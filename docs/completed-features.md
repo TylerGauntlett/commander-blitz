@@ -15415,3 +15415,101 @@ a permanent-only filter still never reaching a seat — and
 seat in turn: yours doubled at the opponent, yours at yourself not, the
 opponent's not, Fiery Emancipation's ×3 on the same spell, and the Flail's
 type-naming dealer filter still refusing a spell.
+
+## `not_name` and `distinct_names` — Tiamat's two name constraints, which are two different things
+
+"When Tiamat enters, if you cast it, search your library for up to five Dragon
+cards **not named Tiamat** that each have **different names**, reveal them, put
+them into your hand, then shuffle."
+
+One sentence, two constraints, and the whole of the work is that they are not
+the same kind of constraint. *Not named Tiamat* is a question about each card by
+itself, answerable card by card, so it is a selector clause. *Each have
+different names* is a question about the picks as a set, which no clause can
+answer, because every clause in `_matches_in_zone` is evaluated against one
+candidate in isolation. Closing one leaves the sentence unsayable.
+
+### What was already there, and why neither half had it
+
+`name` is a positive exact match and there is no generic `not` wrapper around a
+selector, so the negations are a fixed family — `not_colors`, `not_keywords`,
+`not_types`, `not_subtypes`, `not_supertypes` — and none of them reads a name.
+`exclude_self` is the near miss and asks a different question: it excludes *this
+object*, and the card being excluded here is a **second copy** of Tiamat sitting
+in the library, which `exclude_self` never sees. `shares_a_name_with` is
+positive and needs a bound object.
+
+For the other half, `share_subtype` was the only between-the-picks constraint
+the search ops had, and its own docstring says what it is: "a constraint between
+the picks, which no selector can state". It is also the *opposite* relation —
+cards that match one another, on subtype — and `_search_sharing` hardcodes a
+subtype intersection against the first pick and reads no names at all.
+
+Leaving either off makes a different card, not a rough one. Without `not_name` a
+deck running two Tiamats tutors the second. Without `distinct_names` the search
+fetches five copies of one Dragon.
+
+### Tier: A — one selector clause, one op option, no new decision
+
+`ask_objects` composes, so nothing new reaches `DecisionKind`, `verify.py`'s
+auto-answer table, the server or the frontend.
+
+### What was built
+
+- **`not_name`** in `selectors.SELECTOR_KEYS` and `matches`, beside the `name`
+  clause it negates and read off the same `card.name` — nothing in the
+  characteristics layer renames an object, so the card's name is the name. It
+  takes a name or a **list** of them, because two `not_name` keys cannot sit in
+  one selector and cards do print "not named A or B". `validate_selector`
+  refuses anything that is not a name, on the `not_supertypes` argument: a
+  positive clause that matches nothing is visible on the first board, while a
+  negation that excludes nothing looks exactly like one that worked.
+- **`distinct_names`** on `search_library` and `search_zones`, staged by
+  `_search_distinct` as the mirror of `_search_sharing`.
+
+### Where it parts company with `share_subtype`, and why that is the design
+
+Sharing stages exactly **twice**: "two that share a land type" is one relation
+to one lead card, so the lead is picked from the whole pool and the rest of the
+pool is narrowed once. Distinctness is a relation among *all* the picks, so
+every pick constrains the ones after it — offer the pool, take one, drop every
+card sharing that name, repeat up to `count`. Every copy of the chosen card
+leaves the pool, not just the one taken: the constraint is on names, so a second
+printing of the same Dragon is as illegal a second pick as the card just chosen.
+
+Declining a pick ends the search, because "up to five" is satisfied at any
+count — the same stop `_search_sharing` gives its first pick, offered at every
+stage. Running five one-card `search_library` ops instead is the shortcut that
+looks equivalent and is not: five independent "up to one" counts, five shuffles,
+and no pick able to see the names the earlier ones took, which is the one thing
+the printed sentence exists to say.
+
+### The loader
+
+`distinct_names` is guarded exactly as `share_subtype` is — the two search ops
+only, a boolean, a `count` above 1 — since anywhere else it is a promise the op
+never keeps. One guard is its own: **the two together are refused.** They stage
+the pool differently, so whichever branch ran would silently drop the other half
+of the card, and a card that asks for both is wrong rather than half-right.
+
+### Cards unblocked
+
+Tiamat, hand-authored at the agent tier, and with it every "search for up to N
+cards that each have different names" card — the Dragon, Sliver and Primevals
+family — plus every "not named <this card>" line for `not_name` alone.
+
+### Guarded by
+
+`tests/unit/test_search_distinct_names.py`, over
+`tests/data/distinct_names.cards.json`. The test library is stocked with
+**duplicates** on purpose: a library where every Dragon already has a unique
+name passes the distinctness claim while proving nothing about it. So it holds
+two copies of one Dragon, a second copy of the searcher itself, and a non-Dragon
+— and the two claims are kept in separate classes. That the searcher's own name
+is never offered though its copy is a Dragon card in that library, that the
+excluded name is never fetched, that a non-Dragon is still filtered out beside
+it, and that a list excludes every name in it. That the duplicate of the first
+pick is gone from the second menu, that the **third** menu is narrowed by both
+earlier picks rather than only the lead, and that a library of three identical
+Dragons yields one card and asks once. Plus "up to three" meaning zero at every
+stage, and the five load errors.

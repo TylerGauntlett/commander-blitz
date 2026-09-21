@@ -827,6 +827,38 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # One card shares a type with itself vacuously, so the clause would
             # be decoration on a card that reads as if it constrained something.
             raise DslError(f"{where}: 'share_subtype' needs a 'count' above 1; got {count}")
+    if "distinct_names" in effect:
+        # "…for up to five Dragon cards **that each have different names**"
+        # (Tiamat). The mirror of `share_subtype` above, and guarded the same
+        # way for the same reason: it is staged inside the search, so it means
+        # nothing anywhere else, and a card written with it elsewhere would read
+        # as a promise the op never keeps and fetch five copies of one Dragon.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'distinct_names' only applies to search_library and "
+                f"search_zones, not {op!r}"
+            )
+        if not isinstance(effect["distinct_names"], bool):
+            raise DslError(
+                f"{where}: 'distinct_names' is a boolean, got {effect['distinct_names']!r}"
+            )
+        # The two stage the pool differently -- sharing narrows once, against
+        # the lead card's subtypes; distinctness narrows after every pick,
+        # against the names already taken. Whichever ran would silently drop the
+        # other half of the sentence, so a card asking for both is refused
+        # rather than given one of them.
+        if effect.get("share_subtype"):
+            raise DslError(
+                f"{where}: 'distinct_names' and 'share_subtype' are two different "
+                f"stagings of one search; a card cannot ask for both"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 2:
+            # One card differs from nothing, so the clause would be decoration
+            # on a card that reads as if it constrained something.
+            raise DslError(f"{where}: 'distinct_names' needs a 'count' above 1; got {count}")
     if "attachment" in effect:
         # "…you may attach **it** to a creature you control" (Vault 101:
         # Birthday Party). Which permanent is doing the attaching, as against

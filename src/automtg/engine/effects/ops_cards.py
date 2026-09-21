@@ -332,7 +332,9 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         if pool:
             take = min(count, len(pool))
             prompt = "Search your library" if zones == ("library",) else "Search"
-            if spec.get("share_subtype") and take > 1:
+            if spec.get("distinct_names") and take > 1:
+                picked = yield from _search_distinct(ctx, prompt, pool, take, pid)
+            elif spec.get("share_subtype") and take > 1:
                 picked = yield from _search_sharing(ctx, prompt, pool, take, pid)
             else:
                 picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
@@ -405,6 +407,54 @@ def _search_sharing(ctx: EffectContext, prompt: str, pool: list[int], take: int,
         ctx, f"{prompt} (sharing a type)", rest, 0, take - 1, pid, "search"
     )
     return list(first) + list(more)
+
+
+def _search_distinct(ctx: EffectContext, prompt: str, pool: list[int], take: int, pid: int):
+    """ "…for up to five Dragon cards **that each have different names**" (Tiamat).
+
+    The mirror of `_search_sharing` and a constraint between the picks for the
+    same reason: `_matches_in_zone` judges one candidate at a time, so a
+    selector can say "each of these is a Dragon" and never "these five differ
+    from one another". `not_name` is the near miss and is the *other* half of
+    Tiamat's sentence -- a literal name written into the card, which can exclude
+    Tiamat itself and can say nothing about the four cards the same search has
+    not chosen yet. `shares_a_name_with` is the relation wanted, negated and
+    against a bound object, and nothing binds a card mid-search.
+
+    So the choice is staged the same way, but narrowed after **every** pick
+    rather than only after the first: offer the whole pool, take one, drop every
+    card sharing that name, repeat up to `take` times. Sharing stages exactly
+    twice because "two that share a type" is one relation to one lead card;
+    distinctness is a relation among all of them, so each pick constrains the
+    rest.
+
+    Declining a pick ends the search, because "up to five" is satisfied at any
+    count -- it is the same stop `_search_sharing` gives the first pick, offered
+    at every stage. Running five one-card searches instead would be a different
+    card: five "up to one" counts, five shuffles, and no pick able to see the
+    names the earlier ones took.
+    """
+    # `card_of` rather than a characteristics lookup, for the reason the `name`
+    # selector clause reads the same field: nothing in the characteristics layer
+    # renames an object, so the card's name is the name.
+    def name_of(oid: int) -> str:
+        return ctx.state.card_of(ctx.state.objects[oid]).name
+
+    picked: list[int] = []
+    remaining = list(pool)
+    while remaining and len(picked) < take:
+        label = prompt if not picked else f"{prompt} (a different name)"
+        one = yield from ask_objects(ctx, label, remaining, 0, 1, pid, "search")
+        if not one:
+            break
+        oid = one[0]
+        picked.append(oid)
+        # Every copy of the chosen card leaves the pool, not just the one taken:
+        # the constraint is on names, so a second printing of the same Dragon is
+        # as illegal a second pick as the very card just chosen.
+        taken = name_of(oid)
+        remaining = [o for o in remaining if name_of(o) != taken]
+    return picked
 
 
 def _to_top(spec: Mapping[str, Any], destination: Zone) -> bool:

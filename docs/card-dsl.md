@@ -161,6 +161,24 @@ the one thing the printed sentence exists to say. Hardcoding `subtypes:
 player. Refused at load time on any other op, and on a `count` below 2, where
 it would be decoration on a card that reads as though it constrained something.
 
+`distinct_names: true` is the mirror relation — "up to five Dragon cards **that
+each have different names**" (Tiamat, and the Sliver and Primevals family with
+it). Cards that *differ*, where `share_subtype` is cards that *match*, and a
+constraint between the picks for the same reason: a clause judges one candidate
+at a time. `not_name` is the other half of Tiamat's sentence and not this one —
+it is a literal name written into the card, which can exclude Tiamat itself and
+can say nothing about the four cards the search has not chosen yet.
+
+It stages the same way and narrows after **every** pick rather than only after
+the first: offer the whole pool, take one, drop every card sharing that name,
+repeat up to `count`. Sharing stages exactly twice because "two that share a
+type" is one relation to one lead card; distinctness is a relation among all of
+them. Declining a pick ends the search, because "up to five" is satisfied at any
+count. Guarded exactly as `share_subtype` is — the two search ops only, a
+boolean, a `count` above 1 — plus one more: the two together are refused, since
+they stage the pool differently and whichever ran would silently drop the other
+half of the sentence.
+
 `look_at_top` is `search_library` with the pool bounded to the top `amount`
 cards, and the bound is the card:
 
@@ -335,7 +353,8 @@ Every key is optional; all present keys must match.
   "optional": true,               // "you may ... a card" -- exactly N, or none
   "chooser": "controller",        // controller|owner|none
   "random": false,
-  "name": "Forest"
+  "name": "Forest",
+  "not_name": "Tiamat"            // "…Dragon cards NOT NAMED Tiamat" -- a list for two or more
 }
 ```
 
@@ -537,6 +556,20 @@ and Magus of the Moon need a type-changing continuous effect, Back to Basics and
 Winter Moon an untap restriction, Archon of Emeria a filtered enters-tapped
 replacement — so the key would have nothing to attach to and no card to prove
 itself on.
+
+`not_name` is the last member of that family and the same argument in one more
+place: "search your library for up to five Dragon cards **not named Tiamat**".
+`name` is a positive exact match, so it can *require* a name and never forbid
+one, and there is no generic `not` wrapper around a selector to stand in.
+
+`exclude_self` is the near miss and asks a different question — it excludes
+*this object*, and the card being excluded here is a **second copy** of Tiamat
+sitting in the library, which `exclude_self` never sees. Dropping the clause is
+not a safe approximation either: a deck running two Tiamats would tutor the
+other one. It takes a name, or a list when a card names more than one, since two
+`not_name` keys cannot sit in one selector; anything that is not a name is a load
+error, because a negation that excludes nothing looks exactly like one that
+worked.
 
 `any_of` is the same idea one level up, for where there is no single clause to
 widen. Stumpsquall Hydra distributes counters "among **it and any number of

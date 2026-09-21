@@ -1,0 +1,117 @@
+{
+  "_comment": "Cards that exist only for the distinct-names search test (tests/unit/test_search_distinct_names.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_wyrm_ancestor` is Tiamat's sentence with the count dropped to three: the two name constraints on one search, one filtering each card alone (`not_name`) and one holding between the picks (`distinct_names`). `t_wyrm_caller` is the list spelling of `not_name`, which a single card naming two exclusions needs because two `not_name` keys cannot sit in one selector. The rest are library fodder, deliberately stocked with duplicate names.",
+  "cards": [
+    {
+      "id": "t_wyrm_ancestor",
+      "name": "Test Wyrm Ancestor",
+      "oracle_text": "Flying\nWhen this creature enters, search your library for up to three Dragon cards not named Test Wyrm Ancestor that each have different names, reveal them, put them into your hand, then shuffle.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, search your library for up to three Dragon cards not named Test Wyrm Ancestor that each have different names, reveal them, put them into your hand, then shuffle.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 3,
+              "distinct_names": true,
+              "reveal": true,
+              "destination": "hand",
+              "selector": {"subtypes": ["Dragon"], "not_name": "Test Wyrm Ancestor"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wyrm_caller",
+      "name": "Test Wyrm Caller",
+      "oracle_text": "When this enchantment enters, search your library for up to two Dragon cards not named Test Scarlet Wyrm or Test Cobalt Wyrm that each have different names, reveal them, put them into your hand, then shuffle.",
+      "mana_cost": "{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, search your library for up to two Dragon cards not named Test Scarlet Wyrm or Test Cobalt Wyrm that each have different names, reveal them, put them into your hand, then shuffle.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 2,
+              "distinct_names": true,
+              "reveal": true,
+              "destination": "hand",
+              "selector": {
+                "subtypes": ["Dragon"],
+                "not_name": ["Test Scarlet Wyrm", "Test Cobalt Wyrm"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wyrm_scarlet",
+      "name": "Test Scarlet Wyrm",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "t_wyrm_cobalt",
+      "name": "Test Cobalt Wyrm",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "t_wyrm_ashen",
+      "name": "Test Ashen Wyrm",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "t_wyrm_herder",
+      "name": "Test Wyrm Herder",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1
+    }
+  ]
+}

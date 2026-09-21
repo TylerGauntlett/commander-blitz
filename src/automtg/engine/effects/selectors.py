@@ -288,6 +288,18 @@ SELECTOR_KEYS = frozenset(
         "binding",
         "object_kind",
         "name",
+        #: "…search your library for up to five Dragon cards **not named
+        #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
+        #: family was missing. Takes a string, or a list when a card names more
+        #: than one ("not named Griselbrand or Emrakul"), since two `not_name`
+        #: keys cannot sit in one selector.
+        #:
+        #: `exclude_self` is the near miss and is a different question: it
+        #: excludes *this object*, and the card being excluded here is a second
+        #: copy of Tiamat sitting in the library, which `exclude_self` never
+        #: sees. Leaving the clause off is not a safe approximation either --
+        #: a deck running two Tiamats would tutor the other one.
+        "not_name",
         "damaged",
         # "…until this permanent leaves the battlefield." Cards in exile that
         # *this* source put there, read back by its own leaves-trigger.
@@ -829,6 +841,14 @@ def matches(
     if (want := selector.get("not_keywords")) and set(want) & keywords:
         return False
     if (want := selector.get("name")) and card.name != want:
+        return False
+    # "…for up to five Dragon cards **not named Tiamat**". Read off `card.name`
+    # exactly as the positive clause one line up does, for the same reason it
+    # does: nothing in the characteristics layer renames an object, so the
+    # card's name is the name.
+    if (unwanted := selector.get("not_name")) and card.name in (
+        {unwanted} if isinstance(unwanted, str) else set(unwanted)
+    ):
         return False
     if (bound := selector.get("shares_a_name_with")) is not None:
         # Legions to Ashes: "…and all tokens that player controls **with the
@@ -1490,6 +1510,22 @@ def validate_selector(selector: Any, where: str) -> None:
                     f"{where}: unknown supertype {name!r} in {key!r} "
                     f"(known: {sorted(KNOWN_SUPERTYPES)})"
                 )
+    # The same argument once more, and the negated key is again the sharp one:
+    # a positive `name` that is not a string selects nothing and is visible on
+    # the first board, while a `not_name` written as anything but a name -- a
+    # nested selector, say, on the assumption it is a generic `not` wrapper --
+    # excludes nothing and looks like it worked.
+    unwanted = selector.get("not_name")
+    if unwanted is not None:
+        names = [unwanted] if isinstance(unwanted, str) else unwanted
+        if not isinstance(names, (list, tuple)) or not names:
+            raise DslError(
+                f"{where}: 'not_name' takes a card name or a list of them, got {unwanted!r}"
+            )
+        for name in names:
+            if not isinstance(name, str):
+                raise DslError(f"{where}: 'not_name' holds card names; {name!r} is not one")
+
     union = selector.get("union")
     if union is not None:
         if not isinstance(union, (list, tuple)) or len(union) < 2:
