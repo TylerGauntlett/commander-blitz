@@ -533,6 +533,34 @@ class Requirement:
             hybrid=self.hybrid,
         )
 
+    def as_any_color(self) -> Requirement:
+        """This requirement as paid by someone spending mana as any colour.
+
+        :meth:`ManaCost.as_any_color` read one level down, for the same reason
+        :meth:`with_generic` exists here rather than on the cost: a discount is
+        applied to the requirement, and Chromatic Orrery's waiver has to be read
+        **after** it. Loosening the cost first would let "costs {2} less" reach
+        through the generic part into pips that are by then generic -- a
+        ``{1}{G}`` ability discounted by two would come out free instead of
+        owing the one mana the ``{G}`` still is.
+
+        The fold is identical: every coloured pip and every hybrid one becomes a
+        single generic, ``{C}`` stays because colourless is not a colour, and a
+        requirement with nothing to loosen is returned unchanged so the caller
+        can use identity as its cheap test.
+        """
+        colorless = SYMBOL_INDEX[COLORLESS]
+        folded = sum(n for i, n in enumerate(self.colored) if i != colorless)
+        if not folded and not self.hybrid:
+            return self
+        colored = [0] * N_SYMBOLS
+        colored[colorless] = self.colored[colorless]
+        return Requirement(
+            colored=tuple(colored),
+            generic=self.generic + folded + len(self.hybrid),
+            hybrid=(),
+        )
+
 
 class Pip(NamedTuple):
     """One unit of mana in the pool, and what is known about where it came from.

@@ -173,6 +173,14 @@ STATIC_EFFECTS = frozenset(
         # Read by the cast line and by `costs.can_pay` / `costs.pay`, each of
         # which reads a black pip as a Phyrexian one while it is on.
         "black_mana_as_phyrexian",
+        # "You may spend mana as though it were mana of any color." Chromatic
+        # Orrery. Player-wide for `black_mana_as_phyrexian`'s reason and read in
+        # the same places: it loosens which mana pays a coloured pip in *every*
+        # cost the player pays, spells and activated abilities alike, so there
+        # is no object for it to attach to. Distinct from the `any_color` flag
+        # on `exile` / `grant_playable`, which is the same waiver granted for
+        # one named card.
+        "spend_mana_as_any_color",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -471,6 +479,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_from_graveyard",
         "cast_from_library_top",
         "black_mana_as_phyrexian",
+        "spend_mana_as_any_color",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",

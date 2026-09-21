@@ -412,7 +412,7 @@ class Game:
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
         from .casting import strive_surcharge
-        from .player_statics import player_pays_life_for_black
+        from .player_statics import player_pays_life_for_black, player_spends_mana_as_any_color
 
         if player_pays_life_for_black(state, pid):
             # K'rrik's black pips, read as Phyrexian ones exactly where
@@ -436,9 +436,13 @@ class Game:
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
             cost = cost.as_any_type()
-        elif granted.playable_any_color and granted.playable_live(state.turn):
+        elif (
+            granted.playable_any_color and granted.playable_live(state.turn)
+        ) or player_spends_mana_as_any_color(state, pid):
             # Elder Brain's colour waiver, the paying half of the one
-            # `_cast_variant` priced the line with.
+            # `_cast_variant` priced the line with -- or Chromatic Orrery's,
+            # which says it about the player instead of about this card and so
+            # is read here off the same static `_cast_variant` read.
             cost = cost.as_any_color()
 
         # Convoke and delve. Netted into `extra` alongside the commander tax

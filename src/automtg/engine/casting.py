@@ -18,7 +18,11 @@ from .costs import (
 )
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
-from .player_statics import player_casts_as_though_flash, player_pays_life_for_black
+from .player_statics import (
+    player_casts_as_though_flash,
+    player_pays_life_for_black,
+    player_spends_mana_as_any_color,
+)
 from .primitives import sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -1135,6 +1139,12 @@ def _cast_variant(
         # lines are counted, and one line per number bought falls out below.
         # `Game._cast` makes the identical conversion before it charges.
         printed = printed.black_as_phyrexian()
+    # Chromatic Orrery: "You may spend mana as though it were mana of any
+    # color." A fact about the payer rather than about this card, so it is read
+    # once for the whole variant and then folded in beside the permission a
+    # `grant_playable` may also have left on the card. `Game._cast` reads the
+    # same static at the same point.
+    spends_any_color = player_spends_mana_as_any_color(state, pid)
     out: list[Action] = []
     for phyrexian in range(printed.phyrexian_count + 1):
         cost, phyrexian_life = printed.paying_phyrexian(phyrexian)
@@ -1150,10 +1160,15 @@ def _cast_variant(
             # cost -- and the discounts below still only touch the generic part,
             # which by now is all there is.
             cost = cost.as_any_type()
-        elif permission.playable_any_color and permission.playable_live(state.turn):
+        elif (
+            permission.playable_any_color and permission.playable_live(state.turn)
+        ) or spends_any_color:
             # "…you may spend mana as though it were mana of any color to cast
             # it." Relaxed at the same moment and for the same reason as the
             # any-type waiver above, and read off the same card by `Game._cast`.
+            # Either half does it: Elder Brain's permission on *this* card, or
+            # Chromatic Orrery's static on the *player*, which says the same
+            # thing about every cost and so also about this one.
             cost = cost.as_any_color()
         branch = chosen_additional(card, additional_choice)
         if additional_times and branch is not None:
@@ -1212,7 +1227,8 @@ def _cast_variant(
             pool,
             sources,
             any_type=permission.playable_any_type and permission.playable_live(state.turn),
-            any_color=permission.playable_any_color and permission.playable_live(state.turn),
+            any_color=(permission.playable_any_color and permission.playable_live(state.turn))
+            or spends_any_color,
             targeted_discount=targeted_discount,
             discount_for=_discount_for,
         )

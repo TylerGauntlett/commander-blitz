@@ -738,7 +738,12 @@ def can_pay_mana(
             )
             is not None
         )
-    req = cost.with_x(x)
+    # "…including the mana costs of spells, activation costs, and even costs for
+    # special actions": suspend and foretell come through here rather than
+    # `ability_mana`, so Chromatic Orrery's waiver is read here too, and at the
+    # same point in the arithmetic -- before `extra_generic`, exactly as
+    # `ability_mana` reads it before `can_pay` and `pay` add theirs.
+    req = spendable_requirement(state, pid, cost.with_x(x))
     if extra_generic:
         req = req.with_generic(req.generic + extra_generic)
     return (
@@ -818,9 +823,16 @@ def ability_mana(
     from .player_statics import ability_cost_reduction
 
     less += ability_cost_reduction(state, pid, ability, source_oid, targets)
-    if not less:
-        return req
-    return req.with_generic(req.generic - less)
+    if less:
+        req = req.with_generic(req.generic - less)
+    # Chromatic Orrery, **after** the discount: "you may spend mana as though it
+    # were mana of any color" is a rule about which mana pays a pip, not about
+    # how many pips there are, and the clamp above has to have run first or
+    # "costs {2} less" would eat a coloured pip that had become generic. Read
+    # here because this one function is what legality, `can_pay` and `pay` all
+    # reach -- so an ability offered because its {G} was loosened is an ability
+    # charged the loosened price.
+    return spendable_requirement(state, pid, req)
 
 
 def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -862,6 +874,34 @@ def payable_mana(state: GameState, pid: int, mana: ManaCost) -> ManaCost:
     if player_pays_life_for_black(state, pid):
         return mana.black_as_phyrexian()
     return mana
+
+
+def spendable_requirement(state: GameState, pid: int, req: Requirement) -> Requirement:
+    """``req`` as this player may pay it: Chromatic Orrery's loosened pips.
+
+    "You may spend mana as though it were mana of any color." The payment twin
+    of :func:`payable_mana` and written to the same shape, one level down: a
+    `Requirement` rather than a `ManaCost`, because the waiver is read *after*
+    every discount and a discount is applied to the requirement.
+
+    Deliberately **not** folded into `payable_mana`. That helper's answer is
+    asked for its `phyrexian_count` -- by `can_pay`, by `can_pay_mana` and by
+    `life_for_mana_range` -- and `as_any_color` turns hybrid pips into generic
+    ones, so loosening there would hide a printed ``{G/P}`` activation's life
+    half behind an Orrery. The two waivers stack instead: the Phyrexian pips are
+    bought first, and what is left of the cost is loosened here.
+    """
+    colorless = SYMBOL_INDEX[COLORLESS]
+    # Cheap test first: this runs for every cost the engine prices, and a cost
+    # with nothing coloured in it has nothing to loosen whatever is on the
+    # battlefield -- the board walk is for the rest.
+    if not req.hybrid and not any(n for i, n in enumerate(req.colored) if i != colorless):
+        return req
+    from .player_statics import player_spends_mana_as_any_color
+
+    if player_spends_mana_as_any_color(state, pid):
+        return req.as_any_color()
+    return req
 
 
 def _life_budget(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -936,10 +976,22 @@ def most_life_for_mana(
     The cheapest the mana half can get, and so what an ``{X}`` ceiling is
     measured against: `pay` then asks for at least the pips that X needs, never
     more than the life can buy.
+
+    Chromatic Orrery's waiver is applied to what is left, after the pips are
+    bought, for the reason `spendable_requirement` gives -- and it has to be
+    applied *here*, because this is the only cost `max_affordable_x` ever sees
+    for an activated ability. Without it an ``{X}{G}`` line under an Orrery was
+    found payable by `can_pay` and then withheld by the X gate, which is the
+    two halves of legality disagreeing about the same ability.
     """
     mana = payable_mana(state, pid, cost.mana)
     most = min(mana.phyrexian_count, _life_budget(state, pid, cost, source_oid) // 2)
-    return mana.paying_phyrexian(most)[0]
+    mana = mana.paying_phyrexian(most)[0]
+    from .player_statics import player_spends_mana_as_any_color
+
+    if player_spends_mana_as_any_color(state, pid):
+        return mana.as_any_color()
+    return mana
 
 
 def can_pay(

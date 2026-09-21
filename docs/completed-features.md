@@ -14373,3 +14373,101 @@ its own after the Dragon is swept away in response. The `is_spell` flag read
 straight off the event in both directions, so the clause and the payload cannot
 drift. Ward's trigger asserted to leave the key `None`. And the load-time
 refusals — the clause on any other event, and an unknown value.
+
+## `spend_mana_as_any_color` — Chromatic Orrery's "You may spend mana as though it were mana of any color"
+
+The second player-wide static about how a player *pays*, and the sibling of
+`black_mana_as_phyrexian` in every structural way. K'rrik's line rewrites a
+black pip into a Phyrexian one; the Orrery's rewrites every coloured pip into
+one that any mana can buy.
+
+### What was already there, and why it could not be pointed at this card
+
+`ManaCost.as_any_color` — the fold itself — has existed since Elder Brain: *"you
+may spend mana as though it were mana of any color **to cast it**."* It was
+reachable through exactly one door, `permission.playable_any_color`, the
+`any_color` flag on `exile` / `grant_playable` / `look_at_top` /
+`search_library`. That flag rides on a **specific card** some effect made
+playable, and the whole of the waiver's reach was that one card's cast line.
+
+Chromatic Orrery grants no playability at all, so there was no object for the
+flag to attach to. Its sentence is about the player, and about *every* cost the
+player pays. Nothing in `static_effects` did that: `add_mana_on_tap` and
+`double_land_mana` change what mana is **produced**, not what it may be spent
+on, and `black_mana_as_phyrexian` was the only entry in the whole vocabulary
+that touched payment.
+
+### The four read sites
+
+`player_statics.player_spends_mana_as_any_color`, one `_player_static` call, in
+the same four kinds of place K'rrik's twin is read:
+
+| where | what it loosens |
+|---|---|
+| `casting._cast_variant` | the cast line legality offers, and the `_priced_tuples` solve behind it |
+| `game.Game._cast` | the cast line payment — the line offered is the line charged |
+| `costs.ability_mana` | every other cost; the one function legality, `can_pay` and `pay` all reach |
+| `costs.most_life_for_mana` | an activated ability's `{X}` ceiling, the only cost `max_affordable_x` ever sees for one |
+
+The last two are not optional and not symmetric with each other. `ability_mana`
+is where `can_pay` and `pay` cannot be allowed to disagree; `most_life_for_mana`
+is a *different* path that legality takes before it, and without the waiver
+there an `{X}{G}` ability under an Orrery was found payable by `can_pay` and then
+withheld by the X gate — the two halves of legality disagreeing about one
+ability.
+
+### The three design decisions
+
+**`Requirement.as_any_color`, not just the `ManaCost` one.** The waiver has to be
+applied **after** a cost reduction, because a reduction is clamped at the generic
+part and loosening first moves the pips there. A `{1}{G}` ability that "costs {2}
+less" still owes the one mana the `{G}` is; loosening first makes it free. The
+discount is applied to the `Requirement`, so the waiver had to be readable at
+that level too.
+
+**In `costs.spendable_requirement`, not in `costs.payable_mana`.** Folding the
+waiver into `payable_mana` — the obvious place, since it is the existing "this
+cost as this player may pay it" helper — is wrong, and quietly. Three callers ask
+that helper's answer for its `phyrexian_count`, and `as_any_color` turns hybrid
+pips into generic ones: a printed `{G/P}` activation under an Orrery would have
+lost its life half and demanded mana. The two waivers stack instead — the
+Phyrexian pips are bought first, and what is left of the cost is loosened.
+
+**`{C}` is not loosened, and colourless mana still pays a loosened pip.** Both
+fall out of `as_any_color` unchanged and both matter here. A Mountain cannot pay
+a Wastes' `{C}` activation under an Orrery (colourless is not a colour — the
+whole difference from `as_any_type`), while the Orrery's own `{T}: Add
+{C}{C}{C}{C}{C}` pays for five coloured pips, which is the Mycosynth Lattice
+ruling and the reason the card is played.
+
+### The scope that is easy to lose
+
+Activated-ability costs. "Any cost you pay" is the Orrery's own `{5}, {T}` line,
+an equip, a morph, a suspend, "unless its controller pays {B}". A version that
+loosened only the cast line reads correctly against the first card anybody tests
+it with and is a different, much weaker card; it is pinned as its own test class.
+
+### Cards unblocked
+
+One, hand-authored at the agent tier, six gates green. **Chromatic Orrery**'s
+other printed line — `{5}, {T}: Draw a card for each color among permanents you
+control` — was never blocked: it decomposes into five `if` / `exists` ops each
+drawing one, the per-colour decomposition Conqueror's Flail already uses for
+"for each color among permanents you control". The `{T}: Add {C}{C}{C}{C}{C}`
+line came from the template tier untouched, and is deliberately *not* an
+any-colour mana ability: the printed ability makes colourless mana, and it is the
+static that makes that mana spendable on anything.
+
+### Guarded by
+
+`tests/unit/test_spend_mana_as_any_color_static.py`, over
+`tests/data/spend_mana_as_any_color_static.cards.json` — named for the *static*,
+beside the granted form's own pair, which keeps the unsuffixed name. The cost
+reading (a pip becomes one generic, mana value and printed text unmoved, `{C}`
+kept, a hybrid pip worth one, identity when there is nothing to loosen, and the
+discount-before-waiver order); the cast line (`{1}{U}` and `{U}{U}` cast off
+Mountains, refused without the Orrery, refused when the Orrery is the
+*opponent's*, and the amount owed unchanged); activated abilities in the same
+five shapes plus the `{X}` ceiling and colourless mana paying a white pip; and
+the two things the fold must not swallow — a `{C}` cost, and a printed
+`{G/P}`'s life half.

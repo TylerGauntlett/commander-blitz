@@ -4489,6 +4489,55 @@ cost itself does not change -- mana value, colour and chroma read the same.
 When bought pips must be picked, a single-symbol pip goes first
 (`paying_phyrexian`), since anything that pays `{B}` also pays `{B/R}`.
 
+### `spend_mana_as_any_color` — Chromatic Orrery's colour waiver
+
+```jsonc
+{ "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
+```
+
+Chromatic Orrery: *"You may spend mana as though it were mana of any color."*
+The second player-wide static about how a cost is **paid**, and the sibling of
+`black_mana_as_phyrexian` in every structural way — `affects_player`, an
+optional `condition`, no `affects` and no `amount`, read by
+`player_statics.player_spends_mana_as_any_color` at the places that price a
+cost.
+
+The mechanism was already here. `ManaCost.as_any_color` was written for Elder
+Brain — *"you may spend mana as though it were mana of any color **to cast
+it**"* — and reached only through `permission.playable_any_color`, the
+`any_color` flag on `exile` / `grant_playable` / `look_at_top` /
+`search_library`, which rides on one card that effect made playable. The Orrery
+grants no playability, so there is nothing for that flag to attach to; this
+static is the same waiver said about the *player*, and the two are read in the
+same `elif` on both halves of the cast line.
+
+**It covers activated-ability costs**, and that is most of the point: "any cost
+you pay" is the Orrery's own `{5}, {T}` line, an equip, a morph, a suspend,
+"unless its controller pays {B}". A version that loosened only spell costs is a
+different and much weaker card. Four read sites, mirroring K'rrik's:
+
+| where | what it loosens |
+|---|---|
+| `casting._cast_variant` | the cast line legality offers, and its `_priced_tuples` solve |
+| `game.Game._cast` | the cast line payment, so the line offered is the line charged |
+| `costs.ability_mana` | every other cost — the one function legality, `can_pay` and `pay` all reach |
+| `costs.most_life_for_mana` | an activated ability's `{X}` ceiling, the only cost `max_affordable_x` sees |
+
+The waiver is applied **after** any discount, which is why it has a
+`Requirement.as_any_color` beside the `ManaCost` one: a `{1}{G}` ability that
+"costs {2} less" still owes the one mana the `{G}` is, and loosening first would
+let the discount reach a pip that had become generic.
+
+Two things it must not swallow, both pinned in
+`tests/unit/test_spend_mana_as_any_color_static.py`. `{C}` in a cost is
+untouched — colourless is not a colour, so a Mountain still cannot pay a Wastes'
+activation (that is the difference from `as_any_type`) — while colourless *mana*
+pays a loosened pip perfectly well, which is what makes the Orrery's own five
+`{C}` worth anything. And a printed Phyrexian pip keeps its life half: the
+loosening lives in `costs.spendable_requirement` rather than in
+`costs.payable_mana`, because folding hybrid pips into generic inside the latter
+would hide them from the `phyrexian_count` that offers the life line.
+
 ### Restricted mana
 
 ```jsonc
@@ -5089,7 +5138,7 @@ not. It is **not** interchangeable with a `not_types` complement —
 
 ## Player-wide statics
 
-Seventeen static effects describe the *player* rather than a characteristic, so
+Twenty-four static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -5116,6 +5165,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
+{ "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
 ```
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is

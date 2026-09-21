@@ -382,6 +382,32 @@ def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "black_mana_as_phyrexian")
 
 
+def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
+    """Whether every coloured pip this player pays may be paid with any mana.
+
+    Chromatic Orrery: "You may spend mana as though it were mana of any color."
+    The unrestricted twin of the permission `permission.playable_any_color`
+    already carries -- Elder Brain's "you may spend mana as though it were mana
+    of any color **to cast it**", which rides on one card some effect made
+    playable. This one rides on nothing: it is a fact about the *payer*, so it
+    reaches every cost that player pays, and it is read in the same places
+    `player_pays_life_for_black` is -- the cast line in `casting._cast_variant`
+    and `Game._cast`, and `costs.ability_mana` / `costs.most_life_for_mana` for
+    every other cost.
+
+    **Activated abilities are the half that is easy to lose.** A version that
+    loosened only spell costs is a different card: an Orrery's own
+    ``{5}, {T}`` line, an equip, a morph, "unless its controller pays {B}" --
+    all of them are costs this player pays, and all of them are loosened.
+
+    Colourless mana counts (the Mycosynth Lattice ruling: mana spent as though
+    it were of a colour is spent as that colour), and ``{C}`` in a cost does
+    not, because colourless is not a colour. Both fall out of
+    `ManaCost.as_any_color`, which is what does the reading.
+    """
+    return _player_static(state, pid, "spend_mana_as_any_color")
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 
