@@ -2674,6 +2674,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "d20",
+              "count": {
+                "const": 1
+              },
+              "op": "roll_dice",
+              "sides": 20
+            },
+            {
+              "amount": {
+                "rolled": {
+                  "binding": "d20",
+                  "total": true
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ancient_copper_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Ancient Copper Dragon",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -2689,6 +2745,62 @@
         "Crab"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "d20",
+              "count": {
+                "const": 1
+              },
+              "op": "roll_dice",
+              "sides": 20
+            },
+            {
+              "amount": {
+                "rolled": {
+                  "binding": "d20",
+                  "total": true
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "faerie_dragon_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, roll a d20. You create a number of 1/1 blue Faerie Dragon creature tokens with flying equal to the result.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ancient_gold_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{W}{W}",
+      "name": "Ancient Gold Dragon",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of 1/1 blue Faerie Dragon creature tokens with flying equal to the result.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "toughness": 10,
       "types": [
         "Creature"
       ]

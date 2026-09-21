@@ -1119,6 +1119,7 @@ Anywhere a number is expected:
 { "rolled": { "binding": "roll",                // …how many came up even
               "parity": "even" } }              //    ("odd" is the other half)
 { "rolled": { "binding": "roll", "face": 6 } }  // …how many came up 6
+{ "rolled": { "binding": "roll", "total": true } } // …the faces added up ("equal to the result")
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 { "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
 ```
@@ -11147,6 +11148,28 @@ thrown; `parity` (`"even"` / `"odd"`) and `face` narrow it to how many results
 satisfy that predicate. At most one predicate per read — two would silently drop
 one — so "for each even result" and "how many sixes" are two `rolled` values
 naming one binding.
+
+`total` is the odd one out, and the only reading that is **not** a count of
+dice:
+
+```jsonc
+// Ancient Copper Dragon — "roll a d20. You create a number of Treasure
+// tokens equal to the result."
+{ "op": "roll_dice", "count": { "const": 1 }, "sides": 20, "as": "d20" },
+{ "op": "create_token", "token": "treasure_token",
+  "amount": { "rolled": { "binding": "d20", "total": true } } }
+```
+
+Without it the d20 cycle cannot be written at all. Every other reading answers
+*how many dice* satisfy something, so on the single die these cards throw they
+all answer 1 — a 20 and a 1 would be the same card, silently, for ever. It is a
+**sum** rather than "the face of the die" because 705.1 lets a card roll several
+and add them, and one die is that arithmetic over a list of one; a card that
+rolls two and wants one of them says which.
+
+It is a switch rather than a value to match against, so `{"total": false}` is
+refused at load time: it reads as the bare count, which is the exact wrong
+answer this leaf exists to prevent.
 
 The binding is `{"results": [...], "sides": N}` and not a bare list of faces, and
 that is not cosmetic: every other `as` records **oids**, and `resolve_pool` reads

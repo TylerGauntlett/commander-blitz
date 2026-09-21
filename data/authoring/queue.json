@@ -8182,12 +8182,12 @@
     },
     "Ancient Copper Dragon": {
       "edhrec_rank": 639,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Copper Dragon",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, roll a d20. You create a number of",
+      "reason": "",
       "scryfall_id": "f6cbc754-8aed-4c32-857c-ea639943b5d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ancient Cornucopia": {
@@ -8232,12 +8232,12 @@
     },
     "Ancient Gold Dragon": {
       "edhrec_rank": 2092,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Gold Dragon",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, roll a d20. You create a number of",
+      "reason": "",
       "scryfall_id": "18f53d47-fd5c-41de-8d7a-490c1b529f4f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ancient Greenwarden": {

@@ -200,7 +200,7 @@ HALF_ROUNDING = ("up", "down")
 #: silent fall-through to the bare count, which on Luck Bobblehead would read
 #: the number of *dice* as the number of *sixes* and win the game off seven
 #: Bobbleheads.
-ROLL_PREDICATES = ("face", "parity")
+ROLL_PREDICATES = ("face", "parity", "total")
 
 #: Rule 705.1 gives a die two halves and no more; "odd" and "even" are the whole
 #: of what a card asks about the parity of a face.
@@ -603,6 +603,16 @@ def _rolled(ctx: EffectContext, spec: Any) -> int:
     if not isinstance(results, (list, tuple)):
         return 0
     faces = [f for f in results if isinstance(f, int) and not isinstance(f, bool)]
+    if "total" in spec:
+        # "…equal to the result" -- the only reading that is not a count of
+        # dice. Ancient Copper Dragon rolls one d20 and makes that many
+        # Treasures, where every other reading here would answer 1.
+        #
+        # A sum rather than a lone face on purpose: 705.1 lets a card roll
+        # several dice and add them, and one die is the same arithmetic over a
+        # list of one. There is no "the face of the single die" leaf, because a
+        # card that rolls two and wants one of them says which.
+        return sum(faces)
     if "face" in spec:
         want = evaluate_value(ctx, spec["face"])
         return sum(1 for f in faces if f == want)
@@ -928,8 +938,12 @@ def validate_rolled(spec: Any, where: str) -> None:
     - **A misspelled predicate.** Unknown keys fall through to the bare count of
       dice, so ``{"even": true}`` would read the number of *dice* as the number
       of even results and hand out a Treasure per die.
-    - **Both predicates at once.** ``face`` wins in the evaluator, so the
-      ``parity`` half would be silently dropped.
+    - **Both predicates at once.** ``total`` and then ``face`` win in the
+      evaluator, so the later half would be silently dropped.
+    - **``total`` written false.** It is the one predicate that is a bare
+      switch rather than a value to match, so ``{"total": false}`` is the
+      spelling that reads as "count the dice" while looking like it asks for
+      the sum -- on one die those differ by the whole of the card.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object naming the roll's binding")
@@ -954,6 +968,11 @@ def validate_rolled(spec: Any, where: str) -> None:
     if "parity" in spec and str(spec["parity"]) not in ROLL_PARITIES:
         raise DslError(
             f"{where}.parity: must be one of {list(ROLL_PARITIES)}, got {spec['parity']!r}"
+        )
+    if "total" in spec and spec["total"] is not True:
+        raise DslError(
+            f"{where}.total: is a switch and must be true -- a false one reads "
+            f"as the number of dice, which on one die is 1 rather than its face"
         )
     if "face" in spec:
         validate_value(spec["face"], f"{where}.face")

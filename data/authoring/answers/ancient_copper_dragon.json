@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "ancient_copper_dragon",
+    "name": "Ancient Copper Dragon",
+    "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+    "mana_cost": "{4}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Elder", "Dragon"],
+    "power": 6,
+    "toughness": 5,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "roll_dice",
+            "count": {"const": 1},
+            "sides": 20,
+            "as": "d20"
+          },
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "controller": "you",
+            "amount": {"rolled": {"binding": "d20", "total": true}}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

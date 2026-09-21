@@ -246,7 +246,18 @@
   "ancient_carp": {
     "zone": "battlefield"
   },
+  "ancient_copper_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ancient_crab": {
+    "zone": "battlefield"
+  },
+  "ancient_gold_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "ancient_greenwarden": {
