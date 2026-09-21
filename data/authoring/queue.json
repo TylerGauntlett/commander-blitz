@@ -278672,12 +278672,12 @@
     },
     "Terror of the Peaks": {
       "edhrec_rank": 519,
-      "gate": "template",
+      "gate": null,
       "name": "Terror of the Peaks",
-      "reason": "no template for: Spells your opponents cast that target this creature cost an additional 3 life to cast",
+      "reason": "",
       "scryfall_id": "2febfa1b-5a5e-411a-a7aa-f2ca6ee66f51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Terrus Wurm": {
@@ -286582,12 +286582,12 @@
     },
     "Tiamat": {
       "edhrec_rank": 2971,
-      "gate": "template",
+      "gate": null,
       "name": "Tiamat",
-      "reason": "no template for: When enters, if you cast it, search your library for up to five Dragon cards not named tha",
+      "reason": "",
       "scryfall_id": "d7ed714e-28df-4bf3-9752-112a6e9e3609",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tiamat's Fanatics": {
