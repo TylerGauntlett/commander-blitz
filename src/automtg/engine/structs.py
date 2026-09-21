@@ -1149,6 +1149,34 @@ class TurnLedger:
         """
         return any(oid in oids for oids in self.creatures_attacked.values())
 
+    def entered_this_turn(self, oid: int) -> bool:
+        """Did **this** permanent enter the battlefield this turn?
+
+        "Zurgo and Ojutai has hexproof as long as **it** entered this turn";
+        "If a creature you control **that entered this turn** would deal
+        damage…" (Neriv, Heart of the Storm).  The same ledger the
+        `permanents_entered_this_turn` value counts, asked of one object instead
+        of summed over a filter -- which is the whole difference between the two
+        sentences.  Counting cannot say it: the narrowest filter writable over
+        the snapshots is a list of *characteristics*, so "an Orc Dragon you
+        control entered this turn" is satisfied by any other Orc Dragon and by a
+        second copy of the card itself.
+
+        Asked by oid, and asked of the ledger rather than of `entered_turn` on
+        the object.  `entered_turn` is the field `summoning_sick` reads and means
+        something else on purpose: `change_control` stamps it, because 302.6 says
+        a permanent has not been under its new controller since their turn began.
+        Stealing a creature is not that creature entering the battlefield, so a
+        filter reading that field would double an Act of Treason'd attacker under
+        Neriv and hand a stolen commander hexproof.  The ledger records
+        *arrivals* and nothing else.
+
+        Nothing is removed while the turn lasts, so a permanent that entered,
+        left and came back still answers yes -- it has an entry for the trip it
+        is currently on, which is the one the printed line asks about.
+        """
+        return any(entry.oid == oid for entry in self.permanents_entered)
+
     def set_object_flag(self, oid: int, flag: str) -> None:
         """Write a word onto an object for the rest of this turn."""
         self.object_flags.setdefault(oid, set()).add(flag)

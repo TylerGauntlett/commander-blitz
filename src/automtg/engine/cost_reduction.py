@@ -297,6 +297,18 @@ def _object_matches(
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
         return False
+    # "…for each creature that entered this turn". Honoured here because the
+    # docstring above promises it: **every key the loader accepts is read here**,
+    # and a reduction filtered on a key nobody honoured is priced off a clause
+    # that matched everything. A ledger arrival is an input the same way the
+    # three above are -- nothing in the characteristics pipeline writes one -- so
+    # reading it while pricing cannot depend on a static that has not run. Off
+    # the battlefield it is false, which is right: a card in a graveyard or the
+    # command zone did not enter the battlefield this turn.
+    if "entered_this_turn" in filt and bool(
+        state.turn_ledger.entered_this_turn(oid)
+    ) != bool(filt["entered_this_turn"]):
+        return False
     combat = state.combat
     if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
         filt["attacking"]

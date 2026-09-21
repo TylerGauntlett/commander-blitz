@@ -1,0 +1,218 @@
+{
+  "_comment": "Shapes for tests/unit/test_entered_this_turn_filter.py. t_ett_zurgo is Zurgo and Ojutai's second line -- hexproof as long as IT entered this turn -- and t_ett_zurgo_ledger is the same card written with the value leaf instead, which is the narrowest thing sayable without the filter key: 'an Orc Dragon you control entered this turn'. It is kept live so the difference between 'this permanent entered' and 'some matching permanent did' is measured rather than asserted in a comment. t_ett_neriv is Neriv, Heart of the Storm's replacement, and t_ett_gratuitous is the same static with the temporal clause dropped -- the approximation the gap record refused. t_ett_dragon is a plain Orc Dragon to be the other one, and t_ett_bear an ordinary creature to deal damage with.",
+  "cards": [
+    {
+      "id": "t_ett_zurgo",
+      "name": "Test Entered Zurgo",
+      "oracle_text": "Test Entered Zurgo has hexproof as long as it entered this turn.",
+      "mana_cost": "{1}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Orc",
+        "Dragon"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Entered Zurgo has hexproof as long as it entered this turn.",
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "affects": {
+            "self_only": true,
+            "entered_this_turn": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ett_zurgo_ledger",
+      "name": "Test Ledger Zurgo",
+      "oracle_text": "Test Ledger Zurgo has hexproof as long as an Orc Dragon you control entered this turn.",
+      "mana_cost": "{1}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Orc",
+        "Dragon"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Ledger Zurgo has hexproof as long as an Orc Dragon you control entered this turn.",
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "subtypes": [
+                  "Dragon"
+                ]
+              }
+            },
+            "right": {
+              "const": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ett_neriv",
+      "name": "Test Entered Neriv",
+      "oracle_text": "If a creature you control that entered this turn would deal damage, it deals twice that much damage instead.",
+      "mana_cost": "{1}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature you control that entered this turn would deal damage, it deals twice that much damage instead.",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "entered_this_turn": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ett_gratuitous",
+      "name": "Test Gratuitous Neriv",
+      "oracle_text": "If a creature you control would deal damage, it deals twice that much damage instead.",
+      "mana_cost": "{1}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature you control would deal damage, it deals twice that much damage instead.",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ett_dragon",
+      "name": "Test Entered Dragon",
+      "oracle_text": "",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Orc",
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_ett_bear",
+      "name": "Test Entered Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

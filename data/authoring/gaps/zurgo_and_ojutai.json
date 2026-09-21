@@ -3,16 +3,9 @@
   "name": "Zurgo and Ojutai",
   "oracle_text": "Flying, haste\nZurgo and Ojutai has hexproof as long as it entered this turn.\nWhenever one or more Dragons you control deal combat damage to a player or battle, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. You may return one of those Dragons to its owner's hand.",
   "blocked_sentences": [
-    "Zurgo and Ojutai has hexproof as long as it entered this turn.",
     "Whenever one or more Dragons you control deal combat damage to a player or battle, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. You may return one of those Dragons to its owner's hand."
   ],
   "needs": [
-    {
-      "capability": "entered_this_turn",
-      "kind": "value",
-      "what": "a way for a static ability's `condition` to ask whether **the source permanent itself** entered the battlefield this turn, so `grant_keyword: hexproof` with `affects: {\"self_only\": true}` can carry `{\"cmp\": {\"left\": {\"permanents_entered_this_turn\": {\"self_only\": true}}, \"op\": \">\", \"right\": {\"const\": 0}}}`. Concretely: add `self_only` to `ENTERED_FILTER_KEYS` in `engine/effects/values.py` and honour it in both evaluators (`effects/values.py` and `characteristics.py`) by keeping only the ledger entry whose `oid` is the source's -- the mirror of the `exclude_self` clause already sitting one line away in each of them, and the same oid comparison, so a permanent that entered, left and returned this turn still answers yes for its current arrival.",
-      "why_existing_wont_do": "`static_condition_keys` has no arrival clause at all: `counters`, `is_attached`, `is_your_turn`, `top_of_library`, `has_city_s_blessing` and the boolean combinators ask nothing about zone history, and `exists` walks the board, which cannot tell a permanent that has been there since turn three from one that landed this turn. The one static value that reads arrivals is `permanents_entered_this_turn`, but `ENTERED_FILTER_KEYS` is `{controller, types, subtypes, colors, exclude_self}` -- every key is a *characteristic*, so the narrowest condition I can write is \"a legendary-less Orc Dragon you control entered this turn\", which a second copy under a Sakashima effect, an opponent's Dragon token under `gain_control`, or any other Orc Dragon would satisfy while Zurgo sat there from last turn. `exclude_self` is the exact inverse of what is wanted. `arrived_this_turn_from` is the nearest-sounding key in `ability_keys` and is unrelated: the loader accepts it only on a `cast_from_graveyard` static, and `graveyard_cast_arrival_ok` reads it about *graveyard* arrival for cards being escaped. A `self_enters` trigger with `grant_keyword` `duration: \"end_of_turn\"` is the tempting substitution and is a different card: the grant only exists once the trigger resolves, so the creature is targetable in the window while that trigger is on the stack -- which is the whole window the printed static exists to close."
-    },
     {
       "capability": "batched_combat_damage",
       "kind": "trigger_event",
@@ -29,10 +22,9 @@
   "closest_existing": [
     "creatures_deal_combat_damage",
     "deals_combat_damage_to_player",
-    "permanents_entered_this_turn",
-    "arrived_this_turn_from",
     "attackers",
     "or_planeswalker"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "notes": "The `entered_this_turn` need is RESOLVED and has been removed, with its printed sentence: \"Zurgo and Ojutai has hexproof as long as it entered this turn\" is now `{\"kind\": \"static\", \"effect\": \"grant_keyword\", \"keywords\": [\"hexproof\"], \"affects\": {\"self_only\": true, \"entered_this_turn\": true}}` -- a new key in STATIC_FILTER_KEYS answered from `TurnLedger.entered_this_turn(oid)`. Not the `self_only` clause on ENTERED_FILTER_KEYS this record asked for, and not `GameObject.entered_turn` either: `change_control` stamps that field for 302.6, so a filter reading it would hand a stolen commander hexproof. The two needs left are the batched combat-damage trigger and battles; the card stays unauthored until both land."
 }

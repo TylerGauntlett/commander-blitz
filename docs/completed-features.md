@@ -14177,3 +14177,115 @@ the selector is unchanged; both `mana_sources` callers agreeing on `{C}`; the
 superset pinned at six symbols with `any_type` and five without; and three
 load-time refusals — the key on a fixed `mana`, on `in_commander_identity`, and
 spelled `false`.
+
+## "That entered this turn" as a static filter clause — 400.7 / 302.6
+
+### Overview
+
+Neriv, Heart of the Storm: *"If a creature you control **that entered this
+turn** would deal damage, it deals twice that much damage instead."* Zurgo and
+Ojutai: *"Zurgo and Ojutai has hexproof as long as **it** entered this turn."*
+Two cards, two static positions — a `replace_damage` filtering the permanent
+about to deal damage, and a `grant_keyword` gated on its own source — and one
+missing word between them. Two gap records named it from opposite angles and one
+key closes both.
+
+`STATIC_FILTER_KEYS` had no temporal clause at all. Its board-state members
+(`tapped`, `attacking`, `blocking`, `attached`, `paired`, `controller`, `owner`,
+`is_token`, `is_commander`) each describe a permanent's *current* relationships,
+never when it arrived, and nothing substitutes: `keywords: ["haste"]` matches a
+haste creature ten turns old and misses every new creature without haste,
+`is_token` is wrong in both directions, and `tapped` is wrong in both directions
+too. Routing around the static fails as well — `grant_ability`'s `affects` is
+validated against the same list, and there is no trigger to fall back on for a
+replacement effect, since `dealt_damage` fires after the smaller damage has
+already killed something.
+
+### The shape
+
+```jsonc
+// Zurgo and Ojutai
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["hexproof"],
+  "affects": { "self_only": true, "entered_this_turn": true } }
+
+// Neriv, Heart of the Storm
+{ "kind": "static", "effect": "replace_damage", "damage_multiplier": 2,
+  "damage_source": { "controller": "you", "types": ["Creature"],
+                     "entered_this_turn": true } }
+```
+
+One entry in `STATIC_FILTER_KEYS`, one clause in each of the three functions
+that read that language, and one accessor on the turn ledger:
+
+- `TurnLedger.entered_this_turn(oid)` — `any(entry.oid == oid for entry in
+  self.permanents_entered)`. The fact lives on the ledger, so it is asked of the
+  ledger.
+- `characteristics._matches`, beside `tapped` and `is_token`. This is the reader
+  `affects`, `blockers`, `damage_source`, `targeting` and every battlefield
+  counting filter go through.
+- `cost_reduction._object_matches`, because that function's docstring promises
+  **every key the loader accepts is read here** and a reduction priced off an
+  unread narrowing is always cheaper than it prints.
+- `triggers.matches_card_filter`, the `cause_filter` path, for the same reason
+  `tapped` and `not_supertypes` are honoured there: a key validated and then
+  ignored is a silently wider filter.
+
+### Why it is admissible where power is not
+
+A static filter is documented to read **printed** characteristics, and "entered
+this turn" is not one. The rule being kept is narrower than the slogan:
+`check_static_constraints` forbids a filter from reading another static's
+*output*, because layers-lite applies continuous effects in a fixed order and
+has no way to resolve a cycle. Printed characteristics are the large safe family
+and have never been the only one — `tapped`, `attacking`, `is_token`, `owner`
+and `controller` are board state and sit in that list already, on the footing
+that no layer writes them.
+
+An arrival snapshot is one step safer than any of those. `TurnLedger.
+permanents_entered` is written once, by `GameState.emit` folding
+ENTERS_BATTLEFIELD, and is never rewritten at all; the same argument already
+admitted `permanents_entered_this_turn` to `STATIC_VALUE_KEYS`. Power is the
+contrast and stays refused, because four layers rewrite it.
+
+### Not `GameObject.entered_turn`, and not the value leaf
+
+Both gap records proposed `entered_turn`, the field `summoning_sick` reads, and
+it is the wrong fact. `change_control` stamps it — rule 302.6 makes a stolen
+permanent sick without its having entered anything, which is correct for
+summoning sickness and wrong here. A filter reading that field would double an
+Act of Treason'd attacker under Neriv and hand a stolen commander hexproof. The
+ledger records arrivals and nothing else, and 400.7 agrees: a control change is
+not a zone change.
+
+The value leaf is the other near miss, and it cannot say either sentence. An
+`EnteredPermanent` carries *characteristics*, so the narrowest condition
+writable with it is "an Orc Dragon you control entered this turn" — satisfied by
+any second Orc Dragon, and true of a Zurgo that has stood there since last turn
+the moment a Dragon token lands. Asking by oid is the whole difference between
+"**this** permanent entered" and "some matching permanent did".
+
+### Cards unblocked
+
+One authored here: **Neriv, Heart of the Storm**, whose second line is the whole
+of this capability. **Zurgo and Ojutai**'s first need is resolved and its gap
+record keeps the other two — `batched_combat_damage` (a filter and a `damagers`
+binding on `creatures_deal_combat_damage`) and `battles`. Beyond those, the key
+unlocks the whole "creatures that entered this turn" family: Kalain-style haste
+payoffs, and anything that asks a permanent whether it is new.
+
+### Guarded by
+
+`tests/unit/test_entered_this_turn_filter.py`. The sharpest test is the one that
+distinguishes the key from the value it is not: two Orc Dragons, neither of which
+entered this turn, and a third that does — the filtered Zurgo stays targetable
+and `t_ett_zurgo_ledger`, the same card written with
+`permanents_entered_this_turn` and kept live, lights up on somebody else's
+arrival. Beside that: two copies of one card disagreeing about which of them
+arrived; a stolen permanent that is summoning sick and did **not** enter;
+a permanent stolen *after* arriving that still did; the grant wearing off across
+a real turn boundary rather than a hand-cleared ledger; an entered-died-returned
+permanent still counting; the replacement doubling damage to a player and to a
+permanent but not an opponent's new creature; `t_ett_gratuitous`, the
+clause-dropped approximation the gap record refused, kept live so the temporal
+tests are measuring something; and the load-time refusal of the key in a
+graveyard-scoped counting filter.

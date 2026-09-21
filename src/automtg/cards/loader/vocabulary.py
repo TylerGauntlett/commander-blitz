@@ -645,6 +645,26 @@ STATIC_FILTER_KEYS = frozenset(
         # `attached`, and safe for the same reason.
         "paired",
         "paired_with_source",
+        # "Zurgo and Ojutai has hexproof as long as **it entered this turn**";
+        # "If a creature you control **that entered this turn** would deal
+        # damage, it deals twice that much damage instead" (Neriv, Heart of the
+        # Storm). The one clause in this list that is not a characteristic and
+        # not a *current* relationship but a fact about the turn behind the
+        # permanent -- and it is admissible here for the reason
+        # `permanents_entered_this_turn` is admissible in `STATIC_VALUE_KEYS`,
+        # one step more safely than `tapped` is. An arrival is written into
+        # `TurnLedger.permanents_entered` once, by `GameState.emit` folding
+        # ENTERS_BATTLEFIELD, and no layer of the characteristics pipeline can
+        # write to it; so it is a pipeline **input** exactly as `owner` and
+        # `controller` are, and reading it cannot make one static depend on
+        # another's output. Power is the contrast and is refused for the
+        # opposite reason: it is an *output*, rewritten by four of the layers.
+        #
+        # "Printed characteristics" was always shorthand for "printed
+        # characteristics plus board state no layer touches" -- `tapped`,
+        # `attacking`, `is_token`, `owner` are all already here on that footing.
+        # This is that same licence pointed at the turn ledger.
+        "entered_this_turn",
     }
 )
 

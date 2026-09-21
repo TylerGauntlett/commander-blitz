@@ -1400,6 +1400,55 @@ creature a static had made a Human both count, and so the entry survives the
 permanent leaving. That last part is the point: a Human that entered and died
 this turn still entered, and there is nothing left on the board to ask.
 
+#### `entered_this_turn` — the same fact asked of **one** permanent
+
+```jsonc
+// Zurgo and Ojutai: "Zurgo and Ojutai has hexproof as long as it entered
+//  this turn."
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["hexproof"],
+  "affects": { "self_only": true, "entered_this_turn": true } }
+
+// Neriv, Heart of the Storm: "If a creature you control that entered this
+//  turn would deal damage, it deals twice that much damage instead."
+{ "kind": "static", "effect": "replace_damage", "damage_multiplier": 2,
+  "damage_source": { "controller": "you", "types": ["Creature"],
+                     "entered_this_turn": true } }
+```
+
+A **filter key**, not a value: the value above sums arrivals across a filter and
+these two sentences point at one permanent — the one with the ability, or the
+one that is about to deal damage. Counting cannot say either. The snapshots
+carry *characteristics* only, so the narrowest condition the value can express
+is "an Orc Dragon you control entered this turn", which any second Orc Dragon
+satisfies and which is true of a Zurgo that has stood there since last turn the
+moment a Dragon token lands. `entered_this_turn` is asked of the object's own
+oid, so it is false for that Zurgo and true only for the one that arrived.
+
+It reads the same ledger, and that is why it is legal in a static filter at all.
+Static filters are matched against **printed** characteristics, and "entered
+this turn" is not one — the licence is the same one `tapped`, `attacking`,
+`is_token` and `owner` already hold: board state that no layer of
+[layers-lite](adr/0001-layers-lite.md) can write, so reading it cannot make one
+static depend on another's output. An arrival snapshot is one step safer than
+those: it is written once, by `emit`, and is never rewritten at all. Power is
+the contrast and stays refused, because power is a pipeline *output*.
+
+**Not `GameObject.entered_turn`**, which is the near miss and the field
+`summoning_sick` reads. `change_control` stamps it, because 302.6 makes a
+stolen permanent summoning sick without its having entered anything — so a
+filter reading that field would double an Act of Treason'd attacker under Neriv
+and hand a stolen commander hexproof. The ledger records arrivals and nothing
+else.
+
+Nothing is removed from the ledger while the turn lasts, so a permanent that
+entered, left and came back this turn still answers yes: it has an entry for the
+trip it is on. A permanent that phased out and back does **not** gain one, which
+is correct — 702.26c is not a zone change.
+
+Off the battlefield the key is refused at load time with the rest of the board
+state, and a `cost_reduction` **does** read it, because
+`costs._reduction_matches` honours every key the loader accepts.
+
 ### Counting the mana that was actually spent
 
 `{"colors_of_mana_spent": true}` is sunburst and converge, and it is the first
@@ -3758,8 +3807,8 @@ A filter in a *counting* position — `{"count": …}` in a static value, or
 Off the battlefield only the printed face and the owner are readable. A card in
 a graveyard is not tapped, not attacking and attached to nothing, so `tapped`,
 `attacking`, `blocking`, `attached`, `attached_to_host`, `self_only`,
-`exclude_self`, `is_token` and `is_commander` are rejected there at load time
-rather than loading and matching nothing.
+`exclude_self`, `entered_this_turn`, `is_token` and `is_commander` are rejected
+there at load time rather than loading and matching nothing.
 
 `modified` is the keyword-action definition, as one key: a permanent with a
 counter of any kind on it, **or** equipped by any Equipment, **or** enchanted by
@@ -6234,7 +6283,8 @@ The filter is the same language a static ability's `affects` speaks
 (`static_filter_keys`), read by `costs._reduction_matches`, plus `zone`. Every
 key in it is honoured — `types`, `not_types`, `subtypes`, `supertypes`,
 `colors`, `keywords`, `not_keywords`, `controller`, `owner`, `is_commander`,
-`is_token`, `tapped`, `attacking`, `blocking`, `self_only`, `exclude_self`.
+`is_token`, `tapped`, `attacking`, `blocking`, `entered_this_turn`, `self_only`,
+`exclude_self`.
 Takenuma's channel ability is the card that made that true: "{1} less for each
 **legendary** creature you control" wrote `supertypes` in a filter that read six
 keys and ignored the other fourteen, so it priced itself off every creature

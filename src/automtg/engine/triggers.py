@@ -1511,6 +1511,16 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    # "…that entered this turn". Honoured here because a `cause_filter` is
+    # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the
+    # silently-wider filter the two clauses above exist to prevent. It reads the
+    # turn ledger rather than the object, which is what makes it answerable at
+    # all in this function: trigger subjects are frequently gone by the time we
+    # look, and an arrival snapshot outlives the permanent that made it.
+    if "entered_this_turn" in filt and bool(
+        state.turn_ledger.entered_this_turn(oid)
+    ) != bool(filt["entered_this_turn"]):
+        return False
     # Honoured here for the reason `tapped` above is: a trigger filter is
     # validated against the same `SELECTOR_KEYS`, and a key that loaded and was
     # then ignored would be silently wider -- a creature attacking your

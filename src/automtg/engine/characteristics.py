@@ -1528,6 +1528,22 @@ def _matches(
     if "is_token" in selector and bool(obj.is_token) != bool(selector["is_token"]):
         return False
 
+    # "…a creature you control **that entered this turn**" (Neriv, Heart of the
+    # Storm); "as long as **it** entered this turn" (Zurgo and Ojutai). Read off
+    # the turn ledger rather than off `obj.entered_turn`, and the two are not the
+    # same question: `entered_turn` is what `summoning_sick` reads and
+    # `change_control` stamps it, because 302.6 makes a stolen permanent sick
+    # without its having entered anything. `TurnLedger.entered_this_turn` says
+    # why at length.
+    #
+    # A pipeline *input* -- an arrival snapshot is written once, by `emit`, and
+    # no layer can write to it -- so it sits here beside `tapped` and `is_token`
+    # rather than outside the static filter language.
+    if "entered_this_turn" in selector and bool(
+        state.turn_ledger.entered_this_turn(obj.oid)
+    ) != bool(selector["entered_this_turn"]):
+        return False
+
     combat = state.combat
     if "attacking" in selector:
         attacking = bool(combat and combat.attacking(obj.oid))
