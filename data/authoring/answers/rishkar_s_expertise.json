@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "rishkar_s_expertise",
+    "name": "Rishkar's Expertise",
+    "oracle_text": "Draw cards equal to the greatest power among creatures you control.\nYou may cast a spell with mana value 5 or less from your hand without paying its mana cost.",
+    "mana_cost": "{4}{G}{G}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "draw",
+        "player": "you",
+        "amount": {
+          "extreme_value": {
+            "objects": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "of": "power",
+            "pick": "greatest"
+          }
+        }
+      },
+      {
+        "op": "cast_from_hand",
+        "player": "you",
+        "selector": {
+          "mana_value": {
+            "op": "<=",
+            "value": {
+              "const": 5
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard"
+  }
+}

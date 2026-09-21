@@ -428,6 +428,28 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     controller = str(trigger.get("controller", "you"))
     if controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}.trigger: unknown controller {controller!r}")
+    if (subject := trigger.get("subject")) is not None:
+        # "Whenever **that creature** deals combat damage…" -- Hunter's
+        # Insight. The one object this subscription is about, named the way a
+        # resolving effect names an object it already has in hand.
+        if not isinstance(subject, Mapping) or not (set(subject) & {"target", "binding"}):
+            raise DslError(
+                f"{where}.trigger.subject: names one object the delayed ability "
+                f"already has -- a {{'target': ...}} or a {{'binding': ...}}"
+            )
+        validate_selector(subject, f"{where}.trigger.subject")
+        from automtg.engine.triggers import OBJECT_SUBJECT_TRIGGERS
+
+        if event not in OBJECT_SUBJECT_TRIGGERS:
+            # Scoped to an object against an event that has none, the clause is
+            # compared with nothing and the subscription never fires -- the card
+            # reads as printed and does nothing, which is the failure this whole
+            # pass exists to refuse.
+            raise DslError(
+                f"{where}.trigger: {event!r} has no object subject for a "
+                f"'subject' to scope against (events that do: "
+                f"{sorted(OBJECT_SUBJECT_TRIGGERS)})"
+            )
     validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
     # How long the subscription lasts, and what firing does to it. A misspelled
     # value would fall through to the `this_turn` default and quietly retime the
@@ -1368,6 +1390,56 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if "destination_if" in effect:
+        # "Put it onto the battlefield tapped if it's a land card. Otherwise,
+        # put it into your hand." Only the two search ops read it; anywhere else
+        # it would load and be ignored, and the card would send every card it
+        # found to one place -- which is the printed line with half its sentence
+        # missing.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'destination_if' is read only by search_library "
+                f"and search_zones"
+            )
+        branches = effect["destination_if"]
+        if not isinstance(branches, list) or not branches:
+            raise DslError(
+                f"{where}.destination_if: a non-empty list of "
+                f"{{'selector': …, 'to': …}} branches"
+            )
+        for i, branch in enumerate(branches):
+            at = f"{where}.destination_if[{i}]"
+            if not isinstance(branch, dict) or "selector" not in branch:
+                raise DslError(f"{at}: needs a 'selector' saying which cards it catches")
+            validate_selector(branch["selector"], f"{at}.selector")
+            to = branch.get("to", "hand")
+            if to not in DESTINATIONS:
+                raise DslError(f"{at}.to: unknown destination {to!r}")
+    # Two axes, one op: a creature type (the default) or a permanent type. A
+    # near-miss word here would fall through to the creature-type branch and ask
+    # the wrong question -- a card printing "choose a permanent type" that offers
+    # Vampire.
+    if (
+        op == "choose_type"
+        and "of" in effect
+        and effect["of"] not in ("creature_type", "permanent_type")
+    ):
+        raise DslError(
+            f"{where}: choose_type's 'of' is 'creature_type' or "
+            f"'permanent_type', not {effect['of']!r}"
+        )
+    if op == "fight":
+        # Both halves, or it is not a fight. With one missing the op resolves to
+        # nothing and the card silently does half of what it prints -- and the
+        # half it would drop is the one that hits *your* creature, so the card
+        # would be strictly better than printed rather than merely weaker.
+        for key in ("objects", "other"):
+            if key not in effect:
+                raise DslError(
+                    f"{where}: fight needs both 'objects' and 'other' -- the two "
+                    f"creatures that deal damage to each other (701.12a)"
+                )
+            validate_selector(effect[key], f"{where}.{key}")
     if "attached_to" in effect:
         # "Create a Wicked Role token attached to it." Only `create_token` reads
         # the key; on any other op it would load and attach nothing. That the
@@ -1740,6 +1812,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: add_mana needs 'mana' (or 'reflecting', or "
             f"'in_commander_identity', or 'split')"
         )
+    if op == "rename" and not str(effect.get("name") or "").strip():
+        # A rename to nothing would load, run, and leave the permanent answering
+        # to its printed name -- the printed line silently not happening.
+        raise DslError(f"{where}: rename needs a 'name' -- what the permanent becomes called")
+    if "name" in effect and op != "rename":
+        # Every other op that means anything by a name spells it inside a
+        # selector (`objects.name`) or a token id. A bare `name` elsewhere is
+        # read by nobody.
+        raise DslError(
+            f"{where}: a bare 'name' is read only by the rename op, not by {op!r}"
+        )
+    if "persists_until_end_of_turn" in effect:
+        # "Until end of turn, you don't lose this mana as steps and phases end."
+        # Read only by the two ops that put mana in a pool: anywhere else the
+        # printed promise is simply dropped, and the card reads as though the
+        # mana lasted when it did not.
+        if op not in ("add_mana", "add_mana_per"):
+            raise DslError(
+                f"{where}: 'persists_until_end_of_turn' is read only by add_mana "
+                f"and add_mana_per, not by {op!r}"
+            )
+        if effect["persists_until_end_of_turn"] is not True:
+            raise DslError(
+                f"{where}.persists_until_end_of_turn: the only value is true -- "
+                f"ordinary mana is the default and says nothing"
+            )
     if op == "add_mana" and effect.get("split") is not None:
         # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
         # The colours are a list and the size is an `amount`; `mana` says the

@@ -666,6 +666,12 @@ def _translate_line(line: str, *, is_spell: bool):
                 "kind": "activated",
                 "text": line.strip(),
                 "sorcery_speed_only": True,
+                # 702.6a, declared here because this is the one place that knows
+                # the printed word: everything below compiles to an ordinary
+                # activated ability that attaches something, which reconfigure
+                # and Vault 101 also do. The marker is what lets a static name
+                # equip abilities as a class.
+                "is_equip": True,
                 "cost": {"mana": equip.group("cost")},
                 "targets": [
                     {

@@ -1,0 +1,97 @@
+{
+  "card": {
+    "id": "bear_umbra",
+    "name": "Bear Umbra",
+    "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\"\nUmbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)",
+    "mana_cost": "{2}{G}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Aura"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "keywords": [
+      "totem_armor"
+    ],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, untap all lands you control.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "untap",
+            "objects": {
+              "controller": "you",
+              "count": "all",
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 2
+        },
+        "text": "Enchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\""
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {
+          "attached": true
+        },
+        "text": "Enchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\""
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "granted": {
+      "keywords": [
+        "totem_armor"
+      ],
+      "count": 1
+    }
+  }
+}

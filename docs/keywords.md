@@ -316,7 +316,7 @@ This is the long tail, and where the build order comes from.
 | Sunburst | free | `self_enters` trigger, then `add_counters` off `{"colors_of_mana_spent": true}` | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
-| Totem armor | shipped | `Keyword` on the **Aura**, read by `zones.destroy` -- the Aura is destroyed instead | `totem_armor` |
+| Totem armor | shipped | `Keyword` on the **Aura**, read by `zones.destroy` -- the Aura is destroyed instead. The Umbra cycle prints the same ability as **"Umbra armor"**; `KEYWORD_ALIASES` folds that spelling onto this one | `totem_armor` |
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
 | Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |

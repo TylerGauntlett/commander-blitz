@@ -71,7 +71,8 @@
               "target": "t1"
             }
           }
-        ]
+        ],
+        "is_equip": true
       }
     ]
   },

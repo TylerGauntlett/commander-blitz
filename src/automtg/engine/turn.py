@@ -841,7 +841,13 @@ def _after_phase(state: GameState, step: Step) -> Step:
 
 def advance(state: GameState) -> None:
     """End the current step and enter the next one (or the next turn)."""
-    state.empty_all_mana_pools()
+    # Persistent mana survives every boundary but the last one of its turn.
+    # The cleanup step's `advance` is what ends the turn, so clearing
+    # unconditionally there is exactly "until end of turn" -- sparing it here
+    # too would carry it into the next turn's untap step.
+    state.empty_all_mana_pools(
+        None if state.step is Step.CLEANUP else state.turn
+    )
     state.emit(EventType.STEP_ENDED, step=state.step.name)
 
     nxt = next_step(state)

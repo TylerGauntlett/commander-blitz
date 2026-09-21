@@ -342,6 +342,19 @@ class AbilityModel(BaseModel):
     # activated
     cost: CostModel | None = None
     is_mana_ability: bool = False
+    #: "**Equip** {2}" -- 702.6a. Marks this activated ability as the equip
+    #: ability it prints, so a static can name equip abilities as a *class*:
+    #: Strong Back's "equip abilities you activate that target enchanted
+    #: creature cost {3} less", Leonin Shikari's "you may activate equip
+    #: abilities any time you could cast an instant".
+    #:
+    #: Declared rather than inferred. An equip ability compiles to an ordinary
+    #: activated ability whose effect is `attach`, which is exactly what Vault
+    #: 101 and every reconfigure card also compile to -- so guessing from the
+    #: shape would sweep in abilities that are not equip and print no such
+    #: word. The loader checks the declaration against the shape instead, so
+    #: the word cannot be written without the mechanic behind it.
+    is_equip: bool = False
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
     #: A *list* is the "and/or" form -- "Spend this mana only to cast Vampire,
     #: Cleric, and/or Demon spells" -- and its entries may be subtypes as well as
@@ -370,6 +383,11 @@ class AbilityModel(BaseModel):
         | dict[str, str | list[str | dict[str, Any] | list[str | dict[str, Any]]]]
         | None
     ) = None
+    #: "…**and that spell can't be countered**" -- Cavern of Souls, Delighted
+    #: Halfling. A rider on the mana this ability makes, not on this card: the
+    #: spell it was spent on becomes uncounterable. Only meaningful beside
+    #: ``is_mana_ability``, and the loader refuses it anywhere else.
+    mana_uncounterable: bool = False
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.
@@ -419,6 +437,22 @@ class AbilityModel(BaseModel):
     #: being cast* by its printed face, which is a different question from
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: which **activated abilities** the discount
+    #: reaches, as a class. ``{"equip": true}`` is Strong Back's "equip
+    #: abilities"; the key is read against `Ability.is_equip`, which is why that
+    #: marker exists -- an equip ability is otherwise indistinguishable from any
+    #: other that attaches something.
+    affects_abilities: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: whose activation is discounted -- "abilities
+    #: **you** activate". The *activating player*, not the permanent's
+    #: controller: an opponent equipping your Equipment is their activation.
+    activated_by: str | None = None
+    #: `ability_cost_reduction`: what the activation must be **aimed at** --
+    #: "equip abilities you activate **that target enchanted creature**".
+    #: Matched against the refs the activation chose, as an ordinary static
+    #: filter resolved against this permanent, so ``{"attached": true}`` is the
+    #: creature this Aura enchants.
+    targeting: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
@@ -558,6 +592,31 @@ class AbilityModel(BaseModel):
     #: id could be listed, and listing one would convert every token into it.
     #: Refused below 2 for the reason `loss_multiplier` is.
     token_multiplier: int | None = None
+    #: `replace_counters`: how many counters are put on instead. "Twice that
+    #: many" is ``counter_multiplier: 2``; "that many plus one" is
+    #: ``counter_addend: 1``. A card uses exactly one, and the addend is why
+    #: this is not a counter-flavoured `token_multiplier`: every multiplier in
+    #: that family is refused below 2, and "plus one" is not a multiplier.
+    #: `replace_damage`: what damage is multiplied by. Inquisitor's Flail and
+    #: Furnace of Rath are ``2``, Fiery Emancipation ``3``. Refused below 2 for
+    #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
+    #: prevention, which is `prevent_damage`'s sentence and a different card.
+    damage_multiplier: int | None = None
+    #: `replace_damage`: a filter on the permanent **dealing** the damage --
+    #: "if **equipped creature** would deal combat damage". Omitted is any
+    #: source, which is Furnace of Rath's "if a source would deal damage".
+    damage_source: dict[str, Any] | None = None
+    #: `replace_damage`: only combat damage. The Flail says "combat damage" and
+    #: Furnace of Rath does not, and the difference is a whole card.
+    combat_only: bool = False
+    counter_multiplier: int | None = None
+    counter_addend: int | None = None
+    #: `replace_counters`: which kind of counter the replacement is about --
+    #: "+1/+1" on High Score and Hardened Scales. Omitted is every kind, which
+    #: is Doubling Season's "if one or more counters would be put on". Not the
+    #: `counter` on `TriggerModel`, which is a different model and a different
+    #: question ("whenever a +1/+1 counter is put on this creature").
+    counter: str | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:
@@ -596,8 +655,10 @@ class AbilityModel(BaseModel):
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.
     tapped_permanent: dict[str, Any] | None = None
-    #: ``add_mana_on_tap``: the fixed mana added -- Crypt Ghast's ``"{B}"``.
-    add_mana: str | None = None
+    #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
+    #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
+    #: chosen color", the same spelling the ``add_mana`` op uses.
+    add_mana: str | dict[str, Any] | None = None
 
 
 class ReplacementModel(BaseModel):
@@ -616,8 +677,22 @@ class ReplacementModel(BaseModel):
         "self_enters_tapped",
         "self_enters_with_counters",
         "self_enters_prepared",
+        #: "You may have this Equipment enter as a copy of any Equipment on the
+        #: battlefield" -- Masterwork of Ingenuity, Vesuva, Phyrexian Metamorph.
+        #: 614.1b: a copy effect applied *as* the permanent arrives, so it is
+        #: never seen as itself.
+        "self_enters_as_copy",
     ]
     modify: dict[str, Any] = Field(default_factory=dict)
+    #: `self_enters_as_copy`: the pool of permanents that may be copied --
+    #: ``{"zone": "battlefield", "subtypes": ["Equipment"]}`` for Masterwork of
+    #: Ingenuity, ``{"zone": "battlefield", "types": ["Land"]}`` for Vesuva.
+    #: Required on that event and meaningless on the other four.
+    #:
+    #: Always offered rather than forced: every printed card in this family says
+    #: "**You may** have this enter as a copy", and a copy nobody was asked
+    #: about would be a strictly different card.
+    copying: dict[str, Any] | None = None
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
     #: +1/+1 counter on it for each other Human you control" is
@@ -762,6 +837,10 @@ class CardModel(BaseModel):
     #: A card-level flag rather than an ability, because it is true of the
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
+    #: "Cast this spell only before the combat damage step" (Berserk). The name
+    #: of the step the casting window closes at, lowercased -- the only card
+    #: field that narrows when a spell may be cast.
+    cast_before_step: str | None = None
     #: **Buyback**: "You may pay an additional cost as you cast this spell. If
     #: you do, put it into your hand instead of your graveyard as it resolves."
     #:

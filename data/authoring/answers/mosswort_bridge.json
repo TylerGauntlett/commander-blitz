@@ -1,0 +1,99 @@
+{
+  "card": {
+    "id": "mosswort_bridge",
+    "name": "Mosswort Bridge",
+    "oracle_text": "Hideaway 4 (When this land enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nThis land enters tapped.\n{T}: Add {G}.\n{G}, {T}: You may play the exiled card without paying its mana cost if creatures you control have total power 10 or greater.",
+    "mana_cost": "",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "G"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Hideaway 4",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "hideaway",
+            "amount": {
+              "const": 4
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{G}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{G}, {T}: You may play the exiled card without paying its mana cost if creatures you control have total power 10 or greater.",
+        "cost": {
+          "mana": "{G}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "power_of": {
+                  "objects": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              },
+              "right": {
+                "const": 10
+              }
+            },
+            "then": [
+              {
+                "op": "may",
+                "prompt": "Play the exiled card without paying its mana cost?",
+                "effects": [
+                  {
+                    "op": "play_exiled"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "library_size": {
+      "0": 39
+    }
+  }
+}

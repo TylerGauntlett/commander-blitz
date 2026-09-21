@@ -1,0 +1,98 @@
+{
+  "_comment": "Shapes for tests/unit/test_reduction_any_of.py. t_rao_historic reduces by the total mana value of historic permanents you control, spelled as an any_of over Artifact / Legendary / Saga -- the three-way disjunction that is the whole point. t_rao_and is the same card written as one ANDed filter, the control that shows why the disjunction had to exist: nothing is all three at once. The permanents are one of each kind, plus t_rao_bear which is none of them and t_rao_all which is all three.",
+  "cards": [
+    {
+      "id": "t_rao_historic",
+      "name": "Test Historic Reduction",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of historic permanents you control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "total_mana_value": {
+          "controller": "you",
+          "any_of": [
+            {"types": ["Artifact"]},
+            {"supertypes": ["Legendary"]},
+            {"subtypes": ["Saga"]}
+          ]
+        }
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_rao_and",
+      "name": "Test Anded Reduction",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of legendary artifact Sagas you control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "total_mana_value": {
+          "controller": "you",
+          "types": ["Artifact"],
+          "supertypes": ["Legendary"],
+          "subtypes": ["Saga"]
+        }
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_rao_artifact",
+      "name": "Test Plain Artifact",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_rao_legend",
+      "name": "Test Legendary Creature",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_rao_saga",
+      "name": "Test Plain Saga",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": ["Enchantment"],
+      "subtypes": ["Saga"],
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_rao_bear",
+      "name": "Test Unhistoric Bear",
+      "oracle_text": "",
+      "mana_cost": "{5}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_rao_all",
+      "name": "Test Legendary Artifact Saga",
+      "oracle_text": "",
+      "mana_cost": "{6}",
+      "types": ["Artifact", "Enchantment"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Saga"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

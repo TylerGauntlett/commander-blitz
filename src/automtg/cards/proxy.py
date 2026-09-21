@@ -40,7 +40,7 @@ from typing import Literal
 from automtg.engine.enums import CardType
 
 from .images import IndexEntry
-from .loader import KNOWN_KEYWORDS, KNOWN_SUPERTYPES, KNOWN_TYPES
+from .loader import KNOWN_KEYWORDS, KNOWN_SUPERTYPES, KNOWN_TYPES, normalize_keyword
 from .schema import CardModel
 
 #: Coverage of a generated card.  ``full`` means the printed text is *entirely*
@@ -342,14 +342,17 @@ def lift_keywords(
     better card, silently, and the moment ``shroud`` joined ``Keyword`` the
     permissive reading stopped reporting it.
     """
-    printed_lower = {k.casefold().replace(" ", "_") for k in printed}
+    printed_lower = {normalize_keyword(k.casefold().replace(" ", "_")) for k in printed}
     found: list[str] = []
     consumed: set[str] = set()
     for line in oracle_text.split("\n"):
         bare = _strip_reminders(line).strip().rstrip(".")
         if not bare:
             continue
-        parts = [p.strip().casefold().replace(" ", "_") for p in re.split(r"[,;]", bare)]
+        parts = [
+            normalize_keyword(p.strip().casefold().replace(" ", "_"))
+            for p in re.split(r"[,;]", bare)
+        ]
         parts = [p for p in parts if p]
         if not parts or not all(p in KNOWN_KEYWORDS for p in parts):
             continue

@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "bala_ged_recovery_bala_ged_sanctuary",
+    "name": "Bala Ged Recovery // Bala Ged Sanctuary",
+    "oracle_text": "Return target card from your graveyard to your hand.",
+    "mana_cost": "{2}{G}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "second_face": "bala_ged_sanctuary",
+    "second_face_zone": "hand",
+    "targets": [
+      {
+        "id": "gy_card",
+        "kind": "card_in_graveyard",
+        "count": 1,
+        "selector": {
+          "zone": "graveyard",
+          "controller": "you"
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "return_from_graveyard",
+        "destination": "hand",
+        "objects": {
+          "target": "gy_card"
+        }
+      }
+    ]
+  },
+  "back": {
+    "id": "bala_ged_sanctuary",
+    "name": "Bala Ged Sanctuary",
+    "oracle_text": "This land enters tapped.\n{T}: Add {G}.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "G"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{G}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "graveyard_size": {
+      "0": 2
+    }
+  }
+}

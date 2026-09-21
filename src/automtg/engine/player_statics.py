@@ -8,7 +8,7 @@ the layer engine itself stays in ``characteristics``.
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
@@ -271,17 +271,26 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     Swamp. ``affects_player`` names whose taps count -- "you" for Crypt Ghast,
     "any" for "whenever a Forest is tapped for mana, its controller adds"
     (Vernal Bloom). The mana always goes to the player who tapped.
-    """
-    from .mana import parse_mana_production
 
+    ``attached`` is the Aura form -- Wild Growth's "whenever enchanted land is
+    tapped for mana". It is checked against ``source.attached_to`` rather than
+    against the tapped permanent's characteristics, because it names *one*
+    permanent and every other key names a class: written as Vernal Bloom's
+    ``{"types": ["Land"]}`` the card would pay out for every land its controller
+    taps, which is a different and far larger card. An Aura attached to nothing
+    matches nothing, which is the same answer a state-based action is about to
+    give by binning it.
+    """
     out: list[tuple[int, tuple[int, ...]]] = []
     tapped: Any = None
     for source, static in _active_player_statics(state, "add_mana_on_tap"):
         if not _reaches_player(source, static, pid):
             continue
+        wanted = static.get("tapped_permanent") or {}
+        if wanted.get("attached") and source.attached_to != oid:
+            continue
         if tapped is None:
             tapped = chars(state, oid)
-        wanted = static.get("tapped_permanent") or {}
         if not all(t in tapped.types for t in wanted.get("types", [])):
             continue
         if not all(t in tapped.supertypes for t in wanted.get("supertypes", [])):
@@ -289,8 +298,30 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
             continue
-        out.append((source.oid, parse_mana_production(str(static.get("add_mana", "")))))
+        out.append((source.oid, _mana_added(source, static.get("add_mana", ""))))
     return out
+
+
+def _mana_added(source: Any, add_mana: Any) -> tuple[int, ...]:
+    """The mana one ``add_mana_on_tap`` static adds, as a production tuple.
+
+    Almost always the literal the card printed. ``{"chosen_color_of": "self"}``
+    is Utopia Sprawl's "one mana of the chosen color", where the symbol is a
+    question about the Aura and cannot be known until the colour has been
+    chosen. The same spelling and the same reader as the ``add_mana`` *op*, so
+    one card cannot mean two things by it.
+
+    A source that has chosen no colour yet adds **nothing** -- the match-nothing
+    default the chosen colour has everywhere else, and the only safe answer here,
+    since this runs inside cost payment where nothing may stop to ask (605.1a).
+    """
+    from .characteristics import resolve_chosen_color_list
+    from .mana import parse_mana_production
+
+    if isinstance(add_mana, Mapping):
+        colors = resolve_chosen_color_list([add_mana], source)
+        return parse_mana_production("".join(f"{{{c}}}" for c in colors))
+    return parse_mana_production(str(add_mana))
 
 
 def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:
@@ -588,7 +619,9 @@ def block_alone_forbidden(state: GameState, oid: int) -> bool:
     return _alone_forbidden(state, oid, "cant_block_alone")
 
 
-def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+def spell_cost_reduction(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
     "Creature spells with flying you cast cost {1} less to cast." The card-level
@@ -605,6 +638,14 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     Returns a total, clamped and applied by `costs.cost_reduction` -- the one
     function both legality and payment already call, so a spell offered at the
     reduced price is also paid at it.
+
+    ``targeting`` is the clause that reads the **cast** rather than the board --
+    "Aura spells you cast *that target enchanted creature*" (Strong Back) -- and
+    is matched against the refs the cast chose, as an ordinary static filter
+    resolved against this permanent. ``targets`` is ``None`` while the price is
+    a gate asked before any target exists, and the clause is read generously
+    then; see `ability_cost_reduction`, which takes the same shape for the same
+    reason.
     """
     total = 0
     for source_obj, static in _battlefield_statics(state):
@@ -628,6 +669,97 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
         # signature (a printed card, no object) suggested otherwise.
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if not _matches_printed(card, resolved):
+            continue
+        if (
+            (aimed := static.get("targeting")) is not None
+            and targets is not None
+            and not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            )
+        ):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
+def ability_cost_reduction(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None = None,
+) -> int:
+    """How much less ``pid`` pays to activate ``ability`` because of the board.
+
+    "Equip abilities you activate … cost {3} less to activate" -- Strong Back.
+    The mirror of `spell_cost_reduction`: that one discounts a *spell* picked
+    out by its printed face, this one an **activated ability** picked out by
+    what kind of ability it is and whose permanent it is printed on.
+
+    `Cost.mana_reduction` is the near miss and is a different sentence
+    altogether: it lives inside the ability's own cost node, so only the card
+    printing the ability could ever discount it. Strong Back is an Aura
+    discounting somebody else's Equipment.
+
+    ``affects_abilities`` says which abilities. ``equip`` is the only class so
+    far, and it is the reason `Ability.is_equip` exists -- an equip ability is
+    otherwise indistinguishable from any other that attaches something.
+    ``affects`` says whose permanent prints it, matched as an ordinary static
+    filter against the permanent the ability is on.
+
+    ``targeting`` is the third clause and the one that reads the *activation*
+    rather than the board: "equip abilities you activate **that target
+    enchanted creature**". The filter is matched against the refs the activation
+    actually chose, and ``{"attached": true}`` resolves against the static's own
+    source, so it means the creature this Aura enchants.
+
+    ``targets`` is ``None`` when the price is being asked **before** the targets
+    are known -- `legality._ability_aims` gates on payability once, before it
+    enumerates a single target tuple -- and a `targeting` clause is then read
+    **generously**, as though it applied. That is the only reading a gate can
+    take: refusing there would drop an activation that is affordable at the
+    discounted price, and the per-aim check below prices each tuple exactly, so
+    nothing unaffordable survives to be offered. `pay` is handed the action's
+    own targets, so the charge is the number the offer showed.
+
+    Returns a total, clamped and applied by `costs.ability_mana` -- the one
+    function `can_pay` and `pay` both reach, so an ability offered at the
+    reduced price is also charged at it.
+    """
+    if ability is None:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "ability_cost_reduction":
+            continue
+        classes = static.get("affects_abilities") or {}
+        if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        # "abilities **you** activate". The activating player, not the
+        # permanent's controller: an opponent equipping your Equipment is their
+        # activation, and the discount is written about yours.
+        who = str(static.get("activated_by", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        if (filt := static.get("affects")) is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, filt):
+                continue
+        if (
+            (aimed := static.get("targeting")) is not None
+            and targets is not None
+            and not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            )
+        ):
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
@@ -1004,6 +1136,89 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
         for obj, static in _active_player_statics(state, "replace_token_creation")
         if _reaches_player(obj, static, pid)
     ]
+
+
+def counter_placement_replacements(
+    state: GameState, oid: int, kind: str
+) -> list[Mapping[str, Any]]:
+    """The active ``replace_counters`` statics that apply to this placement.
+
+    High Score, Hardened Scales, Doubling Season, Corpsejack Menace. Read by
+    `primitives.add_counters` and by nothing else, the way
+    `token_creation_replacements` is read by `create_token` alone: a
+    replacement is a fact about what *will* happen, not a characteristic of
+    anything, so it cannot be a layer.
+
+    Filtered here rather than in the caller so both halves of "would be put on
+    **a creature you control**" and "**+1/+1** counters" are asked in one place.
+    ``_matches`` refuses anything not on the battlefield, which is what keeps
+    these statics away from the suspend counters on a card in exile.
+
+    Order is `state.battlefield` order, which is arrival order. 616.1 gives the
+    choice to the affected player and this engine does not ask -- see
+    `primitives._replaced_counter_amount`, which owns that divergence together
+    with 614.5.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return []
+    out: list[Mapping[str, Any]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_counters":
+            continue
+        wanted = static.get("counter")
+        if wanted is not None and str(wanted) != kind:
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        out.append(static)
+    return out
+
+
+def damage_multiplier(
+    state: GameState,
+    source_oid: int | None,
+    target_oid: int | None,
+    *,
+    is_combat: bool,
+) -> int:
+    """What this damage is multiplied by, after every `replace_damage` applies.
+
+    Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
+    Emancipation. Read by `primitives.damage_permanent` and
+    `primitives.damage_player` and by nothing else, the way
+    `counter_placement_replacements` is read by `add_counters` alone.
+
+    ``target_oid`` is ``None`` when the damage is being dealt to a **player**,
+    and a static carrying an `affects` filter never applies then: a player is
+    not a permanent, and "…to equipped creature" is a sentence about one. A
+    static with no `affects` reaches both, which is Furnace of Rath's "to a
+    permanent or player" and the Flail's first line.
+
+    Returned as a product rather than applied here, because the two call sites
+    have different things to do with the number and only one of them exists at
+    a time. 614.5 is kept by the shape: each static is consulted once, and
+    multiplication commutes, so 616.1's unasked ordering cannot show between
+    two of these.
+    """
+    multiplier = 1
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_damage":
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        dealer = static.get("damage_source")
+        if dealer is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, dealer):
+                continue
+        recipient = static.get("affects")
+        if recipient is not None:
+            obj = state.objects.get(target_oid) if target_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, recipient):
+                continue
+        multiplier *= max(1, int(static.get("damage_multiplier") or 1))
+    return multiplier
 
 
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:

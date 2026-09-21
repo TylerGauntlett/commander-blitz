@@ -1,24 +1,36 @@
 {
-  "_comment": "Shapes for tests/unit/test_add_mana_on_tap.py. t_crypt_ghast is Crypt Ghast's second line alone; t_turn_ghast gates it on is_your_turn so the condition is shown to be asked; t_vernal_bloom is the any-player spelling ('whenever a Forest is tapped for mana, its controller adds'); t_swamp_maker makes every land a Swamp, Urborg's half, so the static is shown to read current subtypes; t_black_four_drop costs {B}{B}{B}{B}, castable off two Swamps only with the extra mana.",
+  "_comment": "Shapes for tests/unit/test_add_mana_on_tap.py. t_crypt_ghast is Crypt Ghast's second line alone; t_turn_ghast gates it on is_your_turn so the condition is shown to be asked; t_vernal_bloom is the any-player spelling ('whenever a Forest is tapped for mana, its controller adds'); t_swamp_maker makes every land a Swamp, Urborg's half, so the static is shown to read current subtypes; t_black_four_drop costs {B}{B}{B}{B}, castable off two Swamps only with the extra mana. t_wild_growth is the Aura spelling ('whenever enchanted land is tapped for mana, its controller adds an additional {G}') -- tapped_permanent {'attached': true}, naming the one land it is attached to rather than a class of land. t_utopia_sprawl adds the chosen-colour rider on top -- add_mana {'chosen_color_of': 'self'}, the same spelling the add_mana op uses, read off the Aura at the mana choke point.",
   "cards": [
     {
       "id": "t_crypt_ghast",
       "name": "Test Crypt Ghast",
       "oracle_text": "Whenever you tap a Swamp for mana, add an additional {B}.",
       "mana_cost": "{3}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Spirit"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
       "power": 2,
       "toughness": 2,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "abilities": [
         {
           "kind": "static",
           "text": "Whenever you tap a Swamp for mana, add an additional {B}.",
           "effect": "add_mana_on_tap",
           "affects_player": "you",
-          "tapped_permanent": {"subtypes": ["Swamp"]},
+          "tapped_permanent": {
+            "subtypes": [
+              "Swamp"
+            ]
+          },
           "add_mana": "{B}"
         }
       ]
@@ -28,21 +40,35 @@
       "name": "Test Turn Ghast",
       "oracle_text": "As long as it's your turn, whenever you tap a Swamp for mana, add an additional {B}.",
       "mana_cost": "{3}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Spirit"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
       "power": 2,
       "toughness": 2,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "abilities": [
         {
           "kind": "static",
           "text": "As long as it's your turn, whenever you tap a Swamp for mana, add an additional {B}.",
           "effect": "add_mana_on_tap",
           "affects_player": "you",
-          "tapped_permanent": {"subtypes": ["Swamp"]},
+          "tapped_permanent": {
+            "subtypes": [
+              "Swamp"
+            ]
+          },
           "add_mana": "{B}",
-          "condition": {"is_your_turn": true}
+          "condition": {
+            "is_your_turn": true
+          }
         }
       ]
     },
@@ -51,16 +77,26 @@
       "name": "Test Vernal Bloom",
       "oracle_text": "Whenever a Forest is tapped for mana, its controller adds an additional {G}.",
       "mana_cost": "{3}{G}",
-      "types": ["Enchantment"],
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
       "abilities": [
         {
           "kind": "static",
           "text": "Whenever a Forest is tapped for mana, its controller adds an additional {G}.",
           "effect": "add_mana_on_tap",
           "affects_player": "any",
-          "tapped_permanent": {"subtypes": ["Forest"]},
+          "tapped_permanent": {
+            "subtypes": [
+              "Forest"
+            ]
+          },
           "add_mana": "{G}"
         }
       ]
@@ -70,16 +106,29 @@
       "name": "Test Swamp Maker",
       "oracle_text": "Each land is a Swamp in addition to its other land types.",
       "mana_cost": "{2}{B}",
-      "types": ["Enchantment"],
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "abilities": [
         {
           "kind": "static",
           "text": "Each land is a Swamp in addition to its other land types.",
           "effect": "add_subtype",
-          "affects": {"controller": "any", "types": ["Land"]},
-          "subtypes": ["Swamp"]
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "subtypes": [
+            "Swamp"
+          ]
         }
       ]
     },
@@ -88,12 +137,120 @@
       "name": "Test Black Four-Drop",
       "oracle_text": "",
       "mana_cost": "{B}{B}{B}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Horror"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
       "power": 4,
       "toughness": 4,
-      "colors": ["B"],
-      "color_identity": ["B"]
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ]
+    },
+    {
+      "id": "t_wild_growth",
+      "name": "Test Wild Growth",
+      "oracle_text": "Enchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional {G}.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever enchanted land is tapped for mana, its controller adds an additional {G}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "any",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "add_mana": "{G}"
+        }
+      ]
+    },
+    {
+      "id": "t_utopia_sprawl",
+      "name": "Test Utopia Sprawl",
+      "oracle_text": "Enchant Forest\nAs this Aura enters, choose a color.\nWhenever enchanted Forest is tapped for mana, its controller adds one mana of the chosen color.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "subtypes": [
+              "Forest"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Whenever enchanted Forest is tapped for mana, its controller adds one mana of the chosen color.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "any",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "add_mana": {
+            "chosen_color_of": "self"
+          }
+        }
+      ]
     }
   ]
 }

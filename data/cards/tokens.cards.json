@@ -2,22 +2,50 @@
   "_comment": "Token definitions. Referenced by create_token effects; never in a deck list.",
   "cards": [
     {
-      "id": "badger_3_3_g",
-      "name": "Badger Token",
+      "id": "angel_4_4_w_flying",
+      "name": "Angel Token",
+      "oracle_text": "4/4 white Angel creature token with flying.",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Badger"
+        "Angel"
       ],
+      "power": 4,
+      "toughness": 4,
       "colors": [
-        "G"
+        "W"
       ],
       "color_identity": [
-        "G"
+        "W"
       ],
-      "power": 3,
-      "toughness": 3,
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "angel_4_4_w_flying_vigilance",
+      "name": "Angel Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "is_token": true
     },
     {
@@ -38,6 +66,25 @@
       "color_identity": [
         "G"
       ],
+      "is_token": true
+    },
+    {
+      "id": "badger_3_3_g",
+      "name": "Badger Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Badger"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 3,
+      "toughness": 3,
       "is_token": true
     },
     {
@@ -119,6 +166,134 @@
       ]
     },
     {
+      "id": "bird_1_1_u_flying_vigilance",
+      "name": "Bird Token",
+      "oracle_text": "1/1 blue Bird creature token with flying and vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
+    },
+    {
+      "id": "bird_2_2_u_flying",
+      "name": "Bird Token",
+      "oracle_text": "2/2 blue Bird creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "blood_token",
+      "name": "Blood",
+      "oracle_text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Blood"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "discard": 1,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cat_beast_2_2_w",
+      "name": "Cat Beast Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat",
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "citizen_1_1_gw",
+      "name": "Citizen Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Citizen"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "clue_token",
       "name": "Clue",
       "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
@@ -149,6 +324,134 @@
               "amount": {
                 "const": 1
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "construct_0_0_c_artifact_buff",
+      "name": "Construct Token",
+      "oracle_text": "0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token gets +1/+1 for each artifact you control.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "detective_2_2_wu",
+      "name": "Detective Token",
+      "oracle_text": "2/2 white and blue Detective creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Detective"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "drake_2_2_u_flying",
+      "name": "Drake Token",
+      "oracle_text": "2/2 blue Drake creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "eldrazi_spawn_0_1_c",
+      "name": "Eldrazi Spawn Token",
+      "oracle_text": "0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi",
+        "Spawn"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice this token: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
             }
           ]
         }
@@ -194,6 +497,124 @@
       "is_token": true
     },
     {
+      "id": "faerie_1_1_u_flying",
+      "name": "Faerie Token",
+      "oracle_text": "1/1 blue Faerie creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Faerie"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "fish_1_1_u",
+      "name": "Fish Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Fish"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "food_token",
+      "name": "Food",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Food"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "forest_dryad_1_1_g_land",
+      "name": "Forest Dryad Token",
+      "oracle_text": "1/1 green Forest Dryad land creature token.\n{T}: Add {G}.",
+      "types": [
+        "Land",
+        "Creature"
+      ],
+      "subtypes": [
+        "Forest",
+        "Dryad"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "frog_lizard_3_3_g",
       "name": "Frog Lizard Token",
       "oracle_text": "3/3 green Frog Lizard creature token.",
@@ -212,6 +633,60 @@
       "color_identity": [
         "G"
       ],
+      "is_token": true
+    },
+    {
+      "id": "germ_0_0_b",
+      "name": "Germ Token",
+      "oracle_text": "0/0 black Phyrexian Germ creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Germ"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "gnome_1_1_c",
+      "name": "Gnome Token",
+      "oracle_text": "",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Gnome"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "hero_1_1_c",
+      "name": "Hero Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hero"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
       "is_token": true
     },
     {
@@ -261,6 +736,26 @@
       "is_token": true
     },
     {
+      "id": "illusion_1_1_u",
+      "name": "Illusion Token",
+      "oracle_text": "1/1 blue Illusion creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
       "id": "illusion_1_1_u_flying",
       "name": "Illusion",
       "oracle_text": "1/1 blue Illusion creature token with flying.",
@@ -284,6 +779,31 @@
       "is_token": true
     },
     {
+      "id": "inkling_2_1_wb_flying",
+      "name": "Inkling Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Inkling"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "insect_1_1_g",
       "name": "Insect Token",
       "types": [
@@ -300,6 +820,70 @@
       ],
       "power": 1,
       "toughness": 1,
+      "is_token": true
+    },
+    {
+      "id": "junk_token",
+      "name": "Junk",
+      "oracle_text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Junk"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
+          "sorcery_speed_only": true,
+          "cost": {
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "count": 1
+              },
+              "destination": "exile",
+              "playable_this_turn": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kithkin_1_1_gw",
+      "name": "Kithkin Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kithkin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
       "is_token": true
     },
     {
@@ -346,6 +930,31 @@
       "is_token": true
     },
     {
+      "id": "knight_2_2_wu_vigilance",
+      "name": "Knight Token",
+      "oracle_text": "2/2 white and blue Knight creature token with vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    {
       "id": "komas_coil_3_3_u",
       "name": "Koma's Coil",
       "oracle_text": "3/3 blue Serpent creature token named Koma's Coil.",
@@ -386,6 +995,222 @@
       "is_token": true
     },
     {
+      "id": "lander_token",
+      "name": "Lander",
+      "oracle_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Lander"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 1,
+              "destination": "battlefield",
+              "tapped": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "map_token",
+      "name": "Map",
+      "oracle_text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Map"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "targets": [
+            {
+              "id": "explorer",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "explore",
+              "objects": {
+                "target": "explorer"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "monk_1_1_w_prowess",
+      "name": "Monk Token",
+      "oracle_text": "1/1 white Monk creature token with prowess.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Monk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "moogle_1_2_w_lifelink",
+      "name": "Moogle Token",
+      "oracle_text": "1/2 white Moogle creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Moogle"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "ox_2_2_w",
+      "name": "Ox Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "pilot_1_1_c_crew2",
+      "name": "Pilot Token",
+      "oracle_text": "1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pilot"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token crews Vehicles as though its power were 2 greater.",
+          "effect": "crew_power_bonus",
+          "affects": {
+            "self_only": true
+          },
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "plant_0_1_g",
       "name": "Plant Token",
       "oracle_text": "0/1 green Plant creature token.",
@@ -423,6 +1248,120 @@
       "power": 1,
       "toughness": 1,
       "is_token": true
+    },
+    {
+      "id": "shapeshifter_3_2_c_changeling",
+      "name": "Shapeshifter Token",
+      "oracle_text": "3/2 colorless Shapeshifter creature token with changeling. (It is every creature type.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling (This card is every creature type.)",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spirit_1_1_c",
+      "name": "Spirit Token",
+      "oracle_text": "1/1 colorless Spirit creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "tentacle_1_1_u",
+      "name": "Tentacle Token",
+      "oracle_text": "1/1 blue Tentacle creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Tentacle"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "thopter_1_1_c_flying",
+      "name": "Thopter Token",
+      "oracle_text": "1/1 colorless Thopter artifact creature token with flying.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Thopter"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     },
     {
       "id": "treasure_token",
@@ -571,6 +1510,54 @@
       "is_token": true
     },
     {
+      "id": "vampire_1_1_w_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 white Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_1_1_wb_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 white and black Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "vampire_2_2_b_flying",
       "name": "Vampire Flying Token",
       "oracle_text": "2/2 black Vampire creature token with flying.",
@@ -589,6 +1576,32 @@
         "B"
       ],
       "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_demon_4_3_wb_flying",
+      "name": "Vampire Demon Token",
+      "oracle_text": "4/3 white and black Vampire Demon creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire",
+        "Demon"
+      ],
+      "power": 4,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
         "B"
       ],
       "is_token": true
@@ -618,341 +1631,6 @@
       "is_token": true
     },
     {
-      "id": "shapeshifter_3_2_c_changeling",
-      "name": "Shapeshifter Token",
-      "oracle_text": "3/2 colorless Shapeshifter creature token with changeling. (It is every creature type.)",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Shapeshifter"
-      ],
-      "power": 3,
-      "toughness": 2,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Changeling (This card is every creature type.)",
-          "effect": "add_subtype",
-          "affects": {
-            "self_only": true
-          },
-          "subtypes": [
-            "Human",
-            "Soldier",
-            "Warrior",
-            "Wizard",
-            "Cleric",
-            "Rogue",
-            "Knight",
-            "Elf",
-            "Goblin",
-            "Zombie",
-            "Vampire",
-            "Spirit",
-            "Beast",
-            "Elemental",
-            "Dragon",
-            "Angel",
-            "Demon",
-            "Sphinx",
-            "Bird",
-            "Cat",
-            "Snake",
-            "Insect",
-            "Serpent",
-            "Giant",
-            "Orc",
-            "Merfolk",
-            "Druid",
-            "Shaman",
-            "Bear",
-            "Wall"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "vampire_demon_4_3_wb_flying",
-      "name": "Vampire Demon Token",
-      "oracle_text": "4/3 white and black Vampire Demon creature token with flying.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Vampire",
-        "Demon"
-      ],
-      "power": 4,
-      "toughness": 3,
-      "keywords": [
-        "flying"
-      ],
-      "colors": [
-        "W",
-        "B"
-      ],
-      "color_identity": [
-        "W",
-        "B"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "blood_token",
-      "name": "Blood",
-      "oracle_text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
-      "types": [
-        "Artifact"
-      ],
-      "subtypes": [
-        "Blood"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
-          "cost": {
-            "mana": "{1}",
-            "tap": true,
-            "discard": 1,
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "vampire_1_1_wb_lifelink",
-      "name": "Vampire Lifelink Token",
-      "oracle_text": "1/1 white and black Vampire creature token with lifelink.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Vampire"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "keywords": [
-        "lifelink"
-      ],
-      "colors": [
-        "W",
-        "B"
-      ],
-      "color_identity": [
-        "W",
-        "B"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "vampire_1_1_w_lifelink",
-      "name": "Vampire Lifelink Token",
-      "oracle_text": "1/1 white Vampire creature token with lifelink.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Vampire"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "keywords": [
-        "lifelink"
-      ],
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "moogle_1_2_w_lifelink",
-      "name": "Moogle Token",
-      "oracle_text": "1/2 white Moogle creature token with lifelink.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Moogle"
-      ],
-      "power": 1,
-      "toughness": 2,
-      "keywords": [
-        "lifelink"
-      ],
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "ox_2_2_w",
-      "name": "Ox Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Ox"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "hero_1_1_c",
-      "name": "Hero Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Hero"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true
-    },
-    {
-      "id": "angel_4_4_w_flying_vigilance",
-      "name": "Angel Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Angel"
-      ],
-      "power": 4,
-      "toughness": 4,
-      "keywords": [
-        "flying",
-        "vigilance"
-      ],
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "cat_beast_2_2_w",
-      "name": "Cat Beast Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Cat",
-        "Beast"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "citizen_1_1_gw",
-      "name": "Citizen Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Citizen"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "G",
-        "W"
-      ],
-      "color_identity": [
-        "G",
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "kithkin_1_1_gw",
-      "name": "Kithkin Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Kithkin"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "G",
-        "W"
-      ],
-      "color_identity": [
-        "G",
-        "W"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "gnome_1_1_c",
-      "name": "Gnome Token",
-      "oracle_text": "",
-      "types": [
-        "Artifact",
-        "Creature"
-      ],
-      "subtypes": [
-        "Gnome"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true
-    },
-    {
       "id": "warrior_1_1_w_vigilance",
       "name": "Warrior Token",
       "oracle_text": "",
@@ -974,625 +1652,6 @@
         "W"
       ],
       "is_token": true
-    },
-    {
-      "id": "inkling_2_1_wb_flying",
-      "name": "Inkling Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Inkling"
-      ],
-      "power": 2,
-      "toughness": 1,
-      "keywords": [
-        "flying"
-      ],
-      "colors": [
-        "W",
-        "B"
-      ],
-      "color_identity": [
-        "W",
-        "B"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "fish_1_1_u",
-      "name": "Fish Token",
-      "oracle_text": "",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Fish"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "food_token",
-      "name": "Food",
-      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
-      "types": [
-        "Artifact"
-      ],
-      "subtypes": [
-        "Food"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
-          "cost": {
-            "mana": "{2}",
-            "tap": true,
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 3
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "junk_token",
-      "name": "Junk",
-      "oracle_text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
-      "types": [
-        "Artifact"
-      ],
-      "subtypes": [
-        "Junk"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
-          "sorcery_speed_only": true,
-          "cost": {
-            "tap": true,
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "look_at_top",
-              "player": "you",
-              "amount": {
-                "const": 1
-              },
-              "objects": {
-                "count": 1
-              },
-              "destination": "exile",
-              "playable_this_turn": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "lander_token",
-      "name": "Lander",
-      "oracle_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
-      "types": [
-        "Artifact"
-      ],
-      "subtypes": [
-        "Lander"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
-          "cost": {
-            "mana": "{2}",
-            "tap": true,
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "search_library",
-              "player": "you",
-              "count": 1,
-              "destination": "battlefield",
-              "tapped": true,
-              "selector": {
-                "types": [
-                  "Land"
-                ],
-                "supertypes": [
-                  "Basic"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "map_token",
-      "name": "Map",
-      "oracle_text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
-      "types": [
-        "Artifact"
-      ],
-      "subtypes": [
-        "Map"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
-          "sorcery_speed_only": true,
-          "cost": {
-            "mana": "{1}",
-            "tap": true,
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "targets": [
-            {
-              "id": "explorer",
-              "kind": "permanent",
-              "selector": {
-                "zone": "battlefield",
-                "controller": "you",
-                "types": [
-                  "Creature"
-                ]
-              }
-            }
-          ],
-          "effects": [
-            {
-              "op": "explore",
-              "objects": {
-                "target": "explorer"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "drake_2_2_u_flying",
-      "name": "Drake Token",
-      "oracle_text": "2/2 blue Drake creature token with flying.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Drake"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "knight_2_2_wu_vigilance",
-      "name": "Knight Token",
-      "oracle_text": "2/2 white and blue Knight creature token with vigilance.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Knight"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "W",
-        "U"
-      ],
-      "color_identity": [
-        "W",
-        "U"
-      ],
-      "is_token": true,
-      "keywords": [
-        "vigilance"
-      ]
-    },
-    {
-      "id": "detective_2_2_wu",
-      "name": "Detective Token",
-      "oracle_text": "2/2 white and blue Detective creature token.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Detective"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "W",
-        "U"
-      ],
-      "color_identity": [
-        "W",
-        "U"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "eldrazi_spawn_0_1_c",
-      "name": "Eldrazi Spawn Token",
-      "oracle_text": "0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Eldrazi",
-        "Spawn"
-      ],
-      "power": 0,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Sacrifice this token: Add {C}.",
-          "is_mana_ability": true,
-          "cost": {
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "self_only": true,
-              "count": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "add_mana",
-              "mana": "{C}"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bird_1_1_u_flying_vigilance",
-      "name": "Bird Token",
-      "oracle_text": "1/1 blue Bird creature token with flying and vigilance.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bird"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true,
-      "keywords": [
-        "flying",
-        "vigilance"
-      ]
-    },
-    {
-      "id": "angel_4_4_w_flying",
-      "name": "Angel Token",
-      "oracle_text": "4/4 white Angel creature token with flying.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Angel"
-      ],
-      "power": 4,
-      "toughness": 4,
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "faerie_1_1_u_flying",
-      "name": "Faerie Token",
-      "oracle_text": "1/1 blue Faerie creature token with flying.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Faerie"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "monk_1_1_w_prowess",
-      "name": "Monk Token",
-      "oracle_text": "1/1 white Monk creature token with prowess.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Monk"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Prowess",
-          "trigger": {
-            "event": "spell_cast",
-            "filter": {
-              "not_types": [
-                "Creature"
-              ]
-            }
-          },
-          "effects": [
-            {
-              "op": "pump",
-              "objects": {
-                "self_only": true,
-                "zone": "battlefield"
-              },
-              "power": {
-                "const": 1
-              },
-              "toughness": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "tentacle_1_1_u",
-      "name": "Tentacle Token",
-      "oracle_text": "1/1 blue Tentacle creature token.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Tentacle"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "bird_2_2_u_flying",
-      "name": "Bird Token",
-      "oracle_text": "2/2 blue Bird creature token with flying.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bird"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "spirit_1_1_c",
-      "name": "Spirit Token",
-      "oracle_text": "1/1 colorless Spirit creature token.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Spirit"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true
-    },
-    {
-      "id": "illusion_1_1_u",
-      "name": "Illusion Token",
-      "oracle_text": "1/1 blue Illusion creature token.",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Illusion"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [
-        "U"
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "is_token": true
-    },
-    {
-      "id": "thopter_1_1_c_flying",
-      "name": "Thopter Token",
-      "oracle_text": "1/1 colorless Thopter artifact creature token with flying.",
-      "types": [
-        "Artifact",
-        "Creature"
-      ],
-      "subtypes": [
-        "Thopter"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "construct_0_0_c_artifact_buff",
-      "name": "Construct Token",
-      "oracle_text": "0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
-      "types": [
-        "Artifact",
-        "Creature"
-      ],
-      "subtypes": [
-        "Construct"
-      ],
-      "power": 0,
-      "toughness": 0,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "This token gets +1/+1 for each artifact you control.",
-          "effect": "buff",
-          "affects": {
-            "self_only": true
-          },
-          "power": {
-            "count": {
-              "controller": "you",
-              "types": [
-                "Artifact"
-              ],
-              "zone": "battlefield"
-            }
-          },
-          "toughness": {
-            "count": {
-              "controller": "you",
-              "types": [
-                "Artifact"
-              ],
-              "zone": "battlefield"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "pilot_1_1_c_crew2",
-      "name": "Pilot Token",
-      "oracle_text": "1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Pilot"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "colors": [],
-      "color_identity": [],
-      "is_token": true,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "This token crews Vehicles as though its power were 2 greater.",
-          "effect": "crew_power_bonus",
-          "affects": {
-            "self_only": true
-          },
-          "amount": {
-            "const": 2
-          }
-        }
-      ]
     },
     {
       "id": "wicked_role",

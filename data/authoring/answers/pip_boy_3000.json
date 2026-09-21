@@ -121,7 +121,8 @@
             }
           }
         ],
-        "text": "Equip {2}"
+        "text": "Equip {2}",
+        "is_equip": true
       }
     ]
   },

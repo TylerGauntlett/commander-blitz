@@ -33,7 +33,7 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .targeting import selectable_modes
 from .turn import _next_blocker_decision
-from .zones import move_object, offer_enters_costs
+from .zones import move_object, offer_enters_copy, offer_enters_costs
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -280,6 +280,7 @@ class Game:
         # who actually played it, the way `stack.push_spell` sets a spell's.
         state.objects[oid].controller = pid
         yield from offer_enters_costs(state, oid, pid)
+        yield from offer_enters_copy(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
@@ -336,7 +337,10 @@ class Game:
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
         # that also reduces its own cost is charged once. `pay` clamps at zero.
-        extra -= cost_reduction(state, pid, card)
+        # The targets the action actually carries, so a discount that reads
+        # them charges the number legality offered -- `_priced_tuples` priced
+        # this very tuple.
+        extra -= cost_reduction(state, pid, card, action.targets)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
@@ -749,7 +753,17 @@ class Game:
         purpose = ability_purpose(state, oid)
 
         x = 0
-        if ability.cost is not None and ability.cost.mana.x_count:
+        from .legality import _targets_read_x
+
+        if _targets_read_x(ability):
+            # The number was announced when the activation was chosen -- legality
+            # offers one per payable X, each carrying the targets legal at that
+            # value, which is the only order that satisfies 601.2b before
+            # 601.2c. Asking again here would ask a question the player has
+            # already answered and could contradict the targets already
+            # declared. The same argument `ability_modes` makes below.
+            x = action.x
+        elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
             # `costs.pay` make.
@@ -818,7 +832,18 @@ class Game:
         # names nothing, which is every cost but `tap_permanents` with `as`.
         bindings: dict[str, Any] = {}
         ok = yield from pay(
-            state, pid, ability.cost, oid, x=x, purpose=purpose, bindings=bindings
+            state,
+            pid,
+            ability.cost,
+            oid,
+            x=x,
+            purpose=purpose,
+            bindings=bindings,
+            # The same ability legality priced, so a discount written on another
+            # permanent is charged at the number it was offered at -- and the
+            # same targets, for a discount that reads them.
+            ability=ability,
+            targets=action.targets,
         )
         if not ok:  # pragma: no cover
             return
@@ -1220,7 +1245,7 @@ class Game:
         # the same `can_pay`, and a cost found payable there and refused here
         # would strand the payment.
         ok = yield from pay(
-            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid)
+            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid), ability=ability
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return

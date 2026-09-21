@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "keen_sense",
+    "name": "Keen Sense",
+    "oracle_text": "Enchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+    "mana_cost": "{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Aura"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever enchanted creature deals damage to an opponent, you may draw a card.",
+        "trigger": {
+          "event": "deals_damage_to_player",
+          "controller": "any",
+          "defending": "opponent",
+          "filter": {
+            "attached": true
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "effects": [
+              {
+                "op": "draw",
+                "amount": {
+                  "const": 1
+                },
+                "player": "you"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

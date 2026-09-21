@@ -1,0 +1,216 @@
+{
+  "_comment": "Shapes for tests/unit/test_ability_cost_reduction_static.py. t_acr_aura discounts equip abilities you activate by {3} -- Strong Back's second line without its targeting clause. t_acr_blade is an Equipment with an equip {5} to discount, t_acr_reconfig a reconfigure permanent whose attach ability is NOT equip (the near miss the marker exists to keep out), and t_acr_bear a creature to equip. t_acr_aimed carries Strong Back's targeting clause. It is written as an Equipment rather than an Aura because an Aura attached to nothing is put into its owner's graveyard by the state-based actions, and the clause under test reads `attached`, which means the same thing on both. t_acr_other_bear is the creature to aim at instead.",
+  "cards": [
+    {
+      "id": "t_acr_aura",
+      "name": "Test Strong Back",
+      "oracle_text": "Equip abilities you activate cost {3} less to activate.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equip abilities you activate cost {3} less to activate.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {
+            "equip": true
+          },
+          "activated_by": "you",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_acr_blade",
+      "name": "Test Expensive Blade",
+      "oracle_text": "Equipped creature gets +1/+1.\nEquip {5}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {5}",
+          "sorcery_speed_only": true,
+          "is_equip": true,
+          "cost": {
+            "mana": "{5}"
+          },
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "equip_target"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_acr_reconfig",
+      "name": "Test Reconfigure Blade",
+      "oracle_text": "Reconfigure {5}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Reconfigure {5}",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{5}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "exclude_self": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_acr_bear",
+      "name": "Test Equip Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_acr_aimed",
+      "name": "Test Aimed Strong Back",
+      "oracle_text": "Equip abilities you activate that target equipped creature cost {3} less to activate.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equip abilities you activate that target equipped creature cost {3} less to activate.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {
+            "equip": true
+          },
+          "activated_by": "you",
+          "targeting": {
+            "attached": true
+          },
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_acr_other_bear",
+      "name": "Test Other Equip Bear",
+      "oracle_text": "",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 3,
+      "toughness": 3
+    }
+  ]
+}

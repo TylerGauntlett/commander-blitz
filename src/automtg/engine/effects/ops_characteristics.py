@@ -49,6 +49,76 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
         add_subtypes(ctx.state, oid, subtypes)
 
 
+@register("lose_all_abilities")
+def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…and **loses all other abilities**." The Irencrag.
+
+    `lose_all_abilities` existed only as a **static**, and a static is the wrong
+    shape for this line twice over. It is gathered off the printed face, so
+    written on The Irencrag it would strip "{T}: Add {C}" from the moment the
+    artifact entered -- before any legendary creature arrived, and whether or
+    not the player ever said yes. And no `condition` can gate it, because the
+    transformation it waits for is not a fact the engine had a flag for.
+
+    So the fact goes on the **object**, read by `_derived_abilities` beside the
+    static, which is the one place that decides what abilities a permanent has.
+    Both mean the same thing about the printed list; they differ only in who is
+    saying it and for how long.
+
+    Permanent for as long as the permanent is. "Loses all abilities until end of
+    turn" is `temp_effects`' business and a different clause; this one is The
+    Irencrag's, which never changes back.
+
+    **Other** abilities: the grants applied alongside it survive, because
+    `_derived_abilities` drops the *printed* list and appends the granted ones
+    after -- which is exactly what "loses all other abilities and gains …" says.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Loses all abilities")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.lost_all_abilities = True
+    ctx.state.bump_chars()
+
+
+@register("rename")
+def op_rename(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…become a legendary Equipment artifact **named Everflame, Heroes'
+    Legacy**." The Irencrag.
+
+    Nothing in the engine could change a name. The characteristics pipeline has
+    no name layer at all, and `_matches_printed` says so where it tests
+    `selector.name`: "a name is the most printed characteristic there is and
+    nothing in the pipeline can change one".
+
+    So the name is written onto the **object** and read by `GameState.card_of`,
+    the single funnel that decides a permanent's current face -- which is where
+    a copy effect's 706.2 name override already lives. One place, and every
+    reader gets the new name at once: the characteristics layers, `selector.name`,
+    the legend rule and the serializer.
+
+    The two near misses are both the wrong shape. `change_text` rewrites
+    *creature types* and the loader refuses it anything else; `become_copy`'s
+    `except_name` renames a permanent that is copying something, which The
+    Irencrag is not -- it stays itself and is called something else.
+
+    Permanent for as long as the permanent is: `reset_permanent_state` clears
+    it, so a renamed artifact that dies comes back answering to its printed
+    name (400.7).
+    """
+    name = str(spec.get("name") or "")
+    if not name:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Renamed")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.renamed_to = name
+    ctx.state.bump_chars()
+
+
 @register("change_text")
 def op_change_text(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Change the text of that creature by replacing all instances of one

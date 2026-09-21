@@ -38,6 +38,7 @@ from automtg.engine.effects.values import (
 from automtg.engine.enums import (
     AbilityKind,
     CardType,
+    Step,
     Zone,
 )
 from automtg.engine.errors import DslError
@@ -101,6 +102,7 @@ from .targets import (  # noqa: F401
 from .vocabulary import (  # noqa: F401
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,
+    ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
     CONTROLLED_TARGET_KINDS,
     COST_CONDITION_HEADS,
@@ -112,6 +114,7 @@ from .vocabulary import (  # noqa: F401
     DEFENDING_TRIGGERS,
     DELAYED_TRIGGER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
+    KEYWORD_ALIASES,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
@@ -138,6 +141,7 @@ from .vocabulary import (  # noqa: F401
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
     WAS_CAST_TRIGGERS,
+    normalize_keyword,
 )
 from .walk import (  # noqa: F401
     _before,
@@ -166,12 +170,19 @@ def _check_grant_targets(
     * **Out of range.** `characteristics.abilities_of` and the `grant_ability`
       op both index the list and both skip a miss, so an off-by-one is a card
       that prints "gains flying and …" and hands over nothing.
-    * **The op pointing at a static.** The *op* grants for a duration through
-      pointers that only `triggers` and `abilities_of`'s callers read as
-      abilities; a static handed over that way never reaches
-      `_battlefield_statics`, because that walk finds statics on the derived
-      list rather than in the grant record. So the one-shot form is refused
-      where the continuous form is exactly what the card wants.
+    The op pointing at a **static** was refused here too, on the grounds that
+    such a grant never reached `_battlefield_statics`. It does now:
+    `characteristics._op_granted_abilities` puts it on the derived list and that
+    walk reads the derived list, so the premise of the refusal is gone. The
+    Irencrag is the card that needed it -- "it gains equip {3} and "Equipped
+    creature gets +3/+3"" is a static handed over *once*, and the
+    `grant_ability` **static** cannot say it, because a static on The Irencrag
+    applies from the moment it enters.
+
+    What keeps an op-granted *triggered* ability from firing twice is not a
+    refusal here -- Clavileno grants one and has since it shipped -- but
+    `_op_granted_abilities` leaving it off the derived list, since
+    `triggers.collect` already yields it off the grant record itself.
     """
     for i, ability in enumerate(grantable):
         if not ability.is_static:
@@ -179,7 +190,7 @@ def _check_grant_targets(
         if not (ability.static or {}).get("effect"):
             raise DslError(f"{where}.grantable[{i}]: a static needs an 'effect'")
 
-    def check(index: Any, what: str, *, statics_ok: bool) -> None:
+    def check(index: Any, what: str) -> None:
         try:
             pos = int(index)
         except (TypeError, ValueError):
@@ -189,18 +200,12 @@ def _check_grant_targets(
                 f"{where}: {what} names 'grantable_abilities[{pos}]' and this card "
                 f"has {len(grantable)} -- a grant nothing answers hands over nothing"
             )
-        if grantable[pos].is_static and not statics_ok:
-            raise DslError(
-                f"{where}: the grant_ability *op* hands over a pointer that the "
-                f"characteristics pipeline never reads, so granting the static "
-                f"'grantable_abilities[{pos}]' with it would do nothing -- a "
-                f"continuous grant is the `grant_ability` **static**"
-            )
+
 
     for ability in abilities:
         static = ability.static or {}
         if ability.is_static and static.get("effect") == "grant_ability":
-            check(static.get("ability", 0), "grant_ability static", statics_ok=True)
+            check(static.get("ability", 0), "grant_ability static")
 
     trees: list[Any] = [model.spell_effects]
     trees.extend(a.effects for a in abilities)
@@ -210,7 +215,7 @@ def _check_grant_targets(
             if effect.get("op") != "grant_ability":
                 continue
             index = effect.get("ability", effect.get("ability_index"))
-            check(index, "grant_ability op", statics_ok=False)
+            check(index, "grant_ability op")
 
 
 def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
@@ -536,6 +541,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             raise DslError(
                 f"{where}.replacements[{i}]: 'self_enters_prepared' needs a "
                 f"'prepared_face' -- there is no spell to cast a copy of"
+            )
+        if replacement.event == "self_enters_as_copy":
+            # The pool, which is the whole clause: "a copy of **any Equipment on
+            # the battlefield**". Required, because a copy replacement with no
+            # pool asks about nothing and the card enters as itself -- a line of
+            # text it never performs, which is what this pass exists to refuse.
+            if replacement.copying is None:
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'self_enters_as_copy' needs "
+                    f"'copying' -- the permanents this one may enter as a copy of"
+                )
+            validate_selector(
+                replacement.copying, f"{where}.replacements[{i}].copying"
+            )
+        elif replacement.copying is not None:
+            raise DslError(
+                f"{where}.replacements[{i}]: 'copying' is read only by "
+                f"'self_enters_as_copy', not by {replacement.event!r}"
             )
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
@@ -1259,6 +1282,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     types = frozenset(model.types)
     subtypes = frozenset(model.subtypes)
 
+    # "Cast this spell only before the combat damage step" (Berserk). Resolved
+    # here rather than at the check, so a misspelled step is a load error: left
+    # to the engine it would read as "no restriction" and the card would be a
+    # strictly better Berserk, castable after blockers with the damage already
+    # dealt.
+    cast_before_step = None
+    if model.cast_before_step is not None:
+        try:
+            cast_before_step = Step[str(model.cast_before_step).upper()]
+        except KeyError:
+            raise DslError(
+                f"{model.id}: unknown cast_before_step "
+                f"{model.cast_before_step!r} (one of "
+                f"{[s.name.lower() for s in Step]})"
+            ) from None
+
     return CardDef(
         id=model.id,
         name=model.name,
@@ -1291,6 +1330,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         fuse=model.fuse,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
+        cast_before_step=cast_before_step,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
@@ -1575,6 +1615,30 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         raise DslError(
             f"{where}: 'id' only means anything on a reflexive ability, not on a {kind.value} one"
         )
+
+    if model.is_equip:
+        # "Equip {2}" is 702.6a: an activated ability, sorcery-speed only, whose
+        # whole effect is attaching this permanent to a creature you control.
+        # The declaration is held to that shape rather than inferred from it --
+        # see `schema.AbilityModel.is_equip` -- so the word cannot be written on
+        # an ability that does not do what equip does, and a static naming equip
+        # abilities as a class cannot be pointed at something else.
+        if kind is not AbilityKind.ACTIVATED:
+            raise DslError(
+                f"{where}: 'is_equip' marks an *activated* ability (702.6a), "
+                f"not a {kind.value} one"
+            )
+        if not model.sorcery_speed_only:
+            raise DslError(
+                f"{where}: an equip ability is sorcery-speed only (702.6b) -- "
+                f"set 'sorcery_speed_only'"
+            )
+        ops = [e.get("op") for e in (model.effects or []) if isinstance(e, Mapping)]
+        if ops != ["attach"]:
+            raise DslError(
+                f"{where}: an equip ability attaches this permanent and does "
+                f"nothing else (702.6a); got {ops or 'no effects'}"
+            )
 
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
@@ -2012,6 +2076,11 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
         mana_restriction = _mana_restriction(model.mana_restriction, where)
+    if model.mana_uncounterable and not model.is_mana_ability:
+        # It rides the mana, so on an ability that makes none it would load and
+        # never be read -- a card printing "that spell can't be countered" that
+        # does not.
+        raise DslError(f"{where}: 'mana_uncounterable' needs 'is_mana_ability'")
 
     return Ability(
         kind=kind,
@@ -2020,6 +2089,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         reflex_id=model.id or "",
         cost=cost,
         is_mana_ability=model.is_mana_ability,
+        is_equip=model.is_equip,
         mana_options=mana_options,
         mana_amount=mana_amount,
         mana_rider=mana_rider,
@@ -2028,6 +2098,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
+        mana_uncounterable=model.mana_uncounterable,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
         # here rather than left to an author to remember -- one omitted flag and
@@ -2085,6 +2156,27 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     subtypes = tapped.get("subtypes", [])
     if not isinstance(subtypes, list) or not all(isinstance(v, str) and v for v in subtypes):
         raise DslError(f"{where}.tapped_permanent.subtypes: a list of subtype names")
+    # A flag about the source, not a description of the tapped permanent, so it is
+    # the one key here that is a bool. `false` is refused rather than read as "any
+    # permanent": an author who writes it means something, and the spelling for
+    # "any permanent" is to leave the key out.
+    if "attached" in tapped and tapped["attached"] is not True:
+        raise DslError(
+            f"{where}.tapped_permanent.attached: must be true if present "
+            f"(omit the key to match a class of permanent instead)"
+        )
+    if isinstance(model.add_mana, dict):
+        # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
+        # about the source and cannot be parsed now, so the shape is checked here
+        # and the colour is read at the mana choke point. Deliberately the same
+        # spelling the `add_mana` op accepts, so one card cannot mean two things
+        # by it; a source that has chosen nothing yet adds nothing.
+        if set(model.add_mana) != {"chosen_color_of"} or model.add_mana["chosen_color_of"] != "self":
+            raise DslError(
+                f'{where}.add_mana: the only dynamic form is {{"chosen_color_of": "self"}}, '
+                f"not {model.add_mana!r}"
+            )
+        return
     try:
         produced = parse_mana_production(model.add_mana)
     except Exception as exc:
@@ -2195,6 +2287,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
         )
+    if model.effect == "cant_sacrifice" and model.affects is None:
+        # A missing filter matches nothing, so a filterless prohibition protects
+        # nobody -- the card loads, prints "can't be sacrificed" and does not.
+        # Never the whole board: no printed card says that, and the wildcard
+        # reading of an absent filter would turn a one-permanent clause into a
+        # two-sided lock on every sacrifice outlet in the game.
+        raise DslError(
+            f"{where}: cant_sacrifice as a static needs an 'affects' filter "
+            f'naming what it protects -- e.g. {{"attached": true}} for '
+            f"Assault Suit's equipped creature"
+        )
     if model.effect == "cast_from_library_top" and not model.pay_life_instead:
         raise DslError(
             f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
@@ -2261,6 +2364,58 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_spells' only means anything on a "
             f"spell_cost_reduction static, not on {model.effect!r}"
         )
+    if model.effect == "ability_cost_reduction":
+        # Which abilities, and how much less. Both required: a discount that
+        # names no class reaches every activated ability on the table, and one
+        # with no amount loads clean and discounts nothing. Either way the card
+        # prints a line it does not perform.
+        if not model.affects_abilities:
+            raise DslError(
+                f"{where}: ability_cost_reduction needs 'affects_abilities' -- "
+                f"the class of ability it discounts, e.g. {{'equip': true}}"
+            )
+        unknown = set(model.affects_abilities) - ABILITY_CLASS_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_abilities: unknown ability classes "
+                f"{sorted(unknown)} (implemented: {sorted(ABILITY_CLASS_KEYS)})"
+            )
+        if model.amount is None:
+            raise DslError(
+                f"{where}: ability_cost_reduction needs an 'amount' -- how much "
+                f"less the ability costs to activate"
+            )
+        who = model.activated_by or "you"
+        if who not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
+            )
+
+    elif model.activated_by is not None or model.affects_abilities is not None:
+        raise DslError(
+            f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+
+    # `targeting` belongs to **both** reductions: Strong Back prints one line of
+    # each, and "that target enchanted creature" is the same clause on either.
+    # `player_statics.spell_cost_reduction` and `ability_cost_reduction` read it
+    # the same way and from the same place.
+    if model.targeting is not None:
+        if model.effect not in ("ability_cost_reduction", "spell_cost_reduction"):
+            raise DslError(
+                f"{where}: 'targeting' asks what a spell or ability being priced "
+                f"is aimed at, so it only means anything on an "
+                f"ability_cost_reduction or spell_cost_reduction static, not on "
+                f"{model.effect!r}"
+            )
+        unknown = set(model.targeting) - STATIC_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.targeting: static filters may only read printed "
+                f"characteristics; unsupported keys {sorted(unknown)}"
+            )
+
     if model.effect == "replace_token_creation":
         # `affects` names permanents on the battlefield; the token this asks
         # about has not been created and there is nothing on the battlefield for
@@ -2315,6 +2470,95 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'affects_token'/'create_instead'/'token_multiplier' only mean "
             f"anything on a replace_token_creation static, not on {model.effect!r}"
+        )
+
+    if model.effect == "replace_damage":
+        # Refused below 2 for `token_multiplier`'s reason: 1 replaces damage
+        # with itself and 0 prevents it, which is `prevent_damage`'s sentence
+        # and a much stronger card. Required, because a replacement that says
+        # nothing about how much damage is dealt is not this effect.
+        if model.damage_multiplier is None:
+            raise DslError(
+                f"{where}: replace_damage needs 'damage_multiplier' -- "
+                f"\"deals double that damage instead\" is 2"
+            )
+        if model.damage_multiplier < 2:
+            raise DslError(
+                f"{where}.damage_multiplier: must be 2 or more; 1 replaces damage "
+                f"with itself and 0 prevents it, which is 'prevent_damage'"
+            )
+        # Both filters are optional and both read printed characteristics, the
+        # same language `affects` reads everywhere else. `affects` here is the
+        # *recipient*, and a static carrying one never applies to damage dealt
+        # to a player -- a player is not a permanent, and "to equipped creature"
+        # is a sentence about one.
+        if model.damage_source is not None:
+            unknown = set(model.damage_source) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.damage_source: static filters may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
+    elif (
+        model.damage_multiplier is not None
+        or model.damage_source is not None
+        or model.combat_only
+    ):
+        raise DslError(
+            f"{where}: 'damage_multiplier'/'damage_source'/'combat_only' only mean "
+            f"anything on a replace_damage static, not on {model.effect!r}"
+        )
+
+    if model.effect == "replace_counters":
+        # `affects` names the permanent the counters would be put on, and every
+        # printed card names one -- "on a creature you control", "on an
+        # artifact, creature, enchantment or land you control". Required rather
+        # than defaulted: a replacement with no filter applies to every counter
+        # in the game including an opponent's, which is a strictly better card
+        # than any that has been printed.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: replace_counters needs 'affects' -- the permanents the "
+                f"counters would be put on; without it the replacement reaches "
+                f"every counter on the table, which no printed card says"
+            )
+        if model.counter is not None:
+            _check_counter_kind(model.counter, f"{where}.counter")
+        # Exactly one axis, for `replace_token_creation`'s reason, and neither
+        # is a replacement that says nothing about how many arrive.
+        if model.counter_multiplier is not None and model.counter_addend is not None:
+            raise DslError(
+                f"{where}: replace_counters takes 'counter_multiplier' (\"twice "
+                f"that many\") or 'counter_addend' (\"that many plus one\"), not both"
+            )
+        if model.counter_multiplier is not None:
+            # 1 replaces a placement with itself and 0 is "no counters are put
+            # on it" -- a prevention, a different and much stronger sentence.
+            # The same refusal `token_multiplier` and `replace_life_loss` make.
+            if model.counter_multiplier < 2:
+                raise DslError(
+                    f"{where}.counter_multiplier: must be 2 or more; 1 replaces a "
+                    f"placement with itself and 0 puts none on, which is a "
+                    f"different effect"
+                )
+        elif model.counter_addend is not None:
+            # Below 1 is the same argument once more: 0 changes nothing, and a
+            # negative addend is "that many minus one", which no card prints and
+            # which could take a placement to zero -- a prevention again.
+            if model.counter_addend < 1:
+                raise DslError(
+                    f"{where}.counter_addend: must be 1 or more; 0 changes nothing "
+                    f"and a negative addend is a prevention, a different effect"
+                )
+        else:
+            raise DslError(
+                f"{where}: replace_counters needs 'counter_addend' (\"that many "
+                f"plus one\") or 'counter_multiplier' (\"twice that many\")"
+            )
+    elif model.counter_multiplier is not None or model.counter_addend is not None:
+        raise DslError(
+            f"{where}: 'counter_multiplier'/'counter_addend' only mean anything on "
+            f"a replace_counters static, not on {model.effect!r}"
         )
 
     if model.effect == "replace_life_loss":
@@ -2487,12 +2731,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
     elif model.effect in (
         "spell_cost_reduction",
+        # Picks out *activated abilities* through `affects_abilities`, checked
+        # above. `affects` is optional here and names the permanent the ability
+        # is printed on -- Strong Back's "equip abilities you activate" says
+        # nothing about whose Equipment it is, so requiring one would refuse the
+        # printed card.
+        "ability_cost_reduction",
         "replace_token_creation",
         # "Spells can't be countered" names no permanent either -- it is about
         # spells on the stack, and its optional `affects_spells` is the only
         # filter it can carry. Lier prints no filter at all: every spell, every
         # player, which is the card's whole reputation.
         "spells_cant_be_countered",
+        # Furnace of Rath names neither end -- "if **a source** would deal
+        # damage to **a permanent or player**" -- so both of its filters are
+        # optional and `affects`, when written, is the *recipient* rather than
+        # the usual "which permanents this static describes". Inquisitor's
+        # Flail prints one line with each.
+        "replace_damage",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
@@ -2643,6 +2899,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["create_instead"] = list(model.create_instead)
     if model.token_multiplier is not None:
         static["token_multiplier"] = model.token_multiplier
+    # `replace_counters`' three. Copied explicitly for the whitelist reason
+    # spelled out below: a field the schema accepts and this loop forgets
+    # loads, compiles and applies with the clause absent -- here that would be
+    # a High Score that replaces every counter in the game, or doubles nothing.
+    # `replace_damage`'s three, copied explicitly for the whitelist reason
+    # below: forgotten here, the Flail would double every source's damage to
+    # everything, or none of it.
+    # `ability_cost_reduction`'s two, copied explicitly for the whitelist reason
+    # below -- and this one bites hardest: without `affects_abilities` the class
+    # filter reads empty, and an empty filter discounts *every* activated
+    # ability on the table rather than none.
+    if model.affects_abilities is not None:
+        static["affects_abilities"] = dict(model.affects_abilities)
+    if model.activated_by is not None:
+        static["activated_by"] = model.activated_by
+    if model.targeting is not None:
+        static["targeting"] = dict(model.targeting)
+    if model.damage_multiplier is not None:
+        static["damage_multiplier"] = model.damage_multiplier
+    if model.damage_source is not None:
+        static["damage_source"] = dict(model.damage_source)
+    if model.combat_only:
+        static["combat_only"] = True
+    if model.counter_multiplier is not None:
+        static["counter_multiplier"] = model.counter_multiplier
+    if model.counter_addend is not None:
+        static["counter_addend"] = model.counter_addend
+    if model.counter is not None:
+        static["counter"] = model.counter
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
     if model.gain_multiplier is not None:

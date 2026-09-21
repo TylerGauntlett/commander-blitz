@@ -1,0 +1,108 @@
+{
+  "_comment": "Shapes for tests/unit/test_choose_permanent_type.py. t_cpt_renaissance is Creeping Renaissance's second line -- choose a permanent type, then return all cards of that type from your graveyard to your hand. t_cpt_creature_chooser is the same spell asking for a CREATURE type instead, kept live so the tests show the two axes write different slots and neither reads the other's. The rest are graveyard fodder of three different card types.",
+  "cards": [
+    {
+      "id": "t_cpt_renaissance",
+      "name": "Test Creeping Renaissance",
+      "oracle_text": "Choose a permanent type. Return all cards of the chosen type from your graveyard to your hand.",
+      "mana_cost": "{3}{G}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_type",
+          "of": "permanent_type",
+          "prompt": "Choose a permanent type"
+        },
+        {
+          "op": "return_from_graveyard",
+          "destination": "hand",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "count": "all",
+            "types": [
+              {
+                "chosen_card_type_of": "self"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_cpt_creature_chooser",
+      "name": "Test Creature Type Chooser",
+      "oracle_text": "Choose a creature type.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_type",
+          "prompt": "Choose a creature type"
+        }
+      ]
+    },
+    {
+      "id": "t_cpt_bear",
+      "name": "Test CPT Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_cpt_relic",
+      "name": "Test CPT Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_cpt_charm",
+      "name": "Test CPT Charm",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ]
+    }
+  ]
+}

@@ -478,6 +478,8 @@ def _loses_abilities(state: GameState, obj: GameObject) -> bool:
     """Is something stripping every ability from this permanent right now?"""
     if not obj.on_battlefield:
         return False
+    if obj.lost_all_abilities:
+        return True
     return any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
@@ -612,7 +614,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
-    if not statics and not _has_op_grants(obj):
+    if not statics and not _has_op_grants(obj) and not obj.lost_all_abilities:
         return printed
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
@@ -642,7 +644,14 @@ def _derived_abilities(
     """
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
     out: list[tuple[Ability, tuple[int, int] | None]] = []
-    if not any(
+    # `obj.lost_all_abilities` beside the static, and both mean the same thing
+    # about the printed list: one is somebody else saying it continuously
+    # ("enchanted creature loses all abilities"), the other is a resolving
+    # effect having said it once, to this permanent, for as long as it stays
+    # (The Irencrag). Either way the printed abilities are not here -- and the
+    # grants below still are, which is what "loses all **other** abilities and
+    # gains …" says.
+    if not obj.lost_all_abilities and not any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in statics
@@ -657,14 +666,14 @@ def _derived_abilities(
         index = int(static.get("ability", 0))
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
-    out.extend(_op_granted_activated(state, obj))
+    out.extend(_op_granted_abilities(state, obj))
     return out
 
 
 def _has_op_grants(obj: GameObject) -> bool:
     """Is anything on this permanent a one-shot ``grant_ability`` record?
 
-    The cheap half of `_op_granted_activated`, asked on `abilities_of`'s fast
+    The cheap half of `_op_granted_abilities`, asked on `abilities_of`'s fast
     path: almost no permanent carries one, and those that do must not be
     answered with the printed list.
     """
@@ -673,10 +682,10 @@ def _has_op_grants(obj: GameObject) -> bool:
     )
 
 
-def _op_granted_activated(
+def _op_granted_abilities(
     state: GameState, obj: GameObject
 ) -> list[tuple[Ability, tuple[int, int]]]:
-    """The **activated** abilities the `grant_ability` *op* has handed this permanent.
+    """The abilities the `grant_ability` *op* has handed this permanent.
 
     Urza's Saga: "I — This Saga gains "{T}: Add {C}."" and "II — This Saga gains
     "{2}, {T}: Create a … Construct …"". A chapter resolves once and the gain
@@ -690,9 +699,19 @@ def _op_granted_activated(
     Appended here with the same provenance a static grant carries, so an
     activation can tell `stack.ability_of` where the definition lives (608.2).
 
-    **Activated only.** An op-granted *triggered* ability is already yielded by
-    `triggers.collect` off the record itself; listing it here too would fire it
-    twice. And the loader refuses an op-granted static.
+    **Activated and static, never triggered.** An op-granted *triggered* ability
+    is already yielded by `triggers.collect` off the record itself; listing it
+    here too would fire it twice.
+
+    A **static** belongs here, and the loader used to refuse one on the grounds
+    that "a static handed over that way never reaches `_battlefield_statics`,
+    because that walk finds statics on the derived list rather than in the grant
+    record". That is exactly the list this function feeds: `abilities_of`
+    appends what comes back here, `_battlefield_statics` reads `abilities_of`,
+    and so a granted static joins the characteristics pipeline with no new walk
+    at all. The Irencrag is the card that wanted it -- "it gains equip {3} and
+    **"Equipped creature gets +3/+3"**" -- and a `grant_ability` *static* cannot
+    say that line, because a static on The Irencrag is on from turn one.
 
     Read off the two live lists and never off ``left_with``: that is a departure
     snapshot for leave-the-battlefield triggers, and the whole point of 400.7 is
@@ -709,7 +728,7 @@ def _op_granted_activated(
         if not 0 <= temp.ability_index < len(pool):
             continue
         ability = pool[temp.ability_index]
-        if not ability.is_activated:
+        if not (ability.is_activated or ability.is_static):
             continue
         out.append((ability, (granter.oid, temp.ability_index)))
     return out
@@ -965,6 +984,24 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "times" in expr:
+        # "+2/+2 for each Equipment you control" -- Swordsman's Steel. A count
+        # with a step bigger than one, which the language could not say: every
+        # other leaf here *measures* something and nothing combined two.
+        #
+        # Splitting the doubling across two `buff` statics is not the
+        # alternative it looks like. A static may carry no `effects`, so it
+        # would have to be two abilities, and the residual gate asks which
+        # printed line each ability claims -- two abilities claiming one
+        # sentence is exactly what that gate exists to catch.
+        #
+        # Deliberately the same spelling and the same shape as the effect-side
+        # `times`: a list of factors, multiplied. Safe here for `count`'s
+        # reason, since every factor it can contain is a pipeline input.
+        result = 1
+        for factor in expr["times"]:
+            result *= _static_value(state, factor, source)
+        return result
     if "mana_symbols" in expr:
         # Chroma -- Primalcrux's "power and toughness are each equal to the
         # number of green mana symbols in the mana costs of permanents you
@@ -1364,6 +1401,26 @@ def _matches(
     # `controller: "you"` would quietly stop it.
     if selector.get("attached"):
         return obj.oid == source.attached_to
+    # "…as long as two or more Equipment are **attached to it**" (Brass
+    # Knuckles); "+2/+2 for each Aura and Equipment **attached to it**" (Strong
+    # Back). `attached` is the host and this is its other attachments -- the two
+    # halves of one relationship, read from opposite ends.
+    #
+    # It does **not** short-circuit, because every card that prints it also
+    # narrows by subtype: matching every attachment would count the Aura that
+    # says so beside the Equipment it is asking about. It does suppress the
+    # default `controller: "you"` the way `attached` does, and for the same
+    # reason: the equipped creature may be an opponent's, and the printed line
+    # asks what is attached to it rather than who controls what.
+    #
+    # The source counts itself when it qualifies, which is the printed reading:
+    # Brass Knuckles is one of the Equipment attached to the creature, so "two
+    # or more" is itself plus one.
+    attached_to_host = bool(selector.get("attached_to_host"))
+    if attached_to_host and (
+        source.attached_to is None or obj.attached_to != source.attached_to
+    ):
+        return False
     # Soulbond. Two keys because the printed line applies to two creatures and
     # the static is written once: `paired` is "this creature, while it has a
     # partner" and `paired_with_source` is "the partner". Both short-circuit
@@ -1394,7 +1451,7 @@ def _matches(
     # `_static_players` already decided the word means on a permanent: a stolen
     # anthem pumps for whoever is holding it.
     owner = selector.get("owner")
-    controller = selector.get("controller", None if owner else "you")
+    controller = selector.get("controller", None if owner or attached_to_host else "you")
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:

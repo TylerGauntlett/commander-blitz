@@ -54,6 +54,18 @@ SELECTOR_KEYS = frozenset(
         #: or Equipment is attached to, read off the ability's source.  Already
         #: in ``STATIC_FILTER_KEYS``; this is the same word on the effect side.
         "attached",
+        #: "Choose two cards in your hand **drawn this turn**" -- Sylvan Library.
+        #: `GameState.cards_drawn_this_turn` says how many and no selector could
+        #: ask which; this reads the mark `draw_cards` puts on each card as it is
+        #: drawn. Effect-side only: nothing continuous asks the question.
+        "drawn_this_turn",
+        #: "**modified** creatures you control" (Silkguard, and the whole Kamigawa
+        #: cycle) -- a permanent with a counter on it, equipped, or enchanted by
+        #: an Aura you control. A definition rather than a characteristic, which
+        #: is why it is one key and not three: a card that spelled it out would
+        #: have to say "or" across three unrelated relationships, and the
+        #: selector language is a conjunction.
+        "modified",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -498,6 +510,70 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     return ctx.state.alive()
 
 
+def _resolve_chosen_card_type(
+    selector: Mapping[str, Any], source: Any
+) -> Mapping[str, Any]:
+    """Turn ``types: [{"chosen_card_type_of": "self"}]`` into the chosen type.
+
+    The card-type twin of `characteristics.resolve_chosen_subtypes`, and it
+    makes the same choice at the same boundary: a source that has chosen nothing
+    yet matches **nothing**. "All cards of the chosen type" before a type is
+    chosen should return nothing, not the whole graveyard -- and the sentinel is
+    a name no card has for exactly that reason.
+    """
+    out: list[str] = []
+    for entry in selector["types"]:
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_card_type_of") == "self":
+            chosen = getattr(source, "chosen_card_type", None)
+            if chosen is None:
+                return {**selector, "types": ["\0none"]}
+            out.append(chosen)
+    return {**selector, "types": out}
+
+
+def _is_modified(ctx: EffectContext, oid: int) -> bool:
+    """"Modified" -- a counter on it, an Equipment attached, or your Aura.
+
+    The keyword-action definition, and each of its three limbs is a different
+    relationship read from a different direction:
+
+    - **a counter of any kind**, not just +1/+1. A Role's, a loyalty counter, a
+      stun counter -- the reminder text says "counters" and means it.
+    - **equipped**, by anybody's Equipment. An Equipment stapled to your
+      creature by an opponent still modifies it; the definition asks what is
+      attached, not who owns it.
+    - **enchanted by an Aura you control.** This limb *does* ask, and it is the
+      one asymmetry in the definition: an opponent's Pacifism does not make your
+      creature modified. "You" is the effect's controller, since that is who the
+      sentence naming modified creatures belongs to.
+
+    Answered by walking the battlefield for attachments rather than by reading a
+    list on the creature, because attachment is stored one way -- on the Aura or
+    Equipment, as `attached_to` -- and nothing walks back along it. That is the
+    same fact `attached_to_host` is built on, one relationship read from the
+    other end.
+    """
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    if any(n > 0 for n in obj.counters.values()):
+        return True
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != oid:
+            continue
+        subtypes = chars(state, other_oid).subtypes
+        if "Equipment" in subtypes:
+            return True
+        if "Aura" in subtypes and other.controller == ctx.controller:
+            return True
+    return False
+
+
 def matches(
     ctx: EffectContext,
     oid: int,
@@ -534,6 +610,13 @@ def matches(
         selector = resolve_chosen_subtypes(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
+    # "Return all cards of **the chosen type** from your graveyard" -- Creeping
+    # Renaissance. The card-type twin of the substitution above, and effect-side
+    # only: no printed card reads a chosen permanent type from a static.
+    if selector.get("types") and any(isinstance(e, Mapping) for e in selector["types"]):
+        selector = _resolve_chosen_card_type(
+            selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        )
 
     card = state.card_of(obj)
     use_derived = obj.on_battlefield
@@ -559,6 +642,13 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
+    if selector.get("modified") and not _is_modified(ctx, oid):
+        return False
+    if selector.get("drawn_this_turn") and obj.drawn_turn != state.turn:
+        # Compared against the turn rather than read as a flag, so nothing has
+        # to clear it at a turn boundary -- a stale `true` would read as a card
+        # drawn this turn that was not.
+        return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
         # a `snapshot`, and a **list** for an op that recorded what it produced.
@@ -1305,6 +1395,24 @@ def validate_selector(selector: Any, where: str) -> None:
     # because every selector, on every op and every target spec, comes through.
     for key in ("types", "any_types", "not_types"):
         for name in selector.get(key) or ():
+            # "…cards of **the chosen type**" (Creeping Renaissance). The one
+            # entry here that is not a literal name, substituted per resolution
+            # by `_resolve_chosen_card_type` rather than at load time, because
+            # the choice does not exist until the spell resolves. Validated as
+            # exactly that spelling: a near miss that fell through would freeze
+            # into a name no card has and match nothing for ever.
+            if isinstance(name, Mapping):
+                if key != "types":
+                    raise DslError(
+                        f"{where}: the chosen card type may only appear in 'types', "
+                        f"not {key!r}"
+                    )
+                if set(name) != {"chosen_card_type_of"} or name["chosen_card_type_of"] != "self":
+                    raise DslError(
+                        f'{where}: the only dynamic card type is '
+                        f'{{"chosen_card_type_of": "self"}}, not {dict(name)!r}'
+                    )
+                continue
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
     # Same argument, and sharper for the negated key: a misspelled *positive*

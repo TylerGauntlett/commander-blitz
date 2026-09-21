@@ -1,7 +1,8 @@
-"""Domain and coven — counting *different values*, which `count` cannot do.
+"""Domain, coven and delirium — counting *different values*, which `count` cannot do.
 
     Domain — "…for each basic land type among lands you control."
     Coven — "…if you control three or more creatures with different powers."
+    Delirium — "…if there are four or more card types among cards in your graveyard."
 
 Both were filed `blocked` in the census for the same one-line reason: the value
 language counts objects, and these count distinct values over a pool. The two
@@ -14,11 +15,17 @@ capability rather than two —
 so no selector, however filtered, gets either number. `{"distinct": {"of": …,
 "objects": …}}` is the leaf, and its two `of` values are the two printed cards.
 
-Both read **derived** characteristics, and that is load-bearing twice over. An
-anthem changes who has coven; "all lands are Islands" changes what counts for
-domain. It is also the reason this leaf is deliberately absent from the *static*
-condition language: a static that read it would depend on another static's
-output, which is exactly the cycle layers-lite exists to forbid.
+Domain and coven read **derived** characteristics, and that is load-bearing twice
+over. An anthem changes who has coven; "all lands are Islands" changes what
+counts for domain. It is also the reason this leaf is deliberately absent from
+the *static* condition language: a static that read it would depend on another
+static's output, which is exactly the cycle layers-lite exists to forbid.
+
+**Delirium reads the printed face**, and that is not an inconsistency: it counts
+cards in a *graveyard*, where there are no continuous effects to apply. Asking
+`chars` there would be answering a question about a permanent for something that
+is not one — the same reading `characteristics._count_matching` already takes
+off the battlefield.
 """
 
 from __future__ import annotations
@@ -46,6 +53,13 @@ def domain(objects=None):
 
 def coven(objects=None):
     return {"distinct": {"of": "power", "objects": objects or MY_CREATURES}}
+
+
+MY_GRAVEYARD = {"zone": "graveyard", "controller": "you"}
+
+
+def delirium(objects=None):
+    return {"distinct": {"of": "card_type", "objects": objects or MY_GRAVEYARD}}
 
 
 def value(game, expr, controller: int = 0) -> int:
@@ -108,6 +122,37 @@ class TestCoven:
         assert value(game, coven()) == 2
 
 
+class TestDelirium:
+    """Card types among cards in your graveyard."""
+
+    def yard(self, builder, cards):
+        return builder(players=2).graveyard(0, list(cards)).build(advance=False)
+
+    def test_an_empty_graveyard_is_nought(self, builder):
+        assert value(self.yard(builder, []), delirium()) == 0
+
+    def test_one_card_is_one_type(self, builder):
+        assert value(self.yard(builder, [BEAR]), delirium()) == 1
+
+    def test_two_cards_of_one_type_are_still_one(self, builder):
+        """The whole reason `count` cannot say it: two objects, one type."""
+        assert value(self.yard(builder, [BEAR, GIANT]), delirium()) == 1
+
+    def test_different_types_add_up(self, builder):
+        game = self.yard(builder, [BEAR, FOREST, "t_plain_instant"])
+        assert value(game, delirium()) == 3
+
+    def test_it_counts_your_graveyard_only(self, builder):
+        """`controller` is the filter; an opponent's graveyard is theirs."""
+        game = (
+            builder(players=2)
+            .graveyard(0, [BEAR])
+            .graveyard(1, [FOREST, "t_plain_instant"])
+            .build(advance=False)
+        )
+        assert value(game, delirium()) == 1
+
+
 class TestUsedAsACondition:
     def test_coven_is_an_ordinary_comparison(self, builder):
         """Nothing new in the condition language: `cmp` already takes values."""
@@ -123,9 +168,10 @@ class TestUsedAsACondition:
 
 
 class TestTheLoaderGuards:
-    def test_both_well_formed_leaves_load(self):
+    def test_every_well_formed_leaf_loads(self):
         validate_value(domain(), "test")
         validate_value(coven(), "test")
+        validate_value(delirium(), "test")
 
     def test_a_missing_of_is_refused(self):
         """Defaulted it would count powers on a card that meant land types."""

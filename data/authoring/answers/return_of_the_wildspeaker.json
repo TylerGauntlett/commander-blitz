@@ -1,0 +1,78 @@
+{
+  "card": {
+    "id": "return_of_the_wildspeaker",
+    "name": "Return of the Wildspeaker",
+    "oracle_text": "Choose one —\n• Draw cards equal to the greatest power among non-Human creatures you control.\n• Non-Human creatures you control get +3/+3 until end of turn.",
+    "mana_cost": "{4}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {
+            "label": "Draw cards equal to the greatest power among non-Human creatures you control.",
+            "effects": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "extreme_value": {
+                    "of": "power",
+                    "pick": "greatest",
+                    "objects": {
+                      "zone": "battlefield",
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "not_subtypes": [
+                        "Human"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "label": "Non-Human creatures you control get +3/+3 until end of turn.",
+            "effects": [
+              {
+                "op": "pump",
+                "power": {
+                  "const": 3
+                },
+                "toughness": {
+                  "const": 3
+                },
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "not_subtypes": [
+                    "Human"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard"
+  }
+}

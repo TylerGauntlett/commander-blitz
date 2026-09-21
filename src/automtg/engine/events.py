@@ -103,6 +103,17 @@ class EventType:
     #: CONTROL_CHANGED is: no zone change happens, so nothing else in the log
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
+    #: Two cards became one permanent (702.140e). ``source`` and ``data["oid"]``
+    #: are the **host** -- the object that survives the merge and carries the
+    #: union of both cards' abilities -- and ``data["card"]`` is the merged
+    #: card's id.
+    #:
+    #: Fired at the end of `merge_permanents`, after `merged_card` is assigned,
+    #: so the ability printed on the newcomer ("Whenever this creature mutates")
+    #: is already on the permanent when trigger collection looks for it. Fired
+    #: from the merge rather than from the resolution so that every path into a
+    #: mutation goes through it.
+    MUTATED = "mutated"
     BECAME_MONSTROUS = "became_monstrous"
     #: A Class's level **became** a number (716.4). ``source`` and
     #: ``data["oid"]`` are the Class, ``data["level"]`` the level it is now.
@@ -181,6 +192,21 @@ class EventType:
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"
+    #: Combat damage dealt to a **planeswalker** (306.8). ``source`` is the
+    #: dealing permanent, ``data["planeswalker"]`` the walker, ``player`` and
+    #: ``data["defender"]`` its controller, and ``data["amount"]`` the damage --
+    #: the same payload shape COMBAT_DAMAGE_TO_PLAYER carries, so one trigger
+    #: layer reads both.
+    #:
+    #: Its own event rather than a widening of the player one. "Whenever this
+    #: creature deals combat damage to a player" is printed on dozens of cards
+    #: that say nothing about planeswalkers, and firing that event here would
+    #: make every saboteur in the pool trigger off a planeswalker hit -- a
+    #: strictly better card than any of them, and silent. The cards that mean
+    #: both print "a player **or planeswalker**", which is a disjunction, and
+    #: the engine's idiom for a printed disjunction is two abilities claiming
+    #: one line (Winged Boots' "flying and ward {4}", magecraft's cast-or-copy).
+    COMBAT_DAMAGE_TO_PLANESWALKER = "combat_damage_to_planeswalker"
     #: "Whenever one or more creatures **you control** deal combat damage to one
     #: or more players…" One of these per combat-damage step per *damaging
     #: player*, fired beside the per-creature COMBAT_DAMAGE_TO_PLAYER above

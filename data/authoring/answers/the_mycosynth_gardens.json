@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "the_mycosynth_gardens",
+    "name": "The Mycosynth Gardens",
+    "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\n{X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value X.",
+    "types": ["Land"],
+    "subtypes": ["Sphere"],
+    "supertypes": ["Legendary"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}, {T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {"mana": "{1}", "tap": true},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value X.",
+        "cost": {"mana": "{X}", "tap": true},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Artifact"],
+              "is_token": false,
+              "mana_value": {"op": "=", "value": {"x": true}}
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "become_copy",
+            "objects": {"self_only": true},
+            "copying": {"target": "t1"},
+            "duration": "permanent"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
