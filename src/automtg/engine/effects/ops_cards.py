@@ -788,6 +788,69 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("return_to_command_zone")
+def op_return_to_command_zone(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put the chosen objects into their owners' command zones.
+
+    Hellkite Courser -- "you may put a commander you own from the command zone
+    onto the battlefield. It gains haste. **Return it to the command zone** at
+    the beginning of the next end step." The return is the body of a `delay`
+    over a binding the same ability captured, so it has to be an op that names
+    the zone rather than anything armed on the permanent.
+
+    **The command zone was the one zone no effect could move a card to.**
+    `DESTINATIONS` above -- the map the loader validates every `destination`
+    against -- is hand, battlefield, graveyard, exile and the two ends of a
+    library, and `"command"` is deliberately still absent from it: every op that
+    reads it pulls its pool out of a library or a graveyard, and no printed card
+    puts the top of a library into a command zone. What was missing is a
+    *battlefield* departure, which is what this is, so it sits beside
+    `return_to_hand` and takes the same bare `objects`.
+
+    `return_to_hand` is the near miss and is **the dangerous one**, because on
+    the card that wanted this it produces the right board. `move_object` applies
+    the commander zone-change replacement of rule 903.9a unconditionally
+    (`zones.COMMANDER_REPLACED_ZONES`), so a commander told to go to a hand is
+    redirected to the command zone and the test passes. It is a different card
+    written down, and it is wrong three ways: it claims the hand, which is the
+    sentence a reader and the residual gate both see; it does nothing of the
+    sort for a permanent that is not a commander, which the same op would have
+    to serve; and it would become wrong for commanders too on the day 903.9a is
+    modelled as the choice the rule actually gives rather than the automatic
+    redirect documented in `docs/rules-coverage.md`.
+
+    **It cannot double up with that replacement**, and the reason is structural
+    rather than a guard here: `COMMANDER_REPLACED_ZONES` is the four zones a
+    commander is redirected *out of*, and the command zone is not one of them.
+    An object handed straight to `Zone.COMMAND` therefore walks past the
+    replacement untouched -- one move, one `ZONE_CHANGE`, one arrival -- whether
+    or not it is a commander.
+
+    Owner rather than controller, for 903.9a's reason and 400.3's: the command
+    zone a card goes to is the one belonging to whoever owns it, so a commander
+    an opponent had stolen goes home to its own player.
+
+    An object already in a command zone is left alone rather than moved onto
+    itself, which is what a delayed return finds when the permanent has died in
+    the meantime and 903.9a already put it there. A token is moved like anything
+    else and then ceases to exist (111.7) in the next state-based pass, the same
+    answer `sba` gives it in every other zone.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Return to the command zone")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.zone is Zone.COMMAND:
+            continue
+        move_object(
+            ctx.state,
+            oid,
+            Zone.COMMAND,
+            to_player=obj.owner,
+            cause="returned",
+            by=ctx.source_oid,
+        )
+
+
 @register("return_to_origin")
 def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
     """Return exiled cards to the zone each of them came from.

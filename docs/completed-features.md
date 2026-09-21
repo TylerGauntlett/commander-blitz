@@ -14652,3 +14652,119 @@ pinned at five and kept out of colour identity; and five load-time refusals —
 its own, `t_chrome_reflect`, written with `reflecting` over the same selector and
 measured in the same position: it taps for nothing while the real card taps for
 the imprinted colour.
+
+## The command zone as a destination — `return_to_command_zone` — 903.9a / 400.3
+
+### Overview
+
+Hellkite Courser: *"When this creature enters, you may put a commander you own
+from the command zone onto the battlefield. It gains haste. **Return it to the
+command zone** at the beginning of the next end step."*
+
+Everything but the last clause was already sayable. `choose_permanents` bound
+over `{"zone": "command", "player": "you", "is_commander": true}` picks the
+commander — `ZONE_NAMES` is built from the `Zone` enum, so a command zone has
+always been searchable — then `put_onto_battlefield` and `grant_keyword:
+["haste"]` over that binding, all inside a `may`, with `delay` scheduling the
+moment. Only the return had nowhere to go.
+
+**No op in the engine reached a command zone from the battlefield.**
+`DESTINATIONS` in `effects/ops_cards.py` — the map the loader validates every
+written `destination` against — is hand, battlefield, graveyard, exile,
+library-top and library-bottom. `return_to_hand` hardwires `Zone.HAND` and takes
+no destination. `return_to_origin` skips any object whose zone is not `EXILE`
+and reads a record only an exile writes. `replace_deaths` and
+`replace_leaves_battlefield` do validate their destination against `ZONE_NAMES`,
+which contains `"command"` — but they are replacements armed on a permanent for
+when it dies or leaves, and neither fires at a named step.
+
+### Tier: A — a new op composing existing primitives
+
+One `@register`ed generator over `choose_objects` and `move_object`, one loader
+guard, one test module, the docs. No new decision kind, no new event, no new
+continuous effect, and nothing at all in the server or the frontend.
+
+### The shape
+
+```jsonc
+{ "op": "delay", "step": "end_step",
+  "text": "Return it to the command zone at the beginning of the next end step.",
+  "effects": [ { "op": "return_to_command_zone",
+                 "objects": { "binding": "the_commander" } } ] }
+```
+
+`objects` and nothing else, the way `return_to_hand` takes it. It is **not** a
+seventh entry in `DESTINATIONS`: every op that reads that map pulls its pool out
+of a library or a graveyard, so widening it would license "put the top card of
+your library into the command zone", a sentence no printed card says, while
+still not giving the Courser the battlefield departure it actually needed.
+
+`objects` is **required**. An omitted selector resolves to nothing, so the op
+would be a silent no-op — the delay fires, nothing moves, and a commander stands
+on the battlefield for the rest of the game with nothing to say so.
+
+### The trap: the spelling that works by accident
+
+`return_to_hand` over the same binding produces the right board today, and that
+is exactly what makes it dangerous. `zones.move_object` applies the commander
+zone-change replacement of rule 903.9a **unconditionally** — no choice is asked,
+as [rules-coverage](rules-coverage.md) records — so a commander told to go to a
+hand is redirected to the command zone and every assertion about the board
+passes.
+
+It is a different card written down, and it is wrong three ways:
+
+- it **claims the hand**, which is the sentence a reader and the authoring
+  residual gate both see;
+- it does nothing of the sort for a permanent that is **not** a commander, so
+  the same op could never serve the general case; and
+- it becomes wrong for commanders too the day 903.9a is modelled as the choice
+  the rule actually gives rather than the automatic redirect.
+
+### How it sits beside 903.9a
+
+They cannot double up, and the reason is structural rather than a guard in the
+op: `zones.COMMANDER_REPLACED_ZONES` is the frozenset of zones a commander is
+redirected **out of** — graveyard, exile, hand, library — and the command zone
+is not one of them. An object handed straight to `Zone.COMMAND` therefore walks
+past the replacement untouched: one move, one `ZONE_CHANGE`, one arrival,
+whether or not it is a commander. Widening that frozenset would turn every one
+of these returns into a redirect onto its own destination, so the test pins the
+set itself.
+
+`to_player` is the object's **owner**, which is both 903.9a's answer and 400.3's:
+a commander an opponent had stolen goes home to its own player.
+
+### Not modelled
+
+An object already in a command zone is left alone rather than moved onto itself
+— what a delayed return finds when the permanent died in the meantime and the
+replacement already put it away. A token sent there is moved like anything else
+and then ceases to exist in the next state-based pass (111.7), which is what
+`sba` already does for a token in any zone but the battlefield and the stack. A
+non-commander parked there is inert: `casting._cast_actions` offers a cast only
+for an object in that zone whose `is_commander` is true, so nothing becomes
+castable that was not before.
+
+### Cards unblocked
+
+One authored here: **Hellkite Courser**, whose printed line is the whole of this
+capability and the only gap record in the pool naming it. The op is the general
+answer for the "return it to the command zone" family — anything that lends a
+commander out and takes it back at a named moment.
+
+### Guarded by
+
+`tests/unit/test_command_zone.py`. The two halves that matter are deliberately
+separate: a **commander** going home through the Courser's full printed line
+(the case 903.9a would also have covered, so it proves nothing on its own), and
+a **Bear that is nobody's commander** sent to the command zone by the op alone —
+which the replacement would never do, and which is therefore the claim that the
+op names the zone rather than borrowing a redirect. Beside those: the hand is
+asserted intact on both, so the `return_to_hand` spelling fails; the delayed
+return is checked as scheduled and then as fired across a real turn boundary;
+the `may` is checked to schedule nothing when declined; an empty command zone is
+checked not to be an error, because the sandbox the authoring gates use gives
+player 0 no commander; the single `ZONE_CHANGE` is read off the event log;
+`COMMANDER_REPLACED_ZONES` is pinned; and the loader's refusal of a return with
+no `objects`.

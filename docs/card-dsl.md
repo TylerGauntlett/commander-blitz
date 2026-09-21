@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-122 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+123 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `grant_graveyard_cast` `cast_from_hand` `return_to_origin` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `grant_graveyard_cast` `cast_from_hand` `return_to_origin` `return_to_command_zone` |
 
 `cast_from_hand` is "you may cast a spell **from your hand** without paying its
 mana cost" — Electrodominance, Glamdring. The engine could already cast for free
@@ -7223,6 +7223,63 @@ would put a card from somebody's hand onto the board.
 
 `controller: "any"` on the pool, because exile is kept per owner and the card
 was taken from an opponent.
+
+## "Return it to the command zone" — `return_to_command_zone`
+
+Hellkite Courser — *"When this creature enters, you may put a commander you own
+from the command zone onto the battlefield. It gains haste. **Return it to the
+command zone** at the beginning of the next end step."*
+
+```jsonc
+{ "op": "may", "effects": [
+  { "op": "choose_permanents", "as": "the_commander",
+    "objects": { "zone": "command", "player": "you",
+                 "is_commander": true, "count": 1 } },
+  { "op": "put_onto_battlefield", "objects": { "binding": "the_commander" } },
+  { "op": "grant_keyword", "keywords": ["haste"],
+    "objects": { "binding": "the_commander" } },
+  { "op": "delay", "step": "end_step",
+    "text": "Return it to the command zone at the beginning of the next end step.",
+    "effects": [ { "op": "return_to_command_zone",
+                   "objects": { "binding": "the_commander" } } ] } ] }
+```
+
+Every other zone already had a mover and the command zone had none.
+`DESTINATIONS` — the map the loader validates every written `destination`
+against — is hand, battlefield, graveyard, exile and the two ends of a library,
+and `"command"` is still deliberately absent from it: every op that reads that
+map pulls its pool out of a library or a graveyard, and no printed card puts the
+top of a library into a command zone. What was missing is a **battlefield
+departure**, so this is a bare op beside `return_to_hand` rather than a seventh
+entry in a table it would be wrong in.
+
+`return_to_hand` over the same binding is the near miss and is **the dangerous
+one, because it produces the right board**. `move_object` applies the commander
+zone-change replacement of rule 903.9a unconditionally, so a commander told to
+go to a hand is redirected to the command zone and every assertion passes. It is
+a different card written down: it claims the hand, which is the sentence a
+reader and the residual gate both see; it does nothing of the sort for a
+permanent that is not a commander; and it becomes wrong for commanders too the
+day 903.9a is modelled as the choice the rule actually gives rather than the
+automatic redirect [recorded as a divergence](rules-coverage.md).
+
+The two **cannot** double up, and the reason is structural rather than a guard:
+`zones.COMMANDER_REPLACED_ZONES` is the four zones a commander is redirected
+*out of*, and the command zone is not one of them. An object handed straight to
+`Zone.COMMAND` walks past the replacement untouched — one move, one
+`ZONE_CHANGE`, one arrival — commander or not.
+
+`objects` is required: omitted, the selector resolves to nothing and the op is a
+*silent* no-op, so the Courser's delayed return would fire, move nothing, and
+leave a commander on the battlefield for ever.
+
+Owner rather than controller (903.9a, 400.3), so a commander an opponent had
+stolen goes home to its own player. An object already in a command zone is left
+alone rather than moved onto itself — what a delayed return finds when the
+permanent died in the meantime and the replacement already put it away. A token
+sent there is moved like anything else and then ceases to exist (111.7), and a
+non-commander parked there is inert: `casting._cast_actions` offers a cast only
+for an object in that zone whose `is_commander` is true.
 
 ## One choice across two zones — `union`
 
