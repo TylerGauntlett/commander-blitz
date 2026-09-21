@@ -1431,7 +1431,8 @@ this turn" is not one — the licence is the same one `tapped`, `attacking`,
 [layers-lite](adr/0001-layers-lite.md) can write, so reading it cannot make one
 static depend on another's output. An arrival snapshot is one step safer than
 those: it is written once, by `emit`, and is never rewritten at all. Power is
-the contrast and stays refused, because power is a pipeline *output*.
+the contrast — a pipeline *output* — and it is in the list on quite different
+terms; the section below says which.
 
 **Not `GameObject.entered_turn`**, which is the near miss and the field
 `summoning_sick` reads. `change_control` stamps it, because 302.6 makes a
@@ -1448,6 +1449,71 @@ is correct — 702.26c is not a zone change.
 Off the battlefield the key is refused at load time with the rest of the board
 state, and a `cost_reduction` **does** read it, because
 `costs._reduction_matches` honours every key the loader accepts.
+
+#### `power` / `toughness` — a *derived* characteristic, read at a fixed layer
+
+```jsonc
+// Temur Battlecrier: "During your turn, spells you cast cost {1} less to cast
+//  for each creature you control with power 4 or greater."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you" },
+  "condition": { "is_your_turn": true },
+  "amount": { "count": { "controller": "you", "types": ["Creature"],
+                         "power": { "op": ">=", "value": 4 } } } }
+
+// The `affects` position, and the whole ferocious family:
+// "Creatures you control with power 4 or greater get +1/+1."
+{ "kind": "static", "effect": "buff", "power": 1, "toughness": 1,
+  "affects": { "controller": "you", "types": ["Creature"],
+               "power": { "op": ">=", "value": 4 } } }
+```
+
+The clause is `{"op": ">=", "value": 4}` — the same spelling the effect-side
+selector and a trigger filter already take, down to the defaulted `">="` and
+the bare-integer shorthand (`"power": 4` is equality). `value` is a plain
+integer here and not a value expression: a filter tests one object and has no
+source permanent to measure an expression against.
+
+**This is the one derived characteristic in `static_filter_keys`, and it is in
+there under a restriction rather than as an exception.** `entered_this_turn`
+above got in by being an *input* no layer writes. Power is not: `set_pt` writes
+it at layer 3 and every anthem adds to it at layer 4, so a static filter reading
+`chars()` would read another static's output — which is the cycle
+[layers-lite](adr/0001-layers-lite.md) has no dependency analysis to resolve,
+and which does not merely give a wrong answer but fails to terminate, since
+`_matches` is called *from* `chars`.
+
+What a static filter reads instead is **base P/T**: the size the object starts
+the pipeline with — printed power and toughness, a copy exception's replacement
+of them (707.9b, eternalize's "except it's a 4/4"), bestow's 0/0 while attached,
+and the 2/2 shell of a face-down permanent (707.2). One function,
+`characteristics._base_pt`, and `_compute` opens by calling it, so the filter's
+answer cannot drift from the pipeline's starting point. Nothing a layer writes
+is visible: no `animate`, no `set_pt`, no anthem, no +1/+1 counter, no pump.
+
+*Simplification, and it is the layers-lite one again*: a 3/3 pumped to 4 power
+by an anthem is **not** "a creature with power 4 or greater" to a static. That
+is the same sentence `keywords` in this list already carries — a creature
+granted flying by Levitation does not have flying to a static's filter either —
+and the line is drawn at base P/T rather than at the looser "everything no
+static wrote" precisely to keep it one sentence. A +1/+1 counter *is* an input
+and could have been admitted safely; it is refused so that a counter is invisible
+to a static filter for size exactly as it is for keywords.
+
+The two readers of this filter language that run **outside** the characteristics
+pipeline are not restricted and must not be, because nothing is half-computed
+where they run: a trigger filter (`matches_card_filter`) has read derived power
+since Welcoming Vampire's "creatures you control with power 2 or less enter",
+and a `cost_reduction` counts derived power too, as it already counts derived
+types and keywords. So the same JSON clause counts an anthem-pumped creature in
+a card-level `cost_reduction` and does not count it in a static's `count`. That
+divergence is deliberate and is pinned by
+`tests/unit/test_static_power_filter.py`.
+
+Off the battlefield the key is refused at load time with the rest of the board
+state: a card in a graveyard has a printed P/T, but no printed line asks a
+counting filter about it yet, and `static_zone_filter_keys` stays the list of
+what a card outside the battlefield actually has.
 
 ### Counting the mana that was actually spent
 
@@ -6475,8 +6541,8 @@ The filter is the same language a static ability's `affects` speaks
 (`static_filter_keys`), read by `costs._reduction_matches`, plus `zone`. Every
 key in it is honoured — `types`, `not_types`, `subtypes`, `supertypes`,
 `colors`, `keywords`, `not_keywords`, `controller`, `owner`, `is_commander`,
-`is_token`, `tapped`, `attacking`, `blocking`, `entered_this_turn`, `self_only`,
-`exclude_self`.
+`is_token`, `tapped`, `attacking`, `blocking`, `entered_this_turn`, `power`,
+`toughness`, `self_only`, `exclude_self`.
 Takenuma's channel ability is the card that made that true: "{1} less for each
 **legendary** creature you control" wrote `supertypes` in a filter that read six
 keys and ignored the other fourteen, so it priced itself off every creature
@@ -6486,7 +6552,11 @@ board or in a gate would say so.
 
 Types, subtypes, supertypes, colours and keywords come from `chars` on the
 battlefield and from the printed face in the command zone or a graveyard, where
-no continuous effect applies.
+no continuous effect applies. So do `power` and `toughness`, and that is where
+this reader and a *static's* filter part company: a reduction is priced after
+every layer has applied, so it counts an anthem-pumped 3/3 as a 4-power
+creature, while `characteristics._matches` reads base P/T and does not. See
+[`power` / `toughness`](#power--toughness--a-derived-characteristic-read-at-a-fixed-layer).
 
 Three keys the static language has are **refused** here rather than
 implemented — `attached`, `paired`, `paired_with_source`. Each names a relation

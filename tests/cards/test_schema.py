@@ -219,7 +219,18 @@ class TestVocabularyIsChecked:
             compile_card(model)
 
     def test_static_filters_cannot_read_derived_characteristics(self):
-        """The layers-lite constraint is enforced at load time, not discovered at runtime."""
+        """The layers-lite constraint is enforced at load time, not discovered at runtime.
+
+        `power` used to be the exemplar here and no longer is: it is in
+        `STATIC_FILTER_KEYS`, under a restriction rather than as an exception --
+        what a static filter reads is `characteristics._base_pt`, the size
+        before any layer, so it still cannot see another static's output. The
+        restriction is measured in `tests/unit/test_static_power_filter.py`.
+
+        `modified` takes its place, and it is a key the effect-side selector
+        language has and the static one deliberately does not: the cards that
+        print the word grant something once rather than continuously.
+        """
         model = CardModel.model_validate(
             self._card(
                 types=["Enchantment"],
@@ -229,7 +240,7 @@ class TestVocabularyIsChecked:
                     {
                         "kind": "static",
                         "effect": "buff",
-                        "affects": {"controller": "you", "power": {"op": ">=", "value": 3}},
+                        "affects": {"controller": "you", "modified": True},
                         "power": {"const": 1},
                         "toughness": {"const": 1},
                     }

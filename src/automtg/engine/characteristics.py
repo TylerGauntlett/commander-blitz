@@ -23,6 +23,35 @@ object's own board state: controller, tapped, attacking, counters).  That remove
 all recursion and all dependency ordering, at the cost of not supporting cards
 whose anthem depends on another anthem's result.  The curated decks respect this.
 
+``power`` and ``toughness`` are the one *derived* characteristic a static filter
+may name, and they are admitted under a restriction rather than as an exception.
+What such a filter reads is :func:`_base_pt` -- the size an object **starts**
+this pipeline with: its printed P/T, a copy exception's replacement of it
+(707.9b), bestow's 0/0 while attached, and the 2/2 shell of a face-down
+permanent (707.2).  Nothing any layer below writes is visible: not an
+``animate``, not a ``set_pt``, not an anthem, not a +1/+1 counter, not a pump.
+Reading :func:`chars` instead is not a near miss but an unbounded recursion --
+:func:`_matches` is called *from* :func:`_compute`, and from
+:func:`_static_active` before :func:`_compute` has applied a single layer.
+
+The line sits at base P/T rather than at the looser "everything no static
+wrote", which would have been acyclic too: counters and until-end-of-turn pumps
+are pipeline inputs like any other, and a filter could have read them safely.
+It is the stricter line because it is the one this module already takes for
+keywords, and layer 2b spells out why -- a static's ``keywords`` filter does not
+see a flying counter either, and "making counters the one visible kind of grant
+would be the inconsistency".  Base P/T is that same rule pointed at size, and it
+costs nothing to keep true: :func:`_compute` *begins* by calling the very
+function the filter calls, so the two cannot drift.
+
+Two readers of the static filter language sit **outside** this pipeline and so
+read the real, fully derived power: :func:`automtg.engine.triggers.matches_card_filter`
+(Welcoming Vampire's "creatures you control with power 2 or less enter" must see
+the anthem, and has since it was written) and
+:func:`automtg.engine.cost_reduction._object_matches` (which already reads derived types
+and keywords, for the same reason).  Only the reader inside the pipeline is
+restricted, because only it can be asked the question halfway through.
+
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
 :func:`_battlefield_statics` -- *before* layer -1, so before any layer has
@@ -127,6 +156,48 @@ FACE_DOWN_CHARS = Characteristics(
 )
 
 
+def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
+    """The size an object *starts* the pipeline with, before any layer applies.
+
+    Printed P/T, plus the three things that change what the object **is** rather
+    than what has been done to it: a copy exception's base size (707.9b),
+    bestow's 0/0 while the Aura is attached (702.103b), and the 2/2 shell of a
+    face-down permanent (707.2).  The face-down case is here and not only in
+    `_compute` because a static filter asking "power 4 or greater" about a
+    manifested card must read the shell, not the hidden card -- anything else is
+    a filter that answers off information no player can see.
+
+    Called from exactly two places, and that is the reason it exists. `_compute`
+    starts here and then layers animation, `set_pt`, anthems, counters and pumps
+    on top of it; `_matches` stops here, because a static filter that could see
+    any of those layers could see another static's output, and the fixed order
+    has no way to resolve that.  One function, so the filter's idea of where a
+    creature's size begins cannot drift from the pipeline's.
+    """
+    if obj.face_down and obj.on_battlefield:
+        return FACE_DOWN_CHARS.power, FACE_DOWN_CHARS.toughness
+    card = state.card_of(obj)
+    power = card.power or 0
+    toughness = card.toughness or 0
+    if obj.copy_overrides:
+        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The base
+        # size, before every layer, so counters and anthems land on top of the
+        # 4/4 exactly as they would on a printed one (707.9b: the exception
+        # becomes the copiable value).
+        if (base_power := obj.copy_overrides.get("power")) is not None:
+            power = int(base_power)
+        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+            toughness = int(base_toughness)
+    if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+        # Bestow (702.103b): while it is attached it is not a creature, so it
+        # has no P/T of its own. The other half of the keyword -- the type line
+        # it takes on -- stays in `_compute`, which is the reader that has types
+        # to change; the conditions are written identically in both so that they
+        # cannot part company.
+        power = toughness = 0
+    return power, toughness
+
+
 def _compute(state: GameState, oid: int) -> Characteristics:
     obj = state.objects.get(oid)
     if obj is None:
@@ -147,8 +218,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         # rather than replacing with it.
         return FACE_DOWN_CHARS
     card = state.card_of(obj)
-    power = card.power or 0
-    toughness = card.toughness or 0
+    # The base size, and the same call a static filter makes -- see `_base_pt`.
+    # Everything below layers on top of it.
+    power, toughness = _base_pt(state, obj)
     types = set(card.types)
     subtypes = set(card.subtypes)
     supertypes = set(card.supertypes)
@@ -195,14 +267,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # controller, and the ability that was meant to double a legendary
             # Dragon destroys one instead.
             supertypes.difference_update(dropped_supers)
-        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The
-        # base size, before every layer, so counters and anthems land on top of
-        # the 4/4 exactly as they would on a printed one (707.9b: the exception
-        # becomes the copiable value).
-        if (base_power := obj.copy_overrides.get("power")) is not None:
-            power = int(base_power)
-        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
-            toughness = int(base_toughness)
+        # The base size an exception replaces -- "…except it's a **4/4** black
+        # Zombie" -- is applied by `_base_pt` above, beside the printed P/T it
+        # overrides and where a static filter can read the same answer.
 
     # Layer 3, text-changing effects (613.1c): "replacing all instances of one
     # creature type with Vampire". New Blood.
@@ -241,7 +308,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         types.discard("Creature")
         types.add("Enchantment")
         subtypes.add("Aura")
-        power = toughness = 0
+        # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
+        # filter reads the same non-creature size this line does.
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -1025,6 +1093,32 @@ def _compare(op: str, left: int, right: int) -> bool:
         raise DslError(f"unknown comparison operator {op!r}") from None
 
 
+def compare_pt(value: int, spec: Any) -> bool:
+    """A filter's ``power``/``toughness`` clause: ``{"op": ">=", "value": 4}``.
+
+    The same spelling `selectors._compare` and `triggers._compare` already take,
+    down to the defaulted ``">="`` and the bare-integer shorthand for equality,
+    because the three are one printed clause asked in three places and a static
+    filter with a dialect of its own is one more thing to remember wrongly.
+
+    ``value`` is a plain integer rather than a value expression: the static
+    value language needs a source permanent to measure against, and this is a
+    per-object test that has only the object.  The loader enforces that, so a
+    non-integer reaching here means the two languages have drifted.
+
+    Exported unmangled because `cost_reduction._object_matches` -- the reader of
+    this key that runs *outside* the pipeline, against derived characteristics
+    -- has to spell the comparison the same way this one does.
+    """
+    if isinstance(spec, bool):
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    if isinstance(spec, int):
+        return value == spec
+    if not isinstance(spec, Mapping):
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    return _compare(str(spec.get("op", ">=")), value, int(spec.get("value", 0)))
+
+
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     """Evaluate the restricted value language allowed inside static abilities.
 
@@ -1566,6 +1660,21 @@ def _matches(
         return False
 
     if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+        return False
+
+    # "…each creature you control **with power 4 or greater**" (Temur
+    # Battlecrier), and the rest of the ferocious family. The one derived
+    # characteristic this filter language may name, read at `_base_pt` -- the
+    # size before any layer -- and never through `chars`, which this function is
+    # called from and would recurse into. The module docstring argues the
+    # restriction; `_base_pt` is the whole of it.
+    if (spec := selector.get("power")) is not None and not compare_pt(
+        _base_pt(state, obj)[0], spec
+    ):
+        return False
+    if (spec := selector.get("toughness")) is not None and not compare_pt(
+        _base_pt(state, obj)[1], spec
+    ):
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):

@@ -22,7 +22,10 @@ have never been the only one -- `tapped`, `attacking`, `is_token`, `owner` and
 that no layer of the pipeline writes them. An arrival snapshot is one step
 safer still: `TurnLedger.permanents_entered` is written once, by `GameState.
 emit` folding ENTERS_BATTLEFIELD, and is not rewritten at all. Power is the
-contrast, and it is refused because it is an *output* -- four layers rewrite it.
+contrast -- four layers rewrite it, so it could never be let in on these terms.
+It was let in later on different ones: `power` in `STATIC_FILTER_KEYS` names a
+*fixed, earlier* reading of the number (`characteristics._base_pt`) that no
+static can move. See `tests/unit/test_static_power_filter.py`.
 
 **Why it is not the value leaf that already existed.** `permanents_entered_this_
 turn` sums arrivals across a filter, and an `EnteredPermanent` snapshot carries

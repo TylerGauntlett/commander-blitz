@@ -681,14 +681,46 @@ STATIC_FILTER_KEYS = frozenset(
         # ENTERS_BATTLEFIELD, and no layer of the characteristics pipeline can
         # write to it; so it is a pipeline **input** exactly as `owner` and
         # `controller` are, and reading it cannot make one static depend on
-        # another's output. Power is the contrast and is refused for the
-        # opposite reason: it is an *output*, rewritten by four of the layers.
+        # another's output. Power is the contrast: it is an *output*, rewritten
+        # by four of the layers, so it could never be let in on these terms --
+        # and the entry below lets it in on quite different ones.
         #
         # "Printed characteristics" was always shorthand for "printed
         # characteristics plus board state no layer touches" -- `tapped`,
         # `attacking`, `is_token`, `owner` are all already here on that footing.
         # This is that same licence pointed at the turn ledger.
         "entered_this_turn",
+        # "…for each creature you control **with power 4 or greater**" (Temur
+        # Battlecrier), and the whole ferocious family beside it -- "as long as
+        # you control a creature with power 4 or greater", "creatures with
+        # toughness 2 or less". The only **derived** characteristic in this
+        # list, and it is here under a restriction rather than as an exception.
+        #
+        # `entered_this_turn` one entry up got in by being an *input* no layer
+        # writes; power cannot get in on those terms, because four layers
+        # rewrite it and a static that read another static's P/T output is
+        # exactly the cycle `check_static_constraints` exists to forbid. The
+        # answer is not to widen the rule but to name a **fixed, earlier**
+        # reading of power that no static can move:
+        # `characteristics._base_pt` -- printed P/T, a copy exception's
+        # replacement of it (707.9b), bestow's 0/0, and a face-down permanent's
+        # 2/2 (707.2). No `animate`, no `set_pt`, no anthem, no +1/+1 counter,
+        # no pump. The fixed order stays exactly as acyclic as it was, and
+        # `_compute` opens by calling the same function, so the filter's answer
+        # cannot drift from the pipeline's starting point.
+        #
+        # The cost is one sentence, and it is a sentence `keywords` in this list
+        # already carries: a 3/3 pumped to 4 power by an anthem is not "a
+        # creature with power 4 or greater" to a static, exactly as a creature
+        # granted flying by Levitation does not have flying to one. The two
+        # readers of this language that run *outside* the pipeline --
+        # `triggers.matches_card_filter` and `cost_reduction._object_matches` --
+        # read the fully derived number, as they already do for types and
+        # keywords.
+        "power",
+        # The twin. One reader, one restriction, one set of tests: splitting
+        # them would be two spellings of one clause and one of them untested.
+        "toughness",
     }
 )
 

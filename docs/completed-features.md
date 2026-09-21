@@ -14245,7 +14245,10 @@ An arrival snapshot is one step safer than any of those. `TurnLedger.
 permanents_entered` is written once, by `GameState.emit` folding
 ENTERS_BATTLEFIELD, and is never rewritten at all; the same argument already
 admitted `permanents_entered_this_turn` to `STATIC_VALUE_KEYS`. Power is the
-contrast and stays refused, because four layers rewrite it.
+contrast, because four layers rewrite it -- it could never be admitted on these
+terms, and when it was admitted later it was on quite different ones: a *fixed,
+earlier* reading of it that no static can move. See "A static that asks how big
+a creature is" below.
 
 ### Not `GameObject.entered_turn`, and not the value leaf
 
@@ -14871,3 +14874,127 @@ in the command zone, which is the inverse failure; emblem statics reaching both
 the characteristic layers and the player-wide walk, and reaching only the seat
 that got the emblem; and the loader admitting `command`, still refusing `hand`,
 and still refusing `exclude_self` where no price could read it.
+
+## A static that asks how big a creature is — `power` / `toughness` in a static filter — 613
+
+"During your turn, spells you cast cost {1} less to cast for each creature you
+control with power 4 or greater." — **Temur Battlecrier**, whose only printed
+line that was. Behind it the whole ferocious family: "as long as you control a
+creature with power 4 or greater", "creatures you control with power 4 or
+greater get +1/+1", "creatures with toughness 2 or less get…".
+
+Everything but the counting filter was already sayable — a `spell_cost_reduction`
+static with `affects_spells: {"controller": "you"}`, a
+`condition: {"is_your_turn": true}` that `_battlefield_statics` honours through
+`_static_active`, and an `amount` that `_static_value` already dispatches to
+`_count_matching`. `power` was simply not in `STATIC_FILTER_KEYS`, so
+`_validate_static_count_filter` refused the card at load time.
+
+### Why it was excluded, and why that reason was real
+
+Every other key in that list is a pipeline **input**: printed types, colours and
+mana cost, or board state no layer writes — `tapped`, `owner`, `is_token`,
+`attacking`, and `entered_this_turn`, which got in one lane earlier precisely
+because an arrival snapshot is written once and never rewritten. Power is the
+opposite case and that lane said so: `set_pt` writes it at layer 3 and every
+anthem adds to it at layer 4, so a static filter reading power reads another
+static's *output* — the cycle `check_static_constraints` exists to forbid and
+that layers-lite has no dependency analysis to resolve.
+
+It is worse than imprecision. `_matches` is called **from** `_compute`, and again
+from `_static_active` before `_compute` has applied a single layer, so a
+`chars()` read inside it is `chars → _matches → chars`: an unbounded recursion on
+the first anthem whose filter mentions power.
+
+### The restriction that admits it
+
+Not a widening of the rule but a *fixed, earlier reading* of the number, which no
+static can move. `characteristics._base_pt` is the size an object **starts** the
+pipeline with:
+
+- its printed power and toughness;
+- a copy exception's replacement of them — eternalize's "except it's a 4/4"
+  (707.9b: the exception becomes the copiable value);
+- bestow's 0/0 while the Aura is attached (702.103b);
+- the 2/2 shell of a face-down permanent (707.2), which is in `_base_pt` and not
+  only in `_compute` because a filter asking "power 4 or greater" about a
+  manifested card must read the shell or answer off information no player can
+  see.
+
+Nothing a layer writes is visible: no `animate`, no `set_pt`, no anthem, no
++1/+1 counter, no pump. So the fixed order stays exactly as acyclic as it was.
+And there is no second copy of the rule to drift: `_compute` **opens** by calling
+`_base_pt`, so the filter's idea of where a creature's size begins is the
+pipeline's idea of it, by construction.
+
+### Why base P/T and not "everything no static wrote"
+
+The looser line was available and would also have been acyclic — counters and
+until-end-of-turn pumps are pipeline inputs like `tapped` or `owner`, and a
+filter could have read them safely. It is refused to keep **one** sentence rather
+than two. `_compute`'s layer 2b already settled the question for keywords: a
+static's `keywords` filter does not see a flying counter, and "making counters
+the one visible kind of grant would be the inconsistency". Base P/T is that same
+rule pointed at size.
+
+The price, stated plainly: a 3/3 pumped to 4 power by an anthem is **not** "a
+creature with power 4 or greater" to a static — exactly as a creature granted
+flying by Levitation does not have flying to one. That is the layers-lite
+simplification this file has recorded a dozen times, applied to the one
+characteristic where it is most visible.
+
+### The two readers outside the pipeline are not restricted
+
+A key the loader accepts and a reader ignores is a silently wider filter, so all
+three readers of this language honour it — and two of them are not inside the
+characteristics pipeline, so nothing is half-computed where they run and
+restricting them would throw away accuracy to solve a problem they do not have:
+
+- `triggers.matches_card_filter` has read **derived** power since Welcoming
+  Vampire ("creatures you control with power 2 or less enter" must see the
+  anthem), with the same `{"op": …, "value": …}` spelling — which is why the
+  static filter took that spelling rather than inventing a fourth dialect;
+- `cost_reduction._object_matches` reads derived power too, beside the derived
+  types and keywords it already read, and beside `total_power` in the same
+  module.
+
+So one JSON clause counts an anthem-pumped creature in a card-level
+`cost_reduction` and does not count it in a static's `count`. That divergence is
+deliberate, is the one `keywords` already has between those two functions, and is
+measured rather than asserted: `t_spf_discounter` is kept live for it.
+
+### The loader
+
+`power` and `toughness` join `STATIC_FILTER_KEYS` (and so
+`STATIC_COUNT_FILTER_KEYS`), and a key validated by key set alone needs its
+*shape* checked too, so `walk._check_pt_keys` runs wherever `_check_mana_cost_key`
+already did. `{"op": ">=", "value": 4}`, or a bare integer meaning equality. The
+near misses it refuses are the ones that would load and widen: `{"amount": 4}`
+would default `value` to 0 and match every creature on the board, `">=4"` would
+blow up at match time instead of load time, and `{"const": 4}` is a value
+expression, which a per-object filter has no source permanent to evaluate.
+
+Not admitted off the battlefield: `STATIC_ZONE_FILTER_KEYS` stays the list of
+what a card in a graveyard or a hand actually has, and no printed line asks a
+counting filter about a graveyard card's printed power yet.
+
+### Cards unblocked
+
+One authored here: **Temur Battlecrier**, the gap record's own witness, whose
+gate-5 assertion is available at last because it is a 4/3 and therefore satisfies
+its own filter — `battlefield_count` 33 with the static live. The rest of the
+ferocious family is now expressible and waits on the next `/author-cards`.
+
+### Guarded by
+
+`tests/unit/test_static_power_filter.py`, over
+`tests/data/static_power_filter.cards.json`. The card itself counted on four
+boards, including the two failures the gap record predicted — a 2/2 and a 3/3
+not counting, where dropping the power clause would have discounted {3}, and the
+opponent's two 4/4s not counting. `t_spf_lord` is an anthem whose **own filter
+reads power**, so the recursion claim is run rather than argued, and its pump is
+asserted not to bootstrap a second time across a `bump_chars`. The restriction's
+price measured in both directions on one board: `chars` says 4 and the static
+says no, for an anthem and for a +1/+1 counter. `_base_pt` called directly
+against `chars` on a bare board, under an anthem, and on a face-down permanent.
+The toughness twin. And the load-time refusals of every near-miss shape.

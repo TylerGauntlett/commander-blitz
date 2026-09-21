@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import CardDef, Cost
 from .characteristics import (
     chars,
+    compare_pt,
     spell_cost_reduction,
 )
 
@@ -266,10 +267,12 @@ def _object_matches(
         c = chars(state, oid)
         types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
         keywords, colors = c.keywords, c.colors
+        power, toughness = c.power, c.toughness
     else:
         card = state.card_of(obj)
         types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
         keywords, colors = card.keywords, card.colors
+        power, toughness = card.power or 0, card.toughness or 0
     if (want := filt.get("types")) and not set(want).issubset(types):
         return False
     if (want := filt.get("not_types")) and set(want) & set(types):
@@ -289,6 +292,21 @@ def _object_matches(
 
         if not has_printed_cost(state, oid, want):
             return False
+    # "…costs {1} less for each creature you control with power 4 or greater."
+    # Honoured here because a reduction filter is validated against
+    # `STATIC_FILTER_KEYS`, and a key the loader accepts and this function does
+    # not read prices the spell off a clause that matched the whole board.
+    #
+    # **Derived**, off `chars`, exactly like the types and keywords above and
+    # exactly like `total_power` in this same module: pricing happens outside
+    # the characteristics pipeline, so every layer has already applied and there
+    # is nothing half-computed to read. `characteristics._matches` is restricted
+    # to base P/T because it runs *inside* that pipeline and cannot be; the
+    # divergence between the two readers is the one `keywords` already has.
+    if (want := filt.get("power")) is not None and not compare_pt(power, want):
+        return False
+    if (want := filt.get("toughness")) is not None and not compare_pt(toughness, want):
+        return False
     # Board state, and only the three kinds of it a reduction can see. Each
     # is a pipeline *input* -- nothing in the characteristics layer writes
     # a tapped flag, a token flag or a combat assignment -- so reading them
