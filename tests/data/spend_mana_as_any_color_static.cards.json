@@ -3,7 +3,7 @@
   "cards": [
     {
       "id": "t_orrery_static",
-      "name": "Test Orrery",
+      "name": "Test Orrery Static",
       "oracle_text": "You may spend mana as though it were mana of any color.",
       "mana_cost": "{0}",
       "types": [
