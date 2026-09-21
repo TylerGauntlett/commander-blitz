@@ -14289,3 +14289,87 @@ permanent but not an opponent's new creature; `t_ett_gratuitous`, the
 clause-dropped approximation the gap record refused, kept live so the temporal
 tests are measuring something; and the load-time refusal of the key in a
 graveyard-scoped counting filter.
+
+## `targeted_by` — "becomes the target of **a spell**" — 603.2d / 706.10
+
+### Overview
+
+Goldspan Dragon: *"Whenever this creature attacks or **becomes the target of a
+spell**, create a Treasure token."* Heroic prints the same half ("whenever you
+cast a spell that targets this creature"), and so does every "whenever this
+creature becomes the target of a spell you control" line behind it.
+
+The `becomes_target` event shipped with heroic and ward and fires for **abilities
+as well as spells** — which is exactly right for its shipped users, whose printed
+text is "a spell **or ability** an opponent controls", and exactly wrong here. No
+key on `TriggerSpec` could tell the two apart, so the only trigger a card could
+write was the wide one: a Dragon written with it mints a Treasure off an
+opponent's tapper, off a fight ability, and off its own controller's equip. A
+strictly larger card, so no partial answer was written and the line was filed.
+
+### Tier: A — one spec field and one comparison
+
+No new op, decision or event. `TriggerModel.targeted_by`, a loader guard, and a
+check in `triggers._matches` beside `counter` and `mana_ability`.
+
+**The payload was already there.** `stack.announce_targets` has put `is_spell` on
+every `BECAME_TARGET` it fires since the event existed — for the object half and
+the player half, and at all four push sites. Nothing read it.
+
+### Why not a new event type
+
+A second `EventType` would have to be fired from the same four sites, narrated
+twice in the frontend (Tier D is the only change that forces frontend work), and
+would still leave ward wanting the union of both. The distinction is a property
+of the *thing that caused* the event, which is what a restriction on the trigger
+is for — the same argument `mana_ability` makes for "…if it isn't a mana
+ability", and for the same reason: `filter` reads the trigger's **subject**,
+which here is the permanent being targeted, `controller` asks *whose* spell or
+ability it was, and a `condition` reads `event_bindings`, which copies only
+`EVENT_BINDING_KEYS` — the `sid` is carried and the kind is not.
+
+Omitting the key stays the **unrestricted** reading, because that is ward's
+printed sentence and `carddef.ward_ability` writes exactly that trigger. The
+other arm, `"ability"`, is the same clause read the other way.
+
+### The near miss, and why it is not equivalent
+
+A `spell_cast` trigger with an intervening-if of `{"exists": {"binding":
+"spell_targets", "self_only": true, "zone": "battlefield"}}` — Orvar, the
+All-Form's shape. It is wrong twice, and both are ordinary lines of play:
+
+1. **It misses a copy.** Rule 706.10 puts a copy on the stack without casting
+   it, so `put_copy_on_stack` fires `BECAME_TARGET` and no `SPELL_CAST` — and
+   `spell_targets` is written by `Game._cast`, which never ran.
+2. **Rule 603.4 re-asks an intervening-if on resolution.** Kill the Dragon in
+   response and the condition finds nothing on the battlefield, so the Treasure
+   is silently skipped — the exact interaction the printed card exists for.
+
+Both are kept live in the test as `t_orvar_dragon` and measured against the
+trigger in the same positions.
+
+### Cards unblocked
+
+One authored here: **Goldspan Dragon**, whose blocked line is split across two
+triggered abilities sharing the same `text` — an `attacks` trigger and this one
+— which is the established spelling for a printed "attacks **or**" line. Its
+third line needed nothing new: a `grant_ability` static over
+`{"controller": "you", "subtypes": ["Treasure"]}`, pointing at a
+`grantable_abilities` mana ability whose five modes add `{W}{W}` … `{G}{G}`,
+since `_sum_mana` has always summed a multi-symbol string. Heroic and the rest
+of the "becomes the target of a spell you control" family are now expressible and
+wait on the next `/author-cards`.
+
+### Guarded by
+
+`tests/unit/test_becomes_target_of_spell.py`, over
+`tests/data/becomes_target_of_spell.cards.json`. Your spell and an opponent's
+both firing it; a spell aimed elsewhere not; a **copy** firing it a second time;
+your own activated ability not firing it, with the unclaused spelling kept live
+in the same position and firing — the strictly larger card, measured rather than
+described. Both failures of the near miss in the positions that produce them: one
+Treasure where the trigger makes two off a copy, and none where the trigger keeps
+its own after the Dragon is swept away in response. The `is_spell` flag read
+straight off the event in both directions, so the clause and the payload cannot
+drift. Ward's trigger asserted to leave the key `None`. And the load-time
+refusals — the clause on any other event, and an unknown value.

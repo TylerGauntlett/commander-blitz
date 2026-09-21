@@ -2877,7 +2877,8 @@ the ability's own controller, so that key can only ever ask about you. See
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
-    "mana_ability": false            // `ability_activated` only: exclude mana abilities
+    "mana_ability": false,           // `ability_activated` only: exclude mana abilities
+    "targeted_by": "spell"           // `becomes_target` only: a spell, not an ability
   },
   "effects": [ ... ]
 }
@@ -3420,6 +3421,39 @@ ability. The spell it means is the one that just targeted this permanent, which
 the trigger's bindings already carried; written as a `target` instead, the ward
 creature's controller would get to point it at a different spell. The loader
 refuses a card carrying both.
+
+`targeted_by` is **"a spell", as against ward's "a spell or ability"** — Goldspan
+Dragon's "whenever this creature attacks or becomes the target of a spell". The
+clause omitted is the wide reading, which is ward's and heroic's and every
+shipped user's, so leaving it off stays a real sentence rather than a default:
+
+```jsonc
+{ "event": "becomes_target", "source": "self", "controller": "any",
+  "targeted_by": "spell" }     // "spell" | "ability" | omitted, meaning both
+```
+
+It is a restriction on the trigger because nothing else can reach it. `filter` is
+matched against the event's **subject**, which here is the permanent *being*
+targeted, so it can only ask what the Dragon is; `controller` asks *whose* spell
+or ability it was, which is the heroic-versus-ward axis and not this one; and a
+`condition` reads `event_bindings`, which copies only `EVENT_BINDING_KEYS` — the
+`sid` is there and the kind is not. So the only trigger a card could write was
+the wide one, and a Dragon written with it mints a Treasure off an opponent's
+tapper, off a fight ability, and off its own controller's equip.
+
+`announce_targets` has tagged every `BECAME_TARGET` with the answer since the
+event existed, on both the object and the player half and at all four push sites.
+**`put_copy_on_stack` is one of them**, which is the half a condition cannot
+imitate: rule 706.10 puts a copy on the stack without casting it, so a copy is a
+spell here and fires the trigger again, while `spell_cast` never hears of it.
+
+The near miss is a `spell_cast` trigger with an intervening-if of
+`{"exists": {"binding": "spell_targets", "self_only": true, "zone":
+"battlefield"}}` — Orvar's shape — and it is wrong twice. It misses that copy,
+and it is an intervening-if, which rule 603.4 re-asks on resolution: remove the
+Dragon in response and the condition finds nothing on the battlefield, so the
+Treasure is silently skipped. That is the exact interaction the printed card
+exists for.
 
 **`dealt_damage` is about the creature being hurt** — enrage, "whenever this
 creature is dealt damage". Sugar over `DAMAGE_DEALT` in the sense `creature_dies`

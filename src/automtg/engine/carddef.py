@@ -480,6 +480,27 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
+    #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
+    #: Dragon), as against ward's "a spell or ability", which is the unclaused
+    #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities
+    #: alone, and ``None`` on both.
+    #:
+    #: A restriction rather than a ``filter`` or a ``condition``, because
+    #: neither can reach it.  ``filter`` is matched against the trigger's
+    #: *subject*, which for this event is the permanent being targeted -- so it
+    #: can only ask what the Dragon is, never what aimed at it.  ``controller``
+    #: asks *whose* spell or ability it was, which is the other axis entirely.
+    #: And ``condition`` reads `event_bindings`, which copies only
+    #: EVENT_BINDING_KEYS -- carrying the ``sid`` but not this.
+    #:
+    #: `stack.announce_targets` has put ``is_spell`` on every BECAME_TARGET
+    #: event since the event existed, for both the object and the player half
+    #: and at all four push sites (`put_copy_on_stack` included, so a **copy**
+    #: of a spell is a spell here -- 706.10 puts one on the stack without
+    #: casting it).  Nothing read the flag, so the only trigger that could be
+    #: written also fired off an opponent's tapper, a fight ability, and your
+    #: own equip.
+    targeted_by: str | None = None
     #: ``draw`` and ``spell_cast`` only: "whenever you draw your **second**
     #: card each turn", "whenever an opponent casts their **second** spell each
     #: turn".  The ordinal the draw or cast must have had for its player this

@@ -1898,6 +1898,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
+        if model.trigger.targeted_by is not None and model.trigger.event != "becomes_target":
+            # Same reasoning as `mana_ability` above: only BECAME_TARGET is
+            # tagged with what did the targeting, so anywhere else this would
+            # read as "of a spell" and be a restriction that never applies --
+            # the inert-card failure, and the quiet one.
+            raise DslError(
+                f"{where}: 'targeted_by' only means anything on a becomes_target "
+                f"trigger, not on {model.trigger.event!r}"
+            )
+
         if model.trigger.nth is not None and model.trigger.event not in ("draw", "spell_cast"):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`
             # and `spell_cast` carry an ordinal, so accepting it elsewhere would
@@ -1943,6 +1953,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
             mana_ability=model.trigger.mana_ability,
+            targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
             batched=model.trigger.batched,

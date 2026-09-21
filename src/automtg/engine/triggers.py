@@ -995,6 +995,22 @@ def _matches(
     ) is not spec.mana_ability:
         return False
 
+    # "…becomes the target of **a spell**" -- Goldspan Dragon, as against ward's
+    # "a spell or ability", which is this clause omitted. `announce_targets` has
+    # tagged every BECAME_TARGET with `is_spell` since the event existed and
+    # nothing read it, so the only trigger a card could write fired off an
+    # opponent's tapper, a fight ability and its own controller's equip.
+    #
+    # Read as a presence rather than a truthiness: a `spell` clause meeting an
+    # event that forgot to say would otherwise pass, which is the wide
+    # direction, and one that forgot to say is exactly the bug this guards.
+    if spec.targeted_by is not None:
+        flag = event.data.get("is_spell")
+        if flag is None:
+            return False
+        if (spec.targeted_by == "spell") is not bool(flag):
+            return False
+
     # "Whenever you draw your **second** card each turn." An ordinal is a fact
     # about the draw that just happened, and `draw_cards` writes it onto the
     # event, so it is answered here -- once, where the ability queues -- and
