@@ -253172,12 +253172,12 @@
     },
     "Smuggler's Surprise": {
       "edhrec_rank": 1588,
-      "gate": "template",
+      "gate": null,
       "name": "Smuggler's Surprise",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "41b76d0d-da55-44ec-add8-61696ee40d21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sméagol, Helpful Guide": {

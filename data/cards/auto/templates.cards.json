@@ -96478,6 +96478,114 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "smuggler_s_surprise",
+      "mana_cost": "{G}",
+      "name": "Smuggler's Surprise",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Mill four cards. You may put up to two creature and/or land cards from among the milled cards into your hand.\n+ {4}{G} — You may put up to two creature cards from your hand onto the battlefield.\n+ {1} — Creatures you control with power 4 or greater gain hexproof and indestructible until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "binding": "milled",
+                "count": 2,
+                "optional": true
+              },
+              "op": "return_from_graveyard"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "you",
+                "count": 2,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "keywords": [
+                "hexproof",
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{4}{G}"
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
