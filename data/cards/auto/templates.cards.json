@@ -106914,6 +106914,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "power": {
+                "op": ">=",
+                "value": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "During your turn, spells you cast cost {1} less to cast for each creature you control with power 4 or greater."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "temur_battlecrier",
+      "mana_cost": "{G}{U}{R}",
+      "name": "Temur Battlecrier",
+      "oracle_text": "During your turn, spells you cast cost {1} less to cast for each creature you control with power 4 or greater.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Ranger"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -108564,6 +108615,117 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "battlefield",
+            "command"
+          ],
+          "affects_spells": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Dragon"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Eminence — As long as The Ur-Dragon is in the command zone or on the battlefield, other Dragon spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "attackers",
+                  "subtypes": [
+                    "Dragon"
+                  ]
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Battle",
+                      "Creature",
+                      "Enchantment",
+                      "Land",
+                      "Planeswalker"
+                    ],
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a permanent card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Dragons you control attack, draw that many cards, then you may put a permanent card from your hand onto the battlefield.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Dragon"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "the_ur_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{U}{B}{R}{G}",
+      "name": "The Ur-Dragon",
+      "oracle_text": "Eminence — As long as The Ur-Dragon is in the command zone or on the battlefield, other Dragon spells you cast cost {1} less to cast.\nFlying\nWhenever one or more Dragons you control attack, draw that many cards, then you may put a permanent card from your hand onto the battlefield.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Avatar"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 10,
+      "types": [
+        "Creature"
       ]
     },
     {

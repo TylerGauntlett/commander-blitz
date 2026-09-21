@@ -277682,12 +277682,12 @@
     },
     "Temur Battlecrier": {
       "edhrec_rank": 2336,
-      "gate": "template",
+      "gate": null,
       "name": "Temur Battlecrier",
-      "reason": "no template for: During your turn, spells you cast cost {1} less to cast for each creature you control with",
+      "reason": "",
       "scryfall_id": "1292af13-87dd-46d4-b49b-f27baae99e7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Temur Charger": {
@@ -282732,12 +282732,12 @@
     },
     "The Ur-Dragon": {
       "edhrec_rank": 2599,
-      "gate": "template",
+      "gate": null,
       "name": "The Ur-Dragon",
-      "reason": "no template for: Eminence — As long as is in the command zone or on the battlefield, other Dragon spells yo",
+      "reason": "",
       "scryfall_id": "10d42b35-844f-4a64-9981-c6118d45e826",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Ur-Sphinx": {

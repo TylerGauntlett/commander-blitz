@@ -9573,6 +9573,10 @@
     },
     "zone": "battlefield"
   },
+  "temur_battlecrier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tenement_crasher": {
     "zone": "battlefield"
   },
@@ -9675,6 +9679,10 @@
       "amount": 3,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "the_ur_dragon": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_warring_triad": {
