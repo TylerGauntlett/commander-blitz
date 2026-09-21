@@ -15112,3 +15112,120 @@ identity and by label, the paid one actually taking six lands, a non-Dragon with
 the identical mana cost untouched, and an opponent's copy granting you nothing.
 Plus the standing half — a Dragon drawn afterwards covered, two cast free in one
 turn, and the permission gone the moment the enchantment is destroyed.
+
+## `greatest_count` — "the greatest number of artifacts **an opponent** controls" — 601.2f
+
+### Overview
+
+Cavern-Hoard Dragon: *"This spell costs {X} less to cast, where X is the greatest
+number of artifacts an opponent controls."*
+
+The reduction language already had five arithmetic shapes and every one of them
+reads a single flat pool: `count` and `total_power` and `total_mana_value` sum
+it, `greatest_mana_value` maximises a *characteristic* over it, and `amount` is a
+flat number gated on a condition. What none of them could say is "the greatest,
+**per player**" — so `greatest_count` is a sixth key, standing to `count`
+exactly as `greatest_mana_value` stands to `total_mana_value`, one axis over.
+
+```jsonc
+"cost_reduction": {
+  "greatest_count": { "controller": "opponent", "types": ["Artifact"] }
+}
+```
+
+`cost_reduction.reduction_amount` tallies `_reduction_matches` by each matched
+object's **controller** and returns the largest tally, `default=0`.
+
+### Why `count` would not do, and why that is not obvious
+
+`count` is the near miss and it is a **sum**: `sum(1 for _ in
+_reduction_matches(...))`. A reduction filter's `controller: "opponent"` names
+every opponent **at once** — the filter language can say "not you", never "them,
+separately", which is precisely what `effects.values._counts_per_player` says in
+its own docstring about the effect-side `max_count_of`. So:
+
+| board | `count` | `greatest_count` | printed |
+| --- | --- | --- | --- |
+| one opponent with two artifacts | 2 | 2 | {2} |
+| three opponents with two each | 6 | 2 | {2} |
+
+**The two readings coincide at two players**, because one opponent is one group
+and the maximum of one number is that number. The card-authoring sandbox *is* a
+two-player game, so Cavern-Hoard Dragon written with `count` prices itself
+correctly, passes all six gates and ships — wrong only at a pod, where a Dragon
+printed at {7}{R}{R} would cast for {3}{R}{R} instead of {5}{R}{R} off three
+opponents holding two artifacts each. That silence is the whole reason this got
+its own key rather than a filter.
+
+### The two places the arithmetic already existed, neither reachable from a price
+
+- `effects.values._counts_per_player`, behind the `max_count_of` value leaf. It
+  is an `EffectContext` walk, and a spell being priced has no context: nothing
+  is on the stack yet.
+- its static twin in `characteristics.py`, behind `static_value_keys.max_count_of`.
+  Reachable only from a `spell_cost_reduction` static — and
+  `player_statics.spell_cost_reduction` walks `_battlefield_statics` only, so a
+  discount printed on a card still **in hand**, which is where this spell is
+  priced, is never seen. The field's own docstring says the card-level
+  `cost_reduction` is the one that discounts the card carrying it.
+
+Narrowing the filter is no help either: `extreme` is a selector key and appears
+in neither `STATIC_FILTER_KEYS` nor `COST_REDUCTION_FILTER_KEYS`, and
+`controller` in a reduction filter is validated against the plain strings — so
+"the opponent with the most artifacts" has no spelling.
+
+### Where it deliberately answers nothing
+
+**The grouping is over the filter's pool, not over the table.** A filter that
+admits one player has one group, so `greatest_count` under the default
+`controller: "you"` is simply `count`. The filtering and the grouping are
+separate steps, which is what makes the key composable rather than a second
+spelling of "opponent".
+
+**A seat controlling nothing contributes no tally**, and `default=0` is the real
+answer for a board where no opponent has an artifact: no discount, and the spell
+costs what it prints — the same reading `greatest_mana_value` takes of a player
+with no commander.
+
+**The filter runs before the tally**, so a seat's creatures cannot pad it into
+winning the maximum.
+
+**No new validation.** The key falls through the identical filter validation
+`_validate_cost_reduction` runs for every non-`amount` key: one arithmetic head
+per spec, printed characteristics only, the type-name guard, the zone list. It
+carries no zone restriction of its own — unlike `total_power`, it counts objects
+rather than reading a characteristic only permanents have.
+
+**The template tier still refuses the sentence.** Nothing in
+`cards/authoring/templates.py` reads "the greatest number of … an opponent
+controls", so the card is hand-authored at the agent tier; the packet's
+`cost_reduction_keys` is derived from `COST_REDUCTION_KEYS`, so the next worker
+sees the key without a second edit.
+
+### Cards unblocked
+
+One: **Cavern-Hoard Dragon**, hand-authored through all six gates. Its other two
+lines needed nothing new — `flying, trample, haste` are ordinary keywords, and
+"whenever this creature deals combat damage to a player, you create a Treasure
+token for each artifact that player controls" is a `deals_combat_damage_to_player`
+trigger with `source: "self"` over a `create_token` whose amount is
+`{"count": {"controller": {"binding": "event_player"}, "types": ["Artifact"]}}` —
+`event_player` is the damaged seat, and the shipped pool already counts a bound
+seat's permanents that way.
+
+### Guarded by
+
+`tests/unit/test_greatest_count_reduction.py`, over
+`tests/data/greatest_count.cards.json`. **Every board in it is a pod of four**,
+which is the point of the file: at two players the sum and the maximum are the
+same number, so a two-player test would pass against the bug. `t_gc_sum` is the
+identical price written with `count` and is measured in the same positions, so
+the divergence — {2} against {6} off three opponents with two artifacts each — is
+a measurement rather than an argument. Beside that: the richest seat winning over
+a busier table ({3}, not {5}); a lone hoarder among empty seats; the two-player
+coincidence pinned deliberately so the pod tests are understood as the ones that
+separate the keys; no opponent with an artifact reading zero while twelve of your
+own read zero too; creatures filtered out before the tally rather than after it;
+`t_gc_mine` showing a `you` filter collapse to a plain `count`; and five
+load-time refusals — no filter, two arithmetic heads at once, an unknown filter
+key, and a misspelled type.

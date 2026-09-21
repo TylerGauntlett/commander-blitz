@@ -64,7 +64,7 @@ def reduction_amount(
       `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
       **this way**".
 
-    Three shapes of arithmetic, exactly one per spec:
+    Six shapes of arithmetic, exactly one per spec:
 
     - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
       reduction needs.  Not expressible as `count`: "costs {3} less if you're
@@ -72,6 +72,15 @@ def reduction_amount(
       the crown is yours and none otherwise, and no filter over a board can say
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
+    - ``{"greatest_count": {filter}}`` -- Cavern-Hoard Dragon, "where X is the
+      greatest number of artifacts **an opponent** controls".  The same
+      relation `greatest_mana_value` has to `total_mana_value`, one axis over:
+      a maximum where `count` is a sum, taken **per player** rather than over
+      one flat pool.  Its own key for the sharpest of the reasons any of these
+      has one -- a reduction filter's ``controller: "opponent"`` names every
+      opponent at once, so `count` at a pod of four would read three opponents
+      with two artifacts each as {6} where the printed card says {2}, and in a
+      two-player game the two numbers coincide exactly.
     - ``{"total_power": {filter}}`` -- Ghalta.
     - ``{"total_mana_value": {filter}}`` -- Excalibur, Sword of Eden, "where X
       is the total mana value of historic permanents you control".
@@ -107,6 +116,24 @@ def reduction_amount(
         return max(0, int(spec["amount"]))
     if "count" in spec:
         return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
+    if "greatest_count" in spec:
+        # "…where X is the greatest number of artifacts **an opponent**
+        # controls" -- Cavern-Hoard Dragon. One pool, tallied per controller
+        # and maximised, because the filter language can say "not you" but not
+        # "them, separately" -- the same thing `_counts_per_player`'s docstring
+        # says about the effect-side `max_count_of`, which has the arithmetic
+        # and cannot be reached from a price.
+        #
+        # `default=0` because a seat controlling nothing contributes no tally
+        # and is right not to: a board where no opponent has an artifact gives
+        # no discount, and the spell costs what it prints.
+        per_player: dict[int, int] = {}
+        for oid in _reduction_matches(state, pid, spec["greatest_count"], source_oid):
+            obj = state.objects.get(oid)
+            if obj is None:  # pragma: no cover -- yielded from state.objects
+                continue
+            per_player[obj.controller] = per_player.get(obj.controller, 0) + 1
+        return max(per_player.values(), default=0)
     if "total_power" in spec:
         return sum(
             max(0, chars(state, oid).power)

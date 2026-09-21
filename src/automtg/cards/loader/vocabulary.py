@@ -776,8 +776,23 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: commander you own", a **maximum** rather than a sum and so its own key --
 #: written as a `count` or a `total_power` it would add two partners' mana
 #: values together and quietly hand out a bigger discount than the card says.
+#: ``greatest_count`` is Cavern-Hoard Dragon's "the greatest number of artifacts
+#: **an opponent** controls" -- what `count` is to `greatest_mana_value`'s
+#: `total_mana_value`, one axis over: the tally is taken per player and
+#: maximised, because a reduction filter's ``controller: "opponent"`` names
+#: every opponent at once and so `count` is their **sum**. Its own key for the
+#: sharpest reason on this list: at a pod of four, three opponents with two
+#: artifacts each read {6} where the card says {2}, and in a two-player game
+#: the two numbers are identical -- so the wrong key is invisible until a pod.
 COST_REDUCTION_KEYS = frozenset(
-    {"count", "total_power", "amount", "greatest_mana_value", "total_mana_value"}
+    {
+        "count",
+        "greatest_count",
+        "total_power",
+        "amount",
+        "greatest_mana_value",
+        "total_mana_value",
+    }
 )
 
 #: Zones a cost reduction's filter may count.  **Imported** from

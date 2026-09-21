@@ -1827,6 +1827,49 @@ So it is the mana-value analogue of `total_power`. It reads the **printed** mana
 value off the card, the same face `greatest_mana_value` reads: a mana value is a
 property of a card and nothing in the characteristics pipeline writes one.
 
+### A reduction that maximises a per-player tally
+
+```jsonc
+// Cavern-Hoard Dragon — "This spell costs {X} less to cast, where X is the
+//  greatest number of artifacts an opponent controls."
+"cost_reduction": {
+  "greatest_count": { "controller": "opponent", "types": ["Artifact"] }
+}
+```
+
+The sixth reduction shape, and it is to `count` exactly what
+`greatest_mana_value` is to `total_mana_value`, one axis over: a **maximum**
+where the other is a sum, and the grouping is **per player** rather than over
+one flat pool. `reduction_amount` tallies `_reduction_matches` by each matched
+object's controller and takes the largest tally, `default=0`.
+
+`count` is the near miss, and the reason this needed its own key is sharper than
+any other on the list. A reduction filter's `controller: "opponent"` names every
+opponent **at once** — the filter language can say "not you", but not "them,
+separately", which is the same limit `effects.values._counts_per_player` spells
+out for the effect-side `max_count_of` (which has the arithmetic and cannot be
+reached from a price, because `player_statics.spell_cost_reduction` walks the
+battlefield only and this spell is priced from hand). So `count` over that
+filter is their **sum**:
+
+| board | `count` | `greatest_count` | printed |
+| --- | --- | --- | --- |
+| one opponent with two artifacts | 2 | 2 | {2} |
+| three opponents with two each | 6 | 2 | {2} |
+
+**The two readings agree at two players**, because one opponent is one group and
+the maximum of one number is that number. That is not a curiosity: the card
+authoring sandbox is a two-player game, so a Cavern-Hoard Dragon written with
+`count` prices itself correctly through all six gates and is wrong only at a
+pod. `tests/unit/test_greatest_count_reduction.py` is therefore written entirely
+at four seats, with the `count` card beside it as a control.
+
+The filter is the ordinary reduction filter and every key still applies, applied
+*before* the tally — so "artifacts an opponent controls" does not count their
+creatures into the seat that would otherwise win. A filter that admits one
+player has one group, so `greatest_count` with the default `controller: "you"`
+is simply `count`; the grouping and the filtering are separate steps.
+
 ### A target pool that only exists once X is known
 
 ```jsonc
@@ -9112,7 +9155,9 @@ that still tapped for mana would make the effect worth nothing.
   "cost_reduction": { "total_power": { "controller": "you", "types": ["Creature"] } } }
 ```
 
-Also `{"count": filter}`, for "costs {1} less for each…", and `{"amount": N}`
+Also `{"count": filter}`, for "costs {1} less for each…", `{"greatest_count":
+filter}` for "the greatest number of artifacts an opponent controls" — the same
+tally taken per player and maximised — and `{"amount": N}`
 gated on a `condition` — see *An activated ability that gets cheaper* above,
 which documents the one reduction language all three slots share. Generic only,
 clamped at zero: "costs {X} less" never reaches through the generic part into the
