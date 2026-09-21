@@ -61,7 +61,7 @@ matches. The right-hand column is the mistake that row exists to prevent.
 
 | If the printed quality… | it is | witness | why not the neighbour |
 |---|---|---|---|
-| is deck-construction only | an **inert** `Keyword` | partner | it must still be listed, or the residual gate has an unclaimed line |
+| is deck-construction only | an **inert** `Keyword` | partner, choose a Background | it must still be listed, or the residual gate has an unclaimed line |
 | takes a parameter — a colour, a type, a cost | a **static** with fields | protection, `block_restriction` | `Keyword` is a bare string; a parameter has nowhere to live on it |
 | must read **derived** characteristics | a `Keyword`, compared inside the rule | skulk | static filters read *printed* characteristics only, which is what keeps the characteristics pipeline acyclic — so a static cannot ask this at all |
 | takes no parameter, and some rule reads it | a `Keyword` enum member | flying, shroud | — |
@@ -213,6 +213,7 @@ This is the long tail, and where the build order comes from.
 | Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
+| Choose a Background † | shipped | an **inert** `Keyword`, partner's shape — deck construction only. Kept apart from `partner` because the two build different decks: a partner pair is two commanders printing the word, this is one commander plus a Background | `choose_a_background` |
 | Cipher | shipped | the `encode` op (a fourth destination rider) and `cast_copy`, read back by an `encoded_by` trigger filter | `encode` |
 | Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
@@ -499,8 +500,10 @@ capability already has gap records, those cards are the real specification.
 ## Provenance
 
 The census is the supplied source document, entry for entry, plus the rows
-marked **†**: hexproof, skulk, intimidate and partner, which the engine
-implements and the source omits; nightbound, which the source folds into the
+marked **†**: hexproof, skulk, intimidate, partner and choose a Background, which
+the engine implements and the source omits — the last folded into the partner
+entry by the source and kept as its own `Keyword` here, because the two words
+build different decks; nightbound, which the source folds into the
 daybound entry and the engine keeps as its own `Keyword` because it is printed
 on the other face; fuse, which the source omits and which the engine implements
 as a card-level field rather than a `Keyword`, since it is a third way to cast

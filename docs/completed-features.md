@@ -13766,3 +13766,74 @@ number, so the word is genuinely parsed rather than one case special-cased;
 a card quoting Nazgûl's sentence still a singleton; an unreadable number falling
 back to 1 in both the rule and the gate; and the bounded line claimed at gate 3
 only when the card really grants it.
+
+## Choose a Background — the second deck-construction keyword — 702.124
+
+### Overview
+
+Ganax, Astral Hunter: *"Choose a Background (You can have a Background as a
+second commander.)"* The rule is a permission to build a deck a certain way, and
+it is spent before a game starts — the engine is handed a finished deck with its
+commanders already in the command zone.
+
+So it is an **inert `Keyword`**, exactly as `partner` has been: one member on
+`Keyword`, added to `INERT_KEYWORDS`. That is the census's first routing row,
+which exists for this family and says why the word must be listed at all —
+without it the printed line is unaccounted for, and the authoring verifier's
+residual gate rightly rejects the card.
+
+### Why the word has to exist to do nothing
+
+Nothing else on a card can carry the sentence. An `AbilityModel` is activated,
+triggered or static, and a deck-construction permission is none of the three;
+`card_level_rider_keys` and `card_level_cost_keys` are about the card's own fate
+and its price, neither of which this is. Ganax failed gate 3 with flying and its
+Treasure trigger both implemented and verified, on one line nothing could claim.
+
+With the member in place `proxy.lift_keywords` consumes the line like any other
+bare keyword line: the reminder text is stripped, `Choose a Background` normalises
+to `choose_a_background`, and the whole sentence is claimed. Strictly — the
+card must really carry the word, so printing it is not a way to look implemented.
+
+### Not an alias of `partner`
+
+The near miss, and the one decision here worth recording. The two words read the
+same — "you may have a second commander" — and they build different decks:
+
+- **Partner** is a *pair*: two commanders that each print the word.
+- **Choose a Background** is one commander plus a **Background**, an enchantment
+  that prints nothing at all.
+
+Folding `choose_a_background` onto `partner` through `KEYWORD_ALIASES` would let
+Ganax claim its line by asserting a rule it does not have, and would hand
+`validate_deck` the wrong answer the first time it grows an opinion about either.
+Two members, normalising apart, and neither claims the other's printed line.
+
+### What "inert" has to mean
+
+`KEYWORD_COUNTERS` is derived from `Keyword` rather than listed, because 122.1c
+names no subset — so every word added to the enum arrives as a counter kind that
+*grants* it. A *choose a Background* counter placed mid-game would be a
+deck-construction rule with nowhere left to apply, which is the inert tally in a
+costume that the derivation exists to refuse. `INERT_KEYWORDS` is subtracted for
+that reason, and anything added to it must genuinely do nothing during a game;
+a word that does something belongs in the engine instead.
+
+### Cards unblocked
+
+One: **Ganax, Astral Hunter**, whose other two lines were already expressible —
+`flying`, and a `permanent_enters` trigger filtered to `subtypes: ["Dragon"]`
+with no `exclude_self`, because the printed line says "Ganax **or** another
+Dragon" and `self_enters` and `permanent_enters` are one engine event separated
+only by `source: "self"`. It is verified on its own entry: one Treasure, and a
+battlefield of 34 — 32 props, Ganax, and the token its own trigger made.
+
+### Guarded by
+
+`tests/unit/test_choose_a_background.py`: the word loading as a keyword and
+`chars` reporting it; the printed line claimed reminder text and all, and *not*
+claimed by a card that only carries flying; partner failing to claim the
+Background line and the Background word failing to claim partner, so neither is
+an alias for the other; membership in `INERT_KEYWORDS`, absence from
+`KEYWORD_COUNTERS`, a `choose_a_background` counter granting nothing, and the
+keyword granting nothing beside itself.

@@ -244,6 +244,20 @@ class Keyword(str, Enum):
     #: card carrying the word can say so instead of leaving the line unaccounted
     #: for, which the authoring verifier's residual gate would rightly reject.
     PARTNER = "partner"
+    #: Deck construction only, and the second of its kind -- "you can have a
+    #: Background as a second commander" (702.124).  Inert for partner's exact
+    #: reason: the engine is handed a finished deck, so the word has nothing
+    #: left to do once a game starts, and it exists so a card printing the line
+    #: can claim it instead of leaving the authoring verifier's residual gate an
+    #: unaccounted sentence.
+    #:
+    #: Deliberately **not** folded onto `PARTNER`, which is the near miss: the
+    #: two rules build different decks.  A partner pair is two commanders that
+    #: both print the word; this is one commander plus a Background enchantment,
+    #: which prints nothing at all.  One word meaning both would let a deck be
+    #: validated against the wrong rule the moment `validate_deck` grows an
+    #: opinion about either.
+    CHOOSE_A_BACKGROUND = "choose_a_background"
 
 
 LANDWALK_SUBTYPE = {
@@ -271,7 +285,7 @@ EVASION_KEYWORDS = frozenset(
 #: Keywords with no in-game effect, kept so a card can represent its own text.
 #: `docs/rules-coverage.md` names them; anything added here must genuinely do
 #: nothing during a game, or it belongs in the engine instead.
-INERT_KEYWORDS = frozenset({Keyword.PARTNER})
+INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
 
 #: Counter kinds that are **keyword counters** (122.1c): "a keyword counter is a
 #: counter with a keyword ability's name, and a permanent with one has that
@@ -284,10 +298,10 @@ INERT_KEYWORDS = frozenset({Keyword.PARTNER})
 #: inert tally and load clean, which is the failure the authoring gates exist to
 #: refuse.
 #:
-#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner is a
-#: deck-construction word and the engine is handed a finished deck, so a partner
-#: counter could not mean anything mid-game; a counter kind that grants nothing
-#: is the inert tally in a costume.
+#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner and choose a
+#: Background are deck-construction words and the engine is handed a finished
+#: deck, so neither counter could mean anything mid-game; a counter kind that
+#: grants nothing is the inert tally in a costume.
 #:
 #: Read by `characteristics._compute` (the keyword-grant layer) and by
 #: `cards.loader` (which refuses a near-miss spelling of one).

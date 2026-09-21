@@ -8278,8 +8278,8 @@ other is a size.
 Any keyword the engine implements works, `enums.KEYWORD_COUNTERS` being derived
 from `Keyword` rather than listed — 122.1c names no subset, and a hand-kept list
 would be a second place to forget the next card. The one exclusion is
-`INERT_KEYWORDS`: partner is a deck-construction word, so a partner counter could
-grant nothing.
+`INERT_KEYWORDS`: partner and choose a Background are deck-construction words, so
+a counter of either kind could grant nothing.
 
 **The spelling is exact, and the loader enforces that.** A `counter` kind is an
 open vocabulary — charge, quest, slumber, lore, age — so there is nothing to
@@ -10085,6 +10085,43 @@ Read it before adding a keyword. The sections below are the worked examples —
 they say why *this* card is shaped the way it is, which is what the residual
 gate needs, but they were each discovered separately and none of them
 generalises on its own.
+
+## The inert keywords — partner, and choose a Background
+
+    Ganax, Astral Hunter — "Choose a Background (You can have a Background as
+    a second commander.)"
+
+The census's first routing row, and the only one whose answer is "the engine does
+nothing": a deck-construction permission (702.124) is spent before the first
+upkeep. The engine is handed a finished deck with its commanders already in the
+command zone, so there is no moment at which the word could apply.
+
+It is still a `Keyword`, because the **residual gate** is the reader. Nothing
+else on a card can carry the sentence — an `AbilityModel` is activated, triggered
+or static, and a permission to build a deck a certain way is none of the three —
+so without the word Ganax fails gate 3 with flying and its Treasure trigger both
+implemented and verified. `lift_keywords` strips the reminder text and consumes
+the line like any other bare keyword line:
+
+```jsonc
+// Ganax, Astral Hunter
+"keywords": ["flying", "choose_a_background"]
+```
+
+Two words rather than one, and that is the decision worth recording. *Partner*
+and *choose a Background* both read as "you may have a second commander" and they
+are not the same rule: a partner pair is two commanders each printing the word,
+this is one commander plus a Background enchantment that prints nothing. Folding
+`choose_a_background` onto `partner` through `KEYWORD_ALIASES` would make Ganax
+claim its line by asserting a rule it does not have, and would hand
+`validate_deck` the wrong answer the first time it checks either.
+
+"Inert" is load-bearing in exactly one place besides that. `KEYWORD_COUNTERS` is
+derived from `Keyword`, so every word added here would otherwise become a counter
+that grants it (122.1c) — and a *choose a Background* counter placed mid-game
+would be a rule with nowhere to apply. `INERT_KEYWORDS` is subtracted for that
+reason, and a keyword added to it must genuinely do nothing during a game;
+anything that does belongs in the engine instead.
 
 ## Landwalk, and global attack prohibitions
 
