@@ -6094,6 +6094,64 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "avatar_s_wrath",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Avatar's Wrath",
+      "oracle_text": "Choose up to one target creature, then airbend all other creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)\nUntil your next turn, your opponents can't cast spells from anywhere other than their hands.\nExile Avatar's Wrath.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "spared",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "choose_permanents"
+        },
+        {
+          "objects": {
+            "count": "all",
+            "exclude_binding": "spared",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "airbend"
+        },
+        {
+          "except_zones": [
+            "hand"
+          ],
+          "op": "cant_cast_spells_from_zones",
+          "player": "each_opponent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

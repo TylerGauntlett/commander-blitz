@@ -17262,12 +17262,12 @@
     },
     "Avatar's Wrath": {
       "edhrec_rank": 1761,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Avatar's Wrath",
-      "reason": "opponent battlefield is 4, expected 3",
+      "reason": "",
       "scryfall_id": "4811072d-fac0-40dd-a5cf-9694d51b12cf",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Aveline de Grandpré": {

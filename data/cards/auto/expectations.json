@@ -561,6 +561,14 @@
   "avacyn_s_pilgrim": {
     "zone": "battlefield"
   },
+  "avatar_s_wrath": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "exile"
+  },
   "aven_battle_priest": {
     "life": {
       "0": 43

@@ -59,7 +59,7 @@
   "expectation": {
     "zone": "exile",
     "battlefield_count": 31,
-    "opponent_battlefield_count": 3,
+    "opponent_battlefield_count": 4,
     "graveyard_size": {
       "0": 2
     }
