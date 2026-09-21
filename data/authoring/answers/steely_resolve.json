@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "steely_resolve",
+    "name": "Steely Resolve",
+    "oracle_text": "As this enchantment enters, choose a creature type.\nCreatures of the chosen type have shroud. (They can't be the targets of spells or abilities.)",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this enchantment enters, choose a creature type.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "choose_type",
+            "prompt": "Choose a creature type"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Creatures of the chosen type have shroud. (They can't be the targets of spells or abilities.)",
+        "effect": "grant_keyword",
+        "keywords": [
+          "shroud"
+        ],
+        "affects": {
+          "controller": "any",
+          "types": [
+            "Creature"
+          ],
+          "subtypes": [
+            {
+              "chosen_type_of": "self"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

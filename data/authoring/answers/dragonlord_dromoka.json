@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "dragonlord_dromoka",
+    "name": "Dragonlord Dromoka",
+    "oracle_text": "This spell can't be countered.\nFlying, lifelink\nYour opponents can't cast spells during your turn.",
+    "mana_cost": "{4}{G}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Elder", "Dragon"],
+    "power": 5,
+    "toughness": 7,
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "keywords": ["flying", "lifelink"],
+    "uncounterable": true,
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "cant_cast_spells",
+        "affects_player": "opponent",
+        "condition": {"is_your_turn": true},
+        "text": "Your opponents can't cast spells during your turn."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

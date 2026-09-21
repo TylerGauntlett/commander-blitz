@@ -1,0 +1,19 @@
+{
+  "card_id": "ancient_gold_dragon",
+  "name": "Ancient Gold Dragon",
+  "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of 1/1 blue Faerie Dragon creature tokens with flying equal to the result.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a player, roll a d20. You create a number of 1/1 blue Faerie Dragon creature tokens with flying equal to the result."
+  ],
+  "needs": [
+    {
+      "capability": "die_roll_result",
+      "kind": "value",
+      "what": "a value leaf reading the face a die actually rolled. `_rolled` in src/automtg/engine/effects/values.py already holds the list of faces and only ever counts the ones matching a `parity`/`face` predicate; a `total` predicate beside those, plus its entry in ROLL_PREDICATES and validate_rolled, makes amount: {\"rolled\": {\"binding\": \"d20\", \"total\": true}} mean \"equal to the result\".",
+      "why_existing_wont_do": "`rolled` is a count of dice, not a face value: {\"rolled\": {\"binding\": \"d20\"}} on one d20 is always 1, and a bare string {\"rolled\": \"d20\"} is refused by validate_rolled outright. The only exact encoding available today is a hand-unrolled twenty-term sum of `times` products, one per face, which is why this is a value leaf and not a card-level workaround."
+    }
+  ],
+  "closest_existing": ["rolled", "roll_dice", "create_token"],
+  "confidence": "high",
+  "notes": "The token half of this gap is CLOSED: faerie_dragon_1_1_u_flying now ships in data/cards/tokens.cards.json. What is left is the d20 reading, which this card shares with Ancient Copper Dragon -- see data/authoring/gaps/ancient_copper_dragon.json, whose worker found the error in this record's earlier claim that the rest 'needs no engine change'. One value leaf closes both cards, and the rest of the sentence is then ordinary: deals_combat_damage_to_player is a trigger event, roll_dice carries sides and an `as` binding."
+}

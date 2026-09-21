@@ -1,0 +1,26 @@
+{
+  "card_id": "smaug_wicked_worm",
+  "name": "Smaug, Wicked Worm",
+  "oracle_text": "Flying\nWhen Smaug enters, create X tapped Treasure tokens, where X is the number of artifacts your opponents control.\nWhenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+  "blocked_sentences": [
+    "Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life."
+  ],
+  "needs": [
+    {
+      "capability": "treasure_mana_spent",
+      "kind": "selector",
+      "what": "A way for a `spell_cast` trigger to ask whether mana made by a permanent MATCHING A FILTER was spent to cast the spell -- the natural spelling being `paid_by` accepting a selector (`{\"paid_by\": {\"subtypes\": [\"Treasure\"], \"controller\": \"you\"}}`) beside the \"self\"/oid it takes today, in `triggers._matches_filter` (src/automtg/engine/triggers.py:1448-1451). It needs a second, engine-side half, because the oids in `obj.mana_sources_spent` cannot be looked up: a Treasure is SACRIFICED to make its mana, and `sba._tokens_and_attachments` (src/automtg/engine/sba.py:315-329) pops a token that has left the battlefield straight out of `state.objects`, so by the time the spell is on the stack the recorded oid resolves to nothing at all and a subtype test against it matches nothing, silently. The provenance therefore has to be captured where it is still knowable -- at `ManaPool.spend`/`Pip` (src/automtg/engine/mana.py:537-556, 700-755), where `uncounterable` already rides each pip -- either as the source's printed characteristics snapshotted onto the pip, or as a `SpentMana` set of (oid, subtypes/name) pairs written onto the spell beside `mana_sources_spent` (src/automtg/engine/objects.py:194). One filter key plus one provenance record turns on the whole printed 'if mana from a Treasure was spent to cast it' family, not just this card.",
+      "why_existing_wont_do": "`paid_by` is the closest existing thing and is exactly one oid: `wanted = ability_source.oid if paid_by == \"self\" else paid_by`, tested for membership in `obj.mana_sources_spent`. That is Path of Ancestry's and Opal Palace's 'when THAT mana is spent' -- mana from the ability's own source -- and Smaug's line is about a whole class of other permanents, an arbitrary number of Treasure tokens that Smaug did not make and cannot name. No card can write another object's oid, and `\"self\"` would make the trigger fire only on mana Smaug itself produced, which is never (Smaug has no mana ability), so the ability would be inert -- a quietly dead line, not an approximation. Nothing else reaches it either. `condition_keys` has no question about mana provenance at all: `cost_option`, `kicked` and `evoked` read what was PAID as a cost option, not what MADE the mana. `value_keys`' two near misses are both about something else -- `mana_spent_of` is `_characteristic(..., \"mana_spent\")` (src/automtg/engine/effects/values.py:379-380), the integer TOTAL of mana spent on an object, and `colors_of_mana_spent` is which COLOURS were spent (sunburst, converge); a Treasure adds one mana of any colour, so no colour test distinguishes it from a land. `mana_restriction` is the mana ability's own restriction on what it may be spent on, written on the Treasure, and Treasure tokens are created from the closed `token_ids` pool (`treasure_token`) so nothing on this card can alter what they print. An unconditional `spell_cast` trigger with `controller: \"you\"` and no filter would draw a card and lose 1 life on EVERY spell -- a strictly larger card, and the reason no partial answer was written. An intervening `condition` of `{\"exists\": {\"subtypes\": [\"Treasure\"], \"controller\": \"you\"}}` is the other near miss and is wrong twice: it asks whether you still control a Treasure, which is the opposite of the printed fact (the Treasure that paid is gone precisely because it paid), and `stack.resolve_top` re-asks an intervening if on resolution (603.4), so it would also flicker with the board."
+    }
+  ],
+  "closest_existing": [
+    "paid_by",
+    "mana_spent_of",
+    "colors_of_mana_spent",
+    "spell_cast",
+    "mana_restriction",
+    "treasure_token"
+  ],
+  "confidence": "high",
+  "notes": "Only the third line is blocked; the rest of the card is expressible today and should not be re-explored. Flying is a keyword. The enters trigger is an ordinary `self_enters` triggered ability whose effect is `{\"op\": \"create_token\", \"token\": \"treasure_token\", \"tapped\": true, \"amount\": {\"count\": {\"types\": [\"Artifact\"], \"controller\": \"opponent\", \"zone\": \"battlefield\"}}}` -- `treasure_token` is in `token_ids` and `create_token` takes both `tapped` and a counted `amount`, so that half needs nothing new. The 'you draw a card and lose 1 life' half is plain `draw` + `lose_life`; only the intervening if in front of it is missing. Note for whoever implements it: the packet's `starting_point` carries a stray `replacements: [{\"event\": \"self_enters_tapped\"}]` -- Smaug does not enter tapped, the TREASURES do, and that replacement must not be carried into the eventual answer."
+}

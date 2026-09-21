@@ -1,0 +1,18 @@
+{
+  "card_id": "bloom_tender",
+  "name": "Bloom Tender",
+  "oracle_text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+  "blocked_sentences": [
+    "Vivid — {T}: For each color among permanents you control, add one mana of that color."
+  ],
+  "needs": [
+    {
+      "capability": "mana_of_each_color",
+      "kind": "engine",
+      "what": "a fifth dynamic mana-ability family: a mana ability that produces one mana of EACH color present among a selector's matches -- e.g. `{\"op\": \"add_mana\", \"each_color_among\": {\"zone\": \"battlefield\", \"controller\": \"you\"}}` -- so the ability makes a variable-size bundle of up to {W}{U}{B}{R}{G} whose symbols are read off the board at activation, not a single mana chosen from a set. It needs the loader's mana fold to record the selector (advertising the any-color superset the way `reflecting` does, so the ability is still seen as a mana source) and `costs.mana_options_of` to build one multi-symbol production from the distinct colors of the matching permanents rather than offering a choice among them.",
+      "why_existing_wont_do": "All four existing board-dependent families produce exactly ONE mana that the payer chooses from a set: `reflecting` (colors an opponent's lands could produce), `in_commander_identity`, `mana_chosen_color` (`mana` as a mapping), and `split` (X mana in any combination of two named colors, a free combination and not the board's colors). Bloom Tender is neither one mana nor a choice -- it is one mana of every color the board already shows, so any of these would be a strictly different card. `add_mana` with `amount` scales one literal production tuple, which cannot vary its symbols; `add_mana_per` scales one literal unit by a selector count, so `{\"mana\": \"{W}\", \"per\": {\"colors\": [\"W\"], \"controller\": \"you\"}}` would add one {W} per white permanent instead of one {W} total -- and `_split_mana_rider` ends the mana half at the first effect that is not `add_mana` or `choose_mode`, so `add_mana_per` inside a mana ability is not a legal mana effect at all and `MANA_RIDER_OPS` rejects it as a rider. Five separate conditional `add_mana`s is impossible for the same reason (`if` is not a legal mana effect, and `add_mana` takes no `condition`), and the Conqueror's Flail trick of one static per color does not transfer, because a single `{T}` cost cannot be paid five times. A `choose_mode` over the 31 color combinations would hand the payer a free choice the card never offers."
+    }
+  ],
+  "closest_existing": ["reflecting", "in_commander_identity", "add_mana_per", "split"],
+  "confidence": "high"
+}

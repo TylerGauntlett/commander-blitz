@@ -1,0 +1,24 @@
+{
+  "card_id": "hellkite_courser",
+  "name": "Hellkite Courser",
+  "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+  "blocked_sentences": [
+    "Return it to the command zone at the beginning of the next end step."
+  ],
+  "needs": [
+    {
+      "capability": "command_zone",
+      "kind": "op",
+      "what": "a way to move a permanent from the battlefield into its owner's command zone -- either a `return_to_command_zone` op taking `objects`, or `\"command\"` added to `DESTINATIONS` (src/automtg/engine/effects/ops_cards.py:25) so a `destination`-taking mover can name it. It must work on an oid binding captured earlier in the resolution (`choose_permanents` with `as`) and must be legal as the body of `delay` at `step: \"end_step\"`, because the printed clause is a delayed return of a permanent the same ability put down. The rest of the line already has a spelling: `may` + `choose_permanents` (`as`) over `{\"zone\": \"command\", \"player\": \"you\", \"is_commander\": true}` -- ZONE_NAMES (src/automtg/engine/effects/selectors.py:300) is built from the Zone enum, so `\"command\"` is a searchable zone -- then `put_onto_battlefield` and `grant_keyword: [\"haste\"]` over that binding. Only the return has nowhere to go.",
+      "why_existing_wont_do": "No op in `ops` reaches the command zone from the battlefield. `DESTINATIONS` (ops_cards.py:25) is hand/battlefield/graveyard/exile/library_top/library_bottom, and the loader validates every `destination` against exactly that map (src/automtg/cards/loader/effects.py:884,935), so `return_from_graveyard`, `search_zones`, `look_at_top` and `reveal_until` cannot name it even though their pools could be pointed at the battlefield. `return_to_hand` hardwires `Zone.HAND` (src/automtg/engine/effects/ops_cards.py:779-789) and takes no destination. `return_to_origin` (ops_cards.py:791) skips any object whose zone is not EXILE and reads `obj.exiled_from`, so it cannot return a permanent that was never exiled. `replace_deaths` and `replace_leaves_battlefield` (src/automtg/engine/effects/ops_removal.py:75-83,151-160) DO validate their destination against ZONE_NAMES, which does contain \"command\" -- but they are replacements armed on a permanent for when it dies or leaves, not a return that happens at a named step, and neither fires at the beginning of the end step on its own. `delay` (src/automtg/engine/effects/ops_control.py:767) schedules the moment correctly and carries the bindings, but it has no effect to put inside it. The one spelling that currently produces the right board is `return_to_hand` over the binding, which lands in the command zone only because `move_object` applies the 903.9a commander replacement unconditionally (src/automtg/engine/zones.py:90-92) -- that is a different card written down: it claims the hand, and it silently becomes wrong for any object that is not a commander, for a commander token, and the day that replacement becomes the optional choice the rule actually gives."
+    }
+  ],
+  "closest_existing": [
+    "return_to_hand",
+    "return_to_origin",
+    "return_from_graveyard",
+    "replace_leaves_battlefield",
+    "delay"
+  ],
+  "confidence": "high"
+}

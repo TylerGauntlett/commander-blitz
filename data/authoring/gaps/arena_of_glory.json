@@ -1,0 +1,30 @@
+{
+  "card_id": "arena_of_glory",
+  "name": "Arena of Glory",
+  "oracle_text": "This land enters tapped unless you control a Mountain.\n{T}: Add {R}.\n{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",
+  "blocked_sentences": [
+    "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)"
+  ],
+  "needs": [
+    {
+      "capability": "exert",
+      "kind": "cost",
+      "what": "an `exert` entry in an activated ability's `cost` -- paid on activation, it marks the source exerted (701.40a) so it does not untap during its controller's next untap step, and sets the turn flag `exerted` that `has_turn_flag` already reads. It must be payable by a permanent that is not attacking and not a creature (Arena of Glory is a land), and it must be payable inside cost payment, which is where a mana ability is activated",
+      "why_existing_wont_do": "`cost_keys` has no exert: the closest are `tap` (which this line already pays separately -- the printed cost is `{R}`, `{T}` AND exert, so tapping cannot stand in for both) and `untap`/`tap_permanents`, which move a permanent's tap state now and say nothing about the next untap step. The only exert in the pool is Combat Celebrant's, and it is the other kind: an `attacks` trigger whose *resolution* runs `may` + `skip_untap` + `set_turn_flag` (src/automtg/engine/effects/ops_combat_flags.py:116-136). That shape cannot be reused here twice over. First, exert is a cost here, paid when the ability is activated, not an effect that resolves -- and a mana ability never resolves at all: `costs`/`mana_options_of` add its symbols during payment without using the stack. Second, the loader forbids it outright: `_split_mana_rider` (src/automtg/cards/loader/mana.py:181-206) allows a mana ability only `add_mana` (or one `choose_mode` of them) followed by a rider from `MANA_RIDER_OPS` = {add_counters, add_poison, damage, gain_life, lose_life, remove_counters} (src/automtg/cards/loader/vocabulary.py:915), and `skip_untap` is not in it. Writing the ability as a non-mana activated ability to smuggle `skip_untap` in would be a different card -- it would use the stack and be uncastable during another spell's payment, which is the entire point of a land that makes mana."
+    },
+    {
+      "capability": "mana_spent_rider",
+      "kind": "ability",
+      "what": "a per-pip rider on a mana ability, in the shape `mana_uncounterable` already has, that attaches a *continuous effect* to the spell the mana is spent on and survives the spell becoming a permanent -- here `grant_keyword: [\"haste\"]` on a creature spell paid for with that pip. The pip channel exists (`Pip.sources`, `Pip.uncounterable` in src/automtg/engine/mana.py:565-582); what is missing is a rider that grants a keyword and an application point on the way onto the battlefield",
+      "why_existing_wont_do": "`mana_restriction` is a restriction, not a rider: it narrows what the mana may be spent on (Cavern of Souls, Ancient Ziggurat) and cannot express a mana that is spendable on anything but does something extra on a creature spell. `mana_uncounterable` is the right shape but is hardcoded to one boolean on `Pip` and one consumer in casting; it grants no keyword. Path of Ancestry's `spell_cast` trigger with `filter: {\"paid_by\": \"self\"}` is the nearest reachable spelling and is wrong here: the trigger resolves while the creature spell is still on the stack, and `grant_keyword` writes `obj.granted_keywords`, which `reset_permanent_state` (src/automtg/engine/objects.py:894-923) clears -- along with `until_eot` -- as the spell moves to the battlefield, so the haste would be wiped before the creature ever arrives. `delayed_trigger`/`delay` cannot bridge it either: there is no binding that follows a spell object through resolution to the permanent it becomes, and `permanent_enters` has no way to ask which pips paid for the spell that made it."
+    }
+  ],
+  "closest_existing": [
+    "skip_untap",
+    "tap",
+    "mana_uncounterable",
+    "mana_restriction",
+    "paid_by"
+  ],
+  "confidence": "high"
+}

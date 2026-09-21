@@ -1,0 +1,29 @@
+{
+  "card_id": "dracogenesis",
+  "name": "Dracogenesis",
+  "oracle_text": "You may cast Dragon spells without paying their mana costs.",
+  "blocked_sentences": [
+    "You may cast Dragon spells without paying their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_permission",
+      "kind": "static_effect",
+      "what": "a battlefield static that grants a standing permission to cast every spell matching a filter (here `subtypes: [\"Dragon\"]`, `controller: \"you\"`) without paying its mana cost -- the Omniscience/Dracogenesis/Jodah shape. It must price the matching cast on the existing FREE_COST branch in `src/automtg/engine/casting.py` (~line 1075), be re-read each time cast options are built rather than stamped onto a snapshot of objects, apply to cards that arrive in hand after the permanent entered, and be repeatable within a turn. An `affects_spells` filter beside the static, the same one `spell_cost_reduction` and `cast_from_graveyard` already take, is what carries \"Dragon\".",
+      "why_existing_wont_do": "`spell_cost_reduction` is the nearest static and is explicitly not this: `src/automtg/engine/casting.py` (~1180) clamps every reduction to the generic part, so it can never pay a coloured pip, and the comment at line 1080 records that 601.2b's \"without paying its mana cost\" is not a reduction to zero -- the difference shows on an X spell. The other casting-permission statics (`cast_as_though_flash`, `cast_from_graveyard`, `cast_from_library_top`) change *when* or *from where* a spell may be cast and leave the price alone. No static in `static_effects` sets the free branch at all: `playable_free`, the only flag that reaches it, is written in exactly one place (`src/automtg/engine/stack.py:969`, plot)."
+    },
+    {
+      "capability": "free_cast_permission",
+      "kind": "engine",
+      "what": "the per-object playability permission must be able to carry \"free\" from something other than plot -- either a `free`/`playable_free` field granted by the static above, or a permission lookup consulted by `_cast_options` for cards in hand the way `obj.playable_free` is consulted for cards in exile (`src/automtg/engine/casting.py:150`).",
+      "why_existing_wont_do": "`grant_playable` (`src/automtg/engine/effects/ops_cards.py:181`) is the closest grant and its docstring says the cards it marks \"are paid for at their printed price\"; it also marks only the objects it can see when it resolves, so a Dragon drawn later would be invisible to it -- the same snapshot problem `grant_graveyard_cast` was added to fix. `cast_from_hand` and `play_exiled` do cast for free, but both are one-shot ops that fire on resolution, and Dracogenesis has no trigger or activation to hang one on: the sentence is a continuous permission with no event behind it."
+    }
+  ],
+  "closest_existing": [
+    "spell_cost_reduction",
+    "grant_playable",
+    "cast_from_hand",
+    "cast_from_graveyard"
+  ],
+  "confidence": "high"
+}

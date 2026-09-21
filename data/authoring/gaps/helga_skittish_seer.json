@@ -1,0 +1,33 @@
+{
+  "card_id": "helga_skittish_seer",
+  "name": "Helga, Skittish Seer",
+  "oracle_text": "Whenever you cast a creature spell with mana value 4 or greater, you draw a card, gain 1 life, and put a +1/+1 counter on Helga.\n{T}: Add X mana of any one color, where X is Helga's power. Spend this mana only to cast creature spells with mana value 4 or greater or creature spells with {X} in their mana costs.",
+  "blocked_sentences": [
+    "{T}: Add X mana of any one color, where X is Helga's power. Spend this mana only to cast creature spells with mana value 4 or greater or creature spells with {X} in their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "variable_any_color_mana",
+      "kind": "op",
+      "what": "A mana ability that adds a VARIABLE number of mana all of ONE color chosen on activation -- 'Add X mana of any one color, where X is <a value>'. Concretely: let the modal spelling carry the size, e.g. a single add_mana with a chosen-one-color marker plus an 'amount' value ({'power_of': {'self_only': true}}), or let _mana_amount read an 'amount' sitting on the choose_mode (or on each of its modes) and scale the chosen mode's one-symbol tuple by it. The engine already has both halves separately: _mana_options flattens a choose_mode of add_mana into one 6-tuple per mode, and mana_amount already scales a single add_mana's tuple at activation time (src/automtg/cards/loader/mana.py::_mana_options / _mana_amount, consumed in loader/__init__.py::_build_ability). What is missing is the two together. It unblocks every 'add X mana of any one color' card, of which Helga is the archetype.",
+      "why_existing_wont_do": "The three spellings that exist each say a different card. (1) choose_mode of five add_mana is how 'Add N mana of any one color' is written today (Gilded Lotus: five modes of '{W}{W}{W}'...), but N has to be a literal symbol string at load time -- Helga's N is her power, which starts at 1 and grows with every +1/+1 counter her own first ability puts on her, so there is no literal to write. Putting 'amount' inside the modes does not help: _mana_amount only looks for an 'amount' key on the top-level effects, so with choose_mode as the single effect mana_amount comes back None and _sum_mana silently reads just the printed symbols -- the card would quietly tap for exactly one mana forever, which is the worst possible failure. (2) add_mana with 'split' plus 'amount' does take a variable size (Vivi Ornitier, 'Add X mana in any combination of {U} and/or {R}'), and {'power_of': {'self_only': true}} is a legal mana amount -- but 'any combination' is strictly more permissive than 'any one color': at X=3 a split may produce {W}{U}{G}, which the printed Helga cannot do. It is a better card than the one printed, so it is an approximation, not a spelling. (3) 'reflecting', 'in_commander_identity' and the chosen-color add_mana ({'chosen_color_of': 'self'}) all force mana_amount to None in _build_ability and produce exactly one mana; the chosen-color one is also the color a permanent picked as it ENTERED, not a color picked each activation."
+    },
+    {
+      "capability": "mana_restriction_filter",
+      "kind": "selector",
+      "what": "Let 'Spend this mana only to cast ...' restrict by something other than a type name -- here by MANA VALUE ('creature spells with mana value 4 or greater') and by the presence of {X} in a spell's printed cost ('creature spells with {X} in their mana costs'), as an any-of of two all-of groups. The selector language already has both predicates as 'mana_value' and 'x_in_mana_cost'; the need is for RestrictionGroup (src/automtg/engine/mana.py) and the loader's _restriction_groups/_restriction_name (src/automtg/cards/loader/mana.py) to carry a predicate entry beside their literal names, and for costs.spell_purpose to answer it about the spell being paid for rather than only handing over a frozenset of type names.",
+      "why_existing_wont_do": "mana_restriction is in ability_keys and is the right field, but its whole vocabulary is names: _restriction_name accepts a card type, supertype or subtype (lowercased), the single dynamic leaf {'chosen_type_of': 'self'}, and {'not': <literal>}. A group is then matched by RestrictionGroup.satisfied_by, which is a subset test over a frozenset of NAMES -- there is nowhere for a numeric comparison or an {X}-in-cost question to live, and no name expresses either clause. Writing just ['creature'] (Ancient Ziggurat's spelling, and the closest thing available) drops both restrictions and makes Helga's mana castable on any creature spell at all, which is strictly better than the printed card. Writing an invented name such as 'mana-value-4' passes the isalpha shape check, matches nothing ever printed, and freezes the mana permanently unspendable -- the loader's own comment names that exact failure mode ('legendary' did it). Neither is the sentence."
+    }
+  ],
+  "closest_existing": [
+    "mana_restriction",
+    "add_mana",
+    "choose_mode",
+    "split",
+    "power_of",
+    "mana_value",
+    "x_in_mana_cost"
+  ],
+  "confidence": "high",
+  "notes": "The card's FIRST sentence is fully expressible and is deliberately not written as a partial answer: a spell_cast trigger with controller 'you' and filter {types: ['Creature'], mana_value: {'>=': 4}}, whose effects are draw 1, gain_life 1 and add_counters +1/+1 on {'self_only': true}. Only the mana ability is blocked. The two needs are independent -- closing either one alone still leaves the line unsayable -- and the first one is the broadly reusable half."
+}

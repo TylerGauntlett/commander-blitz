@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "stubborn_denial",
+    "name": "Stubborn Denial",
+    "oracle_text": "Counter target noncreature spell unless its controller pays {1}.\nFerocious — If you control a creature with power 4 or greater, counter that spell instead.",
+    "mana_cost": "{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "spell",
+        "selector": {"not_types": ["Creature"]},
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": ["Creature"],
+            "power": {"op": ">=", "value": {"const": 4}}
+          }
+        },
+        "then": [
+          {"op": "counter", "target": "t1"}
+        ],
+        "else": [
+          {
+            "op": "may",
+            "player": {"controller_of_target": "t1"},
+            "pay": {"mana": "{1}"},
+            "prompt": "Pay {1} to stop Stubborn Denial countering your spell?",
+            "else": [
+              {"op": "counter", "target": "t1"}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1}
+  }
+}

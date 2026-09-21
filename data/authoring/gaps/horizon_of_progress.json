@@ -1,0 +1,18 @@
+{
+  "card_id": "horizon_of_progress",
+  "name": "Horizon of Progress",
+  "oracle_text": "{T}, Pay 1 life: Add one mana of any type that a land you control could produce.\n{3}, {T}: You may put a land card from your hand onto the battlefield tapped.\n{1}, {T}, Sacrifice this land: Draw a card.",
+  "blocked_sentences": [
+    "{T}, Pay 1 life: Add one mana of any type that a land you control could produce."
+  ],
+  "needs": [
+    {
+      "capability": "reflecting_any_type",
+      "kind": "engine",
+      "what": "the colorless half of the reflecting mana family -- an add_mana that asks a selector's lands what they could produce and offers every mana TYPE they make, {C} included, not only their five colours. Concretely: a flag or sibling key beside `reflecting` (e.g. `{\"op\": \"add_mana\", \"reflecting\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Land\"]}, \"any_type\": true}`) that makes the loader advertise a six-symbol superset (_ANY_COLOR_OPTIONS plus the colorless production tuple, src/automtg/cards/loader/mana.py:176, used at src/automtg/cards/loader/__init__.py:2001) and makes the narrowing loop in costs._reflect_options (src/automtg/engine/costs.py:441-444) keep the colorless index instead of skipping it. This is Reflecting Pool, Naga Vitalist and Incubation Druid as well as Horizon of Progress.",
+      "why_existing_wont_do": "`reflecting` is the nearest thing and is deliberately narrower than this line. Its load-time superset is _ANY_COLOR_OPTIONS -- WUBRG and nothing else (src/automtg/cards/loader/mana.py:176) -- and costs._reflect_options explicitly drops colorless while polling the board: `if amount and index != SYMBOL_INDEX[COLORLESS]` (src/automtg/engine/costs.py:443). The template tier refuses the same match on purpose: _REFLECTED_COLOR in src/automtg/cards/proxy.py:626 anchors on \"any color\", and its comment says matching \"any type\" here \"would print a Reflecting Pool that cannot tap off a Wastes\". So writing `reflecting` on this card is not a near-miss on an edge case, it is the one substitution the existing capability was built to refuse: a Horizon of Progress that cannot tap for {C} off a Wastes, an Eldrazi Temple or any other colorless land, and whose whole point in a colorless-heavy mana base quietly disappears. No other family fits either -- `in_commander_identity` asks the command zone, `mana_chosen_color` reads a colour the permanent chose (this land chooses none), `split` is a free combination of two named colours, and a `choose_mode` over WUBRG plus {C} would be the unconditional any-type approximation the reflecting capability exists to refuse, offering colours the board has no land for. The mana half of a mana ability may hold only one add_mana (or one choose_mode of them), and a reflecting one is required to be the ability's sole effect (src/automtg/cards/loader/__init__.py:1988), so the line cannot be assembled from parts. The cost itself is fine -- `tap` and `pay_life` are both in cost_keys -- and the card's other two lines are expressible today (a `may` + `put_onto_battlefield` from hand with `tapped`, as Burgeoning already writes; and mana + tap + sacrifice self, then `draw`), so this one capability is all that stands between the card and an answer."
+    }
+  ],
+  "closest_existing": ["reflecting", "in_commander_identity", "mana_chosen_color", "split"],
+  "confidence": "high"
+}

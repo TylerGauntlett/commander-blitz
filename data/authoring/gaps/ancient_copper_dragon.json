@@ -1,0 +1,19 @@
+{
+  "card_id": "ancient_copper_dragon",
+  "name": "Ancient Copper Dragon",
+  "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result."
+  ],
+  "needs": [
+    {
+      "capability": "die_roll_result",
+      "kind": "value",
+      "what": "a value leaf that reads the FACE VALUE a die came up, not how many dice matched a predicate -- e.g. extending the existing {'rolled': {...}} spec with a 'total' (sum of the faces of that binding) or 'highest' predicate, so that 'roll a d20 ... equal to the result' is create_token with amount {'rolled': {'binding': 'd20', 'total': true}}. It is a small addition: _rolled in src/automtg/engine/effects/values.py already holds the list of faces under the binding and today only ever returns a count of them; validate_rolled would gain the new key in ROLL_PREDICATES. This unblocks the whole d20 cycle (the Ancient Dragons, and every 'roll a d20' card whose effect scales with the number rolled).",
+      "why_existing_wont_do": "roll_dice with sides 20 and an 'as' binding is fine, and deals_combat_damage_to_player is in trigger_events, so the trigger and the roll are expressible; treasure_token is in token_ids, so the token is too. The blocker is purely the read. {'rolled': {'binding': 'd20'}} counts the DICE THROWN (1), {'parity': ...} counts even/odd faces and {'face': N} counts dice showing N -- validate_rolled accepts nothing else, and the bare {'binding': 'd20'} value leaf reads the roll record, which is a Mapping and so evaluates to 0. No other value key touches a roll: 'sum', 'max' and 'times' only combine other value expressions. The one exact encoding available today is a 20-term ladder, {'sum': [{'times': [{'rolled': {'binding': 'd20', 'face': N}}, {'const': N}]} for N in 1..20]}, i.e. a hand-unrolled dot product written out twenty times on the card -- it is arithmetically right but it hard-codes the die size on the card, is unreadable, and has to be rewritten for every d20 card in the set, so it is a workaround for the missing leaf rather than a way to say the sentence. Recording it here so the same dead end is not explored again."
+    }
+  ],
+  "closest_existing": ["roll_dice", "rolled", "create_token", "treasure_token", "deals_combat_damage_to_player"],
+  "confidence": "high",
+  "notes": "Same family as the existing gap for ancient_gold_dragon, which is blocked on a missing Faerie Dragon token id -- but that record assumes amount {'rolled': 'd20'} yields the result, which the evaluator does not do (it counts dice, and validate_rolled refuses a bare string). Both cards need this value leaf; the gold one also needs its token. Deliberately not written as a partial answer: Flying alone would leave the printed trigger unclaimed and fail the residual gate."
+}

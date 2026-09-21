@@ -1,0 +1,159 @@
+{
+  "card": {
+    "abilities": [
+      {
+        "effects": [
+          {
+            "amount": {
+              "count": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "as": "tempest_exiled",
+            "destination": "exile",
+            "objects": {
+              "count": "all"
+            },
+            "op": "look_at_top",
+            "playable": "your_next_end_step",
+            "player": "you"
+          },
+          {
+            "effects": [
+              {
+                "amount": {
+                  "times": [
+                    {
+                      "const": 2
+                    },
+                    {
+                      "count": {
+                        "binding": "tempest_exiled",
+                        "zone": "exile"
+                      }
+                    }
+                  ]
+                },
+                "op": "damage",
+                "player": "each_opponent"
+              }
+            ],
+            "op": "delay",
+            "step": "end_step",
+            "text": "At the beginning of your next end step, Dragonhawk deals 2 damage to each opponent for each of those cards that are still exiled.",
+            "your_turn": true
+          }
+        ],
+        "kind": "triggered",
+        "text": "Whenever Dragonhawk enters or attacks, exile the top X cards of your library, where X is the number of creatures you control with power 4 or greater. You may play those cards until your next end step. At the beginning of your next end step, Dragonhawk deals 2 damage to each opponent for each of those cards that are still exiled.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        }
+      },
+      {
+        "effects": [
+          {
+            "amount": {
+              "count": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "as": "tempest_exiled",
+            "destination": "exile",
+            "objects": {
+              "count": "all"
+            },
+            "op": "look_at_top",
+            "playable": "your_next_end_step",
+            "player": "you"
+          },
+          {
+            "effects": [
+              {
+                "amount": {
+                  "times": [
+                    {
+                      "const": 2
+                    },
+                    {
+                      "count": {
+                        "binding": "tempest_exiled",
+                        "zone": "exile"
+                      }
+                    }
+                  ]
+                },
+                "op": "damage",
+                "player": "each_opponent"
+              }
+            ],
+            "op": "delay",
+            "step": "end_step",
+            "text": "At the beginning of your next end step, Dragonhawk deals 2 damage to each opponent for each of those cards that are still exiled.",
+            "your_turn": true
+          }
+        ],
+        "kind": "triggered",
+        "text": "Whenever Dragonhawk enters or attacks, exile the top X cards of your library, where X is the number of creatures you control with power 4 or greater. You may play those cards until your next end step. At the beginning of your next end step, Dragonhawk deals 2 damage to each opponent for each of those cards that are still exiled.",
+        "trigger": {
+          "controller": "you",
+          "event": "attacks",
+          "source": "self"
+        }
+      }
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "colors": [
+      "R"
+    ],
+    "id": "dragonhawk_fate_s_tempest",
+    "keywords": [
+      "flying"
+    ],
+    "mana_cost": "{3}{R}{R}",
+    "name": "Dragonhawk, Fate's Tempest",
+    "oracle_text": "Flying\nWhenever Dragonhawk enters or attacks, exile the top X cards of your library, where X is the number of creatures you control with power 4 or greater. You may play those cards until your next end step. At the beginning of your next end step, Dragonhawk deals 2 damage to each opponent for each of those cards that are still exiled.",
+    "power": 5,
+    "subtypes": [
+      "Bird",
+      "Dragon"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "toughness": 5,
+    "types": [
+      "Creature"
+    ]
+  },
+  "expectation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  }
+}

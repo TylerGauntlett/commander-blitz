@@ -1,0 +1,33 @@
+{
+  "card_id": "klauth_unrivaled_ancient",
+  "name": "Klauth, Unrivaled Ancient",
+  "oracle_text": "Flying, haste\nWhenever Klauth attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end.",
+  "blocked_sentences": [
+    "Whenever Klauth attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end."
+  ],
+  "needs": [
+    {
+      "capability": "triggered_split_mana",
+      "kind": "op",
+      "what": "Let the resolution-time add_mana honour 'amount' and 'split' -- 'add X mana in any combination of colors' produced by a TRIGGERED ability rather than by a tapped mana ability. Concretely: src/automtg/engine/effects/ops_mana.py::op_add_mana today reads only spec['mana'] (via mana_string) and adds that literal tuple once; it needs to evaluate spec['amount'] through evaluate_value and, when spec['split'] is present, ask the controller how to divide that many mana among the named colours -- the same composition choice costs.py::_split_options already builds for the mana-ability path, but offered as a decision during resolution instead of as activation options. X here is {'power_of': {'objects': {'zone': 'battlefield', 'attacking': true, 'types': ['Creature'], 'count': 'all'}}}, which the value language already answers (power_of over an 'objects' selector sums the pool). This unblocks the whole attack-trigger ritual family (Klauth, and any 'whenever ... attacks, add X mana' card whose colours are the player's choice).",
+      "why_existing_wont_do": "'split' and 'amount' are in add_mana's op_options, but both are compiled ONLY inside a mana ability: loader/__init__.py::_build_ability reads them under 'if model.is_mana_ability' into Ability.mana_split / Ability.mana_amount, and they are consumed by costs.py::_split_options and mana_amount at ACTIVATION time. The same loader refuses the combination outright for this card -- 'only activated abilities can be mana abilities' -- so Klauth's attack trigger can never carry them, and written on its add_mana anyway they are inert keys: op_add_mana would add the single symbol in 'mana' (or nothing at all, since a split effect has no 'mana' string), i.e. one mana or zero instead of X. The nearest expressible shape is Tanuki Transplanter's, a 'repeat' whose amount is a power_of and whose body is an add_mana of ONE fixed colour with persists_until_end_of_turn -- that spells the size and the persistence exactly, but it fixes the colour on the card, so it is a strictly different (and for a two-colour Dragon, strictly worse) card than 'any combination of colors'. Nesting a choose_mode of five add_mana inside that repeat is not a spelling either: no shipped card does it, and even if the five-way choice resolved per iteration it would still leave the restriction below unsaid."
+    },
+    {
+      "capability": "mana_restriction_on_nonmana_ability",
+      "kind": "engine",
+      "what": "Carry a spend restriction on mana that an EFFECT put in the pool -- 'Spend this mana only to cast spells.' Concretely: engine/mana.py::Pip records only (source, uncounterable, persists_through_turn), so it needs a fourth field holding a ManaRestriction, ManaPool.add_tuple and op_add_mana need to set it from the effect spec, and the payment path needs to test pool pips against costs.spell_purpose/ability_purpose the way mana.ManaSource.satisfies already tests a tapped source. The restriction Klauth wants already exists in the vocabulary and is the simplest one there is -- {'cast': 'any'} (cast half unrestricted, activate half omitted, which loader/mana.py::_restriction_groups reads as 'never') -- so this is plumbing the existing ManaRestriction to a second producer, not new restriction language.",
+      "why_existing_wont_do": "'mana_restriction' is in ability_keys and says exactly this sentence, but loader/__init__.py rejects it with \"'mana_restriction' needs 'is_mana_ability'\", and is_mana_ability is itself rejected on anything but an activated ability (\"only activated abilities can be mana abilities\"). Klauth's line is a triggered ability on 'attacks' -- it uses the stack and is not a mana ability under 605.1a -- so there is no legal place on this card to write the field. Downstream the same wall: a restriction is resolved by costs.resolve_mana_restriction and lives on mana.ManaSource, which exists only for an untapped ability the payment solver may tap; mana already floating in the pool is a list of Pips, and a Pip cannot say what it may be spent on. Every one of the nine shipped cards with 'Spend this mana only to ...' is a tapped mana ability for that reason. Omitting the clause is not an option -- it would make Klauth's ritual mana spendable on activated abilities the printed card refuses to fund, a strictly better card."
+    }
+  ],
+  "closest_existing": [
+    "add_mana",
+    "split",
+    "persists_until_end_of_turn",
+    "mana_restriction",
+    "repeat",
+    "power_of",
+    "attacks"
+  ],
+  "confidence": "high",
+  "notes": "Two independent blockers on one printed sentence; closing either alone still leaves the line unsayable. What IS expressible and deliberately not written as a partial answer: Flying and haste (already in the packet's starting_point), the 'attacks' trigger with source 'self', the size {'power_of': {'objects': {'attacking': true, ...}}}, and 'Until end of turn, you don't lose this mana as steps and phases end' via persists_until_end_of_turn on add_mana (Tanuki Transplanter, data/cards/auto/templates.cards.json). Same family as the helga_skittish_seer gap -- that one needs a variable-size ONE-colour mana ability plus a richer restriction predicate; Klauth needs the variable-size ANY-combination mana off a trigger plus any restriction at all on effect-made mana. The 'triggered_split_mana' half is the broadly reusable one."
+}

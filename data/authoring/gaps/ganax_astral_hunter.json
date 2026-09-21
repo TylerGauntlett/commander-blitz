@@ -1,0 +1,21 @@
+{
+  "card_id": "ganax_astral_hunter",
+  "name": "Ganax, Astral Hunter",
+  "oracle_text": "Flying\nWhenever Ganax or another Dragon you control enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nChoose a Background (You can have a Background as a second commander.)",
+  "blocked_sentences": [
+    "Choose a Background (You can have a Background as a second commander.)"
+  ],
+  "needs": [
+    {
+      "capability": "choose_a_background",
+      "kind": "keyword",
+      "what": "an inert `choose_a_background` keyword, rule 702.124 -- the deck-construction word that lets a commander take a Background as its second commander, exactly as `partner` already exists. One member on `Keyword` (`CHOOSE_A_BACKGROUND = \"choose_a_background\"`), added to `INERT_KEYWORDS` beside `PARTNER` so it is excluded from `KEYWORD_COUNTERS`, and the printed line is then consumed by `proxy.lift_keywords` like any other bare keyword line. `validate_deck` may optionally honour it for real, the way it does the other deck-construction rules, but the residual gate only needs the word to exist.",
+      "why_existing_wont_do": "The closest thing in `reference` is the `partner` keyword, and the engine's own comment says why it is there: \"Deck construction only ... Listed here, and inert on purpose ... It exists so a card carrying the word can say so instead of leaving the line unaccounted for, which the authoring verifier's residual gate would rightly reject.\" `choose_a_background` is the same shape and is simply not in the enum, so there is nothing on the card that can claim the line: `verify._covered` has no exemption for it (its deck-construction exemptions cover only `any_number_in_deck` and `deck_copy_limit`), `KEYWORD_ALIASES` does not fold it onto `partner` -- and folding it there would be wrong, since the two rules build different decks (a Partner pair is two partners; this is one commander plus a Background enchantment) -- and an ability cannot carry it either, because an AbilityModel is activated, triggered or static and a deck-construction rule is none of the three. `card_level_rider_keys` and `card_level_cost_keys` are about the card's own fate and its price, neither of which this is."
+    }
+  ],
+  "closest_existing": [
+    "partner"
+  ],
+  "confidence": "high",
+  "notes": "The rest of the card is expressible and was verified against the vocabulary before filing: `flying` is a keyword already on the starting point; \"Whenever Ganax or another Dragon you control enters, create a Treasure token.\" is a triggered ability with `{\"event\": \"permanent_enters\", \"controller\": \"you\", \"filter\": {\"subtypes\": [\"Dragon\"]}}` -- and it must NOT carry `exclude_self`, because the printed line includes Ganax itself; the loader's own note confirms `self_enters` and `permanent_enters` are one engine event separated only by `source: \"self\"`, so an unqualified `permanent_enters` sees the source enter. The effect is `{\"op\": \"create_token\", \"token\": \"treasure_token\"}`, and `treasure_token` is in `token_ids`. So this gap is one keyword away from a card that also has a real gate-5 assertion available (`battlefield_count` 33 -- 32 permanents plus Ganax -- and `tokens` {\"treasure_token\": 1}, since the trigger fires off Ganax's own entry)."
+}

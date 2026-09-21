@@ -1,0 +1,25 @@
+{
+  "card_id": "neriv_heart_of_the_storm",
+  "name": "Neriv, Heart of the Storm",
+  "oracle_text": "Flying\nIf a creature you control that entered this turn would deal damage, it deals twice that much damage instead.",
+  "blocked_sentences": [
+    "If a creature you control that entered this turn would deal damage, it deals twice that much damage instead."
+  ],
+  "needs": [
+    {
+      "capability": "entered_this_turn_filter",
+      "kind": "selector",
+      "what": "An \"entered the battlefield this turn\" clause in the STATIC filter language -- a key such as `entered_this_turn: true` added to STATIC_FILTER_KEYS in src/automtg/cards/loader/vocabulary.py (line 589) and answered in src/automtg/engine/characteristics.py `_matches` from the object's own `entered_turn` against `state.turn` (`GameObject.entered_turn`, src/automtg/engine/objects.py line 54, is exactly this fact and is already what `summoning_sick` reads). It is the last piece of this card: everything else about the line exists. `replace_damage` with `damage_multiplier: 2` and a `damage_source` filter is the precise chassis -- Inquisitor's Flail in data/cards/auto/templates.cards.json writes `{\"effect\": \"replace_damage\", \"damage_multiplier\": 2, \"damage_source\": {\"attached\": true}, \"combat_only\": true}` -- and Neriv is that static with `damage_source: {\"controller\": \"you\", \"types\": [\"Creature\"], \"entered_this_turn\": true}` and no `combat_only` (Neriv doubles any damage, not just combat damage). The same key belongs in the effect-side SELECTOR_KEYS (src/automtg/engine/effects/selectors.py) for the same sentence written as a pool, but only the static half is needed to unblock this card. It unlocks the whole 'creatures that entered this turn' family beside Neriv -- Kalain-style haste payoffs, Combat Celebrant checks, anything that asks a permanent whether it is new.",
+      "why_existing_wont_do": "`damage_source` is validated against STATIC_FILTER_KEYS alone (src/automtg/cards/loader/__init__.py line 2495: unknown keys are a DslError, so an invented key is a load failure rather than a silent miss), and that list has no temporal clause at all. Its board-state members -- `tapped`, `attacking`, `blocking`, `attached`, `paired`, `controller`, `is_token`, `is_commander` -- are each a fact about the permanent's current relationships, never about when it arrived. Nothing substitutes: `tapped` is not it (a creature that entered this turn is usually untapped, and an old creature that attacked is tapped -- wrong in both directions); `keywords: [\"haste\"]` is not it (it matches a haste creature that has been out for ten turns and misses every new creature without haste, which is most of them); `is_token` is not it (tokens are not the only permanents that enter, and a token from a previous turn still matches). Routing around the static is no better: the engine knows which permanents entered this turn only through the value `{\"permanents_entered_this_turn\": {...}}`, which is a COUNT read off `ledger.permanents_entered` (src/automtg/engine/effects/values.py line 451) -- it answers 'how many' and cannot be asked of the one permanent that is about to deal damage, and its ENTERED_FILTER_KEYS is a separate, smaller list that no filter site consults. The `grant_ability` static is the other route and dies on the identical wall: its `affects` filter is validated against STATIC_FILTER_KEYS too (src/automtg/cards/loader/statics.py line 195), so 'creatures you control that entered this turn have <replace_damage>' cannot name its recipients either. And there is no trigger to fall back on -- this is a replacement effect ('would deal damage ... instead'), so `dealt_damage` and `deals_damage_to_player` fire after the smaller damage has already been dealt, which does not double a lethal hit and cannot double damage dealt to a permanent that is already dead."
+    }
+  ],
+  "closest_existing": [
+    "replace_damage",
+    "damage_multiplier",
+    "damage_source",
+    "permanents_entered_this_turn",
+    "grant_ability"
+  ],
+  "confidence": "high",
+  "notes": "Deliberately not written as a partial answer: `flying` is already in the packet's starting_point, and a card carrying only that keyword would leave the second printed line unclaimed and fail the residual gate. Approximating the filter would be worse than leaving the card out -- dropping 'that entered this turn' turns Neriv into a strictly better Gratuitous Violence that doubles every creature you control for ever. Cheap to close: one entry in STATIC_FILTER_KEYS and one clause in `characteristics._matches` reading `entered_turn`. Once it exists, the sandbox expectation for this card is `{\"zone\": \"battlefield\", \"battlefield_count\": 33}` -- the harness casts Neriv and stops, and nothing in that position deals damage, so the replacement itself cannot be observed there."
+}

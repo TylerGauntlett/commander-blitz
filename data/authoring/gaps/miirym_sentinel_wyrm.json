@@ -1,0 +1,19 @@
+{
+  "card_id": "miirym_sentinel_wyrm",
+  "name": "Miirym, Sentinel Wyrm",
+  "oracle_text": "Flying, ward {2}\nWhenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",
+  "blocked_sentences": [
+    "Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary."
+  ],
+  "needs": [
+    {
+      "capability": "nonlegendary_token_copy",
+      "kind": "op",
+      "what": "A way for copy_permanent's `except_` to REMOVE the Legendary supertype from the copy -- the printed clause 'except the token isn't legendary'. Concretely: a `remove_supertypes: [\"Legendary\"]` (or a boolean `not_legendary: true`) key added to COPY_EXCEPT_KEYS in src/automtg/cards/loader/effects.py (line 63), and honoured in src/automtg/engine/characteristics.py beside the existing `add_supertypes` union (line 183) by subtracting from the copied card's supertypes. The legend rule in src/automtg/engine/sba.py already reads the DERIVED supertypes via chars(), so nothing else needs touching -- the subtraction is all that is missing. This unblocks the whole family of cards that print the clause: Miirym, Helm of the Host, Kindred Charge, Moritte of the Frost, Living Laser (already in the pool with its copy ability unimplemented), and every future 'copy of it, except the token isn't legendary'.",
+      "why_existing_wont_do": "Everything else on this card is expressible and has an exact precedent: Faerie Artisans (data/cards/auto/templates.cards.json) is the same ability shape -- a `permanent_enters` trigger with `filter: {is_token: false, ...}` and a `copy_permanent` over `objects: {binding: \"subject\"}` -- and the ward {2} / flying line is the `ward` static plus the `flying` keyword. The single blocker is the exception. `except_` accepts only colors, types, power, toughness, add_types, add_subtypes, add_supertypes and no_mana_cost: every supertype key is additive, so 'except it's legendary' (Adagia) can be said and 'except it isn't legendary' cannot. Writing the ability without the clause is not a near-miss but the opposite card -- the token copies a legendary Dragon's supertypes, `_legend_rule` sees two legendary permanents with the same name under one controller and puts the older one in the graveyard on the next state-based check, so Miirym's whole purpose (doubling legendary Dragons) would visibly destroy a creature each time it triggers. There is no op that strips a supertype afterwards either: `add_subtype` only adds, `set_types` and `lose_all_abilities` do not touch supertypes, `change_text` rewrites subtypes only, and `become_copy`'s `except_name` renames rather than de-legendifies (and renaming would also dodge the legend rule for the WRONG reason, leaving a token with a name no printing gives it)."
+    }
+  ],
+  "closest_existing": ["copy_permanent", "except_.add_supertypes", "permanent_enters", "is_token", "ward"],
+  "confidence": "high",
+  "notes": "Deliberately not written as a partial answer: the flying/ward line alone would leave the printed trigger unclaimed and fail the residual gate, and a copy_permanent without the exception would be a materially different card (see above). Cheapest gap in this packet to close -- one key in COPY_EXCEPT_KEYS and one set-difference in characteristics.py."
+}

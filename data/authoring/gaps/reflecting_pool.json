@@ -1,0 +1,19 @@
+{
+  "card_id": "reflecting_pool",
+  "name": "Reflecting Pool",
+  "oracle_text": "{T}: Add one mana of any type that a land you control could produce.",
+  "blocked_sentences": [
+    "{T}: Add one mana of any type that a land you control could produce."
+  ],
+  "needs": [
+    {
+      "capability": "reflecting_any_type",
+      "kind": "engine",
+      "what": "the colorless half of the reflecting mana family -- an add_mana that asks a selector's lands what they could produce and offers every mana TYPE they make, {C} included, not only their five colours. Concretely: a flag or sibling key beside `reflecting` (e.g. `{\"op\": \"add_mana\", \"reflecting\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Land\"]}, \"any_type\": true}`) that makes the loader advertise a six-symbol superset (_ANY_COLOR_OPTIONS plus the colorless production tuple, src/automtg/cards/loader/mana.py:176, used at src/automtg/cards/loader/__init__.py:2001) and makes the narrowing loop in costs._reflect_options (src/automtg/engine/costs.py:441-444) keep the colorless index instead of skipping it. Reflecting Pool is the card the existing capability's own comments name as the reason it must stay colour-only, and it shares this gap with Horizon of Progress, Naga Vitalist and Incubation Druid.",
+      "why_existing_wont_do": "`reflecting` is the nearest thing and is deliberately narrower than this line. Its load-time superset is _ANY_COLOR_OPTIONS -- WUBRG and nothing else (src/automtg/cards/loader/mana.py:176) -- and costs._reflect_options explicitly drops colorless while polling the board: `if amount and index != SYMBOL_INDEX[COLORLESS]` (src/automtg/engine/costs.py:443). The template tier refuses the same match on purpose: _REFLECTED_COLOR in src/automtg/cards/proxy.py:626 anchors on \"any color\", and the comment above it says matching \"any type\" here \"would print a Reflecting Pool that cannot tap off a Wastes\" -- this card by name. So writing `reflecting` on Reflecting Pool is not a near-miss on an edge case, it is the exact substitution the existing capability was built to refuse: a Pool that silently cannot tap for {C} off a Wastes, an Eldrazi Temple, an Ancient Tomb or any other colorless land, which is half of what the card is played for in a colorless-heavy mana base. The packet's own starting_point is the other wrong answer -- a five-mode `choose_mode` over WUBRG is an unconditional any-colour land, strictly better than the printed card (it taps for colours no land you control could produce) and strictly worse (it still cannot make {C}), so it is wrong in both directions at once. No other family fits: `in_commander_identity` asks the command zone, `mana_chosen_color` reads a colour the permanent chose (this land chooses none), `split` is a free combination of two named colours, and `add_mana_per` scales an amount rather than choosing a type. Nor can the line be assembled from parts -- a reflecting add_mana must be the ability's sole effect (src/automtg/cards/loader/__init__.py:1988), and a mana ability's mana half may hold only add_mana or one choose_mode of them. The rest of the card is nothing: it is a single printed line, so this one capability is the whole card.",
+      "closest_existing": ["reflecting"]
+    }
+  ],
+  "closest_existing": ["reflecting", "in_commander_identity", "mana_chosen_color", "split", "add_mana_per"],
+  "confidence": "high"
+}

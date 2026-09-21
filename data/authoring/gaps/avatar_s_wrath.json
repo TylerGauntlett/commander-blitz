@@ -1,0 +1,32 @@
+{
+  "card_id": "avatar_s_wrath",
+  "name": "Avatar's Wrath",
+  "oracle_text": "Choose up to one target creature, then airbend all other creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)\nUntil your next turn, your opponents can't cast spells from anywhere other than their hands.\nExile Avatar's Wrath.",
+  "blocked_sentences": [
+    "Choose up to one target creature, then airbend all other creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)",
+    "Until your next turn, your opponents can't cast spells from anywhere other than their hands."
+  ],
+  "needs": [
+    {
+      "capability": "airbend",
+      "kind": "op",
+      "what": "an `airbend` op (or an `exile` mode) that exiles a pool of permanents and, for each exiled card, grants a `while_exiled` casting permission to that card's OWNER at a fixed alternative mana cost of {2} rather than the card's printed mana cost. Two pieces the engine does not have: (a) a per-object alternative-cost field -- something like `playable_alt_cost: \"{2}\"` on ObjectState, honoured in `casting._cast_options` beside the existing `free=obj.playable_free` branch so the offered cast charges {2} and nothing else; and (b) the grant addressing each card's owner rather than the resolving controller, since airbend hands opponents' creatures back to opponents. It should also expire the way `exiles_itself` does not -- the permission lives only while the card stays in exile.",
+      "why_existing_wont_do": "`exile` with `playable` is the near miss and is wrong on both counts. In `ops_removal.py:285` it writes `obj.playable_by = ctx.controller` -- one seat, the spell's controller -- so airbending an opponent's creature would let ME cast it, not its owner; and the only cost modifiers it can carry are `any_color` (ops_removal.py:291) and, on `grant_playable`, `any_type`/`as_flashback`/`limit` (ops_cards.py:206-219). Nothing anywhere sets a fixed price: `ObjectState` has `playable_free`, `playable_sorcery_only`, `playable_any_color`, `playable_any_type` (objects.py:612-641) and no cost field, and `casting._cast_options` (casting.py:150) can only pass `extra_generic` and `free`, i.e. full price or no price -- never \"{2} instead\". `alternative_cost` and `evoke` in `card_level_cost_keys` are the right shape but live on the card being cast, set by its own author; Avatar's Wrath must impose the price on OTHER cards from outside. `cost_reduction`/`mana_reduction` subtract from a printed cost rather than replace it, so they give the wrong number for every creature whose mana value is not exactly 2 more than {2}. The `exile` reminder text is the whole of airbend, so there is no second sentence to salvage."
+    },
+    {
+      "capability": "cant_cast_spells_from_zones",
+      "kind": "static_effect",
+      "what": "a zone filter on the player-wide `cant_cast_spells` static -- e.g. `from_zones: [\"graveyard\", \"exile\", \"library\", \"command\"]` or its inverse `except_zones: [\"hand\"]` -- read in `casting._cast_actions` and in the three resolution-time cast paths (`suspend.cast_for_free`, `replacements._offer_cast`, `op_cast_copy`) so that a hand cast is still allowed while flashback, escape, cascade, madness, plotted and suspended casts are stopped. It also needs a way for a SORCERY to establish the lock for a duration of \"until your next turn\": a player-wide continuous effect with a floating duration, not a static on a permanent that the card would have to leave behind.",
+      "why_existing_wont_do": "The packet's own note says it outright: `cant_cast_spells` \"stops every spell from every zone, free casts included, and takes no spell filter\", and the loader enforces that -- `loader/__init__.py:2706` raises a DslError if `affects` or `amount` is present, precisely so a narrower printed line cannot load as a strictly stronger lock. `player_cant_cast_spells` (player_statics.py:886) takes only `affects_player` and `condition`, and `condition` comes from `static_condition_keys` (`is_your_turn`, `counters`, `exists`, ...), which has no zone vocabulary and no \"until your next turn\" clock. Writing the static bare would forbid the opponents' HAND casts too -- a far harsher card than the one printed. There is also no op that installs a player-wide prohibition from a sorcery's `spell_effects`: `set_turn_flag` writes a flag only `has_turn_flag` conditions read and no legality path consults it, `detain` and `lock_abilities` target objects rather than players, and `delay`/`delayed_trigger` schedule a future effect rather than hold a restriction open across the intervening turns."
+    }
+  ],
+  "closest_existing": [
+    "exile",
+    "grant_playable",
+    "alternative_cost",
+    "cost_reduction",
+    "cant_cast_spells",
+    "set_turn_flag"
+  ],
+  "confidence": "high"
+}

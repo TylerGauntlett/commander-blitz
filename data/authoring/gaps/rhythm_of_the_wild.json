@@ -1,0 +1,23 @@
+{
+  "card_id": "rhythm_of_the_wild",
+  "name": "Rhythm of the Wild",
+  "oracle_text": "Creature spells you control can't be countered.\nNontoken creatures you control have riot. (They enter with your choice of a +1/+1 counter or haste.)",
+  "blocked_sentences": [
+    "Nontoken creatures you control have riot. (They enter with your choice of a +1/+1 counter or haste.)"
+  ],
+  "needs": [
+    {
+      "capability": "riot",
+      "kind": "keyword",
+      "what": "`riot` as a 35th ability keyword, whose meaning is a 614.1c replacement applied AS the permanent arrives: its controller chooses, on arrival, either a +1/+1 counter placed as it enters or haste for as long as it remains on the battlefield. Two halves are needed and both are load-bearing. (1) The keyword itself, so a creature printing \"Riot\" carries it -- compiled into the replacement slot `self_enters_with_counters`/`self_enters` already occupies (src/automtg/engine/zones.py:620-665), but modal: a decision taken during the move, not a `self_enters` trigger. (2) The keyword being GRANTABLE by a `grant_keyword` static to a filtered set (`{\"types\": [\"Creature\"], \"controller\": \"you\", \"is_token\": false}`), with the granted replacement honoured when one of those creatures enters. The haste half must be permanent-duration haste, which `grant_keyword` already spells (`duration: \"permanent\"`, src/automtg/engine/effects/ops_characteristics.py:190-204 documents this case as riot's).",
+      "why_existing_wont_do": "`keywords` in the reference is a closed list of 34 and riot is not in it, so `grant_keyword` (static or op) cannot name it and the loader rejects anything else -- there is no riot anywhere in the pool (`grep -rnwi riot data/cards` finds only three cards whose NAMES contain the word). Nothing else reaches it either. The card-level replacement family is the right mechanism but the wrong scope: `ReplacementModel` (src/automtg/cards/schema.py:664-700) whitelists five events, every one of them `self_enters*`, and the docstring says outright that each \"modifies the permanent that is already arriving\" -- a permanent can give itself an enters-with-counters replacement, and nothing in the DSL lets one permanent's static hand a replacement to other creatures. It is also not modal: `self_enters_with_counters` takes a `counter` and an `amount` and never asks a question. The `grant_ability` static is the nearest reachable spelling and is the approximation to refuse: the only ability shape it could hand over is a `self_enters` triggered ability running `choose_mode` over `add_counters` and `grant_keyword`, and that is a different card -- the counter lands after the creature is already on the battlefield and after every other enters trigger has looked at it, so a creature that is only alive because of the counter (a printed 0/0, a Hydra) is binned by state-based actions first, an opponent gets a window to respond to a creature riot should never have been seen without, and anything counting counters on arrival reads zero. `replace_counters` (with `counter_addend`) is a third near miss and is the wrong axis: it scales counters that something else is already placing (Hardened Scales), and riot places the first one. `put_onto_battlefield`'s `counters` and `create_token`'s `created_with` only decorate permanents that an effect itself is putting onto the battlefield, not creatures cast from hand."
+    }
+  ],
+  "closest_existing": [
+    "grant_keyword",
+    "grant_ability",
+    "replace_counters",
+    "self_enters_with_counters"
+  ],
+  "confidence": "high"
+}

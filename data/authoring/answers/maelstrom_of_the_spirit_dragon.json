@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "maelstrom_of_the_spirit_dragon",
+    "name": "Maelstrom of the Spirit Dragon",
+    "oracle_text": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a Dragon spell or an Omen spell.\n{4}, {T}, Sacrifice this land: Search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "cost": {"tap": true},
+        "is_mana_ability": true,
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color. Spend this mana only to cast a Dragon spell or an Omen spell.",
+        "cost": {"tap": true},
+        "is_mana_ability": true,
+        "mana_restriction": {"cast": ["Dragon", "Omen"]},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"label": "W", "effects": [{"op": "add_mana", "mana": "{W}"}]},
+              {"label": "U", "effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"label": "B", "effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"label": "R", "effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"label": "G", "effects": [{"op": "add_mana", "mana": "{G}"}]}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{4}, {T}, Sacrifice this land: Search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+        "cost": {
+          "mana": "{4}",
+          "tap": true,
+          "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}
+        },
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "hand",
+            "reveal": true,
+            "shuffle": true,
+            "selector": {"subtypes": ["Dragon"]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

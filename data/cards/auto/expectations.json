@@ -1029,6 +1029,10 @@
   "bonebreaker_giant": {
     "zone": "battlefield"
   },
+  "bonehoard_dracosaur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bonesplitter": {
     "zone": "battlefield"
   },
@@ -1581,6 +1585,10 @@
   "circle_of_dreams_druid": {
     "zone": "battlefield"
   },
+  "city_of_brass": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "city_of_traitors": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1933,6 +1941,14 @@
   },
   "crumbling_necropolis": {
     "zone": "battlefield"
+  },
+  "crux_of_fate": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "crypt_ghast": {
     "battlefield_count": 33,
@@ -2395,6 +2411,10 @@
   "douser_of_lights": {
     "zone": "battlefield"
   },
+  "draconic_visitor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dragon_bell_monk": {
     "zone": "battlefield"
   },
@@ -2408,6 +2428,31 @@
     "zone": "battlefield"
   },
   "dragon_style_twins": {
+    "zone": "battlefield"
+  },
+  "dragon_tempest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dragonhawk_fate_s_tempest": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "dragonlord_dromoka": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dragonlord_kolaghan": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "haste"
+      ]
+    },
     "zone": "battlefield"
   },
   "dragonskull_summit": {
@@ -3096,6 +3141,10 @@
     },
     "zone": "graveyard"
   },
+  "firdoch_core": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fire_diamond": {
     "zone": "battlefield"
   },
@@ -3281,6 +3330,11 @@
     }
   },
   "foot_soldiers": {
+    "zone": "battlefield"
+  },
+  "forbidden_orchard": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "forbidding_watchtower": {
@@ -3722,6 +3776,13 @@
       "graveyard"
     ]
   },
+  "gleaming_splendor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "glider_kids": {
     "zone": "battlefield"
   },
@@ -3826,6 +3887,10 @@
     "zone": "battlefield"
   },
   "golden_tail_disciple": {
+    "zone": "battlefield"
+  },
+  "goldlust_triad": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "goldmire_bridge": {
@@ -4462,6 +4527,10 @@
   "idyllic_beachfront": {
     "zone": "battlefield"
   },
+  "ignoble_hierarch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iguana_parrot": {
     "zone": "battlefield"
   },
@@ -4900,6 +4969,14 @@
   "kinjalli_s_sunwing": {
     "zone": "battlefield"
   },
+  "kiora_behemoth_beckoner": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 7,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "kismet": {
     "zone": "battlefield"
   },
@@ -5000,6 +5077,23 @@
   "kor_halberd": {
     "zone": "battlefield"
   },
+  "korvold_fae_cursed_king": {
+    "battlefield_count": 32,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "koskun_keep": {
     "zone": "battlefield"
   },
@@ -5069,6 +5163,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "lathliss_dragon_queen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "lathnu_sailback": {
     "zone": "battlefield"
@@ -5407,6 +5505,10 @@
     },
     "zone": "graveyard"
   },
+  "maelstrom_of_the_spirit_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "magefire_wings": {
     "zone": [
       "battlefield",
@@ -5525,6 +5627,13 @@
   "mana_prism": {
     "zone": "battlefield"
   },
+  "mana_vault": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "manakin": {
     "zone": "battlefield"
   },
@@ -5556,6 +5665,14 @@
     ]
   },
   "maraleaf_pixie": {
+    "zone": "battlefield"
+  },
+  "marang_river_regent_coil_and_catch": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "marauder_s_axe": {
@@ -6295,6 +6412,10 @@
   "noble_elephant": {
     "zone": "battlefield"
   },
+  "noble_hierarch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "norwood_archers": {
     "zone": "battlefield"
   },
@@ -6439,6 +6560,10 @@
     "zone": "battlefield"
   },
   "old_ghastbark": {
+    "zone": "battlefield"
+  },
+  "old_gnawbone": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "old_growth_dryads": {
@@ -7834,6 +7959,10 @@
     "opponent_battlefield_count": 4,
     "zone": "battlefield"
   },
+  "scourge_of_valkas": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scourge_servant": {
     "zone": "battlefield"
   },
@@ -8502,6 +8631,10 @@
   "slumbering_waterways": {
     "zone": "battlefield"
   },
+  "smaug_the_magnificent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "smoldering_butcher": {
     "zone": "battlefield"
   },
@@ -8801,6 +8934,10 @@
   "steel_wall": {
     "zone": "battlefield"
   },
+  "steely_resolve": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "steeple_roc": {
     "zone": "battlefield"
   },
@@ -8945,6 +9082,12 @@
   "strong_back": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "stubborn_denial": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "stumpsquall_hydra": {
     "battlefield_count": 33,
@@ -9121,6 +9264,16 @@
   },
   "sylvan_library": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sylvia_brightspear": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "double_strike"
+      ]
+    },
     "zone": "battlefield"
   },
   "taiga": {
@@ -9322,9 +9475,20 @@
     "zone": "battlefield"
   },
   "temple_of_the_false_god": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "temple_of_triumph": {
+    "zone": "battlefield"
+  },
+  "temur_ascendancy": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
     "zone": "battlefield"
   },
   "tenement_crasher": {
@@ -9899,6 +10063,16 @@
       "graveyard"
     ]
   },
+  "up_the_beanstalk": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "updraft_elemental": {
     "zone": "battlefield"
   },
@@ -9924,6 +10098,13 @@
     "zone": "battlefield"
   },
   "urborg_volcano": {
+    "zone": "battlefield"
+  },
+  "ureni_of_the_unwritten": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "urza_s_cave": {

@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "temple_of_the_false_god",
+    "name": "Temple of the False God",
+    "oracle_text": "{T}: Add {C}{C}. Activate only if you control five or more lands.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}{C}. Activate only if you control five or more lands.",
+        "cost": {
+          "tap": true
+        },
+        "is_mana_ability": true,
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}{C}"
+          }
+        ],
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "right": {
+            "const": 5
+          }
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

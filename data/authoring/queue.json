@@ -8188,7 +8188,7 @@
       "scryfall_id": "f6cbc754-8aed-4c32-857c-ea639943b5d2",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ancient Cornucopia": {
       "edhrec_rank": 8582,
@@ -8238,7 +8238,7 @@
       "scryfall_id": "18f53d47-fd5c-41de-8d7a-490c1b529f4f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ancient Greenwarden": {
       "edhrec_rank": 682,
@@ -12758,7 +12758,7 @@
       "scryfall_id": "7230f119-b663-483c-aa9b-eb22259fcc2d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Arena of the Ancients": {
       "edhrec_rank": 18668,
@@ -17268,7 +17268,7 @@
       "scryfall_id": "4811072d-fac0-40dd-a5cf-9694d51b12cf",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Aveline de Grandpré": {
       "edhrec_rank": 7289,
@@ -29278,7 +29278,7 @@
       "scryfall_id": "0b5f1455-8124-408f-9ca5-9b281ec1708f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Bloombrute": {
       "edhrec_rank": 32097,
@@ -31072,13 +31072,13 @@
     },
     "Bonehoard Dracosaur": {
       "edhrec_rank": 1371,
-      "gate": "template",
+      "gate": null,
       "name": "Bonehoard Dracosaur",
-      "reason": "no template for: At the beginning of your upkeep, exile the top two cards of your library. You may play the",
+      "reason": "",
       "scryfall_id": "2220ed60-3f8f-4dd2-8319-6a06896a5350",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Boneknitter": {
       "edhrec_rank": 20555,
@@ -41818,7 +41818,7 @@
       "scryfall_id": "e70e4fba-4217-472a-9adb-f7d63424ef2f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Cavernous Maw": {
       "edhrec_rank": 14564,
@@ -46168,7 +46168,7 @@
       "scryfall_id": "7b0b0520-f792-4201-bd4c-22b7d7824b52",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Chromatic Sphere": {
       "edhrec_rank": 5159,
@@ -47122,12 +47122,12 @@
     },
     "City of Brass": {
       "edhrec_rank": 97,
-      "gate": "template",
+      "gate": null,
       "name": "City of Brass",
-      "reason": "no template for: Whenever this land becomes tapped, it deals 1 damage to you",
+      "reason": "",
       "scryfall_id": "c21565d0-fc40-4d89-9b27-87c03385e0af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "City of Death": {
@@ -57242,13 +57242,13 @@
     },
     "Crux of Fate": {
       "edhrec_rank": 1569,
-      "gate": "template",
+      "gate": null,
       "name": "Crux of Fate",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "4d507db6-29a6-4816-8e37-5b6e318d740f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cry of Contrition": {
       "edhrec_rank": 23654,
@@ -72828,7 +72828,7 @@
       "scryfall_id": "4ea86de4-64d0-445f-b83a-f2c41d54462a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Draconautics Engineer": {
       "edhrec_rank": 13257,
@@ -72916,9 +72916,9 @@
       "name": "Draconic Visitor",
       "reason": "",
       "scryfall_id": "112f8478-bd89-4a14-9721-8ab750613129",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dracoplasm": {
       "edhrec_rank": 30109,
@@ -73242,13 +73242,13 @@
     },
     "Dragon Tempest": {
       "edhrec_rank": 850,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon Tempest",
-      "reason": "no template for: Whenever a creature you control with flying enters, it gains haste until end of turn",
+      "reason": "",
       "scryfall_id": "13ad7bb2-e58b-4cd1-9b32-38c7f8589214",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dragon Throne of Tarkir": {
       "edhrec_rank": 7184,
@@ -73572,13 +73572,13 @@
     },
     "Dragonhawk, Fate's Tempest": {
       "edhrec_rank": 2215,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonhawk, Fate's Tempest",
-      "reason": "no template for: Whenever Dragonhawk enters or attacks, exile the top X cards of your library, where X is t",
+      "reason": "",
       "scryfall_id": "8659789c-6a2c-439f-a348-b9b1b06c55b8",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dragonkin Berserker": {
       "edhrec_rank": 13498,
@@ -73632,13 +73632,13 @@
     },
     "Dragonlord Dromoka": {
       "edhrec_rank": 1880,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonlord Dromoka",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "22562492-f77e-4505-81cd-84e473822cdb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dragonlord Dromoka // Dragonlord Dromoka": {
       "edhrec_rank": 1880,
@@ -73652,13 +73652,13 @@
     },
     "Dragonlord Kolaghan": {
       "edhrec_rank": 7734,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonlord Kolaghan",
-      "reason": "no template for: Other creatures you control have haste",
+      "reason": "",
       "scryfall_id": "e169b04a-d799-4693-999e-114dd085b378",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dragonlord Kolaghan // Dragonlord Kolaghan": {
       "edhrec_rank": 7734,
@@ -95272,13 +95272,13 @@
     },
     "Firdoch Core": {
       "edhrec_rank": 3942,
-      "gate": "template",
+      "gate": null,
       "name": "Firdoch Core",
-      "reason": "no template for: {4}: This artifact becomes a 4/4 artifact creature until end of turn",
+      "reason": "",
       "scryfall_id": "8e45cd37-bf97-4742-978d-96f96ed653cd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fire // Ice": {
       "edhrec_rank": 12784,
@@ -99902,13 +99902,13 @@
     },
     "Forbidden Orchard": {
       "edhrec_rank": 709,
-      "gate": "template",
+      "gate": null,
       "name": "Forbidden Orchard",
-      "reason": "no template for: Whenever you tap this land for mana, target opponent creates a 1/1 colorless Spirit creatu",
+      "reason": "",
       "scryfall_id": "3f79add5-6c23-4a36-86d3-8647605d2a71",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Forbidden Ritual": {
       "edhrec_rank": 24835,
@@ -104898,7 +104898,7 @@
       "scryfall_id": "97fb28cc-67bd-4e1f-933a-3b859f38ea64",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gandalf of the Secret Fire": {
       "edhrec_rank": 13920,
@@ -110552,13 +110552,13 @@
     },
     "Gleaming Splendor": {
       "edhrec_rank": 16168,
-      "gate": "template",
+      "gate": null,
       "name": "Gleaming Splendor",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, you create a Treasure token",
+      "reason": "",
       "scryfall_id": "3b087bd4-bbb7-4963-bdb6-0a700ff19a04",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gleancrawler": {
       "edhrec_rank": 16784,
@@ -114492,13 +114492,13 @@
     },
     "Goldlust Triad": {
       "edhrec_rank": 2069,
-      "gate": "template",
+      "gate": null,
       "name": "Goldlust Triad",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "08f0f665-a659-460b-baf7-9f781dcbb5e0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Goldmane Griffin": {
       "edhrec_rank": 25927,
@@ -114618,7 +114618,7 @@
       "scryfall_id": "848c1951-90fa-4f01-9aed-76f1afcd9995",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Goldvein Hydra": {
       "edhrec_rank": 1450,
@@ -125448,7 +125448,7 @@
       "scryfall_id": "40339715-22d0-4f99-822b-a00d9824f27a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Helica Glider": {
       "edhrec_rank": 26032,
@@ -125788,7 +125788,7 @@
       "scryfall_id": "db45122e-b5ef-487b-8ea9-59ea066d3c88",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Hellkite Hatchling": {
       "edhrec_rank": 23446,
@@ -129888,7 +129888,7 @@
       "scryfall_id": "5ae3a9c8-194e-421b-b77d-9c8784442651",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Hormagaunt Horde": {
       "edhrec_rank": 9629,
@@ -133572,13 +133572,13 @@
     },
     "Ignoble Hierarch": {
       "edhrec_rank": 529,
-      "gate": "template",
+      "gate": null,
       "name": "Ignoble Hierarch",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "e802cfe1-45e0-47cd-8745-363ccc0f2af8",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ignoble Soldier": {
       "edhrec_rank": 31399,
@@ -149472,13 +149472,13 @@
     },
     "Kiora, Behemoth Beckoner": {
       "edhrec_rank": 2304,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora, Behemoth Beckoner",
-      "reason": "no template for: Whenever a creature you control with power 4 or greater enters, draw a card",
+      "reason": "",
       "scryfall_id": "8966483f-7977-44ee-b255-3e89262e0a71",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kiora, Master of the Depths": {
       "edhrec_rank": 8946,
@@ -150308,7 +150308,7 @@
       "scryfall_id": "46f66347-a9b5-4f5d-986f-3fb43413f899",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Klaw, Master of Sound": {
       "edhrec_rank": 18793,
@@ -151762,13 +151762,13 @@
     },
     "Korvold, Fae-Cursed King": {
       "edhrec_rank": 1863,
-      "gate": "template",
+      "gate": null,
       "name": "Korvold, Fae-Cursed King",
-      "reason": "no template for: Whenever Korvold enters or attacks, sacrifice another permanent",
+      "reason": "",
       "scryfall_id": "607c1793-8e5a-4ebf-87c6-7f9c99bbd29a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Korvold, Gleeful Glutton": {
       "edhrec_rank": 16910,
@@ -154902,13 +154902,13 @@
     },
     "Lathliss, Dragon Queen": {
       "edhrec_rank": 1072,
-      "gate": "template",
+      "gate": null,
       "name": "Lathliss, Dragon Queen",
-      "reason": "no template for: Whenever another nontoken Dragon you control enters, create a 5/5 red Dragon creature toke",
+      "reason": "",
       "scryfall_id": "409acb8f-cf03-4a56-a8c0-e4c97a01ee10",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Lathnu Hellion": {
       "edhrec_rank": 26923,
@@ -164192,13 +164192,13 @@
     },
     "Maelstrom of the Spirit Dragon": {
       "edhrec_rank": 2109,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom of the Spirit Dragon",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a Dragon spell or an Omen spe",
+      "reason": "",
       "scryfall_id": "836504f0-08ce-4db2-aa1c-261a51110fe5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Maester Seymour": {
       "edhrec_rank": 3869,
@@ -165398,7 +165398,7 @@
       "scryfall_id": "528ef70f-4844-48fa-a768-4003c6ee6dae",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Majestic Heliopterus": {
       "edhrec_rank": 9427,
@@ -166382,12 +166382,12 @@
     },
     "Mana Vault": {
       "edhrec_rank": 145,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Vault",
-      "reason": "no template for: This artifact doesn't untap during your untap step",
+      "reason": "",
       "scryfall_id": "f20b3a5b-c07e-4314-ab3e-097212ff5e6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mana Vortex": {
@@ -167042,13 +167042,13 @@
     },
     "Marang River Regent // Coil and Catch": {
       "edhrec_rank": 3355,
-      "gate": "template",
+      "gate": null,
       "name": "Marang River Regent // Coil and Catch",
-      "reason": "no template for: When this creature enters, return up to two other target nonland permanents to their owner",
+      "reason": "",
       "scryfall_id": "685d2b12-d45a-400b-b582-8b184a6eee13",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Marang River Regent // Coil and Catch // Marang River Regent": {
       "edhrec_rank": 3355,
@@ -173168,7 +173168,7 @@
       "scryfall_id": "99ad63c7-0686-4f20-bc81-7b06df2bcb4a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mijae Djinn": {
       "edhrec_rank": 20900,
@@ -173382,12 +173382,12 @@
     },
     "Millikin": {
       "edhrec_rank": 1226,
-      "gate": "residual",
+      "gate": null,
       "name": "Millikin",
-      "reason": "printed text not represented: {T}, Mill a card: Add {C}",
+      "reason": "",
       "scryfall_id": "c2073453-4108-4039-a8c2-0f94dd7bf237",
       "source": "agent",
-      "status": "failed",
+      "status": "done",
       "wanted": false
     },
     "Millstone": {
@@ -185228,7 +185228,7 @@
       "scryfall_id": "b104ba85-0ba5-4c6e-9fdd-7fab22c3faac",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Nervous Gardener": {
       "edhrec_rank": 11995,
@@ -188212,13 +188212,13 @@
     },
     "Noble Hierarch": {
       "edhrec_rank": 775,
-      "gate": "template",
+      "gate": null,
       "name": "Noble Hierarch",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "db9a7f12-0839-49cd-bf2e-0aac68859038",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Noble Ox": {
       "edhrec_rank": null,
@@ -191982,13 +191982,13 @@
     },
     "Old Gnawbone": {
       "edhrec_rank": 911,
-      "gate": "template",
+      "gate": null,
       "name": "Old Gnawbone",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, create that many Treasure",
+      "reason": "",
       "scryfall_id": "2daa0737-e1a5-4112-afde-34a3375e23f7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Old Hob, Alleycat Blues": {
       "edhrec_rank": 23993,
@@ -218908,7 +218908,7 @@
       "scryfall_id": "1d503baa-c041-46b6-8589-5369b49dd3a3",
       "source": "",
       "status": "unexpressible",
-      "wanted": false
+      "wanted": true
     },
     "Reflections of Littjara": {
       "edhrec_rank": 666,
@@ -223338,7 +223338,7 @@
       "scryfall_id": "e7843a8a-a8d8-4236-a05d-287fad0a74b1",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Rhythmic Water Vortex": {
       "edhrec_rank": 29641,
@@ -225968,7 +225968,7 @@
       "scryfall_id": "6d3c06a5-a0b2-47a2-a583-d579c24a44c9",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Roar of Challenge": {
       "edhrec_rank": 6622,
@@ -236182,13 +236182,13 @@
     },
     "Scourge of Valkas": {
       "edhrec_rank": 1515,
-      "gate": "template",
+      "gate": null,
       "name": "Scourge of Valkas",
-      "reason": "no template for: Whenever this creature or another Dragon you control enters, it deals X damage to any targ",
+      "reason": "",
       "scryfall_id": "ebab854f-f041-49d8-bd7c-3d1cdca72cc6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Scourge of the Nobilis": {
       "edhrec_rank": 18155,
@@ -252692,13 +252692,13 @@
     },
     "Smaug the Magnificent": {
       "edhrec_rank": 10662,
-      "gate": "template",
+      "gate": null,
       "name": "Smaug the Magnificent",
-      "reason": "no template for: Whenever Smaug attacks, he deals damage equal to the number of Treasures you control to an",
+      "reason": "",
       "scryfall_id": "43c56e15-ba46-4a27-b9b0-55cde9f8c933",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Smaug's Fury": {
       "edhrec_rank": 31527,
@@ -252718,7 +252718,7 @@
       "scryfall_id": "189a7d55-c3ec-4402-a3b3-72817f533e87",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Smaug, the Great Calamity // Spew Flame": {
       "edhrec_rank": 31087,
@@ -253178,7 +253178,7 @@
       "scryfall_id": "41b76d0d-da55-44ec-add8-61696ee40d21",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Sméagol, Helpful Guide": {
       "edhrec_rank": 6107,
@@ -263962,13 +263962,13 @@
     },
     "Steely Resolve": {
       "edhrec_rank": 7677,
-      "gate": "template",
+      "gate": null,
       "name": "Steely Resolve",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "c443ee78-6bdc-4a74-9cad-93727b9fdbd6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Steely Resolve // Steely Resolve": {
       "edhrec_rank": 7677,
@@ -267712,13 +267712,13 @@
     },
     "Stubborn Denial": {
       "edhrec_rank": 1534,
-      "gate": "template",
+      "gate": null,
       "name": "Stubborn Denial",
-      "reason": "no template for: Counter target noncreature spell unless its controller pays {1}",
+      "reason": "",
       "scryfall_id": "6f8626c4-306f-4e9d-8840-2bb73fe87e87",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Stuck in Summoner's Sanctum": {
       "edhrec_rank": 10877,
@@ -272752,13 +272752,13 @@
     },
     "Sylvia Brightspear": {
       "edhrec_rank": 11669,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvia Brightspear",
-      "reason": "no template for: Partner with Khorvath Brightflame",
+      "reason": "",
       "scryfall_id": "ab2b349a-1555-4aaa-8302-28667404e630",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sylvok Battle-Chair": {
       "edhrec_rank": 21175,
@@ -275188,7 +275188,7 @@
       "scryfall_id": "44607ed3-9523-40ac-9f61-0edd011cf762",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tanufel Rimespeaker": {
       "edhrec_rank": 12109,
@@ -277336,7 +277336,7 @@
       "name": "Temple of the False God",
       "reason": "",
       "scryfall_id": "1024f555-e0d7-48ac-b86e-c87290eac832",
-      "source": "template:proxy:complete",
+      "source": "agent",
       "status": "done",
       "wanted": false
     },
@@ -277652,13 +277652,13 @@
     },
     "Temur Ascendancy": {
       "edhrec_rank": 877,
-      "gate": "template",
+      "gate": null,
       "name": "Temur Ascendancy",
-      "reason": "no template for: Creatures you control have haste",
+      "reason": "",
       "scryfall_id": "4512f8d1-0d81-424a-a6e4-2a38411dc84b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Temur Banner": {
       "edhrec_rank": 16490,
@@ -277688,7 +277688,7 @@
       "scryfall_id": "1292af13-87dd-46d4-b49b-f27baae99e7f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Temur Charger": {
       "edhrec_rank": 18299,
@@ -278678,7 +278678,7 @@
       "scryfall_id": "2febfa1b-5a5e-411a-a7aa-f2ca6ee66f51",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Terrus Wurm": {
       "edhrec_rank": 26977,
@@ -282738,7 +282738,7 @@
       "scryfall_id": "10d42b35-844f-4a64-9981-c6118d45e826",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "The Ur-Sphinx": {
       "edhrec_rank": 23890,
@@ -286588,7 +286588,7 @@
       "scryfall_id": "d7ed714e-28df-4bf3-9752-112a6e9e3609",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tiamat's Fanatics": {
       "edhrec_rank": 8511,
@@ -294908,7 +294908,7 @@
       "scryfall_id": "04a474e3-e7de-4b4d-ad89-a72571968687",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Twining Twins // Swift Spiral": {
       "edhrec_rank": 11842,
@@ -299022,13 +299022,13 @@
     },
     "Up the Beanstalk": {
       "edhrec_rank": 1095,
-      "gate": "template",
+      "gate": null,
       "name": "Up the Beanstalk",
-      "reason": "no template for: When this enchantment enters and whenever you cast a spell with mana value 5 or greater, d",
+      "reason": "",
       "scryfall_id": "2d5e991f-23b2-4db0-a452-7755125b1fd2",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Updraft": {
       "edhrec_rank": 24606,
@@ -299422,13 +299422,13 @@
     },
     "Ureni of the Unwritten": {
       "edhrec_rank": 2530,
-      "gate": "template",
+      "gate": null,
       "name": "Ureni of the Unwritten",
-      "reason": "no template for: Whenever Ureni enters or attacks, look at the top eight cards of your library. You may put",
+      "reason": "",
       "scryfall_id": "f54ecbf1-83df-4486-bd6a-7d1f173b6863",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ureni's Rebuff": {
       "edhrec_rank": 17112,
@@ -323578,7 +323578,7 @@
       "scryfall_id": "e26911a0-447a-41d6-96e5-c93353778a2c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Zurgo's Vanguard": {
       "edhrec_rank": 10108,
