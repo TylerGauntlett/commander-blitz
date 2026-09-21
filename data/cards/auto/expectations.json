@@ -3915,6 +3915,17 @@
   "goldmire_bridge": {
     "zone": "battlefield"
   },
+  "goldspan_dragon": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "goldvein_hydra": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6330,6 +6341,10 @@
     "zone": "battlefield"
   },
   "nephalia_seakite": {
+    "zone": "battlefield"
+  },
+  "neriv_heart_of_the_storm": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nessian_courser": {
