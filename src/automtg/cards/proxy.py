@@ -513,7 +513,7 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
         # A line whose rider cannot be read is dropped rather than generated
         # without its drawback -- one line short is a worse card, which is the
         # safe direction; a painless painland is a better one, which is not.
-        rider, rider_note = _mana_rider(line, facts.name)
+        rider, condition, rider_note = _mana_rider(line, facts.name)
         if rider_note:
             notes.append(rider_note)
             continue
@@ -524,19 +524,20 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
         cost: dict = {"tap": True}
         if extra_cost:
             cost["mana"] = extra_cost
-        abilities.append(
-            {
-                "kind": "activated",
-                # The printed line this implements, verbatim.  Not decoration:
-                # the authoring verifier's residual gate decides "is every
-                # sentence accounted for" by asking each ability which sentence
-                # it claims, and an ability with no text claims nothing.
-                "text": line.strip(),
-                "is_mana_ability": True,
-                "cost": cost,
-                "effects": effects + rider,
-            }
-        )
+        ability: dict = {
+            "kind": "activated",
+            # The printed line this implements, verbatim.  Not decoration:
+            # the authoring verifier's residual gate decides "is every
+            # sentence accounted for" by asking each ability which sentence
+            # it claims, and an ability with no text claims nothing.
+            "text": line.strip(),
+            "is_mana_ability": True,
+            "cost": cost,
+            "effects": effects + rider,
+        }
+        if condition is not None:
+            ability["condition"] = condition
+        abilities.append(ability)
         consumed.add(line)
 
     return abilities, notes, consumed
@@ -557,14 +558,20 @@ _RIDER_DAMAGE = re.compile(
 )
 
 
-def _mana_rider(line: str, name: str) -> tuple[list[dict], str | None]:
-    """``(rider effects, refusal note)`` for the sentence after ``Add ...``.
+def _mana_rider(line: str, name: str) -> tuple[list[dict], dict | None, str | None]:
+    """``(rider effects, activation condition, refusal note)`` after ``Add ...``.
 
-    Exactly one of the two is ever non-empty.  A tail this cannot read is a
+    At most one of the three is ever set.  A tail this cannot read is a
     *refusal* -- the caller drops the whole mana ability rather than generating
     it without its drawback, because a painland that costs no life is a strictly
     better card than the printed one, and a free untapped dual is the one
     direction this generator must never fail in.
+
+    The two readable shapes are not the same kind of thing and cannot share a
+    slot: a painland's drawback is an **effect** the ability has, where "Activate
+    only if ..." is a **condition** on activating it at all -- written into the
+    effects it would be a cost paid after the fact, and written as a cost it
+    would be something the player could decline.
     """
     # Unwrapped exactly as `_find_mana_lines` unwraps them, and for the same
     # reason: a basic land's whole text is the reminder "({T}: Add {G}.)", and
@@ -574,12 +581,12 @@ def _mana_rider(line: str, name: str) -> tuple[list[dict], str | None]:
     bare = line.replace("(", "").replace(")", "").strip()
     match = _MANA_TAIL.search(bare)
     if match is None:
-        return [], None
+        return [], None, None
     tail = match.group("tail").strip()
     # "({C} represents colorless mana.)" says nothing about the card, and once
     # unwrapped a reminder-only tail has no letters left to say it with.
     if not re.search(r"[A-Za-z]", tail):
-        return [], None
+        return [], None, None
     if damage := _RIDER_DAMAGE.match(tail):
         return [
             {
@@ -587,8 +594,10 @@ def _mana_rider(line: str, name: str) -> tuple[list[dict], str | None]:
                 "amount": {"const": int(damage.group("n"))},
                 "player": "you",
             }
-        ], None
-    return [], f"mana ability not generated; its rider is {tail!r}"
+        ], None, None
+    if condition := _activation_condition(tail):
+        return [], condition, None
+    return [], None, f"mana ability not generated; its rider is {tail!r}"
 
 
 #: ``{T}: Add {C}{C}.`` -- everything after "Add", which is where the *amount*
@@ -862,29 +871,79 @@ def _unless_condition(clause: str) -> dict | None:
         return {"not": {"exists": {**mine, **found}}}
 
     if match := _UNLESS_COUNT.match(clause):
-        count = _NUMBER_WORDS[match.group("n").lower()]
-        what = match.group("what").lower()
-        selector: dict = {**mine, "types": ["Land"]}
-        if what == "basic lands":
-            selector["supertypes"] = ["Basic"]
-        elif what != "lands":
-            subtype = match.group("what")[:-1].title()
-            if subtype not in _BASIC_LAND_SUBTYPES:
-                return None
-            selector["subtypes"] = [subtype]
-        if match.group("other"):
-            # `exclude_self` compares against the ability source, which for a
-            # replacement is the entering permanent -- and it is already on the
-            # battlefield by the time this is evaluated, so without it the land
-            # counts itself and every slowland is off by one.
-            selector["exclude_self"] = True
+        selector = _controlled_land_count(match)
+        if selector is None:
+            return None
         value = {"count": selector}
         # "two or more" is untapped at >= 2, so tapped at < 2. "two or fewer" is
         # untapped at <= 2, so tapped at > 2.
         op = "<" if match.group("dir").lower() == "more" else ">"
-        return {"cmp": op, "left": value, "right": {"const": count}}
+        return {
+            "cmp": op,
+            "left": value,
+            "right": {"const": _NUMBER_WORDS[match.group("n").lower()]},
+        }
 
     return None
+
+
+def _controlled_land_count(match: re.Match) -> dict | None:
+    """The selector an ``_UNLESS_COUNT`` match counts, or ``None`` if unreadable.
+
+    Shared by the two readers of "you control N or more lands", which is the
+    same sentence whether a tapland prints it as the clause it enters *untapped*
+    under or an ability prints it as the clause it may be activated under.
+    """
+    what = match.group("what").lower()
+    selector: dict = {"zone": "battlefield", "controller": "you", "types": ["Land"]}
+    if what == "basic lands":
+        selector["supertypes"] = ["Basic"]
+    elif what != "lands":
+        subtype = match.group("what")[:-1].title()
+        if subtype not in _BASIC_LAND_SUBTYPES:
+            return None
+        selector["subtypes"] = [subtype]
+    if match.group("other"):
+        # `exclude_self` compares against the ability source, which for a
+        # replacement is the entering permanent -- and it is already on the
+        # battlefield by the time this is evaluated, so without it the land
+        # counts itself and every slowland is off by one.
+        selector["exclude_self"] = True
+    return selector
+
+
+#: "Activate only if you control five or more lands." -- Temple of the False
+#: God. `AbilityModel.condition` on an activated ability is exactly this
+#: sentence, and `costs.mana_options_of` already asks it of a mana ability, so
+#: what was missing was only the reading.
+_ACTIVATE_ONLY_IF = re.compile(r"^activate only if (?P<clause>.+?)\.?$", re.I)
+
+
+def _activation_condition(tail: str) -> dict | None:
+    """The condition an "Activate only if ..." tail names, or ``None``.
+
+    The positive twin of :func:`_unless_condition`, and deliberately narrow: a
+    clause this cannot read returns ``None`` and the caller refuses the whole
+    mana ability, because an activation restriction dropped is a land that taps
+    on turn one for mana the printed card would not give until turn five.
+    """
+    match = _ACTIVATE_ONLY_IF.match(tail.strip())
+    if match is None:
+        return None
+    count = _UNLESS_COUNT.match(match.group("clause").strip().rstrip("."))
+    if count is None:
+        return None
+    selector = _controlled_land_count(count)
+    if selector is None:
+        return None
+    # Read as printed, where the tapland reader has to negate: "five or more"
+    # permits activation at >= 5.
+    op = ">=" if count.group("dir").lower() == "more" else "<="
+    return {
+        "cmp": op,
+        "left": {"count": selector},
+        "right": {"const": _NUMBER_WORDS[count.group("n").lower()]},
+    }
 
 
 def _enters_tapped(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[str], set[str]]:
