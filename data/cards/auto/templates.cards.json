@@ -46822,6 +46822,87 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "as": "the_commander",
+                  "objects": {
+                    "count": 1,
+                    "is_commander": true,
+                    "player": "you",
+                    "zone": "command"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a commander you own"
+                },
+                {
+                  "objects": {
+                    "binding": "the_commander"
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "the_commander"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "the_commander"
+                      },
+                      "op": "return_to_command_zone"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Return it to the command zone at the beginning of the next end step."
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a commander onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hellkite_courser",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Hellkite Courser",
+      "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

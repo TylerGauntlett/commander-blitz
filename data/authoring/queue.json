@@ -125782,12 +125782,12 @@
     },
     "Hellkite Courser": {
       "edhrec_rank": 1901,
-      "gate": "template",
+      "gate": null,
       "name": "Hellkite Courser",
-      "reason": "no template for: When this creature enters, you may put a commander you own from the command zone onto the ",
+      "reason": "",
       "scryfall_id": "db45122e-b5ef-487b-8ea9-59ea066d3c88",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hellkite Hatchling": {

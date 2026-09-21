@@ -4301,6 +4301,10 @@
       "0": 41
     }
   },
+  "hellkite_courser": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "helpful_hunter": {
     "hand_size": {
       "0": 2
