@@ -121,6 +121,25 @@ Override with `--bulk-type` if you need something else.
   the card's 36-character id, so the index stores the id and derives the rest.
   Storing both sizes verbatim would add ~6.7 MB of pure redundancy.
 
+### Three layers, and which one wins
+
+Three things can decide which illustration a card draws, and they are not in
+competition — each answers a different question.
+
+| Layer | Question it answers | Scope |
+|---|---|---|
+| The dedupe sort, below | "Which printing do we ship for this name?" | Global, baked into `cards.sqlite` at build time |
+| `data/catalog/art_pins.json` | "The sort's taste is wrong here." | Global, baked in at build time |
+| A deck's `printings` | "*This deck's author* chose this illustration." | One seat, at request time |
+
+The first two are the committed answer and the only way to change what the
+repository ships. The third is applied when `/api/images?game_id=` builds a
+response and reaches the browser as `/art/{card_id}.jpg?p={scryfall_id}` — a
+query, so the card id stays in the path and the server can tell a transforming
+card's back face from its front, and can fall back to the card's own art if the
+printing cannot be fetched. It never touches the global map, so a precon at the
+next seat keeps its own Forests. See `docs/deck-import.md`.
+
 ### When the sort picks the wrong picture
 
 "Newest" is a good proxy for "best scan" and a bad one for "the art people mean".

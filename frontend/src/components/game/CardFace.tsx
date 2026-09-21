@@ -27,7 +27,7 @@
 
 import { useState } from "react";
 import type { CardView } from "../../api/types";
-import { artUrl } from "../../logic/cardArt";
+import { artUrlFor } from "../../logic/cardArt";
 import {
   counterBadges,
   frameTone,
@@ -83,9 +83,10 @@ interface Props {
 
 export function CardFace({ card, variant = "board" }: Props) {
   const images = useUiStore((s) => s.images);
+  const seatImages = useUiStore((s) => s.seatImages);
   // `undefined` = the map has not arrived; draw no art layer at all rather than
   // flashing a "no art" plate on every card during the first paint.
-  const art = artUrl(images, card.card_id);
+  const art = artUrlFor(images, seatImages, card);
   const [broken, setBroken] = useState(false);
   const showArt = art !== undefined && art !== null && !broken;
 

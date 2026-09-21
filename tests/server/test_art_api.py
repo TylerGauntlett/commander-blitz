@@ -9,14 +9,16 @@ regression, so there is a test that says so directly.
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.images import catalog_path
+from automtg.cards.images import CardArt, catalog_path
 from automtg.cards.registry import default_registry
 from automtg.server.app import create_app
 from automtg.server.art import ArtStore
+from automtg.server.routes import _spread_across_faces
 
 # A 1x1 JPEG, so a planted file is a real image rather than bytes that happen to
 # have the right extension.
@@ -249,6 +251,139 @@ class TestLazyFill:
         store.allow_fetch = False
         assert store.resolve("0000419b-0bba-4488-8f7a-6194544ce91e") is None
         assert calls == []
+
+
+#: A printing no catalog row of ours names -- which is the normal case for a
+#: deck's choice, since the catalog keeps one row per card *name*.
+CHOSEN = "11112222-3333-4444-5555-666677778888"
+
+
+class TestADecksOwnPrinting:
+    """`?p=` is a deck saying "this illustration, not the one you picked"."""
+
+    def _store(self, tmp_path, monkeypatch, *, images=None, fail=False):
+        store = ArtStore(images=images or {}, directory=tmp_path, index=None)
+        calls: list[str] = []
+
+        def fake_download(url: str, path):
+            calls.append(url)
+            if fail:
+                return False
+            path.write_bytes(JPEG)
+            return True
+
+        monkeypatch.setattr(store, "_download", fake_download)
+        return store, calls
+
+    def _art(self, scryfall_id, *, back=False):
+        return CardArt(card_id="forest", scryfall_id=scryfall_id, artist="A", back=back)
+
+    def test_it_fetches_the_printing_the_deck_asked_for(self, tmp_path, monkeypatch):
+        store, calls = self._store(
+            tmp_path, monkeypatch, images={"forest": self._art("0" * 8 + "-0000-0000-0000-" + "0" * 12)}
+        )
+        path = store.resolve("forest", printing=CHOSEN)
+        assert path is not None and path.read_bytes() == JPEG
+        assert calls == [f"https://cards.scryfall.io/art_crop/front/1/1/{CHOSEN}.jpg"]
+
+    def test_it_is_cached_under_the_printing_not_the_card(self, tmp_path, monkeypatch):
+        """Two decks that chose the same illustration share one file -- and so
+        does the catalog hover path, which already writes `{uuid}.jpg`."""
+        store, _ = self._store(tmp_path, monkeypatch)
+        store.resolve("forest", printing=CHOSEN)
+        assert (tmp_path / f"{CHOSEN}.jpg").is_file()
+        assert not (tmp_path / "forest.jpg").exists()
+
+    def test_a_transformed_card_gets_the_back_of_that_printing(self, tmp_path, monkeypatch):
+        """The deck names an illustration, not a face. Two faces share one
+        Scryfall id and differ only by `back`, which only our registry knows --
+        so a back face asking for a deck's printing must still get its back."""
+        store, calls = self._store(
+            tmp_path, monkeypatch, images={"forest": self._art("0" * 8 + "-0000-0000-0000-" + "0" * 12, back=True)}
+        )
+        store.resolve("forest", printing=CHOSEN)
+        assert calls == [f"https://cards.scryfall.io/art_crop/back/1/1/{CHOSEN}.jpg"]
+        assert (tmp_path / f"{CHOSEN}_back.jpg").is_file()
+
+    def test_an_unfetchable_printing_falls_back_to_the_cards_own_art(
+        self, tmp_path, monkeypatch
+    ):
+        """The load-bearing failure path. A deck list's printing cannot be
+        validated before it is served -- the catalog has one row per name, not
+        one per printing -- so a dud id must cost the *right* illustration, not
+        the card. A 404 here is a broken image in the preview rail."""
+        (tmp_path / "forest.jpg").write_bytes(JPEG)
+        store, calls = self._store(tmp_path, monkeypatch, fail=True)
+        assert store.resolve("forest", printing=CHOSEN) == tmp_path / "forest.jpg"
+        assert len(calls) == 1, "and it does not re-try on every render"
+        store.resolve("forest", printing=CHOSEN)
+        assert len(calls) == 1
+
+    def test_a_failed_printing_does_not_blacklist_the_cards_own_art(
+        self, tmp_path, monkeypatch
+    ):
+        """The negative set is keyed by printing and face, not by card id. Keyed
+        by card id, one bad printing would also suppress the ordinary art."""
+        base = "0" * 8 + "-0000-0000-0000-" + "0" * 12
+        store, calls = self._store(tmp_path, monkeypatch, images={"forest": self._art(base)})
+
+        def only_the_printing_fails(url, path):
+            calls.append(url)
+            if CHOSEN in url:
+                return False
+            path.write_bytes(JPEG)
+            return True
+
+        monkeypatch.setattr(store, "_download", only_the_printing_fails)
+        assert store.resolve("forest", printing=CHOSEN) is not None, "fell back"
+        assert "forest" not in store._missing
+        assert f"{CHOSEN}|False" in store._missing, "only the printing is remembered"
+        assert store.resolve("forest") == tmp_path / "forest.jpg"
+
+    @pytest.mark.parametrize("junk", ["../../etc/passwd", "Forest", "", "not a uuid"])
+    def test_a_printing_that_is_not_a_scryfall_id_is_ignored(
+        self, tmp_path, monkeypatch, junk
+    ):
+        (tmp_path / "forest.jpg").write_bytes(JPEG)
+        store, calls = self._store(tmp_path, monkeypatch)
+        assert store.resolve("forest", printing=junk) == tmp_path / "forest.jpg"
+        assert calls == [], "nothing was fetched, and no junk reached a path"
+
+    def test_agreeing_with_the_catalog_adds_no_url(self, tmp_path, monkeypatch):
+        # Otherwise every card in a deck gets a second URL for a picture this
+        # repository already ships -- a cache miss and a download, for nothing.
+        store, _ = self._store(tmp_path, monkeypatch, images={"forest": self._art(CHOSEN)})
+        assert store.url_for("forest", printing=CHOSEN) == "/art/forest.jpg"
+
+    def test_a_card_with_no_catalog_printing_still_gets_the_decks(
+        self, tmp_path, monkeypatch
+    ):
+        # `has_printing` false means *we* found nothing, not that the card has
+        # no art. The author chose one, and that is the whole point.
+        store, _ = self._store(
+            tmp_path, monkeypatch, images={"forest": CardArt(card_id="forest")}
+        )
+        assert store.url_for("forest") is None
+        assert store.url_for("forest", printing=CHOSEN) == f"/art/forest.jpg?p={CHOSEN}"
+
+
+class TestThePrintingReachesTheRoute:
+    @pytest.mark.parametrize(
+        "query",
+        ["?p=../../etc/passwd", "?p=Forest", "?p=" + "a" * 200, "?p=", "?p=%2e%2e%2f"],
+    )
+    def test_junk_is_ignored_rather_than_fatal(self, client, query):
+        # The card still renders: `p` is a preference, not an address.
+        assert client.get(f"/art/forest.jpg{query}").status_code == 200
+
+    def test_a_good_printing_is_passed_through(self, client, monkeypatch):
+        seen: list[tuple] = []
+        store = client.app.state.art
+        monkeypatch.setattr(
+            store, "resolve", lambda card_id, printing=None: seen.append((card_id, printing))
+        )
+        client.get(f"/art/forest.jpg?p={CHOSEN}")
+        assert seen == [("forest", CHOSEN)]
 
 
 #: Sheoldred, the Apocalypse, the card this pair of tests was written for.
@@ -545,3 +680,47 @@ class TestCardViewIsUnchanged:
         )
         assert "scryfall" not in raw.lower()
         assert "/art/" not in raw
+
+
+class TestAPrintingFollowsTheCardsOtherFaces:
+    """A deck list names the front; the board can show the back.
+
+    `bloodline_keeper` is what a deck says. The moment it transforms,
+    `card_view` starts sending `lord_of_lineage` -- a card id no list mentions.
+    Without this the deck's illustration would vanish mid-flip, which is the
+    same class of bug `_wanted_ids` was written for.
+    """
+
+    def _art(self, client):
+        return client.app.state.art
+
+    def test_the_back_face_inherits_the_front_s_printing(self, client, game_data):
+        chosen = {"scryfall_id": CHOSEN, "artist": "A"}
+        spread = _spread_across_faces(
+            {"bloodline_keeper": chosen}, game_data.registry, self._art(client)
+        )
+        assert spread["lord_of_lineage"] == chosen
+
+    def test_a_face_with_its_own_printing_keeps_it(self, client, game_data):
+        """The guard. A meld half or an adventure's other side can be a
+        different catalog row, and inheriting onto one fetches the wrong
+        picture outright -- not a near miss, a different card."""
+        real = self._art(client)
+        faked = SimpleNamespace(
+            images={
+                **real.images,
+                "lord_of_lineage": CardArt(
+                    card_id="lord_of_lineage", scryfall_id="9" * 8 + "-9999-9999-9999-" + "9" * 12
+                ),
+            }
+        )
+        spread = _spread_across_faces(
+            {"bloodline_keeper": {"scryfall_id": CHOSEN}}, game_data.registry, faked
+        )
+        assert "lord_of_lineage" not in spread
+
+    def test_the_back_face_asks_for_the_back_of_that_printing(self, client, game_data):
+        # Same uuid, different face: `back` comes off our own registry, because
+        # it is the one thing a deck list cannot tell us.
+        remote = self._art(client).remote_for("lord_of_lineage", printing=CHOSEN)
+        assert remote == f"https://cards.scryfall.io/art_crop/back/1/1/{CHOSEN}.jpg"

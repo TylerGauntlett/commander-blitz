@@ -428,6 +428,19 @@ export interface CardResponse {
 export interface ImagesResponse {
   art_base: string;
   images: Record<string, { card_id: string; art: string | null; artist: string | null } | null>;
+  /**
+   * `seat index -> card id -> ref`, for the cards a seat's deck prints
+   * differently from the catalog's pick -- the illustration its author chose on
+   * Moxfield. Absent without `?game_id=`, and empty for a deck that named none.
+   *
+   * A second layer rather than an edit to `images` because two seats can hold
+   * the same card id and want different art, which a flat map cannot say. The
+   * key is `CardView.owner`, so nothing extra has to be looked up to use it.
+   */
+  seats?: Record<
+    string,
+    Record<string, { card_id: string; art: string | null; artist: string | null }>
+  >;
 }
 
 /* ------------------------------------------------------------------ */

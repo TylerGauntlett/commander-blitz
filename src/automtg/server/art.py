@@ -1,9 +1,15 @@
 """Serving card art from this server, never from Scryfall.
 
-The client is only ever given ``/art/{card_id}.jpg``.  What sits behind that
-path is a local file, so a game keeps rendering when Scryfall is rate limiting,
-down, or blocked -- which is the whole reason the bytes were downloaded in the
-first place.
+The client is only ever given ``/art/{card_id}.jpg``, optionally with
+``?p={scryfall_id}`` when the seat's deck chose a printing of its own.  What
+sits behind that path is a local file either way, so a game keeps rendering when
+Scryfall is rate limiting, down, or blocked -- which is the whole reason the
+bytes were downloaded in the first place.
+
+``?p=`` is a *query* rather than a different path on purpose: the card id stays
+in the URL, which is what lets this module tell a transforming card's back face
+from its front (one Scryfall id, two faces) and fall back to the card's own art
+when a deck names a printing that cannot be fetched.
 
 The one exception is the *lazy fill*: a card outside ``data/cards/`` (a future
 deck, a catalog search result) has no file yet, so the first request for it
@@ -30,6 +36,7 @@ from pathlib import Path
 
 from automtg.cards.images import (
     ART_CROP,
+    SCRYFALL_ID,
     CardArt,
     CardIndex,
     art_cache_dir,
@@ -45,8 +52,9 @@ CARD_ID = re.compile(r"^[a-z0-9_]{1,80}$")
 #: A catalog card is addressed by its Scryfall uuid rather than by a slug of its
 #: name.  Slugs are not reversible -- "Aesi, Tyrant of Gyre Strait" and
 #: "Aesi Tyrant of Gyre Strait" collapse to the same thing -- and the uuid is
-#: already the index's primary handle.
-SCRYFALL_ID = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
+#: already the index's primary handle.  ``SCRYFALL_ID`` itself is imported from
+#: ``cards.images`` rather than defined here: a deck file carries printing ids
+#: too, and one pattern used in two places cannot drift from itself.
 
 HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)"}
 TIMEOUT = 15
@@ -110,10 +118,27 @@ class ArtStore:
                 ids |= {p.stem for p in directory.glob("*.jpg")}
         return ids
 
-    def url_for(self, card_id: str) -> str | None:
+    def url_for(self, card_id: str, *, printing: str | None = None) -> str | None:
         """What the client should put in ``<img src>``, or ``None`` for a card
-        with no printing -- which is a real answer, not an error."""
+        with no printing -- which is a real answer, not an error.
+
+        ``printing`` is a deck's own choice of illustration, and it wins: the
+        author picked it, and it is what makes their deck recognisable.  It is
+        expressed as a query rather than a different path so that the card id
+        stays in the URL -- which is what lets ``resolve`` know whether this is
+        a card's *back* face, and what to fall back to when the printing cannot
+        be fetched.  A printing the base map already agrees with adds nothing
+        but a cache miss, so it is dropped.
+        """
         art = self.images.get(card_id)
+        # Answered *before* the artless check below: a card we have no catalog
+        # printing for, whose deck named one, does have art now.
+        if (
+            printing is not None
+            and SCRYFALL_ID.match(printing)
+            and (art is None or art.scryfall_id != printing)
+        ):
+            return f"/art/{card_id}.jpg?p={printing}"
         if art is not None and not art.has_printing:
             return None
         if art is None and self.index is None:
@@ -126,9 +151,17 @@ class ArtStore:
 
     # -- resolution -----------------------------------------------------
 
-    def remote_for(self, card_id: str) -> str | None:
-        """The CDN URL to fill from.  Server-side only."""
+    def remote_for(self, card_id: str, *, printing: str | None = None) -> str | None:
+        """The CDN URL to fill from.  Server-side only.
+
+        A ``printing`` names the illustration but not the *face*: a transforming
+        card's two faces share one Scryfall id and differ only by ``back``.  So
+        back-ness is read off the card's own catalog entry, which is the one
+        thing the deck cannot tell us and the registry always can.
+        """
         art = self.images.get(card_id)
+        if printing is not None and SCRYFALL_ID.match(printing):
+            return image_url(printing, ART_CROP, back=bool(art and art.back))
         if art is not None:
             return art.remote_url(ART_CROP)
         # Not an engine card: a catalog result, addressed by its Scryfall uuid.
@@ -136,10 +169,33 @@ class ArtStore:
             return image_url(card_id, ART_CROP)
         return None
 
-    def resolve(self, card_id: str) -> Path | None:
-        """A readable file for this card, fetching once if need be."""
+    def _printing_path(self, printing: str, *, back: bool) -> Path:
+        """Where a deck-chosen printing is cached.
+
+        Named for the printing, not the card, so two decks that chose the same
+        illustration share one file -- and so does the catalog hover path, which
+        already writes ``{uuid}.jpg``.  Neither name can collide with a card's
+        own file: ``CARD_ID`` forbids hyphens, so no card id is ever uuid-shaped.
+        """
+        assert self.cache is not None  # set in __post_init__
+        return self.cache / (f"{printing}_back.jpg" if back else f"{printing}.jpg")
+
+    def resolve(self, card_id: str, *, printing: str | None = None) -> Path | None:
+        """A readable file for this card, fetching once if need be.
+
+        A deck's chosen ``printing`` is tried first and **falls back to the
+        card's own art** if it cannot be had.  That fallback is not politeness:
+        the catalog keeps one row per card name, so a printing from a deck list
+        cannot be validated against anything before it is served, and the honest
+        failure for a dud id is the illustration we do have -- not a hole.
+        """
         if not (CARD_ID.match(card_id) or SCRYFALL_ID.match(card_id)):
             return None
+
+        if printing is not None and SCRYFALL_ID.match(printing):
+            found = self._resolve_printing(card_id, printing)
+            if found is not None:
+                return found
 
         path = self.path_for(card_id)
         if path.is_file():
@@ -156,6 +212,30 @@ class ArtStore:
             url = self.remote_for(card_id)
             if url is None or not self._download(url, path):
                 self._missing.add(card_id)
+                return None
+            return path
+
+    def _resolve_printing(self, card_id: str, printing: str) -> Path | None:
+        """The deck's illustration, or ``None`` to fall back to the card's own."""
+        art = self.images.get(card_id)
+        back = bool(art and art.back)
+        path = self._printing_path(printing, back=back)
+        if path.is_file():
+            return path
+        # Keyed by printing and face, never by card id: a printing that cannot
+        # be fetched must not also blacklist the card's ordinary art.
+        key = f"{printing}|{back}"
+        if not self.allow_fetch or key in self._missing:
+            return None
+
+        with self._lock:
+            if path.is_file():
+                return path
+            if key in self._missing:
+                return None
+            url = self.remote_for(card_id, printing=printing)
+            if url is None or not self._download(url, path):
+                self._missing.add(key)
                 return None
             return path
 

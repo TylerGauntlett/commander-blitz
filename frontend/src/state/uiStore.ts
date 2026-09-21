@@ -7,7 +7,7 @@
  */
 
 import { create } from "zustand";
-import type { ImageMap } from "../logic/cardArt";
+import type { ImageMap, SeatImages } from "../logic/cardArt";
 
 /** How fast the narration queue plays back. */
 export type Speed = "instant" | "fast" | "cinematic";
@@ -121,6 +121,11 @@ interface UiState {
    * exactly the layout that shipped before art existed.
    */
   images: ImageMap;
+  /**
+   * Per-seat overrides: the printings an imported deck's author chose. Layered
+   * over `images` by `artUrlFor` and friends; `null` until the map arrives.
+   */
+  seatImages: SeatImages;
 
   /** The log section in the left rail is expanded. Desktop only. */
   logOpen: boolean;
@@ -174,7 +179,7 @@ interface UiState {
   unstageBlock: (blocker: number) => void;
   clearStaging: () => void;
 
-  setImages: (images: ImageMap) => void;
+  setImages: (images: ImageMap, seatImages?: SeatImages) => void;
   openStackGroup: (key: string | null) => void;
   toggleLog: () => void;
   toggleLogOverlay: () => void;
@@ -193,6 +198,7 @@ export const useUiStore = create<UiState>((set) => ({
   stagedBlocks: {},
   openStack: null,
   images: null,
+  seatImages: null,
   logOpen: true,
   logOverlay: false,
   viewingPid: null,
@@ -239,7 +245,7 @@ export const useUiStore = create<UiState>((set) => ({
   toggleLog: () => set((s) => ({ logOpen: !s.logOpen })),
   toggleLogOverlay: () => set((s) => ({ logOverlay: !s.logOverlay })),
   setViewing: (pid) => set({ viewingPid: pid }),
-  setImages: (images) => set({ images }),
+  setImages: (images, seatImages = null) => set({ images, seatImages }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),
   toggleMuted: () =>

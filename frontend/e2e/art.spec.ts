@@ -85,7 +85,9 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
   // wildcard stops matching the moment a query string appears -- which would
   // silently let the real art through and make this test assert nothing.
   await page.route("**/api/images*", (route) =>
-    route.fulfill({ json: { art_base: "/art", images: {} } }),
+    // `seats: {}` is what the server sends for a game of precons: the per-seat
+    // layer only carries the printings an imported deck's author chose.
+    route.fulfill({ json: { art_base: "/art", images: {}, seats: {} } }),
   );
 
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
@@ -191,4 +193,59 @@ test("the preview rail credits the illustrator", async ({ page }) => {
   await expect(preview).toBeVisible();
   // `Art` only appears when the map resolved an artist for this card.
   await expect.poll(async () => (await preview.textContent()) ?? "").toContain("Art");
+});
+
+test("a deck's own printing reaches the board, and only its owner's cards", async ({
+  page,
+}) => {
+  test.setTimeout(budget(180_000));
+  /*
+   * The per-seat layer, in a real browser.
+   *
+   * An imported deck names the printing its author chose on Moxfield, and that
+   * choice belongs to their seat: two players can run the same card and want
+   * different illustrations. Stubbed rather than imported, because what is
+   * under test is the client picking a ref by `owner` -- a real import would
+   * put a hundred CDN fetches behind an assertion about markup.
+   */
+  const CHOSEN = "11112222-3333-4444-5555-666677778888";
+  await page.route("**/api/images*", async (route) => {
+    const body = await (await route.fetch()).json();
+    const mine: Record<string, unknown> = {};
+    for (const [id, ref] of Object.entries(body.images)) {
+      if (ref) mine[id] = { card_id: id, art: `/art/${id}.jpg?p=${CHOSEN}`, artist: "A" };
+    }
+    // Seat 0 only: the opponent must go on drawing the catalog's printing.
+    await route.fulfill({ json: { ...body, seats: { "0": mine } } });
+  });
+
+  // Served from the card's own file, so the bytes are real and this cannot
+  // pass on a broken image -- and so the run never waits on a CDN.
+  const asked: string[] = [];
+  await page.route("**/art/*.jpg*", async (route) => {
+    const url = route.request().url();
+    asked.push(url);
+    if (url.includes("?p=")) {
+      await route.fulfill({ response: await route.fetch({ url: url.split("?")[0] }) });
+      return;
+    }
+    await route.continue();
+  });
+
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await buildABoard(page);
+
+  const decoded = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLImageElement>(".face__art-img")]
+      .filter((img) => img.naturalWidth > 0)
+      .map((img) => img.src),
+  );
+  expect(decoded.length).toBeGreaterThan(0);
+  // Our own cards ask for the printing we chose...
+  expect(decoded.some((src) => src.includes(`?p=${CHOSEN}`))).toBe(true);
+  // ...and nothing left this server to get it.
+  for (const url of asked) {
+    expect(url).toContain("/art/");
+    expect(url).not.toContain("scryfall");
+  }
 });
