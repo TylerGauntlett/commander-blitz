@@ -2128,6 +2128,7 @@ from .player_statics import (  # noqa: F401
     player_cant_cast_spells,
     player_cant_gain_life,
     player_doubles_land_mana,
+    player_doubles_mana_from,
     player_extra_land_drops,
     player_has_no_hand_limit,
     player_looks_at_library_top,

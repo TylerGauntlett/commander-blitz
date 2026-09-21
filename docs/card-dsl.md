@@ -5482,7 +5482,7 @@ not. It is **not** interchangeable with a `not_types` complement —
 
 ## Player-wide statics
 
-Twenty-five static effects describe the *player* rather than a characteristic, so
+Twenty-six static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -5502,6 +5502,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
+{ "kind": "static", "effect": "double_nonland_mana", "affects_player": "you" }
 { "kind": "static", "effect": "add_mana_on_tap", "affects_player": "you",
   "tapped_permanent": { "subtypes": ["Swamp"] }, "add_mana": "{B}" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
@@ -5541,13 +5542,30 @@ permanents' triggers fire an additional time. Read by `triggers.collect`, which
 queues the ability **twice** rather than resolving it twice — the two copies are
 separate abilities on the stack and anything in between still goes between them.
 
-The last two are Vorinclex's halves, and neither can be a triggered ability:
-tapping for mana happens *inside* payment, where nothing may go on the stack and
-nothing may stop to ask. Both are read at `costs.activate_mana_ability` instead.
-`double_land_mana` is also read by `_sources_of`, so legality counts the extra
-mana — a spell offered on doubled mana and then paid for on single mana would
-strand the payment mid-cast, which is why both go through one `mana_produced`
-helper.
+`double_land_mana` and `freeze_opponent_lands` are Vorinclex's halves, and
+neither can be a triggered ability: tapping for mana happens *inside* payment,
+where nothing may go on the stack and nothing may stop to ask. Both are read at
+`costs.activate_mana_ability` instead. `double_land_mana` is also read by
+`_sources_of`, so legality counts the extra mana — a spell offered on doubled
+mana and then paid for on single mana would strand the payment mid-cast, which is
+why both go through one `mana_produced` helper.
+
+`double_nonland_mana` is Kinnan, Bonder Prodigy: "Whenever you tap a **nonland**
+permanent for mana, add one mana of any type that permanent produced." Word for
+word the sentence above with one word changed, so it is the same effect read at
+the same three places (`_sources_of`, `activate_mana_ability`, the chip label)
+through the same `player_doubles_mana_from`, which asks what was tapped and
+matches it against the class each static is printed about. Two effect names
+rather than one with an author-written permanent filter: the printed class is
+what names the card, and no permanent is both a land and a nonland permanent, so
+a Kinnan and a Vorinclex on the same board each take their own half of it and
+never stack on one tap. A creature-land is a land here, because the class is
+matched against the tapped permanent's **current** types.
+
+"One mana of any type that permanent produced" is `mana_produced`'s doubling and
+is not a fixed colour: a rock that taps for {U} or {B} doubles whichever it just
+made. Two Kinnans still only double, the same simplification two Vorinclexes
+already get — see [Rules coverage](rules-coverage.md).
 
 `add_mana_on_tap` is Crypt Ghast's "Whenever you tap a Swamp for mana, add an
 additional {B}." It is a triggered mana ability (605.1b), which resolves at once

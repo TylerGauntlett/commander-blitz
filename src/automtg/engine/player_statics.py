@@ -282,6 +282,55 @@ def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "double_land_mana")
 
 
+#: The permanent each doubling static is printed about, as a predicate over the
+#: tapped permanent's *current* types. The filter used to be the inline
+#: ``is_land`` at each mana choke point, which made "a land" the only sentence
+#: the engine could say: Kinnan, Bonder Prodigy prints the same line with one
+#: word changed ("**nonland** permanent") and had no spelling at all. Keyed by
+#: effect name rather than carried as an author-written selector because the
+#: printed class is what names the card -- an author who writes
+#: `double_nonland_mana` cannot then also claim it is about lands -- and because
+#: a third member ("a permanent", Mana Reflection) is one line here.
+_MANA_DOUBLER_CLASS: Mapping[str, Any] = {
+    "double_land_mana": lambda tapped: "Land" in tapped.types,
+    "double_nonland_mana": lambda tapped: "Land" not in tapped.types,
+}
+
+
+def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
+    """Does a doubling static apply to the mana ``pid`` gets from tapping ``oid``?
+
+    Vorinclex ("whenever you tap a land for mana, add one mana of any type that
+    land produced") and Kinnan, Bonder Prodigy, which is that printed sentence
+    about a **nonland** permanent. Both are triggered mana abilities (605.1b):
+    they resolve immediately and never use the stack (605.4a), so they are
+    answered here at the mana choke point rather than queued -- mana that
+    arrives on the stack arrives after the payment it was printed to pay for.
+
+    Read against the tapped permanent's *current* characteristics, so a
+    creature-land animated this turn is a land for Vorinclex and is not a
+    nonland permanent for Kinnan. One permanent is never both, so the two
+    statics cannot stack on the same tap; two Kinnans still only double, which
+    is the same simplification `mana_produced` already makes for two
+    Vorinclexes.
+
+    The "of any type that permanent produced" half is `mana_produced`'s job and
+    is unchanged: whatever the option yielded is doubled in place rather than
+    offering a free choice of type, because a mana ability cannot ask. Recorded
+    in ``docs/rules-coverage.md``.
+    """
+    tapped: Any = None
+    for effect, matches in _MANA_DOUBLER_CLASS.items():
+        for source, static in _active_player_statics(state, effect):
+            if not _reaches_player(source, static, pid):
+                continue
+            if tapped is None:
+                tapped = chars(state, oid)
+            if matches(tapped):
+                return True
+    return False
+
+
 def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 

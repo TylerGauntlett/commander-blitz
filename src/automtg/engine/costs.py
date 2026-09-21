@@ -17,7 +17,7 @@ from .characteristics import (
     abilities_of,
     chars,
     mana_added_on_tap,
-    player_doubles_land_mana,
+    player_doubles_mana_from,
 )
 from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.selectors import resolve_pool
@@ -297,7 +297,10 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     if is_creature and obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
         return []
     is_land = "Land" in c.types
-    doubled = is_land and player_doubles_land_mana(state, obj.controller)
+    # Vorinclex over a land, Kinnan over anything else. Asked of the permanent
+    # rather than recomputed from `is_land` here, so the two doubling statics
+    # cannot drift apart between this offer and the payment below.
+    doubled = player_doubles_mana_from(state, obj.controller, oid)
     # Crypt Ghast. Every ability reaching the solver is tap-only, so each one
     # is "tapping it for mana" (106.12) and each option gets the extra.
     extra = mana_added_total(state, obj.controller, oid)
@@ -1845,7 +1848,10 @@ def activate_mana_ability(
 
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
-    doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
+    # The payment half of the pair in `_sources_of`, and it must ask the same
+    # question: a spell offered on doubled mana and then paid on single mana
+    # strands the payment mid-cast.
+    doubled = obj is not None and player_doubles_mana_from(state, obj.controller, oid)
     options = mana_options_of(state, oid, ability)
     if option_index >= len(options):
         # The board changed what this ability offers between the plan and the

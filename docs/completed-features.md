@@ -15767,3 +15767,84 @@ activation rather than reaching for the superset, the solver and the payment
 agreeing on the whole bundle, both near-miss cards answering differently on the
 same board, the superset and its exclusion from colour identity, and every
 load-time refusal.
+
+## `double_nonland_mana` — Vorinclex's sentence about the other half of the board — Kinnan, Bonder Prodigy — 605.1b / 605.4a
+
+"Whenever you tap a **nonland** permanent for mana, add one mana of any type
+that permanent produced."
+
+The engine already shipped this exact printed sentence. `double_land_mana` is
+docstringed with it word for word for the land version (Vorinclex, Voice of
+Hunger; Zendikar Resurgent), and Kinnan is that card with one printed word
+changed. So this is not a new mechanism — it is the permanent class the old one
+could not say.
+
+### What was actually missing
+
+`is_land = "Land" in chars(state, oid).types` was computed **inline** at each of
+the three places tapped mana is counted — `costs._sources_of` (the planner),
+`costs.activate_mana_ability` (the payment) and `legality._mana_option_label`
+(the chip) — and the static itself carried no permanent filter at all: the
+loader's player-wide statics take only `affects_player` and an optional
+`condition`. There was therefore no spelling of Kinnan anywhere in the DSL.
+Written as `double_land_mana` he would have doubled every land and no nonland
+permanent, which is the exact complement of his printed line.
+
+`player_doubles_mana_from(state, pid, oid)` replaces the pair. It takes the
+permanent that is about to be tapped, walks the doubling statics that reach
+`pid`, and matches each against the class it is printed about — a small table,
+`_MANA_DOUBLER_CLASS`, keyed by effect name.
+
+### Two effect names, not one static with a filter
+
+The printed class is what names the card, and keying on it means an author
+cannot write `double_nonland_mana` and then also claim it is about lands. It
+also makes the mutual exclusion structural rather than a rule someone has to
+remember: no permanent is both a land and a nonland permanent, so a Kinnan and a
+Vorinclex on one board each take their own half of a tap and can never stack on
+the same one. A third member — "whenever you tap a permanent for mana" (Mana
+Reflection) — is one line in that table.
+
+The class is matched against the tapped permanent's **current** types, the same
+reading `add_mana_on_tap` takes, so a creature-land animated this turn is a land
+for Vorinclex and is not a nonland permanent for Kinnan.
+
+### Why it is not a trigger, and why all three sites
+
+605.1b makes this a *mana ability* even though it is triggered — it triggers off
+a mana ability and adds mana — and 605.4a resolves it immediately, without the
+stack. Tapping for mana happens inside cost payment, where nothing may be queued
+and nothing may stop to ask, so mana that arrived on the stack would arrive
+after the payment it was printed to pay for. Same argument that put
+`double_land_mana` and `add_mana_on_tap` at the choke point.
+
+The planner and the payment must agree: a spell offered on doubled mana and then
+paid for on single mana strands the cast half-paid. Both now ask the one helper,
+so they cannot be given different answers.
+
+### The type produced, not a fixed colour
+
+"One mana of any type that permanent produced" is `mana_produced`'s existing
+scaling, unchanged: a rock tapping for {U} or {B} doubles whichever it just made.
+The simplification already recorded in `docs/rules-coverage.md` — a source with a
+choice doubles what it produced rather than offering a free choice of type,
+because a mana ability cannot ask — carries over as the right trade here too, and
+two Kinnans still only double for the same reason two Vorinclexes do.
+
+### Cards unblocked
+
+One authored here: **Kinnan, Bonder Prodigy**. His second line needed nothing
+new (`look_at_top` with `not_subtypes: ["Human"]` and `rest_to_bottom`).
+
+### Guarded by
+
+`tests/unit/test_double_nonland_mana.py`, over five new test-pool cards in
+`tests/data/double_nonland_mana.cards.json`. It pins the nonland half doubling a
+mana dork and a rock, a **land** under Kinnan staying single, the shipped
+`double_land_mana` still doubling its land and still leaving a dork alone (the
+silent regression this change could have caused), both doublers on one board
+taking their own halves and not stacking on one tap, the doubled mana following
+the mode the source produced rather than a fixed colour, an opponent's tap
+getting nothing, the planner and the payment agreeing on a {G}{G}{G}{G} spell
+off two dorks, the "as long as it's your turn" condition being asked, and the
+whole thing wearing off with its source.

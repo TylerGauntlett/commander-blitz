@@ -16,7 +16,6 @@ from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
 from .characteristics import (
     abilities_of,
-    chars,
     loyalty_activation_timing_waived,
     threshold_met,
 )
@@ -921,7 +920,7 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     Doubling is applied, because a Vivid land under Vorinclex really does add
     two and the chip would otherwise promise one.
     """
-    from .characteristics import player_doubles_land_mana
+    from .characteristics import player_doubles_mana_from
     from .costs import mana_added_total, mana_amount, mana_options_of, mana_produced, plus_mana
     from .mana import format_symbols
 
@@ -929,9 +928,7 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     if mana_option is None or len(options) <= 1:
         return ""
 
-    doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
-        state, state.objects[oid].controller
-    )
+    doubled = player_doubles_mana_from(state, state.objects[oid].controller, oid)
     produced = mana_produced(
         options[mana_option],
         doubled=doubled,

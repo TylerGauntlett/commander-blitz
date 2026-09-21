@@ -238,6 +238,13 @@ STATIC_EFFECTS = frozenset(
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.
         "double_land_mana",
+        # Kinnan, Bonder Prodigy: "Whenever you tap a **nonland** permanent for
+        # mana, add one mana of any type that permanent produced." The line
+        # above with one printed word changed, and read at the same choke point
+        # for the same reason. Two effect names rather than one with an
+        # author-written filter: the printed class is what names the card, and
+        # no permanent is both, so they can never both apply to one tap.
+        "double_nonland_mana",
         "freeze_opponent_lands",
         # Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional
         # {B}." A triggered mana ability (605.1b), which resolves immediately,
@@ -511,6 +518,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
+        "double_nonland_mana",
         "add_mana_on_tap",
         "freeze_opponent_lands",
         "replace_life_loss",
