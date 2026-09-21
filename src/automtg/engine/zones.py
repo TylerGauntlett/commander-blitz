@@ -215,6 +215,13 @@ def move_object(
     left_with = (
         (*obj.until_eot, *obj.granted_abilities_permanent) if was_on_battlefield else ()
     )
+    # "If that mana is spent on a creature spell, **it gains haste until end of
+    # turn**" (Arena of Glory). Snapshotted for `left_with`'s reason and carried
+    # the other way: `reset_permanent_state` empties it a few lines below, and
+    # the promise is owed to the permanent the spell is *becoming*. Restored
+    # only for a battlefield destination, so a countered creature spell does not
+    # sit in its graveyard holding a haste to cash on a later cast.
+    mana_granted_keywords = obj.mana_granted_keywords
 
     _remove_from_zone(state, obj)
 
@@ -233,6 +240,8 @@ def move_object(
         card = state.card_of(obj)
 
     obj.left_with = left_with
+    if to_zone is Zone.BATTLEFIELD:
+        obj.mana_granted_keywords = mana_granted_keywords
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
@@ -852,6 +861,24 @@ def _enter_battlefield(
         obj.granted_keywords.add(Keyword.HASTE.value)
     elif riot_choice == RIOT_COUNTER:
         obj.add_counter("+1/+1", 1)
+
+    # "…it gains haste until end of turn" (Arena of Glory), in the slot beside
+    # riot and for a neighbouring reason: the creature is never on the
+    # battlefield without it, so no attack declaration and no summoning-sickness
+    # check can fall in between. Emptied as it is read, because the promise
+    # belongs to this arrival -- a permanent that leaves and comes back is a new
+    # object and nobody paid Arena of Glory for that one.
+    #
+    # `until_eot` and not `granted_keywords`, which is where riot's haste goes:
+    # the printed clause says "until end of turn" and riot's says nothing, and
+    # `clear_until_eot` sweeps only the one that asked to be swept.
+    granted = obj.mana_granted_keywords
+    obj.mana_granted_keywords = set()
+    if granted:
+        from .primitives import grant_keyword
+
+        for keyword in sorted(granted):
+            grant_keyword(state, obj.oid, keyword)
 
     state.bump_chars()
     fire(

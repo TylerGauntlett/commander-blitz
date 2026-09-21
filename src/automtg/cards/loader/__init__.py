@@ -72,6 +72,7 @@ from .mana import (  # noqa: F401
     _ANY_TYPE_OPTIONS,
     _compile_cost,
     _mana_amount,
+    _mana_grant,
     _mana_options,
     _mana_restriction,
     _restriction_groups,
@@ -2210,6 +2211,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         # never be read -- a card printing "that spell can't be countered" that
         # does not.
         raise DslError(f"{where}: 'mana_uncounterable' needs 'is_mana_ability'")
+    mana_grant = _mana_grant(model.mana_grant, model.is_mana_ability, where)
 
     return Ability(
         kind=kind,
@@ -2231,6 +2233,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,
+        mana_grant=mana_grant,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
         # here rather than left to an author to remember -- one omitted flag and

@@ -1153,6 +1153,16 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.tapped:
             return False
+    if cost.exert:
+        # 702.121a: exerting is done to a permanent, so the source has to be on
+        # the battlefield -- and nothing else is required. Deliberately no
+        # "untapped" test (702.121b exerts a tapped permanent quite happily),
+        # no "creature" test and no "attacking" test: Arena of Glory is a land
+        # that never attacks, and the keyword's usual home on an attack trigger
+        # is that card's business, not the cost's.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
+            return False
     # 118.4: you may pay life down to exactly 0 -- losing is a state-based
     # action afterwards, not a reason the cost was illegal.  `<=` would stop a
     # fetchland being cracked at 1 life, which is precisely when somebody wants
@@ -1553,6 +1563,16 @@ def pay(
         if obj is not None:
             obj.tapped = False
             state.bump_chars()
+    if cost.exert and source_oid is not None:
+        obj = state.objects.get(source_oid)
+        if obj is not None and obj.on_battlefield:
+            # The two halves of 702.121a, and they are two stores on purpose --
+            # the same call `set_turn_flag` and `skip_untap` already made.
+            # `skip_next_untap` is a *one-shot* consumed by the untap step it
+            # skips; the ledger flag is a word that wears off at the turn
+            # boundary and is what "hasn't been exerted this turn" reads.
+            obj.skip_next_untap = True
+            state.turn_ledger.set_object_flag(source_oid, "exerted")
 
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
@@ -1814,6 +1834,16 @@ def pay_mana(
         # pays in more than one call when it has an additional cost, and a spell
         # paid for partly with Cavern mana was paid for with Cavern mana.
         obj.uncounterable_mana_spent = obj.uncounterable_mana_spent or spent.uncounterable
+        # "**If that mana is spent on a creature spell**, it gains haste until
+        # end of turn." The type test belongs here and nowhere later: "creature
+        # spell" is a question about the *spell*, asked at the instant the mana
+        # is spent, and by the time the permanent exists to be given haste the
+        # spell is gone. Accumulated for `uncounterable_mana_spent`'s reason --
+        # one cast can pay in more than one call.
+        for grant in spent.grants:
+            if grant.spell_types and not (set(grant.spell_types) & chars(state, obj.oid).types):
+                continue
+            obj.mana_granted_keywords.update(grant.keywords)
         # Accumulated rather than assigned: a cast pays in more than one call
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
@@ -1890,7 +1920,13 @@ def activate_mana_ability(
     # spell can't be countered": recorded per permanent, its plain {C} would make
     # the spell uncounterable too.
     state.players[pid].mana_pool.add_tuple(
-        produced, source=oid, uncounterable=ability.mana_uncounterable
+        produced,
+        source=oid,
+        uncounterable=ability.mana_uncounterable,
+        # Arena of Glory's "…it gains haste until end of turn", read off the
+        # **ability** for the reason above: Arena's plain `{R}` ability must not
+        # hand out the haste its exerting one pays for.
+        grant=ability.mana_grant,
     )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged

@@ -23,6 +23,18 @@ class CostModel(BaseModel):
     mana: str | None = None
     tap: bool = False
     untap: bool = False
+    #: "{R}, {T}, **Exert this land**: …" -- Arena of Glory. Exert as a *cost*
+    #: (702.121a): paying it marks the source so it does not untap during its
+    #: controller's next untap step, and writes the turn flag `exerted` that
+    #: `has_turn_flag` already reads.
+    #:
+    #: Not ``tap``: Arena's printed cost is ``{R}``, ``{T}`` **and** exert, so
+    #: the tap cannot stand in for both, and exert says nothing about tapping --
+    #: rule 702.121b lets an already-tapped permanent be exerted. Not the
+    #: ``skip_untap`` **op** either: that runs at *resolution*, and this ability
+    #: is a mana ability which never resolves at all. A permanent need be
+    #: neither attacking nor a creature to pay it -- Arena of Glory is a land.
+    exert: bool = False
     sacrifice: dict[str, Any] | None = None
     #: "Return a land you control to its owner's hand" -- Meloku and Trench
     #: Behemoth. A selector over the battlefield, like ``sacrifice``, and
@@ -396,6 +408,21 @@ class AbilityModel(BaseModel):
     #: spell it was spent on becomes uncounterable. Only meaningful beside
     #: ``is_mana_ability``, and the loader refuses it anywhere else.
     mana_uncounterable: bool = False
+    #: "If that mana is spent on a creature spell, **it gains haste until end of
+    #: turn**" -- Arena of Glory. A rider on the mana this ability makes, in
+    #: ``mana_uncounterable``'s slot and with the harder lifetime: the keyword is
+    #: handed to the *permanent* the spell becomes, as it enters.
+    #:
+    #: ``{"keywords": ["haste"], "spell_types": ["Creature"]}``. ``spell_types``
+    #: is the printed "creature spell" half and narrows **who is given the
+    #: keyword**, which is what separates it from ``mana_restriction``: that one
+    #: narrows what the mana may be spent on at all, and Arena's mana pays for
+    #: anything. Omitted, every spell paid for with this mana is granted the
+    #: keywords. The duration is always until end of turn, the only one printed.
+    #:
+    #: Only meaningful beside ``is_mana_ability``, and the loader refuses it
+    #: anywhere else.
+    mana_grant: dict[str, Any] | None = None
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.

@@ -562,6 +562,28 @@ class Requirement:
         )
 
 
+class ManaKeywordGrant(NamedTuple):
+    """ "…it gains haste until end of turn" -- Arena of Glory's second rider.
+
+    The *other* kind of thing a pip can carry. `Pip.uncounterable` is a fact the
+    casting rules read once and throw away; this one has to outlive the spell it
+    paid for, because the permanent the spell becomes is what gains the keyword.
+
+    ``spell_types`` is the printed "**creature** spell" half. Empty means any
+    spell, which no card prints today and which the shape gets for free -- the
+    restriction is on the *grant*, not on what the mana may buy, and that is the
+    whole difference from `ManaRestriction`: Arena of Glory's mana pays for
+    anything, and only a creature spell is given anything back.
+
+    The duration is fixed at until-end-of-turn rather than being a field,
+    because that is the only duration printed on this shape. A grant with no
+    duration is riot's, and riot is `granted_keywords` and a different slot.
+    """
+
+    keywords: tuple[str, ...] = ()
+    spell_types: tuple[str, ...] = ()
+
+
 class Pip(NamedTuple):
     """One unit of mana in the pool, and what is known about where it came from.
 
@@ -587,6 +609,11 @@ class Pip(NamedTuple):
     #: would need clearing at the turn boundary, and mana that forgot to be
     #: cleared is mana that never empties.
     persists_through_turn: int = -1
+    #: Arena of Glory's "…it gains haste until end of turn". On the pip for
+    #: `uncounterable`'s reason and one step further: Arena has two mana
+    #: abilities and only the exerting one prints the clause, so recorded per
+    #: permanent its plain ``{R}`` would hand out haste for free.
+    grant: ManaKeywordGrant | None = None
 
 
 @dataclass(frozen=True)
@@ -607,6 +634,12 @@ class SpentMana:
     #: Any, not all: the printed sentence makes the spell uncounterable if that
     #: mana was spent on it, and says nothing about the rest of its cost.
     uncounterable: bool = False
+    #: Every keyword grant carried by a pip this payment consumed -- Arena of
+    #: Glory. A tuple rather than a bool because, unlike `uncounterable`, the
+    #: rider still has to say *what* it grants and *which* spells get it. In the
+    #: order the pips were taken, deduplicated, so two Arenas paying for one
+    #: creature grant haste once.
+    grants: tuple[ManaKeywordGrant, ...] = ()
 
 
 class ManaPool:
@@ -647,10 +680,12 @@ class ManaPool:
         *,
         uncounterable: bool = False,
         persists_through_turn: int = -1,
+        grant: ManaKeywordGrant | None = None,
     ) -> None:
         index = SYMBOL_INDEX[symbol]
         self.amounts[index] += count
-        self.tags[index].extend([Pip(source, uncounterable, persists_through_turn)] * count)
+        pip = Pip(source, uncounterable, persists_through_turn, grant)
+        self.tags[index].extend([pip] * count)
 
     def add_tuple(
         self,
@@ -659,8 +694,9 @@ class ManaPool:
         *,
         uncounterable: bool = False,
         persists_through_turn: int = -1,
+        grant: ManaKeywordGrant | None = None,
     ) -> None:
-        pip = Pip(source, uncounterable, persists_through_turn)
+        pip = Pip(source, uncounterable, persists_through_turn, grant)
         for i, v in enumerate(produced):
             self.amounts[i] += v
             self.tags[i].extend([pip] * v)
@@ -733,6 +769,10 @@ class ManaPool:
         # the whole payment carry it: the printed sentence is about the spell the
         # mana was spent on, and says nothing about the rest of its cost.
         rider = False
+        # "…it gains haste until end of turn". A list, not a set: the grant has
+        # to survive into `SpentMana` as data rather than a flag, and a stable
+        # order keeps one payment's report the same from run to run.
+        grants: list[ManaKeywordGrant] = []
 
         def record(taken: list[Pip]) -> None:
             nonlocal rider
@@ -740,6 +780,8 @@ class ManaPool:
                 if pip.source is not None:
                     made_by.add(pip.source)
                 rider = rider or pip.uncounterable
+                if pip.grant is not None and pip.grant not in grants:
+                    grants.append(pip.grant)
 
         remaining_generic = req.generic
         for i in range(N_SYMBOLS):
@@ -780,6 +822,7 @@ class ManaPool:
             colors=frozenset(spent),
             sources=frozenset(made_by),
             uncounterable=rider,
+            grants=tuple(grants),
         )
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper

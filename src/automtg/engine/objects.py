@@ -214,6 +214,23 @@ class GameObject:
     #: itself. This one is what somebody *else* said about it, exactly as
     #: `granted_rebound` is to `CardDef.rebound`.
     uncounterable_mana_spent: bool = False
+    #: Keywords the mana that paid for this **spell** owes the **permanent** it
+    #: is about to become -- Arena of Glory's "if that mana is spent on a
+    #: creature spell, it gains haste until end of turn". Written by
+    #: `costs.pay_mana` beside `uncounterable_mana_spent` and read by
+    #: `zones._enter_battlefield`, which empties it as it hands the keywords over
+    #: as `until_eot` grants.
+    #:
+    #: A staging field and not the grant itself, which is the whole difficulty of
+    #: the printed line: the spell on the stack and the permanent are one object
+    #: (400.7 notwithstanding), and `reset_permanent_state` clears
+    #: `granted_keywords` and `until_eot` on the way in -- so haste written onto
+    #: the spell is wiped exactly as the creature arrives, which looks right for
+    #: the length of one test that never attacks. `move_object` carries this one
+    #: across that reset, and **only** when the destination is the battlefield:
+    #: a countered creature spell must not keep the promise in its graveyard and
+    #: cash it on a later cast.
+    mana_granted_keywords: set[str] = field(default_factory=set)
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -944,6 +961,11 @@ class GameObject:
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
         self.granted_keywords = set()
+        # Cleared like every other battlefield word, and deliberately: a spell
+        # that was countered, or an instant that finished resolving, is in a
+        # graveyard owing nobody haste. `move_object` restores it across this
+        # reset for the one destination that is owed it -- the battlefield.
+        self.mana_granted_keywords = set()
         self.granted_abilities_permanent = []
         self.tapped = False
         self.damage = 0

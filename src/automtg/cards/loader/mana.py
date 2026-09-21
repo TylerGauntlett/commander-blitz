@@ -21,6 +21,7 @@ from automtg.engine.errors import DslError
 from automtg.engine.mana import (
     CHOSEN_TYPE,
     WILDCARD,
+    ManaKeywordGrant,
     ManaRestriction,
     RestrictionGroup,
     parse_mana_production,
@@ -30,6 +31,9 @@ from .statics import (
     _validate_cost_reduction,
 )
 from .vocabulary import (
+    KEYWORD_ALIASES,
+    KNOWN_KEYWORDS,
+    KNOWN_TYPES,
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
 )
@@ -486,3 +490,50 @@ def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
             f"(a card type, supertype or subtype, lowercased)"
         )
     return entry.lower()
+
+
+def _mana_grant(spec: Any, is_mana_ability: bool, where: str) -> ManaKeywordGrant | None:
+    """ "…it gains haste until end of turn" compiled to a `ManaKeywordGrant`.
+
+    ``{"keywords": ["haste"], "spell_types": ["Creature"]}`` -- Arena of Glory.
+    ``spell_types`` is optional and narrows **who is given the keywords**, which
+    is the whole difference from `_mana_restriction` above: that one narrows what
+    the mana may be spent on at all, and this mana buys anything.
+
+    Every name is checked here rather than at the pip, for the reason the
+    restriction grammar is compiled at load time: a misspelt keyword would
+    otherwise be a rider that matches nothing, which reads on the board as a
+    land whose second ability is strictly worse than its first.
+    """
+    if spec is None:
+        return None
+    if not is_mana_ability:
+        # It rides the mana, so on an ability that makes none it would load and
+        # never be read -- `mana_uncounterable`'s refusal, for its reason.
+        raise DslError(f"{where}: 'mana_grant' needs 'is_mana_ability'")
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: 'mana_grant' is an object with 'keywords'")
+    unknown = set(spec) - {"keywords", "spell_types"}
+    if unknown:
+        raise DslError(f"{where}: 'mana_grant' has unknown keys {sorted(unknown)}")
+    raw = spec.get("keywords")
+    if not isinstance(raw, list) or not raw:
+        raise DslError(
+            f"{where}: 'mana_grant' needs a non-empty 'keywords' list -- a rider "
+            f"that grants nothing is a sentence the card does not print"
+        )
+    keywords: list[str] = []
+    for name in raw:
+        keyword = KEYWORD_ALIASES.get(str(name), str(name))
+        if keyword not in KNOWN_KEYWORDS:
+            raise DslError(f"{where}: 'mana_grant' has unknown keyword {name!r}")
+        keywords.append(keyword)
+    types: list[str] = []
+    for name in spec.get("spell_types") or []:
+        # Checked against the card types as `chars().types` spells them --
+        # `costs.pay_mana` intersects the two sets directly, so a lowercased
+        # "creature" here would silently match no spell ever cast.
+        if str(name) not in KNOWN_TYPES:
+            raise DslError(f"{where}: 'mana_grant' has unknown card type {name!r}")
+        types.append(str(name))
+    return ManaKeywordGrant(keywords=tuple(keywords), spell_types=tuple(types))

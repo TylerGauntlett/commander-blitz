@@ -2619,6 +2619,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
 
 ```jsonc
 { "mana": "{1}{U}", "tap": true, "untap": true,
+  "exert": true,                                  // Arena of Glory: it won't untap next untap step
   "pay_life": 3,
   "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
@@ -2641,6 +2642,49 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
+
+### `exert` — the keyword as a cost
+
+"{R}, {T}, **Exert this land**: Add {R}{R}" — Arena of Glory.
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn.",
+  "cost": { "mana": "{R}", "tap": true, "exert": true },
+  "mana_grant": { "keywords": ["haste"], "spell_types": ["Creature"] },
+  "effects": [ { "op": "add_mana", "mana": "{R}" },
+               { "op": "add_mana", "mana": "{R}" } ] }
+```
+
+Exert usually needs no engine support at all: the keyword's ordinary home is an
+`attacks` trigger resolving a `may` around `skip_untap` and `set_turn_flag`, and
+`docs/keywords.md` still routes it that way. **That shape cannot be reused
+here**, twice over. Exert is a *cost* on this card, paid as the ability is
+activated (601.2h), not an effect that resolves — and the ability is a **mana
+ability**, which never resolves at all, so there is no resolution for an op to
+run in. The loader says so before the engine gets the chance:
+`_split_mana_rider` allows a mana ability only `add_mana` plus a rider from
+`MANA_RIDER_OPS`, and `skip_untap` is not in it. Rewriting the line as an
+ordinary activated ability to smuggle the op in would be a different card — it
+would use the stack and be uncastable during another spell's payment, which is
+the entire point of a land that makes mana.
+
+So `exert` is a cost key, paid beside `{T}` and the `{R}`, and it writes the two
+halves rule 702.121a names: `skip_next_untap` — a one-shot spent by the untap
+step it skips — and the turn-scoped word `exerted` on `TurnLedger.object_flags`,
+which is what `{"has_turn_flag": "exerted"}` reads. Two stores and not one, the
+same call `skip_untap` and `set_turn_flag` already made: the lifetimes are
+different rules objects and using either for the other is wrong in both
+directions.
+
+It is **not** `tap`. Arena's printed cost is `{R}`, `{T}` *and* exert, so a tap
+cannot stand in for both, and 702.121b exerts a tapped permanent quite happily.
+It asks nothing of its source but that it be on the battlefield: no creature
+test and no attacking test, because the only printed exert cost is on a land.
+
+`Cost.is_tap_only` excludes it, which is what keeps the payment solver off it —
+a solver that paid an exert silently would keep a land down for a turn nobody
+agreed to. Cashed by `tests/unit/test_exert_cost.py`.
 
 ### `mill` — a cost, and never an effect
 
@@ -4988,6 +5032,57 @@ Delighted Halfling's "only to cast a **legendary** spell". They were the quiet
 omission: `_restriction_name` accepts any alphabetic word, so "legendary" loaded
 clean and matched nothing on any card in the game — mana that could never be
 spent, which reads on the board as a land that taps for nothing.
+
+### Mana that grants the spell a keyword — `mana_grant`
+
+```jsonc
+// Arena of Glory's second mana ability
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn.",
+  "cost": { "mana": "{R}", "tap": true, "exert": true },
+  "mana_grant": { "keywords": ["haste"], "spell_types": ["Creature"] },
+  "effects": [ { "op": "add_mana", "mana": "{R}" },
+               { "op": "add_mana", "mana": "{R}" } ] }
+```
+
+`mana_uncounterable` one field above is the same shape with the easy lifetime:
+"that spell can't be countered" is read while the spell is still on the stack
+and then thrown away. This one is owed to the **permanent**, and the spell and
+the permanent are the same object changing zones.
+
+**That is the whole difficulty, and it is invisible.** Every reachable spelling
+writes the keyword onto the *spell*: a `spell_cast` trigger with `filter:
+{"paid_by": "self"}` — Path of Ancestry's shape — resolves while the creature is
+still on the stack; `grant_keyword` writes `granted_keywords`, and without
+`permanent` it writes `until_eot`. `reset_permanent_state` clears **both** as
+the spell moves to the battlefield. The creature therefore arrives with nothing,
+and the only assertion that notices is the one the card is bought for: it
+attacks that turn.
+
+So the rider rides the **pip** and is carried across the reset by hand:
+`mana.Pip` holds a `ManaKeywordGrant`, `ManaPool.spend` reports the ones a
+payment consumed, `costs.pay_mana` asks the printed "**creature** spell"
+question at the one instant the spell exists to be asked,
+`zones.move_object` snapshots the answer past `reset_permanent_state` — **only**
+for a battlefield destination, so a countered creature spell does not keep the
+promise in its graveyard and cash it on a later cast — and `_enter_battlefield`
+hands it over as an `until_eot` grant in the slot riot occupies, so the creature
+is never on the battlefield without it.
+
+The pip and not the permanent, for Cavern of Souls' reason: Arena has a plain
+`{T}: Add {R}` too, and a flag recorded per permanent would hand out haste for
+free.
+
+`spell_types` narrows **who is given the keyword**, which is what separates this
+from `mana_restriction`: that one narrows what the mana may be spent on at all,
+and Arena's mana pays for anything — only a creature spell is given anything
+back. Omitted, every spell paid for with the mana is granted the keywords. The
+duration is always until end of turn, the only one printed on this shape; a
+grant with no duration is riot's, which is `granted_keywords` and a different
+slot. Keyword and type names are checked at load time, because a rider matching
+nothing reads on the board as a land whose second ability is strictly worse than
+its first. Refused on an ability that is not a mana ability, where it would load
+and never be read. Cashed by `tests/unit/test_mana_granted_keyword.py`.
 
 ### Counting the spells you cast, by type
 

@@ -13386,6 +13386,81 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_glory_arena",
+      "name": "Test Glory Arena",
+      "oracle_text": "{T}: Add {R}.\n{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn.",
+          "is_mana_ability": true,
+          "cost": {
+            "mana": "{R}",
+            "tap": true,
+            "exert": true
+          },
+          "mana_grant": {
+            "keywords": [
+              "haste"
+            ],
+            "spell_types": [
+              "Creature"
+            ]
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            },
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_glory_sprinter",
+      "name": "Test Glory Sprinter",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_glory_relic",
+      "name": "Test Glory Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ]
     }
   ]
 }

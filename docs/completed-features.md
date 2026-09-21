@@ -15848,3 +15848,114 @@ the mode the source produced rather than a fixed colour, an opponent's tap
 getting nothing, the planner and the payment agreeing on a {G}{G}{G}{G} spell
 off two dorks, the "as long as it's your turn" condition being asked, and the
 whole thing wearing off with its source.
+
+## Arena of Glory — exert as a cost, and a rider on mana that outlives the spell — 702.121a / 400.7
+
+### Overview
+
+Arena of Glory: *"{R}, {T}, **Exert this land**: Add {R}{R}. **If that mana is
+spent on a creature spell, it gains haste until end of turn.**"*
+
+One printed line, two capabilities, and each is blocked by the same fact about
+the other: this is a **mana ability**, so it never resolves, and there is no
+resolution for an effect to run in.
+
+### Exert as a cost
+
+`docs/keywords.md` had always routed exert as "free": an `attacks` trigger, a
+`may`, then `skip_untap` and whatever the card does — and
+`tests/unit/test_exert.py` cashes that claim on Combat Celebrant. It cannot be
+reused here, twice over.
+
+- Exert is a **cost** on this card, paid as the ability is activated (601.2h),
+  not an effect that resolves. A mana ability resolves at no point at all:
+  `costs.pay` and `mana_options_of` add its symbols during somebody else's
+  payment, with nothing on the stack.
+- The loader refuses the effect spelling before the engine sees it.
+  `loader.mana._split_mana_rider` allows a mana ability only `add_mana` (or one
+  `choose_mode` of them) plus a rider from `MANA_RIDER_OPS` —
+  damage/life/counters — and `skip_untap` is not in it. Rewriting the line as an
+  ordinary activated ability to smuggle the op in produces a *different card*:
+  it would use the stack and be uncastable during another spell's payment, which
+  is the whole point of a land that makes mana.
+
+So `Cost.exert` is a cost key beside `tap`. It writes both halves 702.121a
+names, and they stay two stores for the reason `skip_untap` and `set_turn_flag`
+are two ops: `obj.skip_next_untap` is a one-shot spent by the untap step it
+skips, and `TurnLedger.object_flags` holds the turn-scoped word `exerted` that
+`{"has_turn_flag": "exerted"}` reads.
+
+| the near miss | why it is not this |
+|---|---|
+| `tap` | Arena's printed cost is `{R}`, `{T}` **and** exert — the tap cannot stand in for both — and 702.121b exerts a permanent whether or not it is tapped |
+| `untap` / `tap_permanents` | They move a permanent's tap state *now* and say nothing about the next untap step |
+| the `skip_untap` op | Runs at resolution, which a mana ability never reaches, and is refused inside a mana ability's effects in any case |
+
+It asks nothing of its source but that it be on the battlefield: no creature
+test and no attacking test, because the one printed exert **cost** is on a land.
+`Cost.is_tap_only` excludes it, which keeps the payment solver off it — a solver
+that paid an exert silently would keep a land down for a turn nobody agreed to.
+
+### The rider, and the trap
+
+`mana_uncounterable` is the right shape with the easy lifetime: Cavern of Souls'
+"that spell can't be countered" is read while the spell is still on the stack
+and then thrown away. This one is owed to the **permanent**, and the spell and
+the permanent are one object changing zones.
+
+**Every reachable spelling of the sentence is wiped, silently.** Path of
+Ancestry's `spell_cast` + `filter: {"paid_by": "self"}` resolves while the
+creature is still on the stack. `grant_keyword` writes `granted_keywords`, and
+without `permanent` it writes `until_eot`. `objects.reset_permanent_state`
+clears **both** as the spell moves to the battlefield — so the creature arrives
+with nothing, and the only assertion that notices is the one the card is bought
+for: that it attacks that turn.
+
+The mechanism, one field over from Cavern's:
+
+- `mana.Pip` carries a `ManaKeywordGrant` (`keywords`, and an optional
+  `spell_types`). On the **pip** for Cavern's reason and one step further: Arena
+  has a plain `{T}: Add {R}` too, and a flag recorded per permanent would hand
+  out haste for free.
+- `ManaPool.spend` reports the grants a payment consumed, deduplicated — Arena
+  makes `{R}{R}` and the creature gains haste, not haste twice.
+- `costs.pay_mana` asks the printed "**creature** spell" question there and
+  nowhere later: it is a question about the *spell*, and by the time a permanent
+  exists to be given haste the spell is gone.
+- `zones.move_object` snapshots the answer past `reset_permanent_state`, in the
+  slot `left_with` occupies and with the opposite destination — **only** when
+  the move ends on the battlefield. A countered creature spell must not keep the
+  promise in its graveyard and cash it on a later cast.
+- `zones._enter_battlefield` hands it over in the slot riot occupies, so the
+  creature is never on the battlefield without it, and empties the staging
+  field: the promise belongs to one arrival (400.7).
+
+`until_eot` and not riot's `granted_keywords`, because the printed clause has a
+duration and riot's has none — `clear_until_eot` sweeps only the one that asked
+to be swept.
+
+`spell_types` narrows **who is given the keyword**, which is the whole
+difference from `mana_restriction`: that one narrows what the mana may be spent
+on at all, and Arena's mana pays for anything — only a creature spell is given
+anything back.
+
+### Cards unblocked
+
+One: **Arena of Glory**, the only gap record in the pool naming either
+capability.
+
+### Guarded by
+
+`tests/unit/test_exert_cost.py` and `tests/unit/test_mana_granted_keyword.py`,
+over three new test-pool cards — a two-ability Arena, so the plain line and the
+exerting line are measured against each other on one permanent, plus a vanilla
+creature and a vanilla artifact.
+
+The exert file pins the timing in both directions: the land stays tapped through
+exactly **one** untap step and untaps the next, since a land that never untapped
+again would pass a single-look assertion and be a different card. The rider file
+pins the trap itself — the creature is on the battlefield, has haste, **and is
+declared as an attacker that turn** — against a control cast with the Arena's
+plain mana on the same turn, plus the wearing-off at the turn boundary, the
+noncreature spell that is given nothing, and the spell that never arrives and so
+keeps nothing.

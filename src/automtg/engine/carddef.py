@@ -18,7 +18,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .enums import AbilityKind, CardType, Keyword, Step, Supertype, Zone
-from .mana import ManaCost, ManaRestriction
+from .mana import ManaCost, ManaKeywordGrant, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
 LAND_TYPE = CardType.LAND.value
@@ -174,6 +174,15 @@ class Cost:
     mana: ManaCost = field(default_factory=ManaCost)
     tap: bool = False
     untap: bool = False
+    #: "{R}, {T}, **Exert this land**:" -- Arena of Glory. Exert as a cost
+    #: (702.121a): the source does not untap during its controller's next untap
+    #: step, and `TurnLedger.object_flags` records the word for the turn.
+    #:
+    #: Distinct from ``tap``, which is the ``{T}`` symbol -- Arena's cost is
+    #: both, and 702.121b exerts a permanent whether or not it is tapped -- and
+    #: from the ``skip_untap`` **op**, which runs at resolution. A mana ability
+    #: never resolves, so the op could not be reached from the only printing.
+    exert: bool = False
     sacrifice: Mapping[str, Any] | None = None
     #: "Return a land you control to its owner's hand": a selector over the
     #: battlefield. Distinct from ``sacrifice`` because the permanent comes
@@ -299,6 +308,7 @@ class Cost:
             mana=ManaCost.parse(spec.get("mana")),
             tap=bool(spec.get("tap", False)),
             untap=bool(spec.get("untap", False)),
+            exert=bool(spec.get("exert", False)),
             sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
             return_to_hand=(
                 dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
@@ -370,6 +380,11 @@ class Cost:
             self.tap
             and self.mana.is_free()
             and not self.untap
+            # Arena of Glory's exerting ability is not a tap-for-mana source the
+            # solver may fire on its own: exert is a price, and a solver that
+            # paid it silently would keep a land down for a turn nobody agreed
+            # to. Its `{R}` already disqualifies it; this is the claim itself.
+            and not self.exert
             and self.sacrifice is None
             and self.return_to_hand is None
             and self.tap_permanents is None
@@ -404,6 +419,8 @@ class Cost:
             parts.append("{T}")
         if self.untap:
             parts.append("{Q}")
+        if self.exert:
+            parts.append("Exert this permanent")
         if self.sacrifice:
             parts.append("Sacrifice")
         if self.return_to_hand:
@@ -772,6 +789,16 @@ class Ability:
     #: Ability-level rather than card-level for the same reason, and distinct
     #: from `CardDef.uncounterable`, which is a spell speaking about itself.
     mana_uncounterable: bool = False
+    #: "…**it gains haste until end of turn**" -- Arena of Glory. The other
+    #: rider this ability's mana carries, and the one that has to outlive the
+    #: spell: `mana_uncounterable` is read while the spell is still on the stack
+    #: and thrown away, while this is owed to the *permanent* the spell becomes.
+    #:
+    #: On the ability for `mana_uncounterable`'s reason -- Arena has a plain
+    #: `{T}: Add {R}` too, and recorded per permanent that one would grant haste
+    #: for free. ``None`` is ordinary mana; the loader refuses it on an ability
+    #: that is not a mana ability, where it would load and never be read.
+    mana_grant: ManaKeywordGrant | None = None
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and
