@@ -13322,6 +13322,70 @@
           "affects_player": "you"
         }
       ]
+    },
+    {
+      "id": "t_life_toll_drake",
+      "name": "Test Life Toll Drake",
+      "oracle_text": "Spells your opponents cast that target this creature cost an additional 3 life to cast.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast that target this creature cost an additional 3 life to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "targeting": {
+            "self_only": true
+          },
+          "cost": {
+            "pay_life": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_toll_collector",
+      "name": "Test Toll Collector",
+      "oracle_text": "Spells your opponents cast cost an additional 2 life to cast.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast cost an additional 2 life to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "pay_life": 2
+          }
+        }
+      ]
     }
   ]
 }

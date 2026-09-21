@@ -753,6 +753,96 @@ def spell_cost_reduction(
     return total
 
 
+def spell_life_tax(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
+    """How much **life** ``pid`` must pay on top to cast ``card`` (601.2f).
+
+    "Spells your opponents cast that target this creature cost an additional 3
+    life to cast." Terror of the Peaks. The `spell_cost_increase` static, and
+    the mirror of `spell_cost_reduction` in everything except the two things
+    that matter: the direction, and the currency.
+
+    It is a **cost**, which settles three questions at once. It is paid as the
+    spell is cast rather than when it resolves, so a countered spell has still
+    been paid for. It is not optional -- there is no "unless", and nothing on
+    the stack to decline. And a player who cannot pay it simply cannot cast the
+    spell at all: legality never offers the line, which is the whole difference
+    from `ward`, where the spell is cast first and dies unpaid.
+
+    Life, not mana, and that is why the size lives in a `cost` node instead of
+    an `amount`. `spell_cost_reduction` is generic-mana arithmetic end to end --
+    subtracted and clamped at zero by `costs.cost_reduction` -- so it could
+    neither add nor charge a different resource. Keeping life out of the mana
+    price also keeps the payment solver out of it: the tax never touches a pip,
+    so it cannot make a spell unpayable for a reason the solver would have to
+    explain.
+
+    ``affects_spells`` says whose spells and which, matched against the printed
+    face by `_matches_printed`, exactly as the reduction matches it.
+    ``targeting`` is the clause that reads the **cast** rather than the board --
+    "that target *this creature*" -- and is matched against the refs the cast
+    chose.
+
+    ``targets`` is ``None`` while the price is a gate asked before any target
+    exists, and a `targeting` clause is then read **meanly**: the tax is left
+    out. That is the opposite convention from the two reductions and it is the
+    same principle -- be generous to the caster at a gate, exact per tuple. A
+    gate that charged the tax speculatively would refuse a spell the player can
+    afford to aim somewhere else, and `casting._priced_tuples` drops the tuples
+    that really cannot be paid for.
+
+    Read on the cast path only -- `casting._cast_variant` offers the line and
+    `Game._cast` charges it -- which leaves the gap strive already has: the
+    resolution-time casts that pay no mana of their own (`suspend.cast_for_free`,
+    madness, miracle) reach neither, so they collect no surcharge. Narrower than
+    601.2f, which taxes a free cast like any other.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_increase":
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one, for `spell_cost_reduction`'s reason: an
+            # empty filter would match *every* spell, so a compile bug would
+            # tax the whole table rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if not _matches_printed(card, resolved):
+            continue
+        if (aimed := static.get("targeting")) is not None:
+            if targets is None:
+                continue
+            if not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            ):
+                continue
+        total += int((static.get("cost") or {}).get("pay_life") or 0)
+    return total
+
+
+def spell_life_tax_on_board(state: GameState) -> bool:
+    """Is any `spell_cost_increase` static active at all?
+
+    The cheap test that keeps `spell_life_tax` off the hot path. Legality prices
+    every castable card in hand against every target tuple, and on a board with
+    no tax on it the answer is 0 every time -- so this asks once per cast line
+    and the per-tuple walk happens only for the boards that have one.
+    """
+    return any(
+        static.get("effect") == "spell_cost_increase" for _, static in _battlefield_statics(state)
+    )
+
+
 def ability_cost_reduction(
     state: GameState,
     pid: int,

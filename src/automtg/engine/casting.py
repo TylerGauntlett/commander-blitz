@@ -23,8 +23,10 @@ from .player_statics import (
     player_casts_as_though_flash,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
+    spell_life_tax,
+    spell_life_tax_on_board,
 )
-from .primitives import sacrifice_forbidden
+from .primitives import life_locked, sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -946,6 +948,8 @@ def _priced_tuples(
     any_color: bool = False,
     targeted_discount: bool = False,
     discount_for=None,
+    life_tax_for=None,
+    life_budget: int = 0,
 ) -> list[tuple[tuple, tuple[int, ...]]]:
     """Each target tuple this line may be cast with, and what paying for it taps.
 
@@ -977,7 +981,29 @@ def _priced_tuples(
     target is reached, and one target is the line that costs nothing extra. Each
     size gets its own enumeration, largest first, then the empty tuple last, the
     order the rest of targeting keeps.
+
+    **A life tax is the third**, and it is the cheap one: "spells your opponents
+    cast that target this creature cost an additional 3 life to cast" (Terror of
+    the Peaks) also makes the price a question about which target was chosen,
+    but it is paid in a resource the mana solver knows nothing about. So it is
+    settled before any solving happens -- the tuples the caster cannot afford
+    the life for are simply not there -- and a tuple that survives is priced by
+    exactly the code that priced it before. `life_tax_for` is `None` unless such
+    a static is on the board, which is the common case and costs nothing.
     """
+    if life_tax_for is not None:
+        # 118.4: life may be paid down to exactly 0, so a tax of 3 is payable at
+        # 3 life and not at 2. `life_budget` is what is left after the Phyrexian
+        # pips this line already bought, since both come out of the same total.
+        # A tax of zero is not a payment, so it survives a frozen life total
+        # (`life_budget` is -1 then) as well as an empty one.
+        tuples = [
+            targets
+            for targets in tuples
+            if (tax := life_tax_for(targets)) == 0 or tax <= life_budget
+        ]
+        if not tuples:
+            return []
 
     def solve(extra: int, aimed_at=None):
         total = cost
@@ -1166,6 +1192,20 @@ def _cast_variant(
     # `grant_playable` may also have left on the card. `Game._cast` reads the
     # same static at the same point.
     spends_any_color = player_spends_mana_as_any_color(state, pid)
+    # Terror of the Peaks: "spells your opponents cast that target this creature
+    # cost an additional 3 life to cast." An additional cost (601.2f) charged in
+    # life, so it never reaches the payment solver -- it only narrows which
+    # target tuples this player can afford to announce, which is what
+    # `_priced_tuples` does with it. Asked once per cast line, and only when the
+    # board actually has such a static on it.
+    taxed = spell_life_tax_on_board(state)
+    # "Your life total can't change" makes paying life impossible rather than
+    # free (118.4 makes it a loss of life, and 601.2h makes an unpayable cost an
+    # illegal cast), so a taxed line goes away entirely -- the same refusal
+    # `costs.can_pay` already makes about a printed "pay 3 life". An *untaxed*
+    # line is untouched by it, which is why this is a flag rather than a life
+    # total of -1: a tax of zero is not a payment.
+    life_frozen = taxed and life_locked(state, pid)
     out: list[Action] = []
     for phyrexian in range(printed.phyrexian_count + 1):
         cost, phyrexian_life = printed.paying_phyrexian(phyrexian)
@@ -1173,6 +1213,16 @@ def _cast_variant(
         # at 1 is not offered the line a player at 2 is.
         if phyrexian_life > state.players[pid].life:
             continue
+        if taxed:
+            # The floor: the tax every tuple on this line pays whatever it aims
+            # at. A `targeting` clause is left out of it (`targets=None` reads
+            # such a static meanly), so this refuses only the lines that are
+            # unaffordable however they are aimed.
+            floor_tax = spell_life_tax(state, pid, card, None)
+            if floor_tax and (
+                life_frozen or phyrexian_life + floor_tax > state.players[pid].life
+            ):
+                continue
         permission = state.objects[oid]
         if permission.playable_any_type and permission.playable_live(state.turn):
             # "…and mana of any type can be spent to cast that spell." The colours
@@ -1252,6 +1302,13 @@ def _cast_variant(
             or spends_any_color,
             targeted_discount=targeted_discount,
             discount_for=_discount_for,
+            # Priced per tuple, exactly, because "that target this creature" is
+            # a question about which target was chosen. The budget is what the
+            # Phyrexian pips this line already bought have left over.
+            life_tax_for=(
+                (lambda aimed: spell_life_tax(state, pid, card, aimed)) if taxed else None
+            ),
+            life_budget=(-1 if life_frozen else state.players[pid].life - phyrexian_life),
         )
         if not priced:
             continue

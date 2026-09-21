@@ -442,7 +442,11 @@ class Game:
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
         from .casting import strive_surcharge
-        from .player_statics import player_pays_life_for_black, player_spends_mana_as_any_color
+        from .player_statics import (
+            player_pays_life_for_black,
+            player_spends_mana_as_any_color,
+            spell_life_tax,
+        )
 
         if player_pays_life_for_black(state, pid):
             # K'rrik's black pips, read as Phyrexian ones exactly where
@@ -531,6 +535,25 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+
+        # "Spells your opponents cast that target this creature cost an
+        # additional 3 life to cast." Terror of the Peaks, and somebody *else's*
+        # permanent is what imposed it. An additional cost (601.2f), so it is
+        # paid here with the rest of them, after the mana (601.2g) and before
+        # the spell is on the stack -- which is what makes it a price rather
+        # than a ward: it is charged whether or not the spell ever resolves, and
+        # there is no moment at which the caster could decline it.
+        #
+        # `action.targets` is the tuple legality priced the line with -- the
+        # same read `cost_reduction` above takes, and for the same reason: a
+        # surcharge sized off anything else would be a charge the offer never
+        # showed. Legality proved this payable before offering the line, so a
+        # failure here is a bug rather than a decision.
+        life_tax = spell_life_tax(state, pid, card, action.targets)
+        if life_tax:
+            ok = yield from pay(state, pid, Cost(pay_life=life_tax), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         # Retrace's discarded land is an *additional* cost, so it is paid before
         # the spell goes on the stack -- and after the mana, which is the order

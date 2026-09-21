@@ -450,6 +450,9 @@ class AbilityModel(BaseModel):
     #: name a card nobody can point at yet, and so may read only its printed
     #: face. Required on all three: an absent filter reads as "every spell",
     #: which on the last of them is Omniscience.
+    #: Read by `spell_cost_increase` too -- "Spells your opponents cast … cost
+    #: an additional 3 life" (Terror of the Peaks) asks the identical question
+    #: of the identical card, and answers it from the same key.
     affects_spells: dict[str, Any] | None = None
     #: `ability_cost_reduction`: which **activated abilities** the discount
     #: reaches, as a class. ``{"equip": true}`` is Strong Back's "equip
@@ -466,6 +469,12 @@ class AbilityModel(BaseModel):
     #: Matched against the refs the activation chose, as an ordinary static
     #: filter resolved against this permanent, so ``{"attached": true}`` is the
     #: creature this Aura enchants.
+    #:
+    #: `spell_cost_increase` takes the same clause pointing the other way --
+    #: Terror of the Peaks' "spells your opponents cast **that target this
+    #: creature**", which is ``{"self_only": true}``. The one difference is how
+    #: it is read when no target exists yet: a reduction applies generously
+    #: there and a tax is left out, both of them being generous to the caster.
     targeting: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each

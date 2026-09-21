@@ -329,6 +329,18 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Terror of the Peaks. "Spells your opponents cast that target this
+        # creature cost an additional 3 life to cast." An additional cost
+        # (601.2f) imposed on somebody *else's* spell, and it is not the line
+        # above pointing the other way: `spell_cost_reduction` is mana
+        # arithmetic, subtracted and clamped at zero by `costs.cost_reduction`,
+        # so a negative `amount` there could only round away to "costs nothing
+        # extra" -- which is why the loader now refuses one. This carries a
+        # `cost` node instead, the way `ward` and `attack_tax` do, and the
+        # loader holds it to `pay_life`: life is the one resource a caster can
+        # be made to spend on a stranger's terms without the payment solver
+        # having anything to say about it.
+        "spell_cost_increase",
         # Strong Back. "Equip abilities you activate … cost {3} less to
         # activate." The mirror of the line above, for activated abilities
         # instead of spells, and read by `costs.ability_mana` -- the one

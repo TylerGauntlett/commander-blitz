@@ -15513,3 +15513,155 @@ pick is gone from the second menu, that the **third** menu is narrowed by both
 earlier picks rather than only the lead, and that a library of three identical
 Dragons yields one card and asks once. Plus "up to three" meaning zero at every
 stage, and the five load errors.
+
+## An additional cost on somebody else's spell — `spell_cost_increase` — 601.2f / 601.2h / 118.4
+
+### Overview
+
+Terror of the Peaks: *"**Spells your opponents cast that target this creature
+cost an additional 3 life to cast.**"*
+
+Two of the three printed lines were already sayable — flying is a keyword, and
+the enters trigger is an ordinary `permanent_enters` with a `damage` op sized by
+`{"power_of": {"binding": "subject"}}` at a bare `kind: "any"` target. The middle
+line is a **static that raises the price of a spell its controller does not
+cast, and charges the raise in life**, and nothing in the engine pointed that
+way.
+
+`spell_cost_reduction` already had the two clauses that are genuinely hard here,
+and they are reused unchanged:
+
+- `affects_spells: {"controller": "opponent"}` — whose spells, and which,
+  matched against the **printed face** by `_matches_printed`, because a spell
+  being priced is still in hand and has no board state to read;
+- `targeting: {"self_only": true}` — "that target *this creature*", matched
+  against the refs the cast actually chose, as an ordinary static filter
+  resolved against this permanent. Strong Back's "Aura spells you cast that
+  target enchanted creature" is the same clause.
+
+What did not exist is the **direction** and the **resource**, and the reduction
+could not be bent to supply either.
+
+### Why not a negative `spell_cost_reduction`
+
+`costs.cost_reduction` sums the statics and `costs` subtracts the total from the
+generic part, clamped at zero. An `amount: -3` therefore rounds away to "costs
+the printed price": the card would load clean, print its line, and tax nobody —
+the silent-wrong-card failure that costs more than a rejection. The loader now
+**refuses a negative literal `amount`** by name and points at this effect, so
+the dead end is closed rather than merely unused.
+
+The second half is the currency. `schema.py` already said it outright about the
+reduction — "that one lowers a mana cost by an amount and **cannot swap the
+payment to a different resource entirely**" — so 3 life was never expressible
+there however the sign pointed.
+
+### Why not `ward`
+
+`ward` is the loud near miss and is a materially different card, in four ways
+that all matter at a table:
+
+- it is a **triggered** ability, so it fires on **abilities** as well as spells,
+  where the printed line taxes spells only;
+- it resolves **after** the spell is already cast and on the stack, rather than
+  pricing it at cast time;
+- the opponent chooses whether to pay **once they are already committed**; and
+- declining **counters** the spell, where declining a cost is simply not casting.
+
+Writing the line as ward would hand the Dragon much stronger and
+differently-shaped protection than is printed. `becomes_target` is worse still: a
+trigger cannot price a cast at all, it would fire on a spell that gets countered,
+and losing 3 life after the fact cannot be declined by not casting. The
+card-level `additional_cost` is the right *price* — a `Cost` node that can hold
+`pay_life` — and the wrong direction of ownership: it is a field on the card
+being cast, charging its own caster.
+
+### Tier: B-shaped — a new static effect, read on the cast path
+
+One entry in `STATIC_EFFECTS`, one reader in `player_statics`, loader validation,
+and two call sites on the cast path. No new decision kind, no new event, no new
+continuous effect, nothing in the server and nothing in the frontend.
+
+### The shape
+
+```jsonc
+{ "kind": "static", "effect": "spell_cost_increase",
+  "affects_spells": { "controller": "opponent" },
+  "targeting": { "self_only": true },
+  "cost": { "pay_life": 3 } }
+```
+
+The price is a **`cost` node**, as `ward`'s and `attack_tax`'s are, and the
+loader holds it to a `pay_life` of 1 or more and nothing else:
+
+- **mana is refused** because it would have to reach the payment solver.
+  Legality prices a cast line by solving for its pips, so a surcharge in mana
+  changes which lands tap and which target tuples are affordable — four more
+  seams where the offer and the charge could disagree. Life is a second resource
+  checked beside the mana and touches none of them;
+- a **sacrifice or a discard** is refused for `attack_tax`'s reason: it would
+  have to ask a question inside the cast, where nothing can answer one;
+- a **`pay_life` of 0** is refused for ward's reason, and `prune_cost` drops the
+  zero, so "pay 0 life" and "pay nothing" arrive as the same card — a line that
+  prints and charges nobody.
+
+`amount` is refused on this effect: the size is the `cost`, and an `amount` here
+would be read by nothing while looking exactly like the number being charged.
+
+### It is a cost, and everything follows from that
+
+**Paid as the spell is cast** (601.2g puts it after the mana), in `Game._cast`
+beside retrace's discard and flashback's life, and sized off `action.targets` —
+the tuple legality priced the line with, the same read `cost_reduction` takes
+there. So a **countered spell has still been paid for**, which is the sharpest
+difference from ward and is what the test plays out on a real stack.
+
+**Never optional.** There is no "unless", and no moment at which the caster could
+decline: the only way out is not casting.
+
+**Unpayable means uncastable** (601.2h). `casting._priced_tuples` drops the
+target tuples whose tax the caster cannot afford, *before* any mana is solved —
+the tax is in a resource the solver knows nothing about, so filtering the tuples
+first also covers strive and the targeted-discount path without touching either.
+118.4 fixes the boundary: life may be paid down to exactly 0, so a 3-life tax is
+payable at 3 life and **not** at 2, and at 2 the aim at the Dragon is not offered
+while every other aim still is. An unconditional tax ("spells your opponents cast
+cost 2 more") withdraws the whole cast line instead, through the same gate.
+
+A **frozen life total** — "your life total can't change" — makes paying life
+impossible rather than free, so every taxed line goes away. The same refusal
+`costs.can_pay` already makes about a printed "pay 3 life", read here as a flag
+rather than a life total of −1 so that an *untaxed* line is untouched by it.
+
+### The gate reads `targeting` meanly
+
+The price is asked twice: once as a gate, before legality has enumerated a single
+target tuple, and then once per tuple. The two reductions read a `targeting`
+clause **generously** at the gate — `targets=None` applies the discount —
+because refusing there would drop a spell that is affordable once discounted.
+
+A tax is generous to the caster by doing the **opposite**: with no tuple to read,
+a `targeting` tax is left out entirely. Charging it speculatively would refuse a
+spell the player can afford to aim somewhere else. The per-tuple pass then
+charges each aim exactly, so the offer and the charge still agree.
+
+### Cards unblocked
+
+One authored here: **Terror of the Peaks**, the only gap record in the pool
+naming this capability. The effect is the general answer for the "spells that
+target this cost more" family; a mana-priced member of it would need the solver
+work the loader currently refuses.
+
+### Guarded by
+
+`tests/unit/test_spell_cost_increase.py`, over two new test-pool cards — a Drake
+with the printed targeting clause and a Collector that taxes every opponent spell
+unconditionally, so the conditional and unconditional gates are separate claims.
+The module covers what it taxes and what it does not (the same spell aimed
+elsewhere, the taxing player's own spells, an empty board, two of them stacking),
+the mean gate reading, the 118.4 boundary in both directions with the untaxed
+aims surviving beside it, the frozen life total, the life actually leaving, the
+tax surviving a counterspell, the absence of any prompt, the wearing-off when the
+permanent dies, every loader refusal, and the negative-`amount` refusal on
+`spell_cost_reduction` — with the companion claim that a reduction of *zero*
+still loads, since only the sign is wrong.

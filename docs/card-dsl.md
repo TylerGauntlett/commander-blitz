@@ -9310,6 +9310,55 @@ same reason and by the same route. A `spell_cast` trigger cannot substitute: it
 fires after the spell is paid for, so the best it could do is refund mana, which
 is not the same as being able to afford the spell.
 
+### Making *other* spells cost more, in life
+
+```jsonc
+// Terror of the Peaks — "Spells your opponents cast that target this creature
+// cost an additional 3 life to cast."
+{ "kind": "static", "effect": "spell_cost_increase",
+  "affects_spells": { "controller": "opponent" },
+  "targeting": { "self_only": true },
+  "cost": { "pay_life": 3 } }
+```
+
+The same two filters the reduction above takes — `affects_spells` for whose
+spells and which, `targeting` for what the cast is aimed at — pointing the other
+way, and charging a different resource.
+
+**It is not the reduction with a minus sign.** `costs.cost_reduction` subtracts
+its total and clamps the result at zero, so `amount: -3` would load clean, print
+"costs 3 more" and charge the printed price — the loader now refuses a negative
+`amount` by name and points here. And the reduction is generic-mana arithmetic
+end to end, so it could never charge life.
+
+**The price lives in a `cost` node**, the way `ward`'s and `attack_tax`'s do, and
+the loader holds it to a `pay_life` of 1 or more and nothing else. Mana is
+refused because it would have to reach the payment solver, where a surcharge
+changes which lands tap and which target tuples are affordable; life is checked
+beside the mana and touches none of it. A sacrifice or a discard is refused for
+`attack_tax`'s reason — it would have to ask a question inside the cast.
+
+**It is a cost, and every consequence follows from that.** It is paid as the
+spell is cast (601.2h), so a countered spell has still been paid for. It is not
+optional — there is no "unless" and nothing on the stack to decline. And a
+player who cannot pay simply cannot cast the spell: `casting._priced_tuples`
+drops the target tuples the caster cannot afford, so an opponent at 2 life is
+never offered the aim at all, and one at exactly 3 still is (118.4 lets life be
+paid down to 0).
+
+**`ward` is the near miss and is a different card.** It is a triggered
+counter-unless-paid: it fires on *abilities* too, it prices the spell after it is
+already cast, the opponent decides once they are committed, and declining kills
+the spell rather than merely costing life. `becomes_target` is worse still — a
+trigger cannot price a cast, would fire on a countered spell, and could not be
+declined by not casting.
+
+**The gate reads `targeting` meanly**, which is the mirror of the reduction
+reading it generously and the same principle: be generous to the caster before
+any target exists. `targets=None` leaves a `targeting` tax *out*, because
+charging speculatively would refuse a spell the player can afford to aim
+somewhere else; the per-tuple pass then charges each aim exactly.
+
 ## Kicker
 
 An additional cost the caster may choose to pay. Two fields, and they only mean
