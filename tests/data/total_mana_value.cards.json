@@ -1,0 +1,49 @@
+{
+  "_comment": "Shapes for tests/unit/test_total_mana_value_reduction.py. t_tmv_sum reduces by the TOTAL mana value of the artifacts you control; t_tmv_max is the identical card written with greatest_mana_value, the control that makes the sum-versus-maximum distinction measurable rather than argued. t_tmv_two and t_tmv_five are artifacts of mana value 2 and 5.",
+  "cards": [
+    {
+      "id": "t_tmv_sum",
+      "name": "Test Total Mana Value",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of artifacts you control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "total_mana_value": {"controller": "you", "types": ["Artifact"]}
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_tmv_max",
+      "name": "Test Greatest Mana Value",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest mana value among artifacts you control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "greatest_mana_value": {"controller": "you", "types": ["Artifact"]}
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_tmv_two",
+      "name": "Test Two Drop Artifact",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_tmv_five",
+      "name": "Test Five Drop Artifact",
+      "oracle_text": "",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

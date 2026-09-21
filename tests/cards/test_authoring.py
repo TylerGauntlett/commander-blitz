@@ -519,12 +519,24 @@ class TestThePacketCarriesTheWholeVocabulary:
         Bloodchief puts a counter on equipped creature and Skullclamp draws when
         it dies, and neither is a continuous effect. Being static-only was the
         reason no `op` could reach the equipped creature at all.
+
+        `attached_to_host` -- the host's *other* attachments, Brass Knuckles'
+        "two or more Equipment are attached to it" -- is static-only for
+        `owner`'s duller reason rather than the relationship one: every printed
+        card that asks the question asks it continuously, so no one-shot has
+        needed it yet. It moves to both lists the day one does, and `attached`
+        is the precedent for how cheap that is.
         """
         from automtg.cards.authoring.packet import reference
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
-        assert static - selector == {"paired", "paired_with_source", "owner"}
+        assert static - selector == {
+            "paired",
+            "paired_with_source",
+            "owner",
+            "attached_to_host",
+        }
         assert "attached" in static and "attached" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
 

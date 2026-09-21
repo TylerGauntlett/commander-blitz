@@ -1,0 +1,105 @@
+{
+  "_comment": "Shapes for tests/unit/test_becomes_tapped.py. t_bt_pinger is the Legolas's Quick Reflexes grant as a printed ability -- 'whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature' -- reduced to a bare draw so the test measures the trigger and not the damage. t_bt_land is City of Brass's shape -- a land whose own tap for mana is the trigger -- carrying the same bare draw as the pinger, since the class it serves is about the trigger surviving cost payment rather than about what the trigger does. t_bt_bear is a vanilla for the pinger to hit or be hit by.",
+  "cards": [
+    {
+      "id": "t_bt_pinger",
+      "name": "Test Tap Watcher",
+      "oracle_text": "Whenever this creature becomes tapped, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature becomes tapped, draw a card.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bt_land",
+      "name": "Test Tap Land",
+      "oracle_text": "Whenever this land becomes tapped, draw a card.\n{T}: Add {C}.",
+      "types": [
+        "Land"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this land becomes tapped, draw a card.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bt_bear",
+      "name": "Test Tap Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "card": {
+    "id": "brass_knuckles",
+    "name": "Brass Knuckles",
+    "oracle_text": "When you cast this spell, copy it. (The copy becomes a token.)\nEquipped creature has double strike as long as two or more Equipment are attached to it.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+    "mana_cost": "{4}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When you cast this spell, copy it. (The copy becomes a token.)",
+        "active_zones": [
+          "stack"
+        ],
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "copy_spell"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Equipped creature has double strike as long as two or more Equipment are attached to it.",
+        "effect": "grant_keyword",
+        "keywords": [
+          "double_strike"
+        ],
+        "affects": {
+          "attached": true
+        },
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ],
+              "attached_to_host": true
+            }
+          },
+          "right": {
+            "const": 2
+          }
+        }
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {1}",
+        "cost": {
+          "mana": "{1}"
+        },
+        "sorcery_speed_only": true,
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34
+  }
+}

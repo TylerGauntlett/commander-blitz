@@ -90,7 +90,8 @@ class TestTheExtraMana:
         ghast = oids_of(game, GHAST, 0)[0]
         swamp = oids_of(game, "swamp", 0)[0]
         tap(game, "swamp", 0)
-        assert sorted(game.state.players[0].mana_pool.tags[B]) == sorted([ghast, swamp])
+        made_by = [pip.source for pip in game.state.players[0].mana_pool.tags[B]]
+        assert sorted(made_by) == sorted([ghast, swamp])
 
 
 class TestWhoseTapsCount:

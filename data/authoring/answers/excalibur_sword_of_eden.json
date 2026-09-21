@@ -1,0 +1,106 @@
+{
+  "card": {
+    "id": "excalibur_sword_of_eden",
+    "name": "Excalibur, Sword of Eden",
+    "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)\nEquipped creature gets +10/+0 and has vigilance.\nEquip legendary creature {2}",
+    "mana_cost": "{12}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "cost_reduction": {
+      "total_mana_value": {
+        "controller": "you",
+        "any_of": [
+          {
+            "types": [
+              "Artifact"
+            ]
+          },
+          {
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          {
+            "subtypes": [
+              "Saga"
+            ]
+          }
+        ]
+      }
+    },
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +10/+0 and has vigilance.",
+        "effect": "buff",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "const": 10
+        },
+        "toughness": {
+          "const": 0
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +10/+0 and has vigilance.",
+        "effect": "grant_keyword",
+        "affects": {
+          "attached": true
+        },
+        "keywords": [
+          "vigilance"
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip legendary creature {2}",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{2}"
+        },
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "supertypes": [
+                "Legendary"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

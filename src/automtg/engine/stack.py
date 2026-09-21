@@ -656,7 +656,15 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     elif item.mutated:
         specs = (MUTATE_TARGET,)
     targets, any_legal = filter_legal(
-        state, item.controller, specs, item.targets, item.oid
+        # `item.x` so 608.2b re-checks the target against the X that was
+        # actually paid: "target ... with mana value X" is a question with an X
+        # in it, and re-asked at 0 the spell would fizzle every time.
+        state,
+        item.controller,
+        specs,
+        item.targets,
+        item.oid,
+        x=item.x,
     )
     if not any_legal:
         state.emit(
@@ -919,9 +927,10 @@ def _place_after_resolution(
         # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
-        from .zones import offer_enters_costs
+        from .zones import offer_enters_copy, offer_enters_costs
 
         yield from offer_enters_costs(state, obj.oid, controller)
+        yield from offer_enters_copy(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
@@ -1038,6 +1047,8 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         # the re-check reads an empty binding, which is not a stricter answer
         # than the declaration but a different one.
         bindings=item.bindings,
+        # The X that was paid, for the reason the spell path above gives.
+        x=item.x,
     )
     if not any_legal:
         state.emit(

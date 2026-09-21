@@ -17,7 +17,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from .enums import AbilityKind, CardType, Keyword, Supertype, Zone
+from .enums import AbilityKind, CardType, Keyword, Step, Supertype, Zone
 from .mana import ManaCost, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
@@ -625,6 +625,10 @@ class Ability:
     # activated
     cost: Cost | None = None
     is_mana_ability: bool = False
+    #: "Equip {2}" (702.6a), so a static can name equip abilities as a class.
+    #: See `schema.AbilityModel.is_equip` for why it is declared and not
+    #: inferred from the `attach` effect.
+    is_equip: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
     #: "Add {G} for each +1/+1 counter on this creature."  A value expression
     #: evaluated **when the ability is activated**, multiplying the single
@@ -689,6 +693,15 @@ class Ability:
     #: shape; a group may hold `mana.CHOSEN_TYPE`, resolved per permanent by
     #: `costs.resolve_mana_restriction` rather than at load time.
     mana_restriction: ManaRestriction | None = None
+    #: "…**and that spell can't be countered**" -- Cavern of Souls, Delighted
+    #: Halfling. A rider on the *mana*, so it travels on the pip
+    #: (`mana.Pip.uncounterable`) rather than on this permanent: Cavern has two
+    #: mana abilities and only one prints the clause, so anything recorded per
+    #: permanent would make its plain ``{C}`` uncounterable too.
+    #:
+    #: Ability-level rather than card-level for the same reason, and distinct
+    #: from `CardDef.uncounterable`, which is a spell speaking about itself.
+    mana_uncounterable: bool = False
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and
@@ -942,6 +955,15 @@ class CardDef:
     uncounterable: bool = False
     #: Split second: read off the stack by `legality.split_second_active`.
     split_second: bool = False
+    #: "Cast this spell only before the combat damage step" (Berserk). The step
+    #: at which the casting window **closes**, read by `casting._timing_ok`.
+    #:
+    #: The one card field that *narrows* when a spell may be cast. Everything
+    #: else about timing widens -- `flash`, `cast_as_though_flash`,
+    #: `sorcery_speed_only` on an ability -- and `_timing_ok` returns True for an
+    #: instant before any of them are consulted, so a restriction written
+    #: anywhere else could not be reached at all.
+    cast_before_step: Step | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False

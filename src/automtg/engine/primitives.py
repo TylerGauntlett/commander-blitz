@@ -23,7 +23,12 @@ from .characteristics import (
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
-from .player_statics import mill_multiplier, untap_held
+from .player_statics import (
+    counter_placement_replacements,
+    damage_multiplier,
+    mill_multiplier,
+    untap_held,
+)
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -74,6 +79,13 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # card can never be drawn without the tally seeing it.
         nth = state.cards_drawn_this_turn.get(pid, 0) + 1
         state.cards_drawn_this_turn[pid] = nth
+        # ...and the same fact per card, for "cards in your hand drawn this
+        # turn" (Sylvan Library). Written here for the tally's reason: every
+        # draw passes through this function, so a card cannot be drawn without
+        # being marked.
+        obj = state.objects.get(oid)
+        if obj is not None:
+            obj.drawn_turn = state.turn
         # "…except the first one you draw in each of your draw steps." A card,
         # not an attempt: counted here, after the move, so a dredged draw (which
         # never reaches this function) leaves the next draw still the first.
@@ -372,6 +384,11 @@ def damage_player(
             reason="protection",
         )
         return 0
+    # The player-side half of the doubling, placed for `damage_permanent`'s
+    # stated reasons: after the two preventions, which were never dealt, and
+    # before the infect branch, which changes where the number lands rather
+    # than how big it is -- so a doubled infect hit is twice the poison.
+    amount *= damage_multiplier(state, source_oid, None, is_combat=is_combat)
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -547,6 +564,25 @@ def damage_permanent(
             reason="shield_counter",
         )
         return 0
+    # "If equipped creature would deal combat damage, it deals **double** that
+    # damage instead" -- Inquisitor's Flail, Furnace of Rath, Fiery
+    # Emancipation. A replacement, so everything below reads the multiplied
+    # number: deathtouch marks on it, lifelink gains it, the ledger records it,
+    # `DAMAGE_DEALT` carries it, and a withering source puts that many -1/-1
+    # counters on. A trigger that dealt the extra damage afterwards would be a
+    # second event -- two DAMAGE_DEALTs, two lifelink gains, and a creature
+    # dying to the first half before the second arrived.
+    #
+    # **After the preventions above and before the branches below**, and both
+    # halves of that placement are deliberate. 616.1 lets the damaged object's
+    # controller order a prevention against a doubling and this engine does not
+    # ask; doubling last means a "prevent the next 3" answers 3 of the printed
+    # damage rather than 3 of the doubled damage, which is the order its
+    # controller would have chosen -- the same judgement the shield counter
+    # makes twenty lines up. And it is before the planeswalker and wither
+    # branches because each of those is a *different place to put the damage*
+    # rather than a change to how much of it there is.
+    amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword
@@ -571,6 +607,36 @@ def damage_permanent(
 
     if "Planeswalker" in _chars(state, oid).types:
         remove_counters(state, oid, "loyalty", amount)
+        if is_combat and source_oid is not None:
+            # "Whenever that creature deals combat damage to a player **or
+            # planeswalker** this turn, draw that many cards" -- Hunter's
+            # Insight. Fired here, beside the loyalty removal, because this is
+            # the one point every damage to a planeswalker passes through.
+            #
+            # After the counters come off, so a trigger that reads the board
+            # sees the damage already done -- the ordering `chapters_reached`
+            # keeps for the same reason.
+            fire(
+                state,
+                EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
+                player=obj.controller,
+                source=source_oid,
+                # `planeswalker`, not `oid`. `_subject_oid` reads `oid` first
+                # and would make the **walker** the trigger's subject, so
+                # `source: "self"` would scope the ability to the permanent
+                # being hit rather than to the creature connecting -- the exact
+                # opposite of every card that prints this line. Left off, the
+                # subject falls through to `event.source`, which is the dealer,
+                # exactly as it does on the player half.
+                planeswalker=oid,
+                amount=amount,
+                controller=(
+                    src.controller
+                    if (src := state.objects.get(source_oid)) is not None
+                    else None
+                ),
+                defender=obj.controller,
+            )
     elif withers:
         add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
     else:
@@ -641,12 +707,62 @@ def untap_permanent(state: GameState, oid: int) -> bool:
     return True
 
 
+def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int) -> int:
+    """How many counters are actually put on, after every replacement applies.
+
+    "If one or more +1/+1 counters would be put on a creature you control,
+    **that many plus one** +1/+1 counters are put on it instead" -- High Score.
+    Hardened Scales prints the same sentence; Doubling Season and Corpsejack
+    Menace print "twice that many".
+
+    Two axes, and a card uses exactly one:
+
+    - ``counter_addend`` -- "that many **plus one**". A flat number added to the
+      batch, once, however many counters the batch holds. The whole reason this
+      static could not be a counter-flavoured clone of `replace_token_creation`:
+      every multiplier in that family is refused below 2 by the loader, and
+      "plus one" is not a multiplier at any size.
+    - ``counter_multiplier`` -- "**twice** that many".
+
+    Three rules the loop is about, the same three `_token_creation_plan`
+    answers:
+
+    - **614.5, a replacement applies at most once to a given event.** One pass
+      over a fixed list, each static seeing the amount as the ones before it
+      left it -- so a Doubling Season does not double its own output.
+    - **Several compound**, each applied once to the event as the last one
+      modified it. Hardened Scales plus Doubling Season is the famous case, and
+      it is *order-dependent*: (1+1)*2 = 4 but 1*2+1 = 3.
+    - **616.1 gives the order to the affected player**, and this engine does
+      not ask: it applies in `state.battlefield` order, which is arrival order.
+      That divergence is invisible between two multipliers, and visible exactly
+      when an addend and a multiplier are on the table together. Recorded in
+      ``docs/rules-coverage.md`` with the rest of the narrow-replacement story.
+
+    A batch is one event (614.1's "one or more … would be put"), so the addend
+    is added once per *placement*, not once per counter -- which is what the
+    printed "that many plus one" says.
+    """
+    for static in counter_placement_replacements(state, oid, kind):
+        multiplier = int(static.get("counter_multiplier") or 1)
+        addend = int(static.get("counter_addend") or 0)
+        amount = amount * multiplier + addend
+    return amount
+
+
 def add_counters(
     state: GameState, oid: int, kind: str, amount: int, source: int | None = None
 ) -> int:
     obj = state.objects.get(oid)
     if obj is None or amount == 0:
         return 0
+    if amount > 0:
+        # Before the write and before the event, because this is a replacement
+        # and not a second placement: `counter_placed` has to report the number
+        # that really arrived, and a Saga chapter comparison below has to see
+        # the same total the board does. Only on the way up -- "would be put on"
+        # is nothing to do with counters coming off.
+        amount = _replaced_counter_amount(state, oid, kind, amount)
     # Read before the write. A Saga's chapter ability triggers on the count
     # *becoming* its number (714.2c), so the comparison needs both sides and
     # this is the only moment both exist.
@@ -1323,16 +1439,36 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     arriving = state.card_of(newcomer)
     standing = state.card_of(host)
     top, under = (arriving, standing) if on_top else (standing, arriving)
+    # Renumbered, not merely concatenated. `Ability.index` is a *position* in
+    # the list `abilities_of` returns -- `Action.ability_index`,
+    # `StackItem.ability_index` and `TriggerInstance.ability_index` all address
+    # an ability by it, and resolution reads it back against that list. Both
+    # halves of a merge start numbering at 0, so an ability from underneath
+    # kept its old number and resolution looked up whatever the *top* card has
+    # at that position: a trigger that fires and quietly does something else,
+    # or nothing. The same promise `abilities_of` keeps when it appends a
+    # granted ability.
+    merged = tuple(top.abilities) + tuple(under.abilities)
     host.merged_card = dataclasses.replace(
-        top, abilities=tuple(top.abilities) + tuple(under.abilities)
+        top,
+        abilities=tuple(
+            ability if ability.index == i else dataclasses.replace(ability, index=i)
+            for i, ability in enumerate(merged)
+        ),
     )
     host.merged_under = (*host.merged_under, card_oid)
     newcomer.zone = Zone.BATTLEFIELD
     newcomer.merged_into = host_oid
     newcomer.stack_id = None
     state.bump_chars()
-    state.emit(
-        "mutated",
+    # `fire`, not `emit`: the moment has been in the log since mutation
+    # existed, but `emit` only writes the log -- "the caller is responsible for
+    # handing the event to the trigger bus" -- so "whenever this creature
+    # mutates" had nothing to hear. After `merged_card` is assigned, which is
+    # what puts the newcomer's own trigger on the permanent in time to hear it.
+    fire(
+        state,
+        EventType.MUTATED,
         player=host.controller,
         source=host_oid,
         oid=host_oid,

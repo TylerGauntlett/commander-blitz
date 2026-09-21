@@ -63,6 +63,10 @@ def start_combat(state: GameState) -> None:
     # begins -- so "at end of combat" can name *this* combat rather than the
     # next `END_OF_COMBAT` step to come round. See `GameState.combat_number`.
     state.combat_number += 1
+    # ...and the per-turn count, which is a different question: "the first
+    # combat phase of the turn" (Genji Glove). See `TurnLedger.combats` for why
+    # the monotonic one cannot answer it.
+    state.turn_ledger.combats += 1
     state.combat = CombatState(declaring_player=state.active_player)
 
 

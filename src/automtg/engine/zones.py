@@ -449,6 +449,83 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
             obj.enters_cost_paid = True
 
 
+def offer_enters_copy(state: GameState, oid: int, controller: int):
+    """"You may have this enter **as a copy** of any Equipment on the battlefield."
+
+    Masterwork of Ingenuity, Vesuva, Phyrexian Metamorph. Asked here, beside
+    `offer_enters_costs` and from the same two call sites, for that function's
+    stated reason: `move_object` is not a generator and cannot stop for a
+    decision, and making it one would put a suspend point inside every zone
+    change in the engine.
+
+    Asking a moment early is not an approximation, and the argument is the one
+    `offer_enters_costs` makes: 614 applies the replacements *during* the zone
+    change and nobody receives priority in between, so there is no window in
+    which the permanent exists with the question unanswered. That is the whole
+    point of the clause -- 614.1b means the permanent is **never seen as
+    itself**, which is the difference between this and a `self_enters` trigger
+    running `become_copy`. Written that way, Masterwork would arrive as a blank
+    Equipment, everything watching an Equipment enter would see the blank, and
+    anything that answered the trigger would answer it before the copy existed.
+
+    `copy_permanent` is not the mechanism either: it calls `create_token` and
+    makes a *new* permanent, where Masterwork has to enter as the real card --
+    it stays a card, it can be equipped and returned, and its copy is set as it
+    arrives.
+
+    Always an offer: every printed card in this family says "you may", and a
+    copy nobody was asked about would be a different card. An empty pool asks
+    nothing, which is the printed answer with no Equipment on the table.
+
+    The answer is left on `obj.enters_copy_of`, which `reset_permanent_state`
+    deliberately does not clear and `_enter_battlefield` clears once it has
+    turned it into `copying`.
+    """
+    from .effects.context import EffectContext, ask_objects, ask_yes_no
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    for replacement in card.replacements:
+        if replacement.get("event") != "self_enters_as_copy":
+            continue
+        selector = replacement.get("copying") or {}
+        ctx = EffectContext(
+            state=state, controller=controller, source_oid=oid, source_name=card.name
+        )
+        from .effects.selectors import resolve_pool
+
+        # `exclude_self` is implicit and structural rather than written: the
+        # permanent is still on its way in and is not on the battlefield, so a
+        # battlefield selector cannot find it. 706.2's "it copies nothing else"
+        # needs no help here.
+        pool = resolve_pool(ctx, selector)
+        if not pool:
+            continue
+        if not (
+            yield from ask_yes_no(
+                ctx, f"Have {card.name} enter as a copy of another permanent?", controller
+            )
+        ):
+            continue
+        chosen = yield from ask_objects(
+            ctx,
+            f"Copy which permanent for {card.name}?",
+            pool,
+            1,
+            1,
+            controller,
+            purpose="enters_as_copy",
+        )
+        if not chosen:
+            continue
+        model = state.objects.get(chosen[0])
+        if model is not None:
+            obj.enters_copy_of = state.card_of(model).id
+        return
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -488,6 +565,9 @@ def _enter_battlefield(
     # (400.7) whose controller has not been asked anything.
     paid_on_arrival = obj.enters_cost_paid
     obj.enters_cost_paid = False
+    # The same one-arrival answer, from `offer_enters_copy` a moment ago.
+    copy_on_arrival = obj.enters_copy_of
+    obj.enters_copy_of = None
     for replacement in card.replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
@@ -498,6 +578,23 @@ def _enter_battlefield(
         if not evaluate_condition(
             state, replacement.get("condition"), controller=obj.controller, source=obj.oid
         ):
+            continue
+        if event == "self_enters_as_copy":
+            # 614.1b: applied *as* it enters, so the permanent is never seen as
+            # itself -- which is exactly what a `self_enters` trigger running
+            # `become_copy` could not promise.
+            #
+            # `copying_until_eot` is False: a copy applied as a permanent enters
+            # lasts as long as the permanent does (706.2 has no duration), and
+            # `clear_until_eot` only takes the timed form.
+            #
+            # The rest of this loop goes on reading the **printed** card's
+            # replacements, which is what every card in this family wants:
+            # Vesuva's "enter tapped" is printed on Vesuva, not on the land it
+            # copies.
+            if copy_on_arrival is not None:
+                obj.copying = copy_on_arrival
+                obj.copying_until_eot = False
             continue
         if event == "self_enters_prepared":
             # "This creature **enters prepared**." A characteristic of the

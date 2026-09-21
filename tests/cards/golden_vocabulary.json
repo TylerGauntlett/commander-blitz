@@ -1,5 +1,8 @@
 {
  "loader": {
+  "ABILITY_CLASS_KEYS": [
+   "equip"
+  ],
   "ATTACKING_OPS": [
    "copy_permanent",
    "create_token",
@@ -28,16 +31,19 @@
    "zone_is"
   ],
   "COST_REDUCTION_FILTER_KEYS": [
+   "any_of",
    "zone"
   ],
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
    "greatest_mana_value",
+   "total_mana_value",
    "total_power"
   ],
   "COST_REDUCTION_REFUSED_FILTER_KEYS": [
    "attached",
+   "attached_to_host",
    "paired",
    "paired_with_source"
   ],
@@ -58,9 +64,11 @@
   "DELAYED_TRIGGER_KEYS": [
    "condition",
    "controller",
-   "event"
+   "event",
+   "subject"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
+   "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
    "attack_tax",
@@ -72,11 +80,14 @@
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",
+   "cant_sacrifice",
    "crew_power_bonus",
    "double_triggers",
    "grant_keyword",
    "prevent_damage",
    "protection",
+   "replace_counters",
+   "replace_damage",
    "set_colors",
    "set_pt",
    "set_types",
@@ -86,6 +97,9 @@
    "untap_during_each_untap_step",
    "ward"
   ],
+  "KEYWORD_ALIASES": {
+   "umbra_armor": "totem_armor"
+  },
   "KNOWN_COLORS": [
    "B",
    "G",
@@ -256,6 +270,7 @@
   "STATIC_COUNT_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to_host",
    "attacking",
    "blocking",
    "colors",
@@ -288,6 +303,7 @@
    "library"
   ],
   "STATIC_EFFECTS": [
+   "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
    "add_subtype",
@@ -303,6 +319,7 @@
    "cant_block_alone",
    "cant_cast_spells",
    "cant_gain_life",
+   "cant_sacrifice",
    "cast_as_though_flash",
    "cast_from_graveyard",
    "cast_from_library_top",
@@ -321,6 +338,8 @@
    "play_lands_from_library_top",
    "prevent_damage",
    "protection",
+   "replace_counters",
+   "replace_damage",
    "replace_draw",
    "replace_empty_draw",
    "replace_life_gain",
@@ -342,6 +361,7 @@
   "STATIC_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to_host",
    "attacking",
    "blocking",
    "colors",
@@ -383,7 +403,8 @@
    "max_life_of",
    "min_count_of",
    "min_life_of",
-   "permanents_entered_this_turn"
+   "permanents_entered_this_turn",
+   "times"
   ],
   "STATIC_ZONE_FILTER_KEYS": [
    "any_types",
@@ -400,6 +421,7 @@
    "zone"
   ],
   "TAPPED_PERMANENT_KEYS": [
+   "attached",
    "subtypes",
    "supertypes",
    "types"
@@ -549,6 +571,7 @@
   "extra_combat",
   "extra_land_drop",
   "extra_turn",
+  "fight",
   "for_each",
   "for_each_player",
   "freeze",
@@ -570,6 +593,7 @@
   "lock_life_total",
   "look_at_hand",
   "look_at_top",
+  "lose_all_abilities",
   "lose_life",
   "manifest",
   "may",
@@ -593,6 +617,7 @@
   "reflexive_trigger",
   "regenerate",
   "remove_counters",
+  "rename",
   "repeat",
   "repeat_while",
   "replace_deaths",

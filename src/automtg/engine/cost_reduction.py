@@ -17,8 +17,16 @@ if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
 
-def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+def cost_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> int:
     """How much less this card costs its controller right now.
+
+    ``targets`` is what the cast actually aimed at, when it is known. A
+    discount whose clause reads them -- "Aura spells you cast **that target
+    enchanted creature** cost {3} less" -- is read generously while it is
+    ``None``, which is the only reading a gate can take: legality asks whether
+    the card is castable at all before it enumerates a target tuple, and
+    refusing there would drop a spell that is affordable at the discounted
+    price. Each offered cast is then priced with its own targets.
 
     Generic only, and never below zero: "costs {X} less" does not touch coloured
     pips, which is both what the rules say and the only thing the payment solver
@@ -31,7 +39,7 @@ def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     # permanents. The statics are Warden of Evos Isle -- "creature spells with
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
-    total = spell_cost_reduction(state, pid, card)
+    total = spell_cost_reduction(state, pid, card, targets)
     return total + reduction_amount(state, pid, card.cost_reduction)
 
 
@@ -64,6 +72,8 @@ def reduction_amount(
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
     - ``{"total_power": {filter}}`` -- Ghalta.
+    - ``{"total_mana_value": {filter}}`` -- Excalibur, Sword of Eden, "where X
+      is the total mana value of historic permanents you control".
     - ``{"greatest_mana_value": {filter}}`` -- Visions of Glory, "where X is the
       greatest mana value of a commander you own".  A **maximum**, which is why
       it is a fourth shape rather than a filter on `count`: the other two sum,
@@ -100,6 +110,22 @@ def reduction_amount(
         return sum(
             max(0, chars(state, oid).power)
             for oid in _reduction_matches(state, pid, spec["total_power"], source_oid)
+        )
+    if "total_mana_value" in spec:
+        # "…where X is the **total** mana value of historic permanents you
+        # control" -- Excalibur, Sword of Eden. The mana-value analogue of
+        # `total_power`, and a separate key from `greatest_mana_value` for that
+        # key's own reason read the other way round: a maximum must not sum and
+        # a sum must not take a maximum. Two permanents of mana value 3 and 5
+        # are 8 here and 5 there, and each printed card means exactly one.
+        #
+        # The **printed** mana value, off the card rather than the object -- the
+        # same face `greatest_mana_value` reads, because a mana value is a
+        # property of a card and nothing in the characteristics pipeline writes
+        # one.
+        return sum(
+            state.card(oid).mana_value
+            for oid in _reduction_matches(state, pid, spec["total_mana_value"], source_oid)
         )
     if "greatest_mana_value" in spec:
         # The **printed** mana value, off the card rather than the object, and
@@ -187,6 +213,100 @@ def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
             yield from player.graveyard
 
 
+def _object_matches(
+    state: GameState, pid: int, filt: Any, oid: int, obj: Any, source_oid: int | None
+) -> bool:
+    """Does this one object match this filter?
+
+    Split out of `_reduction_matches` so that it can **recurse**, which is the
+    whole of `any_of`: a branch is the same filter language asked about the same
+    object, exactly as the effect-side selector's `any_of` is.
+    """
+    # "…the total mana value of **historic** permanents you control. (Artifacts,
+    # legendaries, and Sagas are historic.)" -- Excalibur, Sword of Eden.
+    #
+    # Every other key here is ANDed, which is what makes a disjunction
+    # unsayable without this: `{"types": ["Artifact"], "supertypes":
+    # ["Legendary"], "subtypes": ["Saga"]}` matches only a permanent that is all
+    # three at once, which nothing is, and the card would price itself off an
+    # empty board for ever. `any_types` is an or over *types* alone and cannot
+    # reach a supertype or a subtype.
+    #
+    # A branch names no `zone`: the zones are chosen once, outside the loop, and
+    # a branch that named its own would be read by nobody -- so the loader
+    # refuses one rather than accepting it silently.
+    if (branches := filt.get("any_of")) is not None and not any(
+        _object_matches(state, pid, branch, oid, obj, source_oid) for branch in branches
+    ):
+        return False
+    owner = filt.get("owner")
+    # "You control" is the default only while the filter has said nothing
+    # about ownership. A filter that named `owner` and not `controller` is
+    # asking the other question, and a defaulted control check on top of it
+    # would silently re-impose the answer the card went out of its way not
+    # to ask for -- a commander an opponent stole is one you own and *not*
+    # one you control, so the default would drop exactly the case `owner`
+    # was written for.
+    controller = filt.get("controller", None if owner else "you")
+    if controller == "you" and obj.controller != pid:
+        return False
+    if controller == "opponent" and obj.controller == pid:
+        return False
+    if owner == "you" and obj.owner != pid:
+        return False
+    if owner == "opponent" and obj.owner == pid:
+        return False
+    if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
+        return False
+    if filt.get("self_only") and oid != source_oid:
+        return False
+    if filt.get("exclude_self") and oid == source_oid:
+        return False
+    if obj.on_battlefield:
+        c = chars(state, oid)
+        types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
+        keywords, colors = c.keywords, c.colors
+    else:
+        card = state.card_of(obj)
+        types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
+        keywords, colors = card.keywords, card.colors
+    if (want := filt.get("types")) and not set(want).issubset(types):
+        return False
+    if (want := filt.get("not_types")) and set(want) & set(types):
+        return False
+    if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
+        return False
+    if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
+        return False
+    if (want := filt.get("colors")) and not set(want) & set(colors):
+        return False
+    if (want := filt.get("keywords")) and not set(want).issubset(keywords):
+        return False
+    if (want := filt.get("not_keywords")) and set(want) & set(keywords):
+        return False
+    if (want := filt.get("mana_cost")) is not None:
+        from .effects.selectors import has_printed_cost
+
+        if not has_printed_cost(state, oid, want):
+            return False
+    # Board state, and only the three kinds of it a reduction can see. Each
+    # is a pipeline *input* -- nothing in the characteristics layer writes
+    # a tapped flag, a token flag or a combat assignment -- so reading them
+    # while pricing cannot depend on a static that has not run.
+    if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+        return False
+    if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
+        return False
+    combat = state.combat
+    if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
+        filt["attacking"]
+    ):
+        return False
+    if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(filt["blocking"]):
+        return False
+    return True
+
+
 def _reduction_matches(state: GameState, pid: int, filt: Any, source_oid: int | None = None):
     """The objects one reduction filter picks out, across the zones it names.
 
@@ -223,72 +343,8 @@ def _reduction_matches(state: GameState, pid: int, filt: Any, source_oid: int | 
         obj = state.objects.get(oid)
         if obj is None:
             continue
-        owner = filt.get("owner")
-        # "You control" is the default only while the filter has said nothing
-        # about ownership. A filter that named `owner` and not `controller` is
-        # asking the other question, and a defaulted control check on top of it
-        # would silently re-impose the answer the card went out of its way not
-        # to ask for -- a commander an opponent stole is one you own and *not*
-        # one you control, so the default would drop exactly the case `owner`
-        # was written for.
-        controller = filt.get("controller", None if owner else "you")
-        if controller == "you" and obj.controller != pid:
-            continue
-        if controller == "opponent" and obj.controller == pid:
-            continue
-        if owner == "you" and obj.owner != pid:
-            continue
-        if owner == "opponent" and obj.owner == pid:
-            continue
-        if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
-            continue
-        if filt.get("self_only") and oid != source_oid:
-            continue
-        if filt.get("exclude_self") and oid == source_oid:
-            continue
-        if obj.on_battlefield:
-            c = chars(state, oid)
-            types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
-            keywords, colors = c.keywords, c.colors
-        else:
-            card = state.card_of(obj)
-            types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
-            keywords, colors = card.keywords, card.colors
-        if (want := filt.get("types")) and not set(want).issubset(types):
-            continue
-        if (want := filt.get("not_types")) and set(want) & set(types):
-            continue
-        if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
-            continue
-        if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
-            continue
-        if (want := filt.get("colors")) and not set(want) & set(colors):
-            continue
-        if (want := filt.get("keywords")) and not set(want).issubset(keywords):
-            continue
-        if (want := filt.get("not_keywords")) and set(want) & set(keywords):
-            continue
-        if (want := filt.get("mana_cost")) is not None:
-            from .effects.selectors import has_printed_cost
-
-            if not has_printed_cost(state, oid, want):
-                continue
-        # Board state, and only the three kinds of it a reduction can see. Each
-        # is a pipeline *input* -- nothing in the characteristics layer writes
-        # a tapped flag, a token flag or a combat assignment -- so reading them
-        # while pricing cannot depend on a static that has not run.
-        if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
-            continue
-        if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
-            continue
-        combat = state.combat
-        if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
-            filt["attacking"]
-        ):
-            continue
-        if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(filt["blocking"]):
-            continue
-        yield oid
+        if _object_matches(state, pid, filt, oid, obj, source_oid):
+            yield oid
 
 
 def _filter_zones(filt: Any) -> frozenset[str]:

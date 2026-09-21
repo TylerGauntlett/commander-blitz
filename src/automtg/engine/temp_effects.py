@@ -407,13 +407,47 @@ def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     choice illegal is both the rule and the safe reading; making the *action*
     silently fail is neither.
 
-    Short-circuits on the empty table, which is every game that plays none of
-    these cards -- and this is asked once per candidate in every sacrifice pool
-    that is built, so the empty case is the one that has to cost nothing.
+    Asked once per candidate in every sacrifice pool that is built, so the case
+    that has to cost nothing is the game playing none of these cards. The
+    one-shot table is empty then and `any` over it is free; the static walk
+    behind it reads `_battlefield_statics`, which is cached against
+    ``char_version`` and is an empty list in the same games.
     """
-    if not state.sacrifice_restrictions:
+    if any(oid in entry.objects for entry in state.sacrifice_restrictions):
+        return True
+    return _forbidden_by_a_static(state, oid)
+
+
+def _forbidden_by_a_static(state: GameState, oid: int) -> bool:
+    """The continuous half: "equipped creature ... can't be sacrificed".
+
+    Assault Suit. The one-shot above is a *table* of permanents named when a
+    spell resolved; this is a filter on a permanent that is still on the
+    battlefield, and the two cannot be one mechanism for the reason
+    `cant_attack_player` and `cant_attack_you` are not one either: a resolving
+    sorcery leaves no source for a static to live on, and a static's set is
+    recomputed every time it is asked rather than chosen once.
+
+    Which matters here twice over. An Equipment's prohibition has to *end* when
+    it is unequipped or leaves, and it has to *move* when it is equipped to
+    something else -- neither of which a recorded set can do.
+
+    Read at this seam rather than at `zones.sacrifice`, for the reason the
+    docstring above gives: making the choice illegal is the rule (701.17b), and
+    making the action silently fail would spin the state-based-action loop.
+    """
+    from .characteristics import _matches
+    from .player_statics import _battlefield_statics
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
         return False
-    return any(oid in entry.objects for entry in state.sacrifice_restrictions)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_sacrifice":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
 
 
 def clear_sacrifice_restrictions(state: GameState, duration: str) -> None:

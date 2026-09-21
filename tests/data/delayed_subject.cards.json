@@ -1,0 +1,82 @@
+{
+  "_comment": "Shapes for tests/unit/test_delayed_trigger_subject.py. t_dsub_insight is Hunter's Insight: choose target creature you control, then a delayed subscription scoped to THAT creature. t_dsub_any is the same spell with no subject, the control that shows what an unscoped subscription does -- it fires for every creature you control, which is Forth Eorlingas! and a different card. The two bears are interchangeable so the scope is the only thing separating them.",
+  "cards": [
+    {
+      "id": "t_dsub_insight",
+      "name": "Test Hunter's Insight",
+      "oracle_text": "Choose target creature you control. Whenever that creature deals combat damage to a player this turn, draw that many cards.",
+      "mana_cost": "{2}{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever that creature deals combat damage to a player this turn, draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you",
+            "subject": {"target": "t1"}
+          },
+          "effects": [
+            {"op": "draw", "player": "you", "amount": {"binding": "amount"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dsub_any",
+      "name": "Test Unscoped Insight",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player this turn, draw that many cards.",
+      "mana_cost": "{2}{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever a creature you control deals combat damage to a player this turn, draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you"
+          },
+          "effects": [
+            {"op": "draw", "player": "you", "amount": {"binding": "amount"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dsub_chosen",
+      "name": "Test Chosen Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_dsub_other",
+      "name": "Test Other Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 3
+    }
+  ]
+}

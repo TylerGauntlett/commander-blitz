@@ -1,0 +1,205 @@
+{
+  "_comment": "Shapes for tests/unit/test_static_times.py. t_st_doubler is Swordsman's Steel -- '+2/+2 for each Equipment you control', a count with a step of two. t_st_single is the same card at +1/+1, the spelling that was already possible, kept live so the tests measure the multiplication rather than the count. t_st_nested multiplies two counts together, which is what makes `times` a list of factors rather than a count with a scale. t_st_gear is a bare Equipment to be counted and t_st_bear the host.",
+  "cards": [
+    {
+      "id": "t_st_doubler",
+      "name": "Test Doubling Steel",
+      "oracle_text": "Equipped creature gets +2/+2 for each Equipment you control.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 for each Equipment you control.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_st_single",
+      "name": "Test Single Steel",
+      "oracle_text": "Equipped creature gets +1/+1 for each Equipment you control.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 for each Equipment you control.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_st_nested",
+      "name": "Test Squaring Steel",
+      "oracle_text": "Equipped creature gets +1/+1 for each Equipment you control for each Equipment you control.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 for each Equipment you control for each Equipment you control.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_st_gear",
+      "name": "Test Steel Gear",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_st_bear",
+      "name": "Test Steel Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

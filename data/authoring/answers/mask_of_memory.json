@@ -1,0 +1,89 @@
+{
+  "card": {
+    "id": "mask_of_memory",
+    "name": "Mask of Memory",
+    "oracle_text": "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+    "mana_cost": "{2}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "controller": "any",
+          "filter": {
+            "attached": true
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "effects": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 2
+                }
+              },
+              {
+                "op": "discard",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {1}",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{1}"
+        },
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

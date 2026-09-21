@@ -405,11 +405,15 @@ class TestTheGrantMustPointAtSomething:
         with pytest.raises(DslError, match="grantable_abilities"):
             compile_card(CardModel.model_validate(spec))
 
-    def test_the_one_shot_op_may_not_hand_over_a_static(self):
-        """The op's grants are pointers `_battlefield_statics` never walks.
+    def test_the_one_shot_op_may_hand_over_a_static(self):
+        """It may **now**. This used to be refused, and the reason given was
+        that "the op's grants are pointers `_battlefield_statics` never walks".
 
-        Accepted, it would print "target creature gains …" and change nothing.
-        The continuous form is what this card wants and it is a different key.
+        That walk reads the derived list, and `_op_granted_abilities` puts an
+        op-granted static on it -- so the premise is gone and the refusal with
+        it. The Irencrag is the card that needed the one-shot form, and
+        `tests/unit/test_grant_static_op.py` measures that the granted static
+        actually applies rather than merely loading.
         """
         spec = leader()
         spec["abilities"].append(
@@ -430,5 +434,4 @@ class TestTheGrantMustPointAtSomething:
                 ],
             }
         )
-        with pytest.raises(DslError, match="never reads"):
-            compile_card(CardModel.model_validate(spec))
+        compile_card(CardModel.model_validate(spec))

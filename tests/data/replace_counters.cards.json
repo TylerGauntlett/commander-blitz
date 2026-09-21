@@ -1,0 +1,82 @@
+{
+  "_comment": "Shapes for tests/unit/test_replace_counters.py. t_rc_scales is High Score's and Hardened Scales' addend; t_rc_season is Doubling Season's multiplier over every counter kind; t_rc_charge doubles charge counters only, so the kind filter can be shown to bite; t_rc_bear is a plain creature to put counters on and t_rc_rock a noncreature artifact that the 'creature you control' filter must miss.",
+  "cards": [
+    {
+      "id": "t_rc_scales",
+      "name": "Test Hardened Scales",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "mana_cost": "{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+          "effect": "replace_counters",
+          "counter": "+1/+1",
+          "counter_addend": 1,
+          "affects": {"controller": "you", "types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_rc_season",
+      "name": "Test Doubling Season",
+      "oracle_text": "If one or more counters would be put on a permanent you control, twice that many of those counters are put on it instead.",
+      "mana_cost": "{4}{G}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If one or more counters would be put on a permanent you control, twice that many of those counters are put on it instead.",
+          "effect": "replace_counters",
+          "counter_multiplier": 2,
+          "affects": {"controller": "you"}
+        }
+      ]
+    },
+    {
+      "id": "t_rc_charge",
+      "name": "Test Charge Doubler",
+      "oracle_text": "If one or more charge counters would be put on a permanent you control, twice that many charge counters are put on it instead.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If one or more charge counters would be put on a permanent you control, twice that many charge counters are put on it instead.",
+          "effect": "replace_counters",
+          "counter": "charge",
+          "counter_multiplier": 2,
+          "affects": {"controller": "you"}
+        }
+      ]
+    },
+    {
+      "id": "t_rc_bear",
+      "name": "Test Counter Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_rc_rock",
+      "name": "Test Counter Rock",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

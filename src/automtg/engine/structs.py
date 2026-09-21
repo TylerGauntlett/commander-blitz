@@ -822,6 +822,21 @@ class DelayedTrigger:
     #: trigger's own controller is taking.
     your_turn: bool = False
     trigger: TriggerSpec | None = None
+    #: "Whenever **that creature** deals combat damage to a player or
+    #: planeswalker this turn" -- Hunter's Insight. The one object this
+    #: subscription is about, resolved to an oid *as the delayed ability is
+    #: created* and compared against the event's subject when it fires.
+    #:
+    #: An oid rather than the target spec it came from, for the reason the
+    #: bindings and the controller are captured here rather than re-read: the
+    #: spell is in a graveyard before the first blow lands, so there is nothing
+    #: left to resolve "that creature" against. `TriggerSpec.source` cannot
+    #: stand in either -- it says "self", and a delayed ability has no self.
+    #:
+    #: ``None`` is every delayed trigger printed before this one: Forth
+    #: Eorlingas! watches *any* creature you control, so a scope would be a
+    #: strictly narrower card.
+    subject_oid: int | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
 
@@ -959,6 +974,21 @@ class TurnLedger:
     #: controlled them.  "A creature died this turn" is the sum over every
     #: player; "a creature you controlled died" is one entry.
     creatures_died: dict[int, int] = field(default_factory=dict)
+    #: How many combat phases have **begun** this turn, counting the one in
+    #: progress. "If it's the first combat phase of the turn" (Genji Glove,
+    #: Aggravated Assault's cousins) is this being 1.
+    #:
+    #: Not `GameState.combat_number`, which is monotonic for the whole game on
+    #: purpose -- a delayed trigger names the combat it must fire in by that
+    #: integer, so resetting it per turn would make "at end of combat" fire in
+    #: the wrong one. Two counters because they answer two questions: one
+    #: identifies a combat for ever, this one counts them within a turn.
+    #:
+    #: Written by `combat.start_combat` rather than folded in `emit`, unlike
+    #: every other tally here: beginning a combat emits no event, and inventing
+    #: one to carry a counter would put a new entry on the trigger bus that no
+    #: card subscribes to.
+    combats: int = 0
     #: Which creatures each player has **declared as attackers** this turn:
     #: player id -> the oids they attacked with.  Two questions, one record.
     #:
@@ -1156,6 +1186,7 @@ class TurnLedger:
         self.ability_resolutions.clear()
         self.object_flags.clear()
         self.permanents_entered.clear()
+        self.combats = 0
 
 
 @dataclass

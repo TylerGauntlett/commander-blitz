@@ -53,6 +53,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     "attacks": EventType.ATTACKS,
     "blocks": EventType.BLOCKS,
     "deals_combat_damage_to_player": EventType.COMBAT_DAMAGE_TO_PLAYER,
+    #: "…deals combat damage to a player **or planeswalker**" -- the second half
+    #: of that sentence, written as a second triggered ability claiming the same
+    #: printed line. Its own event rather than a widening of the one above: see
+    #: `EventType.COMBAT_DAMAGE_TO_PLANESWALKER` for why widening would quietly
+    #: improve every saboteur in the pool.
+    "deals_combat_damage_to_planeswalker": EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
@@ -121,6 +127,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: "(Damage causes loss of life.)" Infect damage is the exception and fires
     #: nothing, since it costs no life.
     "life_lost": EventType.LIFE_LOST,
+    #: "Whenever this creature mutates…" (702.140e). The subject is the
+    #: **host** permanent, which is the one object that exists afterwards and
+    #: the one carrying the ability, so `source: "self"` means this creature.
+    "mutates": EventType.MUTATED,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
     #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
     #: the loader supplies it -- and always with the `level` it waits for, which
@@ -189,6 +199,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: event existed; what did not was the untap *step* saying which permanents
     #: it untapped, which is where inspired fires nearly every time.
     "becomes_untapped": EventType.UNTAPPED,
+    #: "Whenever this creature becomes tapped, …" -- the Legolas's Quick Reflexes
+    #: grant, City of Brass, the whole Kithkin/rogue lineage. `EventType.TAPPED`
+    #: has fired from `primitives.tap_permanent` since tapping existed and simply
+    #: had no name here, so nothing could subscribe.
+    #:
+    #: "Becomes" is already right at the primitive: `tap_permanent` returns early
+    #: on an already-tapped permanent, so re-tapping one is not a second event --
+    #: which is the whole of 701.x's distinction between *being* tapped and
+    #: *becoming* tapped, and it is also why tapping for mana and being declared
+    #: as an attacker both count. They are taps.
+    "becomes_tapped": EventType.TAPPED,
     #: "…until an opponent becomes the monarch" (Palace Jailer). The one monarch
     #: card that must be *woken up* by the designation moving rather than merely
     #: asking about it with `is_monarch`.
@@ -293,8 +314,17 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "attacks",
         "blocks",
         "deals_combat_damage_to_player",
+        # The **dealing** permanent, as on the player half above, so
+        # `source: "self"` means "whenever *this* creature connects" rather
+        # than "whenever anything connects with this planeswalker".
+        "deals_combat_damage_to_planeswalker",
         "counter_placed",
         "land_played",
+        # The merged permanent, so `source: "self"` scopes the trigger to the
+        # creature that mutated rather than to every mutation on the table.
+        # Both cards' abilities hang off that one object, which is why the
+        # newcomer's printed trigger is answered by the host's oid.
+        "mutates",
         "becomes_monstrous",
         # The Class whose level changed, so the supplied `source: "self"` means
         # *this* Class and not every Class on the table.
@@ -331,8 +361,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # scopes them to the creature that was, or was not, blocked.
         "becomes_blocked",
         "attacks_unblocked",
-        # The permanent that untapped.
+        # The permanent that untapped, and the one that tapped.
         "becomes_untapped",
+        "becomes_tapped",
         # The permanent whose ability was activated, so a filter can ask what it
         # was -- "an ability of an artifact, creature, or land **on the
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
@@ -541,7 +572,15 @@ def _delayed_matches(
     if not _half_matches(spec.event, event):
         return False
 
-    actor = _actor(state, spec.event, event, _subject_oid(spec.event, event))
+    subject = _subject_oid(spec.event, event)
+    if delayed.subject_oid is not None and subject != delayed.subject_oid:
+        # "Whenever **that creature**…". The scope is the whole difference
+        # between Hunter's Insight and a card that draws off every creature you
+        # control, and it is compared against the event's *subject* -- which for
+        # a damage event is the dealer, the same object `source: "self"` means
+        # on an ordinary trigger.
+        return False
+    actor = _actor(state, spec.event, event, subject)
     if actor is not None:
         if spec.controller == "you" and actor != delayed.controller:
             return False
@@ -1256,7 +1295,15 @@ def _actor(
     # deals damage" mean "…deals damage to you". `damage_player` puts the
     # dealing permanent's controller on the event, which is the answer, and the
     # separate `defending` clause is what asks who was hit.
-    if dsl_event in ("deals_combat_damage_to_player", "deals_damage_to_player"):
+    if dsl_event in (
+        "deals_combat_damage_to_player",
+        "deals_damage_to_player",
+        # The planeswalker half carries the same two keys for the same reason:
+        # its `player` is the walker's controller -- the seat that was hit --
+        # so a `controller` clause compared against it would read "…deals
+        # damage to you" instead of "you deal damage".
+        "deals_combat_damage_to_planeswalker",
+    ):
         controller = event.data.get("controller")
         return int(controller) if controller is not None else None
     if subject_oid is not None:

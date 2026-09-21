@@ -1,0 +1,147 @@
+{
+  "_comment": "Shapes for tests/unit/test_lose_abilities_op.py. t_lao_crag strips its own abilities when a trigger resolves -- The Irencrag's clause without the rest of the transformation -- while keeping the mana ability it prints, so that losing it is something the test can watch happen. t_lao_gainer does the same and is granted an ability in the same breath, which is what 'loses all OTHER abilities and gains ...' asks for. t_lao_plain is the same card with no stripping, the control.",
+  "cards": [
+    {
+      "id": "t_lao_crag",
+      "name": "Test Stripping Crag",
+      "oracle_text": "{T}: Add {C}.\nWhen this artifact enters, it loses all other abilities.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, it loses all other abilities.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "lose_all_abilities",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lao_gainer",
+      "name": "Test Stripping Gainer",
+      "oracle_text": "{T}: Add {C}.\nWhen this artifact enters, it gains \"{T}: Draw a card\" and loses all other abilities.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, it gains \"{T}: Draw a card\" and loses all other abilities.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "grant_ability",
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "lose_all_abilities",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Draw a card.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lao_plain",
+      "name": "Test Unstripped Rock",
+      "oracle_text": "{T}: Add {C}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

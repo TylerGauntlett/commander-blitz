@@ -180,6 +180,27 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
 #: prompt unusable without making any card play differently.
 MAX_TYPE_CHOICES = 400
 
+#: The six card types rule 110.4a calls **permanent types**, in the printed
+#: order a card lists them.
+#:
+#: A fixed list, not a survey of the pool the way `_creature_types` is, and for
+#: `COLOR_CHOICES`' reason: there are exactly six and every one is always a
+#: legal answer, so there is nothing for the board to narrow -- and a fixed
+#: order keeps a replay picking the same type from the same index.
+#:
+#: Battle and Planeswalker are listed even though neither is modelled: they are
+#: legal answers at a real table, the rule names six, and a list that quietly
+#: held four would make a card that offers the wrong choices rather than one
+#: that refuses.
+PERMANENT_TYPE_CHOICES: tuple[str, ...] = (
+    "Artifact",
+    "Battle",
+    "Creature",
+    "Enchantment",
+    "Land",
+    "Planeswalker",
+)
+
 
 @register("choose_type")
 def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -200,6 +221,27 @@ def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
     `self_enters` trigger instead and the type is chosen a moment after the
     permanent arrives rather than as it does.
     """
+    # "Choose a **permanent** type" (Creeping Renaissance) is the same question
+    # on a different axis, so it is a parameter rather than a second op: the
+    # decision, the prompt, the storage and the read-back all have the same
+    # shape, and two ops would be two copies of them.
+    #
+    # It writes a **separate slot**, though. `chosen_type` holds a creature type
+    # and `chosen_card_type` a card type; one field would make "of the chosen
+    # type" ambiguous at every reader, and a reader that guessed wrong would
+    # match nothing silently.
+    if str(spec.get("of", "creature_type")) == "permanent_type":
+        choices = list(PERMANENT_TYPE_CHOICES)
+        prompt = str(spec.get("prompt") or "Choose a permanent type")
+        picked = yield from ask_mode(ctx, prompt, choices, ctx.controller)
+        if not picked:
+            return
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if obj is not None:
+            obj.chosen_card_type = choices[picked[0]]
+            ctx.state.bump_chars()
+        return
+
     types = sorted(_creature_types(ctx))
     if not types:
         return
@@ -798,6 +840,24 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
 
     trigger = spec.get("trigger") or {}
     state = ctx.state
+    # "Choose target creature you control. Whenever **that creature** deals
+    # combat damage…" -- resolved now, to an oid, because the spell that is
+    # saying it will be in a graveyard before the first blow lands and there
+    # would be nothing left to resolve it against. `choose_objects` is not
+    # reached: the object is already chosen, as a target or a binding, and this
+    # only reads which.
+    subject_oid = None
+    if (subject := trigger.get("subject")) is not None:
+        from .selectors import resolve_pool
+
+        chosen = resolve_pool(ctx, subject)
+        if not chosen:
+            # The target is gone by resolution (608.2b took it), so there is no
+            # "that creature" to watch and the clause does nothing -- which is
+            # what the printed card says rather than a reason to watch
+            # everything.
+            return
+        subject_oid = chosen[0]
     state.delayed_triggers.append(
         DelayedTrigger(
             step="",
@@ -812,6 +872,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 controller=str(trigger.get("controller", "you")),
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
+            subject_oid=subject_oid,
             duration=str(spec.get("duration", "this_turn")),
         )
     )

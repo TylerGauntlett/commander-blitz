@@ -1,0 +1,144 @@
+{
+  "card": {
+    "id": "archdruid_s_charm",
+    "name": "Archdruid's Charm",
+    "oracle_text": "Choose one —\n• Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.\n• Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control.\n• Exile target artifact or enchantment.",
+    "mana_cost": "{G}{G}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {
+            "label": "Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.",
+            "effects": [
+              {
+                "op": "search_library",
+                "selector": {
+                  "any_types": [
+                    "Creature",
+                    "Land"
+                  ]
+                },
+                "reveal": true,
+                "shuffle": true,
+                "destination": "hand",
+                "destination_if": [
+                  {
+                    "selector": {
+                      "types": [
+                        "Land"
+                      ]
+                    },
+                    "to": "battlefield",
+                    "tapped": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control.",
+            "effects": [
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "amount": {
+                  "const": 1
+                },
+                "objects": {
+                  "target": "pumped"
+                }
+              },
+              {
+                "op": "damage",
+                "amount": {
+                  "power_of": {
+                    "target": "pumped"
+                  }
+                },
+                "objects": {
+                  "target": "struck"
+                },
+                "source_object": {
+                  "target": "pumped"
+                }
+              }
+            ]
+          },
+          {
+            "label": "Exile target artifact or enchantment.",
+            "effects": [
+              {
+                "op": "exile",
+                "objects": {
+                  "target": "banished"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "targets": [
+      {
+        "id": "pumped",
+        "kind": "permanent",
+        "count": 1,
+        "mode": 1,
+        "selector": {
+          "types": [
+            "Creature"
+          ],
+          "controller": "you",
+          "zone": "battlefield"
+        }
+      },
+      {
+        "id": "struck",
+        "kind": "permanent",
+        "count": 1,
+        "mode": 1,
+        "selector": {
+          "types": [
+            "Creature"
+          ],
+          "controller": "opponent",
+          "zone": "battlefield"
+        }
+      },
+      {
+        "id": "banished",
+        "kind": "permanent",
+        "count": 1,
+        "mode": 2,
+        "selector": {
+          "any_types": [
+            "Artifact",
+            "Enchantment"
+          ],
+          "zone": "battlefield"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 39
+    },
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

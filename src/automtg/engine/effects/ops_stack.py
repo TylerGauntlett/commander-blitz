@@ -261,6 +261,23 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     return copy
 
 
+def _paid_with_uncounterable_mana(state, item) -> bool:
+    """Was this spell paid for with mana carrying Cavern of Souls' rider?
+
+    Answered off the spell's own object, where `costs.pay_mana` wrote it as the
+    cost was paid. It cannot be asked any later: the rider travels on the pip
+    (`mana.Pip.uncounterable`) and the pip is gone the instant it is spent.
+
+    An ability on the stack has no such object and needs none -- no printed card
+    makes an *ability* uncounterable by paying for it a particular way.
+    """
+    oid = getattr(item, "oid", None)
+    if oid is None:
+        return False
+    obj = state.objects.get(oid)
+    return bool(obj is not None and obj.uncounterable_mana_spent)
+
+
 def _shielded_by_a_static(state, item) -> bool:
     """Is a `spells_cant_be_countered` static covering this spell?
 
@@ -380,11 +397,26 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
         item = state.stack_item(sid)
         if item is None:
             continue
-        # "This spell can't be countered." Printed on the card rather than
-        # granted, so it is read off the definition and needs no static: the
-        # spell is on the stack, where statics do not reach it anyway.
+        # "This spell can't be countered." Three sources, and each is a
+        # different thing said by a different card at a different moment:
+        #
+        # * the **printed** rider, read off the definition -- the spell saying it
+        #   about itself, needing no static since the spell is on the stack where
+        #   statics do not reach it anyway;
+        # * a **static** on the battlefield, somebody else saying it about a
+        #   class of spell;
+        # * the **mana** it was paid with -- Cavern of Souls, Delighted Halfling.
+        #   Recorded on the spell's object by `costs.pay_mana` at the instant it
+        #   was paid for, because a pip's rider is unrecoverable the moment the
+        #   pip is spent.
+        #
+        # The third cannot be either of the others. As a card-level flag it would
+        # make every copy of the card uncounterable however it was cast; as a
+        # static it would protect every creature spell of the chosen type on the
+        # table, whoever cast it and whatever paid for it.
         if item.is_spell and (
             state.registry.get(item.def_id).uncounterable
+            or _paid_with_uncounterable_mana(state, item)
             or _shielded_by_a_static(state, item)
         ):
             state.emit(

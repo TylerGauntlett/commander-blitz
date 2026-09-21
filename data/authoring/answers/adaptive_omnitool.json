@@ -1,0 +1,107 @@
+{
+  "card": {
+    "id": "adaptive_omnitool",
+    "name": "Adaptive Omnitool",
+    "oracle_text": "Equipped creature gets +1/+1 for each artifact you control.\nWhenever equipped creature attacks, look at the top six cards of your library. You may reveal an artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nEquip {3}",
+    "mana_cost": "{2}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        "toughness": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        "text": "Equipped creature gets +1/+1 for each artifact you control."
+      },
+      {
+        "kind": "triggered",
+        "trigger": {
+          "event": "attacks",
+          "controller": "any",
+          "filter": {
+            "attached": true
+          }
+        },
+        "effects": [
+          {
+            "op": "look_at_top",
+            "player": "you",
+            "amount": {
+              "const": 6
+            },
+            "destination": "hand",
+            "objects": {
+              "types": [
+                "Artifact"
+              ],
+              "count": 1,
+              "optional": true
+            },
+            "rest_to_bottom": true
+          }
+        ],
+        "text": "Whenever equipped creature attacks, look at the top six cards of your library. You may reveal an artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+      },
+      {
+        "kind": "activated",
+        "cost": {
+          "mana": "{3}"
+        },
+        "sorcery_speed_only": true,
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "text": "Equip {3}",
+        "is_equip": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "ulvenwald_tracker",
+    "name": "Ulvenwald Tracker",
+    "oracle_text": "{1}{G}, {T}: Target creature you control fights another target creature.",
+    "mana_cost": "{G}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Shaman"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}{G}, {T}: Target creature you control fights another target creature.",
+        "cost": {"mana": "{1}{G}", "tap": true},
+        "targets": [
+          {
+            "id": "mine",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"]
+            }
+          },
+          {
+            "id": "theirs",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "types": ["Creature"],
+              "exclude_binding": "mine"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "fight",
+            "objects": {"target": "mine"},
+            "other": {"target": "theirs"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

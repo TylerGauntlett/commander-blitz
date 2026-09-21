@@ -129,9 +129,45 @@ class GameObject:
     #: needed changing. `copy_permanent` is a different thing entirely: it makes
     #: a new **token** and never alters the object it points at.
     copying: str | None = None
+    #: The def id this permanent was told to enter as a copy of, recorded by
+    #: `zones.offer_enters_copy` a moment before the move and consumed by
+    #: `_enter_battlefield`, which turns it into `copying` above.
+    #:
+    #: A field of its own rather than writing `copying` directly, for
+    #: `enters_cost_paid`'s reason: `reset_permanent_state` clears `copying` --
+    #: a permanent that leaves the battlefield stops being a copy of anything --
+    #: and it runs during the very move this answer has to survive.
+    enters_copy_of: str | None = None
     #: The name the copy keeps, for the "except its name is…" clause. `None`
     #: takes the copied card's own name, which is the ordinary case.
     copying_name: str | None = None
+    #: "…**become a legendary Equipment artifact named Everflame, Heroes'
+    #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
+    #: effect and read by `GameState.card_of`, the one place a permanent's
+    #: current face is decided.
+    #:
+    #: Separate from `copying_name`, which is a *copy* effect's 706.2 override
+    #: and only means anything beside `copying`. This one renames the card the
+    #: permanent already is, with nothing copied at all.
+    #:
+    #: Cleared by `reset_permanent_state`: a permanent that left the
+    #: battlefield is a new object (400.7) and answers to its printed name
+    #: again.
+    renamed_to: str | None = None
+    #: "…and **loses all other abilities**" -- The Irencrag. Written by a
+    #: resolving effect and read by `characteristics._derived_abilities`, the
+    #: one place that decides which abilities a permanent has.
+    #:
+    #: A field rather than the `lose_all_abilities` **static**, which is the
+    #: only shape that existed and is the wrong one here: a static is gathered
+    #: off the printed face and applies from the moment the permanent enters, so
+    #: written on The Irencrag it would strip "{T}: Add {C}" before any legendary
+    #: creature ever arrived -- a different and strictly worse card, and no
+    #: `condition` can gate it on a transformation the engine has no flag for.
+    #:
+    #: Cleared by `reset_permanent_state`: a permanent that left the battlefield
+    #: is a new object (400.7) with its printed abilities back.
+    lost_all_abilities: bool = False
     #: Whether the copy above expires at cleanup. Clone copies permanently;
     #: Gogo copies "until end of turn", and only that form is cleared.
     copying_until_eot: bool = False
@@ -156,6 +192,28 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: The turn this card was **drawn**, or -1 if it never was. "Choose two
+    #: cards in your hand drawn this turn" -- Sylvan Library.
+    #:
+    #: `GameState.cards_drawn_this_turn` is the near miss and is a per-player
+    #: integer: it says how many, and no selector can ask *which*. This is the
+    #: same fact per card, and it has to be recorded as the card is drawn --
+    #: nothing about a card in hand afterwards distinguishes one drawn this turn
+    #: from one that has sat there since the opening hand.
+    #:
+    #: The turn rather than a flag, so it needs no clearing: a mark that had to
+    #: be reset would be one more thing for a turn boundary to forget, and a
+    #: stale `true` reads as a card drawn this turn that was not.
+    drawn_turn: int = -1
+    #: Whether any mana spent casting this carried Cavern of Souls' rider --
+    #: "…and that spell can't be countered". Written by `costs.pay_mana` beside
+    #: `mana_sources_spent`, at the same instant and for the same reason: the
+    #: pool holds six integers and a pip's rider is gone the moment it is spent.
+    #:
+    #: Distinct from `CardDef.uncounterable`, which is a spell saying it about
+    #: itself. This one is what somebody *else* said about it, exactly as
+    #: `granted_rebound` is to `CardDef.rebound`.
+    uncounterable_mana_spent: bool = False
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -671,6 +729,18 @@ class GameObject:
     #: again.
     chosen_type: str | None = None
 
+    #: "Choose a permanent type." Creeping Renaissance, and every "choose a card
+    #: type" sweep. One of the six card types 110.4a calls permanent types, read
+    #: back through ``{"chosen_card_type_of": "self"}`` in a selector's ``types``.
+    #:
+    #: A second slot rather than a second meaning for `chosen_type`, because the
+    #: two are different axes and a card may want either: `chosen_type` holds a
+    #: *creature* type (Vanquisher's Banner's "Vampire"), this holds a *card*
+    #: type ("Enchantment"). One field would make "of the chosen type" ambiguous
+    #: at every reader, and the reader that guessed wrong would match nothing --
+    #: silently, which is the failure mode this engine is built to refuse.
+    chosen_card_type: str | None = None
+
     #: "As this artifact enters, choose a color." Heraldic Banner. The colour
     #: letter (``"W"``…``"G"``) this permanent's controller named, read back by
     #: its own abilities through ``{"chosen_color_of": "self"}``.
@@ -854,7 +924,12 @@ class GameObject:
         self.dies_to = None
         self.leaves_to = None
         self.copying = None
+        # `enters_copy_of` is deliberately absent, exactly as `enters_cost_paid`
+        # is: it is an answer about the arrival this reset is clearing the way
+        # for, and `_enter_battlefield` clears it itself once it has been read.
         self.copying_name = None
+        self.renamed_to = None
+        self.lost_all_abilities = False
         self.copying_until_eot = False
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the
@@ -865,6 +940,7 @@ class GameObject:
         self.exiled_by = None
         self.phased_out_by = None
         self.chosen_type = None
+        self.chosen_card_type = None
         self.chosen_color = None
         self.added_subtypes = ()
         self.text_changes = ()

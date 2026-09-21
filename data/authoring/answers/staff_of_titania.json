@@ -1,0 +1,98 @@
+{
+  "card": {
+    "id": "staff_of_titania",
+    "name": "Staff of Titania",
+    "oracle_text": "Equipped creature gets +X/+X, where X is the number of Forests you control.\nWhenever equipped creature attacks, create a 1/1 green Forest Dryad land creature token. (It's affected by summoning sickness.)\nEquip {3}",
+    "mana_cost": "{2}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "text": "Equipped creature gets +X/+X, where X is the number of Forests you control.",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "count": {
+            "controller": "you",
+            "subtypes": [
+              "Forest"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        "toughness": {
+          "count": {
+            "controller": "you",
+            "subtypes": [
+              "Forest"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever equipped creature attacks, create a 1/1 green Forest Dryad land creature token.",
+        "trigger": {
+          "event": "attacks",
+          "controller": "any",
+          "filter": {
+            "attached": true
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "forest_dryad_1_1_g_land",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {3}",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{3}"
+        },
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -91,18 +91,28 @@ def mana_sources(
 def spell_purpose(card: CardDef) -> SpendPurpose:
     """What restricted mana would have to allow, to *cast* this card.
 
-    Subtypes as well as types, because the printed clause names either: "…only
-    to cast a creature spell" is a type, and "…only to cast Vampire, Cleric,
-    and/or Demon spells" is three subtypes. One flat set of lowercased names on
-    both sides, matched by :meth:`ManaSource.permits` -- which is where the
-    printed "and/or" (an any-of) and "a creature spell **of** the chosen type"
-    (an all-of) are told apart.
+    Subtypes and supertypes as well as types, because the printed clause names
+    any of the three: "…only to cast a creature spell" is a type, "…only to cast
+    Vampire, Cleric, and/or Demon spells" is three subtypes, and Delighted
+    Halfling's "…only to cast a **legendary** spell" is a supertype. One flat set
+    of lowercased names on both sides, matched by :meth:`ManaSource.permits` --
+    which is where the printed "and/or" (an any-of) and "a creature spell **of**
+    the chosen type" (an all-of) are told apart.
+
+    The supertypes were the quiet omission. `loader.mana._restriction_name`
+    accepts any alphabetic word, so "legendary" loaded clean and then matched
+    nothing on every card in the game -- mana that was permanently unspendable,
+    which reads on the board as a land that taps for nothing rather than as an
+    error.
 
     Tagged :data:`CAST`, which is the half of the purpose that keeps every
     restriction shipped before Secluded Courtyard meaning what it printed.
     """
     return SpendPurpose(
-        kind=CAST, names=frozenset(t.lower() for t in (*card.types, *card.subtypes))
+        kind=CAST,
+        names=frozenset(
+            t.lower() for t in (*card.types, *card.subtypes, *card.supertypes)
+        ),
     )
 
 
@@ -134,10 +144,10 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
         return SpendPurpose(kind=ACTIVATE, names=frozenset())
     if obj.on_battlefield:
         c = chars(state, oid)
-        names = (*c.types, *c.subtypes)
+        names = (*c.types, *c.subtypes, *c.supertypes)
     else:
         card = state.card_of(obj)
-        names = (*card.types, *card.subtypes)
+        names = (*card.types, *card.subtypes, *card.supertypes)
     return SpendPurpose(kind=ACTIVATE, names=frozenset(t.lower() for t in names))
 
 
@@ -757,6 +767,8 @@ def ability_mana(
     cost: Cost,
     x: int = 0,
     source_oid: int | None = None,
+    ability=None,
+    targets=None,
 ) -> Requirement:
     """What this ability's mana half actually costs right now.
 
@@ -789,6 +801,13 @@ def ability_mana(
         x = defined
     req = cost.mana.with_x(x)
     less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
+    # "Equip abilities you activate … cost {3} less to activate" -- Strong Back,
+    # a discount written on a *different* permanent. Added to the ability's own
+    # `mana_reduction` rather than replacing it: two cards may both be talking
+    # about the same activation, and the printed answer is that both apply.
+    from .player_statics import ability_cost_reduction
+
+    less += ability_cost_reduction(state, pid, ability, source_oid, targets)
     if not less:
         return req
     return req.with_generic(req.generic - less)
@@ -854,6 +873,8 @@ def life_for_mana_range(
     x: int = 0,
     extra_generic: int = 0,
     purpose: SpendPurpose | None = None,
+    ability=None,
+    targets=None,
 ) -> tuple[ManaCost, int, int] | None:
     """How many of this cost's Phyrexian pips may be paid with life, or ``None``.
 
@@ -881,7 +902,15 @@ def life_for_mana_range(
     pool = state.players[pid].mana_pool
     for bought in range(most + 1):
         remaining, _ = mana.paying_phyrexian(bought)
-        req = ability_mana(state, pid, replace(cost, mana=remaining), x, source_oid)
+        req = ability_mana(
+            state,
+            pid,
+            replace(cost, mana=remaining),
+            x,
+            source_oid,
+            ability=ability,
+            targets=targets,
+        )
         if extra_generic:
             req = req.with_generic(req.generic + extra_generic)
         if solve_payment(req, pool, sources) is not None:
@@ -911,8 +940,16 @@ def can_pay(
     *,
     x: int = 0,
     purpose: SpendPurpose | None = None,
+    ability=None,
+    targets=None,
 ) -> bool:
     """Can this player pay every part of ``cost`` right now?
+
+    ``ability`` is the activated ability being priced, when one is -- a cost is
+    also paid for a spell, a suspend and a special action, and none of those is
+    an ability. It is threaded down to `ability_mana` because a discount written
+    on a *different* permanent ("equip abilities you activate cost {3} less")
+    is a fact about which ability this is, and nothing else in a `Cost` says.
 
     ``purpose`` is what restricted mana would have to be allowed to pay for, and
     it must be the same value :func:`pay` is given -- a cost found payable on
@@ -1028,10 +1065,28 @@ def can_pay(
         if payable_mana(state, pid, cost.mana).phyrexian_count:
             # 107.4f, and K'rrik: some pips may be bought with life, and the
             # cost is payable if any number of them leaves a payable remainder.
-            if life_for_mana_range(state, pid, cost, source_oid, x=x, purpose=purpose) is None:
+            if (
+                life_for_mana_range(
+                    state,
+                    pid,
+                    cost,
+                    source_oid,
+                    x=x,
+                    purpose=purpose,
+                    ability=ability,
+                    targets=targets,
+                )
+                is None
+            ):
                 return False
         elif (
-            solve_payment(ability_mana(state, pid, cost, x, source_oid), player.mana_pool, sources)
+            solve_payment(
+                ability_mana(
+                    state, pid, cost, x, source_oid, ability=ability, targets=targets
+                ),
+                player.mana_pool,
+                sources,
+            )
             is None
         ):
             return False
@@ -1279,8 +1334,16 @@ def pay(
     record_colors_on: int | None = None,
     bindings: dict[str, Any] | None = None,
     life_for_mana: bool = True,
+    ability=None,
+    targets=None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
+
+    ``ability`` is the activated ability being priced, when one is -- a cost is
+    also paid for a spell, a suspend and a special action, and none of those is
+    an ability. It is threaded down to `ability_mana` because a discount written
+    on a *different* permanent ("equip abilities you activate cost {3} less")
+    is a fact about which ability this is, and nothing else in a `Cost` says.
 
     Returns ``True`` on success.  Callers only invoke this after :func:`can_pay`,
     so a ``False`` return means the game state changed underneath them.
@@ -1346,7 +1409,7 @@ def pay(
                 bought = fewest + (picked[0] if picked else 0)
             remaining, phyrexian_life = mana.paying_phyrexian(bought)
             cost = replace(cost, mana=remaining)
-    req = ability_mana(state, pid, cost, x, source_oid)
+    req = ability_mana(state, pid, cost, x, source_oid, ability=ability, targets=targets)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
@@ -1575,6 +1638,10 @@ def pay_mana(
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # Accumulated with `or`, not assigned, for `mana_spent`'s reason: a cast
+        # pays in more than one call when it has an additional cost, and a spell
+        # paid for partly with Cavern mana was paid for with Cavern mana.
+        obj.uncounterable_mana_spent = obj.uncounterable_mana_spent or spent.uncounterable
         # Accumulated rather than assigned: a cast pays in more than one call
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
@@ -1638,11 +1705,18 @@ def activate_mana_ability(
         # checked against the board in `pay_mana` instead.
         tap_permanent(state, oid)
 
-    # Tagged with the permanent that made it. The tag is the whole of what
-    # Path of Ancestry's "when that mana is spent" reads back, and it is
-    # knowable only here -- a pool of six integers cannot say where a pip
-    # came from once it has landed in it.
-    state.players[pid].mana_pool.add_tuple(produced, source=oid)
+    # Tagged with the permanent that made it, and with any rider the ability
+    # attached. The tag is the whole of what Path of Ancestry's "when that mana
+    # is spent" reads back, and it is knowable only here -- a pool of six
+    # integers cannot say where a pip came from once it has landed in it.
+    #
+    # The rider is read off the **ability**, not the permanent, because Cavern of
+    # Souls has two mana abilities and only the second one prints "…and that
+    # spell can't be countered": recorded per permanent, its plain {C} would make
+    # the spell uncounterable too.
+    state.players[pid].mana_pool.add_tuple(
+        produced, source=oid, uncounterable=ability.mana_uncounterable
+    )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged
     # with the Ghast, so provenance readers see who really made it.

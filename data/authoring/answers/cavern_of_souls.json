@@ -1,0 +1,117 @@
+{
+  "card": {
+    "id": "cavern_of_souls",
+    "name": "Cavern of Souls",
+    "oracle_text": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this land enters, choose a creature type.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "choose_type",
+            "prompt": "Choose a creature type"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "mana_restriction": {
+          "cast": [
+            [
+              "creature",
+              {
+                "chosen_type_of": "self"
+              }
+            ]
+          ]
+        },
+        "mana_uncounterable": true,
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "label": "W",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "U",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "B",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "R",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "G",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

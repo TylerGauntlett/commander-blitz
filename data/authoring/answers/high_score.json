@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "high_score",
+    "name": "High Score",
+    "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.\nAt the beginning of your end step, draw a card if you control a creature with the greatest power among creatures on the battlefield.",
+    "mana_cost": "{2}{G}",
+    "types": ["Enchantment"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+        "effect": "replace_counters",
+        "counter": "+1/+1",
+        "counter_addend": 1,
+        "affects": {"controller": "you", "types": ["Creature"]}
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, draw a card if you control a creature with the greatest power among creatures on the battlefield.",
+        "trigger": {"event": "end_step", "controller": "you", "source": "self"},
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "all": [
+                {"exists": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}},
+                {
+                  "cmp": ">=",
+                  "left": {
+                    "extreme_value": {
+                      "objects": {
+                        "zone": "battlefield",
+                        "controller": "you",
+                        "types": ["Creature"]
+                      },
+                      "of": "power",
+                      "pick": "greatest"
+                    }
+                  },
+                  "right": {
+                    "extreme_value": {
+                      "objects": {"zone": "battlefield", "types": ["Creature"]},
+                      "of": "power",
+                      "pick": "greatest"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": [
+              {"op": "draw", "player": "you", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

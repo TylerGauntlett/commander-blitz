@@ -4,8 +4,12 @@
     "name": "Paradise Mantle",
     "oracle_text": "Equipped creature has \"{T}: Add one mana of any color.\"\nEquip {1}",
     "mana_cost": "{0}",
-    "types": ["Artifact"],
-    "subtypes": ["Equipment"],
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "colors": [],
     "color_identity": [],
     "abilities": [
@@ -14,22 +18,40 @@
         "text": "Equipped creature has \"{T}: Add one mana of any color.\"",
         "effect": "grant_ability",
         "ability": 0,
-        "affects": {"attached": true}
+        "affects": {
+          "attached": true
+        }
       },
       {
         "kind": "activated",
         "text": "Equip {1}",
         "sorcery_speed_only": true,
-        "cost": {"mana": "{1}"},
+        "cost": {
+          "mana": "{1}"
+        },
         "targets": [
           {
             "id": "equip_target",
             "kind": "permanent",
-            "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]},
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            },
             "count": 1
           }
         ],
-        "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
       }
     ],
     "grantable_abilities": [
@@ -37,16 +59,53 @@
         "kind": "activated",
         "text": "{T}: Add one mana of any color.",
         "is_mana_ability": true,
-        "cost": {"tap": true},
+        "cost": {
+          "tap": true
+        },
         "effects": [
           {
             "op": "choose_mode",
             "modes": [
-              {"effects": [{"op": "add_mana", "mana": "{W}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{G}"}]}
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
             ]
           }
         ]

@@ -1,0 +1,122 @@
+{
+  "_comment": "Shapes for tests/unit/test_search_destination_if.py. t_sdi_charm is Archdruid's Charm's first mode -- search for a creature or land, the land onto the battlefield tapped and anything else to hand. t_sdi_plain is the same search WITHOUT destination_if, kept live so the tests measure the branch rather than the search: it sends a land to hand like everything else. t_sdi_bear and t_sdi_wood are the two cards a library is stocked with.",
+  "cards": [
+    {
+      "id": "t_sdi_charm",
+      "name": "Test Branching Charm",
+      "oracle_text": "Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Land"
+            ]
+          },
+          "reveal": true,
+          "shuffle": true,
+          "destination": "hand",
+          "destination_if": [
+            {
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "to": "battlefield",
+              "tapped": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sdi_plain",
+      "name": "Test Plain Search",
+      "oracle_text": "Search your library for a creature or land card, reveal it, put it into your hand, then shuffle.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Land"
+            ]
+          },
+          "reveal": true,
+          "shuffle": true,
+          "destination": "hand"
+        }
+      ]
+    },
+    {
+      "id": "t_sdi_bear",
+      "name": "Test SDI Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_sdi_wood",
+      "name": "Test SDI Wood",
+      "oracle_text": "{T}: Add {G}.",
+      "types": [
+        "Land"
+      ],
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

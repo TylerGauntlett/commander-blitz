@@ -63,11 +63,41 @@ KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 KNOWN_KEYWORDS = frozenset(k.value for k in Keyword)
 KNOWN_COLORS = frozenset(c.value for c in Color)
 
+#: Printed spellings of a keyword the engine already has under another word.
+#:
+#: Rule 702.88 is *totem armor*, and the Rise of the Eldrazi Umbra cycle prints
+#: the identical ability as "Umbra armor" -- one mechanic with two names on real
+#: cardboard, and Scryfall's ``keywords`` array repeats the printed one. Without
+#: this the replacement is fully implemented (``zones.destroy`` reads
+#: ``Keyword.TOTEM_ARMOR``) and yet no Umbra can ship, because the printed line
+#: folds to a word that is in no vocabulary and the residual gate reports it
+#: unclaimed.
+#:
+#: An alias, deliberately, rather than a second ``Keyword`` member: two enum
+#: values for one ability would need every reader to check both, and the one
+#: that forgot would be a card that quietly loses its totem armor.
+KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
+
+
+def normalize_keyword(word: str) -> str:
+    """A printed keyword folded to the word the engine knows it by.
+
+    Applied wherever printed text or Scryfall's array becomes a keyword, so the
+    two spellings of one ability meet before anything compares them.
+    """
+    return KEYWORD_ALIASES.get(word, word)
+
 #: The keys `add_mana_on_tap`'s `tapped_permanent` may carry: what the tapped
 #: permanent *is*. Crypt Ghast's "a Swamp", Leyline of Abundance's "a creature",
 #: Vernal Bloom's "a Forest". Read against the permanent's current
 #: characteristics, so a land Urborg makes a Swamp counts.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes"})
+#:
+#: `attached` is the one key that is not a characteristic: it names *the* permanent
+#: this static's source is attached to, rather than a class of permanent. Wild
+#: Growth and Utopia Sprawl print the Vernal Bloom sentence about one enchanted
+#: land, and every other key here is a description that would also match the
+#: thirty other lands on the table.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached"})
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
@@ -256,6 +286,15 @@ STATIC_EFFECTS = frozenset(
         # seats with no creature filter.  Unlike that op, this one **does** reach
         # the defender's planeswalkers, because this sentence names them.
         "cant_attack_you",
+        # "Equipped creature ... can't be sacrificed" (Assault Suit, 701.17b).
+        # The continuous half of the `cant_sacrifice` op, and it has to be a
+        # second mechanism for the reason `cant_attack_you` is not the
+        # `cant_attack_player` op: that one records a *set* of permanents named
+        # when a spell resolved, and an Equipment's prohibition must end when it
+        # is unequipped and move when it is equipped elsewhere -- neither of
+        # which a recorded set can do. Read at `temp_effects.sacrifice_forbidden`,
+        # the one seam both roads to a sacrifice already go through.
+        "cant_sacrifice",
         # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
         # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
         # and there is nowhere in one to put the `{1}`. Read by
@@ -269,6 +308,17 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Strong Back. "Equip abilities you activate … cost {3} less to
+        # activate." The mirror of the line above, for activated abilities
+        # instead of spells, and read by `costs.ability_mana` -- the one
+        # function `can_pay` and `pay` both reach, so an ability offered at the
+        # reduced price is charged at it.
+        #
+        # `Cost.mana_reduction` is the near miss and is a different sentence: it
+        # lives inside the ability's own cost node, so only the card printing
+        # the ability could discount it. Strong Back is an Aura discounting
+        # somebody else's Equipment.
+        "ability_cost_reduction",
         # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
         # Food, or Treasure token, instead create one of each."  Read by
         # `primitives.create_token`, which is the only moment a token creation
@@ -279,6 +329,42 @@ STATIC_EFFECTS = frozenset(
         # `docs/rules-coverage.md`, which records that there is no general
         # rule-616 replacement system and that this is not the start of one.
         "replace_token_creation",
+        # High Score, Hardened Scales, Doubling Season, Corpsejack Menace. "If
+        # one or more +1/+1 counters would be put on a creature you control,
+        # that many plus one +1/+1 counters are put on it instead." Read by
+        # `primitives.add_counters`, which is the single funnel every placement
+        # comes through -- the `add_counters` op, `move_counters`, `proliferate`,
+        # the `counters` key on `put_onto_battlefield` and entering with
+        # counters -- so the replacement applies once per batch and before the
+        # `counter_placed` event or any Saga chapter comparison reads the new
+        # total.
+        #
+        # Unlike the five replacements above it, this one is about an *object*
+        # rather than a player, so it takes `affects` and no `affects_player`:
+        # every printed card names what the counters would be put on.
+        #
+        # A `counter_placed` trigger is the wrong sentence twice over: it uses
+        # the stack, so the extra counter arrives after state-based actions and
+        # after anything else that read the count, and its own `add_counters`
+        # fires `counter_placed` again, so it retriggers itself.
+        "replace_counters",
+        # Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
+        # Emancipation. "If equipped creature would deal combat damage, it deals
+        # double that damage instead." Read by `primitives.damage_permanent` and
+        # `primitives.damage_player`, the two points every damage in the game
+        # passes through, after prevention and before the number is marked -- so
+        # deathtouch, lifelink, infect, the damage ledger, the commander tally
+        # and `DAMAGE_DEALT` all see the doubled figure, which is what makes it
+        # a replacement rather than a second helping of damage.
+        #
+        # Filtered on **both ends**, which is why it is not one of the five
+        # player-wide multipliers above: `damage_source` is "if <this> would
+        # deal", `affects` is "…to <this>". The Flail prints one line of each.
+        # `replace_life_loss` is the near miss and is genuinely a different
+        # sentence: damage is not life loss -- it is marked on creatures, feeds
+        # deathtouch and infect, and only incidentally reduces a life total --
+        # so doubling the loss leaves a doubled hit on a creature undoubled.
+        "replace_damage",
         # Bloodletter of Aclazotz.  "If an opponent would lose life during your
         # turn, they lose twice that much life instead."  The engine's *second*
         # replacement hook and, like the first, a named one rather than the
@@ -546,6 +632,13 @@ STATIC_FILTER_KEYS = frozenset(
         # state rather than a derived characteristic, so it cannot depend on
         # another static's output and belongs in this list rather than outside it.
         "attached",
+        # The other end of the same relationship: "…as long as two or more
+        # Equipment are **attached to it**" (Brass Knuckles), "+2/+2 for each
+        # Aura and Equipment **attached to it**" (Strong Back). `attached` names
+        # the host; this names the host's *other* attachments. The same board
+        # state read the other way round, so it is safe here for `attached`'s
+        # reason.
+        "attached_to_host",
         # Soulbond: "as long as this creature is paired, **both** creatures
         # have…". `paired: true` matches the source while it has a partner, and
         # `paired_with_source: true` matches the partner. Board state like
@@ -593,7 +686,9 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: commander you own", a **maximum** rather than a sum and so its own key --
 #: written as a `count` or a `total_power` it would add two partners' mana
 #: values together and quietly hand out a bigger discount than the card says.
-COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_mana_value"})
+COST_REDUCTION_KEYS = frozenset(
+    {"count", "total_power", "amount", "greatest_mana_value", "total_mana_value"}
+)
 
 #: Zones a cost reduction's filter may count.  **Imported** from
 #: `costs.REDUCTION_ZONES`, which is what actually walks them, rather than
@@ -617,7 +712,19 @@ COST_REDUCTION_ZONES = REDUCTION_ZONES
 #: What a reduction kept is the *reason* it wanted the word first: reading the
 #: command zone, where "a commander you own on the battlefield or in the command
 #: zone" still counts the commander an opponent stole from you.
-COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
+#: ``any_of`` is the second, and it is a *disjunction* rather than a
+#: characteristic: "the total mana value of **historic** permanents you control.
+#: (Artifacts, legendaries, and Sagas are historic.)" -- Excalibur, Sword of
+#: Eden. Every other key in a reduction filter is ANDed, so historic is
+#: unsayable without it -- ``{"types": ["Artifact"], "supertypes":
+#: ["Legendary"], "subtypes": ["Saga"]}`` matches only a permanent that is all
+#: three at once, which nothing is. ``any_types`` is an or over *types* alone
+#: and reaches neither a supertype nor a subtype.
+#:
+#: Spelled as the effect-side selector language already spells it (Lost to
+#: Legend's target line is exactly this shape), so one printed word has one
+#: spelling wherever it is written.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of"})
 
 #: Filter keys a cost reduction *refuses*, though a static ability accepts them.
 #:
@@ -630,7 +737,16 @@ COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 #: read the rest of the list, and being refused is the safer half of that fix:
 #: a key that means nothing here should say so at load time rather than price
 #: an ability off a filter nobody honoured.
-COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset({"attached", "paired", "paired_with_source"})
+#:
+#: `attached_to_host` joins them for the near reason rather than the same one:
+#: counting a permanent's attachments *is* a number a reduction could price off,
+#: but `costs._reduction_matches` does not read the key, so one written there
+#: would load and be ignored -- the quiet failure this list exists to convert
+#: into a load-time refusal. It belongs here until a printed card asks for it
+#: and `_reduction_matches` is taught the word.
+COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset(
+    {"attached", "attached_to_host", "paired", "paired_with_source"}
+)
 
 #: Condition heads a *cost* reduction may use.
 #:
@@ -764,8 +880,16 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: inline so the authoring packet can show it -- a worker shown `value_keys` and
 #: not this one reads the effect-side list as the whole language, which is how
 #: Door of Destinies came to be filed as a gap.
+#: `times` is the one leaf here that does not *measure* anything: it multiplies
+#: the others, for "+2/+2 for each Equipment you control" (Swordsman's Steel) --
+#: a count with a step bigger than one. Two `buff` statics are not the
+#: alternative they look like, since a static carries no `effects` and so it
+#: would be two abilities claiming one printed line, which the residual gate
+#: exists to refuse. Same spelling and shape as the effect-side `times`.
 STATIC_VALUE_KEYS = (
-    frozenset({"const", "count", "mana_symbols", "counters_on", "permanents_entered_this_turn"})
+    frozenset(
+        {"const", "count", "times", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+    )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
@@ -779,6 +903,15 @@ STATIC_VALUE_KEYS = (
 #: These six change a number and return. Anything else is refused at load, which
 #: is the difference between a card that will not compile and a game that locks
 #: up the first time somebody taps a Talisman.
+#: The classes of activated ability an `ability_cost_reduction` may name.
+#:
+#: One so far. Each is a question the engine can actually answer about a
+#: compiled `Ability` -- `equip` reads `Ability.is_equip` -- and a class with no
+#: marker behind it would load and match nothing, which is the printed line
+#: silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip"})
+
+
 MANA_RIDER_OPS = frozenset(
     {"damage", "lose_life", "gain_life", "add_poison", "add_counters", "remove_counters"}
 )
@@ -838,4 +971,4 @@ PLURAL_PLAYER_SPEC_NAMES = frozenset({"opponent", "each_opponent", "each_player"
 #: The pure event filters -- `counter`, `nth`, `not_cause`, `mana_ability`,
 #: `defending` -- are left out because no card asks for them here, not because
 #: they could not work. `_delayed_matches` gains a line each when one does.
-DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition"})
+DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition", "subject"})
