@@ -46162,12 +46162,12 @@
     },
     "Chromatic Orrery": {
       "edhrec_rank": 1251,
-      "gate": "template",
+      "gate": null,
       "name": "Chromatic Orrery",
-      "reason": "no template for: You may spend mana as though it were mana of any color",
+      "reason": "",
       "scryfall_id": "7b0b0520-f792-4201-bd4c-22b7d7824b52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Chromatic Sphere": {

@@ -1584,6 +1584,10 @@
     },
     "zone": "battlefield"
   },
+  "chromatic_orrery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chrome_cat": {
     "zone": "battlefield"
   },

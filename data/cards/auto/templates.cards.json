@@ -17900,6 +17900,158 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "spend_mana_as_any_color",
+          "kind": "static",
+          "text": "You may spend mana as though it were mana of any color."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}{C}{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}{C}{C}{C}."
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "U"
+                  ],
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "B"
+                  ],
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "R"
+                  ],
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "G"
+                  ],
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card for each color among permanents you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chromatic_orrery",
+      "mana_cost": "{7}",
+      "name": "Chromatic Orrery",
+      "oracle_text": "You may spend mana as though it were mana of any color.\n{T}: Add {C}{C}{C}{C}{C}.\n{5}, {T}: Draw a card for each color among permanents you control.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
