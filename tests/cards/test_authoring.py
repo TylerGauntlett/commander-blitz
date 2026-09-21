@@ -687,6 +687,76 @@ class TestATransformingCardIsOneAnswer:
             {"id": "b"},
         ]
 
+    def test_a_back_may_not_take_a_hand_written_card_s_id(self, real_registry):
+        """`test_a_card_may_not_overwrite_a_hand_written_one`, for the *other* face.
+
+        A face id is a slug of the face's own printed name, so a card whose back
+        half is named after a card that already exists carries that card's id --
+        and the front, being a different name, sails through the gate that
+        catches this for the main entry. The merge is a dict assignment, so the
+        companion replaces the incumbent and `link_faces` then stamps
+        `parent_face` on what used to be a free-standing card. Nothing raises;
+        the pool just quietly stops being able to deal that card into a deck.
+        """
+        from automtg.cards.authoring import verify as V
+
+        front, back = self.front_and_back()
+        front = {**front, "back_face": "sol_ring"}
+        verdict = V.verify(
+            front, {"zone": "battlefield"}, real_registry,
+            companions=[{**back, "id": "sol_ring"}],
+        )
+        assert verdict.failed_gate == "registry"
+        assert "sol_ring" in verdict.reason
+
+    def test_a_back_may_not_take_an_authored_card_s_id(self):
+        """The half of the same bug that `verify` cannot see.
+
+        `verify` is handed the hand-written pool only, so a companion colliding
+        with a *machine-authored* card -- which is the collision that actually
+        shipped, Emeritus of Woe // Demonic Tutor landing on Demonic Tutor --
+        gets past it. The collector knows the auto batch as well, and asks the
+        one question that separates a face from a card: a companion is written
+        with **no expectation of its own**, so an id that has one belongs to a
+        card somebody authored in its own right.
+        """
+        from scripts.author_cards import _companion_collision
+
+        backs = [{"id": "demonic_tutor"}]
+        expectations = {"demonic_tutor": {"zone": "graveyard"}}
+        assert _companion_collision(backs, expectations, "emeritus") == "demonic_tutor"
+
+        # The namespaced id the answer was repaired to: no expectation of its
+        # own, so it stays legal on every re-collect rather than only the first.
+        clean = [{"id": "demonic_tutor_26156d"}]
+        assert _companion_collision(clean, expectations, "emeritus") is None
+        expectations["demonic_tutor_26156d"] = {}
+        assert _companion_collision(clean, expectations, "emeritus") == "demonic_tutor_26156d"
+
+    def test_the_shipped_pool_has_no_face_that_is_also_a_card(self):
+        """The regression this branch fixed, asserted against the real pool.
+
+        Demonic Tutor is in a deck somebody imports; while it was the prepared
+        face of Emeritus of Woe it was not a card a deck could contain, and the
+        importer refused the whole list rather than one card.
+        """
+        import json
+
+        from automtg.cards.authoring.queue import auto_cards_dir
+        from automtg.cards.registry import default_registry
+
+        expectations = json.loads(
+            (auto_cards_dir() / "expectations.json").read_text(encoding="utf-8")
+        )
+        registry = default_registry().registry
+        stolen = [
+            card.id
+            for card in registry
+            if (card.parent_face is not None or card.front_face is not None)
+            and card.id in expectations
+        ]
+        assert not stolen, f"faces holding a whole card's id: {stolen}"
+
 
 
 class TestTheQueueTracksWhatIsInYourDecks:

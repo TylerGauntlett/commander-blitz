@@ -811,6 +811,26 @@ def verify(
         pool = {**existing, card.id: card}
         for extra in companions or ():
             extra_card = compile_card(CardModel.model_validate(extra))
+            if extra_card.id in existing and not supersedes:
+                # The same silent overwrite the front face is guarded against
+                # above, one line further down and far quieter. A face id is a
+                # slug of the *face's* printed name, so a card whose back half
+                # is named after a card that already exists -- Emeritus of Woe
+                # // Demonic Tutor is the one that found this -- lands its
+                # companion on top of the incumbent. Nothing collides: the dict
+                # merge replaces, `link_faces` then stamps `parent_face` on what
+                # used to be a free-standing card, and a real Demonic Tutor
+                # stops being something a deck may contain.
+                #
+                # Not `registry`, which the front's guard reads, because that
+                # membership test has to ignore `card.id`; `existing` is the
+                # pool with this answer's own front already taken out.
+                verdict.failed_gate = "registry"
+                verdict.reason = (
+                    f"companion face {extra_card.id!r} is already in the pool as a "
+                    f"card of its own -- give the face a distinct id"
+                )
+                return verdict
             pool[extra_card.id] = extra_card
         from ..loader import link_faces, validate_token_references
 

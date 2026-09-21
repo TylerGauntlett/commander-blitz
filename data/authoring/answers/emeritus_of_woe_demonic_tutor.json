@@ -19,7 +19,7 @@
     "color_identity": [
       "B"
     ],
-    "prepared_face": "demonic_tutor",
+    "prepared_face": "demonic_tutor_26156d",
     "replacements": [
       {
         "event": "self_enters_prepared"
@@ -54,7 +54,7 @@
     ]
   },
   "back": {
-    "id": "demonic_tutor",
+    "id": "demonic_tutor_26156d",
     "name": "Demonic Tutor",
     "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
     "mana_cost": "{1}{B}",
