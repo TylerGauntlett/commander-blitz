@@ -17262,12 +17262,12 @@
     },
     "Avatar's Wrath": {
       "edhrec_rank": 1761,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Avatar's Wrath",
-      "reason": "no template for: Choose up to one target creature, then airbend all other creatures",
+      "reason": "opponent battlefield is 4, expected 3",
       "scryfall_id": "4811072d-fac0-40dd-a5cf-9694d51b12cf",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": true
     },
     "Aveline de Grandpré": {
