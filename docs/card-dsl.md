@@ -3331,6 +3331,57 @@ The index rides the stack item and is stamped onto the object **before**
 and `kicked`. Written after them it would read `None`, every branch would fail,
 and the spell would cost mana and do nothing at all.
 
+### Spree — "choose **one or more** additional costs"
+
+Smuggler's Surprise. Three priced modes, and the caster buys any non-empty
+**subset** of them as the spell is cast: two modes chosen means both prices paid
+and both effects run.
+
+That word is why spree is its own slot rather than a flag on the section above.
+`additional_cost_options` is exclusive by construction — `chosen_additional`
+returns one indexed branch, the paid branch is stored as one `int | None`, and
+`{"cost_option": n}` can only ever name one index. Written that way, Smuggler's
+Surprise loads clean and plays a strictly weaker card: the player may buy
+exactly one of its three modes and never two, however much mana is on the table.
+`multikicker` is one fixed price paid N times, not N distinct prices with N
+distinct effects; and `choose_mode` picks a subset but runs at **resolution**,
+so it can neither be a cost nor decide whether the spell is castable — three
+modes written there would hand the player all of them for {G}.
+
+```jsonc
+"mana_cost": "{G}",
+"spree": [ {"mana": "{2}"}, {"mana": "{4}{G}"}, {"mana": "{1}"} ],
+"spell_effects": [
+  { "op": "if", "condition": { "spree_mode": 0 }, "then": [ … ] },
+  { "op": "if", "condition": { "spree_mode": 1 }, "then": [ … ] },
+  { "op": "if", "condition": { "spree_mode": 2 }, "then": [ … ] }
+]
+```
+
+`{"spree_mode": n}` is the **set-membership** sibling of `{"cost_option": n}`:
+"was mode `n` among those paid", not "is the mode that was paid `n`". An
+equality test there would make a two-mode cast run one mode.
+
+Legality offers one cast line per non-empty subset — seven for three modes,
+cheapest shape first — and each line's price is the printed cost **plus every
+chosen mode's mana**, folded in so the solver prices what the player is actually
+offered. The plain line is **withdrawn**: 702.166a's "one or more" means the
+unmodified spell is not a legal cast at all, and a spree card castable for its
+printed cost is a card with none of its text. A card that cannot afford a single
+mode is simply not castable.
+
+Each mode is a bare mana price, and the loader enforces that. A non-mana mode
+would be checked for payability once per mode and never per *combination*, so
+two "sacrifice a creature" modes would be offered together to a player with one
+creature. It also refuses fewer than two modes, a mode that costs nothing, and
+`additional_cost`, `additional_cost_options`, `additional_optional` or
+`additional_repeatable` beside it.
+
+The chosen indices ride the stack item and are stamped onto the object **before**
+`spell_effects` run, for the reason `cost_option` is and with more riding on it:
+written afterwards the set would read empty and a spell three extra prices were
+paid for would do nothing at all.
+
 ### `mana_spent_of` — what was paid, not what is printed
 
 "…if **at least four mana was spent** to cast it" — The Emperor of Palamecia.

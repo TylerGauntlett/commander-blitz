@@ -64,6 +64,14 @@ class Action:
     #: the two branches are two prices for the same spell and the player is
     #: choosing between them. `None` when the card has no modal cost.
     additional_choice: int | None = None
+    #: **Spree** (702.166a): which of the card's priced modes this cast buys,
+    #: by index, ascending. A *set* where `additional_choice` is one index,
+    #: because "choose one or more" is a subset and a card whose two chosen
+    #: modes were recorded as one would silently run half of what was paid for.
+    #: Part of the action's identity for the reason `kicked` is, and more so:
+    #: the seven lines a three-mode spree offers differ in this field and in
+    #: nothing else. Empty for every card without spree.
+    spree_modes: tuple[int, ...] = ()
     #: Cast **without paying its mana cost** (601.2b) -- a plotted card, or a
     #: spell a `free_cast_permission` static reaches ("You may cast Dragon
     #: spells without paying their mana costs").
@@ -226,6 +234,10 @@ class Action:
             # without it the two are one key and a lookup answers with
             # whichever came first.
             self.cast_free,
+            # And the spree subset, for the same reason and more sharply: every
+            # line a spree card offers shares all of the above, so without this
+            # the seven subsets are one key.
+            self.spree_modes,
         )
 
     def to_dict(self) -> dict[str, Any]:

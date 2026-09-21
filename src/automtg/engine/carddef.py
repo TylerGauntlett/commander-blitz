@@ -1086,6 +1086,12 @@ class CardDef:
     #: "…discard a card **or** pay 3 life" -- one cast line per payable branch.
     #: See `CostModel.additional_cost_options`.
     additional_cost_options: tuple[Cost, ...] = ()
+    #: **Spree** (702.166a) -- "Choose one or more additional costs." A
+    #: non-empty *subset* of these prices is paid as the spell is cast, and one
+    #: cast line is offered per payable subset. Which modes were bought is read
+    #: back on resolution with `{"spree_mode": n}`.
+    #: See `CostModel.spree`.
+    spree: tuple[Cost, ...] = ()
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".

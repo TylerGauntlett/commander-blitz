@@ -703,6 +703,14 @@ class StackItem:
     #: resolution by the `{"cost_option": n}` condition a tiered card branches
     #: on -- the tier that was bought decides which effect happens.
     cost_option: int | None = None
+    #: **Spree** (702.166a): which priced modes were bought as this spell was
+    #: cast, by index, ascending. Read on resolution by the
+    #: `{"spree_mode": n}` condition each printed mode is an `if` on.
+    #:
+    #: A tuple rather than `cost_option`'s single index, and that is the whole
+    #: mechanic: "choose one or more" buys a subset, so a card that recorded
+    #: only the first chosen mode would run one effect having charged for three.
+    spree_modes: tuple[int, ...] = ()
     #: Card ids spliced onto this spell as it was cast. Their `spell_effects`
     #: run after the host's, in the order they were spliced on -- which is what
     #: "add this card's effects to that spell" means, and why they are recorded

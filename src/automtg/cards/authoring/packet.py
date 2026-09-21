@@ -53,6 +53,11 @@ CARD_LEVEL_COST_KEYS = (
     #: reading it correctly reported the mechanic missing while Bitter Triumph
     #: shipped using it.
     "additional_cost_options",
+    #: **Spree** (702.166a): "Choose one or more additional costs." A list of
+    #: priced modes of which a non-empty *subset* is bought as the spell is
+    #: cast; each printed "+ <cost> — <effect>" line is an `if` on
+    #: `{"spree_mode": n}`. Every mode is a bare mana cost.
+    "spree",
     "additional_optional",
     "additional_repeatable",
     "alternative_cost",

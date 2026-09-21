@@ -16218,3 +16218,129 @@ the assertion is about the clause and not about effect-made mana, the payment
 actually going through, the mana surviving into the postcombat main phase and
 not into the next turn, `ManaPool.spendable` and `spend` in isolation including
 the take that must skip a forbidden pip, and every load-time refusal.
+
+## Spree — "choose **one or more** additional costs" — 702.166a
+
+### Overview
+
+Smuggler's Surprise: *"Spree (Choose one or more additional costs.)"* with three
+priced modes — `+ {2}` mill four and take up to two creature/land cards from
+among them, `+ {4}{G}` put up to two creature cards from hand onto the
+battlefield, `+ {1}` creatures you control with power 4 or greater gain hexproof
+and indestructible.
+
+The mechanic is one word: **subset**. The caster takes any non-empty combination
+of the modes as the spell is cast, pays *every* chosen price on top of the
+printed cost, and on resolution runs *every* chosen mode's effect.
+
+`additional_cost_options` is the near miss and is exclusive by construction. The
+loader calls it "a choice between prices", `chosen_additional` returns
+`card.additional_cost_options[choice]` for exactly one index,
+`_charge_additional_cost` builds one cast line per single branch, and the paid
+branch is stored as one `int | None` — so `{"cost_option": n}` can only ever
+report a single mode. Spelling Smuggler's Surprise that way loads clean, passes
+every gate, and plays a **strictly weaker card**: the player may buy exactly one
+of its three modes and never two, however much mana is on the table.
+
+The other two near misses fail differently. `multikicker` (with
+`additional_repeatable`) is one fixed price paid N times, not N distinct prices
+with N distinct effects — and the loader already refuses `additional_repeatable`
+beside `additional_cost_options`. `choose_mode` does pick a subset, but it runs
+at **resolution**, so it can be neither a cost nor a castability test: the three
+modes written there would be handed to the player for {G} with the prices never
+charged. `additional_optional` only makes one fixed price skippable.
+
+### Tier: A-shaped, with the plumbing a set needs
+
+No new op, no new decision kind, no new event, no frontend work. What is new is
+that three places which held one index now hold a set, plus one cast-line
+builder and one condition key.
+
+### What was built
+
+- **`spree`** — a card-level list of `CostModel`s (`schema.py`, `carddef.py`,
+  compiled and guarded in `loader/__init__.py`).
+- **`casting._spree_lines`** — one cast line per **non-empty subset**, cheapest
+  shape first. `_cast_variant` gained `spree_modes` and folds each chosen mode's
+  mana into the spell's price, so legality, the solver and `Game._cast` all
+  price the line the player is actually being offered.
+- **The set, in three places** — `Action.spree_modes` (part of the action's
+  identity and of `key()`, since the seven lines of a three-mode card differ in
+  this field and in nothing else), `StackItem.spree_modes`, and
+  `CardObject.cast_spree_modes`, stamped by `stack.resolve` **before**
+  `spell_effects` run.
+- **`{"spree_mode": n}`** — the set-**membership** sibling of
+  `{"cost_option": n}`: "was mode `n` among those paid", not "is the mode that
+  was paid `n`".
+- **`verify.find_play`** now takes the line buying the most modes, and
+  **`packet.CARD_LEVEL_COST_KEYS`** advertises `spree`.
+
+### Why the plain cast line is withdrawn
+
+702.166a says "one or more", so the unmodified spell is not a legal cast at all.
+`_spree_lines` therefore discards whatever the caller had already built, exactly
+as a mandatory `additional_cost` does — and wholesale, not merely when no mode is
+affordable, because clearing it only in the unpayable case is the same thing as
+never charging it: `verify.find_play` and the heuristic agent both take the first
+line offered. A spree card that cannot afford a single mode is simply not
+castable, rather than castable for its printed cost with none of its text.
+
+### Why a spree mode is a bare mana price
+
+Enforced at load, and load-bearing rather than tidy. Subsets are priced by
+folding each chosen mode's mana into the spell's cost and letting the mana solver
+decide what is affordable. A non-mana half would have to be checked by `can_pay`,
+which is asked **per mode** and never per *combination* — so two modes each
+sacrificing a creature would be offered together to a player with one creature,
+and `pay` does not fail closed. Every printed spree mode is mana.
+
+The loader also refuses fewer than two modes ("one or more" of one thing is one
+thing — that is an `additional_cost`), a mode costing nothing (a price nobody
+would decline is not a choice), `mana_reduction` on a mode (never read, because
+the mana is folded into the spell's price), and `additional_cost`,
+`additional_cost_options`, `additional_optional` or `additional_repeatable`
+beside it — the first two because two slots would both answer "what else does
+this cast owe", `additional_optional` because making the whole spree skippable is
+precisely what 702.166a forbids, and `additional_repeatable` because it would
+sell one mode twice.
+
+### Why gate 5 had to reach past the first line
+
+`find_play` took `matches[0]`, and `_spree_lines` offers the single-mode subsets
+first. Gate 5 would have measured a third of Smuggler's Surprise and passed a
+card whose other two modes did nothing — with no way to tell that from the card
+working, which is the exact failure the behaviour gate exists to catch. So the
+harness asks for the **most** modes, which is `multikicked`'s argument
+("maximum, because zero measures nothing") with one difference that makes it
+unconditional: a spree card has no free line to protect, every line pays a price,
+and `max` is stable, so every card without spree keeps legality's order and the
+front-face preference.
+
+### Cards unblocked
+
+One authored here: **Smuggler's Surprise**, the only gap record in the pool
+naming this capability. Its three mode effects needed nothing new — `mill` with
+an `as` binding plus a `return_from_graveyard` over that binding,
+`put_onto_battlefield` from hand, and `grant_keyword` over a `power >= 4`
+selector — which is what the gap record predicted: closing the cost gap turned
+the card straight into an ordinary answer.
+
+No template was added, so the rest of the spree cycle stays in the agent tier for
+the next `/author-cards` run.
+
+### Guarded by
+
+`tests/unit/test_spree.py`, over one new test-pool card whose three modes sit on
+three **independent** axes — your hand, your life, the opponent's life — so a
+cast that bought two modes and ran one is visible. Every behavioural claim in the
+module is made about *two or more* modes, because a single-mode implementation
+passes any test that only ever picks one: that is the whole point of the file.
+
+It covers all seven subsets being offered, the combinations specifically, the
+702.166a floor in three ways (no empty subset, every line buys a mode, and a card
+that cannot afford one mode is not castable at all), summation of the prices with
+`{0, 2}` as the line that pins it, both chosen effects running, the two modes
+that skip the first still running, the counterfactual that an unbought mode does
+not fire, the subset being part of the action's identity and of `key()`, seven
+distinct `base_label`s so the client cannot collapse the rows, and every loader
+refusal.

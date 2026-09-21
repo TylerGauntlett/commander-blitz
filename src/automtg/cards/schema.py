@@ -996,6 +996,26 @@ class CardModel(BaseModel):
     #: offers one per sacrificeable creature: the player is choosing, and the
     #: choice changes the price.
     additional_cost_options: list[CostModel] = Field(default_factory=list)
+    #: **Spree** (702.166a): "Choose one or more additional costs." Smuggler's
+    #: Surprise. A list of priced modes of which the caster takes a non-empty
+    #: **subset** as the spell is cast, pays every chosen price on top of the
+    #: printed cost, and on resolution runs only the chosen modes' effects.
+    #:
+    #: A sibling of ``additional_cost_options`` rather than a flag on it,
+    #: because that list is *exclusive* by construction: one index is chosen,
+    #: one branch is charged, and `{"cost_option": n}` can only ever name one.
+    #: Writing three spree modes there would let the player buy exactly one of
+    #: them and never two -- a strictly weaker card wearing the right words.
+    #: ``multikicker`` is one fixed price paid N times, not N distinct prices
+    #: with N distinct effects, and `choose_mode` runs at *resolution*, so it
+    #: can neither be a cost nor decide whether the spell is castable.
+    #:
+    #: Legality offers one cast line per **payable non-empty subset** -- never
+    #: the unmodified spell, because 702.166a says "one or more" -- and each
+    #: printed "+ <cost> — <effect>" line is an ``if`` on
+    #: ``{"spree_mode": n}``, which asks whether mode ``n`` was among the modes
+    #: paid for.
+    spree: list[CostModel] = Field(default_factory=list)
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's

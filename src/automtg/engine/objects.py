@@ -584,6 +584,13 @@ class GameObject:
     #: Triumph's two prices lead to one effect and never needed reading back;
     #: a tiered card cannot resolve at all without knowing which was paid.
     cast_cost_option: int | None = None
+    #: **Spree** (702.166a): which of `CardDef.spree`'s priced modes were bought
+    #: as this object was cast, by index. Same contract as `cast_cost_option` --
+    #: stamped before `spell_effects` run, because the whole card is an `if` on
+    #: it -- and a *set* rather than one index, because "choose one or more"
+    #: buys a subset and a spell that ran only the first mode it was charged for
+    #: would be a strictly worse card at the same price.
+    cast_spree_modes: tuple[int, ...] = ()
     #: **Which step this object was cast in** -- addendum's "if you cast this
     #: spell during your main phase". Recorded by `stack.push_spell`, because
     #: that is the moment 608.2 is talking about: the spell can be cast in a

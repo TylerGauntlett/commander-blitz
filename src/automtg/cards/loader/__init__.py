@@ -958,6 +958,70 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             _compile_cost(option, f"{where}.additional_cost_options[{i}]")
             for i, option in enumerate(model.additional_cost_options)
         )
+    # Spree (702.166a): "Choose one or more additional costs." A *subset* of the
+    # prices below is bought as the spell is cast, which is why it is its own
+    # slot and not a flag on `additional_cost_options` -- that one is exclusive
+    # by construction and would sell exactly one of these modes.
+    spree: tuple = ()
+    if model.spree:
+        if len(model.spree) < 2:
+            # "One or more" of one thing is one thing. A single priced mode is
+            # an ordinary `additional_cost`, and writing it here hides it behind
+            # machinery that exists only to offer a choice.
+            raise DslError(
+                f"{where}: 'spree' is a choice of one or more prices, so it needs "
+                f"at least two -- use 'additional_cost' for one"
+            )
+        if model.additional_cost is not None or model.additional_cost_options:
+            # Two slots that both mean "what else does this cast owe", and they
+            # disagree about what a cast line is: one per subset against one per
+            # branch or per number of times paid. Whichever won would be the
+            # card and the other would load clean and never be charged.
+            raise DslError(
+                f"{where}: 'spree' does not compose with 'additional_cost' or "
+                f"'additional_cost_options' -- the spree modes are the additional costs"
+            )
+        if model.additional_repeatable or model.additional_optional:
+            # `additional_optional` would make the *whole* spree skippable,
+            # which is precisely what 702.166a forbids, and `additional_repeatable`
+            # would sell one mode twice. Neither is a printed shape.
+            raise DslError(
+                f"{where}: 'additional_optional' and 'additional_repeatable' do not "
+                f"compose with 'spree' -- 702.166a already says 'one or more', once each"
+            )
+        spree_costs = []
+        for i, option in enumerate(model.spree):
+            at = f"{where}.spree[{i}]"
+            if option.mana_reduction:
+                # `_cast_variant` folds a chosen mode's mana *into* the spell's
+                # price, so nothing ever prices this node on its own -- the same
+                # reason `additional_cost` refuses it.
+                raise DslError(
+                    f"{at}: 'mana_reduction' is not read here -- a spree mode's mana is "
+                    f"folded into the spell's price. Put the reduction on the card's "
+                    f"'cost_reduction' instead"
+                )
+            compiled = _compile_cost(option, at)
+            if not compiled.charges_nothing():
+                # **Mana only**, which is what every printed spree mode is, and
+                # the restriction is load-bearing rather than tidiness: the
+                # subsets are priced by folding each chosen mode's mana into the
+                # spell's cost and letting the solver decide what is affordable,
+                # so a non-mana half would be offered per mode and never checked
+                # *per subset* -- two modes each sacrificing a creature would be
+                # offered together to a player with one.
+                raise DslError(
+                    f"{at}: a spree mode is a mana price -- a non-mana cost here would "
+                    f"be offered in combinations nothing checks the player can pay"
+                )
+            if compiled.mana.is_free():
+                # A mode that costs nothing is a mode nobody would ever decline,
+                # so the choice it claims to offer is not one. Every printed
+                # spree mode carries a price.
+                raise DslError(f"{at}: a spree mode with no cost is not a choice")
+            spree_costs.append(compiled)
+        spree = tuple(spree_costs)
+
     additional_optional = model.additional_optional
     additional_repeatable = model.additional_repeatable
 
@@ -1391,6 +1455,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,
         additional_cost_options=additional_cost_options,
+        spree=spree,
         additional_optional=additional_optional,
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,

@@ -605,7 +605,18 @@ def find_play(
     # `_land_actions` runs before `_cast_actions`, so without this the land line
     # simply wins on ordering -- the same kind of accident `kicked` already
     # disambiguates for a spell offered twice.
-    return next((a for a in matches if not a.second_face), matches[0])
+    front = [a for a in matches if not a.second_face] or matches
+    # **Spree** (702.166a): the line that buys the most modes. `multikicked`'s
+    # argument, with the one difference that makes it unconditional: a spree
+    # card has no free line to protect -- every line pays at least one price --
+    # but legality offers the single-mode subsets first, so taking the first
+    # would measure a third of Smuggler's Surprise and pass a card whose other
+    # two modes do nothing at all. There is no way to tell that from the card
+    # working, which is exactly the failure gate 5 exists to catch.
+    #
+    # `max` is stable, so every card without spree keeps legality's order and
+    # the front-face preference above.
+    return max(front, key=lambda a: len(a.spree_modes))
 
 
 # ----------------------------------------------------------------------

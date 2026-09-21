@@ -48,6 +48,7 @@ def push_spell(
     enters_tapped: bool = False,
     overloaded: bool = False,
     cost_option: int | None = None,
+    spree_modes: tuple[int, ...] = (),
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
@@ -128,6 +129,7 @@ def push_spell(
         enters_tapped=enters_tapped,
         overloaded=overloaded,
         cost_option=cost_option,
+        spree_modes=spree_modes,
         spliced=spliced,
         face_down=face_down,
         modes=modes,
@@ -705,6 +707,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # `spell_effects` would read None and every tier would resolve as none of
     # them.
     obj.cast_cost_option = item.cost_option
+    # Spree (702.166a), at the same moment and for the same reason, and with
+    # more riding on it: every printed mode of a spree card is an `if` on this,
+    # so a set written after `spell_effects` would read empty and a spell the
+    # player paid three extra prices for would do nothing at all.
+    obj.cast_spree_modes = item.spree_modes
     # And the evoke slot, for the same reason. It shipped for Mulldrifter, whose
     # "it's sacrificed when it enters" reads the flag on the *permanent*, so the
     # write after `spell_effects` below was enough -- until an instant paid for

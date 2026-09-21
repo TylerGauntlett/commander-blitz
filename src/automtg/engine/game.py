@@ -748,6 +748,13 @@ class Game:
             flashback=action.flashback,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,
+            # Spree (702.166a). The prices themselves were folded into the
+            # spell's mana cost by `_cast_variant` and paid with the rest of it,
+            # exactly as an additional cost's mana half is -- the loader refuses
+            # a non-mana spree mode, so there is nothing left to charge here.
+            # What the item carries is *which* modes were bought, because each
+            # printed mode is an `if` on that and nothing else records it.
+            spree_modes=action.spree_modes,
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,

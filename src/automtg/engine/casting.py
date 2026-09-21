@@ -6,6 +6,7 @@ read apart.
 
 from __future__ import annotations
 
+from itertools import combinations
 from typing import TYPE_CHECKING
 
 from . import suspend as suspend_mod
@@ -567,6 +568,25 @@ def _cast_options(
             additional_choice=choice,
         ),
     )
+    # Spree (702.166a): "Choose one or more additional costs." One line per
+    # non-empty subset of the priced modes, which is the mechanic: a player
+    # buying Smuggler's Surprise's mill *and* its hexproof pays both prices and
+    # gets both effects, and a version offering one mode at a time would be a
+    # strictly weaker card at the same rate.
+    out = _spree_lines(
+        state,
+        card,
+        out,
+        lambda subset: _cast_variant(
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            extra_generic=extra_generic,
+            spree_modes=subset,
+        ),
+    )
     # Morph: "you may cast this card face down as a 2/2 creature for {3}"
     # (702.37a). A cast variant with **no targets** -- a face-down spell is a
     # nameless 2/2 with no text, so there is nothing on it to target with -- and
@@ -772,6 +792,50 @@ def _charge_additional_cost(
         for times in range(1, _additional_ceiling(state, pid, oid, card, choice) + 1):
             out = out + build(times, choice)
     return out
+
+
+def _spree_lines(
+    state: GameState,
+    card: CardDef,
+    out: list[Action],
+    build,
+) -> list[Action]:
+    """702.166a: "Choose **one or more** additional costs."
+
+    ``build(subset)`` makes the cast line that buys exactly those modes; ``out``
+    is whatever the caller has already built.
+
+    One line per **non-empty subset**, which is the whole of spree and the one
+    thing `additional_cost_options` cannot say: that list sells exactly one
+    branch, so three modes written there would be three cast lines instead of
+    seven, and Smuggler's Surprise would be a card that can never do two things
+    at once however much mana its caster has.
+
+    The lines already built are **withdrawn**, for the reason a mandatory
+    `additional_cost` withdraws them: "one or more" means the unmodified spell
+    is not a legal cast at all, and leaving the plain line in place would make
+    every spree card castable for its printed cost with none of its text.
+    Withdrawn wholesale rather than only when a mode is unaffordable, because
+    clearing it in the unpayable case alone is the same thing as never charging
+    it -- `find_play` and the heuristic agent both take the first line offered.
+
+    Payability is left entirely to the mana solver, which `_cast_variant` runs
+    over the *subset's* folded price. That is why the loader refuses a non-mana
+    spree mode: a per-mode check would say yes twice to a player who can only
+    afford once.
+    """
+    if not card.spree:
+        return out
+    lines: list[Action] = []
+    indices = range(len(card.spree))
+    # Cheapest-shaped first -- one mode before two, and in printed order inside
+    # each size. The client lists them in this order and `verify.find_play`
+    # deliberately reaches past it for the largest, so nothing downstream reads
+    # "the first line" as "the whole card".
+    for size in range(1, len(card.spree) + 1):
+        for subset in combinations(indices, size):
+            lines = lines + build(subset)
+    return lines
 
 
 def _additional_ceiling(
@@ -1088,6 +1152,7 @@ def _cast_variant(
     overloaded: bool = False,
     additional_times: int = 0,
     additional_choice: int | None = None,
+    spree_modes: tuple[int, ...] = (),
     free: bool = False,
     from_library_top: bool = False,
     foretold: bool = False,
@@ -1253,6 +1318,12 @@ def _cast_variant(
             # `branch` rather than `card.additional_cost`, so a modal cost prices
             # the option this line is offering and not some other one.
             cost = cost.plus(branch.mana.scaled(additional_times))
+        for mode in spree_modes:
+            # Spree (702.166a): **every** chosen mode's price, folded in one at
+            # a time. Summed rather than picked, which is the difference between
+            # this and the branch above and the whole reason spree needed its
+            # own slot: a player who chose two modes owes two prices.
+            cost = cost.plus(card.spree[mode].mana)
         # `targets=None` is the generous reading a *gate* has to take: a
         # discount that asks what the spell is aiming at has no tuple to read
         # yet, and refusing here would drop a spell that is affordable once
@@ -1361,6 +1432,14 @@ def _cast_variant(
             # which one this row buys -- otherwise Bitter Triumph draws two
             # identical rows and the player picks blind.
             label_base += f" ({branch.describe()})"
+        if spree_modes:
+            # Which modes this row buys, in the card's own prices. The client
+            # groups rows by `base_label`, so seven spree lines sharing one
+            # label would collapse into a single row and the player would pick
+            # blind between "mill four" and "all three at once".
+            label_base += " (spree " + " ".join(
+                card.spree[mode].describe() for mode in spree_modes
+            ) + ")"
         if pay_generic:
             word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
             label_base += f" ({word} {pay_generic})"
@@ -1394,6 +1473,7 @@ def _cast_variant(
                     overloaded=overloaded,
                     additional_times=additional_times,
                     additional_choice=additional_choice,
+                    spree_modes=spree_modes,
                     cast_free=free,
                     from_library_top=from_library_top,
                     foretold=foretold,
