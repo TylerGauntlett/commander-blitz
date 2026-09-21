@@ -18,7 +18,8 @@ from automtg.engine.effects.values import (
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost
+from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
+from automtg.engine.mana import ManaCost, compile_restriction
 from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -2003,10 +2004,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"ordinary mana is the default and says nothing"
             )
     if op == "add_mana" and effect.get("split") is not None:
-        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
-        # The colours are a list and the size is an `amount`; `mana` says the
-        # opposite thing (a fixed production string) and the two together would
-        # be two answers to one question.
+        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier,
+        # a mana ability; "in any combination of colors" -- Klauth, Unrivaled
+        # Ancient, a triggered one. The colours are a list and the size is an
+        # `amount`; `mana` says the opposite thing (a fixed production string)
+        # and the two together would be two answers to one question.
         if "mana" in effect:
             raise DslError(
                 f"{where}: 'split' names the colours a combination may draw on, so it "
@@ -2014,6 +2016,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["split"], list):
             raise DslError(f"{where}.split: expected a list of mana symbols")
+        colors = [str(c) for c in effect["split"]]
+        if len(colors) < 2:
+            raise DslError(
+                f"{where}.split: a combination needs two or more colours; one colour "
+                f"is an ordinary 'mana' string with an 'amount'"
+            )
+        if unknown := [c for c in colors if c not in MANA_SYMBOLS]:
+            raise DslError(f"{where}.split: unknown mana symbols {unknown}")
+        if "amount" not in effect:
+            # Without it the split has no size, and `_add_split_mana` would add
+            # nothing at all -- a card that prints "add X mana" adding none.
+            raise DslError(
+                f"{where}: a split add_mana needs an 'amount' -- how much mana is "
+                f"being divided. Without it the split has no size"
+            )
+    if "mana_restriction" in effect:
+        # "Spend this mana only to cast spells" on mana an **effect** makes --
+        # Klauth's attack trigger, where the ability-level `mana_restriction`
+        # has no home: that one is compiled onto `Ability` and read at payment
+        # time off an untapped source, and this mana is already in the pool.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'mana_restriction' says what the mana this adds may pay "
+                f"for, and is read by nobody on {op!r}"
+            )
+        # Compiled here as well as at resolution, so a malformed restriction
+        # fails the test suite rather than a game.
+        compile_restriction(effect["mana_restriction"], f"{where}.mana_restriction")
     if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
         # The one non-literal `mana`, and validated as such for the reason
         # `_restriction_name` validates its twin: a near-miss spelling that fell

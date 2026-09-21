@@ -16067,3 +16067,154 @@ from `state.objects` while the trigger fires, draws and loses the life — and
 that the oid it recorded is by then unresolvable, which is the claim the whole
 design rests on. The negative is the same creature and the same spell cast off
 lands: no trigger, no draw, no life lost.
+
+## A ritual off an attack trigger — X in any combination of colours, spendable only on spells — Klauth, Unrivaled Ancient
+
+"Whenever Klauth attacks, add X mana in any combination of colors, where X is the
+total power of attacking creatures. Spend this mana only to cast spells. Until
+end of turn, you don't lose this mana as steps and phases end."
+
+One printed sentence and two independent blockers. Closing either alone still
+left the line unsayable, and each of them, omitted, ships a different card from
+the printed one.
+
+### Tier: A, twice over
+
+No new op, no new `DecisionKind`, no new `EventType`, no API field, and nothing
+in `frontend/`. Two existing keys on an existing op learn to be read at
+resolution, and an existing rules object (`ManaRestriction`) gains a second
+producer. The one thing that is not tier A is the pool itself: `Pip` is a rules
+struct and every reader of `ManaPool` had to be told what the mana is for.
+
+### `split` and `amount`, read at resolution
+
+Both keys existed on `add_mana` and both were compiled **only** inside a mana
+ability: `loader/__init__::_build_ability` reads them under `if
+model.is_mana_ability` into `Ability.mana_split` / `Ability.mana_amount`, and
+the loader refuses `is_mana_ability` on anything but an activated ability. So
+Klauth's attack trigger could never carry them, and written on its `add_mana`
+anyway they were inert — `op_add_mana` read only the literal `mana` string, and
+a split effect has no `mana` string, so the card would have added *nothing*.
+
+The two halves of the family answer the combination differently, and both
+answers are forced:
+
+- A **mana ability** may not stop to ask (605.1a), so the choice is folded into
+  the price. `costs._split_options` builds one option per composition — a
+  power-3 Vivi offers 3+0, 2+1, 1+2, 0+3 — and the payment solver picks the one
+  that covers the spell, which is what a player does at a table.
+- A **triggered ability** uses the stack, has no payment to fold a choice into,
+  and has every right to ask. `ops_mana._add_split_mana` asks: one `ask_mode`
+  over the named colours, per mana. X independent one-mana choices *is* a free
+  division of X among the colours, so **no new `DecisionKind`** — `choose_mode`
+  already answers it, in the client, in the RL encoder and in the authoring
+  verifier's auto-answer table.
+
+`op_add_mana` returns that generator only on the `split` branch. Written as one
+function with a `yield` in it, every `add_mana` in the game would have become a
+generator; `execute_one` delegates to a *returned* generator, which is what lets
+one op have an asking half and a plain-call half.
+
+X is read once, as the trigger resolves, so the loop cannot walk past the number
+it started with. X of zero asks nothing and adds nothing — an attack by a
+0-power creature, which is the printed card.
+
+The near miss is Tanuki Transplanter's shape: a `repeat` whose amount is a
+`power_of` and whose body is an `add_mana` of **one fixed colour** with
+`persists_until_end_of_turn`. It spells the size and the persistence exactly and
+still fixes the colour on the card, so for anything that prints "any combination
+of colors" it is a strictly different — and for a two-colour Dragon, strictly
+worse — card. `tests/unit/test_triggered_split_mana.py` asserts the difference
+as a pool holding four colours at once.
+
+### A restriction on mana an **effect** made
+
+`mana_restriction` said exactly this sentence already, and there was no legal
+place on this card to write it: the loader refuses it without `is_mana_ability`,
+and `is_mana_ability` is refused on a trigger. Downstream, the same wall — a
+restriction lived on `mana.ManaSource`, which exists only for an *untapped*
+ability the payment solver may tap, and `costs.mana_sources` enforces it by
+**withholding the source** before the mana is ever made. That works only because
+a mana ability's mana is tapped at the instant it is spent, which is why all
+nine shipped "Spend this mana only to…" cards are tapped mana abilities.
+
+Klauth's mana is already floating. So the restriction rides the **pip**:
+
+- `mana.Pip` grows a `restriction`, beside `uncounterable` and
+  `persists_through_turn` and for their reason — the printed sentence is about
+  *this* mana, and the pool it lands in also holds mana from a land tapped a
+  moment earlier.
+- `ManaPool.spendable(purpose)` reports the pool as one purpose may spend it,
+  and returns `amounts` untouched when nothing in the pool is restricted, which
+  is every pool in almost every game.
+- `ManaPool.spend(req, purpose)` takes only pips that permit that purpose, and
+  `_take` skips past a forbidden pip rather than reaching for it. The offer and
+  the take must agree: `spendable` is what promised there would be enough left,
+  and a take that reached past the permission would spend the mana on an ability
+  the offer said it could not pay for.
+- Every reader of the pool now asks with the purpose it already had — the four
+  `solve_payment` sites in `costs`, the cast offer in `casting._cast_variant`,
+  and every `max_affordable_x` ceiling in `legality`, `game` and `ops_control`.
+  An X the offer promised has to be an X the payment can meet.
+
+`Pip.permits` and `ManaSource.permits` are one routine (`mana._permits`), so the
+same printed sentence cannot mean two different things depending on which of
+them made the mana.
+
+`{"cast": "any"}` is Klauth's whole line, and the simplest restriction the
+vocabulary holds: the cast half unrestricted, and the activate half **omitted**,
+which `_restriction_groups` reads as "never". The restriction lives entirely in
+the omission.
+
+### Where the compiler lives now
+
+`engine.mana.compile_restriction`, moved from `cards.loader.mana` with
+`_restriction_groups` and `_restriction_name`. A mana ability's restriction is
+compiled once at load onto `Ability`; an effect's spec is still JSON when it
+reaches the stack, so it is compiled as the effect resolves. Two producers, one
+grammar — and `parse_mana_production`, a card-text parser, already lived in
+`engine/mana.py` for the same reason. The loader compiles it as well, in
+`_validate_effect`, so a malformed restriction is a test failure rather than a
+game that stops.
+
+### Load-time refusals
+
+- `split` on an effect now gets the checks the mana-ability branch already
+  made: two or more colours, known symbols, and an `amount`. Without the amount
+  the effect loads clean and adds no mana at all — a card printing "add X mana"
+  that adds none.
+- `mana_restriction` on any op but `add_mana`, where nothing would read it.
+- `mana_restriction` on an `add_mana` **inside a mana ability**, for
+  `persists_until_end_of_turn`'s reason: `activate_mana_ability` adds the parsed
+  symbols rather than running the effect, so the clause would be read by nobody
+  and the card would ship with it silently dropped. It belongs on the ability.
+
+### What needed nothing
+
+"Until end of turn, you don't lose this mana as steps and phases end" was
+already expressible and is reused rather than rebuilt —
+`persists_until_end_of_turn` has ridden the pip since Tanuki Transplanter. The
+size, `{"power_of": {"objects": {"attacking": true, …}}}`, is the existing value
+language: `power_of` over an `objects` selector sums the pool. Flying and haste
+came from the packet's starting point.
+
+### Cards unblocked
+
+One authored here: **Klauth, Unrivaled Ancient**, the gap record that named both
+capabilities. It passes all six gates. The `triggered_split_mana` half is the
+broadly reusable one — any "whenever … attacks, add X mana" whose colours are the
+player's choice.
+
+### Guarded by
+
+`tests/unit/test_triggered_split_mana.py`, over four new test-pool cards
+(`t_tsm_wyrm`, the same trigger with no restriction as the control, a `{1}`
+activated ability the mana may not pay for and a `{1}` instant it may). The
+module covers X as a *total power* rather than a count, a second attacker adding
+its power and not one, a creature left at home not counting, a genuinely mixed
+division, the degenerate all-of-one-colour division, one question per mana, the
+restriction refusing an activation while permitting a cast, the control proving
+the assertion is about the clause and not about effect-made mana, the payment
+actually going through, the mana surviving into the postcombat main phase and
+not into the next turn, `ManaPool.spendable` and `spend` in isolation including
+the take that must skip a forbidden pip, and every load-time refusal.

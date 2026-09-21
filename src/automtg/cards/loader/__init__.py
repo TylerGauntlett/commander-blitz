@@ -43,7 +43,7 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
-from automtg.engine.mana import ManaCost, ManaRestriction
+from automtg.engine.mana import ManaCost, ManaRestriction, compile_restriction
 from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
 
@@ -74,9 +74,6 @@ from .mana import (  # noqa: F401
     _mana_amount,
     _mana_grant,
     _mana_options,
-    _mana_restriction,
-    _restriction_groups,
-    _restriction_name,
     _split_mana_rider,
     _sum_mana,
     _validate_mana_amount,
@@ -2205,7 +2202,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
-        mana_restriction = _mana_restriction(model.mana_restriction, where)
+        mana_restriction = compile_restriction(model.mana_restriction, where)
     if model.mana_uncounterable and not model.is_mana_ability:
         # It rides the mana, so on an ability that makes none it would load and
         # never be read -- a card printing "that spell can't be countered" that

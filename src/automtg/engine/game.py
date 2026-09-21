@@ -977,7 +977,10 @@ class Game:
         if exclude_oid is not None:
             sources = [s for s in sources if s.oid != exclude_oid]
         ceiling = max_affordable_x(
-            cost, state.players[pid].mana_pool, sources, extra_generic=extra_generic
+            cost,
+            state.players[pid].mana_pool.spendable(purpose),
+            sources,
+            extra_generic=extra_generic,
         )
         ctx = EffectContext(state=state, controller=pid, source_oid=None)
         return (

@@ -11,9 +11,9 @@ worst tedium from the UI, at the cost of not being able to deliberately tap the
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from .enums import COLOR_ORDER, COLORLESS, Color
 from .errors import DslError
@@ -659,6 +659,24 @@ class Pip(NamedTuple):
     #: permanent its plain ``{R}`` would hand out haste for free.
     grant: ManaKeywordGrant | None = None
     source_traits: ManaOrigin | None = None
+    #: "Spend this mana only to cast spells" -- Klauth, Unrivaled Ancient.
+    #: ``None``, the default, is ordinary mana.
+    #:
+    #: A *tapped* restricted source never needs this: `costs.mana_sources`
+    #: withholds the source itself, so the restricted mana is never made. Mana an
+    #: **effect** put in the pool has already been made, and the pool is the only
+    #: place left that can remember what it may pay for.
+    restriction: ManaRestriction | None = None
+
+    def permits(self, purpose: SpendPurpose | None) -> bool:
+        """May this pip pay for what ``purpose`` describes?
+
+        The same question :meth:`ManaSource.permits` asks, asked of a unit of
+        mana instead of an untapped ability -- and answered by the same routine,
+        so a restriction cannot mean one thing when a land makes it and another
+        when a trigger does.
+        """
+        return _permits(self.restriction, purpose)
 
 
 @dataclass(frozen=True)
@@ -732,10 +750,21 @@ class ManaPool:
         persists_through_turn: int = -1,
         grant: ManaKeywordGrant | None = None,
         source_traits: ManaOrigin | None = None,
+        restriction: ManaRestriction | None = None,
     ) -> None:
         index = SYMBOL_INDEX[symbol]
         self.amounts[index] += count
-        pip = Pip(source, uncounterable, persists_through_turn, grant, source_traits)
+        # Built by keyword: three separate lanes have added a field to `Pip`,
+        # and a positional call here would silently pass the wrong one the next
+        # time somebody inserts a fourth.
+        pip = Pip(
+            source=source,
+            uncounterable=uncounterable,
+            persists_through_turn=persists_through_turn,
+            grant=grant,
+            source_traits=source_traits,
+            restriction=restriction,
+        )
         self.tags[index].extend([pip] * count)
 
     def add_tuple(
@@ -747,11 +776,44 @@ class ManaPool:
         persists_through_turn: int = -1,
         grant: ManaKeywordGrant | None = None,
         source_traits: ManaOrigin | None = None,
+        restriction: ManaRestriction | None = None,
     ) -> None:
-        pip = Pip(source, uncounterable, persists_through_turn, grant, source_traits)
+        pip = Pip(
+            source=source,
+            uncounterable=uncounterable,
+            persists_through_turn=persists_through_turn,
+            grant=grant,
+            source_traits=source_traits,
+            restriction=restriction,
+        )
         for i, v in enumerate(produced):
             self.amounts[i] += v
             self.tags[i].extend([pip] * v)
+
+    def spendable(self, purpose: SpendPurpose | None = None) -> tuple[int, ...]:
+        """The pool as ``purpose`` may actually spend it, symbol by symbol.
+
+        :func:`solve_payment` plans against six integers, and an unrestricted
+        count would let it plan on mana the payment then cannot take -- a spell
+        offered on Klauth's ritual mana and an *ability* offered on it too, which
+        is the strictly better card the printed line refuses.
+
+        ``None`` means "no particular spell in mind" and withholds every
+        restricted pip, exactly as :meth:`ManaSource.permits` withholds every
+        restricted source: an under-count, which is the safe direction for a
+        number the AI reads.
+
+        Returns ``amounts`` untouched when nothing in the pool is restricted,
+        which is every pool in almost every game.
+        """
+        counts: list[int] | None = None
+        for i, pips in enumerate(self.tags):
+            for pip in pips:
+                if pip.restriction is not None and not pip.permits(purpose):
+                    if counts is None:
+                        counts = list(self.amounts)
+                    counts[i] -= 1
+        return tuple(self.amounts) if counts is None else tuple(counts)
 
     def total(self) -> int:
         return sum(self.amounts)
@@ -780,7 +842,9 @@ class ManaPool:
     def copy(self) -> ManaPool:
         return ManaPool(self.amounts, self.tags)
 
-    def _take(self, index: int, count: int) -> list[Pip]:
+    def _take(
+        self, index: int, count: int, purpose: SpendPurpose | None = None
+    ) -> list[Pip]:
         """Deduct ``count`` pips of one symbol and report who made them.
 
         **Newest first.** Which same-coloured pip a payment consumes is the
@@ -790,18 +854,41 @@ class ManaPool:
         the list. A Path of Ancestry tapped *for* a spell therefore pays for that
         spell, which is the only case the card is ever played for. Recorded as a
         simplification in ``docs/rules-coverage.md``.
+
+        Newest first *among the pips this purpose may spend*: a restricted pip
+        this payment is not allowed to touch is skipped over rather than
+        deducted, and :meth:`spendable` is what promised there would be enough
+        left. The two must agree -- a take that reached past the permission
+        would spend Klauth's mana on an ability while the offer said it could
+        not be.
         """
+        pips = self.tags[index]
+        if all(pip.restriction is None for pip in pips):
+            self.amounts[index] -= count
+            cut = len(pips) - count
+            taken = pips[cut:]
+            del pips[cut:]
+            return taken
+        usable = [i for i, pip in enumerate(pips) if pip.permits(purpose)]
+        if len(usable) < count:
+            raise ValueError("pool cannot cover requirement with this purpose")
+        chosen = usable[len(usable) - count :]
+        taken = [pips[i] for i in chosen]
+        for i in reversed(chosen):
+            del pips[i]
         self.amounts[index] -= count
-        cut = len(self.tags[index]) - count
-        taken = self.tags[index][cut:]
-        del self.tags[index][cut:]
         return taken
 
     def to_dict(self) -> dict[str, int]:
         return {s: self.amounts[i] for i, s in enumerate(SYMBOLS) if self.amounts[i]}
 
-    def spend(self, req: Requirement) -> SpentMana:
+    def spend(self, req: Requirement, purpose: SpendPurpose | None = None) -> SpentMana:
         """Deduct ``req`` from the pool.  Assumes the pool can cover it.
+
+        ``purpose`` is what the mana is being spent on, and must be the same
+        value :meth:`spendable` was asked with when the payment was planned:
+        every count below is read off the *permitted* pips, so a restricted pip
+        is invisible here exactly as it was to the solver.
 
         Returns what the payment consumed: **which colours** -- sunburst and
         converge -- and **which permanents made it** -- Path of Ancestry's "when
@@ -830,6 +917,10 @@ class ManaPool:
         # order keeps one payment's report the same from run to run.
         grants: list[ManaKeywordGrant] = []
 
+        # The pool as this payment may spend it, kept in step with every take
+        # below: a restricted pip is not in these counts and is not taken.
+        avail = list(self.spendable(purpose))
+
         def record(taken: list[Pip]) -> None:
             nonlocal rider
             for pip in taken:
@@ -841,13 +932,17 @@ class ManaPool:
                 if pip.grant is not None and pip.grant not in grants:
                     grants.append(pip.grant)
 
+        def take(index: int, count: int) -> None:
+            avail[index] -= count
+            record(self._take(index, count, purpose))
+
         remaining_generic = req.generic
         for i in range(N_SYMBOLS):
             need = req.colored[i]
             if need:
-                if self.amounts[i] < need:
+                if avail[i] < need:
                     raise ValueError("pool cannot cover colored requirement")
-                record(self._take(i, need))
+                take(i, need)
                 if i < len(COLOR_ORDER):
                     spent.add(COLOR_ORDER[i].value)
         # Hybrid pips choose their half here, and must choose it the *same* way
@@ -855,25 +950,25 @@ class ManaPool:
         # looser rule here could take a symbol the solver was relying on for a
         # coloured pip and strand the payment halfway through.
         if req.hybrid:
-            chosen = assign_hybrid(list(self.amounts), req.hybrid, remaining_generic)
+            chosen = assign_hybrid(list(avail), req.hybrid, remaining_generic)
             if chosen is None:
                 raise ValueError("pool cannot cover hybrid requirement")
             for pip, symbol in zip(req.hybrid, chosen, strict=True):
                 if symbol < 0:
                     remaining_generic += pip.generic or 0
                 else:
-                    record(self._take(symbol, 1))
+                    take(symbol, 1)
                     if symbol < len(COLOR_ORDER):
                         spent.add(COLOR_ORDER[symbol].value)
         # Pay generic from the most plentiful symbols first so scarce colours are
         # preserved for later spells in the same step.  Deterministic by index.
         while remaining_generic > 0:
-            best = max(range(N_SYMBOLS), key=lambda i: (self.amounts[i], -i))
-            if self.amounts[best] <= 0:
+            best = max(range(N_SYMBOLS), key=lambda i: (avail[i], -i))
+            if avail[best] <= 0:
                 raise ValueError("pool cannot cover generic requirement")
-            take = min(self.amounts[best], remaining_generic)
-            record(self._take(best, take))
-            remaining_generic -= take
+            amount = min(avail[best], remaining_generic)
+            take(best, amount)
+            remaining_generic -= amount
             if best < len(COLOR_ORDER):
                 spent.add(COLOR_ORDER[best].value)
         return SpentMana(
@@ -1027,6 +1122,219 @@ class ManaRestriction:
         return self.activate if kind == ACTIVATE else self.cast
 
 
+def _permits(restriction: ManaRestriction | None, purpose: SpendPurpose | None) -> bool:
+    """May mana carrying ``restriction`` pay for what ``purpose`` describes?
+
+    The one answer, asked by both producers of restricted mana -- an untapped
+    ability the solver may tap (:meth:`ManaSource.permits`) and a pip an effect
+    already put in the pool (:meth:`Pip.permits`). Written once so the same
+    printed sentence cannot mean two different things depending on which of them
+    made the mana.
+
+    Both halves of the purpose are asked: the restriction's groups **for that
+    kind** (casting a spell, or activating an ability), and then whether any one
+    group's names are all present.
+
+    ``None`` means "no particular spell in mind", and withholds every restricted
+    source -- an under-count rather than an over-count, which is the safe
+    direction for a number the AI reads.
+    """
+    if restriction is None:
+        return True
+    if purpose is None:
+        return False
+    return any(group.satisfied_by(purpose.names) for group in restriction.groups(purpose.kind))
+
+
+def compile_restriction(spec: Any, where: str) -> ManaRestriction:
+    """ "Spend this mana only to cast …" compiled to a :class:`ManaRestriction`.
+
+    Beside the class it builds rather than in the card loader, for
+    :func:`parse_mana_production`'s reason: both producers of restricted mana
+    need it, and only one of them is a loader. A mana **ability**'s restriction
+    is compiled once at load; an `add_mana` effect's is compiled as it resolves,
+    because an effect's spec stays JSON all the way to the stack.
+
+    A bare string or list is the **cast** half alone, which is what every card
+    printed before Secluded Courtyard says and why the old spelling still means
+    exactly what it meant:
+
+    - ``"creature"`` -- one name, Ancient Ziggurat.
+    - ``["Vampire", "Cleric", "Demon"]`` -- the printed "and/or", which is an
+      any-of: one matching name is enough (Master of Dark Rites).
+
+    An **object** names the halves separately, because the printed sentence
+    does: "…only to cast a creature spell of the chosen type **or activate an
+    ability of** a creature source of the chosen type" gives them different
+    subjects, and a card that says nothing about activating abilities must not
+    permit it.
+
+    ```jsonc
+    "mana_restriction": {
+      "cast":     [["creature", {"chosen_type_of": "self"}]],
+      "activate": [["creature", {"chosen_type_of": "self"}]]
+    }
+    ```
+
+    A nested list is an **all-of**, and this card needs it: "a creature spell
+    **of** the chosen type" is a conjunction, and flattening it into the any-of
+    above would offer the mana for every creature ever printed -- a strictly
+    better card than the printed one.
+
+    ``{"chosen_type_of": "self"}`` is the one entry that is not a literal name.
+    It compiles to :data:`CHOSEN_TYPE` and is substituted per permanent by
+    `costs.resolve_mana_restriction`, because the type does not exist until the
+    permanent is on the battlefield. Spelled the same way `subtypes` filters
+    already spell it (Vanquisher's Banner, Door of Destinies) rather than as a
+    new key meaning the same thing.
+    """
+    if isinstance(spec, Mapping):
+        unknown = sorted(set(spec) - {"cast", "activate"})
+        if unknown:
+            raise DslError(
+                f"{where}: 'mana_restriction' names {unknown}; mana is only ever spent "
+                f"to 'cast' a spell or 'activate' an ability"
+            )
+        restriction = ManaRestriction(
+            cast=_restriction_groups(spec.get("cast"), f"{where}.cast"),
+            activate=_restriction_groups(spec.get("activate"), f"{where}.activate"),
+        )
+        if not restriction.cast and not restriction.activate:
+            raise DslError(
+                f"{where}: 'mana_restriction' permits nothing at all; omit it for ordinary mana"
+            )
+        if spec.get("cast") == WILDCARD and spec.get("activate") == WILDCARD:
+            # Both halves unrestricted is ordinary mana wearing a restriction,
+            # and the one shape that would make `"any"` a way to say nothing.
+            raise DslError(
+                f"{where}: 'mana_restriction' of {WILDCARD!r} on both halves restricts "
+                f"nothing; omit it for ordinary mana"
+            )
+        return restriction
+    if spec == WILDCARD:
+        # A bare restriction is the *cast* half, so a bare wildcard is mana that
+        # pays for every spell ever printed and merely declines to activate an
+        # ability. No card prints that, and the shape is one keystroke from the
+        # line that is meant -- "spend this mana only to activate abilities" --
+        # which it would silently invert into a strictly better card. The
+        # wildcard is only ever one named half of the mapping.
+        raise DslError(
+            f"{where}: a bare {WILDCARD!r} 'mana_restriction' restricts nothing worth "
+            f"saying; name the half it belongs to, as {{{WILDCARD!r}: ...}} under "
+            f"'cast' or 'activate'"
+        )
+    return ManaRestriction(cast=_restriction_groups(spec, where))
+
+
+def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
+    """One half of a restriction: the groups, any of which may be satisfied.
+
+    ``None`` is an omitted half and means "never", which is the whole of how a
+    card that says only "to cast" refuses to fund an activation.
+
+    ``"any"`` is the other end of the same axis: one empty group, which
+    `RestrictionGroup.satisfied_by` satisfies for every purpose of that kind
+    (``required <= names`` with nothing required). "Spend this mana only to
+    **activate abilities**" (Cryptic Trilobite, Omen Hawker) names no type at
+    all, and every group this language can otherwise hold is a set of literal
+    type or subtype names -- there is no name every source has.
+
+    The restriction is real because it lives in the *other* half: with `cast`
+    omitted, this mana can never pay for a spell. That is why the wildcard is
+    not "no restriction", and why both halves being ``"any"`` is refused above.
+
+    Spelled as an explicit word rather than accepted as an empty list, which
+    stays an error: ``[]`` is what a mistake looks like, and the difference
+    between "I meant everything" and "I left this blank" is a strictly better
+    card.
+    """
+    if spec is None:
+        return ()
+    if spec == WILDCARD:
+        return (RestrictionGroup(),)
+    groups = [spec] if isinstance(spec, str) else list(spec)
+    if not groups:
+        raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")
+    out: list[RestrictionGroup] = []
+    for group in groups:
+        entries = [group] if isinstance(group, (str, Mapping)) else list(group)
+        if not entries:
+            raise DslError(
+                f"{where}: an empty group in 'mana_restriction' restricts nothing; "
+                f"omit it for ordinary mana"
+            )
+        required: set[str] = set()
+        forbidden: set[str] = set()
+        for entry in entries:
+            if isinstance(entry, Mapping) and "not" in entry:
+                if set(entry) != {"not"}:
+                    raise DslError(
+                        f"{where}: a negated mana restriction takes only 'not', "
+                        f"not {dict(entry)!r}"
+                    )
+                forbidden.add(_restriction_name(entry["not"], where, negated=True))
+            else:
+                required.add(_restriction_name(entry, where))
+        if not required and not forbidden:
+            raise DslError(
+                f"{where}: an empty group in 'mana_restriction' restricts nothing; "
+                f"omit it for ordinary mana"
+            )
+        # A name on both sides is a group nothing can ever satisfy -- the same
+        # permanently-unspendable mana a typo makes, and worth the same refusal.
+        if overlap := required & forbidden:
+            raise DslError(
+                f"{where}: {sorted(overlap)!r} is both required and forbidden in one "
+                f"'mana_restriction' group, which nothing can satisfy"
+            )
+        out.append(RestrictionGroup(frozenset(required), frozenset(forbidden)))
+    return tuple(out)
+
+
+def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
+    """One name inside a restriction group: a literal, or the chosen type.
+
+    ``negated`` is the `{"not": …}` half, and it accepts literals only. No card
+    prints "spend this only to cast a spell that is *not* the chosen type", and
+    the sentinel would have to survive `costs._resolve_groups` for it to mean
+    anything -- so it is refused here rather than accepted and half-honoured.
+    """
+    if negated and isinstance(entry, Mapping):
+        raise DslError(
+            f"{where}: a negated mana restriction takes a literal type or "
+            f"subtype, not {dict(entry)!r}"
+        )
+    if isinstance(entry, Mapping):
+        # Exactly the one dynamic leaf, and validated as such: a near-miss
+        # spelling that fell through would freeze into a literal name no card
+        # has, producing mana that can never be spent.
+        if set(entry) != {"chosen_type_of"} or entry["chosen_type_of"] != "self":
+            raise DslError(
+                f"{where}: the only dynamic mana restriction is "
+                f'{{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+            )
+        return CHOSEN_TYPE
+    # A card type, a supertype, or a subtype. Subtypes are open-ended in Magic
+    # and there is no closed list to check one against, so the guard is the
+    # weaker "looks like a word": a typo here produces mana that can never be
+    # spent, which is a strictly worse card than the printed one -- the safe
+    # direction, but a silent one, so it is worth the shape check.
+    #
+    # "legendary" was exactly that failure until `costs.spell_purpose` learned to
+    # read supertypes: it passed this check, matched nothing on any card in the
+    # game, and read on the board as a land that taps for nothing.
+    if (
+        not isinstance(entry, str)
+        or not entry
+        or not entry.replace("-", "").replace(" ", "").isalpha()
+    ):
+        raise DslError(
+            f"{where}: unparsable mana restriction {entry!r} "
+            f"(a card type, supertype or subtype, lowercased)"
+        )
+    return entry.lower()
+
+
 @dataclass(frozen=True)
 class ManaSource:
     """One mana ability of one untapped permanent, flattened into its yields.
@@ -1058,24 +1366,8 @@ class ManaSource:
     restriction: ManaRestriction | None = None
 
     def permits(self, purpose: SpendPurpose | None) -> bool:
-        """May this source pay for what ``purpose`` describes?
-
-        Both halves of the purpose are asked: the restriction's groups **for
-        that kind** (casting a spell, or activating an ability), and then whether
-        any one group's names are all present.
-
-        ``None`` means "no particular spell in mind", and withholds every
-        restricted source -- an under-count rather than an over-count, which is
-        the safe direction for a number the AI reads.
-        """
-        if self.restriction is None:
-            return True
-        if purpose is None:
-            return False
-        return any(
-            group.satisfied_by(purpose.names)
-            for group in self.restriction.groups(purpose.kind)
-        )
+        """May this source pay for what ``purpose`` describes?  See :func:`_permits`."""
+        return _permits(self.restriction, purpose)
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)

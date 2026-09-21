@@ -6,7 +6,7 @@
 `mana_restriction` was the right field and had the wrong vocabulary.
 `costs.spell_purpose` built the set of names a restricted source is matched
 against from ``card.types`` and ``card.subtypes`` and never `supertypes`, while
-`loader.mana._restriction_name` accepts any alphabetic word -- so "legendary"
+`mana._restriction_name` accepts any alphabetic word -- so "legendary"
 **loaded clean and matched nothing on any card in the game**.
 
 That is the worst shape a bug can take here. It is not a crash and not a refusal:

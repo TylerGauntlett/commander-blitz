@@ -452,7 +452,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         if (
             max_affordable_x(
                 card.mana_cost,
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 mana_sources(state, pid, purpose=purpose),
                 extra_generic=-discount,
             )
@@ -740,7 +740,7 @@ def _ability_aims(
         if (
             max_affordable_x(
                 most_life_for_mana(state, pid, ability.cost, oid),
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 mana_sources(state, pid, purpose=purpose),
             )
             < 0
@@ -775,7 +775,7 @@ def _ability_aims(
                 sources = [s for s in sources if s.oid != oid]
             ceiling = max_affordable_x(
                 most_life_for_mana(state, pid, ability.cost, oid),
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 sources,
             )
             out_x: list[tuple] = []

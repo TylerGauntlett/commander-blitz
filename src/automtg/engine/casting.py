@@ -1113,8 +1113,12 @@ def _cast_variant(
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same
     # answer -- both go through `spell_purpose`.
-    sources = mana_sources(state, pid, purpose=spell_purpose(card))
-    pool = state.players[pid].mana_pool
+    purpose = spell_purpose(card)
+    sources = mana_sources(state, pid, purpose=purpose)
+    # The pool asked the same question: a pip carrying "spend this mana only to
+    # cast spells" is a restricted *source* that has already been made, and the
+    # offer would otherwise plan on mana this cast is not allowed to take.
+    pool = state.players[pid].mana_pool.spendable(purpose)
 
     # "This spell costs {X} less to cast **this way**": a discount belonging to
     # the variant rather than to the card, so it is read on the branch that

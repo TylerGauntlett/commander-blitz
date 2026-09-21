@@ -101,7 +101,7 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
     which is where the printed "and/or" (an any-of) and "a creature spell **of**
     the chosen type" (an all-of) are told apart.
 
-    The supertypes were the quiet omission. `loader.mana._restriction_name`
+    The supertypes were the quiet omission. `mana._restriction_name`
     accepts any alphabetic word, so "legendary" loaded clean and then matched
     nothing on every card in the game -- mana that was permanently unspendable,
     which reads on the board as a land that taps for nothing rather than as an
@@ -859,7 +859,14 @@ def can_pay_mana(
     if extra_generic:
         req = req.with_generic(req.generic + extra_generic)
     return (
-        solve_payment(req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose))
+        solve_payment(
+            req,
+            # The pool as this purpose may spend it: a pip carrying "spend this
+            # mana only to cast spells" is no more available to an activation
+            # than a restricted *source* is, and the solver plans on integers.
+            state.players[pid].mana_pool.spendable(purpose),
+            mana_sources(state, pid, purpose=purpose),
+        )
         is not None
     )
 
@@ -1061,7 +1068,7 @@ def life_for_mana_range(
     sources = mana_sources(state, pid, purpose=purpose)
     if cost.tap and source_oid is not None:
         sources = [s for s in sources if s.oid != source_oid]
-    pool = state.players[pid].mana_pool
+    pool = state.players[pid].mana_pool.spendable(purpose)
     for bought in range(most + 1):
         remaining, _ = mana.paying_phyrexian(bought)
         req = ability_mana(
@@ -1268,7 +1275,7 @@ def can_pay(
                 ability_mana(
                     state, pid, cost, x, source_oid, ability=ability, targets=targets
                 ),
-                player.mana_pool,
+                player.mana_pool.spendable(purpose),
                 sources,
             )
             is None
@@ -1812,7 +1819,7 @@ def pay_mana(
     sources = mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
         sources = [s for s in sources if s.oid != exclude_oid]
-    payment = solve_payment(req, player.mana_pool, sources)
+    payment = solve_payment(req, player.mana_pool.spendable(purpose), sources)
     if payment is None:
         return False
     for oid, ability_index, option_index in payment.taps:
@@ -1828,7 +1835,7 @@ def pay_mana(
                 "already tapped; the solver must never tap one permanent twice"
             )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
-    spent = player.mana_pool.spend(req)
+    spent = player.mana_pool.spend(req, purpose)
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
