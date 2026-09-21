@@ -127,6 +127,7 @@ from .vocabulary import (  # noqa: F401
     PLAYER_WIDE_STATIC_EFFECTS,
     PLURAL_PLAYER_SPEC_NAMES,
     SOURCE_MOVING_OPS,
+    SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
@@ -233,12 +234,19 @@ def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
     battlefield, where an emblem never is, so an emblem that took the default
     would load clean and never trigger.
 
-    **Triggered abilities only.** That is what `triggers._candidate_abilities`
-    already reads from the command zone (Edgar Markov's eminence). A static is
-    read by several separate walks -- the characteristic layers, the player
-    statics, the cost reductions -- none of which look at the command zone, and
-    an activated ability would have to be offered from it; either would load
-    and do nothing, so both are refused until one is built.
+    **Triggered and static abilities.** Both are read from the command zone:
+    triggers by `triggers._candidate_abilities` (Edgar Markov's eminence), and
+    statics by `characteristics._command_zone_statics` -- which
+    `_battlefield_statics` appends, so the characteristic layers and the cost
+    reductions get them together -- plus the one line
+    `player_statics._active_player_statics` needed for its own separate walk.
+    Statics were refused here while those walks did not exist, because a
+    "creatures you control get +1/+1" emblem would have loaded clean and done
+    nothing; that refusal came down with eminence, since it is the same walk.
+
+    An **activated** ability is still refused: nothing offers one from the
+    command zone, so it would load and do nothing, which is the failure this
+    pass exists to catch.
     """
     out: list[CardDef] = []
     for i, emblem in enumerate(model.emblems):
@@ -247,11 +255,12 @@ def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
             raise DslError(f"{here}: an emblem with no abilities is nothing (114.3)")
         abilities: list[Ability] = []
         for j, ability in enumerate(emblem.abilities):
-            if ability.kind != "triggered":
+            if ability.kind not in ("triggered", "static"):
                 raise DslError(
-                    f"{here}.abilities[{j}]: only triggered abilities work from the "
-                    f"command zone so far, not {ability.kind!r} -- a static or "
-                    f"activated emblem ability would load and never apply"
+                    f"{here}.abilities[{j}]: only triggered and static abilities work "
+                    f"from the command zone so far, not {ability.kind!r} -- nothing "
+                    f"offers an activated emblem ability, so it would load and never "
+                    f"apply"
                 )
             if list(ability.active_zones) not in (["battlefield"], ["command"]):
                 raise DslError(
@@ -2470,7 +2479,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if model.affects_spells is None:
             raise DslError(f"{where}: spell_cost_reduction needs 'affects_spells'")
-        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        unknown = set(model.affects_spells) - SPELL_COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(
                 f"{where}.affects_spells: a spell has a printed face and a caster "
@@ -3162,15 +3171,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # The zone clause needs no separate condition. Being gathered only while the
     # card sits there *is* "as long as this card is in your graveyard", and
     # `characteristics._active_statics` is what enforces it.
+    #
+    # `command` joined the two for eminence (702.106): "as long as The Ur-Dragon
+    # is in the command zone **or on the battlefield**, other Dragon spells you
+    # cast cost {1} less" is one static with both zones on it, because being
+    # gathered from either *is* the "as long as" -- the same argument Anger
+    # makes one zone over. `characteristics._command_zone_statics` and
+    # `player_statics._active_player_statics` are the walks that make it true.
     zones = tuple(Zone(z) for z in model.active_zones)
-    unsupported = set(zones) - {Zone.BATTLEFIELD, Zone.GRAVEYARD}
+    unsupported = set(zones) - {Zone.BATTLEFIELD, Zone.GRAVEYARD, Zone.COMMAND}
     if unsupported:
-        # Only the two the walk actually visits. A static declaring `hand` or
+        # Only the three the walks actually visit. A static declaring `hand` or
         # `exile` would load clean and never once be collected, which is the
         # inert-card failure this pass exists to refuse.
         raise DslError(
-            f"{where}: a static can be active on the battlefield or in a "
-            f"graveyard; nothing collects one in {sorted(z.value for z in unsupported)}"
+            f"{where}: a static can be active on the battlefield, in a graveyard "
+            f"or in the command zone; nothing collects one in "
+            f"{sorted(z.value for z in unsupported)}"
         )
     return Ability(
         kind=AbilityKind.STATIC,

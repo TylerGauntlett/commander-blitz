@@ -840,6 +840,7 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
             if _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
     out.extend(_graveyard_statics(state))
+    out.extend(_command_zone_statics(state))
     return out
 
 
@@ -870,6 +871,52 @@ def _graveyard_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, 
                 if not (ability.is_static and ability.static):
                     continue
                 if Zone.GRAVEYARD not in ability.active_zones:
+                    continue
+                if _static_active(state, obj, ability.static):
+                    out.append((obj, ability.static))
+    return out
+
+
+def _command_zone_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Statics that work from the command zone -- eminence (702.106), and emblems.
+
+    "As long as The Ur-Dragon is in the command zone **or on the battlefield**,
+    other Dragon spells you cast cost {1} less to cast." The zone half of that
+    sentence is *this function*, on `_graveyard_statics`' argument exactly: being
+    gathered while the card sits there **is** the "as long as", so the clause
+    needs no condition of its own, and "or on the battlefield" is then one
+    static with ``active_zones: ["battlefield", "command"]`` rather than two
+    abilities that would have to be kept in step.
+
+    Without this walk the zone was unsayable and the tempting near miss was a
+    battlefield-only discount, which for a nine-mana commander drops the half of
+    eminence that is live for most of the game -- and drops it *silently*, since
+    no authoring expectation key can observe a price.
+
+    Read off the **printed** face for `_graveyard_statics`' reason: `abilities_of`
+    resolves grants and losses against the battlefield and has nothing to say
+    about an object that is not there. An emblem (114.3) is abilities and
+    nothing else, so the printed face is all it ever had.
+
+    Appended last, after the battlefield and graveyard walks, because this list's
+    order is the order effects apply in and an object here has no battlefield
+    timestamp to sort against.
+
+    **The source may be the spell being priced.** A commander is cast *out of*
+    this zone, and `Game._cast` reads `cost_reduction` while `obj.zone` is still
+    `COMMAND` -- so the eminence static is collected against its own card. That
+    is what "other" is for, and `spell_cost_reduction` spends it.
+    """
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for player in state.players:
+        for oid in player.command:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                if not (ability.is_static and ability.static):
+                    continue
+                if Zone.COMMAND not in ability.active_zones:
                     continue
                 if _static_active(state, obj, ability.static):
                     out.append((obj, ability.static))

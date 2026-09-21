@@ -14684,6 +14684,23 @@ One `@register`ed generator over `choose_objects` and `move_object`, one loader
 guard, one test module, the docs. No new decision kind, no new event, no new
 continuous effect, and nothing at all in the server or the frontend.
 
+
+## Eminence — a static that works from the **command zone** — 702.106 / 114.4
+
+### Overview
+
+The Ur-Dragon: *"**Eminence** — As long as The Ur-Dragon is in the command zone
+or on the battlefield, other Dragon spells you cast cost {1} less to cast."*
+
+The effect was already shipped. `spell_cost_reduction` with an `affects_spells`
+filter is Warden of Evos Isle, and it says "other Dragon spells you cast cost
+{1} less" exactly. The **zone** was the whole gap: the engine gathered statics
+from the battlefield and from graveyards and from nowhere else, and the loader
+refused `active_zones: ["command"]` in as many words — *"a static can be active
+on the battlefield or in a graveyard; nothing collects one in ['command']"* — so
+the clause was a load error rather than an inert card. Command-zone support up
+to here was **triggered abilities only** (Edgar Markov, and every emblem).
+
 ### The shape
 
 ```jsonc
@@ -14768,3 +14785,89 @@ checked not to be an error, because the sandbox the authoring gates use gives
 player 0 no commander; the single `ZONE_CHANGE` is read off the event log;
 `COMMANDER_REPLACED_ZONES` is pinned; and the loader's refusal of a return with
 no `objects`.
+
+// The Ur-Dragon. One static, two zones -- "or on the battlefield" is the
+// second entry in `active_zones`, not a second ability.
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "active_zones": ["battlefield", "command"],
+  "affects_spells": { "controller": "you", "subtypes": ["Dragon"],
+                      "exclude_self": true },
+  "amount": { "const": 1 } }
+```
+
+**The zone clause needs no condition**, on Anger's argument one zone over: being
+gathered while the card sits there *is* the "as long as", so
+`static_condition_keys` gained nothing and a card that wrote the zone twice
+would be saying it twice.
+
+`characteristics._command_zone_statics` is the walk, built like
+`_graveyard_statics` and appended to the same list, so the characteristic
+layers and `cost_reduction.spell_cost_reduction` get it together.
+`player_statics._active_player_statics` walks the battlefield itself rather than
+reading `_battlefield_statics`, so it needed its own line — which is what makes
+a **player-wide** command-zone static work at all.
+
+### `exclude_self` on a spell filter — the word the command zone made necessary
+
+"**Other** Dragon spells you cast." A permanent's own spell is never on the
+stack while that permanent is on the battlefield, so no battlefield static ever
+needed the word and `SPELL_FILTER_KEYS` never carried it. A commander's is:
+`Game._cast` reads `cost_reduction` while `obj.zone` is still `COMMAND`, so the
+eminence static is gathered against its own card, and without the word The
+Ur-Dragon would discount its own nine-mana cast by the {1} it prints for
+everything else.
+
+Read by `spell_cost_reduction` itself rather than by `_matches_printed`, which
+is handed a card face and has no source to compare it against, and kept in
+`SPELL_COST_REDUCTION_FILTER_KEYS` rather than the shared set so
+`cast_from_graveyard` still refuses a word that would do nothing there. The
+comparison is by card id, which in a singleton format is object identity.
+
+### Emblem statics, the second item it closes
+
+`loader._compile_emblems` refused a static emblem ability in its own docstring,
+and named this exact walk as the reason: *"a static is read by several separate
+walks … none of which look at the command zone"*. An emblem is only ever in the
+command zone (114.1), so it is the same question one card type over, and the
+refusal came down with eminence. *"Creatures you control get +1/+1"* and *"You
+may play an additional land on each of your turns"* now work as emblem
+abilities. An **activated** emblem ability is still refused: nothing offers an
+activation from the command zone, so it would load and do nothing.
+
+### The trap, and why the test is the only thing that could catch it
+
+A cost reduction is invisible to every authoring expectation key. The sandbox
+casts the card from hand onto a board with no other Dragons, declines combat, and
+no `expect` can observe a price — so a battlefield-only approximation passes all
+six gates while silently dropping the half of eminence that matters most: the
+discount while the commander sits in the command zone, which is where a
+nine-mana commander is for most of the game, and the only reason the ability is
+worth printing. That is why this was triaged against the engine rather than
+against the harness, and why `t_battlefield_dragon` is kept live as the
+counterfactual.
+
+### Cards unblocked
+
+The Ur-Dragon itself, whose other two lines were already expressible — `flying`
+is a printed keyword, and "Whenever one or more Dragons you control attack, draw
+that many cards…" is `you_attack` with an `exists` **condition** over the
+`attackers` binding (not a `filter`, which never fires: `you_attack` is absent
+from `OBJECT_SUBJECT_TRIGGERS`, so `_matches` finds no subject and returns
+False). Beyond it, every eminence card whose eminence line is a static rather
+than a trigger, and the emblem statics above.
+
+### Guarded by
+
+`tests/unit/test_command_zone_static.py`. The load-bearing test is
+`TestTheCounterfactualIsDeadWhereItMatters`: `t_battlefield_dragon` is
+byte-for-byte the same static with `active_zones` omitted, and the two are
+asserted to agree on the battlefield and with nothing on the table, and to
+disagree in exactly the zone the card is about. Beside that: the cast actually
+being *offered* at the reduced price on four Mountains, which legality and
+payment reach through one function; "other" refusing the commander its own
+discount, with the filter counterfactual showing the word is the only thing
+doing it; a commander's ordinary battlefield anthem staying dead while it waits
+in the command zone, which is the inverse failure; emblem statics reaching both
+the characteristic layers and the player-wide walk, and reaching only the seat
+that got the emblem; and the loader admitting `command`, still refusing `hand`,
+and still refusing `exclude_self` where no price could read it.

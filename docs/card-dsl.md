@@ -5700,8 +5700,9 @@ cannot target (605.1a), so they were never mana abilities to begin with.
 
 Anger, and the Incarnation cycle. `active_zones` was already read on activated
 and triggered abilities; a static reads it too, and only `battlefield` (the
-default) and `graveyard` are accepted — those are the two zones the engine walks
-for statics, and one declaring `hand` would load clean and never be gathered.
+default), `graveyard` and `command` are accepted — those are the three zones the
+engine walks for statics, and one declaring `hand` would load clean and never be
+gathered.
 
 **The zone clause needs no condition.** Being collected only while the card sits
 in a graveyard *is* "as long as this card is in your graveyard", so
@@ -5711,6 +5712,38 @@ ordinary static `condition`.
 Getting this wrong is not a card that does nothing, it is a card that does the
 **inverse**: without `active_zones` the anthem switches on while Anger is a 2/2
 in play and switches off when it dies, which is exactly when it should start.
+
+### Eminence — a static that works from the command zone
+
+```jsonc
+// The Ur-Dragon — "Eminence — As long as The Ur-Dragon is in the command zone
+// or on the battlefield, other Dragon spells you cast cost {1} less to cast."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "active_zones": ["battlefield", "command"],
+  "affects_spells": { "controller": "you", "subtypes": ["Dragon"],
+                      "exclude_self": true },
+  "amount": { "const": 1 } }
+```
+
+Eminence (702.106), and every other "as long as this is in the command zone"
+static. **One ability, two zones** — "or on the battlefield" is the second entry
+in `active_zones`, not a second copy of the static, because being gathered from
+either zone *is* the "as long as" on exactly Anger's argument above. Do not
+write a condition for the zone.
+
+**`exclude_self` for "other".** `affects_spells` accepts it only on a
+`spell_cost_reduction`, and this is where it earns its keep: a commander is cast
+*out of* the zone its own eminence static is read from, so without the word The
+Ur-Dragon discounts its own nine-mana cast by the {1} it prints for everything
+else. On the battlefield the word is inert — a permanent's own spell is never on
+the stack while that permanent is in play — which is why it was not there
+before.
+
+**Nothing observes this from a card's expectation.** A price is invisible to
+every authoring expectation key, so a battlefield-only approximation passes all
+six gates while dropping the half of eminence that is live for most of the game.
+If you write an eminence static, the thing to assert is a unit test, not an
+`expect`.
 
 ### `choose_permanents` — marking without acting
 
@@ -6351,10 +6384,13 @@ with abilities and no other characteristics, and nothing removes it. So:
   command zone, and refuses any other zone.
 - **The source may be gone.** An ultimate usually spends the last loyalty; the op
   reads the card the ability was activated from, not the board.
-- **Triggered abilities only, so far.** An emblem static ("Creatures you control
-  get +1/+1") or activated ability ("Tap an untapped artifact you control: This
-  emblem deals 1 damage…") is refused at load time: the static walks and the
-  activation offer do not look at the command zone, so either would load and do
+- **Triggered and static abilities.** An emblem static ("Creatures you control
+  get +1/+1", "You may play an additional land on each of your turns") works
+  from the command zone like the triggers do — see
+  [Eminence](#eminence--a-static-that-works-from-the-command-zone), which is the
+  walk it rides on. An **activated** emblem ability ("Tap an untapped artifact
+  you control: This emblem deals 1 damage…") is still refused at load time:
+  nothing offers an activation from the command zone, so it would load and do
   nothing. The loader also refuses an emblem no `emblem` op gives, an index past
   the end, an empty emblem, and `source: "self"` on an emblem trigger (nothing
   ever happens *to* an emblem).

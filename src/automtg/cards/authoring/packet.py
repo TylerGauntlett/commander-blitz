@@ -782,8 +782,19 @@ def reference() -> dict:
             " the loader puts them in the command zone -- and gives one with the"
             " `emblem` op: `{\"op\": \"emblem\", \"player\": \"you\" | {\"target\":"
             " \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the"
-            " emblem is the player who got it. Only triggered abilities may be on"
-            " an emblem so far; a static or activated one is a gap.",
+            " emblem is the player who got it. Triggered and static abilities"
+            " may both be on an emblem; an activated one is still a gap,"
+            " because nothing offers an activation from the command zone.",
+            "Eminence and any other static that works from the command zone is"
+            " `active_zones` on the static: \"As long as this is in the command"
+            " zone or on the battlefield, ...\" is one ability with"
+            " `\"active_zones\": [\"battlefield\", \"command\"]`, because being"
+            " gathered from either zone IS the \"as long as\" -- the same"
+            " argument as `[\"graveyard\"]` on Anger. Do not write a condition"
+            " for the zone. \"**Other** ... spells you cast cost {N} less\" adds"
+            " `\"exclude_self\": true` to a `spell_cost_reduction`'s"
+            " `affects_spells`, which matters exactly here: a commander is cast"
+            " out of the zone its own eminence static is read from.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"
             " with `attached_to`, a selector naming the host -- never"
             " `create_token` then `attach`, which makes the Role even when the"

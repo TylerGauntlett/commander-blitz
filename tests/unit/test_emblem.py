@@ -259,7 +259,12 @@ class TestTheLoader:
         with pytest.raises(DslError, match="no abilities"):
             compile_card(walker(emblems=[{"abilities": []}]))
 
-    def test_a_static_emblem_ability_is_refused_rather_than_inert(self):
+    def test_a_static_emblem_ability_works_from_the_command_zone(self):
+        """Refused until `characteristics._command_zone_statics` existed.
+
+        See tests/unit/test_command_zone_static.py, which is where the walk and
+        the emblem statics that ride on it are asserted.
+        """
         static = {
             "kind": "static",
             "text": "Creatures you control get +1/+1.",
@@ -268,8 +273,21 @@ class TestTheLoader:
             "power": 1,
             "toughness": 1,
         }
-        with pytest.raises(DslError, match="only triggered abilities"):
-            compile_card(walker(emblems=[{"abilities": [static]}]))
+        card = compile_card(walker(emblems=[{"abilities": [static]}]))
+        (emblem,) = card.emblems
+        assert emblem.abilities[0].active_zones == (Zone.COMMAND,)
+
+    def test_an_activated_emblem_ability_is_refused_rather_than_inert(self):
+        """Nothing offers an activation from the command zone, so it would
+        load clean and never once be playable."""
+        activated = {
+            "kind": "activated",
+            "text": "{T}: You gain 1 life.",
+            "cost": {"tap": True},
+            "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}],
+        }
+        with pytest.raises(DslError, match="triggered and static"):
+            compile_card(walker(emblems=[{"abilities": [activated]}]))
 
     def test_an_emblem_ability_elsewhere_than_the_command_zone_is_refused(self):
         with pytest.raises(DslError, match="command zone"):

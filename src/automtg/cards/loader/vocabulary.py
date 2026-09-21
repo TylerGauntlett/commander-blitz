@@ -592,6 +592,21 @@ SPELL_FILTER_KEYS = frozenset(
     }
 )
 
+#: `SPELL_FILTER_KEYS` plus the one word only a *price* can act on.
+#:
+#: "**Other** Dragon spells you cast cost {1} less" -- The Ur-Dragon. Read by
+#: `player_statics.spell_cost_reduction` itself rather than by
+#: `_matches_printed`, which is handed a card face and has no source to compare
+#: it against, and kept out of the shared set so `cast_from_graveyard` -- whose
+#: permission is offered from a zone its own source is never in -- still refuses
+#: a word that would do nothing there.
+#:
+#: Unsayable before eminence, and unnecessary too: a permanent's own spell is
+#: never on the stack while that permanent is on the battlefield. A commander's
+#: is, because the command zone its eminence static is gathered from is the very
+#: zone it is cast out of.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
 #: so that no static can depend on another static's output.

@@ -57,6 +57,14 @@ def _active_player_statics(
     The source is yielded beside the static because two of the callers need it:
     `affects_player` is resolved against its controller, and a `condition`'s
     "you" and its `counters` head are both relative to the permanent carrying it.
+
+    **The command zone too**, since eminence and emblems put statics there. This
+    is the third of the three separate walks `_compile_emblems` used to name when
+    it refused an emblem static -- the characteristic layers and the cost
+    reductions both reach `characteristics._command_zone_statics` through
+    `_battlefield_statics`, and this one has its own walk and so needs its own
+    line. An emblem is only ever in the command zone (114.1), so a player-wide
+    emblem static that this walk did not see would load clean and grant nothing.
     """
     for oid in state.battlefield:
         obj = state.objects.get(oid)
@@ -76,6 +84,26 @@ def _active_player_statics(
             if not _static_active(state, obj, static):
                 continue
             yield obj, static
+    for player in state.players:
+        for oid in player.command:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                static = ability.static
+                if not ability.is_static or not static:
+                    continue
+                if static.get("effect") != effect:
+                    continue
+                if Zone.COMMAND not in ability.active_zones:
+                    # A battlefield static on a commander waiting in the command
+                    # zone -- which is every commander with an anthem. Not active
+                    # here, and letting it through would be the inverse of the
+                    # printed card, exactly as it is for Anger on the battlefield.
+                    continue
+                if not _static_active(state, obj, static):
+                    continue
+                yield obj, static
 
 
 def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> bool:
@@ -665,6 +693,18 @@ def spell_cost_reduction(
     function both legality and payment already call, so a spell offered at the
     reduced price is also paid at it.
 
+    ``exclude_self`` is the printed word "**other**" -- "other Dragon spells you
+    cast cost {1} less" (The Ur-Dragon). It only became sayable, and necessary,
+    with the command zone: a commander is cast *out of* the zone its own
+    eminence static is collected from, and `Game._cast` prices the spell while
+    `obj.zone` is still `COMMAND`, so without this The Ur-Dragon would discount
+    its own nine-mana cast by the {1} it prints for everything else. Matched on
+    the **card** rather than the object, because this function is handed a
+    `CardDef` and never an oid: a singleton format makes the two the same
+    question, and the divergence it leaves -- a second physical copy of the same
+    card, which no Commander deck may run -- is smaller than threading an oid
+    through three pricing call sites that have no use for it.
+
     ``targeting`` is the clause that reads the **cast** rather than the board --
     "Aura spells you cast *that target enchanted creature*" (Strong Back) -- and
     is matched against the refs the cast chose, as an ordinary static filter
@@ -687,6 +727,8 @@ def spell_cost_reduction(
         if who == "you" and source_obj.controller != pid:
             continue
         if who == "opponent" and source_obj.controller == pid:
+            continue
+        if filt.get("exclude_self") and card.id == state.card_of(source_obj).id:
             continue
         # "Creature spells you cast **of the chosen type** cost {1} less."
         # Herald's Horn. The substitution needs the permanent that made the
