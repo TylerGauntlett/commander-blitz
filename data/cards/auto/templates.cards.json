@@ -27051,6 +27051,35 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Dragon"
+            ]
+          },
+          "effect": "free_cast_permission",
+          "kind": "static",
+          "text": "You may cast Dragon spells without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dracogenesis",
+      "mana_cost": "{6}{R}{R}",
+      "name": "Dracogenesis",
+      "oracle_text": "You may cast Dragon spells without paying their mana costs.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_token": {
             "types": [
               "Artifact"

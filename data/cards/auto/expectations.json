@@ -2433,6 +2433,10 @@
   "douser_of_lights": {
     "zone": "battlefield"
   },
+  "dracogenesis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "draconic_visitor": {
     "battlefield_count": 33,
     "zone": "battlefield"

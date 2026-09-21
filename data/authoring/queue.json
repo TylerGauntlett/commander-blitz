@@ -72822,12 +72822,12 @@
     },
     "Dracogenesis": {
       "edhrec_rank": 2356,
-      "gate": "template",
+      "gate": null,
       "name": "Dracogenesis",
-      "reason": "no template for: You may cast Dragon spells without paying their mana costs",
+      "reason": "",
       "scryfall_id": "4ea86de4-64d0-445f-b83a-f2c41d54462a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Draconautics Engineer": {
