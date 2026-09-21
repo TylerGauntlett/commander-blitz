@@ -12752,12 +12752,12 @@
     },
     "Arena of Glory": {
       "edhrec_rank": 377,
-      "gate": "template",
+      "gate": null,
       "name": "Arena of Glory",
-      "reason": "no template for: {R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains",
+      "reason": "",
       "scryfall_id": "7230f119-b663-483c-aa9b-eb22259fcc2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Arena of the Ancients": {

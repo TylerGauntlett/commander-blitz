@@ -462,6 +462,10 @@
   "ardent_militia": {
     "zone": "battlefield"
   },
+  "arena_of_glory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "argothian_opportunist": {
     "zone": "battlefield"
   },

@@ -4909,6 +4909,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}."
+        },
+        {
+          "cost": {
+            "exert": true,
+            "mana": "{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            },
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_grant": {
+            "keywords": [
+              "haste"
+            ],
+            "spell_types": [
+              "Creature"
+            ]
+          },
+          "text": "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "arena_of_glory",
+      "mana_cost": "",
+      "name": "Arena of Glory",
+      "oracle_text": "This land enters tapped unless you control a Mountain.\n{T}: Add {R}.\n{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "subtypes": [
+                  "Mountain"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
