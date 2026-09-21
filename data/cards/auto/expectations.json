@@ -5038,6 +5038,10 @@
   "kinjalli_s_sunwing": {
     "zone": "battlefield"
   },
+  "kinnan_bonder_prodigy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kiora_behemoth_beckoner": {
     "battlefield_count": 33,
     "counters": {

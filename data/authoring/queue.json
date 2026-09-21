@@ -149312,12 +149312,12 @@
     },
     "Kinnan, Bonder Prodigy": {
       "edhrec_rank": 1351,
-      "gate": "template",
+      "gate": null,
       "name": "Kinnan, Bonder Prodigy",
-      "reason": "no template for: Whenever you tap a nonland permanent for mana, add one mana of any type that permanent pro",
+      "reason": "",
       "scryfall_id": "e141f975-945e-4e2c-ac04-6083b5bdaf16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kinsbaile Aspirant": {
