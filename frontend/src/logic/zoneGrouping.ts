@@ -35,6 +35,10 @@ export const LANE_LABELS: Record<Lane, string> = {
  * Creature beats land, so a creature-land is where its body can be blocked
  * rather than where it taps -- the same call `laneFor` has always made.
  *
+ * Battles ride with them for exactly that reason -- 506.2 makes a battle the
+ * third thing an attack can be declared against, so a battle parked in the
+ * artifacts row would be a defender you cannot aim at.
+ *
  * Planeswalkers ride with the creatures: they are what combat is pointed at, so
  * they belong on the line combat is declared across, not in a leftover row.
  *
@@ -48,6 +52,7 @@ export function laneFor(card: CardView): Lane {
   if (card.attached_to != null) return "Creatures";
   if (card.types.includes("Creature")) return "Creatures";
   if (card.types.includes("Planeswalker")) return "Creatures";
+  if (card.types.includes("Battle")) return "Creatures";
   if (card.types.includes("Land")) return "Lands";
   if (card.subtypes.includes("Aura") || card.subtypes.includes("Equipment")) return "Creatures";
   return "Artifacts & Enchantments";

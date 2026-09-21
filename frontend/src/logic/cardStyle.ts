@@ -32,6 +32,7 @@ export type TypeTone =
   | "instant"
   | "sorcery"
   | "planeswalker"
+  | "battle"
   | "other";
 
 /**
@@ -45,6 +46,7 @@ const TYPE_PRECEDENCE: ReadonlyArray<[string, TypeTone]> = [
   ["Land", "land"],
   ["Creature", "creature"],
   ["Planeswalker", "planeswalker"],
+  ["Battle", "battle"],
   ["Instant", "instant"],
   ["Sorcery", "sorcery"],
   ["Enchantment", "enchantment"],
@@ -81,6 +83,7 @@ const TYPE_GLYPHS: Record<TypeTone, string> = {
   instant: "»", // guillemet, reads as "any time"
   sorcery: "●", // filled circle
   planeswalker: "★", // star
+  battle: "▼", // inverted triangle, a shield under siege
   other: "·", // middle dot
 };
 
