@@ -41812,12 +41812,12 @@
     },
     "Cavern-Hoard Dragon": {
       "edhrec_rank": 1448,
-      "gate": "template",
+      "gate": null,
       "name": "Cavern-Hoard Dragon",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the greatest number of artifacts an opponent",
+      "reason": "",
       "scryfall_id": "e70e4fba-4217-472a-9adb-f7d63424ef2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cavernous Maw": {

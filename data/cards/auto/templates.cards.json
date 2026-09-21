@@ -15905,6 +15905,69 @@
         {
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": {
+                    "binding": "event_player"
+                  },
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you create a Treasure token for each artifact that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "greatest_count": {
+          "controller": "opponent",
+          "types": [
+            "Artifact"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "cavern_hoard_dragon",
+      "keywords": [
+        "flying",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{7}{R}{R}",
+      "name": "Cavern-Hoard Dragon",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest number of artifacts an opponent controls.\nFlying, trample, haste\nWhenever this creature deals combat damage to a player, you create a Treasure token for each artifact that player controls.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }

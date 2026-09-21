@@ -1448,6 +1448,18 @@
       "graveyard"
     ]
   },
+  "cavern_hoard_dragon": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "trample",
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "cavern_of_souls": {
     "battlefield_count": 33,
     "zone": "battlefield"
