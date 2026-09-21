@@ -180262,12 +180262,12 @@
     },
     "Mox Diamond": {
       "edhrec_rank": 246,
-      "gate": "template",
+      "gate": null,
       "name": "Mox Diamond",
-      "reason": "no template for: If this artifact would enter, you may discard a land card instead. If you do, put this art",
+      "reason": "",
       "scryfall_id": "fadb218d-29e2-42d1-a7a1-1066741d63ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mox Emerald": {

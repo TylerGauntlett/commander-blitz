@@ -6163,6 +6163,16 @@
   "mountain_valley": {
     "zone": "battlefield"
   },
+  "mox_diamond": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "mox_emerald": {
     "zone": "battlefield"
   },
