@@ -275182,12 +275182,12 @@
     },
     "Tannuk, Steadfast Second": {
       "edhrec_rank": 4769,
-      "gate": "template",
+      "gate": null,
       "name": "Tannuk, Steadfast Second",
-      "reason": "no template for: Other creatures you control have haste",
+      "reason": "",
       "scryfall_id": "44607ed3-9523-40ac-9f61-0edd011cf762",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tanufel Rimespeaker": {

@@ -9526,6 +9526,16 @@
   "tanglepool_bridge": {
     "zone": "battlefield"
   },
+  "tannuk_steadfast_second": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "tanuki_transplanter": {
     "battlefield_count": 33,
     "zone": "battlefield"
