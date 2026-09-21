@@ -46,7 +46,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
 import { stopId } from "../../input/stops";
-import { artUrl } from "../../logic/cardArt";
+import { artUrlFor } from "../../logic/cardArt";
 import { manaPips } from "../../logic/cardStyle";
 import { commandersOf } from "../../logic/zoneGrouping";
 import { bouncy } from "../../motion/springs";
@@ -105,11 +105,12 @@ interface PlinthProps {
 
 function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: PlinthProps) {
   const images = useUiStore((s) => s.images);
+  const seatImages = useUiStore((s) => s.seatImages);
   const [broken, setBroken] = useState(false);
   // Three states, and the last two differ: `undefined` means the image map has
   // not arrived, and drawing the "no art" plate there would flash a hatched
   // placeholder on every first paint. See logic/cardArt.ts.
-  const art = artUrl(images, card.card_id);
+  const art = artUrlFor(images, seatImages, card);
   const showArt = art !== undefined && art !== null && !broken;
 
   const state = commanderState(card, castable);

@@ -16,7 +16,7 @@ somebody a game and an hour working out why.
 ## The round trip
 
 ```
-paste  ->  moxfield.py   fetch the list        (names and quantities only)
+paste  ->  moxfield.py   fetch the list        (names, quantities, printings)
        ->  importer.py   reconcile each name against our catalog
        ->  proxy.py      generate what nobody wrote
        ->  data/generated/                     (gitignored)
@@ -28,11 +28,25 @@ paste  ->  moxfield.py   fetch the list        (names and quantities only)
 `api2.moxfield.com` — that was `/v2/cards/search/user`, a different endpoint, and
 it is still true of that one.
 
-**Only three things are read from Moxfield**: a card's name, its quantity, and
-which board it was in. Every characteristic comes from our own
-`data/catalog/cards.sqlite`, so an imported card's id, art and colour identity
-agree with what `/api/catalog` already says. Supporting Archidekt later is an
-adapter, not a second card pipeline.
+**What a card *is* comes from us, not from Moxfield**: a card's name, its
+quantity and which board it was in are all that identify it, and every
+characteristic is read from our own `data/catalog/cards.sqlite`, so an imported
+card's id and colour identity agree with what `/api/catalog` already says.
+Supporting Archidekt later is an adapter, not a second card pipeline.
+
+**Art is the exception.** Which of a card's printings the author chose is not a
+characteristic we can derive — the catalog keeps one printing per card *name*,
+so asking it gives everybody the same Sol Ring and the same Forest, and a deck
+stops being recognisable as yours. It is a choice, and only the source list
+knows it, so the printing's `scryfall_id` is carried through (with `artist`,
+`set` and `cn` alongside, for whoever reads the deck file later).
+
+Those land in the deck file as `printings: {card_id: {...}}` and are applied
+**per seat**: two players can run the same card and want different
+illustrations, so a seat's choice never leaks into the global art map or onto
+anybody else's board. See `docs/card-catalog.md` for how the three layers
+stack. A deck imported before this existed simply has no `printings` and keeps
+the catalog's pick — re-import it to pick up its own art.
 
 ## Three outcomes per card
 

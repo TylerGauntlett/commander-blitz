@@ -7,6 +7,9 @@
  * `CardFace` renders bare in unit tests with no `QueryClientProvider` around
  * it, and a card must never depend on one.
  *
+ * Scoped to a game once there is one -- which is also what makes the per-seat
+ * layer possible at all: only a game says which deck sits at which seat.
+ *
  * Scoped to a game once there is one. Unscoped, the response carries every card
  * the server knows, and deck import means that is no longer a couple of hundred
  * -- a machine with twenty imported decks would send thousands of entries to
@@ -34,6 +37,6 @@ export function useImages(gameId?: string): void {
   });
 
   useEffect(() => {
-    if (data) setImages(data.images);
+    if (data) setImages(data.images, data.seats ?? null);
   }, [data, setImages]);
 }

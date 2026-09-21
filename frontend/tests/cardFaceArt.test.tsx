@@ -208,3 +208,42 @@ describe("when the card has no printing", () => {
     expect(container.querySelector(".face__art--none .watermark-row")).not.toBeNull();
   });
 });
+
+describe("a deck's own printing", () => {
+  /**
+   * The point of the whole per-seat layer: the illustration the deck's author
+   * chose on Moxfield, on the cards that player owns and nobody else's.
+   */
+  const seats = {
+    "0": {
+      forest: {
+        card_id: "forest",
+        art: "/art/forest.jpg?p=11112222-3333-4444-5555-666677778888",
+        artist: "Sam Burley",
+      },
+    },
+  };
+
+  beforeEach(() => {
+    useUiStore.setState({
+      images: { forest: { card_id: "forest", art: "/art/forest.jpg", artist: "Leon Tukker" } },
+      seatImages: seats,
+    });
+  });
+
+  afterEach(() => useUiStore.setState({ seatImages: null }));
+
+  it("draws it for the seat that owns the card", () => {
+    const { container } = render(<CardFace card={{ ...forest, owner: 0 }} />);
+    expect(container.querySelector<HTMLImageElement>(".face__art-img")?.src).toContain(
+      "?p=11112222-3333-4444-5555-666677778888",
+    );
+  });
+
+  it("leaves the opponent's copy on the catalog's printing", () => {
+    const { container } = render(<CardFace card={{ ...forest, owner: 1 }} />);
+    const src = container.querySelector<HTMLImageElement>(".face__art-img")?.src;
+    expect(src).toContain("/art/forest.jpg");
+    expect(src).not.toContain("?p=");
+  });
+});

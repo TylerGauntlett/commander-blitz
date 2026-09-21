@@ -168,6 +168,10 @@ class DeckList:
     ratings: dict | None = None
     strategy: str = ""
     signature: tuple[dict, ...] = ()
+    #: ``card id -> {scryfall_id, artist, set_code, collector_number}``: the
+    #: printings the source list chose.  Empty for a precon and for anything
+    #: imported before the importer recorded them.  See ``DeckModel.printings``.
+    printings: dict[str, dict] = field(default_factory=dict)
 
     def expanded(self) -> list[str]:
         """The 99 non-commander cards, one entry per physical card."""
@@ -198,6 +202,7 @@ class DeckList:
             ratings=None if model.ratings is None else model.ratings.model_dump(),
             strategy=model.strategy,
             signature=tuple(s.model_dump() for s in model.signature),
+            printings={cid: p.model_dump() for cid, p in model.printings.items()},
         )
 
 

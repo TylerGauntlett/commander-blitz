@@ -4,7 +4,9 @@
    "cards": {
     "YNJVJ": {
      "card": {
+      "artist": "Lorenzo Mastroianni",
       "cmc": 6.0,
+      "cn": "230",
       "color_identity": [
        "B",
        "G"
@@ -15,6 +17,7 @@
       "oracle_text": "Deathtouch, ward {2}\nOther Spiders you control have deathtouch and ward {2}.\nWhenever another creature dealt damage this turn by a Spider you controlled dies, create a token that's a copy of that creature, except it's a Food artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life,\" and it loses all other card types.",
       "power": "8",
       "scryfall_id": "a14c4b29-3363-45ce-9190-0f79e1a0ef7f",
+      "set": "ltr",
       "toughness": "8",
       "type_line": "Legendary Creature — Spider Demon"
      },
@@ -27,7 +30,9 @@
    "cards": {
     "E18eB": {
      "card": {
+      "artist": "Ron Spears",
       "cmc": 3.0,
+      "cn": "249",
       "color_identity": [
        "G"
       ],
@@ -37,6 +42,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63",
+      "set": "mh3",
       "toughness": null,
       "type_line": "Sorcery // Land"
      },
@@ -44,7 +50,9 @@
     },
     "E6D3Q": {
      "card": {
+      "artist": "Warren Mahy",
       "cmc": 2.0,
+      "cn": "175",
       "color_identity": [
        "G"
       ],
@@ -54,6 +62,7 @@
       "oracle_text": "Reach (This creature can block creatures with flying.)\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)",
       "power": "1",
       "scryfall_id": "6ab810f1-21d6-4a98-b77a-e455370aa6cc",
+      "set": "m10",
       "toughness": "2",
       "type_line": "Creature — Spider"
      },
@@ -61,7 +70,9 @@
     },
     "EJVBA": {
      "card": {
+      "artist": "Christine Choi",
       "cmc": 0,
+      "cn": "261",
       "color_identity": [
        "B",
        "G"
@@ -72,6 +83,7 @@
       "oracle_text": "This land enters tapped unless you control a Swamp or a Forest.\n{T}: Add {B} or {G}.",
       "power": null,
       "scryfall_id": "2100b00b-a7de-4e36-a83b-1ce1fa427cc2",
+      "set": "dmr",
       "toughness": null,
       "type_line": "Land"
      },
@@ -79,7 +91,9 @@
     },
     "EPPom": {
      "card": {
+      "artist": "Konstantin Porubov",
       "cmc": 2.0,
+      "cn": "182",
       "color_identity": [
        "G"
       ],
@@ -89,6 +103,7 @@
       "oracle_text": "Target creature you control deals damage equal to its power to another target creature, planeswalker, or battle.",
       "power": null,
       "scryfall_id": "b8eef541-6851-4312-ad2b-74f45c7ede6c",
+      "set": "mom",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -96,7 +111,9 @@
     },
     "EPv79": {
      "card": {
+      "artist": "Henry Peters",
       "cmc": 4.0,
+      "cn": "221",
       "color_identity": [
        "B",
        "G"
@@ -107,6 +124,7 @@
       "oracle_text": "Reach\nWhen this creature enters, you may sacrifice another creature. When you do, destroy target nonland permanent.\nWhen this creature dies, you may gain 1 life for each creature card in your graveyard. If you do, exile this card from your graveyard.",
       "power": "3",
       "scryfall_id": "87300ac8-8b6f-4c37-8058-beb59eaa66be",
+      "set": "bro",
       "toughness": "3",
       "type_line": "Creature — Spider"
      },
@@ -114,7 +132,9 @@
     },
     "EQwBy": {
      "card": {
+      "artist": "Slawomir Maniak",
       "cmc": 4.0,
+      "cn": "173",
       "color_identity": [
        "G"
       ],
@@ -124,6 +144,7 @@
       "oracle_text": "Reach\nWhen this creature dies, create a 1/2 green Spider creature token with reach.",
       "power": "2",
       "scryfall_id": "e24e2f49-70f9-445f-af03-2ef43798004a",
+      "set": "mid",
       "toughness": "4",
       "type_line": "Creature — Spider"
      },
@@ -131,7 +152,9 @@
     },
     "EZjZV": {
      "card": {
+      "artist": "Kev Walker",
       "cmc": 4.0,
+      "cn": "212",
       "color_identity": [
        "B",
        "G"
@@ -142,6 +165,7 @@
       "oracle_text": "Reach\n{3}{B}{G}, Exile a creature card from your graveyard: Create a 1/2 green Spider creature token with reach, then each opponent loses 1 life for each Spider you control.",
       "power": "2",
       "scryfall_id": "2cda35eb-ae42-43be-9015-3c468c7ebede",
+      "set": "mh1",
       "toughness": "4",
       "type_line": "Creature — Spider"
      },
@@ -149,7 +173,9 @@
     },
     "EZyJX": {
      "card": {
+      "artist": "John Avon",
       "cmc": 0,
+      "cn": "278",
       "color_identity": [
        "B",
        "G"
@@ -160,6 +186,7 @@
       "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {B}{G}.",
       "power": null,
       "scryfall_id": "104364d5-ede8-4ac5-900f-19947f51bbc1",
+      "set": "rav",
       "toughness": null,
       "type_line": "Land"
      },
@@ -167,7 +194,9 @@
     },
     "EZyKV": {
      "card": {
+      "artist": "Mike Bierek",
       "cmc": 1.0,
+      "cn": "2",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{1}",
@@ -175,6 +204,7 @@
       "oracle_text": "{T}: Add {C}{C}.",
       "power": null,
       "scryfall_id": "219210d3-263c-41c4-9211-0e59b2d4ccf3",
+      "set": "fdc",
       "toughness": null,
       "type_line": "Artifact"
      },
@@ -182,7 +212,9 @@
     },
     "Eb7ya": {
      "card": {
+      "artist": "Johannes Voss",
       "cmc": 3.0,
+      "cn": "32",
       "color_identity": [
        "G"
       ],
@@ -192,6 +224,7 @@
       "oracle_text": "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.",
       "power": null,
       "scryfall_id": "7967cb69-1868-45c0-92d1-39dabe30f2a2",
+      "set": "c15",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -199,7 +232,9 @@
     },
     "EbOJJ": {
      "card": {
+      "artist": "Matt Stewart",
       "cmc": 4.0,
+      "cn": "178",
       "color_identity": [
        "G"
       ],
@@ -209,6 +244,7 @@
       "oracle_text": "For each token you control, create a token that's a copy of that permanent.",
       "power": null,
       "scryfall_id": "22b01c98-c24b-4255-921f-4820f3d395ea",
+      "set": "c19",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -216,7 +252,9 @@
     },
     "Ebme7": {
      "card": {
+      "artist": "Grzegorz Rutkowski",
       "cmc": 3.0,
+      "cn": "192",
       "color_identity": [
        "G"
       ],
@@ -226,6 +264,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "99535539-aa73-41ed-86ab-21c97b92620d",
+      "set": "znr",
       "toughness": null,
       "type_line": "Instant // Land"
      },
@@ -233,7 +272,9 @@
     },
     "Ebmnn": {
      "card": {
+      "artist": "Marta Nael",
       "cmc": 1.0,
+      "cn": "111",
       "color_identity": [
        "B"
       ],
@@ -243,6 +284,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
+      "set": "znr",
       "toughness": null,
       "type_line": "Instant // Land"
      },
@@ -250,7 +292,9 @@
     },
     "EgMBr": {
      "card": {
+      "artist": "Raoul Vitale",
       "cmc": 1.0,
+      "cn": "256",
       "color_identity": [
        "B",
        "G"
@@ -261,6 +305,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "03522b6b-31ec-4126-8885-5dbb2248688b",
+      "set": "mh3",
       "toughness": null,
       "type_line": "Instant // Land"
      },
@@ -268,7 +313,9 @@
     },
     "EgpKv": {
      "card": {
+      "artist": "Aldo Domínguez",
       "cmc": 6.0,
+      "cn": "253",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{6}",
@@ -276,6 +323,7 @@
       "oracle_text": "As Chronicle of Victory enters, choose a creature type.\nCreatures you control of the chosen type get +2/+2 and have first strike and trample.\nWhenever you cast a spell of the chosen type, draw a card.",
       "power": null,
       "scryfall_id": "b3c2d68d-690b-41e7-99ed-2d20c7e0a9b4",
+      "set": "ecl",
       "toughness": null,
       "type_line": "Legendary Artifact"
      },
@@ -283,7 +331,9 @@
     },
     "EgqBp": {
      "card": {
+      "artist": "Xavier Ribeiro",
       "cmc": 3.0,
+      "cn": "112",
       "color_identity": [
        "G"
       ],
@@ -293,6 +343,7 @@
       "oracle_text": "Reach\nWhenever another nontoken creature you control dies, you may reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order.",
       "power": "4",
       "scryfall_id": "f50a8dec-b079-4192-9098-6cdc1026c693",
+      "set": "fdn",
       "toughness": "3",
       "type_line": "Creature — Spider Spirit"
      },
@@ -300,7 +351,9 @@
     },
     "Ernxn": {
      "card": {
+      "artist": "Sam Rowan",
       "cmc": 4.0,
+      "cn": "165",
       "color_identity": [
        "G"
       ],
@@ -310,6 +363,7 @@
       "oracle_text": "Reach\nWhenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach.",
       "power": "3",
       "scryfall_id": "7c38833a-96c5-48b5-8dd8-23f10e798537",
+      "set": "thb",
       "toughness": "5",
       "type_line": "Legendary Enchantment Creature — Spider"
      },
@@ -317,7 +371,9 @@
     },
     "EromV": {
      "card": {
+      "artist": "Steven Belledin",
       "cmc": 0,
+      "cn": "243",
       "color_identity": [
        "B",
        "G"
@@ -328,6 +384,7 @@
       "oracle_text": "({T}: Add {B} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "power": null,
       "scryfall_id": "1c7d50d6-b63a-4d8c-88fa-1d78ae693a45",
+      "set": "rtr",
       "toughness": null,
       "type_line": "Land — Swamp Forest"
      },
@@ -335,7 +392,9 @@
     },
     "L3J53": {
      "card": {
+      "artist": "Marie Magny",
       "cmc": 3.0,
+      "cn": "25",
       "color_identity": [
        "G"
       ],
@@ -345,6 +404,7 @@
       "oracle_text": "Enchant player\nWhenever a nontoken creature enchanted player controls dies, exile it and you create a 1/2 green Spider creature token with reach.",
       "power": null,
       "scryfall_id": "5e2d349e-fe5f-4627-84b7-2f01982603d2",
+      "set": "mic",
       "toughness": null,
       "type_line": "Enchantment — Aura Curse"
      },
@@ -352,7 +412,9 @@
     },
     "L3JNn": {
      "card": {
+      "artist": "Deruchenko Alexander",
       "cmc": 2.0,
+      "cn": "154",
       "color_identity": [
        "G"
       ],
@@ -362,6 +424,7 @@
       "oracle_text": "Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)\nCreate a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
       "power": null,
       "scryfall_id": "544c810b-5f90-4535-aa76-14f8c6b9428a",
+      "set": "snc",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -369,7 +432,9 @@
     },
     "L3MrR": {
      "card": {
+      "artist": "Jeff Easley",
       "cmc": 4.0,
+      "cn": "MM3-131",
       "color_identity": [
        "G"
       ],
@@ -379,6 +444,7 @@
       "oracle_text": "Reach\nWhen this creature dies, create a 2/4 black Spider creature token with reach.",
       "power": "2",
       "scryfall_id": "5bdec240-39e5-4abd-bf8d-3d26a788dc9d",
+      "set": "plst",
       "toughness": "4",
       "type_line": "Creature — Spider"
      },
@@ -386,7 +452,9 @@
     },
     "L3WZJ": {
      "card": {
+      "artist": "Artur Nakhodkin",
       "cmc": 1.0,
+      "cn": "215",
       "color_identity": [
        "G"
       ],
@@ -396,6 +464,7 @@
       "oracle_text": "Choose one —\n• Search your library for a basic land card, reveal it, put it into your hand, then shuffle.\n• Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)",
       "power": null,
       "scryfall_id": "03ebdb36-55e0-49dd-a514-785fbeb4ae19",
+      "set": "fdn",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -403,7 +472,9 @@
     },
     "L3bxN": {
      "card": {
+      "artist": "Bram Sels",
       "cmc": 7.0,
+      "cn": "C17-18",
       "color_identity": [
        "B"
       ],
@@ -413,6 +484,7 @@
       "oracle_text": "Choose a creature type. Destroy all creatures that aren't of the chosen type.",
       "power": null,
       "scryfall_id": "22c47433-a0fa-4a1d-9070-25af120c02dd",
+      "set": "plst",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -420,7 +492,9 @@
     },
     "L479R": {
      "card": {
+      "artist": "Steve Argyle",
       "cmc": 4.0,
+      "cn": "194",
       "color_identity": [
        "B",
        "G"
@@ -431,6 +505,7 @@
       "oracle_text": "Morbid — At the beginning of each end step, if a creature died this turn, you may draw a card.",
       "power": null,
       "scryfall_id": "7ff6346a-5154-4c93-9a24-8b1936683517",
+      "set": "2xm",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -438,7 +513,9 @@
     },
     "LGe4o": {
      "card": {
+      "artist": "Jonas De Ro",
       "cmc": 8.0,
+      "cn": "122",
       "color_identity": [
        "G"
       ],
@@ -448,6 +525,7 @@
       "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nAt the beginning of combat on your turn, look at the top five cards of your library. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
       "power": null,
       "scryfall_id": "3b3c609e-f7c9-4fe5-84d9-4f4c76020a4b",
+      "set": "spm",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -455,7 +533,9 @@
     },
     "LK6Dg": {
      "card": {
+      "artist": "Adam Paquette",
       "cmc": 9.0,
+      "cn": "294",
       "color_identity": [
        "G"
       ],
@@ -465,6 +545,7 @@
       "oracle_text": "This spell costs {X} less to cast, where X is the greatest power among creatures you control.\n{T}: Add {G}{G}. You gain 2 life.\nWhenever a nontoken creature you control enters, put a +1/+1 counter on it and draw a card.",
       "power": null,
       "scryfall_id": "6340e0f3-7f9c-4d71-8daf-e1be5505eb5b",
+      "set": "cmm",
       "toughness": null,
       "type_line": "Legendary Artifact"
      },
@@ -472,7 +553,9 @@
     },
     "LKM0K": {
      "card": {
+      "artist": "Lucas Staniec",
       "cmc": 3.0,
+      "cn": "180",
       "color_identity": [
        "G"
       ],
@@ -482,6 +565,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "c5cb3052-358d-44a7-8cfd-cd31b236494a",
+      "set": "znr",
       "toughness": null,
       "type_line": "Sorcery // Land"
      },
@@ -489,7 +573,9 @@
     },
     "LKaJa": {
      "card": {
+      "artist": "Viktor Titov",
       "cmc": 3.0,
+      "cn": "145",
       "color_identity": [
        "G"
       ],
@@ -499,6 +585,7 @@
       "oracle_text": "All creatures able to block target creature this turn do so.\nFerocious — That creature gains indestructible until end of turn if you control a creature with power 4 or greater.",
       "power": null,
       "scryfall_id": "83456f8f-8a1a-403c-816b-25e454ba1edf",
+      "set": "ktk",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -506,7 +593,9 @@
     },
     "LKwyz": {
      "card": {
+      "artist": "Tyler Jacobson",
       "cmc": 5.0,
+      "cn": "AFR-112",
       "color_identity": [
        "B"
       ],
@@ -516,6 +605,7 @@
       "oracle_text": "Whenever a creature you control dies, put a loyalty counter on Lolth.\n0: You draw a card and you lose 1 life.\n−3: Create two 2/1 black Spider creature tokens with menace and reach.\n−8: You get an emblem with \"Whenever an opponent is dealt combat damage by one or more creatures you control, if that player lost less than 8 life this turn, they lose life equal to the difference.\"",
       "power": null,
       "scryfall_id": "c9b661d5-2d2d-4c27-b139-3387cbc4e082",
+      "set": "plst",
       "toughness": null,
       "type_line": "Legendary Planeswalker — Lolth"
      },
@@ -523,7 +613,9 @@
     },
     "LRM2v": {
      "card": {
+      "artist": "Johannes Voss",
       "cmc": 0,
+      "cn": "254",
       "color_identity": [
        "B",
        "G"
@@ -534,6 +626,7 @@
       "oracle_text": null,
       "power": null,
       "scryfall_id": "87a4e5fe-161f-42da-9ca2-67c8e8970e94",
+      "set": "khm",
       "toughness": null,
       "type_line": "Land // Land"
      },
@@ -541,7 +634,9 @@
     },
     "LRWbR": {
      "card": {
+      "artist": "Vincent Proce",
       "cmc": 5.0,
+      "cn": "SOI-239",
       "color_identity": [
        "G"
       ],
@@ -551,6 +646,7 @@
       "oracle_text": "Reach (This creature can block creatures with flying.)\nThis creature can block an additional seven creatures each combat.",
       "power": "2",
       "scryfall_id": "0b6a0d46-d32d-4eb3-963b-2a952b6fdc83",
+      "set": "plst",
       "toughness": "5",
       "type_line": "Creature — Spider"
      },
@@ -558,7 +654,9 @@
     },
     "LRg0d": {
      "card": {
+      "artist": "Sergey Glushakov",
       "cmc": 0,
+      "cn": "271",
       "color_identity": [
        "B",
        "G"
@@ -569,6 +667,7 @@
       "oracle_text": "({T}: Add {B} or {G}.)\nThis land enters tapped.\nWhen this land enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
       "power": null,
       "scryfall_id": "f6ca59cd-8779-4a84-a54b-e863b79c61f0",
+      "set": "mkm",
       "toughness": null,
       "type_line": "Land — Swamp Forest"
      },
@@ -576,7 +675,9 @@
     },
     "LV94l": {
      "card": {
+      "artist": "Christopher Moeller",
       "cmc": 1.0,
+      "cn": "200",
       "color_identity": [
        "G"
       ],
@@ -586,6 +687,7 @@
       "oracle_text": "{1}{G}, {T}: Target creature you control fights another target creature.",
       "power": "1",
       "scryfall_id": "46199391-a4f5-4532-b89c-b7691b229bd0",
+      "set": "avr",
       "toughness": "1",
       "type_line": "Creature — Human Shaman"
      },
@@ -593,7 +695,9 @@
     },
     "LVNJ5": {
      "card": {
+      "artist": "Jason Felix",
       "cmc": 3.0,
+      "cn": "296",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{3}",
@@ -601,6 +705,7 @@
       "oracle_text": "As this artifact enters, choose a creature type.\nCreature spells you cast of the chosen type cost {1} less to cast.\nAt the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand.",
       "power": null,
       "scryfall_id": "2cfafee3-c060-44bd-be6e-8d36501d72d3",
+      "set": "m3c",
       "toughness": null,
       "type_line": "Artifact"
      },
@@ -608,7 +713,9 @@
     },
     "LVODj": {
      "card": {
+      "artist": "Kitt Lapeña",
       "cmc": 2.0,
+      "cn": "155",
       "color_identity": [
        "G"
       ],
@@ -618,6 +725,7 @@
       "oracle_text": "Target creature you control deals damage equal to its power to target creature or planeswalker you don't control.",
       "power": null,
       "scryfall_id": "0eacd3de-b803-4322-8d88-d533761aa748",
+      "set": "dmu",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -625,7 +733,9 @@
     },
     "LVeV3": {
      "card": {
+      "artist": "Grady Frederick",
       "cmc": 0,
+      "cn": "260",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -633,6 +743,7 @@
       "oracle_text": "As Three Tree City enters, choose a creature type.\n{T}: Add {C}.\n{2}, {T}: Choose a color. Add an amount of mana of that color equal to the number of creatures you control of the chosen type.",
       "power": null,
       "scryfall_id": "56f88a48-cced-4a9d-8c19-e4f105f0d8a2",
+      "set": "blb",
       "toughness": null,
       "type_line": "Legendary Land"
      },
@@ -640,7 +751,9 @@
     },
     "Lw3m2": {
      "card": {
+      "artist": "Jeremy Jarvis",
       "cmc": 1.0,
+      "cn": "270",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{1}",
@@ -648,6 +761,7 @@
       "oracle_text": "Equipped creature has \"{T}: This creature deals 1 damage to any target.\"\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
       "power": null,
       "scryfall_id": "be892d73-d1f4-4c36-b674-01ae21ff1484",
+      "set": "mrd",
       "toughness": null,
       "type_line": "Artifact — Equipment"
      },
@@ -655,7 +769,9 @@
     },
     "LzKbN": {
      "card": {
+      "artist": "Svetlin Velinov",
       "cmc": 2.0,
+      "cn": "A25-234",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{2}",
@@ -663,6 +779,7 @@
       "oracle_text": "Equipped creature has hexproof and haste. (It can't be the target of spells or abilities your opponents control. It can attack and {T} no matter when it came under your control.)\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
       "power": null,
       "scryfall_id": "9c316917-1569-4d95-8729-3b7a0fc39465",
+      "set": "plst",
       "toughness": null,
       "type_line": "Artifact — Equipment"
      },
@@ -670,7 +787,9 @@
     },
     "Y26vB": {
      "card": {
+      "artist": "Don Hazeltine",
       "cmc": 0,
+      "cn": "301",
       "color_identity": [
        "B"
       ],
@@ -680,6 +799,7 @@
       "oracle_text": "{2}, {T}: Add {B} for each Swamp you control.",
       "power": null,
       "scryfall_id": "e1efb0d3-2c72-46ff-bdc1-1069967365a0",
+      "set": "mh2",
       "toughness": null,
       "type_line": "Land"
      },
@@ -687,7 +807,9 @@
     },
     "Y2W81": {
      "card": {
+      "artist": "Warren Mahy",
       "cmc": 4.0,
+      "cn": "29",
       "color_identity": [
        "B"
       ],
@@ -697,6 +819,7 @@
       "oracle_text": "Whenever a nontoken creature an opponent controls dies, exile it.\n{2}{B}, Put a creature card exiled with Shelob into its owner's graveyard: Put two +1/+1 counters on Shelob. Draw a card.\n{X}{1}{B}: Put target creature card with mana value X exiled with Shelob onto the battlefield tapped under your control.",
       "power": "3",
       "scryfall_id": "83944c19-6f9b-4043-9eeb-1a4ca452f698",
+      "set": "ltc",
       "toughness": "3",
       "type_line": "Legendary Creature — Spider Demon"
      },
@@ -704,7 +827,9 @@
     },
     "Y84gO": {
      "card": {
+      "artist": "Martina Fačková",
       "cmc": 3.0,
+      "cn": "104p",
       "color_identity": [
        "B"
       ],
@@ -714,6 +839,7 @@
       "oracle_text": "At the beginning of your upkeep, you draw a card and you lose 1 life.",
       "power": null,
       "scryfall_id": "c2364acd-7073-4d5d-ac93-bb9661533b47",
+      "set": "pone",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -738,7 +864,9 @@
     },
     "YBn68": {
      "card": {
+      "artist": "Bartek Fedyczak",
       "cmc": 0,
+      "cn": "268",
       "color_identity": [
        "B",
        "G"
@@ -749,6 +877,7 @@
       "oracle_text": "{T}: Add {G}.\n{T}: Add {B}. Activate only if you control a Swamp or a Forest.",
       "power": null,
       "scryfall_id": "5ceacc7d-d407-4f82-af58-9bdf8426924e",
+      "set": "dft",
       "toughness": null,
       "type_line": "Land"
      },
@@ -756,7 +885,9 @@
     },
     "YM0ld": {
      "card": {
+      "artist": "Sam Rowan",
       "cmc": 1.0,
+      "cn": "167",
       "color_identity": [
        "G"
       ],
@@ -766,6 +897,7 @@
       "oracle_text": "Reach\nWhen this creature enters, it deals damage equal to its power to target creature with flying an opponent controls.\nEscape—{3}{G}{G}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with three +1/+1 counters on it.",
       "power": "1",
       "scryfall_id": "874afaad-546a-4cb2-ad01-2b4a4862b219",
+      "set": "thb",
       "toughness": "2",
       "type_line": "Creature — Spider"
      },
@@ -773,7 +905,9 @@
     },
     "YMn5B": {
      "card": {
+      "artist": "John Tedrick",
       "cmc": 8.0,
+      "cn": "172",
       "color_identity": [
        "G"
       ],
@@ -783,6 +917,7 @@
       "oracle_text": "This spell can't be countered.\nDraw cards equal to the greatest toughness among creatures you control, then put any number of creature cards from your hand onto the battlefield.",
       "power": null,
       "scryfall_id": "7f1b99e0-ffb7-4f98-8ee5-4357bb79dd2e",
+      "set": "ltr",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -790,7 +925,9 @@
     },
     "YMr0j": {
      "card": {
+      "artist": "James Ryman",
       "cmc": 2.0,
+      "cn": "109",
       "color_identity": [
        "G"
       ],
@@ -800,6 +937,7 @@
       "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
       "power": null,
       "scryfall_id": "8f5a620c-fde7-4b72-bf8a-efc4f14560c5",
+      "set": "aer",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -807,7 +945,9 @@
     },
     "YNw7Z": {
      "card": {
+      "artist": "Jodie Muir",
       "cmc": 5.0,
+      "cn": "98",
       "color_identity": [
        "B"
       ],
@@ -817,6 +957,7 @@
       "oracle_text": "Reach\nWhenever this creature deals combat damage to a player, create a 2/1 black Spider creature token with menace and reach.",
       "power": "4",
       "scryfall_id": "bbc06a88-1eb6-4edb-8f03-d8274560cc41",
+      "set": "afr",
       "toughness": "3",
       "type_line": "Creature — Elf Spider"
      },
@@ -824,7 +965,9 @@
     },
     "Yd1VG": {
      "card": {
+      "artist": "Campbell White",
       "cmc": 3.0,
+      "cn": "219",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{3}",
@@ -832,6 +975,7 @@
       "oracle_text": "If you would create a Clue, Food, or Treasure token, instead create one of each.",
       "power": "1",
       "scryfall_id": "90744c2c-6dd7-4623-8cbf-b138b83ee88f",
+      "set": "mh2",
       "toughness": "3",
       "type_line": "Artifact Creature — Assembly-Worker"
      },
@@ -839,7 +983,9 @@
     },
     "Yd37z": {
      "card": {
+      "artist": "Daniel Ljunggren",
       "cmc": 5.0,
+      "cn": "CMA-149",
       "color_identity": [
        "B",
        "G"
@@ -850,6 +996,7 @@
       "oracle_text": "Create a 1/2 green Spider creature token with reach for each creature card in your graveyard.\nFlashback {6}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
       "power": null,
       "scryfall_id": "d798227e-b098-4eff-931c-0bef642ccc81",
+      "set": "plst",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -857,7 +1004,9 @@
     },
     "YebBm": {
      "card": {
+      "artist": "Thomas M. Baxa",
       "cmc": 0,
+      "cn": "284",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -865,6 +1014,7 @@
       "oracle_text": "{T}: Add {C}.\n{T}: Regenerate target Insect, Rat, Spider, or Squirrel. (The next time it would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)",
       "power": null,
       "scryfall_id": "b89329f2-d386-40a7-9098-6d80beeb8843",
+      "set": "tsr",
       "toughness": null,
       "type_line": "Land"
      },
@@ -872,7 +1022,9 @@
     },
     "Yew6v": {
      "card": {
+      "artist": "Sam Burley",
       "cmc": 0,
+      "cn": "261p",
       "color_identity": [
        "B",
        "G"
@@ -883,6 +1035,7 @@
       "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {B} or {G}.",
       "power": null,
       "scryfall_id": "583fec70-3e6e-439e-98f7-4e9551fcfbfb",
+      "set": "pvow",
       "toughness": null,
       "type_line": "Land"
      },
@@ -890,7 +1043,9 @@
     },
     "Yj06l": {
      "card": {
+      "artist": "Alayna Danner",
       "cmc": 0,
+      "cn": "907",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -898,6 +1053,7 @@
       "oracle_text": "This land enters tapped.\n{T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
       "power": null,
       "scryfall_id": "43710f35-c43f-48bf-82e1-64ba5c3fa03e",
+      "set": "clb",
       "toughness": null,
       "type_line": "Land"
      },
@@ -905,7 +1061,9 @@
     },
     "Yl0Dl": {
      "card": {
+      "artist": "Christine Choi",
       "cmc": 5.0,
+      "cn": "162",
       "color_identity": [
        "B",
        "G"
@@ -916,6 +1074,7 @@
       "oracle_text": "Reach\nDelirium — When Ishkanah enters, if there are four or more card types among cards in your graveyard, create three 1/2 green Spider creature tokens with reach.\n{6}{B}: Target opponent loses 1 life for each Spider you control.",
       "power": "3",
       "scryfall_id": "2a6c5a98-2fe5-4671-a6a8-98a47c09c5a7",
+      "set": "emn",
       "toughness": "5",
       "type_line": "Legendary Creature — Spider"
      },
@@ -923,7 +1082,9 @@
     },
     "Yl3ZN": {
      "card": {
+      "artist": "Jehan Choo",
       "cmc": 6.0,
+      "cn": "260",
       "color_identity": [
        "G"
       ],
@@ -933,6 +1094,7 @@
       "oracle_text": "Flash\nCascade\nReach\nWhen this creature enters, put three +1/+1 counters on each of any number of target creatures that entered this turn.",
       "power": "0",
       "scryfall_id": "3fd331b3-43cd-421a-964d-d3b35bb8abcb",
+      "set": "cmr",
       "toughness": "3",
       "type_line": "Creature — Spider"
      },
@@ -940,7 +1102,9 @@
     },
     "YlOvG": {
      "card": {
+      "artist": "Yeong-Hao Han",
       "cmc": 2.0,
+      "cn": "261",
       "color_identity": [
        "G"
       ],
@@ -950,6 +1114,7 @@
       "oracle_text": "Search your library for a Forest card, put it onto the battlefield, then shuffle.",
       "power": null,
       "scryfall_id": "bd9307ec-987b-4bbf-a679-cfaabe283a80",
+      "set": "cmr",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -957,7 +1122,9 @@
     },
     "Ylgpy": {
      "card": {
+      "artist": "Alan Rabinowitz",
       "cmc": 2.0,
+      "cn": "316",
       "color_identity": [
        "G"
       ],
@@ -967,6 +1134,7 @@
       "oracle_text": "Search your library for a Forest card, put that card onto the battlefield, then shuffle.",
       "power": null,
       "scryfall_id": "00a4ffc1-7731-42d9-b970-2a8d84cba14d",
+      "set": "5ed",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -974,7 +1142,9 @@
     },
     "Yn3x3": {
      "card": {
+      "artist": "GodMachine",
       "cmc": 2.0,
+      "cn": "26",
       "color_identity": [
        "G"
       ],
@@ -984,6 +1154,7 @@
       "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhenever a creature you control with deathtouch deals combat damage to a player, that player gets two poison counters. (A player with ten or more poison counters loses the game.)",
       "power": "1",
       "scryfall_id": "837e18d9-a5a6-4a0c-a604-9374d5b0dea4",
+      "set": "mul",
       "toughness": "3",
       "type_line": "Legendary Creature — Human Warrior"
      },
@@ -991,7 +1162,9 @@
     },
     "Yo0Wy": {
      "card": {
+      "artist": "Jesper Ejsing",
       "cmc": 0,
+      "cn": "227",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -999,6 +1172,7 @@
       "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
       "power": null,
       "scryfall_id": "f92583e4-9749-4c11-9d32-fb81260c5b63",
+      "set": "m13",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1006,7 +1180,9 @@
     },
     "Yo3Bj": {
      "card": {
+      "artist": "Yeong-Hao Han",
       "cmc": 0,
+      "cn": "359",
       "color_identity": [
        "B",
        "G"
@@ -1017,6 +1193,7 @@
       "oracle_text": "This land enters tapped unless you have two or more opponents.\n{T}: Add {B} or {G}.",
       "power": null,
       "scryfall_id": "df64c9cf-17de-44f3-831d-ba09661f2308",
+      "set": "cmr",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1024,7 +1201,9 @@
     },
     "Yo94b": {
      "card": {
+      "artist": "John Tedrick",
       "cmc": 2.0,
+      "cn": "417",
       "color_identity": [
        "G"
       ],
@@ -1034,6 +1213,7 @@
       "oracle_text": "{T}: Add one mana of any color. Put a nest counter on this creature.\n{T}, Sacrifice this creature: Create a 2/2 green Spider creature token with reach for each counter on this creature. Activate only as a sorcery.",
       "power": "2",
       "scryfall_id": "23684053-024e-4e15-8aec-de3d4bc7f126",
+      "set": "dsk",
       "toughness": "2",
       "type_line": "Artifact Creature — Spider Toy"
      },
@@ -1041,7 +1221,9 @@
     },
     "YoZm2": {
      "card": {
+      "artist": "Titus Lunter",
       "cmc": 0,
+      "cn": "24",
       "color_identity": [
        "B",
        "G"
@@ -1052,6 +1234,7 @@
       "oracle_text": "({T}: Add {B} or {G}.)\nThis land enters tapped unless you control two or more basic lands.",
       "power": null,
       "scryfall_id": "bac98f27-ef3e-45e0-87cb-0fb4325ae734",
+      "set": "eoc",
       "toughness": null,
       "type_line": "Land — Swamp Forest"
      },
@@ -1059,7 +1242,9 @@
     },
     "YovQV": {
      "card": {
+      "artist": "Lindsey Look",
       "cmc": 2.0,
+      "cn": "314",
       "color_identity": [
        "B",
        "G"
@@ -1070,6 +1255,7 @@
       "oracle_text": "{T}: Add {C}.\n{T}: Add {B} or {G}. This artifact deals 1 damage to you.",
       "power": null,
       "scryfall_id": "e77335bc-ba8c-4d44-9f7e-57700132ca68",
+      "set": "m3c",
       "toughness": null,
       "type_line": "Artifact"
      },
@@ -1077,7 +1263,9 @@
     },
     "Yowa2": {
      "card": {
+      "artist": "Vance Kovacs",
       "cmc": 0,
+      "cn": "260",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -1085,6 +1273,7 @@
       "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Forest card, put it onto the battlefield, then shuffle.",
       "power": null,
       "scryfall_id": "94c229ea-90da-4aa0-bfda-b162fb3b5b8b",
+      "set": "mh2",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1092,7 +1281,9 @@
     },
     "Yoxyb": {
      "card": {
+      "artist": "Helge C. Balzer",
       "cmc": 6.0,
+      "cn": "34",
       "color_identity": [
        "B"
       ],
@@ -1102,6 +1293,7 @@
       "oracle_text": "Reach\nSoulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Doom Weaver is paired with another creature, each of those creatures has \"When this creature dies, draw cards equal to its power.\"",
       "power": "1",
       "scryfall_id": "08c79a77-810d-4ee2-8afc-18ddfba41ad1",
+      "set": "voc",
       "toughness": "8",
       "type_line": "Creature — Spider Horror"
      },
@@ -1109,7 +1301,9 @@
     },
     "Yvd6a": {
      "card": {
+      "artist": "Chris Rallis",
       "cmc": 5.0,
+      "cn": "205",
       "color_identity": [
        "G"
       ],
@@ -1119,6 +1313,7 @@
       "oracle_text": "Choose one —\n• Draw cards equal to the greatest power among non-Human creatures you control.\n• Non-Human creatures you control get +3/+3 until end of turn.",
       "power": null,
       "scryfall_id": "110cf870-7e8c-43e2-9184-4d8c43f9f480",
+      "set": "c21",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -1126,7 +1321,9 @@
     },
     "YxjA9": {
      "card": {
+      "artist": "Iain McCaig",
       "cmc": 5.0,
+      "cn": "169",
       "color_identity": [
        "G"
       ],
@@ -1136,6 +1333,7 @@
       "oracle_text": "Reach\n{X}{G}{G}: This creature deals X damage to each creature with flying.",
       "power": "2",
       "scryfall_id": "f15c3d37-82e2-461a-8a1f-d92854e3bf3a",
+      "set": "c13",
       "toughness": "7",
       "type_line": "Creature — Spider"
      },
@@ -1143,7 +1341,9 @@
     },
     "YxjxG": {
      "card": {
+      "artist": "Chuck Lukacs",
       "cmc": 5.0,
+      "cn": "164",
       "color_identity": [
        "G"
       ],
@@ -1153,6 +1353,7 @@
       "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
       "power": null,
       "scryfall_id": "8676d164-c76e-402b-a649-6ded3f549b6e",
+      "set": "2xm",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -1160,7 +1361,9 @@
     },
     "Yxl0Q": {
      "card": {
+      "artist": "Howard Lyon",
       "cmc": 0,
+      "cn": "285",
       "color_identity": [
        "B"
       ],
@@ -1170,6 +1373,7 @@
       "oracle_text": "This land enters tapped.\nWhen this land enters, exile target player's graveyard.\n{T}: Add {B}.",
       "power": null,
       "scryfall_id": "0ac2a3ab-a221-47a7-b1c1-a9306fa48b0c",
+      "set": "c14",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1177,7 +1381,9 @@
     },
     "YxoPV": {
      "card": {
+      "artist": "Livia Prima",
       "cmc": 7.0,
+      "cn": "132",
       "color_identity": [
        "G"
       ],
@@ -1187,6 +1393,7 @@
       "oracle_text": "Reach\nUndergrowth — When you cast this spell, reveal the top X cards of your library, where X is the number of creature cards in your graveyard. You may put a green permanent card with mana value X or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
       "power": "5",
       "scryfall_id": "0b841904-202c-4b42-869a-e345112ab1c8",
+      "set": "grn",
       "toughness": "7",
       "type_line": "Creature — Spider"
      },
@@ -1194,7 +1401,9 @@
     },
     "Yxy9J": {
      "card": {
+      "artist": "Jesper Ejsing",
       "cmc": 2.0,
+      "cn": "145",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{2}",
@@ -1202,6 +1411,7 @@
       "oracle_text": "Equipped creature has \"{2}, {T}: This creature deals 1 damage to any target\" and \"Whenever a creature dies, untap this creature.\"\nWhenever a Shaman creature enters, you may attach this Equipment to it.\nEquip {4}",
       "power": null,
       "scryfall_id": "c1ab3225-64a9-411e-b22b-1869e958b8e5",
+      "set": "mor",
       "toughness": null,
       "type_line": "Kindred Artifact — Shaman Equipment"
      },
@@ -1209,7 +1419,9 @@
     },
     "k71D9": {
      "card": {
+      "artist": "Howard Lyon",
       "cmc": 0,
+      "cn": "4",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -1217,6 +1429,7 @@
       "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land.",
       "power": null,
       "scryfall_id": "e374f1a8-0b90-4f62-9af5-3bbb11a0fbc4",
+      "set": "pw21",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1224,7 +1437,9 @@
     },
     "k943g": {
      "card": {
+      "artist": "Lordigan",
       "cmc": 5.0,
+      "cn": "56",
       "color_identity": [
        "B"
       ],
@@ -1234,6 +1449,7 @@
       "oracle_text": "Deathtouch, lifelink\nWhenever Gwenom attacks, until end of turn, you may look at the top card of your library any time and you may play cards from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
       "power": "4",
       "scryfall_id": "46b6cc5d-7a37-4e8b-a1a5-9a573056610c",
+      "set": "spm",
       "toughness": "4",
       "type_line": "Legendary Creature — Symbiote Spider Hero"
      },
@@ -1241,7 +1457,9 @@
     },
     "k9vvg": {
      "card": {
+      "artist": "David Astruga",
       "cmc": 2.0,
+      "cn": "92",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{2}",
@@ -1249,6 +1467,7 @@
       "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
       "power": null,
       "scryfall_id": "211a1d86-7257-4621-ae05-c2b235c063f0",
+      "set": "dsc",
       "toughness": null,
       "type_line": "Artifact"
      },
@@ -1256,7 +1475,9 @@
     },
     "k9zOe": {
      "card": {
+      "artist": "Greg Hildebrandt",
       "cmc": 2.0,
+      "cn": "249",
       "color_identity": [
        "B",
        "G"
@@ -1267,6 +1488,7 @@
       "oracle_text": "{1}, {T}: Add {B}{G}.",
       "power": null,
       "scryfall_id": "49b3ce74-40d2-4e97-aa40-a4b6419e10ba",
+      "set": "cmd",
       "toughness": null,
       "type_line": "Artifact"
      },
@@ -1274,7 +1496,9 @@
     },
     "kA7oe": {
      "card": {
+      "artist": "Igor Krstic",
       "cmc": 2.0,
+      "cn": "211",
       "color_identity": [
        "B",
        "G"
@@ -1285,6 +1509,7 @@
       "oracle_text": "Reach\nWhen this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\n{4}{B}{G}, {T}, Sacrifice this creature: Create a number of 1/1 black and green Insect creature tokens with flying equal to the number of card types among cards in your graveyard.",
       "power": "2",
       "scryfall_id": "dcdd2622-ab7a-4990-b026-3667cac42894",
+      "set": "dsk",
       "toughness": "3",
       "type_line": "Creature — Spider"
      },
@@ -1292,7 +1517,9 @@
     },
     "kAj50": {
      "card": {
+      "artist": "John Avon",
       "cmc": 0,
+      "cn": "248",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -1300,6 +1527,7 @@
       "oracle_text": "Each land is a Swamp in addition to its other land types.",
       "power": null,
       "scryfall_id": "fa48b15c-7312-4f3f-b7aa-b2ad98234bf1",
+      "set": "m15",
       "toughness": null,
       "type_line": "Legendary Land"
      },
@@ -1307,7 +1535,9 @@
     },
     "kAjzO": {
      "card": {
+      "artist": "Kimonas Theodossiou",
       "cmc": 2.0,
+      "cn": "143",
       "color_identity": [
        "G"
       ],
@@ -1317,6 +1547,7 @@
       "oracle_text": "{T}: Add {G}.\nPut a -1/-1 counter on this creature: Untap this creature.",
       "power": "0",
       "scryfall_id": "1ab94f16-778d-4437-a1b9-2f67cd214cc0",
+      "set": "2x2",
       "toughness": "2",
       "type_line": "Creature — Elf Druid"
      },
@@ -1324,7 +1555,9 @@
     },
     "kOrpr": {
      "card": {
+      "artist": "Michele Giorgi",
       "cmc": 2.0,
+      "cn": "86",
       "color_identity": [
        "B"
       ],
@@ -1334,6 +1567,7 @@
       "oracle_text": "Put onto the battlefield under your control all creature cards in your opponents' graveyards that were put there from the battlefield this turn. They are Food artifacts with \"{2}, {T}, Sacrifice this artifact: You gain 3 life.\" (They lose all other types and subtypes.)",
       "power": null,
       "scryfall_id": "5b25e454-06bb-43ca-9a9f-57164f7a70c4",
+      "set": "hob",
       "toughness": null,
       "type_line": "Instant"
      },
@@ -1341,7 +1575,9 @@
     },
     "kOzVw": {
      "card": {
+      "artist": "Jung Park",
       "cmc": 0,
+      "cn": "292",
       "color_identity": [
        "B"
       ],
@@ -1351,6 +1587,7 @@
       "oracle_text": "({T}: Add {B}.)",
       "power": null,
       "scryfall_id": "806d26a2-2f2a-4a77-b5bc-a6c97ba5db42",
+      "set": "inr",
       "toughness": null,
       "type_line": "Basic Land — Swamp"
      },
@@ -1358,7 +1595,9 @@
     },
     "kXOmZ": {
      "card": {
+      "artist": "Steve Prescott",
       "cmc": 4.0,
+      "cn": "199",
       "color_identity": [
        "G"
       ],
@@ -1368,6 +1607,7 @@
       "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.",
       "power": null,
       "scryfall_id": "01033dae-fec1-41f2-b7f2-cc6a43331790",
+      "set": "isd",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -1375,7 +1615,9 @@
     },
     "kXXQG": {
      "card": {
+      "artist": "Cristi Balanescu",
       "cmc": 4.0,
+      "cn": "258",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{4}",
@@ -1383,6 +1625,7 @@
       "oracle_text": "Ward {2}\nAs this creature enters, choose a creature type.\nThis creature is the chosen type in addition to its other types.\nIf a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time.",
       "power": "4",
       "scryfall_id": "32fd8b7c-baf3-4d3d-be6f-044a917b11a0",
+      "set": "lci",
       "toughness": "4",
       "type_line": "Artifact Creature — Golem"
      },
@@ -1390,7 +1633,9 @@
     },
     "ka8jO": {
      "card": {
+      "artist": "Ben Maier",
       "cmc": 3.0,
+      "cn": "188",
       "color_identity": [
        "G"
       ],
@@ -1400,6 +1645,7 @@
       "oracle_text": "Reach\nWhen this creature enters, create a 1/2 green Spider creature token with reach.",
       "power": "1",
       "scryfall_id": "7cf3188c-879b-4b18-88b4-6237d7162271",
+      "set": "mh1",
       "toughness": "2",
       "type_line": "Creature — Spider"
      },
@@ -1407,7 +1653,9 @@
     },
     "kaN92": {
      "card": {
+      "artist": "Ryan Yee",
       "cmc": 0,
+      "cn": "350",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "",
@@ -1415,6 +1663,7 @@
       "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
       "power": null,
       "scryfall_id": "86424491-a372-40c4-bfb5-faa2b2d41d4c",
+      "set": "cmr",
       "toughness": null,
       "type_line": "Land"
      },
@@ -1422,7 +1671,9 @@
     },
     "kqe05": {
      "card": {
+      "artist": "Ezoi",
       "cmc": 3.0,
+      "cn": "353",
       "color_identity": [],
       "layout": "normal",
       "mana_cost": "{3}",
@@ -1430,6 +1681,7 @@
       "oracle_text": "As long as equipped creature is attacking, it has first strike and must be blocked if able.\nEquipped creature has \"If a creature dying causes a triggered ability of this creature or an emblem you own to trigger, that ability triggers an additional time.\"\nEquip {2}",
       "power": null,
       "scryfall_id": "a288efba-7c70-428d-a2b7-571891976f78",
+      "set": "fin",
       "toughness": null,
       "type_line": "Legendary Artifact — Equipment"
      },
@@ -1437,7 +1689,9 @@
     },
     "ky831": {
      "card": {
+      "artist": "Matt Stewart",
       "cmc": 4.0,
+      "cn": "123",
       "color_identity": [
        "G"
       ],
@@ -1447,6 +1701,7 @@
       "oracle_text": "Whenever you cast a creature spell, draw a card.",
       "power": "2",
       "scryfall_id": "9da6f595-41b2-4e52-b15a-6ad18e4232c7",
+      "set": "grn",
       "toughness": "3",
       "type_line": "Creature — Elf Druid"
      },
@@ -1454,7 +1709,9 @@
     },
     "ky8M6": {
      "card": {
+      "artist": "Chris Rallis",
       "cmc": 4.0,
+      "cn": "130p",
       "color_identity": [
        "G"
       ],
@@ -1464,6 +1721,7 @@
       "oracle_text": "Whenever a nontoken creature you control enters, if it doesn't have the same name as another creature you control or a creature card in your graveyard, draw a card.",
       "power": null,
       "scryfall_id": "a375e3d3-22f5-416b-ad32-83b6028f7024",
+      "set": "prna",
       "toughness": null,
       "type_line": "Enchantment"
      },
@@ -1471,7 +1729,9 @@
     },
     "kyw31": {
      "card": {
+      "artist": "Martina Pilcerova",
       "cmc": 2.0,
+      "cn": "163",
       "color_identity": [
        "G"
       ],
@@ -1481,6 +1741,7 @@
       "oracle_text": "Search your library for a Plains, Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle.",
       "power": null,
       "scryfall_id": "8180abec-9459-4b81-987e-b1794e45d543",
+      "set": "rav",
       "toughness": null,
       "type_line": "Sorcery"
      },
@@ -1488,7 +1749,9 @@
     },
     "kywJr": {
      "card": {
+      "artist": "Jung Park",
       "cmc": 0,
+      "cn": "296",
       "color_identity": [
        "G"
       ],
@@ -1498,6 +1761,7 @@
       "oracle_text": "({T}: Add {G}.)",
       "power": null,
       "scryfall_id": "a7cdabc9-39d6-4380-8e14-e7792d7463dd",
+      "set": "inr",
       "toughness": null,
       "type_line": "Basic Land — Forest"
      },

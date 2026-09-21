@@ -281,8 +281,14 @@ def list_images(request: Request, game_id: str | None = Query(None)) -> ImagesRe
     """
     art = _art(request)
     registry = _registry(request).data.registry
+    seats: dict[str, dict[str, ImageRefDTO]] = {}
     if game_id is not None:
-        wanted = sorted(_wanted_ids(_session(request, game_id), registry))
+        session = _session(request, game_id)
+        wanted = sorted(_wanted_ids(session, registry))
+        for pid, seat in enumerate(session.seats):
+            overrides = _seat_overrides(session.data.deck(seat.deck_id), registry, art)
+            if overrides:
+                seats[str(pid)] = overrides
     else:
         wanted = registry.ids()
     images: dict[str, ImageRefDTO | None] = {}
@@ -293,7 +299,62 @@ def list_images(request: Request, game_id: str | None = Query(None)) -> ImagesRe
             if url is None
             else ImageRefDTO(card_id=card_id, art=url, artist=art.artist_for(card_id))
         )
-    return ImagesResponse(images=images)
+    return ImagesResponse(images=images, seats=seats)
+
+
+def _seat_overrides(deck, registry, art) -> dict[str, ImageRefDTO]:
+    """The cards this deck prints differently from the catalog's pick.
+
+    Only the differences: a deck that happens to agree with the catalog adds
+    nothing here, which keeps its cards on the bytes this repository already
+    ships instead of sending the client to a second URL for the same picture.
+
+    The artist is the deck's own or nothing.  The catalog keeps one row per card
+    name and essentially never the row the author picked, so there is nothing to
+    look up -- and the base card's illustrator is a *false* credit on someone
+    else's painting, which is worse than no credit at all.
+    """
+    overrides: dict[str, ImageRefDTO] = {}
+    for card_id, printing in _spread_across_faces(deck.printings, registry, art).items():
+        url = art.url_for(card_id, printing=printing.get("scryfall_id"))
+        if url is None or "?p=" not in url:
+            continue
+        overrides[card_id] = ImageRefDTO(
+            card_id=card_id, art=url, artist=printing.get("artist") or None
+        )
+    return overrides
+
+
+def _spread_across_faces(printings: dict[str, dict], registry, art) -> dict[str, dict]:
+    """``printings``, plus the other faces of the cards in it.
+
+    A deck list names the front (`bloodline_keeper`); the back is a card id of
+    its own that no list ever mentions, and the moment the permanent transforms
+    ``card_view`` starts sending that id.  Without this the deck's illustration
+    would vanish mid-flip -- the same class of bug ``_wanted_ids`` documents.
+
+    A face only inherits when it shares the front's catalog printing, which is
+    exactly the transform case: one Scryfall id, two faces, told apart by
+    ``back``.  A meld half or an adventure's other side has a printing of its
+    own, and inheriting onto it would fetch the wrong picture outright.
+    """
+    out = dict(printings)
+    pending = list(printings)
+    while pending:
+        card_id = pending.pop()
+        if card_id not in registry:
+            continue
+        base = art.images.get(card_id)
+        card = registry.get(card_id)
+        for face in (card.back_face, card.second_face):
+            if not face or face in out:
+                continue
+            other = art.images.get(face)
+            if base is None or other is None or other.scryfall_id != base.scryfall_id:
+                continue
+            out[face] = out[card_id]
+            pending.append(face)
+    return out
 
 
 def _wanted_ids(session: GameSession, registry) -> set[str]:
@@ -410,17 +471,24 @@ def get_catalog_card(request: Request, scryfall_id: str) -> CatalogCardDTO:
 
 
 @art_router.get("/art/{filename}")
-def get_art(request: Request, filename: str) -> FileResponse:
+def get_art(
+    request: Request, filename: str, p: str | None = Query(None)
+) -> FileResponse:
     """One card's art, from disk.
 
     ``FileResponse`` gives ETag, Last-Modified and range handling for free,
     which is why this is a route rather than a ``StaticFiles`` mount -- the
     mount could not also do the lazy fill below.
+
+    ``?p=`` is a deck's chosen printing.  It is validated as a Scryfall uuid
+    before it reaches the filesystem, and an unusable one is ignored rather than
+    fatal -- the card falls back to its own art, so a stale printing id costs
+    the right illustration, never the card.
     """
     if not filename.endswith(".jpg"):
         raise HTTPException(status_code=404, detail="not an image")
     card_id = filename[: -len(".jpg")]
-    path = _art(request).resolve(card_id)
+    path = _art(request).resolve(card_id, printing=p)
     if path is None:
         raise HTTPException(status_code=404, detail=f"no art for {card_id}")
     return FileResponse(path, media_type="image/jpeg")
