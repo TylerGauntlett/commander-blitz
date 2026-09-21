@@ -18089,6 +18089,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "not_types": [
+                    "Artifact",
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "link": "self",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "not_types": [
+                      "Artifact",
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile a nonartifact, nonland card from your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "colors_of": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any of the exiled card's colors."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chrome_mox",
+      "mana_cost": "{0}",
+      "name": "Chrome Mox",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.\n{T}: Add one mana of any of the exiled card's colors.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

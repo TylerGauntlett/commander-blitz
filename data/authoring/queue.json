@@ -46242,12 +46242,12 @@
     },
     "Chrome Mox": {
       "edhrec_rank": 146,
-      "gate": "template",
+      "gate": null,
       "name": "Chrome Mox",
-      "reason": "no template for: Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your h",
+      "reason": "",
       "scryfall_id": "da3b705c-a5c9-4e65-9a5e-31b7dc734623",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Chrome Prowler": {

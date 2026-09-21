@@ -1591,6 +1591,13 @@
   "chrome_cat": {
     "zone": "battlefield"
   },
+  "chrome_mox": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "cinder_barrens": {
     "zone": "battlefield"
   },
