@@ -2010,6 +2010,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_reflects: Mapping[str, Any] | None = None
     mana_reflects_any_type = False
     mana_colors_of: Mapping[str, Any] | None = None
+    mana_each_color_among: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
     mana_split: tuple[str, ...] = ()
@@ -2093,6 +2094,39 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # an empty tuple at load time makes `solver_taps` and
             # `offerable_mana_ability` decide this is not a mana source, so an
             # imprinted Mox would never be offered whatever it exiled.
+            mana_options = _ANY_COLOR_OPTIONS
+            mana_amount = None
+        elif (
+            each_color := next(
+                (
+                    e.get("each_color_among")
+                    for e in mana_effects
+                    if isinstance(e, Mapping) and e.get("each_color_among")
+                ),
+                None,
+            )
+        ) is not None:
+            # "Vivid -- {T}: For each color among permanents you control, add
+            # one mana of that color." Bloom Tender. The same question
+            # `colors_of` asks -- which colours does this selector's matches
+            # show -- and a different *answer shape*: every other member of this
+            # family hands back one mana the payer picks a colour for, and this
+            # one hands back one mana of each colour at once. A three-colour
+            # board taps it for three mana.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: an each-colour mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the board's colours to join"
+                )
+            validate_selector(each_color, f"{where}.each_color_among")
+            mana_each_color_among = dict(each_color)
+            # The static superset, for the same reason `reflecting` needs one:
+            # an empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source, so the
+            # ability would never be offered whatever the board showed. Unlike
+            # the rest of the family this one is not *filtered* at activation --
+            # `costs.mana_options_of` builds the bundle from scratch -- so it is
+            # only a "this produces mana" marker here.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
         elif any(isinstance(e, Mapping) and e.get("in_commander_identity") for e in mana_effects):
@@ -2191,6 +2225,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_reflects=mana_reflects,
         mana_reflects_any_type=mana_reflects_any_type,
         mana_colors_of=mana_colors_of,
+        mana_each_color_among=mana_each_color_among,
         mana_identity=mana_identity,
         mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,

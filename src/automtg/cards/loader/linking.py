@@ -35,7 +35,16 @@ def _derive_color_identity(
         # five-colour one would make it illegal in every commander deck that is
         # not itself five-colour -- the deck-building rule 903.4, not a
         # gameplay approximation.
-        skip_superset = ability.mana_chosen_color or ability.mana_colors_of is not None
+        #
+        # `mana_each_color_among` is the third: Bloom Tender prints {G}{G} and a
+        # green body, and its Vivid line names no symbol at all. A five-colour
+        # identity would bar it from the mono-green commander decks it is played
+        # in, and from every other deck that is not itself five-colour.
+        skip_superset = (
+            ability.mana_chosen_color
+            or ability.mana_colors_of is not None
+            or ability.mana_each_color_among is not None
+        )
         for option in () if skip_superset else ability.mana_options:
             for i, amount in enumerate(option[:5]):
                 if amount:

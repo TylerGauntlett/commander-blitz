@@ -15665,3 +15665,105 @@ tax surviving a counterspell, the absence of any prompt, the wearing-off when th
 permanent dies, every loader refusal, and the negative-`amount` refusal on
 `spell_cost_reduction` — with the companion claim that a reduction of *zero*
 still loads, since only the sign is wrong.
+
+
+## `each_color_among` — one mana of **each** colour on the board — Bloom Tender
+
+"Vivid — {T}: For each color among permanents you control, add one mana of that
+color."
+
+A mana ability's output had always been a *list of options the payer picks one
+of*. Every board-dependent family said the same thing in a different dialect:
+`reflecting` (colours an opponent's lands could make), `colors_of` (an imprinted
+card's printed colours), `in_commander_identity`, `mana_chosen_color`, and
+`split` (a free combination of two named colours). All five narrow a load-time
+superset to a shorter list of **one-mana** options, and `costs.mana_options_of`
+returns that list.
+
+Bloom Tender is not a choice. A board showing three colours taps it for three
+mana, one of each, simultaneously, and it never asks which.
+
+### One option, and why that is the rule
+
+`_each_color_among_options` returns a tuple of length **one** — a multi-symbol
+production built from the distinct colours of whatever the selector matched.
+
+That is not a convenience. `legality._mana_option_indices` offers one chip per
+option and the payment solver picks an option index while planning, so a list of
+colours here would put a question in front of the player that the printed card
+does not ask — and a mana ability may not ask anything (605.1a). The single
+option is what keeps the sentence honest in both directions: nothing is chosen,
+and nothing is left behind.
+
+It is also the one member of the family whose load-time superset is never
+*filtered*. The other five keep `ability.mana_options` and drop the rows the
+board rules out; this builds a fresh tuple and ignores the superset entirely. The
+superset survives only as a "this produces mana" marker, because an empty
+`mana_options` at load time makes `solver_taps` and `offerable_mana_ability` both
+decide the ability is not a mana source — so it would never be offered whatever
+the board showed.
+
+### The three near misses, all of which load clean
+
+**`colors_of` over the identical selector is Mox Amber.** "One mana of any color
+among permanents you control" is a real printed sentence and a different card: a
+three-colour board taps it for one mana. `t_vivid_mirror` ships that card beside
+the real one in the test pool, so the difference is demonstrated rather than
+claimed — three single-symbol options against one option worth three.
+
+**`reflecting` over the same selector asks a different question**, not a
+different shape: it polls each matched permanent's own mana *abilities*. Beside a
+Forest and an Island it offers {G} or {U} — what those lands tap *for* — where
+`each_color_among` sees neither colour, because a basic land is a **colourless
+permanent**. This key reads the colours permanents *are*. `t_vivid_reflect` pins
+that: two cards, one board, three different answers.
+
+**`add_mana_per` is the one the sentence sounds like.** It scales a literal
+symbol by a selector count, so `{"mana": "{W}", "per": {"colors": ["W"]}}` adds
+one {W} per white *permanent* rather than one {W} for the colour. It is also not
+a legal mana effect at all: `_split_mana_rider` ends the mana half at the first
+op that is not `add_mana` or `choose_mode`, and `MANA_RIDER_OPS` does not hold
+it either. Five conditional `add_mana`s are impossible for the same reason, and
+a `choose_mode` over the 31 colour combinations would hand the payer a free
+choice the card never offers.
+
+### Load-time refusals
+
+The key is refused beside `mana`, `reflecting`, `colors_of`,
+`in_commander_identity` and `split` — each is a second answer to the one question
+it asks, and only one would be read. It is refused on any op but `add_mana`,
+where nothing would read it. `any_type` is refused by the existing guard, which
+wants a `reflecting`: 106.1b's sixth type of mana is not a colour, and "for each
+**color**" is colours (105.1) — an all-artifact board adds nothing.
+
+`amount` is refused, and this one is not a dropped key: `mana_produced` would
+happily multiply the whole bundle. No printed card doubles it, so a card that
+asked for that would be one the engine invented, and it should arrive with its
+own witness rather than riding untested on this one.
+
+### Colour identity
+
+`_derive_color_identity` skips the superset here, beside `mana_chosen_color` and
+`mana_colors_of`. Bloom Tender prints {1}{G} and a green body and names no other
+symbol; a derived five-colour identity would bar it from every commander deck
+narrower than five colours, including the mono-green ones it is actually played
+in (903.4).
+
+### Cards unblocked
+
+One authored here: **Bloom Tender**, the only gap record in the pool naming this
+capability. It passes all six gates.
+
+### Guarded by
+
+`tests/unit/test_mana_of_each_color.py`, over six new test-pool cards
+(`t_vivid_tender`, the `colors_of` mirror, the `reflecting` mirror, a colourless
+Golem body and three painted permanents). The module covers the bundle on three-
+and five-colour boards, a gold permanent contributing two colours off one card, a
+colour shown twice still being one mana (the boundary `add_mana_per` gets wrong),
+the mono-green board that taps for exactly {G}, a basic land contributing
+nothing, the all-colourless board that is not a mana source and refuses the
+activation rather than reaching for the superset, the solver and the payment
+agreeing on the whole bundle, both near-miss cards answering differently on the
+same board, the superset and its exclusion from colour identity, and every
+load-time refusal.

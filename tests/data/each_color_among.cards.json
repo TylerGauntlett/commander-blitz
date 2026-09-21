@@ -1,0 +1,145 @@
+{
+  "_comment": "The Bloom Tender shape: a mana ability that adds one mana of EACH colour among a selector's matches, simultaneously, rather than one mana of a colour the payer picks. t_vivid_tender is the capability; t_vivid_mirror is the near miss written with `colors_of` over the identical selector, which is Mox Amber and taps for one. The four painted permanents are the board it reads, and t_void_rock is the colourless one that contributes nothing.",
+  "cards": [
+    {
+      "id": "t_vivid_tender",
+      "name": "Test Vivid Tender",
+      "oracle_text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+      "mana_cost": "{G}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf", "Druid"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "each_color_among": {"zone": "battlefield", "controller": "you"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vivid_mirror",
+      "name": "Test Vivid Mirror",
+      "oracle_text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+      "mana_cost": "{G}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf", "Druid"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color among permanents you control.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "colors_of": {"zone": "battlefield", "controller": "you"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vivid_reflect",
+      "name": "Test Vivid Reflection",
+      "oracle_text": "{T}: Add one mana of any color that a permanent you control could produce.",
+      "mana_cost": "{G}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf", "Druid"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color that a permanent you control could produce.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {"zone": "battlefield", "controller": "you"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vivid_golem",
+      "name": "Test Vivid Golem",
+      "oracle_text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+      "mana_cost": "{4}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Golem"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "each_color_among": {"zone": "battlefield", "controller": "you"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vivid_white_rock",
+      "name": "Test Vivid White Rock",
+      "oracle_text": "",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"]
+    },
+    {
+      "id": "t_vivid_blue_rock",
+      "name": "Test Vivid Blue Rock",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_vivid_gold_rock",
+      "name": "Test Vivid Gold Rock",
+      "oracle_text": "",
+      "mana_cost": "{B}{R}",
+      "types": ["Enchantment"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"]
+    },
+    {
+      "id": "t_vivid_void_rock",
+      "name": "Test Vivid Void Rock",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

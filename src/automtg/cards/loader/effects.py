@@ -1885,12 +1885,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         and "mana" not in effect
         and "reflecting" not in effect
         and "colors_of" not in effect
+        and "each_color_among" not in effect
         and not effect.get("in_commander_identity")
         and not effect.get("split")
     ):
         raise DslError(
             f"{where}: add_mana needs 'mana' (or 'reflecting', or 'colors_of', or "
-            f"'in_commander_identity', or 'split')"
+            f"'each_color_among', or 'in_commander_identity', or 'split')"
         )
     if "colors_of" in effect:
         # "Add one mana of any of **the exiled card's colors**." Chrome Mox.
@@ -1906,7 +1907,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         clash = [
             key
-            for key in ("mana", "reflecting", "in_commander_identity", "split")
+            for key in ("mana", "reflecting", "in_commander_identity", "split", "each_color_among")
             if effect.get(key)
         ]
         if clash:
@@ -1923,6 +1924,39 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: a 'colors_of' add_mana is one mana of one colour; "
                 f"'amount' would load and never be read"
+            )
+    if "each_color_among" in effect:
+        # "Vivid -- {T}: For each color among permanents you control, add one
+        # mana of that color." Bloom Tender. One more answer to the question
+        # 'mana', 'reflecting', 'colors_of', 'in_commander_identity' and 'split'
+        # each answer -- which symbols does this ability make -- so writing it
+        # beside any of them is two answers and only one gets read.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'each_color_among' names the colours an add_mana makes, "
+                f"and is read by nobody on {op!r}"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "colors_of", "in_commander_identity", "split")
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'each_color_among' already says which colours this adds, so "
+                f"it cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" in effect:
+            # `mana_produced` would happily multiply the whole bundle, so this
+            # is not a dropped key -- it is a card nobody printed. "One mana of
+            # that color" is the sentence, and a doubled bundle should be a
+            # second `add_mana` family with its own witness rather than an
+            # untested multiplier riding on this one.
+            raise DslError(
+                f"{where}: an 'each_color_among' add_mana is one mana of each colour "
+                f"present; no printed card multiplies that bundle, so 'amount' here "
+                f"would be a card the engine invented"
             )
     if op == "add_mana" and "any_type" in effect:
         # "Add one mana of any **type** that a land you control could produce."

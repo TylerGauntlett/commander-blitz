@@ -418,6 +418,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         return _identity_options(state, oid, ability)
     if ability.mana_colors_of is not None:
         return _colors_of_options(state, oid, ability)
+    if ability.mana_each_color_among is not None:
+        return _each_color_among_options(state, oid, ability)
     if ability.mana_reflects is None:
         return ability.mana_options
 
@@ -509,6 +511,60 @@ def _colors_of_options(state: GameState, oid: int, ability: Ability) -> tuple[tu
         for option in ability.mana_options
         if any(amount and i in colors for i, amount in enumerate(option))
     )
+
+
+def _each_color_among_options(
+    state: GameState, oid: int, ability: Ability
+) -> tuple[tuple[int, ...], ...]:
+    """**One** option holding one mana of every colour the selector shows.
+
+    "Vivid — {T}: For each color among permanents you control, add one mana of
+    that color." Bloom Tender. The same board question `_colors_of_options`
+    asks, answered in the other shape: that one hands back one *single-symbol
+    option per colour* and the payer picks one, and this one hands back a single
+    multi-symbol option and the payer gets all of it. A board showing three
+    colours taps this for three mana, one of each, and never asks which.
+
+    That is the whole capability, and why `mana_colors_of` over the same
+    selector is a different card rather than a rougher one: written that way
+    Bloom Tender is Mox Amber, adding one mana off a five-colour board.
+
+    One option and not several is also what keeps the ability decision-free for
+    605.1a — `legality._mana_option_indices` offers one chip per option, so a
+    list of colours here would put a question in front of the player that the
+    printed card does not ask.
+
+    Colourless is not a colour (105.1), so a board of Wastes and Eldrazi offers
+    nothing and the empty tuple is the real answer — the same one an unimprinted
+    Mox and a colourless commander give, and the solver simply never picks a
+    source that produces nothing.
+
+    Colours are read off `chars` on the battlefield and off the card elsewhere,
+    the way `_colors_of_options` reads them, so a permanent repainted by a
+    continuous effect counts as it now is.
+
+    It **only looks**: `resolve_pool` asks nothing and puts nothing on the stack.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:  # pragma: no cover - callers hold a live permanent
+        return ()
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_each_color_among):
+        found = state.objects.get(other)
+        if found is None:  # pragma: no cover - resolve_pool returns live oids
+            continue
+        present = chars(state, other).colors if found.on_battlefield else state.card_of(found).colors
+        for symbol in present:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    if not colors:
+        return ()
+    produced = [0] * len(SYMBOLS)
+    for index in colors:
+        produced[index] = 1
+    return (tuple(produced),)
 
 
 def _chosen_color_options(

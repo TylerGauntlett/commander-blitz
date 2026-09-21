@@ -709,6 +709,26 @@ class Ability:
     #: same reason `mana_reflects` needs one, and `costs.mana_options_of` does
     #: the narrowing -- to nothing at all while the Mox is unimprinted.
     mana_colors_of: Mapping[str, Any] | None = None
+    #: "Vivid — {T}: **For each color among permanents you control**, add one
+    #: mana of that color." Bloom Tender. A selector whose matches' colours are
+    #: read the way `mana_colors_of` reads them, and then *all of them are
+    #: produced at once* rather than offered as a choice — so this is the one
+    #: mana ability whose output is a variable multi-symbol bundle instead of a
+    #: single pip picked from a set.
+    #:
+    #: `mana_colors_of` over the same selector is the near miss and is Mox
+    #: Amber: "one mana of any color among …" is one mana, and a three-colour
+    #: board would tap this card for one mana instead of three.
+    #:
+    #: `costs.mana_options_of` returns **exactly one option** here — the bundle —
+    #: so there is nothing for the player or the solver to choose between, which
+    #: is the printed card: Bloom Tender never asks which colour.
+    #:
+    #: `mana_options` carries the five-colour superset until activation for the
+    #: same reason `mana_reflects` needs one, and unlike every other member of
+    #: the family that superset is not *filtered* at activation — the narrowing
+    #: builds a fresh tuple from the board's colours instead.
+    mana_each_color_among: Mapping[str, Any] | None = None
     #: "…any color in your commander's color identity." The colours are a
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.

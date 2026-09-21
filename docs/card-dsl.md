@@ -3379,9 +3379,12 @@ Ornitier's power." Two things at once, and the engine had each separately:
 
 `split` names the colours the combination may draw on and replaces `mana`;
 `amount` is how much is being divided. One of the family that includes
-`reflecting`, `colors_of`, `in_commander_identity` and a `mana` mapping — all
-five are abilities whose options cannot be known at load time, so the card
-records the question and `costs.mana_options_of` answers it at activation.
+`reflecting`, `colors_of`, `each_color_among`, `in_commander_identity` and a
+`mana` mapping — all six are abilities whose options cannot be known at load
+time, so the card records the question and `costs.mana_options_of` answers it at
+activation. `each_color_among` is the odd one: the others hand back a *list* of
+one-mana options and the payer picks, and it hands back a single multi-symbol
+bundle.
 
 The combination is offered as **one option per composition**: a power-3 source
 offers 3+0, 2+1, 1+2 and 0+3, and the payment picks whichever covers the spell.
@@ -7111,6 +7114,62 @@ you may exile a nonartifact, nonland card from your hand" is a `self_enters`
 trigger wrapping `may` around an `exile` with `link: "self"`, the shape Isochron
 Scepter and Soul Foundry already ship — see `tests/unit/test_imprint.py` for the
 link itself.
+
+## Vivid mana — "for each color among permanents you control"
+
+```jsonc
+{"op": "add_mana",
+ "each_color_among": {"zone": "battlefield", "controller": "you"}}
+```
+
+Bloom Tender. The **sixth** way an `add_mana` may name its colours, and the only
+one whose output is a *bundle* rather than a choice. A board showing three
+colours taps it for three mana, one of each, simultaneously and without asking —
+so `costs.mana_options_of` hands back exactly **one** option here, a
+multi-symbol tuple built from the distinct colours of whatever the selector
+matched.
+
+That single option is the rule, not an implementation detail.
+`legality._mana_option_indices` offers one chip per option and the solver picks
+an option index while planning, so a list of colours here would put a question in
+front of the player that the printed card never asks — and a mana ability may not
+ask anything (605.1a).
+
+`colors_of` over the *identical selector* is the near miss and is a **different
+card**: "one mana of any color among permanents you control" is Mox Amber, and
+written that way a three-colour board taps Bloom Tender for one mana.
+`tests/unit/test_mana_of_each_color.py` ships that mirror beside the real card so
+the difference is demonstrated rather than claimed — same selector, same board,
+three single-symbol options against one option worth three.
+
+`reflecting` over the same selector is the *other* near miss and asks a different
+**question**: it polls each permanent's own mana abilities. Beside a Forest and
+an Island it offers {G} or {U} — what those lands tap *for* — while this key sees
+neither, because a basic land is a colourless permanent. This reads the colours
+permanents *are*.
+
+`add_mana_per` is the third near miss and the one that looks closest in the
+sentence. It scales one literal symbol by a selector **count**, so
+`{"mana": "{W}", "per": {"colors": ["W"]}}` adds one {W} per white permanent
+rather than one {W} for the colour — and it is not a legal mana effect at all:
+`_split_mana_rider` ends the mana half at the first op that is not `add_mana` or
+`choose_mode`, and `MANA_RIDER_OPS` does not hold it either.
+
+**Colourless is not a colour** (105.1), so a board of nothing but artifacts adds
+nothing and the ability is not a mana source at that moment — the same real
+answer an unimprinted Chrome Mox and a colourless commander give. There is no
+`any_type` here, and the key carries no `amount`: `mana_produced` would happily
+multiply the whole bundle, so an `amount` is refused as a card nobody printed
+rather than dropped.
+
+`mana_options` still carries the five-colour superset at load time, for the same
+reason `reflecting` needs one — an empty tuple makes `solver_taps` and
+`offerable_mana_ability` both decide this is not a mana source. It is the one
+member of the family whose superset is never *filtered*: the narrowing builds a
+fresh tuple instead. So it must not reach colour identity either, and
+`_derive_color_identity` skips it beside `mana_chosen_color` and
+`mana_colors_of` — Bloom Tender prints {1}{G} and is legal in a mono-green deck
+(903.4).
 
 ## "If it would die this turn, exile it instead"
 
