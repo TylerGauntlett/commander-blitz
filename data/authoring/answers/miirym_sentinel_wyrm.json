@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "miirym_sentinel_wyrm",
+    "name": "Miirym, Sentinel Wyrm",
+    "oracle_text": "Flying, ward {2}\nWhenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",
+    "mana_cost": "{3}{G}{U}{R}",
+    "colors": ["G", "R", "U"],
+    "color_identity": ["G", "R", "U"],
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Dragon", "Spirit"],
+    "power": 6,
+    "toughness": 6,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Flying, ward {2}",
+        "effect": "ward",
+        "affects": { "self_only": true },
+        "cost": { "mana": "{2}" }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "subtypes": ["Dragon"],
+            "is_token": false,
+            "exclude_self": true
+          }
+        },
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": { "binding": "subject" },
+            "controller": "you",
+            "except_": { "remove_supertypes": ["Legendary"] }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

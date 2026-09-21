@@ -9149,12 +9149,29 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 | `types` | *replaces* the card types — Espers to Magicite, below |
 | `add_types` | *adds* card types — "except it's an artifact in addition to its other types" (Faerie Artisans) |
 | `add_supertypes` | *adds* supertypes — "except it's legendary" (Adagia, Windswept Bastion); the legend rule reads it |
+| `remove_supertypes` | *removes* supertypes — "except the token isn't legendary" (Miirym, Sentinel Wyrm; Helm of the Host; Kindred Charge) |
 | `power`, `toughness` | *replace* the base size, a pair of non-negative integers — eternalize's "4/4" |
 
 The whole set is 707.9b's copiable values that a printing has asked for, and
 the loader holds it as `COPY_EXCEPT_KEYS`. `types` and `add_types` together are
 refused (one replaces, one adds, and the order would be a guess), as are an
-empty addition and half a size.
+empty addition or removal, half a size, and a supertype named in both
+`add_supertypes` and `remove_supertypes` (whichever way `chars` ordered the two
+would decide the card by accident).
+
+`remove_supertypes` is the one subtraction in the table, and it exists for one
+printed word. "Whenever another nontoken Dragon you control enters, create a
+token that's a copy of it, except the token isn't legendary" — Miirym, Sentinel
+Wyrm — doubles legendary Dragons, and the same copy *without* the exception is
+not a weaker card but the reverse one: the token inherits the original's
+Legendary, `_legend_rule` (704.5j) reads these derived supertypes rather than
+the printed card, sees two of one name under one controller, and puts the
+Dragon in the graveyard on the next state-based check. So the token has to
+survive the legend rule beside its original, which is the claim the unit test
+makes; a check on the supertype set alone would pass on an engine that still
+bins it. Renaming the token instead (`become_copy`'s `except_name`) would dodge
+704.5j for the wrong reason and leave a permanent with a name no printing gives
+it.
 
 Eternalize (702.129a) is embalm's shape with a bigger exception — Champion of
 Wits, a Snake Wizard, becomes "a 4/4 black Zombie Snake Wizard with no mana

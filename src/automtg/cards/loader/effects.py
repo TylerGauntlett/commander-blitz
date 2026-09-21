@@ -59,7 +59,9 @@ from .walk import (
 #: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
 #: 707.9b that a printed exception has needed so far. Replacements: ``colors``,
 #: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
-#: ``add_subtypes`` and ``add_supertypes``. And ``no_mana_cost``.
+#: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
+#: the only subtraction any printing asks for ("except the token isn't
+#: legendary"). And ``no_mana_cost``.
 COPY_EXCEPT_KEYS = frozenset(
     {
         "colors",
@@ -69,6 +71,7 @@ COPY_EXCEPT_KEYS = frozenset(
         "add_types",
         "add_subtypes",
         "add_supertypes",
+        "remove_supertypes",
         "no_mana_cost",
     }
 )
@@ -1309,18 +1312,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for key, known, noun in (
             ("add_types", KNOWN_TYPES, "card type"),
             ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+            ("remove_supertypes", KNOWN_SUPERTYPES, "supertype"),
         ):
             if key not in overrides:
                 continue
             added = overrides[key]
             if not isinstance(added, list) or not added:
-                # An addition of nothing is a clause that does nothing, and
+                # A clause naming nothing is a clause that does nothing, and
                 # "except it's legendary" dropped is a copy the legend rule
-                # never sees.
+                # never sees -- "except it isn't legendary" dropped is one the
+                # legend rule bins, which is worse.
                 raise DslError(f"{where}.except_.{key}: must be a non-empty list")
             for name in added:
                 if name not in known:
                     raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+        if both := set(overrides.get("add_supertypes") or ()) & set(
+            overrides.get("remove_supertypes") or ()
+        ):
+            # One printed clause cannot both grant and strip the same supertype,
+            # and whichever way `chars` happened to order the two would decide a
+            # card's behaviour by accident.
+            raise DslError(
+                f"{where}.except_: {sorted(both)} is both added and removed -- "
+                f"write the one the printed clause says"
+            )
         for key in ("power", "toughness"):
             # "...except it's a 4/4" (eternalize). The base size, so a number and
             # never an expression: 707.9b makes it a copiable value, fixed when

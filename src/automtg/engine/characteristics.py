@@ -185,6 +185,16 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # the copied card's supertypes, so the legend rule -- which reads
             # this, not the printed card -- applies to the token.
             supertypes.update(added_supers)
+        if dropped_supers := obj.copy_overrides.get("remove_supertypes"):
+            # "…except the token isn't legendary." Miirym, Sentinel Wyrm; Helm
+            # of the Host; Kindred Charge. The set difference beside the union
+            # above, and the *only* subtraction any printing asks for -- and the
+            # one the card is played for: without it the token copies the
+            # original's Legendary, `_legend_rule` reads these derived
+            # supertypes and sees two legendary permanents of one name under one
+            # controller, and the ability that was meant to double a legendary
+            # Dragon destroys one instead.
+            supertypes.difference_update(dropped_supers)
         # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The
         # base size, before every layer, so counters and anthems land on top of
         # the 4/4 exactly as they would on a printed one (707.9b: the exception

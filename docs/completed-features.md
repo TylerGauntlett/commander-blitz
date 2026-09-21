@@ -13837,3 +13837,61 @@ Background line and the Background word failing to claim partner, so neither is
 an alias for the other; membership in `INERT_KEYWORDS`, absence from
 `KEYWORD_COUNTERS`, a `choose_a_background` counter granting nothing, and the
 keyword granting nothing beside itself.
+
+## `remove_supertypes` — "except the token isn't legendary"
+
+### Overview
+
+Miirym, Sentinel Wyrm: "Whenever another nontoken Dragon you control enters,
+create a token that's a copy of it, except the token isn't legendary." The
+clause is printed wherever a card hands you a second copy of something that may
+be legendary — Helm of the Host, Kindred Charge, Moritte of the Frost, Living
+Laser. `copy_permanent`'s `except_` could already say the *opposite* sentence
+("except it's legendary", `add_supertypes`, Adagia); every supertype key was
+additive and nothing in the DSL could take a supertype away.
+
+### Why the existing vocabulary would not do
+
+Writing the ability without the exception is not a near-miss, it is the reverse
+card. `sba._legend_rule` reads the **derived** supertypes through `chars`, so an
+unqualified copy of a legendary Dragon carries the original's Legendary, the
+rule sees two permanents of one name under one controller, and the ability meant
+to double a Dragon destroys one on the next state-based check. No op strips a
+supertype afterwards either: `add_subtype` only adds, `set_types` and
+`lose_all_abilities` leave supertypes alone, `change_text` rewrites subtypes,
+and `become_copy`'s `except_name` renames — which would dodge 704.5j for the
+wrong reason and leave a permanent with a name no printing gives it.
+
+### The shape
+
+One key in `COPY_EXCEPT_KEYS` and one set difference in
+`characteristics._compute`, immediately after `add_supertypes`' union and still
+on the printed face before any layer, because 707.9b makes the exception part of
+what the token *is*. Nothing else moved: the legend rule already read the
+derived supertypes, which is what the `add_supertypes` change bought.
+
+The loader validates it beside `add_types`/`add_supertypes` — a non-empty list
+of known supertypes — and refuses a supertype named in both `add_supertypes` and
+`remove_supertypes`, since no printing says both and whichever way `_compute`
+happened to order the two would decide a card's behaviour by accident.
+
+### Tier A
+
+Loader key, characteristic layer, test, docs. No new op, decision kind, event or
+API field; no server or frontend change.
+
+### Guarded by
+
+`tests/unit/test_nonlegendary_token_copy.py`: the supertype gone from the copy
+and still on the original; a "legendary" selector skipping the token; and the
+claim that matters — the token and its original **both still on the battlefield
+after `sba.run`**, over repeated checks and for three tokens at once, against
+the counterfactual where the same copy without the clause has the original put
+into the graveyard. Also an opponent's own legendary copy untouched (704.5j is
+per player, so the exception must not read as a rule about seats), the name,
+types, subtypes and size the copy keeps, Moritte's add-and-remove together, a
+removal of a supertype the card never had, and the loader guards including the
+misspelled key.
+
+Miirym, Sentinel Wyrm is authored in this change —
+`data/authoring/answers/miirym_sentinel_wyrm.json` — and its gap record retired.
