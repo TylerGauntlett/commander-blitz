@@ -543,6 +543,14 @@ class TestThePacketCarriesTheWholeVocabulary:
             "paired",
             "paired_with_source",
             "attached_to_host",
+            # `entered_this_turn` is here for `attached_to_host`'s reason rather
+            # than `paired`'s: nothing about it is static-only in principle, and
+            # the effect side would read the same `TurnLedger` snapshot. It is
+            # static-only because the two cards that printed it -- Neriv's
+            # damage replacement and Zurgo's hexproof -- both ask it
+            # continuously, so no one-shot has needed the pool yet. One line in
+            # `SELECTOR_KEYS` the day one does.
+            "entered_this_turn",
         }
         assert "attached" in static and "attached" in selector
         assert "owner" in static and "owner" in selector
