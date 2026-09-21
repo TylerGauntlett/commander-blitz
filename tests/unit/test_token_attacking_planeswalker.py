@@ -9,7 +9,7 @@ they control**."
 `test_token_attacking_player.py`) and nothing else. The token joined
 `combat.attackers` against the player and there was no way to aim it at a
 permanent, although a declared attacker has been able to attack a planeswalker
-since planeswalkers shipped (`combat.add_attacker(planeswalker=...)`).
+since planeswalkers shipped (`combat.add_attacker(permanent=...)`).
 
 That is a narrower card, not a rougher one. Rule 506.2 makes a planeswalker a
 third kind of thing to attack, and attacking somebody's planeswalker is not
@@ -24,7 +24,7 @@ So `or_planeswalker: true` beside `attacking`. The choice is an existing
 `ask_targets` question (a player ref and object refs in one list, purpose
 ``"attack"``) — no new decision kind — and the answer is written where a
 declared attack at a walker is written: `attackers[oid]` stays the defending
-player and `attacking_planeswalker[oid]` names the walker, so combat damage
+player and `attacking_permanent[oid]` names the walker, so combat damage
 (508.1, 506.4c) needs nothing new.
 """
 
@@ -136,7 +136,7 @@ class TestNoPlaneswalkerNothingIsAsked:
 
         assert asked == []
         assert game.state.combat.attackers[made[0]] == 1
-        assert made[0] not in game.state.combat.attacking_planeswalker
+        assert made[0] not in game.state.combat.attacking_permanent
 
     def test_a_walker_at_another_seat_is_not_offered(self, builder):
         """"A planeswalker **they** control" -- the named seat's, nobody else's."""
@@ -169,7 +169,7 @@ class TestNoPlaneswalkerNothingIsAsked:
         )
 
         assert asked == []
-        assert made[0] not in game.state.combat.attacking_planeswalker
+        assert made[0] not in game.state.combat.attacking_permanent
 
 
 class TestTheControllerChooses:
@@ -202,7 +202,7 @@ class TestTheControllerChooses:
             [pick_object], bindings={"each_player": 1},
         )
 
-        assert game.state.combat.attacking_planeswalker[made[0]] == walker
+        assert game.state.combat.attacking_permanent[made[0]] == walker
         assert game.state.combat.attackers[made[0]] == 1, "506.2: its controller is still the defender"
 
     def test_choosing_the_player_records_no_walker(self, builder):
@@ -214,7 +214,7 @@ class TestTheControllerChooses:
         )
 
         assert game.state.combat.attackers[made[0]] == 1
-        assert made[0] not in game.state.combat.attacking_planeswalker
+        assert made[0] not in game.state.combat.attacking_permanent
 
     def test_the_tokens_controller_is_who_is_asked(self, builder):
         """Not the effect's controller: a token another player creates is
@@ -245,7 +245,7 @@ class TestTheControllerChooses:
         )
 
         assert len(asked) == 2
-        assert [game.state.combat.attacking_planeswalker.get(oid) for oid in made] == [walker, None]
+        assert [game.state.combat.attacking_permanent.get(oid) for oid in made] == [walker, None]
         assert all(game.state.combat.attackers[oid] == 1 for oid in made)
 
     def test_the_boolean_form_widens_the_same_way(self, builder):
@@ -262,7 +262,7 @@ class TestTheControllerChooses:
             gen.send([pick_object(decision)])
         (made,) = [oid for oid in game.state.objects if oid not in before]
 
-        assert game.state.combat.attacking_planeswalker[made] == walker
+        assert game.state.combat.attacking_permanent[made] == walker
 
     def test_it_is_still_never_declared(self, builder):
         """508.4's other half: choosing a walker is not declaring an attack."""
@@ -295,7 +295,7 @@ class TestTheSiblingOpsTakeTheKey:
         )
 
         assert game.state.objects[in_hand].zone is Zone.BATTLEFIELD
-        assert game.state.combat.attacking_planeswalker[in_hand] == walker
+        assert game.state.combat.attacking_permanent[in_hand] == walker
 
     def test_copy_permanent(self, builder):
         game = position(builder, walkers=(1,))
@@ -310,7 +310,7 @@ class TestTheSiblingOpsTakeTheKey:
         )
 
         assert len(asked) == 1
-        assert game.state.combat.attacking_planeswalker[made[0]] == walker
+        assert game.state.combat.attacking_permanent[made[0]] == walker
 
 
 def resolve_to_attack_choice(game, limit: int = 200):
@@ -386,7 +386,7 @@ class TestTheCard:
         humans = oids_of(game, HUMAN, 0)
         combat = game.state.combat
         assert sorted(combat.attackers[h] for h in humans) == [1, 2, 3]
-        assert sorted(combat.attacking_planeswalker.get(h, 0) for h in humans) == sorted(
+        assert sorted(combat.attacking_permanent.get(h, 0) for h in humans) == sorted(
             [0, seat_walkers[1], seat_walkers[3]]
         )
 
@@ -398,7 +398,7 @@ class TestTheCard:
         pass_until(game, lambda g: g.state.step is Step.END_OF_COMBAT)
 
         (human,) = oids_of(game, HUMAN, 0)
-        assert human not in (game.state.combat.attacking_planeswalker if game.state.combat else {})
+        assert human not in (game.state.combat.attacking_permanent if game.state.combat else {})
 
     def test_power_is_the_number_of_creatures_i_control(self, builder):
         """604.3: the characteristic-defining line, a `set_pt` with a count."""

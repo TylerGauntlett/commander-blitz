@@ -861,6 +861,18 @@ class CardModel(BaseModel):
     #: a planeswalker arrives -- loyalty *is* counters, and every reader the
     #: engine already has for counters is a reader for loyalty.
     loyalty: int | None = None
+    #: A battle's printed **defense** (310.3), the number in the box on the
+    #: right. Compiled into a `self_enters_with_counters` replacement exactly as
+    #: `loyalty` is, and for the same reason: defense *is* counters (310.4), so
+    #: proliferate, `counters_on` and the client's badge read it with no new
+    #: reader anywhere.
+    #:
+    #: A separate field from `loyalty` rather than one "starting counters"
+    #: number, because the two are different characteristics that print on
+    #: different card types and the counter kinds are not interchangeable: a
+    #: `remove_counters` aimed at loyalty must not take defense off a battle,
+    #: and 306.8 and 310.6 are two rules.
+    defense: int | None = None
     #: A Saga's **final chapter number** (714.4). Omit it and the loader takes the
     #: highest chapter the card prints, which is right for every Saga whose text
     #: the DSL can say in full.

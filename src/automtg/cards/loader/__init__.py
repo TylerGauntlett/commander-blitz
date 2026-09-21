@@ -19,6 +19,7 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
+from automtg.engine.battles import DEFENSE as BATTLE_DEFENSE
 from automtg.engine.carddef import (
     Ability,
     CardDef,
@@ -383,15 +384,20 @@ def load_deck_file(path: Path) -> DeckModel:
 def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
     """A card's replacements, plus the ones the rules put on it.
 
-    Two cards in the game arrive with counters nobody wrote a replacement for,
-    and both are the same shape: a number printed on the card that the *rules*
-    turn into counters as the permanent enters.
+    Three cards in the game arrive with counters nobody wrote a replacement for,
+    and all three are the same shape: a number printed on the card that the
+    *rules* turn into counters as the permanent enters.
 
     Loyalty **is** counters (306.5b), so a planeswalker's starting loyalty is an
     enters-with-counters replacement and nothing new runs when one arrives.
     Everything the engine already does with counters -- proliferate, the client's
     badge, `counters_on` -- reads loyalty for free because there is nothing else
     to read.
+
+    A battle's **defense** is 310.3/310.4, the same sentence with a different
+    number and a different counter kind, and it is a replacement for the extra
+    reason that the zero-defense state-based action (704.5x) would otherwise
+    defeat the battle the instant it resolved.
 
     A Saga is 714.2b: "as a Saga enters, its controller puts a lore counter on
     it". A **replacement** and not a `self_enters` trigger, and that distinction
@@ -414,6 +420,16 @@ def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
                 "event": "self_enters_with_counters",
                 "counter": "loyalty",
                 "amount": model.loyalty,
+                "modify": {},
+                "condition": None,
+            }
+        )
+    if model.defense is not None:
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": BATTLE_DEFENSE,
+                "amount": model.defense,
                 "modify": {},
                 "condition": None,
             }
@@ -511,6 +527,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
+
+    # The same sentence for a battle (310.3), and refused rather than defaulted
+    # for a sharper reason: a battle that enters with no defense counters is
+    # defeated by 704.5x the instant it resolves, so the omission is not a
+    # weaker card but a card that never reaches the battlefield -- and it would
+    # do it silently. Loyalty is not guarded this way because a planeswalker
+    # missing it is caught by the proxy tier before a card file is ever
+    # written; a battle has no such tier yet.
+    if CardType.BATTLE.value in model.types and model.defense is None:
+        raise DslError(
+            f"{where}: battles need 'defense' -- a battle entering with no defense "
+            f"counters is defeated by the zero-defense state-based action (704.5x) "
+            f"as it resolves"
+        )
+    if model.defense is not None and CardType.BATTLE.value not in model.types:
+        raise DslError(
+            f"{where}: 'defense' is a battle's characteristic (310.3); this card is "
+            f"{'/'.join(model.types)}"
+        )
 
     # How many modes a mode-owned target may point at, and `None` when there is
     # no single cast-time modal question -- the same test `CardDef` makes for
@@ -1450,6 +1485,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         power=model.power,
         toughness=model.toughness,
         loyalty=model.loyalty,
+        defense=model.defense,
         final_chapter=final_chapter,
         prepared_face=model.prepared_face,
         keywords=frozenset(model.keywords),

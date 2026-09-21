@@ -186,7 +186,7 @@ class Game:
                 walker = state.objects.get(ref.id)
                 if walker is not None:
                     add_attacker(
-                        state, action.source, walker.controller, planeswalker=ref.id
+                        state, action.source, walker.controller, permanent=ref.id
                     )
             return  # the decision stays open for more attackers
         state.pending_decision = None

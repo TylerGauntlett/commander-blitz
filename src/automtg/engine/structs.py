@@ -166,7 +166,12 @@ class AttackRestriction:
     #: The player who may not be attacked.
     defender: int
     duration: str = "this_turn"
-    #: Does it also stop an attack on ``defender``'s **planeswalkers**?
+    #: Does it also stop an attack on ``defender``'s **planeswalkers** -- and,
+    #: since battles joined them, on 506.2's third defender kind generally?
+    #: The DSL key keeps the name it was written with, because the sentence that
+    #: sets it ("creatures can't attack this combat") names no defender at all
+    #: and so reaches every kind; the one card that *does* name walkers by hand
+    #: is `attack_defender_forbidden`'s, not this.
     #:
     #: ``False`` on every card that names a player, and that is 506.2: "you
     #: can't attack that player this turn" restricts attacking the *seat*, and
@@ -1308,13 +1313,20 @@ class CombatState:
 
     #: attacker oid -> the player being attacked
     attackers: dict[int, int] = field(default_factory=dict)
-    #: attacker oid -> the **planeswalker** it is attacking, when it is
-    #: attacking one. A parallel map rather than a union in `attackers`, which
-    #: is read in about fifteen places: a planeswalker's controller *is* the
-    #: defending player (506.2), so every existing read of `attackers[oid]`
-    #: keeps meaning what it meant and stays true. Only declaration, damage
-    #: assignment and serialization have to know the difference.
-    attacking_planeswalker: dict[int, int] = field(default_factory=dict)
+    #: attacker oid -> the **permanent** it is attacking, when it is attacking
+    #: one rather than a seat. A parallel map rather than a union in
+    #: `attackers`, which is read in about fifteen places: the permanent's
+    #: controller *is* the defending player (506.2), so every existing read of
+    #: `attackers[oid]` keeps meaning what it meant and stays true. Only
+    #: declaration, damage assignment and serialization have to know the
+    #: difference.
+    #:
+    #: Named for the *kind of thing* rather than for planeswalkers, because
+    #: 506.2 has three attack targets and this map holds two of them: a
+    #: planeswalker and a **battle** (310.7) are the same slot in the
+    #: declaration, differing only in which counter the damage comes off. It
+    #: was `attacking_planeswalker` while a walker was the only one.
+    attacking_permanent: dict[int, int] = field(default_factory=dict)
     #: blocker oid -> the attacker it is blocking
     blockers: dict[int, int] = field(default_factory=dict)
     #: attacker oid -> ordered list of blocker oids (damage assignment order)

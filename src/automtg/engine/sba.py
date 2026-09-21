@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from . import sagas
+from . import battles, sagas
 from .characteristics import chars
 from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
@@ -41,6 +41,7 @@ def check(state: GameState) -> bool:
     changed |= _counter_annihilation(state)
     changed |= _creature_deaths(state)
     changed |= _planeswalker_deaths(state)
+    changed |= _defeated_battles(state)
     changed |= _finished_sagas(state)
     changed |= _legend_rule(state)
     changed |= _role_rule(state)
@@ -418,6 +419,34 @@ def _planeswalker_deaths(state: GameState) -> bool:
             continue
         if obj.counter("loyalty") <= 0:
             move_object(state, oid, Zone.GRAVEYARD, cause="zero_loyalty")
+            changed = True
+    return changed
+
+
+def _defeated_battles(state: GameState) -> bool:
+    """704.5x: a battle with no defense counters is put into its owner's graveyard.
+
+    The sibling of `_planeswalker_deaths` immediately above, and the same shape
+    for the same reason: this is not destruction, so it goes through
+    `move_object` and indestructible does not save it.
+
+    Directly after the planeswalker pass rather than anywhere else in the order,
+    because the two are one rule read twice -- 506.2's non-seat defenders, each
+    with its own counter kind -- and a reader looking for one should find the
+    other. `check` loops to a fixed point anyway, so the placement is legibility
+    rather than correctness.
+
+    The reason the test is a call into `battles` rather than a bare
+    `obj.counter("defense") <= 0` here: `battles.defeated` is where 704.5x's
+    exemption for a battle that is the source of a trigger on the stack will go,
+    and it carries the note saying why there is nothing to exempt yet.
+    """
+    changed = False
+    for oid in list(state.battlefield):
+        if not battles.is_battle(state, oid):
+            continue
+        if battles.defeated(state, oid):
+            move_object(state, oid, Zone.GRAVEYARD, cause="defeated")
             changed = True
     return changed
 

@@ -152,7 +152,7 @@ SELECTOR_KEYS = frozenset(
         #: is exactly Mangara, the Diplomat's "attacking you and/or planeswalkers
         #: you control" and one creature too many for Trouble in Pairs. This key
         #: narrows that binding (or any pool) by also reading
-        #: `combat.attacking_planeswalker`. `"you"`, `"opponent"` or `"any"`
+        #: `combat.attacking_permanent`. `"you"`, `"opponent"` or `"any"`
         #: (some player, never a planeswalker), relative to the ability's
         #: controller.
         "attacking_player",
@@ -1006,20 +1006,21 @@ ATTACKING_PLAYER_WORDS = ("you", "opponent", "any")
 
 def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -> bool:
     """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
-    planeswalker that player controls?
+    planeswalker or battle that player controls?
 
     506.2 gives an attacking creature one of three things to attack: a player, a
     planeswalker, or a battle. `combat.attackers[oid]` is the defending *player*
-    in the first two cases (`add_attacker` refuses a walker whose controller
+    in all three cases (`add_attacker` refuses a permanent whose controller
     disagrees), which is right for "attacks you or a planeswalker you control"
-    and one creature too many for "attacks you". `attacking_planeswalker` is
-    the record that tells them apart. Battles are not attackable in this engine;
-    when they are, their record belongs beside this one.
+    and one creature too many for "attacks you". `attacking_permanent` is
+    the record that tells them apart, and it holds battles as well as walkers --
+    so a creature swinging at a battle is not attacking anybody, which is what
+    this asks and what 506.2 says.
 
     Shared by `matches` and `triggers.matches_card_filter`, so the effect and
     trigger halves of the filter language cannot disagree about it.
     """
-    if combat is None or not combat.attacking(oid) or oid in combat.attacking_planeswalker:
+    if combat is None or not combat.attacking(oid) or oid in combat.attacking_permanent:
         return False
     defender = combat.attackers[oid]
     if who == "you":

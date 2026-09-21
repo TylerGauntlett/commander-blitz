@@ -11,6 +11,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
+from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
     life_gain_multiplier,
@@ -681,6 +682,21 @@ def damage_permanent(
                 ),
                 defender=obj.controller,
             )
+    # 310.6: damage dealt to a battle removes that many defense counters. The
+    # planeswalker branch one line up with a different counter kind, and here
+    # for the reason that one is here -- `obj.damage` on a battle would be
+    # invisible, because nothing compares a battle's damage to anything.
+    #
+    # No per-connection event beside it. The planeswalker half has
+    # `COMBAT_DAMAGE_TO_PLANESWALKER` because cards print "to a player or
+    # planeswalker" one creature at a time; the printed battle line is "one or
+    # more creatures you control deal combat damage to a player or battle",
+    # which is a *batch* and is fired once, from `combat._fire_damage_batch`,
+    # where the whole simultaneous event is knowable. A per-connection battle
+    # event would have no card to serve and would be a second, wrong answer to
+    # the same sentence.
+    elif "Battle" in _chars(state, oid).types:
+        remove_counters(state, oid, BATTLE_DEFENSE, amount)
     elif withers:
         add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
     else:

@@ -33,11 +33,13 @@ CMD_CAP = 2
 ABIL_CAP = 2
 #: Target-option slots per castable object (index 0 also covers "no targets").
 TGT_SLOTS = 5
-#: Attack-target slots: every opponent, plus their planeswalkers. Eight rather
-#: than three because a planeswalker is a third kind of thing to attack (506.2)
-#: and a pod board can hold several. Raising it shifts every index above
-#: `IDX_ATTACK` and therefore invalidates trained checkpoints -- see
-#: docs/adr/0002-flat-action-space.md.
+#: Attack-target slots: every opponent, plus their planeswalkers **and
+#: battles**. Eight rather than three because a planeswalker is a third kind of
+#: thing to attack (506.2) and a pod board can hold several. Raising it shifts
+#: every index above `IDX_ATTACK` and therefore invalidates trained checkpoints
+#: -- see docs/adr/0002-flat-action-space.md, which is why battles were folded
+#: into the existing slots (after each seat's walkers) rather than given their
+#: own band.
 DEF_CAP = 8
 BLOCK_TARGET_CAP = 4
 CHOICE_CAP = 10
@@ -161,31 +163,47 @@ class _Slots:
         # map would let "attack player 1" and "attack the planeswalker whose oid
         # is 1" collide on the same slot.
         seats = [("player", p) for p in state.turn_order(pid) if p != pid]
-        walkers = [("pw", oid) for oid in _attackable_walkers(state, pid)]
-        self.defenders = _index_map(seats + walkers)
+        # `"pw"` is the tag 506.2's non-seat defenders share -- planeswalkers
+        # and battles alike. Kept as written rather than renamed with the
+        # function: it is an internal key, and `encode` below has to spell the
+        # same string, so the two changing together buys nothing.
+        permanents = [("pw", oid) for oid in _attackable_permanents(state, pid)]
+        self.defenders = _index_map(seats + permanents)
         attackers = sorted(state.combat.attackers) if state.combat else []
         self.attackers = _index_map(attackers)
         self.choices = _index_map(decision.remaining_options) if decision else {}
 
 
-def _attackable_walkers(state: GameState, pid: int) -> list[int]:
-    """Planeswalkers this player could attack, in the seat order above.
+def _attackable_permanents(state: GameState, pid: int) -> list[int]:
+    """Planeswalkers **and battles** this player could attack, in the seat order above.
 
     Grouped by controller rather than by oid, so a slot means "the first
     planeswalker of the next opponent round the table" and stays roughly stable
     as boards change -- the same reasoning `_bf_key` uses for battlefield slots.
+
+    Battles are appended **after** each seat's planeswalkers rather than
+    interleaved by oid, and that ordering is the whole reason this function was
+    widened rather than a second one added: every walker keeps the slot it had,
+    so `DEF_CAP` does not move and no trained checkpoint is invalidated. A board
+    with more non-seat defenders than the cap simply loses the overflow from the
+    mask, which `encode` has always handled by returning `None`.
     """
 
     out: list[int] = []
     for seat in state.turn_order(pid):
         if seat == pid:
             continue
-        out.extend(
+        theirs = [
             oid
             for oid in state.battlefield
-            if (obj := state.objects.get(oid)) is not None
-            and obj.controller == seat
-            and "Planeswalker" in chars(state, oid).types
+            if (obj := state.objects.get(oid)) is not None and obj.controller == seat
+        ]
+        walkers = [oid for oid in theirs if "Planeswalker" in chars(state, oid).types]
+        out.extend(walkers)
+        out.extend(
+            oid
+            for oid in theirs
+            if "Battle" in chars(state, oid).types and oid not in walkers
         )
     return out
 

@@ -7868,6 +7868,41 @@ up at instant speed on somebody else's turn.
 counts a single ability, so on a three-ability planeswalker it would allow two
 pluses and then a minus.
 
+## Battles
+
+```jsonc
+{"types": ["Battle"], "subtypes": ["Siege"], "defense": 3}
+```
+
+`defense` is a number on the card, and it is the planeswalker paragraph above
+with one word changed: defense **is** counters (310.4), so it compiles into a
+`self_enters_with_counters` replacement and proliferate, `counters_on`,
+`move_counters` and the client's badge all read a battle for free. Combat damage
+takes those counters off (310.6), and 704.5x puts a battle with none into its
+owner's graveyard -- not destruction, so indestructible does not save it.
+
+**`defense` is required on a Battle and refused on anything else.** A battle
+written without one is not a weaker card: 704.5x defeats it as it resolves, so it
+is a card that never reaches the battlefield, and it would do that silently. This
+is the one place the loader is stricter than it is about `loyalty`.
+
+**A battle is attacked like a planeswalker** (506.2) and needs nothing written on
+the card to be: `legal_permanent_defenders` offers it, `attackers[oid]` stays the
+defending player, and `attacking_permanent[oid]` names the battle. A creature
+swinging at one is therefore **not** attacking anybody, which is what the
+`attacking_player` selector key asks.
+
+**Not implemented: the protector** (310.7, 506.2b) and the back face a defeated
+Siege lets its controller cast. So a battle here is attackable by the people who
+could attack **its controller** -- the planeswalker rule applied unchanged --
+where a real Siege is attacked by its controller, because its protector is an
+opponent. Every battle in print is a Siege, so writing one is writing an honest
+permanent with a life total and **not** a playable Siege. See
+`docs/rules-coverage.md` and `src/automtg/engine/battles.py`.
+
+The proxy tier refuses battles outright: 310.3's printed defense is not a column
+in the card catalog, so there is no number to generate one from.
+
 
 
 ```jsonc

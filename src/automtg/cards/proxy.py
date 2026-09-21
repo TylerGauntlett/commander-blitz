@@ -410,7 +410,30 @@ def build_proxy(facts: CardFacts, *, taken: set[str] | None = None) -> ProxyResu
                 else "no printed loyalty in the catalog; the card cannot be authored"
             )
     if CardType.BATTLE.value in types:
-        notes.append("battles enter play but have no defence or protector here")
+        # 310 is implemented as far as defense counters, being attacked and
+        # being defeated -- but a battle's **defense is not in the catalog**.
+        # Scryfall prints it in its own field and `images.py` does not carry one
+        # (see its column list), so there is no number to write and the only
+        # honest options are a fabricated one or a refusal.
+        #
+        # Refused, for the reason the loader refuses a battle without `defense`:
+        # a battle entering with no defense counters is defeated by 704.5x as it
+        # resolves, so a proxied one would not be a weaker card but a card that
+        # vanishes from the battlefield with no explanation. A named refusal
+        # puts it in the import report instead, where it can be hand-written.
+        #
+        # Every battle in print is also a transforming Siege whose back face is
+        # cast when it is defeated, and neither protectors (310.7) nor that back
+        # face is modelled -- so even with a defense number the proxy would be
+        # generating a permanent that cannot do the thing it exists to do.
+        return ProxyResult(
+            card_id=card_id,
+            error=(
+                "battles need a printed defense (310.3) and the catalog carries "
+                "none; hand-write it, or see docs/rules-coverage.md for the "
+                "protector and back-face rules a Siege would also need"
+            ),
+        )
 
     if facts.layout in _TWO_FACED_LAYOUTS:
         notes.append("only the front face exists; the back face is not modelled")

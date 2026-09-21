@@ -570,7 +570,7 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
     planeswalker is not attacking them -- and the sentence *this* effect exists
     for says "or planeswalkers you control" out loud, so neither half is
     inferred. A planeswalker's controller **is** the defending player (506.2)
-    and `combat.legal_planeswalker_defenders` passes it, so the one seat test
+    and `combat.legal_permanent_defenders` passes it, so the one seat test
     below covers the walker as well as the chair, exactly as goad's does.
     """
     obj = state.objects.get(oid)

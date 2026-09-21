@@ -978,6 +978,10 @@ class CardDef:
     #: replacement, because the client shows it on the card in hand where no
     #: object exists to carry counters yet.
     loyalty: int | None = None
+    #: A battle's printed defense (310.3). Kept as a characteristic as well as
+    #: compiled into a replacement, for loyalty's reason: the client shows it on
+    #: the card in hand, where no object exists to carry counters yet.
+    defense: int | None = None
     #: A Saga's **final chapter number** (714.4). Set by the loader on any card
     #: with chapter abilities, and the one thing about a Saga that is not
     #: derivable from the board: it is what 704.5s compares the lore counters

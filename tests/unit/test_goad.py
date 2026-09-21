@@ -309,7 +309,7 @@ class TestItReachesPlaneswalkers:
         goad_creature(game.state, bear, 0)
         to_declare_attackers(game)
         assert walker not in walkers_offered(game, bear)
-        assert not combat_mod.add_attacker(game.state, bear, 0, planeswalker=walker)
+        assert not combat_mod.add_attacker(game.state, bear, 0, permanent=walker)
 
     def test_a_third_partys_walker_is_offered(self, builder):
         game = position(builder, mine=(WALKER,), lends=(WALKER,))

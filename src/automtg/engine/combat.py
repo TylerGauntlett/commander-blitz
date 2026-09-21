@@ -108,7 +108,7 @@ def can_attack(state: GameState, oid: int) -> bool:
     # has nowhere legal to swing -- so it joins the cheap guard rather than
     # relying on the one already there.
     if (state.attack_restrictions or any_defender_attack_prohibition(state)) and not (
-        legal_defenders(state, oid) or legal_planeswalker_defenders(state, oid)
+        legal_defenders(state, oid) or legal_permanent_defenders(state, oid)
     ):
         return False
     combat = state.combat
@@ -265,7 +265,7 @@ def legal_attackers(state: GameState) -> list[int]:
 
 
 def attack_target_forbidden(
-    state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
 ) -> bool:
     """May this creature **not** attack this defender?
 
@@ -276,18 +276,24 @@ def attack_target_forbidden(
     instead, and leaves the creature free to swing at anybody else.
 
     One predicate rather than a filter inside each of the three callers, because
-    `legal_defenders`, `legal_planeswalker_defenders` and `add_attacker` have to
+    `legal_defenders`, `legal_permanent_defenders` and `add_attacker` have to
     agree exactly -- an action legality offers and `add_attacker` then refuses is
     a game that cannot continue.
 
-    ``planeswalker`` is the attack's *third* target kind (506.2) and it is
-    deliberately exempt from `attack_restrictions`. "Creatures can't attack you"
-    restricts attacking the **player**; attacking a planeswalker they control is
-    not that, which is why a Ghostly Prison taxes nothing when the attack goes at
-    a planeswalker instead. The argument is taken rather than assumed so a future
-    restriction that *does* reach planeswalkers -- goad's "attacks a player other
-    than you if able", where attacking your planeswalker does not discharge the
+    ``permanent`` is the attack's *non-seat* target kind (506.2) -- a
+    planeswalker or a battle -- and it is deliberately exempt from
+    `attack_restrictions`. "Creatures can't attack you" restricts attacking the
+    **player**; attacking a planeswalker they control is not that, which is why
+    a Ghostly Prison taxes nothing when the attack goes at a planeswalker
+    instead. The argument is taken rather than assumed so a future restriction
+    that *does* reach planeswalkers -- goad's "attacks a player other than you
+    if able", where attacking your planeswalker does not discharge the
     requirement -- can say so here without touching the three callers again.
+
+    A **battle** is passed in the same argument and is read the same way, and
+    that is the whole of what battles cost this predicate: 506.2 makes the two
+    one kind of declaration, and every sentence above that distinguishes a seat
+    from a permanent distinguishes a seat from a battle for the same reason.
 
     That future arrived, and it is the second clause below. **Goad reaches
     planeswalkers** where an attack restriction does not, and the two answers are
@@ -314,21 +320,29 @@ def attack_target_forbidden(
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
                 continue
-            if planeswalker is None or restriction.planeswalkers:
+            if permanent is None or restriction.planeswalkers:
                 return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
     # control." The same seam read off a *static* instead of the table, so the
     # prohibition is filtered on the attacking creature and lives exactly as
     # long as the permanent printing it. Deliberately **not** under the
-    # `planeswalker is None` guard above: this sentence names the walkers, where
+    # `permanent is None` guard above: this sentence names the walkers, where
     # `attack_restrictions`' sentence ("that player can't attack you") does not,
     # and reading either one the other's way would be a different card.
+    #
+    # A **battle** inherits this unchanged, which over-reads it by one word:
+    # Combat Calligrapher says "you or planeswalkers you control" and this stops
+    # the Inkling attacking that seat's battle too. Left as it is rather than
+    # split, because the split would be a per-type prohibition list built for a
+    # card that does not exist, and the over-reading is in the safe direction --
+    # a battle that cannot be attacked is inert, where one that could be
+    # attacked around a printed prohibition is a rules error.
     if attack_defender_forbidden(state, oid, defender):
         return True
     # Goad's second half (701.38a): "…and attacks a player other than you if
     # able". `defender` is the defending *player* for both attack kinds -- a
-    # planeswalker's controller is the defending player (506.2) and
-    # `legal_planeswalker_defenders` passes it -- so one membership test covers
+    # planeswalker's or battle's controller is the defending player (506.2) and
+    # `legal_permanent_defenders` passes it -- so one membership test covers
     # the walker as well as the seat, which is what "goad reaches planeswalkers"
     # means in code.
     #
@@ -378,7 +392,7 @@ def _has_non_goader_defender(state: GameState, oid: int, goaders: set[int]) -> b
         if "Planeswalker" not in chars(state, pw).types:
             continue
         if not attack_target_forbidden(
-            state, oid, pw_obj.controller, planeswalker=pw
+            state, oid, pw_obj.controller, permanent=pw
         ):
             return True
     return False
@@ -398,18 +412,36 @@ def legal_defenders(state: GameState, oid: int | None = None) -> list[int]:
     return [pid for pid in defenders if not attack_target_forbidden(state, oid, pid)]
 
 
-def legal_planeswalker_defenders(state: GameState, oid: int | None = None) -> list[int]:
-    """Planeswalkers that may be attacked, in deterministic order (506.2).
+#: The permanent types 506.2 lets a creature be declared as attacking, beside a
+#: player. Two of the three attack targets, and the only thing that separates
+#: them downstream is which counter the damage comes off -- loyalty (306.8) or
+#: defense (310.6).
+ATTACKABLE_TYPES = ("Planeswalker", "Battle")
 
-    Every planeswalker controlled by a player who could be attacked. Its
-    controller is the defending player, which is why attacking one does not
-    need its own notion of "who is being attacked" -- `attackers[oid]` still
-    answers that, and still truthfully.
+
+def legal_permanent_defenders(state: GameState, oid: int | None = None) -> list[int]:
+    """Permanents that may be attacked, in deterministic order (506.2).
+
+    Every planeswalker **or battle** controlled by a player who could be
+    attacked. Its controller is the defending player, which is why attacking
+    one does not need its own notion of "who is being attacked" --
+    `attackers[oid]` still answers that, and still truthfully.
 
     Read off the **unfiltered** player set: a player under an attack restriction
     is still a legal defender when the attack goes at their planeswalker, so the
     filtering is left entirely to `attack_target_forbidden`, which is told which
     kind of attack it is being asked about.
+
+    **Battles are offered to the attacking player's opponents**, exactly as
+    planeswalkers are, and that is the one place the engine's battle differs
+    from a printed Siege. 506.2b makes the *protector* the defending player, and
+    a Siege's protector is an opponent of its controller -- so in a real game
+    you attack the battle **you** control. Protectors are not modelled (see
+    `docs/rules-coverage.md`), and rather than invent a defending player this
+    follows the planeswalker precedent: a battle is attackable by the people who
+    could attack its controller. A battle with no protector is therefore a
+    permanent your opponents can shoot down, not one you race -- narrower than
+    the printed card, and visibly so, rather than silently mis-seated.
     """
     from .characteristics import chars
 
@@ -419,13 +451,13 @@ def legal_planeswalker_defenders(state: GameState, oid: int | None = None) -> li
         for pw in state.battlefield
         if (obj := state.objects.get(pw)) is not None
         and obj.controller in defenders
-        and "Planeswalker" in chars(state, pw).types
-        and (oid is None or not attack_target_forbidden(state, oid, obj.controller, planeswalker=pw))
+        and any(t in chars(state, pw).types for t in ATTACKABLE_TYPES)
+        and (oid is None or not attack_target_forbidden(state, oid, obj.controller, permanent=pw))
     ]
 
 
 def add_attacker(
-    state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
 ) -> bool:
     combat = state.combat
     if combat is None or not can_attack(state, oid):
@@ -433,19 +465,19 @@ def add_attacker(
     # Each of the two attack kinds is validated against exactly the list
     # legality offered for it, and `oid` is passed to both -- an attack legality
     # offers and this then refuses would strand the declaration with no way out.
-    if planeswalker is None:
+    if permanent is None:
         if defender not in legal_defenders(state, oid):
             return False
     else:
-        if planeswalker not in legal_planeswalker_defenders(state, oid):
+        if permanent not in legal_permanent_defenders(state, oid):
             return False
-        obj = state.objects.get(planeswalker)
+        obj = state.objects.get(permanent)
         if obj is None or obj.controller != defender:
-            # The planeswalker and the player have to agree, or `attackers[oid]`
+            # The permanent and the player have to agree, or `attackers[oid]`
             # -- which everything else reads as "the defending player" -- would
             # name someone this creature is not attacking.
             return False
-        combat.attacking_planeswalker[oid] = planeswalker
+        combat.attacking_permanent[oid] = permanent
     combat.attackers[oid] = defender
     return True
 
@@ -453,7 +485,7 @@ def add_attacker(
 def remove_attacker(state: GameState, oid: int) -> None:
     if state.combat is not None:
         state.combat.attackers.pop(oid, None)
-        state.combat.attacking_planeswalker.pop(oid, None)
+        state.combat.attacking_permanent.pop(oid, None)
 
 
 def _declared_attackers(state: GameState, player: int) -> list[int]:
@@ -1510,13 +1542,17 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
     was_blocked = any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
 
     if not was_blocked:
-        # 508.1: a creature attacking a planeswalker that is still there deals
-        # its damage to the planeswalker instead of to its controller. If the
-        # planeswalker has already left -- burned down in response, or bounced
-        # -- the attacker deals no combat damage at all rather than falling
-        # through to the player, which is 506.4c and the whole risk of the
-        # attack.
-        target = combat.attacking_planeswalker.get(attacker_oid)
+        # 508.1: a creature attacking a planeswalker **or battle** that is still
+        # there deals its damage to that permanent instead of to its controller.
+        # If it has already left -- burned down in response, or bounced -- the
+        # attacker deals no combat damage at all rather than falling through to
+        # the player, which is 506.4c and the whole risk of the attack.
+        #
+        # One branch for both, because the difference between them is entirely
+        # downstream: `damage_permanent` reads the type and takes the amount off
+        # loyalty (306.8) or off defense (310.6). Nothing about *assigning* the
+        # damage knows which it is.
+        target = combat.attacking_permanent.get(attacker_oid)
         if target is not None:
             obj = state.objects.get(target)
             if obj is None or not obj.on_battlefield:

@@ -118,7 +118,7 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
         # player controls can have different defender lists in the same combat
         # once one of them was borrowed from somebody else.
         defenders = combat_mod.legal_defenders(state, oid)
-        walkers = combat_mod.legal_planeswalker_defenders(state, oid)
+        walkers = combat_mod.legal_permanent_defenders(state, oid)
         for defender in defenders:
             # Propaganda: "creatures can't attack you **unless** their
             # controller pays {2}". An unpayable tax is a prohibition (508.1g),
