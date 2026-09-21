@@ -388,7 +388,14 @@ def damage_player(
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
     # than how big it is -- so a doubled infect hit is twice the poison.
-    amount *= damage_multiplier(state, source_oid, None, is_combat=is_combat)
+    #
+    # `target_pid` is the seat being hit, which is what `affects_player` reads:
+    # "if a source you control would deal damage to **an opponent**" names a
+    # player the way `affects` names a permanent, and without it the recipient
+    # side of the static was all-or-nothing here.
+    amount *= damage_multiplier(
+        state, source_oid, None, target_pid=pid, is_combat=is_combat
+    )
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in

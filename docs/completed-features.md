@@ -15328,3 +15328,90 @@ including an opponent's creature not being asked and a token getting neither
 half; a reanimated arrival on both branches; two arrivals answering differently;
 and the control at every step — a creature with no riot, and the same creature
 with the granter gone.
+
+## `replace_damage` widened to name a **seat** and a **spell** — Twinflame Tyrant
+
+"If a source you control would deal damage to an opponent or a permanent an
+opponent controls, it deals double that damage instead." One printed sentence,
+and both ends of `replace_damage` were too narrow for it — in opposite
+directions, which is why it is one change rather than two cards' worth.
+
+### The recipient side was permanent-only, and the card is half about a seat
+
+`affects` is the only recipient filter the static had, and it is permanent-only
+by construction: `player_statics.damage_multiplier` is called from
+`primitives.damage_player` with `target_oid=None`, so `state.objects.get(None)`
+is `None` and any static carrying `affects` is skipped. `affects: {"controller":
+"opponent"}` therefore implements the *second* half of the printed line and
+silently drops every point aimed at the opponent themself — the half the card is
+played for.
+
+Dropping `affects` instead is worse and wrong in both directions at once: it is
+Furnace of Rath restricted to your sources, doubling your Pyroclasm onto your own
+board, your fight damage onto your own creature, and the ping your own City of
+Brass deals to **you**. Strictly stronger than printed on offence and strictly
+worse on defence, and — this is the trap worth naming — it passes any test that
+asks only "was the damage doubled".
+
+`affects_player` is the fix, and it was already *accepted* here. `replace_damage`
+is deliberately not in `PLAYER_WIDE_STATIC_EFFECTS`, the loader's
+`replace_damage` branch never rejected the key, and the compile loop copied it
+onto the static unconditionally — so written before this change it loaded clean
+and was read by nothing. A silent no-op is the worst of the three outcomes; the
+capability delivered is the key being **read**, in `damage_multiplier`'s player
+branch, with `primitives.damage_player` now passing the seat down as
+`target_pid`.
+
+### The two recipient filters are a union, and nothing else in the DSL is
+
+Every other pair of filters on one static conjoins. These cannot: one damage
+event is dealt either to a player or to a permanent and never to both, so an AND
+over the pair doubles **nothing at all** — the failure that looks exactly like
+the static not being there. All four combinations are printed sentences:
+neither filter is Furnace of Rath, `affects` alone is the Flail's second line,
+`affects_player` alone is "to an opponent", and both together are the Tyrant's
+printed **or**.
+
+### "A source you control" is not "a permanent you control"
+
+109.5's source of damage is the instant on the stack as readily as the creature
+on the battlefield, and `op_damage`'s dealer defaults to `ctx.source_oid` — the
+resolving **spell** object for a burn spell. `characteristics._matches` returns
+`False` for anything whose `on_battlefield` is false, so a `damage_source`
+matched through it reads `{"controller": "you"}` as "a permanent you control"
+and quietly misses every instant you cast. A doubler that does not double your
+Lightning Bolt is not the printed card; omitting `damage_source` reaches the
+spells and the opponent's sources with them, which no printed card says.
+
+Keyed on the **shape of the filter** rather than a new key, because the shape
+already carries the distinction: a `damage_source` naming only `controller` is
+answered off the dealer's controller in whatever zone it stands, and the moment
+a card names a type, an attachment or any other characteristic it is describing
+a permanent and keeps the permanent reading. "Another **creature**" and "a
+**source** you control" are different sentences and the filters say so. An empty
+`{}` is not the widened shape — its defaulted `controller: "you"` still means a
+permanent. No shipped card wrote a controller-only `damage_source`, so nothing
+changed meaning under it.
+
+### Cards unblocked
+
+One, hand-authored at the agent tier: **Twinflame Tyrant**, whose second printed
+line this is. The same pair reaches the rest of the opponent-facing doubler
+family — Fiery Emancipation's "a source you control … triple", Angrath's
+Marauders, Gratuitous Violence's opponent-side cousins — none of which could
+name a player as the thing being hit.
+
+### Guarded by
+
+`tests/unit/test_replace_damage.py`, over
+`tests/data/replace_damage.cards.json`, three new classes beside the Flail and
+Furnace ones. `TestTheAsymmetryIsTheWholeCard` is the important one and pins the
+four cells against each other on one board: damage to an opponent and to an
+opponent's permanent doubles, damage to you and to your own permanents does not,
+and an opponent's source is not doubled either. `TestTheRecipientFiltersAreAUnionNotAConjunction`
+pins each filter written alone — a seat-only filter never reaching a permanent,
+a permanent-only filter still never reaching a seat — and
+`TestASourceYouControlIsNotAPermanentYouControl` casts a real instant at each
+seat in turn: yours doubled at the opponent, yours at yourself not, the
+opponent's not, Fiery Emancipation's ×3 on the same spell, and the Flail's
+type-naming dealer filter still refusing a spell.

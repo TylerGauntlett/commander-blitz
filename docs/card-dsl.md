@@ -2047,6 +2047,17 @@ card's own owner's copy of that zone.
 
 // Furnace of Rath: neither end named, no combat clause
 { "effect": "replace_damage", "damage_multiplier": 2 }
+
+// Twinflame Tyrant: "if a source you control would deal damage to an
+//  opponent OR a permanent an opponent controls"
+{ "effect": "replace_damage", "damage_multiplier": 2,
+  "damage_source": { "controller": "you" },   // any zone -- see below
+  "affects_player": "opponent",               // the seat half
+  "affects": { "controller": "opponent" } }   // the permanent half
+
+// Fiery Emancipation: the same dealer, no recipient named
+{ "effect": "replace_damage", "damage_multiplier": 3,
+  "damage_source": { "controller": "you" } }
 ```
 
 No damage-modifying static existed at all. The five multiplier replacements were
@@ -2069,6 +2080,41 @@ why `replace_damage` sits with `spell_cost_reduction` on the list of statics tha
 do not require it. A static carrying `affects` never applies to damage dealt to a
 **player**: a player is not a permanent, and "…to equipped creature" is a sentence
 about one.
+
+**The recipient's other half is a seat.** `affects_player` — `"you"`,
+`"opponent"` or `"any"` — is "…would deal damage **to an opponent**", and it is
+the only key on this static that names a player. `replace_damage` is still not
+one of the [player-wide statics](#player-wide-statics): those *require*
+`affects_player` and forbid `affects`, and this one takes either, neither or
+both. All four combinations are printed sentences:
+
+| `affects` | `affects_player` | the sentence | witness |
+| --- | --- | --- | --- |
+| — | — | "to a permanent or player" | Furnace of Rath |
+| ✓ | — | "to equipped creature" | Inquisitor's Flail, line 2 |
+| — | ✓ | "to an opponent" | Twinflame Tyrant's first half |
+| ✓ | ✓ | "to an opponent **or** a permanent an opponent controls" | Twinflame Tyrant |
+
+Written together they are a **union**, which is the one place in the DSL two
+filters on one static do not both have to pass. One damage event is dealt either
+to a player or to a permanent and never to both, so ANDing them would double
+nothing at all — the failure that looks exactly like the static not being there.
+Dropping the pair instead is the loud version of the same mistake: Twinflame
+Tyrant without them is Furnace of Rath restricted to your sources, doubling your
+own sweeper onto your own board and your own painland's ping onto you.
+
+**"A source you control" is not "a permanent you control."** 109.5's source of
+damage is the instant on the stack as readily as the creature on the
+battlefield, and for a burn spell the dealer `op_damage` passes down *is* the
+resolving spell object. The static filter language refuses anything off the
+battlefield by construction, so the widening is keyed on the filter's shape
+rather than a new key: a `damage_source` naming **only** `controller` is
+answered off the dealer's controller in whatever zone it stands, and the moment
+a card names a type, an attachment or any other characteristic it is describing
+a permanent and gets the permanent reading. The Flail's "another **creature**"
+and the Tyrant's "a **source** you control" are different sentences, and the
+filters say so. An *empty* `damage_source` is not the widened shape — `{}` keeps
+the default `controller: "you"` and so means "a permanent you control".
 
 Read in `primitives.damage_permanent` and `primitives.damage_player`, the two
 points every damage passes through, so deathtouch marks the doubled number,
@@ -5431,6 +5477,12 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
 ```
+
+`replace_damage` is **not** on that list and still reads `affects_player`: it is
+filtered on both ends, so the key is optional there and sits beside `affects`
+rather than instead of it — see
+[Damage multiplied on the way out](#damage-multiplied-on-the-way-out). It is the
+only static that takes both.
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is
 how *little* it takes away. Rule 500.1: skipping a step's turn-based action is

@@ -1294,25 +1294,76 @@ def counter_placement_replacements(
     return out
 
 
+def _matches_damage_source(
+    state: GameState,
+    obj: GameObject,
+    source_obj: GameObject,
+    dealer: Mapping[str, Any],
+) -> bool:
+    """Does ``obj`` answer a `replace_damage` static's ``damage_source``?
+
+    `_matches` everywhere else, with one widening: a filter naming **only**
+    ``controller`` is "a source you control" and is answered off the dealer's
+    controller in whatever zone it is standing.
+
+    That distinction is the printed one. 109.5's "a source you control" covers
+    the instant on the stack, the token, the ability -- anything that can deal
+    damage -- while "equipped creature", "another creature", "a creature you
+    control that entered this turn" all name characteristics, and only a
+    permanent has those. `_matches` refuses anything off the battlefield by
+    construction, so it answers the second kind exactly and the first kind not
+    at all: Twinflame Tyrant and Fiery Emancipation are about burn spells
+    first and creatures second, and `op_damage`'s dealer for a burn spell is
+    the resolving *spell* object.
+
+    Keyed on the filter's shape rather than a new key, because the shape
+    already says it: the moment a card names a type, a zone, an attachment or
+    any other characteristic it is describing a permanent and wants the
+    permanent reading. No shipped card writes a controller-only
+    ``damage_source``, so nothing changes meaning under this.
+
+    An **empty** filter is not this -- ``{}`` falls through to `_matches`,
+    where the default ``controller: "you"`` makes it "a permanent you control".
+    """
+    if set(dealer) == {"controller"}:
+        who = str(dealer.get("controller") or "you")
+        if who == "you":
+            return obj.controller == source_obj.controller
+        if who == "opponent":
+            return obj.controller != source_obj.controller
+        return True
+    return _matches(state, obj, source_obj, dealer)
+
+
 def damage_multiplier(
     state: GameState,
     source_oid: int | None,
     target_oid: int | None,
     *,
+    target_pid: int | None = None,
     is_combat: bool,
 ) -> int:
     """What this damage is multiplied by, after every `replace_damage` applies.
 
     Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
-    Emancipation. Read by `primitives.damage_permanent` and
+    Emancipation, Twinflame Tyrant. Read by `primitives.damage_permanent` and
     `primitives.damage_player` and by nothing else, the way
     `counter_placement_replacements` is read by `add_counters` alone.
 
     ``target_oid`` is ``None`` when the damage is being dealt to a **player**,
-    and a static carrying an `affects` filter never applies then: a player is
-    not a permanent, and "…to equipped creature" is a sentence about one. A
-    static with no `affects` reaches both, which is Furnace of Rath's "to a
-    permanent or player" and the Flail's first line.
+    and ``target_pid`` names that player then. Exactly one of the two exists
+    at a time, which is what makes the recipient side a **union** rather than
+    the conjunction the two filters would otherwise form:
+
+    * neither `affects` nor `affects_player` -- Furnace of Rath's "to a
+      permanent or player", which names no recipient at all and reaches both;
+    * `affects` alone -- "…to equipped creature", the Flail's second line. A
+      player is not a permanent, so it never reaches the face;
+    * `affects_player` alone -- "…to an opponent", naming a seat and nothing
+      on the battlefield;
+    * **both** -- Twinflame Tyrant's "to an opponent **or** a permanent an
+      opponent controls". ANDing them would double nothing, because no single
+      damage event is dealt to a player *and* a permanent.
 
     Returned as a product rather than applied here, because the two call sites
     have different things to do with the number and only one of them exists at
@@ -1329,13 +1380,26 @@ def damage_multiplier(
         dealer = static.get("damage_source")
         if dealer is not None:
             obj = state.objects.get(source_oid) if source_oid is not None else None
-            if obj is None or not _matches(state, obj, source_obj, dealer):
+            if obj is None or not _matches_damage_source(state, obj, source_obj, dealer):
                 continue
         recipient = static.get("affects")
-        if recipient is not None:
-            obj = state.objects.get(target_oid) if target_oid is not None else None
-            if obj is None or not _matches(state, obj, source_obj, recipient):
-                continue
+        seats = static.get("affects_player")
+        if recipient is not None or seats is not None:
+            if target_oid is None:
+                # Damage to a player: only the `affects_player` half can speak
+                # for it. Absent, the static named permanents and this is not
+                # one of them.
+                if seats is None or target_pid is None:
+                    continue
+                if not _reaches_player(source_obj, static, target_pid):
+                    continue
+            else:
+                # Damage to a permanent: symmetrically, only `affects` can.
+                obj = state.objects.get(target_oid)
+                if recipient is None or obj is None:
+                    continue
+                if not _matches(state, obj, source_obj, recipient):
+                    continue
         multiplier *= max(1, int(static.get("damage_multiplier") or 1))
     return multiplier
 

@@ -2672,11 +2672,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.damage_multiplier: must be 2 or more; 1 replaces damage "
                 f"with itself and 0 prevents it, which is 'prevent_damage'"
             )
-        # Both filters are optional and both read printed characteristics, the
-        # same language `affects` reads everywhere else. `affects` here is the
-        # *recipient*, and a static carrying one never applies to damage dealt
-        # to a player -- a player is not a permanent, and "to equipped creature"
-        # is a sentence about one.
+        # Every filter here is optional. `damage_source` is the dealer and
+        # `affects` the *recipient*, both in the printed-characteristic
+        # language `affects` reads everywhere else, and a static carrying
+        # `affects` never applies to damage dealt to a player -- a player is
+        # not a permanent, and "to equipped creature" is a sentence about one.
+        #
+        # `affects_player` is the recipient's other half, and the one key on
+        # this static that names a *seat*: "…would deal damage to an opponent".
+        # `replace_damage` is still not one of `PLAYER_WIDE_STATIC_EFFECTS` --
+        # those require the key and forbid `affects`, and this one takes either,
+        # neither or both. Both is Twinflame Tyrant's printed **or**, and
+        # `damage_multiplier` reads the pair as a union for that reason: no one
+        # damage event is dealt to a player and a permanent, so ANDing them
+        # would double nothing at all.
         if model.damage_source is not None:
             unknown = set(model.damage_source) - STATIC_FILTER_KEYS
             if unknown:
