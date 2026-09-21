@@ -8563,6 +8563,61 @@ implemented by filtering sources before the solver sees them, so it cannot carry
 a rider. And a bare `spell_cast` with no `paid_by` is a strictly better card —
 it triggers on creature spells cast entirely off other lands.
 
+### "…if mana from a **Treasure** was spent to cast it"
+
+```jsonc
+{"trigger": {"event": "spell_cast", "controller": "you",
+             "filter": {"paid_by": {"subtypes": ["Treasure"], "controller": "you"}}}}
+```
+
+Smaug, Wicked Worm. The same key, given a **selector** instead of `"self"` or an
+oid, because this sentence is about a *class* of permanents — an arbitrary
+number of Treasure tokens the card did not make and cannot name. No card can
+write another object's oid, and `"self"` would ask about mana Smaug produced,
+which is none.
+
+**It does not read `mana_sources_spent`.** A Treasure sacrifices itself to make
+its mana, and `sba._tokens_and_attachments` pops a token that has left the
+battlefield straight out of `state.objects` — so the recorded oid resolves to
+nothing by the time the spell is on the stack, and a subtype test against it
+would match nothing, silently. The provenance is captured where it is still
+knowable instead: `Pip.source_traits` carries a `mana.ManaOrigin` snapshot of
+what the source **was** (name, types, subtypes, supertypes, controller), taken
+by `characteristics.mana_source_traits` before the mana ability's own cost runs,
+and `pay_mana` puts what the payment consumed onto the spell as
+`GameObject.mana_spent_traits`.
+
+The legal keys inside it are `triggers.PAID_BY_SELECTOR_KEYS` and **not** the
+general `SELECTOR_KEYS`:
+
+| key | |
+| --- | --- |
+| `name` | a string, or a list of them |
+| `types` / `any_types` / `not_types` | all of / any of / none of |
+| `subtypes` / `supertypes` | any of / all of |
+| `controller` | `"you"`, `"opponent"` or `"any"`, relative to the ability source |
+
+Everything else is refused at load time. What is being filtered is a *memory* of
+a permanent: `tapped`, `power`, `attacking` and `zone` have no answer about
+something sacrificed three cost-payments ago, and each would load and then be
+silently false — which is the failure this capability exists to fix.
+
+`controller` compares the controller the source had **when it made the mana**.
+That is the printed reading of "mana from a Treasure you control": it is about
+the Treasure you tapped, not about who controls it now, which is nobody.
+
+Mana an effect produced carries no snapshot, and matches nothing. Unknown
+provenance does not establish "mana from a Treasure" — the claim has to be
+positively made.
+
+The near misses are all wrong in the same direction, and each is a strictly
+better card: `mana_spent_of` is the integer *total* spent, `colors_of_mana_spent`
+is which colours (a Treasure adds one mana of any colour, so no colour test
+distinguishes it from a land), and an intervening `condition` of
+`{"exists": {"subtypes": ["Treasure"]}}` asks whether you *still* control a
+Treasure — the opposite of the printed fact, since the Treasure that paid is
+gone precisely because it paid, and 603.4 would re-ask it on resolution.
+
 ## "…that shares a creature type with your commander"
 
 ```jsonc

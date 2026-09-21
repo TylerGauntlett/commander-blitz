@@ -584,6 +584,44 @@ class ManaKeywordGrant(NamedTuple):
     spell_types: tuple[str, ...] = ()
 
 
+class ManaOrigin(NamedTuple):
+    """What the permanent that made a unit of mana **was**, at that instant.
+
+    Named apart from :class:`ManaSource` below, which is the *solver's* view of
+    a permanent that could make mana: that one is an offer with an oid and a
+    live board behind it, this one is a memory of a permanent that may be gone.
+
+    "…if mana from a **Treasure** was spent to cast it" -- Smaug, Wicked Worm.
+    A whole class of permanents rather than one named object, which is why the
+    oid in :attr:`Pip.source` cannot answer it: a Treasure is *sacrificed* to
+    make its mana, and `sba._tokens_and_attachments` pops a token that has left
+    the battlefield straight out of ``state.objects``. By the time the spell is
+    on the stack the recorded oid resolves to nothing at all, so a subtype test
+    against it matches nothing -- silently, which is the dangerous direction.
+
+    So the characteristics travel with the mana instead of a pointer back to an
+    object that may no longer exist. Snapshotted from *derived* characteristics
+    (`characteristics.mana_source_traits`), because a Treasure that something
+    else turned into an artifact creature is still a Treasure, and a land
+    animated into a creature really is a creature while the mana it made is in
+    the pool.
+
+    Hashable, so a payment can collect a set of them; ``oid`` rides along so a
+    reader that still wants the object has it, and so two identical Treasures
+    do not collapse into one entry.
+    """
+
+    oid: int | None = None
+    name: str = ""
+    types: frozenset[str] = frozenset()
+    subtypes: frozenset[str] = frozenset()
+    supertypes: frozenset[str] = frozenset()
+    #: Who controlled the source when it made the mana -- "mana from a Treasure
+    #: **you control**". The controller at spend time is the wrong question for
+    #: the same reason the oid is: the Treasure is gone.
+    controller: int | None = None
+
+
 class Pip(NamedTuple):
     """One unit of mana in the pool, and what is known about where it came from.
 
@@ -597,6 +635,12 @@ class Pip(NamedTuple):
     prints the clause. Recorded per permanent instead, tapping a Cavern for its
     plain ``{C}`` would make the spell uncounterable too, which is a strictly
     better card than the one printed.
+
+    ``source_traits`` is what that permanent *was* -- see :class:`ManaOrigin`.
+    It rides the pip beside the oid rather than replacing it because the two
+    answer different questions: "that mana" (Path of Ancestry) is about one
+    object and needs the oid, and "mana from a Treasure" (Smaug) is about a
+    class and must survive the object's death.
     """
 
     source: int | None = None
@@ -614,6 +658,7 @@ class Pip(NamedTuple):
     #: abilities and only the exerting one prints the clause, so recorded per
     #: permanent its plain ``{R}`` would hand out haste for free.
     grant: ManaKeywordGrant | None = None
+    source_traits: ManaOrigin | None = None
 
 
 @dataclass(frozen=True)
@@ -630,6 +675,11 @@ class SpentMana:
     #: "When **that mana** is spent..." -- which permanents' mana abilities made
     #: the mana this payment consumed. Path of Ancestry, Opal Palace.
     sources: frozenset[int] = frozenset()
+    #: What those permanents **were** -- Smaug, Wicked Worm's "if mana from a
+    #: Treasure was spent to cast it". Not derivable from `sources`: the
+    #: Treasure was sacrificed to make the mana, so the oid resolves to nothing
+    #: by the time anything asks. See :class:`ManaOrigin`.
+    source_traits: frozenset[ManaOrigin] = frozenset()
     #: Whether **any** pip this payment consumed carried Cavern of Souls' rider.
     #: Any, not all: the printed sentence makes the spell uncounterable if that
     #: mana was spent on it, and says nothing about the rest of its cost.
@@ -681,10 +731,11 @@ class ManaPool:
         uncounterable: bool = False,
         persists_through_turn: int = -1,
         grant: ManaKeywordGrant | None = None,
+        source_traits: ManaOrigin | None = None,
     ) -> None:
         index = SYMBOL_INDEX[symbol]
         self.amounts[index] += count
-        pip = Pip(source, uncounterable, persists_through_turn, grant)
+        pip = Pip(source, uncounterable, persists_through_turn, grant, source_traits)
         self.tags[index].extend([pip] * count)
 
     def add_tuple(
@@ -695,8 +746,9 @@ class ManaPool:
         uncounterable: bool = False,
         persists_through_turn: int = -1,
         grant: ManaKeywordGrant | None = None,
+        source_traits: ManaOrigin | None = None,
     ) -> None:
-        pip = Pip(source, uncounterable, persists_through_turn, grant)
+        pip = Pip(source, uncounterable, persists_through_turn, grant, source_traits)
         for i, v in enumerate(produced):
             self.amounts[i] += v
             self.tags[i].extend([pip] * v)
@@ -765,6 +817,10 @@ class ManaPool:
         """
         spent: set[str] = set()
         made_by: set[int] = set()
+        # "…if mana from a Treasure was spent to cast it." Collected beside the
+        # oids and not instead of them: this is what each source *was*, which is
+        # the only half that survives the source being sacrificed to pay.
+        made_by_traits: set[ManaOrigin] = set()
         # "…and that spell can't be countered." Any pip carrying the rider makes
         # the whole payment carry it: the printed sentence is about the spell the
         # mana was spent on, and says nothing about the rest of its cost.
@@ -779,6 +835,8 @@ class ManaPool:
             for pip in taken:
                 if pip.source is not None:
                     made_by.add(pip.source)
+                if pip.source_traits is not None:
+                    made_by_traits.add(pip.source_traits)
                 rider = rider or pip.uncounterable
                 if pip.grant is not None and pip.grant not in grants:
                     grants.append(pip.grant)
@@ -821,6 +879,7 @@ class ManaPool:
         return SpentMana(
             colors=frozenset(spent),
             sources=frozenset(made_by),
+            source_traits=frozenset(made_by_traits),
             uncounterable=rider,
             grants=tuple(grants),
         )

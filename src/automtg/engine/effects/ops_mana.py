@@ -53,13 +53,25 @@ def _persists_through(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
 
 @register("add_mana")
 def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
+    # Imported here rather than at module scope: `characteristics` is reached
+    # through `primitives` -> `zones` -> `effects`, so a top-level import turns
+    # that existing chain into a cycle.
+    from ..characteristics import mana_source_traits
+
     symbols = mana_string(ctx, spec)
     if not symbols:
         return
     produced = parse_mana_production(symbols)
     for pid in select_players(ctx, spec.get("player", "you")):
         ctx.state.players[pid].mana_pool.add_tuple(
-            produced, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
+            produced,
+            source=ctx.source_oid,
+            persists_through_turn=_persists_through(ctx, spec),
+            # What the source was, for "if mana from a Treasure was spent"
+            # -- see `characteristics.mana_source_traits`. Taken beside the oid
+            # on every path that adds mana, so provenance does not depend on
+            # which of the two ways a permanent made it.
+            source_traits=mana_source_traits(ctx.state, ctx.source_oid),
         )
         ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
 
@@ -70,6 +82,8 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
 
     e.g. "Add {G} for each Forest you control".
     """
+    from ..characteristics import mana_source_traits
+
     unit = parse_mana_production(str(spec.get("mana", "")))
     count = len(resolve_pool(ctx, spec.get("per")))
     if count <= 0:
@@ -77,7 +91,10 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
     scaled = tuple(v * count for v in unit)
     for pid in select_players(ctx, spec.get("player", "you")):
         ctx.state.players[pid].mana_pool.add_tuple(
-            scaled, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
+            scaled,
+            source=ctx.source_oid,
+            persists_through_turn=_persists_through(ctx, spec),
+            source_traits=mana_source_traits(ctx.state, ctx.source_oid),
         )
         ctx.state.emit(
             EventType.MANA_ADDED,

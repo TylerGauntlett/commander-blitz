@@ -13461,6 +13461,65 @@
       "types": [
         "Artifact"
       ]
+    },
+    {
+      "id": "t_hoard_worm",
+      "name": "Test Hoard Worm",
+      "oracle_text": "Flying\nWhenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+      "mana_cost": "{4}{B}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "paid_by": {
+                "subtypes": [
+                  "Treasure"
+                ],
+                "controller": "you"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

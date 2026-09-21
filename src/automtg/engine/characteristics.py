@@ -84,6 +84,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
+from .mana import ManaOrigin
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
@@ -142,6 +143,42 @@ def chars(state: GameState, oid: int) -> Characteristics:
     result = _compute(state, oid)
     state.char_cache[oid] = result
     return result
+
+
+def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
+    """What the permanent at ``oid`` **is**, frozen for a pip of mana to carry.
+
+    "Whenever you cast a spell, if mana from a **Treasure** was spent to cast
+    it…" -- Smaug, Wicked Worm. The oid alone cannot answer that question later:
+    a Treasure is sacrificed to make its mana, and `sba._tokens_and_attachments`
+    removes a token from ``state.objects`` the moment it leaves the battlefield,
+    so by the time the spell is on the stack there is nothing left to ask. The
+    answer therefore has to be taken here, while the source is still on the
+    battlefield and still itself.
+
+    Read from :func:`chars` rather than the printed card, so grants count both
+    ways: a land animated into a creature made that mana as a creature, and a
+    Treasure is still a Treasure whatever else has been layered onto it.
+
+    ``None`` for mana no permanent made -- an effect's ``add_mana``, or a source
+    that has already left. A pip whose traits are ``None`` matches no filter,
+    which is the right default: "mana from a Treasure" is a claim, and unknown
+    provenance does not establish it.
+    """
+    if oid is None:
+        return None
+    obj = state.objects.get(oid)
+    if obj is None:
+        return None
+    derived = chars(state, oid)
+    return ManaOrigin(
+        oid=oid,
+        name=state.card_of(obj).name,
+        types=derived.types,
+        subtypes=derived.subtypes,
+        supertypes=derived.supertypes,
+        controller=obj.controller,
+    )
 
 
 #: What a face-down permanent is, whatever is underneath it (707.2).

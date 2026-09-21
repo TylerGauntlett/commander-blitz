@@ -15959,3 +15959,111 @@ declared as an attacker that turn** — against a control cast with the Arena's
 plain mana on the same turn, plus the wearing-off at the turn boundary, the
 noncreature spell that is given nothing, and the spell that never arrives and so
 keeps nothing.
+
+## `treasure_mana_spent` — "if mana from a **Treasure** was spent to cast it" — Smaug, Wicked Worm
+
+"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you
+draw a card and lose 1 life."
+
+The engine already answered *"when **that** mana is spent"* — Path of Ancestry,
+Opal Palace. `pay_mana` wrote onto the spell which permanents' mana abilities
+had paid for it, and a `paid_by` trigger filter compared one oid against
+`GameObject.mana_sources_spent`.
+
+That is a question about **one named object**, and this sentence is about a
+whole class of them: an arbitrary number of Treasure tokens Smaug did not make
+and cannot name. No card can write another object's oid, and `"self"` would ask
+about mana Smaug itself produced, which is none — a quietly dead line rather
+than an approximation.
+
+### The oid could not have been looked up anyway
+
+This is the half that is not a filter key, and it is why widening `paid_by` on
+its own would have shipped a card that never fired.
+
+A Treasure **sacrifices itself** to make its mana, and
+`sba._tokens_and_attachments` pops a token that has left the battlefield
+straight out of `state.objects`. By the time the spell is on the stack, every
+oid in `mana_sources_spent` that named a Treasure resolves to nothing at all —
+so a subtype test against it matches nothing, silently, which is the dangerous
+direction for a filter.
+
+So the **characteristics travel with the mana** instead of a pointer back to an
+object that may be gone:
+
+- `mana.ManaOrigin` — a hashable snapshot of what a source *was*: name, types,
+  subtypes, supertypes, and the player who controlled it.
+- `Pip.source_traits` — one per unit of mana, beside the `source` oid rather
+  than replacing it. The two answer different sentences and neither is the
+  other: "that mana" needs the oid, "mana from a Treasure" must survive the
+  object's death.
+- `SpentMana.source_traits` and `GameObject.mana_spent_traits` — what a
+  payment consumed, carried onto the spell by `pay_mana` at the same instant
+  and for the same reason `colors_spent` always was.
+
+`characteristics.mana_source_traits` takes the snapshot, off **derived**
+characteristics: a Treasure that something else turned into an artifact creature
+is still a Treasure, and a land animated into a creature really made that mana
+as a creature.
+
+### Where the snapshot is taken, which is the whole trick
+
+`Game._activate_mana` takes it **before running the ability's own cost**, and
+hands it to `costs.activate_mana_ability`. That path pays first and adds mana
+second, so by the time the mana exists the Treasure has already been sacrificed.
+
+Handed nothing, `activate_mana_ability` snapshots for itself — right for the
+payment solver's path, which only ever taps and never sacrifices anything.
+`op_add_mana` and `op_add_mana_per` do the same off `ctx.source_oid`, so
+provenance does not depend on which of the two ways a permanent made its mana.
+
+Mana no permanent made carries `None`, and `None` matches no filter. Unknown
+provenance does not establish "mana from a Treasure": the claim has to be
+positively made.
+
+### The filter key
+
+`paid_by` now takes a **selector** beside the `"self"`/oid it always took:
+
+```jsonc
+{"trigger": {"event": "spell_cast", "controller": "you",
+             "filter": {"paid_by": {"subtypes": ["Treasure"], "controller": "you"}}}}
+```
+
+Its legal keys are `triggers.PAID_BY_SELECTOR_KEYS` — `name`, `types`,
+`any_types`, `not_types`, `subtypes`, `supertypes`, `controller` — and *not*
+`SELECTOR_KEYS`. A closed list, because what is being filtered is a memory of a
+permanent and not a permanent: `tapped`, `power`, `attacking` and `zone` have no
+answer about something sacrificed three cost-payments ago, and read through the
+general selector machinery every one of them would be silently false. They are
+refused at load time instead, by `validate_selector`.
+
+`controller` is relative to the ability source and compares the controller the
+source had **when it made the mana** — the printed reading of "mana from a
+Treasure you control" is about the Treasure you tapped, not about who would
+control it now, which is nobody.
+
+`mana_spent_traits` is unioned rather than assigned, for
+`uncounterable_mana_spent`'s reason: a cast pays in more than one call when it
+has an additional cost, and a spell partly paid for with Treasure mana was paid
+for with Treasure mana.
+
+### Cards unblocked
+
+One authored here: **Smaug, Wicked Worm**. Its other two lines needed nothing
+new — flying is a keyword, and the enters trigger is `create_token` of
+`treasure_token` with `tapped` and a counted `amount`.
+
+### Guarded by
+
+`tests/unit/test_treasure_mana_spent.py`, over one new test-pool card
+(`t_hoard_worm`). The pool half is pinned in isolation — a tagged pip reporting
+its traits, the oid still reported beside it, effect mana carrying nothing,
+generic pips carrying provenance (which is how a Treasure's mana is usually
+spent), only the pips actually spent being reported, two identical Treasures not
+collapsing into one, and the tags staying the same length as the amounts. The
+card half casts a spell off a sacrificed Treasure and asserts the token is gone
+from `state.objects` while the trigger fires, draws and loses the life — and
+that the oid it recorded is by then unresolvable, which is the claim the whole
+design rests on. The negative is the same creature and the same spell cast off
+lands: no trigger, no draw, no life lost.

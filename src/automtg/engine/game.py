@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
-from .characteristics import abilities_of
+from .characteristics import abilities_of, mana_source_traits
 from .combat import add_attacker, add_blocker, finish_attackers
 from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -1296,6 +1296,16 @@ class Game:
             mana_ability=True,
         )
 
+        # What the source **is**, taken before its own cost is paid -- "if mana
+        # from a Treasure was spent to cast it" (Smaug, Wicked Worm). This is
+        # the path with `Cost.sacrifice` on it, and every Treasure sacrifices
+        # itself to make its mana: after `pay` the token has left the
+        # battlefield and `sba._tokens_and_attachments` deletes it from
+        # `state.objects` outright, so nothing downstream can still ask what it
+        # was. `activate_mana_ability` takes its own snapshot when handed none,
+        # which is right for the solver's path -- that one only ever taps.
+        traits = mana_source_traits(state, oid)
+
         # A mana ability is an activated ability, so restricted mana may fund its
         # cost on the same terms as any other -- and it is read here rather than
         # left `None` because `legality._ability_aims` gates this path through
@@ -1309,7 +1319,14 @@ class Game:
 
         from .costs import activate_mana_ability
 
-        activate_mana_ability(state, oid, action.ability_index, pid, action.mana_option or 0)
+        activate_mana_ability(
+            state,
+            oid,
+            action.ability_index,
+            pid,
+            action.mana_option or 0,
+            source_traits=traits,
+        )
 
     def _pass_priority(self) -> None:
         state = self.state

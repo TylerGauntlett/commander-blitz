@@ -17,6 +17,7 @@ from .characteristics import (
     abilities_of,
     chars,
     mana_added_on_tap,
+    mana_source_traits,
     player_doubles_mana_from,
 )
 from .effects.context import EffectContext, ask_mode, ask_objects
@@ -31,6 +32,7 @@ from .mana import (
     SYMBOL_INDEX,
     SYMBOLS,
     ManaCost,
+    ManaOrigin,
     ManaRestriction,
     ManaSource,
     Requirement,
@@ -1830,6 +1832,13 @@ def pay_mana(
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # "…if mana from a Treasure was spent to cast it." Unioned, not
+        # assigned, for `uncounterable_mana_spent`'s reason one line down: a
+        # cast pays in more than one call when it has an additional cost, and a
+        # spell partly paid for with Treasure mana was paid for with Treasure
+        # mana. (`mana_sources_spent` above predates that reading and keeps its
+        # assignment, so this change cannot alter any shipped card's behaviour.)
+        obj.mana_spent_traits = obj.mana_spent_traits | spent.source_traits
         # Accumulated with `or`, not assigned, for `mana_spent`'s reason: a cast
         # pays in more than one call when it has an additional cost, and a spell
         # paid for partly with Cavern mana was paid for with Cavern mana.
@@ -1859,7 +1868,12 @@ def pay_mana(
 
 
 def activate_mana_ability(
-    state: GameState, oid: int, ability_index: int, pid: int, option_index: int = 0
+    state: GameState,
+    oid: int,
+    ability_index: int,
+    pid: int,
+    option_index: int = 0,
+    source_traits: ManaOrigin | None = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -1873,8 +1887,18 @@ def activate_mana_ability(
     enumerates sources while they are still untapped, so measuring after tapping
     would let the offer and the payment see two different boards -- the exact
     disagreement `mana_produced` exists to prevent.
+
+    ``source_traits`` is what the source **was**, for "if mana from a Treasure
+    was spent to cast it". A parameter rather than a lookup here, because this
+    function is not always early enough: `Game._activate_mana` runs the
+    ability's cost *before* calling it, and a Treasure's cost sacrifices the
+    Treasure. That path passes the snapshot it took while the token was still on
+    the battlefield. Left ``None`` -- the payment solver's path, which only ever
+    taps -- the snapshot is taken here, which is still before the tap.
     """
     ability = abilities_of(state, oid)[ability_index]
+    if source_traits is None:
+        source_traits = mana_source_traits(state, oid)
 
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
@@ -1919,6 +1943,13 @@ def activate_mana_ability(
     # Souls has two mana abilities and only the second one prints "…and that
     # spell can't be countered": recorded per permanent, its plain {C} would make
     # the spell uncounterable too.
+    #
+    # `source_traits` rides beside the oid rather than replacing it, and is the
+    # half that survives the source: this ability's cost may *sacrifice* the
+    # permanent -- every Treasure does -- and `sba._tokens_and_attachments`
+    # deletes a sacrificed token from `state.objects` outright, so the oid is
+    # already a dangling pointer by the time the spell it paid for is on the
+    # stack. Snapshotted here because here is the last moment it is knowable.
     state.players[pid].mana_pool.add_tuple(
         produced,
         source=oid,
@@ -1927,12 +1958,15 @@ def activate_mana_ability(
         # **ability** for the reason above: Arena's plain `{R}` ability must not
         # hand out the haste its exerting one pays for.
         grant=ability.mana_grant,
+        source_traits=source_traits,
     )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged
     # with the Ghast, so provenance readers see who really made it.
     for source, mana in added_on_tap:
-        state.players[pid].mana_pool.add_tuple(mana, source=source)
+        state.players[pid].mana_pool.add_tuple(
+            mana, source=source, source_traits=mana_source_traits(state, source)
+        )
         state.emit(EventType.MANA_ADDED, player=pid, source=source, mana=format_symbols(mana))
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)

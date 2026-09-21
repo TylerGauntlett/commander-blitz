@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .enums import Step, Zone
+from .mana import ManaOrigin
 from .structs import TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
@@ -192,6 +193,19 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: **What** those permanents were -- "if mana from a Treasure was spent to
+    #: cast it" (Smaug, Wicked Worm). The class-of-permanents twin of the oid
+    #: set above, and it cannot be derived from it: the Treasure is sacrificed
+    #: to make the mana, and `sba._tokens_and_attachments` pops the token out of
+    #: `state.objects` before the spell is ever on the stack, so every oid in
+    #: `mana_sources_spent` that named a Treasure resolves to nothing by the
+    #: time a trigger asks. Snapshotted onto the pip at
+    #: `characteristics.mana_source_traits` and carried here by `pay_mana`.
+    #:
+    #: Unioned rather than assigned, for `uncounterable_mana_spent`'s reason: a
+    #: cast pays in more than one call when it has an additional cost, and a
+    #: spell partly paid for with Treasure mana was paid for with Treasure mana.
+    mana_spent_traits: frozenset[ManaOrigin] = frozenset()
     #: The turn this card was **drawn**, or -1 if it never was. "Choose two
     #: cards in your hand drawn this turn" -- Sylvan Library.
     #:

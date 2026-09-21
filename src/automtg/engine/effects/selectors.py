@@ -245,6 +245,13 @@ SELECTOR_KEYS = frozenset(
         #: Opal Palace. A trigger filter only, matched against the spell: the
         #: permanents whose mana abilities paid for it are recorded on the spell
         #: by `pay_mana`, which is the only instant they are knowable.
+        #:
+        #: Also takes a **selector** -- "…if mana from a Treasure was spent to
+        #: cast it" (Smaug, Wicked Worm), a class of permanents rather than one
+        #: named object. That half matches what each source *was*, snapshotted
+        #: onto the pip, because the Treasure is sacrificed to make its mana and
+        #: its oid resolves to nothing by the time the spell is on the stack.
+        #: Its legal keys are `triggers.PAID_BY_SELECTOR_KEYS`, not these.
         "paid_by",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
@@ -1379,6 +1386,31 @@ def validate_selector(selector: Any, where: str) -> None:
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    # `paid_by` takes either "self"/an oid ("when **that mana** is spent") or a
+    # selector over what the mana's source *was* ("if mana from a **Treasure**
+    # was spent to cast it"). The selector half is validated against its own
+    # closed key list rather than `SELECTOR_KEYS`, because what it filters is a
+    # snapshot and not a permanent: `tapped`, `power`, `zone` and the rest have
+    # no answer about a Treasure that was sacrificed to make the mana, and every
+    # one of them would load and then be silently false.
+    paid_by = selector.get("paid_by")
+    if isinstance(paid_by, Mapping):
+        from ..triggers import PAID_BY_SELECTOR_KEYS
+
+        unknown_paid_by = set(paid_by) - PAID_BY_SELECTOR_KEYS
+        if unknown_paid_by:
+            raise DslError(
+                f"{where}.paid_by: {sorted(unknown_paid_by)} cannot be asked of a "
+                f"remembered mana source -- it may have left the battlefield to "
+                f"make the mana. Use only {sorted(PAID_BY_SELECTOR_KEYS)}"
+            )
+        controller = paid_by.get("controller")
+        if controller is not None and controller not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.paid_by: unknown controller clause {controller!r}; the "
+                f"snapshot records one player, so only 'you', 'opponent' and 'any' "
+                f"can be asked of it"
+            )
     if "created_with" in selector and selector["created_with"] != "self":
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.

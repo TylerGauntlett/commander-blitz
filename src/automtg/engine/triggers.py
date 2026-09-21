@@ -1461,11 +1461,26 @@ def matches_card_filter(
     # at the one instant that was knowable. A `mana_spent` event of its own
     # would fire during cost payment, before the spell is on the stack and
     # before its filter has anything to match against.
+    # "…**if mana from a Treasure was spent to cast it**" -- Smaug, Wicked Worm.
+    # The same key widened from one oid to a class of permanents, because that
+    # is the other printed spelling and an oid cannot say it: no card can write
+    # another object's oid, and "self" would ask about mana Smaug made, which is
+    # none. Matched against `mana_spent_traits` -- what the sources *were* --
+    # and not against `mana_sources_spent`, because the Treasure is sacrificed
+    # to make its mana and its oid is dangling by the time this runs. See
+    # `mana.ManaOrigin`.
     paid_by = filt.get("paid_by")
     if paid_by is not None:
-        wanted = ability_source.oid if paid_by == "self" else paid_by
-        if wanted not in obj.mana_sources_spent:
-            return False
+        if isinstance(paid_by, Mapping):
+            if not any(
+                _origin_matches(origin, paid_by, ability_source)
+                for origin in obj.mana_spent_traits
+            ):
+                return False
+        else:
+            wanted = ability_source.oid if paid_by == "self" else paid_by
+            if wanted not in obj.mana_sources_spent:
+                return False
     # "Whenever a token created with this creature…" -- honoured here as well
     # as in `selectors.matches` for `not_supertypes`' reason: a trigger filter
     # is validated against the same keys, and one that loaded and did nothing
@@ -1584,6 +1599,62 @@ def matches_card_filter(
         toughness is not None
         and not _compare((live.toughness if live else card.toughness) or 0, toughness)
     )
+
+
+#: The only keys a selector-valued `paid_by` may use -- everything
+#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
+#:
+#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
+#: filtered is a *memory* of a permanent and not a permanent: "tapped",
+#: "attacking", a P/T comparison or a zone have no answer about an object that
+#: was sacrificed three cost-payments ago. Read through the general selector
+#: machinery they would all be silently false, which is the failure mode this
+#: capability exists to fix, so they are refused at load time instead.
+PAID_BY_SELECTOR_KEYS = frozenset(
+    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
+)
+
+
+def _origin_matches(
+    origin: Any, filt: Mapping[str, Any], ability_source: GameObject
+) -> bool:
+    """Whether one remembered mana source answers a selector-valued ``paid_by``.
+
+    ``origin`` is a :class:`mana.ManaOrigin` -- what a permanent was when it
+    made a unit of mana this spell's payment consumed. Matched on the snapshot
+    and never on the live board: the whole point is that the object may be gone.
+
+    ``controller`` is relative to the *ability source*, as everywhere else in a
+    trigger filter, and compares the controller the source had when it made the
+    mana. That is the printed reading: "mana from a Treasure you control" is
+    about the Treasure you tapped, not about who would control it now.
+    """
+    name = filt.get("name")
+    if name is not None:
+        wanted = [name] if isinstance(name, str) else list(name)
+        if origin.name not in wanted:
+            return False
+    types = filt.get("types")
+    if types and not set(types).issubset(origin.types):
+        return False
+    any_types = filt.get("any_types")
+    if any_types and not (set(any_types) & origin.types):
+        return False
+    not_types = filt.get("not_types")
+    if not_types and set(not_types) & origin.types:
+        return False
+    subtypes = filt.get("subtypes")
+    if subtypes and not (set(subtypes) & origin.subtypes):
+        return False
+    supertypes = filt.get("supertypes")
+    if supertypes and not set(supertypes).issubset(origin.supertypes):
+        return False
+    controller = filt.get("controller")
+    if controller == "you" and origin.controller != ability_source.controller:
+        return False
+    if controller == "opponent" and origin.controller == ability_source.controller:
+        return False
+    return True
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
