@@ -533,7 +533,11 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         name = ctx.state.card_of(obj).name
         if optional and not (
-            yield from ask_yes_no(ctx, f"Cast a copy of {name} without paying its mana cost?")
+            yield from ask_yes_no(
+                ctx,
+                f"Cast a copy of {name} without paying its mana cost?",
+                ctx.controller,
+            )
         ):
             continue
         template = StackItem(
