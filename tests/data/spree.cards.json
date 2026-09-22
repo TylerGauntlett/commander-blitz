@@ -1,0 +1,27 @@
+{
+  "_comment": "Cards that exist only for the spree test (tests/unit/test_spree.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_spree_caper` is Smuggler's Surprise's shape -- three priced modes of which a non-empty SUBSET is bought as the spell is cast. Its three effects are deliberately on three independent axes (hand, your life, the opponent's life) so a cast that bought two modes and ran one is visible: the tiered card in tests/data/tiered.cards.json is the same cost machinery where exactly one price is paid and the axes may safely overlap.",
+  "cards": [
+    {
+      "id": "t_spree_caper",
+      "name": "Test Spree Caper",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Draw a card.\n+ {2} — You gain 3 life.\n+ {4} — Test Spree Caper deals 2 damage to each opponent.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spree": [
+        {"mana": "{1}"},
+        {"mana": "{2}"},
+        {"mana": "{4}"}
+      ],
+      "spell_effects": [
+        {"op": "if", "condition": {"spree_mode": 0},
+         "then": [{"op": "draw", "player": "you", "amount": {"const": 1}}]},
+        {"op": "if", "condition": {"spree_mode": 1},
+         "then": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]},
+        {"op": "if", "condition": {"spree_mode": 2},
+         "then": [{"op": "damage", "player": "opponent", "amount": {"const": 2}}]}
+      ]
+    }
+  ]
+}

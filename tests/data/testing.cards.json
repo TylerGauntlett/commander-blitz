@@ -8393,6 +8393,90 @@
       ]
     },
     {
+      "id": "t_chosen_throne",
+      "name": "Test Chosen Throne",
+      "oracle_text": "As this creature enters, choose a creature type.\nThis creature is the chosen type in addition to its other types.",
+      "mana_cost": "{4}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this creature enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_type",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "This creature is the chosen type in addition to its other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            {
+              "chosen_type_of": "self"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chosen_xenograft",
+      "name": "Test Chosen Xenograft",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nEach creature you control is the chosen type in addition to its other types.",
+      "mana_cost": "{4}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_type",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Each creature you control is the chosen type in addition to its other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "subtypes": [
+            {
+              "chosen_type_of": "self"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_clamp",
       "name": "Test Clamp",
       "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",
@@ -8680,6 +8764,37 @@
               "amount": {
                 "binding": "amount"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pool",
+      "name": "Test Pool",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              },
+              "any_type": true
             }
           ]
         }
@@ -13205,6 +13320,204 @@
           "text": "If you would draw a card while your library has no cards in it, you win the game instead.",
           "effect": "replace_empty_draw",
           "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_life_toll_drake",
+      "name": "Test Life Toll Drake",
+      "oracle_text": "Spells your opponents cast that target this creature cost an additional 3 life to cast.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast that target this creature cost an additional 3 life to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "targeting": {
+            "self_only": true
+          },
+          "cost": {
+            "pay_life": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_toll_collector",
+      "name": "Test Toll Collector",
+      "oracle_text": "Spells your opponents cast cost an additional 2 life to cast.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast cost an additional 2 life to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "pay_life": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_glory_arena",
+      "name": "Test Glory Arena",
+      "oracle_text": "{T}: Add {R}.\n{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn.",
+          "is_mana_ability": true,
+          "cost": {
+            "mana": "{R}",
+            "tap": true,
+            "exert": true
+          },
+          "mana_grant": {
+            "keywords": [
+              "haste"
+            ],
+            "spell_types": [
+              "Creature"
+            ]
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            },
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_glory_sprinter",
+      "name": "Test Glory Sprinter",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_glory_relic",
+      "name": "Test Glory Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "id": "t_hoard_worm",
+      "name": "Test Hoard Worm",
+      "oracle_text": "Flying\nWhenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+      "mana_cost": "{4}{B}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "paid_by": {
+                "subtypes": [
+                  "Treasure"
+                ],
+                "controller": "you"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
         }
       ]
     }

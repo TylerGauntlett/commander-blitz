@@ -1,0 +1,94 @@
+{
+  "card": {
+    "id": "city_of_brass",
+    "name": "City of Brass",
+    "oracle_text": "Whenever this land becomes tapped, it deals 1 damage to you.\n{T}: Add one mana of any color.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this land becomes tapped, it deals 1 damage to you.",
+        "trigger": {
+          "event": "becomes_tapped",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "damage",
+            "amount": {
+              "const": 1
+            },
+            "player": "you",
+            "source_object": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

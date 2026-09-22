@@ -2,7 +2,7 @@
   "card": {
     "id": "millikin",
     "name": "Millikin",
-    "oracle_text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)",
+    "oracle_text": "{T}, Mill a card: Add {C}. (Activate only as an instant. To mill a card, put the top card of your library into your graveyard.)",
     "mana_cost": "{2}",
     "types": ["Artifact", "Creature"],
     "subtypes": ["Construct"],
@@ -13,7 +13,7 @@
     "abilities": [
       {
         "kind": "activated",
-        "text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)",
+        "text": "{T}, Mill a card: Add {C}. (Activate only as an instant. To mill a card, put the top card of your library into your graveyard.)",
         "is_mana_ability": true,
         "cost": {"tap": true, "mill": 1},
         "effects": [{"op": "add_mana", "mana": "{C}"}]

@@ -23,6 +23,18 @@ class CostModel(BaseModel):
     mana: str | None = None
     tap: bool = False
     untap: bool = False
+    #: "{R}, {T}, **Exert this land**: …" -- Arena of Glory. Exert as a *cost*
+    #: (702.121a): paying it marks the source so it does not untap during its
+    #: controller's next untap step, and writes the turn flag `exerted` that
+    #: `has_turn_flag` already reads.
+    #:
+    #: Not ``tap``: Arena's printed cost is ``{R}``, ``{T}`` **and** exert, so
+    #: the tap cannot stand in for both, and exert says nothing about tapping --
+    #: rule 702.121b lets an already-tapped permanent be exerted. Not the
+    #: ``skip_untap`` **op** either: that runs at *resolution*, and this ability
+    #: is a mana ability which never resolves at all. A permanent need be
+    #: neither attacking nor a creature to pay it -- Arena of Glory is a land.
+    exert: bool = False
     sacrifice: dict[str, Any] | None = None
     #: "Return a land you control to its owner's hand" -- Meloku and Trench
     #: Behemoth. A selector over the battlefield, like ``sacrifice``, and
@@ -275,6 +287,14 @@ class TriggerModel(BaseModel):
     #: indistinguishable to a listener; without this clause Harsh Mentor is a
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
+    #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
+    #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
+    #: only, omitted on both -- and omitted is ward's printed "a spell or
+    #: ability", so leaving it off is a real reading rather than a default.
+    #: Without it the only writable trigger is the wide one, and a Dragon that
+    #: mints a Treasure off an opponent's tapper or your own equip is a
+    #: strictly larger card.
+    targeted_by: Literal["spell", "ability"] | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
@@ -297,6 +317,14 @@ class TriggerModel(BaseModel):
     #: "one or more" fires again later the same turn for a second, separate
     #: departure, and a per-turn cap does not.
     batched: bool = False
+    #: "…deal combat damage to a player **or battle**" -- Zurgo and Ojutai.
+    #: Widens `creatures_deal_combat_damage` to 506.2's battle half, and means
+    #: nothing anywhere else: the loader refuses it on any other event.
+    #:
+    #: Off by default because it *is* a widening. The printed sentence on every
+    #: other card using this event is "to one or more players", and a swing that
+    #: connected only with a battle must not fire those.
+    or_battle: bool = False
 
 
 class AbilityModel(BaseModel):
@@ -372,6 +400,14 @@ class AbilityModel(BaseModel):
     #: ability of a creature source of the chosen type". A bare string or list is
     #: the ``cast`` half alone, which is what every other printing says.
     #:
+    #: An entry may also be a **predicate** rather than a name --
+    #: ``{"mana_value": {"op": ">=", "value": 4}}`` or
+    #: ``{"x_in_mana_cost": true}``, the selector language's own spellings.
+    #: Helga, Skittish Seer's "…only to cast creature spells with mana value 4 or
+    #: greater or creature spells with {X} in their mana costs" is two groups,
+    #: each a type name and a predicate, and neither clause has a name of its
+    #: own. See `engine.mana._restriction_predicate`.
+    #:
     #: Either half of the object may be the word ``"any"`` instead of a list of
     #: groups -- "Spend this mana only to activate abilities" (Cryptic Trilobite,
     #: Omen Hawker), which names no type at all. The loader refuses it on both
@@ -388,6 +424,21 @@ class AbilityModel(BaseModel):
     #: spell it was spent on becomes uncounterable. Only meaningful beside
     #: ``is_mana_ability``, and the loader refuses it anywhere else.
     mana_uncounterable: bool = False
+    #: "If that mana is spent on a creature spell, **it gains haste until end of
+    #: turn**" -- Arena of Glory. A rider on the mana this ability makes, in
+    #: ``mana_uncounterable``'s slot and with the harder lifetime: the keyword is
+    #: handed to the *permanent* the spell becomes, as it enters.
+    #:
+    #: ``{"keywords": ["haste"], "spell_types": ["Creature"]}``. ``spell_types``
+    #: is the printed "creature spell" half and narrows **who is given the
+    #: keyword**, which is what separates it from ``mana_restriction``: that one
+    #: narrows what the mana may be spent on at all, and Arena's mana pays for
+    #: anything. Omitted, every spell paid for with this mana is granted the
+    #: keywords. The duration is always until end of turn, the only one printed.
+    #:
+    #: Only meaningful beside ``is_mana_ability``, and the loader refuses it
+    #: anywhere else.
+    mana_grant: dict[str, Any] | None = None
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.
@@ -436,6 +487,15 @@ class AbilityModel(BaseModel):
     #: "Creature spells with flying you cast cost {1} less." Filters a *card
     #: being cast* by its printed face, which is a different question from
     #: `affects` (which picks out permanents on the battlefield).
+    #:
+    #: Also `cast_from_graveyard`'s "an **artifact** spell from your graveyard"
+    #: and `free_cast_permission`'s "**Dragon** spells" -- three statics that
+    #: name a card nobody can point at yet, and so may read only its printed
+    #: face. Required on all three: an absent filter reads as "every spell",
+    #: which on the last of them is Omniscience.
+    #: Read by `spell_cost_increase` too -- "Spells your opponents cast … cost
+    #: an additional 3 life" (Terror of the Peaks) asks the identical question
+    #: of the identical card, and answers it from the same key.
     affects_spells: dict[str, Any] | None = None
     #: `ability_cost_reduction`: which **activated abilities** the discount
     #: reaches, as a class. ``{"equip": true}`` is Strong Back's "equip
@@ -452,6 +512,12 @@ class AbilityModel(BaseModel):
     #: Matched against the refs the activation chose, as an ordinary static
     #: filter resolved against this permanent, so ``{"attached": true}`` is the
     #: creature this Aura enchants.
+    #:
+    #: `spell_cost_increase` takes the same clause pointing the other way --
+    #: Terror of the Peaks' "spells your opponents cast **that target this
+    #: creature**", which is ``{"self_only": true}``. The one difference is how
+    #: it is read when no target exists yet: a reduction applies generously
+    #: there and a tax is left out, both of them being generous to the caster.
     targeting: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
@@ -521,7 +587,22 @@ class AbilityModel(BaseModel):
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)
-    subtypes: list[str] = Field(default_factory=list)
+    #: The subtypes an ``add_subtype`` static grants. Literal names, with one
+    #: exception: ``{"chosen_type_of": "self"}`` -- "this creature is **the
+    #: chosen type** in addition to its other types" (Roaming Throne, Arcane
+    #: Adaptation, Xenograft).
+    #:
+    #: The same entry a *filter*'s ``subtypes`` has always taken, now on the
+    #: granting side too, and it is `list[str]` no longer for that one word.
+    #: Written as a literal it cannot be written at all: the type is named by a
+    #: player as the permanent enters, so there is nothing to put here at load
+    #: time, and the grant has to be re-read as the game goes on -- a second
+    #: ``choose_type`` or a ``change_text`` moves it.
+    #:
+    #: Accepted on ``add_subtype`` and refused on every other static, which is
+    #: the only effect that reads this field: a mapping quietly ignored is a
+    #: printed line that does nothing.
+    subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
     #: Two different clauses sharing one field, because the card files read
@@ -659,15 +740,24 @@ class AbilityModel(BaseModel):
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
     #: chosen color", the same spelling the ``add_mana`` op uses.
     add_mana: str | dict[str, Any] | None = None
+    #: ``grant_warp``: the price the filtered cards in hand gain -- Tannuk's
+    #: ``"{2}{R}"``. Beside `affects_spells` rather than inside it, for
+    #: `static_max_per_turn`'s reason: the filter says *which* cards and may
+    #: read only their printed face, and this says what the grant costs, which
+    #: is a fact about the granting permanent.
+    warp_cost: str | None = None
 
 
 class ReplacementModel(BaseModel):
-    """One of the four whitelisted replacement effects.
+    """One of the whitelisted replacement effects.
 
-    Every one of them modifies the permanent that is *already arriving*, which
-    is why token creation is not here and could not be: there is no object yet.
+    Five of the six modify the permanent that is *already arriving*, which is
+    why token creation is not here and could not be: there is no object yet.
     "If you would create a Clue, Food, or Treasure token" is a
     ``replace_token_creation`` static instead -- see `AbilityModel.create_instead`.
+
+    ``self_enters_replaced`` is the sixth and the exception: it replaces the
+    **arrival itself**, so the permanent may never enter at all.
     """
 
     model_config = Strict
@@ -682,6 +772,14 @@ class ReplacementModel(BaseModel):
         #: 614.1b: a copy effect applied *as* the permanent arrives, so it is
         #: never seen as itself.
         "self_enters_as_copy",
+        #: "If this artifact would enter, you may discard a land card instead.
+        #: If you do, put this artifact onto the battlefield. If you don't, put
+        #: it into its owner's graveyard." -- Mox Diamond. 614.1a applied to the
+        #: zone change itself: paid, the permanent finishes arriving; declined,
+        #: it is sent somewhere else and **never enters**, so no enters trigger
+        #: anywhere sees it and it is never on the battlefield to be responded
+        #: to. See `instead_cost` and `instead_zone`.
+        "self_enters_replaced",
     ]
     modify: dict[str, Any] = Field(default_factory=dict)
     #: `self_enters_as_copy`: the pool of permanents that may be copied --
@@ -728,6 +826,24 @@ class ReplacementModel(BaseModel):
     #: ask, and making it one would put a suspend point inside every zone
     #: change in the engine.
     unless_cost: dict[str, Any] | None = None
+    #: ``self_enters_replaced``: the price that lets the arrival happen at all
+    #: -- Mox Diamond's "you may **discard a land card** instead". A whole
+    #: ``Cost``, so the discard selector, the sacrifice and the life payment the
+    #: rest of the DSL prices things with are all reachable, and required on the
+    #: event: a replaced arrival with no price is a permanent that can never
+    #: enter.
+    #:
+    #: **The opposite polarity to `unless_cost`, and deliberately not that
+    #: field.** There, paying *avoids* a modification and the permanent enters
+    #: either way; here, paying is what buys the entry, and not paying sends the
+    #: card to `instead_zone` instead. The two read alike in a diff and mean
+    #: opposite things, so they are two keys and the loader refuses each on the
+    #: other's event.
+    instead_cost: dict[str, Any] | None = None
+    #: ``self_enters_replaced``: where the permanent goes when the price is not
+    #: paid -- "put it into its **owner's graveyard**". Its owner's copy of the
+    #: zone, which is what every printed card in this family says.
+    instead_zone: Literal["graveyard", "exile", "hand", "library"] = "graveyard"
 
 
 class EmblemModel(BaseModel):
@@ -761,6 +877,18 @@ class CardModel(BaseModel):
     #: a planeswalker arrives -- loyalty *is* counters, and every reader the
     #: engine already has for counters is a reader for loyalty.
     loyalty: int | None = None
+    #: A battle's printed **defense** (310.3), the number in the box on the
+    #: right. Compiled into a `self_enters_with_counters` replacement exactly as
+    #: `loyalty` is, and for the same reason: defense *is* counters (310.4), so
+    #: proliferate, `counters_on` and the client's badge read it with no new
+    #: reader anywhere.
+    #:
+    #: A separate field from `loyalty` rather than one "starting counters"
+    #: number, because the two are different characteristics that print on
+    #: different card types and the counter kinds are not interchangeable: a
+    #: `remove_counters` aimed at loyalty must not take defense off a battle,
+    #: and 306.8 and 310.6 are two rules.
+    defense: int | None = None
     #: A Saga's **final chapter number** (714.4). Omit it and the loader takes the
     #: highest chapter the card prints, which is right for every Saga whose text
     #: the DSL can say in full.
@@ -902,6 +1030,26 @@ class CardModel(BaseModel):
     #: offers one per sacrificeable creature: the player is choosing, and the
     #: choice changes the price.
     additional_cost_options: list[CostModel] = Field(default_factory=list)
+    #: **Spree** (702.166a): "Choose one or more additional costs." Smuggler's
+    #: Surprise. A list of priced modes of which the caster takes a non-empty
+    #: **subset** as the spell is cast, pays every chosen price on top of the
+    #: printed cost, and on resolution runs only the chosen modes' effects.
+    #:
+    #: A sibling of ``additional_cost_options`` rather than a flag on it,
+    #: because that list is *exclusive* by construction: one index is chosen,
+    #: one branch is charged, and `{"cost_option": n}` can only ever name one.
+    #: Writing three spree modes there would let the player buy exactly one of
+    #: them and never two -- a strictly weaker card wearing the right words.
+    #: ``multikicker`` is one fixed price paid N times, not N distinct prices
+    #: with N distinct effects, and `choose_mode` runs at *resolution*, so it
+    #: can neither be a cost nor decide whether the spell is castable.
+    #:
+    #: Legality offers one cast line per **payable non-empty subset** -- never
+    #: the unmodified spell, because 702.166a says "one or more" -- and each
+    #: printed "+ <cost> — <effect>" line is an ``if`` on
+    #: ``{"spree_mode": n}``, which asks whether mode ``n`` was among the modes
+    #: paid for.
+    spree: list[CostModel] = Field(default_factory=list)
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's
@@ -995,6 +1143,20 @@ class CardModel(BaseModel):
     #: Rohan is printed {3}{R}{W} with dash {4}{R}{W}. Equal to the printed cost
     #: stays refused under every label: that is one cast offered twice.
     evoke_label: str = "evoked"
+    #: **Warp {1}{R}**: "You may cast this card from your hand for its warp
+    #: cost. Exile that permanent at the beginning of the next end step, then
+    #: you may cast it from exile on a later turn."
+    #:
+    #: ``evoke``'s slot -- an alternative mana cost offered from hand -- with
+    #: two riders the *rule* supplies rather than the card. Evoke buys a
+    #: sacrifice written on the card's own trigger; warp's exile and its later
+    #: cast are printed nowhere, so they are the engine's and not a
+    #: ``delayed_trigger`` ability an author has to remember. See
+    #: `casting._cast_options` and `stack._place_after_resolution`.
+    #:
+    #: Not a discount: the printed mana value is unchanged, and a warped
+    #: permanent arrives exactly as a normally-cast one does.
+    warp: str | None = None
     #: ``{"mana": "{R}", "condition": {...}}`` -- **prowl** and **spectacle**.
     #: An alternative cost like evoke, and unlike evoke it is only *offered*
     #: when the condition holds: "you may cast this for its spectacle cost if

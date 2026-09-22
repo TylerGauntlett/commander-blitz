@@ -40,8 +40,24 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Types are always *added*.  Replacing a type line is `animate` or the
     `set_types` static.
+
+    **Literal names only**, and the assertion is the point. `str()` stood where
+    this check does, and it made `{"chosen_type_of": "self"}` -- which the
+    static of the same name now takes, and which the loader refuses here -- into
+    the subtype `"{'chosen_type_of': 'self'}"`: a permanent that loads,
+    resolves, and is of no creature type at all. A one-shot cannot honour that
+    entry anyway, because it writes a word onto the object and walks away, where
+    the sentence is a continuous grant that has to be re-read after a second
+    `choose_type` or a `change_text`. Unreachable through `compile_card`; loud
+    rather than silent for a spec built in code.
     """
-    subtypes = [str(t) for t in spec.get("subtypes", ())]
+    wanted = tuple(spec.get("subtypes", ()))
+    if not all(isinstance(t, str) for t in wanted):
+        raise TypeError(
+            f"add_subtype: subtypes are literal names, got {wanted!r} -- "
+            f"'of the chosen type' is the add_subtype static, not this op"
+        )
+    subtypes = list(wanted)
     if not subtypes:
         return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")

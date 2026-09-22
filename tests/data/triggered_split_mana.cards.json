@@ -1,0 +1,115 @@
+{
+  "_comment": "Shapes for tests/unit/test_triggered_split_mana.py. t_tsm_wyrm is the Klauth line in full -- an attacks trigger that adds X mana freely divided among the five colours, spendable only on spells, surviving every step and phase boundary until end of turn. t_tsm_ritual is the same trigger with no restriction, the control that proves the assertions are about the restriction and not about effect-made mana. t_tsm_relic is the activated ability the restricted mana may not pay for and t_tsm_bolt is the spell it may; both cost {1}, so the only difference between them is what the mana is being spent on.",
+  "cards": [
+    {
+      "id": "t_tsm_wyrm",
+      "name": "Test Hoard Wyrm",
+      "oracle_text": "Flying\nWhenever Test Hoard Wyrm attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end.",
+      "mana_cost": "{4}{R}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 5,
+      "toughness": 5,
+      "colors": ["R", "G"],
+      "color_identity": ["R", "G"],
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test Hoard Wyrm attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": { "event": "attacks", "source": "self", "controller": "you" },
+          "effects": [
+            {
+              "op": "add_mana",
+              "split": ["W", "U", "B", "R", "G"],
+              "amount": {
+                "power_of": {
+                  "objects": {
+                    "zone": "battlefield",
+                    "types": ["Creature"],
+                    "attacking": true,
+                    "count": "all"
+                  }
+                }
+              },
+              "mana_restriction": { "cast": "any" },
+              "persists_until_end_of_turn": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tsm_ritual",
+      "name": "Test Hoard Serpent",
+      "oracle_text": "Whenever Test Hoard Serpent attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Until end of turn, you don't lose this mana as steps and phases end.",
+      "mana_cost": "{4}{R}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Serpent"],
+      "power": 5,
+      "toughness": 5,
+      "colors": ["R", "G"],
+      "color_identity": ["R", "G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test Hoard Serpent attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": { "event": "attacks", "source": "self", "controller": "you" },
+          "effects": [
+            {
+              "op": "add_mana",
+              "split": ["W", "U", "B", "R", "G"],
+              "amount": {
+                "power_of": {
+                  "objects": {
+                    "zone": "battlefield",
+                    "types": ["Creature"],
+                    "attacking": true,
+                    "count": "all"
+                  }
+                }
+              },
+              "persists_until_end_of_turn": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tsm_relic",
+      "name": "Test Hoard Relic",
+      "oracle_text": "{1}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: You gain 1 life.",
+          "cost": { "mana": "{1}" },
+          "effects": [{ "op": "gain_life", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_tsm_bolt",
+      "name": "Test Hoard Spark",
+      "oracle_text": "Test Hoard Spark deals 1 damage to any target.",
+      "mana_cost": "{1}",
+      "types": ["Instant"],
+      "colors": [],
+      "color_identity": [],
+      "targets": [
+        {
+          "id": "victim",
+          "kind": "any",
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        { "op": "damage", "amount": { "const": 1 }, "targets": ["victim"] }
+      ]
+    }
+  ]
+}

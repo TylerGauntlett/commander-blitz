@@ -70,6 +70,13 @@ CONDITION_KEYS = frozenset(
         # is one `choose_mode`-free branch per price. Bitter Triumph needed no
         # such key because both of its prices lead to the same effect.
         "cost_option",
+        # **Spree** (702.166a): whether mode n was among the ones bought. The
+        # set-membership sibling of `cost_option`, and a separate key rather
+        # than a widening of it because the two ask different questions: "the
+        # tier that was paid *is* n" against "n was *among* those paid". A
+        # spree card asked the first would run at most one of the modes it
+        # charged for.
+        "spree_mode",
         "has_city_s_blessing",
         # "If you're the monarch…" (721). Takes a player spec, so a card can also
         # ask it of somebody else.
@@ -182,6 +189,16 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         chosen = obj.cast_cost_option if obj is not None else None
         return chosen == int(cond["cost_option"])
+    if "spree_mode" in cond:
+        # Spree (702.166a). Read off the object for `cost_option`'s reason, and
+        # asked as **membership**: the modes bought are a subset, so "+ {2} —
+        # Mill four cards" must fire whenever {2} was among the prices paid,
+        # whatever else was paid beside it. An equality test here would make a
+        # two-mode cast run one mode, which is the whole bug this key exists to
+        # not have.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        bought = obj.cast_spree_modes if obj is not None else ()
+        return int(cond["spree_mode"]) in bought
     if "evoked" in cond:
         # Read in both lifetimes. On the battlefield it is "it's sacrificed
         # when it enters", an ETB trigger; on the stack it is "if the {1}{B}

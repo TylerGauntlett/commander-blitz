@@ -6,6 +6,7 @@ read apart.
 
 from __future__ import annotations
 
+from itertools import combinations
 from typing import TYPE_CHECKING
 
 from . import suspend as suspend_mod
@@ -15,11 +16,20 @@ from .characteristics import chars, player_cant_cast_spells
 from .costs import (
     can_pay,
     commander_cost,
+    zone_of,
 )
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
-from .player_statics import player_casts_as_though_flash, player_pays_life_for_black
-from .primitives import sacrifice_forbidden
+from .player_statics import (
+    free_cast_permission,
+    granted_warp_cost,
+    player_casts_as_though_flash,
+    player_pays_life_for_black,
+    player_spends_mana_as_any_color,
+    spell_life_tax,
+    spell_life_tax_on_board,
+)
+from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -147,7 +157,20 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(
-            _cast_options(state, pid, oid, card, extra_generic=0, free=obj.playable_free)
+            _cast_options(
+                state,
+                pid,
+                oid,
+                card,
+                extra_generic=0,
+                free=obj.playable_free,
+                # "…its owner may cast it **for {2} rather than its mana
+                # cost**" -- airbend. Read off the same permission that made
+                # the card castable at all, beside `playable_free`, because it
+                # is the same kind of fact: what this line costs. `Game._cast`
+                # reads the identical field off the identical card.
+                alt_cost=obj.playable_alt_cost,
+            )
         )
 
     # Foretold cards are cast from **exile**, at the foretell price, and only on
@@ -260,6 +283,19 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid)))
+    # "…can't cast spells from anywhere other than their hands." (Avatar's
+    # Wrath.) Applied to the finished list rather than written into each block
+    # above, and that is the whole point of doing it here: this function offers
+    # casts out of the hand, the top of the library, exile, both graveyards,
+    # the command zone and the battlefield, in eight separate walks, and a gate
+    # written into one of them would leave the other seven open. One filter on
+    # `zone_of` closes all of them, and closes the ninth the next lane adds.
+    #
+    # Distinct from `player_cant_cast_spells` at the top, which returns early
+    # and needs no zone: that one is a claim about the player, and this one is
+    # a claim about where a card is.
+    if shut := cast_locked_zones(state, pid):
+        out = [a for a in out if zone_of(state, a.source) not in shut]
     return out
 
 
@@ -413,8 +449,38 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     return player_casts_as_though_flash(state, pid)
 
 
+def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
+    """The warp price this player may cast this card for, printed or granted.
+
+    Two sources for one mechanic, and the second is the whole reason this is a
+    function rather than a field read. "Warp {1}{R}" is printed on the card;
+    "artifact cards and red creature cards in your hand have warp {2}{R}" is
+    Tannuk, Steadfast Second saying it about *somebody else's* cards, and a
+    card in a hand has no abilities for a grant to hang on -- so the grant is a
+    static on the granting permanent and is asked here, where the cast lines
+    are built, every time they are built.
+
+    The printed cost wins when a card has both. No printing collides yet, but
+    the card's own price is the one its designer set, and a grant that silently
+    re-priced a warp card would be a strictly different card.
+
+    Read by `_cast_options` and by `Game._cast`, which must agree: a line
+    offered at one price and charged at another strands the cast half-paid.
+    """
+    if card.warp is not None:
+        return card.warp.text
+    return granted_warp_cost(state, pid, card)
+
+
 def _cast_options(
-    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int, free: bool = False
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    *,
+    extra_generic: int,
+    free: bool = False,
+    alt_cost: str | None = None,
 ) -> list[Action]:
     """Every distinct way to cast this card right now.
 
@@ -434,8 +500,42 @@ def _cast_options(
         return []
 
     out = _cast_variant(
-        state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=free
+        state,
+        pid,
+        oid,
+        card,
+        tuples,
+        extra_generic=extra_generic,
+        kicked=False,
+        free=free,
+        # The airbend price rides on **this** line alone and is deliberately
+        # not handed to the variants below. Each of those already chose its own
+        # price -- evoke, bestow, the alternative cost -- and a flat {2} laid
+        # over one of them would be a third price nobody printed. The plain
+        # line is the one the permission is offering, and `Game._cast` charges
+        # {2} on exactly the branch that has no other flag set.
+        alt_cost=alt_cost,
     )
+    # "You may cast Dragon spells without paying their mana costs" --
+    # Dracogenesis. A standing board permission rather than a price on this
+    # card, so it is asked here, where every cast line for this object is
+    # built, and asked *afresh* each time: a Dragon drawn after the permanent
+    # arrived is covered, and the permission does not spend itself.
+    #
+    # An **extra line beside the printed one**, which is the whole of "you
+    # may": 601.2b's alternative is a choice, and a player who wants the mana
+    # spent -- for Aetherflux Reservoir, for a "spend mana on a creature spell"
+    # trigger, or to leave a smaller Dragon uncast -- must still be able to pay
+    # normally. A version that replaced the printed line would take that away
+    # silently. Listed second for the reason the unkicked line is listed first:
+    # the printed way to cast a card stays the default one.
+    #
+    # Skipped when the caller already priced this line free -- a plotted Dragon
+    # is offered free once, not twice.
+    if not free and free_cast_permission(state, pid, card):
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
+        )
     if card.kicker is not None:
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True
@@ -472,6 +572,18 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
+    # Warp: evoke's shape with the riders supplied by the rule, and the only
+    # alternative cost here that a *different permanent* may hand this card --
+    # "artifact cards and red creature cards in your hand have warp {2}{R}".
+    # So the price is asked for rather than read off the card, and it is asked
+    # afresh at every cast: a card drawn after Tannuk arrived has warp too.
+    #
+    # Hand-only, like evoke and for its reason -- and here it is the loop guard
+    # as well: the warped permanent is exiled at the next end step and cast
+    # again *from exile*, so a warp line offered there would let it warp itself
+    # for ever and never leave.
+    if state.objects[oid].zone is Zone.HAND and (warp := warp_cost(state, pid, card)) is not None:
+        out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, warp=warp)
     # Bestow (702.103a): the same alternative-cost shape as evoke, and the only
     # one that changes what the spell *points at*. "Enchant creature" is fixed
     # by the rule, so the target comes from `BESTOW_TARGET` rather than from the
@@ -538,6 +650,25 @@ def _cast_options(
             extra_generic=extra_generic,
             additional_times=times,
             additional_choice=choice,
+        ),
+    )
+    # Spree (702.166a): "Choose one or more additional costs." One line per
+    # non-empty subset of the priced modes, which is the mechanic: a player
+    # buying Smuggler's Surprise's mill *and* its hexproof pays both prices and
+    # gets both effects, and a version offering one mode at a time would be a
+    # strictly weaker card at the same rate.
+    out = _spree_lines(
+        state,
+        card,
+        out,
+        lambda subset: _cast_variant(
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            extra_generic=extra_generic,
+            spree_modes=subset,
         ),
     )
     # Morph: "you may cast this card face down as a 2/2 creature for {3}"
@@ -747,6 +878,50 @@ def _charge_additional_cost(
     return out
 
 
+def _spree_lines(
+    state: GameState,
+    card: CardDef,
+    out: list[Action],
+    build,
+) -> list[Action]:
+    """702.166a: "Choose **one or more** additional costs."
+
+    ``build(subset)`` makes the cast line that buys exactly those modes; ``out``
+    is whatever the caller has already built.
+
+    One line per **non-empty subset**, which is the whole of spree and the one
+    thing `additional_cost_options` cannot say: that list sells exactly one
+    branch, so three modes written there would be three cast lines instead of
+    seven, and Smuggler's Surprise would be a card that can never do two things
+    at once however much mana its caster has.
+
+    The lines already built are **withdrawn**, for the reason a mandatory
+    `additional_cost` withdraws them: "one or more" means the unmodified spell
+    is not a legal cast at all, and leaving the plain line in place would make
+    every spree card castable for its printed cost with none of its text.
+    Withdrawn wholesale rather than only when a mode is unaffordable, because
+    clearing it in the unpayable case alone is the same thing as never charging
+    it -- `find_play` and the heuristic agent both take the first line offered.
+
+    Payability is left entirely to the mana solver, which `_cast_variant` runs
+    over the *subset's* folded price. That is why the loader refuses a non-mana
+    spree mode: a per-mode check would say yes twice to a player who can only
+    afford once.
+    """
+    if not card.spree:
+        return out
+    lines: list[Action] = []
+    indices = range(len(card.spree))
+    # Cheapest-shaped first -- one mode before two, and in printed order inside
+    # each size. The client lists them in this order and `verify.find_play`
+    # deliberately reaches past it for the largest, so nothing downstream reads
+    # "the first line" as "the whole card".
+    for size in range(1, len(card.spree) + 1):
+        for subset in combinations(indices, size):
+            lines = lines + build(subset)
+    return lines
+
+
 def _additional_ceiling(
     state: GameState, pid: int, oid: int, card: CardDef, choice: int | None = None
 ) -> int:
@@ -921,6 +1096,8 @@ def _priced_tuples(
     any_color: bool = False,
     targeted_discount: bool = False,
     discount_for=None,
+    life_tax_for=None,
+    life_budget: int = 0,
 ) -> list[tuple[tuple, tuple[int, ...]]]:
     """Each target tuple this line may be cast with, and what paying for it taps.
 
@@ -952,7 +1129,29 @@ def _priced_tuples(
     target is reached, and one target is the line that costs nothing extra. Each
     size gets its own enumeration, largest first, then the empty tuple last, the
     order the rest of targeting keeps.
+
+    **A life tax is the third**, and it is the cheap one: "spells your opponents
+    cast that target this creature cost an additional 3 life to cast" (Terror of
+    the Peaks) also makes the price a question about which target was chosen,
+    but it is paid in a resource the mana solver knows nothing about. So it is
+    settled before any solving happens -- the tuples the caster cannot afford
+    the life for are simply not there -- and a tuple that survives is priced by
+    exactly the code that priced it before. `life_tax_for` is `None` unless such
+    a static is on the board, which is the common case and costs nothing.
     """
+    if life_tax_for is not None:
+        # 118.4: life may be paid down to exactly 0, so a tax of 3 is payable at
+        # 3 life and not at 2. `life_budget` is what is left after the Phyrexian
+        # pips this line already bought, since both come out of the same total.
+        # A tax of zero is not a payment, so it survives a frozen life total
+        # (`life_budget` is -1 then) as well as an empty one.
+        tuples = [
+            targets
+            for targets in tuples
+            if (tax := life_tax_for(targets)) == 0 or tax <= life_budget
+        ]
+        if not tuples:
+            return []
 
     def solve(extra: int, aimed_at=None):
         total = cost
@@ -1031,12 +1230,17 @@ def _cast_variant(
     kicked: bool = False,
     gift_to: int | None = None,
     evoked: bool = False,
+    # The **price**, not a flag: warp may be handed to this card by a static on
+    # another permanent, so there is nothing on the card to read it back off.
+    # `Action.warp` carries the same string for the same reason.
+    warp: str | None = None,
     emerge_oid: int | None = None,
     flashback: bool = False,
     alternative: bool = False,
     overloaded: bool = False,
     additional_times: int = 0,
     additional_choice: int | None = None,
+    spree_modes: tuple[int, ...] = (),
     free: bool = False,
     from_library_top: bool = False,
     foretold: bool = False,
@@ -1047,6 +1251,7 @@ def _cast_variant(
     bestowed: bool = False,
     mutated: bool = False,
     pay_generic: int = 0,
+    alt_cost: str | None = None,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose, variant_reduction
     from .stack import modal_cast_ok
@@ -1062,8 +1267,12 @@ def _cast_variant(
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same
     # answer -- both go through `spell_purpose`.
-    sources = mana_sources(state, pid, purpose=spell_purpose(card))
-    pool = state.players[pid].mana_pool
+    purpose = spell_purpose(card)
+    sources = mana_sources(state, pid, purpose=purpose)
+    # The pool asked the same question: a pip carrying "spend this mana only to
+    # cast spells" is a restricted *source* that has already been made, and the
+    # offer would otherwise plan on mana this cast is not allowed to take.
+    pool = state.players[pid].mana_pool.spendable(purpose)
 
     # "This spell costs {X} less to cast **this way**": a discount belonging to
     # the variant rather than to the card, so it is read on the branch that
@@ -1083,6 +1292,15 @@ def _cast_variant(
         # shows on an X spell, where a discount leaves X payable and this does
         # not.
         cost = FREE_COST
+    elif alt_cost is not None:
+        # "…its owner may cast it **for {2} rather than its mana cost**" --
+        # airbend. Second in the chain, directly under the free line, because
+        # it is the same shape: a price that *replaces* the printed one rather
+        # than adjusting it. The discounts below still apply to it, which is
+        # right -- a cost reduction reduces whatever cost is actually being
+        # paid (601.2f) -- and they reach only its generic part, which is all
+        # of it.
+        cost = ManaCost.parse(alt_cost)
     elif flashback and card.flashback is not None:
         cost = card.flashback.mana
         variant_less = variant_reduction(state, pid, card.flashback, oid)
@@ -1090,6 +1308,13 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif warp is not None:
+        # Parsed from the string rather than read off the card: the price may
+        # have come from a `grant_warp` static, where there is no `ManaCost`
+        # field to reach for. An **alternative** cost -- it replaces the
+        # printed one outright -- so it sits in this chain beside evoke rather
+        # than being netted into `extra_generic` like a discount.
+        cost = ManaCost.parse(warp)
     elif bestowed and card.bestow is not None:
         cost = card.bestow
     elif mutated and card.mutate is not None:
@@ -1135,6 +1360,26 @@ def _cast_variant(
         # lines are counted, and one line per number bought falls out below.
         # `Game._cast` makes the identical conversion before it charges.
         printed = printed.black_as_phyrexian()
+    # Chromatic Orrery: "You may spend mana as though it were mana of any
+    # color." A fact about the payer rather than about this card, so it is read
+    # once for the whole variant and then folded in beside the permission a
+    # `grant_playable` may also have left on the card. `Game._cast` reads the
+    # same static at the same point.
+    spends_any_color = player_spends_mana_as_any_color(state, pid)
+    # Terror of the Peaks: "spells your opponents cast that target this creature
+    # cost an additional 3 life to cast." An additional cost (601.2f) charged in
+    # life, so it never reaches the payment solver -- it only narrows which
+    # target tuples this player can afford to announce, which is what
+    # `_priced_tuples` does with it. Asked once per cast line, and only when the
+    # board actually has such a static on it.
+    taxed = spell_life_tax_on_board(state)
+    # "Your life total can't change" makes paying life impossible rather than
+    # free (118.4 makes it a loss of life, and 601.2h makes an unpayable cost an
+    # illegal cast), so a taxed line goes away entirely -- the same refusal
+    # `costs.can_pay` already makes about a printed "pay 3 life". An *untaxed*
+    # line is untouched by it, which is why this is a flag rather than a life
+    # total of -1: a tax of zero is not a payment.
+    life_frozen = taxed and life_locked(state, pid)
     out: list[Action] = []
     for phyrexian in range(printed.phyrexian_count + 1):
         cost, phyrexian_life = printed.paying_phyrexian(phyrexian)
@@ -1142,6 +1387,16 @@ def _cast_variant(
         # at 1 is not offered the line a player at 2 is.
         if phyrexian_life > state.players[pid].life:
             continue
+        if taxed:
+            # The floor: the tax every tuple on this line pays whatever it aims
+            # at. A `targeting` clause is left out of it (`targets=None` reads
+            # such a static meanly), so this refuses only the lines that are
+            # unaffordable however they are aimed.
+            floor_tax = spell_life_tax(state, pid, card, None)
+            if floor_tax and (
+                life_frozen or phyrexian_life + floor_tax > state.players[pid].life
+            ):
+                continue
         permission = state.objects[oid]
         if permission.playable_any_type and permission.playable_live(state.turn):
             # "…and mana of any type can be spent to cast that spell." The colours
@@ -1150,10 +1405,15 @@ def _cast_variant(
             # cost -- and the discounts below still only touch the generic part,
             # which by now is all there is.
             cost = cost.as_any_type()
-        elif permission.playable_any_color and permission.playable_live(state.turn):
+        elif (
+            permission.playable_any_color and permission.playable_live(state.turn)
+        ) or spends_any_color:
             # "…you may spend mana as though it were mana of any color to cast
             # it." Relaxed at the same moment and for the same reason as the
             # any-type waiver above, and read off the same card by `Game._cast`.
+            # Either half does it: Elder Brain's permission on *this* card, or
+            # Chromatic Orrery's static on the *player*, which says the same
+            # thing about every cost and so also about this one.
             cost = cost.as_any_color()
         branch = chosen_additional(card, additional_choice)
         if additional_times and branch is not None:
@@ -1163,6 +1423,12 @@ def _cast_variant(
             # `branch` rather than `card.additional_cost`, so a modal cost prices
             # the option this line is offering and not some other one.
             cost = cost.plus(branch.mana.scaled(additional_times))
+        for mode in spree_modes:
+            # Spree (702.166a): **every** chosen mode's price, folded in one at
+            # a time. Summed rather than picked, which is the difference between
+            # this and the branch above and the whole reason spree needed its
+            # own slot: a player who chose two modes owes two prices.
+            cost = cost.plus(card.spree[mode].mana)
         # `targets=None` is the generous reading a *gate* has to take: a
         # discount that asks what the spell is aiming at has no tuple to read
         # yet, and refusing here would drop a spell that is affordable once
@@ -1212,14 +1478,35 @@ def _cast_variant(
             pool,
             sources,
             any_type=permission.playable_any_type and permission.playable_live(state.turn),
-            any_color=permission.playable_any_color and permission.playable_live(state.turn),
+            any_color=(permission.playable_any_color and permission.playable_live(state.turn))
+            or spends_any_color,
             targeted_discount=targeted_discount,
             discount_for=_discount_for,
+            # Priced per tuple, exactly, because "that target this creature" is
+            # a question about which target was chosen. The budget is what the
+            # Phyrexian pips this line already bought have left over.
+            life_tax_for=(
+                (lambda aimed: spell_life_tax(state, pid, card, aimed)) if taxed else None
+            ),
+            life_budget=(-1 if life_frozen else state.players[pid].life - phyrexian_life),
         )
         if not priced:
             continue
 
         label_base = f"Cast {card.name}"
+        if free:
+            # The printed words, because this line is now offered *beside* the
+            # paid one -- Dracogenesis. The client groups its rows by
+            # `base_label`, so two identically-labelled lines for one card
+            # would collapse into one row and the player would never see the
+            # choice, which is the choice 601.2b gives them.
+            label_base += " (without paying its mana cost)"
+        if alt_cost is not None:
+            # The price, in the label, for the reason the free line carries its
+            # printed words: a card airbent out of a graveyard could also be
+            # offered a flashback line, and two rows labelled "Cast Foo" would
+            # collapse into one in the client and hide the choice.
+            label_base += f" (for {alt_cost})"
         if kicked:
             # The card's own word: "kicked", "buyback".
             label_base += f" ({card.kicker_label})"
@@ -1235,6 +1522,11 @@ def _cast_variant(
             # one mechanism, and only the label tells the player which they are
             # buying.
             label_base += f" ({card.evoke_label})"
+        if warp is not None:
+            # The printed word plus the price, because the price is not on the
+            # card: a player looking at an artifact in hand under Tannuk has no
+            # other way to see what this line costs.
+            label_base += f" (warp {warp})"
         if fused:
             label_base += " (fused)"
         if bestowed:
@@ -1256,6 +1548,14 @@ def _cast_variant(
             # which one this row buys -- otherwise Bitter Triumph draws two
             # identical rows and the player picks blind.
             label_base += f" ({branch.describe()})"
+        if spree_modes:
+            # Which modes this row buys, in the card's own prices. The client
+            # groups rows by `base_label`, so seven spree lines sharing one
+            # label would collapse into a single row and the player would pick
+            # blind between "mill four" and "all three at once".
+            label_base += " (spree " + " ".join(
+                card.spree[mode].describe() for mode in spree_modes
+            ) + ")"
         if pay_generic:
             word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
             label_base += f" ({word} {pay_generic})"
@@ -1285,10 +1585,13 @@ def _cast_variant(
                     kicked=kicked,
                     gift_to=gift_to,
                     evoked=evoked,
+                    warp=warp,
                     alternative=alternative,
                     overloaded=overloaded,
                     additional_times=additional_times,
                     additional_choice=additional_choice,
+                    spree_modes=spree_modes,
+                    cast_free=free,
                     from_library_top=from_library_top,
                     foretold=foretold,
                     face_down=face_down,

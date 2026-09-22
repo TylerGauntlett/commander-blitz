@@ -1,0 +1,100 @@
+{
+  "card": {
+    "id": "bonehoard_dracosaur",
+    "name": "Bonehoard Dracosaur",
+    "oracle_text": "Flying, first strike\nAt the beginning of your upkeep, exile the top two cards of your library. You may play them this turn. If you exiled a land card this way, create a 3/1 red Dinosaur creature token. If you exiled a nonland card this way, create a Treasure token.",
+    "mana_cost": "{3}{R}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Dinosaur",
+      "Dragon"
+    ],
+    "power": 5,
+    "toughness": 5,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [
+      "flying",
+      "first_strike"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, exile the top two cards of your library. You may play them this turn. If you exiled a land card this way, create a 3/1 red Dinosaur creature token. If you exiled a nonland card this way, create a Treasure token.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "look_at_top",
+            "player": "you",
+            "amount": {
+              "const": 2
+            },
+            "objects": {
+              "count": "all"
+            },
+            "destination": "exile",
+            "playable_this_turn": true,
+            "as": "dracosaur_exiled"
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "binding": "dracosaur_exiled",
+                "zone": "exile",
+                "types": [
+                  "Land"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "create_token",
+                "token": "dinosaur_3_1_r",
+                "amount": {
+                  "const": 1
+                },
+                "controller": "you"
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "binding": "dracosaur_exiled",
+                "zone": "exile",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "create_token",
+                "token": "treasure_token",
+                "amount": {
+                  "const": 1
+                },
+                "controller": "you"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

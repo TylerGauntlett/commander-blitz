@@ -1,0 +1,128 @@
+{
+  "_comment": "Shapes for tests/unit/test_enters_replacement.py. t_er_mox is Mox Diamond: an artifact whose own arrival is replaced by 'you may discard a land card instead', and which also carries a self_enters trigger so a test can prove the trigger never fires on a declined arrival. t_er_plain is the same artifact without the clause, the control. t_er_exiled sends the declined arrival to exile instead of a graveyard, so instead_zone is exercised. t_er_watcher watches every permanent that enters from the other side of the table. t_er_reanimate returns an artifact from a graveyard to the battlefield, and t_er_cheat puts one there from a hand -- the two non-cast arrivals.",
+  "cards": [
+    {
+      "id": "t_er_mox",
+      "name": "Test Mox",
+      "oracle_text": "If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.\nWhen this artifact enters, draw a card.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_replaced",
+          "instead_cost": {"discard": 1, "discard_selector": {"types": ["Land"]}}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, draw a card.",
+          "trigger": {"event": "self_enters"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_er_exiled",
+      "name": "Test Exiling Mox",
+      "oracle_text": "If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, exile it.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_replaced",
+          "instead_cost": {"discard": 1, "discard_selector": {"types": ["Land"]}},
+          "instead_zone": "exile"
+        }
+      ]
+    },
+    {
+      "id": "t_er_plain",
+      "name": "Test Plain Mox",
+      "oracle_text": "When this artifact enters, draw a card.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, draw a card.",
+          "trigger": {"event": "self_enters"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_er_watcher",
+      "name": "Test Arrival Watcher",
+      "oracle_text": "Whenever an artifact you control enters, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an artifact you control enters, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Artifact"]}
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_er_reanimate",
+      "name": "Test Reanimation",
+      "oracle_text": "Return target artifact card from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "return_from_graveyard",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": ["Artifact"],
+            "count": 1
+          },
+          "destination": "battlefield",
+          "controller": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_er_cheat",
+      "name": "Test Cheat In",
+      "oracle_text": "Put an artifact card from your hand onto the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "put_onto_battlefield",
+          "objects": {
+            "zone": "hand",
+            "controller": "you",
+            "types": ["Artifact"],
+            "count": 1
+          },
+          "controller": "you"
+        }
+      ]
+    }
+  ]
+}

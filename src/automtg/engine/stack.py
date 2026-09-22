@@ -43,11 +43,13 @@ def push_spell(
     kicked: bool = False,
     gift_to: int | None = None,
     evoked: bool = False,
+    warped: bool = False,
     flashback: bool = False,
     graveyard_permission: int | None = None,
     enters_tapped: bool = False,
     overloaded: bool = False,
     cost_option: int | None = None,
+    spree_modes: tuple[int, ...] = (),
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
@@ -120,6 +122,7 @@ def push_spell(
         kicked=kicked,
         gift_to=gift_to,
         evoked=evoked,
+        warped=warped,
         fused=fused,
         bestowed=bestowed,
         mutated=mutated,
@@ -128,6 +131,7 @@ def push_spell(
         enters_tapped=enters_tapped,
         overloaded=overloaded,
         cost_option=cost_option,
+        spree_modes=spree_modes,
         spliced=spliced,
         face_down=face_down,
         modes=modes,
@@ -705,6 +709,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # `spell_effects` would read None and every tier would resolve as none of
     # them.
     obj.cast_cost_option = item.cost_option
+    # Spree (702.166a), at the same moment and for the same reason, and with
+    # more riding on it: every printed mode of a spree card is an `if` on this,
+    # so a set written after `spell_effects` would read empty and a spell the
+    # player paid three extra prices for would do nothing at all.
+    obj.cast_spree_modes = item.spree_modes
     # And the evoke slot, for the same reason. It shipped for Mulldrifter, whose
     # "it's sacrificed when it enters" reads the flag on the *permanent*, so the
     # write after `spell_effects` below was enough -- until an instant paid for
@@ -775,7 +784,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     if item.mutated:
         yield from _merge_mutation(state, item, targets)
         return
-    yield from _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
+    yield from _place_after_resolution(
+        state, obj, card, enters_tapped=item.enters_tapped, warped=item.warped
+    )
     _attach_aura(state, obj, card, targets, specs)
 
 
@@ -822,7 +833,7 @@ def _merge_mutation(
 
 
 def _place_after_resolution(
-    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False
+    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False, warped: bool = False
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -927,10 +938,23 @@ def _place_after_resolution(
         # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
-        from .zones import offer_enters_copy, offer_enters_costs
+        from .zones import (
+            offer_enters_copy,
+            offer_enters_costs,
+            offer_enters_replacement,
+            offer_riot_choice,
+        )
 
+        # "If this artifact would enter, you may discard a land card instead."
+        # First, because it decides whether there is an arrival left to decorate
+        # -- see `zones.offer_enters_replacement`.
+        yield from offer_enters_replacement(state, obj.oid, controller)
         yield from offer_enters_costs(state, obj.oid, controller)
         yield from offer_enters_copy(state, obj.oid, controller)
+        # "…with your choice of a +1/+1 counter or haste." The cast line, which
+        # is where most riot creatures arrive. Last of the four: the copy offer
+        # above decides what is arriving, and riot asks about a creature.
+        yield from offer_riot_choice(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
@@ -969,6 +993,51 @@ def _place_after_resolution(
         obj.playable_free = True
         obj.playable_sorcery_only = True
         state.emit("plotted", player=controller, source=obj.oid, card=obj.def_id)
+    if warped and destination is Zone.BATTLEFIELD:
+        # Warp's two riders, and they are the **rule's**: no warp card prints a
+        # sentence saying the permanent is exiled or that it may be cast again,
+        # so an author has no printed line to hang a `delayed_trigger` ability
+        # on and the residual gate would reject one written anyway. The engine
+        # owes them instead, here, where the permanent has just arrived.
+        #
+        # Scoped to **this object** through a binding rather than a selector
+        # over the board: "exile that permanent" names the one that entered,
+        # and a copy, a second printing or a later re-cast of the same card is
+        # not it. The `battlefield` clause on the branch is the other half of
+        # that scope -- a warped creature that died before the end step is a
+        # card in a graveyard and a new object under 400.7, and exiling it
+        # there would be this trigger reaching past what it was created for.
+        #
+        # `end_step` on `state.turn`: `turn.fire_delayed` fires delays as a step
+        # is *entered*, so one created during an end step is not due until the
+        # next turn's -- which is what "the **next** end step" says, and is the
+        # one case where a delay created now and a delay created a moment later
+        # differ.
+        #
+        # The later-cast permission rides on the same exile, because it is one
+        # printed sentence and the permission is what warp is bought for.
+        # `later_turns` is plot's duration and its "a turn after the one it was
+        # granted on" is exactly warp's "on a later turn"; the price is the
+        # printed one, so `playable_free` is deliberately not set.
+        from .structs import DelayedTrigger
+
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="end_step",
+                controller=controller,
+                effects=(
+                    {
+                        "op": "exile",
+                        "objects": {"binding": "warped", "zone": "battlefield"},
+                        "playable": "later_turns",
+                    },
+                ),
+                bindings={"warped": [obj.oid]},
+                source_oid=obj.oid,
+                description=f"Warp ({card.name})",
+                turn=state.turn,
+            )
+        )
     if adventuring and printed.adventure:
         # After the move for `rebound_by`'s reason, and this one really is
         # cleared on the way back: the creature that comes off its adventure

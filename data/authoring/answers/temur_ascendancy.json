@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "temur_ascendancy",
+    "name": "Temur Ascendancy",
+    "oracle_text": "Creatures you control have haste.\nWhenever a creature you control with power 4 or greater enters, you may draw a card.",
+    "mana_cost": "{G}{U}{R}",
+    "types": ["Enchantment"],
+    "colors": ["G", "R", "U"],
+    "color_identity": ["G", "R", "U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control have haste.",
+        "effect": "grant_keyword",
+        "keywords": ["haste"],
+        "affects": {"controller": "you", "types": ["Creature"]}
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control with power 4 or greater enters, you may draw a card.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": ["Creature"],
+            "power": {"op": ">=", "value": {"const": 4}}
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Draw a card?",
+            "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["haste"], "count": 2}
+  }
+}

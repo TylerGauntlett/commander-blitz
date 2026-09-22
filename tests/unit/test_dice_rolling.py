@@ -132,6 +132,71 @@ class TestOneRollReadTwoWays:
         assert rolled(eight, face=6) == 8, "the leaf reports the count, not a verdict"
 
 
+class TestTheResultItself:
+    """"…equal to the result" — the reading that is not a count of dice.
+
+        "Whenever this creature deals combat damage to a player, roll a d20.
+        You create a number of Treasure tokens equal to the result."
+            — Ancient Copper Dragon
+
+    Every other reading of a roll answers *how many dice* satisfy something, so
+    on the one d20 these cards throw they all answer 1: a 20 and a 1 are the
+    same card. That is the trap this leaf closes, and it is silent — the bare
+    ``{"rolled": {"binding": "d20"}}`` spelling loads, resolves, and hands out
+    exactly one Treasure for ever.
+
+    A **sum**, not "the face of the die": 705.1 lets a card roll several and add
+    them, and one die is that same arithmetic over a list of one.
+    """
+
+    def test_the_result_is_the_face_and_not_the_number_of_dice(self, builder):
+        game = table(builder)
+        assert rolled(with_faces(game, 20, sides=20), total=True) == 20
+        assert rolled(with_faces(game, 1, sides=20), total=True) == 1
+        # The near miss, asserted so the difference cannot quietly vanish.
+        assert rolled(with_faces(game, 20, sides=20)) == 1
+        assert rolled(with_faces(game, 1, sides=20)) == 1
+
+    def test_several_dice_add_up(self, builder):
+        game = table(builder)
+        assert rolled(with_faces(game, 3, 5, 6), total=True) == 14
+
+    def test_no_dice_total_nothing(self, builder):
+        """The zero-dice boundary, where a sum and a count agree by accident."""
+        game = table(builder)
+        assert rolled(with_faces(game), total=True) == 0
+
+    def test_reading_the_total_does_not_re_roll(self, builder):
+        game = table(builder)
+        ctx = roll(game, count=3, sides=20)
+        before = game.state.rng.getstate()
+        assert rolled(ctx, total=True) == rolled(ctx, total=True)
+        assert game.state.rng.getstate() == before
+
+    def test_the_total_agrees_with_the_faces_it_read(self, builder):
+        game = table(builder)
+        ctx = roll(game, count=12, sides=20)
+        assert rolled(ctx, total=True) == sum(faces(ctx))
+
+    def test_a_false_total_is_refused_at_load_time(self):
+        """The spelling that looks like the sum and reads as the count.
+
+        `total` is the one predicate that is a switch rather than a value to
+        match against, so a false one would fall through to the bare count --
+        on one die, 1 however it fell.
+        """
+        from automtg.engine.effects.values import validate_rolled
+
+        with pytest.raises(DslError, match="must be true"):
+            validate_rolled({"binding": "d20", "total": False}, "x")
+
+    def test_it_may_not_be_combined_with_another_predicate(self, builder):
+        from automtg.engine.effects.values import validate_rolled
+
+        with pytest.raises(DslError, match="two predicates"):
+            validate_rolled({"binding": "d20", "total": True, "parity": "even"}, "x")
+
+
 class TestTheDice:
     def test_the_count_is_a_value_expression_not_a_literal(self, builder):
         """X is "the number of Bobbleheads you control", so it moves."""

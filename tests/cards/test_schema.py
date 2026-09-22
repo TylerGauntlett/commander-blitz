@@ -35,14 +35,40 @@ class TestFilesLoad:
                 seen[card.id] = path.name
 
     def test_every_card_has_a_distinct_name(self, registry: CardRegistry):
+        """Distinct among the cards a name can *mean*, which is what `by_name` indexes.
+
+        Faces are skipped for the reason tokens are: they are entries in the
+        pool but not things a deck list, an import or a search can name. Two
+        objects sharing a printed name is real Magic -- the spell half of
+        Emeritus of Woe // Demonic Tutor is called Demonic Tutor, and so is the
+        card 2,600 decks play -- so the invariant worth holding is that exactly
+        one of them is reachable by that name, which is the test below.
+        """
         names: dict[str, str] = {}
         for card in registry:
-            if card.is_token:
+            if card.is_token or card.parent_face or card.front_face:
                 continue
             assert card.name not in names, (
                 f"{card.id} and {names[card.name]} share the name {card.name!r}"
             )
             names[card.name] = card.id
+
+    def test_a_name_a_face_shares_resolves_to_the_whole_card(self, registry: CardRegistry):
+        """The half of the invariant that actually protects a deck import.
+
+        `importer.import_deck` turns a deck list's names into cards through
+        `by_name` and nothing else, so a face winning that lookup is a card
+        nobody can play: `registry._deck_problems` refuses a face outright, and
+        the whole list fails rather than the one card. That is exactly what
+        happened while the Emeritus spell half held the id `demonic_tutor`.
+        """
+        for card in registry:
+            if card.is_token or not (card.parent_face or card.front_face):
+                continue
+            found = registry.by_name(card.name)
+            assert found is None or found.id != card.id, (
+                f"{card.id} is a face but answers to the name {card.name!r}"
+            )
 
     def test_token_references_resolve(self, registry: CardRegistry):
         # CardRegistry.from_paths runs validate_token_references; this asserts the
@@ -193,7 +219,18 @@ class TestVocabularyIsChecked:
             compile_card(model)
 
     def test_static_filters_cannot_read_derived_characteristics(self):
-        """The layers-lite constraint is enforced at load time, not discovered at runtime."""
+        """The layers-lite constraint is enforced at load time, not discovered at runtime.
+
+        `power` used to be the exemplar here and no longer is: it is in
+        `STATIC_FILTER_KEYS`, under a restriction rather than as an exception --
+        what a static filter reads is `characteristics._base_pt`, the size
+        before any layer, so it still cannot see another static's output. The
+        restriction is measured in `tests/unit/test_static_power_filter.py`.
+
+        `modified` takes its place, and it is a key the effect-side selector
+        language has and the static one deliberately does not: the cards that
+        print the word grant something once rather than continuously.
+        """
         model = CardModel.model_validate(
             self._card(
                 types=["Enchantment"],
@@ -203,7 +240,7 @@ class TestVocabularyIsChecked:
                     {
                         "kind": "static",
                         "effect": "buff",
-                        "affects": {"controller": "you", "power": {"op": ">=", "value": 3}},
+                        "affects": {"controller": "you", "modified": True},
                         "power": {"const": 1},
                         "toughness": {"const": 1},
                     }

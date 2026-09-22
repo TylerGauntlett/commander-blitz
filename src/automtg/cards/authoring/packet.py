@@ -53,6 +53,11 @@ CARD_LEVEL_COST_KEYS = (
     #: reading it correctly reported the mechanic missing while Bitter Triumph
     #: shipped using it.
     "additional_cost_options",
+    #: **Spree** (702.166a): "Choose one or more additional costs." A list of
+    #: priced modes of which a non-empty *subset* is bought as the spell is
+    #: cast; each printed "+ <cost> — <effect>" line is an `if` on
+    #: `{"spree_mode": n}`. Every mode is a bare mana cost.
+    "spree",
     "additional_optional",
     "additional_repeatable",
     "alternative_cost",
@@ -79,6 +84,12 @@ CARD_LEVEL_COST_KEYS = (
     #: needs exactly one target spec, with count "any".
     "strive",
     "suspend",
+    #: "Warp {1}{R}" -- evoke's slot, with the exile at the next end step and
+    #: the cast from exile on a later turn supplied by the *rule*. Nothing is
+    #: written on the card for those, deliberately: the printed card says only
+    #: the price, so a `delayed_trigger` ability spelling out the riders would
+    #: be a line with no printed sentence to claim.
+    "warp",
 )
 
 #: The card-level fields that join two printed faces into one card entry.
@@ -564,6 +575,19 @@ def reference() -> dict:
             " `mana_restriction` for \"spend this mana only to ...\". Each of"
             " those has been filed as a missing capability by a worker that had"
             " only the op *names*.",
+            "A **mana ability may say things about the mana it makes** without"
+            " writing an effect for them, which is the only way to say them: a"
+            " mana ability may contain nothing but `add_mana`. `mana_restriction`"
+            " narrows what the mana may be spent on; `mana_uncounterable` is"
+            " \"...and that spell can't be countered\"; and `mana_grant` is"
+            " \"...it gains haste until end of turn\" --"
+            " `{\"keywords\": [\"haste\"], \"spell_types\": [\"Creature\"]}`,"
+            " where `spell_types` narrows *who is given* the keyword rather than"
+            " what the mana may buy. The keyword reaches the permanent the spell"
+            " becomes, which no trigger can do. And `exert` in `cost_keys` is"
+            " \"Exert this permanent\" as a **cost** (Arena of Glory): it does"
+            " not untap during its controller's next untap step, and it is not"
+            " `tap`, which a card may charge alongside it.",
             "`op_options` is a **lower bound**, gathered from each op's own"
             " source and from every effect the shipped pool writes. An op that"
             " forwards its spec to a helper can accept a key listed for neither,"
@@ -782,8 +806,19 @@ def reference() -> dict:
             " the loader puts them in the command zone -- and gives one with the"
             " `emblem` op: `{\"op\": \"emblem\", \"player\": \"you\" | {\"target\":"
             " \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the"
-            " emblem is the player who got it. Only triggered abilities may be on"
-            " an emblem so far; a static or activated one is a gap.",
+            " emblem is the player who got it. Triggered and static abilities"
+            " may both be on an emblem; an activated one is still a gap,"
+            " because nothing offers an activation from the command zone.",
+            "Eminence and any other static that works from the command zone is"
+            " `active_zones` on the static: \"As long as this is in the command"
+            " zone or on the battlefield, ...\" is one ability with"
+            " `\"active_zones\": [\"battlefield\", \"command\"]`, because being"
+            " gathered from either zone IS the \"as long as\" -- the same"
+            " argument as `[\"graveyard\"]` on Anger. Do not write a condition"
+            " for the zone. \"**Other** ... spells you cast cost {N} less\" adds"
+            " `\"exclude_self\": true` to a `spell_cost_reduction`'s"
+            " `affects_spells`, which matters exactly here: a commander is cast"
+            " out of the zone its own eminence static is read from.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"
             " with `attached_to`, a selector naming the host -- never"
             " `create_token` then `attach`, which makes the Role even when the"
@@ -821,6 +856,48 @@ def reference() -> dict:
             " note used to say a mana ability may contain only `add_mana`, and"
             " a worker filed a gap against a rider the loader has always"
             " accepted.",
+            "\"Add one mana of any **type** that a land you control could"
+            " produce\" (Reflecting Pool, Horizon of Progress, Naga Vitalist) is"
+            " `reflecting` plus `any_type: true` on the same `add_mana`. 106.1b"
+            " names six types of mana, so \"any type\" is \"any color\" plus"
+            " `{C}`, and plain `reflecting` drops `{C}` on purpose -- a Pool"
+            " written without the flag cannot tap off a Wastes. The flag is read"
+            " by the LOADER rather than by `op_add_mana`, so until a card using"
+            " it ships it is not in `op_options`; it is refused on any `add_mana`"
+            " that has no `reflecting`, because nothing else reads it.",
+            "\"Add one mana of any of **the exiled card's colors**\" (Chrome"
+            " Mox) is `colors_of` on the `add_mana`, holding a selector over"
+            " the CARDS whose printed colours are offered --"
+            " `{\"zone\": \"exile\", \"controller\": \"any\","
+            " \"exiled_with\": \"self\"}` for an imprint. It is the fifth way an"
+            " `add_mana` may name its colours and is read by the LOADER, so it"
+            " is not in `op_options`. `reflecting` is the near miss and is a"
+            " different card: it asks each matched object's own mana ABILITIES"
+            " what they could produce, and an imprinted nonartifact, nonland"
+            " card in exile has none -- so a Mox written that way taps for"
+            " nothing for ever. A `choose_mode` over five `add_mana`s is the"
+            " other near miss and is strictly BETTER than the printed card,"
+            " because it taps for any colour with nothing imprinted at all."
+            " Nothing imprinted offers nothing, and so does a colourless"
+            " imprint (105.1); there is no `any_type` here, and it is refused"
+            " beside `colors_of`.",
+            "\"Vivid -- {T}: **For each color among permanents you control,"
+            " add one mana of that color**\" (Bloom Tender) is"
+            " `each_color_among` on the `add_mana`, holding the selector whose"
+            " matches are read for colour --"
+            " `{\"zone\": \"battlefield\", \"controller\": \"you\"}`. It is the"
+            " sixth way an `add_mana` may name its colours, it is read by the"
+            " LOADER (so it is not in `op_options`), and it is the only one"
+            " whose output is a BUNDLE: a board showing three colours taps it"
+            " for three mana, one of each, with nothing asked. `colors_of` over"
+            " the same selector is the near miss and is Mox Amber -- one mana"
+            " of a colour the payer picks -- and `add_mana_per` is the other,"
+            " adding one mana per matching PERMANENT rather than one per"
+            " colour (and it is not a legal mana effect at all). Colourless is"
+            " not a colour (105.1), so an all-artifact board adds nothing;"
+            " there is no `any_type` here and no `amount`, and the key is"
+            " refused beside `mana`, `reflecting`, `colors_of`,"
+            " `in_commander_identity` and `split`.",
             "\"It can't be regenerated.\" is `no_regeneration: true` on the"
             " `destroy` op -- 701.15c, the victim's regeneration shields are"
             " not applied to that destruction (and not spent either)."

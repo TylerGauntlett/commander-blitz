@@ -1,0 +1,25 @@
+{
+  "card_id": "marang_river_regent_coil_and_catch_omen",
+  "name": "Marang River Regent // Coil and Catch",
+  "oracle_text": "Flying\nWhen this creature enters, return up to two target nonland permanents you don't control to their owners' hands.\n// Coil and Catch {3}{U} Instant - Omen: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)",
+  "blocked_sentences": [
+    "Coil and Catch -- Instant - Omen, {3}{U}: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)"
+  ],
+  "needs": [
+    {
+      "capability": "omen",
+      "kind": "cost",
+      "what": "the Omen half of a card as a castable second face: an alternative cast from hand at the Omen's own cost and type line, whose card is shuffled into its owner's library instead of going to the graveyard as it resolves. The existing `second_face` / `second_face_zone` machinery is the right chassis -- this is a 'play one face or the other' card, not a transforming one -- and what is missing beside it is the shuffle-self rider, which no `card_level_rider_keys` entry provides (Aftermath exiles, Adventure exiles-then-recasts, and this returns to the library).",
+      "why_existing_wont_do": "`second_face` covers split, Adventure and Aftermath halves and is exactly the right shape, but every existing user of it leaves the card in the graveyard or in exile; there is no rider that shuffles the source into its owner's library on resolution. Writing the Omen without it makes a strictly better card -- a repeatable bounce spell that also leaves a 6/7 flier available later is not the printed card."
+    },
+    {
+      "capability": "omen",
+      "kind": "engine",
+      "what": "scripts/build_card_index.py must expose the half at all. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` (so the two halves are never joined into `oracle_text`) and `_TWO_FACED_LAYOUTS` (so the `back_*` columns stay empty). The packet therefore shows `back_face: {}` and a front-only `oracle_text`, and `--collect` feeds the residual gate that same front-only text.",
+      "why_existing_wont_do": "This is the part that makes the gap invisible rather than merely unbuilt. Every one of the six gates can pass on a card whose printed second half the pipeline cannot see, so the card is reported `native` with no notes while half its printing does nothing. Until the index carries the half, no gate can refuse an incomplete answer for it."
+    }
+  ],
+  "closest_existing": ["second_face", "second_face_zone", "adventure", "aftermath"],
+  "confidence": "high",
+  "notes": "Filed by the main agent, not by the card's worker: the worker wrote a correct answer for the front face and was right that the Omen text is outside what the pipeline currently defines as this card. That is precisely the problem -- the card would be counted native while missing a printed half. There are zero Adventure-layout cards in the shipped pool, so this capability is unexercised territory rather than a variation on something proven. The deck's import is not complete while this is open."
+}

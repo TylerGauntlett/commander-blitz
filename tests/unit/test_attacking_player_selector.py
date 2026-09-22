@@ -21,7 +21,7 @@ card does not draw.
 `attacking` is the near miss and is a bare boolean with no notion of whom.
 `attacking_player` names whom -- `"you"`, `"opponent"` or `"any"` player,
 relative to the ability's controller -- and excludes every creature whose attack
-is recorded in `combat.attacking_planeswalker`, a field that until now nothing
+is recorded in `combat.attacking_permanent`, a field that until now nothing
 outside combat damage read. A selector key rather than a trigger option, because
 it composes: it narrows the `attackers` binding inside `count`, and the same
 words work on any pool of attacking creatures.

@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "reflecting_pool",
+    "name": "Reflecting Pool",
+    "oracle_text": "{T}: Add one mana of any type that a land you control could produce.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any type that a land you control could produce.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "reflecting": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            },
+            "any_type": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

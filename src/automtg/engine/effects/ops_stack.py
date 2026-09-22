@@ -290,15 +290,40 @@ def _shielded_by_a_static(state, item) -> bool:
     it is one card saying it about itself, and could never cover a spell the
     static's controller does not own.
     """
-    from ..characteristics import _battlefield_statics, _matches_printed
+    from ..characteristics import (
+        _battlefield_statics,
+        _matches_printed,
+        resolve_chosen_colors,
+        resolve_chosen_subtypes,
+    )
 
     card = state.registry.get(item.def_id)
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "spells_cant_be_countered":
             continue
         filt = static.get("affects_spells")
-        if filt and not _matches_printed(card, filt):
-            continue
+        if filt:
+            # "Creature spells **you control** can't be countered" -- Rhythm of
+            # the Wild. Read here rather than left to `_matches_printed`, which
+            # sees a printed card and no caster: the word is about who controls
+            # the *spell*, measured against whoever controls the static, exactly
+            # as `player_statics.cost_reduction` reads the same key.
+            #
+            # Absent, it means **any** controller, which is the opposite default
+            # to `spell_cost_reduction`'s and is what this effect has always
+            # said: Lier's unfiltered line covers the whole table, so a filter
+            # that merely narrows the *type* must not quietly narrow the seat
+            # too. The card writes the word when it means it.
+            who = str(filt.get("controller", "any"))
+            if who == "you" and source_obj.controller != item.controller:
+                continue
+            if who == "opponent" and source_obj.controller == item.controller:
+                continue
+            resolved = resolve_chosen_colors(
+                resolve_chosen_subtypes(filt, source_obj), source_obj
+            )
+            if not _matches_printed(card, resolved):
+                continue
         if source_obj is not None:
             return True
     return False

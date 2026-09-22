@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
-from .characteristics import abilities_of
+from .characteristics import abilities_of, mana_source_traits
 from .combat import add_attacker, add_blocker, finish_attackers
 from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -33,7 +33,13 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .targeting import selectable_modes
 from .turn import _next_blocker_decision
-from .zones import move_object, offer_enters_copy, offer_enters_costs
+from .zones import (
+    move_object,
+    offer_enters_copy,
+    offer_enters_costs,
+    offer_enters_replacement,
+    offer_riot_choice,
+)
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -180,7 +186,7 @@ class Game:
                 walker = state.objects.get(ref.id)
                 if walker is not None:
                     add_attacker(
-                        state, action.source, walker.controller, planeswalker=ref.id
+                        state, action.source, walker.controller, permanent=ref.id
                     )
             return  # the decision stays open for more attackers
         state.pending_decision = None
@@ -279,8 +285,18 @@ class Game:
         # so the enters replacements and the landfall event read the player
         # who actually played it, the way `stack.push_spell` sets a spell's.
         state.objects[oid].controller = pid
+        # First of the three, because this one decides whether the permanent
+        # arrives at all: asking a land whether it enters tapped, or what it is
+        # a copy of, is a wasted question when the arrival itself is about to be
+        # replaced.
+        yield from offer_enters_replacement(state, oid, pid)
         yield from offer_enters_costs(state, oid, pid)
         yield from offer_enters_copy(state, oid, pid)
+        # Riot, on a land drop: Dryad Arbor is a land *creature*, so a land put
+        # onto the battlefield under a Rhythm of the Wild really does arrive
+        # with the choice. Last of the four, because the copy above decides
+        # what the arriving permanent is and riot asks about a creature.
+        yield from offer_riot_choice(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
@@ -364,6 +380,14 @@ class Game:
             extra -= variant_reduction(state, pid, card.flashback, oid)
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
+        elif action.warp is not None:
+            # The price legality offered, read off the **answer** and not
+            # re-derived from the board. `Action.warp` is a string rather than
+            # a flag because a `grant_warp` static may have supplied it, and
+            # the granting permanent can leave between the line being offered
+            # and this charge being made -- at which point a re-derived price
+            # would be `None` and the spell would be charged its printed cost.
+            cost = ManaCost.parse(action.warp)
         elif action.bestowed and card.bestow is not None:
             cost = card.bestow
         elif action.mutated and card.mutate is not None:
@@ -395,14 +419,48 @@ class Game:
             # for free and then billed its printed cost, which `pay` refused
             # with no mana on the board: the cast simply did nothing.
             cost = ManaCost.parse("")
-        elif state.objects[oid].playable_free and state.objects[oid].playable_live(state.turn):
-            # Plot: "you may cast it as a sorcery on a later turn **without
-            # paying its mana cost**". Read off the same flag on the same card
-            # that `_cast_variant` priced the line with -- the argument the
-            # `playable_any_type` block below makes, and the bug the
-            # `from_library_top` branch above records: a line offered free and
-            # billed the printed cost is a cast that silently does nothing.
+        elif action.cast_free:
+            # "…without paying its mana cost" (601.2b). Plot's "you may cast it
+            # as a sorcery on a later turn without paying its mana cost", and
+            # Dracogenesis' standing permission over a whole class of spell.
+            # One branch, because 601.2b is one rule and the two cards differ
+            # only in what granted it.
+            #
+            # Read off the **action** rather than off the board, which is what
+            # changed when the permission became something a player may
+            # decline: plot's `obj.playable_free` was safe to re-read because a
+            # plotted card is *only* castable free, while the same board offers
+            # Dracogenesis' free line and the printed line at once. A re-read
+            # here would bill whichever the board happened to say, and a line
+            # offered free and billed the printed cost is a cast that silently
+            # does nothing -- the bug the `from_library_top` branch above
+            # records. `_cast_variant` stamps the flag on the line it priced,
+            # so the line offered is the line charged.
+            #
+            # X is 0 and is never asked, because this cost has no X in it to
+            # announce (107.3b) -- the reason this is `FREE_COST` and not a
+            # reduction to zero.
             cost = ManaCost.parse("")
+        elif (
+            (airbent := state.objects[oid]).playable_alt_cost is not None
+            and airbent.playable_by == pid
+            and airbent.playable_live(state.turn)
+        ):
+            # "…its owner may cast it **for {2} rather than its mana cost**" --
+            # airbend. The paying half of the line `_cast_variant` priced, and
+            # read off the **board** rather than off the action, which is safe
+            # here for the reason it was safe for plot and is not for
+            # Dracogenesis: an airbent card is castable *only* under this
+            # permission, so there is no printed-cost line beside it for a
+            # re-read to confuse this one with. It is the same read
+            # `playable_any_type` and `playable_any_color` make three lines
+            # below, off the same card, at the same moment.
+            #
+            # Last in the chain, immediately above the printed cost, because
+            # `_cast_variant` hands `alt_cost` to the plain line alone: every
+            # branch above this one chose a price of its own, and a line
+            # offered at that price has to be charged at it.
+            cost = ManaCost.parse(airbent.playable_alt_cost)
         else:
             cost = card.mana_cost
 
@@ -412,7 +470,11 @@ class Game:
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
         from .casting import strive_surcharge
-        from .player_statics import player_pays_life_for_black
+        from .player_statics import (
+            player_pays_life_for_black,
+            player_spends_mana_as_any_color,
+            spell_life_tax,
+        )
 
         if player_pays_life_for_black(state, pid):
             # K'rrik's black pips, read as Phyrexian ones exactly where
@@ -436,9 +498,13 @@ class Game:
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
             cost = cost.as_any_type()
-        elif granted.playable_any_color and granted.playable_live(state.turn):
+        elif (
+            granted.playable_any_color and granted.playable_live(state.turn)
+        ) or player_spends_mana_as_any_color(state, pid):
             # Elder Brain's colour waiver, the paying half of the one
-            # `_cast_variant` priced the line with.
+            # `_cast_variant` priced the line with -- or Chromatic Orrery's,
+            # which says it about the player instead of about this card and so
+            # is read here off the same static `_cast_variant` read.
             cost = cost.as_any_color()
 
         # Convoke and delve. Netted into `extra` alongside the commander tax
@@ -497,6 +563,25 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+
+        # "Spells your opponents cast that target this creature cost an
+        # additional 3 life to cast." Terror of the Peaks, and somebody *else's*
+        # permanent is what imposed it. An additional cost (601.2f), so it is
+        # paid here with the rest of them, after the mana (601.2g) and before
+        # the spell is on the stack -- which is what makes it a price rather
+        # than a ward: it is charged whether or not the spell ever resolves, and
+        # there is no moment at which the caster could decline it.
+        #
+        # `action.targets` is the tuple legality priced the line with -- the
+        # same read `cost_reduction` above takes, and for the same reason: a
+        # surcharge sized off anything else would be a charge the offer never
+        # showed. Legality proved this payable before offering the line, so a
+        # failure here is a bug rather than a decision.
+        life_tax = spell_life_tax(state, pid, card, action.targets)
+        if life_tax:
+            ok = yield from pay(state, pid, Cost(pay_life=life_tax), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         # Retrace's discarded land is an *additional* cost, so it is paid before
         # the spell goes on the stack -- and after the mana, which is the order
@@ -688,9 +773,17 @@ class Game:
             # ordinary effect on the card, and it happens on resolution.
             gift_to=action.gift_to,
             evoked=action.evoked,
+            warped=action.warp is not None,
             flashback=action.flashback,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,
+            # Spree (702.166a). The prices themselves were folded into the
+            # spell's mana cost by `_cast_variant` and paid with the rest of it,
+            # exactly as an additional cost's mana half is -- the loader refuses
+            # a non-mana spree mode, so there is nothing left to charge here.
+            # What the item carries is *which* modes were bought, because each
+            # printed mode is an `if` on that and nothing else records it.
+            spree_modes=action.spree_modes,
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,
@@ -920,7 +1013,10 @@ class Game:
         if exclude_oid is not None:
             sources = [s for s in sources if s.oid != exclude_oid]
         ceiling = max_affordable_x(
-            cost, state.players[pid].mana_pool, sources, extra_generic=extra_generic
+            cost,
+            state.players[pid].mana_pool.spendable(purpose),
+            sources,
+            extra_generic=extra_generic,
         )
         ctx = EffectContext(state=state, controller=pid, source_oid=None)
         return (
@@ -1239,6 +1335,16 @@ class Game:
             mana_ability=True,
         )
 
+        # What the source **is**, taken before its own cost is paid -- "if mana
+        # from a Treasure was spent to cast it" (Smaug, Wicked Worm). This is
+        # the path with `Cost.sacrifice` on it, and every Treasure sacrifices
+        # itself to make its mana: after `pay` the token has left the
+        # battlefield and `sba._tokens_and_attachments` deletes it from
+        # `state.objects` outright, so nothing downstream can still ask what it
+        # was. `activate_mana_ability` takes its own snapshot when handed none,
+        # which is right for the solver's path -- that one only ever taps.
+        traits = mana_source_traits(state, oid)
+
         # A mana ability is an activated ability, so restricted mana may fund its
         # cost on the same terms as any other -- and it is read here rather than
         # left `None` because `legality._ability_aims` gates this path through
@@ -1252,7 +1358,14 @@ class Game:
 
         from .costs import activate_mana_ability
 
-        activate_mana_ability(state, oid, action.ability_index, pid, action.mana_option or 0)
+        activate_mana_ability(
+            state,
+            oid,
+            action.ability_index,
+            pid,
+            action.mana_option or 0,
+            source_traits=traits,
+        )
 
     def _pass_priority(self) -> None:
         state = self.state

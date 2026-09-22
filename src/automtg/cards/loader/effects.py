@@ -12,17 +12,20 @@ from typing import Any
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
+from automtg.engine.effects.ops_player import CASTABLE_ZONES
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import (
     validate_value,
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost
+from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
+from automtg.engine.mana import ManaCost, compile_restriction
 from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
+    CAST_LOCK_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
@@ -59,7 +62,9 @@ from .walk import (
 #: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
 #: 707.9b that a printed exception has needed so far. Replacements: ``colors``,
 #: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
-#: ``add_subtypes`` and ``add_supertypes``. And ``no_mana_cost``.
+#: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
+#: the only subtraction any printing asks for ("except the token isn't
+#: legendary"). And ``no_mana_cost``.
 COPY_EXCEPT_KEYS = frozenset(
     {
         "colors",
@@ -69,6 +74,7 @@ COPY_EXCEPT_KEYS = frozenset(
         "add_types",
         "add_subtypes",
         "add_supertypes",
+        "remove_supertypes",
         "no_mana_cost",
     }
 )
@@ -824,6 +830,38 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # One card shares a type with itself vacuously, so the clause would
             # be decoration on a card that reads as if it constrained something.
             raise DslError(f"{where}: 'share_subtype' needs a 'count' above 1; got {count}")
+    if "distinct_names" in effect:
+        # "…for up to five Dragon cards **that each have different names**"
+        # (Tiamat). The mirror of `share_subtype` above, and guarded the same
+        # way for the same reason: it is staged inside the search, so it means
+        # nothing anywhere else, and a card written with it elsewhere would read
+        # as a promise the op never keeps and fetch five copies of one Dragon.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'distinct_names' only applies to search_library and "
+                f"search_zones, not {op!r}"
+            )
+        if not isinstance(effect["distinct_names"], bool):
+            raise DslError(
+                f"{where}: 'distinct_names' is a boolean, got {effect['distinct_names']!r}"
+            )
+        # The two stage the pool differently -- sharing narrows once, against
+        # the lead card's subtypes; distinctness narrows after every pick,
+        # against the names already taken. Whichever ran would silently drop the
+        # other half of the sentence, so a card asking for both is refused
+        # rather than given one of them.
+        if effect.get("share_subtype"):
+            raise DslError(
+                f"{where}: 'distinct_names' and 'share_subtype' are two different "
+                f"stagings of one search; a card cannot ask for both"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 2:
+            # One card differs from nothing, so the clause would be decoration
+            # on a card that reads as if it constrained something.
+            raise DslError(f"{where}: 'distinct_names' needs a 'count' above 1; got {count}")
     if "attachment" in effect:
         # "…you may attach **it** to a creature you control" (Vault 101:
         # Birthday Party). Which permanent is doing the attaching, as against
@@ -1182,6 +1220,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # selected it is a return that returns nothing.
     if op == "return_to_origin" and "objects" not in effect:
         raise DslError(f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return")
+    # Same argument, and one degree more dangerous: `choose_objects` over an
+    # omitted selector resolves to nothing, so the op is a *silent* no-op --
+    # Hellkite Courser's delayed return would fire, move no permanent, and leave
+    # a commander on the battlefield for ever with nothing to say so. The
+    # printed line always names what comes back ("return **it**"), so the key is
+    # required rather than defaulted.
+    if op == "return_to_command_zone" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'return_to_command_zone' needs 'objects' -- there is nothing to return"
+        )
     # "When you do" has to say which do. Without the key the op names the empty
     # id, no ability matches it, and the second half of the card never happens.
     if op == "reflexive_trigger" and not effect.get("ability"):
@@ -1309,18 +1357,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for key, known, noun in (
             ("add_types", KNOWN_TYPES, "card type"),
             ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+            ("remove_supertypes", KNOWN_SUPERTYPES, "supertype"),
         ):
             if key not in overrides:
                 continue
             added = overrides[key]
             if not isinstance(added, list) or not added:
-                # An addition of nothing is a clause that does nothing, and
+                # A clause naming nothing is a clause that does nothing, and
                 # "except it's legendary" dropped is a copy the legend rule
-                # never sees.
+                # never sees -- "except it isn't legendary" dropped is one the
+                # legend rule bins, which is worse.
                 raise DslError(f"{where}.except_.{key}: must be a non-empty list")
             for name in added:
                 if name not in known:
                     raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+        if both := set(overrides.get("add_supertypes") or ()) & set(
+            overrides.get("remove_supertypes") or ()
+        ):
+            # One printed clause cannot both grant and strip the same supertype,
+            # and whichever way `chars` happened to order the two would decide a
+            # card's behaviour by accident.
+            raise DslError(
+                f"{where}.except_: {sorted(both)} is both added and removed -- "
+                f"write the one the printed clause says"
+            )
         for key in ("power", "toughness"):
             # "...except it's a 4/4" (eternalize). The base size, so a number and
             # never an expression: 707.9b makes it a copiable value, fixed when
@@ -1340,6 +1400,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # and it would load and resolve exactly like one that works.
         if not effect.get("subtypes"):
             raise DslError(f"{where}: add_subtype needs 'subtypes'")
+        for index, entry in enumerate(effect.get("subtypes") or ()):
+            # Literal names only, and `{"chosen_type_of": "self"}` most of all.
+            #
+            # The static of the same name *does* take it -- "this creature is
+            # the chosen type in addition to its other types" -- and the op
+            # cannot, because the op writes a fixed word onto the permanent and
+            # walks away (`primitives.add_subtypes`). A choice re-made, or a
+            # `change_text` moving it, would never reach a type granted this
+            # way, so the same JSON in the two places would mean two different
+            # cards while reading identically.
+            #
+            # This guard is the load-time half of closing a real trap: the op
+            # used to coerce every entry with `str()`, so this spec compiled
+            # clean and the permanent gained the literal subtype
+            # "{'chosen_type_of': 'self'}" -- a card that loads, resolves,
+            # passes a zone assertion and is of no creature type at all.
+            if not isinstance(entry, str):
+                raise DslError(
+                    f"{where}.subtypes[{index}]: the add_subtype *op* takes literal "
+                    f"subtype names, not {entry!r}; a one-shot freezes the word it "
+                    f"writes, so 'of the chosen type' is the add_subtype static"
+                )
         if "objects" not in effect:
             raise DslError(f"{where}: add_subtype needs 'objects' -- there is nothing to change")
         if "types" in effect:
@@ -1805,13 +1887,100 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         op == "add_mana"
         and "mana" not in effect
         and "reflecting" not in effect
+        and "colors_of" not in effect
+        and "each_color_among" not in effect
         and not effect.get("in_commander_identity")
         and not effect.get("split")
+        and not effect.get("any_one_color")
     ):
         raise DslError(
-            f"{where}: add_mana needs 'mana' (or 'reflecting', or "
-            f"'in_commander_identity', or 'split')"
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'colors_of', or "
+            f"'each_color_among', or 'in_commander_identity', or 'split', or "
+            f"'any_one_color')"
         )
+    if "colors_of" in effect:
+        # "Add one mana of any of **the exiled card's colors**." Chrome Mox.
+        # A selector over cards, read for their printed colours -- so it is one
+        # more answer to the question the four keys above answer, and writing it
+        # beside any of them would be two answers to one question with only the
+        # first read. Silently: a Mox carrying `colors_of` under a `reflecting`
+        # would load and tap for whatever the board said instead.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'colors_of' names the colours an add_mana offers, "
+                f"and is read by nobody on {op!r}"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "in_commander_identity", "split", "each_color_among")
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'colors_of' already says which colours this adds, so it "
+                f"cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" in effect:
+            # The family this joins is all "one mana of…", and the narrowing in
+            # `costs.mana_options_of` hands back one-symbol options. An amount
+            # here would load and be dropped, leaving a card that printed "two
+            # mana" adding one.
+            raise DslError(
+                f"{where}: a 'colors_of' add_mana is one mana of one colour; "
+                f"'amount' would load and never be read"
+            )
+    if "each_color_among" in effect:
+        # "Vivid -- {T}: For each color among permanents you control, add one
+        # mana of that color." Bloom Tender. One more answer to the question
+        # 'mana', 'reflecting', 'colors_of', 'in_commander_identity' and 'split'
+        # each answer -- which symbols does this ability make -- so writing it
+        # beside any of them is two answers and only one gets read.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'each_color_among' names the colours an add_mana makes, "
+                f"and is read by nobody on {op!r}"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "colors_of", "in_commander_identity", "split")
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'each_color_among' already says which colours this adds, so "
+                f"it cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" in effect:
+            # `mana_produced` would happily multiply the whole bundle, so this
+            # is not a dropped key -- it is a card nobody printed. "One mana of
+            # that color" is the sentence, and a doubled bundle should be a
+            # second `add_mana` family with its own witness rather than an
+            # untested multiplier riding on this one.
+            raise DslError(
+                f"{where}: an 'each_color_among' add_mana is one mana of each colour "
+                f"present; no printed card multiplies that bundle, so 'amount' here "
+                f"would be a card the engine invented"
+            )
+    if op == "add_mana" and "any_type" in effect:
+        # "Add one mana of any **type** that a land you control could produce."
+        # It widens `reflecting`'s answer from five colours to 106.1b's six
+        # types of mana, and it is read nowhere else on an add_mana: written
+        # without `reflecting` -- on a fixed `mana` string, on `split`, on
+        # `in_commander_identity` -- it would load, be ignored, and leave a card
+        # that prints "any type" tapping for whatever the other key said.
+        if not effect.get("reflecting"):
+            raise DslError(
+                f"{where}: 'any_type' widens 'reflecting' from five colours to the "
+                f"six types of mana, so it needs one -- a mana ability that is not "
+                f"a question about the board already names the types it makes"
+            )
+        if effect["any_type"] is not True:
+            raise DslError(
+                f"{where}.any_type: the only value is true -- \"any color\" is the "
+                f"default and is spelled by leaving this off"
+            )
     if op == "rename" and not str(effect.get("name") or "").strip():
         # A rename to nothing would load, run, and leave the permanent answering
         # to its printed name -- the printed line silently not happening.
@@ -1839,10 +2008,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"ordinary mana is the default and says nothing"
             )
     if op == "add_mana" and effect.get("split") is not None:
-        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
-        # The colours are a list and the size is an `amount`; `mana` says the
-        # opposite thing (a fixed production string) and the two together would
-        # be two answers to one question.
+        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier,
+        # a mana ability; "in any combination of colors" -- Klauth, Unrivaled
+        # Ancient, a triggered one. The colours are a list and the size is an
+        # `amount`; `mana` says the opposite thing (a fixed production string)
+        # and the two together would be two answers to one question.
         if "mana" in effect:
             raise DslError(
                 f"{where}: 'split' names the colours a combination may draw on, so it "
@@ -1850,6 +2020,73 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["split"], list):
             raise DslError(f"{where}.split: expected a list of mana symbols")
+        colors = [str(c) for c in effect["split"]]
+        if len(colors) < 2:
+            raise DslError(
+                f"{where}.split: a combination needs two or more colours; one colour "
+                f"is an ordinary 'mana' string with an 'amount'"
+            )
+        if unknown := [c for c in colors if c not in MANA_SYMBOLS]:
+            raise DslError(f"{where}.split: unknown mana symbols {unknown}")
+        if "amount" not in effect:
+            # Without it the split has no size, and `_add_split_mana` would add
+            # nothing at all -- a card that prints "add X mana" adding none.
+            raise DslError(
+                f"{where}: a split add_mana needs an 'amount' -- how much mana is "
+                f"being divided. Without it the split has no size"
+            )
+    if "any_one_color" in effect:
+        # "{T}: Add X mana of **any one color**, where X is Helga's power."
+        # Sixth answer to the one question this family answers -- which symbols
+        # does this ability make -- so beside any of the other five it is two
+        # answers with only one read.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'any_one_color' names the colours an add_mana makes, "
+                f"and is read by nobody on {op!r}"
+            )
+        if effect["any_one_color"] is not True:
+            raise DslError(
+                f'{where}.any_one_color: the only value is true -- "any color" is '
+                f"the default and is spelled by leaving this off"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "colors_of", "each_color_among", "split")
+            if effect.get(key)
+        ]
+        if effect.get("in_commander_identity"):
+            clash.append("in_commander_identity")
+        if clash:
+            raise DslError(
+                f"{where}: 'any_one_color' already says which colours this adds, so "
+                f"it cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" not in effect:
+            # Without one this is "add **one** mana of any color", which the
+            # engine has always spelled as a `choose_mode` of five `add_mana`s
+            # and which every shipped card uses. A second spelling for a
+            # sentence that already has one is how the untested one ships: the
+            # whole capability here is the *variable* size.
+            raise DslError(
+                f"{where}: an 'any_one_color' add_mana needs an 'amount' -- how many "
+                f"mana of that one colour. \"Add one mana of any color\" is a "
+                f"'choose_mode' of five 'add_mana's"
+            )
+    if "mana_restriction" in effect:
+        # "Spend this mana only to cast spells" on mana an **effect** makes --
+        # Klauth's attack trigger, where the ability-level `mana_restriction`
+        # has no home: that one is compiled onto `Ability` and read at payment
+        # time off an untapped source, and this mana is already in the pool.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'mana_restriction' says what the mana this adds may pay "
+                f"for, and is read by nobody on {op!r}"
+            )
+        # Compiled here as well as at resolution, so a malformed restriction
+        # fails the test suite rather than a game.
+        compile_restriction(effect["mana_restriction"], f"{where}.mana_restriction")
     if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
         # The one non-literal `mana`, and validated as such for the reason
         # `_restriction_name` validates its twin: a near-miss spelling that fell
@@ -1922,6 +2159,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: unknown protection duration {duration!r} "
                     f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
                 )
+    if op == "airbend":
+        if "objects" not in effect:
+            # "Airbend all other creatures" is a pool, and an airbend with no
+            # pool would exile nothing while still printing its sentence.
+            raise DslError(f"{where}: airbend needs 'objects' -- there is nothing to exile")
+        if "playable" in effect or "playable_this_turn" in effect:
+            # The permission *is* airbend. A duration written beside it would
+            # read as overriding "while each one is exiled" and would be
+            # ignored, which is the silent-wrong-card shape.
+            raise DslError(
+                f"{where}: airbend grants its own permission ('while each one is "
+                f"exiled') -- 'playable' belongs on 'exile', not here"
+            )
+        if (alt := effect.get("cost")) is not None:
+            try:
+                ManaCost.parse(str(alt))
+            except Exception as exc:  # pragma: no cover - defensive
+                raise DslError(f"{where}: airbend cost {alt!r} is not a mana cost") from exc
+    if op == "cant_cast_spells_from_zones":
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        named = effect.get("zones")
+        opened = effect.get("except_zones")
+        if (named is None) == (opened is None):
+            # Both, or neither. Neither locks nothing while printing a
+            # prohibition; both are two answers to one question, and the
+            # positive list would silently win.
+            raise DslError(
+                f"{where}: cant_cast_spells_from_zones needs exactly one of "
+                f"'zones' (the shut ones) or 'except_zones' (the open ones)"
+            )
+        for zone in named if named is not None else opened:
+            if str(zone) not in CASTABLE_ZONES:
+                # A misspelled zone in `zones` locks one door fewer than the
+                # card says, and in `except_zones` locks one *more*. Both are
+                # the wrong card, silently.
+                raise DslError(
+                    f"{where}: unknown zone {zone!r} "
+                    f"(implemented: {sorted(CASTABLE_ZONES)})"
+                )
+        duration = str(effect.get("duration", "until_your_next_turn"))
+        if duration not in CAST_LOCK_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_cast_spells_from_zones duration {duration!r} "
+                f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
+            )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)

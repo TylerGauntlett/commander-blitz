@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import CardDef, Cost
 from .characteristics import (
     chars,
+    compare_pt,
     spell_cost_reduction,
 )
 
@@ -63,7 +64,7 @@ def reduction_amount(
       `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
       **this way**".
 
-    Three shapes of arithmetic, exactly one per spec:
+    Six shapes of arithmetic, exactly one per spec:
 
     - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
       reduction needs.  Not expressible as `count`: "costs {3} less if you're
@@ -71,6 +72,15 @@ def reduction_amount(
       the crown is yours and none otherwise, and no filter over a board can say
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
+    - ``{"greatest_count": {filter}}`` -- Cavern-Hoard Dragon, "where X is the
+      greatest number of artifacts **an opponent** controls".  The same
+      relation `greatest_mana_value` has to `total_mana_value`, one axis over:
+      a maximum where `count` is a sum, taken **per player** rather than over
+      one flat pool.  Its own key for the sharpest of the reasons any of these
+      has one -- a reduction filter's ``controller: "opponent"`` names every
+      opponent at once, so `count` at a pod of four would read three opponents
+      with two artifacts each as {6} where the printed card says {2}, and in a
+      two-player game the two numbers coincide exactly.
     - ``{"total_power": {filter}}`` -- Ghalta.
     - ``{"total_mana_value": {filter}}`` -- Excalibur, Sword of Eden, "where X
       is the total mana value of historic permanents you control".
@@ -106,6 +116,24 @@ def reduction_amount(
         return max(0, int(spec["amount"]))
     if "count" in spec:
         return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
+    if "greatest_count" in spec:
+        # "…where X is the greatest number of artifacts **an opponent**
+        # controls" -- Cavern-Hoard Dragon. One pool, tallied per controller
+        # and maximised, because the filter language can say "not you" but not
+        # "them, separately" -- the same thing `_counts_per_player`'s docstring
+        # says about the effect-side `max_count_of`, which has the arithmetic
+        # and cannot be reached from a price.
+        #
+        # `default=0` because a seat controlling nothing contributes no tally
+        # and is right not to: a board where no opponent has an artifact gives
+        # no discount, and the spell costs what it prints.
+        per_player: dict[int, int] = {}
+        for oid in _reduction_matches(state, pid, spec["greatest_count"], source_oid):
+            obj = state.objects.get(oid)
+            if obj is None:  # pragma: no cover -- yielded from state.objects
+                continue
+            per_player[obj.controller] = per_player.get(obj.controller, 0) + 1
+        return max(per_player.values(), default=0)
     if "total_power" in spec:
         return sum(
             max(0, chars(state, oid).power)
@@ -266,10 +294,12 @@ def _object_matches(
         c = chars(state, oid)
         types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
         keywords, colors = c.keywords, c.colors
+        power, toughness = c.power, c.toughness
     else:
         card = state.card_of(obj)
         types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
         keywords, colors = card.keywords, card.colors
+        power, toughness = card.power or 0, card.toughness or 0
     if (want := filt.get("types")) and not set(want).issubset(types):
         return False
     if (want := filt.get("not_types")) and set(want) & set(types):
@@ -289,6 +319,21 @@ def _object_matches(
 
         if not has_printed_cost(state, oid, want):
             return False
+    # "…costs {1} less for each creature you control with power 4 or greater."
+    # Honoured here because a reduction filter is validated against
+    # `STATIC_FILTER_KEYS`, and a key the loader accepts and this function does
+    # not read prices the spell off a clause that matched the whole board.
+    #
+    # **Derived**, off `chars`, exactly like the types and keywords above and
+    # exactly like `total_power` in this same module: pricing happens outside
+    # the characteristics pipeline, so every layer has already applied and there
+    # is nothing half-computed to read. `characteristics._matches` is restricted
+    # to base P/T because it runs *inside* that pipeline and cannot be; the
+    # divergence between the two readers is the one `keywords` already has.
+    if (want := filt.get("power")) is not None and not compare_pt(power, want):
+        return False
+    if (want := filt.get("toughness")) is not None and not compare_pt(toughness, want):
+        return False
     # Board state, and only the three kinds of it a reduction can see. Each
     # is a pipeline *input* -- nothing in the characteristics layer writes
     # a tapped flag, a token flag or a combat assignment -- so reading them
@@ -296,6 +341,18 @@ def _object_matches(
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
+        return False
+    # "…for each creature that entered this turn". Honoured here because the
+    # docstring above promises it: **every key the loader accepts is read here**,
+    # and a reduction filtered on a key nobody honoured is priced off a clause
+    # that matched everything. A ledger arrival is an input the same way the
+    # three above are -- nothing in the characteristics pipeline writes one -- so
+    # reading it while pricing cannot depend on a static that has not run. Off
+    # the battlefield it is false, which is right: a card in a graveyard or the
+    # command zone did not enter the battlefield this turn.
+    if "entered_this_turn" in filt and bool(
+        state.turn_ledger.entered_this_turn(oid)
+    ) != bool(filt["entered_this_turn"]):
         return False
     combat = state.combat
     if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(

@@ -14,6 +14,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from automtg.cards.registry import CardRegistry
+from automtg.engine.battles import DEFENSE
 from automtg.engine.enums import Step, Zone
 from automtg.engine.game import Game
 from automtg.engine.player import PlayerState
@@ -102,6 +103,12 @@ class GameBuilder:
             # this places permanents rather than playing them.
             if card.final_chapter is not None and LORE not in obj.counters:
                 obj.counters[LORE] = 1
+            # And for a battle, its printed defense (310.3). The third of the
+            # three, and the argument is the loyalty one word for word: the
+            # zero-defense state-based action (704.5x) bins a battle placed
+            # without counters before the position is ever looked at.
+            if card.defense is not None and DEFENSE not in obj.counters:
+                obj.counters[DEFENSE] = card.defense
             self.state.battlefield.append(obj.oid)
         self.state.bump_chars()
         return self

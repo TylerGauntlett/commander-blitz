@@ -340,6 +340,34 @@ def _companion_faces(answer: dict) -> list[dict]:
     return [dict(b) for b in back]
 
 
+def _companion_collision(
+    backs: list[dict], expectations: dict, card_id: str
+) -> str | None:
+    """The id of a companion face that is really somebody else's whole card.
+
+    A face id is a slug of the face's own printed name, so a card whose back
+    half is named after a card that already exists takes that card's id.
+    Nothing raises: the write loop below is a dict assignment, so the companion
+    *replaces* the incumbent, and `link_faces` then stamps `parent_face` on what
+    used to be free-standing -- which is how a real Demonic Tutor stopped being
+    something a deck may contain the day Emeritus of Woe // Demonic Tutor was
+    authored.
+
+    The gate in `verify.py` catches this against the hand-written pool, which is
+    the only one it is given. Here the auto batch is in scope as well, and
+    `expectations` is the exact question to ask of it: the write loop deliberately
+    records **no** expectation for a companion, because a face is never cast or
+    drawn on its own, so an id that has one is a card that was authored in its own
+    right. That also makes the check stable across re-runs -- a companion
+    re-collected from the same answer file still has no expectation of its own.
+    """
+    for back in backs:
+        back_id = str(back.get("id", ""))
+        if back_id != card_id and back_id in expectations:
+            return back_id
+    return None
+
+
 def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> dict[str, int]:
     """Verify what came back, and commit only what passes.
 
@@ -386,6 +414,14 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
         )
 
         entry = by_name.get(payload.get("name", ""))
+        if verdict.ok:
+            stolen = _companion_collision(backs, expectations, card_id)
+            if stolen is not None:
+                verdict.failed_gate = "registry"
+                verdict.reason = (
+                    f"companion face {stolen!r} is already in the pool as a card of "
+                    f"its own -- give the face a distinct id"
+                )
         if not verdict.ok:
             print(f"  REJECT {card_id}: {verdict.failed_gate} -- {verdict.reason[:90]}")
             if entry is not None:

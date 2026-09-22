@@ -6,9 +6,16 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..events import EventType
-from ..mana import parse_mana_production
+from ..mana import (
+    N_SYMBOLS,
+    SYMBOL_INDEX,
+    SYMBOLS,
+    ManaRestriction,
+    compile_restriction,
+    parse_mana_production,
+)
 from . import register
-from .context import EffectContext
+from .context import EffectContext, ask_mode
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -51,16 +58,140 @@ def _persists_through(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
     """
     return ctx.state.turn if spec.get("persists_until_end_of_turn") else -1
 
+
+def _restriction_of(spec: Mapping[str, Any]) -> ManaRestriction | None:
+    """"Spend this mana only to cast spells" on the mana this effect makes.
+
+    Compiled here, as the effect resolves, rather than at load time: an
+    `add_mana` **effect** is still card JSON when it reaches the stack, and
+    `Ability.mana_restriction` -- the load-time compilation -- exists only on a
+    mana ability, which this is not. The loader validates the same spec through
+    the same function (`loader.effects._validate_effect`), so a malformed
+    restriction still fails at load rather than mid-game.
+    """
+    spec_restriction = spec.get("mana_restriction")
+    if spec_restriction is None:
+        return None
+    return compile_restriction(spec_restriction, "add_mana.mana_restriction")
+
+
+def _give_mana(ctx: EffectContext, spec: Mapping[str, Any], pid: int, produced) -> None:
+    """Put one bundle of mana in one player's pool and say so."""
+    # Imported here rather than at module scope: `characteristics` is reached
+    # through `primitives` -> `zones` -> `effects`, so a top-level import turns
+    # that existing chain into a cycle.
+    from ..characteristics import mana_source_traits
+
+    ctx.state.players[pid].mana_pool.add_tuple(
+        produced,
+        source=ctx.source_oid,
+        persists_through_turn=_persists_through(ctx, spec),
+        restriction=_restriction_of(spec),
+        # What the source was, for "if mana from a Treasure was spent" -- see
+        # `characteristics.mana_source_traits`. Inside this helper rather than
+        # at its one old call site, so the split branch below records
+        # provenance too: a Treasure sacrificed for Klauth's ritual is still a
+        # Treasure the mana came from.
+        source_traits=mana_source_traits(ctx.state, ctx.source_oid),
+    )
+
+
 @register("add_mana")
 def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
+    if spec.get("split"):
+        # A generator, and only on this branch: `execute_one` delegates to a
+        # returned generator, so the ordinary `add_mana` stays a plain call that
+        # asks nothing. Written as one function with a `yield` in it, *every*
+        # add_mana would become a generator.
+        return _add_split_mana(ctx, spec)
+    if spec.get("any_one_color"):
+        # A generator for `_add_split_mana`'s reason, and on its own branch for
+        # the same one: the plain `add_mana` must stay a call that asks nothing.
+        return _add_one_color_mana(ctx, spec)
     symbols = mana_string(ctx, spec)
     if not symbols:
-        return
+        return None
     produced = parse_mana_production(symbols)
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].mana_pool.add_tuple(
-            produced, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
-        )
+        _give_mana(ctx, spec, pid, produced)
+        ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
+    return None
+
+
+def _add_split_mana(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Add X mana in **any combination of colors**", from a triggered ability.
+
+    Klauth, Unrivaled Ancient. The same two keys a *mana ability* carries --
+    `split` names the colours and `amount` is X -- read at resolution instead of
+    at activation, because this is an ability that uses the stack.
+
+    A mana ability answers the combination by **offering every composition** as
+    an option and letting the payment solver pick (`costs._split_options`): it
+    may not stop to ask, so the choice has to be folded into the price. A
+    trigger has no payment to fold into and every right to ask, so it asks --
+    one mana at a time, `ask_mode` over the colours, which is a genuinely free
+    division of X and not X of one colour. The near miss is a `choose_mode` of
+    five `add_mana`s wrapped in a `repeat`: that re-asks per iteration only by
+    accident of nesting, and no shipped card spells it that way.
+
+    X is read **once**, here, when the trigger resolves -- "the total power of
+    attacking creatures" is a fact about the board at that moment, and a
+    creature that dies to a blocker before the trigger resolves was still
+    attacking when it was put on the stack but is not counted by a reader that
+    waits. One read also means the loop cannot walk past the number it started
+    with.
+
+    X of zero asks nothing and adds nothing, exactly as a split mana ability
+    with zero power taps for nothing.
+    """
+    colors = [str(c).upper() for c in spec.get("split") or ()]
+    amount = spec.get("amount")
+    total = max(0, int(evaluate_value(ctx, amount))) if amount is not None else 0
+    if total <= 0 or not colors:
+        return
+    labels = [f"{{{c}}}" for c in colors]
+    for pid in select_players(ctx, spec.get("player", "you")):
+        produced = [0] * N_SYMBOLS
+        for left in range(total, 0, -1):
+            picked = yield from ask_mode(
+                ctx, f"Add one mana ({left} to divide)", labels, pid
+            )
+            produced[SYMBOL_INDEX[colors[picked[0] if picked else 0]]] += 1
+        symbols = "".join(f"{{{SYMBOLS[i]}}}" * produced[i] for i in range(N_SYMBOLS))
+        _give_mana(ctx, spec, pid, produced)
+        ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
+
+
+def _add_one_color_mana(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Add X mana of **any one color**", from an ability that uses the stack.
+
+    Helga, Skittish Seer prints it as a mana ability, where the choice cannot be
+    asked (605.1a) and is folded into the price instead: `costs.mana_options_of`
+    offers the five colours as five options and `costs.mana_amount` scales the
+    one the payer picks. This is the same sentence on an ability that *may*
+    ask -- a trigger, or a spell -- and it asks, once.
+
+    Once is the whole difference from `_add_split_mana` above, which asks per
+    mana and is therefore "any combination": one question here means all X mana
+    come out the same colour, which at X=3 is the difference between {G}{G}{G}
+    and {W}{U}{G}.
+
+    X is read once, before the question, for `_add_split_mana`'s reason: it is a
+    fact about the board at resolution, not a running total.
+    """
+    amount = spec.get("amount")
+    total = max(0, int(evaluate_value(ctx, amount))) if amount is not None else 0
+    if total <= 0:
+        return
+    colors = SYMBOLS[:5]
+    labels = [f"{{{c}}}" for c in colors]
+    for pid in select_players(ctx, spec.get("player", "you")):
+        picked = yield from ask_mode(ctx, f"Add {total} mana of one colour", labels, pid)
+        index = SYMBOL_INDEX[colors[picked[0] if picked else 0]]
+        produced = [0] * N_SYMBOLS
+        produced[index] = total
+        symbols = f"{{{SYMBOLS[index]}}}" * total
+        _give_mana(ctx, spec, pid, produced)
         ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
 
 
@@ -70,6 +201,8 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
 
     e.g. "Add {G} for each Forest you control".
     """
+    from ..characteristics import mana_source_traits
+
     unit = parse_mana_production(str(spec.get("mana", "")))
     count = len(resolve_pool(ctx, spec.get("per")))
     if count <= 0:
@@ -77,7 +210,10 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
     scaled = tuple(v * count for v in unit)
     for pid in select_players(ctx, spec.get("player", "you")):
         ctx.state.players[pid].mana_pool.add_tuple(
-            scaled, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
+            scaled,
+            source=ctx.source_oid,
+            persists_through_turn=_persists_through(ctx, spec),
+            source_traits=mana_source_traits(ctx.state, ctx.source_oid),
         )
         ctx.state.emit(
             EventType.MANA_ADDED,

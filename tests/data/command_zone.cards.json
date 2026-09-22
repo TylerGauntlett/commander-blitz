@@ -1,0 +1,86 @@
+{
+  "_comment": "Shapes for tests/unit/test_command_zone.py. t_cz_courser is Hellkite Courser's printed line, whole -- the may, the put onto the battlefield out of the command zone, the haste, and the delayed return that is what `return_to_command_zone` exists for. t_cz_general is the legendary creature the position makes a commander, kept vanilla so the assertions are about where it is rather than what it does. t_cz_bear is a plain creature that is nobody's commander: it is how the op is shown to name the zone itself, since rule 903.9a would never send it there.",
+  "cards": [
+    {
+      "id": "t_cz_courser",
+      "name": "Test Command Zone Courser",
+      "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+      "mana_cost": "{3}{R}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Put a commander onto the battlefield?",
+              "effects": [
+                {
+                  "op": "choose_permanents",
+                  "as": "the_commander",
+                  "prompt": "Choose a commander you own",
+                  "objects": {
+                    "zone": "command",
+                    "player": "you",
+                    "is_commander": true,
+                    "count": 1
+                  }
+                },
+                {"op": "put_onto_battlefield", "objects": {"binding": "the_commander"}},
+                {
+                  "op": "grant_keyword",
+                  "keywords": ["haste"],
+                  "objects": {"binding": "the_commander"}
+                },
+                {
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Return it to the command zone at the beginning of the next end step.",
+                  "effects": [
+                    {
+                      "op": "return_to_command_zone",
+                      "objects": {"binding": "the_commander"}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cz_general",
+      "name": "Test Command Zone General",
+      "oracle_text": "",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Dragon"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 4,
+      "toughness": 4
+    },
+    {
+      "id": "t_cz_bear",
+      "name": "Test Command Zone Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

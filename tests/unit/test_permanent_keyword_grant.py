@@ -2,8 +2,15 @@
 
 The census blamed the wrong half. It routes riot as "`self_enters` +
 `choose_mode`, but a `choose_mode` inside a trigger resolves late" — and the
-late resolution is fine, it is the documented "as this enters, choose" trade
-Vanquisher's Banner already makes. The mode selection works.
+mode *selection* works, which is what this file is about.
+
+**Riot itself is no longer written that way**, and the late resolution turned
+out not to be fine: 614.1c says the creature is never on the battlefield at its
+printed size, which a trigger cannot promise however it is ordered. Riot is now a
+`Keyword` applied during the arrival — see `tests/unit/test_riot.py`, which makes
+that argument, and `zones.offer_riot_choice`, which asks the question. `t_rioter`
+stays as it is on purpose: it is this file's witness for the **duration**, and
+the trigger shape is the honest way to isolate that from the replacement.
 
 What did not work is the **haste**. `grant_keyword` had exactly one duration:
 it appends an `until_eot` `TempEffect`, swept by `clear_until_eot` at cleanup.

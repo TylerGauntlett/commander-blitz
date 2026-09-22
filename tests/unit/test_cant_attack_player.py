@@ -37,7 +37,7 @@ wrong rather than broken:
    was already paid; `this_turn` has to survive the combat it was cast before,
    because Call for Aid is a sorcery cast in a main phase and means the turn.
 
-The legality seam this needed -- `legal_defenders`/`legal_planeswalker_defenders`
+The legality seam this needed -- `legal_defenders`/`legal_permanent_defenders`
 /`add_attacker` taking the attacking oid, funnelled through one
 `attack_target_forbidden` predicate -- is the same seam `goad` was recorded
 needing, which is why it is per-attacker rather than per-attacking-player.
@@ -183,7 +183,7 @@ class TestPlaneswalkersAreExempt:
         to_declare_attackers(game)
         assert 1 not in defenders_offered(game, bear)
         assert walker in walkers_offered(game, bear)
-        assert combat_mod.add_attacker(game.state, bear, 1, planeswalker=walker)
+        assert combat_mod.add_attacker(game.state, bear, 1, permanent=walker)
         assert game.state.combat.attackers[bear] == 1, (
             "the walker's controller is still the defending player (506.2)"
         )

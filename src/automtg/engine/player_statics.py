@@ -57,6 +57,14 @@ def _active_player_statics(
     The source is yielded beside the static because two of the callers need it:
     `affects_player` is resolved against its controller, and a `condition`'s
     "you" and its `counters` head are both relative to the permanent carrying it.
+
+    **The command zone too**, since eminence and emblems put statics there. This
+    is the third of the three separate walks `_compile_emblems` used to name when
+    it refused an emblem static -- the characteristic layers and the cost
+    reductions both reach `characteristics._command_zone_statics` through
+    `_battlefield_statics`, and this one has its own walk and so needs its own
+    line. An emblem is only ever in the command zone (114.1), so a player-wide
+    emblem static that this walk did not see would load clean and grant nothing.
     """
     for oid in state.battlefield:
         obj = state.objects.get(oid)
@@ -76,6 +84,26 @@ def _active_player_statics(
             if not _static_active(state, obj, static):
                 continue
             yield obj, static
+    for player in state.players:
+        for oid in player.command:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                static = ability.static
+                if not ability.is_static or not static:
+                    continue
+                if static.get("effect") != effect:
+                    continue
+                if Zone.COMMAND not in ability.active_zones:
+                    # A battlefield static on a commander waiting in the command
+                    # zone -- which is every commander with an anthem. Not active
+                    # here, and letting it through would be the inverse of the
+                    # printed card, exactly as it is for Anger on the battlefield.
+                    continue
+                if not _static_active(state, obj, static):
+                    continue
+                yield obj, static
 
 
 def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> bool:
@@ -254,6 +282,55 @@ def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "double_land_mana")
 
 
+#: The permanent each doubling static is printed about, as a predicate over the
+#: tapped permanent's *current* types. The filter used to be the inline
+#: ``is_land`` at each mana choke point, which made "a land" the only sentence
+#: the engine could say: Kinnan, Bonder Prodigy prints the same line with one
+#: word changed ("**nonland** permanent") and had no spelling at all. Keyed by
+#: effect name rather than carried as an author-written selector because the
+#: printed class is what names the card -- an author who writes
+#: `double_nonland_mana` cannot then also claim it is about lands -- and because
+#: a third member ("a permanent", Mana Reflection) is one line here.
+_MANA_DOUBLER_CLASS: Mapping[str, Any] = {
+    "double_land_mana": lambda tapped: "Land" in tapped.types,
+    "double_nonland_mana": lambda tapped: "Land" not in tapped.types,
+}
+
+
+def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
+    """Does a doubling static apply to the mana ``pid`` gets from tapping ``oid``?
+
+    Vorinclex ("whenever you tap a land for mana, add one mana of any type that
+    land produced") and Kinnan, Bonder Prodigy, which is that printed sentence
+    about a **nonland** permanent. Both are triggered mana abilities (605.1b):
+    they resolve immediately and never use the stack (605.4a), so they are
+    answered here at the mana choke point rather than queued -- mana that
+    arrives on the stack arrives after the payment it was printed to pay for.
+
+    Read against the tapped permanent's *current* characteristics, so a
+    creature-land animated this turn is a land for Vorinclex and is not a
+    nonland permanent for Kinnan. One permanent is never both, so the two
+    statics cannot stack on the same tap; two Kinnans still only double, which
+    is the same simplification `mana_produced` already makes for two
+    Vorinclexes.
+
+    The "of any type that permanent produced" half is `mana_produced`'s job and
+    is unchanged: whatever the option yielded is doubled in place rather than
+    offering a free choice of type, because a mana ability cannot ask. Recorded
+    in ``docs/rules-coverage.md``.
+    """
+    tapped: Any = None
+    for effect, matches in _MANA_DOUBLER_CLASS.items():
+        for source, static in _active_player_statics(state, effect):
+            if not _reaches_player(source, static, pid):
+                continue
+            if tapped is None:
+                tapped = chars(state, oid)
+            if matches(tapped):
+                return True
+    return False
+
+
 def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 
@@ -382,6 +459,32 @@ def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "black_mana_as_phyrexian")
 
 
+def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
+    """Whether every coloured pip this player pays may be paid with any mana.
+
+    Chromatic Orrery: "You may spend mana as though it were mana of any color."
+    The unrestricted twin of the permission `permission.playable_any_color`
+    already carries -- Elder Brain's "you may spend mana as though it were mana
+    of any color **to cast it**", which rides on one card some effect made
+    playable. This one rides on nothing: it is a fact about the *payer*, so it
+    reaches every cost that player pays, and it is read in the same places
+    `player_pays_life_for_black` is -- the cast line in `casting._cast_variant`
+    and `Game._cast`, and `costs.ability_mana` / `costs.most_life_for_mana` for
+    every other cost.
+
+    **Activated abilities are the half that is easy to lose.** A version that
+    loosened only spell costs is a different card: an Orrery's own
+    ``{5}, {T}`` line, an equip, a morph, "unless its controller pays {B}" --
+    all of them are costs this player pays, and all of them are loosened.
+
+    Colourless mana counts (the Mycosynth Lattice ruling: mana spent as though
+    it were of a colour is spent as that colour), and ``{C}`` in a cost does
+    not, because colourless is not a colour. Both fall out of
+    `ManaCost.as_any_color`, which is what does the reading.
+    """
+    return _player_static(state, pid, "spend_mana_as_any_color")
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 
@@ -467,7 +570,7 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
     planeswalker is not attacking them -- and the sentence *this* effect exists
     for says "or planeswalkers you control" out loud, so neither half is
     inferred. A planeswalker's controller **is** the defending player (506.2)
-    and `combat.legal_planeswalker_defenders` passes it, so the one seat test
+    and `combat.legal_permanent_defenders` passes it, so the one seat test
     below covers the walker as well as the chair, exactly as goad's does.
     """
     obj = state.objects.get(oid)
@@ -639,6 +742,18 @@ def spell_cost_reduction(
     function both legality and payment already call, so a spell offered at the
     reduced price is also paid at it.
 
+    ``exclude_self`` is the printed word "**other**" -- "other Dragon spells you
+    cast cost {1} less" (The Ur-Dragon). It only became sayable, and necessary,
+    with the command zone: a commander is cast *out of* the zone its own
+    eminence static is collected from, and `Game._cast` prices the spell while
+    `obj.zone` is still `COMMAND`, so without this The Ur-Dragon would discount
+    its own nine-mana cast by the {1} it prints for everything else. Matched on
+    the **card** rather than the object, because this function is handed a
+    `CardDef` and never an oid: a singleton format makes the two the same
+    question, and the divergence it leaves -- a second physical copy of the same
+    card, which no Commander deck may run -- is smaller than threading an oid
+    through three pricing call sites that have no use for it.
+
     ``targeting`` is the clause that reads the **cast** rather than the board --
     "Aura spells you cast *that target enchanted creature*" (Strong Back) -- and
     is matched against the refs the cast chose, as an ordinary static filter
@@ -662,6 +777,8 @@ def spell_cost_reduction(
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
+        if filt.get("exclude_self") and card.id == state.card_of(source_obj).id:
+            continue
         # "Creature spells you cast **of the chosen type** cost {1} less."
         # Herald's Horn. The substitution needs the permanent that made the
         # choice, and this loop has had it all along -- `_battlefield_statics`
@@ -683,6 +800,96 @@ def spell_cost_reduction(
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def spell_life_tax(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
+    """How much **life** ``pid`` must pay on top to cast ``card`` (601.2f).
+
+    "Spells your opponents cast that target this creature cost an additional 3
+    life to cast." Terror of the Peaks. The `spell_cost_increase` static, and
+    the mirror of `spell_cost_reduction` in everything except the two things
+    that matter: the direction, and the currency.
+
+    It is a **cost**, which settles three questions at once. It is paid as the
+    spell is cast rather than when it resolves, so a countered spell has still
+    been paid for. It is not optional -- there is no "unless", and nothing on
+    the stack to decline. And a player who cannot pay it simply cannot cast the
+    spell at all: legality never offers the line, which is the whole difference
+    from `ward`, where the spell is cast first and dies unpaid.
+
+    Life, not mana, and that is why the size lives in a `cost` node instead of
+    an `amount`. `spell_cost_reduction` is generic-mana arithmetic end to end --
+    subtracted and clamped at zero by `costs.cost_reduction` -- so it could
+    neither add nor charge a different resource. Keeping life out of the mana
+    price also keeps the payment solver out of it: the tax never touches a pip,
+    so it cannot make a spell unpayable for a reason the solver would have to
+    explain.
+
+    ``affects_spells`` says whose spells and which, matched against the printed
+    face by `_matches_printed`, exactly as the reduction matches it.
+    ``targeting`` is the clause that reads the **cast** rather than the board --
+    "that target *this creature*" -- and is matched against the refs the cast
+    chose.
+
+    ``targets`` is ``None`` while the price is a gate asked before any target
+    exists, and a `targeting` clause is then read **meanly**: the tax is left
+    out. That is the opposite convention from the two reductions and it is the
+    same principle -- be generous to the caster at a gate, exact per tuple. A
+    gate that charged the tax speculatively would refuse a spell the player can
+    afford to aim somewhere else, and `casting._priced_tuples` drops the tuples
+    that really cannot be paid for.
+
+    Read on the cast path only -- `casting._cast_variant` offers the line and
+    `Game._cast` charges it -- which leaves the gap strive already has: the
+    resolution-time casts that pay no mana of their own (`suspend.cast_for_free`,
+    madness, miracle) reach neither, so they collect no surcharge. Narrower than
+    601.2f, which taxes a free cast like any other.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_increase":
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one, for `spell_cost_reduction`'s reason: an
+            # empty filter would match *every* spell, so a compile bug would
+            # tax the whole table rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if not _matches_printed(card, resolved):
+            continue
+        if (aimed := static.get("targeting")) is not None:
+            if targets is None:
+                continue
+            if not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            ):
+                continue
+        total += int((static.get("cost") or {}).get("pay_life") or 0)
+    return total
+
+
+def spell_life_tax_on_board(state: GameState) -> bool:
+    """Is any `spell_cost_increase` static active at all?
+
+    The cheap test that keeps `spell_life_tax` off the hot path. Legality prices
+    every castable card in hand against every target tuple, and on a board with
+    no tax on it the answer is 0 every time -- so this asks once per cast line
+    and the per-tuple walk happens only for the boards that have one.
+    """
+    return any(
+        static.get("effect") == "spell_cost_increase" for _, static in _battlefield_statics(state)
+    )
 
 
 def ability_cost_reduction(
@@ -1087,6 +1294,107 @@ def library_top_cast_permission(state: GameState, pid: int):
     return None
 
 
+def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
+    """May ``pid`` cast ``card`` right now **without paying its mana cost**?
+
+    "You may cast Dragon spells without paying their mana costs" --
+    Dracogenesis. Omniscience with a filter on it, and the third casting
+    permission beside `graveyard_cast_permissions` and
+    `library_top_cast_permission`: those two say *where* a spell may be cast
+    from and leave the price alone, and this one says nothing about the zone
+    and replaces the price entirely.
+
+    **Not a discount.** `spell_cost_reduction` is the nearest static and cannot
+    stand in for this at any amount: `costs.cost_reduction` clamps every
+    reduction to the *generic* part of a cost, so no reduction reaches a
+    coloured pip -- and 601.2b's "without paying its mana cost" is not a
+    reduction to zero in any case. The difference shows on an X spell, where a
+    discounted cost still has an X to announce and this one has X = 0 (107.3b).
+    So the caller prices the cast on `casting.FREE_COST` instead.
+
+    **Not a grant either.** `grant_playable`'s cards are "paid for at their
+    printed price", and it marks only the objects it can see as it resolves --
+    the snapshot problem `grant_graveyard_cast` exists to avoid. This is read
+    afresh every time the cast actions are built, so a Dragon drawn after the
+    permanent arrived is covered and the permission is repeatable within a
+    turn, both of which the printed sentence promises.
+
+    The filter reads the printed face and nothing else, for
+    `graveyard_cast_allows`' reason: a card in hand has an owner and a face and
+    no board state. ``controller`` inside it is honoured beside
+    ``affects_player`` rather than ignored -- they are two spellings of "whose
+    spells", and a key this walk read past would be a silent over-grant.
+    """
+    for source_obj, static in _active_player_statics(state, "free_cast_permission"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` here would match
+            # *every* spell, so a compile bug would hand the player Omniscience
+            # rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return True
+    return False
+
+
+def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
+    """The warp cost a static hands this card in ``pid``'s hand, or None.
+
+    "Artifact cards and red creature cards in your hand have warp {2}{R}" --
+    Tannuk, Steadfast Second. `free_cast_permission`'s shape one step further
+    along: that one says a whole class of spell costs *nothing*, and this says a
+    whole class of card has a **second, separate price** beside its printed one.
+
+    Nothing in `card_level_cost_keys` could stand in, because every entry there
+    is a field on the card that prints the word, and Tannuk's artifacts print
+    nothing. `grant_keyword` cannot reach it twice over -- warp is not one of
+    the ability keywords, and it is a price rather than an ability even if it
+    were -- and `grant_ability` hands over a triggered, activated or static
+    ability, which a cost is none of. `spell_cost_reduction` is the only static
+    that touches what a spell costs and it can only discount the printed one; a
+    {2}{R} discount on every artifact in hand is a different card.
+
+    Read afresh by `casting.warp_cost` every time the cast lines for an object
+    are built, for the reason `free_cast_permission` is: a card drawn after
+    Tannuk arrived has warp, and the grant does not spend itself.
+
+    The filter reads the printed face alone -- a card in hand has an owner and a
+    face and no board state -- and may write `any_of`, which is the only way to
+    say the union of two printed shapes the printed sentence actually is.
+
+    **The first grant wins.** Two Tannuks are one warp cost, not two cast lines
+    at the same price, and two *different* prices is a card nobody has printed;
+    taking the first keeps the action list from growing a duplicate row that a
+    player could not tell apart.
+    """
+    for source_obj, static in _active_player_statics(state, "grant_warp"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        price = static.get("warp_cost")
+        if not filt or not price:
+            # The loader requires both. Defaulting either here would hand warp
+            # to every card in the hand, or hand it over free.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return str(price)
+    return None
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 
@@ -1175,25 +1483,76 @@ def counter_placement_replacements(
     return out
 
 
+def _matches_damage_source(
+    state: GameState,
+    obj: GameObject,
+    source_obj: GameObject,
+    dealer: Mapping[str, Any],
+) -> bool:
+    """Does ``obj`` answer a `replace_damage` static's ``damage_source``?
+
+    `_matches` everywhere else, with one widening: a filter naming **only**
+    ``controller`` is "a source you control" and is answered off the dealer's
+    controller in whatever zone it is standing.
+
+    That distinction is the printed one. 109.5's "a source you control" covers
+    the instant on the stack, the token, the ability -- anything that can deal
+    damage -- while "equipped creature", "another creature", "a creature you
+    control that entered this turn" all name characteristics, and only a
+    permanent has those. `_matches` refuses anything off the battlefield by
+    construction, so it answers the second kind exactly and the first kind not
+    at all: Twinflame Tyrant and Fiery Emancipation are about burn spells
+    first and creatures second, and `op_damage`'s dealer for a burn spell is
+    the resolving *spell* object.
+
+    Keyed on the filter's shape rather than a new key, because the shape
+    already says it: the moment a card names a type, a zone, an attachment or
+    any other characteristic it is describing a permanent and wants the
+    permanent reading. No shipped card writes a controller-only
+    ``damage_source``, so nothing changes meaning under this.
+
+    An **empty** filter is not this -- ``{}`` falls through to `_matches`,
+    where the default ``controller: "you"`` makes it "a permanent you control".
+    """
+    if set(dealer) == {"controller"}:
+        who = str(dealer.get("controller") or "you")
+        if who == "you":
+            return obj.controller == source_obj.controller
+        if who == "opponent":
+            return obj.controller != source_obj.controller
+        return True
+    return _matches(state, obj, source_obj, dealer)
+
+
 def damage_multiplier(
     state: GameState,
     source_oid: int | None,
     target_oid: int | None,
     *,
+    target_pid: int | None = None,
     is_combat: bool,
 ) -> int:
     """What this damage is multiplied by, after every `replace_damage` applies.
 
     Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
-    Emancipation. Read by `primitives.damage_permanent` and
+    Emancipation, Twinflame Tyrant. Read by `primitives.damage_permanent` and
     `primitives.damage_player` and by nothing else, the way
     `counter_placement_replacements` is read by `add_counters` alone.
 
     ``target_oid`` is ``None`` when the damage is being dealt to a **player**,
-    and a static carrying an `affects` filter never applies then: a player is
-    not a permanent, and "…to equipped creature" is a sentence about one. A
-    static with no `affects` reaches both, which is Furnace of Rath's "to a
-    permanent or player" and the Flail's first line.
+    and ``target_pid`` names that player then. Exactly one of the two exists
+    at a time, which is what makes the recipient side a **union** rather than
+    the conjunction the two filters would otherwise form:
+
+    * neither `affects` nor `affects_player` -- Furnace of Rath's "to a
+      permanent or player", which names no recipient at all and reaches both;
+    * `affects` alone -- "…to equipped creature", the Flail's second line. A
+      player is not a permanent, so it never reaches the face;
+    * `affects_player` alone -- "…to an opponent", naming a seat and nothing
+      on the battlefield;
+    * **both** -- Twinflame Tyrant's "to an opponent **or** a permanent an
+      opponent controls". ANDing them would double nothing, because no single
+      damage event is dealt to a player *and* a permanent.
 
     Returned as a product rather than applied here, because the two call sites
     have different things to do with the number and only one of them exists at
@@ -1210,13 +1569,26 @@ def damage_multiplier(
         dealer = static.get("damage_source")
         if dealer is not None:
             obj = state.objects.get(source_oid) if source_oid is not None else None
-            if obj is None or not _matches(state, obj, source_obj, dealer):
+            if obj is None or not _matches_damage_source(state, obj, source_obj, dealer):
                 continue
         recipient = static.get("affects")
-        if recipient is not None:
-            obj = state.objects.get(target_oid) if target_oid is not None else None
-            if obj is None or not _matches(state, obj, source_obj, recipient):
-                continue
+        seats = static.get("affects_player")
+        if recipient is not None or seats is not None:
+            if target_oid is None:
+                # Damage to a player: only the `affects_player` half can speak
+                # for it. Absent, the static named permanents and this is not
+                # one of them.
+                if seats is None or target_pid is None:
+                    continue
+                if not _reaches_player(source_obj, static, target_pid):
+                    continue
+            else:
+                # Damage to a permanent: symmetrically, only `affects` can.
+                obj = state.objects.get(target_oid)
+                if recipient is None or obj is None:
+                    continue
+                if not _matches(state, obj, source_obj, recipient):
+                    continue
         multiplier *= max(1, int(static.get("damage_multiplier") or 1))
     return multiplier
 

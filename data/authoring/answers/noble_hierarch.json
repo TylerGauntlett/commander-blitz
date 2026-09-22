@@ -1,0 +1,103 @@
+{
+  "card": {
+    "id": "noble_hierarch",
+    "name": "Noble Hierarch",
+    "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{T}: Add {G}, {W}, or {U}.",
+    "mana_cost": "{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Druid"
+    ],
+    "power": 0,
+    "toughness": 1,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G",
+      "U",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you",
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "count": {
+                "binding": "attackers"
+              }
+            },
+            "right": {
+              "const": 1
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "power": {
+              "const": 1
+            },
+            "toughness": {
+              "const": 1
+            },
+            "objects": {
+              "binding": "attackers"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}, {W}, or {U}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

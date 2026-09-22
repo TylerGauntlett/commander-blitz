@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "dragonlord_kolaghan",
+    "name": "Dragonlord Kolaghan",
+    "oracle_text": "Flying, haste\nOther creatures you control have haste.\nWhenever an opponent casts a creature or planeswalker spell with the same name as a card in their graveyard, that player loses 10 life.",
+    "mana_cost": "{4}{B}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Elder", "Dragon"],
+    "power": 6,
+    "toughness": 5,
+    "colors": ["B", "R"],
+    "color_identity": ["B", "R"],
+    "keywords": ["flying", "haste"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "grant_keyword",
+        "keywords": ["haste"],
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "exclude_self": true
+        },
+        "text": "Other creatures you control have haste."
+      },
+      {
+        "kind": "triggered",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "filter": {
+            "any_types": ["Creature", "Planeswalker"]
+          },
+          "condition": {
+            "exists": {
+              "zone": "graveyard",
+              "player": {"binding": "event_player"},
+              "shares_a_name_with": "subject"
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "lose_life",
+            "amount": {"const": 10},
+            "player": {"binding": "event_player"}
+          }
+        ],
+        "text": "Whenever an opponent casts a creature or planeswalker spell with the same name as a card in their graveyard, that player loses 10 life."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["haste"], "count": 3}
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "card": {
+    "id": "horizon_of_progress",
+    "name": "Horizon of Progress",
+    "oracle_text": "{T}, Pay 1 life: Add one mana of any type that a land you control could produce.\n{3}, {T}: You may put a land card from your hand onto the battlefield tapped.\n{1}, {T}, Sacrifice this land: Draw a card.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Pay 1 life: Add one mana of any type that a land you control could produce.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true,
+          "pay_life": 1
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "reflecting": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            },
+            "any_type": true
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: You may put a land card from your hand onto the battlefield tapped.",
+        "cost": {
+          "mana": "{3}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a land card from your hand onto the battlefield tapped?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "tapped": true,
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}, {T}, Sacrifice this land: Draw a card.",
+        "cost": {
+          "mana": "{1}",
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
