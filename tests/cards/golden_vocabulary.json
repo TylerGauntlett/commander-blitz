@@ -37,6 +37,7 @@
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
+   "greatest_count",
    "greatest_mana_value",
    "total_mana_value",
    "total_power"
@@ -92,6 +93,7 @@
    "set_pt",
    "set_types",
    "skip_untap_step",
+   "spell_cost_increase",
    "spell_cost_reduction",
    "spells_cant_be_countered",
    "untap_during_each_untap_step",
@@ -109,6 +111,7 @@
   ],
   "KNOWN_KEYWORDS": [
    "banding",
+   "choose_a_background",
    "daybound",
    "deathtouch",
    "defender",
@@ -134,6 +137,7 @@
    "phasing",
    "plainswalk",
    "reach",
+   "riot",
    "shadow",
    "shroud",
    "skulk",
@@ -205,8 +209,11 @@
    "cast_from_library_top",
    "double_land_mana",
    "double_land_triggers",
+   "double_nonland_mana",
    "extra_land_drops",
+   "free_cast_permission",
    "freeze_opponent_lands",
+   "grant_warp",
    "look_at_library_top",
    "no_hand_limit",
    "play_lands_from_graveyard",
@@ -218,7 +225,8 @@
    "replace_mill",
    "reveal_library_top",
    "skip_draw_step",
-   "skip_extra_turn"
+   "skip_extra_turn",
+   "spend_mana_as_any_color"
   ],
   "PLURAL_PLAYER_SPEC_NAMES": [
    "all",
@@ -231,6 +239,21 @@
    "put_on_top",
    "put_onto_battlefield",
    "return_to_hand"
+  ],
+  "SPELL_COST_REDUCTION_FILTER_KEYS": [
+   "any_types",
+   "colors",
+   "controller",
+   "exclude_self",
+   "keywords",
+   "mana_cost",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
   ],
   "SPELL_FILTER_KEYS": [
    "any_types",
@@ -275,6 +298,7 @@
    "blocking",
    "colors",
    "controller",
+   "entered_this_turn",
    "exclude_self",
    "is_commander",
    "is_token",
@@ -287,10 +311,12 @@
    "owner",
    "paired",
    "paired_with_source",
+   "power",
    "self_only",
    "subtypes",
    "supertypes",
    "tapped",
+   "toughness",
    "types",
    "zone"
   ],
@@ -326,11 +352,14 @@
    "crew_power_bonus",
    "double_land_mana",
    "double_land_triggers",
+   "double_nonland_mana",
    "double_triggers",
    "extra_land_drops",
+   "free_cast_permission",
    "freeze_opponent_lands",
    "grant_ability",
    "grant_keyword",
+   "grant_warp",
    "look_at_library_top",
    "lose_all_abilities",
    "no_hand_limit",
@@ -353,8 +382,10 @@
    "skip_draw_step",
    "skip_extra_turn",
    "skip_untap_step",
+   "spell_cost_increase",
    "spell_cost_reduction",
    "spells_cant_be_countered",
+   "spend_mana_as_any_color",
    "untap_during_each_untap_step",
    "ward"
   ],
@@ -366,6 +397,7 @@
    "blocking",
    "colors",
    "controller",
+   "entered_this_turn",
    "exclude_self",
    "is_commander",
    "is_token",
@@ -377,10 +409,12 @@
    "owner",
    "paired",
    "paired_with_source",
+   "power",
    "self_only",
    "subtypes",
    "supertypes",
    "tapped",
+   "toughness",
    "types"
   ],
   "STATIC_LIFE_KEYS": [
@@ -446,9 +480,12 @@
    "cast_from_library_top",
    "double_land_mana",
    "double_land_triggers",
+   "double_nonland_mana",
    "extra_land_drops",
+   "free_cast_permission",
    "freeze_opponent_lands",
    "grant_ability",
+   "grant_warp",
    "look_at_library_top",
    "lose_all_abilities",
    "no_hand_limit",
@@ -462,7 +499,23 @@
    "replace_token_creation",
    "reveal_library_top",
    "skip_draw_step",
-   "skip_extra_turn"
+   "skip_extra_turn",
+   "spend_mana_as_any_color"
+  ],
+  "WARP_GRANT_FILTER_KEYS": [
+   "any_of",
+   "any_types",
+   "colors",
+   "controller",
+   "keywords",
+   "mana_cost",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
   ],
   "WAS_CAST_TRIGGERS": [
    "self_enters"
@@ -509,6 +562,56 @@
     0
    ]
   ],
+  "_ANY_TYPE_OPTIONS": [
+   [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ]
+  ],
   "_CHOSEN_QUALITY_KEYS": [
    "chosen_type_of",
    "chosen_color_of"
@@ -531,6 +634,7 @@
   "add_mana_per",
   "add_poison",
   "add_subtype",
+  "airbend",
   "animate",
   "attach",
   "aura_swap",
@@ -540,6 +644,7 @@
   "become_prepared",
   "cant_attack_player",
   "cant_block",
+  "cant_cast_spells_from_zones",
   "cant_sacrifice",
   "cascade",
   "cast_copy",
@@ -624,6 +729,7 @@
   "replace_leaves_battlefield",
   "return_from_graveyard",
   "return_spell_to_hand",
+  "return_to_command_zone",
   "return_to_hand",
   "return_to_origin",
   "reveal",
