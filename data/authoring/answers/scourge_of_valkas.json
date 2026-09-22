@@ -38,7 +38,14 @@
           {
             "id": "t1",
             "kind": "any",
-            "count": 1
+            "count": 1,
+            "selector": {
+              "any_types": [
+                "Creature",
+                "Planeswalker",
+                "Battle"
+              ]
+            }
           }
         ],
         "effects": [
