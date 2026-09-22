@@ -771,19 +771,39 @@ def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tu
     spell offered on doubled mana and then paid for on single mana would strand
     the payment mid-cast.
 
-    *Simplification*: a dual land doubles whatever it produced rather than
-    offering a free choice of type, because a mana ability cannot ask.  Recorded
-    in ``docs/rules-coverage.md`` alongside the other automatic-mana trades.
+    *Simplification*: a dual land adds one mana of **a** type it produced rather
+    than offering a free choice of which, because a mana ability cannot ask.
+    Recorded in ``docs/rules-coverage.md`` alongside the other automatic-mana
+    trades.
 
     ``times`` is the variable-output multiplier from :func:`mana_amount`, and it
     is threaded through *here* for the same reason the doubling is: this is the
     one place both the offer and the payment come through, so they cannot be
     given different numbers.
+
+    **One mana, not twice the mana.** The printed line is "add *one* mana of any
+    type that permanent produced", and for the one-mana sources this family was
+    written against -- a mana dork, a basic land -- one more and twice as many
+    are the same number, which is why doubling the whole tuple read correctly
+    for years. They part company the moment the source makes two: a Sol Ring
+    under Kinnan is ``{C}{C}{C}``, not ``{C}{C}{C}{C}``, and Ancient Tomb under
+    Vorinclex is ``{C}{C}{C}``. Doubling was wrong in the strictly-better
+    direction, and silently, since nothing in the pool exercised it.
     """
-    scale = (2 if doubled else 1) * times
-    if scale == 1:
-        return tuple(option)
-    return tuple(v * scale for v in option)
+    produced = tuple(v * times for v in option) if times != 1 else tuple(option)
+    if not doubled:
+        return produced
+    # Which type the extra mana is, when the source made more than one, is the
+    # choice a mana ability may not stop to ask about. Taken as the first symbol
+    # in WUBRGC order that the source actually produced -- deterministic, so the
+    # offer in `_sources_of` and the payment in `activate_mana_ability` cannot
+    # disagree, which is the one failure this helper exists to prevent.
+    extra = list(produced)
+    for i, v in enumerate(produced):
+        if v:
+            extra[i] += 1
+            break
+    return tuple(extra)
 
 
 def produced_symbols(card: CardDef) -> list[str]:
