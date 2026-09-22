@@ -25,9 +25,10 @@ strictly better card.
 from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import pass_until
+from tests.conftest import find_action, pass_until
 
 MASTERY = "t_mastery"  # exile a graveyard card, copy it, cast the copy free
+MASTERY_MAY = "t_mastery_may"  # the same, with the printed "you may"
 EPIC = "t_epic_exp"  # look at three, cast free, bin the rest
 BAIT = "t_demo_draw"  # {R} instant, draws a card
 
@@ -129,3 +130,73 @@ class TestBinningTheRemainder:
         cast(game, EPIC)
 
         assert list(game.state.players[0].library) == before[3:]
+
+
+class TestTheOptionalCopyAsksFirst:
+    """`optional` is the printed "you **may** cast the copy".
+
+    Every card in the pool that uses `cast_copy` sets it -- Isochron Scepter,
+    Mizzix's Mastery, Arcane Bombardment -- and no fixture did, so the branch
+    that asks the question was never executed and the call inside it was one
+    argument short of being callable.  Activating a Scepter was a 500.
+    """
+
+    def position(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, ["mountain"] * 6)
+            .battlefield(1, ["plains"])
+            .graveyard(0, [BAIT])
+            .library(0, ["forest"] * 20)
+            .hand(0, [MASTERY_MAY])
+            .hand(1, ["t_plain_instant"])
+            .step(Step.PRECOMBAT_MAIN)
+            .build(advance=False)
+        )
+
+    def cast_and_stop_at_the_question(self, game):
+        game._advance()
+        action = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST
+            and game.state.objects[a.source].def_id == MASTERY_MAY
+        )
+        game.apply(action)
+        pass_until(
+            game, lambda g: (d := g.pending()) is not None and d.kind is DecisionKind.MAY
+        )
+
+    def test_the_question_reaches_the_player_casting_the_copy(self, builder):
+        """The regression itself: getting here at all used to raise TypeError."""
+        game = self.position(builder)
+
+        self.cast_and_stop_at_the_question(game)
+
+        decision = game.pending()
+        assert decision.kind is DecisionKind.MAY
+        assert decision.player == 0, "the controller casts the copy, so it is asked"
+
+    def test_yes_casts_the_copy(self, builder):
+        game = self.position(builder)
+        before = len(game.state.players[0].library)
+
+        self.cast_and_stop_at_the_question(game)
+        game.apply(find_action(game, ActionKind.YES))
+        settle(game)
+
+        assert len(game.state.players[0].library) == before - 1
+
+    def test_no_declines_it(self, builder):
+        """The point of asking. The card is still exiled -- only the cast is
+        skipped -- so the graveyard does not refill either way."""
+        game = self.position(builder)
+        bait = game.state.players[0].graveyard[0]
+        before = len(game.state.players[0].library)
+
+        self.cast_and_stop_at_the_question(game)
+        game.apply(find_action(game, ActionKind.NO))
+        settle(game)
+
+        assert len(game.state.players[0].library) == before
+        assert game.state.objects[bait].zone is Zone.EXILE

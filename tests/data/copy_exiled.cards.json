@@ -1,5 +1,5 @@
 {
-  "_comment": "Mizzix's Mastery and Epic Experiment shapes. t_mastery exiles a graveyard card and copies it, offering the copy as a free cast -- the ORIGINAL stays in exile, which is what stops the card being a repeatable engine. t_epic looks at the top three, free-casts what it can, and bins the rest.",
+  "_comment": "Mizzix's Mastery and Epic Experiment shapes. t_mastery exiles a graveyard card and copies it, offering the copy as a free cast -- the ORIGINAL stays in exile, which is what stops the card being a repeatable engine. t_mastery_may is the same card with the printed `optional` that every real cast_copy card carries and no fixture did, which is how the branch that asks the question shipped uncallable. t_epic looks at the top three, free-casts what it can, and bins the rest.",
   "cards": [
     {
       "id": "t_mastery",
@@ -17,6 +17,24 @@
       "spell_effects": [
         {"op": "exile", "objects": {"target": "t1"}, "as": "banked"},
         {"op": "cast_copy", "objects": {"binding": "banked"}}
+      ]
+    },
+    {
+      "id": "t_mastery_may",
+      "name": "Test Mastery (May)",
+      "oracle_text": "Exile target instant or sorcery card from your graveyard. Copy it. You may cast the copy without paying its mana cost.",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "controller": "you",
+                      "any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "as": "banked"},
+        {"op": "cast_copy", "objects": {"binding": "banked"}, "optional": true}
       ]
     },
     {
