@@ -74,8 +74,8 @@ def _aim_at_planeswalker(ctx: EffectContext, spec: Mapping[str, Any], oids, defe
     new `DecisionKind` for the reason Fact or Fiction needed none.
 
     The choice is recorded the way a declared attack at a walker is
-    (`combat.add_attacker(planeswalker=...)`): ``attackers[oid]`` stays the
-    defending player, and ``attacking_planeswalker[oid]`` names the walker, so
+    (`combat.add_attacker(permanent=...)`): ``attackers[oid]`` stays the
+    defending player, and ``attacking_permanent[oid]`` names the walker, so
     damage assignment (508.1 / 506.4c) and every reader of either map see it.
 
     Made a moment **after** the token arrives rather than as it does, the trade
@@ -123,9 +123,9 @@ def _aim_at_planeswalker(ctx: EffectContext, spec: Mapping[str, Any], oids, defe
             purpose="attack",
         )
         if picked and picked[0].kind == "object":
-            combat.attacking_planeswalker[oid] = picked[0].id
+            combat.attacking_permanent[oid] = picked[0].id
         else:
-            combat.attacking_planeswalker.pop(oid, None)
+            combat.attacking_permanent.pop(oid, None)
 
 
 def _offer_blocks_to(ctx: EffectContext, defender: int) -> None:

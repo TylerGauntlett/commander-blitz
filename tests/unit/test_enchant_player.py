@@ -454,7 +454,7 @@ class TestCreaturesCantAttackThisCombat:
         restrict_attack(state, 1, 0, "this_combat", planeswalkers=True)
 
         assert combat_mod.legal_defenders(state, bear) == []
-        assert combat_mod.legal_planeswalker_defenders(state, bear) == []
+        assert combat_mod.legal_permanent_defenders(state, bear) == []
         assert combat_mod.can_attack(state, bear) is False
 
     def test_the_seat_only_form_still_exempts_them(self, builder):
@@ -468,7 +468,7 @@ class TestCreaturesCantAttackThisCombat:
         restrict_attack(state, 1, 0, "this_combat", planeswalkers=False)
 
         assert combat_mod.legal_defenders(state, bear) == []
-        assert combat_mod.legal_planeswalker_defenders(state, bear) == [walker]
+        assert combat_mod.legal_permanent_defenders(state, bear) == [walker]
         assert combat_mod.can_attack(state, bear) is True
 
     def test_the_two_widths_are_separate_entries(self, builder):

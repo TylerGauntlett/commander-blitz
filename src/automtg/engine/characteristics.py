@@ -23,6 +23,35 @@ object's own board state: controller, tapped, attacking, counters).  That remove
 all recursion and all dependency ordering, at the cost of not supporting cards
 whose anthem depends on another anthem's result.  The curated decks respect this.
 
+``power`` and ``toughness`` are the one *derived* characteristic a static filter
+may name, and they are admitted under a restriction rather than as an exception.
+What such a filter reads is :func:`_base_pt` -- the size an object **starts**
+this pipeline with: its printed P/T, a copy exception's replacement of it
+(707.9b), bestow's 0/0 while attached, and the 2/2 shell of a face-down
+permanent (707.2).  Nothing any layer below writes is visible: not an
+``animate``, not a ``set_pt``, not an anthem, not a +1/+1 counter, not a pump.
+Reading :func:`chars` instead is not a near miss but an unbounded recursion --
+:func:`_matches` is called *from* :func:`_compute`, and from
+:func:`_static_active` before :func:`_compute` has applied a single layer.
+
+The line sits at base P/T rather than at the looser "everything no static
+wrote", which would have been acyclic too: counters and until-end-of-turn pumps
+are pipeline inputs like any other, and a filter could have read them safely.
+It is the stricter line because it is the one this module already takes for
+keywords, and layer 2b spells out why -- a static's ``keywords`` filter does not
+see a flying counter either, and "making counters the one visible kind of grant
+would be the inconsistency".  Base P/T is that same rule pointed at size, and it
+costs nothing to keep true: :func:`_compute` *begins* by calling the very
+function the filter calls, so the two cannot drift.
+
+Two readers of the static filter language sit **outside** this pipeline and so
+read the real, fully derived power: :func:`automtg.engine.triggers.matches_card_filter`
+(Welcoming Vampire's "creatures you control with power 2 or less enter" must see
+the anthem, and has since it was written) and
+:func:`automtg.engine.cost_reduction._object_matches` (which already reads derived types
+and keywords, for the same reason).  Only the reader inside the pipeline is
+restricted, because only it can be asked the question halfway through.
+
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
 :func:`_battlefield_statics` -- *before* layer -1, so before any layer has
@@ -55,6 +84,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
+from .mana import ManaOrigin
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
@@ -115,6 +145,42 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
+    """What the permanent at ``oid`` **is**, frozen for a pip of mana to carry.
+
+    "Whenever you cast a spell, if mana from a **Treasure** was spent to cast
+    it…" -- Smaug, Wicked Worm. The oid alone cannot answer that question later:
+    a Treasure is sacrificed to make its mana, and `sba._tokens_and_attachments`
+    removes a token from ``state.objects`` the moment it leaves the battlefield,
+    so by the time the spell is on the stack there is nothing left to ask. The
+    answer therefore has to be taken here, while the source is still on the
+    battlefield and still itself.
+
+    Read from :func:`chars` rather than the printed card, so grants count both
+    ways: a land animated into a creature made that mana as a creature, and a
+    Treasure is still a Treasure whatever else has been layered onto it.
+
+    ``None`` for mana no permanent made -- an effect's ``add_mana``, or a source
+    that has already left. A pip whose traits are ``None`` matches no filter,
+    which is the right default: "mana from a Treasure" is a claim, and unknown
+    provenance does not establish it.
+    """
+    if oid is None:
+        return None
+    obj = state.objects.get(oid)
+    if obj is None:
+        return None
+    derived = chars(state, oid)
+    return ManaOrigin(
+        oid=oid,
+        name=state.card_of(obj).name,
+        types=derived.types,
+        subtypes=derived.subtypes,
+        supertypes=derived.supertypes,
+        controller=obj.controller,
+    )
+
+
 #: What a face-down permanent is, whatever is underneath it (707.2).
 FACE_DOWN_CHARS = Characteristics(
     power=2,
@@ -125,6 +191,48 @@ FACE_DOWN_CHARS = Characteristics(
     keywords=frozenset(),
     colors=frozenset(),
 )
+
+
+def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
+    """The size an object *starts* the pipeline with, before any layer applies.
+
+    Printed P/T, plus the three things that change what the object **is** rather
+    than what has been done to it: a copy exception's base size (707.9b),
+    bestow's 0/0 while the Aura is attached (702.103b), and the 2/2 shell of a
+    face-down permanent (707.2).  The face-down case is here and not only in
+    `_compute` because a static filter asking "power 4 or greater" about a
+    manifested card must read the shell, not the hidden card -- anything else is
+    a filter that answers off information no player can see.
+
+    Called from exactly two places, and that is the reason it exists. `_compute`
+    starts here and then layers animation, `set_pt`, anthems, counters and pumps
+    on top of it; `_matches` stops here, because a static filter that could see
+    any of those layers could see another static's output, and the fixed order
+    has no way to resolve that.  One function, so the filter's idea of where a
+    creature's size begins cannot drift from the pipeline's.
+    """
+    if obj.face_down and obj.on_battlefield:
+        return FACE_DOWN_CHARS.power, FACE_DOWN_CHARS.toughness
+    card = state.card_of(obj)
+    power = card.power or 0
+    toughness = card.toughness or 0
+    if obj.copy_overrides:
+        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The base
+        # size, before every layer, so counters and anthems land on top of the
+        # 4/4 exactly as they would on a printed one (707.9b: the exception
+        # becomes the copiable value).
+        if (base_power := obj.copy_overrides.get("power")) is not None:
+            power = int(base_power)
+        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+            toughness = int(base_toughness)
+    if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+        # Bestow (702.103b): while it is attached it is not a creature, so it
+        # has no P/T of its own. The other half of the keyword -- the type line
+        # it takes on -- stays in `_compute`, which is the reader that has types
+        # to change; the conditions are written identically in both so that they
+        # cannot part company.
+        power = toughness = 0
+    return power, toughness
 
 
 def _compute(state: GameState, oid: int) -> Characteristics:
@@ -147,8 +255,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         # rather than replacing with it.
         return FACE_DOWN_CHARS
     card = state.card_of(obj)
-    power = card.power or 0
-    toughness = card.toughness or 0
+    # The base size, and the same call a static filter makes -- see `_base_pt`.
+    # Everything below layers on top of it.
+    power, toughness = _base_pt(state, obj)
     types = set(card.types)
     subtypes = set(card.subtypes)
     supertypes = set(card.supertypes)
@@ -185,14 +294,19 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # the copied card's supertypes, so the legend rule -- which reads
             # this, not the printed card -- applies to the token.
             supertypes.update(added_supers)
-        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The
-        # base size, before every layer, so counters and anthems land on top of
-        # the 4/4 exactly as they would on a printed one (707.9b: the exception
-        # becomes the copiable value).
-        if (base_power := obj.copy_overrides.get("power")) is not None:
-            power = int(base_power)
-        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
-            toughness = int(base_toughness)
+        if dropped_supers := obj.copy_overrides.get("remove_supertypes"):
+            # "…except the token isn't legendary." Miirym, Sentinel Wyrm; Helm
+            # of the Host; Kindred Charge. The set difference beside the union
+            # above, and the *only* subtraction any printing asks for -- and the
+            # one the card is played for: without it the token copies the
+            # original's Legendary, `_legend_rule` reads these derived
+            # supertypes and sees two legendary permanents of one name under one
+            # controller, and the ability that was meant to double a legendary
+            # Dragon destroys one instead.
+            supertypes.difference_update(dropped_supers)
+        # The base size an exception replaces -- "…except it's a **4/4** black
+        # Zombie" -- is applied by `_base_pt` above, beside the printed P/T it
+        # overrides and where a static filter can read the same answer.
 
     # Layer 3, text-changing effects (613.1c): "replacing all instances of one
     # creature type with Vampire". New Blood.
@@ -231,7 +345,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         types.discard("Creature")
         types.add("Enchantment")
         subtypes.add("Aura")
-        power = toughness = 0
+        # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
+        # filter reads the same non-creature size this line does.
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -295,11 +410,26 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    on top of it is the ordinary case.
         subtypes.update(obj.added_subtypes)
 
+        #    The grant is resolved per source rather than read off the compiled
+        #    static, because one entry in that list is not a literal name:
+        #    `{"chosen_type_of": "self"}` is "this creature is **the chosen
+        #    type** in addition to its other types" -- Roaming Throne, Arcane
+        #    Adaptation, Xenograft. It reads the type *this static's own source*
+        #    named, which is why the substitution happens here, inside the loop
+        #    that already knows which permanent the static came from, and not at
+        #    load time: the choice does not exist until the permanent arrives,
+        #    and a second `choose_type` or a `change_text` moves it afterwards.
+        #
+        #    A source that has chosen nothing yet grants **nothing** -- not
+        #    every type, and not a literal placeholder. Layer 4 runs on every
+        #    recompute, so the type appears the moment the choice is made.
         for source_obj, static in statics:
             if static.get("effect") != "add_subtype":
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
-                subtypes.update(static.get("subtypes", ()))
+                subtypes.update(
+                    resolve_chosen_subtype_list(static.get("subtypes", ()), source_obj)
+                )
                 types.update(static.get("types", ()))
 
         # 1b. "…and loses all other card types and abilities." A keyword *is*
@@ -815,6 +945,7 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
             if _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
     out.extend(_graveyard_statics(state))
+    out.extend(_command_zone_statics(state))
     return out
 
 
@@ -845,6 +976,52 @@ def _graveyard_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, 
                 if not (ability.is_static and ability.static):
                     continue
                 if Zone.GRAVEYARD not in ability.active_zones:
+                    continue
+                if _static_active(state, obj, ability.static):
+                    out.append((obj, ability.static))
+    return out
+
+
+def _command_zone_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Statics that work from the command zone -- eminence (702.106), and emblems.
+
+    "As long as The Ur-Dragon is in the command zone **or on the battlefield**,
+    other Dragon spells you cast cost {1} less to cast." The zone half of that
+    sentence is *this function*, on `_graveyard_statics`' argument exactly: being
+    gathered while the card sits there **is** the "as long as", so the clause
+    needs no condition of its own, and "or on the battlefield" is then one
+    static with ``active_zones: ["battlefield", "command"]`` rather than two
+    abilities that would have to be kept in step.
+
+    Without this walk the zone was unsayable and the tempting near miss was a
+    battlefield-only discount, which for a nine-mana commander drops the half of
+    eminence that is live for most of the game -- and drops it *silently*, since
+    no authoring expectation key can observe a price.
+
+    Read off the **printed** face for `_graveyard_statics`' reason: `abilities_of`
+    resolves grants and losses against the battlefield and has nothing to say
+    about an object that is not there. An emblem (114.3) is abilities and
+    nothing else, so the printed face is all it ever had.
+
+    Appended last, after the battlefield and graveyard walks, because this list's
+    order is the order effects apply in and an object here has no battlefield
+    timestamp to sort against.
+
+    **The source may be the spell being priced.** A commander is cast *out of*
+    this zone, and `Game._cast` reads `cost_reduction` while `obj.zone` is still
+    `COMMAND` -- so the eminence static is collected against its own card. That
+    is what "other" is for, and `spell_cost_reduction` spends it.
+    """
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for player in state.players:
+        for oid in player.command:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                if not (ability.is_static and ability.static):
+                    continue
+                if Zone.COMMAND not in ability.active_zones:
                     continue
                 if _static_active(state, obj, ability.static):
                     out.append((obj, ability.static))
@@ -951,6 +1128,32 @@ def _compare(op: str, left: int, right: int) -> bool:
         return _COMPARISONS[op](left, right)
     except KeyError:
         raise DslError(f"unknown comparison operator {op!r}") from None
+
+
+def compare_pt(value: int, spec: Any) -> bool:
+    """A filter's ``power``/``toughness`` clause: ``{"op": ">=", "value": 4}``.
+
+    The same spelling `selectors._compare` and `triggers._compare` already take,
+    down to the defaulted ``">="`` and the bare-integer shorthand for equality,
+    because the three are one printed clause asked in three places and a static
+    filter with a dialect of its own is one more thing to remember wrongly.
+
+    ``value`` is a plain integer rather than a value expression: the static
+    value language needs a source permanent to measure against, and this is a
+    per-object test that has only the object.  The loader enforces that, so a
+    non-integer reaching here means the two languages have drifted.
+
+    Exported unmangled because `cost_reduction._object_matches` -- the reader of
+    this key that runs *outside* the pipeline, against derived characteristics
+    -- has to spell the comparison the same way this one does.
+    """
+    if isinstance(spec, bool):
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    if isinstance(spec, int):
+        return value == spec
+    if not isinstance(spec, Mapping):
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    return _compare(str(spec.get("op", ">=")), value, int(spec.get("value", 0)))
 
 
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
@@ -1189,6 +1392,35 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     return state.alive()
 
 
+def resolve_chosen_subtype_list(entries: Any, source: GameObject | None) -> list[str]:
+    """Literal subtype names, with ``{"chosen_type_of": "self"}`` substituted.
+
+    The leaf-level half of :func:`resolve_chosen_subtypes`, split out for the
+    reason its colour twin was: one reader wants the plain list and not a
+    selector. That reader is the layer-4 ``add_subtype`` grant -- "this creature
+    is **the chosen type** in addition to its other types" (Roaming Throne,
+    Arcane Adaptation, Xenograft) -- where the entry is the thing being *given*
+    rather than a test something has to pass.
+
+    A source that has chosen nothing yet contributes **nothing** -- the entry is
+    dropped, so the Throne is of no extra type until its controller names one,
+    and becomes that type the moment they do. The selector wrapper turns the
+    same emptiness into a match-nothing sentinel instead, because a filter's
+    ``subtypes`` is an any-of and an empty one would match everything.
+    """
+    out: list[str] = []
+    for entry in entries or ():
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_type_of") != "self":
+            continue
+        chosen = source.chosen_type if source is not None else None
+        if chosen is not None:
+            out.append(chosen)
+    return out
+
+
 def resolve_chosen_subtypes(
     selector: Mapping[str, Any], source: GameObject | None
 ) -> Mapping[str, Any]:
@@ -1202,21 +1434,16 @@ def resolve_chosen_subtypes(
 
     A source that has chosen nothing yet matches **nothing**, which is right: an
     anthem for "the chosen type" before a type is chosen should pump nobody, not
-    everybody.
+    everybody. The sentinel replaces the *whole* list rather than just the
+    unresolved entry, because ``subtypes`` is an any-of: "Goblins and the chosen
+    type" with no choice made yet must not quietly fall back to "Goblins".
     """
     wanted = selector.get("subtypes")
     if not wanted or not any(isinstance(s, Mapping) for s in wanted):
         return selector
-    out: list[str] = []
-    for entry in wanted:
-        if not isinstance(entry, Mapping):
-            out.append(entry)
-            continue
-        if entry.get("chosen_type_of") == "self":
-            chosen = source.chosen_type if source is not None else None
-            if chosen is None:
-                return {**selector, "subtypes": ["\0none"]}
-            out.append(chosen)
+    out = resolve_chosen_subtype_list(wanted, source)
+    if len(out) != len(wanted):
+        return {**selector, "subtypes": ["\0none"]}
     return {**selector, "subtypes": out}
 
 
@@ -1303,6 +1530,22 @@ def _matches_printed(
     convert a creature that no Vampire lord could find: the card would look
     implemented and do almost nothing.
     """
+    # "**Artifact cards and red creature cards** in your hand have warp {2}{R}"
+    # -- Tannuk, Steadfast Second. A disjunction, and the only way to say one
+    # here: every other key below is ANDed, so the two printed shapes written
+    # as one filter collapse to "red artifact creature" and the sentence is
+    # unsayable. `any_types` is an or over *types* alone and would let a blue
+    # creature card through.
+    #
+    # A branch is the same filter language asked about the same card, exactly
+    # as `cost_reduction._object_matches` recurses for its own `any_of` and as
+    # the effect-side selector does. Only `grant_warp` may write the word --
+    # `SPELL_FILTER_KEYS` does not carry it -- so no shipped card's filter
+    # changes meaning by this being here.
+    if (branches := selector.get("any_of")) is not None and not any(
+        _matches_printed(card, branch, added_subtypes, text_changes) for branch in branches
+    ):
+        return False
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
         return False
@@ -1387,6 +1630,31 @@ def _matches(
         return False
     if not obj.on_battlefield:
         return False
+    return _matches_wherever(state, obj, source, selector)
+
+
+def _matches_wherever(
+    state: GameState,
+    obj: GameObject,
+    source: GameObject,
+    selector: Mapping[str, Any],
+) -> bool:
+    """`_matches` without the battlefield gate -- for an object that is *arriving*.
+
+    Split off rather than given a flag, because the gate is not a detail of the
+    match: every caller in the layer pipeline walks `state.battlefield` and so
+    could never see anything else, and the one caller that needs this is asking
+    a different question -- "would this static describe the permanent that is
+    about to exist?" -- a moment before the zone change makes it answerable the
+    ordinary way.  `keyword_as_it_enters` is that caller and says why.
+
+    The board-state clauses below (`tapped`, `attacking`, `entered_this_turn`)
+    read a permanent that is not one yet, so they answer with the arrival's
+    blank slate.  That is right for a creature on its way in -- it is untapped,
+    unblocking and has entered nothing -- and it is why this is not a public
+    door onto the filter language: it is exact only for the questions asked
+    *during* an arrival.
+    """
     selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
     card = state.card_of(obj)
 
@@ -1472,11 +1740,42 @@ def _matches(
     if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
         return False
 
+    # "…each creature you control **with power 4 or greater**" (Temur
+    # Battlecrier), and the rest of the ferocious family. The one derived
+    # characteristic this filter language may name, read at `_base_pt` -- the
+    # size before any layer -- and never through `chars`, which this function is
+    # called from and would recurse into. The module docstring argues the
+    # restriction; `_base_pt` is the whole of it.
+    if (spec := selector.get("power")) is not None and not compare_pt(
+        _base_pt(state, obj)[0], spec
+    ):
+        return False
+    if (spec := selector.get("toughness")) is not None and not compare_pt(
+        _base_pt(state, obj)[1], spec
+    ):
+        return False
+
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
     if "is_token" in selector and bool(obj.is_token) != bool(selector["is_token"]):
+        return False
+
+    # "…a creature you control **that entered this turn**" (Neriv, Heart of the
+    # Storm); "as long as **it** entered this turn" (Zurgo and Ojutai). Read off
+    # the turn ledger rather than off `obj.entered_turn`, and the two are not the
+    # same question: `entered_turn` is what `summoning_sick` reads and
+    # `change_control` stamps it, because 302.6 makes a stolen permanent sick
+    # without its having entered anything. `TurnLedger.entered_this_turn` says
+    # why at length.
+    #
+    # A pipeline *input* -- an arrival snapshot is written once, by `emit`, and
+    # no layer can write to it -- so it sits here beside `tapped` and `is_token`
+    # rather than outside the static filter language.
+    if "entered_this_turn" in selector and bool(
+        state.turn_ledger.entered_this_turn(obj.oid)
+    ) != bool(selector["entered_this_turn"]):
         return False
 
     combat = state.combat
@@ -1507,6 +1806,56 @@ def is_land(state: GameState, oid: int) -> bool:
 
 def has_keyword(state: GameState, oid: int, keyword: str) -> bool:
     return keyword in chars(state, oid).keywords
+
+
+def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
+    """Would the permanent now *arriving* have ``keyword`` once it is there?
+
+    Riot (702.113) is the only caller and the reason this exists. `chars` cannot
+    answer it: the object is still on the stack (or in a graveyard, or in a
+    hand), so the layer pipeline sees a card rather than a permanent and no
+    battlefield static reaches it. Waiting until it *is* a permanent is not an
+    option either -- by then `zones._enter_battlefield` has run, and the whole
+    content of riot is that the choice was made **as** the creature entered.
+
+    So the two halves of "has riot" are asked here, a moment before the move:
+
+    * the **printed** keyword, off the face that is actually arriving --
+      Zegana, Utopian Speaker and the rest of the cycle; and
+    * a `grant_keyword` static on the battlefield whose `affects` describes the
+      arriving object -- Rhythm of the Wild's "nontoken creatures you control
+      have riot", which is riot's commonest printing and the reason it had to
+      be a grantable keyword rather than a replacement.
+
+    The granters are read through `_battlefield_statics`, so a granter that has
+    lost its abilities, or whose own `condition` is unmet, grants nothing --
+    the same walk every layer uses. What is *matched* goes through
+    `_matches_wherever`, which is `_matches` minus the battlefield gate the
+    arriving object cannot pass yet.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    # 707.2: a permanent arriving face down has no abilities at all, so it has
+    # no printed riot -- and nothing on the board can see a keyword on it
+    # either. The same exemption `move_object` makes for Mox Diamond, written
+    # the same way, because `face_down` is only set after the move.
+    if obj.pending_face_down:
+        return False
+    if keyword in state.card_of(obj).keywords:
+        return True
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "grant_keyword":
+            continue
+        if keyword not in static.get("keywords", ()):
+            continue
+        affects = static.get("affects")
+        # `None` matches nothing, exactly as `_matches` decides: the loader
+        # requires `affects` on a `grant_keyword`, so this is the same
+        # fail-closed answer rather than a filter that quietly means "everyone".
+        if affects is not None and _matches_wherever(state, obj, source_obj, affects):
+            return True
+    return False
 
 
 def prevented_damage(state: GameState, oid: int) -> int:
@@ -1832,6 +2181,7 @@ from .player_statics import (  # noqa: F401
     player_cant_cast_spells,
     player_cant_gain_life,
     player_doubles_land_mana,
+    player_doubles_mana_from,
     player_extra_land_drops,
     player_has_no_hand_limit,
     player_looks_at_library_top,

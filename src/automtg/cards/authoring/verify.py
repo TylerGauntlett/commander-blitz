@@ -605,7 +605,18 @@ def find_play(
     # `_land_actions` runs before `_cast_actions`, so without this the land line
     # simply wins on ordering -- the same kind of accident `kicked` already
     # disambiguates for a spell offered twice.
-    return next((a for a in matches if not a.second_face), matches[0])
+    front = [a for a in matches if not a.second_face] or matches
+    # **Spree** (702.166a): the line that buys the most modes. `multikicked`'s
+    # argument, with the one difference that makes it unconditional: a spree
+    # card has no free line to protect -- every line pays at least one price --
+    # but legality offers the single-mode subsets first, so taking the first
+    # would measure a third of Smuggler's Surprise and pass a card whose other
+    # two modes do nothing at all. There is no way to tell that from the card
+    # working, which is exactly the failure gate 5 exists to catch.
+    #
+    # `max` is stable, so every card without spree keeps legality's order and
+    # the front-face preference above.
+    return max(front, key=lambda a: len(a.spree_modes))
 
 
 # ----------------------------------------------------------------------
@@ -811,6 +822,26 @@ def verify(
         pool = {**existing, card.id: card}
         for extra in companions or ():
             extra_card = compile_card(CardModel.model_validate(extra))
+            if extra_card.id in existing and not supersedes:
+                # The same silent overwrite the front face is guarded against
+                # above, one line further down and far quieter. A face id is a
+                # slug of the *face's* printed name, so a card whose back half
+                # is named after a card that already exists -- Emeritus of Woe
+                # // Demonic Tutor is the one that found this -- lands its
+                # companion on top of the incumbent. Nothing collides: the dict
+                # merge replaces, `link_faces` then stamps `parent_face` on what
+                # used to be a free-standing card, and a real Demonic Tutor
+                # stops being something a deck may contain.
+                #
+                # Not `registry`, which the front's guard reads, because that
+                # membership test has to ignore `card.id`; `existing` is the
+                # pool with this answer's own front already taken out.
+                verdict.failed_gate = "registry"
+                verdict.reason = (
+                    f"companion face {extra_card.id!r} is already in the pool as a "
+                    f"card of its own -- give the face a distinct id"
+                )
+                return verdict
             pool[extra_card.id] = extra_card
         from ..loader import link_faces, validate_token_references
 
@@ -1379,5 +1410,18 @@ def _covered(card: CardDef, line: str) -> bool:
             # The words are matched rather than skipped, and the loader will not
             # let the event be written without a `copying` pool, so the sentence
             # cannot be claimed by a card that copies nothing.
+            return True
+        if event == "self_enters_replaced" and "would enter" in lowered:
+            # "If this artifact would enter, you may discard a land card
+            # instead. If you do, put this artifact onto the battlefield. If you
+            # don't, put it into its owner's graveyard." -- Mox Diamond. One
+            # printed line holding the whole replacement, claimed the way the
+            # four above are: it replaces the arrival itself, so there is no
+            # ability whose `text` could carry it.
+            #
+            # "would enter" rather than the looser "enter", so the sentence
+            # cannot be claimed by "when this enters" -- that is a trigger, and
+            # writing it as one is exactly the approximation this event exists
+            # to replace.
             return True
     return False

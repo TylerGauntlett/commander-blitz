@@ -1,0 +1,133 @@
+{
+  "_comment": "Shapes for tests/unit/test_riot.py. t_riot_brute prints the keyword itself (the Zegana cycle); t_riot_drum is Rhythm of the Wild's second line, a grant_keyword static handing riot to nontoken creatures you control -- the printing riot had to be a *keyword* for, because a replacement is not grantable. t_riot_sapling is a printed 0/0 with riot: it is alive only if the counter is part of the arrival, so it is the 614.1c witness that no self_enters trigger could pass. t_riot_scribe reads the entering creature's power from the other side of the table, which pins that the counter is on before any enters trigger looks. t_riot_plain is the same brute with no riot, the control. t_riot_raise reanimates and t_riot_spawn makes a token -- the non-cast arrival and the nontoken exclusion.",
+  "cards": [
+    {
+      "id": "t_riot_brute",
+      "name": "Test Riot Brute",
+      "oracle_text": "Riot (This creature enters with your choice of a +1/+1 counter or haste.)",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["riot"]
+    },
+    {
+      "id": "t_riot_plain",
+      "name": "Test Plain Brute",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_riot_sapling",
+      "name": "Test Riot Sapling",
+      "oracle_text": "Riot (This creature enters with your choice of a +1/+1 counter or haste.)",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Plant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 0,
+      "keywords": ["riot"]
+    },
+    {
+      "id": "t_riot_drum",
+      "name": "Test Riot Drum",
+      "oracle_text": "Nontoken creatures you control have riot.",
+      "mana_cost": "{2}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Nontoken creatures you control have riot.",
+          "effect": "grant_keyword",
+          "keywords": ["riot"],
+          "affects": {
+            "types": ["Creature"],
+            "controller": "you",
+            "is_token": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_riot_scribe",
+      "name": "Test Riot Scribe",
+      "oracle_text": "Whenever another creature you control enters, you gain life equal to its power.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, you gain life equal to its power.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Creature"], "exclude_self": true}
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {"power_of": {"binding": "subject"}}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_riot_raise",
+      "name": "Test Riot Reanimation",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "return_from_graveyard",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": ["Creature"],
+            "count": 1
+          },
+          "destination": "battlefield",
+          "controller": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_riot_spawn",
+      "name": "Test Riot Spawner",
+      "oracle_text": "Create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "create_token",
+          "token": "human_soldier_1_1_w",
+          "amount": {"const": 1}
+        }
+      ]
+    }
+  ]
+}

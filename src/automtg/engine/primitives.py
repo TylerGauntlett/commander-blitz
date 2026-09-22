@@ -11,6 +11,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
+from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
     life_gain_multiplier,
@@ -40,6 +41,7 @@ from .temp_effects import (  # noqa: F401
     _expired,
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_cast_locks,
     clear_damage_shields,
     clear_goad,
     clear_life_locks,
@@ -50,6 +52,7 @@ from .temp_effects import (  # noqa: F401
     forbid_sacrifice,
     goad_creature,
     grant_player_protection,
+    lock_casting_zones,
     lock_life_total,
     make_unblockable,
     restrict_attack,
@@ -256,6 +259,41 @@ def life_locked(state: GameState, pid: int) -> bool:
     return any(lock.player == pid for lock in state.life_locks)
 
 
+def cast_locked_zones(state: GameState, pid: int) -> frozenset[str]:
+    """The zones ``pid`` can't cast a spell out of right now.  Usually empty.
+
+    "Until your next turn, your opponents can't cast spells from anywhere other
+    than their hands" (Avatar's Wrath).  The union over every
+    :class:`structs.CastLock` reaching this seat, because two locks are two
+    effects and "can't" beats "can" (101.2): a zone one of them names stays
+    shut however permissive the other is.
+
+    Three readers, not one, for `life_locked`'s reason -- there is no single
+    choke point for a cast.  `casting._cast_actions` builds the ordinary
+    priority-window offers; `suspend.cast_for_free` and
+    `replacements._offer_cast` each put a spell on the stack at *resolution*
+    time without passing through it, which is how cascade, madness, suspend and
+    rebound work.  A lock installed in the first alone would be a prohibition
+    that cascade walks straight past -- and cascade casts from exile, which is
+    precisely one of the zones this card shuts.
+
+    `ops_stack.op_cast_copy` is the fourth road and is deliberately **not**
+    gated: a copy created on the stack was never in a zone to be cast from
+    (707.12), so there is no zone for this to compare against.
+
+    Returns strings rather than `Zone` members because `Zone` is a `str` enum
+    and the rows come from JSON: comparing `costs.zone_of(...)` against this set
+    works either way, and the loader is the thing that validated the spelling.
+    """
+    if not state.cast_locks:
+        return frozenset()
+    shut: set[str] = set()
+    for lock in state.cast_locks:
+        if pid in lock.affects:
+            shut.update(lock.zones)
+    return frozenset(shut)
+
+
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
     """Put life on a player, applying any replacement of the gain.
 
@@ -388,7 +426,14 @@ def damage_player(
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
     # than how big it is -- so a doubled infect hit is twice the poison.
-    amount *= damage_multiplier(state, source_oid, None, is_combat=is_combat)
+    #
+    # `target_pid` is the seat being hit, which is what `affects_player` reads:
+    # "if a source you control would deal damage to **an opponent**" names a
+    # player the way `affects` names a permanent, and without it the recipient
+    # side of the static was all-or-nothing here.
+    amount *= damage_multiplier(
+        state, source_oid, None, target_pid=pid, is_combat=is_combat
+    )
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -637,6 +682,21 @@ def damage_permanent(
                 ),
                 defender=obj.controller,
             )
+    # 310.6: damage dealt to a battle removes that many defense counters. The
+    # planeswalker branch one line up with a different counter kind, and here
+    # for the reason that one is here -- `obj.damage` on a battle would be
+    # invisible, because nothing compares a battle's damage to anything.
+    #
+    # No per-connection event beside it. The planeswalker half has
+    # `COMBAT_DAMAGE_TO_PLANESWALKER` because cards print "to a player or
+    # planeswalker" one creature at a time; the printed battle line is "one or
+    # more creatures you control deal combat damage to a player or battle",
+    # which is a *batch* and is fired once, from `combat._fire_damage_batch`,
+    # where the whole simultaneous event is knowable. A per-connection battle
+    # event would have no card to serve and would be a second, wrong answer to
+    # the same sentence.
+    elif "Battle" in _chars(state, oid).types:
+        remove_counters(state, oid, BATTLE_DEFENSE, amount)
     elif withers:
         add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
     else:

@@ -16,7 +16,6 @@ from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
 from .characteristics import (
     abilities_of,
-    chars,
     loyalty_activation_timing_waived,
     threshold_met,
 )
@@ -119,7 +118,7 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
         # player controls can have different defender lists in the same combat
         # once one of them was borrowed from somebody else.
         defenders = combat_mod.legal_defenders(state, oid)
-        walkers = combat_mod.legal_planeswalker_defenders(state, oid)
+        walkers = combat_mod.legal_permanent_defenders(state, oid)
         for defender in defenders:
             # Propaganda: "creatures can't attack you **unless** their
             # controller pays {2}". An unpayable tax is a prohibition (508.1g),
@@ -453,7 +452,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         if (
             max_affordable_x(
                 card.mana_cost,
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 mana_sources(state, pid, purpose=purpose),
                 extra_generic=-discount,
             )
@@ -741,7 +740,7 @@ def _ability_aims(
         if (
             max_affordable_x(
                 most_life_for_mana(state, pid, ability.cost, oid),
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 mana_sources(state, pid, purpose=purpose),
             )
             < 0
@@ -776,7 +775,7 @@ def _ability_aims(
                 sources = [s for s in sources if s.oid != oid]
             ceiling = max_affordable_x(
                 most_life_for_mana(state, pid, ability.cost, oid),
-                state.players[pid].mana_pool,
+                state.players[pid].mana_pool.spendable(purpose),
                 sources,
             )
             out_x: list[tuple] = []
@@ -921,7 +920,7 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     Doubling is applied, because a Vivid land under Vorinclex really does add
     two and the chip would otherwise promise one.
     """
-    from .characteristics import player_doubles_land_mana
+    from .characteristics import player_doubles_mana_from
     from .costs import mana_added_total, mana_amount, mana_options_of, mana_produced, plus_mana
     from .mana import format_symbols
 
@@ -929,9 +928,7 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     if mana_option is None or len(options) <= 1:
         return ""
 
-    doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
-        state, state.objects[oid].controller
-    )
+    doubled = player_doubles_mana_from(state, state.objects[oid].controller, oid)
     produced = mana_produced(
         options[mana_option],
         doubled=doubled,

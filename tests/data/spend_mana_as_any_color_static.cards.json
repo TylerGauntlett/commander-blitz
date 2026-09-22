@@ -1,0 +1,194 @@
+{
+  "_comment": "Cards that exist only for the Chromatic Orrery payment test (tests/unit/test_spend_mana_as_any_color_static.py -- the granted form of the same sentence has its own pair, spend_mana_as_any_color.cards.json). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_orrery_static` is Chromatic Orrery's first line alone, on a cheap artifact. `t_azure_bolt` is a {1}{U} spell and `t_azure_pair` a {U}{U} one, so the cast line is measured off off-colour lands; `t_chroma_font` is an activated ability whose cost is {W}{W} -- the half a spells-only version would lose -- `t_x_chroma_font` an {X}{G} one for the X ceiling, `t_waste_font` a {C} one for the symbol that is not a colour, and `t_green_phyrexian_font` a {G/P} one, so the life half a printed Phyrexian pip carries is pinned to survive the loosening.",
+  "cards": [
+    {
+      "id": "t_orrery_static",
+      "name": "Test Orrery Static",
+      "oracle_text": "You may spend mana as though it were mana of any color.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may spend mana as though it were mana of any color.",
+          "effect": "spend_mana_as_any_color",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_azure_bolt",
+      "name": "Test Azure Bolt",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_azure_pair",
+      "name": "Test Azure Pair",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{U}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_chroma_font",
+      "name": "Test Chroma Font",
+      "oracle_text": "{W}{W}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{W}{W}: You gain 1 life.",
+          "cost": {
+            "mana": "{W}{W}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_x_chroma_font",
+      "name": "Test X Chroma Font",
+      "oracle_text": "{X}{G}: You gain X life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}{G}: You gain X life.",
+          "cost": {
+            "mana": "{X}{G}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "x": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_waste_font",
+      "name": "Test Waste Font",
+      "oracle_text": "{C}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{C}: You gain 1 life.",
+          "cost": {
+            "mana": "{C}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_green_phyrexian_font",
+      "name": "Test Green Phyrexian Font",
+      "oracle_text": "{G/P}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G/P}: You gain 1 life.",
+          "cost": {
+            "mana": "{G/P}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

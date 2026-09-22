@@ -508,24 +508,32 @@ class TestThePacketCarriesTheWholeVocabulary:
         +1/+1", one static written once and applied to two creatures. Both are
         board state, so no static can depend on another's output through them.
 
-        `owner` is the exception and is static-only for a duller reason: no card
-        has yet needed an *effect* to say "creatures you own". It arrived for
-        Inspiring Leader's "Commander creatures you own have …", where 903.3
-        makes ownership the rules-relevant relation, and it stays on this side
-        of the line until a one-shot prints the word.
+        `owner` and `attached` both used to be here and are now in *both*
+        lists, and each left for the same kind of reason: a card printed the
+        word on the other side of the line.
 
-        `attached` used to be here and is now in *both* lists. The claim that it
-        was "meaningless to an effect's selector" was simply wrong: Blade of the
-        Bloodchief puts a counter on equipped creature and Skullclamp draws when
-        it dies, and neither is a continuous effect. Being static-only was the
-        reason no `op` could reach the equipped creature at all.
+        `attached`'s claim -- that it was "meaningless to an effect's selector"
+        -- was simply wrong: Blade of the Bloodchief puts a counter on equipped
+        creature and Skullclamp draws when it dies, and neither is a continuous
+        effect. Being static-only was the reason no `op` could reach the
+        equipped creature at all.
+
+        `owner`'s was the duller one, and it held right up until it did not: it
+        arrived for Inspiring Leader's "Commander creatures you own have …",
+        where 903.3 makes ownership the rules-relevant relation, and it was
+        static-only only because no *one-shot* had yet printed the word. Majestic
+        Genesis prints it -- "the greatest mana value of a commander **you own**
+        on the battlefield or in the command zone" -- so it crossed. Both lists
+        mean the same thing by it and neither defaults it the same way: a static
+        filter defaults `controller: "you"` and `owner` suppresses that default,
+        where a selector defaults nothing and `owner` simply filters.
 
         `attached_to_host` -- the host's *other* attachments, Brass Knuckles'
-        "two or more Equipment are attached to it" -- is static-only for
-        `owner`'s duller reason rather than the relationship one: every printed
+        "two or more Equipment are attached to it" -- is the last one holding
+        `owner`'s old position rather than the relationship one: every printed
         card that asks the question asks it continuously, so no one-shot has
-        needed it yet. It moves to both lists the day one does, and `attached`
-        is the precedent for how cheap that is.
+        needed it yet. It moves to both lists the day one does, and the two keys
+        above are the precedent for how cheap that is.
         """
         from automtg.cards.authoring.packet import reference
 
@@ -534,10 +542,18 @@ class TestThePacketCarriesTheWholeVocabulary:
         assert static - selector == {
             "paired",
             "paired_with_source",
-            "owner",
             "attached_to_host",
+            # `entered_this_turn` is here for `attached_to_host`'s reason rather
+            # than `paired`'s: nothing about it is static-only in principle, and
+            # the effect side would read the same `TurnLedger` snapshot. It is
+            # static-only because the two cards that printed it -- Neriv's
+            # damage replacement and Zurgo's hexproof -- both ask it
+            # continuously, so no one-shot has needed the pool yet. One line in
+            # `SELECTOR_KEYS` the day one does.
+            "entered_this_turn",
         }
         assert "attached" in static and "attached" in selector
+        assert "owner" in static and "owner" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
 
     def test_the_static_condition_vocabulary_is_shown(self):
@@ -686,6 +702,76 @@ class TestATransformingCardIsOneAnswer:
             {"id": "a"},
             {"id": "b"},
         ]
+
+    def test_a_back_may_not_take_a_hand_written_card_s_id(self, real_registry):
+        """`test_a_card_may_not_overwrite_a_hand_written_one`, for the *other* face.
+
+        A face id is a slug of the face's own printed name, so a card whose back
+        half is named after a card that already exists carries that card's id --
+        and the front, being a different name, sails through the gate that
+        catches this for the main entry. The merge is a dict assignment, so the
+        companion replaces the incumbent and `link_faces` then stamps
+        `parent_face` on what used to be a free-standing card. Nothing raises;
+        the pool just quietly stops being able to deal that card into a deck.
+        """
+        from automtg.cards.authoring import verify as V
+
+        front, back = self.front_and_back()
+        front = {**front, "back_face": "sol_ring"}
+        verdict = V.verify(
+            front, {"zone": "battlefield"}, real_registry,
+            companions=[{**back, "id": "sol_ring"}],
+        )
+        assert verdict.failed_gate == "registry"
+        assert "sol_ring" in verdict.reason
+
+    def test_a_back_may_not_take_an_authored_card_s_id(self):
+        """The half of the same bug that `verify` cannot see.
+
+        `verify` is handed the hand-written pool only, so a companion colliding
+        with a *machine-authored* card -- which is the collision that actually
+        shipped, Emeritus of Woe // Demonic Tutor landing on Demonic Tutor --
+        gets past it. The collector knows the auto batch as well, and asks the
+        one question that separates a face from a card: a companion is written
+        with **no expectation of its own**, so an id that has one belongs to a
+        card somebody authored in its own right.
+        """
+        from scripts.author_cards import _companion_collision
+
+        backs = [{"id": "demonic_tutor"}]
+        expectations = {"demonic_tutor": {"zone": "graveyard"}}
+        assert _companion_collision(backs, expectations, "emeritus") == "demonic_tutor"
+
+        # The namespaced id the answer was repaired to: no expectation of its
+        # own, so it stays legal on every re-collect rather than only the first.
+        clean = [{"id": "demonic_tutor_26156d"}]
+        assert _companion_collision(clean, expectations, "emeritus") is None
+        expectations["demonic_tutor_26156d"] = {}
+        assert _companion_collision(clean, expectations, "emeritus") == "demonic_tutor_26156d"
+
+    def test_the_shipped_pool_has_no_face_that_is_also_a_card(self):
+        """The regression this branch fixed, asserted against the real pool.
+
+        Demonic Tutor is in a deck somebody imports; while it was the prepared
+        face of Emeritus of Woe it was not a card a deck could contain, and the
+        importer refused the whole list rather than one card.
+        """
+        import json
+
+        from automtg.cards.authoring.queue import auto_cards_dir
+        from automtg.cards.registry import default_registry
+
+        expectations = json.loads(
+            (auto_cards_dir() / "expectations.json").read_text(encoding="utf-8")
+        )
+        registry = default_registry().registry
+        stolen = [
+            card.id
+            for card in registry
+            if (card.parent_face is not None or card.front_face is not None)
+            and card.id in expectations
+        ]
+        assert not stolen, f"faces holding a whole card's id: {stolen}"
 
 
 

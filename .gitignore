@@ -50,3 +50,7 @@ frontend/test-results/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Agent worktrees. Created by parallel capability lanes during a deck import;
+# a checkout of this same repo, so committing one would nest the tree in itself.
+.claude/worktrees/

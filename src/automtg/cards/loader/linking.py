@@ -29,7 +29,32 @@ def _derive_color_identity(
         # so the ability is recognisable as a mana source, but the card prints no
         # mana symbol at all -- Heraldic Banner's colour identity is colourless,
         # and reading the superset here would make it five-colour.
-        for option in () if ability.mana_chosen_color else ability.mana_options:
+        #
+        # `mana_colors_of` carries the same superset for the same reason and
+        # prints no symbol either: Chrome Mox's identity is colourless, and a
+        # five-colour one would make it illegal in every commander deck that is
+        # not itself five-colour -- the deck-building rule 903.4, not a
+        # gameplay approximation.
+        #
+        # `mana_each_color_among` is the third: Bloom Tender prints {G}{G} and a
+        # green body, and its Vivid line names no symbol at all. A five-colour
+        # identity would bar it from the mono-green commander decks it is played
+        # in, and from every other deck that is not itself five-colour.
+        #
+        # `mana_any_one_color` is the fourth, and the one where the five-colour
+        # tuple is not even a placeholder: "Add X mana of any one color" really
+        # does offer all five. It still prints no mana symbol, so by 903.4
+        # Helga, Skittish Seer's identity is the {2}{G}{U} on her face -- and a
+        # five-colour identity would bar her from every commander deck that is
+        # not itself five-colour, including the mono-green and Simic ones she is
+        # played in.
+        skip_superset = (
+            ability.mana_chosen_color
+            or ability.mana_any_one_color
+            or ability.mana_colors_of is not None
+            or ability.mana_each_color_among is not None
+        )
+        for option in () if skip_superset else ability.mana_options:
             for i, amount in enumerate(option[:5]):
                 if amount:
                     identity.add(("W", "U", "B", "R", "G")[i])

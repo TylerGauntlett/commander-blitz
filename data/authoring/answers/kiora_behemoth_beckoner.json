@@ -1,0 +1,89 @@
+{
+  "card": {
+    "id": "kiora_behemoth_beckoner",
+    "name": "Kiora, Behemoth Beckoner",
+    "oracle_text": "Whenever a creature you control with power 4 or greater enters, draw a card.\n−1: Untap target permanent.",
+    "mana_cost": "{2}{G/U}",
+    "types": [
+      "Planeswalker"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Kiora"
+    ],
+    "loyalty": 7,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "color_identity": [
+      "G",
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control with power 4 or greater enters, draw a card.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Creature"
+            ],
+            "power": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−1: Untap target permanent.",
+        "cost": {
+          "loyalty": -1
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "untap",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {
+      "kind": "loyalty",
+      "amount": 7
+    }
+  }
+}

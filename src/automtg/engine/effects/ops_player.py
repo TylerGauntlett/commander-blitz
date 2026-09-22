@@ -24,6 +24,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..errors import DslError
 from ..primitives import become_monarch, give_emblem
 from . import register
 from .context import EffectContext
@@ -53,6 +54,82 @@ def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         become_monarch(ctx.state, pid, source=ctx.source_oid)
     yield from ()
+
+
+#: The zones a `cant_cast_spells_from_zones` can shut, and the set
+#: ``except_zones`` is subtracted from.
+#:
+#: Every zone there is, including the stack and the battlefield, because both
+#: are places a spell is cast from here: a prepared permanent offers a cast
+#: from the battlefield, and `ops_stack.op_cast_copy` casts a copy sitting on
+#: the stack. "Anywhere other than their hands" means anywhere, and a list that
+#: quietly omitted a zone would be a lock with a door left open.
+CASTABLE_ZONES = ("library", "hand", "battlefield", "graveyard", "exile", "stack", "command")
+
+
+@register("cant_cast_spells_from_zones")
+def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, your opponents can't cast spells from anywhere
+    other than their hands." -- Avatar's Wrath.
+
+    A **zone-filtered** casting prohibition with a clock, installed by a
+    *sorcery*. Three things at once, and the two nearest existing pieces each
+    have exactly one of them.
+
+    `cant_cast_spells`, the player-wide static, is total: the loader refuses an
+    `affects` beside it on purpose, so a narrower printed line cannot load as a
+    strictly stronger lock. Written bare here it would forbid the opponents'
+    **hand** casts too -- a far harsher card than the one printed, and silently
+    so. It is also a `static_effect`, which only a permanent can carry, and
+    this card exiles itself on resolution.
+
+    `set_turn_flag` is the other near miss and is inert: no legality path reads
+    `has_turn_flag`, so a player "flagged" locked goes on casting, and the flag
+    dies at the turn boundary rather than at the caster's next turn -- one turn
+    too soon at a table of four.
+
+    So it is a **row in a timed table**, `structs.CastLock`, beside the life
+    lock and the player protection the same kind of one-shot installs. Like
+    them it modifies nothing and resolves before there is anything to modify:
+    the whole of its behaviour is the record it leaves for
+    `primitives.cast_locked_zones` to answer from, and the three cast roads
+    all ask that.
+
+    ``player`` is the usual player spec and says **who is locked**; it defaults
+    to ``"each_opponent"``, which is what the printed sentence says. The *clock* is
+    always the resolving controller -- "until **your** next turn" -- and is not
+    spellable, because no printed card times a prohibition off a seat other
+    than the one that imposed it.
+
+    ``zones`` names the shut zones; ``except_zones`` names the open ones and is
+    subtracted from :data:`CASTABLE_ZONES`. Two spellings because printed cards
+    use both -- "from anywhere other than their hands" is the inverse form and
+    would otherwise be six zones typed out by hand, which is six chances to
+    leave one off. The loader refuses both on one effect, and refuses neither.
+    """
+    from ..primitives import lock_casting_zones
+    from ..structs import CAST_LOCK_DURATIONS
+
+    duration = str(spec.get("duration", "until_your_next_turn"))
+    if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_cast_spells_from_zones duration {duration!r}")
+    if (named := spec.get("zones")) is not None:
+        zones = [str(z) for z in named]
+    else:
+        # The inverse form. `except_zones` is required when `zones` is absent
+        # -- the loader says so -- so there is no third branch where this locks
+        # everything by accident.
+        opened = {str(z) for z in spec.get("except_zones", ())}
+        zones = [z for z in CASTABLE_ZONES if z not in opened]
+    lock_casting_zones(
+        ctx.state,
+        # The clock: whoever is resolving this. "Until **your** next turn."
+        ctx.controller,
+        select_players(ctx, spec.get("player", "each_opponent")),
+        zones,
+        duration,
+        source=ctx.source_oid,
+    )
 
 
 @register("win_game")

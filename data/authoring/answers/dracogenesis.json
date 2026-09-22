@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "dracogenesis",
+    "name": "Dracogenesis",
+    "oracle_text": "You may cast Dragon spells without paying their mana costs.",
+    "mana_cost": "{6}{R}{R}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You may cast Dragon spells without paying their mana costs.",
+        "effect": "free_cast_permission",
+        "affects_player": "you",
+        "affects_spells": {
+          "subtypes": [
+            "Dragon"
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

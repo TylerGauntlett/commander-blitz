@@ -167,12 +167,52 @@ STATIC_EFFECTS = frozenset(
         # the permission without it is every spell in the deck castable off the
         # top at its printed cost, which is a different and much stronger card.
         "cast_from_library_top",
+        # "You may cast Dragon spells without paying their mana costs."
+        # Dracogenesis; Omniscience narrowed by a filter. The third casting
+        # permission beside the two above and the only one that changes the
+        # **price** rather than the zone: those two say where a spell may be
+        # cast from and leave the cost alone, and `spell_cost_reduction` is
+        # clamped to the generic part so it can never reach a coloured pip.
+        # 601.2b's "without paying its mana cost" is not a reduction to zero --
+        # the difference shows on an X spell, where X is 0 (107.3b) -- so this
+        # prices the cast on `casting.FREE_COST` instead. `affects_spells`, the
+        # same printed-face filter `spell_cost_reduction` and
+        # `cast_from_graveyard` take, is what carries "Dragon"; the permission
+        # is optional, so the printed line is still offered beside it.
+        "free_cast_permission",
+        # "Artifact cards and red creature cards in your hand have warp
+        # {2}{R}." Tannuk, Steadfast Second. The fourth casting permission, and
+        # the only one that hands over a **price** somebody else's card did not
+        # print: the three above say where a spell may be cast from or that it
+        # costs nothing, and this one adds a second, separate cost beside the
+        # printed one.
+        #
+        # Not `grant_keyword`, which knows only the ability keywords and of
+        # which warp is not one -- and warp is a cost rather than an ability
+        # even if the word existed. Not `grant_ability` either: a cost is not a
+        # triggered, activated or static ability, and a granted ability reaches
+        # the battlefield while this grant must be live on cards sitting in a
+        # hand. `spell_cost_reduction` is the only other static that touches
+        # what a spell costs and it can only discount the printed price.
+        #
+        # `affects_spells` carries the filter and `warp_cost` the price. Read
+        # by `player_statics.granted_warp_cost` at every cast, so a card drawn
+        # after the granter arrived is covered.
+        "grant_warp",
         # "For each {B} in a cost, you may pay 2 life rather than pay that
         # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
         # player *pays*, in every cost, so there is no object to attach it to.
         # Read by the cast line and by `costs.can_pay` / `costs.pay`, each of
         # which reads a black pip as a Phyrexian one while it is on.
         "black_mana_as_phyrexian",
+        # "You may spend mana as though it were mana of any color." Chromatic
+        # Orrery. Player-wide for `black_mana_as_phyrexian`'s reason and read in
+        # the same places: it loosens which mana pays a coloured pip in *every*
+        # cost the player pays, spells and activated abilities alike, so there
+        # is no object for it to attach to. Distinct from the `any_color` flag
+        # on `exile` / `grant_playable`, which is the same waiver granted for
+        # one named card.
+        "spend_mana_as_any_color",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -217,6 +257,13 @@ STATIC_EFFECTS = frozenset(
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.
         "double_land_mana",
+        # Kinnan, Bonder Prodigy: "Whenever you tap a **nonland** permanent for
+        # mana, add one mana of any type that permanent produced." The line
+        # above with one printed word changed, and read at the same choke point
+        # for the same reason. Two effect names rather than one with an
+        # author-written filter: the printed class is what names the card, and
+        # no permanent is both, so they can never both apply to one tap.
+        "double_nonland_mana",
         "freeze_opponent_lands",
         # Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional
         # {B}." A triggered mana ability (605.1b), which resolves immediately,
@@ -308,6 +355,18 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Terror of the Peaks. "Spells your opponents cast that target this
+        # creature cost an additional 3 life to cast." An additional cost
+        # (601.2f) imposed on somebody *else's* spell, and it is not the line
+        # above pointing the other way: `spell_cost_reduction` is mana
+        # arithmetic, subtracted and clamped at zero by `costs.cost_reduction`,
+        # so a negative `amount` there could only round away to "costs nothing
+        # extra" -- which is why the loader now refuses one. This carries a
+        # `cost` node instead, the way `ward` and `attack_tax` do, and the
+        # loader holds it to `pay_life`: life is the one resource a caster can
+        # be made to spend on a stranger's terms without the payment solver
+        # having anything to say about it.
+        "spell_cost_increase",
         # Strong Back. "Equip abilities you activate … cost {3} less to
         # activate." The mirror of the line above, for activated abilities
         # instead of spells, and read by `costs.ability_mana` -- the one
@@ -470,12 +529,16 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
+        "free_cast_permission",
+        "grant_warp",
         "black_mana_as_phyrexian",
+        "spend_mana_as_any_color",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
+        "double_nonland_mana",
         "add_mana_on_tap",
         "freeze_opponent_lands",
         "replace_life_loss",
@@ -583,6 +646,39 @@ SPELL_FILTER_KEYS = frozenset(
     }
 )
 
+#: `SPELL_FILTER_KEYS` plus the one word only a *price* can act on.
+#:
+#: "**Other** Dragon spells you cast cost {1} less" -- The Ur-Dragon. Read by
+#: `player_statics.spell_cost_reduction` itself rather than by
+#: `_matches_printed`, which is handed a card face and has no source to compare
+#: it against, and kept out of the shared set so `cast_from_graveyard` -- whose
+#: permission is offered from a zone its own source is never in -- still refuses
+#: a word that would do nothing there.
+#:
+#: Unsayable before eminence, and unnecessary too: a permanent's own spell is
+#: never on the stack while that permanent is on the battlefield. A commander's
+#: is, because the command zone its eminence static is gathered from is the very
+#: zone it is cast out of.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+
+#: `SPELL_FILTER_KEYS` plus the one word a **union of two printed shapes** needs.
+#:
+#: "**Artifact cards and red creature cards** in your hand have warp {2}{R}" --
+#: Tannuk, Steadfast Second. Every other key in a printed-face filter is ANDed,
+#: so the sentence is unsayable without a disjunction: ``{"types":
+#: ["Artifact", "Creature"], "colors": ["R"]}`` matches only a red artifact
+#: creature, and ``any_types`` is an or over *types* alone -- it would let a
+#: blue creature card through, which is exactly the scope this grant must not
+#: have.
+#:
+#: Spelled as the effect-side selector and `COST_REDUCTION_FILTER_KEYS` already
+#: spell it, so one printed word has one spelling wherever it is written; read
+#: by `characteristics._matches_printed`, which recurses into the branches.
+#: Kept off `SPELL_FILTER_KEYS` itself rather than widened into it, because
+#: that set is shared with three statics whose readers were written before the
+#: word existed and would walk past it -- a silent over-grant.
+WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
+
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
 #: so that no static can depend on another static's output.
@@ -645,6 +741,58 @@ STATIC_FILTER_KEYS = frozenset(
         # `attached`, and safe for the same reason.
         "paired",
         "paired_with_source",
+        # "Zurgo and Ojutai has hexproof as long as **it entered this turn**";
+        # "If a creature you control **that entered this turn** would deal
+        # damage, it deals twice that much damage instead" (Neriv, Heart of the
+        # Storm). The one clause in this list that is not a characteristic and
+        # not a *current* relationship but a fact about the turn behind the
+        # permanent -- and it is admissible here for the reason
+        # `permanents_entered_this_turn` is admissible in `STATIC_VALUE_KEYS`,
+        # one step more safely than `tapped` is. An arrival is written into
+        # `TurnLedger.permanents_entered` once, by `GameState.emit` folding
+        # ENTERS_BATTLEFIELD, and no layer of the characteristics pipeline can
+        # write to it; so it is a pipeline **input** exactly as `owner` and
+        # `controller` are, and reading it cannot make one static depend on
+        # another's output. Power is the contrast: it is an *output*, rewritten
+        # by four of the layers, so it could never be let in on these terms --
+        # and the entry below lets it in on quite different ones.
+        #
+        # "Printed characteristics" was always shorthand for "printed
+        # characteristics plus board state no layer touches" -- `tapped`,
+        # `attacking`, `is_token`, `owner` are all already here on that footing.
+        # This is that same licence pointed at the turn ledger.
+        "entered_this_turn",
+        # "…for each creature you control **with power 4 or greater**" (Temur
+        # Battlecrier), and the whole ferocious family beside it -- "as long as
+        # you control a creature with power 4 or greater", "creatures with
+        # toughness 2 or less". The only **derived** characteristic in this
+        # list, and it is here under a restriction rather than as an exception.
+        #
+        # `entered_this_turn` one entry up got in by being an *input* no layer
+        # writes; power cannot get in on those terms, because four layers
+        # rewrite it and a static that read another static's P/T output is
+        # exactly the cycle `check_static_constraints` exists to forbid. The
+        # answer is not to widen the rule but to name a **fixed, earlier**
+        # reading of power that no static can move:
+        # `characteristics._base_pt` -- printed P/T, a copy exception's
+        # replacement of it (707.9b), bestow's 0/0, and a face-down permanent's
+        # 2/2 (707.2). No `animate`, no `set_pt`, no anthem, no +1/+1 counter,
+        # no pump. The fixed order stays exactly as acyclic as it was, and
+        # `_compute` opens by calling the same function, so the filter's answer
+        # cannot drift from the pipeline's starting point.
+        #
+        # The cost is one sentence, and it is a sentence `keywords` in this list
+        # already carries: a 3/3 pumped to 4 power by an anthem is not "a
+        # creature with power 4 or greater" to a static, exactly as a creature
+        # granted flying by Levitation does not have flying to one. The two
+        # readers of this language that run *outside* the pipeline --
+        # `triggers.matches_card_filter` and `cost_reduction._object_matches` --
+        # read the fully derived number, as they already do for types and
+        # keywords.
+        "power",
+        # The twin. One reader, one restriction, one set of tests: splitting
+        # them would be two spellings of one clause and one of them untested.
+        "toughness",
     }
 )
 
@@ -686,8 +834,23 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: commander you own", a **maximum** rather than a sum and so its own key --
 #: written as a `count` or a `total_power` it would add two partners' mana
 #: values together and quietly hand out a bigger discount than the card says.
+#: ``greatest_count`` is Cavern-Hoard Dragon's "the greatest number of artifacts
+#: **an opponent** controls" -- what `count` is to `greatest_mana_value`'s
+#: `total_mana_value`, one axis over: the tally is taken per player and
+#: maximised, because a reduction filter's ``controller: "opponent"`` names
+#: every opponent at once and so `count` is their **sum**. Its own key for the
+#: sharpest reason on this list: at a pod of four, three opponents with two
+#: artifacts each read {6} where the card says {2}, and in a two-player game
+#: the two numbers are identical -- so the wrong key is invisible until a pod.
 COST_REDUCTION_KEYS = frozenset(
-    {"count", "total_power", "amount", "greatest_mana_value", "total_mana_value"}
+    {
+        "count",
+        "greatest_count",
+        "total_power",
+        "amount",
+        "greatest_mana_value",
+        "total_mana_value",
+    }
 )
 
 #: Zones a cost reduction's filter may count.  **Imported** from

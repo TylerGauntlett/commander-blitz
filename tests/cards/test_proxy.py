@@ -687,6 +687,87 @@ class TestLands:
 # ----------------------------------------------------------------------
 
 
+class TestAManaAbilityYouMayNotAlwaysActivate:
+    """"Activate only if ..." is a condition, and dropping it is an upgrade.
+
+    Temple of the False God taps for two colourless *from turn five*. Generated
+    without the clause it taps for two on turn one, which is a strictly better
+    card than the one in the deck list -- the direction this generator exists to
+    never fail in. `AbilityModel.condition` on an activated ability is exactly
+    this sentence and `costs.mana_options_of` already asks it of a mana ability,
+    so what was missing was only the reading.
+    """
+
+    def test_the_clause_becomes_the_abilitys_condition(self):
+        _, card = built(
+            name="Temple of the False God",
+            type_line="Land",
+            oracle_text="{T}: Add {C}{C}. Activate only if you control five or more lands.",
+            produced_mana=("C",),
+        )
+        (ability,) = [a for a in card.abilities if a.is_mana_ability]
+        assert ability.activation_condition == {
+            "cmp": ">=",
+            "left": {
+                "count": {"zone": "battlefield", "controller": "you", "types": ["Land"]}
+            },
+            "right": {"const": 5},
+        }
+
+    def test_reading_it_makes_the_card_whole(self):
+        """The refusal it replaces cost the land its mana entirely.
+
+        Before the clause could be read the whole ability was dropped, so the
+        card came through `partial` with no mana ability at all -- a land in a
+        deck's mana base producing nothing.
+        """
+        result, card = built(
+            name="Temple of the False God",
+            type_line="Land",
+            oracle_text="{T}: Add {C}{C}. Activate only if you control five or more lands.",
+            produced_mana=("C",),
+        )
+        assert result.coverage == "full"
+        assert result.notes == ()
+        assert any(a.is_mana_ability for a in card.abilities)
+
+    def test_a_clause_it_cannot_read_still_refuses_the_whole_ability(self):
+        """The narrowness is the point, not a gap left for later.
+
+        A condition half-read is an activation restriction that does not
+        restrict. Refusing leaves a land that makes no mana, which is visible
+        the first time somebody counts on it; generating leaves a land that
+        makes mana it should not, which is not.
+        """
+        result, card = built(
+            name="Test Shrine",
+            type_line="Land",
+            oracle_text="{T}: Add {C}{C}. Activate only if an opponent controls a Dragon.",
+            produced_mana=("C",),
+        )
+        assert not any(a.is_mana_ability for a in card.abilities)
+        assert any("mana ability not generated" in n for n in result.notes)
+
+    def test_a_painlands_rider_is_still_an_effect(self):
+        """The two readable tails are different kinds of thing and stay apart.
+
+        A drawback is an effect the ability *has*; an activation clause is a
+        condition on having it at all. Written into the effects, "only if you
+        control five lands" would be a cost paid after the fact.
+        """
+        result, card = built(
+            name="Battlefield Forge",
+            type_line="Land",
+            oracle_text="{T}: Add {C}.\n{T}: Add {R} or {W}. This land deals 1 damage to you.",
+            produced_mana=("C", "R", "W"),
+        )
+        assert all(a.activation_condition is None for a in card.abilities)
+        written = result.model.model_dump(exclude_defaults=True, exclude_none=True)
+        painful = written["abilities"][1]
+        assert "condition" not in painful
+        assert [e["op"] for e in painful["effects"]] == ["choose_mode", "damage"]
+
+
 class TestPartiallyModelledCards:
     def test_a_planeswalker_enters_play_but_says_it_does_nothing(self):
         result, card = built(
@@ -700,17 +781,25 @@ class TestPartiallyModelledCards:
         assert "Planeswalker" in card.types
         assert any("loyalty" in n for n in result.notes)
 
-    def test_a_battle_enters_play_but_says_it_does_nothing(self):
-        result, card = built(
-            name="Invasion of Ravnica",
-            type_line="Battle — Siege",
-            mana_cost="{3}{G}{U}",
-            oracle_text="When this Siege enters, destroy target artifact.",
-            colors="GU",
-            color_identity="GU",
+    def test_a_battle_is_refused_rather_than_generated(self):
+        """It used to enter play inert and say so in a note. Now that battles
+        are real (310), the note would be the lie: 310.3's printed defense is
+        not a column in the catalog, and a battle entering with no defense
+        counters is defeated by 704.5x as it resolves. A card that vanishes
+        from the battlefield is not a weaker card, so it is refused by name and
+        goes in the import report to be hand-written."""
+        result = build_proxy(
+            facts(
+                name="Invasion of Ravnica",
+                type_line="Battle — Siege",
+                mana_cost="{3}{G}{U}",
+                oracle_text="When this Siege enters, destroy target artifact.",
+                colors="GU",
+                color_identity="GU",
+            )
         )
-        assert "Battle" in card.types
-        assert any("defence" in n for n in result.notes)
+        assert result.model is None
+        assert "defense" in (result.error or "")
 
     def test_a_kindred_card_drops_the_noise_type(self):
         result, card = built(

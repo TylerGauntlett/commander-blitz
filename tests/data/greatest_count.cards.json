@@ -1,0 +1,65 @@
+{
+  "_comment": "Shapes for tests/unit/test_greatest_count_reduction.py. t_gc_greatest is Cavern-Hoard Dragon's price -- greatest_count over the artifacts an opponent controls, a per-player maximum. t_gc_sum is the identical card written with `count`, the near miss: it sums one flat pool, so it is right at two players and wrong at a pod, which is what makes the distinction measurable rather than argued. t_gc_bauble is a plain artifact and t_gc_ogre a plain creature, so the filter has something to reject.",
+  "cards": [
+    {
+      "id": "t_gc_greatest",
+      "name": "Test Greatest Opposing Hoard",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest number of artifacts an opponent controls.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "greatest_count": {"controller": "opponent", "types": ["Artifact"]}
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_gc_sum",
+      "name": "Test Summed Opposing Hoard",
+      "oracle_text": "This spell costs {1} less to cast for each artifact your opponents control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "count": {"controller": "opponent", "types": ["Artifact"]}
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_gc_mine",
+      "name": "Test Greatest Hoard You Control",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest number of artifacts you control.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "greatest_count": {"types": ["Artifact"]}
+      },
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_gc_bauble",
+      "name": "Test Hoarded Bauble",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_gc_ogre",
+      "name": "Test Hoard Guard",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    }
+  ]
+}

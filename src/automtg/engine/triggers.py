@@ -120,6 +120,19 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: is absent from `OBJECT_SUBJECT_TRIGGERS` and `event_player` is the
     #: damaging seat. That is what makes `controller: "you"` read "creatures
     #: **you control** deal combat damage".
+    #:
+    #: That is also why this event's `filter` is answered by its own branch in
+    #: `_matches` rather than by the generic one: the generic branch asks the
+    #: subject, and with a player subject a `filter` here would refuse every
+    #: firing -- "one or more **Dragons** you control" would be an ability that
+    #: never fires, silently. Read over `damagers` instead, satisfied by any one
+    #: of them ("one or more"), and the same subset becomes the `damagers`
+    #: binding so "those Dragons" names exactly the creatures that qualified.
+    #:
+    #: `or_battle` widens it to "…to a player **or battle**" (Zurgo and Ojutai).
+    #: Without the flag the event keeps meaning what it always meant, even
+    #: though `_fire_damage_batch` now also fires for a swing that hit only a
+    #: battle.
     "creatures_deal_combat_damage": EventType.CREATURES_DEALT_COMBAT_DAMAGE,
     #: "Whenever an opponent loses life, you gain that much life." The amount is
     #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
@@ -995,6 +1008,22 @@ def _matches(
     ) is not spec.mana_ability:
         return False
 
+    # "…becomes the target of **a spell**" -- Goldspan Dragon, as against ward's
+    # "a spell or ability", which is this clause omitted. `announce_targets` has
+    # tagged every BECAME_TARGET with `is_spell` since the event existed and
+    # nothing read it, so the only trigger a card could write fired off an
+    # opponent's tapper, a fight ability and its own controller's equip.
+    #
+    # Read as a presence rather than a truthiness: a `spell` clause meeting an
+    # event that forgot to say would otherwise pass, which is the wide
+    # direction, and one that forgot to say is exactly the bug this guards.
+    if spec.targeted_by is not None:
+        flag = event.data.get("is_spell")
+        if flag is None:
+            return False
+        if (spec.targeted_by == "spell") is not bool(flag):
+            return False
+
     # "Whenever you draw your **second** card each turn." An ordinal is a fact
     # about the draw that just happened, and `draw_cards` writes it onto the
     # event, so it is answered here -- once, where the ability queues -- and
@@ -1026,7 +1055,33 @@ def _matches(
     if spec.defending is not None and not _defender_matches(spec.defending, obj, event):
         return False
 
-    if spec.filter is not None:
+    # "Whenever one or more **Dragons you control** deal combat damage to a
+    # player **or battle**" -- Zurgo and Ojutai. Both halves of that clause are
+    # here, and both have to be, because this event's subject is deliberately a
+    # *player* (see `OBJECT_SUBJECT_TRIGGERS`): the generic `filter` branch
+    # below asks `subject_oid`, which is `None` here, so a `filter` on this
+    # event would refuse every firing -- an ability that never fires, silently.
+    if spec.event == "creatures_deal_combat_damage":
+        # "…to a player or battle." Without `or_battle` this event means what it
+        # has always meant, "to one or more players", so a swing that connected
+        # only with a battle is not it. `_fire_damage_batch` fires one event for
+        # the whole batch either way; which sentence it answers is decided here.
+        if not spec.or_battle and not event.data.get("damaged"):
+            return False
+        # "…one or more **Dragons**." Read over the damagers rather than over a
+        # subject, and satisfied by *any* of them: the printed line is "one or
+        # more", so one Dragon in a swing of five creatures fires it once. The
+        # same list is narrowed to the matching creatures for the `damagers`
+        # binding -- see `event_bindings` -- so "those Dragons" and "did a
+        # Dragon connect" cannot come apart.
+        if spec.filter is not None and not _matching_damagers(state, obj, spec, event):
+            return False
+
+    # Every other event's `filter` is about its subject. The one exception is
+    # excluded rather than special-cased inside, so this branch keeps saying one
+    # thing -- and so that a filtered `creatures_deal_combat_damage` still
+    # reaches the `condition` check below, which an early return would skip.
+    if spec.filter is not None and spec.event != "creatures_deal_combat_damage":
         if subject_oid is None:
             return False
         if not matches_card_filter(state, subject_oid, spec.filter, obj):
@@ -1040,7 +1095,7 @@ def _matches(
             spec.condition,
             controller=obj.controller,
             source=obj.oid,
-            bindings=event_bindings(obj, spec, event),
+            bindings=event_bindings(state, obj, spec, event),
         ):
             return False
 
@@ -1113,7 +1168,41 @@ def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, n
     return earlier + 1
 
 
-def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:
+def _matching_damagers(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> list[int]:
+    """The creatures on this combat-damage batch that ``spec.filter`` names.
+
+    "Whenever one or more **Dragons** you control deal combat damage to a player
+    or battle … You may return **one of those Dragons** to its owner's hand."
+    Two questions about the same list, asked from two places -- `_matches` wants
+    to know whether any of them matched, `event_bindings` wants exactly the ones
+    that did -- so they are one function and cannot come apart.
+
+    Narrowing the binding is the whole point rather than a nicety. `damagers`
+    unfiltered is every creature that connected, so "one of those Dragons" would
+    reach the Elf that got through beside them; and
+    `{"zone": "battlefield", "subtypes": ["Dragon"], "controller": "you"}` --
+    the near miss the gap record names -- is strictly larger still, because it
+    includes the Dragons that stayed home.
+
+    `matches_card_filter` reads the **printed** face, which is the right reading
+    here for the reason it is right for `dies`: the creature may have left the
+    battlefield between the damage and the ability resolving, and its printed
+    face is what is left to ask. An unfiltered spec returns the whole list
+    untouched, so this costs nothing on the events that do not ask.
+    """
+    damagers = event.data.get("damagers") or []
+    if spec.filter is None:
+        return [int(oid) for oid in damagers]
+    return [
+        int(oid) for oid in damagers if matches_card_filter(state, int(oid), spec.filter, obj)
+    ]
+
+
+def event_bindings(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> dict[str, Any]:
     """What the event carried, for a condition or a queued trigger to read.
 
     Shared by `_matches` and `_queue` so an intervening-if and the ability it
@@ -1122,6 +1211,10 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
     against the creature that entered read zero and the ability never fired --
     quietly, and only for the conditions that ask about the event rather than
     about the board.
+
+    ``state`` is taken for the one binding that is not a straight copy off the
+    payload: `damagers` on a filtered `creatures_deal_combat_damage` is narrowed
+    to the creatures the filter names, and deciding that needs the board.
     """
     bindings: dict[str, Any] = {
         "self": obj.oid,
@@ -1135,6 +1228,8 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
     for key in EVENT_BINDING_KEYS:
         if key in event.data:
             bindings[key] = event.data[key]
+    if spec.event == "creatures_deal_combat_damage" and spec.filter is not None:
+        bindings["damagers"] = _matching_damagers(state, obj, spec, event)
     return bindings
 
 
@@ -1170,6 +1265,18 @@ EVENT_BINDING_KEYS = (
     # whom, so on a split attack it also names the creatures attacking the
     # trigger's own controller.
     "attackers",
+    # "…You may return **one of those Dragons** to its owner's hand" -- Zurgo
+    # and Ojutai. The creatures that connected, on
+    # `creatures_deal_combat_damage`, and the same list-of-oids shape
+    # `attackers` is: `resolve_pool` has accepted a list since devour, so
+    # nothing downstream had to learn anything. `_fire_damage_batch` has put it
+    # on the event since the event existed, and it was being dropped here.
+    #
+    # On a **filtered** trigger this key is overwritten below with the subset
+    # the filter names, because "those Dragons" is not "those creatures": the
+    # Elf that got through beside them is on the payload and is not what the
+    # card points at. See `_matching_damagers`.
+    "damagers",
     # "Whenever you cast an instant or sorcery spell, **if it targets one or
     # more other permanents you control**, create a token that's a copy of one
     # of those permanents" -- Orvar, the All-Form. The object targets of the
@@ -1445,11 +1552,26 @@ def matches_card_filter(
     # at the one instant that was knowable. A `mana_spent` event of its own
     # would fire during cost payment, before the spell is on the stack and
     # before its filter has anything to match against.
+    # "…**if mana from a Treasure was spent to cast it**" -- Smaug, Wicked Worm.
+    # The same key widened from one oid to a class of permanents, because that
+    # is the other printed spelling and an oid cannot say it: no card can write
+    # another object's oid, and "self" would ask about mana Smaug made, which is
+    # none. Matched against `mana_spent_traits` -- what the sources *were* --
+    # and not against `mana_sources_spent`, because the Treasure is sacrificed
+    # to make its mana and its oid is dangling by the time this runs. See
+    # `mana.ManaOrigin`.
     paid_by = filt.get("paid_by")
     if paid_by is not None:
-        wanted = ability_source.oid if paid_by == "self" else paid_by
-        if wanted not in obj.mana_sources_spent:
-            return False
+        if isinstance(paid_by, Mapping):
+            if not any(
+                _origin_matches(origin, paid_by, ability_source)
+                for origin in obj.mana_spent_traits
+            ):
+                return False
+        else:
+            wanted = ability_source.oid if paid_by == "self" else paid_by
+            if wanted not in obj.mana_sources_spent:
+                return False
     # "Whenever a token created with this creature…" -- honoured here as well
     # as in `selectors.matches` for `not_supertypes`' reason: a trigger filter
     # is validated against the same keys, and one that loaded and did nothing
@@ -1511,6 +1633,16 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    # "…that entered this turn". Honoured here because a `cause_filter` is
+    # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the
+    # silently-wider filter the two clauses above exist to prevent. It reads the
+    # turn ledger rather than the object, which is what makes it answerable at
+    # all in this function: trigger subjects are frequently gone by the time we
+    # look, and an arrival snapshot outlives the permanent that made it.
+    if "entered_this_turn" in filt and bool(
+        state.turn_ledger.entered_this_turn(oid)
+    ) != bool(filt["entered_this_turn"]):
+        return False
     # Honoured here for the reason `tapped` above is: a trigger filter is
     # validated against the same `SELECTOR_KEYS`, and a key that loaded and was
     # then ignored would be silently wider -- a creature attacking your
@@ -1558,6 +1690,62 @@ def matches_card_filter(
         toughness is not None
         and not _compare((live.toughness if live else card.toughness) or 0, toughness)
     )
+
+
+#: The only keys a selector-valued `paid_by` may use -- everything
+#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
+#:
+#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
+#: filtered is a *memory* of a permanent and not a permanent: "tapped",
+#: "attacking", a P/T comparison or a zone have no answer about an object that
+#: was sacrificed three cost-payments ago. Read through the general selector
+#: machinery they would all be silently false, which is the failure mode this
+#: capability exists to fix, so they are refused at load time instead.
+PAID_BY_SELECTOR_KEYS = frozenset(
+    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
+)
+
+
+def _origin_matches(
+    origin: Any, filt: Mapping[str, Any], ability_source: GameObject
+) -> bool:
+    """Whether one remembered mana source answers a selector-valued ``paid_by``.
+
+    ``origin`` is a :class:`mana.ManaOrigin` -- what a permanent was when it
+    made a unit of mana this spell's payment consumed. Matched on the snapshot
+    and never on the live board: the whole point is that the object may be gone.
+
+    ``controller`` is relative to the *ability source*, as everywhere else in a
+    trigger filter, and compares the controller the source had when it made the
+    mana. That is the printed reading: "mana from a Treasure you control" is
+    about the Treasure you tapped, not about who would control it now.
+    """
+    name = filt.get("name")
+    if name is not None:
+        wanted = [name] if isinstance(name, str) else list(name)
+        if origin.name not in wanted:
+            return False
+    types = filt.get("types")
+    if types and not set(types).issubset(origin.types):
+        return False
+    any_types = filt.get("any_types")
+    if any_types and not (set(any_types) & origin.types):
+        return False
+    not_types = filt.get("not_types")
+    if not_types and set(not_types) & origin.types:
+        return False
+    subtypes = filt.get("subtypes")
+    if subtypes and not (set(subtypes) & origin.subtypes):
+        return False
+    supertypes = filt.get("supertypes")
+    if supertypes and not set(supertypes).issubset(origin.supertypes):
+        return False
+    controller = filt.get("controller")
+    if controller == "you" and origin.controller != ability_source.controller:
+        return False
+    if controller == "opponent" and origin.controller == ability_source.controller:
+        return False
+    return True
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
@@ -1655,7 +1843,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # condition and the ability it gates cannot read "that creature"
     # differently. `x` is carried through so "enters with X counters" can read
     # what was paid.
-    bindings = event_bindings(obj, spec, event)
+    bindings = event_bindings(state, obj, spec, event)
 
     card = state.card_of(obj)
     # `ability_index` is read back against whichever list `granted_by` names, so

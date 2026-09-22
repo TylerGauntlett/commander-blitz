@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .enums import Step, Zone
+from .mana import ManaOrigin
 from .structs import TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
@@ -192,6 +193,19 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: **What** those permanents were -- "if mana from a Treasure was spent to
+    #: cast it" (Smaug, Wicked Worm). The class-of-permanents twin of the oid
+    #: set above, and it cannot be derived from it: the Treasure is sacrificed
+    #: to make the mana, and `sba._tokens_and_attachments` pops the token out of
+    #: `state.objects` before the spell is ever on the stack, so every oid in
+    #: `mana_sources_spent` that named a Treasure resolves to nothing by the
+    #: time a trigger asks. Snapshotted onto the pip at
+    #: `characteristics.mana_source_traits` and carried here by `pay_mana`.
+    #:
+    #: Unioned rather than assigned, for `uncounterable_mana_spent`'s reason: a
+    #: cast pays in more than one call when it has an additional cost, and a
+    #: spell partly paid for with Treasure mana was paid for with Treasure mana.
+    mana_spent_traits: frozenset[ManaOrigin] = frozenset()
     #: The turn this card was **drawn**, or -1 if it never was. "Choose two
     #: cards in your hand drawn this turn" -- Sylvan Library.
     #:
@@ -214,6 +228,23 @@ class GameObject:
     #: itself. This one is what somebody *else* said about it, exactly as
     #: `granted_rebound` is to `CardDef.rebound`.
     uncounterable_mana_spent: bool = False
+    #: Keywords the mana that paid for this **spell** owes the **permanent** it
+    #: is about to become -- Arena of Glory's "if that mana is spent on a
+    #: creature spell, it gains haste until end of turn". Written by
+    #: `costs.pay_mana` beside `uncounterable_mana_spent` and read by
+    #: `zones._enter_battlefield`, which empties it as it hands the keywords over
+    #: as `until_eot` grants.
+    #:
+    #: A staging field and not the grant itself, which is the whole difficulty of
+    #: the printed line: the spell on the stack and the permanent are one object
+    #: (400.7 notwithstanding), and `reset_permanent_state` clears
+    #: `granted_keywords` and `until_eot` on the way in -- so haste written onto
+    #: the spell is wiped exactly as the creature arrives, which looks right for
+    #: the length of one test that never attacks. `move_object` carries this one
+    #: across that reset, and **only** when the destination is the battlefield:
+    #: a countered creature spell must not keep the promise in its graveyard and
+    #: cash it on a later cast.
+    mana_granted_keywords: set[str] = field(default_factory=set)
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -241,6 +272,46 @@ class GameObject:
     #: `reset_permanent_state` -- see the note there -- and is cleared by
     #: `_enter_battlefield` once it has been read.
     enters_cost_paid: bool = False
+    #: "If this artifact would enter, you may discard a land card instead."
+    #: Whether the controller took *that* offer -- Mox Diamond's, and not
+    #: `enters_cost_paid`'s. Two fields because the two answers mean opposite
+    #: things: a paid `unless_cost` cancels a modification and the permanent
+    #: arrives either way, where a paid `instead_cost` is the only thing that
+    #: lets the arrival happen at all.
+    #:
+    #: Recorded by `zones.offer_enters_replacement` just before the move and
+    #: read by `move_object` itself, not by `_enter_battlefield`: by the time
+    #: that runs the permanent is already on the battlefield, and the whole
+    #: point of the clause is that an unpaid arrival never gets there.
+    #:
+    #: ``False`` is therefore the answer for "nobody was asked" as well as for
+    #: "asked and declined", and they are deliberately the same answer -- an
+    #: arrival that reached `move_object` without the offer being made is one
+    #: nobody paid for, which is the printed card's own worst branch rather
+    #: than a permanent that quietly enters for free.
+    #:
+    #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason -- that
+    #: reset runs during the very move this answer has to be read in.
+    enters_replacement_paid: bool = False
+    #: Riot (702.113): which half of "a +1/+1 counter or haste" this arrival's
+    #: controller chose, ``"counter"`` or ``"haste"``.  Recorded by
+    #: `zones.offer_riot_choice` just before the move and read -- and cleared --
+    #: by `_enter_battlefield`, beside `enters_cost_paid` and `enters_copy_of`
+    #: and for their reason: the answer belongs to *this* arrival, and a
+    #: permanent that leaves and comes back is a new object (400.7) whose
+    #: controller has not been asked anything.
+    #:
+    #: A field rather than a counter placed at the offer site, because 614.1c is
+    #: the whole point of the keyword: the creature is never on the battlefield
+    #: at its printed size, so the counter has to land inside the arrival, in
+    #: `_enter_battlefield`, before the ENTERS_BATTLEFIELD event goes out.
+    #: ``None`` is "riot never applied here", which is also what an arrival on a
+    #: route that cannot stop to ask records -- a token, whose creation is not a
+    #: generator.
+    #:
+    #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason: that
+    #: reset runs during the very move this answer has to be read in.
+    riot_choice: str | None = None
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -513,6 +584,13 @@ class GameObject:
     #: Triumph's two prices lead to one effect and never needed reading back;
     #: a tiered card cannot resolve at all without knowing which was paid.
     cast_cost_option: int | None = None
+    #: **Spree** (702.166a): which of `CardDef.spree`'s priced modes were bought
+    #: as this object was cast, by index. Same contract as `cast_cost_option` --
+    #: stamped before `spell_effects` run, because the whole card is an `if` on
+    #: it -- and a *set* rather than one index, because "choose one or more"
+    #: buys a subset and a spell that ran only the first mode it was charged for
+    #: would be a strictly worse card at the same price.
+    cast_spree_modes: tuple[int, ...] = ()
     #: **Which step this object was cast in** -- addendum's "if you cast this
     #: spell during your main phase". Recorded by `stack.push_spell`, because
     #: that is the moment 608.2 is talking about: the spell can be cast in a
@@ -656,6 +734,23 @@ class GameObject:
     #: colourless mana), and kept beside it for the same reason: it rides on the
     #: permission and expires with it.
     playable_any_color: bool = False
+    #: "…its owner may cast it **for {2} rather than its mana cost**" -- airbend
+    #: (Avatar's Wrath). The flat price the permission carries, as a printed
+    #: mana string, or None for the ordinary permission that charges whatever
+    #: the card says.
+    #:
+    #: A *replacement*, not a discount, and that is the whole reason it is a
+    #: field rather than a number folded into the existing reductions:
+    #: `costs.cost_reduction` clamps every reduction to the **generic** part of
+    #: a cost, so no subtraction reaches a coloured pip and no single number is
+    #: right for two airbent creatures of different mana values. {2} is {2}
+    #: whether the card printed {G} or {7}{U}{U}.
+    #:
+    #: Distinct from `playable_free`, which is 601.2b's "without paying its
+    #: mana cost" and leaves nothing to pay at all -- this one has a price, it
+    #: is simply not the card's. Rides on the permission and dies with it, the
+    #: way `playable_any_color` does.
+    playable_alt_cost: str | None = None
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -904,6 +999,11 @@ class GameObject:
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
         self.granted_keywords = set()
+        # Cleared like every other battlefield word, and deliberately: a spell
+        # that was countered, or an instant that finished resolving, is in a
+        # graveyard owing nobody haste. `move_object` restores it across this
+        # reset for the one destination that is owed it -- the battlefield.
+        self.mana_granted_keywords = set()
         self.granted_abilities_permanent = []
         self.tapped = False
         self.damage = 0
@@ -925,8 +1025,9 @@ class GameObject:
         self.leaves_to = None
         self.copying = None
         # `enters_copy_of` is deliberately absent, exactly as `enters_cost_paid`
-        # is: it is an answer about the arrival this reset is clearing the way
-        # for, and `_enter_battlefield` clears it itself once it has been read.
+        # and `enters_replacement_paid` are: each is an answer about the arrival
+        # this reset is clearing the way for, and each is cleared by whichever
+        # of `move_object` and `_enter_battlefield` has read it.
         self.copying_name = None
         self.renamed_to = None
         self.lost_all_abilities = False
@@ -967,6 +1068,7 @@ class GameObject:
         self.playable_group = None
         self.playable_any_type = False
         self.playable_any_color = False
+        self.playable_alt_cost = None
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()

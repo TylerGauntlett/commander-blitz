@@ -1,0 +1,141 @@
+{
+  "_comment": "The Chrome Mox shape: a mana ability whose colours are the printed colours of a CARD, read through an imprint link. t_chrome is the whole capability; the three spells are the colours it can read (mono, gold, colourless), and t_chrome_reflect is the near miss written as `reflecting`, which polls the exiled card's mana ABILITIES and so taps for nothing.",
+  "cards": [
+    {
+      "id": "t_chrome",
+      "name": "Test Chrome Mox",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.\n{T}: Add one mana of any of the exiled card's colors.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exile a nonartifact, nonland card from your hand?",
+              "condition": {
+                "exists": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "not_types": ["Artifact", "Land"]
+                }
+              },
+              "effects": [
+                {
+                  "op": "exile",
+                  "link": "self",
+                  "objects": {
+                    "zone": "hand",
+                    "controller": "you",
+                    "count": 1,
+                    "not_types": ["Artifact", "Land"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any of the exiled card's colors.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "colors_of": {"zone": "exile", "controller": "any", "exiled_with": "self"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chrome_reflect",
+      "name": "Test Chrome Mirror",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.\n{T}: Add one mana of any of the exiled card's colors.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exile a nonartifact, nonland card from your hand?",
+              "condition": {
+                "exists": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "not_types": ["Artifact", "Land"]
+                }
+              },
+              "effects": [
+                {
+                  "op": "exile",
+                  "link": "self",
+                  "objects": {
+                    "zone": "hand",
+                    "controller": "you",
+                    "count": 1,
+                    "not_types": ["Artifact", "Land"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any of the exiled card's colors.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {"zone": "exile", "controller": "any", "exiled_with": "self"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_blue_spell",
+      "name": "Test Blue Spell",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [{"op": "draw", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_gold_spell",
+      "name": "Test Gold Spell",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{U}{R}",
+      "types": ["Instant"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "spell_effects": [{"op": "draw", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_void_spell",
+      "name": "Test Colorless Spell",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{2}",
+      "types": ["Instant"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [{"op": "draw", "amount": {"const": 1}}]
+    }
+  ]
+}

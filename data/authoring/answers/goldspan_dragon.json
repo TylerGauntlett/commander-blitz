@@ -1,0 +1,158 @@
+{
+  "card": {
+    "id": "goldspan_dragon",
+    "name": "Goldspan Dragon",
+    "oracle_text": "Flying, haste\nWhenever this creature attacks or becomes the target of a spell, create a Treasure token.\nTreasures you control have \"{T}, Sacrifice this artifact: Add two mana of any one color.\"",
+    "mana_cost": "{3}{R}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Dragon"
+    ],
+    "power": 4,
+    "toughness": 4,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [
+      "flying",
+      "haste"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks or becomes the target of a spell, create a Treasure token.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {
+              "const": 1
+            },
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks or becomes the target of a spell, create a Treasure token.",
+        "trigger": {
+          "event": "becomes_target",
+          "source": "self",
+          "controller": "any",
+          "targeted_by": "spell"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {
+              "const": 1
+            },
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Treasures you control have \"{T}, Sacrifice this artifact: Add two mana of any one color.\"",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {
+          "controller": "you",
+          "subtypes": [
+            "Treasure"
+          ]
+        }
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice this artifact: Add two mana of any one color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "White",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}{W}"
+                  }
+                ]
+              },
+              {
+                "label": "Blue",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}{U}"
+                  }
+                ]
+              },
+              {
+                "label": "Black",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}{B}"
+                  }
+                ]
+              },
+              {
+                "label": "Red",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}{R}"
+                  }
+                ]
+              },
+              {
+                "label": "Green",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "count": 1
+    }
+  }
+}

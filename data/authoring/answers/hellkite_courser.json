@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "hellkite_courser",
+    "name": "Hellkite Courser",
+    "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+    "mana_cost": "{4}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Dragon"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "power": 6,
+    "toughness": 5,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a commander onto the battlefield?",
+            "effects": [
+              {
+                "op": "choose_permanents",
+                "as": "the_commander",
+                "prompt": "Choose a commander you own",
+                "objects": {
+                  "zone": "command",
+                  "player": "you",
+                  "is_commander": true,
+                  "count": 1
+                }
+              },
+              {"op": "put_onto_battlefield", "objects": {"binding": "the_commander"}},
+              {
+                "op": "grant_keyword",
+                "keywords": ["haste"],
+                "objects": {"binding": "the_commander"}
+              },
+              {
+                "op": "delay",
+                "step": "end_step",
+                "text": "Return it to the command zone at the beginning of the next end step.",
+                "effects": [
+                  {"op": "return_to_command_zone", "objects": {"binding": "the_commander"}}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

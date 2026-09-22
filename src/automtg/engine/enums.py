@@ -244,6 +244,39 @@ class Keyword(str, Enum):
     #: card carrying the word can say so instead of leaving the line unaccounted
     #: for, which the authoring verifier's residual gate would rightly reject.
     PARTNER = "partner"
+    #: Deck construction only, and the second of its kind -- "you can have a
+    #: Background as a second commander" (702.124).  Inert for partner's exact
+    #: reason: the engine is handed a finished deck, so the word has nothing
+    #: left to do once a game starts, and it exists so a card printing the line
+    #: can claim it instead of leaving the authoring verifier's residual gate an
+    #: unaccounted sentence.
+    #:
+    #: Deliberately **not** folded onto `PARTNER`, which is the near miss: the
+    #: two rules build different decks.  A partner pair is two commanders that
+    #: both print the word; this is one commander plus a Background enchantment,
+    #: which prints nothing at all.  One word meaning both would let a deck be
+    #: validated against the wrong rule the moment `validate_deck` grows an
+    #: opinion about either.
+    CHOOSE_A_BACKGROUND = "choose_a_background"
+    #: Riot (702.113): "this creature enters with your choice of a +1/+1
+    #: counter or haste."  The first keyword whose whole content is a **614.1c
+    #: replacement**, and it is a `Keyword` rather than a `ReplacementModel`
+    #: entry for the one reason that family could not carry it: every
+    #: `self_enters*` event is printed on the permanent it modifies, and riot's
+    #: commonest printing -- Rhythm of the Wild's "nontoken creatures you
+    #: control **have riot**" -- is one permanent handing the replacement to
+    #: other creatures.  A replacement is not grantable; a keyword is, through
+    #: the `grant_keyword` static that already exists, so writing riot as a
+    #: keyword is what makes the granted form sayable at all.
+    #:
+    #: It takes no parameter -- "a +1/+1 counter or haste" is the whole of the
+    #: quality -- which is the routing rule in `docs/keywords.md`, and it is
+    #: read at exactly one point: `zones.offer_riot_choice`, called by every
+    #: arrival path that can stop to ask.  Once the permanent is on the
+    #: battlefield the keyword is spent and reads as a characteristic only,
+    #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
+    #: does it during a zone change rather than on the board.
+    RIOT = "riot"
 
 
 LANDWALK_SUBTYPE = {
@@ -271,7 +304,7 @@ EVASION_KEYWORDS = frozenset(
 #: Keywords with no in-game effect, kept so a card can represent its own text.
 #: `docs/rules-coverage.md` names them; anything added here must genuinely do
 #: nothing during a game, or it belongs in the engine instead.
-INERT_KEYWORDS = frozenset({Keyword.PARTNER})
+INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
 
 #: Counter kinds that are **keyword counters** (122.1c): "a keyword counter is a
 #: counter with a keyword ability's name, and a permanent with one has that
@@ -284,10 +317,10 @@ INERT_KEYWORDS = frozenset({Keyword.PARTNER})
 #: inert tally and load clean, which is the failure the authoring gates exist to
 #: refuse.
 #:
-#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner is a
-#: deck-construction word and the engine is handed a finished deck, so a partner
-#: counter could not mean anything mid-game; a counter kind that grants nothing
-#: is the inert tally in a costume.
+#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner and choose a
+#: Background are deck-construction words and the engine is handed a finished
+#: deck, so neither counter could mean anything mid-game; a counter kind that
+#: grants nothing is the inert tally in a costume.
 #:
 #: Read by `characteristics._compute` (the keyword-grant layer) and by
 #: `cards.loader` (which refuses a near-miss spelling of one).
@@ -463,6 +496,7 @@ SUBTYPE_CLASS: dict[str, str] = {
     "Greensleeves": "Planeswalker",
     "Grist": "Planeswalker",
     "Guff": "Planeswalker",
+    "Heartwood": "Artifact",
     "Huatli": "Planeswalker",
     "Incubator": "Artifact",
     "Infinity": "Artifact",

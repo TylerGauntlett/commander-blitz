@@ -1,0 +1,97 @@
+{
+  "card": {
+    "id": "smaug_wicked_worm",
+    "name": "Smaug, Wicked Worm",
+    "oracle_text": "Flying\nWhen Smaug enters, create X tapped Treasure tokens, where X is the number of artifacts your opponents control.\nWhenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+    "mana_cost": "{3}{B}{R}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Dragon"
+    ],
+    "power": 5,
+    "toughness": 5,
+    "colors": [
+      "B",
+      "R"
+    ],
+    "color_identity": [
+      "B",
+      "R"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Smaug enters, create X tapped Treasure tokens, where X is the number of artifacts your opponents control.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "controller": "you",
+            "tapped": true,
+            "amount": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Artifact"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "paid_by": {
+              "subtypes": [
+                "Treasure"
+              ],
+              "controller": "you"
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          },
+          {
+            "op": "lose_life",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "tokens": {
+      "id": "treasure_token",
+      "count": 1
+    },
+    "battlefield_count": 34
+  }
+}

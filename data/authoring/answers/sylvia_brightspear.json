@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "sylvia_brightspear",
+    "name": "Sylvia Brightspear",
+    "oracle_text": "Partner with Khorvath Brightflame (When this creature enters, target player may put Khorvath into their hand from their library, then shuffle.)\nDouble strike\nDragons your team controls have double strike.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Knight"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["double_strike"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Partner with Khorvath Brightflame (When this creature enters, target player may put Khorvath into their hand from their library, then shuffle.)",
+        "trigger": {"event": "self_enters"},
+        "targets": [{"id": "t1", "kind": "player", "count": 1}],
+        "effects": [
+          {
+            "op": "may",
+            "player": {"target": "t1"},
+            "prompt": "Put Khorvath Brightflame into your hand from your library?",
+            "effects": [
+              {
+                "op": "search_library",
+                "player": {"target": "t1"},
+                "count": 1,
+                "selector": {"name": "Khorvath Brightflame"},
+                "destination": "hand",
+                "shuffle": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Dragons your team controls have double strike.",
+        "effect": "grant_keyword",
+        "affects": {"controller": "you", "subtypes": ["Dragon"]},
+        "keywords": ["double_strike"]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["double_strike"], "count": 1}
+  }
+}

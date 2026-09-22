@@ -43,7 +43,7 @@ die.
 **Attacking one keeps `attackers[oid]` meaning "the defending player."** A
 planeswalker's controller *is* that player (506.2), so the fifteen existing
 reads stay true and only declaration, damage assignment and serialization learn
-the difference — carried by a parallel `attacking_planeswalker` map rather than
+the difference — carried by a parallel `attacking_permanent` map rather than
 by widening the value to a union.
 """
 
@@ -225,7 +225,7 @@ class TestAttackingOne:
         game, bear, walker = self.combat_board(builder)
         self.swing_at_the_walker(game, bear, walker)
         assert game.state.combat.attackers[bear] == 1
-        assert game.state.combat.attacking_planeswalker[bear] == walker
+        assert game.state.combat.attacking_permanent[bear] == walker
 
 
 class TestTheActionSpaceCanSayIt:

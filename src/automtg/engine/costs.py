@@ -17,7 +17,8 @@ from .characteristics import (
     abilities_of,
     chars,
     mana_added_on_tap,
-    player_doubles_land_mana,
+    mana_source_traits,
+    player_doubles_mana_from,
 )
 from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.selectors import resolve_pool
@@ -31,6 +32,7 @@ from .mana import (
     SYMBOL_INDEX,
     SYMBOLS,
     ManaCost,
+    ManaOrigin,
     ManaRestriction,
     ManaSource,
     Requirement,
@@ -99,7 +101,7 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
     which is where the printed "and/or" (an any-of) and "a creature spell **of**
     the chosen type" (an all-of) are told apart.
 
-    The supertypes were the quiet omission. `loader.mana._restriction_name`
+    The supertypes were the quiet omission. `mana._restriction_name`
     accepts any alphabetic word, so "legendary" loaded clean and then matched
     nothing on every card in the game -- mana that was permanently unspendable,
     which reads on the board as a land that taps for nothing rather than as an
@@ -107,12 +109,26 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
 
     Tagged :data:`CAST`, which is the half of the purpose that keeps every
     restriction shipped before Secluded Courtyard meaning what it printed.
+
+    The two **numbers** ride along beside the names for the same reason the
+    supertypes had to: Helga, Skittish Seer's "…only to cast creature spells
+    with mana value 4 or greater or creature spells with {X} in their mana
+    costs" names no type for either clause, and a purpose carrying names alone
+    would leave both unaskable -- so the restriction would have to be written as
+    a bare "creature" and fund every creature spell ever printed.
+
+    `mana_cost.x_count` rather than a mana value of X, for rule 107.3's reason:
+    a Fireball cast for X=0 is still "a spell with {X} in its mana cost", and
+    202.3b scores that X as 0 -- so `mana_value` catches Fireball and Shock
+    together or neither, and the symbol question is a different question.
     """
     return SpendPurpose(
         kind=CAST,
         names=frozenset(
             t.lower() for t in (*card.types, *card.subtypes, *card.supertypes)
         ),
+        mana_value=card.mana_value,
+        x_in_mana_cost=card.mana_cost.x_count > 0,
     )
 
 
@@ -142,13 +158,23 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
     obj = state.objects.get(oid)
     if obj is None:
         return SpendPurpose(kind=ACTIVATE, names=frozenset())
+    card = state.card_of(obj)
     if obj.on_battlefield:
         c = chars(state, oid)
         names = (*c.types, *c.subtypes, *c.supertypes)
     else:
-        card = state.card_of(obj)
         names = (*card.types, *card.subtypes, *card.supertypes)
-    return SpendPurpose(kind=ACTIVATE, names=frozenset(t.lower() for t in names))
+    # The cost predicates are answered here too, off the printed face, rather
+    # than left `None`. A source has a mana value and a printed cost whether or
+    # not any card asks about them, and answering honestly means the day one
+    # prints "or activate an ability of a permanent with mana value 4 or
+    # greater" this is not the place that quietly said no.
+    return SpendPurpose(
+        kind=ACTIVATE,
+        names=frozenset(t.lower() for t in names),
+        mana_value=card.mana_value,
+        x_in_mana_cost=card.mana_cost.x_count > 0,
+    )
 
 
 def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | None:
@@ -192,8 +218,15 @@ def _resolve_groups(
             # "spend this only to cast a spell that is *not* the chosen type".
             # Substituting both anyway means the day one does, this is not the
             # place that quietly kept the sentinel.
+            # `replace` rather than a fresh `RestrictionGroup`, so a predicate
+            # the group also carries survives the substitution. Rebuilt from
+            # the two name sets alone, a "creature spell of the chosen type
+            # with mana value 4 or greater" would quietly lose the comparison
+            # the instant a type was chosen -- which is the one moment the
+            # restriction starts being read.
             out.append(
-                RestrictionGroup(
+                replace(
+                    group,
                     required=_swap(group.required, chosen),
                     forbidden=_swap(group.forbidden, chosen),
                 )
@@ -297,7 +330,10 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     if is_creature and obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
         return []
     is_land = "Land" in c.types
-    doubled = is_land and player_doubles_land_mana(state, obj.controller)
+    # Vorinclex over a land, Kinnan over anything else. Asked of the permanent
+    # rather than recomputed from `is_land` here, so the two doubling statics
+    # cannot drift apart between this offer and the payment below.
+    doubled = player_doubles_mana_from(state, obj.controller, oid)
     # Crypt Ghast. Every ability reaching the solver is tap-only, so each one
     # is "tapping it for mana" (106.12) and each option gets the extra.
     extra = mana_added_total(state, obj.controller, oid)
@@ -416,6 +452,10 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         return _chosen_color_options(state, oid, ability)
     if ability.mana_identity:
         return _identity_options(state, oid, ability)
+    if ability.mana_colors_of is not None:
+        return _colors_of_options(state, oid, ability)
+    if ability.mana_each_color_among is not None:
+        return _each_color_among_options(state, oid, ability)
     if ability.mana_reflects is None:
         return ability.mana_options
 
@@ -440,14 +480,127 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
             # `mana_reflects`, and it never gets here.
             for option in mana_options_of(state, other, other_ability):
                 for index, amount in enumerate(option):
-                    if amount and index != SYMBOL_INDEX[COLORLESS]:
-                        colors.add(index)
+                    if not amount:
+                        continue
+                    # "any **color**" drops the sixth type of mana here;
+                    # "any **type**" keeps it. That one index is the entire
+                    # difference between Exotic Orchard and Reflecting Pool: a
+                    # Pool beside a Wastes taps for {C}, an Orchard beside one
+                    # taps for nothing. Only the *type list* widens -- the
+                    # question, the recursion and the skip above are the same,
+                    # so a Pool still offers nothing the board cannot make.
+                    if index == SYMBOL_INDEX[COLORLESS] and not ability.mana_reflects_any_type:
+                        continue
+                    colors.add(index)
 
     out: list[tuple[int, ...]] = []
     for option in ability.mana_options:
         if any(amount and i in colors for i, amount in enumerate(option)):
             out.append(option)
     return tuple(out)
+
+
+def _colors_of_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """The five-colour superset narrowed to the colours *printed on a card*.
+
+    "{T}: Add one mana of any of the exiled card's colors" -- Chrome Mox. The
+    sibling of `mana_options_of`'s reflecting branch, asking a different
+    question of the same shape: `reflecting` polls each matched object's own
+    mana **abilities**, and the card this one reads is a nonartifact, nonland
+    card lying in exile, which has none. Written as `reflecting` the Mox taps
+    for nothing whatever it imprinted.
+
+    **Nothing imprinted is nothing added.** An unimprinted Mox matches no card,
+    so this is the empty tuple and the solver simply never picks it -- the same
+    real answer `_identity_options` gives a colourless commander and
+    `_chosen_color_options` gives a permanent that has not chosen yet. The near
+    miss is a `choose_mode` over five `add_mana`s, which taps for any colour
+    with nothing imprinted at all: a strictly better card than the printed one.
+
+    Colourless is not a colour (105.1), so an imprinted colourless card offers
+    nothing either -- that is the printed sentence, not an oversight, and it is
+    why there is no `any_type` here.
+
+    Colours come from `chars` on the battlefield and off the card everywhere
+    else, matching what a selector's own `colors` filter reads, so a Mox Amber
+    reading legendary creatures sees a repainted one as it now is.
+
+    It **only looks**: `resolve_pool` over a zone asks nothing and puts nothing
+    on the stack, which is what keeps this a mana ability for 605.1a.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:  # pragma: no cover - callers hold a live permanent
+        return ()
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_colors_of):
+        found = state.objects.get(other)
+        if found is None:  # pragma: no cover - resolve_pool returns live oids
+            continue
+        printed = chars(state, other).colors if found.on_battlefield else state.card_of(found).colors
+        for symbol in printed:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    return tuple(
+        option
+        for option in ability.mana_options
+        if any(amount and i in colors for i, amount in enumerate(option))
+    )
+
+
+def _each_color_among_options(
+    state: GameState, oid: int, ability: Ability
+) -> tuple[tuple[int, ...], ...]:
+    """**One** option holding one mana of every colour the selector shows.
+
+    "Vivid — {T}: For each color among permanents you control, add one mana of
+    that color." Bloom Tender. The same board question `_colors_of_options`
+    asks, answered in the other shape: that one hands back one *single-symbol
+    option per colour* and the payer picks one, and this one hands back a single
+    multi-symbol option and the payer gets all of it. A board showing three
+    colours taps this for three mana, one of each, and never asks which.
+
+    That is the whole capability, and why `mana_colors_of` over the same
+    selector is a different card rather than a rougher one: written that way
+    Bloom Tender is Mox Amber, adding one mana off a five-colour board.
+
+    One option and not several is also what keeps the ability decision-free for
+    605.1a — `legality._mana_option_indices` offers one chip per option, so a
+    list of colours here would put a question in front of the player that the
+    printed card does not ask.
+
+    Colourless is not a colour (105.1), so a board of Wastes and Eldrazi offers
+    nothing and the empty tuple is the real answer — the same one an unimprinted
+    Mox and a colourless commander give, and the solver simply never picks a
+    source that produces nothing.
+
+    Colours are read off `chars` on the battlefield and off the card elsewhere,
+    the way `_colors_of_options` reads them, so a permanent repainted by a
+    continuous effect counts as it now is.
+
+    It **only looks**: `resolve_pool` asks nothing and puts nothing on the stack.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:  # pragma: no cover - callers hold a live permanent
+        return ()
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_each_color_among):
+        found = state.objects.get(other)
+        if found is None:  # pragma: no cover - resolve_pool returns live oids
+            continue
+        present = chars(state, other).colors if found.on_battlefield else state.card_of(found).colors
+        for symbol in present:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    if not colors:
+        return ()
+    produced = [0] * len(SYMBOLS)
+    for index in colors:
+        produced[index] = 1
+    return (tuple(produced),)
 
 
 def _chosen_color_options(
@@ -618,19 +771,39 @@ def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tu
     spell offered on doubled mana and then paid for on single mana would strand
     the payment mid-cast.
 
-    *Simplification*: a dual land doubles whatever it produced rather than
-    offering a free choice of type, because a mana ability cannot ask.  Recorded
-    in ``docs/rules-coverage.md`` alongside the other automatic-mana trades.
+    *Simplification*: a dual land adds one mana of **a** type it produced rather
+    than offering a free choice of which, because a mana ability cannot ask.
+    Recorded in ``docs/rules-coverage.md`` alongside the other automatic-mana
+    trades.
 
     ``times`` is the variable-output multiplier from :func:`mana_amount`, and it
     is threaded through *here* for the same reason the doubling is: this is the
     one place both the offer and the payment come through, so they cannot be
     given different numbers.
+
+    **One mana, not twice the mana.** The printed line is "add *one* mana of any
+    type that permanent produced", and for the one-mana sources this family was
+    written against -- a mana dork, a basic land -- one more and twice as many
+    are the same number, which is why doubling the whole tuple read correctly
+    for years. They part company the moment the source makes two: a Sol Ring
+    under Kinnan is ``{C}{C}{C}``, not ``{C}{C}{C}{C}``, and Ancient Tomb under
+    Vorinclex is ``{C}{C}{C}``. Doubling was wrong in the strictly-better
+    direction, and silently, since nothing in the pool exercised it.
     """
-    scale = (2 if doubled else 1) * times
-    if scale == 1:
-        return tuple(option)
-    return tuple(v * scale for v in option)
+    produced = tuple(v * times for v in option) if times != 1 else tuple(option)
+    if not doubled:
+        return produced
+    # Which type the extra mana is, when the source made more than one, is the
+    # choice a mana ability may not stop to ask about. Taken as the first symbol
+    # in WUBRGC order that the source actually produced -- deterministic, so the
+    # offer in `_sources_of` and the payment in `activate_mana_ability` cannot
+    # disagree, which is the one failure this helper exists to prevent.
+    extra = list(produced)
+    for i, v in enumerate(produced):
+        if v:
+            extra[i] += 1
+            break
+    return tuple(extra)
 
 
 def produced_symbols(card: CardDef) -> list[str]:
@@ -728,11 +901,23 @@ def can_pay_mana(
             )
             is not None
         )
-    req = cost.with_x(x)
+    # "…including the mana costs of spells, activation costs, and even costs for
+    # special actions": suspend and foretell come through here rather than
+    # `ability_mana`, so Chromatic Orrery's waiver is read here too, and at the
+    # same point in the arithmetic -- before `extra_generic`, exactly as
+    # `ability_mana` reads it before `can_pay` and `pay` add theirs.
+    req = spendable_requirement(state, pid, cost.with_x(x))
     if extra_generic:
         req = req.with_generic(req.generic + extra_generic)
     return (
-        solve_payment(req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose))
+        solve_payment(
+            req,
+            # The pool as this purpose may spend it: a pip carrying "spend this
+            # mana only to cast spells" is no more available to an activation
+            # than a restricted *source* is, and the solver plans on integers.
+            state.players[pid].mana_pool.spendable(purpose),
+            mana_sources(state, pid, purpose=purpose),
+        )
         is not None
     )
 
@@ -808,9 +993,16 @@ def ability_mana(
     from .player_statics import ability_cost_reduction
 
     less += ability_cost_reduction(state, pid, ability, source_oid, targets)
-    if not less:
-        return req
-    return req.with_generic(req.generic - less)
+    if less:
+        req = req.with_generic(req.generic - less)
+    # Chromatic Orrery, **after** the discount: "you may spend mana as though it
+    # were mana of any color" is a rule about which mana pays a pip, not about
+    # how many pips there are, and the clamp above has to have run first or
+    # "costs {2} less" would eat a coloured pip that had become generic. Read
+    # here because this one function is what legality, `can_pay` and `pay` all
+    # reach -- so an ability offered because its {G} was loosened is an ability
+    # charged the loosened price.
+    return spendable_requirement(state, pid, req)
 
 
 def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -852,6 +1044,34 @@ def payable_mana(state: GameState, pid: int, mana: ManaCost) -> ManaCost:
     if player_pays_life_for_black(state, pid):
         return mana.black_as_phyrexian()
     return mana
+
+
+def spendable_requirement(state: GameState, pid: int, req: Requirement) -> Requirement:
+    """``req`` as this player may pay it: Chromatic Orrery's loosened pips.
+
+    "You may spend mana as though it were mana of any color." The payment twin
+    of :func:`payable_mana` and written to the same shape, one level down: a
+    `Requirement` rather than a `ManaCost`, because the waiver is read *after*
+    every discount and a discount is applied to the requirement.
+
+    Deliberately **not** folded into `payable_mana`. That helper's answer is
+    asked for its `phyrexian_count` -- by `can_pay`, by `can_pay_mana` and by
+    `life_for_mana_range` -- and `as_any_color` turns hybrid pips into generic
+    ones, so loosening there would hide a printed ``{G/P}`` activation's life
+    half behind an Orrery. The two waivers stack instead: the Phyrexian pips are
+    bought first, and what is left of the cost is loosened here.
+    """
+    colorless = SYMBOL_INDEX[COLORLESS]
+    # Cheap test first: this runs for every cost the engine prices, and a cost
+    # with nothing coloured in it has nothing to loosen whatever is on the
+    # battlefield -- the board walk is for the rest.
+    if not req.hybrid and not any(n for i, n in enumerate(req.colored) if i != colorless):
+        return req
+    from .player_statics import player_spends_mana_as_any_color
+
+    if player_spends_mana_as_any_color(state, pid):
+        return req.as_any_color()
+    return req
 
 
 def _life_budget(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -899,7 +1119,7 @@ def life_for_mana_range(
     sources = mana_sources(state, pid, purpose=purpose)
     if cost.tap and source_oid is not None:
         sources = [s for s in sources if s.oid != source_oid]
-    pool = state.players[pid].mana_pool
+    pool = state.players[pid].mana_pool.spendable(purpose)
     for bought in range(most + 1):
         remaining, _ = mana.paying_phyrexian(bought)
         req = ability_mana(
@@ -926,10 +1146,22 @@ def most_life_for_mana(
     The cheapest the mana half can get, and so what an ``{X}`` ceiling is
     measured against: `pay` then asks for at least the pips that X needs, never
     more than the life can buy.
+
+    Chromatic Orrery's waiver is applied to what is left, after the pips are
+    bought, for the reason `spendable_requirement` gives -- and it has to be
+    applied *here*, because this is the only cost `max_affordable_x` ever sees
+    for an activated ability. Without it an ``{X}{G}`` line under an Orrery was
+    found payable by `can_pay` and then withheld by the X gate, which is the
+    two halves of legality disagreeing about the same ability.
     """
     mana = payable_mana(state, pid, cost.mana)
     most = min(mana.phyrexian_count, _life_budget(state, pid, cost, source_oid) // 2)
-    return mana.paying_phyrexian(most)[0]
+    mana = mana.paying_phyrexian(most)[0]
+    from .player_statics import player_spends_mana_as_any_color
+
+    if player_spends_mana_as_any_color(state, pid):
+        return mana.as_any_color()
+    return mana
 
 
 def can_pay(
@@ -980,6 +1212,16 @@ def can_pay(
     if cost.untap:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.tapped:
+            return False
+    if cost.exert:
+        # 702.121a: exerting is done to a permanent, so the source has to be on
+        # the battlefield -- and nothing else is required. Deliberately no
+        # "untapped" test (702.121b exerts a tapped permanent quite happily),
+        # no "creature" test and no "attacking" test: Arena of Glory is a land
+        # that never attacks, and the keyword's usual home on an attack trigger
+        # is that card's business, not the cost's.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
             return False
     # 118.4: you may pay life down to exactly 0 -- losing is a state-based
     # action afterwards, not a reason the cost was illegal.  `<=` would stop a
@@ -1084,7 +1326,7 @@ def can_pay(
                 ability_mana(
                     state, pid, cost, x, source_oid, ability=ability, targets=targets
                 ),
-                player.mana_pool,
+                player.mana_pool.spendable(purpose),
                 sources,
             )
             is None
@@ -1381,6 +1623,16 @@ def pay(
         if obj is not None:
             obj.tapped = False
             state.bump_chars()
+    if cost.exert and source_oid is not None:
+        obj = state.objects.get(source_oid)
+        if obj is not None and obj.on_battlefield:
+            # The two halves of 702.121a, and they are two stores on purpose --
+            # the same call `set_turn_flag` and `skip_untap` already made.
+            # `skip_next_untap` is a *one-shot* consumed by the untap step it
+            # skips; the ledger flag is a word that wears off at the turn
+            # boundary and is what "hasn't been exerted this turn" reads.
+            obj.skip_next_untap = True
+            state.turn_ledger.set_object_flag(source_oid, "exerted")
 
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
@@ -1618,7 +1870,7 @@ def pay_mana(
     sources = mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
         sources = [s for s in sources if s.oid != exclude_oid]
-    payment = solve_payment(req, player.mana_pool, sources)
+    payment = solve_payment(req, player.mana_pool.spendable(purpose), sources)
     if payment is None:
         return False
     for oid, ability_index, option_index in payment.taps:
@@ -1634,14 +1886,31 @@ def pay_mana(
                 "already tapped; the solver must never tap one permanent twice"
             )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
-    spent = player.mana_pool.spend(req)
+    spent = player.mana_pool.spend(req, purpose)
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # "…if mana from a Treasure was spent to cast it." Unioned, not
+        # assigned, for `uncounterable_mana_spent`'s reason one line down: a
+        # cast pays in more than one call when it has an additional cost, and a
+        # spell partly paid for with Treasure mana was paid for with Treasure
+        # mana. (`mana_sources_spent` above predates that reading and keeps its
+        # assignment, so this change cannot alter any shipped card's behaviour.)
+        obj.mana_spent_traits = obj.mana_spent_traits | spent.source_traits
         # Accumulated with `or`, not assigned, for `mana_spent`'s reason: a cast
         # pays in more than one call when it has an additional cost, and a spell
         # paid for partly with Cavern mana was paid for with Cavern mana.
         obj.uncounterable_mana_spent = obj.uncounterable_mana_spent or spent.uncounterable
+        # "**If that mana is spent on a creature spell**, it gains haste until
+        # end of turn." The type test belongs here and nowhere later: "creature
+        # spell" is a question about the *spell*, asked at the instant the mana
+        # is spent, and by the time the permanent exists to be given haste the
+        # spell is gone. Accumulated for `uncounterable_mana_spent`'s reason --
+        # one cast can pay in more than one call.
+        for grant in spent.grants:
+            if grant.spell_types and not (set(grant.spell_types) & chars(state, obj.oid).types):
+                continue
+            obj.mana_granted_keywords.update(grant.keywords)
         # Accumulated rather than assigned: a cast pays in more than one call
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
@@ -1657,7 +1926,12 @@ def pay_mana(
 
 
 def activate_mana_ability(
-    state: GameState, oid: int, ability_index: int, pid: int, option_index: int = 0
+    state: GameState,
+    oid: int,
+    ability_index: int,
+    pid: int,
+    option_index: int = 0,
+    source_traits: ManaOrigin | None = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -1671,12 +1945,25 @@ def activate_mana_ability(
     enumerates sources while they are still untapped, so measuring after tapping
     would let the offer and the payment see two different boards -- the exact
     disagreement `mana_produced` exists to prevent.
+
+    ``source_traits`` is what the source **was**, for "if mana from a Treasure
+    was spent to cast it". A parameter rather than a lookup here, because this
+    function is not always early enough: `Game._activate_mana` runs the
+    ability's cost *before* calling it, and a Treasure's cost sacrifices the
+    Treasure. That path passes the snapshot it took while the token was still on
+    the battlefield. Left ``None`` -- the payment solver's path, which only ever
+    taps -- the snapshot is taken here, which is still before the tap.
     """
     ability = abilities_of(state, oid)[ability_index]
+    if source_traits is None:
+        source_traits = mana_source_traits(state, oid)
 
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
-    doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
+    # The payment half of the pair in `_sources_of`, and it must ask the same
+    # question: a spell offered on doubled mana and then paid on single mana
+    # strands the payment mid-cast.
+    doubled = obj is not None and player_doubles_mana_from(state, obj.controller, oid)
     options = mana_options_of(state, oid, ability)
     if option_index >= len(options):
         # The board changed what this ability offers between the plan and the
@@ -1714,14 +2001,30 @@ def activate_mana_ability(
     # Souls has two mana abilities and only the second one prints "…and that
     # spell can't be countered": recorded per permanent, its plain {C} would make
     # the spell uncounterable too.
+    #
+    # `source_traits` rides beside the oid rather than replacing it, and is the
+    # half that survives the source: this ability's cost may *sacrifice* the
+    # permanent -- every Treasure does -- and `sba._tokens_and_attachments`
+    # deletes a sacrificed token from `state.objects` outright, so the oid is
+    # already a dangling pointer by the time the spell it paid for is on the
+    # stack. Snapshotted here because here is the last moment it is knowable.
     state.players[pid].mana_pool.add_tuple(
-        produced, source=oid, uncounterable=ability.mana_uncounterable
+        produced,
+        source=oid,
+        uncounterable=ability.mana_uncounterable,
+        # Arena of Glory's "…it gains haste until end of turn", read off the
+        # **ability** for the reason above: Arena's plain `{R}` ability must not
+        # hand out the haste its exerting one pays for.
+        grant=ability.mana_grant,
+        source_traits=source_traits,
     )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged
     # with the Ghast, so provenance readers see who really made it.
     for source, mana in added_on_tap:
-        state.players[pid].mana_pool.add_tuple(mana, source=source)
+        state.players[pid].mana_pool.add_tuple(
+            mana, source=source, source_traits=mana_source_traits(state, source)
+        )
         state.emit(EventType.MANA_ADDED, player=pid, source=source, mana=format_symbols(mana))
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)

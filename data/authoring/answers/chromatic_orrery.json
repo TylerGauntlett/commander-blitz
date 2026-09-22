@@ -1,0 +1,157 @@
+{
+  "card": {
+    "id": "chromatic_orrery",
+    "name": "Chromatic Orrery",
+    "oracle_text": "You may spend mana as though it were mana of any color.\n{T}: Add {C}{C}{C}{C}{C}.\n{5}, {T}: Draw a card for each color among permanents you control.",
+    "mana_cost": "{7}",
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You may spend mana as though it were mana of any color.",
+        "effect": "spend_mana_as_any_color",
+        "affects_player": "you"
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}{C}{C}{C}{C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}{C}{C}{C}{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{5}, {T}: Draw a card for each color among permanents you control.",
+        "cost": {
+          "mana": "{5}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "colors": [
+                  "W"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "colors": [
+                  "U"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "colors": [
+                  "B"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "colors": [
+                  "R"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "colors": [
+                  "G"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

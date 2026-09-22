@@ -20,6 +20,7 @@ from .vocabulary import (
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,
     SOURCE_MOVING_OPS,
+    STATIC_CONDITION_OPS,
 )
 
 
@@ -49,17 +50,71 @@ def _check_mana_cost_key(filt: Any, where: str) -> None:
         validate_printed_cost_list(filt["mana_cost"], where)
 
 
+def _check_pt_keys(filt: Any, where: str) -> None:
+    """``power``/``toughness`` in a static filter is a comparison, not a size.
+
+    ``{"op": ">=", "value": 4}``, or a bare integer meaning equality -- the
+    spelling `selectors._compare` and `triggers._compare` already take, so the
+    clause reads the same wherever it is written.
+
+    Static filters are validated by key set alone, which is why this check has
+    to exist: ``"power": 4`` is fine, but ``"power": {"amount": 4}`` would load,
+    default its ``value`` to 0 and match **every** creature on the board -- the
+    silently-wider filter this pass exists to refuse -- and ``"power": ">=4"``
+    would load and blow up at match time instead of at load time.
+
+    The compared-against value is a plain integer, because a static filter tests
+    one object and has no source permanent to measure an expression against.
+    """
+    if not isinstance(filt, Mapping):
+        return
+    for key in ("power", "toughness"):
+        if key not in filt:
+            continue
+        spec = filt[key]
+        if isinstance(spec, bool) or not isinstance(spec, (int, Mapping)):
+            raise DslError(
+                f"{where}.{key}: a comparison -- {{'op': '>=', 'value': 4}} -- "
+                f"or a bare integer, got {spec!r}"
+            )
+        if not isinstance(spec, Mapping):
+            continue
+        unknown = set(spec) - {"op", "value"}
+        if unknown:
+            raise DslError(
+                f"{where}.{key}: unknown comparison keys {sorted(unknown)} "
+                f"(a comparison is 'op' and 'value')"
+            )
+        op = spec.get("op", ">=")
+        if op not in STATIC_CONDITION_OPS:
+            raise DslError(
+                f"{where}.{key}.op: unknown comparison {op!r} "
+                f"(implemented: {sorted(STATIC_CONDITION_OPS)})"
+            )
+        value = spec.get("value", 0)
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise DslError(
+                f"{where}.{key}.value: a static compares against a plain integer, "
+                f"got {value!r}"
+            )
+
+
 def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """ "…of the chosen type" cannot survive being handed to another permanent.
 
     `characteristics.resolve_chosen_subtypes` and its colour twin substitute the
-    choice made by the filter's **source**, and a granted static's source is its
+    choice made by the **source**, and a granted static's source is its
     *recipient*. So an author writing "of the chosen type" means the granter and
     the engine would read the recipient -- which has chosen nothing, so the
     filter matches nobody and the card loads clean and does nothing.
 
     The two readings differ and no printed card asks for either, so this is
     refused rather than picked between.
+
+    Called on a granted static's **filters** and on the static mapping itself,
+    because `add_subtype` carries the same entry on its *grant* side -- "this
+    creature is the chosen type in addition to its other types" -- outside any
+    filter, and the ambiguity there is the same one word for word.
     """
     if not isinstance(filt, Mapping):
         return
@@ -71,8 +126,8 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
                 if chosen in entry:
                     raise DslError(
                         f"{where}.{key}: {chosen!r} names the choice made by the "
-                        f"filter's source, and a granted static's source is the "
-                        f"permanent it was granted to -- which has chosen nothing"
+                        f"source, and a granted static's source is the permanent "
+                        f"it was granted to -- which has chosen nothing"
                     )
 
 

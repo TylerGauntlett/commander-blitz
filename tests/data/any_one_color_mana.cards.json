@@ -1,0 +1,179 @@
+{
+  "_comment": "The Helga, Skittish Seer shape: a mana ability adding X mana of ANY ONE COLOUR, X read live off the source's power, whose mana may only be spent on creature spells with mana value 4 or greater or with {X} in their costs. t_one_colour_seer is the card; t_ziggurat_seer is the same ability written the closest existing way (a bare [\"creature\"] restriction), which is the strictly better card this capability exists to refuse. The four spells are the corners of the restriction.",
+  "cards": [
+    {
+      "id": "t_one_colour_seer",
+      "name": "Test One Colour Seer",
+      "oracle_text": "{T}: Add X mana of any one color, where X is Test One Colour Seer's power. Spend this mana only to cast creature spells with mana value 4 or greater or creature spells with {X} in their mana costs.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add X mana of any one color, where X is Test One Colour Seer's power. Spend this mana only to cast creature spells with mana value 4 or greater or creature spells with {X} in their mana costs.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "creature",
+                {
+                  "mana_value": {
+                    "op": ">=",
+                    "value": 4
+                  }
+                }
+              ],
+              [
+                "creature",
+                {
+                  "x_in_mana_cost": true
+                }
+              ]
+            ]
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "any_one_color": true,
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ziggurat_seer",
+      "name": "Test Ziggurat Seer",
+      "oracle_text": "{T}: Add X mana of any one color, where X is Test Ziggurat Seer's power. Spend this mana only to cast creature spells.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add X mana of any one color, where X is Test Ziggurat Seer's power. Spend this mana only to cast creature spells.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": [
+            "creature"
+          ],
+          "effects": [
+            {
+              "op": "add_mana",
+              "any_one_color": true,
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_seer_small_beast",
+      "name": "Test Seer Small Beast",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_seer_big_beast",
+      "name": "Test Seer Big Beast",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_seer_x_beast",
+      "name": "Test Seer X Beast",
+      "oracle_text": "Test Seer X Beast enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_seer_relic",
+      "name": "Test Seer Relic",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

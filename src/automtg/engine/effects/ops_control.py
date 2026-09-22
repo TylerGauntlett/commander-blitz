@@ -160,7 +160,7 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     ceiling = max(0, evaluate_value(ctx, x_spec.get("max")))
     affordable = max_affordable_x(
         cost.mana,
-        ctx.state.players[chooser].mana_pool,
+        ctx.state.players[chooser].mana_pool.spendable(),
         mana_sources(ctx.state, chooser),
         cap=ceiling,
     )

@@ -15,7 +15,14 @@ from ..primitives import (
     create_token,
     sacrifice_forbidden,
 )
-from ..zones import destroy, exile, move_object, sacrifice
+from ..zones import (
+    destroy,
+    exile,
+    move_object,
+    offer_enters_replacement,
+    offer_riot_choice,
+    sacrifice,
+)
 from ..zones import snapshot as capture_snapshot
 from . import register
 from .board_helpers import (
@@ -297,6 +304,58 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.exiled_by = ctx.source_oid
 
 
+@register("airbend")
+def op_airbend(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "**Airbend** all other creatures." -- Avatar's Wrath.
+
+    The reminder text is the whole mechanic: "Exile them. While each one is
+    exiled, its owner may cast it for {2} rather than its mana cost." So it is
+    `exile` with a permission riding on it, and both halves of that permission
+    are ones `exile` could not say.
+
+    **The owner, not the caster.** `exile`'s `playable` writes
+    ``obj.playable_by = ctx.controller`` -- one seat, the resolving spell's --
+    which is right for the impulse-draw family it was written for and exactly
+    wrong here: airbend sweeps the whole board, so most of what it exiles
+    belongs to somebody else, and granting the permission to `ctx.controller`
+    would hand me my opponents' creatures. The owner is read off the object,
+    and `owner` is the one identity a card never loses (108.3), so it is the
+    same seat however the permanent got where it was -- a creature I stole with
+    `gain_control` goes back to the player who brought it.
+
+    **A flat {2}, replacing the price.** `playable_alt_cost` rather than any of
+    the reduction machinery, because `costs.cost_reduction` clamps a reduction
+    to the generic part of a cost and no subtraction is right for two creatures
+    of different mana values anyway. {2} is {2} whether the card printed {G} or
+    {7}{U}{U}, and a {G} creature "reduced" by anything still owes its green
+    pip.
+
+    The permission lasts "while each one is exiled", so it carries no clock of
+    its own: `reset_permanent_state` wipes every `playable_*` field as the card
+    leaves exile (400.7 makes it a new object anyway), which is precisely the
+    moment the printed sentence ends. That is the ``"while_exiled"`` duration,
+    the same one `exile`'s own `playable: "while_exiled"` spells.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Airbend", "destroy")
+    if name := spec.get("as"):
+        # Written before the move, for `op_exile`'s reason: the binding records
+        # what this op airbent rather than whatever is in exile once it is done.
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + list(oids)
+    for oid in oids:
+        exile(ctx.state, oid, by=ctx.source_oid)
+        # After the move, for `op_exile`'s reason: `move_object` runs
+        # `reset_permanent_state` on the way and would wipe all of this.
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        obj.playable_by = obj.owner
+        obj.playable_turn = ctx.state.turn
+        obj.playable_duration = "while_exiled"
+        obj.playable_alt_cost = str(spec.get("cost", "{2}"))
+
+
 @register("become_prepared")
 def op_become_prepared(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "This creature **becomes prepared**." Emeritus of Woe // Demonic Tutor.
@@ -494,6 +553,17 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         controller = ctx.controller if spec.get("controller") == "you" else obj.owner
         obj.controller = controller
+        # "If this artifact **would enter**, you may discard a land card
+        # instead." Mox Diamond, reanimated or blinked rather than cast -- the
+        # printed clause is about any arrival from any zone, so the offer has to
+        # be made here and not only on the cast line. See
+        # `zones.offer_enters_replacement`; `move_object` treats an unasked
+        # arrival as unpaid, so this is what buys the permanent its entry.
+        yield from offer_enters_replacement(ctx.state, oid, controller)
+        # And riot, on the generic cheat-into-play route: "nontoken creatures
+        # you control have riot" is about any arrival, not only a cast one --
+        # see `zones.offer_riot_choice`.
+        yield from offer_riot_choice(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.
@@ -504,6 +574,13 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=tapped,
             cause=str(spec.get("cause") or "put_onto_battlefield"),
         )
+        if not obj.on_battlefield:
+            # The arrival was replaced -- Mox Diamond whose controller declined
+            # the discard, and the card is in a graveyard rather than on the
+            # battlefield. Everything below is about a permanent that is there:
+            # counters would land on a graveyard card and the combat rider would
+            # put a non-permanent into `combat.attackers`.
+            continue
         # Placed immediately after the move rather than as an enters-with
         # replacement -- the same trade `op_return_from_graveyard` documents,
         # observable only by another trigger ordered between the two.

@@ -8,6 +8,7 @@ happen in exactly one place.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
@@ -82,6 +83,39 @@ def move_object(
     # the time the event goes out the culprit may itself be out of `objects`.
     # The client needs a card id it can turn into a printed name either way.
     by_card = _card_id_of(state, by)
+
+    # -- "if this artifact would enter … instead" (614.1a) ------------------
+    # Mox Diamond. The only replacement in the DSL that replaces the **arrival
+    # itself** rather than decorating a permanent that is already arriving, so
+    # it is the only one that cannot live in `_enter_battlefield`: by the time
+    # that function runs the object is on the battlefield, every enters trigger
+    # is about to see it, and the card says it was never there.
+    #
+    # The question was asked a moment ago by `offer_enters_replacement`, which
+    # left its answer on the object; this reads it. An arrival that got here
+    # without being asked counts as unpaid -- see the field's note.
+    #
+    # Before the commander replacement below on purpose: 903.9a replaces the
+    # *new* destination, so a commander Mox that was not paid for is redirected
+    # to a graveyard here and then to the command zone there, which is the two
+    # replacements applied in the order the rules apply them.
+    if to_zone is Zone.BATTLEFIELD and from_zone is not Zone.BATTLEFIELD:
+        replaced = _arrival_replacement(card)
+        paid = obj.enters_replacement_paid
+        obj.enters_replacement_paid = False
+        # 707.2: a permanent put onto the battlefield face down has no
+        # abilities at all, so it has no replacement either. `face_down` is
+        # written *after* the move by both routes -- `stack._place_after_resolution`
+        # for a morph and `ops_counters.op_manifest` for a manifest -- so the
+        # flag cannot be read here and the two are named instead.
+        face_down = obj.pending_face_down or cause == "manifest"
+        if replaced is not None and not paid and not face_down:
+            to_zone = Zone(str(replaced.get("instead_zone", "graveyard")))
+            target_player = owner
+            # Overwritten rather than defaulted: "resolved" is how the card got
+            # here and no longer how it is leaving, and the log line a player
+            # needs is the one saying the arrival was replaced.
+            cause = "enters_replaced"
 
     # -- commander zone-change replacement (rule 903.9a) --------------------
     # Simplification: the owner always chooses the command zone.  Documented in
@@ -181,6 +215,13 @@ def move_object(
     left_with = (
         (*obj.until_eot, *obj.granted_abilities_permanent) if was_on_battlefield else ()
     )
+    # "If that mana is spent on a creature spell, **it gains haste until end of
+    # turn**" (Arena of Glory). Snapshotted for `left_with`'s reason and carried
+    # the other way: `reset_permanent_state` empties it a few lines below, and
+    # the promise is owed to the permanent the spell is *becoming*. Restored
+    # only for a battlefield destination, so a countered creature spell does not
+    # sit in its graveyard holding a haste to cash on a later cast.
+    mana_granted_keywords = obj.mana_granted_keywords
 
     _remove_from_zone(state, obj)
 
@@ -199,6 +240,8 @@ def move_object(
         card = state.card_of(obj)
 
     obj.left_with = left_with
+    if to_zone is Zone.BATTLEFIELD:
+        obj.mana_granted_keywords = mana_granted_keywords
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
@@ -402,6 +445,77 @@ def _detach_all(state: GameState, oid: int) -> None:
 
 
 
+def _arrival_replacement(card: CardDef) -> Mapping[str, Any] | None:
+    """The card's ``self_enters_replaced`` replacement, if it has one.
+
+    One per card: two clauses each replacing the same arrival would have to be
+    applied in some order, and no printed card asks that question. The first
+    written wins, which is the answer the loader's ordering already gives every
+    other replacement.
+    """
+    for replacement in card.replacements:
+        if replacement.get("event") == "self_enters_replaced":
+            return replacement
+    return None
+
+
+def offer_enters_replacement(state: GameState, oid: int, controller: int):
+    """"If this artifact would enter, you may discard a land card instead."
+
+    Mox Diamond. Asked here, beside `offer_enters_costs` and `offer_enters_copy`
+    and for their stated reason -- `move_object` is not a generator and cannot
+    stop for a decision, and making it one would put a suspend point inside
+    every zone change in the engine. Asking a moment early is not an
+    approximation: 614 applies the replacements during the zone change and
+    nobody receives priority in between.
+
+    **Called from every arrival path that can stop to ask**, not only from the
+    cast line, and that is the whole of this function's design. A version wired
+    into `stack._place_after_resolution` alone would be right for a Mox Diamond
+    cast out of hand and wrong for every blink and every reanimation in the
+    format -- the card says "if this artifact **would enter**", which is any
+    arrival from any zone, and a permanent returned by Animate Dead is arriving
+    exactly as hard as one that was cast.
+
+    The answer is left on `obj.enters_replacement_paid`, which
+    `reset_permanent_state` deliberately does not clear and `move_object` reads
+    and clears as it decides where the card is actually going. Unlike its two
+    neighbours this answer is *not* read by `_enter_battlefield`: that runs
+    after the object is on the battlefield, and an unpaid Mox never gets there.
+
+    An unaffordable price is not offered, exactly as `offer_enters_costs` does
+    not offer one: a player with no land in hand is not asked a question whose
+    "yes" cannot be honoured, and the permanent goes to `instead_zone`.
+    """
+    from .carddef import Cost
+    from .costs import can_pay, pay
+    from .effects.context import ask_yes_no
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    replacement = _arrival_replacement(card)
+    if replacement is None:
+        return
+    cost = Cost.from_spec(replacement.get("instead_cost"))
+    # `source_oid` is the arriving card itself, which is what keeps a Mox
+    # Diamond in hand from being its own discard: `costs._discard_pool` drops
+    # the source from the pool for 601.2a's reason, and the same exclusion is
+    # the right one here for 614's -- the object being replaced is the one on
+    # its way to the battlefield, not fodder sitting in a hand.
+    if not can_pay(state, controller, cost, oid):
+        return
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    prompt = f"Pay {card.name}'s cost to have it enter?"
+    if not (yield from ask_yes_no(ctx, prompt, controller)):
+        return
+    if (yield from pay(state, controller, cost, oid)):
+        obj.enters_replacement_paid = True
+
+
 def offer_enters_costs(state: GameState, oid: int, controller: int):
     """"As this enters, you may pay 3 life." Ask, and pay if the answer is yes.
 
@@ -524,6 +638,72 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
         if model is not None:
             obj.enters_copy_of = state.card_of(model).id
         return
+
+
+#: Riot's two halves, in the order the reminder text prints them.
+RIOT_COUNTER, RIOT_HASTE = "counter", "haste"
+
+
+def offer_riot_choice(state: GameState, oid: int, controller: int):
+    """Riot (702.113): "with your choice of a +1/+1 counter or haste."
+
+    Rhythm of the Wild's "nontoken creatures you control have riot", and the
+    printed cycle that carries the word itself. Asked here, beside
+    `offer_enters_costs`, `offer_enters_copy` and `offer_enters_replacement`,
+    and for their stated reason: `move_object` is not a generator and cannot
+    stop for a decision, and making it one would put a suspend point inside
+    every zone change in the engine.
+
+    Asking a moment early is not an approximation, and it is the whole of the
+    keyword. 614.1c applies the replacement **during** the zone change and
+    nobody receives priority in between, so there is no window in which the
+    creature exists with the question unanswered -- which is exactly what a
+    `self_enters` trigger running `choose_mode` over `add_counters` and
+    `grant_keyword` could not promise. Written that way the creature arrives at
+    its printed size first: a 0/0 that is only alive because of the counter is
+    binned by state-based actions before the trigger resolves, every other
+    enters trigger reads a size riot says was never on the board, and an
+    opponent holds priority with a creature that should never have been seen
+    without its counter.
+
+    **Per creature, and the controller's.** Two riot creatures entering
+    together are two questions, because the choice is part of each arrival
+    rather than a mode of the effect that made them.
+
+    The answer is left on `obj.riot_choice`, which `reset_permanent_state`
+    deliberately does not clear and `_enter_battlefield` reads and clears as
+    the permanent arrives. An arrival that reached `move_object` without being
+    asked -- a token, whose creation is not a generator -- records no choice and
+    gets neither half, which is the printed card this unblocks anyway: Rhythm of
+    the Wild says **nontoken**.
+    """
+    from .characteristics import keyword_as_it_enters
+    from .effects.context import ask_mode
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    if not keyword_as_it_enters(state, oid, Keyword.RIOT.value):
+        return
+    card = state.card_of(obj)
+    # "…**creatures** you control have riot." Riot on a noncreature permanent is
+    # a keyword with nothing to do: a +1/+1 counter on an enchantment changes no
+    # characteristic anything reads, and haste is a fact about attacking and
+    # tapping a *creature*. Read off the printed face, because the object is not
+    # a permanent yet and the layer pipeline has nothing to say about it -- the
+    # same face `keyword_as_it_enters` matched the granting static against.
+    if "Creature" not in card.types:
+        return
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    chosen = yield from ask_mode(
+        ctx,
+        f"{card.name} enters with a +1/+1 counter, or with haste?",
+        ["A +1/+1 counter", "Haste"],
+        controller,
+    )
+    obj.riot_choice = RIOT_HASTE if chosen and chosen[0] == 1 else RIOT_COUNTER
 
 
 def _enter_battlefield(
@@ -662,6 +842,43 @@ def _enter_battlefield(
                     str(replacement.get("counter", "+1/+1")),
                     evaluate_value(ctx, replacement.get("amount", 1)),
                 )
+
+    # Riot (702.113), applied in the slot enters-with-counters occupies and for
+    # its reason: 614.1c, so the creature is never on the battlefield without
+    # whichever half its controller picked. The question was asked a moment ago,
+    # just before the move, by `offer_riot_choice`.
+    #
+    # `granted_keywords` rather than an `until_eot` entry, which is the whole of
+    # "or with haste": an until-end-of-turn haste on a creature that entered
+    # this turn does the same thing today and nothing ever after, so from the
+    # next turn a riot creature that took haste would be indistinguishable from
+    # one that took the counter. `reset_permanent_state` emptied that set a few
+    # lines ago, on this very move, so the grant is this arrival's and no
+    # earlier one's.
+    riot_choice = obj.riot_choice
+    obj.riot_choice = None
+    if riot_choice == RIOT_HASTE:
+        obj.granted_keywords.add(Keyword.HASTE.value)
+    elif riot_choice == RIOT_COUNTER:
+        obj.add_counter("+1/+1", 1)
+
+    # "…it gains haste until end of turn" (Arena of Glory), in the slot beside
+    # riot and for a neighbouring reason: the creature is never on the
+    # battlefield without it, so no attack declaration and no summoning-sickness
+    # check can fall in between. Emptied as it is read, because the promise
+    # belongs to this arrival -- a permanent that leaves and comes back is a new
+    # object and nobody paid Arena of Glory for that one.
+    #
+    # `until_eot` and not `granted_keywords`, which is where riot's haste goes:
+    # the printed clause says "until end of turn" and riot's says nothing, and
+    # `clear_until_eot` sweeps only the one that asked to be swept.
+    granted = obj.mana_granted_keywords
+    obj.mana_granted_keywords = set()
+    if granted:
+        from .primitives import grant_keyword
+
+        for keyword in sorted(granted):
+            grant_keyword(state, obj.oid, keyword)
 
     state.bump_chars()
     fire(

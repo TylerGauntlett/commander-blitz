@@ -1,0 +1,63 @@
+{
+  "card": {
+    "id": "goldlust_triad",
+    "name": "Goldlust Triad",
+    "oracle_text": "Flying\nMyriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)\nWhenever this creature deals combat damage to a player, create a Treasure token.",
+    "mana_cost": "{4}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Dragon"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Myriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+        "trigger": {"event": "attacks", "source": "self"},
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": {"not": {"binding": "defender"}, "except": "you"},
+            "effects": [
+              {
+                "op": "may",
+                "effects": [
+                  {
+                    "op": "copy_permanent",
+                    "objects": {"self_only": true},
+                    "as": "myriad_token",
+                    "tapped": true,
+                    "attacking": {"binding": "each_player"},
+                    "or_planeswalker": true
+                  },
+                  {
+                    "op": "delay",
+                    "step": "end_of_combat",
+                    "text": "Exile the tokens at end of combat.",
+                    "effects": [
+                      {"op": "exile", "objects": {"binding": "myriad_token"}}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals combat damage to a player, create a Treasure token.",
+        "trigger": {"event": "deals_combat_damage_to_player", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "treasure_token", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

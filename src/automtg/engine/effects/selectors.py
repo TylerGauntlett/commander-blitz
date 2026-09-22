@@ -40,6 +40,28 @@ SELECTOR_KEYS = frozenset(
     {
         "zone",
         "controller",
+        #: "A commander **you own** on the battlefield or in the command zone"
+        #: (Majestic Genesis).  Ownership rather than control, read off
+        #: ``GameObject.owner`` -- written once when the object is made and left
+        #: alone by ``change_control``, so it is the one relation on a permanent
+        #: that a control-changing effect cannot move.
+        #:
+        #: `controller` is the near miss and is a genuinely different set in a
+        #: game this engine can reach, because `gain_control` is implemented:
+        #: 903.3 defines a commander by *ownership*, so `controller: "you"`
+        #: misses your own commander while an opponent holds it and counts an
+        #: opponent's commander you have stolen.  Either way the number a card
+        #: reads off the pool comes out wrong, and silently.
+        #:
+        #: The same word, in the same sense, that `STATIC_FILTER_KEYS` and the
+        #: cost-reduction filter have read since Visions of Glory -- which
+        #: spells this exact printed clause in a `mana_reduction`.  One
+        #: difference, and it is because the two languages default differently:
+        #: a static's filter defaults `controller: "you"` and so `owner` has to
+        #: *suppress* that default, while an effect-side selector defaults
+        #: nothing, so `owner` simply filters and composes with a `controller`
+        #: written beside it.
+        "owner",
         #: Whose hand/graveyard/library/exile to walk, as a full player spec
         #: rather than the three words ``controller`` allows -- so
         #: ``{"target": "t1"}`` scopes a zone to the one player a trigger
@@ -130,7 +152,7 @@ SELECTOR_KEYS = frozenset(
         #: is exactly Mangara, the Diplomat's "attacking you and/or planeswalkers
         #: you control" and one creature too many for Trouble in Pairs. This key
         #: narrows that binding (or any pool) by also reading
-        #: `combat.attacking_planeswalker`. `"you"`, `"opponent"` or `"any"`
+        #: `combat.attacking_permanent`. `"you"`, `"opponent"` or `"any"`
         #: (some player, never a planeswalker), relative to the ability's
         #: controller.
         "attacking_player",
@@ -223,6 +245,13 @@ SELECTOR_KEYS = frozenset(
         #: Opal Palace. A trigger filter only, matched against the spell: the
         #: permanents whose mana abilities paid for it are recorded on the spell
         #: by `pay_mana`, which is the only instant they are knowable.
+        #:
+        #: Also takes a **selector** -- "…if mana from a Treasure was spent to
+        #: cast it" (Smaug, Wicked Worm), a class of permanents rather than one
+        #: named object. That half matches what each source *was*, snapshotted
+        #: onto the pip, because the Treasure is sacrificed to make its mana and
+        #: its oid resolves to nothing by the time the spell is on the stack.
+        #: Its legal keys are `triggers.PAID_BY_SELECTOR_KEYS`, not these.
         "paid_by",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
@@ -266,6 +295,18 @@ SELECTOR_KEYS = frozenset(
         "binding",
         "object_kind",
         "name",
+        #: "…search your library for up to five Dragon cards **not named
+        #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
+        #: family was missing. Takes a string, or a list when a card names more
+        #: than one ("not named Griselbrand or Emrakul"), since two `not_name`
+        #: keys cannot sit in one selector.
+        #:
+        #: `exclude_self` is the near miss and is a different question: it
+        #: excludes *this object*, and the card being excluded here is a second
+        #: copy of Tiamat sitting in the library, which `exclude_self` never
+        #: sees. Leaving the clause off is not a safe approximation either --
+        #: a deck running two Tiamats would tutor the other one.
+        "not_name",
         "damaged",
         # "…until this permanent leaves the battlefield." Cards in exile that
         # *this* source put there, read back by its own leaves-trigger.
@@ -495,7 +536,18 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     """
     if "player" in selector:
         return select_players(ctx, selector["player"])
-    controller = selector.get("controller", "you")
+    # `owner` stands in for `controller` when only it was written, because in a
+    # zone somebody owns the two words name the same seat: 400.3 sends a card to
+    # its **owner's** hand, library and graveyard, and exile is kept per owner
+    # here for the same reason. Without this the default below would quietly
+    # re-impose "you" on a selector that deliberately said `owner: "any"`, and a
+    # card asking about every graveyard at the table would read only its own --
+    # the silent narrowing `player` is validated to prevent, arriving through
+    # the other door.
+    if "controller" not in selector and (own := selector.get("owner")) is not None:
+        controller = own
+    else:
+        controller = selector.get("controller", "you")
     if controller == "you":
         return [ctx.controller]
     if controller == "opponent":
@@ -727,6 +779,27 @@ def matches(
     ):
         return False
 
+    # The ownership twin of the three clauses above, spelled the same way and
+    # read off `obj.owner` instead. "A commander **you own** on the battlefield
+    # or in the command zone" -- Majestic Genesis, and every other "you own"
+    # clause with it.
+    #
+    # It is a filter and never a default: nothing is imposed when the key is
+    # absent, so `owner` written beside `controller` is a conjunction ("a
+    # permanent you own that an opponent controls" is sayable) and `owner`
+    # written alone asks about ownership and nothing else. That is the whole
+    # difference from the static side, where `characteristics._matches` has to
+    # switch a defaulted `controller: "you"` off to say the same sentence.
+    owner = selector.get("owner")
+    if owner == "you" and obj.owner != ctx.controller:
+        return False
+    if owner == "opponent" and obj.owner == ctx.controller:
+        return False
+    if (isinstance(owner, Mapping) or owner == "enchanted_player") and (
+        obj.owner not in select_players(ctx, owner)
+    ):
+        return False
+
     if (want := selector.get("types")) and not set(want).issubset(types):
         return False
     # any-of, matching `subtypes` and `colors` above rather than `types`.
@@ -775,6 +848,14 @@ def matches(
     if (want := selector.get("not_keywords")) and set(want) & keywords:
         return False
     if (want := selector.get("name")) and card.name != want:
+        return False
+    # "…for up to five Dragon cards **not named Tiamat**". Read off `card.name`
+    # exactly as the positive clause one line up does, for the same reason it
+    # does: nothing in the characteristics layer renames an object, so the
+    # card's name is the name.
+    if (unwanted := selector.get("not_name")) and card.name in (
+        {unwanted} if isinstance(unwanted, str) else set(unwanted)
+    ):
         return False
     if (bound := selector.get("shares_a_name_with")) is not None:
         # Legions to Ashes: "…and all tokens that player controls **with the
@@ -925,20 +1006,21 @@ ATTACKING_PLAYER_WORDS = ("you", "opponent", "any")
 
 def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -> bool:
     """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
-    planeswalker that player controls?
+    planeswalker or battle that player controls?
 
     506.2 gives an attacking creature one of three things to attack: a player, a
     planeswalker, or a battle. `combat.attackers[oid]` is the defending *player*
-    in the first two cases (`add_attacker` refuses a walker whose controller
+    in all three cases (`add_attacker` refuses a permanent whose controller
     disagrees), which is right for "attacks you or a planeswalker you control"
-    and one creature too many for "attacks you". `attacking_planeswalker` is
-    the record that tells them apart. Battles are not attackable in this engine;
-    when they are, their record belongs beside this one.
+    and one creature too many for "attacks you". `attacking_permanent` is
+    the record that tells them apart, and it holds battles as well as walkers --
+    so a creature swinging at a battle is not attacking anybody, which is what
+    this asks and what 506.2 says.
 
     Shared by `matches` and `triggers.matches_card_filter`, so the effect and
     trigger halves of the filter language cannot disagree about it.
     """
-    if combat is None or not combat.attacking(oid) or oid in combat.attacking_planeswalker:
+    if combat is None or not combat.attacking(oid) or oid in combat.attacking_permanent:
         return False
     defender = combat.attackers[oid]
     if who == "you":
@@ -1305,6 +1387,31 @@ def validate_selector(selector: Any, where: str) -> None:
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    # `paid_by` takes either "self"/an oid ("when **that mana** is spent") or a
+    # selector over what the mana's source *was* ("if mana from a **Treasure**
+    # was spent to cast it"). The selector half is validated against its own
+    # closed key list rather than `SELECTOR_KEYS`, because what it filters is a
+    # snapshot and not a permanent: `tapped`, `power`, `zone` and the rest have
+    # no answer about a Treasure that was sacrificed to make the mana, and every
+    # one of them would load and then be silently false.
+    paid_by = selector.get("paid_by")
+    if isinstance(paid_by, Mapping):
+        from ..triggers import PAID_BY_SELECTOR_KEYS
+
+        unknown_paid_by = set(paid_by) - PAID_BY_SELECTOR_KEYS
+        if unknown_paid_by:
+            raise DslError(
+                f"{where}.paid_by: {sorted(unknown_paid_by)} cannot be asked of a "
+                f"remembered mana source -- it may have left the battlefield to "
+                f"make the mana. Use only {sorted(PAID_BY_SELECTOR_KEYS)}"
+            )
+        controller = paid_by.get("controller")
+        if controller is not None and controller not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.paid_by: unknown controller clause {controller!r}; the "
+                f"snapshot records one player, so only 'you', 'opponent' and 'any' "
+                f"can be asked of it"
+            )
     if "created_with" in selector and selector["created_with"] != "self":
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
@@ -1322,6 +1429,17 @@ def validate_selector(selector: Any, where: str) -> None:
         and controller not in ("you", "opponent", "any", "enchanted_player")
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
+    owner = selector.get("owner")
+    if (
+        owner is not None
+        and not isinstance(owner, Mapping)
+        and owner not in ("you", "opponent", "any", "enchanted_player")
+    ):
+        # Refused for the reason `controller` is, and the stakes are higher: an
+        # unrecognised word here matches *everything*, so a selector meaning "a
+        # commander you own" would quietly mean "a commander", and the number a
+        # card reads off that pool would be an opponent's.
+        raise DslError(f"{where}: unknown owner clause {owner!r}")
     if "player" in selector:
         # Only zones that *belong* to a player have an owner to choose. On the
         # battlefield and the stack the list is shared, so `player` would be
@@ -1425,6 +1543,22 @@ def validate_selector(selector: Any, where: str) -> None:
                     f"{where}: unknown supertype {name!r} in {key!r} "
                     f"(known: {sorted(KNOWN_SUPERTYPES)})"
                 )
+    # The same argument once more, and the negated key is again the sharp one:
+    # a positive `name` that is not a string selects nothing and is visible on
+    # the first board, while a `not_name` written as anything but a name -- a
+    # nested selector, say, on the assumption it is a generic `not` wrapper --
+    # excludes nothing and looks like it worked.
+    unwanted = selector.get("not_name")
+    if unwanted is not None:
+        names = [unwanted] if isinstance(unwanted, str) else unwanted
+        if not isinstance(names, (list, tuple)) or not names:
+            raise DslError(
+                f"{where}: 'not_name' takes a card name or a list of them, got {unwanted!r}"
+            )
+        for name in names:
+            if not isinstance(name, str):
+                raise DslError(f"{where}: 'not_name' holds card names; {name!r} is not one")
+
     union = selector.get("union")
     if union is not None:
         if not isinstance(union, (list, tuple)) or len(union) < 2:

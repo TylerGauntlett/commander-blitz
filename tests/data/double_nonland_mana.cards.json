@@ -1,0 +1,119 @@
+{
+  "_comment": "Shapes for tests/unit/test_double_nonland_mana.py. t_nonland_doubler is Kinnan, Bonder Prodigy's first line alone ('whenever you tap a nonland permanent for mana, add one mana of any type that permanent produced'); t_land_doubler is the same sentence about a land, Vorinclex's half, kept here so the shared static is shown to be unregressed rather than only Kinnan's half tested; t_turn_kinnan gates the nonland half on is_your_turn so the condition is shown to be asked; t_bicolor_rock taps for {U} or {B}, a nonland source with a choice, so the doubling is shown to follow what it produced rather than a fixed colour; t_green_four_drop costs {G}{G}{G}{G}, castable off two mana dorks only with the doubling.",
+  "cards": [
+    {
+      "id": "t_nonland_doubler",
+      "name": "Test Nonland Mana Doubler",
+      "oracle_text": "Whenever you tap a nonland permanent for mana, add one mana of any type that permanent produced.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a nonland permanent for mana, add one mana of any type that permanent produced.",
+          "effect": "double_nonland_mana",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_turn_kinnan",
+      "name": "Test Turn-Gated Nonland Doubler",
+      "oracle_text": "As long as it's your turn, whenever you tap a nonland permanent for mana, add one mana of any type that permanent produced.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, whenever you tap a nonland permanent for mana, add one mana of any type that permanent produced.",
+          "effect": "double_nonland_mana",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_land_doubler",
+      "name": "Test Land Mana Doubler",
+      "oracle_text": "Whenever you tap a land for mana, add one mana of any type that land produced.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a land for mana, add one mana of any type that land produced.",
+          "effect": "double_land_mana",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_bicolor_rock",
+      "name": "Test Bicolor Rock",
+      "oracle_text": "{T}: Add {U} or {B}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_green_four_drop",
+      "name": "Test Green Four Drop",
+      "oracle_text": "",
+      "mana_cost": "{G}{G}{G}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": []
+    }
+  ]
+}

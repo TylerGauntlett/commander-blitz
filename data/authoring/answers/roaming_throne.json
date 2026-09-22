@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "roaming_throne",
+    "name": "Roaming Throne",
+    "oracle_text": "Ward {2}\nAs this creature enters, choose a creature type.\nThis creature is the chosen type in addition to its other types.\nIf a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time.",
+    "mana_cost": "{4}",
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Golem"],
+    "power": 4,
+    "toughness": 4,
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Ward {2}",
+        "effect": "ward",
+        "affects": { "self_only": true },
+        "cost": { "mana": "{2}" }
+      },
+      {
+        "kind": "triggered",
+        "text": "As this creature enters, choose a creature type.",
+        "trigger": { "event": "self_enters", "source": "self" },
+        "effects": [{ "op": "choose_type", "prompt": "Choose a creature type" }]
+      },
+      {
+        "kind": "static",
+        "text": "This creature is the chosen type in addition to its other types.",
+        "effect": "add_subtype",
+        "affects": { "self_only": true },
+        "subtypes": [{ "chosen_type_of": "self" }]
+      },
+      {
+        "kind": "static",
+        "text": "If a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time.",
+        "effect": "double_triggers",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "exclude_self": true,
+          "subtypes": [{ "chosen_type_of": "self" }]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

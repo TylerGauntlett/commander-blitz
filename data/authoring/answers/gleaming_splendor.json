@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "gleaming_splendor",
+    "name": "Gleaming Splendor",
+    "oracle_text": "Whenever an opponent draws their second card each turn, you create a Treasure token.\n{2}{W}: Two target players each draw a card.",
+    "mana_cost": "{1}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent draws their second card each turn, you create a Treasure token.",
+        "trigger": {
+          "event": "draw",
+          "controller": "opponent",
+          "nth": 2
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {"const": 1},
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}{W}: Two target players each draw a card.",
+        "cost": {"mana": "{2}{W}"},
+        "targets": [
+          {"id": "t1", "kind": "player", "count": 2, "selector": {}}
+        ],
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {"const": 1},
+            "player": {"target": "t1"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

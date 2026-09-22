@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "avatar_s_wrath",
+    "name": "Avatar's Wrath",
+    "oracle_text": "Choose up to one target creature, then airbend all other creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)\nUntil your next turn, your opponents can't cast spells from anywhere other than their hands.\nExile Avatar's Wrath.",
+    "mana_cost": "{2}{W}{W}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "exiles_itself": true,
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        },
+        "optional": true
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_permanents",
+        "objects": {
+          "target": "t1"
+        },
+        "as": "spared"
+      },
+      {
+        "op": "airbend",
+        "objects": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ],
+          "count": "all",
+          "exclude_binding": "spared"
+        }
+      },
+      {
+        "op": "cant_cast_spells_from_zones",
+        "player": "each_opponent",
+        "except_zones": [
+          "hand"
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "exile",
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {
+      "0": 2
+    }
+  }
+}

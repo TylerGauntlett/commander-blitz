@@ -18,7 +18,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .enums import AbilityKind, CardType, Keyword, Step, Supertype, Zone
-from .mana import ManaCost, ManaRestriction
+from .mana import ManaCost, ManaKeywordGrant, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
 LAND_TYPE = CardType.LAND.value
@@ -174,6 +174,15 @@ class Cost:
     mana: ManaCost = field(default_factory=ManaCost)
     tap: bool = False
     untap: bool = False
+    #: "{R}, {T}, **Exert this land**:" -- Arena of Glory. Exert as a cost
+    #: (702.121a): the source does not untap during its controller's next untap
+    #: step, and `TurnLedger.object_flags` records the word for the turn.
+    #:
+    #: Distinct from ``tap``, which is the ``{T}`` symbol -- Arena's cost is
+    #: both, and 702.121b exerts a permanent whether or not it is tapped -- and
+    #: from the ``skip_untap`` **op**, which runs at resolution. A mana ability
+    #: never resolves, so the op could not be reached from the only printing.
+    exert: bool = False
     sacrifice: Mapping[str, Any] | None = None
     #: "Return a land you control to its owner's hand": a selector over the
     #: battlefield. Distinct from ``sacrifice`` because the permanent comes
@@ -299,6 +308,7 @@ class Cost:
             mana=ManaCost.parse(spec.get("mana")),
             tap=bool(spec.get("tap", False)),
             untap=bool(spec.get("untap", False)),
+            exert=bool(spec.get("exert", False)),
             sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
             return_to_hand=(
                 dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
@@ -370,6 +380,11 @@ class Cost:
             self.tap
             and self.mana.is_free()
             and not self.untap
+            # Arena of Glory's exerting ability is not a tap-for-mana source the
+            # solver may fire on its own: exert is a price, and a solver that
+            # paid it silently would keep a land down for a turn nobody agreed
+            # to. Its `{R}` already disqualifies it; this is the claim itself.
+            and not self.exert
             and self.sacrifice is None
             and self.return_to_hand is None
             and self.tap_permanents is None
@@ -404,6 +419,8 @@ class Cost:
             parts.append("{T}")
         if self.untap:
             parts.append("{Q}")
+        if self.exert:
+            parts.append("Exert this permanent")
         if self.sacrifice:
             parts.append("Sacrifice")
         if self.return_to_hand:
@@ -480,6 +497,27 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
+    #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
+    #: Dragon), as against ward's "a spell or ability", which is the unclaused
+    #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities
+    #: alone, and ``None`` on both.
+    #:
+    #: A restriction rather than a ``filter`` or a ``condition``, because
+    #: neither can reach it.  ``filter`` is matched against the trigger's
+    #: *subject*, which for this event is the permanent being targeted -- so it
+    #: can only ask what the Dragon is, never what aimed at it.  ``controller``
+    #: asks *whose* spell or ability it was, which is the other axis entirely.
+    #: And ``condition`` reads `event_bindings`, which copies only
+    #: EVENT_BINDING_KEYS -- carrying the ``sid`` but not this.
+    #:
+    #: `stack.announce_targets` has put ``is_spell`` on every BECAME_TARGET
+    #: event since the event existed, for both the object and the player half
+    #: and at all four push sites (`put_copy_on_stack` included, so a **copy**
+    #: of a spell is a spell here -- 706.10 puts one on the stack without
+    #: casting it).  Nothing read the flag, so the only trigger that could be
+    #: written also fired off an opponent's tapper, a fight ability, and your
+    #: own equip.
+    targeted_by: str | None = None
     #: ``draw`` and ``spell_cast`` only: "whenever you draw your **second**
     #: card each turn", "whenever an opponent casts their **second** spell each
     #: turn".  The ordinal the draw or cast must have had for its player this
@@ -534,6 +572,26 @@ class TriggerSpec:
     #: Class becomes level 2". On the spec for `chapter`'s reason: it is a filter
     #: on the event, and `triggers._matches` is handed the spec.
     level: int | None = None
+    #: "…deal combat damage to a player **or battle**" -- Zurgo and Ojutai. The
+    #: one widening key on a trigger, and it only means anything on
+    #: ``creatures_deal_combat_damage``; the loader refuses it anywhere else.
+    #:
+    #: A flag rather than a second event name, because it is one printed
+    #: sentence with a disjunction in it and the batch is the same batch:
+    #: `_fire_damage_batch` fires one event per damaging player per step
+    #: carrying `damaged` and `damaged_battles`, and splitting it in two would
+    #: fire *both* on a swing that hit a seat and a battle, paying an ability
+    #: twice for one combat-damage event (510.2).
+    #:
+    #: It is a widening and therefore **off** by default and checked as a
+    #: presence: "whenever one or more creatures you control deal combat damage
+    #: to one or more players" is printed on cards that say nothing about
+    #: battles, and a battle-only swing must not fire them. `_matches` refuses a
+    #: firing with no `damaged` seats unless this is set.
+    #:
+    #: Named for `or_planeswalker`, the effect-side key with the same job on
+    #: `attacking` -- same word, same disjunction, same default.
+    or_battle: bool = False
 
 
 def count_mode_specs(effects: Any) -> int:
@@ -659,6 +717,55 @@ class Ability:
     #: what the board actually offers happens in `costs.mana_options_of`, which
     #: both the payment solver and the activation read.
     mana_reflects: Mapping[str, Any] | None = None
+    #: "Add one mana of any **type** that a land you control could produce."
+    #: Reflecting Pool, Horizon of Progress. The same question as
+    #: `mana_reflects` asked over 106.1b's six types of mana rather than over
+    #: five colours, so `mana_options` carries `_ANY_TYPE_OPTIONS` at load time
+    #: and `costs.mana_options_of` keeps the colorless index while polling the
+    #: board instead of dropping it.
+    #:
+    #: A flag beside `mana_reflects` rather than a family of its own, because
+    #: the *question* is identical -- "what could these permanents produce" --
+    #: and only the answer's vocabulary widens. It is meaningless without
+    #: `mana_reflects` and the loader refuses it there.
+    mana_reflects_any_type: bool = False
+    #: "{T}: Add one mana of any of **the exiled card's colors**." Chrome Mox.
+    #: A selector over *cards*, whose printed colours decide which colours this
+    #: ability offers -- the fifth member of the same family as `mana_reflects`
+    #: and `mana_identity`, and the one that reads a characteristic rather than
+    #: another ability.
+    #:
+    #: `mana_reflects` is the near miss and is a different card: it asks each
+    #: matched object's own mana *abilities* what they could produce, and an
+    #: imprinted nonartifact, nonland card sitting in exile has none -- so a
+    #: Chrome Mox written that way taps for nothing, always. The other near miss
+    #: is a `choose_mode` over five `add_mana`s, which taps for any colour with
+    #: nothing imprinted at all: strictly better than the printed card.
+    #:
+    #: `mana_options` carries the five-colour superset until activation, for the
+    #: same reason `mana_reflects` needs one, and `costs.mana_options_of` does
+    #: the narrowing -- to nothing at all while the Mox is unimprinted.
+    mana_colors_of: Mapping[str, Any] | None = None
+    #: "Vivid — {T}: **For each color among permanents you control**, add one
+    #: mana of that color." Bloom Tender. A selector whose matches' colours are
+    #: read the way `mana_colors_of` reads them, and then *all of them are
+    #: produced at once* rather than offered as a choice — so this is the one
+    #: mana ability whose output is a variable multi-symbol bundle instead of a
+    #: single pip picked from a set.
+    #:
+    #: `mana_colors_of` over the same selector is the near miss and is Mox
+    #: Amber: "one mana of any color among …" is one mana, and a three-colour
+    #: board would tap this card for one mana instead of three.
+    #:
+    #: `costs.mana_options_of` returns **exactly one option** here — the bundle —
+    #: so there is nothing for the player or the solver to choose between, which
+    #: is the printed card: Bloom Tender never asks which colour.
+    #:
+    #: `mana_options` carries the five-colour superset until activation for the
+    #: same reason `mana_reflects` needs one, and unlike every other member of
+    #: the family that superset is not *filtered* at activation — the narrowing
+    #: builds a fresh tuple from the board's colours instead.
+    mana_each_color_among: Mapping[str, Any] | None = None
     #: "…any color in your commander's color identity." The colours are a
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
@@ -673,6 +780,24 @@ class Ability:
     #: worse card: it offers X of one colour or X of the other and can never
     #: make {U}{U}{R}{R} off a power-4 Vivi.
     mana_split: tuple[str, ...] = ()
+    #: "{T}: Add X mana of **any one color**, where X is Helga's power" --
+    #: Helga, Skittish Seer. The sixth member of the same family, and the one
+    #: that needs no branch in `costs.mana_options_of` at all: the five
+    #: one-symbol options really are what it offers, and `mana_amount` -- which
+    #: has scaled a single option since Gyre Sage -- turns the chosen one into X
+    #: of that colour.
+    #:
+    #: `mana_split` is the near miss and is a strictly *better* card: "any
+    #: combination" at X=3 makes {W}{U}{G}, and "any one color" cannot. The
+    #: other near miss is a `choose_mode` of five fixed `add_mana`s (Gilded
+    #: Lotus), which needs a literal size at load time -- and Helga's size is
+    #: her power, which starts at 1 and grows.
+    #:
+    #: A flag of its own rather than "five options and an amount", because the
+    #: card prints **no mana symbol**: without a marker `_derive_color_identity`
+    #: would read the superset and make a {2}{G}{U} creature five-colour, which
+    #: is a deck-building rule (903.4) and not an approximation.
+    mana_any_one_color: bool = False
     #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
     #: member of the same family as `mana_reflects` and `mana_identity`: the
     #: colour is a question about this permanent's own `chosen_color`, asked
@@ -702,6 +827,16 @@ class Ability:
     #: Ability-level rather than card-level for the same reason, and distinct
     #: from `CardDef.uncounterable`, which is a spell speaking about itself.
     mana_uncounterable: bool = False
+    #: "…**it gains haste until end of turn**" -- Arena of Glory. The other
+    #: rider this ability's mana carries, and the one that has to outlive the
+    #: spell: `mana_uncounterable` is read while the spell is still on the stack
+    #: and thrown away, while this is owed to the *permanent* the spell becomes.
+    #:
+    #: On the ability for `mana_uncounterable`'s reason -- Arena has a plain
+    #: `{T}: Add {R}` too, and recorded per permanent that one would grant haste
+    #: for free. ``None`` is ordinary mana; the loader refuses it on an ability
+    #: that is not a mana ability, where it would load and never be read.
+    mana_grant: ManaKeywordGrant | None = None
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and
@@ -881,6 +1016,10 @@ class CardDef:
     #: replacement, because the client shows it on the card in hand where no
     #: object exists to carry counters yet.
     loyalty: int | None = None
+    #: A battle's printed defense (310.3). Kept as a characteristic as well as
+    #: compiled into a replacement, for loyalty's reason: the client shows it on
+    #: the card in hand, where no object exists to carry counters yet.
+    defense: int | None = None
     #: A Saga's **final chapter number** (714.4). Set by the loader on any card
     #: with chapter abilities, and the one thing about a Saga that is not
     #: derivable from the board: it is what 704.5s compares the lore counters
@@ -989,6 +1128,12 @@ class CardDef:
     #: "…discard a card **or** pay 3 life" -- one cast line per payable branch.
     #: See `CostModel.additional_cost_options`.
     additional_cost_options: tuple[Cost, ...] = ()
+    #: **Spree** (702.166a) -- "Choose one or more additional costs." A
+    #: non-empty *subset* of these prices is paid as the spell is cast, and one
+    #: cast line is offered per payable subset. Which modes were bought is read
+    #: back on resolution with `{"spree_mode": n}`.
+    #: See `CostModel.spree`.
+    spree: tuple[Cost, ...] = ()
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".
@@ -1035,6 +1180,14 @@ class CardDef:
     melds_into: str | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
+    #: **Warp {1}{R}**: ``evoke``'s slot -- an alternative mana cost offered
+    #: only from hand -- with the exile and the later cast supplied by the rule
+    #: rather than by the card. Kept out of ``mana_cost`` for evoke's reason.
+    #:
+    #: ``None`` on every card Tannuk hands the mechanic to, since the grant is a
+    #: static on a *different* permanent: `casting.warp_cost` is what asks both
+    #: questions, and nothing reads this field directly.
+    warp: ManaCost | None = None
     #: Prowl and spectacle: an alternative cost offered from hand, optionally
     #: only *while* ``alternative_condition`` holds.
     #:

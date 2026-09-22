@@ -1,0 +1,101 @@
+{
+  "_comment": "Cards that exist only for the Dracogenesis permission test (tests/unit/test_free_cast_permission.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_dragon_amnesty` is Dracogenesis' one line on a free enchantment, so the board can be set without the mana to cast the granter. `t_cinder_wyrm` is a Dragon whose cost is mostly coloured pips -- the half a `spell_cost_reduction` can never reach, since reductions are clamped to the generic part -- and `t_cinder_ogre` is the same card with the Dragon type filed off, which is how the filter's scope is measured. `t_swelling_wyrmling` is an {X} Dragon that enters with X +1/+1 counters, so 107.3b's 'X is 0' is a printed number on the battlefield rather than a field nobody looks at.",
+  "cards": [
+    {
+      "id": "t_dragon_amnesty",
+      "name": "Test Dragon Amnesty",
+      "oracle_text": "You may cast Dragon spells without paying their mana costs.",
+      "mana_cost": "{0}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast Dragon spells without paying their mana costs.",
+          "effect": "free_cast_permission",
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Dragon"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_cinder_wyrm",
+      "name": "Test Cinder Wyrm",
+      "oracle_text": "Flying",
+      "mana_cost": "{4}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_cinder_ogre",
+      "name": "Test Cinder Ogre",
+      "oracle_text": "",
+      "mana_cost": "{4}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ogre"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_swelling_wyrmling",
+      "name": "Test Swelling Wyrmling",
+      "oracle_text": "Test Swelling Wyrmling enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": {
+            "x": true
+          }
+        }
+      ]
+    }
+  ]
+}

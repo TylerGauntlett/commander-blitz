@@ -1,6 +1,6 @@
 # Keywords, and where each one lands
 
-The engine implements 30 keywords. Every one arrived the same way: a card in the
+The engine implements 36 keywords. Every one arrived the same way: a card in the
 authoring queue could not be expressed, a worker wrote a gap record,
 `/extend-dsl` built it. That loop works, and [card-authoring.md](card-authoring.md)
 is the argument for it.
@@ -61,7 +61,7 @@ matches. The right-hand column is the mistake that row exists to prevent.
 
 | If the printed quality… | it is | witness | why not the neighbour |
 |---|---|---|---|
-| is deck-construction only | an **inert** `Keyword` | partner | it must still be listed, or the residual gate has an unclaimed line |
+| is deck-construction only | an **inert** `Keyword` | partner, choose a Background | it must still be listed, or the residual gate has an unclaimed line |
 | takes a parameter — a colour, a type, a cost | a **static** with fields | protection, `block_restriction` | `Keyword` is a bare string; a parameter has nowhere to live on it |
 | must read **derived** characteristics | a `Keyword`, compared inside the rule | skulk | static filters read *printed* characteristics only, which is what keeps the characteristics pipeline acyclic — so a static cannot ask this at all |
 | takes no parameter, and some rule reads it | a `Keyword` enum member | flying, shroud | — |
@@ -213,6 +213,7 @@ This is the long tail, and where the build order comes from.
 | Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
+| Choose a Background † | shipped | an **inert** `Keyword`, partner's shape — deck construction only. Kept apart from `partner` because the two build different decks: a partner pair is two commanders printing the word, this is one commander plus a Background | `choose_a_background` |
 | Cipher | shipped | the `encode` op (a fourth destination rider) and `cast_copy`, read back by an `encoded_by` trigger filter | `encode` |
 | Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
@@ -237,7 +238,7 @@ This is the long tail, and where the build order comes from.
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
 | Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
-| Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py`. A card that guards it with "if this creature hasn't been exerted **this turn**" (Combat Celebrant) adds `set_turn_flag` inside the `may` and `{"not": {"has_turn_flag": "exerted"}}` as the intervening-if | `set_turn_flag` |
+| Exert | shipped | Two shapes, and only one of them is free. **As a choice while attacking**: `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py`. A card that guards it with "if this creature hasn't been exerted **this turn**" (Combat Celebrant) adds `set_turn_flag` inside the `may` and `{"not": {"has_turn_flag": "exerted"}}` as the intervening-if. **As a cost** ("{R}, {T}, Exert this land", Arena of Glory) it is the `exert` cost key, which writes both halves itself: the trigger shape cannot reach it, because the ability is a mana ability and never resolves, and `_split_mana_rider` refuses `skip_untap` there anyway — cashed by `test_exert_cost.py` | — |
 | Exploit | free | `self_enters` trigger, `may`, then `sacrifice` and whatever the card does — cashed by `test_exploit_and_bloodrush.py` | — |
 | Explore | shipped | op — the branch reads the card just revealed, which no condition can name | `explore` |
 | Extort | free | `spell_cast` trigger, then `may` with `pay` `{W/B}`, then `lose_life` on each opponent with `as` and `gain_life` of that binding ("that much" is the loss after replacement) — written by the `extort` template (`templates.extort_ability`), cashed by `test_extort.py` | — |
@@ -301,7 +302,7 @@ This is the long tail, and where the build order comes from.
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
 | Replicate | shipped | `additional_cost` with both modifiers -- one cast line per number of times paid | `additional_cost` |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
-| Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
+| Riot | shipped | `Keyword`, read by `zones.offer_riot_choice` a moment before the move: a 614.1c replacement, not a `self_enters` trigger, so the creature is never seen at its printed size. A `Keyword` rather than a `ReplacementModel` event because the printing that matters -- "nontoken creatures you control **have riot**" -- grants it, and a replacement is not grantable | `riot` |
 | Ripple | shipped | the `ripple` op -- cascade's shape at a fixed depth, matched on the source's own name | `ripple` |
 | Scavenge | free | activated from the graveyard with an exile cost, then `add_counters` | — |
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |
@@ -324,6 +325,7 @@ This is the long tail, and where the build order comes from.
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | free | activated from the graveyard: `put_onto_battlefield` self, `grant_keyword` haste `permanent`, then a `delay`ed `exile` | — |
 | Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
+| Warp | shipped | card-level field — evoke's alternative cost from hand, with both riders supplied by the engine: a `DelayedTrigger` at the next end step exiling *that* object, carrying `playable: "later_turns"` so it may be cast from exile on a later turn. Nothing is written on the card, because the printing says only the price. `grant_warp` is the static that hands the cost to other cards in hand (Tannuk, Steadfast Second) | `warp` |
 | Wither | shipped | `Keyword`, read by `damage_permanent` -- the counters land instead of the damage mark | `wither` |
 
 ## Ability words
@@ -357,7 +359,7 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**Every row is shipped or free** — 92 shipped, 93 free. `routed`, `blocked` and
+**Every row is shipped or free** — 93 shipped, 93 free. `routed`, `blocked` and
 `refused` are all empty.
 
 The single most useful finding, made over and over, is that **`blocked` was a
@@ -499,8 +501,10 @@ capability already has gap records, those cards are the real specification.
 ## Provenance
 
 The census is the supplied source document, entry for entry, plus the rows
-marked **†**: hexproof, skulk, intimidate and partner, which the engine
-implements and the source omits; nightbound, which the source folds into the
+marked **†**: hexproof, skulk, intimidate, partner and choose a Background, which
+the engine implements and the source omits — the last folded into the partner
+entry by the source and kept as its own `Keyword` here, because the two words
+build different decks; nightbound, which the source folds into the
 daybound entry and the engine keeps as its own `Keyword` because it is printed
 on the other face; fuse, which the source omits and which the engine implements
 as a card-level field rather than a `Keyword`, since it is a third way to cast

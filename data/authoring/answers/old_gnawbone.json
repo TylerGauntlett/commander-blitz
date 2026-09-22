@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "old_gnawbone",
+    "name": "Old Gnawbone",
+    "oracle_text": "Flying\nWhenever a creature you control deals combat damage to a player, create that many Treasure tokens.",
+    "mana_cost": "{5}{G}{G}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Dragon"],
+    "power": 7,
+    "toughness": 7,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control deals combat damage to a player, create that many Treasure tokens.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {"binding": "amount"},
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

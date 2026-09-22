@@ -1,0 +1,258 @@
+{
+  "_comment": "Shapes for tests/unit/test_static_power_filter.py. t_spf_battlecrier is Temur Battlecrier's only printed line, the witness for `power` in a static COUNT filter. t_spf_lord is the same key in an `affects` position -- an anthem that reads power while the anthem layer is running -- which is where a naive `chars()` read would recurse for ever. t_spf_discounter is the card-level `cost_reduction` reader, which runs outside the characteristics pipeline and therefore reads the DERIVED number; it is kept live so the divergence between the two readers is measured rather than asserted in a comment. t_spf_anthem is the thing a static filter must not see, t_spf_runt the 3/3 it pumps to 4 power, t_spf_brute a printed 4/4 and t_spf_bear a printed 2/2. t_spf_tough is the toughness twin.",
+  "cards": [
+    {
+      "id": "t_spf_battlecrier",
+      "name": "Test Ferocious Battlecrier",
+      "oracle_text": "During your turn, spells you cast cost {1} less to cast for each creature you control with power 4 or greater.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "power": 4,
+      "toughness": 3,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During your turn, spells you cast cost {1} less to cast for each creature you control with power 4 or greater.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {
+            "controller": "you"
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "power": {
+                "op": ">=",
+                "value": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_spf_lord",
+      "name": "Test Ferocious Power Lord",
+      "oracle_text": "Creatures you control with power 4 or greater get +1/+1.",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control with power 4 or greater get +1/+1.",
+          "effect": "buff",
+          "power": 1,
+          "toughness": 1,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "power": {
+              "op": ">=",
+              "value": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_spf_anthem",
+      "name": "Test Ferocious Anthem Bearer",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1.",
+          "effect": "buff",
+          "power": 1,
+          "toughness": 1,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_spf_discounter",
+      "name": "Test Ferocious Discount Sorcery",
+      "oracle_text": "This spell costs {1} less to cast for each creature you control with power 4 or greater.\nDraw a card.",
+      "mana_cost": "{9}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "power": {
+            "op": ">=",
+            "value": 4
+          }
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_spf_tough",
+      "name": "Test Ferocious Toughness Lord",
+      "oracle_text": "Creatures you control with toughness 2 or less get +1/+0.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control with toughness 2 or less get +1/+0.",
+          "effect": "buff",
+          "power": 1,
+          "toughness": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "toughness": {
+              "op": "<=",
+              "value": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_spf_brute",
+      "name": "Test Ferocious Brute",
+      "oracle_text": "",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_spf_runt",
+      "name": "Test Ferocious Runt",
+      "oracle_text": "",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_spf_bear",
+      "name": "Test Ferocious Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

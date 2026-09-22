@@ -1,0 +1,96 @@
+{
+  "card": {
+    "id": "dragon_tempest",
+    "name": "Dragon Tempest",
+    "oracle_text": "Whenever a creature you control with flying enters, it gains haste until end of turn.\nWhenever a Dragon you control enters, it deals X damage to any target, where X is the number of Dragons you control.",
+    "mana_cost": "{1}{R}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control with flying enters, it gains haste until end of turn.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "flying"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "keywords": [
+              "haste"
+            ],
+            "duration": "until_end_of_turn",
+            "objects": {
+              "binding": "subject"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a Dragon you control enters, it deals X damage to any target, where X is the number of Dragons you control.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "subtypes": [
+              "Dragon"
+            ]
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "any",
+            "count": 1,
+            "selector": {
+              "any_types": [
+                "Creature",
+                "Planeswalker",
+                "Battle"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "damage",
+            "amount": {
+              "count": {
+                "controller": "you",
+                "subtypes": [
+                  "Dragon"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "target": "t1",
+            "source_object": {
+              "binding": "subject"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

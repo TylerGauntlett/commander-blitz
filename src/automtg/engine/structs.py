@@ -166,7 +166,12 @@ class AttackRestriction:
     #: The player who may not be attacked.
     defender: int
     duration: str = "this_turn"
-    #: Does it also stop an attack on ``defender``'s **planeswalkers**?
+    #: Does it also stop an attack on ``defender``'s **planeswalkers** -- and,
+    #: since battles joined them, on 506.2's third defender kind generally?
+    #: The DSL key keeps the name it was written with, because the sentence that
+    #: sets it ("creatures can't attack this combat") names no defender at all
+    #: and so reaches every kind; the one card that *does* name walkers by hand
+    #: is `attack_defender_forbidden`'s, not this.
     #:
     #: ``False`` on every card that names a player, and that is 506.2: "you
     #: can't attack that player this turn" restricts attacking the *seat*, and
@@ -566,6 +571,77 @@ class LifeLock:
         }
 
 
+#: The durations a :class:`CastLock` can carry.  Both, for the reason
+#: :data:`LIFE_LOCK_DURATIONS` carries both: the printed sentence says "until
+#: your next turn", and a timed table the cleanup step could not sweep on
+#: ``this_turn`` would be the one exception among them.
+CAST_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class CastLock:
+    """"Until your next turn, your opponents can't cast spells from anywhere
+    other than their hands." -- Avatar's Wrath.
+
+    A prohibition on casting **from named zones**, over named seats, with a
+    clock. Three things at once, and the engine had none of them together.
+
+    **Not the `cant_cast_spells` static.** That one is player-wide and total:
+    the loader refuses an `affects` or an `amount` beside it (see
+    `loader.__init__`) precisely so a narrower printed line cannot load as a
+    strictly stronger lock, and written bare here it would forbid the
+    opponents' **hand** casts too -- a far harsher card than the one printed.
+    It is also a `static_effect`, so only a permanent can carry one, and
+    Avatar's Wrath is a sorcery that exiles itself.
+
+    **Not a `set_turn_flag`.** A turn flag is read by `has_turn_flag`
+    conditions and by nothing in the legality path, so a player "flagged"
+    locked would go on casting; and it expires at the turn boundary rather than
+    at the locking player's next turn, which is one turn too soon at a
+    four-player table.
+
+    Lives on the table (:attr:`GameState.cast_locks`) beside `life_locks` and
+    `player_protections`, for their reason, and shares their clock: cleared in
+    :attr:`player`'s untap step, keyed by a seat and never by a turn number,
+    because eliminating a player moves everybody else's "next turn".
+
+    :attr:`player` is the seat whose next turn **ends** it -- the `_expired`
+    contract every timed table here shares -- and :attr:`affects` is who is
+    *locked*. The first table where the two differ, and they have to: the
+    printed sentence is "until **your** next turn, **your opponents** can't
+    cast", one clock and several other seats. `DamageShield` overloads
+    ``player`` the other way and is the reason `clear_damage_shields` cannot
+    use `_expired`; splitting the two fields here keeps this table on the
+    shared helper.
+    """
+
+    #: Whose next turn ends this. Never a turn number.
+    player: int
+    #: The seats that can't cast. A tuple rather than a set so the record stays
+    #: hashable and `==` deduplicates two copies of one sentence.
+    affects: tuple[int, ...] = ()
+    #: The zones a locked player can't cast from, as `Zone` values. Named
+    #: positively rather than as "everywhere except the hand", because the
+    #: reader compares against `costs.zone_of` and a positive list needs no
+    #: inversion at the point of use -- and because a card that locks exactly
+    #: one zone ("can't cast spells from graveyards") is then the same record
+    #: with a shorter list.
+    zones: tuple[str, ...] = ()
+    duration: str = "until_your_next_turn"
+    #: The spell that installed it, for the log. Not part of the lifetime:
+    #: Avatar's Wrath exiles itself on resolution and the lock stands anyway.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "affects": list(self.affects),
+            "zones": list(self.zones),
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 #: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
 #: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
 #: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --
@@ -669,6 +745,12 @@ class StackItem:
     #: because the card's reward effect has to know *whose* it is.
     gift_to: int | None = None
     evoked: bool = False
+    #: Cast for its **warp** cost. Read on resolution, and it is the only cast
+    #: flag here whose riders are the *rule's* rather than the card's: a warped
+    #: permanent is exiled at the beginning of the next end step and may then be
+    #: cast from exile on a later turn, and no warp card prints a sentence
+    #: saying so. See `_place_after_resolution`.
+    warped: bool = False
     #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
     #: creature. Read on resolution to decide which target list the spell has:
     #: the printed card declares none, and "enchant creature" comes from the
@@ -703,6 +785,14 @@ class StackItem:
     #: resolution by the `{"cost_option": n}` condition a tiered card branches
     #: on -- the tier that was bought decides which effect happens.
     cost_option: int | None = None
+    #: **Spree** (702.166a): which priced modes were bought as this spell was
+    #: cast, by index, ascending. Read on resolution by the
+    #: `{"spree_mode": n}` condition each printed mode is an `if` on.
+    #:
+    #: A tuple rather than `cost_option`'s single index, and that is the whole
+    #: mechanic: "choose one or more" buys a subset, so a card that recorded
+    #: only the first chosen mode would run one effect having charged for three.
+    spree_modes: tuple[int, ...] = ()
     #: Card ids spliced onto this spell as it was cast. Their `spell_effects`
     #: run after the host's, in the order they were spliced on -- which is what
     #: "add this card's effects to that spell" means, and why they are recorded
@@ -1149,6 +1239,34 @@ class TurnLedger:
         """
         return any(oid in oids for oids in self.creatures_attacked.values())
 
+    def entered_this_turn(self, oid: int) -> bool:
+        """Did **this** permanent enter the battlefield this turn?
+
+        "Zurgo and Ojutai has hexproof as long as **it** entered this turn";
+        "If a creature you control **that entered this turn** would deal
+        damage…" (Neriv, Heart of the Storm).  The same ledger the
+        `permanents_entered_this_turn` value counts, asked of one object instead
+        of summed over a filter -- which is the whole difference between the two
+        sentences.  Counting cannot say it: the narrowest filter writable over
+        the snapshots is a list of *characteristics*, so "an Orc Dragon you
+        control entered this turn" is satisfied by any other Orc Dragon and by a
+        second copy of the card itself.
+
+        Asked by oid, and asked of the ledger rather than of `entered_turn` on
+        the object.  `entered_turn` is the field `summoning_sick` reads and means
+        something else on purpose: `change_control` stamps it, because 302.6 says
+        a permanent has not been under its new controller since their turn began.
+        Stealing a creature is not that creature entering the battlefield, so a
+        filter reading that field would double an Act of Treason'd attacker under
+        Neriv and hand a stolen commander hexproof.  The ledger records
+        *arrivals* and nothing else.
+
+        Nothing is removed while the turn lasts, so a permanent that entered,
+        left and came back still answers yes -- it has an entry for the trip it
+        is currently on, which is the one the printed line asks about.
+        """
+        return any(entry.oid == oid for entry in self.permanents_entered)
+
     def set_object_flag(self, oid: int, flag: str) -> None:
         """Write a word onto an object for the rest of this turn."""
         self.object_flags.setdefault(oid, set()).add(flag)
@@ -1195,13 +1313,20 @@ class CombatState:
 
     #: attacker oid -> the player being attacked
     attackers: dict[int, int] = field(default_factory=dict)
-    #: attacker oid -> the **planeswalker** it is attacking, when it is
-    #: attacking one. A parallel map rather than a union in `attackers`, which
-    #: is read in about fifteen places: a planeswalker's controller *is* the
-    #: defending player (506.2), so every existing read of `attackers[oid]`
-    #: keeps meaning what it meant and stays true. Only declaration, damage
-    #: assignment and serialization have to know the difference.
-    attacking_planeswalker: dict[int, int] = field(default_factory=dict)
+    #: attacker oid -> the **permanent** it is attacking, when it is attacking
+    #: one rather than a seat. A parallel map rather than a union in
+    #: `attackers`, which is read in about fifteen places: the permanent's
+    #: controller *is* the defending player (506.2), so every existing read of
+    #: `attackers[oid]` keeps meaning what it meant and stays true. Only
+    #: declaration, damage assignment and serialization have to know the
+    #: difference.
+    #:
+    #: Named for the *kind of thing* rather than for planeswalkers, because
+    #: 506.2 has three attack targets and this map holds two of them: a
+    #: planeswalker and a **battle** (310.7) are the same slot in the
+    #: declaration, differing only in which counter the damage comes off. It
+    #: was `attacking_planeswalker` while a walker was the only one.
+    attacking_permanent: dict[int, int] = field(default_factory=dict)
     #: blocker oid -> the attacker it is blocking
     blockers: dict[int, int] = field(default_factory=dict)
     #: attacker oid -> ordered list of blocker oids (damage assignment order)
