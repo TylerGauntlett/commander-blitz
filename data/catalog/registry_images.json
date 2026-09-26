@@ -247,6 +247,10 @@
     "artist": "Andrew Robinson",
     "scryfall_id": "9f57f8bf-228b-4da2-823c-67bce8b574cd"
   },
+  "anafenza_unyielding_lineage": {
+    "artist": "Matt Stewart",
+    "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725"
+  },
   "ancestral_recall": {
     "artist": "Mark Poole",
     "scryfall_id": "2dd41293-d7c8-4422-9f0c-b3e96350f5c9"
@@ -943,6 +947,10 @@
     "artist": "Kaja Foglio",
     "scryfall_id": "02750f36-d9d3-4c50-adbf-dadab46e92fd"
   },
+  "bird_soldier_4_4_w_flying": {
+    "artist": "Leesha Hannigan",
+    "scryfall_id": "9ed2d2f3-e1b0-41e0-a29d-31624e5e9004"
+  },
   "birds_of_paradise": {
     "artist": "Marcelo Vignali",
     "scryfall_id": "3ffe931c-9f19-4ea5-bc24-041eb00a5862"
@@ -1530,6 +1538,10 @@
   "castle_vantress": {
     "artist": "John Avon",
     "scryfall_id": "dead85f7-865c-4f7d-ad6c-014d4e90f8be"
+  },
+  "cat_1_1_w": {
+    "artist": "Jesper Ejsing",
+    "scryfall_id": "7d400b41-813d-4a63-848f-5eb4db4bf3bb"
   },
   "cat_beast_2_2_w": {
     "artist": "Bayard Wu",
@@ -2835,6 +2847,10 @@
   "elder_deep_fiend": {
     "artist": "Jason Felix",
     "scryfall_id": "10532d06-94e3-47bc-a036-7535be05be98"
+  },
+  "eldrazi_angel_4_4_c_flying_vigilance": {
+    "artist": "Nino Is",
+    "scryfall_id": "c1ce831f-3e80-4205-884f-a912b5d53742"
   },
   "eldrazi_devastator": {
     "artist": "Joseph Meehan",
@@ -9299,6 +9315,10 @@
     "artist": "Sergey Glushakov",
     "scryfall_id": "03c45b66-ddc7-43f8-95d0-fe2ad743b3a4"
   },
+  "soldier_1_1_c": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "a58c2fc3-c07f-4f06-a9d5-1d0fe3dbde1f"
+  },
   "soldier_1_1_w": {
     "artist": "Magali Villeneuve",
     "scryfall_id": "a58c2fc3-c07f-4f06-a9d5-1d0fe3dbde1f"
@@ -9428,6 +9448,10 @@
     "scryfall_id": "59a04e16-a767-4112-ab01-6ca1b09c286c"
   },
   "spirit_1_1_c": {
+    "artist": "Ryan Yee",
+    "scryfall_id": "9ca99f61-a1cd-4c61-9e0a-791b5f211f56"
+  },
+  "spirit_2_2_w": {
     "artist": "Ryan Yee",
     "scryfall_id": "9ca99f61-a1cd-4c61-9e0a-791b5f211f56"
   },

@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "missing_token",
-      "kind": "token",
-      "what": "A token id for \"4/4 colorless Eldrazi Angel creature token with flying and vigilance\" -- colorless (no colors at all, like the other Devoid-made tokens), creature subtypes Eldrazi and Angel, 4/4, keywords flying and vigilance. One line in the token pool, e.g. `eldrazi_angel_4_4_c_flying_vigilance`.",
-      "why_existing_wont_do": "`token_ids` is a closed list and holds no colorless Eldrazi Angel. `angel_4_4_w_flying_vigilance` (\"4/4 white Angel creature with flying and vigilance\") is the near miss and is a different token on two axes: it is WHITE, not colorless, and it is an Angel only, not an Eldrazi Angel. Colour and creature type are both real: this card is Devoid so everything about it is colourless on purpose, the tokens feed Eldrazi-typal and colourless-matters cards, and a white token is hit by protection from white, Angel-typal anthems and colour hosers the printed token is not. The only other colourless Eldrazi token is `eldrazi_spawn_0_1_c` (0/1 with a mana ability), which is unrelated. Substituting either is exactly the \"nearly right token\" the brief forbids."
-    },
-    {
       "capability": "base_power_toughness",
       "kind": "selector",
       "what": "A selector that reads a creature's BASE power/toughness -- its copiable 4/4-before-effects value (613.2 layer 7a/7b, i.e. printed or set by a copy effect or a type-changing effect), ignoring +1/+1 counters, anthems, Auras, Equipment and pump. Needed as `base_power` / `base_toughness` keys taking the same comparison spec `power`/`toughness` take, so \"each with base power or toughness 1 or less\" is `{\"any_of\": [{\"base_power\": {\"op\": \"<=\", \"value\": {\"const\": 1}}}, {\"base_toughness\": {\"op\": \"<=\", \"value\": {\"const\": 1}}}]}`.",

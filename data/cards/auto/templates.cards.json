@@ -2557,6 +2557,84 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put two +1/+1 counters on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "spirit_2_2_w"
+                    }
+                  ],
+                  "label": "Create a 2/2 white Spirit creature token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken creature you control dies, Anafenza endures 2. (Put two +1/+1 counters on it or create a 2/2 white Spirit creature token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "anafenza_unyielding_lineage",
+      "keywords": [
+        "flash",
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Anafenza, Unyielding Lineage",
+      "oracle_text": "Flash\nFirst strike\nWhenever another nontoken creature you control dies, Anafenza endures 2. (Put two +1/+1 counters on it or create a 2/2 white Spirit creature token.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

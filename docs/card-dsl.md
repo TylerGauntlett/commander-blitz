@@ -11539,13 +11539,25 @@ pairs in the pool now differ by exactly one word:
 | `angel_4_4_w_flying` | `angel_4_4_w_flying_vigilance` | vigilance |
 | `illusion_1_1_u` | `illusion_1_1_u_flying` | flying |
 | `knight_2_2_wu_vigilance` | `knight_2_2_w_vigilance` | blue |
+| `soldier_1_1_c` | `soldier_1_1_w` | colorless, and an artifact |
+| `spirit_2_2_w` | `spirit_1_1_c` | the body, and the colour |
+| `cat_1_1_w` | `cat_beast_2_2_w` | Beast, and the body |
+| `bird_soldier_4_4_w_flying` | `bird_1_1_w_flying` | the body |
+| `eldrazi_angel_4_4_c_flying_vigilance` | `angel_4_4_w_flying_vigilance` | Eldrazi, and colorless |
+
+The bottom five arrived together, from one deck, and two of them show how the
+error compounds rather than staying cosmetic. Myrel, Shield of Argive makes
+colorless Soldier **artifact** tokens and counts Soldiers to decide how many —
+so a white non-artifact Soldier would feed the wrong number back into the card
+that made it. Ocelot Pride's next sentence *copies every token that entered this
+turn*, so the near miss is not made once, it is made and then doubled.
 
 Two consequences. The packet's `token_ids` carries each id's **printed
 description** rather than the bare id, so matching a printed token against the
 list is a lookup rather than a guess. And a token added to the pool gets its
-assertion written by hand — `tests/unit/test_deck_tokens.py` and
-`tests/unit/test_artifact_tokens.py` are where that lives, and they are the only
-coverage a token definition ever has.
+assertion written by hand — `tests/unit/test_token_pool.py`,
+`tests/unit/test_deck_tokens.py` and `tests/unit/test_artifact_tokens.py` are
+where that lives, and they are the only coverage a token definition ever has.
 
 A token's *size* need not be a number. Urza's Saga's Construct is a printed 0/0
 carrying "This token gets +1/+1 for each artifact you control", which is a static

@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**37 cards** blocked by **45** capabilities.
+**36 cards** blocked by **44** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [missing-token](#missing-token) | 5 | 1126 | token |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
@@ -59,38 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unbounded-pay-x](#unbounded-pay-x) | 1 | 8328 | op |
 | [untap-limit](#untap-limit) | 1 | 3327 | static_effect |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## missing-token
-
-Blocks **5** cards.
-
-- **(token)** A token id for "2/2 white Spirit creature token" -- the create_token half of endure N. Suggested id following the pool's naming convention: spirit_2_2_w.
-  <br>Why the existing vocabulary won't do: `token_ids` is a closed list and its only Spirit is `spirit_1_1_c`, a 1/1 COLORLESS Spirit -- wrong size and wrong colour, so it is not the printed token. The other 2/2 whites in the list (`knight_2_2_w`, `ox_2_2_w`, `cat_beast_2_2_w`) are the right body with the wrong creature type, and the brief forbids substituting a nearly-right token. With no matching id the create_token branch of endure cannot be written, and dropping it would silently turn a modal keyword action into a counters-only ability.
-- **(token)** A token id for "4/4 colorless Eldrazi Angel creature token with flying and vigilance" -- colorless (no colors at all, like the other Devoid-made tokens), creature subtypes Eldrazi and Angel, 4/4, keywords flying and vigilance. One line in the token pool, e.g. `eldrazi_angel_4_4_c_flying_vigilance`.
-  <br>Why the existing vocabulary won't do: `token_ids` is a closed list and holds no colorless Eldrazi Angel. `angel_4_4_w_flying_vigilance` ("4/4 white Angel creature with flying and vigilance") is the near miss and is a different token on two axes: it is WHITE, not colorless, and it is an Angel only, not an Eldrazi Angel. Colour and creature type are both real: this card is Devoid so everything about it is colourless on purpose, the tokens feed Eldrazi-typal and colourless-matters cards, and a white token is hit by protection from white, Angel-typal anthems and colour hosers the printed token is not. The only other colourless Eldrazi token is `eldrazi_spawn_0_1_c` (0/1 with a mana ability), which is unrelated. Substituting either is exactly the "nearly right token" the brief forbids.
-- **(token)** The token id for a **1/1 colorless Soldier artifact creature token** -- `types: ["Artifact", "Creature"]`, `subtypes: ["Soldier"]`, `colors: []`, 1/1 -- added to data/cards/tokens.cards.json as, say, `soldier_1_1_c_artifact`. This is the Phyrexia/Brothers' War-era Soldier token printed by Myrel, Shield of Argive, Mishra's Foundry, Thran Spider and the rest of that cycle. With it in the pool the second sentence is otherwise fully expressible today and needs no engine work: an `attacks` trigger whose `create_token` carries `amount: {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Soldier"]}}` says "X is the number of Soldiers you control" exactly, and the tokens count themselves for the NEXT attack because they are Soldiers too.
-  <br>Why the existing vocabulary won't do: `token_ids` is a closed list and holds no colorless artifact Soldier. The two Soldier tokens that exist are both wrong cards: `soldier_1_1_w` (data/cards/isperia.cards.json:1361) is a 1/1 WHITE Soldier creature and `human_soldier_1_1_w` (data/cards/tokens.cards.json) is a 1/1 white Human Soldier creature -- neither is an artifact and neither is colorless, which is the whole point of the token on a commander whose deck counts artifacts: substituting one would silently break every artifact count, every metalcraft/affinity-style payoff, improvise, and any "colorless" or "nonwhite" check, and would add a spurious Human for tribal effects. The three colorless artifact creature tokens that do exist are each a different creature type and so miss the Soldier count this very card reads: `gnome_1_1_c` is a Gnome, `thopter_1_1_c_flying` is a 1/1 Thopter WITH FLYING, and `construct_0_0_c_artifact_buff` is a 0/0 Construct with its own printed ability. `hero_1_1_c` and `spirit_1_1_c` are 1/1 colorless but are not artifacts and are not Soldiers. `create_token` has no key that recolours, retypes or renames the token it names -- `op_options` for it is amount/as/attached_to/attacking/controller/or_planeswalker/player/tapped/token -- and `add_subtype` after the fact would not make the existing white Soldier colorless or an artifact, would be a separate continuous effect, and would still leave the token white for the turn it was made. Per the packet's own note this is a one-line data change and the cheapest gap in the pipeline to close.
-- **(token)** A "1/1 white Cat creature token" in the token pool -- suggested id `cat_1_1_w`, a one-entry data change in data/cards/tokens.cards.json alongside `cat_beast_2_2_w`: `{"id": "cat_1_1_w", "name": "Cat Token", "oracle_text": "1/1 white Cat creature token.", "types": ["Creature"], "subtypes": ["Cat"], "colors": ["W"], "power": 1, "toughness": 1}`, plus the usual art-manifest/registry entry the other tokens carry. It unblocks the large white/green Cat-token family (Ocelot Pride, Ajani's Chosen-style makers, Cat Collector, Feline Sovereign's friends, Arahbo, Regal Caracal's second token).
-  <br>Why the existing vocabulary won't do: `token_ids` is a CLOSED list and the only Cat in it is `cat_beast_2_2_w`, "2/2 white Cat Beast creature". That is the wrong size and the wrong type line, and this card then COPIES every token it made this turn, so substituting it would double a 2/2 Cat Beast where the printed card doubles a 1/1 Cat -- the error compounds rather than staying cosmetic. `human_soldier_1_1_w`, `soldier_1_1_w` and `human_1_1_w` are the right size and colour but the wrong creature type, which matters on a card whose deck is built on the Cat type.
-- **(token)** The token id for a **4/4 white Bird Soldier creature token with flying** -- `types: ["Creature"]`, `subtypes: ["Bird", "Soldier"]`, `colors: ["W"]`, 4/4, `keywords: ["flying"]` -- added to data/cards/tokens.cards.json as, following the pool's naming convention, `bird_soldier_4_4_w_flying`. This is the Lord of the Rings: Tales of Middle-earth Eagle token (The Eagles Are Coming!, Gwaihir the Windlord's neighbours). It is a one-line data change.
-  <br>Why the existing vocabulary won't do: `token_ids` is a closed list and holds no 4/4 Bird of any colour. `bird_1_1_w_flying` is the right colour, the right type and the right keyword at a quarter of the size -- a 1/1 is not a 4/4, and the brief forbids substituting a nearly-right token. `angel_4_4_w_flying` and `angel_4_4_w_flying_vigilance` are the right body, colour and keyword with the wrong creature types: they are Angels, not Bird Soldiers, so every Bird or Soldier tribal count on the board (and this deck is a Soldier deck -- the packet's queue sits beside Myrel, Daru Warchief and Valiant Veteran, all of which read Soldiers) would be silently wrong, and `angel_4_4_w_flying_vigilance` also grants a keyword the printed token does not have. `bird_2_2_u_flying` and `bird_1_1_u_flying_vigilance` are blue and the wrong size. `create_token` has no key that resizes, recolours or retypes the token it names -- its `op_options` are amount/as/attached_to/attacking/controller/or_planeswalker/player/tapped/token -- and patching a 1/1 Bird up afterwards with `add_subtype` plus a `pump` or `set_pt` would be separate continuous effects that could be stripped, would not survive the end of turn for `pump`, and would still leave the token printed as a 1/1.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ocelot Pride** (rank 1126) — `ocelot_pride`
-  - At the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token.
-  - Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.
-- **Myrel, Shield of Argive** (rank 1525) — `myrel_shield_of_argive`
-  - During your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments.
-  - Whenever Myrel attacks, create X 1/1 colorless Soldier artifact creature tokens, where X is the number of Soldiers you control.
-- **Anafenza, Unyielding Lineage** (rank 7860) — `anafenza_unyielding_lineage`
-  - Whenever another nontoken creature you control dies, Anafenza endures 2. (Put two +1/+1 counters on it or create a 2/2 white Spirit creature token.)
-- **Angelic Aberration** (rank 8006) — `angelic_aberration`
-  - When this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.
-- **The Eagles Are Coming!** (rank 26603) — `the_eagles_are_coming`
-  - Choose target creature you own. If this spell was kicked, instead choose any number of target creatures you own. Return each chosen creature to your hand. At the beginning of the next upkeep, create a 4/4 white Bird Soldier creature token with flying for each creature returned to your hand this way.
-
-</details>
 
 ## cast-as-though-flash
 

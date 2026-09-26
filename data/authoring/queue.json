@@ -7792,12 +7792,12 @@
     },
     "Anafenza, Unyielding Lineage": {
       "edhrec_rank": 7860,
-      "gate": "template",
+      "gate": null,
       "name": "Anafenza, Unyielding Lineage",
-      "reason": "no template for: Whenever another nontoken creature you control dies, Anafenza endures 2",
+      "reason": "",
       "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Anafenza, the Foremost": {

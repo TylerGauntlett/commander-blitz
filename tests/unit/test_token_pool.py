@@ -136,3 +136,148 @@ class TestEveryNamedTokenResolves:
         assert named, "walked every card file and found no create_token at all"
         missing = sorted(t for t in named if pool.get(t) is None)
         assert not missing, f"cards name tokens the pool does not define: {missing}"
+
+
+class TestMyrelsSoldiersAreColorlessArtifacts:
+    """Myrel, Shield of Argive: *"create X 1/1 colorless Soldier **artifact**
+    creature tokens, where X is the number of Soldiers you control."*
+
+    The near miss is the worst kind, because it is wrong twice over and the
+    second way is self-inflicted: `soldier_1_1_w` is a **white non-artifact**
+    Soldier, so handing it to Myrel would make tokens of the wrong colour and
+    the wrong card type -- and Myrel's own X counts Soldiers, so the tokens feed
+    the count that makes the next batch. A commander whose whole deck is built
+    on colorless artifact Soldiers would be quietly making something else.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("soldier_1_1_c") is not None
+
+    def test_it_is_a_colorless_artifact_creature(self, pool):
+        soldier = pool.get("soldier_1_1_c")
+        assert (soldier.power, soldier.toughness) == (1, 1)
+        assert not soldier.colors, "colorless -- the printed word"
+        assert "Artifact" in soldier.types and "Creature" in soldier.types
+        assert "Soldier" in soldier.subtypes
+        assert soldier.is_token
+
+    def test_the_white_soldier_is_still_a_separate_token(self, pool):
+        """The two differ in colour and in card type; neither may absorb the
+        other, and the white one is what several other cards print."""
+        white = pool.get("soldier_1_1_w")
+        assert white is not None
+        assert sorted(white.colors) == ["W"]
+        assert "Artifact" not in white.types
+
+
+class TestAnafenzasSpiritIsATwoTwoWhite:
+    """Anafenza, Unyielding Lineage endures 2: *"put two +1/+1 counters on it or
+    create a **2/2 white** Spirit creature token."*
+
+    The pool's only Spirit was `spirit_1_1_c` -- a 1/1 **colorless** one, half
+    the body and the wrong colour. Endure is modal, so substituting it would not
+    merely make a smaller token: it would make the counters half of the mode
+    strictly better than the token half on every board.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("spirit_2_2_w") is not None
+
+    def test_it_is_a_two_two_white_spirit(self, pool):
+        spirit = pool.get("spirit_2_2_w")
+        assert (spirit.power, spirit.toughness) == (2, 2)
+        assert sorted(spirit.colors) == ["W"]
+        assert "Spirit" in spirit.subtypes
+        assert spirit.is_creature and spirit.is_token
+
+    def test_the_colorless_spirit_is_still_a_separate_token(self, pool):
+        other = pool.get("spirit_1_1_c")
+        assert other is not None
+        assert (other.power, other.toughness) == (1, 1)
+        assert not other.colors
+
+
+class TestTheAberrationsAngelsAreColorlessEldrazi:
+    """Angelic Aberration: *"Create that many **4/4 colorless Eldrazi Angel**
+    creature tokens with flying and vigilance."*
+
+    `angel_4_4_w_flying_vigilance` is the right body with the right keywords and
+    is still the wrong token: it is **white**, and it is an Angel rather than an
+    Eldrazi Angel. The colour is load-bearing twice -- the card itself is Devoid,
+    so a white token would contradict the card printing it, and colorless- and
+    Eldrazi-typal cards read both characteristics.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("eldrazi_angel_4_4_c_flying_vigilance") is not None
+
+    def test_it_is_a_colorless_eldrazi_angel_with_both_keywords(self, pool):
+        token = pool.get("eldrazi_angel_4_4_c_flying_vigilance")
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.colors, "Devoid's token is colorless"
+        assert {"Eldrazi", "Angel"} <= set(token.subtypes)
+        assert {"flying", "vigilance"} <= set(token.keywords)
+
+    def test_the_white_angel_is_still_a_separate_token(self, pool):
+        other = pool.get("angel_4_4_w_flying_vigilance")
+        assert other is not None
+        assert sorted(other.colors) == ["W"]
+        assert "Eldrazi" not in other.subtypes
+
+
+class TestTheEaglesAreBirdSoldiers:
+    """The Eagles Are Coming!: *"create a **4/4 white Bird Soldier** creature
+    token with flying for each creature returned to your hand this way."*
+
+    Two near misses, each wrong in its own direction. `bird_1_1_w_flying` is a
+    quarter of the body. `angel_4_4_w_flying` is the right body and the wrong
+    creature types -- and in *this* deck that is the expensive error, because
+    Myrel, Daru Warchief, Ballyrush Banneret and Valiant Veteran all count or
+    pump Soldiers.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("bird_soldier_4_4_w_flying") is not None
+
+    def test_it_is_a_four_four_white_bird_soldier_with_flying(self, pool):
+        token = pool.get("bird_soldier_4_4_w_flying")
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["W"]
+        assert {"Bird", "Soldier"} <= set(token.subtypes)
+        assert "flying" in token.keywords
+
+    def test_the_small_bird_is_still_a_separate_token(self, pool):
+        other = pool.get("bird_1_1_w_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (1, 1)
+        assert "Soldier" not in other.subtypes
+
+
+class TestOcelotPridesCatIsAOneOneWhite:
+    """Ocelot Pride: *"create a **1/1 white Cat** creature token."*
+
+    `cat_beast_2_2_w` is the pool's only Cat and is a 2/2 Cat **Beast**. The
+    substitution is worse on this card than on most, because its next sentence
+    copies *every token you control that entered this turn* -- so a wrong token
+    is not made once, it is made and then doubled.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("cat_1_1_w") is not None
+
+    def test_it_is_a_one_one_white_cat(self, pool):
+        cat = pool.get("cat_1_1_w")
+        assert (cat.power, cat.toughness) == (1, 1)
+        assert sorted(cat.colors) == ["W"]
+        assert "Cat" in cat.subtypes
+        assert cat.is_creature and cat.is_token
+
+    def test_it_is_not_a_beast(self, pool):
+        """The whole reason it exists rather than reusing the Cat Beast."""
+        assert "Beast" not in pool.get("cat_1_1_w").subtypes
+
+    def test_the_cat_beast_is_still_a_separate_token(self, pool):
+        other = pool.get("cat_beast_2_2_w")
+        assert other is not None
+        assert (other.power, other.toughness) == (2, 2)
+        assert "Beast" in other.subtypes

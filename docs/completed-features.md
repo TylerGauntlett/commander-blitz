@@ -16911,3 +16911,45 @@ mean no card yet measures its own warp half at gate 5.
   a dearer printed one; and a real printing's reminder text not having to match,
   since `_declares_printed_cost` cuts at the parenthesis before parsing. The
   first and last fail without the branch.
+
+## Five printed tokens the closed pool did not have — Myrel, Shield of Argive — 111.4
+
+### Overview
+
+Five cards in one deck were blocked on nothing but a token. `create_token` names
+an id in a **closed** list, `validate_token_references` refuses an id the pool
+does not hold, and no key on the op recolours, resizes or retypes what it names —
+so "the nearly-right token" is not a cheaper option, it is the only option, and
+it is wrong. Five workers reached that conclusion independently and each filed a
+gap rather than substituting.
+
+| the printed token | the card | the near miss, and why it is a different card |
+|---|---|---|
+| 1/1 colorless Soldier **artifact** | Myrel, Shield of Argive | `soldier_1_1_w` is white and not an artifact — and Myrel's X *counts Soldiers*, so the wrong token feeds the wrong number back into the card that made it |
+| 2/2 white Spirit | Anafenza, Unyielding Lineage | `spirit_1_1_c` is half the body and colourless; endure is **modal**, so substituting it makes the counters half strictly better than the token half on every board |
+| 4/4 colorless Eldrazi Angel, flying + vigilance | Angelic Aberration | `angel_4_4_w_flying_vigilance` is the right body and keywords in the wrong colour with the wrong types — and the card is **Devoid**, so a white token would contradict the card printing it |
+| 4/4 white Bird Soldier, flying | The Eagles Are Coming! | `bird_1_1_w_flying` is a quarter of the body; `angel_4_4_w_flying` is the right body with types that would misfeed this deck's four Soldier counters |
+| 1/1 white Cat | Ocelot Pride | `cat_beast_2_2_w` is the wrong body *and* a Beast — and Ocelot Pride copies every token that entered this turn, so the error is made and then **doubled** |
+
+### Tier: none of A–E — five entries in `data/cards/tokens.cards.json`
+
+No engine change. The capability was data the whole time, which is what made it
+the cheapest item on the roadmap and the one blocking the most cards — including
+the commander.
+
+Four of the five cards were blocked on a *second* capability as well, so this
+change unblocked one card outright (Anafenza) and moved the other four down to a
+single remaining need each: `base_power_toughness`, `cant_activate_abilities`,
+`entered_this_turn_selector`, and `kicked_target_count` +
+`return_to_hand_binding`. Their gap records were edited rather than deleted, so
+`report_gaps` stops counting a capability that has shipped.
+
+### Tests
+
+- `tests/unit/test_token_pool.py` — one class per token, each pinning the
+  characteristic that makes its near miss wrong, and each asserting **the near
+  miss still exists as a separate token**, so nobody later "consolidates" the
+  pair the way the section in `card-dsl.md` warns about. The colourlessness of
+  Myrel's Soldier and of the Aberration's Angel, the Cat not being a Beast, and
+  the Bird Soldier carrying both creature types are the four that would silently
+  change a card if they drifted.

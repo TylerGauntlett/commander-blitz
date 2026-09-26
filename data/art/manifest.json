@@ -368,6 +368,12 @@
     "file": "anaconda.jpg",
     "scryfall_id": "9f57f8bf-228b-4da2-823c-67bce8b574cd"
   },
+  "anafenza_unyielding_lineage": {
+    "artist": "Matt Stewart",
+    "bytes": 50792,
+    "file": "anafenza_unyielding_lineage.jpg",
+    "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725"
+  },
   "ancestral_recall": {
     "artist": "Mark Poole",
     "bytes": 106084,
@@ -1410,6 +1416,12 @@
     "file": "bird_maiden.jpg",
     "scryfall_id": "02750f36-d9d3-4c50-adbf-dadab46e92fd"
   },
+  "bird_soldier_4_4_w_flying": {
+    "artist": "Leesha Hannigan",
+    "bytes": 40437,
+    "file": "bird_soldier_4_4_w_flying.jpg",
+    "scryfall_id": "9ed2d2f3-e1b0-41e0-a29d-31624e5e9004"
+  },
   "birds_of_paradise": {
     "artist": "Kevin Sidharta",
     "bytes": 56450,
@@ -2282,6 +2294,12 @@
     "bytes": 48408,
     "file": "castle_vantress.jpg",
     "scryfall_id": "dead85f7-865c-4f7d-ad6c-014d4e90f8be"
+  },
+  "cat_1_1_w": {
+    "artist": "Jesper Ejsing",
+    "bytes": 123997,
+    "file": "cat_1_1_w.jpg",
+    "scryfall_id": "7d400b41-813d-4a63-848f-5eb4db4bf3bb"
   },
   "cat_beast_2_2_w": {
     "artist": "Bayard Wu",
@@ -4237,6 +4255,12 @@
     "bytes": 63676,
     "file": "elder_deep_fiend.jpg",
     "scryfall_id": "10532d06-94e3-47bc-a036-7535be05be98"
+  },
+  "eldrazi_angel_4_4_c_flying_vigilance": {
+    "artist": "Nino Is",
+    "bytes": 115227,
+    "file": "eldrazi_angel_4_4_c_flying_vigilance.jpg",
+    "scryfall_id": "c1ce831f-3e80-4205-884f-a912b5d53742"
   },
   "eldrazi_devastator": {
     "artist": "Joseph Meehan",
@@ -13921,6 +13945,12 @@
     "file": "solar_array.jpg",
     "scryfall_id": "03c45b66-ddc7-43f8-95d0-fe2ad743b3a4"
   },
+  "soldier_1_1_c": {
+    "artist": "Magali Villeneuve",
+    "bytes": 89583,
+    "file": "soldier_1_1_c.jpg",
+    "scryfall_id": "a58c2fc3-c07f-4f06-a9d5-1d0fe3dbde1f"
+  },
   "soldier_1_1_w": {
     "artist": "Bachzim",
     "bytes": 72431,
@@ -14122,6 +14152,12 @@
     "bytes": 92807,
     "file": "spirit_1_1_c.jpg",
     "scryfall_id": "5a9c5b21-c770-4fc0-b205-d96862e6be3e"
+  },
+  "spirit_2_2_w": {
+    "artist": "Ryan Yee",
+    "bytes": 33925,
+    "file": "spirit_2_2_w.jpg",
+    "scryfall_id": "9ca99f61-a1cd-4c61-9e0a-791b5f211f56"
   },
   "spirit_mascot": {
     "artist": "Edgar S\u00e1nchez Hidalgo",
