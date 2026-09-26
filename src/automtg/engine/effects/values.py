@@ -95,6 +95,12 @@ VALUE_KEYS = frozenset(
         # of the line above; "did it happen" is a `cmp` against 0.
         "life_gained_this_turn",
         "spells_cast_this_turn",
+        #: Approach of the Second Sun's "this game". The same shape as the key
+        #: above over a ledger with no turn boundary on it -- `spells_cast_ids`
+        #: is cleared every turn, so it reads empty on the turn that matters.
+        #: "Another" is the card's own `> 1`, since this spell is already
+        #: recorded by the time its effects run.
+        "spells_cast_this_game",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -517,6 +523,41 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 # does not know -- a copy put on the stack by an effect is not a
                 # card and was never cast, but the guard costs nothing and a
                 # crash here would take down an ordinary condition check.
+                if cast_id in registry and _matches_printed(registry.get(cast_id), filt):
+                    total += 1
+        return total
+    if "spells_cast_this_game" in expr:
+        # "…and you've cast **another spell named Approach of the Second Sun this
+        # game**" -- Approach of the Second Sun.
+        #
+        # The same shape as `spells_cast_this_turn` above and a different ledger,
+        # because the per-turn one is cleared at every turn boundary: on the turn
+        # that matters it reads empty, and the card could never win. Nothing else
+        # keeps cast history -- object flags die with the object on a zone change
+        # and `set_turn_flag` is one turn by name.
+        #
+        # **"Another" is the caller's job**, and deliberately so. This spell has
+        # already been recorded by the time its own effects run (`push_spell`
+        # fires SPELL_CAST as it goes on the stack), so a card meaning "another"
+        # compares `> 1` rather than `> 0`. Subtracting one here would be wrong
+        # for every sentence that does *not* say "another", and there is no way
+        # from inside this leaf to tell which was meant.
+        spec = expr["spells_cast_this_game"]
+        filt = spec.get("filter") if isinstance(spec, Mapping) and "filter" in spec else None
+        who = spec.get("player", "you") if filt is not None else spec
+        pids = _players(ctx, who)
+        cast = ctx.state.spells_cast_this_game
+        if filt is None:
+            return sum(len(cast.get(p, ())) for p in pids)
+        from ..characteristics import _matches_printed
+
+        registry = ctx.state.registry
+        total = 0
+        for p in pids:
+            for cast_id in cast.get(p, ()):
+                # `in` before `get` for the reason the per-turn leaf gives: an id
+                # the registry does not know would raise, and a crash here would
+                # take down an ordinary condition check.
                 if cast_id in registry and _matches_printed(registry.get(cast_id), filt):
                     total += 1
         return total

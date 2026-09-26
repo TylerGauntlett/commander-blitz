@@ -17399,3 +17399,86 @@ granted the same turn correctly begins free of it.
   starting free of it, and the op inert with no combat at all; plus three tests
   driving a **real turn** to show the defender is never asked. Stashing
   `turn.py` fails three of them.
+
+## Approach of the Second Sun — three clauses, three seams that already existed
+
+### Overview
+
+*"If this spell was cast from your hand and you've cast another spell named
+Approach of the Second Sun this game, you win the game. Otherwise, put it into
+its owner's library seventh from the top and you gain 7 life."*
+
+Only "you win the game" and "you gain 7 life" were sayable. Each of the other
+three clauses needed one small addition at a seam that was already there, and
+each had a near miss that would have been silently wrong.
+
+### `cast_from_hand` — a sibling, not a negation
+
+A condition leaf reading the `obj.cast_from_hand` stamp `stack.push_spell` already
+writes beside `cast_from_graveyard`. It cannot be the negation of that key: a
+spell cast from exile (foretell, plot, adventure), off a Citadel top or from the
+command zone was cast from **neither**, and a copy was never cast at all (707.10)
+— so a copy of Approach must not win the game. `zone_is` cannot answer it either,
+reporting the source's *current* zone, which for any resolving sorcery is the
+stack.
+
+### `spells_cast_this_game` — the same shape over a ledger with no turn boundary
+
+`TurnLedger.spells_cast_ids` is cleared at every turn boundary, so on the turn
+that matters it reads empty and a card written against it could never win. The
+new tally lives on `GameState` and is written in the **same** `emit` SPELL_CAST
+fold as the per-turn one, so the two cannot disagree about what counted as a cast.
+
+**"Another" is the card's job, deliberately.** `push_spell` fires SPELL_CAST as
+the spell goes on the stack, so by the time its own effects run it has already
+recorded itself, and a card meaning "another" compares `> 1`. Subtracting one
+inside the leaf would be wrong for every sentence that does *not* say "another",
+and nothing inside it can tell which was meant.
+
+### `tucks_itself` — the eighth rider, and the only one with a depth
+
+`_place_after_resolution` already carried seven riders that replace the graveyard
+a resolving spell goes to. This is the eighth, and the only one whose destination
+is a **library** and whose value is an ordinal rather than a flag. `move_object`
+already accepted `to_index`, and the ordinal converts the way `op_put_on_top`
+does, for its stated reason: a card tucked sixth when the card says seventh is
+drawn a turn early, which is the whole of what the depth buys.
+
+Written as a `put_on_top` op in the card's own effects it would reach nothing —
+`_place_after_resolution` runs *after* `spell_effects` — which is the same reason
+`exiles_itself` is a rider.
+
+### Two defects this shipped with, both in the harness rather than the card
+
+Worth recording because the codebase had warned about the second one in advance.
+
+1. **Gate 4 rejected a correct card.** `verify._play_once` allows a nonpermanent
+   to end in a graveyard, widened to exile for `exiles_itself` and `rebound`. The
+   third rider was added without teaching the gate, so Approach failed gate 4
+   while behaving exactly as printed. Widening it is **not** weakening it: the
+   gate's own docstring admits only a *declared* flag, so a spell that merely
+   finds itself in a library still fails.
+
+2. **The two harnesses disagreed.** `tests/cards/test_every_card_works.py` keeps
+   its own copy of that allowlist, and its comment says plainly that the two
+   "have to agree or a card passes one gate and fails the other for the same
+   behaviour." Only one was widened, so `--collect` accepted the card and
+   `tests/cards` then failed it. Both are now in sync, and that comment records
+   Approach as the card that proved the warning real.
+
+3. **`CARD_LEVEL_RIDER_KEYS` in `packet.py` is hand-maintained**, unlike
+   `condition_keys` and `value_keys` which are derived and picked the new leaves
+   up for free. So a worker reading "put it into its owner's library" would have
+   been told the vocabulary has no word for it — the "most gaps are documentation
+   gaps" failure exactly. Added.
+
+### Tests
+
+- `tests/unit/test_approach_of_the_second_sun.py` — `cast_from_hand` true and
+  false, and **an object cast from exile answering false to both keys**, which is
+  the claim that makes it a separate word rather than a negation; the game-long
+  tally counting a cast, **surviving a `TurnLedger.clear()`**, honouring a name
+  filter, and staying per-player; the `> 1` boundary measured as a pair — one
+  cast gains 7 and does not win, two casts win; the tuck landing at index 6 and
+  not in the graveyard, with a no-rider contrast; and the flag the gate reads.
+  All fourteen fail without the change.

@@ -1116,6 +1116,11 @@ class CardDef:
     #: resolving spell goes to, and like the five beside it, it only ever
     #: replaces the *graveyard*.
     exiles_itself: bool = False
+    #: Approach of the Second Sun's "seventh from the top". The eighth rider
+    #: on the resolution slot, and the only one whose destination is a library
+    #: and whose value is a depth rather than a flag. The printed ordinal,
+    #: counting from 1.
+    tucks_itself: int | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put
     #: on the stack with no targets at all, and the card branches on

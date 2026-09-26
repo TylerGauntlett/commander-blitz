@@ -1511,6 +1511,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
+        tucks_itself=model.tucks_itself,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,

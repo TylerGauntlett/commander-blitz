@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**28 cards** blocked by **36** capabilities.
+**27 cards** blocked by **33** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
-| [cast-from-hand](#cast-from-hand) | 1 | 1017 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [copy-ability](#copy-ability) | 1 | 3634 | op |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -46,8 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spells-cast-this-game](#spells-cast-this-game) | 1 | 1017 | value |
-| [tucks-itself](#tucks-itself) | 1 | 1017 | replacement |
 | [untap-limit](#untap-limit) | 1 | 3327 | static_effect |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
@@ -178,21 +175,6 @@ Blocks **1** card.
 - **Angel's Grace** (rank 2015) — `angel_s_grace`
   - You can't lose the game this turn and your opponents can't win the game this turn.
   - Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.
-
-</details>
-
-## cast-from-hand
-
-Blocks **1** card.
-
-- **(value)** an `if` condition leaf that asks whether the spell being resolved was cast from its controller's hand -- `{"cast_from_hand": true}`, read off the resolving spell the way `cast_from_graveyard` is, so a spell can branch on the zone it was cast from
-  <br>Why the existing vocabulary won't do: `condition_keys` has `cast_from_graveyard`, which reads only the graveyard stamp, and its negation is not 'from hand' (a spell cast from exile, the command zone or the top of the library is neither). `zone_is` reports the source's CURRENT zone (engine/effects/conditions.py:156, and its own comment at :216 says it cannot answer where a spell was cast from), and a resolving spell is always on the stack. The engine already stamps the fact -- `obj.cast_from_hand` is set in engine/stack.py:78 and read by rebound and plot at :903 and :912 -- it is simply not exposed to the condition language, so this is a one-leaf change.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Approach of the Second Sun** (rank 1017) — `approach_of_the_second_sun`
-  - If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game.
-  - Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.
 
 </details>
 
@@ -531,36 +513,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## spells-cast-this-game
-
-Blocks **1** card.
-
-- **(value)** a game-long ledger of the spells each player has cast, filterable by name, so 'you've cast another spell named Approach of the Second Sun this game' is a value leaf -- e.g. `{"spells_cast_this_game": {"player": "you", "filter": {"name": "Approach of the Second Sun"}}}` compared `>` against `{"const": 0}`, counting casts that happened on earlier turns and excluding this spell itself ('another')
-  <br>Why the existing vocabulary won't do: `spells_cast_this_turn` (value_keys) is the only cast counter and it lives on `TurnLedger` (engine/structs.py:1123, 1137), which is cleared at every turn boundary by `TurnLedger` reset at :1298-1299 -- so on the turn that matters it reads 0 and the card would never win. Nothing else records cast history: `set_flag` writes only to permanents on the battlefield (engine/effects/ops_combat_flags.py:107-110) and object flags do not survive a zone change, `set_turn_flag` is explicitly the one-turn lifetime, and there is no player-level, game-long record of any kind (the only game-long player fields are `epic_source` and the city's blessing).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Approach of the Second Sun** (rank 1017) — `approach_of_the_second_sun`
-  - If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game.
-  - Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.
-
-</details>
-
-## tucks-itself
-
-Blocks **1** card.
-
-- **(replacement)** a card-level rider, beside `exiles_itself`, that sends the spell into its OWNER's library at a printed depth instead of the graveyard as it resolves -- e.g. `"tucks_itself": {"from_top": 7}` -- and, for this card, one that applies only on the 'Otherwise' branch
-  <br>Why the existing vocabulary won't do: `put_on_top` already understands the depth (`from_top: 7`, engine/effects/ops_cards.py:1880), but it cannot reach the resolving spell: `_place_after_resolution` runs AFTER `spell_effects` and moves a nonpermanent to the graveyard unconditionally (engine/stack.py:838-848), so a self-tuck written in the card's own effects is overwritten -- exactly the reason `exiles_itself` exists as a rider rather than an `exile` op, per the comment at engine/stack.py:889-893. Of the seven riders on that slot (`graveyard_cast_exiles`, buyback, rebound, cipher, `exiles_itself`, plot, adventure/aftermath) every one redirects to exile or to hand; none names a library, and none carries a depth.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Approach of the Second Sun** (rank 1017) — `approach_of_the_second_sun`
-  - If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game.
-  - Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.
 
 </details>
 

@@ -263,14 +263,21 @@ class TestEveryCardIsPlayable:
             )
         else:
             # A spell goes to its owner's graveyard -- unless the card says
-            # otherwise, which two riders do: "Exile Teferi's Protection" and
-            # rebound's "exile it as it resolves". `authoring/verify.py` makes
-            # the same allowance and reads the same two flags, because the two
-            # harnesses have to agree or a card passes one gate and fails the
-            # other for the same behaviour.
+            # otherwise, which three riders do: "Exile Teferi's Protection",
+            # rebound's "exile it as it resolves", and Approach of the Second
+            # Sun's "put it into its owner's library seventh from the top".
+            # `authoring/verify.py` makes the same allowance and reads the same
+            # three flags, because the two harnesses have to agree or a card
+            # passes one gate and fails the other for the same behaviour.
+            #
+            # Approach is the card that proved that warning was not theoretical:
+            # the `tucks_itself` rider shipped having widened only the other
+            # harness, so the card was accepted by `--collect` and failed here.
             spell_zones = {Zone.GRAVEYARD}
             if played.exiles_itself or played.rebound:
                 spell_zones.add(Zone.EXILE)
+            if played.tucks_itself is not None:
+                spell_zones.add(Zone.LIBRARY)
             assert obj.zone in spell_zones, (
                 f"{card_id} is a spell but ended in {obj.zone.value}"
             )

@@ -130,6 +130,11 @@ CARD_LEVEL_FACE_KEYS = (
 #: `uncounterable` are sentences on the card.
 CARD_LEVEL_RIDER_KEYS = (
     "exiles_itself",  # "Exile <this card>." -- instead of the graveyard, on resolution
+    # "…put it into its owner's library seventh from the top" -- the printed
+    # ordinal, counting from 1. `exiles_itself`'s sibling on the same slot, and a
+    # sentence on the card by exactly the test above, so a worker reading it goes
+    # looking for this.
+    "tucks_itself",
     "uncounterable",  # "This spell can't be countered."
     "rebound",  # exiled as it resolves, cast free from exile next upkeep
     "split_second",  # "…players can't cast spells or activate abilities"

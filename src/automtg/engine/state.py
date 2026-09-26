@@ -233,6 +233,21 @@ class GameState:
     #: `structs.TurnLedger`: the other per-turn tallies, folded from the event
     #: stream in `emit` rather than counted at six separate primitives.
     turn_ledger: TurnLedger = field(default_factory=TurnLedger)
+    #: Every spell each player has cast **this game**, by the card id of the face
+    #: that was cast, in cast order.
+    #:
+    #: "…and you've cast another spell named Approach of the Second Sun this
+    #: game" (Approach of the Second Sun) is the sentence, and it cannot be
+    #: answered from `TurnLedger.spells_cast_ids`: that tally is cleared at every
+    #: turn boundary, so on the turn that matters it reads empty and the card
+    #: could never win. Nothing else in the engine keeps cast history -- object
+    #: flags die with the object on a zone change, and `set_turn_flag` is
+    #: explicitly one turn.
+    #:
+    #: On the state rather than on a player for the reason `turn_ledger` is:
+    #: it is folded from the event stream in one place (`emit`'s SPELL_CAST arm),
+    #: so no cast path can forget it.
+    spells_cast_this_game: dict[int, list[str]] = field(default_factory=dict)
     #: Day / night (726). ``None`` until a daybound permanent makes it day, then
     #: ``"day"`` or ``"night"`` for the rest of the game.
     #:
@@ -785,6 +800,11 @@ class GameState:
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:
                     ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
+                    # The same fact with no turn boundary on it, for "…this
+                    # game". Written beside the per-turn list rather than in a
+                    # second fold, so the two cannot disagree about what counted
+                    # as a cast.
+                    self.spells_cast_this_game.setdefault(pid, []).append(str(cast_id))
                 # "Whenever an opponent casts their **second** spell each turn."
                 # The ordinal is a fact about this cast, so it goes on the event
                 # -- the one thing a trigger reads at queue time and never again

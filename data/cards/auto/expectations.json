@@ -356,6 +356,21 @@
   "apprentice_wizard": {
     "zone": "battlefield"
   },
+  "approach_of_the_second_sun": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 41
+    },
+    "life": {
+      "0": 47
+    },
+    "zone": "library"
+  },
   "arachnoid": {
     "zone": "battlefield"
   },

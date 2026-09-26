@@ -1004,6 +1004,17 @@ class CardModel(BaseModel):
     #: "self_only": true}` reaches nothing and the line would silently do
     #: nothing at all. Not `exile_self` either, which is a **cost** key.
     exiles_itself: bool = False
+    #: "Otherwise, put it into its owner's library **seventh from the top**"
+    #: -- Approach of the Second Sun. The rider beside `exiles_itself` that
+    #: redirects to a *library* rather than to exile, and the only one that
+    #: carries a **depth**: the printed ordinal, counting from 1, the same
+    #: way `put_on_top`'s `from_top` does.
+    #:
+    #: Written as a `put_on_top` op in the card's own effects it would reach
+    #: nothing -- `_place_after_resolution` runs after `spell_effects` and
+    #: moves a nonpermanent to the graveyard unconditionally -- which is the
+    #: same reason `exiles_itself` is a rider and not an op.
+    tucks_itself: int | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text
