@@ -6410,6 +6410,10 @@
   "mutilate": {
     "zone": "graveyard"
   },
+  "myrel_shield_of_argive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "myriad_landscape": {
     "battlefield_count": 33,
     "hand_size": {

@@ -1116,6 +1116,49 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "cant_cast_spells")
 
 
+def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
+    """ "…or activate abilities of artifacts, creatures, or enchantments."
+
+    Grand Abolisher's second half, and Myrel, Shield of Argive's first line. The
+    twin of :func:`player_cant_cast_spells` directly above, which stops the
+    *casting* half and says in its own docstring that it deliberately does not
+    stop this one.
+
+    It takes the **object** as well as the player, which is the whole difference
+    between the two. Casting is a thing a player does; activating is a thing a
+    player does *to a permanent*, and every printed card in this family names
+    which permanents -- so the filter is required vocabulary rather than a
+    refusable extra, and this predicate cannot be answered from the seat alone.
+
+    Read in two places, and the second is not optional. `legality._activate_actions`
+    withholds the actions, and `costs._sources_of` withholds the **mana** ones:
+    605.1a makes a mana ability an activated ability, the printed line excepts
+    nothing, and a locked permanent that still taps for mana makes the lock worth
+    nothing against the only decks that mind it. That is the same argument
+    `ObjectState.abilities_locked` already makes for `lock_abilities`, which is
+    why both sites check this beside that flag rather than instead of it.
+
+    The filter's `controller` defaults to the source's, as everywhere else in
+    this language, so a card means "permanents your opponents control" by writing
+    `controller: "opponent"` beside its types. That is exact rather than
+    approximate for this family: a player may only activate abilities of
+    permanents they control, so the two readings name the same activations.
+
+    `_matches` gates on the battlefield, which is also the printed reading --
+    these cards stop abilities of artifact, creature and enchantment
+    *permanents*, and leave an opponent free to cycle a card from hand or
+    activate one from a graveyard.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    return any(
+        _reaches_player(source_obj, static, pid)
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _active_player_statics(state, "cant_activate_abilities")
+    )
+
+
 def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
     """"Any player may cast spells as though they had flash." Tidal Barracuda.
 

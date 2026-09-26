@@ -70495,6 +70495,84 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cant_cast_spells",
+          "kind": "static",
+          "text": "During your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments."
+        },
+        {
+          "affects": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment"
+            ],
+            "controller": "opponent"
+          },
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cant_activate_abilities",
+          "kind": "static",
+          "text": "During your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Soldier"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Myrel attacks, create X 1/1 colorless Soldier artifact creature tokens, where X is the number of Soldiers you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "myrel_shield_of_argive",
+      "mana_cost": "{3}{W}",
+      "name": "Myrel, Shield of Argive",
+      "oracle_text": "During your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments.\nWhenever Myrel attacks, create X 1/1 colorless Soldier artifact creature tokens, where X is the number of Soldiers you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

@@ -202,6 +202,7 @@
   "PLAYER_WIDE_STATIC_EFFECTS": [
    "add_mana_on_tap",
    "black_mana_as_phyrexian",
+   "cant_activate_abilities",
    "cant_cast_spells",
    "cant_gain_life",
    "cast_as_though_flash",
@@ -338,6 +339,7 @@
    "black_mana_as_phyrexian",
    "block_restriction",
    "buff",
+   "cant_activate_abilities",
    "cant_attack",
    "cant_attack_alone",
    "cant_attack_you",
@@ -473,6 +475,7 @@
   "UNGRANTABLE_STATIC_EFFECTS": [
    "add_mana_on_tap",
    "black_mana_as_phyrexian",
+   "cant_activate_abilities",
    "cant_cast_spells",
    "cant_gain_life",
    "cast_as_though_flash",

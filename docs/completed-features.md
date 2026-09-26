@@ -16953,3 +16953,69 @@ single remaining need each: `base_power_toughness`, `cant_activate_abilities`,
   Myrel's Soldier and of the Aberration's Angel, the Cat not being a Beast, and
   the Bird Soldier carrying both creature types are the four that would silently
   change a card if they drifted.
+
+## Grand Abolisher's other half — "…or activate abilities of artifacts, creatures, or enchantments" — Myrel, Shield of Argive — 605.1a / 101.2
+
+### Overview
+
+`cant_cast_spells` shipped with Voice of Victory and its docstring has said ever
+since that it deliberately stops only the casting half, listing "activating
+abilities" among what it leaves alone and closing with "Grand Abolisher's second
+half is a different static". `tests/unit/test_cant_cast_spells.py` repeats it in
+its own module docstring. Myrel, Shield of Argive is the card that finally needed
+the other half: its first line is that whole sentence, and writing it as
+`cant_cast_spells` alone would have dropped a printed clause.
+
+### Tier: a new player-wide static, plus a second reader the obvious version misses
+
+`cant_activate_abilities`, in `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`,
+with `player_cant_activate(state, pid, oid)` beside `player_cant_cast_spells`.
+
+**It takes the object as well as the player**, which is the whole structural
+difference between the two halves. Casting is something a player does;
+activating is something a player does *to a permanent*. That is also why
+`affects` is **required** here where its twin refuses it:
+
+| the near miss | why it is not this |
+|---|---|
+| no filter (`affects` optional, as on `cant_cast_spells`) | every printed card in the family names its types — filterless it would also stop an opponent cracking a fetchland or moving a planeswalker's loyalty, a strictly stronger lock than anything printed and one that looks correct on the board. The loader refuses it |
+| an `amount` beside it | a prohibition has no size; a number reads as "can't activate more than N", a different card that nothing enforces. Refused |
+| `lock_abilities` | an **op**, recorded as an until-end-of-turn `TempEffect` over a fixed set of object ids — it cannot be an ongoing static, is dropped at cleanup, and never sees a permanent played afterwards |
+| `detain` | the same shape, expiring at the next untap |
+| `lose_all_abilities` | strictly wider and permanent: it strips triggered, static and mana abilities too, so the opponent's Sol Ring would stop making mana on their own turn |
+
+**The second reader is the part worth recording.** A version read only in
+`legality._activate_actions` passes every obvious test and is still wrong: the
+mana solver reaches `costs._sources_of` without ever building a priority action,
+so an opponent's mana creature would keep tapping right through the lock. 605.1a
+makes a mana ability an activated ability and the printed line excepts nothing.
+`ObjectState.abilities_locked` already documents exactly this split for
+`lock_abilities` — "Covers mana abilities too, which is why the mana solver has
+to ask as well as legality" — so both sites now check this static beside that
+flag.
+
+One subtlety the filter language decides for us: `controller` defaults to the
+**source's** controller, so "your opponents' permanents" is written
+`controller: "opponent"` beside the types. That is exact rather than approximate
+for this family, since a player may only activate abilities of permanents they
+control. And `_matches` gates on the battlefield, which is also the printed
+reading — these cards leave an opponent free to cycle from hand or activate from
+a graveyard.
+
+### Tests
+
+- `tests/unit/test_cant_activate_abilities.py` — the lock across all three named
+  card types and the control position without it; `affects_player` sparing its
+  own controller; the `condition` sleeping on the opponent's turn, with the
+  unconditional version pinning that the sleep is the condition's doing and not
+  a hole; **the land that proves the filter is real**, both as the predicate and
+  at the mana solver, with a creature on the same board still stopped so the
+  land is exempt by type rather than by the static having lapsed; and the
+  605.1a boundary — a locked creature's mana ability withheld from
+  `_sources_of`, with a no-lock control so the empty list is the lock's doing
+  and not summoning sickness. Plus the four loader refusals.
+- Both read sites are load-bearing and proven so: stashing `legality.py` and
+  `costs.py` fails exactly one test each.
+- `tests/data/cant_activate_abilities.cards.json` — the two Abolishers. The
+  permanents whose abilities are under test are the shared ones in
+  `testing.cards.json`, the way `test_cant_cast_spells.py` reuses `t_dork`.

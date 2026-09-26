@@ -3248,6 +3248,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"would cast; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "cant_activate_abilities":
+            # The inverse guard to its twin directly above, and it points the
+            # other way on purpose. Every printed card in this family names the
+            # permanent types it reaches -- Grand Abolisher and Myrel both say
+            # "of artifacts, creatures, or enchantments" -- so a filterless
+            # version is not the printed card but a strictly stronger lock that
+            # would also stop an opponent cracking a fetchland or activating a
+            # planeswalker. Required rather than defaulted, because there is no
+            # honest default: the types are the clause.
+            if model.affects is None:
+                raise DslError(
+                    f"{where}: cant_activate_abilities needs 'affects' naming the "
+                    f"permanent types it reaches -- every printed card in this "
+                    f"family says 'of artifacts, creatures, or enchantments', and "
+                    f"without the filter it would stop lands and planeswalkers too"
+                )
+            if model.amount is not None:
+                # A prohibition has no size. A number here would read as a
+                # limit ("can't activate more than N"), which is a different
+                # card and one nothing would enforce.
+                raise DslError(
+                    f"{where}: cant_activate_abilities is a prohibition, not a "
+                    f"limit; it takes 'affects_player', 'affects' and an optional "
+                    f"'condition', and no 'amount'"
+                )
         if model.effect == "cast_as_though_flash" and (
             model.affects is not None or model.amount is not None
         ):

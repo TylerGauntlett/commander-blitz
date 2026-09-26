@@ -489,12 +489,22 @@ def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
 
 
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
+    # Local, the way `costs.py` imports this module's neighbours: `player_statics`
+    # reads `characteristics`, which reaches back here.
+    from .player_statics import player_cant_activate
+
     out: list[Action] = []
     manual_mana = state.players[pid].manual_mana
     offer_all = state.players[pid].offer_all_abilities
     for oid, zone in _activate_zones(state, pid):
         obj = state.objects.get(oid)
         if obj is None or obj.abilities_locked:
+            continue
+        # Grand Abolisher, Myrel. The board's standing prohibition, beside the
+        # object's own until-end-of-turn one: `abilities_locked` is a fact
+        # recorded on the permanent, this is a static somebody else controls,
+        # and either is enough to withhold the action.
+        if player_cant_activate(state, pid, oid):
             continue
         # A card in hand has no controller in the battlefield sense of the word;
         # its owner is the one who may activate it.

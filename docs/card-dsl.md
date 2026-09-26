@@ -6026,8 +6026,56 @@ never cast), playing lands and the special actions suspend and foretell (116.2),
 and activated abilities (Grand Abolisher's second sentence is a different
 static). It takes no spell filter yet, and `affects` or `amount` beside it is a
 load error rather than ignored — "can't cast **creature** spells" written with a
-filter would otherwise load as a lock on every spell. Drannith Magistrate,
-Deafening Silence and Grand Abolisher remain gaps.
+filter would otherwise load as a lock on every spell. Drannith Magistrate and
+Deafening Silence remain gaps.
+
+`cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
+activate abilities of artifacts, creatures, or enchantments", and the first line
+of Myrel, Shield of Argive. One printed sentence, **two statics**, because the
+two halves prohibit different actions:
+
+```jsonc
+{ "kind": "static",
+  "text": "…or activate abilities of artifacts, creatures, or enchantments during your turn.",
+  "effect": "cant_activate_abilities",
+  "affects_player": "opponent",
+  "affects": { "controller": "opponent",
+               "any_types": ["Artifact", "Creature", "Enchantment"] },
+  "condition": { "is_your_turn": true } }
+```
+
+The difference from its twin is that **`affects` is required rather than
+refused**, and it is the one thing to get right here. Casting is something a
+player does; activating is something a player does *to a permanent*, so the
+predicate takes the object as well as the seat. Every printed card in this family
+names the permanent types it reaches, and a filterless version would also stop an
+opponent cracking a fetchland or moving a planeswalker's loyalty — a strictly
+stronger lock than anything printed, and one that looks right on the board. The
+loader refuses it, and refuses an `amount` too: a prohibition has no size, and a
+number would read as "can't activate more than N", which nothing enforces.
+
+The filter's `controller` defaults to the **source's**, as everywhere in this
+language, so "your opponents' permanents" is `controller: "opponent"` beside the
+types. That is exact rather than approximate for this family, since a player may
+only activate abilities of permanents they control.
+
+Read in two places, and the second is the one a first attempt misses.
+`legality._activate_actions` withholds the priority actions, and
+`costs._sources_of` withholds the **mana** ones — 605.1a makes a mana ability an
+activated ability and the printed line excepts nothing, so a lock read only at
+legality would leave an opponent's Llanowar Elves tapping all through your turn.
+That is the same split `ObjectState.abilities_locked` already documents for
+`lock_abilities`, which is why both sites ask this beside that flag rather than
+instead of it.
+
+`_matches` gates on the battlefield, which is also the printed reading: these
+cards stop abilities of artifact, creature and enchantment *permanents*, and
+leave an opponent free to cycle a card from hand or activate one from a
+graveyard. The near misses are `lock_abilities` (an op, recorded as an
+until-end-of-turn `TempEffect` over a fixed set of object ids, so it cannot be an
+ongoing static and never sees a permanent played afterwards), `detain` (the same
+shape, expiring at the next untap) and `lose_all_abilities` (strictly wider and
+permanent — it would stop the opponent's Sol Ring on their own turn too).
 
 `cast_as_though_flash` is its permissive twin — Tidal Barracuda's "Any player may
 cast spells as though they had flash", and Leyline of Anticipation and Vedalken

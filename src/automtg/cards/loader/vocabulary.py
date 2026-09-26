@@ -485,6 +485,20 @@ STATIC_EFFECTS = frozenset(
         # Not `split_second`, which lives on the stack and binds every player,
         # and not `epic`, which is a card-level rider with no seat or duration.
         "cant_cast_spells",
+        # Grand Abolisher; Myrel, Shield of Argive.  "…or activate abilities of
+        # artifacts, creatures, or enchantments."  The *other half* of the
+        # sentence above, and a separate static because it prohibits a different
+        # action: `cant_cast_spells`'s own docstring lists "activating abilities"
+        # among the things it deliberately does not stop.
+        #
+        # Unlike its twin, `affects` is **required** rather than refused. Every
+        # printed card in this family names permanent types, so a filterless
+        # version would stop opponents' lands and planeswalkers too -- a
+        # strictly stronger lock than anything printed. Read in
+        # `legality._activate_actions` and in `costs._sources_of`, because 605.1a
+        # makes a mana ability an activated ability and a locked permanent that
+        # still taps for mana makes the lock worthless.
+        "cant_activate_abilities",
         # Tidal Barracuda; Leyline of Anticipation; Vedalken Orrery.  "Any
         # player may cast spells as though they had flash."  The permissive twin
         # of the prohibition above, and the only static that widens a *timing*
@@ -551,6 +565,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_mill",
         "replace_empty_draw",
         "cant_cast_spells",
+        "cant_activate_abilities",
         "cast_as_though_flash",
         "cant_gain_life",
     }

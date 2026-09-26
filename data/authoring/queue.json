@@ -182002,12 +182002,12 @@
     },
     "Myrel, Shield of Argive": {
       "edhrec_rank": 1525,
-      "gate": "template",
+      "gate": null,
       "name": "Myrel, Shield of Argive",
-      "reason": "no template for: During your turn, your opponents can't cast spells or activate abilities of artifacts, cre",
+      "reason": "",
       "scryfall_id": "14b4d558-11f2-46d0-8f25-d44f5e74f70c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Myriad Construct": {

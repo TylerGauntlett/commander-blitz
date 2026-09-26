@@ -1,0 +1,54 @@
+{
+  "_comment": "Cards that exist only for the activation prohibition test (tests/unit/test_cant_activate_abilities.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_abolisher` is Grand Abolisher's second half and Myrel's first line -- opponents can't activate abilities of artifacts, creatures or enchantments they control, during its controller's turn. `t_quiet_abolisher` drops the turn condition so the lock can be measured inside the opponent's own priority window without driving a turn. The permanents whose abilities are under test are the shared ones in testing.cards.json -- t_mutator, t_bobblehead, t_sac_outlet, t_dork and t_passage -- the way test_cant_cast_spells.py reuses t_dork and t_bear.",
+  "cards": [
+    {
+      "id": "t_abolisher",
+      "name": "Test Abolisher",
+      "oracle_text": "Your opponents can't activate abilities of artifacts, creatures, or enchantments during your turn.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Cleric"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't activate abilities of artifacts, creatures, or enchantments during your turn.",
+          "effect": "cant_activate_abilities",
+          "affects_player": "opponent",
+          "affects": {
+            "controller": "opponent",
+            "any_types": ["Artifact", "Creature", "Enchantment"]
+          },
+          "condition": { "is_your_turn": true }
+        }
+      ]
+    },
+    {
+      "id": "t_quiet_abolisher",
+      "name": "Test Quiet Abolisher",
+      "oracle_text": "Your opponents can't activate abilities of artifacts, creatures, or enchantments.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Cleric"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't activate abilities of artifacts, creatures, or enchantments.",
+          "effect": "cant_activate_abilities",
+          "affects_player": "opponent",
+          "affects": {
+            "controller": "opponent",
+            "any_types": ["Artifact", "Creature", "Enchantment"]
+          }
+        }
+      ]
+    }
+  ]
+}

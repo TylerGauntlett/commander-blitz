@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **44** capabilities.
+**35 cards** blocked by **43** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [base-power-toughness](#base-power-toughness) | 1 | 8006 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [cant-activate-abilities](#cant-activate-abilities) | 1 | 1525 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
 | [cast-from-hand](#cast-from-hand) | 1 | 1017 | value |
@@ -171,21 +170,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## cant-activate-abilities
-
-Blocks **1** card.
-
-- **(static_effect)** A player-wide static that stops the named players ACTIVATING abilities of permanents matched by a printed-characteristics filter, for as long as its optional `condition` holds -- Grand Abolisher's second half, and Myrel's. Suggested shape: a `static_effects` entry such as `cant_activate_abilities` taking `affects_player` ("you" / "opponent" / "any"), an optional `condition` (here `{"is_your_turn": true}`, answered by `_active_player_statics` exactly as `cant_cast_spells` already answers it) and an optional `affects` filter over printed characteristics (here `{"any_types": ["Artifact", "Creature", "Enchantment"]}`, from `static_filter_keys`). Unlike `cant_cast_spells` the filter is REQUIRED vocabulary rather than a refusable extra, because every printed card in this family names permanent types: Grand Abolisher says "artifacts, creatures, or enchantments", so shipping the effect filterless would stop opponents' lands and planeswalkers too. It needs a new predicate beside `player_cant_cast_spells` in src/automtg/engine/player_statics.py:1093 that takes the OBJECT as well as the player -- `player_cant_activate(state, pid, oid)` -- read in src/automtg/engine/legality.py:491 `_activate_actions`, in the same `continue` that already drops `obj.abilities_locked` at line 497, and again in the mana solver, for the reason src/automtg/engine/objects.py:1122 gives about `abilities_locked`: a locked permanent that still taps for mana makes the lock worthless. 605.1a/602.5d mean mana abilities are caught too, since the printed line excepts nothing, but the filter keeps lands out by type. It also has to be asked at the same three resolution-time seams `player_cant_cast_spells` is (101.2: a "can't" beats a "may"), so an opponent's trigger cannot offer an activation past it. This unblocks the whole Abolisher family at once: Grand Abolisher, Myrel, Shield of Argive, Dosan's twins, Conqueror's Flail and Teferi, Time Raveler's neighbours.
-  <br>Why the existing vocabulary won't do: `cant_cast_spells` is the near miss and is explicitly only half the sentence: its own docstring (src/automtg/engine/player_statics.py:1105-1110) lists what it does NOT stop -- "copying a spell, **activating abilities**, playing a land, and the special actions suspend and foretell" -- and closes with "Grand Abolisher's second half is a different static". Its loader guard at src/automtg/cards/loader/__init__.py:3239 also refuses an `affects` filter on it, so it cannot even carry the "of artifacts, creatures, or enchantments" half; writing the line as `cant_cast_spells` alone drops a printed clause, which is the approximation the brief forbids. `lock_abilities` is the other near relative and gates the wrong axis three times over: it is an OP, so it can only run once from a resolving spell or trigger and cannot be Myrel's ongoing static; it is recorded as an until-end-of-turn `TempEffect` (src/automtg/engine/primitives.py:1565) that the cleanup step drops, so it could not last "during your turn" let alone re-apply each of the controller's turns; and it names a fixed set of object ids at resolution, so a permanent an opponent plays afterwards is untouched. `detain` is the same shape and expires at the next untap. `lose_all_abilities` is strictly wider and permanent -- it removes triggered, static and mana abilities as well, so the opponent's Sol Ring would stop making mana even on their own turn. `ability_cost_reduction` and `attack_tax` are prices, not prohibitions: no number stops an activation the way "can't" does. Nothing in `static_effects` prohibits an activation at all, and no `condition_keys`/`static_condition_keys` entry could bolt one onto an unrelated effect. The card's second sentence is blocked separately (see below), so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myrel, Shield of Argive** (rank 1525) — `myrel_shield_of_argive`
-  - During your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments.
-  - Whenever Myrel attacks, create X 1/1 colorless Soldier artifact creature tokens, where X is the number of Soldiers you control.
 
 </details>
 
