@@ -17019,3 +17019,44 @@ a graveyard.
 - `tests/data/cant_activate_abilities.cards.json` — the two Abolishers. The
   permanents whose abilities are under test are the shared ones in
   `testing.cards.json`, the way `test_cant_cast_spells.py` reuses `t_dork`.
+
+## `entered_this_turn` on the effect side — gathering the turn's arrivals, not counting them — Ocelot Pride — 400.7
+
+### Overview
+
+Ocelot Pride: *"…then if you have the city's blessing, **for each token you
+control that entered this turn**, create a token that's a copy of it."*
+
+The reading already existed in every filter language in the engine except the
+one this card needs. `characteristics._matches` answers it for statics (Zurgo
+and Ojutai's "as long as it entered this turn"),
+`cost_reduction._object_matches` answers it on the cost side, and
+`triggers.matches_card_filter` answers it for trigger filters. Only
+`effects.selectors` could not say it — and `validate_selector` turns any key
+outside `SELECTOR_KEYS` into a load error, so the clause was a **refused card
+rather than a silently wrong one**, which is the failure mode worth having.
+
+### Tier: A — one selector key and one ledger read
+
+`entered_this_turn` in `SELECTOR_KEYS`, answered from
+`TurnLedger.entered_this_turn(oid)`, checked beside the existing
+`attacked_this_turn` clause and deliberately outside the combat block for the
+same reason: it is a turn-ledger question rather than a board one, so it
+survives the permanent having since been tapped, animated or moved.
+
+| the near miss | why it is not this |
+|---|---|
+| `permanents_entered_this_turn` (the **value**) | reads the same ledger and yields a *number*. `for_each` needs the object pool to bind `each` for `copy_permanent` — a number cannot be copied |
+| `created_with: "self"` | hard-restricted to the literal string `"self"`, so it gathers only the tokens *this source* made and misses every token another card made this turn, which is most of what Ocelot Pride copies |
+| a bare `is_token: true` | gathers the whole token board, so a deck making Cats for six turns copies all of them at once. The two compose; this key is the narrowing clause |
+| `entered_turn` on the object | that field is what `summoning_sick` reads. It is not the arrival record 400.7 makes meaningful, and a permanent that left and came back is a new arrival |
+
+### Tests
+
+- `tests/unit/test_entered_this_turn_selector.py` — the arrival gathered and the
+  permanent that was already standing excluded, with an unfiltered control
+  proving the exclusion is the key's doing and not the position's; composition
+  with `controller`, measured by an opponent's arrival on the same turn; `false`
+  as the complement; and 400.7 — a permanent exiled and returned counts again,
+  which is the claim that separates the ledger from `entered_turn`. Four of the
+  eight fail without the key.

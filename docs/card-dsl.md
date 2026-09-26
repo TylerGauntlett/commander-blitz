@@ -334,6 +334,7 @@ Every key is optional; all present keys must match.
   "tapped": false, "attacking": true, "blocking": false,
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
+  "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },

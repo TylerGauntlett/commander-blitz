@@ -74438,6 +74438,89 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "cat_1_1_w"
+            },
+            {
+              "condition": {
+                "has_city_s_blessing": "you"
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "copy_permanent"
+                    }
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "entered_this_turn": true,
+                    "is_token": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "for_each"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token. Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ocelot_pride",
+      "keywords": [
+        "first_strike",
+        "lifelink"
+      ],
+      "mana_cost": "{W}",
+      "name": "Ocelot Pride",
+      "oracle_text": "First strike, lifelink\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token. Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "op": "scry",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **43** capabilities.
+**34 cards** blocked by **42** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,7 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [entered-this-turn-selector](#entered-this-turn-selector) | 1 | 1126 | selector |
 | [enters-tapped](#enters-tapped) | 1 | 346 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -342,21 +341,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## entered-this-turn-selector
-
-Blocks **1** card.
-
-- **(selector)** An `entered_this_turn` clause in the EFFECT-side selector language (`SELECTOR_KEYS` in src/automtg/engine/effects/selectors.py), so an effect's `objects` can gather "each token you control that entered this turn" as `{"zone": "battlefield", "controller": "you", "is_token": true, "entered_this_turn": true, "count": "all"}`. The reading already exists one layer over: `characteristics._matches` (src/automtg/engine/characteristics.py:1776) answers exactly this key off `state.turn_ledger.entered_this_turn(oid)`, and `cost_reduction._object_matches` (src/automtg/engine/cost_reduction.py:353) and `triggers.matches_card_filter` (src/automtg/engine/triggers.py:1642) each read it too -- it is only the effect-side selector that cannot say it. The work is the key in `SELECTOR_KEYS`, the same three-line ledger test in `selectors._matches` beside the existing `attacked_this_turn` check (selectors.py:936), and the packet's `selector_keys` list regenerating. It unblocks the whole "permanents that entered this turn" family (Ocelot Pride, Aetherwind Basker-style sacrifices, Kalain's and Winota's board reads, "return each creature that entered this turn").
-  <br>Why the existing vocabulary won't do: `validate_selector` (selectors.py:1384) rejects any key outside `SELECTOR_KEYS` as a load error, and `entered_this_turn` is not in it -- the list has `attacked_this_turn` and `drawn_this_turn`, the two other turn-ledger clauses, but not this one. The near misses each answer a different question: `created_with: "self"` (selectors.py:1415) is restricted to the literal string "self" and matches only tokens this source itself made, so it misses every token made by another card this turn, which is most of what this card copies; `permanents_entered_this_turn` is a `value_keys` entry, so it can COUNT the arrivals but yields a number, and `for_each` needs the object pool itself to bind `each` for the copy; `is_token: true` alone would copy every token you control, doubling a board built over many turns instead of the turn's arrivals. `static_filter_keys` does list `entered_this_turn`, but a static ability cannot create tokens, so that list is unreachable from a triggered ability's `create_token`/`copy_permanent`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ocelot Pride** (rank 1126) — `ocelot_pride`
-  - At the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token.
-  - Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.
 
 </details>
 
