@@ -32493,6 +32493,41 @@
     {
       "abilities": [
         {
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.",
+          "token_multiplier": 2
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "exalted_sunborn",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Exalted Sunborn",
+      "oracle_text": "Flying, lifelink\nIf one or more tokens would be created under your control, twice that many of those tokens are created instead.\nWarp {1}{W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Wizard"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ],
+      "warp": "{1}{W}"
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -46081,6 +46116,88 @@
       "types": [
         "Creature"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Haliya or another creature or artifact you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "life_gained_this_turn": "you"
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, draw a card if you've gained 3 or more life this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "haliya_guided_by_light",
+      "mana_cost": "{2}{W}",
+      "name": "Haliya, Guided by Light",
+      "oracle_text": "Whenever Haliya or another creature or artifact you control enters, you gain 1 life.\nAt the beginning of your end step, draw a card if you've gained 3 or more life this turn.\nWarp {W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ],
+      "warp": "{W}"
     },
     {
       "abilities": [

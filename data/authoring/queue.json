@@ -87682,12 +87682,12 @@
     },
     "Exalted Sunborn": {
       "edhrec_rank": 1528,
-      "gate": "template",
+      "gate": null,
       "name": "Exalted Sunborn",
-      "reason": "no template for: If one or more tokens would be created under your control, twice that many of those tokens",
+      "reason": "",
       "scryfall_id": "59183da2-8315-49f4-ab87-01b957b26366",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Exava, Rakdos Blood Witch": {
@@ -121462,12 +121462,12 @@
     },
     "Haliya, Guided by Light": {
       "edhrec_rank": 1682,
-      "gate": "template",
+      "gate": null,
       "name": "Haliya, Guided by Light",
-      "reason": "no template for: Whenever Haliya or another creature or artifact you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "6f7c63ae-5df3-410f-8643-b8c69133ca9d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hall": {

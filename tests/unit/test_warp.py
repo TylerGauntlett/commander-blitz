@@ -455,3 +455,95 @@ class TestTheLoaderRefusesTheSilentFailures:
         model = self._card(types=["Instant"], power=None, toughness=None, warp="{R}")
         with pytest.raises(DslError, match="only on a permanent card"):
             compile_card(model)
+
+
+class TestThePrintedWarpLineIsClaimed:
+    """Gate 3's bookkeeping, which is where a correct warp card used to die.
+
+    `verify._covered` carries a claimant for every other card-level alternative
+    cost -- kicker, multikicker, strive, emerge, evoke, bestow, mutate, gift,
+    ascend -- and carried none for warp. Nothing had hit it because no shipped
+    card used the field: the pool's only warp is the `grant_warp` static above,
+    whose printed line that static's own `text` already claims.
+
+    So a card printing "Warp {1}{R}" loaded, offered both cast lines, exiled and
+    came back exactly as the classes above measure -- and was still rejected as
+    half-implemented, with `residual_text` returning precisely that one line.
+    Exalted Sunborn and Haliya, Guided by Light are the witnesses; both were
+    filed as gap records against a mechanic the engine already had.
+
+    "Warp" is not in `KNOWN_KEYWORDS` either, so `lift_keywords` cannot consume
+    the line and there is no honest way to claim it from inside the card.
+    """
+
+    def _card(self, **extra) -> CardModel:
+        base = {
+            "id": "t_warp_residual",
+            "name": "Warp Residual",
+            "mana_cost": "{5}{R}",
+            "oracle_text": "Warp {1}{R}\nFlying",
+            "types": ["Creature"],
+            "power": 3,
+            "toughness": 3,
+            "keywords": ["flying"],
+            "warp": "{1}{R}",
+        }
+        base.update(extra)
+        return CardModel.model_validate(base)
+
+    def test_the_printed_warp_line_is_claimed(self):
+        from automtg.cards.authoring.verify import residual_text
+        from automtg.cards.loader import compile_card
+
+        card = compile_card(self._card())
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_a_card_without_warp_leaves_the_line_residual(self):
+        """The claimant is the field, not the word: no field, no claim.
+
+        This is the half that stops the exemption becoming a way to print a
+        mechanic you did not implement.
+        """
+        from automtg.cards.authoring.verify import residual_text
+        from automtg.cards.loader import compile_card
+
+        card = compile_card(self._card(id="t_warp_absent", warp=None))
+        assert "Warp {1}{R}" in residual_text(card, card.oracle_text)
+
+    def test_a_cheaper_declared_cost_cannot_claim_a_dearer_printed_one(self):
+        """Strict like bestow's and mutate's claimants, for their reason.
+
+        The whole line is the price, so a card charging {1}{R} while printing
+        "Warp {3}{R}{R}" is a strictly cheaper card wearing the real one's
+        words. The line stays residual rather than being waved through on the
+        first word alone.
+        """
+        from automtg.cards.authoring.verify import residual_text
+        from automtg.cards.loader import compile_card
+
+        card = compile_card(
+            self._card(
+                id="t_warp_cheaper",
+                oracle_text="Warp {3}{R}{R}\nFlying",
+                warp="{1}{R}",
+            )
+        )
+        assert "Warp {3}{R}{R}" in residual_text(card, card.oracle_text)
+
+    def test_the_reminder_text_does_not_have_to_match(self):
+        """`_declares_printed_cost` cuts at the parenthesis before parsing, so a
+        real printing -- which always carries the reminder -- is claimed."""
+        from automtg.cards.authoring.verify import residual_text
+        from automtg.cards.loader import compile_card
+
+        card = compile_card(
+            self._card(
+                id="t_warp_reminder",
+                oracle_text=(
+                    "Warp {1}{R} (You may cast this card from your hand for its warp "
+                    "cost. Exile that permanent at the beginning of the next end step, "
+                    "then you may cast it from exile on a later turn.)\nFlying"
+                ),
+            )
+        )
+        assert residual_text(card, card.oracle_text) == ""

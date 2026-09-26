@@ -3064,6 +3064,10 @@
     "artist": "Alexey Kruglov",
     "scryfall_id": "47ebc3bc-113f-437c-b60a-9597939d91ea"
   },
+  "exalted_sunborn": {
+    "artist": "Makoron",
+    "scryfall_id": "59183da2-8315-49f4-ab87-01b957b26366"
+  },
   "excalibur_sword_of_eden": {
     "artist": "Thanh Tu\u1ea5n",
     "scryfall_id": "26dbf574-3193-413e-a982-4b9d27dafaf5"
@@ -4351,6 +4355,10 @@
   "halberdier": {
     "artist": "Ben Thompson",
     "scryfall_id": "b69dfc05-51ba-4798-ac00-1e9b8bbbf280"
+  },
+  "haliya_guided_by_light": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "6f7c63ae-5df3-410f-8643-b8c69133ca9d"
   },
   "hallowed_fountain": {
     "artist": "Piotr Dura",

@@ -4576,6 +4576,12 @@
     "file": "exalted_flamer_of_tzeentch.jpg",
     "scryfall_id": "47ebc3bc-113f-437c-b60a-9597939d91ea"
   },
+  "exalted_sunborn": {
+    "artist": "Makoron",
+    "bytes": 49875,
+    "file": "exalted_sunborn.jpg",
+    "scryfall_id": "59183da2-8315-49f4-ab87-01b957b26366"
+  },
   "excalibur_sword_of_eden": {
     "artist": "Thanh Tu\u1ea5n",
     "bytes": 38675,
@@ -6507,6 +6513,12 @@
     "bytes": 71614,
     "file": "halberdier.jpg",
     "scryfall_id": "b69dfc05-51ba-4798-ac00-1e9b8bbbf280"
+  },
+  "haliya_guided_by_light": {
+    "artist": "Kieran Yanner",
+    "bytes": 54001,
+    "file": "haliya_guided_by_light.jpg",
+    "scryfall_id": "6f7c63ae-5df3-410f-8643-b8c69133ca9d"
   },
   "hallowed_fountain": {
     "artist": "Piotr Dura",

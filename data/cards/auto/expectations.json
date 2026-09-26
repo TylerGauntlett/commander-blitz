@@ -2927,6 +2927,16 @@
     },
     "zone": "battlefield"
   },
+  "exalted_sunborn": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "excalibur_sword_of_eden": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4247,6 +4257,13 @@
     "zone": "battlefield"
   },
   "halberdier": {
+    "zone": "battlefield"
+  },
+  "haliya_guided_by_light": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 41
+    },
     "zone": "battlefield"
   },
   "hallowed_fountain": {

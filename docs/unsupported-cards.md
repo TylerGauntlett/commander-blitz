@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **46** capabilities.
+**37 cards** blocked by **45** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 2 | 75 | selector |
-| [warp](#warp) | 2 | 1528 | cost, keyword |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [base-power-toughness](#base-power-toughness) | 1 | 8006 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -163,24 +162,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Peter Parker's Camera** (rank 3634) — `peter_parker_s_camera`
   - {2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy.
-
-</details>
-
-## warp
-
-Blocks **2** cards.
-
-- **(cost)** A residual-gate claimant for the card-level `warp` cost, so a printed "Warp {N}" line counts as implemented when the card declares `warp`. Concretely: a branch in `verify._covered` (src/automtg/cards/authoring/verify.py) alongside the existing `emerge`/`evoke`/`bestow`/`mutate` branches -- `if card.warp is not None and stripped.lower().startswith("warp "): return _declares_printed_cost(stripped[len("warp "):], card.warp)` -- strict like bestow's and mutate's claimants, so a card declaring `warp: "{1}{W}"` cannot claim a printed "Warp {3}{W}". `fidelity.unimplemented_mechanics` also needs "warp" added to its `declared` set for the instant/sorcery path, for the reason flashback and suspend were added there; warp is refused on a nonpermanent by the loader, so that half is defensive only.
-  <br>Why the existing vocabulary won't do: The mechanic itself is NOT missing -- `warp` is in `card_level_cost_keys`, `schema.CardModel.warp` parses, `loader.compile_card` compiles it onto `CardDef.warp` (refusing X, a nonpermanent card, and a warp cost equal to the printed cost), `casting.warp_cost` offers the cast line, and `stack._place_after_resolution` supplies the rules-given exile at the next end step plus the later cast from exile. Compiling this exact card succeeds and `CardDef.warp` is `{1}{W}`. What falls short is gate 3: `verify.claimed_lines` -> `_covered` has a claimant for every other card-level alternative cost (`kicker`, `multikicker`, `strive`, `gift`, `ascend`, `emerge`, `evoke`, `bestow`, `mutate`, `additional_cost`, `cost_reduction`) but none for `warp`, and `proxy.lift_keywords` cannot consume the line because "warp" is not in `KNOWN_KEYWORDS` and the loader rejects it as one. `residual_text` on the fully-written card returns exactly 'Warp {1}{W}', so the card is rejected as half-implemented with the mechanic wholly present. `grant_warp` is the near miss and is a different sentence: it is a static on another permanent pricing cards in somebody's hand (Tannuk, Steadfast Second), so its printed line is claimed by that static's own `text` -- which is why no shipped card has ever exercised the card-level field and the hole went unnoticed.
-- **(keyword)** A residual-gate claimant for the printed "Warp {W}" line in `verify._covered` (src/automtg/cards/authoring/verify.py), alongside the ones that already exist for `kicker`, `multikicker`, `strive`, `emerge`, `evoke`, `bestow`, `mutate` and `gift`. IMPORTANT: the warp MECHANIC is already fully built and this is not a request to build it. `CardModel.warp` / `CardDef.warp` parse, `casting.warp_cost` and `casting._cast_options` offer the second cast line, and `stack._place_after_resolution` supplies the rule's two riders (exile at the next end step, then castable from exile on later turns) -- there is also a `grant_warp` static for Tannuk-style grants. I loaded this card with `"warp": "{W}"` and both cast lines are offered in the sandbox: 'Cast Haliya, Guided by Light' and 'Cast Haliya, Guided by Light (warp {W})'. What is missing is only the authoring bookkeeping that lets a warp card be ACCEPTED. Concretely: `if card.warp is not None and stripped.lower().startswith("warp "): return _declares_printed_cost(stripped[len("warp "):], card.warp)` -- strict like `bestow`/`mutate` rather than permissive like `evoke`, because the whole line is the price and a card declaring warp {W} must not be able to claim a printed "Warp {3}{R}". Two smaller companions belong with it: (a) `fidelity.unimplemented_mechanics` builds a `declared` set of card-level alternative casts and has no `warp` entry, so the first warp INSTANT or SORCERY authored will be reported as missing the mechanic it has; (b) `verify.find_play` has no way to ask for the warp line -- it disambiguates `kicked`, `multikicked`, `gifted`, `second_face` and `spree_modes` but not `warp`, so `_cast` always takes the plain cast and gate 5 can never measure a warp card's warp half.
-  <br>Why the existing vocabulary won't do: There is no honest way to claim the line from inside the card. `warp` is correctly a `card_level_cost_keys` field and not an ability: an AbilityModel is activated, triggered or static and a cost is none of the three, which is the argument already written into the `emerge`, `bestow` and `mutate` exemptions in `_covered`. It cannot be laundered through `keywords` either -- `warp` is not in `KNOWN_KEYWORDS` (36 entries, all ability keywords), so `proxy.lift_keywords` will not consume the line and the loader rejects the card outright if it is declared as a keyword. The `spell_effects` blanket claim in `claimed_lines` does not apply, because Haliya is a permanent and its text lives in `abilities`. I verified the failure rather than inferring it: the card loads clean with all three lines written and `verify.residual_text` returns exactly 'Warp {W}', which is a hard gate-3 rejection ('printed text not represented').
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exalted Sunborn** (rank 1528) — `exalted_sunborn`
-  - Warp {1}{W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)
-- **Haliya, Guided by Light** (rank 1682) — `haliya_guided_by_light`
-  - Warp {W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)
 
 </details>
 

@@ -1317,6 +1317,25 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.mutate is not None and stripped.lower().startswith("mutate "):
         return _declares_printed_cost(stripped[len("mutate ") :], card.mutate)
 
+    # "Warp {1}{W} (You may cast this card from your hand for its warp cost…)"
+    # is the same shape a third time, and it is the one that had no claimant.
+    # The mechanic is entirely built -- the loader parses the cost and refuses
+    # it on a nonpermanent, `casting.warp_cost` offers the second cast line, and
+    # `stack` supplies the rules-given exile at the next end step and the cast
+    # from exile on a later turn -- but `warp` is not in `KNOWN_KEYWORDS`, so
+    # `lift_keywords` cannot consume the line either, and a correctly
+    # implemented warp card failed gate 3 with `residual_text` returning exactly
+    # "Warp {1}{W}". No shipped card used the field, so nothing had hit it: the
+    # only warp in the pool was the `grant_warp` static on another permanent,
+    # whose printed line that static's own `text` already claims.
+    #
+    # Strict like bestow's and mutate's claimants and for their reason: the whole
+    # line is the price, so a card declaring `warp: "{1}{W}"` must not be able to
+    # claim a printed "Warp {3}{W}". An unparsable or mismatched cost fails
+    # closed and the line stays residual.
+    if card.warp is not None and stripped.lower().startswith("warp "):
+        return _declares_printed_cost(stripped[len("warp ") :], card.warp)
+
     # "As an additional cost to cast this spell, sacrifice a creature" is the
     # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
     # ability that could honestly claim it. This did not surface while the only

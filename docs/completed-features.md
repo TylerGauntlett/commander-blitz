@@ -16838,3 +16838,76 @@ read.
   a missing `amount`, and `any_one_color` beside `mana` or `split`.
 - `tests/data/any_one_color_mana.cards.json` -- the card, the contrast card, and
   the four spells that are the corners of the restriction.
+
+## The gate-3 claimant `warp` never had — the mechanic was built, the bookkeeping was not
+
+### Overview
+
+Two cards in the Myrel, Shield of Argive import — **Exalted Sunborn** (`Warp
+{1}{W}`) and **Haliya, Guided by Light** (`Warp {W}`) — were filed as gap records
+against a capability called `warp`. Two workers, independently and without
+seeing each other, reached the same conclusion: warp is not missing.
+
+The mechanic is complete and has been since Tannuk shipped. `CardModel.warp`
+parses, the loader refuses a warp cost equal to the printed one and refuses warp
+on a nonpermanent, `casting.warp_cost` offers the second cast line, and
+`stack._place_after_resolution` supplies both rules-given riders — the
+`DelayedTrigger` that exiles the permanent at the next end step, and the
+`playable: "later_turns"` permission that casts it from exile afterwards. Both
+workers built the finished card, loaded it, and confirmed the sandbox offers
+*both* cast lines.
+
+What was missing was one branch in `src/automtg/cards/authoring/verify.py`.
+`_covered` carries a claimant for every other card-level alternative cost —
+`kicker`, `multikicker`, `strive`, `emerge`, `evoke`, `bestow`, `mutate`, `gift`,
+`ascend` — and carried none for `warp`. So `residual_text` on a completely
+correct card returned exactly `Warp {1}{W}`, and gate 3 rejected it as
+half-implemented. `warp` is not in `KNOWN_KEYWORDS` either, so `lift_keywords`
+could not consume the line and there was no honest way to claim it from inside
+the card.
+
+Nothing had ever hit this, which is why it survived: the only warp in the shipped
+pool was the `grant_warp` **static** on another permanent, whose printed line
+that static's own `text` already claims. The card-level field had no card.
+
+### Tier: none of A–E — an authoring-pipeline claimant, no engine change
+
+One branch, placed beside `mutate`'s and written strict for `bestow`'s stated
+reason:
+
+```python
+if card.warp is not None and stripped.lower().startswith("warp "):
+    return _declares_printed_cost(stripped[len("warp ") :], card.warp)
+```
+
+Strict matters here. The whole printed line *is* the price, so a permissive
+first-word check would let a card declaring `warp: "{1}{W}"` claim a printed
+`Warp {3}{W}{W}` — a strictly cheaper card wearing the real one's words. An
+unparsable or mismatched cost fails closed and the line stays residual.
+
+| the near miss | why it is not this |
+|---|---|
+| adding `"warp"` to `KNOWN_KEYWORDS` | it is a price, not a keyword; the loader rejects it as one, and `lift_keywords` consuming the line would claim the cost without checking it |
+| a permissive claimant on the first word | laundering — see the strictness above, and the test that pins it |
+| an ability carrying the line as its `text` | an ability is activated, triggered or static; a card-level alternative cost is none of the three, which is precisely why bestow and mutate needed claimants too |
+| a `delayed_trigger` ability for the exile rider | the card prints no sentence for it, so the residual gate would reject the ability itself — and the engine already owes the rider |
+
+Deliberately **not** changed: `fidelity.unimplemented_mechanics`'s `declared`
+set. It looked like the same omission, but it returns early on
+`if not card.spell_effects`, and the loader refuses warp on anything that is not
+a permanent card — a permanent has no `spell_effects`, so the branch is
+unreachable for warp and adding it would be dead code.
+
+Also left for its own change: `verify.find_play` has no `warped` flag, so gate 5
+measures a warp card on its **printed** line. That is correct for both cards here
+(each expectation describes the ordinary cast), and it is honest — but it does
+mean no card yet measures its own warp half at gate 5.
+
+### Tests
+
+- `tests/unit/test_warp.py::TestThePrintedWarpLineIsClaimed` — the printed line
+  claimed by the field; the line left residual when the field is absent (the
+  claimant is the field, not the word); a cheaper declared cost failing to claim
+  a dearer printed one; and a real printing's reminder text not having to match,
+  since `_declares_printed_cost` cuts at the parenthesis before parsing. The
+  first and last fail without the branch.

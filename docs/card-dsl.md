@@ -13783,6 +13783,18 @@ rider and simply cost less. Dearer than printed is **not** refused, unlike evoke
 proper: warp buys a turn on the board now and the card back later, and that is a
 trade a player takes at a premium.
 
+The printed `Warp {1}{R}` line is claimed at gate 3 by **the field**, the way
+`bestow`'s and `mutate`'s are — there is no ability that could honestly carry it,
+since an ability is activated, triggered or static and a price is none of the
+three. The claimant is strict: a card declaring `warp: "{1}{R}"` cannot claim a
+printed "Warp {3}{R}{R}", because the whole line *is* the price and a looser
+check would wave through a strictly cheaper card wearing the real one's words.
+This was the last card-level alternative cost without a claimant, and nothing had
+hit it because the only warp in the shipped pool was the `grant_warp` static
+above, whose line that static's own `text` already claims — so a correct warp
+card loaded, offered both cast lines, exiled and came back, and was still
+rejected as half-implemented.
+
 ### "When you cast this spell…"
 
 An ability that fires while its own card *is* the spell, so it is never on the
