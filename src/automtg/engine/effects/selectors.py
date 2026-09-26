@@ -16,7 +16,7 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import chars
+from ..characteristics import _base_pt, chars
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from .context import EffectContext, ask_objects
@@ -182,6 +182,14 @@ SELECTOR_KEYS = frozenset(
         "is_commander",
         "is_token",
         "power",
+        #: "…each with **base** power or toughness 1 or less" -- Angelic
+        #: Aberration. 613.2 layer 7a/7b: the copiable size, before
+        #: counters, anthems, Auras, Equipment and pump. `power` and
+        #: `toughness` above read the *live* value, and on any board with a
+        #: counter or an anthem the two name different creatures in both
+        #: directions.
+        "base_power",
+        "base_toughness",
         "toughness",
         "mana_value",
         #: "Counter target spell **with {X} in its mana cost**" -- Frontline
@@ -1001,6 +1009,29 @@ def matches(
             return False
     if (spec := selector.get("toughness")) is not None:
         value = c.toughness if c else (card.toughness or 0)
+        if not _compare(value, spec, ctx):
+            return False
+    # "…each with **base** power or toughness 1 or less" -- Angelic Aberration.
+    # 613.2 layer 7a/7b: the copiable size, before counters, anthems, Auras,
+    # Equipment and pump. `characteristics._base_pt` is the one function that
+    # answers it -- the same one `_compute` starts from and static filters stop
+    # at -- so this cannot drift from the pipeline's idea of where a creature's
+    # size begins.
+    #
+    # Distinct from `power`/`toughness` above, which read the *live* value, and
+    # on any board carrying a +1/+1 counter or an anthem the two name different
+    # creatures in both directions: the live keys would spare the 1/1s this card
+    # sacrifices and swallow a big creature whose printed line is small.
+    #
+    # Off the battlefield there is no object to layer anything onto, so the
+    # printed value is already the base one and both spellings agree.
+    for key, index in (("base_power", 0), ("base_toughness", 1)):
+        if (spec := selector.get(key)) is None:
+            continue
+        if use_derived:
+            value = _base_pt(state, obj)[index]
+        else:
+            value = (card.power if index == 0 else card.toughness) or 0
         if not _compare(value, spec, ctx):
             return False
     if (spec := selector.get("mana_value")) is not None and not _compare(

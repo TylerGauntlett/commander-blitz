@@ -337,7 +337,9 @@ Every key is optional; all present keys must match.
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
-  "power":      { "op": ">=", "value": { "const": 3 } },
+  "power":      { "op": ">=", "value": { "const": 3 } },   // the LIVE size, after counters and anthems
+  "base_power": { "op": "<=", "value": { "const": 1 } },   // Angelic Aberration -- 613.2 layer 7a/7b
+  "base_toughness": { "op": "<=", "value": { "const": 1 } },
   "toughness":  { "op": "<=", "value": { "const": 2 } },
   "mana_value": { "op": "<=", "value": { "const": 3 } },
   "x_in_mana_cost": true,         // "target spell WITH {X} IN ITS MANA COST" -- see below

@@ -3271,6 +3271,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "aberrant",
+              "objects": {
+                "any_of": [
+                  {
+                    "base_power": {
+                      "op": "<=",
+                      "value": {
+                        "const": 1
+                      }
+                    }
+                  },
+                  {
+                    "base_toughness": {
+                      "op": "<=",
+                      "value": {
+                        "const": 1
+                      }
+                    }
+                  }
+                ],
+                "controller": "you",
+                "count": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "aberrant"
+                }
+              },
+              "op": "create_token",
+              "token": "eldrazi_angel_4_4_c_flying_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "angelic_aberration",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{5}{W}",
+      "name": "Angelic Aberration",
+      "oracle_text": "Devoid (This card has no color.)\nFlying, vigilance\nWhen this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

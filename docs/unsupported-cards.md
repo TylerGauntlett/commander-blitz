@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**34 cards** blocked by **42** capabilities.
+**33 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 2 | 75 | selector |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [base-power-toughness](#base-power-toughness) | 1 | 8006 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
@@ -141,20 +140,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## base-power-toughness
-
-Blocks **1** card.
-
-- **(selector)** A selector that reads a creature's BASE power/toughness -- its copiable 4/4-before-effects value (613.2 layer 7a/7b, i.e. printed or set by a copy effect or a type-changing effect), ignoring +1/+1 counters, anthems, Auras, Equipment and pump. Needed as `base_power` / `base_toughness` keys taking the same comparison spec `power`/`toughness` take, so "each with base power or toughness 1 or less" is `{"any_of": [{"base_power": {"op": "<=", "value": {"const": 1}}}, {"base_toughness": {"op": "<=", "value": {"const": 1}}}]}`.
-  <br>Why the existing vocabulary won't do: The selector's `power`/`toughness` keys are the closest thing and read CURRENT characteristics: `src/automtg/engine/effects/selectors.py` (~line 974) does `value = c.power if c else (card.power or 0)`, where `c` is the live characteristics after every continuous effect and counter. On the sandbox board, and on any board with an anthem or a +1/+1 counter, that silently excludes the 1/1s the printed card sacrifices and includes big creatures whose base line is small (an animated 0/1 Plant wearing counters, a 1/1 that got +3/+3). `selector_keys` has no `base_power`, `base_toughness` or printed-characteristics flag; `static_filter_keys` reads printed characteristics but only for static abilities, and this is a triggered ability's effect selector, not a static filter. `x_in_mana_cost` and `mana_cost` are the only printed-only reads available and say nothing about P/T.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angelic Aberration** (rank 8006) — `angelic_aberration`
-  - When this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.
 
 </details>
 

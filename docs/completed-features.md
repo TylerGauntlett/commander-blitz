@@ -17060,3 +17060,58 @@ survives the permanent having since been tapped, animated or moved.
   as the complement; and 400.7 — a permanent exiled and returned counts again,
   which is the claim that separates the ledger from `entered_turn`. Four of the
   eight fail without the key.
+
+## `base_power` / `base_toughness` — the size before anything was done to it — Angelic Aberration — 613.2 layer 7a/7b
+
+### Overview
+
+Angelic Aberration: *"When this creature enters, sacrifice any number of
+creatures **each with base power or toughness 1 or less**. Create that many 4/4
+colorless Eldrazi Angel creature tokens with flying and vigilance."*
+
+The effect-side selector already had `power` and `toughness`, and they read the
+**live** value — `chars(state, oid)`, after every continuous effect. The printed
+word "base" is the card declining to read those layers, and that is not a
+spelling difference: on any board carrying a +1/+1 counter or an anthem the two
+keys name different creatures **in both directions**.
+
+- The live keys **spare** the 1/1 the card is meant to sacrifice, the moment
+  anybody puts a counter on it.
+- They **swallow** a creature whose printed line is 2/2 but which is currently a
+  1/1 under a -1/-1 counter.
+
+Either way the card eats a different set and makes a different number of Angels,
+and nothing on screen says so — the failure the gap record existed to prevent.
+
+### Tier: A — two selector keys reading a function that already existed
+
+`base_power` and `base_toughness` in `SELECTOR_KEYS`, answered from
+`characteristics._base_pt`. That function is the one the pipeline itself starts
+from and the one static filters stop at, and its docstring says why it exists:
+"One function, so the filter's idea of where a creature's size begins cannot
+drift from the pipeline's." The effect selector is now the third caller on the
+same argument.
+
+Off the battlefield there is nothing to layer anything onto, so the printed
+value *is* the base one and both spellings agree — pinned, so the branch cannot
+quietly start returning 0 for a card in hand.
+
+| the near miss | why it is not this |
+|---|---|
+| `power` / `toughness` | the live size. The whole gap, in both directions — see above |
+| a `static_filter_keys` filter | reads printed characteristics correctly, but applies only to static abilities; this is a triggered ability's effect selector |
+| printed P/T off `card` directly | misses the three things `_base_pt` folds in that genuinely change what the object *is* rather than what was done to it: a copy exception's base size (707.9b), bestow's 0/0 while attached (702.103b), and a face-down permanent's 2/2 shell (707.2) |
+
+### Tests
+
+- `tests/unit/test_base_power_toughness_selector.py` — the 1/1 gathered and the
+  2/2 not; either half of the printed "or" sufficing; **the 1/1 still gathered
+  while wearing three +1/+1 counters**, with the live-key contrast on the same
+  board showing it would have been dropped; the mirror, where a -1/-1 counter
+  makes a 2/2 live-1/1 that the live keys take and the printed card does not;
+  a card in hand answering from its printed line; and the loader still refusing
+  a key it cannot answer. Four of the nine fail without the keys.
+- The counter tests drive `primitives.add_counters` rather than writing
+  `obj.counters` directly, because `chars` is cached against
+  `state.char_version` and a poked dict never invalidates it — a test that
+  wrote the dict would pass while measuring nothing.

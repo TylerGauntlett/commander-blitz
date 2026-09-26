@@ -8802,12 +8802,12 @@
     },
     "Angelic Aberration": {
       "edhrec_rank": 8006,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Aberration",
-      "reason": "no template for: When this creature enters, sacrifice any number of creatures each with base power or tough",
+      "reason": "",
       "scryfall_id": "c79a5bbe-7b70-4b05-a336-9b2bcb2f2b8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Angelic Accord": {

@@ -303,6 +303,20 @@
       "0": 47
     }
   },
+  "angelic_aberration": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "angelic_wall": {
     "zone": "battlefield"
   },
