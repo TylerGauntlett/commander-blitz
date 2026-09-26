@@ -104,6 +104,16 @@ STATIC_EFFECTS = frozenset(
     {
         "buff",
         "grant_keyword",
+        # Archetype of Courage and its cycle: "Creatures your opponents control
+        # lose first strike and **can't have or gain** first strike."  The
+        # subtractive twin of `grant_keyword`, and the *last* step of the
+        # keyword pipeline rather than an early one -- "can't have or gain" is a
+        # standing prohibition, so it has to outrank every adder, where
+        # `lose_all_abilities` at layer 1 is deliberately early because 613.1b
+        # keeps whatever is added after a removal. Named keywords only, which is
+        # what separates it from `lose_all_abilities`: that one would also take
+        # the opponents' flying and their triggered and activated abilities.
+        "lose_keyword",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."

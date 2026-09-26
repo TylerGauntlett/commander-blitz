@@ -8823,6 +8823,45 @@ list, so the two cannot disagree about what index 0 means.
 the grant layers, which is 613.1b: a Levitation played afterwards still grants
 flying, and a vigilance counter (613.1f) still gives vigilance.
 
+### `lose_keyword` — the other kind of removal, at the other end of the pipeline
+
+Archetype of Courage: *"Creatures your opponents control **lose first strike and
+can't have or gain first strike**."*
+
+```jsonc
+{ "kind": "static",
+  "text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+  "effect": "lose_keyword",
+  "keywords": ["first_strike"],
+  "affects": { "controller": "opponent", "types": ["Creature"] } }
+```
+
+Read the paragraph directly above this one and then this sentence, because the
+two are opposites and the printed text is what decides which applies.
+`lose_all_abilities` is **early**, before the grant layers, and that is 613.1b
+being honoured — what is added afterwards survives. `lose_keyword` is **last**,
+after the `grant_keyword` statics, after keyword counters (122.1c), after the
+until-end-of-turn grants, after suspend's haste and after `granted_keywords`.
+The reason is the second half of the printed clause: "can't have *or gain*" is a
+standing prohibition rather than a one-time subtraction, so nothing may hand the
+keyword back.
+
+That position is load-bearing and is pinned as such: moving the block above the
+grant layers fails exactly the two tests in `test_lose_keyword.py` that assert
+the prohibition — an opponent's own first-strike anthem, and a first-strike
+counter — and nothing else. A version placed early passes every other test in
+the file and is wrong on the only boards the card is played against.
+
+`keywords` and `affects` are both **required**. An empty keyword list subtracts
+nothing and would print a prohibition over an inert static; an absent filter
+defaults to `controller: "you"` and would strip the keyword from the card's own
+side, which is the opposite of every printed card in this cycle.
+
+`lose_all_abilities` is the near miss and is wrong on breadth as well as
+position: it would take the opponents' flying, their triggered abilities and
+their activated abilities too, which is half a Humility rather than a
+first-strike hoser.
+
 ### `grant_ability` as a static, and where the line now runs
 
 The `grant_ability` *op* grants for a duration and its grants are pointers only

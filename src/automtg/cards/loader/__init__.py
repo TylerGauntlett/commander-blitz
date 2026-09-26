@@ -3432,6 +3432,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
 
+    if model.effect == "lose_keyword":
+        # Named keywords only. An empty list would subtract nothing and load
+        # clean, printing "can't have or gain first strike" over an inert
+        # static -- and "lose *all* keywords" is a different sentence that no
+        # card in this cycle prints, so it is not the honest default.
+        if not model.keywords:
+            raise DslError(
+                f"{where}: lose_keyword needs the keywords it removes -- an empty "
+                f"list is an inert static wearing a printed prohibition"
+            )
+        if model.affects is None:
+            # Whose creatures lose it is the printed clause: the Archetype cycle
+            # says "creatures your opponents control", and the filter defaults
+            # `controller: "you"`, so an absent one would strip the keyword from
+            # the wrong side of the table -- a card that reads as a hoser and
+            # hoses its own controller.
+            raise DslError(
+                f"{where}: lose_keyword needs 'affects' naming whose permanents "
+                f"lose the keyword -- the filter defaults to your own, which is "
+                f"the opposite of every printed card in this cycle"
+            )
+
     if model.effect == "set_colors":
         # `[]` is colourless and is the point of the effect, so the check is for
         # the field being *absent* -- a `set_colors` with nothing said would

@@ -544,6 +544,35 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    while the card is still in exile.
         keywords.update(obj.granted_keywords)
 
+        # 9. "Creatures your opponents control **lose first strike and can't
+        #    have or gain first strike**" -- Archetype of Courage, and the rest
+        #    of that cycle.
+        #
+        #    Last, and that is the whole design of it. `lose_all_abilities` at
+        #    layer 1 is deliberately *early*, because 613.1b keeps whatever is
+        #    added after a removal -- an Imprisoned in the Moon plus a
+        #    Levitation leaves the permanent flying. This sentence is the other
+        #    kind: "can't have or gain" is a standing prohibition, not a
+        #    one-time subtraction, so it has to outrank every adder above it --
+        #    the grants at 2, keyword counters at 2b, the until-end-of-turn
+        #    grants at 6, suspend's haste at 7 and `granted_keywords` at 8.
+        #    Placed anywhere earlier, an opponent's anthem or a first_strike
+        #    counter would hand the keyword straight back and the card would
+        #    read as working while doing nothing on the only boards it matters.
+        #    Moving this block above layer 2 fails exactly the two tests in
+        #    `test_lose_keyword.py` that assert the prohibition, and nothing
+        #    else -- which is why those two are there.
+        #
+        #    It subtracts named keywords only, which is what separates it from
+        #    `lose_all_abilities`: that one would also take the opponents'
+        #    flying, their triggered abilities and their activated abilities,
+        #    turning a first-strike hoser into half a Humility.
+        for source_obj, static in statics:
+            if static.get("effect") != "lose_keyword":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                keywords -= set(static.get("keywords", ()))
+
     return Characteristics(
         power=power,
         toughness=toughness,

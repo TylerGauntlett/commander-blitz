@@ -17115,3 +17115,57 @@ quietly start returning 0 for a card in hand.
   `obj.counters` directly, because `chars` is cached against
   `state.char_version` and a poked dict never invalidates it — a test that
   wrote the dict would pass while measuring nothing.
+
+## `lose_keyword` — "lose first strike and can't have or gain first strike" — Archetype of Courage — 613.1b
+
+### Overview
+
+The keyword pipeline in `characteristics._compute` was additive from end to end.
+Every step does `keywords.update(...)` — the `grant_keyword` statics at layer 2,
+keyword counters at 2b (122.1c), the until-end-of-turn grants at 6, suspend's
+haste at 7, `granted_keywords` at 8 — and no step ever discarded one. The only
+subtractive thing in the whole static language was `lose_all_abilities`.
+
+### Tier: B — a new continuous effect, and the layer position *is* the feature
+
+This is the case the extend-dsl skill means when it says the layer position is
+the whole design question, and the answer lands at the opposite end of the file
+from the near miss.
+
+`lose_all_abilities` sits at **layer 1**, deliberately *before* the grants,
+because 613.1b keeps whatever is added after a removal: Imprisoned in the Moon
+plus a Levitation leaves the permanent flying, and that is correct.
+
+Archetype's sentence is the other kind. "Can't have **or gain**" is a standing
+prohibition, not a one-time subtraction, so `lose_keyword` must outrank every
+adder above it — which makes it the **last** step, after even
+`granted_keywords`.
+
+**The position is pinned rather than asserted.** Moving the block above layer 2
+fails exactly two tests — the opponent's own first-strike anthem, and a
+first-strike counter — and nothing else. So a version placed early passes eleven
+of the thirteen tests in the file and is wrong on precisely the boards the card
+exists for, which is why those two tests are written the way they are.
+
+| the near miss | why it is not this |
+|---|---|
+| `lose_all_abilities` | wrong twice over — too broad (it takes the opponents' flying and their triggered and activated abilities, which is half a Humility) *and* at the wrong end of the pipeline, where a later anthem hands the keyword back |
+| a negation flag on `grant_keyword` | neither the op options nor the static reader knows anything but `keywords`, and the two effects want opposite layer positions, so one entry could not carry both |
+| `not_keywords` in a filter | narrows which permanents a static *sees*; it removes nothing |
+
+`keywords` and `affects` are both required. An empty keyword list is an inert
+static wearing a printed prohibition; an absent filter defaults to
+`controller: "you"` and would make the card hose its own controller.
+
+### Tests
+
+- `tests/unit/test_lose_keyword.py` — the keyword taken from the opponents'
+  creature, with a no-static control; its own side untouched (the filter is the
+  printed "your opponents"); the whole printed card doing both halves at once;
+  **the prohibition beating a later grant** (the opponent's own anthem) and
+  **beating a keyword counter**, each with a control proving the adder is real
+  and the position is not rigged; another keyword surviving on the same board so
+  the breadth difference from `lose_all_abilities` is measured; and the two
+  loader refusals.
+- `tests/data/lose_keyword.cards.json` — the Archetype as printed, its lose half
+  alone, the two opponent-side anthems and a creature with first strike printed.

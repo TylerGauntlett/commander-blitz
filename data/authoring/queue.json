@@ -11952,12 +11952,12 @@
     },
     "Archetype of Courage": {
       "edhrec_rank": 4531,
-      "gate": "template",
+      "gate": null,
       "name": "Archetype of Courage",
-      "reason": "no template for: Creatures you control have first strike",
+      "reason": "",
       "scryfall_id": "8e6c4afb-6a94-4519-91c6-9824fed2892c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Archetype of Endurance": {

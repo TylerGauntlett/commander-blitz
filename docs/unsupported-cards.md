@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**33 cards** blocked by **41** capabilities.
+**32 cards** blocked by **40** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [graveyard-replacement](#graveyard-replacement) | 1 | 2287 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [keyword-removal](#keyword-removal) | 1 | 4531 | static_effect |
 | [kicked-target-count](#kicked-target-count) | 1 | 26603 | selector |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -414,20 +413,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## keyword-removal
-
-Blocks **1** card.
-
-- **(static_effect)** a static effect that REMOVES one named keyword from every permanent matching its `affects` filter, and keeps it off -- the Archetype cycle's "lose <keyword> and can't have or gain <keyword>" half. It has to beat later grants, not merely subtract once: a creature the opponent later enchants with a first-strike anthem, or that enters with a first_strike keyword counter, must still not have it. Shape: `{"kind": "static", "effect": "lose_keyword", "keywords": ["first_strike"], "affects": {"types": ["Creature"], "controller": "opponent"}}`, applied after every keyword-adding step in the characteristics pipeline (and after the keyword-counter step) so that nothing can add the keyword back.
-  <br>Why the existing vocabulary won't do: `grant_keyword` is the only keyword static in `static_effects` and it is additive-only: `characteristics.py` builds a creature's keyword set by `keywords.update(...)` over every matching `grant_keyword` and every keyword counter, and no step in that loop ever discards a keyword. The only subtractive thing in the whole list is `lose_all_abilities`, which is far too broad -- it would strip the opponents' creatures of flying, their triggered abilities and their activated abilities as well, turning a first-strike hoser into a board-wide Humility half. There is no negation flag on `grant_keyword` (`op_options` and the static reader both know only `keywords`), and `not_keywords` in `static_filter_keys` only filters who a static sees, it cannot take a keyword away.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Archetype of Courage** (rank 4531) — `archetype_of_courage`
-  - Creatures your opponents control lose first strike and can't have or gain first strike.
 
 </details>
 
