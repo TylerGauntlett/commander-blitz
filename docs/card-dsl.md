@@ -6280,10 +6280,33 @@ from 0 up to the **smaller** of `max` and what they can pay, and exactly that X 
 charged. `pay.times` is the near miss: it scales a cost by a number the card
 computes, so it could only charge X equal to the life gained, never less.
 
+**`max` is optional**, because a printed ceiling is a rule the *card* makes and
+not every card makes one:
+
+```jsonc
+// Decree of Justice: when you cycle this card, you may pay {X}.
+//                    If you do, create X 1/1 white Soldier creature tokens.
+{ "op": "may", "pay": { "mana": "{X}" },
+  "x": { "as": "paid_x" },
+  "effects": [ { "op": "create_token", "token": "soldier_1_1_w",
+                 "amount": { "binding": "paid_x" } } ] }
+```
+
+With `max` absent the only bound is the one 118.3 makes — what the player can
+actually pay — and the affordability probe runs under its own default cap, which
+is the engine's guard against a pathological board rather than anything the card
+claims. This is **not** join forces: `op_join_forces` walks every player in turn
+order asking `{1}` at a time and binds the sum, where an unbounded `x` here is
+announced once by one player and no opponent may add to it.
+
+Supplying a made-up ceiling instead is not a cosmetic shortcut. `_announce_x`
+hands `x.max` straight to `max_affordable_x` as the probe `cap`, so an invented
+20 silently *becomes* the card's real maximum — which is why this was filed as a
+gap rather than approximated.
+
 `{X}` in an optional `pay` without `x` is refused (nothing would announce X, so
-it would charge {0}), as is `x` without an `{X}`, without `max` or `as`, on any
-op but a `may` with a `pay`, and beside `repeat`, `pay.times` or
-`pay.mana_reduction`.
+it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
+`may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
 
 ### "…unless that player pays {1}"
 

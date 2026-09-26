@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**31 cards** blocked by **39** capabilities.
+**30 cards** blocked by **38** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -50,7 +50,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spells-cast-this-game](#spells-cast-this-game) | 1 | 1017 | value |
 | [tucks-itself](#tucks-itself) | 1 | 1017 | replacement |
-| [unbounded-pay-x](#unbounded-pay-x) | 1 | 8328 | op |
 | [untap-limit](#untap-limit) | 1 | 3327 | static_effect |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
@@ -592,20 +591,6 @@ Blocks **1** card.
 - **Approach of the Second Sun** (rank 1017) — `approach_of_the_second_sun`
   - If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game.
   - Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.
-
-</details>
-
-## unbounded-pay-x
-
-Blocks **1** card.
-
-- **(op)** An optional {X} payment by ONE player with no printed ceiling -- "you may pay {X}. If you do, <do it> X times". Concretely: let `may`'s `x` spec omit `max`. `loader/effects.py::_validate_pay_x` (line 131) currently hard-requires it; it should accept `{"as": "paid_x"}` alone and mark the announcement unbounded. `ops_control.py::_announce_x` (line 145) then has to stop deriving its probe cap from the printed ceiling -- today it calls `max_affordable_x(cost.mana, pool, sources, cap=ceiling)` and returns `min(ceiling, affordable)`, so with no ceiling it must fall back to affordability alone under some engine-level cap (`max_affordable_x`'s own `cap=20` default, or a named constant beside `MAX_JOIN_FORCES`). `ask_x` already carries `per_point`, so nothing else changes. With that one relaxation the whole card is expressible and no other work is needed -- I verified it: the identical payload with a fabricated `"max": {"const": 20}` passes schema, compile, residual and playable, and the sandbox measures 13 `angel_4_4_w_flying` tokens, a battlefield of 45 and the sorcery in the graveyard, so the answer to write afterwards is `{"zone": "graveyard", "tokens": {"id": "angel_4_4_w_flying", "count": 13}, "battlefield_count": 45}`.
-  <br>Why the existing vocabulary won't do: `may` with `pay: {"mana": "{X}"}` plus an `x` spec is the engine's only single-player optional X payment (Well of Lost Dreams), and the loader refuses it without `x.max`: "the printed ceiling on X is required". `_validate_pay_x`'s own docstring says why -- "A missing `max` is 'pay any amount', which is join forces and not this" -- so the unbounded case was deliberately routed to `join_forces`, and `join_forces` is a different card: `op_join_forces` walks `state.turn_order(controller)` and asks EVERY player, repeatedly, one `{1}` unit at a time, binding the summed units. Decree's X is announced once, by its controller alone, and an opponent may not add to it. Supplying a made-up numeric `max` is the approximation the brief forbids -- it writes a printed rule the card does not have (and `_announce_x` feeds that number to `max_affordable_x` as the probe `cap`, so the invented number is load-bearing, not cosmetic). Nothing in `value_keys` expresses "unbounded": every leaf there is a reading off the board or the turn's ledger. `cost_keys.x_value` is the other near miss and is the opposite mechanic -- a DEFINED X ("X is the mana value of that card") that `costs.defined_x` computes and never asks about, and it lives on an activated ability's cost, not inside a triggered ability's resolution. The card's other two lines are fully supported and were left unwritten rather than shipped as a partial answer: `create_token` with `amount: {"x": true}` says the Angels (`angel_4_4_w_flying` is in `token_ids`), and cycling is already a capability -- an `is_cycling` activated ability with `active_zones: ["hand"]` and `cost: {"mana": "{2}{W}", "discard_self": true}`, plus the `cycle` trigger event with `active_zones: ["graveyard"]`, exactly as Krosan Tusker writes it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Decree of Justice** (rank 8328) — `decree_of_justice`
-  - When you cycle this card, you may pay {X}. If you do, create X 1/1 white Soldier creature tokens.
 
 </details>
 

@@ -64522,12 +64522,12 @@
     },
     "Decree of Justice": {
       "edhrec_rank": 8328,
-      "gate": "template",
+      "gate": null,
       "name": "Decree of Justice",
-      "reason": "no template for: Create X 4/4 white Angel creature tokens with flying",
+      "reason": "",
       "scryfall_id": "21637fbe-d9d3-4d5b-a361-0687385d4738",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Decree of Pain": {

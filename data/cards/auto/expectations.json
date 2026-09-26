@@ -2347,6 +2347,14 @@
   "deceptive_landscape": {
     "zone": "battlefield"
   },
+  "decree_of_justice": {
+    "battlefield_count": 45,
+    "tokens": {
+      "count": 13,
+      "id": "angel_4_4_w_flying"
+    },
+    "zone": "graveyard"
+  },
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },

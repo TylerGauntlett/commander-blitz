@@ -17233,3 +17233,56 @@ rather than an omission.
   tapping itself**, with a second copy proving the exclusion is about the
   arriving object and not a self-blind effect; and the loader refusals. Six of
   the thirteen fail without the change.
+
+## An unbounded optional `{X}` — the ceiling the card does not print — Decree of Justice — 118.3
+
+### Overview
+
+Decree of Justice: *"When you cycle this card, you may pay {X}. If you do, create
+X 1/1 white Soldier creature tokens."*
+
+`may`'s `x` spec required `max`, and its docstring justified that by saying a
+missing ceiling was "pay any amount, which is join forces and not this". That
+conflated two different mechanics. `op_join_forces` walks `state.turn_order` and
+asks **every** player for `{1}` at a time, repeatedly, binding the summed units;
+Decree's X is announced **once**, by its controller alone, and no opponent may add
+to it.
+
+Meanwhile a great many cards print no ceiling at all, and for those 118.3 — what
+the player can actually pay — is the only bound there is.
+
+### Tier: a loader relaxation and one branch in `_announce_x`
+
+`max` is now optional; `as` is still required (without it the payment charges for
+X and nothing reads the number, so the card pays for X cards and draws none).
+With `max` absent, `_announce_x` runs the affordability probe under
+`max_affordable_x`'s own default cap instead of a printed one.
+
+**Why the fabricated number was not an option.** This is the part worth
+recording: `_announce_x` passes `x.max` straight to `max_affordable_x` as the
+probe `cap`. So an invented ceiling is not a placeholder that something else
+overrides — it silently *becomes* the card's real maximum. A Decree written with
+`"max": {"const": 20}` is a card with a printed rule it does not have, and on a
+board with more than twenty mana it makes fewer Soldiers than the real one. That
+is exactly the class of error the gap-record discipline exists to catch, and the
+worker who filed it had verified the whole rest of the card with a throwaway
+ceiling rather than shipping one.
+
+| the near miss | why it is not this |
+|---|---|
+| a fabricated `max` | load-bearing, not cosmetic — it becomes the ceiling. See above |
+| `join_forces` | asks every player, repeatedly, and binds the sum. A different card |
+| `cost_keys.x_value` | a *defined* X ("X is the mana value of that card") that `costs.defined_x` computes without asking, and it lives on an activated ability's cost rather than inside a resolution |
+| `may` + `repeat` around `{1}` | pays one at a time and lets the results inform the next payment, which no printed "pay {X}" does |
+
+### Tests
+
+- `tests/unit/test_pay_x_on_resolution.py::TestAnUnboundedX` — X running up to
+  affordability where the printed-ceiling Well stops at the life gained, **with
+  the bounded contrast measured on the same board**, so relaxing the requirement
+  is shown not to have relaxed the rule; the `as` binding still read by the "if
+  you do"; and the zero-mana boundary still asking nothing.
+- The old `test_no_ceiling` refusal is now `test_no_ceiling_is_allowed_now`,
+  carrying the reasoning for the change rather than being deleted.
+- `tests/data/pay_x.cards.json` gains `t_well_unbounded`, the same trigger with
+  no printed maximum.
