@@ -310,6 +310,7 @@ it, but a card that needed correcting was authored wrong.
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
+| Combat decisions | `choose_blockers` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `repeat_while` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 

@@ -75268,6 +75268,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_blockers",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "odric_master_tactician",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Odric, Master Tactician",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

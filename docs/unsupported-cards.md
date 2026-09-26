@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **37** capabilities.
+**28 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
 | [cast-from-hand](#cast-from-hand) | 1 | 1017 | value |
-| [choose-blockers](#choose-blockers) | 1 | 2369 | decision |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [copy-ability](#copy-ability) | 1 | 3634 | op |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -194,20 +193,6 @@ Blocks **1** card.
 - **Approach of the Second Sun** (rank 1017) — `approach_of_the_second_sun`
   - If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game.
   - Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.
-
-</details>
-
-## choose-blockers
-
-Blocks **1** card.
-
-- **(decision)** An effect that, for the rest of this combat, hands the DECLARE_BLOCKERS decision of every defending player to the effect's controller: the attacking player declares which of the defenders' creatures block and which attacker each one blocks, subject to the same legality checks (blocks_valid, unmet_block_requirements, can_block) that already gate a defender's own declaration. Needs an op (one-shot, duration 'this combat' / end of turn) usable from a triggered ability's effects, plus a way to route DecisionKind.DECLARE_BLOCKERS for a player in combat.pending_blockers to a different seat.
-  <br>Why the existing vocabulary won't do: The nearest things in reference are the ops must_block and cant_block and the static block_restriction. All three only constrain an individual creature -- must_block forces one named creature to block (optionally a named attacker), cant_block forbids blocking, and block_restriction's `blockers` filter (src/automtg/engine/combat.py:843) only says what may not block a given attacker. None of them lets a player choose the whole block assignment, and none of them can decline a block the defender would otherwise be free to make elsewhere. Underneath, src/automtg/engine/turn.py:651 (_next_blocker_decision) always issues PendingDecision(kind=DecisionKind.DECLARE_BLOCKERS, player=pid) to each pid in combat.pending_blockers, with no hook to reassign that seat; unblockable and freeze are also unrelated. Forcing a set of blocks with must_block would be an approximation: it cannot express 'and how those creatures block' for creatures Odric wants held back, nor stop a defender adding extra blockers.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Odric, Master Tactician** (rank 2369) — `odric_master_tactician`
-  - Whenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.
 
 </details>
 

@@ -17339,3 +17339,63 @@ are pinned separately.
   Soldier **at home** unprotected; a non-Soldier unprotected; an unnarrowed
   contrast card shielding all of them, proving the clauses narrow rather than the
   static being inert; and the three loader refusals.
+
+## `choose_blockers` — the defender's declaration, made by somebody else — Odric, Master Tactician — 509.1
+
+### Overview
+
+Odric, Master Tactician: *"Whenever Odric and at least three other creatures
+attack, **you** choose which creatures block this combat and how those creatures
+block."*
+
+Nothing in the combat-flag family can say this, and the obstruction is *kind*
+rather than breadth. `must_block` and `cant_block` each constrain **one** creature
+and leave the defender free everywhere else — they cannot stop the defender adding
+blockers the effect never named — and "and **how** those creatures block", the
+assignment of each blocker to an attacker, has no spelling at all in a
+per-creature requirement. `block_restriction`'s filter only says what may *not*
+block a given attacker.
+
+Underneath, `turn._next_blocker_decision` issued
+`PendingDecision(kind=DECLARE_BLOCKERS, player=pid)` to each seat in
+`combat.pending_blockers` with no way to reassign it.
+
+### Tier: C-adjacent — no new DecisionKind, but a new thing a decision can say
+
+The design that makes this safe is splitting **who is asked** from **whose
+declaration it is**:
+
+- `PendingDecision.on_behalf_of` names the second, with a `subject` property that
+  resolves to `player` for every ordinary decision.
+- `CombatState.blocker_chooser` records the thief, read by
+  `_next_blocker_decision` when it hands the prompt out.
+- `legality._blocker_actions` and `game._dispatch_blockers` read `subject`.
+
+**No legality check changed.** `legal_blocks` still offers the defender's
+creatures, `add_blocker` still validates against them, and `blocks_valid` /
+`unmet_block_requirements` still hold the defender to their own menace and lures.
+So a stolen declaration is exactly as legal as the defender's own would have been
+— Odric may choose badly but not illegally, which is the printed card. Reusing
+`player` instead would have offered the *attacker's* creatures as blockers, which
+is the one mistake this shape forecloses.
+
+Deliberately **not** a new `DecisionKind`: the decision is the same one, asked of
+a different seat, so the client, the encoder and `verify.py`'s auto-answer table
+all keep working untouched. That is the extend-dsl routing rule applied — the
+cheaper tier composed rather than a new kind invented.
+
+Recorded on `CombatState` rather than on a player because "this combat" is the
+printed duration: it dies with `state.combat`, needs no clock, and an extra combat
+granted the same turn correctly begins free of it.
+
+### Tests
+
+- `tests/unit/test_choose_blockers.py` — the attacker holding the prompt with
+  `on_behalf_of` still naming the defender, and a control showing the defender is
+  asked without the op; **the blocks offered being the defender's creatures and
+  not the thief's**, which is the safety of the whole design; menace still
+  requiring two blockers under a stolen declaration, and `legal_blocks` still
+  computed for the defender; the record dying with the combat, a fresh combat
+  starting free of it, and the op inert with no combat at all; plus three tests
+  driving a **real turn** to show the defender is never asked. Stashing
+  `turn.py` fails three of them.

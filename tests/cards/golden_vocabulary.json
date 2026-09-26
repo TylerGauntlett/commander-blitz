@@ -657,6 +657,7 @@
   "cast_copy",
   "cast_from_hand",
   "change_text",
+  "choose_blockers",
   "choose_color",
   "choose_mode",
   "choose_permanents",

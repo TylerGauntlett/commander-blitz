@@ -657,10 +657,19 @@ def _next_blocker_decision(state: GameState) -> None:
         if not state.is_alive(pid):
             combat.pending_blockers.pop(0)
             continue
+        # Odric, Master Tactician: "you choose which creatures block this combat
+        # and how those creatures block." The seat asked moves; the seat the
+        # declaration is *about* stays, which is what keeps `legal_blocks` and
+        # `blocks_valid` reading the defender's own creatures and requirements.
+        chooser = combat.blocker_chooser
+        taken_over = chooser is not None and chooser != pid and state.is_alive(chooser)
         state.pending_decision = PendingDecision(
             kind=DecisionKind.DECLARE_BLOCKERS,
-            player=pid,
-            prompt="Declare blockers",
+            player=chooser if taken_over else pid,
+            on_behalf_of=pid if taken_over else None,
+            prompt=(
+                f"Declare blockers for player {pid}" if taken_over else "Declare blockers"
+            ),
         )
         return
     combat_mod.finish_blockers(state)

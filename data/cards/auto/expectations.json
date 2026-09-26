@@ -6808,6 +6808,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "odric_master_tactician": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ogre_berserker": {
     "zone": "battlefield"
   },

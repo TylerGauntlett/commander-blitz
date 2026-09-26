@@ -68,7 +68,10 @@ def legal_actions(state: GameState) -> list[Action]:
     if kind is DecisionKind.DECLARE_ATTACKERS:
         return _attacker_actions(state, decision.player)
     if kind is DecisionKind.DECLARE_BLOCKERS:
-        return _blocker_actions(state, decision.player)
+        # `subject`, not `player`: when Odric has taken the declaration over, the
+        # attacker holds the prompt but the blocks offered are still the
+        # *defender's* legal ones.
+        return _blocker_actions(state, decision.subject)
     if kind is DecisionKind.MULLIGAN:
         return [
             Action(kind=ActionKind.MULLIGAN, label="Mulligan"),

@@ -1335,6 +1335,16 @@ class CombatState:
     removed: set[int] = field(default_factory=set)
     #: which defending players still have to declare blocks, in APNAP order
     pending_blockers: list[int] = field(default_factory=list)
+    #: The seat declaring blocks **for** every defender this combat, when one
+    #: effect has taken that choice over: "you choose which creatures block this
+    #: combat and how those creatures block" (Odric, Master Tactician).
+    #:
+    #: On the combat rather than on a player, because the printed duration is
+    #: "this combat" -- it dies with `state.combat` and needs no separate clock,
+    #: and a second combat granted the same turn correctly starts free of it.
+    #: The defenders' creatures and every block-legality check are unchanged;
+    #: only who answers the DECLARE_BLOCKERS decision moves.
+    blocker_chooser: int | None = None
     attackers_declared: bool = False
     blockers_declared: bool = False
     first_strike_done: bool = False
