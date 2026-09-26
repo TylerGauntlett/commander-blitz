@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **38** capabilities.
+**29 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -28,7 +28,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-ability](#copy-ability) | 1 | 3634 | op |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-life-floor](#damage-life-floor) | 1 | 2015 | replacement |
-| [damage-prevention](#damage-prevention) | 1 | 8995 | static_effect |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
@@ -267,20 +266,6 @@ Blocks **1** card.
 - **Angel's Grace** (rank 2015) — `angel_s_grace`
   - You can't lose the game this turn and your opponents can't win the game this turn.
   - Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.
-
-</details>
-
-## damage-prevention
-
-Blocks **1** card.
-
-- **(static_effect)** A static ability on one permanent that prevents ALL damage that would be dealt to OTHER permanents matched by a printed-characteristics filter -- a total shield, not a number. Suggested shape: an 'all: true' (or 'amount: "all"') rider on the existing 'prevent_damage' static so that 'affects: {"controller": "you", "subtypes": ["Soldier"], "attacking": true, "exclude_self": true}' shields every match completely. src/automtg/engine/characteristics.py:1861 prevented_damage() sums a per-source integer; a total shield needs its own answer there (a bool alongside the sum, or a sentinel the caller reads as infinite) and a branch in src/automtg/engine/primitives.py:563, where absorb is applied, that returns 0 and fires DAMAGE_PREVENTED with the full amount -- the way the protected_from() branch immediately above it already does. The filter half is already expressible: 'attacking', 'subtypes', 'controller' and 'exclude_self' are all in STATIC_FILTER_KEYS, so only the magnitude is missing. This unblocks the whole 'prevent all damage that would be dealt to ...' family (Mother of Runes-style shields aside, it is the anthem-shaped ones: Rescue Retriever, Solitary Confinement's cousins, Palisade Giant, Archetype of Courage's neighbours), which today have no expressible form at all.
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' STATIC is absorb N and nothing else: src/automtg/cards/loader/__init__.py:2571 refuses it without an 'amount', and src/automtg/engine/characteristics.py:1878 sums that amount into a per-source, per-instance cap (702.63a). 'Prevent all damage' has no number, and picking a large one (absorb 99) is a different card -- it is still a finite cap read per source, it is a printed characteristic nothing on the card says, and any card that ever deals more than the invented number quietly gets through. The 'prevent_damage' OP is the other near miss and shields a PLAYER only: src/automtg/cards/loader/effects.py:1164 explicitly refuses 'objects' on it and points at the static, and it needs a 'duration' from a fixed list, so it cannot say a permanent-wide, open-ended static either. 'replace_damage' is refused below a 'damage_multiplier' of 2 (loader/__init__.py:2996), which the comment there says is exactly because 0 would be this sentence. The 'protection' static is the tempting substitute and is strictly wider than what is printed: protection from everything would also stop those Soldiers being blocked, targeted, enchanted and equipped (702.16e), turning a damage shield into evasion. 'grant_keyword' has no prevention keyword to grant -- 'indestructible' is the other approximation and is a different effect again, since the Soldiers would still take damage, still be marked, still die to -1/-1 and still feed an opponent's lifelink. The rest of the card is expressible and no partial answer was written: 'Flash' is a keyword, and 'When this creature enters, put a +1/+1 counter on each other Soldier you control' is an ordinary 'self_enters' trigger running 'add_counters' over '{"zone": "battlefield", "controller": "you", "subtypes": ["Soldier"], "exclude_self": true, "count": "all"}'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rescue Retriever** (rank 8995) — `rescue_retriever`
-  - Prevent all damage that would be dealt to other attacking Soldiers you control.
 
 </details>
 

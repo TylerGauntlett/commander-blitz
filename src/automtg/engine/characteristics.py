@@ -1908,8 +1908,41 @@ def prevented_damage(state: GameState, oid: int) -> int:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
+        if static.get("prevent_all"):
+            # A total shield is answered by `prevents_all_damage` below, not by
+            # a number here. Skipped rather than summed as 0, so the two never
+            # meet: `amount` is absent on such a static and `_static_value`
+            # would read it as 0 and contribute nothing anyway.
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def prevents_all_damage(state: GameState, oid: int) -> bool:
+    """Whether **all** damage to this permanent is prevented.
+
+    "Prevent all damage that would be dealt to other attacking Soldiers you
+    control" -- Rescue Retriever. Its own question rather than a very large
+    :func:`prevented_damage`, because absorb and a total shield are different
+    rules and the difference is not a number: 702.63a's absorb is per source and
+    per instance, so any finite N is a per-source cap the card never printed --
+    three 1/1 attackers get through an absorb 2 and do nothing at all to a total
+    shield.
+
+    Shaped after `protected_from` rather than after absorb, for the reason that
+    one is a bool: it answers the whole damage event however big it is. What it
+    deliberately is *not* is protection, which also stops the creature being
+    blocked, enchanted and targeted -- reusing that would make every shielded
+    Soldier unblockable, which is three extra cards' worth of text.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    return any(
+        static.get("prevent_all") and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _battlefield_statics(state)
+        if static.get("effect") == "prevent_damage"
+    )
 
 
 def crew_power_bonus(state: GameState, oid: int) -> int:

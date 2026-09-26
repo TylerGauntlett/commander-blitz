@@ -7769,6 +7769,13 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "rescue_retriever": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "reshape_the_earth": {
     "battlefield_count": 42,
     "graveyard_size": {

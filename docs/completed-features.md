@@ -17286,3 +17286,56 @@ ceiling rather than shipping one.
   carrying the reasoning for the change rather than being deleted.
 - `tests/data/pay_x.cards.json` gains `t_well_unbounded`, the same trigger with
   no printed maximum.
+
+## A total damage shield — "prevent **all** damage", not absorb N — Rescue Retriever — 702.63a
+
+### Overview
+
+Rescue Retriever: *"Prevent all damage that would be dealt to other attacking
+Soldiers you control."*
+
+`docs/rules-coverage.md` recorded this as unimplemented, and the reason is the
+interesting part: the `prevent_damage` static existed and refused an absent
+`amount` rather than reading it as infinite, so there was no way to say "all" —
+only a number.
+
+**A big number is not "all."** Absorb is per source and per instance, so any
+finite N is a per-source cap the printed card never named. A Soldier under
+absorb 2 is untouched by three 1/1 attackers and takes four from a single 6/6;
+under a total shield it takes nothing from either. Writing the card with
+`amount: 999` would be a different card that happens to look the same on most
+boards.
+
+### Tier: B — a bool beside the number, at the same seam as protection
+
+`prevent_all` on the static, answered by `characteristics.prevents_all_damage`.
+A bool rather than a sentinel int, shaped after `protected_from` for the reason
+that one is a bool: it settles the whole damage event however big it is. Read in
+`primitives.damage_permanent` beside the protection branch, and **before** absorb
+— with both on one creature the shield has already taken everything, and absorb
+would otherwise fire a second `DAMAGE_PREVENTED` for damage that no longer
+exists. A total shield contributes nothing to the absorb sum, so a caller reading
+only the number cannot conflate them.
+
+| the near miss | why it is not this |
+|---|---|
+| `amount` with a large N | a per-source cap (702.63a), not a shield. Three small attackers get through absorb 2 |
+| `protection` | prevents all the damage *and* stops the creature being blocked, enchanted and targeted — a shielded attacking Soldier written that way is unblockable |
+| the `prevent_damage` **op** | shields a *player*, refuses `objects`, and needs a `duration`; this is continuous while its source stands |
+| `indestructible` | the damage is still dealt and still marks the creature; only the lethal check changes |
+
+**Both narrowing clauses are the card.** "Other" is `exclude_self` and
+"attacking" is the `attacking` filter key. A version dropping either would look
+identical on a board where everything happens to be attacking, which is why both
+are pinned separately.
+
+### Tests
+
+- `tests/unit/test_prevent_all_damage.py` — a large hit and a small one each
+  prevented entirely, with a no-shield control and the permanent left with zero
+  marked damage; **the absorb sum staying zero** so the two rules are shown not
+  to be the same question; three separate sources each prevented in full, which
+  a per-source cap cannot claim; the Retriever not shielding **itself**; a
+  Soldier **at home** unprotected; a non-Soldier unprotected; an unnarrowed
+  contrast card shielding all of them, proving the clauses narrow rather than the
+  static being inert; and the three loader refusals.

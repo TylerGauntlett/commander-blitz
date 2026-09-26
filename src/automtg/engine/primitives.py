@@ -542,7 +542,7 @@ def damage_permanent(
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is
     # why this returns before all three rather than zeroing `amount` later.
-    from .characteristics import prevented_damage, protected_from
+    from .characteristics import prevented_damage, prevents_all_damage, protected_from
 
     if protected_from(state, oid, source_oid):
         # `fire`, not `emit`, and `to="permanent"`: see the player-side site in
@@ -558,6 +558,28 @@ def damage_permanent(
             amount=amount,
             to="permanent",
             reason="protection",
+        )
+        return 0
+    # "Prevent **all** damage that would be dealt to..." (Rescue Retriever).
+    # Beside protection above rather than beside absorb below, because it is the
+    # same shape as protection -- it answers the whole event however big it is --
+    # and only the *breadth* differs: protection also stops the creature being
+    # blocked, enchanted and targeted, which this does not.
+    #
+    # Before absorb, so a shielded permanent never reports a partial prevention:
+    # with both on one creature the total shield has already taken everything,
+    # and absorb would otherwise fire a second DAMAGE_PREVENTED for damage that
+    # no longer exists.
+    if prevents_all_damage(state, oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="prevent_all",
         )
         return 0
     # Absorb (702.63a): "prevent N of that damage", per source and per instance.

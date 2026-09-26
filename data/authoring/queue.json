@@ -221012,12 +221012,12 @@
     },
     "Rescue Retriever": {
       "edhrec_rank": 8995,
-      "gate": "template",
+      "gate": null,
       "name": "Rescue Retriever",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on each other Soldier you control",
+      "reason": "",
       "scryfall_id": "22dde654-5bde-47f9-8e90-4f38dddc07b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Rescue Skiff": {

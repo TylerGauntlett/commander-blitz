@@ -85664,6 +85664,73 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "subtypes": [
+                  "Soldier"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, put a +1/+1 counter on each other Soldier you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Soldier"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all damage that would be dealt to other attacking Soldiers you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rescue_retriever",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Rescue Retriever",
+      "oracle_text": "Flash\nWhen this creature enters, put a +1/+1 counter on each other Soldier you control.\nPrevent all damage that would be dealt to other attacking Soldiers you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

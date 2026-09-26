@@ -605,6 +605,16 @@ class AbilityModel(BaseModel):
     subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
+    #: ``prevent_damage``'s total shield: "Prevent **all** damage that would be
+    #: dealt to other attacking Soldiers you control" (Rescue Retriever).
+    #:
+    #: A separate flag rather than a magic ``amount``, because absorb N and a
+    #: total shield are different rules and the difference is not a number.
+    #: 702.63a's absorb is per source and per instance, so a large N is still a
+    #: finite per-source cap the card never printed -- three 1/1s get through an
+    #: absorb 2 and do nothing to a total shield. The loader requires exactly
+    #: one of this and ``amount``.
+    prevent_all: bool = False
     #: Two different clauses sharing one field, because the card files read
     #: better for it and the two can never collide -- an ability is static or
     #: activated, never both.

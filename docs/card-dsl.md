@@ -6930,12 +6930,39 @@ carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 absorb N and is keyed to an **object** — `characteristics.prevented_damage`
 matches each entry's `affects` filter against a permanent, and
 `static_filter_keys` has no way to name a seat at all. It is also per source and
-per instance rather than "all damage this turn", it cannot be spelled `"all"`
-(the loader requires a number), and being a static it is continuous while its
-source stands on the battlefield — a Squire carrying one would fog its
-controller every future turn, which is a Worship. Same relationship `cant_block`
-the op has with `cant_block` the static, and the same three inversions: the
-subject, the clock, and who owns it.
+per instance rather than "all damage this turn", and being a static it is
+continuous while its source stands on the battlefield — a Squire carrying one
+would fog its controller every future turn, which is a Worship. Same relationship
+`cant_block` the op has with `cant_block` the static, and the same three
+inversions: the subject, the clock, and who owns it.
+
+The static **can** say "all", with `prevent_all` rather than a number:
+
+```jsonc
+// Rescue Retriever: prevent all damage that would be dealt to other attacking
+//                   Soldiers you control.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "affects": { "controller": "you", "subtypes": ["Soldier"],
+               "attacking": true, "exclude_self": true } }
+```
+
+A flag and not a very large `amount`, because absorb N and a total shield are
+different rules and the difference is not a number. 702.63a's absorb is per
+source and per instance, so any finite N is a per-source cap the printed card
+never named: a Soldier under absorb 2 is untouched by three 1/1 attackers and
+takes four from one 6/6, where a total shield takes nothing from either. It is
+answered by `characteristics.prevents_all_damage`, a bool like `protected_from`
+because it settles the whole event however big it is, and read in
+`primitives.damage_permanent` beside the protection branch and before absorb.
+
+Protection is the other near miss and is three extra cards' worth of text: it
+prevents all the damage *and* stops the creature being blocked, enchanted and
+targeted, so a shielded attacking Soldier written that way is unblockable.
+
+The loader requires exactly **one** of `prevent_all` and `amount` — absorb 0
+prevents nothing and would print a line that never fires, while both together are
+two answers to one question — and refuses `prevent_all` on any other static,
+since a flag nothing reads is a printed line that does nothing.
 
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It

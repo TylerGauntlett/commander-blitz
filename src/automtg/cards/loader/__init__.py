@@ -2568,11 +2568,26 @@ def _validate_static_subtypes(model: AbilityModel, where: str) -> None:
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
-    if model.effect == "prevent_damage" and model.amount is None:
-        # Absorb 0 prevents nothing. A static that reads as damage prevention
-        # and prevents none of it is the failure this whole pass exists to
-        # refuse -- it would load, appear in the card's text, and never fire.
-        raise DslError(f"{where}: 'prevent_damage' needs an 'amount' -- absorb N")
+    if model.effect == "prevent_damage":
+        # Exactly one of the two, because absorb N and a total shield are
+        # different rules rather than two sizes of one. Absorb 0 prevents
+        # nothing and would load, print the line and never fire; a total shield
+        # beside a number is two answers to one question, and nothing would say
+        # which won.
+        if model.prevent_all and model.amount is not None:
+            raise DslError(
+                f"{where}: 'prevent_damage' takes 'prevent_all' or an 'amount', not "
+                f"both -- absorb N is a per-source cap (702.63a) and a total shield "
+                f"is not a larger one"
+            )
+        if not model.prevent_all and model.amount is None:
+            raise DslError(
+                f"{where}: 'prevent_damage' needs an 'amount' -- absorb N -- or "
+                f"'prevent_all' for 'prevent all damage'"
+            )
+    if model.prevent_all and model.effect != "prevent_damage":
+        # A flag nothing reads is a printed line that does nothing.
+        raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")
     if model.effect == "crew_power_bonus" and model.amount is None:
         # "As though its power were 0 greater" is not a printed sentence, and a
         # bonus of nothing would load, print the Pilot's line, and crew exactly
@@ -3608,6 +3623,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         value = getattr(model, field_name)
         if value is not None:
             static[field_name] = value
+    if model.prevent_all:
+        static["prevent_all"] = True
     if model.keywords:
         static["keywords"] = list(model.keywords)
     if model.subtypes:
