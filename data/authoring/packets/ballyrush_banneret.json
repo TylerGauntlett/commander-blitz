@@ -1,0 +1,1590 @@
+{
+  "back_face": {},
+  "card_id": "ballyrush_banneret",
+  "color_identity": "W",
+  "colors": "W",
+  "examples": [
+    {
+      "id": "acidic_slime",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Acidic Slime",
+      "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhen this creature enters, destroy target artifact, enchantment, or land.",
+      "power": 2,
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "id": "aesi_tyrant_of_gyre_strait",
+      "mana_cost": "{4}{G}{U}",
+      "name": "Aesi, Tyrant of Gyre Strait",
+      "oracle_text": "You may play an additional land on each of your turns.\nLandfall — Whenever a land you control enters, you may draw a card.",
+      "power": 5,
+      "subtypes": [
+        "Serpent"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "id": "air_elemental",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Air Elemental",
+      "oracle_text": "Flying",
+      "power": 4,
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    }
+  ],
+  "mana_cost": "{1}{W}",
+  "name": "Ballyrush Banneret",
+  "oracle_text": "Kithkin spells and Soldier spells you cast cost {1} less to cast.",
+  "power": "2",
+  "reference": {
+    "ability_keys": [
+      "ability",
+      "activate_steps",
+      "activated_by",
+      "active_zones",
+      "add_mana",
+      "affects",
+      "affects_abilities",
+      "affects_player",
+      "affects_spells",
+      "affects_token",
+      "amount",
+      "arrived_this_turn_from",
+      "blockers",
+      "cause_controller",
+      "cause_events",
+      "cause_filter",
+      "chapter",
+      "colors",
+      "combat_only",
+      "condition",
+      "cost",
+      "counter",
+      "counter_addend",
+      "counter_multiplier",
+      "create_instead",
+      "damage_multiplier",
+      "damage_source",
+      "draw_multiplier",
+      "effect",
+      "effects",
+      "enters_tapped",
+      "except_first_in_draw_step",
+      "from_colors",
+      "from_colors_outside_commander_identity",
+      "from_subtypes",
+      "from_types",
+      "gain_multiplier",
+      "grants_flashback",
+      "id",
+      "is_cycling",
+      "is_equip",
+      "is_mana_ability",
+      "keywords",
+      "kind",
+      "level",
+      "loss_multiplier",
+      "mana_grant",
+      "mana_restriction",
+      "mana_uncounterable",
+      "mill_multiplier",
+      "once_each_turn",
+      "pay_life_instead",
+      "power",
+      "require_all",
+      "sorcery_speed_only",
+      "static_max_per_turn",
+      "subtypes",
+      "tapped_permanent",
+      "targeting",
+      "targets",
+      "text",
+      "threshold",
+      "token_multiplier",
+      "toughness",
+      "trigger",
+      "types",
+      "warp_cost"
+    ],
+    "ability_kinds": [
+      "activated",
+      "triggered",
+      "static",
+      "chapter",
+      "reflexive",
+      "level"
+    ],
+    "card_level_cost_keys": [
+      "additional_cost",
+      "additional_cost_options",
+      "spree",
+      "additional_optional",
+      "additional_repeatable",
+      "alternative_cost",
+      "ascend",
+      "bestow",
+      "buyback",
+      "cost_reduction",
+      "dredge",
+      "emerge",
+      "evoke",
+      "flashback",
+      "foretell",
+      "gift",
+      "kicker",
+      "madness",
+      "morph",
+      "multikicker",
+      "mutate",
+      "overload",
+      "pay_generic_with",
+      "retrace",
+      "splice",
+      "strive",
+      "suspend",
+      "warp"
+    ],
+    "card_level_face_keys": [
+      "back_face",
+      "second_face",
+      "second_face_zone",
+      "prepared_face",
+      "fuse",
+      "adventure"
+    ],
+    "card_level_rider_keys": [
+      "exiles_itself",
+      "uncounterable",
+      "rebound",
+      "split_second",
+      "epic",
+      "miracle",
+      "graveyard_cast",
+      "graveyard_cost",
+      "graveyard_cast_transformed",
+      "splice_onto",
+      "melds_with",
+      "melds_into"
+    ],
+    "condition_keys": [
+      "all",
+      "any",
+      "cast_during",
+      "cast_from_graveyard",
+      "cmp",
+      "combat_damage_by",
+      "cost_option",
+      "entered_from",
+      "evoked",
+      "exists",
+      "gift_promised",
+      "has_city_s_blessing",
+      "has_flag",
+      "has_turn_flag",
+      "is_active_player",
+      "is_monarch",
+      "is_your_turn",
+      "kicked",
+      "left",
+      "no_monarch",
+      "not",
+      "of",
+      "overloaded",
+      "right",
+      "spree_mode",
+      "two_share_a_color",
+      "was_cast",
+      "zone_is"
+    ],
+    "cost_keys": [
+      "discard",
+      "discard_selector",
+      "discard_self",
+      "exert",
+      "exile_from_graveyard",
+      "exile_from_hand",
+      "exile_self",
+      "exile_self_from_hand",
+      "loyalty",
+      "mana",
+      "mana_reduction",
+      "mill",
+      "pay_life",
+      "pay_life_x",
+      "remove_counters",
+      "return_to_hand",
+      "sacrifice",
+      "tap",
+      "tap_permanents",
+      "times",
+      "untap",
+      "untap_permanents",
+      "x_value"
+    ],
+    "cost_reduction_filter_keys": [
+      "any_of",
+      "any_types",
+      "attacking",
+      "blocking",
+      "colors",
+      "controller",
+      "entered_this_turn",
+      "exclude_self",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "mana_cost",
+      "not_keywords",
+      "not_supertypes",
+      "not_types",
+      "owner",
+      "power",
+      "self_only",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "toughness",
+      "types",
+      "zone"
+    ],
+    "cost_reduction_keys": [
+      "amount",
+      "count",
+      "greatest_count",
+      "greatest_mana_value",
+      "total_mana_value",
+      "total_power"
+    ],
+    "expectation_keys": [
+      "life",
+      "hand_size",
+      "library_size",
+      "graveyard_size",
+      "counters",
+      "tokens",
+      "battlefield_count",
+      "opponent_battlefield_count",
+      "zone",
+      "granted",
+      "target_pt_delta"
+    ],
+    "keywords": [
+      "banding",
+      "choose_a_background",
+      "daybound",
+      "deathtouch",
+      "defender",
+      "double_strike",
+      "fear",
+      "first_strike",
+      "flash",
+      "flying",
+      "forestwalk",
+      "haste",
+      "hexproof",
+      "horsemanship",
+      "indestructible",
+      "infect",
+      "intimidate",
+      "islandwalk",
+      "lifelink",
+      "menace",
+      "mountainwalk",
+      "nightbound",
+      "nonbasic_landwalk",
+      "partner",
+      "phasing",
+      "plainswalk",
+      "reach",
+      "riot",
+      "shadow",
+      "shroud",
+      "skulk",
+      "swampwalk",
+      "totem_armor",
+      "trample",
+      "vigilance",
+      "wither"
+    ],
+    "notes": [
+      "A card either uses vocabulary in these lists or it fails to load.",
+      "`token_ids` is every token `create_token` may name, and it is a CLOSED list: an id that is not in it does not load, so do not invent one from the printed words. Match the printed token against the descriptions -- \"create a 1/1 white Human Soldier creature token\" is `human_soldier_1_1_w`. If the token your card prints is genuinely not there, that IS a gap record, with `kind: \"token\"` and the printed token in `what` -- it is a data change somebody makes in one line, and it is the cheapest gap in this whole pipeline to close. Do not substitute a token that is nearly right: a 2/2 Knight with vigilance is not a 2/2 Knight.",
+      "`op_options` is what each op may carry beside its `op` name, and `ability_keys` is what an entry in `abilities` may have. Read both before concluding a line cannot be said: `copy_spell` takes `new_targets` (\"you may choose new targets for the copy\"), an ability takes `sorcery_speed_only`, `once_each_turn` and `activate_steps` for printed activation limits, and `mana_restriction` for \"spend this mana only to ...\". Each of those has been filed as a missing capability by a worker that had only the op *names*.",
+      "A **mana ability may say things about the mana it makes** without writing an effect for them, which is the only way to say them: a mana ability may contain nothing but `add_mana`. `mana_restriction` narrows what the mana may be spent on; `mana_uncounterable` is \"...and that spell can't be countered\"; and `mana_grant` is \"...it gains haste until end of turn\" -- `{\"keywords\": [\"haste\"], \"spell_types\": [\"Creature\"]}`, where `spell_types` narrows *who is given* the keyword rather than what the mana may buy. The keyword reaches the permanent the spell becomes, which no trigger can do. And `exert` in `cost_keys` is \"Exert this permanent\" as a **cost** (Arena of Glory): it does not untap during its controller's next untap step, and it is not `tap`, which a card may charge alongside it.",
+      "`op_options` is a **lower bound**, gathered from each op's own source and from every effect the shipped pool writes. An op that forwards its spec to a helper can accept a key listed for neither, so a key's absence is not proof it does not exist -- check the `examples` too, and prefer a gap record only when both are silent.",
+      "`trigger_keys` is what a trigger object may carry beside `event`, and it is where a printed rate limit lives: `max_per_turn: 1` is \"whenever you cast your FIRST ... each turn\" and \"this ability triggers only once each turn\" (a cap per permanent, so never \"an opponent casts THEIR first ... each turn\"), and `nth` is \"your second card each turn\" on a `draw` trigger and \"a player casts their Nth spell each turn\" on a `spell_cast` trigger -- counted per caster, and over the spells matching the trigger's `filter` when it has one (\"their first noncreature spell\"). A trigger's FILTER keys go inside `filter`, never on the trigger itself.",
+      "`target_keys` is what a card-level or ability `targets` entry may carry, and `ability_kinds` is the closed vocabulary of an ability's `kind`.",
+      "A key being listed does not make it legal everywhere. `id` on an ability is accepted only on a **reflexive** one and the compiler refuses it on any other -- it is in `ability_keys` because it is a real field, and writing it on a triggered ability is a gate-2 rejection.",
+      "A **Class** (\"(Gain the next level as a sorcery to add its ability.)\") is `subtypes: [\"Class\"]` plus two spellings of `level`. A printed \"{W}: Level 2\" line is `{\"kind\": \"level\", \"level\": 2, \"text\": \"{W}: Level 2\", \"cost\": {\"mana\": \"{W}\"}}` and nothing else -- the sorcery timing, the \"only from level 1\" restriction and the effect are rule 716.2a and the compiler supplies them. Every ability printed BELOW that line, up to the next level line, carries `\"level\": 2` whatever its kind; the abilities above the first level line carry no `level`. The reminder line needs no ability. \"When this Class becomes level 2, ...\" is a triggered ability with `\"level\": 2` and `trigger: {\"event\": \"becomes_level\", \"level\": 2}`.",
+      "`required_keys` is the subset of each of those lists that is NOT optional -- every ability needs a `kind`, every target an `id` and a `kind`, every trigger an `event`. A spec missing one fails schema validation before anything else about the card is looked at, so check this list against what you wrote before filing anything.",
+      "`card_level_rider_keys` is what a card says about ITSELF that is neither a price nor a face -- `exiles_itself` for \"Exile <this card>.\" instead of the graveyard, `uncounterable` for \"This spell can't be countered\", `rebound`, `split_second`, `miracle`. Look here before concluding a sentence about the card's own fate cannot be said.",
+      "`card_level_face_keys` is how a card carries a second printed face, and which key you want turns on one question: is the other half something you TURN OVER to, or a second spell you may CAST? `back_face` is the first -- a transforming DFC, never cast, never drawn, reached only by the `transform` op. `second_face` is the second -- a split half, an Adventure, an Aftermath half -- with its own name, cost and type line, cast instead of the front from `second_face_zone` (\"hand\", or \"graveyard\" for Aftermath). A **modal double-faced card** is a `second_face` whose other half is a permanent: you play one face or the other and nothing turns over. Either way the other half is an ordinary card entry in the same pool, and your packet's `back_face` block carries its printed text -- write it as a second entry, do not file a gap.",
+      "A `tap_permanents` cost may carry `as`, naming THE one permanent it tapped so the ability's effects can read it: Station (\"Tap another creature you control: Put charge counters equal to its power on this Planet\") is `{\"tap_permanents\": {\"types\": [\"Creature\"], \"exclude_self\": true, \"as\": \"stationed\"}}` with `sorcery_speed_only` and an `add_counters` whose amount is `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count` above 1 or a `total_power` beside it.",
+      "A station striation -- \"12+ | {U}, {T}: Add {U} for each artifact you control.\" -- is an activated ability with `threshold: {\"counter\": \"charge\", \"at_least\": 12}` whose `text` is the whole printed line, prefix included. The permanent HAS it only at that many counters. Activated abilities only; gated abilities go after every ungated one, in rising order. Not `condition`, which leaves the ability on the permanent.",
+      "`condition_keys` and `value_keys` are what an `if` can ask and what an amount can be. `counters_on` reads a counter count off an object, so \"if this has no +1/+1 counters on it\" is a `cmp` against `{\"const\": 0}` and needs no new op.",
+      "\"Your opponents can't cast spells during your turn\" is the player-wide static `cant_cast_spells` with `affects_player: \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops every spell from every zone, free casts included, and takes no spell filter: \"can't cast creature spells\", \"from anywhere other than their hands\" and \"more than one spell each turn\" are still gaps, and so is \"can't activate abilities\".",
+      "\"If you would gain life, you gain twice that much life instead\" is the player-wide static `replace_life_gain` with `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real replacement read wherever life is gained, lifelink included, so it is NOT a `you_gain_life` trigger that gains again.",
+      "\"If you gained life this turn\" is the value `{\"life_gained_this_turn\": \"you\"}` compared `>` against `{\"const\": 0}` -- on a trigger, as its `condition` (an intervening if). It is the turn's ledger, so it counts gains made before the permanent entered; never an unprinted `you_gain_life` trigger setting a flag.",
+      "\"Your opponents can't gain life\" is the player-wide static `cant_gain_life` with `affects_player: \"opponent\"` (\"you\" and \"any\" for the other sentences). Every gain is stopped, lifelink included, and no life-gain trigger fires; it beats a `replace_life_gain`. \"Damage can't be prevented\" and \"your life total can't change\" are other effects.",
+      "\"If you would draw a card, draw two cards instead\" is the player-wide static `replace_draw` with `affects_player: \"you\"` and `draw_multiplier: 2`; \"...except the first one you draw in each of your draw steps\" adds `except_first_in_draw_step: true`. It is a real replacement of each draw, so it is NOT a `draw` trigger that draws an extra card. \"Skip your draw step\" is `skip_draw_step`, and a replacement that does something other than draw more cards (\"exile the top card instead\") is still a gap.",
+      "\"Crew N\" is an activated ability whose `cost` is `tap_permanents` with `total_power: N`. \"This creature crews Vehicles as though its power were 2 greater\" is the static `crew_power_bonus` with `affects: {\"self_only\": true}` and `amount: {\"const\": 2}` -- not `buff`, which changes real power. The Pilot token printing that line is `pilot_1_1_c_crew2`; a Pilot that also \"saddles Mounts\" is a different token and is still a gap.",
+      "`static_condition_keys` is what a static ability's optional `condition` may ask -- an \"as long as ...\" clause that switches the whole static on and off as the board moves. It is a third language, neither `condition_keys` nor `static_filter_keys`.",
+      "`static_value_keys` is what a static's *magnitude* may be -- its `power`, `toughness` or `amount`, and either side of a `cmp` in its condition. Smaller than `value_keys`, and a leaf outside it is a load error rather than a silent 0. `counters_on` is in it, so \"gets +1/+1 for each charge counter on this artifact\" is a `buff` whose `power` is `{\"counters_on\": {\"counter\": \"charge\", \"objects\": {\"self_only\": true}}}` -- an anthem with a size, which no op can be: `pump` wears off and `add_counters` would miss both the creatures already out and the ones cast later.",
+      "`selector_keys` is what an effect's `objects` or a target spec's `selector` may contain. `static_filter_keys` is the much smaller set a *static ability* may read, because a static may only read printed characteristics -- do not mistake it for the whole selector language.",
+      "A selector's `controller` (and `player`, for a zone somebody owns) takes a player spec as well as \"you\"/\"opponent\"/\"any\". `{\"target\": \"t1\"}` there means EVERY player target t1 chose, so \"the number of creatures those opponents control\" after \"choose any number of target opponents\" is `{\"count\": {\"types\": [\"Creature\"], \"controller\": {\"target\": \"t1\"}}}` -- and \"creatures they control\" after one target player is the same clause. Targets that became illegal are dropped on resolution. `controller: \"opponent\"` is NOT it: that counts every opponent, targeted or not.",
+      "\"This spell/ability costs {N} less\" is `cost_reduction` on the card, or `mana_reduction` on an activated ability's `cost` or a `flashback` node. It takes exactly one of `cost_reduction_keys` -- `count`, `total_power` and `greatest_mana_value` each take a filter, `amount` is a flat number and needs a `condition` -- and a filter may use `cost_reduction_filter_keys` only. Every key in that list is honoured, so \"for each legendary creature you control\" is `{\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"supertypes\": [\"Legendary\"]}}`; anything outside it is a load error rather than a discount counted wrong.",
+      "An ability's `text` must be the printed sentence it implements: the residual gate asks each ability which line it claims, and anything unclaimed means the card is only half implemented.",
+      "An instant or sorcery puts its effects in `spell_effects`; a permanent puts them in `abilities`.",
+      "`card_level_cost_keys` is what the *card* may charge -- an alternative or additional cost, set as a field on the card itself rather than inside an ability. A printed line that is just a mechanic and a price (\"Bestow {1}{G}\", \"Evoke {2}{U}\", \"Kicker {1}{R}\") is one of these, and no ability can carry it: an ability is activated, triggered or static, and a cost is none of the three. Do not invent an ability to hold the line, and do not put the mechanic in `keywords` -- the loader knows only the 34 ability keywords and rejects the rest.",
+      "`cost_keys` is what an activated ability's `cost` may contain. A printed \"<cost>: <effect>\" line splits into a `cost` from that list and `effects` from `ops` -- paying with an op instead moves the payment to resolution and lets the ability be activated when it could not be paid for.",
+      "`alternative_cost` takes a whole cost from `cost_keys` plus an optional `condition`, not just a mana string: \"You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost\" is `{\"pay_life\": 1, \"exile_from_hand\": {\"colors\": [\"U\"]}}`, with no mana at all. The `condition` is needed only when the price is mana and nothing else -- an unconditional cheaper mana price is `evoke`.",
+      "`evoke` is the mechanism, not the keyword: an unconditional alternative mana cost plus the `evoked` condition that reads whether it was paid, with `evoke_label` naming the cost on the cast line (\"dash\", or \"paying {1}{B}\" for a card that gives it no name). It works on an instant or sorcery too, read inside `spell_effects`: \"You may pay {1}{B} rather than pay this spell's mana cost. If the {1}{B} cost was paid, ...\" is `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`.",
+      "Exiling from hand as a cost is two keys, the way discarding is: `exile_from_hand` picks a card by selector (\"a blue card\"), and `exile_self_from_hand` is \"Exile this card from your hand\" with no choice about which card goes -- Simian Spirit Guide, on an ability with `active_zones: [\"hand\"]`. `exile_self` is a different cost: it is \"Exile this artifact\" and requires the source to be on the battlefield.",
+      "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is written once under the card's `grantable_abilities` and handed over by index. A one-shot gain is the `grant_ability` op -- `duration: \"permanent\"` when no duration is printed, and `objects: {\"self_only\": true}` for \"this Saga gains\" -- and it may grant a triggered or an activated ability, mana or not. \"As long as ...\" / \"have ...\" is the `grant_ability` static, which may also grant a static. A granted activated ability works on the battlefield only.",
+      "\"You get an emblem with \\\"...\\\"\" / \"Target opponent gets an emblem with \\\"...\\\"\" writes the quoted abilities once under the card's `emblems` -- `[{\"abilities\": [...]}]`, no `active_zones`, the loader puts them in the command zone -- and gives one with the `emblem` op: `{\"op\": \"emblem\", \"player\": \"you\" | {\"target\": \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the emblem is the player who got it. Triggered and static abilities may both be on an emblem; an activated one is still a gap, because nothing offers an activation from the command zone.",
+      "Eminence and any other static that works from the command zone is `active_zones` on the static: \"As long as this is in the command zone or on the battlefield, ...\" is one ability with `\"active_zones\": [\"battlefield\", \"command\"]`, because being gathered from either zone IS the \"as long as\" -- the same argument as `[\"graveyard\"]` on Anger. Do not write a condition for the zone. \"**Other** ... spells you cast cost {N} less\" adds `\"exclude_self\": true` to a `spell_cost_reduction`'s `affects_spells`, which matters exactly here: a commander is cast out of the zone its own eminence static is read from.",
+      "\"Create a <Name> Role token attached to <it>\" is `create_token` with `attached_to`, a selector naming the host -- never `create_token` then `attach`, which makes the Role even when the host is gone. The Role rule (one Role per player per permanent) is a state-based action and is not written on the card. Only Role tokens that exist in `token_ids` can be created.",
+      "A static ability's filter may only read printed characteristics.",
+      "\"If one or more tokens would be created under your control, twice that many of those tokens are created instead\" (Parallel Lives, Anointed Procession, Doubling Season's token half) is a `replace_token_creation` static with `token_multiplier: 2` and no `create_instead` -- the tokens keep their identity, so copies stay copies. `create_instead` is the OTHER axis (which token is made instead) and a static takes one or the other. \"Creature tokens\" is an `affects_token` filter; a sentence naming no player (\"if one or more tokens would be created\") adds `affects_player: \"any\"`.",
+      "\"…tapped and attacking that player or a planeswalker they control\" (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g. `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus `or_planeswalker: true`, on `create_token`, `copy_permanent` or `put_onto_battlefield`. The creature's controller then chooses the seat or one of its planeswalkers (508.4). Without the key the token can only attack the player, which is a narrower card.",
+      "`snapshot` is how a card reads a value after its target has left -- there is no general last-known-information system.",
+      "A mana ability's MANA half may contain only `add_mana`, or one `choose_mode` whose modes each contain only `add_mana` -- and it may then be followed by a **rider**, one or more of ['add_counters', 'add_poison', 'damage', 'gain_life', 'lose_life', 'remove_counters'], which happen on activation without the stack exactly as the mana does. That is how \"{T}: Add {U}. Remove a time counter from this land.\" is written (Temple of Cyclical Time), and \"{T}: Add {B}. This creature deals 1 damage to you.\" The rider belongs to the ABILITY, not to `add_mana`, so it is not in `op_options` -- this note used to say a mana ability may contain only `add_mana`, and a worker filed a gap against a rider the loader has always accepted.",
+      "\"Add one mana of any **type** that a land you control could produce\" (Reflecting Pool, Horizon of Progress, Naga Vitalist) is `reflecting` plus `any_type: true` on the same `add_mana`. 106.1b names six types of mana, so \"any type\" is \"any color\" plus `{C}`, and plain `reflecting` drops `{C}` on purpose -- a Pool written without the flag cannot tap off a Wastes. The flag is read by the LOADER rather than by `op_add_mana`, so until a card using it ships it is not in `op_options`; it is refused on any `add_mana` that has no `reflecting`, because nothing else reads it.",
+      "\"Add one mana of any of **the exiled card's colors**\" (Chrome Mox) is `colors_of` on the `add_mana`, holding a selector over the CARDS whose printed colours are offered -- `{\"zone\": \"exile\", \"controller\": \"any\", \"exiled_with\": \"self\"}` for an imprint. It is the fifth way an `add_mana` may name its colours and is read by the LOADER, so it is not in `op_options`. `reflecting` is the near miss and is a different card: it asks each matched object's own mana ABILITIES what they could produce, and an imprinted nonartifact, nonland card in exile has none -- so a Mox written that way taps for nothing for ever. A `choose_mode` over five `add_mana`s is the other near miss and is strictly BETTER than the printed card, because it taps for any colour with nothing imprinted at all. Nothing imprinted offers nothing, and so does a colourless imprint (105.1); there is no `any_type` here, and it is refused beside `colors_of`.",
+      "\"Vivid -- {T}: **For each color among permanents you control, add one mana of that color**\" (Bloom Tender) is `each_color_among` on the `add_mana`, holding the selector whose matches are read for colour -- `{\"zone\": \"battlefield\", \"controller\": \"you\"}`. It is the sixth way an `add_mana` may name its colours, it is read by the LOADER (so it is not in `op_options`), and it is the only one whose output is a BUNDLE: a board showing three colours taps it for three mana, one of each, with nothing asked. `colors_of` over the same selector is the near miss and is Mox Amber -- one mana of a colour the payer picks -- and `add_mana_per` is the other, adding one mana per matching PERMANENT rather than one per colour (and it is not a legal mana effect at all). Colourless is not a colour (105.1), so an all-artifact board adds nothing; there is no `any_type` here and no `amount`, and the key is refused beside `mana`, `reflecting`, `colors_of`, `in_commander_identity` and `split`.",
+      "\"It can't be regenerated.\" is `no_regeneration: true` on the `destroy` op -- 701.15c, the victim's regeneration shields are not applied to that destruction (and not spent either). Indestructible and totem armor are unaffected. Refused on any other op, because nothing else replaces a destruction.",
+      "A target spec may carry `mode`: the index of the mode that owns it, in a spell whose whole effect tree is one top-level `choose_mode`. That is how \"Choose up to two. * Target artifact card. * Target creature card. ...\" carries one target per bullet and binds two distinct ones -- the spec is declared only if its mode is chosen. It must be a fixed count, never `optional`, and no card-level target on the same card may be variable-size.",
+      "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
+    ],
+    "op_options": {
+      "<=": [
+        "value"
+      ],
+      "=": [
+        "value"
+      ],
+      ">": [
+        "value"
+      ],
+      ">=": [
+        "amount",
+        "counter",
+        "value"
+      ],
+      "add_counters": [
+        "amount",
+        "counter",
+        "objects"
+      ],
+      "add_mana": [
+        "amount",
+        "any_one_color",
+        "any_type",
+        "colors_of",
+        "each_color_among",
+        "in_commander_identity",
+        "mana",
+        "mana_restriction",
+        "persists_until_end_of_turn",
+        "player",
+        "reflecting",
+        "split"
+      ],
+      "add_mana_per": [
+        "mana",
+        "per",
+        "persists_until_end_of_turn",
+        "player"
+      ],
+      "add_poison": [
+        "amount",
+        "player"
+      ],
+      "add_subtype": [
+        "objects",
+        "subtypes"
+      ],
+      "airbend": [
+        "as",
+        "cost",
+        "objects"
+      ],
+      "animate": [
+        "colors",
+        "keywords",
+        "objects",
+        "power",
+        "subtypes",
+        "toughness",
+        "types",
+        "your_turn_keywords"
+      ],
+      "attach": [
+        "attachment",
+        "objects"
+      ],
+      "aura_swap": [
+        "objects"
+      ],
+      "become_copy": [
+        "copying",
+        "duration",
+        "except_name",
+        "objects"
+      ],
+      "become_level": [
+        "level"
+      ],
+      "become_monarch": [
+        "player"
+      ],
+      "become_prepared": [
+        "objects"
+      ],
+      "cant_attack_player": [
+        "attacker",
+        "defender",
+        "duration",
+        "planeswalkers"
+      ],
+      "cant_block": [
+        "all_creatures",
+        "duration",
+        "objects"
+      ],
+      "cant_cast_spells_from_zones": [
+        "duration",
+        "except_zones",
+        "player",
+        "zones"
+      ],
+      "cant_sacrifice": [
+        "duration",
+        "objects"
+      ],
+      "cascade": [
+        "max_mana_value"
+      ],
+      "cast_copy": [
+        "objects",
+        "optional"
+      ],
+      "cast_from_hand": [
+        "player",
+        "selector"
+      ],
+      "change_text": [
+        "objects",
+        "to"
+      ],
+      "choose_color": [
+        "prompt"
+      ],
+      "choose_mode": [
+        "all_if",
+        "budget",
+        "chooser",
+        "count",
+        "modes",
+        "once_each",
+        "or_more",
+        "up_to",
+        "up_to_if"
+      ],
+      "choose_permanents": [
+        "as",
+        "objects",
+        "prompt"
+      ],
+      "choose_player": [
+        "as",
+        "players",
+        "prompt"
+      ],
+      "choose_type": [
+        "of",
+        "prompt"
+      ],
+      "connive": [
+        "amount",
+        "objects"
+      ],
+      "copy_permanent": [
+        "amount",
+        "as",
+        "attacking",
+        "controller",
+        "except",
+        "except_",
+        "objects",
+        "or_planeswalker",
+        "tapped"
+      ],
+      "copy_spell": [
+        "amount",
+        "controller",
+        "new_targets",
+        "sid",
+        "target"
+      ],
+      "counter": [
+        "objects",
+        "sid",
+        "target"
+      ],
+      "create_token": [
+        "amount",
+        "as",
+        "attached_to",
+        "attacking",
+        "controller",
+        "or_planeswalker",
+        "player",
+        "tapped",
+        "token"
+      ],
+      "damage": [
+        "amount",
+        "excess_to",
+        "objects",
+        "player",
+        "source_object",
+        "target"
+      ],
+      "delay": [
+        "effects",
+        "step",
+        "text",
+        "your_turn"
+      ],
+      "delayed_trigger": [
+        "duration",
+        "effects",
+        "text",
+        "trigger"
+      ],
+      "destroy": [
+        "no_regeneration",
+        "objects"
+      ],
+      "detain": [
+        "objects"
+      ],
+      "discard": [
+        "amount",
+        "as",
+        "player",
+        "random",
+        "up_to",
+        "whole_hand"
+      ],
+      "draw": [
+        "amount",
+        "as",
+        "player"
+      ],
+      "emblem": [
+        "emblem",
+        "player"
+      ],
+      "encode": [
+        "objects"
+      ],
+      "exile": [
+        "any_color",
+        "as",
+        "link",
+        "objects",
+        "playable",
+        "playable_this_turn",
+        "until_leaves"
+      ],
+      "exile_and_return": [
+        "face",
+        "objects"
+      ],
+      "explore": [
+        "objects"
+      ],
+      "extra_combat": [
+        "amount",
+        "extra_main"
+      ],
+      "extra_land_drop": [
+        "amount",
+        "player"
+      ],
+      "extra_turn": [
+        "player"
+      ],
+      "fight": [
+        "objects",
+        "other"
+      ],
+      "for_each": [
+        "effects",
+        "objects"
+      ],
+      "for_each_player": [
+        "effects",
+        "players"
+      ],
+      "freeze": [
+        "objects"
+      ],
+      "gain_control": [
+        "as",
+        "duration",
+        "objects",
+        "player"
+      ],
+      "gain_life": [
+        "amount",
+        "player"
+      ],
+      "goad": [
+        "objects",
+        "player"
+      ],
+      "grant_ability": [
+        "ability",
+        "ability_index",
+        "duration",
+        "objects"
+      ],
+      "grant_graveyard_cast": [
+        "affects_spells",
+        "any_graveyard",
+        "grants_flashback"
+      ],
+      "grant_keyword": [
+        "duration",
+        "keyword",
+        "keywords",
+        "objects"
+      ],
+      "grant_playable": [
+        "any_color",
+        "any_type",
+        "as_flashback",
+        "limit",
+        "objects",
+        "playable",
+        "playable_this_turn"
+      ],
+      "grant_plot": [
+        "sid",
+        "target"
+      ],
+      "grant_protection": [
+        "duration",
+        "from_colors",
+        "from_everything",
+        "from_subtypes",
+        "from_types",
+        "objects",
+        "player"
+      ],
+      "grant_rebound": [
+        "sid",
+        "target"
+      ],
+      "haunt": [
+        "objects"
+      ],
+      "hideaway": [
+        "amount"
+      ],
+      "if": [
+        "condition",
+        "else",
+        "then"
+      ],
+      "join_forces": [
+        "as",
+        "pay",
+        "prompt"
+      ],
+      "lock_abilities": [
+        "objects"
+      ],
+      "lock_life_total": [
+        "duration",
+        "player"
+      ],
+      "look_at_hand": [
+        "player"
+      ],
+      "look_at_top": [
+        "amount",
+        "any_color",
+        "as",
+        "cast_free",
+        "destination",
+        "destination_if",
+        "destinations",
+        "face_down",
+        "objects",
+        "playable",
+        "playable_this_turn",
+        "player",
+        "rest_to",
+        "rest_to_bottom",
+        "selector",
+        "shuffle",
+        "tapped"
+      ],
+      "lose_all_abilities": [
+        "objects"
+      ],
+      "lose_life": [
+        "amount",
+        "as",
+        "player"
+      ],
+      "manifest": [
+        "amount",
+        "cloak",
+        "player"
+      ],
+      "may": [
+        "as",
+        "condition",
+        "effects",
+        "else",
+        "pay",
+        "player",
+        "prompt",
+        "repeat",
+        "x"
+      ],
+      "mill": [
+        "amount",
+        "as",
+        "player"
+      ],
+      "monstrosity": [
+        "amount"
+      ],
+      "move_counters": [
+        "all_kinds",
+        "amount",
+        "counter",
+        "from",
+        "from_had_counters",
+        "objects"
+      ],
+      "must_attack": [
+        "duration",
+        "objects"
+      ],
+      "must_block": [
+        "attacker",
+        "objects"
+      ],
+      "no_maximum_hand_size": [
+        "player"
+      ],
+      "noop": [],
+      "pair": [
+        "objects"
+      ],
+      "phase_in": [
+        "objects",
+        "tapped"
+      ],
+      "phase_out": [
+        "link",
+        "objects",
+        "until_leaves"
+      ],
+      "play_exiled": [
+        "as",
+        "objects"
+      ],
+      "prevent_damage": [
+        "duration",
+        "player"
+      ],
+      "proliferate": [
+        "objects"
+      ],
+      "pump": [
+        "duration",
+        "objects",
+        "power",
+        "toughness"
+      ],
+      "put_on_top": [
+        "any_order",
+        "as",
+        "bottom",
+        "from_top",
+        "objects",
+        "owner_chooses"
+      ],
+      "put_onto_battlefield": [
+        "attacking",
+        "cause",
+        "controller",
+        "counters",
+        "objects",
+        "or_planeswalker",
+        "tapped"
+      ],
+      "reflexive_trigger": [
+        "ability"
+      ],
+      "regenerate": [
+        "amount",
+        "objects"
+      ],
+      "remove_counters": [
+        "amount",
+        "counter",
+        "objects"
+      ],
+      "rename": [
+        "name",
+        "objects"
+      ],
+      "repeat": [
+        "amount",
+        "effects"
+      ],
+      "repeat_while": [
+        "condition",
+        "effects",
+        "reset"
+      ],
+      "replace_deaths": [
+        "destination",
+        "objects"
+      ],
+      "replace_leaves_battlefield": [
+        "destination",
+        "objects"
+      ],
+      "return_from_graveyard": [
+        "controller",
+        "counters",
+        "destination",
+        "objects",
+        "tapped"
+      ],
+      "return_spell_to_hand": [
+        "target"
+      ],
+      "return_to_command_zone": [
+        "objects"
+      ],
+      "return_to_hand": [
+        "objects"
+      ],
+      "return_to_origin": [
+        "objects"
+      ],
+      "reveal": [
+        "as",
+        "objects"
+      ],
+      "reveal_until": [
+        "any_color",
+        "destination",
+        "destination_if",
+        "face_down",
+        "objects",
+        "playable",
+        "playable_this_turn",
+        "player",
+        "rest_to_bottom",
+        "selector"
+      ],
+      "ripple": [
+        "amount"
+      ],
+      "roll_dice": [
+        "as",
+        "count",
+        "sides"
+      ],
+      "sacrifice": [
+        "as",
+        "chooser",
+        "objects",
+        "snapshot"
+      ],
+      "scry": [
+        "amount",
+        "chooser",
+        "player"
+      ],
+      "search_library": [
+        "any_color",
+        "as",
+        "count",
+        "destination",
+        "destination_if",
+        "distinct_names",
+        "face_down",
+        "playable",
+        "playable_this_turn",
+        "player",
+        "reveal",
+        "selector",
+        "share_subtype",
+        "shuffle",
+        "tapped"
+      ],
+      "search_zones": [
+        "any_color",
+        "as",
+        "count",
+        "destination",
+        "destination_if",
+        "distinct_names",
+        "face_down",
+        "playable",
+        "playable_this_turn",
+        "player",
+        "reveal",
+        "selector",
+        "share_subtype",
+        "shuffle",
+        "tapped",
+        "zones"
+      ],
+      "set_flag": [
+        "flag",
+        "objects"
+      ],
+      "set_pt": [
+        "objects",
+        "power",
+        "toughness"
+      ],
+      "set_turn_flag": [
+        "flag",
+        "objects"
+      ],
+      "shuffle": [
+        "player"
+      ],
+      "skip_untap": [
+        "objects"
+      ],
+      "snapshot": [
+        "as",
+        "objects",
+        "target"
+      ],
+      "surveil": [
+        "amount",
+        "player"
+      ],
+      "tap": [
+        "objects"
+      ],
+      "transform": [
+        "objects",
+        "to_back"
+      ],
+      "two_piles": [
+        "amount",
+        "other",
+        "to"
+      ],
+      "unattach": [
+        "objects"
+      ],
+      "unblockable": [
+        "duration",
+        "objects"
+      ],
+      "untap": [
+        "objects"
+      ],
+      "win_game": [
+        "player"
+      ]
+    },
+    "ops": [
+      "add_counters",
+      "add_mana",
+      "add_mana_per",
+      "add_poison",
+      "add_subtype",
+      "airbend",
+      "animate",
+      "attach",
+      "aura_swap",
+      "become_copy",
+      "become_level",
+      "become_monarch",
+      "become_prepared",
+      "cant_attack_player",
+      "cant_block",
+      "cant_cast_spells_from_zones",
+      "cant_sacrifice",
+      "cascade",
+      "cast_copy",
+      "cast_from_hand",
+      "change_text",
+      "choose_color",
+      "choose_mode",
+      "choose_permanents",
+      "choose_player",
+      "choose_type",
+      "clash",
+      "connive",
+      "copy_permanent",
+      "copy_spell",
+      "counter",
+      "create_token",
+      "damage",
+      "delay",
+      "delayed_trigger",
+      "destroy",
+      "detain",
+      "discard",
+      "draw",
+      "emblem",
+      "encode",
+      "exile",
+      "exile_and_return",
+      "explore",
+      "extra_combat",
+      "extra_land_drop",
+      "extra_turn",
+      "fight",
+      "for_each",
+      "for_each_player",
+      "freeze",
+      "gain_control",
+      "gain_life",
+      "goad",
+      "grant_ability",
+      "grant_graveyard_cast",
+      "grant_keyword",
+      "grant_playable",
+      "grant_plot",
+      "grant_protection",
+      "grant_rebound",
+      "haunt",
+      "hideaway",
+      "if",
+      "join_forces",
+      "lock_abilities",
+      "lock_life_total",
+      "look_at_hand",
+      "look_at_top",
+      "lose_all_abilities",
+      "lose_life",
+      "manifest",
+      "may",
+      "meld",
+      "mill",
+      "monstrosity",
+      "move_counters",
+      "must_attack",
+      "must_block",
+      "no_maximum_hand_size",
+      "noop",
+      "pair",
+      "phase_in",
+      "phase_out",
+      "play_exiled",
+      "prevent_damage",
+      "proliferate",
+      "pump",
+      "put_on_top",
+      "put_onto_battlefield",
+      "reflexive_trigger",
+      "regenerate",
+      "remove_counters",
+      "rename",
+      "repeat",
+      "repeat_while",
+      "replace_deaths",
+      "replace_leaves_battlefield",
+      "return_from_graveyard",
+      "return_spell_to_hand",
+      "return_to_command_zone",
+      "return_to_hand",
+      "return_to_origin",
+      "reveal",
+      "reveal_until",
+      "ripple",
+      "roll_dice",
+      "sacrifice",
+      "scry",
+      "search_library",
+      "search_zones",
+      "set_flag",
+      "set_pt",
+      "set_turn_flag",
+      "shuffle",
+      "skip_untap",
+      "snapshot",
+      "surveil",
+      "tap",
+      "transform",
+      "two_piles",
+      "unattach",
+      "unblockable",
+      "untap",
+      "win_game"
+    ],
+    "playable_durations": [
+      "end_of_your_next_turn",
+      "later_turns",
+      "this_turn",
+      "while_exiled",
+      "your_next_end_step"
+    ],
+    "required_keys": {
+      "ability": [
+        "kind"
+      ],
+      "cost": [],
+      "target": [
+        "id",
+        "kind"
+      ],
+      "trigger": [
+        "event"
+      ]
+    },
+    "selector_keys": [
+      "any_of",
+      "any_types",
+      "attached",
+      "attacked_this_turn",
+      "attacking",
+      "attacking_player",
+      "binding",
+      "blocked",
+      "blocking",
+      "chooser",
+      "colors",
+      "controller",
+      "count",
+      "created_with",
+      "damaged",
+      "damaged_by",
+      "drawn_this_turn",
+      "encoded_by",
+      "exclude_binding",
+      "exclude_self",
+      "exiled_with",
+      "extreme",
+      "haunted_by",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "mana_cost",
+      "mana_value",
+      "min_colors",
+      "modified",
+      "name",
+      "not_colors",
+      "not_keywords",
+      "not_name",
+      "not_subtypes",
+      "not_supertypes",
+      "not_types",
+      "object_kind",
+      "optional",
+      "owner",
+      "paid_by",
+      "phased_out_with",
+      "player",
+      "power",
+      "random",
+      "self_only",
+      "shares_a_color_with",
+      "shares_a_name_with",
+      "shares_a_type_with",
+      "shares_a_type_with_commander",
+      "shares_permanent_type_with",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "target",
+      "toughness",
+      "types",
+      "union",
+      "x_in_mana_cost",
+      "zone"
+    ],
+    "static_condition_keys": [
+      "all",
+      "any",
+      "cmp",
+      "counters",
+      "exists",
+      "has_city_s_blessing",
+      "is_attached",
+      "is_your_turn",
+      "not",
+      "top_of_library"
+    ],
+    "static_effects": [
+      "ability_cost_reduction",
+      "activate_loyalty_as_though_instant",
+      "add_mana_on_tap",
+      "add_subtype",
+      "attack_tax",
+      "attacks_if_able",
+      "black_mana_as_phyrexian",
+      "block_restriction",
+      "buff",
+      "cant_attack",
+      "cant_attack_alone",
+      "cant_attack_you",
+      "cant_block",
+      "cant_block_alone",
+      "cant_cast_spells",
+      "cant_gain_life",
+      "cant_sacrifice",
+      "cast_as_though_flash",
+      "cast_from_graveyard",
+      "cast_from_library_top",
+      "crew_power_bonus",
+      "double_land_mana",
+      "double_land_triggers",
+      "double_nonland_mana",
+      "double_triggers",
+      "extra_land_drops",
+      "free_cast_permission",
+      "freeze_opponent_lands",
+      "grant_ability",
+      "grant_keyword",
+      "grant_warp",
+      "look_at_library_top",
+      "lose_all_abilities",
+      "no_hand_limit",
+      "play_lands_from_graveyard",
+      "play_lands_from_library_top",
+      "prevent_damage",
+      "protection",
+      "replace_counters",
+      "replace_damage",
+      "replace_draw",
+      "replace_empty_draw",
+      "replace_life_gain",
+      "replace_life_loss",
+      "replace_mill",
+      "replace_token_creation",
+      "reveal_library_top",
+      "set_colors",
+      "set_pt",
+      "set_types",
+      "skip_draw_step",
+      "skip_extra_turn",
+      "skip_untap_step",
+      "spell_cost_increase",
+      "spell_cost_reduction",
+      "spells_cant_be_countered",
+      "spend_mana_as_any_color",
+      "untap_during_each_untap_step",
+      "ward"
+    ],
+    "static_filter_keys": [
+      "any_types",
+      "attached",
+      "attached_to_host",
+      "attacking",
+      "blocking",
+      "colors",
+      "controller",
+      "entered_this_turn",
+      "exclude_self",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "mana_cost",
+      "not_keywords",
+      "not_supertypes",
+      "not_types",
+      "owner",
+      "paired",
+      "paired_with_source",
+      "power",
+      "self_only",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "toughness",
+      "types"
+    ],
+    "static_value_keys": [
+      "const",
+      "count",
+      "counters_on",
+      "mana_symbols",
+      "max_count_of",
+      "max_life_of",
+      "min_count_of",
+      "min_life_of",
+      "permanents_entered_this_turn",
+      "times"
+    ],
+    "supertypes": [
+      "Basic",
+      "Legendary",
+      "Snow"
+    ],
+    "target_keys": [
+      "count",
+      "id",
+      "kind",
+      "mode",
+      "one_per_player",
+      "optional",
+      "selector",
+      "total_mana_value",
+      "up_to"
+    ],
+    "token_ids": {
+      "angel_4_4_w_flying": "4/4 white Angel creature with flying",
+      "angel_4_4_w_flying_vigilance": "4/4 white Angel creature with flying and vigilance",
+      "ape_3_3_g": "3/3 green Ape creature",
+      "badger_3_3_g": "3/3 green Badger creature",
+      "beast_3_3_g": "3/3 green Beast creature",
+      "beast_4_4_g": "4/4 green Beast creature",
+      "beast_4_4_w_alone": "4/4 white Beast creature -- This token can't attack or block alone.",
+      "bird_1_1_u_flying_vigilance": "1/1 blue Bird creature with flying and vigilance",
+      "bird_1_1_w_flying": "1/1 white Bird creature with flying",
+      "bird_2_2_u_flying": "2/2 blue Bird creature with flying",
+      "blood_token": "colorless Blood artifact -- {1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+      "cat_beast_2_2_w": "2/2 white Cat Beast creature",
+      "citizen_1_1_gw": "1/1 green white Citizen creature",
+      "clue_token": "colorless Clue artifact -- {2}, Sacrifice this artifact: Draw a card.",
+      "construct_0_0_c_artifact_buff": "0/0 colorless Construct artifact creature -- This token gets +1/+1 for each artifact you control.",
+      "detective_2_2_wu": "2/2 white blue Detective creature",
+      "dinosaur_3_1_r": "3/1 red Dinosaur creature",
+      "dragon_5_5_r_flying": "5/5 red Dragon creature with flying",
+      "drake_2_2_u_flying": "2/2 blue Drake creature with flying",
+      "eldrazi_spawn_0_1_c": "0/1 colorless Eldrazi Spawn creature -- Sacrifice this token: Add {C}.",
+      "elemental_2_2_g": "2/2 green Elemental creature",
+      "elephant_3_3_g": "3/3 green Elephant creature",
+      "faerie_1_1_u_flying": "1/1 blue Faerie creature with flying",
+      "faerie_dragon_1_1_u_flying": "1/1 blue Faerie Dragon creature with flying",
+      "fish_1_1_u": "1/1 blue Fish creature",
+      "food_token": "colorless Food artifact -- {2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "forest_dryad_1_1_g_land": "1/1 green Forest Dryad land creature -- {T}: Add {G}.",
+      "frog_lizard_3_3_g": "3/3 green Frog Lizard creature",
+      "germ_0_0_b": "0/0 black Phyrexian Germ creature",
+      "gnome_1_1_c": "1/1 colorless Gnome artifact creature",
+      "goblin_1_1_r": "1/1 red Goblin creature",
+      "hero_1_1_c": "1/1 colorless Hero creature",
+      "human_1_1_w": "1/1 white Human creature",
+      "human_knight_2_2_r_trample_haste": "2/2 red Human Knight creature with trample and haste",
+      "human_soldier_1_1_w": "1/1 white Human Soldier creature",
+      "illusion_1_1_u": "1/1 blue Illusion creature",
+      "illusion_1_1_u_flying": "1/1 blue Illusion creature with flying",
+      "inkling_2_1_wb_flying": "2/1 white black Inkling creature with flying",
+      "insect_1_1_g": "1/1 green Insect creature",
+      "junk_token": "colorless Junk artifact -- {T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
+      "kithkin_1_1_gw": "1/1 green white Kithkin creature",
+      "knight_2_2_w": "2/2 white Knight creature",
+      "knight_2_2_w_vigilance": "2/2 white Knight creature with vigilance",
+      "knight_2_2_wu_vigilance": "2/2 white blue Knight creature with vigilance",
+      "komas_coil_3_3_u": "3/3 blue Serpent creature",
+      "kraken_8_8_u": "8/8 blue Kraken creature",
+      "lander_token": "colorless Lander artifact -- {2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "map_token": "colorless Map artifact -- {1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
+      "monk_1_1_w_prowess": "1/1 white Monk creature -- Prowess",
+      "moogle_1_2_w_lifelink": "1/2 white Moogle creature with lifelink",
+      "ox_2_2_w": "2/2 white Ox creature",
+      "pilot_1_1_c_crew2": "1/1 colorless Pilot creature -- This token crews Vehicles as though its power were 2 greater.",
+      "plant_0_1_g": "0/1 green Plant creature",
+      "saproling_1_1_g": "1/1 green Saproling creature",
+      "shapeshifter_3_2_c_changeling": "3/2 colorless Shapeshifter creature -- Changeling (This card is every creature type.)",
+      "soldier_1_1_w": "1/1 white Soldier creature",
+      "spirit_1_1_c": "1/1 colorless Spirit creature",
+      "tentacle_1_1_u": "1/1 blue Tentacle creature",
+      "thopter_1_1_c_flying": "1/1 colorless Thopter artifact creature with flying",
+      "treasure_token": "colorless Treasure artifact -- {T}, Sacrifice this artifact: Add one mana of any color.",
+      "vampire_1_1_b": "1/1 black Vampire creature",
+      "vampire_1_1_b_lifelink": "1/1 black Vampire creature with lifelink",
+      "vampire_1_1_bw": "1/1 black white Vampire creature",
+      "vampire_1_1_w_lifelink": "1/1 white Vampire creature with lifelink",
+      "vampire_1_1_wb_lifelink": "1/1 white black Vampire creature with lifelink",
+      "vampire_2_2_b_flying": "2/2 black Vampire creature with flying",
+      "vampire_demon_4_3_wb_flying": "4/3 white black Vampire Demon creature with flying",
+      "vampire_rogue_1_1_b_lifelink": "1/1 black Vampire Rogue creature with lifelink",
+      "warrior_1_1_r": "1/1 red Warrior creature",
+      "warrior_1_1_w_vigilance": "1/1 white Warrior creature with vigilance",
+      "wicked_role": "colorless Aura Role enchantment -- Enchanted creature gets +1/+1.",
+      "zombie_2_2_b": "2/2 black Zombie creature"
+    },
+    "trigger_events": [
+      "ability_activated",
+      "attacks",
+      "attacks_unblocked",
+      "becomes_blocked",
+      "becomes_level",
+      "becomes_monarch",
+      "becomes_monstrous",
+      "becomes_tapped",
+      "becomes_target",
+      "becomes_untapped",
+      "begin_combat",
+      "blocks",
+      "chapter",
+      "counter_placed",
+      "creature_dies",
+      "creatures_attack_player",
+      "creatures_deal_combat_damage",
+      "cycle",
+      "damage_prevented",
+      "deals_combat_damage_to_planeswalker",
+      "deals_combat_damage_to_player",
+      "deals_damage_to_player",
+      "dealt_damage",
+      "dies",
+      "discard",
+      "draw",
+      "draw_step",
+      "end_step",
+      "land_played",
+      "leaves_battlefield",
+      "leaves_graveyard",
+      "life_lost",
+      "mutates",
+      "permanent_enters",
+      "postcombat_main",
+      "precombat_main",
+      "sacrificed",
+      "self_enters",
+      "spell_cast",
+      "spell_copied",
+      "token_created",
+      "upkeep",
+      "you_attack",
+      "you_gain_life"
+    ],
+    "trigger_keys": [
+      "batched",
+      "cause_controller",
+      "condition",
+      "controller",
+      "counter",
+      "defending",
+      "event",
+      "filter",
+      "level",
+      "mana_ability",
+      "max_per_turn",
+      "not_cause",
+      "nth",
+      "or_battle",
+      "source",
+      "targeted_by"
+    ],
+    "types": [
+      "Artifact",
+      "Battle",
+      "Creature",
+      "Enchantment",
+      "Instant",
+      "Land",
+      "Planeswalker",
+      "Sorcery"
+    ],
+    "value_keys": [
+      "additional_paid",
+      "attacked_this_turn",
+      "attackers_this_turn",
+      "binding",
+      "cards_drawn_this_turn",
+      "cards_from_graveyard_this_turn",
+      "cards_in_hand",
+      "cards_to_graveyard_this_turn",
+      "colors_of_mana_spent",
+      "combats_this_turn",
+      "commander_color_identity",
+      "const",
+      "count",
+      "counters_had",
+      "counters_on",
+      "creatures_died_this_turn",
+      "creatures_you_control",
+      "damage_taken_this_turn",
+      "distinct",
+      "extreme_value",
+      "greatest_discarded_by_a_player",
+      "half",
+      "lands_you_control",
+      "life_gained_this_turn",
+      "life_lost_this_turn",
+      "life_of",
+      "loop_value",
+      "mana_spent_of",
+      "mana_symbols",
+      "mana_value_of",
+      "max",
+      "max_count_of",
+      "max_life_of",
+      "min",
+      "min_count_of",
+      "min_life_of",
+      "minus",
+      "permanents_entered_this_turn",
+      "power_had",
+      "power_of",
+      "resolutions_this_turn",
+      "rolled",
+      "spells_cast_this_turn",
+      "sum",
+      "times",
+      "toughness_had",
+      "toughness_of",
+      "x"
+    ]
+  },
+  "starting_point": {
+    "color_identity": [
+      "W"
+    ],
+    "colors": [
+      "W"
+    ],
+    "id": "ballyrush_banneret",
+    "mana_cost": "{1}{W}",
+    "name": "Ballyrush Banneret",
+    "oracle_text": "Kithkin spells and Soldier spells you cast cost {1} less to cast.",
+    "power": 2,
+    "subtypes": [
+      "Kithkin",
+      "Soldier"
+    ],
+    "toughness": 1,
+    "types": [
+      "Creature"
+    ]
+  },
+  "template_said": "no template for: Kithkin spells and Soldier spells you cast cost {1} less to cast",
+  "todo": [
+    "Kithkin spells and Soldier spells you cast cost {1} less to cast"
+  ],
+  "toughness": "1",
+  "type_line": "Creature — Kithkin Soldier"
+}

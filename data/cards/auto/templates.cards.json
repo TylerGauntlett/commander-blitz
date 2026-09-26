@@ -5187,6 +5187,34 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "armageddon",
+      "mana_cost": "{3}{W}",
+      "name": "Armageddon",
+      "oracle_text": "Destroy all lands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -7019,6 +7047,45 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Kithkin",
+              "Soldier"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Kithkin spells and Soldier spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ballyrush_banneret",
+      "mana_cost": "{1}{W}",
+      "name": "Ballyrush Banneret",
+      "oracle_text": "Kithkin spells and Soldier spells you cast cost {1} less to cast.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kithkin",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -15789,6 +15856,68 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice this creature: Destroy target artifact or enchantment."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cathar_commando",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Cathar Commando",
+      "oracle_text": "Flash\n{1}, Sacrifice this creature: Destroy target artifact or enchantment.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -21791,6 +21920,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever another white creature you control enters, tap target creature an opponent controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "colors": [
+                "W"
+              ],
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "court_street_denizen",
+      "mana_cost": "{2}{W}",
+      "name": "Court Street Denizen",
+      "oracle_text": "Whenever another white creature you control enters, tap target creature an opponent controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -24410,6 +24602,64 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Soldier"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Soldier spells you cast cost {1} less to cast."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Soldier"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Soldier creatures you control get +1/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "daru_warchief",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Daru Warchief",
+      "oracle_text": "Soldier spells you cast cost {1} less to cast.\nSoldier creatures you control get +1/+2.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -31819,6 +32069,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "Esgaroth Garrison's power is equal to the number of creatures you control.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "recruited",
+              "op": "discard",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "recruited",
+                  "not_types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "human_soldier_1_1_w"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "esgaroth_garrison",
+      "mana_cost": "{4}{W}",
+      "name": "Esgaroth Garrison",
+      "oracle_text": "Esgaroth Garrison's power is equal to the number of creatures you control.\nWhen this creature enters, recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -35485,6 +35822,104 @@
         "Faerie"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "attacking_player": "you",
+                    "binding": "attackers"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another player attacks with two or more creatures, they draw a card if none of those creatures attacked you.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "opponent",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "firemane_commando",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Firemane Commando",
+      "oracle_text": "Flying\nWhenever you attack with two or more creatures, draw a card.\nWhenever another player attacks with two or more creatures, they draw a card if none of those creatures attacked you.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Soldier"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -42870,6 +43305,64 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, creatures you control get +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "goldnight_commander",
+      "mana_cost": "{3}{W}",
+      "name": "Goldnight Commander",
+      "oracle_text": "Whenever another creature you control enters, creatures you control get +1/+1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -50621,6 +51114,99 @@
       "subtypes": [
         "Plains",
         "Island"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W}.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this land enters untapped, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "filter": {
+              "tapped": false
+            },
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "idyllic_grange",
+      "name": "Idyllic Grange",
+      "oracle_text": "({T}: Add {W}.)\nThis land enters tapped unless you control three or more other Plains.\nWhen this land enters untapped, put a +1/+1 counter on target creature you control.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Plains"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains"
       ],
       "types": [
         "Land"
@@ -64927,6 +65513,122 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "chooser": {
+                    "binding": "each_player"
+                  },
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "treasure_token"
+                        },
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": {
+                            "binding": "each_player"
+                          },
+                          "op": "create_token",
+                          "token": "treasure_token"
+                        }
+                      ],
+                      "label": "Money"
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "citizen_1_1_gw"
+                        },
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": {
+                            "binding": "each_player"
+                          },
+                          "op": "create_token",
+                          "token": "citizen_1_1_gw"
+                        }
+                      ],
+                      "label": "Friends"
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "op": "draw",
+                          "player": "you"
+                        },
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "op": "draw",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "label": "Secrets"
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each opponent chooses money, friends, or secrets. For each player who chose money, you and that player each create a Treasure token. For each player who chose friends, you and that player each create a 1/1 green and white Citizen creature token. For each player who chose secrets, you and that player each draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "master_of_ceremonies",
+      "mana_cost": "{3}{W}",
+      "name": "Master of Ceremonies",
+      "oracle_text": "At the beginning of your upkeep, each opponent chooses money, friends, or secrets. For each player who chose money, you and that player each create a Treasure token. For each player who chose friends, you and that player each create a 1/1 green and white Citizen creature token. For each player who chose secrets, you and that player each draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Druid"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "controller": "you",
@@ -67448,6 +68150,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.",
+          "token_multiplier": 2
+        },
+        {
+          "cost": {
+            "mana": "{1}{W/P}{W/P}",
+            "sacrifice": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "you",
+              "count": 2,
+              "exclude_self": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "indestructible",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W/P}{W/P}, Sacrifice two other artifacts and/or creatures: Put an indestructible counter on Mondrak. ({W/P} can be paid with either {W} or 2 life.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "mondrak_glory_dominus",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Mondrak, Glory Dominus",
+      "oracle_text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.\n{1}{W/P}{W/P}, Sacrifice two other artifacts and/or creatures: Put an indestructible counter on Mondrak. ({W/P} can be paid with either {W} or 2 life.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -67626,6 +68391,46 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "moogles_valor",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Moogles' Valor",
+      "oracle_text": "For each creature you control, create a 1/2 white Moogle creature token with lifelink. Then creatures you control gain indestructible until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "create_token",
+          "token": "moogle_1_2_w_lifelink"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -73395,6 +74200,459 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "first_strike"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "first_strike"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "flying"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "flying"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "deathtouch"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "deathtouch"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "hexproof"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "hexproof"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "lifelink"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "lifelink"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "menace"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "menace"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "reach"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "reach"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "skulk"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "skulk"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "vigilance"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "vigilance"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance.",
+          "trigger": {
+            "controller": "any",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "odric_lunarch_marshal",
+      "mana_cost": "{3}{W}",
+      "name": "Odric, Lunarch Marshal",
+      "oracle_text": "At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -79040,6 +80298,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attacking": true,
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "subtypes": [
+                      "Soldier"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a Soldier creature card from your hand onto the battlefield tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may put a Soldier creature card from your hand onto the battlefield tapped and attacking.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "preeminent_captain",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Preeminent Captain",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhenever this creature attacks, you may put a Soldier creature card from your hand onto the battlefield tapped and attacking.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kithkin",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -83098,6 +84417,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "optional": true,
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}: Look at the top four cards of your library. You may reveal a creature card with mana value 3 or less from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "recruitment_officer",
+      "mana_cost": "{W}",
+      "name": "Recruitment Officer",
+      "oracle_text": "{3}{W}: Look at the top four cards of your library. You may reveal a creature card with mana value 3 or less from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -83727,6 +85101,49 @@
         "Rebel"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 white Soldier creature token.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "resolute_reinforcements",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Resolute Reinforcements",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nWhen this creature enters, create a 1/1 white Soldier creature token.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -90927,6 +92344,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Exile this artifact: Exile all graveyards."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sentinel_totem",
+      "mana_cost": "{1}",
+      "name": "Sentinel Totem",
+      "oracle_text": "When this artifact enters, scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{T}, Exile this artifact: Exile all graveyards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -98025,6 +99490,53 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature enters, you gain 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "soul_warden",
+      "mana_cost": "{W}",
+      "name": "Soul Warden",
+      "oracle_text": "Whenever another creature enters, you gain 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -108107,6 +109619,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "supertypes": [
+                    "Basic"
+                  ],
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a basic land card from your hand onto the battlefield tapped?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: You may put a basic land card from your hand onto the battlefield tapped."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "terrain_generator",
+      "name": "Terrain Generator",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: You may put a basic land card from your hand onto the battlefield tapped.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -115684,6 +117267,85 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Soldier"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Soldiers you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{W}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Soldier"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}{W}, Exile this card from your graveyard: Put a +1/+1 counter on each Soldier you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "valiant_veteran",
+      "mana_cost": "{1}{W}",
+      "name": "Valiant Veteran",
+      "oracle_text": "Other Soldiers you control get +1/+1.\n{3}{W}{W}, Exile this card from your graveyard: Put a +1/+1 counter on each Soldier you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

@@ -7798,7 +7798,7 @@
       "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Anafenza, the Foremost": {
       "edhrec_rank": 14269,
@@ -8718,7 +8718,7 @@
       "scryfall_id": "de0f22af-fb85-4178-8a35-ec3ff031f4df",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Angel's Herald": {
       "edhrec_rank": 28027,
@@ -8808,7 +8808,7 @@
       "scryfall_id": "c79a5bbe-7b70-4b05-a336-9b2bcb2f2b8f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Angelic Accord": {
       "edhrec_rank": 3391,
@@ -10558,7 +10558,7 @@
       "scryfall_id": "78d7ca09-b6dc-4906-95ce-1571f6c4cefb",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "April O'Neil, Hacktivist": {
       "edhrec_rank": 17878,
@@ -11958,7 +11958,7 @@
       "scryfall_id": "8e6c4afb-6a94-4519-91c6-9824fed2892c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Archetype of Endurance": {
       "edhrec_rank": 2863,
@@ -13192,13 +13192,13 @@
     },
     "Armageddon": {
       "edhrec_rank": 4044,
-      "gate": "template",
+      "gate": null,
       "name": "Armageddon",
-      "reason": "no template for: Destroy all lands",
+      "reason": "",
       "scryfall_id": "41954132-2c71-4b3a-8893-20e0df68a848",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Armageddon Clock": {
       "edhrec_rank": 18072,
@@ -16788,7 +16788,7 @@
       "scryfall_id": "53e3fa87-8de0-4e3a-90bf-780dd0a9fb48",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Autochthon Wurm": {
       "edhrec_rank": 19926,
@@ -19592,13 +19592,13 @@
     },
     "Ballyrush Banneret": {
       "edhrec_rank": 8698,
-      "gate": "template",
+      "gate": null,
       "name": "Ballyrush Banneret",
-      "reason": "no template for: Kithkin spells and Soldier spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "b18a7daa-a112-4728-9123-594366694915",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Balm of Restoration": {
       "edhrec_rank": 30904,
@@ -41232,13 +41232,13 @@
     },
     "Cathar Commando": {
       "edhrec_rank": 1391,
-      "gate": "template",
+      "gate": null,
       "name": "Cathar Commando",
-      "reason": "no template for: {1}, Sacrifice this creature: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "7cd21530-ca72-4986-a0f2-142b9f23c413",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cathar's Call": {
       "edhrec_rank": 8790,
@@ -54552,13 +54552,13 @@
     },
     "Court Street Denizen": {
       "edhrec_rank": 7481,
-      "gate": "template",
+      "gate": null,
       "name": "Court Street Denizen",
-      "reason": "no template for: Whenever another white creature you control enters, tap target creature an opponent contro",
+      "reason": "",
       "scryfall_id": "c45b1d32-5a3a-4ec3-af11-d0ba947de175",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Court of Ambition": {
       "edhrec_rank": 2472,
@@ -61752,13 +61752,13 @@
     },
     "Daru Warchief": {
       "edhrec_rank": 9083,
-      "gate": "template",
+      "gate": null,
       "name": "Daru Warchief",
-      "reason": "no template for: Soldier spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "2630d3b5-8f3a-4aad-a45e-22a7979429f3",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Darwin, Adaptive Mutant": {
       "edhrec_rank": 26928,
@@ -64528,7 +64528,7 @@
       "scryfall_id": "21637fbe-d9d3-4d5b-a361-0687385d4738",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Decree of Pain": {
       "edhrec_rank": 1338,
@@ -85912,13 +85912,13 @@
     },
     "Esgaroth Garrison": {
       "edhrec_rank": 31924,
-      "gate": "template",
+      "gate": null,
       "name": "Esgaroth Garrison",
-      "reason": "no template for: 's power is equal to the number of creatures you control",
+      "reason": "",
       "scryfall_id": "573f67b0-6ce8-4857-a703-4a5728640736",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Eshki Dragonclaw": {
       "edhrec_rank": 10793,
@@ -87688,7 +87688,7 @@
       "scryfall_id": "59183da2-8315-49f4-ab87-01b957b26366",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Exava, Rakdos Blood Witch": {
       "edhrec_rank": 16722,
@@ -96032,13 +96032,13 @@
     },
     "Firemane Commando": {
       "edhrec_rank": 1858,
-      "gate": "template",
+      "gate": null,
       "name": "Firemane Commando",
-      "reason": "no template for: Whenever you attack with two or more creatures, draw a card",
+      "reason": "",
       "scryfall_id": "c86269cc-bf4d-44b4-ad4b-8356857c532f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Firemantle Mage": {
       "edhrec_rank": 17329,
@@ -114592,13 +114592,13 @@
     },
     "Goldnight Commander": {
       "edhrec_rank": 3741,
-      "gate": "template",
+      "gate": null,
       "name": "Goldnight Commander",
-      "reason": "no template for: Whenever another creature you control enters, creatures you control get +1/+1 until end of",
+      "reason": "",
       "scryfall_id": "3c87f4e1-73a0-458e-8941-22423bbfefc4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Goldnight Redeemer": {
       "edhrec_rank": 18656,
@@ -121468,7 +121468,7 @@
       "scryfall_id": "6f7c63ae-5df3-410f-8643-b8c69133ca9d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Hall": {
       "edhrec_rank": 14717,
@@ -133422,13 +133422,13 @@
     },
     "Idyllic Grange": {
       "edhrec_rank": 4261,
-      "gate": "template",
+      "gate": null,
       "name": "Idyllic Grange",
-      "reason": "no template for: When this land enters untapped, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "ca2c611c-3a6f-44b0-9daa-837a465845e0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Idyllic Tutor": {
       "edhrec_rank": 750,
@@ -169132,13 +169132,13 @@
     },
     "Master of Ceremonies": {
       "edhrec_rank": 3179,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Ceremonies",
-      "reason": "no template for: At the beginning of your upkeep, each opponent chooses money, friends, or secrets. For eac",
+      "reason": "",
       "scryfall_id": "ac736037-113f-4e4b-8b97-7b2300b0d276",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Master of Cruelties": {
       "edhrec_rank": 3401,
@@ -178182,13 +178182,13 @@
     },
     "Mondrak, Glory Dominus": {
       "edhrec_rank": 428,
-      "gate": "template",
+      "gate": null,
       "name": "Mondrak, Glory Dominus",
-      "reason": "no template for: If one or more tokens would be created under your control, twice that many of those tokens",
+      "reason": "",
       "scryfall_id": "1ef1b6a8-0151-4e41-a909-3d519dc19f14",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Mondronen Shaman // Tovolar's Magehunter": {
       "edhrec_rank": 13907,
@@ -178572,13 +178572,13 @@
     },
     "Moogles' Valor": {
       "edhrec_rank": 4655,
-      "gate": "template",
+      "gate": null,
       "name": "Moogles' Valor",
-      "reason": "no template for: For each creature you control, create a 1/2 white Moogle creature token with lifelink. The",
+      "reason": "",
       "scryfall_id": "522920b3-e7a4-4097-8321-2dbb326719c6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Moon Girl and Devil Dinosaur": {
       "edhrec_rank": 21393,
@@ -182008,7 +182008,7 @@
       "scryfall_id": "14b4d558-11f2-46d0-8f25-d44f5e74f70c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Myriad Construct": {
       "edhrec_rank": 11090,
@@ -190978,7 +190978,7 @@
       "scryfall_id": "859d2ff4-8b8c-410b-8636-7e6a539fd291",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ochran Assassin": {
       "edhrec_rank": 13467,
@@ -191132,13 +191132,13 @@
     },
     "Odric, Lunarch Marshal": {
       "edhrec_rank": 1487,
-      "gate": "template",
+      "gate": null,
       "name": "Odric, Lunarch Marshal",
-      "reason": "no template for: At the beginning of each combat, creatures you control gain first strike until end of turn",
+      "reason": "",
       "scryfall_id": "12e4f93c-6daf-458e-aa5a-26844c54bfdd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Odric, Master Tactician": {
       "edhrec_rank": 2369,
@@ -191148,7 +191148,7 @@
       "scryfall_id": "13bfcec9-a789-41f1-aa3d-4e4cdd7555b2",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Odunos River Trawler": {
       "edhrec_rank": 26830,
@@ -200448,7 +200448,7 @@
       "scryfall_id": "47875dff-c046-4cb0-b1e3-f926cbe25b59",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Petra Sphinx": {
       "edhrec_rank": 29014,
@@ -206272,13 +206272,13 @@
     },
     "Preeminent Captain": {
       "edhrec_rank": 9419,
-      "gate": "template",
+      "gate": null,
       "name": "Preeminent Captain",
-      "reason": "no template for: Whenever this creature attacks, you may put a Soldier creature card from your hand onto th",
+      "reason": "",
       "scryfall_id": "32faaece-2775-4ab5-8376-d9f68959d5ac",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Preemptive Strike": {
       "edhrec_rank": 28734,
@@ -218312,13 +218312,13 @@
     },
     "Recruitment Officer": {
       "edhrec_rank": 12682,
-      "gate": "template",
+      "gate": null,
       "name": "Recruitment Officer",
-      "reason": "no template for: {3}{W}: Look at the top four cards of your library. You may reveal a creature card with ma",
+      "reason": "",
       "scryfall_id": "584b96de-67ec-41e3-b8c3-3a90c5c657aa",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Recumbent Bliss": {
       "edhrec_rank": 19344,
@@ -221018,7 +221018,7 @@
       "scryfall_id": "22dde654-5bde-47f9-8e90-4f38dddc07b3",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Rescue Skiff": {
       "edhrec_rank": 12379,
@@ -221292,13 +221292,13 @@
     },
     "Resolute Reinforcements": {
       "edhrec_rank": 7110,
-      "gate": "template",
+      "gate": null,
       "name": "Resolute Reinforcements",
-      "reason": "no template for: When this creature enters, create a 1/1 white Soldier creature token",
+      "reason": "",
       "scryfall_id": "940f3989-77cc-49a9-92e0-095a75d80f0f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Resolute Rider": {
       "edhrec_rank": 26358,
@@ -221508,7 +221508,7 @@
       "scryfall_id": "4266ac5c-40dc-4fe3-9f42-e03cea5277ea",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Restart Sequence": {
       "edhrec_rank": 4357,
@@ -240222,13 +240222,13 @@
     },
     "Sentinel Totem": {
       "edhrec_rank": 16173,
-      "gate": "template",
+      "gate": null,
       "name": "Sentinel Totem",
-      "reason": "no template for: {T}, Exile this artifact: Exile all graveyards",
+      "reason": "",
       "scryfall_id": "0d8097eb-518a-4b8e-8d6a-a139d4ddcc8f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sentinel Tower": {
       "edhrec_rank": 9813,
@@ -255962,13 +255962,13 @@
     },
     "Soul Warden": {
       "edhrec_rank": 505,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Warden",
-      "reason": "no template for: Whenever another creature enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "53b54485-37e2-4ae0-be91-c77ec02c5fe0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Soul of Emancipation": {
       "edhrec_rank": 19572,
@@ -278352,13 +278352,13 @@
     },
     "Terrain Generator": {
       "edhrec_rank": 1894,
-      "gate": "template",
+      "gate": null,
       "name": "Terrain Generator",
-      "reason": "no template for: {2}, {T}: You may put a basic land card from your hand onto the battlefield tapped",
+      "reason": "",
       "scryfall_id": "4bdd6634-6de1-4938-9038-317c15c8bfc7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Terramorph": {
       "edhrec_rank": 7707,
@@ -280458,7 +280458,7 @@
       "scryfall_id": "0bda1b62-47fc-42c2-a841-ccad8ea0db48",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "The Earth Crystal": {
       "edhrec_rank": 763,
@@ -300422,13 +300422,13 @@
     },
     "Valiant Veteran": {
       "edhrec_rank": 7939,
-      "gate": "template",
+      "gate": null,
       "name": "Valiant Veteran",
-      "reason": "no template for: Other Soldiers you control get +1/+1",
+      "reason": "",
       "scryfall_id": "18b1a4ee-437f-4a08-b176-8342d526143f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Valki, God of Lies // Tibalt, Cosmic Impostor": {
       "edhrec_rank": 6011,
@@ -316778,7 +316778,7 @@
       "scryfall_id": "838f66d8-4f2d-4418-958c-e79aee0ce8aa",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Winter Sky": {
       "edhrec_rank": 17314,

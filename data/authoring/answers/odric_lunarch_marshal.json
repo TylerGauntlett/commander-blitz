@@ -1,0 +1,458 @@
+{
+  "card": {
+    "id": "odric_lunarch_marshal",
+    "name": "Odric, Lunarch Marshal",
+    "oracle_text": "At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance.",
+    "mana_cost": "{3}{W}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 3,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each combat, creatures you control gain first strike until end of turn if a creature you control has first strike. The same is true for flying, deathtouch, double strike, haste, hexproof, indestructible, lifelink, menace, reach, skulk, trample, and vigilance.",
+        "trigger": {
+          "event": "begin_combat",
+          "controller": "any"
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "first_strike"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "first_strike"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "flying"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "flying"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "deathtouch"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "deathtouch"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "double_strike"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "double_strike"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "haste"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "haste"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "hexproof"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "hexproof"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "indestructible"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "indestructible"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "lifelink"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "lifelink"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "menace"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "menace"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "reach"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "reach"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "skulk"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "skulk"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "trample"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "trample"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "vigilance"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "vigilance"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

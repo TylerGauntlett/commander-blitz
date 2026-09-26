@@ -1,0 +1,28 @@
+{
+  "card_id": "winter_orb",
+  "name": "Winter Orb",
+  "oracle_text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps.",
+  "blocked_sentences": [
+    "As long as this artifact is untapped, players can't untap more than one land during their untap steps."
+  ],
+  "needs": [
+    {
+      "capability": "untap_limit",
+      "kind": "static_effect",
+      "what": "A player-wide static that caps how MANY matching permanents a player may untap during their untap step -- an effect taking a filter (\"land\") and a maximum (1), where the untapping player chooses which one permanent untaps and every other match stays tapped. It also needs the untap step to offer that choice as a decision, since today nothing in the untap step ever asks the active player anything.",
+      "why_existing_wont_do": "`skip_untap_step` is the closest static and is the wrong shape: `player_statics.untap_held` marks each permanent matching its `affects` filter and `primitives.untap_all` skips every marked one, so it is an all-or-nothing hold per permanent with no count and no chooser. Writing Winter Orb with it would stop ALL of a player's lands untapping (a strictly harsher card, Rising Waters/Stasis territory), which is exactly the approximation the brief forbids. `untap_during_each_untap_step` is its inverse (untap more, not fewer) and `freeze_opponent_lands` freezes a whole side's lands for mana rather than capping a count. `static_max_per_turn` is unrelated -- the loader only reads it on `free_cast_permission`/flashback grants, not on an untap effect. Nothing in `static_effects` carries a numeric ceiling on an untap step, and `untap_all` has no branch that ever asks a player which permanent to untap."
+    },
+    {
+      "capability": "untap_limit",
+      "kind": "static_effect",
+      "what": "An \"as long as this permanent is untapped\" gate on a static ability -- the static switches off while its own source is tapped, which is how Winter Orb is answered (tap the Orb on the opponent's end step).",
+      "why_existing_wont_do": "`static_condition_keys` offers `counters`, `cmp`, `exists`, `is_attached`, `is_your_turn`, `top_of_library` and the boolean combinators. `exists` over `{\"self_only\": true, \"tapped\": false}` is the near miss and may well read the source's tapped state, but it is unproven for a self-referential untapped check and is worthless without the capping effect above, so it is recorded here rather than guessed at."
+    }
+  ],
+  "closest_existing": [
+    "skip_untap_step",
+    "untap_during_each_untap_step",
+    "freeze_opponent_lands"
+  ],
+  "confidence": "high"
+}

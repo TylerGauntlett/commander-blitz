@@ -1,0 +1,24 @@
+{
+  "card_id": "peter_parker_s_camera",
+  "name": "Peter Parker's Camera",
+  "oracle_text": "This artifact enters with three film counters on it.\n{2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy.",
+  "blocked_sentences": [
+    "{2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "copy_ability",
+      "kind": "op",
+      "what": "An op that copies an activated or triggered ability that is already on the stack (706.10 applied to abilities, 707.10), putting a second StackItem of kind \"ability\" on top of the stack that carries the original's source_oid, ability_index, granted_by/granted_def_id, bindings (the objects its cost named), x and modes -- a copy that was never activated, so no cost is paid again and the source permanent is not tapped again -- with the existing new_targets choice offered for it. It also needs the retarget helper to read the copied ABILITY's target specs rather than the card's: _choose_new_targets pulls specs from state.registry.get(def_id).targets, which is the card-level target list, and an ability's targets live on the AbilityModel, so an ability copy retargeted through it would be offered the wrong pool (usually an empty one).",
+      "why_existing_wont_do": "`copy_spell` is the only copy-onto-the-stack op and it refuses abilities by construction: `_spell_named_by` (src/automtg/engine/effects/ops_stack.py:15-47) returns None for \"a stack item that is an ability rather than a spell\", and `put_copy_on_stack` (ops_stack.py:199-230) always builds `kind=\"spell\"` from a `new_object` card token with an `oid`, which is not what an ability item is (an ability StackItem has no oid and is identified by source_oid + ability_index, src/automtg/engine/stack.py:283-300 and 398-412). So a copy_spell written here would silently do nothing whenever the target is an ability -- the exact quiet wrong card the brief forbids. `double_triggers` is the closest existing capability and is a different card on three axes: it is a static read in `collect` (src/automtg/engine/triggers.py:466-492) that queues an extra TRIGGER at the moment the event fires, so it never touches something already on the stack, it cannot see an activated ability at all, and it has no targeting and no \"you may choose new targets\" (it just `_queue`s the same trigger twice). `new_targets` cannot be borrowed either: the loader hard-refuses it on any op but copy_spell (src/automtg/cards/loader/effects.py:888-894). `copy_permanent` copies battlefield objects and `cast_copy` casts a copy of a card, neither of which is a stack ability."
+    },
+    {
+      "capability": "target_ability_on_stack",
+      "kind": "selector",
+      "what": "A target kind that binds an activated or triggered ability on the stack, plus a way to restrict it to abilities you control (\"target activated or triggered ability you control\") and, for cards that need it, to one of the two ability kinds.",
+      "why_existing_wont_do": "TargetModel.kind is a closed Literal of permanent, player, spell, card_in_graveyard, card_in_exile, any, spell_or_permanent (src/automtg/cards/schema.py:197-205), and the stack-facing kinds enumerate only spells: both the `spell` branch and the spell half of `spell_or_permanent` in `enumerate_target_tuples` filter with `item.is_spell` (src/automtg/engine/targeting.py:84-114), and `StackItem.is_spell` is `self.kind == \"spell\"` (src/automtg/engine/structs.py:816). So an ability on the stack is not offered as a legal target by any spec that exists, the target could never be announced at activation, and `still_legal` has no branch that would re-check one. This is the same missing kind already recorded for Deflecting Swat's \"target spell or ability\"."
+    }
+  ],
+  "closest_existing": ["copy_spell", "double_triggers", "copy_permanent", "cast_copy"],
+  "confidence": "high"
+}

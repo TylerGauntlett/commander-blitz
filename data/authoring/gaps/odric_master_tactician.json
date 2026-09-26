@@ -1,0 +1,23 @@
+{
+  "card_id": "odric_master_tactician",
+  "name": "Odric, Master Tactician",
+  "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+  "blocked_sentences": [
+    "Whenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block."
+  ],
+  "needs": [
+    {
+      "capability": "choose_blockers",
+      "kind": "decision",
+      "what": "An effect that, for the rest of this combat, hands the DECLARE_BLOCKERS decision of every defending player to the effect's controller: the attacking player declares which of the defenders' creatures block and which attacker each one blocks, subject to the same legality checks (blocks_valid, unmet_block_requirements, can_block) that already gate a defender's own declaration. Needs an op (one-shot, duration 'this combat' / end of turn) usable from a triggered ability's effects, plus a way to route DecisionKind.DECLARE_BLOCKERS for a player in combat.pending_blockers to a different seat.",
+      "why_existing_wont_do": "The nearest things in reference are the ops must_block and cant_block and the static block_restriction. All three only constrain an individual creature -- must_block forces one named creature to block (optionally a named attacker), cant_block forbids blocking, and block_restriction's `blockers` filter (src/automtg/engine/combat.py:843) only says what may not block a given attacker. None of them lets a player choose the whole block assignment, and none of them can decline a block the defender would otherwise be free to make elsewhere. Underneath, src/automtg/engine/turn.py:651 (_next_blocker_decision) always issues PendingDecision(kind=DecisionKind.DECLARE_BLOCKERS, player=pid) to each pid in combat.pending_blockers, with no hook to reassign that seat; unblockable and freeze are also unrelated. Forcing a set of blocks with must_block would be an approximation: it cannot express 'and how those creatures block' for creatures Odric wants held back, nor stop a defender adding extra blockers."
+    }
+  ],
+  "closest_existing": [
+    "must_block",
+    "cant_block",
+    "block_restriction",
+    "unblockable"
+  ],
+  "confidence": "high"
+}

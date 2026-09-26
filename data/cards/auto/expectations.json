@@ -482,6 +482,14 @@
     },
     "zone": "battlefield"
   },
+  "armageddon": {
+    "battlefield_count": 2,
+    "graveyard_size": {
+      "0": 33
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "armored_cancrix": {
     "zone": "battlefield"
   },
@@ -653,6 +661,13 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "ballyrush_banneret": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "balmor_battlemage_captain": {
     "battlefield_count": 33,
@@ -1443,6 +1458,11 @@
   "catacomb_slug": {
     "zone": "battlefield"
   },
+  "cathar_commando": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "cathar_s_shield": {
     "zone": "battlefield"
   },
@@ -1911,6 +1931,11 @@
   "courier_hawk": {
     "zone": "battlefield"
   },
+  "court_street_denizen": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "cowl_prowler": {
     "zone": "battlefield"
   },
@@ -2180,6 +2205,10 @@
     "zone": "battlefield"
   },
   "darkwater_catacombs": {
+    "zone": "battlefield"
+  },
+  "daru_warchief": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dauthi_marauder": {
@@ -2858,6 +2887,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "esgaroth_garrison": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "esper_cormorants": {
     "zone": "battlefield"
   },
@@ -3228,6 +3270,13 @@
     "zone": "battlefield"
   },
   "fire_sprites": {
+    "zone": "battlefield"
+  },
+  "firemane_commando": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "fireshrieker": {
@@ -3958,6 +4007,10 @@
   "goldmire_bridge": {
     "zone": "battlefield"
   },
+  "goldnight_commander": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "goldspan_dragon": {
     "battlefield_count": 33,
     "granted": {
@@ -4610,6 +4663,13 @@
     "zone": "battlefield"
   },
   "idyllic_beachfront": {
+    "zone": "battlefield"
+  },
+  "idyllic_grange": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "ignoble_hierarch": {
@@ -5875,6 +5935,10 @@
   "mass_of_ghouls": {
     "zone": "battlefield"
   },
+  "master_of_ceremonies": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "master_of_dark_rites": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6114,6 +6178,10 @@
   "monastery_swiftspear": {
     "zone": "battlefield"
   },
+  "mondrak_glory_dominus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "monoist_sentry": {
     "zone": "battlefield"
   },
@@ -6134,6 +6202,20 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "moogles_valor": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 4,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "tokens": {
+      "count": 2,
+      "id": "moogle_1_2_w_lifelink"
+    },
+    "zone": "graveyard"
   },
   "moon_heron": {
     "zone": "battlefield"
@@ -6651,6 +6733,10 @@
   "octoprophet": {
     "zone": "battlefield"
   },
+  "odric_lunarch_marshal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ogre_berserker": {
     "zone": "battlefield"
   },
@@ -7159,6 +7245,10 @@
     },
     "zone": "battlefield"
   },
+  "preeminent_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prickly_boggart": {
     "zone": "battlefield"
   },
@@ -7529,6 +7619,13 @@
     },
     "zone": "battlefield"
   },
+  "recruitment_officer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "red_elemental_blast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -7612,6 +7709,14 @@
     "zone": "graveyard"
   },
   "resistance_skywarden": {
+    "zone": "battlefield"
+  },
+  "resolute_reinforcements": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "soldier_1_1_w"
+    },
     "zone": "battlefield"
   },
   "response_resurgence": {
@@ -8273,6 +8378,16 @@
   "sentinel_spider": {
     "zone": "battlefield"
   },
+  "sentinel_totem": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "sentinels_of_glen_elendra": {
     "zone": "battlefield"
   },
@@ -8916,6 +9031,10 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "soul_warden": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "soulbound_guardians": {
     "zone": "battlefield"
@@ -9699,6 +9818,10 @@
   "terrain_elemental": {
     "zone": "battlefield"
   },
+  "terrain_generator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "terrian_world_tyrant": {
     "zone": "battlefield"
   },
@@ -10339,6 +10462,13 @@
     "zone": "battlefield"
   },
   "valiant_guard": {
+    "zone": "battlefield"
+  },
+  "valiant_veteran": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "valkyrior_skyrider": {

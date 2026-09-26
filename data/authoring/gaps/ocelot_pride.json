@@ -1,0 +1,31 @@
+{
+  "card_id": "ocelot_pride",
+  "name": "Ocelot Pride",
+  "oracle_text": "First strike, lifelink\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token. Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it.",
+  "blocked_sentences": [
+    "At the beginning of your end step, if you gained life this turn, create a 1/1 white Cat creature token.",
+    "Then if you have the city's blessing, for each token you control that entered this turn, create a token that's a copy of it."
+  ],
+  "needs": [
+    {
+      "capability": "missing_token",
+      "kind": "token",
+      "what": "A \"1/1 white Cat creature token\" in the token pool -- suggested id `cat_1_1_w`, a one-entry data change in data/cards/tokens.cards.json alongside `cat_beast_2_2_w`: `{\"id\": \"cat_1_1_w\", \"name\": \"Cat Token\", \"oracle_text\": \"1/1 white Cat creature token.\", \"types\": [\"Creature\"], \"subtypes\": [\"Cat\"], \"colors\": [\"W\"], \"power\": 1, \"toughness\": 1}`, plus the usual art-manifest/registry entry the other tokens carry. It unblocks the large white/green Cat-token family (Ocelot Pride, Ajani's Chosen-style makers, Cat Collector, Feline Sovereign's friends, Arahbo, Regal Caracal's second token).",
+      "why_existing_wont_do": "`token_ids` is a CLOSED list and the only Cat in it is `cat_beast_2_2_w`, \"2/2 white Cat Beast creature\". That is the wrong size and the wrong type line, and this card then COPIES every token it made this turn, so substituting it would double a 2/2 Cat Beast where the printed card doubles a 1/1 Cat -- the error compounds rather than staying cosmetic. `human_soldier_1_1_w`, `soldier_1_1_w` and `human_1_1_w` are the right size and colour but the wrong creature type, which matters on a card whose deck is built on the Cat type."
+    },
+    {
+      "capability": "entered_this_turn_selector",
+      "kind": "selector",
+      "what": "An `entered_this_turn` clause in the EFFECT-side selector language (`SELECTOR_KEYS` in src/automtg/engine/effects/selectors.py), so an effect's `objects` can gather \"each token you control that entered this turn\" as `{\"zone\": \"battlefield\", \"controller\": \"you\", \"is_token\": true, \"entered_this_turn\": true, \"count\": \"all\"}`. The reading already exists one layer over: `characteristics._matches` (src/automtg/engine/characteristics.py:1776) answers exactly this key off `state.turn_ledger.entered_this_turn(oid)`, and `cost_reduction._object_matches` (src/automtg/engine/cost_reduction.py:353) and `triggers.matches_card_filter` (src/automtg/engine/triggers.py:1642) each read it too -- it is only the effect-side selector that cannot say it. The work is the key in `SELECTOR_KEYS`, the same three-line ledger test in `selectors._matches` beside the existing `attacked_this_turn` check (selectors.py:936), and the packet's `selector_keys` list regenerating. It unblocks the whole \"permanents that entered this turn\" family (Ocelot Pride, Aetherwind Basker-style sacrifices, Kalain's and Winota's board reads, \"return each creature that entered this turn\").",
+      "why_existing_wont_do": "`validate_selector` (selectors.py:1384) rejects any key outside `SELECTOR_KEYS` as a load error, and `entered_this_turn` is not in it -- the list has `attacked_this_turn` and `drawn_this_turn`, the two other turn-ledger clauses, but not this one. The near misses each answer a different question: `created_with: \"self\"` (selectors.py:1415) is restricted to the literal string \"self\" and matches only tokens this source itself made, so it misses every token made by another card this turn, which is most of what this card copies; `permanents_entered_this_turn` is a `value_keys` entry, so it can COUNT the arrivals but yields a number, and `for_each` needs the object pool itself to bind `each` for the copy; `is_token: true` alone would copy every token you control, doubling a board built over many turns instead of the turn's arrivals. `static_filter_keys` does list `entered_this_turn`, but a static ability cannot create tokens, so that list is unreachable from a triggered ability's `create_token`/`copy_permanent`."
+    }
+  ],
+  "closest_existing": [
+    "cat_beast_2_2_w",
+    "created_with",
+    "attacked_this_turn",
+    "drawn_this_turn",
+    "permanents_entered_this_turn"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,25 @@
+{
+  "card_id": "haliya_guided_by_light",
+  "name": "Haliya, Guided by Light",
+  "oracle_text": "Whenever Haliya or another creature or artifact you control enters, you gain 1 life.\nAt the beginning of your end step, draw a card if you've gained 3 or more life this turn.\nWarp {W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+  "blocked_sentences": [
+    "Warp {W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "warp",
+      "kind": "keyword",
+      "what": "A residual-gate claimant for the printed \"Warp {W}\" line in `verify._covered` (src/automtg/cards/authoring/verify.py), alongside the ones that already exist for `kicker`, `multikicker`, `strive`, `emerge`, `evoke`, `bestow`, `mutate` and `gift`. IMPORTANT: the warp MECHANIC is already fully built and this is not a request to build it. `CardModel.warp` / `CardDef.warp` parse, `casting.warp_cost` and `casting._cast_options` offer the second cast line, and `stack._place_after_resolution` supplies the rule's two riders (exile at the next end step, then castable from exile on later turns) -- there is also a `grant_warp` static for Tannuk-style grants. I loaded this card with `\"warp\": \"{W}\"` and both cast lines are offered in the sandbox: 'Cast Haliya, Guided by Light' and 'Cast Haliya, Guided by Light (warp {W})'. What is missing is only the authoring bookkeeping that lets a warp card be ACCEPTED. Concretely: `if card.warp is not None and stripped.lower().startswith(\"warp \"): return _declares_printed_cost(stripped[len(\"warp \"):], card.warp)` -- strict like `bestow`/`mutate` rather than permissive like `evoke`, because the whole line is the price and a card declaring warp {W} must not be able to claim a printed \"Warp {3}{R}\". Two smaller companions belong with it: (a) `fidelity.unimplemented_mechanics` builds a `declared` set of card-level alternative casts and has no `warp` entry, so the first warp INSTANT or SORCERY authored will be reported as missing the mechanic it has; (b) `verify.find_play` has no way to ask for the warp line -- it disambiguates `kicked`, `multikicked`, `gifted`, `second_face` and `spree_modes` but not `warp`, so `_cast` always takes the plain cast and gate 5 can never measure a warp card's warp half.",
+      "why_existing_wont_do": "There is no honest way to claim the line from inside the card. `warp` is correctly a `card_level_cost_keys` field and not an ability: an AbilityModel is activated, triggered or static and a cost is none of the three, which is the argument already written into the `emerge`, `bestow` and `mutate` exemptions in `_covered`. It cannot be laundered through `keywords` either -- `warp` is not in `KNOWN_KEYWORDS` (36 entries, all ability keywords), so `proxy.lift_keywords` will not consume the line and the loader rejects the card outright if it is declared as a keyword. The `spell_effects` blanket claim in `claimed_lines` does not apply, because Haliya is a permanent and its text lives in `abilities`. I verified the failure rather than inferring it: the card loads clean with all three lines written and `verify.residual_text` returns exactly 'Warp {W}', which is a hard gate-3 rejection ('printed text not represented')."
+    }
+  ],
+  "closest_existing": [
+    "evoke",
+    "bestow",
+    "mutate",
+    "emerge",
+    "grant_warp"
+  ],
+  "confidence": "high",
+  "notes": "The other two printed lines are NOT blocked and are recorded here only so the fix can be verified in one step. Ability 1 is `{\"kind\": \"triggered\", \"trigger\": {\"event\": \"permanent_enters\", \"controller\": \"you\", \"filter\": {\"any_types\": [\"Artifact\", \"Creature\"]}}, \"effects\": [{\"op\": \"gain_life\", \"amount\": {\"const\": 1}, \"player\": \"you\"}]}` -- the self-inclusive \"Haliya or another\" shape that ganax_astral_hunter, scourge_of_valkas and verdant_sun_s_avatar already use (no `exclude_self`). Ability 2 is `{\"kind\": \"triggered\", \"trigger\": {\"event\": \"end_step\", \"controller\": \"you\"}, \"effects\": [{\"op\": \"if\", \"condition\": {\"cmp\": \">=\", \"left\": {\"life_gained_this_turn\": \"you\"}, \"right\": {\"const\": 3}}, \"then\": [{\"op\": \"draw\", \"amount\": {\"const\": 1}, \"player\": \"you\"}]}]}` -- the trailing \"if\" is an `if` op at resolution rather than an intervening-if `condition` on the trigger, which is what the printed wording says. Run through `verify._cast` in the sandbox that pair produces life {\"0\": 41} (the enters trigger sees Haliya's own arrival), battlefield_count 33 and zone \"battlefield\", with hand 1, library 40 and graveyard 2 unchanged. Once `_covered` claims the Warp line this card is an answer with `\"warp\": \"{W}\"` and exactly that expectation."
+}

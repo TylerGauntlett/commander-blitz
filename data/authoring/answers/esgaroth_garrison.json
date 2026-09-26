@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "esgaroth_garrison",
+    "name": "Esgaroth Garrison",
+    "oracle_text": "Esgaroth Garrison's power is equal to the number of creatures you control.\nWhen this creature enters, recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)",
+    "mana_cost": "{4}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 0,
+    "toughness": 5,
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "set_pt",
+        "affects": {"self_only": true},
+        "power": {"count": {"controller": "you", "types": ["Creature"]}},
+        "toughness": {"const": 5},
+        "text": "Esgaroth Garrison's power is equal to the number of creatures you control."
+      },
+      {
+        "kind": "triggered",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {"op": "discard", "player": "you", "amount": {"const": 1}, "as": "recruited"},
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "recruited", "not_types": ["Land"]}},
+            "then": [
+              {"op": "create_token", "token": "human_soldier_1_1_w", "amount": {"const": 1}}
+            ]
+          }
+        ],
+        "text": "When this creature enters, recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1},
+    "library_size": {"0": 39},
+    "graveyard_size": {"0": 3}
+  }
+}
