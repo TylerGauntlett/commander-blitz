@@ -706,6 +706,45 @@ def offer_riot_choice(state: GameState, oid: int, controller: int):
     obj.riot_choice = RIOT_HASTE if chosen and chosen[0] == 1 else RIOT_COUNTER
 
 
+def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
+    """"Creatures your opponents control enter tapped." Authority of the Consuls.
+
+    The whole family -- Imposing Sovereign, Kismet, Frozen Aether, Loxodon
+    Gatekeeper, Root Maze, Orb of Dreams, Thalia Heretic Cathar -- and the one
+    thing a card's own ``replacements`` can never say. That list is a closed
+    ``self_*`` Literal read off the **arriving** card, so every branch of it
+    speaks about itself; `self_enters_tapped` on Authority taps the enchantment
+    and leaves the opponents alone. This is the other direction: a static on one
+    permanent, about somebody else's arrivals, however they arrive -- cast, put
+    onto the battlefield, created as a token, returned from a graveyard -- since
+    they all funnel through here.
+
+    Read before the printed loop below, not after, and it does not matter which:
+    both only ever set ``tapped`` to True, and neither reads the other. Before,
+    so the printed "…unless you pay 3 life" branch keeps the last word on its own
+    card.
+
+    **The arriving permanent is excluded as a source.** Orb of Dreams says
+    "Permanents enter tapped" and does not tap itself: a permanent's own static
+    is not applying to its own entrance, and by this point in `_enter_battlefield`
+    the object is already in ``state.battlefield`` -- which is what makes the
+    ordinary `_matches` filter language work here at all, and would otherwise
+    make every symmetric card in the family tap itself on arrival. That is the
+    same defect, reached from the other side, that `self_enters_tapped` gave ten
+    of these cards.
+    """
+    from .characteristics import _battlefield_statics, _matches
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "enters_tapped":
+            continue
+        if source_obj.oid == obj.oid:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            obj.tapped = True
+            return
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -748,6 +787,7 @@ def _enter_battlefield(
     # The same one-arrival answer, from `offer_enters_copy` a moment ago.
     copy_on_arrival = obj.enters_copy_of
     obj.enters_copy_of = None
+    _apply_board_enters_tapped(state, obj)
     for replacement in card.replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here

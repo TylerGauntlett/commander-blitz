@@ -17169,3 +17169,67 @@ static wearing a printed prohibition; an absent filter defaults to
   loader refusals.
 - `tests/data/lose_keyword.cards.json` — the Archetype as printed, its lose half
   alone, the two opponent-side anthems and a creature with first strike printed.
+
+## `enters_tapped` — the arrival somebody *else* taxes — Authority of the Consuls — 614.1
+
+### Overview
+
+Authority of the Consuls: *"Creatures your opponents control enter tapped."*
+
+This is the one thing a card's own `replacements` can never say. That list is a
+closed `self_*` Literal — `self_enters`, `self_enters_tapped`,
+`self_enters_with_counters`, `self_enters_prepared`, `self_enters_as_copy`,
+`self_enters_replaced` — and every branch is read off the **arriving** card's
+printed face, so each speaks only about itself. `self_enters_tapped` on Authority
+taps the enchantment and leaves the opponents entirely alone.
+
+**That is not hypothetical: ten cards in the shipped pool have exactly that
+defect**, because `self_enters_tapped` was the only spelling available when the
+template tier wrote them — Imposing Sovereign, Kismet, Frozen Aether, Loxodon
+Gatekeeper, Root Maze, Orb of Dreams, Kinjalli's Sunwing, Thalia Heretic Cathar,
+Uphill Battle and Spider-Woman. Each one taps *itself* on arrival and does
+nothing to its opponents. They are repaired in the commit after this one; this
+one is the machinery they needed.
+
+### Tier: a new static, read at the one place `obj.tapped` is decided
+
+`_apply_board_enters_tapped` in `zones._enter_battlefield`, before the printed
+replacement loop. Both only ever set `tapped` to True and neither reads the
+other, so the order is free; before, so the printed "…unless you pay 3 life"
+branch keeps the last word on its own card.
+
+Reading it *there* is the point. `obj.tapped` is decided in one place and every
+arrival funnels through it — a resolved cast, a `put_onto_battlefield`, a token
+created straight onto the battlefield, a return from a graveyard. A version hung
+off the cast path passes the obvious test and lets a reanimated creature walk in
+untapped.
+
+**The arriving permanent is excluded as a source.** Orb of Dreams says
+"Permanents enter tapped" and does not tap itself: a permanent's own static is
+not applying to its own entrance. By this point the arriving object is already in
+`state.battlefield` — which is what makes the ordinary `_matches` filter language
+usable here at all — so without an explicit exclusion every symmetric card in
+the family would acquire the very self-tapping bug this static exists to fix.
+
+| the near miss | why it is not this |
+|---|---|
+| `self_enters_tapped` on the taxing card | reads the arriving card's own face, so it taps the enchantment. **The live bug on ten cards** |
+| the `enters_tapped` bool in `ability_keys` | a rider on a `cast_from_graveyard` static, reaching only a spell cast under that one graveyard permission |
+| a `permanent_enters` trigger running `tap` | materially different: a stack window, a chance to respond, and the creature could attack with haste before it resolved |
+| `skip_untap_step` | a turn too late — it holds a permanent down *next* untap rather than taxing the arrival |
+
+`affects` is required and an `amount` is refused. The filter is the printed
+clause, and it defaults to your own side; "Permanents enter tapped" is written
+with `controller: "any"` said out loud, so the symmetric case is a statement
+rather than an omission.
+
+### Tests
+
+- `tests/unit/test_enters_tapped.py` — the opponent's creature tapped with a
+  no-static control; the controller's own creature untouched; **every arrival
+  route** (a graveyard return and a token, not just a hand arrival); the narrow
+  filter leaving an opponent's land alone where the Kismet-width one catches it;
+  the symmetric version catching both sides; **the symmetric permanent not
+  tapping itself**, with a second copy proving the exclusion is about the
+  arriving object and not a self-blind effect; and the loader refusals. Six of
+  the thirteen fail without the change.

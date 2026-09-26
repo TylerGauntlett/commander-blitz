@@ -114,6 +114,18 @@ STATIC_EFFECTS = frozenset(
         # what separates it from `lose_all_abilities`: that one would also take
         # the opponents' flying and their triggered and activated abilities.
         "lose_keyword",
+        # Authority of the Consuls; Imposing Sovereign; Kismet; Frozen
+        # Aether; Loxodon Gatekeeper; Root Maze; Orb of Dreams; Thalia,
+        # Heretic Cathar.  "<permanents> your opponents control enter
+        # tapped."  The one thing a card's own `replacements` can never say:
+        # that list is a closed `self_*` Literal read off the ARRIVING card,
+        # so `self_enters_tapped` on Authority taps the enchantment and
+        # leaves the opponents alone. Read in `zones._enter_battlefield`,
+        # where `obj.tapped` is decided, so it catches every arrival --
+        # cast, put onto the battlefield, a token, or returned from a
+        # graveyard. `affects` is required: the filter is the printed clause
+        # and it defaults to your own side.
+        "enters_tapped",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."

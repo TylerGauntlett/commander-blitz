@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **40** capabilities.
+**31 cards** blocked by **39** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [enters-tapped](#enters-tapped) | 1 | 346 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -325,20 +324,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## enters-tapped
-
-Blocks **1** card.
-
-- **(replacement)** a static ability on one permanent that makes OTHER permanents -- matched by a printed-characteristics filter plus a controller ("creatures your opponents control", "artifacts, creatures and lands your opponents control", "permanents", "artifacts and lands") -- enter the battlefield tapped, however they arrive: cast, put onto the battlefield, created as a token, returned from a graveyard. It has to be read inside `move_object`'s arrival path in src/automtg/engine/zones.py, where `obj.tapped` is decided, by asking the board's statics about the permanent that is arriving, the same way 614.1 replacements printed on the arriving card are read there now. Suggested shape: a `static_effects` entry `enters_tapped_filter` (or an extension of the existing `enters_tapped` key to statics with an `affects` filter) carrying `affects: {"types": ["Creature"], "controller": "opponent"}`. It unblocks a large, well-defined family -- Authority of the Consuls, Imposing Sovereign, Blind Obedience, Kismet, Frozen Aether, Thalia Heretic Cathar, Root Maze, Urabrask -- 10+ of which are already sitting in data/cards/auto/templates.cards.json with this line unimplemented
-  <br>Why the existing vocabulary won't do: Entering tapped is only ever a fact about the arriving card itself. `replacements` on a card is a closed Literal in src/automtg/cards/schema.py (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`, `self_enters_as_copy`, `self_enters_replaced`) and every branch is read off the arriving object's OWN printed card in src/automtg/engine/zones.py:789 -- there is no way to write one that speaks about someone else's permanent, and `self_enters_tapped` on Authority would only tap the enchantment. The near miss is the `enters_tapped` key in `ability_keys`: it is a bool rider on a `cast_from_graveyard` static (schema.py:567), consumed in src/automtg/engine/game.py:730 only for a spell cast under that one graveyard permission and carried onto the stack item, so it reaches nothing that was cast from hand or created as a token. `static_effects` has no entry for arrival state at all -- the closest, `skip_untap_step` and the `skip_untap` op, act on the NEXT untap step and leave the creature untapped on the turn it lands, which is the whole point of the card. A `permanent_enters` trigger running `tap` is the approximation and is a different card: it uses the stack, so the creature is untapped while the trigger is on it, it can be responded to, the creature can be sacrificed or given haste and attack in response, and an opponent's Vigilance-less blocker is still available in that window. Note that the free template tier has already mis-written Imposing Sovereign (data/cards/auto/templates.cards.json:51054) with `self_enters_tapped`, which taps the wrong permanent -- that entry should be fixed when this capability lands. The second sentence, "Whenever a creature an opponent controls enters, you gain 1 life", is an ordinary `permanent_enters` trigger with a `{"types": ["Creature"], "controller": "opponent"}` filter and a `gain_life` effect, so only the first line is blocked and no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Authority of the Consuls** (rank 346) — `authority_of_the_consuls`
-  - Creatures your opponents control enter tapped.
 
 </details>
 

@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "authority_of_the_consuls",
+    "name": "Authority of the Consuls",
+    "oracle_text": "Creatures your opponents control enter tapped.\nWhenever a creature an opponent controls enters, you gain 1 life.",
+    "mana_cost": "{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures your opponents control enter tapped.",
+        "effect": "enters_tapped",
+        "affects": {
+          "controller": "opponent",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature an opponent controls enters, you gain 1 life.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "opponent",
+          "filter": {
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    }
+  }
+}

@@ -16782,12 +16782,12 @@
     },
     "Authority of the Consuls": {
       "edhrec_rank": 346,
-      "gate": "template",
+      "gate": null,
       "name": "Authority of the Consuls",
-      "reason": "no template for: Whenever a creature an opponent controls enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "53e3fa87-8de0-4e3a-90bf-780dd0a9fb48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Autochthon Wurm": {

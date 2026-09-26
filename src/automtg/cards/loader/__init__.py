@@ -3432,6 +3432,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
 
+    if model.effect == "enters_tapped":
+        if model.affects is None:
+            # Whose permanents arrive tapped is the printed clause, and the
+            # filter defaults to `controller: "you"` -- so an absent one would
+            # tap the card's own side, which is what `self_enters_tapped` was
+            # already doing wrongly on ten cards in the pool. "Permanents enter
+            # tapped" (Orb of Dreams) is written with an explicit
+            # `controller: "any"`, so the symmetric case is a statement rather
+            # than an omission.
+            raise DslError(
+                f"{where}: enters_tapped needs 'affects' naming whose permanents "
+                f"arrive tapped -- the filter defaults to your own side, and "
+                f"'permanents enter tapped' is controller 'any' said out loud"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: enters_tapped is a fact about an arrival, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
+            )
+
     if model.effect == "lose_keyword":
         # Named keywords only. An empty list would subtract nothing and load
         # clean, printing "can't have or gain first strike" over an inert
