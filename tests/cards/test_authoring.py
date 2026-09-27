@@ -528,12 +528,22 @@ class TestThePacketCarriesTheWholeVocabulary:
         filter defaults `controller: "you"` and `owner` suppresses that default,
         where a selector defaults nothing and `owner` simply filters.
 
+        `entered_this_turn` crossed next, and it is the third card to make the
+        same point. It was static-only because the two cards that printed it --
+        Neriv's damage replacement and Zurgo's hexproof -- both ask it
+        continuously; this docstring used to say "one line in `SELECTOR_KEYS`
+        the day one does" and Ocelot Pride is that day. "For each token you
+        control **that entered this turn**, create a token that's a copy of it"
+        is a one-shot that needs the *pool* rather than the question, because
+        `for_each` binds `each` and a count cannot be copied. It was one line,
+        as predicted.
+
         `attached_to_host` -- the host's *other* attachments, Brass Knuckles'
         "two or more Equipment are attached to it" -- is the last one holding
         `owner`'s old position rather than the relationship one: every printed
         card that asks the question asks it continuously, so no one-shot has
-        needed it yet. It moves to both lists the day one does, and the two keys
-        above are the precedent for how cheap that is.
+        needed it yet. It moves to both lists the day one does, and the three
+        keys above are the precedent for how cheap that is.
         """
         from automtg.cards.authoring.packet import reference
 
@@ -543,14 +553,6 @@ class TestThePacketCarriesTheWholeVocabulary:
             "paired",
             "paired_with_source",
             "attached_to_host",
-            # `entered_this_turn` is here for `attached_to_host`'s reason rather
-            # than `paired`'s: nothing about it is static-only in principle, and
-            # the effect side would read the same `TurnLedger` snapshot. It is
-            # static-only because the two cards that printed it -- Neriv's
-            # damage replacement and Zurgo's hexproof -- both ask it
-            # continuously, so no one-shot has needed the pool yet. One line in
-            # `SELECTOR_KEYS` the day one does.
-            "entered_this_turn",
         }
         assert "attached" in static and "attached" in selector
         assert "owner" in static and "owner" in selector

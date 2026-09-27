@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**24 cards** blocked by **28** capabilities.
+**22 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,22 +19,20 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -126,20 +124,6 @@ Blocks **1** card.
 
 </details>
 
-## becomes-tapped
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
-  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
-
-<details><summary>Cards waiting on this</summary>
-
-- **City of Brass** (rank 97) — `city_of_brass`
-  - Whenever this land becomes tapped, it deals 1 damage to you.
-
-</details>
-
 ## cant-be-countered
 
 Blocks **1** card.
@@ -225,20 +209,6 @@ Blocks **1** card.
 
 </details>
 
-## enters-replacement
-
-Blocks **1** card.
-
-- **(replacement)** a card-level replacement of the permanent's own arrival that can (a) offer its controller an optional cost as the entry is being replaced -- here discarding a land card from hand, i.e. the `discard_selector` vocabulary of an activated cost reused as a replacement's price -- and (b) choose the destination zone on the answer: paid, the permanent finishes entering the battlefield; declined, it goes to its owner's graveyard instead and never enters at all, so no `self_enters`/`permanent_enters` trigger anywhere sees it and it is never on the battlefield to be sacrificed or bounced in response. It must apply on every arrival, from any zone (cast, reanimated, blinked), not only when the card is cast
-  <br>Why the existing vocabulary won't do: The four whitelisted replacements (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`) all only decorate a permanent that is already arriving -- ReplacementModel's own docstring says so, and `zones` runs them after the object has been added to the battlefield, reading nothing from `modify` but `tapped` and `counters`. None of them can charge a cost, ask the controller anything, or redirect the arrival to another zone, and there is no `graveyard` destination in that code path at all. The card-level cost keys are the wrong layer twice over: `additional_optional` / `additional_cost` are cast costs, so they would not apply to a Mox Diamond returning from the graveyard or blinked, and neither branch matches the printed card -- a mandatory discard would make the artifact uncastable with no land in hand (it is castable, it just dies on the way), and an optional one that goes unpaid would still let it enter. `replace_leaves_battlefield` and `replace_deaths` are the only existing destination-rewriting replacements and both fire on the way *out* of the battlefield, so they cannot see a permanent that must never arrive; `replace_token_creation` rewrites what is created but, as its docstring notes, deliberately handles the no-object-yet case only for tokens. Carrying the line as a `self_enters` triggered ability running `may` + `discard` + `sacrifice` is exactly the approximation the rules forbid: the artifact would really enter, other enters triggers would see it, and it would reach the graveyard from the battlefield rather than never having been there.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mox Diamond** (rank 246) — `mox_diamond`
-  - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
-
-</details>
-
 ## escape
 
 Blocks **1** card.
@@ -282,20 +252,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## imprint
-
-Blocks **1** card.
-
-- **(engine)** a fourth dynamic-colour family for mana abilities, alongside 'reflecting' and 'in_commander_identity' and 'chosen_color_of': an add_mana whose producible colours are the printed colours of the cards a selector matches -- here {"zone": "exile", "exiled_with": "self"} -- narrowed at activation time in costs.mana_options_of so the solver plans against the real colours, and empty (the ability makes nothing) while nothing is imprinted
-  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana or one choose_mode of add_mana, and each of the three existing narrowings asks the wrong question. 'reflecting' resolves a pool and asks each object's own mana abilities what it could produce, so an imprinted Lightning Bolt -- a card with no mana abilities at all -- would offer nothing rather than {R}; 'in_commander_identity' asks the command zone; 'chosen_color_of: self' reads a colour the permanent chose, and Chrome Mox names no colour, it reads the colours off another card. The colours of an exiled card are not a value the mana language can reach at all: value_keys has mana_value_of and colors_of_mana_spent but no colours-of-an-object leaf, and an op that could compute one (choose_color) is forbidden inside a mana ability. Leaving the packet's five-colour choose_mode in place would be a Mox Opal that taps for any colour with nothing imprinted -- the unconditional any-colour approximation the reflecting capability exists to refuse.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chrome Mox** (rank 146) — `chrome_mox`
-  - {T}: Add one mana of any of the exiled card's colors.
 
 </details>
 
@@ -356,6 +312,22 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
+
+</details>
+
+## omen
+
+Blocks **1** card.
+
+- **(cost)** the Omen half of a card as a castable second face: an alternative cast from hand at the Omen's own cost and type line, whose card is shuffled into its owner's library instead of going to the graveyard as it resolves. The existing `second_face` / `second_face_zone` machinery is the right chassis -- this is a 'play one face or the other' card, not a transforming one -- and what is missing beside it is the shuffle-self rider, which no `card_level_rider_keys` entry provides (Aftermath exiles, Adventure exiles-then-recasts, and this returns to the library).
+  <br>Why the existing vocabulary won't do: `second_face` covers split, Adventure and Aftermath halves and is exactly the right shape, but every existing user of it leaves the card in the graveyard or in exile; there is no rider that shuffles the source into its owner's library on resolution. Writing the Omen without it makes a strictly better card -- a repeatable bounce spell that also leaves a 6/7 flier available later is not the printed card.
+- **(engine)** scripts/build_card_index.py must expose the half at all. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` (so the two halves are never joined into `oracle_text`) and `_TWO_FACED_LAYOUTS` (so the `back_*` columns stay empty). The packet therefore shows `back_face: {}` and a front-only `oracle_text`, and `--collect` feeds the residual gate that same front-only text.
+  <br>Why the existing vocabulary won't do: This is the part that makes the gap invisible rather than merely unbuilt. Every one of the six gates can pass on a card whose printed second half the pipeline cannot see, so the card is reported `native` with no notes while half its printing does nothing. Until the index carries the half, no gate can refuse an incomplete answer for it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marang River Regent // Coil and Catch** (rank 3355) — `marang_river_regent_coil_and_catch_omen`
+  - Coil and Catch -- Instant - Omen, {3}{U}: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)
 
 </details>
 

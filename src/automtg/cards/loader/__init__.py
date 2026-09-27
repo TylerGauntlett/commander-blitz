@@ -565,6 +565,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # For the one computed count a spell may carry: "each of X targets"
         # needs an {X} to be sized by.
         mana_cost=model.mana_cost,
+        # `count_if_kicked` names a choice made at 601.2b, so there has to be one.
+        has_kicker=model.kicker is not None or model.multikicker is not None,
     )
     targets = tuple(spec for spec in all_targets if spec.mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
@@ -800,7 +802,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # `buyback` reads it too, and not through an effect: the rider in
     # `_place_after_resolution` is what the extra mana buys, so a buyback card
     # has no `kicked` clause anywhere in its effects and is not half a kicker.
-    reads_kicked = _mentions_kicked(model) or model.buyback
+    # `count_if_kicked` is the third way to read the choice, and it reads it
+    # without an `if` anywhere in the effects: The Eagles Are Coming!'s whole
+    # kicked half is *how many targets it takes*. Counted here for `buyback`'s
+    # reason -- the rider is what the extra mana buys -- or the card would be
+    # refused as half a kicker while being the printed card.
+    targets_read_kicked = any(t.count_if_kicked is not None for t in model.targets)
+    reads_kicked = _mentions_kicked(model) or model.buyback or targets_read_kicked
     if _mentions_kicked(model) and kicker is None:
         raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")
     if kicker is not None and not reads_kicked:
@@ -1511,6 +1519,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
+        tucks_itself=model.tucks_itself,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
@@ -2568,11 +2577,26 @@ def _validate_static_subtypes(model: AbilityModel, where: str) -> None:
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
-    if model.effect == "prevent_damage" and model.amount is None:
-        # Absorb 0 prevents nothing. A static that reads as damage prevention
-        # and prevents none of it is the failure this whole pass exists to
-        # refuse -- it would load, appear in the card's text, and never fire.
-        raise DslError(f"{where}: 'prevent_damage' needs an 'amount' -- absorb N")
+    if model.effect == "prevent_damage":
+        # Exactly one of the two, because absorb N and a total shield are
+        # different rules rather than two sizes of one. Absorb 0 prevents
+        # nothing and would load, print the line and never fire; a total shield
+        # beside a number is two answers to one question, and nothing would say
+        # which won.
+        if model.prevent_all and model.amount is not None:
+            raise DslError(
+                f"{where}: 'prevent_damage' takes 'prevent_all' or an 'amount', not "
+                f"both -- absorb N is a per-source cap (702.63a) and a total shield "
+                f"is not a larger one"
+            )
+        if not model.prevent_all and model.amount is None:
+            raise DslError(
+                f"{where}: 'prevent_damage' needs an 'amount' -- absorb N -- or "
+                f"'prevent_all' for 'prevent all damage'"
+            )
+    if model.prevent_all and model.effect != "prevent_damage":
+        # A flag nothing reads is a printed line that does nothing.
+        raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")
     if model.effect == "crew_power_bonus" and model.amount is None:
         # "As though its power were 0 greater" is not a printed sentence, and a
         # bonus of nothing would load, print the Pilot's line, and crew exactly
@@ -3248,6 +3272,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"would cast; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "cant_activate_abilities":
+            # The inverse guard to its twin directly above, and it points the
+            # other way on purpose. Every printed card in this family names the
+            # permanent types it reaches -- Grand Abolisher and Myrel both say
+            # "of artifacts, creatures, or enchantments" -- so a filterless
+            # version is not the printed card but a strictly stronger lock that
+            # would also stop an opponent cracking a fetchland or activating a
+            # planeswalker. Required rather than defaulted, because there is no
+            # honest default: the types are the clause.
+            if model.affects is None:
+                raise DslError(
+                    f"{where}: cant_activate_abilities needs 'affects' naming the "
+                    f"permanent types it reaches -- every printed card in this "
+                    f"family says 'of artifacts, creatures, or enchantments', and "
+                    f"without the filter it would stop lands and planeswalkers too"
+                )
+            if model.amount is not None:
+                # A prohibition has no size. A number here would read as a
+                # limit ("can't activate more than N"), which is a different
+                # card and one nothing would enforce.
+                raise DslError(
+                    f"{where}: cant_activate_abilities is a prohibition, not a "
+                    f"limit; it takes 'affects_player', 'affects' and an optional "
+                    f"'condition', and no 'amount'"
+                )
         if model.effect == "cast_as_though_flash" and (
             model.affects is not None or model.amount is not None
         ):
@@ -3287,6 +3336,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the usual "which permanents this static describes". Inquisitor's
         # Flail prints one line with each.
         "replace_damage",
+        # Rest in Peace names nothing at all -- "if **a card or token** would be
+        # put into **a graveyard** from **anywhere**" -- so its filter is
+        # genuinely optional and is the exception rather than the rule in this
+        # family: Leyline of the Void narrows by player and Planar Void by card
+        # type, and both write `affects_player` or `affects` to say so.
+        "replace_graveyard",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
@@ -3406,6 +3461,95 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
+
+    if model.effect == "replace_graveyard":
+        # Whose graveyards are replaced is the printed clause and it differs
+        # across the family: Rest in Peace says "a card or token" with no player
+        # at all (so `"any"`), Leyline of the Void says "your opponents'". Made
+        # required rather than defaulted for `enters_tapped`'s reason -- there is
+        # no honest default when printed cards disagree, and a silent `"any"`
+        # would turn Leyline into Rest in Peace.
+        #
+        # Deliberately *not* added to `PLAYER_WIDE_STATIC_EFFECTS` despite taking
+        # the key: that set is subtracted from `GRANTABLE_STATIC_EFFECTS` because
+        # its readers walk printed faces through `_active_player_statics`, and
+        # this one reads `_battlefield_statics`, which sees a granted ability. So
+        # a granted `replace_graveyard` would work, and marking it ungrantable
+        # would be a refusal with no reason behind it.
+        if model.affects_player is None:
+            raise DslError(
+                f"{where}: replace_graveyard needs 'affects_player' -- 'any' for "
+                f"Rest in Peace, 'opponent' for Leyline of the Void. There is no "
+                f"honest default when the printed cards disagree"
+            )
+        destination = str(model.destination or "exile")
+        if destination not in ("exile", "library", "hand"):
+            raise DslError(
+                f"{where}: replace_graveyard destination {destination!r} is not a "
+                f"zone a printed card in this family redirects to"
+            )
+
+    if model.effect == "untap_limit":
+        if model.amount is None:
+            # A cap with no number is not a cap. Absent, `_static_value` reads it
+            # as 0 and the card becomes "can't untap **any** lands" -- Rising
+            # Waters rather than Winter Orb, and strictly harsher than anything
+            # this effect is meant to express.
+            raise DslError(
+                f"{where}: untap_limit needs an 'amount' -- the most that may untap. "
+                f"Without it the cap is zero, which is a different and harsher card"
+            )
+        if model.affects is None:
+            # Which permanents are capped is the printed clause: Winter Orb says
+            # lands. Filterless it would cap every permanent the player controls,
+            # and the filter language defaults to the source's own side anyway.
+            raise DslError(
+                f"{where}: untap_limit needs 'affects' naming which permanents are "
+                f"capped -- Winter Orb says lands, and a filterless cap holds down "
+                f"the whole board"
+            )
+
+    if model.effect == "enters_tapped":
+        if model.affects is None:
+            # Whose permanents arrive tapped is the printed clause, and the
+            # filter defaults to `controller: "you"` -- so an absent one would
+            # tap the card's own side, which is what `self_enters_tapped` was
+            # already doing wrongly on ten cards in the pool. "Permanents enter
+            # tapped" (Orb of Dreams) is written with an explicit
+            # `controller: "any"`, so the symmetric case is a statement rather
+            # than an omission.
+            raise DslError(
+                f"{where}: enters_tapped needs 'affects' naming whose permanents "
+                f"arrive tapped -- the filter defaults to your own side, and "
+                f"'permanents enter tapped' is controller 'any' said out loud"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: enters_tapped is a fact about an arrival, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
+            )
+
+    if model.effect == "lose_keyword":
+        # Named keywords only. An empty list would subtract nothing and load
+        # clean, printing "can't have or gain first strike" over an inert
+        # static -- and "lose *all* keywords" is a different sentence that no
+        # card in this cycle prints, so it is not the honest default.
+        if not model.keywords:
+            raise DslError(
+                f"{where}: lose_keyword needs the keywords it removes -- an empty "
+                f"list is an inert static wearing a printed prohibition"
+            )
+        if model.affects is None:
+            # Whose creatures lose it is the printed clause: the Archetype cycle
+            # says "creatures your opponents control", and the filter defaults
+            # `controller: "you"`, so an absent one would strip the keyword from
+            # the wrong side of the table -- a card that reads as a hoser and
+            # hoses its own controller.
+            raise DslError(
+                f"{where}: lose_keyword needs 'affects' naming whose permanents "
+                f"lose the keyword -- the filter defaults to your own, which is "
+                f"the opposite of every printed card in this cycle"
+            )
 
     if model.effect == "set_colors":
         # `[]` is colourless and is the point of the effect, so the check is for
@@ -3541,6 +3685,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         value = getattr(model, field_name)
         if value is not None:
             static[field_name] = value
+    if model.prevent_all:
+        static["prevent_all"] = True
+    if model.destination is not None:
+        static["destination"] = model.destination
+    if model.affects_token is not None:
+        static["affects_token"] = model.affects_token
     if model.keywords:
         static["keywords"] = list(model.keywords)
     if model.subtypes:

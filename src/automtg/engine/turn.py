@@ -22,13 +22,16 @@ from .effects.context import EffectContext, ask_objects
 from .enums import DecisionKind, Keyword, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
+from .player_statics import untap_caps
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
     clear_cast_locks,
     clear_damage_shields,
     clear_goad,
+    clear_life_floors,
     clear_life_locks,
+    clear_outcome_locks,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -77,7 +80,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int]]:
     step = state.step
 
     if step is Step.UNTAP:
-        _untap_step(state)
+        yield from _untap_step(state)
     elif step is Step.UPKEEP:
         # Before the upkeep triggers: removing the last time counter casts the
         # card, and a spell cast this upkeep should be on the stack under
@@ -307,7 +310,7 @@ def _monarch_draw(state: GameState) -> Generator[Any, list[int]]:
     yield from replacements.draw(state, pid, 1)
 
 
-def _untap_step(state: GameState) -> None:
+def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     player = state.players[state.active_idx]
     player.lands_played = 0
     player.extra_land_drops = 0
@@ -366,7 +369,35 @@ def _untap_step(state: GameState) -> None:
     # rather than in a card's effect list.
     _phase(state, player.pid)
     _day_night(state, player.pid)
-    untap_all(state, player.pid)
+    # Winter Orb: "players can't untap more than one land during their untap
+    # steps." The untap step is a turn-based action that asks nobody anything --
+    # 502.2 untaps, it does not choose -- so this is the first question it has
+    # ever put to a player, and it is put here rather than inside `untap_all`
+    # because that function is not a generator and every other caller of it
+    # wants no decision at all.
+    #
+    # Which permanents untap is the **untapping player's** choice, which is the
+    # printed wording and also the only reading that is not a different card: an
+    # engine that picked for them would decide whether Winter Orb locks out the
+    # Sol Ring or the Island.
+    capped_out: set[int] = set()
+    for maximum, candidates in untap_caps(state, player.pid):
+        ctx = EffectContext(state=state, controller=player.pid, source_name="Untap step")
+        keep = yield from ask_objects(
+            ctx,
+            f"Untap up to {maximum}",
+            candidates,
+            min(maximum, len(candidates)),
+            min(maximum, len(candidates)),
+            player.pid,
+            "untap",
+        )
+        # Every candidate this static named and the player did not pick. Unioned
+        # across statics rather than replaced, so two caps both bite: a board
+        # with Winter Orb and a second land-capper leaves the intersection of
+        # what each allowed, which is what "can't" means twice over.
+        capped_out |= set(candidates) - set(keep)
+    untap_all(state, player.pid, capped_out=capped_out)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.
     for oid in untap_also(state, player.pid):
@@ -657,10 +688,19 @@ def _next_blocker_decision(state: GameState) -> None:
         if not state.is_alive(pid):
             combat.pending_blockers.pop(0)
             continue
+        # Odric, Master Tactician: "you choose which creatures block this combat
+        # and how those creatures block." The seat asked moves; the seat the
+        # declaration is *about* stays, which is what keeps `legal_blocks` and
+        # `blocks_valid` reading the defender's own creatures and requirements.
+        chooser = combat.blocker_chooser
+        taken_over = chooser is not None and chooser != pid and state.is_alive(chooser)
         state.pending_decision = PendingDecision(
             kind=DecisionKind.DECLARE_BLOCKERS,
-            player=pid,
-            prompt="Declare blockers",
+            player=chooser if taken_over else pid,
+            on_behalf_of=pid if taken_over else None,
+            prompt=(
+                f"Declare blockers for player {pid}" if taken_over else "Declare blockers"
+            ),
         )
         return
     combat_mod.finish_blockers(state)
@@ -693,6 +733,12 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
     clear_life_locks(state, "this_turn")
+    # Angel's Grace stops working here, and this is also the moment a player it
+    # held in the game at zero life actually loses: `sba._player_losses` sweeps
+    # again and finds the lock gone. 104.3b's "this turn" must not survive into
+    # the next one.
+    clear_outcome_locks(state, "this_turn")
+    clear_life_floors(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on
     # that word would be the one exception among them.

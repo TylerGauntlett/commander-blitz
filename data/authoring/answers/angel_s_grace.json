@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "angel_s_grace",
+    "name": "Angel's Grace",
+    "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nYou can't lose the game this turn and your opponents can't win the game this turn. Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+    "mana_cost": "{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "split_second": true,
+    "spell_effects": [
+      {
+        "op": "cant_lose_the_game",
+        "cant_lose": "you",
+        "cant_win": "each_opponent",
+        "duration": "this_turn"
+      },
+      {
+        "op": "damage_life_floor",
+        "player": "you",
+        "floor": 1,
+        "duration": "this_turn"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

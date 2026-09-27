@@ -1028,6 +1028,50 @@ def untap_also(state: GameState, active_pid: int) -> list[int]:
     return out
 
 
+def untap_caps(state: GameState, active_pid: int) -> list[tuple[int, list[int]]]:
+    """How many of which permanents ``active_pid`` may untap -- `untap_limit`.
+
+    Winter Orb: "As long as this artifact is untapped, players can't untap more
+    than one land during their untap steps."
+
+    The distinction from :func:`untap_held` next door is a **count**, and it is
+    the whole reason this is a separate static. `skip_untap_step` marks each
+    matching permanent and `untap_all` skips every one of them: an
+    all-or-nothing hold with no number and nobody choosing. Written with it,
+    Winter Orb would stop *all* of a player's lands untapping -- which is
+    Rising Waters, a strictly harsher card, and exactly the approximation the
+    gap record refused.
+
+    Returns one ``(maximum, candidates)`` pair per applicable static, where the
+    candidates are the tapped permanents this player controls that the static's
+    filter describes. The *caller* asks which of them untap, because that choice
+    belongs to the untapping player (Winter Orb's own wording) and
+    `primitives.untap_all` is not a generator -- see `turn._untap_step`.
+
+    ``affects_player`` is read the ordinary way, so "players can't untap" is
+    `"any"` and a one-sided version would be `"opponent"`. The condition on the
+    static -- Winter Orb's "as long as this artifact is untapped", which is how
+    the card is beaten by tapping the Orb -- is honoured by
+    `_active_player_statics` like any other, so nothing extra is needed for it.
+    """
+    caps: list[tuple[int, list[int]]] = []
+    for source_obj, static in _active_player_statics(state, "untap_limit"):
+        if not _reaches_player(source_obj, static, active_pid):
+            continue
+        maximum = max(0, _static_value(state, static.get("amount"), source_obj))
+        candidates = [
+            oid
+            for oid in state.battlefield
+            if (obj := state.objects.get(oid)) is not None
+            and obj.controller == active_pid
+            and obj.tapped
+            and _matches(state, obj, source_obj, static.get("affects"))
+        ]
+        if candidates:
+            caps.append((maximum, candidates))
+    return caps
+
+
 def untap_held(state: GameState, active_pid: int) -> set[int]:
     """Permanents a static stops from untapping (`skip_untap_step`).
 
@@ -1114,6 +1158,49 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     lock lifts the instant the source leaves or the turn passes.
     """
     return _player_static(state, pid, "cant_cast_spells")
+
+
+def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
+    """ "…or activate abilities of artifacts, creatures, or enchantments."
+
+    Grand Abolisher's second half, and Myrel, Shield of Argive's first line. The
+    twin of :func:`player_cant_cast_spells` directly above, which stops the
+    *casting* half and says in its own docstring that it deliberately does not
+    stop this one.
+
+    It takes the **object** as well as the player, which is the whole difference
+    between the two. Casting is a thing a player does; activating is a thing a
+    player does *to a permanent*, and every printed card in this family names
+    which permanents -- so the filter is required vocabulary rather than a
+    refusable extra, and this predicate cannot be answered from the seat alone.
+
+    Read in two places, and the second is not optional. `legality._activate_actions`
+    withholds the actions, and `costs._sources_of` withholds the **mana** ones:
+    605.1a makes a mana ability an activated ability, the printed line excepts
+    nothing, and a locked permanent that still taps for mana makes the lock worth
+    nothing against the only decks that mind it. That is the same argument
+    `ObjectState.abilities_locked` already makes for `lock_abilities`, which is
+    why both sites check this beside that flag rather than instead of it.
+
+    The filter's `controller` defaults to the source's, as everywhere else in
+    this language, so a card means "permanents your opponents control" by writing
+    `controller: "opponent"` beside its types. That is exact rather than
+    approximate for this family: a player may only activate abilities of
+    permanents they control, so the two readings name the same activations.
+
+    `_matches` gates on the battlefield, which is also the printed reading --
+    these cards stop abilities of artifact, creature and enchantment
+    *permanents*, and leave an opponent free to cycle a card from hand or
+    activate one from a graveyard.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    return any(
+        _reaches_player(source_obj, static, pid)
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _active_player_statics(state, "cant_activate_abilities")
+    )
 
 
 def player_casts_as_though_flash(state: GameState, pid: int) -> bool:

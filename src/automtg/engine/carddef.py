@@ -71,6 +71,25 @@ class TargetSpec:
     #: last, because `filter_legal` slices the stored refs spec by spec and a
     #: variable-size spec in the middle would make the split ambiguous.
     count: int | str | Mapping[str, Any] = 1
+    #: The ``count`` this spec takes instead **when the spell was kicked**.
+    #:
+    #: "Choose target creature you own. **If this spell was kicked, instead
+    #: choose any number of target creatures you own.**" -- The Eagles Are
+    #: Coming!. A second count rather than a value expression, because the two
+    #: sizes are not two numbers: unkicked is exactly one and kicked is ``"any"``,
+    #: which no arithmetic yields.
+    #:
+    #: Legal *because of the rules order*, which the note on
+    #: `targeting.resolve_count` gets half right and half wrong. That note says a
+    #: spell's own targets are fixed "before it has been paid for", and payment
+    #: (601.2h) is indeed later -- but kicker is **announced** at 601.2b, one step
+    #: *before* targets are declared at 601.2c. So the choice is known when the
+    #: targets are chosen, which is exactly why this printing exists.
+    #:
+    #: Read by `casting._kicked_targets`, which hands the kicked cast line its own
+    #: enumeration. Nothing outside that line ever sees it, so an unkicked cast is
+    #: byte-for-byte the card it was before.
+    count_if_kicked: int | str | Mapping[str, Any] | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
@@ -1116,6 +1135,11 @@ class CardDef:
     #: resolving spell goes to, and like the five beside it, it only ever
     #: replaces the *graveyard*.
     exiles_itself: bool = False
+    #: Approach of the Second Sun's "seventh from the top". The eighth rider
+    #: on the resolution slot, and the only one whose destination is a library
+    #: and whose value is a depth rather than a flag. The printed ordinal,
+    #: counting from 1.
+    tucks_itself: int | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put
     #: on the stack with no targets at all, and the card branches on

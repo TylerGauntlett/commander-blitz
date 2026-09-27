@@ -1,0 +1,78 @@
+{
+  "_comment": "Cards that exist only for the graveyard-replacement test (tests/unit/test_replace_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rip` is Rest in Peace's second line -- every card and token, every graveyard, from anywhere. `t_leyline_like` narrows it to one player's cards (Leyline of the Void), and `t_planar_void_like` narrows it by card type instead, so the two filters can be measured apart. `t_library_void` redirects to a library rather than exile, which is the Kozilek/Ulamog shape and the reason `destination` is a field.",
+  "cards": [
+    {
+      "id": "t_rip",
+      "name": "Test Rest In Peace",
+      "oracle_text": "If a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a card or token would be put into a graveyard from anywhere, exile it instead.",
+          "effect": "replace_graveyard",
+          "affects_player": "any",
+          "destination": "exile"
+        }
+      ]
+    },
+    {
+      "id": "t_leyline_like",
+      "name": "Test Leyline Void",
+      "oracle_text": "If a card would be put into an opponent's graveyard from anywhere, exile it instead.",
+      "mana_cost": "{2}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a card would be put into an opponent's graveyard from anywhere, exile it instead.",
+          "effect": "replace_graveyard",
+          "affects_player": "opponent",
+          "destination": "exile"
+        }
+      ]
+    },
+    {
+      "id": "t_planar_void_like",
+      "name": "Test Planar Void",
+      "oracle_text": "If a creature card would be put into a graveyard from anywhere, exile it instead.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature card would be put into a graveyard from anywhere, exile it instead.",
+          "effect": "replace_graveyard",
+          "affects_player": "any",
+          "affects": { "types": ["Creature"] },
+          "destination": "exile"
+        }
+      ]
+    },
+    {
+      "id": "t_library_void",
+      "name": "Test Library Void",
+      "oracle_text": "If a card would be put into a graveyard from anywhere, put it into its owner's library instead.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a card would be put into a graveyard from anywhere, put it into its owner's library instead.",
+          "effect": "replace_graveyard",
+          "affects_player": "any",
+          "destination": "library"
+        }
+      ]
+    }
+  ]
+}

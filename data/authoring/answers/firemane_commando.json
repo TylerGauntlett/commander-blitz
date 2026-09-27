@@ -1,0 +1,106 @@
+{
+  "card": {
+    "id": "firemane_commando",
+    "name": "Firemane Commando",
+    "oracle_text": "Flying\nWhenever you attack with two or more creatures, draw a card.\nWhenever another player attacks with two or more creatures, they draw a card if none of those creatures attacked you.",
+    "mana_cost": "{3}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Angel",
+      "Soldier"
+    ],
+    "power": 4,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you attack with two or more creatures, draw a card.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "binding": "attackers"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            },
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever another player attacks with two or more creatures, they draw a card if none of those creatures attacked you.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "opponent",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "binding": "attackers"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "not": {
+                "exists": {
+                  "binding": "attackers",
+                  "attacking_player": "you"
+                }
+              }
+            },
+            "then": [
+              {
+                "op": "draw",
+                "amount": {
+                  "const": 1
+                },
+                "player": {
+                  "binding": "event_player"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "preeminent_captain",
+    "name": "Preeminent Captain",
+    "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhenever this creature attacks, you may put a Soldier creature card from your hand onto the battlefield tapped and attacking.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Kithkin", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["first_strike"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, you may put a Soldier creature card from your hand onto the battlefield tapped and attacking.",
+        "trigger": {"event": "attacks", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Put a Soldier creature card from your hand onto the battlefield tapped and attacking?",
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": ["Creature"],
+                  "subtypes": ["Soldier"],
+                  "count": 1,
+                  "chooser": "controller"
+                },
+                "tapped": true,
+                "attacking": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

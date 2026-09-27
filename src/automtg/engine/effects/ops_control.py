@@ -150,6 +150,15 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     for ten cards off a one-life gain. What the player can pay is the rule
     118.3 makes, and without it a prompt offers an X the payment then fails.
 
+    **A card may print no ceiling**, and then 118.3 is the only bound there is:
+    Decree of Justice's "you may pay {X}. If you do, create X 1/1 white Soldier
+    creature tokens" names no maximum, and inventing one would be writing a rule
+    the card does not have -- a number that then rides into `max_affordable_x`
+    as the probe `cap` and silently becomes the card's real ceiling. With `max`
+    absent the affordability probe runs under its own default cap instead, which
+    is the engine's guard against a pathological board rather than anything the
+    card claims.
+
     Read when the question is asked, after the yes, because mana abilities
     activated in between are exactly what change the second number. A ceiling
     of 0 asks nothing (`ask_x`'s own short-circuit) and charges {0}.
@@ -157,17 +166,20 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     from ..costs import mana_sources
     from ..mana import max_affordable_x
 
-    ceiling = max(0, evaluate_value(ctx, x_spec.get("max")))
-    affordable = max_affordable_x(
-        cost.mana,
-        ctx.state.players[chooser].mana_pool.spendable(),
-        mana_sources(ctx.state, chooser),
-        cap=ceiling,
-    )
+    printed = x_spec.get("max")
+    pool = ctx.state.players[chooser].mana_pool.spendable()
+    sources = mana_sources(ctx.state, chooser)
+    if printed is None:
+        ceiling = None
+        affordable = max_affordable_x(cost.mana, pool, sources)
+    else:
+        ceiling = max(0, evaluate_value(ctx, printed))
+        affordable = max_affordable_x(cost.mana, pool, sources, cap=ceiling)
     prompt = str(x_spec.get("prompt") or f"Choose X for {ctx.source_name or 'the payment'}")
+    offered = affordable if ceiling is None else min(ceiling, affordable)
     return (
         yield from ask_x(
-            ctx, prompt, max(0, min(ceiling, affordable)), chooser, per_point=cost.mana.x_count
+            ctx, prompt, max(0, offered), chooser, per_point=cost.mana.x_count
         )
     )
 

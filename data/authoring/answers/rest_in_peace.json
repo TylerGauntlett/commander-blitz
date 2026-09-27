@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "rest_in_peace",
+    "name": "Rest in Peace",
+    "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, exile all graveyards.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "exile",
+            "objects": {
+              "zone": "graveyard",
+              "controller": "any",
+              "count": "all"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "If a card or token would be put into a graveyard from anywhere, exile it instead.",
+        "effect": "replace_graveyard",
+        "affects_player": "any",
+        "destination": "exile"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 0
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    }
+  }
+}

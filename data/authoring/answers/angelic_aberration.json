@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "angelic_aberration",
+    "name": "Angelic Aberration",
+    "oracle_text": "Devoid (This card has no color.)\nFlying, vigilance\nWhen this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.",
+    "mana_cost": "{5}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Eldrazi", "Angel"],
+    "power": 4,
+    "toughness": 4,
+    "colors": [],
+    "color_identity": ["W"],
+    "keywords": ["flying", "vigilance"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, sacrifice any number of creatures each with base power or toughness 1 or less. Create that many 4/4 colorless Eldrazi Angel creature tokens with flying and vigilance.",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {
+            "op": "sacrifice",
+            "as": "aberrant",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": "any",
+              "any_of": [
+                {"base_power": {"op": "<=", "value": {"const": 1}}},
+                {"base_toughness": {"op": "<=", "value": {"const": 1}}}
+              ]
+            }
+          },
+          {
+            "op": "create_token",
+            "token": "eldrazi_angel_4_4_c_flying_vigilance",
+            "amount": {"count": {"binding": "aberrant"}}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "graveyard_size": {"0": 2},
+    "granted": {"keywords": ["flying", "vigilance"], "count": 1}
+  }
+}

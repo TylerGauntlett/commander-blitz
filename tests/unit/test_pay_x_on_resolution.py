@@ -19,6 +19,19 @@ decision a spell's X already uses) offers 0 up to the **smaller** of the printed
 ceiling and what the player can pay, `pay` charges exactly that, and the paid X
 is bound for the "if you do" effects. Both halves of the ceiling are tested,
 because each alone is a card that looks right on an ordinary board.
+
+**The printed ceiling is optional**, because it is a rule the *card* makes and
+not every card makes one. Decree of Justice prints "you may pay {X}. If you do,
+create X 1/1 white Soldier creature tokens" with no maximum anywhere on it, and
+for that card 118.3 — what the player can actually pay — is the only bound there
+is. `x.max` was once required on the grounds that "pay any amount" was join
+forces; it is not, since `op_join_forces` asks every player for `{1}` at a time
+and binds the sum, where this is announced once by one player. Requiring it
+forced an invented number that was load-bearing rather than cosmetic:
+`_announce_x` hands `x.max` to `max_affordable_x` as the probe `cap`, so a
+made-up 20 silently *became* the ceiling. `TestAnUnboundedX` covers the relaxed
+form, and pins the printed-ceiling contrast on the same board so that relaxing
+the requirement did not relax the rule.
 """
 
 from __future__ import annotations
@@ -214,11 +227,26 @@ class TestTheLoaderRefuses:
         with pytest.raises(DslError, match="has none"):
             compile_with({"op": "may", "pay": {"mana": "{2}"}, "x": GOOD_X, "effects": DRAW_X})
 
-    def test_no_ceiling(self):
-        with pytest.raises(DslError, match="max"):
-            compile_with(
-                {"op": "may", "pay": {"mana": "{X}"}, "x": {"as": "paid_x"}, "effects": DRAW_X}
-            )
+    def test_no_ceiling_is_allowed_now(self):
+        """A printed ceiling is a rule the *card* makes, and not every card makes
+        one.
+
+        This used to be refused, on the grounds that "pay any amount" was join
+        forces. It is not: `op_join_forces` walks every player in turn order
+        asking `{1}` at a time and binds the sum, where an unbounded X here is
+        announced once by one player and no opponent may add to it. Decree of
+        Justice prints exactly that -- "you may pay {X}. If you do, create X 1/1
+        white Soldier creature tokens" -- with no maximum anywhere on it.
+
+        Refusing it forced an invented number, and the invented number was not
+        cosmetic: `_announce_x` passes `x.max` to `max_affordable_x` as the probe
+        `cap`, so a made-up 20 silently *becomes* the card's ceiling. With `max`
+        absent the only bound is 118.3, what the player can actually pay, which
+        is what the printed card says.
+        """
+        compile_with(
+            {"op": "may", "pay": {"mana": "{X}"}, "x": {"as": "paid_x"}, "effects": DRAW_X}
+        )
 
     def test_no_binding(self):
         with pytest.raises(DslError, match="as"):
@@ -257,3 +285,82 @@ class TestTheLoaderRefuses:
     def test_on_another_op(self):
         with pytest.raises(DslError, match="'x'"):
             compile_with({"op": "draw", "x": GOOD_X, "amount": 1})
+
+
+UNBOUNDED = "t_well_unbounded"  # the same trigger with no printed ceiling
+
+
+def unbounded_position(builder, *, spare_lands: int):
+    """`t_well_unbounded` in the Well's place: "you may pay {X}", no maximum."""
+    game = (
+        builder(players=2)
+        .battlefield(0, [UNBOUNDED, "plains", *["island"] * spare_lands])
+        .library(0, ["forest"] * 20)
+        .library(1, ["forest"] * 20)
+        .hand(0, [GAIN])
+        .step(Step.PRECOMBAT_MAIN)
+        .build(advance=False)
+    )
+    game._advance()
+    return game
+
+
+class TestAnUnboundedX:
+    """A card that prints no ceiling -- Decree of Justice's "you may pay {X}".
+
+    The printed maximum is a rule the *card* makes, and not every card makes
+    one. Requiring it forced an invented number, and the number was load-bearing
+    rather than cosmetic: `_announce_x` hands `x.max` to `max_affordable_x` as
+    the probe `cap`, so a made-up 20 silently becomes the card's real ceiling.
+    With `max` absent the only bound left is the one 118.3 makes.
+
+    This is not join forces, which `op_join_forces` implements by walking every
+    player in turn order asking `{1}` at a time and binding the sum. Here one
+    player announces once and no opponent may add to it — which is why the
+    decision below belongs to seat 0 alone.
+    """
+
+    def test_x_runs_up_to_what_the_player_can_pay(self, builder):
+        """Three life gained but *five* Islands open: X runs 0..5, where the
+        printed-ceiling Well would have stopped at 3."""
+        game = unbounded_position(builder, spare_lands=5)
+        gain_until_asked(game, DecisionKind.MAY)
+        answer_yes(game)
+        decision = game.pending()
+
+        assert decision.kind is DecisionKind.CHOOSE_X
+        assert decision.player == 0
+        assert [o.value for o in decision.options] == [0, 1, 2, 3, 4, 5]
+
+    def test_the_printed_ceiling_version_still_stops_at_three(self, builder):
+        """The contrast, on the same board. `max` is honoured where it exists,
+        so relaxing the requirement did not relax the rule."""
+        game = position(builder, spare_lands=5)
+        gain_until_asked(game, DecisionKind.MAY)
+        answer_yes(game)
+
+        assert [o.value for o in game.pending().options] == [0, 1, 2, 3]
+
+    def test_the_paid_x_is_still_bound_for_the_if_you_do(self, builder):
+        """The `as` half is still required, and still read: four paid, four
+        drawn."""
+        game = unbounded_position(builder, spare_lands=5)
+        hand = len(game.state.players[0].hand)
+        gain_until_asked(game, DecisionKind.MAY)
+        answer_yes(game)
+        choose_x(game, 4)
+        settle(game)
+
+        # -1 for the gain spell that left the hand, +4 drawn.
+        assert len(game.state.players[0].hand) == hand - 1 + 4
+
+    def test_nothing_open_still_asks_nothing(self, builder):
+        """The boundary: with no mana the only answer is 0, so `ask_x` short
+        circuits exactly as it does with a printed ceiling of 0."""
+        game = unbounded_position(builder, spare_lands=0)
+        hand = len(game.state.players[0].hand)
+        gain_until_asked(game, DecisionKind.MAY)
+        answer_yes(game)
+        settle(game)
+
+        assert len(game.state.players[0].hand) == hand - 1

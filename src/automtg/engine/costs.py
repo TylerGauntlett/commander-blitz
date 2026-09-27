@@ -324,6 +324,15 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     # this one helper because both entry points above go through it.
     if obj.abilities_locked:
         return []
+    # Grand Abolisher, Myrel. 605.1a: a mana ability *is* an activated ability,
+    # and the printed line excepts nothing -- so the board's standing
+    # prohibition is asked here for the same reason the object's own flag is,
+    # one line above. Without it a locked permanent would still tap for mana,
+    # which is most of what the lock is for.
+    from .player_statics import player_cant_activate
+
+    if player_cant_activate(state, obj.controller, oid):
+        return []
     card = state.card_of(obj)
     c = chars(state, oid)
     is_creature = "Creature" in c.types

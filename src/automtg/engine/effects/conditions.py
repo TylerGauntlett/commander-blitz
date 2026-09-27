@@ -61,6 +61,11 @@ CONDITION_KEYS = frozenset(
         "gift_promised",
         "evoked",
         "cast_from_graveyard",
+        #: Approach of the Second Sun's "if this spell was cast from your hand".
+        #: The sibling of the key above and not its negation: a spell cast from
+        #: exile, from a Citadel top or from the command zone was cast from
+        #: neither, and a copy was never cast at all (707.10).
+        "cast_from_hand",
         # Overload (702.96a): "change its text by replacing all instances of
         # 'target' with 'each'". There is no rewriting a printed sentence, and
         # the two halves really are two effects, so the card branches on this.
@@ -230,6 +235,28 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(target) if isinstance(target, int) else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
+    if "cast_from_hand" in cond:
+        # "**If this spell was cast from your hand** and you've cast another
+        # spell named Approach of the Second Sun this game, you win the game."
+        #
+        # The sibling of `cast_from_graveyard` directly above, reading the stamp
+        # `stack.push_spell` already writes beside it, and it exists because the
+        # negation of that one is not this one: a spell cast from exile (foretell,
+        # plot, adventure), from a Citadel top or from the command zone was cast
+        # from neither a graveyard nor a hand. Approach cares about hand
+        # specifically -- a copy of it, which was never cast from anywhere
+        # (707.10), must not win the game.
+        #
+        # `zone_is` cannot answer it for the same reason it cannot answer the
+        # graveyard half: it reports the source's *current* zone, which for any
+        # resolving sorcery is the stack.
+        who = cond.get("of")
+        target = ctx.bindings.get(str(who)) if who is not None else ctx.source_oid
+        if isinstance(target, list):
+            target = target[0] if target else None
+        obj = ctx.state.objects.get(target) if isinstance(target, int) else None
+        from_hand = obj is not None and obj.cast_from_hand
+        return from_hand == bool(cond["cast_from_hand"])
     if "cast_during" in cond:
         # Addendum. Asked of the ability's own source: while the spell resolves
         # that is the spell itself, and once it has become a permanent it is

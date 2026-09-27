@@ -1,0 +1,69 @@
+{
+  "card": {
+    "id": "court_street_denizen",
+    "name": "Court Street Denizen",
+    "oracle_text": "Whenever another white creature you control enters, tap target creature an opponent controls.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another white creature you control enters, tap target creature an opponent controls.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Creature"
+            ],
+            "colors": [
+              "W"
+            ],
+            "exclude_self": true
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "tap",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6
+  }
+}

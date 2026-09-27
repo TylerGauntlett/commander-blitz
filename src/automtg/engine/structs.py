@@ -523,6 +523,93 @@ class PlayerProtection:
 #: :data:`PLAYER_PROTECTION_DURATIONS` carries both: the printed sentence says
 #: "until your next turn", and a table the cleanup step cannot sweep on
 #: ``this_turn`` would be the one exception among the timed tables.
+#: The durations an `OutcomeLock` may carry.  "This turn" is the only one any
+#: printed card in this family uses -- Angel's Grace is an Instant and says it
+#: outright -- and the list exists so a typo in a card file fails at load time
+#: like every other piece of DSL vocabulary.
+OUTCOME_LOCK_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class OutcomeLock:
+    """"You can't lose the game this turn and your opponents can't win the game
+    this turn." -- Angel's Grace.  Rules 104.2a, 104.3b and 614.
+
+    ``sba._eliminate`` and ``sba.declare_win`` were the engine's only two writers
+    of a game result, and `sba.declare_win`'s own docstring listed this among the
+    things "deliberately not modelled, because no card in the pool needs it yet",
+    adding that it "is replacement-shaped and belongs beside the other continuous
+    prohibitions". Angel's Grace is the first card in the pool to need it.
+
+    A **timed table** rather than a static, for `LifeLock`'s three reasons, which
+    apply here unchanged: Angel's Grace is an Instant, so no permanent is left
+    behind to carry a static; the prohibition ends at a fixed moment rather than
+    when a source leaves; and the effect belongs to no object at all. Platinum
+    Angel and Abyssal Persecutor want the *continuous* form of the same
+    sentence, which is a static and is not built here -- see
+    `docs/rules-coverage.md`.
+
+    **Two fields, not one, because they are two sentences.** Angel's Grace prints
+    both halves and most cards print only one: Platinum Angel says "you can't
+    lose the game and your opponents can't win the game", but Abyssal Persecutor
+    says only "you can't win the game". Folding them together would make every
+    card in the family symmetric, which none of them is.
+
+    104.3b is why ``cant_lose`` is not the same as setting life to 1: a player
+    under it keeps playing at zero or negative life and loses the moment the lock
+    ends. That is the whole of what Angel's Grace buys -- a turn at 1 life or
+    less to find an answer -- and it is why this is a check inside
+    `_player_losses` rather than a rewrite of the life total.
+    """
+
+    #: The seat the prohibition is about.
+    player: int
+    #: "**You** can't lose the game this turn."
+    cant_lose: bool = False
+    #: "Your opponents can't **win** the game this turn." Recorded against each
+    #: named seat rather than as "everyone but the caster", so a one-sided
+    #: printing reads the same way a symmetric one does.
+    cant_win: bool = False
+    duration: str = "this_turn"
+    #: What installed it, for the log.
+    source: int | None = None
+
+
+#: The durations a `LifeFloor` may carry.
+LIFE_FLOOR_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class LifeFloor:
+    """"Until end of turn, damage that would reduce your life total to less than 1
+    reduces it to 1 instead." -- Angel's Grace.  Rule 614.
+
+    A **floor on the total**, not a prevention, and that distinction is the card.
+    `DamageShield` is a Fog: the damage never happens, so a player at 40 ends the
+    turn at 40. Angel's Grace lets the damage through and stops the total passing
+    1, which is why it is normally cast *to survive at 1 life* -- and why it pairs
+    with `OutcomeLock` on the same card, since surviving at 1 is useless if the
+    next point kills you.
+
+    Its own table rather than a field on `OutcomeLock`, because they are separate
+    sentences that separate cards print separately, and one timed table per
+    rules-relevant thing is the shape every other table here already has.
+
+    It floors **damage only**, which is the printed word. An ordinary `lose_life`
+    walks straight past it, so a Phyrexian cost or a Bitterblossom still takes
+    you below 1 under Angel's Grace -- which is correct, and is the reason this is
+    read in `damage_player` and nowhere else.
+    """
+
+    player: int
+    #: The total the damage may not take this player below. 1 on every printed
+    #: card, and a field rather than a constant because nothing about the rule
+    #: requires that number.
+    floor: int = 1
+    duration: str = "this_turn"
+    source: int | None = None
+
+
 LIFE_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
 
 
@@ -1335,6 +1422,16 @@ class CombatState:
     removed: set[int] = field(default_factory=set)
     #: which defending players still have to declare blocks, in APNAP order
     pending_blockers: list[int] = field(default_factory=list)
+    #: The seat declaring blocks **for** every defender this combat, when one
+    #: effect has taken that choice over: "you choose which creatures block this
+    #: combat and how those creatures block" (Odric, Master Tactician).
+    #:
+    #: On the combat rather than on a player, because the printed duration is
+    #: "this combat" -- it dies with `state.combat` and needs no separate clock,
+    #: and a second combat granted the same turn correctly starts free of it.
+    #: The defenders' creatures and every block-legality check are unchanged;
+    #: only who answers the DECLARE_BLOCKERS decision moves.
+    blocker_chooser: int | None = None
     attackers_declared: bool = False
     blockers_declared: bool = False
     first_strike_done: bool = False

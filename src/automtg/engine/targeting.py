@@ -90,6 +90,27 @@ def candidates(
             and _spell_matches(ctx, item, spec)
         ]
 
+    if spec.kind == "ability_on_stack":
+        # "Copy target activated or triggered ability you control" -- Peter
+        # Parker's Camera. The complement of the `spell` branch above, and it has
+        # to be its own kind rather than a looser `spell`: 113.7a makes an ability
+        # on the stack a different object from a spell, with no card behind it,
+        # and `item.is_spell` is exactly `kind == "spell"`.
+        #
+        # `_spell_matches` is deliberately **not** reused. Every clause it reads
+        # -- types, colours, mana value, "creature spell" -- is a characteristic
+        # of a card, and an ability has none; asking it would answer about the
+        # source permanent instead, quietly making "target activated ability" mean
+        # "target ability of a creature". Whose ability it is, is the one clause
+        # printed cards in this family actually carry, and `controller` answers it.
+        return [
+            TargetRef.stack(item.sid)
+            for item in state.stack
+            if not item.is_spell
+            and item.sid != exclude_sid
+            and _ability_matches(ctx, item, spec)
+        ]
+
     if spec.kind == "spell_or_permanent":
         # "Target spell or nonland permanent an opponent controls." One
         # instance of the word "target" whose legal choices live in two zones,
@@ -148,6 +169,40 @@ def candidates(
         for oid in pool
         if can_be_targeted(state, controller, oid, source_oid=source_oid)
     ]
+
+
+def _ability_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> bool:
+    """Does one **ability** on the stack satisfy its target spec's `selector`?
+
+    Deliberately narrow, and the narrowness is the point. `_spell_matches` below
+    reads types, colours, subtypes and mana value off a printed face; an ability
+    on the stack has no face (113.7a) and only a source, an index and its
+    bindings. Reusing that matcher would silently answer about the *source
+    permanent* instead, so "target activated ability you control" would come to
+    mean "target ability of a creature you control" the moment anybody wrote a
+    `types` clause -- the same class of silently-inert selector `_spell_matches`
+    was itself written to stop.
+
+    So exactly one clause is honoured, and it is the one every printed card in
+    this family carries: ``controller`` -- "an ability **you control**" (Peter
+    Parker's Camera, Lithoform Engine, Strionic Resonator). The loader refuses
+    every other key on such a spec, so a clause that cannot be answered here is a
+    load error rather than a restriction the card does not have.
+
+    **"Triggered ability" alone is deliberately not expressible**, and that is a
+    refusal rather than an omission. Strionic Resonator copies a *triggered*
+    ability only, where the Camera and the Engine take either -- but
+    `StackItem.kind` is ``"ability"`` for both, and nothing on the item records
+    which it was. Guessing from `bindings` would be wrong, since an activated
+    ability's cost writes bindings too (`costs.bind_paid_object`). A card needing
+    that distinction needs a field first, and is a gap record until it has one.
+    """
+    who = dict(spec.selector).get("controller")
+    if who == "you" and item.controller != ctx.controller:
+        return False
+    if who == "opponent" and item.controller == ctx.controller:
+        return False
+    return True
 
 
 def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> bool:
@@ -625,7 +680,17 @@ def still_legal(
         return state.is_alive(ref.id) and _player_allowed(ctx, ref.id, spec)
     if ref.kind == "stack":
         item = state.stack_item(ref.id)
-        if item is None or not item.is_spell:
+        if item is None:
+            return False
+        if spec.kind == "ability_on_stack":
+            # 608.2b re-checks every target as the copy resolves, and for an
+            # ability the whole of legality is that it is still an ability on the
+            # stack and still the right controller's. An ability that has already
+            # resolved is gone from `state.stack`, so `stack_item` returning None
+            # above is the fizzle -- which is the printed behaviour: a Camera
+            # activation whose target ability resolved first does nothing.
+            return not item.is_spell and _ability_matches(ctx, item, spec)
+        if not item.is_spell:
             return False
         # 608.2b re-checks every target as the spell resolves, and the selector
         # is half of what makes a target legal. Without this an Essence Scatter
@@ -716,6 +781,42 @@ def filter_legal(
         buckets[spec.id] = kept
     remains = any(bool(v) for v in buckets.values())
     return {k: tuple(v) for k, v in buckets.items()}, (remains or not had_targets)
+
+
+def kicked_targets(specs):
+    """The same target specs with their kicked counts in place, or ``None``.
+
+    "If this spell was kicked, **instead choose any number of** target creatures
+    you own" -- The Eagles Are Coming!. Legal at 601.2c because kicker is
+    announced one step earlier at 601.2b, so the choice is already made when the
+    targets are declared; payment (601.2h) is later and is not what this reads.
+
+    ``None`` when no spec carries a `count_if_kicked`, which is every card but the
+    handful printing that clause -- the caller then uses the specs it already had,
+    so an ordinary kicker card costs nothing and behaves exactly as before.
+
+    **Both the declaration and the resolution have to call this**, and that is the
+    whole reason it lives here rather than in `casting`. `casting._cast_actions`
+    enumerates the kicked line's targets from these specs, and
+    `stack._resolve_spell` splits the stored refs back into per-spec buckets with
+    `filter_legal`, which reads `TargetSpec.variable_size` -- false for the
+    printed `count: 1`. Substituted in only one of the two places, a kicked
+    Eagles stores two refs and then buckets one, so the card silently ships as
+    its small half. Bestow's own note in `_resolve_spell` makes the same point
+    for the same reason: the two ends must agree about what the specs are.
+
+    `dataclasses.replace` rather than mutation, because the specs hang off the
+    CardDef and are shared by every cast line and every future cast of every copy
+    of the card.
+    """
+    from dataclasses import replace
+
+    if not any(spec.count_if_kicked is not None for spec in specs):
+        return None
+    return tuple(
+        spec if spec.count_if_kicked is None else replace(spec, count=spec.count_if_kicked)
+        for spec in specs
+    )
 
 
 def describe_ref(state: GameState, ref: TargetRef) -> str:

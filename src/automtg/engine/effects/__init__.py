@@ -104,6 +104,14 @@ RECORDING_OPS = frozenset(
         #: arrived, not what was chosen: a commander redirected to the command
         #: zone was not put there. See `ops_cards.op_put_on_top`.
         "put_on_top",
+        #: "…for each creature returned to your hand **this way**" -- The Eagles
+        #: Are Coming!. Beside `exile` and `sacrifice`, whose bindings it copies
+        #: in both shape and accumulating semantics, and it matters here for a
+        #: reason the other two rarely meet: the sentence that counts the return
+        #: lives inside a `delay`, and a `{"target": …}` there is refused by name
+        #: because `_run_delayed` rebuilds its context with no targets. A binding
+        #: is carried forward where a target is not.
+        "return_to_hand",
         "reveal",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than

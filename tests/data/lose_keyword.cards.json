@@ -1,0 +1,103 @@
+{
+  "_comment": "Cards that exist only for the keyword-removal test (tests/unit/test_lose_keyword.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_archetype` is Archetype of Courage -- the grant half and the lose half, one card, the way it is printed. `t_archetype_lose_only` is the lose half alone, so the removal can be measured without its own grant also being on the board. `t_first_strike_anthem` is an opponent-side grant the prohibition has to beat, and `t_striker` is a creature with first strike printed on it.",
+  "cards": [
+    {
+      "id": "t_archetype",
+      "name": "Test Archetype",
+      "oracle_text": "Creatures you control have first strike.\nCreatures your opponents control lose first strike and can't have or gain first strike.",
+      "mana_cost": "{1}{W}{W}",
+      "types": ["Enchantment", "Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have first strike.",
+          "effect": "grant_keyword",
+          "keywords": ["first_strike"],
+          "affects": { "controller": "you", "types": ["Creature"] }
+        },
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+          "effect": "lose_keyword",
+          "keywords": ["first_strike"],
+          "affects": { "controller": "opponent", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_archetype_lose_only",
+      "name": "Test Archetype Lose Only",
+      "oracle_text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+      "mana_cost": "{1}{W}{W}",
+      "types": ["Enchantment", "Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+          "effect": "lose_keyword",
+          "keywords": ["first_strike"],
+          "affects": { "controller": "opponent", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_first_strike_anthem",
+      "name": "Test First Strike Anthem",
+      "oracle_text": "Creatures you control have first strike.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have first strike.",
+          "effect": "grant_keyword",
+          "keywords": ["first_strike"],
+          "affects": { "controller": "you", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_flying_anthem",
+      "name": "Test Flying Anthem",
+      "oracle_text": "Creatures you control have flying.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have flying.",
+          "effect": "grant_keyword",
+          "keywords": ["flying"],
+          "affects": { "controller": "you", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_striker",
+      "name": "Test Striker",
+      "oracle_text": "First strike",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Knight"],
+      "power": 2,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["first_strike"]
+    }
+  ]
+}

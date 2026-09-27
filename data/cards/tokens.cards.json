@@ -213,6 +213,30 @@
       ]
     },
     {
+      "id": "bird_soldier_4_4_w_flying",
+      "name": "Bird Soldier Token",
+      "oracle_text": "4/4 white Bird Soldier creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird",
+        "Soldier"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "blood_token",
       "name": "Blood",
       "oracle_text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
@@ -249,6 +273,26 @@
           ]
         }
       ]
+    },
+    {
+      "id": "cat_1_1_w",
+      "name": "Cat Token",
+      "oracle_text": "1/1 white Cat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
     },
     {
       "id": "cat_beast_2_2_w",
@@ -460,6 +504,27 @@
       "is_token": true,
       "keywords": [
         "flying"
+      ]
+    },
+    {
+      "id": "eldrazi_angel_4_4_c_flying_vigilance",
+      "name": "Eldrazi Angel Token",
+      "oracle_text": "4/4 colorless Eldrazi Angel creature token with flying and vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi",
+        "Angel"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying",
+        "vigilance"
       ]
     },
     {
@@ -1375,6 +1440,23 @@
       ]
     },
     {
+      "id": "soldier_1_1_c",
+      "name": "Soldier Token",
+      "oracle_text": "1/1 colorless Soldier artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "spirit_1_1_c",
       "name": "Spirit Token",
       "oracle_text": "1/1 colorless Spirit creature token.",
@@ -1388,6 +1470,26 @@
       "toughness": 1,
       "colors": [],
       "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "spirit_2_2_w",
+      "name": "Spirit Token",
+      "oracle_text": "2/2 white Spirit creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "is_token": true
     },
     {
