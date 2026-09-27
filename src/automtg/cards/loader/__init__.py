@@ -565,6 +565,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # For the one computed count a spell may carry: "each of X targets"
         # needs an {X} to be sized by.
         mana_cost=model.mana_cost,
+        # `count_if_kicked` names a choice made at 601.2b, so there has to be one.
+        has_kicker=model.kicker is not None or model.multikicker is not None,
     )
     targets = tuple(spec for spec in all_targets if spec.mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
@@ -800,7 +802,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # `buyback` reads it too, and not through an effect: the rider in
     # `_place_after_resolution` is what the extra mana buys, so a buyback card
     # has no `kicked` clause anywhere in its effects and is not half a kicker.
-    reads_kicked = _mentions_kicked(model) or model.buyback
+    # `count_if_kicked` is the third way to read the choice, and it reads it
+    # without an `if` anywhere in the effects: The Eagles Are Coming!'s whole
+    # kicked half is *how many targets it takes*. Counted here for `buyback`'s
+    # reason -- the rider is what the extra mana buys -- or the card would be
+    # refused as half a kicker while being the printed card.
+    targets_read_kicked = any(t.count_if_kicked is not None for t in model.targets)
+    reads_kicked = _mentions_kicked(model) or model.buyback or targets_read_kicked
     if _mentions_kicked(model) and kicker is None:
         raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")
     if kicker is not None and not reads_kicked:

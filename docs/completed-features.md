@@ -17482,3 +17482,73 @@ Worth recording because the codebase had warned about the second one in advance.
   cast gains 7 and does not win, two casts win; the tuck landing at index 6 and
   not in the graveyard, with a no-rider contrast; and the flag the gate reads.
   All fourteen fail without the change.
+
+## The Eagles Are Coming! — a target list sized by a cost, and a delay that counts what came back — 601.2b / 601.2c
+
+### Overview
+
+*"Kicker {2}{W}{W}. Choose target creature you own. **If this spell was kicked,
+instead choose any number of target creatures you own.** Return each chosen
+creature to your hand. At the beginning of the next upkeep, create a 4/4 white
+Bird Soldier creature token with flying **for each creature returned to your hand
+this way**."*
+
+Kicker was never the gap — `kicker` is a card-level cost and `{"kicked": true}` is
+a live condition. Two other things were.
+
+### The target count, and a rules order the engine had half right
+
+`targeting.resolve_count`'s docstring said a spell's own targets are fixed
+"before it has been paid for", and concluded there was nothing to read there. The
+first half is true and the conclusion is not: payment is 601.2h, but **kicker is
+announced at 601.2b, one step before targets are declared at 601.2c**. The choice
+is already made when the targets are chosen, which is exactly why this card can be
+printed at all.
+
+What was missing was plumbing. `_cast_variant` receives one tuple set, built from
+the printed counts, and is handed to the unkicked and kicked lines alike — so the
+kicked line now enumerates its own from `_kicked_targets`. `dataclasses.replace`
+rather than mutation, because the specs hang off the CardDef and are shared by
+every cast of every copy.
+
+A **second count** rather than a value expression, because the two sizes are not
+two numbers: unkicked is exactly one, kicked is `"any"`, and no arithmetic yields
+the second. `_kicked_targets` returns `None` when nothing carries the key, so
+every other kicker card reuses the shared enumeration and costs nothing.
+
+### The binding, which is what makes the delayed half sayable
+
+`return_to_hand` had no `as`, though `op_exile` and `op_sacrifice` both do. It
+matters here for a reason those two rarely meet: the sentence that counts the
+return lives inside a `delay`, and a `{"target": …}` there is **refused by name**
+because `_run_delayed` rebuilds its context with `targets={}`. `op_delay` *does*
+copy `ctx.bindings` forward, so a binding survives where a target cannot — and
+that refusal's own docstring already named `as` as the intended idiom.
+
+### Three guards that had to learn about this, and all three would have failed closed
+
+Worth recording, because each is a registry that a new key has to be taught:
+
+1. **`RECORDING_OPS`** — the explicit allowlist of ops that write bindings. An
+   `as` on an op outside it is refused, precisely so a binding nothing writes
+   cannot read back as 0. `return_to_hand` joins it.
+2. **The half-a-kicker guard** — "has a 'kicker' cost that no effect reads via
+   'kicked'" exists to catch a spell that charges more and does the same thing.
+   `count_if_kicked` is a *third* way to read the choice (beside an `if` and
+   `buyback`) and reads it without any `if` in the effects at all, so the guard
+   counted this card as half a kicker until taught.
+3. **`_op_options`** in the packet is **derived** by walking each op's source for
+   `spec.get(...)`, so the new `as` advertised itself with no list to update —
+   the contrast with `CARD_LEVEL_RIDER_KEYS`, which is curated and had to be
+   edited by hand for `tucks_itself` one commit earlier.
+
+### Tests
+
+- `tests/unit/test_the_eagles_are_coming.py` — the unkicked line taking exactly
+  one target and **the kicked line offering more, measured on the same board**,
+  which is the only way to show the switch rather than assert it; both lines
+  offered at once, since 601.2b is a choice; `_kicked_targets` returning `None`
+  for an ordinary card, so nothing else changed; the binding recording what was
+  returned, absent without the key, **accumulating** across two calls, and
+  written before the moves; and the loader refusing `count_if_kicked` with no
+  kicker. Five of the ten fail without the change.

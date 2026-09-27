@@ -718,6 +718,42 @@ def filter_legal(
     return {k: tuple(v) for k, v in buckets.items()}, (remains or not had_targets)
 
 
+def kicked_targets(specs):
+    """The same target specs with their kicked counts in place, or ``None``.
+
+    "If this spell was kicked, **instead choose any number of** target creatures
+    you own" -- The Eagles Are Coming!. Legal at 601.2c because kicker is
+    announced one step earlier at 601.2b, so the choice is already made when the
+    targets are declared; payment (601.2h) is later and is not what this reads.
+
+    ``None`` when no spec carries a `count_if_kicked`, which is every card but the
+    handful printing that clause -- the caller then uses the specs it already had,
+    so an ordinary kicker card costs nothing and behaves exactly as before.
+
+    **Both the declaration and the resolution have to call this**, and that is the
+    whole reason it lives here rather than in `casting`. `casting._cast_actions`
+    enumerates the kicked line's targets from these specs, and
+    `stack._resolve_spell` splits the stored refs back into per-spec buckets with
+    `filter_legal`, which reads `TargetSpec.variable_size` -- false for the
+    printed `count: 1`. Substituted in only one of the two places, a kicked
+    Eagles stores two refs and then buckets one, so the card silently ships as
+    its small half. Bestow's own note in `_resolve_spell` makes the same point
+    for the same reason: the two ends must agree about what the specs are.
+
+    `dataclasses.replace` rather than mutation, because the specs hang off the
+    CardDef and are shared by every cast line and every future cast of every copy
+    of the card.
+    """
+    from dataclasses import replace
+
+    if not any(spec.count_if_kicked is not None for spec in specs):
+        return None
+    return tuple(
+        spec if spec.count_if_kicked is None else replace(spec, count=spec.count_if_kicked)
+        for spec in specs
+    )
+
+
 def describe_ref(state: GameState, ref: TargetRef) -> str:
     """A player-facing name for one chosen target.
 

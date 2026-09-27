@@ -280452,12 +280452,12 @@
     },
     "The Eagles Are Coming!": {
       "edhrec_rank": 26603,
-      "gate": "template",
+      "gate": null,
       "name": "The Eagles Are Coming!",
-      "reason": "no template for: Kicker {2}{W}{W}",
+      "reason": "",
       "scryfall_id": "0bda1b62-47fc-42c2-a841-ccad8ea0db48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Earth Crystal": {

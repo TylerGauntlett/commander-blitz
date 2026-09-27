@@ -225,6 +225,16 @@ class TargetModel(BaseModel):
     #: refuses one on a card's own `targets` because a spell's are chosen before
     #: it has been paid for and the expression would read zero.
     count: int | Literal["any"] | dict[str, Any] = 1
+    #: The ``count`` this spec takes instead **when the spell was kicked** --
+    #: "If this spell was kicked, instead choose any number of target
+    #: creatures you own" (The Eagles Are Coming!).
+    #:
+    #: A second count and not a value expression, because the two sizes are
+    #: not two numbers: unkicked is exactly one, kicked is ``"any"``, and no
+    #: arithmetic yields the second. Refused on a card with no ``kicker``, and
+    #: refused on a triggered ability's targets, which have no cast to have
+    #: been kicked.
+    count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,

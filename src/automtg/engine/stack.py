@@ -26,7 +26,7 @@ from .enums import Zone
 from .events import EventType
 from .primitives import attach, attach_to_player
 from .structs import StackItem, TargetRef, TriggerInstance
-from .targeting import filter_legal
+from .targeting import filter_legal, kicked_targets
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -659,6 +659,18 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         specs = (BESTOW_TARGET,)
     elif item.mutated:
         specs = (MUTATE_TARGET,)
+    # "If this spell was kicked, instead choose any number of target creatures
+    # you own" -- The Eagles Are Coming!. Substituted here for the same reason
+    # bestow's specs are asked here: **declaration and resolution have to agree
+    # about what the specs are.**
+    #
+    # `filter_legal` below splits the stored refs into per-spec buckets and reads
+    # `TargetSpec.variable_size`, which is false for the printed `count: 1`. With
+    # the substitution only in legality, a kicked Eagles stored two refs and then
+    # bucketed one, orphaning the rest -- the card looked right at the prompt and
+    # silently returned a single creature.
+    if item.kicked and (swapped := kicked_targets(specs)) is not None:
+        specs = swapped
     targets, any_legal = filter_legal(
         # `item.x` so 608.2b re-checks the target against the X that was
         # actually paid: "target ... with mana value X" is a question with an X

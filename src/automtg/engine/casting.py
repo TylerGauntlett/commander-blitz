@@ -30,7 +30,7 @@ from .player_statics import (
     spell_life_tax_on_board,
 )
 from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
-from .targeting import describe_ref, enumerate_target_tuples
+from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -537,8 +537,23 @@ def _cast_options(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
         )
     if card.kicker is not None:
+        # "If this spell was kicked, **instead choose any number of** target
+        # creatures you own" -- The Eagles Are Coming!. The kicked line gets its
+        # own enumeration, because the size of its target list is not the
+        # unkicked one: `tuples` above was built from the printed counts and is
+        # shared by every other line on this object.
+        #
+        # Legal at 601.2c precisely because kicker is announced at 601.2b, one
+        # step earlier -- the choice is already made when the targets are
+        # declared. Payment (601.2h) is later and is not what this reads.
+        kicked_specs = kicked_targets(card.targets)
+        kicked_tuples = (
+            tuples
+            if kicked_specs is None
+            else enumerate_target_tuples(state, pid, kicked_specs, oid)
+        )
         out += _cast_variant(
-            state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True
+            state, pid, oid, card, kicked_tuples, extra_generic=extra_generic, kicked=True
         )
     # Gift (702.164a): "you may promise an opponent a gift as you cast this
     # spell". Kicker's slot -- an optional cast-time choice offered as extra
