@@ -234,6 +234,83 @@ def grant_player_protection(
     return added
 
 
+def set_life_floor(
+    state: GameState,
+    pid: int,
+    floor: int = 1,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """Stop damage taking ``pid``'s life below ``floor`` for ``duration``.
+
+    Deduplicated on the whole entry, like every table beside it: two Angel's
+    Graces in a turn are two identical records and the second changes nothing.
+    """
+    from .structs import LifeFloor
+
+    record = LifeFloor(player=pid, floor=floor, duration=duration, source=source)
+    if record in state.life_floors:
+        return False
+    state.life_floors.append(record)
+    return True
+
+
+def life_floor(state: GameState, pid: int) -> int | None:
+    """The highest floor protecting ``pid``, or ``None``.
+
+    The **highest**, because two floors are two prohibitions and the stricter one
+    is the one that bites: a floor of 1 and a floor of 3 together mean damage may
+    not take you below 3. Short-circuits on the empty list, which is what
+    `state.life_floors` is in every game that plays none of these cards -- and it
+    is read on every point of damage to a player, so that matters.
+    """
+    floors = [record.floor for record in state.life_floors if record.player == pid]
+    return max(floors) if floors else None
+
+
+def clear_life_floors(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the life floors of one duration -- their wearing-off.
+
+    Swept in the same breath as `clear_outcome_locks`, because Angel's Grace
+    installs both and says "until end of turn" about both halves.
+    """
+    state.life_floors = _expired(state.life_floors, duration, player)
+
+
+def lock_game_outcome(
+    state: GameState,
+    pid: int,
+    *,
+    cant_lose: bool = False,
+    cant_win: bool = False,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """Hold ``pid`` in the game, or out of winning it, for ``duration`` -- 104.3b.
+
+    Angel's Grace prints both halves about different seats: "**you** can't lose
+    the game this turn and **your opponents** can't win the game this turn", so
+    the caller installs one record per seat with the flags that seat needs.
+
+    Deduplicated on the whole entry the way `lock_life_total` is: two Angel's
+    Graces in a turn are two identical records and the second changes nothing
+    observable.
+    """
+    from .structs import OutcomeLock
+
+    lock = OutcomeLock(
+        player=pid,
+        cant_lose=cant_lose,
+        cant_win=cant_win,
+        duration=duration,
+        source=source,
+    )
+    if lock in state.outcome_locks:
+        return False
+    state.outcome_locks.append(lock)
+    return True
+
+
 def lock_life_total(
     state: GameState,
     pid: int,
@@ -321,6 +398,19 @@ def clear_life_locks(state: GameState, duration: str, player: int | None = None)
     installs both and says "until your next turn" about both halves.
     """
     state.life_locks = _expired(state.life_locks, duration, player)
+
+
+def clear_outcome_locks(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the outcome locks of one duration -- their wearing-off.
+
+    This is the moment Angel's Grace stops working, and the moment a player it
+    held in the game at zero life actually loses: `sba._player_losses` sweeps
+    again on the next state-based-action pass and finds the lock gone. 104.3b's
+    "you can't lose the game **this turn**" ends here, which is why the clock is
+    the cleanup step's rather than an untap step's -- a player saved by it must
+    not survive into the next turn.
+    """
+    state.outcome_locks = _expired(state.outcome_locks, duration, player)
 
 
 def clear_player_protections(state: GameState, duration: str, player: int | None = None) -> None:

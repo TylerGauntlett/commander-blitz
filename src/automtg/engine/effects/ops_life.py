@@ -299,3 +299,79 @@ def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: st
     # excess with it.
     if excess_to == "controller":
         damage_player(state, obj.controller, spill, ctx.source_oid)
+
+
+@register("cant_lose_the_game")
+def op_cant_lose_the_game(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You can't lose the game this turn and your opponents can't win the game
+    this turn." -- Angel's Grace.  Rules 104.3b and 614.
+
+    `sba.declare_win`'s own docstring listed this among the things "deliberately
+    not modelled, because no card in the pool needs it yet", adding that it "is
+    replacement-shaped and belongs beside the other continuous prohibitions".
+    Angel's Grace is the first card in the pool to need it.
+
+    **Two independent flags, because they are two sentences.** Angel's Grace
+    prints both and most cards print one: Platinum Angel says both, Abyssal
+    Persecutor says only "you can't win the game". A single symmetric flag would
+    make every card in the family read like Platinum Angel.
+
+    So the op takes `cant_lose` and `cant_win`, each with its own player spec, and
+    Angel's Grace writes them about different seats -- itself and its opponents.
+
+    `lock_life_total` is the near miss and is a different card three times over:
+    it forbids the total *changing*, so it blocks life gain too; Angel's Grace is
+    routinely cast at 40 and leaves you at 1, which that would prevent; and it
+    says nothing at all about the other three ways to lose or about an opponent
+    winning. `prevent_damage` the op is the other near miss and is a Fog -- the
+    total never moves, so you end the turn at 40 rather than at 1, and 104.3b's
+    point is that you survive *at* 1 or less.
+    """
+    from ..primitives import lock_game_outcome
+    from ..structs import OUTCOME_LOCK_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in OUTCOME_LOCK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_lose_the_game duration {duration!r}")
+    for pid in select_players(ctx, spec.get("cant_lose") or ()):
+        lock_game_outcome(
+            ctx.state, pid, cant_lose=True, duration=duration, source=ctx.source_oid
+        )
+    for pid in select_players(ctx, spec.get("cant_win") or ()):
+        lock_game_outcome(
+            ctx.state, pid, cant_win=True, duration=duration, source=ctx.source_oid
+        )
+
+
+@register("damage_life_floor")
+def op_damage_life_floor(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until end of turn, damage that would reduce your life total to less than
+    1 reduces it to 1 instead." -- Angel's Grace.  Rule 614.
+
+    A **floor on the total**, not a prevention, and that is the card. The near
+    miss is `prevent_damage` the op, which is a Fog: it installs a `DamageShield`
+    and the total never moves, so a player at 40 ends the turn at 40 rather than
+    at 1. Angel's Grace lets the damage through and stops the total passing 1,
+    which is why it is cast *to survive at 1 life* -- and why the printed card
+    pairs it with `cant_lose_the_game`, since surviving at 1 is worth nothing if
+    the next point kills you.
+
+    `replace_damage` is the other near miss and is a multiplier with no floor and
+    no cap, and a static besides -- an Instant cannot install one. `lock_life_total`
+    freezes the total in both directions, so it would also stop you paying life
+    and stop you gaining any.
+
+    It floors **damage only**, which is the printed word: an ordinary `lose_life`
+    walks past it, so a Phyrexian cost still takes you below 1 under Angel's
+    Grace. That is correct, and it is why the floor is read in `damage_player` and
+    nowhere else.
+    """
+    from ..primitives import set_life_floor
+    from ..structs import LIFE_FLOOR_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in LIFE_FLOOR_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown damage_life_floor duration {duration!r}")
+    floor = evaluate_value(ctx, spec.get("floor", 1))
+    for pid in select_players(ctx, spec.get("player", "you")):
+        set_life_floor(ctx.state, pid, floor, duration, source=ctx.source_oid)

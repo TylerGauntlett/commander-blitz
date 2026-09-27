@@ -44,7 +44,9 @@ from .temp_effects import (  # noqa: F401
     clear_cast_locks,
     clear_damage_shields,
     clear_goad,
+    clear_life_floors,
     clear_life_locks,
+    clear_outcome_locks,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -52,11 +54,14 @@ from .temp_effects import (  # noqa: F401
     forbid_sacrifice,
     goad_creature,
     grant_player_protection,
+    life_floor,
     lock_casting_zones,
+    lock_game_outcome,
     lock_life_total,
     make_unblockable,
     restrict_attack,
     sacrifice_forbidden,
+    set_life_floor,
     shield_player,
     shielded,
 )
@@ -463,6 +468,24 @@ def damage_player(
         # getting it wrong would make a doubled hit from a lifelinking commander
         # gain double life and kill on half the commander damage.
         lost = 0 if life_locked(state, pid) else amount * life_loss_multiplier(state, pid)
+        # "Until end of turn, damage that would reduce your life total to less
+        # than 1 reduces it to 1 instead." -- Angel's Grace. 614: a replacement
+        # on the *loss*, applied after the multiplier for the reason the
+        # multiplier sits where it does -- Furnace of Rath doubling a hit that is
+        # then floored at 1 still leaves you at 1, and flooring first would let
+        # the doubling take you below it.
+        #
+        # A **floor on the life total**, not a prevention: the damage was still
+        # dealt, so `DAMAGE_DEALT` below is unchanged, lifelink still gains what
+        # was dealt, and the commander-damage tally still counts it. That is the
+        # whole difference from `prevent_damage`, which is a Fog and would leave
+        # you at 40 rather than at 1.
+        #
+        # `LIFE_LOST` fires with the *floored* number, because that is what was
+        # actually lost -- a Bloodthirsty Conqueror paying out for life that
+        # never left is the same failure the life-lock branch above avoids.
+        if lost > 0 and (floor := life_floor(state, pid)) is not None:
+            lost = max(0, min(lost, state.players[pid].life - floor))
         state.players[pid].life -= lost
         # "Whenever an opponent loses life… (Damage causes loss of life.)"
         # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires

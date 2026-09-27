@@ -29,7 +29,9 @@ from .primitives import (
     clear_cast_locks,
     clear_damage_shields,
     clear_goad,
+    clear_life_floors,
     clear_life_locks,
+    clear_outcome_locks,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -731,6 +733,12 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
     clear_life_locks(state, "this_turn")
+    # Angel's Grace stops working here, and this is also the moment a player it
+    # held in the game at zero life actually loses: `sba._player_losses` sweeps
+    # again and finds the lock gone. 104.3b's "this turn" must not survive into
+    # the next one.
+    clear_outcome_locks(state, "this_turn")
+    clear_life_floors(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on
     # that word would be the one exception among them.

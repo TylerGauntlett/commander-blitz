@@ -17687,3 +17687,86 @@ and is a gap record until it has one.
   target has already resolved or is a spell; and the matcher honouring
   `controller` while ignoring a clause it cannot answer. The whole file errors
   without the change.
+
+## Rules subsystem: game-outcome prohibitions — Angel's Grace — 104.3b / 614
+
+### Why this is a subsystem and not a capability
+
+`sba.declare_win`'s own docstring listed this among the things **"deliberately not
+modelled, because no card in the pool needs it yet"**, and said where it belonged:
+"that is replacement-shaped and belongs beside the other continuous
+prohibitions, not in this function." `docs/rules-coverage.md` recorded the same
+omission under the "You win the game" row.
+
+`sba._eliminate` and `sba.declare_win` were the engine's only two writers of a
+game result, and neither had any notion of a seat that may not lose or may not
+win. Angel's Grace is the first card in the pool to need it, and the same pass
+unblocks the Platinum Angel / Abyssal Persecutor family those notes name.
+
+Built as its own commit under the import-moxfield skill's rule 2, which permits a
+subsystem when the deck is the deliverable, provided it is said out loud first.
+It was.
+
+### Two tables, because they are three sentences
+
+`OutcomeLock` (`state.outcome_locks`) carries **`cant_lose` and `cant_win` as
+independent flags**. That is the design decision worth defending: Angel's Grace
+prints both halves about *different seats* ("**you** can't lose… **your
+opponents** can't win"), Platinum Angel prints both about the same seats, and
+Abyssal Persecutor prints only "you can't win the game". A single symmetric flag
+would make every card in the family read like Platinum Angel.
+
+`LifeFloor` (`state.life_floors`) is its own table rather than a third field on
+the lock, because separate cards print it separately and one timed table per
+rules-relevant thing is the shape every other table here already has.
+
+Both are **timed tables** rather than statics, for `LifeLock`'s three stated
+reasons applied unchanged: Angel's Grace is an Instant, so no permanent is left to
+carry a static; the prohibition ends at a fixed moment rather than when a source
+leaves; and the effect belongs to no object. The *continuous* form — Platinum
+Angel — is a static and is deliberately still unbuilt.
+
+### 104.3b is the whole card, and it is not a rewrite of the life total
+
+A player under `cant_lose` **keeps playing at zero or negative life** and loses
+the moment the lock ends. That is what Angel's Grace buys: a turn at 1 life or
+less to find an answer. So this is a check inside `_player_losses`, not a rewrite:
+
+| the near miss | why it is a different card |
+|---|---|
+| setting life to 1 | shows the wrong number, and stops every "whenever you lose life" trigger on the way |
+| `prevent_damage` the op | a Fog — the total never moves, so a player at 40 ends the turn at **40** rather than at 1 |
+| `lock_life_total` | forbids the total *changing*, in both directions: it blocks the life gain Angel's Grace is cast alongside, and says nothing about the other three loss reasons or about an opponent winning |
+| `replace_damage` | a multiplier with no floor, and a static besides — an Instant cannot install one |
+
+**`cant_lose` holds off all four loss reasons**, not just life: the printed text is
+"you can't lose the game", full stop, so an empty library, 21 commander damage and
+ten poison counters are held off too.
+
+**The floor covers damage only**, which is also the printed word — an ordinary
+`lose_life` walks past it, so a Phyrexian cost still takes you below 1. That is
+why it is read in `damage_player` and nowhere else.
+
+### Where the win check sits, and why one layer down would break
+
+`player_cant_win` is consulted in `declare_win`, **not** in `_eliminate`. A win is
+*implemented* by eliminating every other player, so a check one layer down would
+eliminate some opponents and then stop — leaving a game with no declared result
+and a half-dismantled board. The test asserts nobody was eliminated at all.
+
+The floor is applied **after** the life-loss multiplier, for the reason the
+multiplier sits where it does: Furnace of Rath doubling a hit that is then floored
+at 1 still leaves you at 1, where flooring first would let the doubling carry you
+below it.
+
+### Tests
+
+- `tests/unit/test_cant_lose_the_game.py` (20) — the floor landing a 100-damage
+  hit on exactly 1, leaving small hits alone, protecting only the named seat, and
+  **the stricter of two floors winning**; the floor ignored by a plain
+  `lose_life` with damage on the same board still floored; a locked player sitting
+  at -4 life **with the total not rewritten**, held off every loss reason, and the
+  other seat unprotected; **the whole arc of the card in one test** — saved at
+  negative life, then eliminated on the very next sweep once the cleanup step
+  drops the lock; the two flags shown independent in both directions; and a win
+  refused whole, with nobody eliminated.
