@@ -31,22 +31,10 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}: Add one mana of any color.",
+          "text": "{T}: Add one mana of any color in your commander's color identity.",
           "is_mana_ability": true,
           "cost": { "tap": true },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
-                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
-                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
-                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
-                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
-              ]
-            }
-          ]
+          "effects": [{ "op": "add_mana", "in_commander_identity": true }]
         }
       ]
     },
@@ -59,22 +47,10 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}: Add one mana of any color.",
+          "text": "{T}: Add one mana of any color in your commander's color identity.",
           "is_mana_ability": true,
           "cost": { "tap": true },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
-                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
-                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
-                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
-                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
-              ]
-            }
-          ]
+          "effects": [{ "op": "add_mana", "in_commander_identity": true }]
         }
       ]
     },
@@ -144,22 +120,10 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}: Add one mana of any color.",
+          "text": "{T}: Add one mana of any color in your commander's color identity.",
           "is_mana_ability": true,
           "cost": { "tap": true },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
-                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
-                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
-                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
-                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
-              ]
-            }
-          ]
+          "effects": [{ "op": "add_mana", "in_commander_identity": true }]
         },
         {
           "kind": "activated",

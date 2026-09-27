@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**23 cards** blocked by **27** capabilities.
+**22 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -28,7 +28,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [graveyard-replacement](#graveyard-replacement) | 1 | 2287 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -253,20 +252,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## graveyard-replacement
-
-Blocks **1** card.
-
-- **(static_effect)** A static ability on one permanent that redirects EVERY card and token that would be put into ANY graveyard, from ANY zone and for EVERY player, to a different zone (exile). Suggested shape: a `static_effects` entry such as `replace_graveyard` taking `affects_player` ("you" / "opponent" / "any"), a `destination` ("exile", and "library_bottom"/"library_top" would immediately cover the Kozilek/Ulamog family), an optional `affects` filter over printed characteristics ("creature cards", "instant and sorcery cards", "a card an opponent owns") and an optional `affects_token`. It has to be read in `move_object` in src/automtg/engine/zones.py, in the block at line 139 where `dies_to` is applied, but gated on `to_zone is Zone.GRAVEYARD` ALONE rather than on `from_zone is Zone.BATTLEFIELD` -- the printed words are "from anywhere", so it must catch a milled card, a discarded card, a countered or resolved spell leaving the stack, a token that dies, a card put into the graveyard from exile or from the command zone, and a permanent dying, for every player at once. It also has to order against the commander replacement already above it (903.9a: the commander's owner chooses after this one has picked exile) and against `dies_to`/`leaves_to`, and since the effect is owned by a permanent on the battlefield rather than marked on each object, it has to be looked up by scanning the board's statics at move time the way src/automtg/engine/player_statics.py already scans for `replace_mill`. This unblocks a large family that is entirely blocked today: Rest in Peace, Leyline of the Void, Planar Void, Ground Seal's cousins, Kozilek/Ulamog-style "shuffle it into its owner's library instead", Anafenza the Foremost, Containment Priest's graveyard analogues, and Yixlid Jailer's neighbours.
-  <br>Why the existing vocabulary won't do: `replace_deaths` (src/automtg/engine/effects/ops_removal.py:64) is the closest thing in `reference` and is a different card three times over: it is an OP, so it can only run once from a resolving spell or trigger and cannot be the permanent's ongoing static; it snapshots a fixed set of object ids at resolution and marks `obj.dies_to` on each, so it reaches nothing that arrives, is drawn, or is milled afterwards; and `move_object` reads `dies_to` only when `from_zone is Zone.BATTLEFIELD`, so a milled, discarded or countered card walks straight past it. Writing it as an `exile` op inside a static is not possible either -- a static ability's `effect` must come from `static_effects`, and that list has no entry for a zone-change replacement of any kind: `replace_mill` only multiplies a mill's COUNT (src/automtg/engine/player_statics.py:257, `mill_multiplier`) and still sends the cards to the graveyard, `replace_draw`, `replace_life_gain`, `replace_life_loss`, `replace_counters`, `replace_damage` and `replace_token_creation` each replace a different event entirely, and `replace_leaves_battlefield` (ops_removal.py:141) is again a per-object op limited to `from_zone is Zone.BATTLEFIELD`. The approximations all fail visibly: a `dies` or `creature_dies` trigger that exiles uses the stack, misses milling, discarding and spells, and lets the card be raised in response; `cant_cast_spells_from_zones` stops one use of the graveyard and leaves the cards in it, so delirium, threshold, escape, Tarmogoyf and every graveyard COUNT still see them; and `exile` with a `{"zone": "graveyard"}` selector, repeated, cannot be written as a continuous effect at all. The first sentence, "When this enchantment enters, exile all graveyards", is an ordinary `self_enters` trigger with an `exile` whose `objects` is `{"zone": "graveyard", "controller": "any", "count": "all"}` and is NOT blocked, so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rest in Peace** (rank 2287) — `rest_in_peace`
-  - If a card or token would be put into a graveyard from anywhere, exile it instead.
 
 </details>
 
