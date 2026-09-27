@@ -3336,6 +3336,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the usual "which permanents this static describes". Inquisitor's
         # Flail prints one line with each.
         "replace_damage",
+        # Rest in Peace names nothing at all -- "if **a card or token** would be
+        # put into **a graveyard** from **anywhere**" -- so its filter is
+        # genuinely optional and is the exception rather than the rule in this
+        # family: Leyline of the Void narrows by player and Planar Void by card
+        # type, and both write `affects_player` or `affects` to say so.
+        "replace_graveyard",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
@@ -3455,6 +3461,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
+
+    if model.effect == "replace_graveyard":
+        # Whose graveyards are replaced is the printed clause and it differs
+        # across the family: Rest in Peace says "a card or token" with no player
+        # at all (so `"any"`), Leyline of the Void says "your opponents'". Made
+        # required rather than defaulted for `enters_tapped`'s reason -- there is
+        # no honest default when printed cards disagree, and a silent `"any"`
+        # would turn Leyline into Rest in Peace.
+        #
+        # Deliberately *not* added to `PLAYER_WIDE_STATIC_EFFECTS` despite taking
+        # the key: that set is subtracted from `GRANTABLE_STATIC_EFFECTS` because
+        # its readers walk printed faces through `_active_player_statics`, and
+        # this one reads `_battlefield_statics`, which sees a granted ability. So
+        # a granted `replace_graveyard` would work, and marking it ungrantable
+        # would be a refusal with no reason behind it.
+        if model.affects_player is None:
+            raise DslError(
+                f"{where}: replace_graveyard needs 'affects_player' -- 'any' for "
+                f"Rest in Peace, 'opponent' for Leyline of the Void. There is no "
+                f"honest default when the printed cards disagree"
+            )
+        destination = str(model.destination or "exile")
+        if destination not in ("exile", "library", "hand"):
+            raise DslError(
+                f"{where}: replace_graveyard destination {destination!r} is not a "
+                f"zone a printed card in this family redirects to"
+            )
 
     if model.effect == "untap_limit":
         if model.amount is None:
@@ -3654,6 +3687,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             static[field_name] = value
     if model.prevent_all:
         static["prevent_all"] = True
+    if model.destination is not None:
+        static["destination"] = model.destination
+    if model.affects_token is not None:
+        static["affects_token"] = model.affects_token
     if model.keywords:
         static["keywords"] = list(model.keywords)
     if model.subtypes:

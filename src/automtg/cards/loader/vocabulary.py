@@ -136,6 +136,15 @@ STATIC_EFFECTS = frozenset(
         # permanents untap -- asked in `turn._untap_step`, the first question
         # the untap step has ever put to anybody.
         "untap_limit",
+        # Rest in Peace; Leyline of the Void; Planar Void.  "If a card or
+        # token would be put into a graveyard from anywhere, exile it
+        # instead."  The FIFTH named hook on the enters/leaves replacement
+        # whitelist, and not the start of a rule-616 system -- see
+        # docs/rules-coverage.md. Read in `zones.move_object`, gated on the
+        # destination alone so the printed "from anywhere" really is
+        # anywhere, and ordered after the commander replacement so a
+        # commander still reaches its command zone.
+        "replace_graveyard",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."

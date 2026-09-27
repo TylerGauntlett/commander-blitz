@@ -635,6 +635,17 @@ class AbilityModel(BaseModel):
     #: absorb 2 and do nothing to a total shield. The loader requires exactly
     #: one of this and ``amount``.
     prevent_all: bool = False
+    #: Where `replace_graveyard` sends a card instead -- "exile it instead"
+    #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
+    #: exile because the same sentence is printed about a library by the
+    #: Kozilek and Ulamog family, and defaulting it silently would make the
+    #: two indistinguishable in a card file.
+    destination: str | None = None
+    #: Whether `replace_graveyard` also catches a **token** -- the printed "a
+    #: card **or token**" (Rest in Peace). Defaults to catching them, which is
+    #: what every printed card in the family says; `false` is how one that
+    #: named only cards would opt out.
+    affects_token: bool | None = None
     #: Two different clauses sharing one field, because the card files read
     #: better for it and the two can never collide -- an ability is static or
     #: activated, never both.

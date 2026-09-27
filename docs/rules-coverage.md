@@ -469,11 +469,30 @@ creation** has a narrow hook of its own, `replace_token_creation`, described in
 the row above). There is still no rule-616 machinery: no event object, no
 "replaced by" chain, and no asking the affected player which of two applicable
 replacements to apply first (dredge against a draw doubler is the one pair that
-is asked). There are now **four** named hooks rather than one
--- `create_token`, the life loss, the life gain and the draw below -- and they are still named hooks
-and not the start of a system. A fifth entry on the enters-the-battlefield
-whitelist, or a replacement of anything other than those four, is engine work
-rather than a new key in a card file
+is asked). There are now **eight** named hooks rather than one --
+`replace_token_creation`, the life loss, the life gain, the draw, the mill, the
+counter placement and the damage below, and `replace_graveyard` -- and they are
+still named hooks and not the start of a system. (This sentence said **four** for
+several capabilities after it had stopped being true; the count is now derived from
+the rows rather than carried forward.) A further entry on the
+enters-the-battlefield whitelist, or a replacement of anything other than those
+eight, is engine work rather than a new key in a card file.
+
+`replace_graveyard` is the one worth calling out separately, because it is the
+first of them to replace a **zone change** rather than a quantity: every other hook
+takes a number and returns a bigger number, so each could live at the one function
+that owns that number. This one is read in `zones.move_object`, gated on
+`to_zone is Zone.GRAVEYARD` **alone** so that the printed "from anywhere" really is
+anywhere -- a mill, a discard, a spell leaving the stack, a token, a card put there
+from exile, and a permanent dying -- and it is therefore the first hook that had to
+be *ordered* against replacements already at that site. It runs **after** the
+commander replacement, so a commander dying under Rest in Peace still reaches its
+command zone; the other order would exile people's commanders. That ordering is
+616.1's choice being settled by the engine rather than asked, which is the same
+thing this row already records for the commander case. `affects_player` is required
+by the loader and has no default in the reader either, because the default that
+suggests itself is `"any"` and `"any"` is what turns Leyline of the Void into Rest
+in Peace. Pinned in `tests/unit/test_replace_graveyard.py`
 
 **Combat**
 Manual damage division · attacking with

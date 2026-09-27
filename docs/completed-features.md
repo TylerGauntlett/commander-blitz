@@ -17770,3 +17770,101 @@ below it.
   negative life, then eliminated on the very next sweep once the cleanup step
   drops the lock; the two flags shown independent in both directions; and a win
   refused whole, with nobody eliminated.
+
+## Rules subsystem: replacing the graveyard itself — Rest in Peace — 616.1 / 404.1
+
+### Why this is a subsystem and not a capability
+
+`docs/rules-coverage.md` recorded this in the strongest terms it uses: "There is
+still no rule-616 machinery: no event object, no 'replaced by' chain, and no
+asking the affected player which of two applicable replacements to apply first",
+and "a replacement of anything other than those four is engine work rather than a
+new key in a card file."
+
+Built as its own commit under the import-moxfield skill's rule 2, which permits a
+subsystem when the deck is the deliverable, provided it is said out loud first. It
+was. And it is deliberately still **a named hook and not the start of a system** —
+the eighth — because the alternative is a rule-616 event pipeline that no card in
+the pool has asked for.
+
+What makes it a subsystem rather than another multiplier is that it is the first
+named hook to replace a **zone change** rather than a quantity. Every hook before
+it takes a number and returns a bigger number: `replace_token_creation`,
+`replace_counters`, `replace_damage`, `replace_draw`, `replace_mill`, the two life
+hooks. This one changes where an object ends up, so it had to be read at the one
+place every zone change funnels through, and it had to order against the two
+replacements already living there.
+
+### "From anywhere" is the whole clause, and it is what `dies_to` cannot say
+
+The engine already had `obj.dies_to` — "if it would die this turn, exile it
+instead" — and `move_object` reads it only when `from_zone is Zone.BATTLEFIELD`.
+Rest in Peace says **from anywhere**, so `replace_graveyard` is gated on
+`to_zone is Zone.GRAVEYARD` **alone**. It therefore catches a milled card, a
+discard, a countered or resolved spell leaving the stack, a token dying, a card
+put there from exile or the command zone, and a permanent dying, for every player
+at once.
+
+| the near miss | why it is a different card |
+|---|---|
+| `replace_deaths` | an **op**, so it cannot be a permanent's ongoing static; it snapshots object ids at resolution and marks `dies_to` on each, so it reaches nothing drawn, milled or cast afterwards; and it is battlefield-gated |
+| a `dies` trigger that exiles | uses the stack, misses milling, discarding and spells, and lets the card be reanimated in response |
+| `cant_cast_spells_from_zones` | stops one *use* of the graveyard and leaves the cards in it, so delirium, threshold, escape, Tarmogoyf and every graveyard count still see them |
+| `replace_mill` | multiplies a mill's **count** and still sends the cards to the graveyard |
+
+### Ordering against the commander replacement, and 616.1
+
+616.1 gives the choice between two applicable replacements to the affected
+player, and this engine does not ask — it already does not ask for the commander
+case, which `rules-coverage.md` records as "the owner always chooses the command
+zone". So this hook runs **after** it, and a commander dying under Rest in Peace
+reaches its command zone: by the time this runs, `to_zone` is no longer a
+graveyard. Ordered the other way round it would exile people's commanders, which
+is the one ordering mistake here that would be visible in a game.
+
+### Owner, not controller — and no default for whose
+
+`affects_player` is read against the object's **owner** (404.1 puts a card in its
+owner's graveyard however control changed), compared against the *source's
+controller*, which is the right reading for "your graveyard" on a stolen
+enchantment. Reading the owner on both ends would exile a stolen card that should
+reach its owner's pile untouched.
+
+It is **required** by the loader and has **no default in the reader either**, for
+`enters_tapped`'s reason: there is no honest default when the printed cards
+disagree, and the default that suggests itself — `"any"` — is precisely what turns
+Leyline of the Void into Rest in Peace. The reader originally defaulted to `"any"`
+behind the loader's guarantee; that is now a `continue`, so a malformed static does
+nothing anybody could mistake for the card working.
+
+`destination` is a field rather than a hard-coded exile because the same sentence
+is printed about a library by the Kozilek and Ulamog family. `affects_token`
+defaults to catching tokens, which is the printed "a card **or token**" every card
+in this family says.
+
+Deliberately **not** added to `PLAYER_WIDE_STATIC_EFFECTS` despite taking
+`affects_player`: that set is subtracted from `GRANTABLE_STATIC_EFFECTS` because
+its readers walk printed faces through `_active_player_statics`, and this one reads
+`_battlefield_statics`, which sees a granted ability. A granted `replace_graveyard`
+works, so marking it ungrantable would be a refusal with nothing behind it.
+
+### Unblocked
+
+Rest in Peace, and the family behind it: Leyline of the Void, Planar Void,
+Kozilek/Ulamog-style "shuffle it into its owner's library instead", and the
+Yixlid Jailer neighbourhood.
+
+### Tests
+
+- `tests/unit/test_replace_graveyard.py` (20) — every "from anywhere" route walked
+  separately, because a battlefield-gated version passes a death test and lets
+  every mill through: a permanent dying, a mill, a discard, a spell leaving the
+  stack, a card put there from exile, and the graveyard observably **staying
+  empty**; both sides caught, since Rest in Peace is symmetric and that is the
+  drawback it is built around; a token caught; Leyline's owner filter sparing its
+  controller's own cards while exiling the opponent's; Planar Void's type filter
+  taking a creature and leaving an instant; a library destination; **a dying
+  commander still reaching the command zone** with an ordinary creature on the
+  same board exiled, which is the replacement ordering; the loader refusing a
+  missing `affects_player` and an unreachable destination; and the reader's
+  fail-closed behaviour pinned in both directions through the same seam.
