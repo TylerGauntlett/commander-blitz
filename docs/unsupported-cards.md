@@ -10,20 +10,18 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **30** capabilities.
+**24 cards** blocked by **29** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [target-ability-on-stack](#target-ability-on-stack) | 2 | 75 | selector |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [copy-ability](#copy-ability) | 1 | 3634 | op |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-life-floor](#damage-life-floor) | 1 | 2015 | replacement |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -43,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
 ## cast-as-though-flash
@@ -97,24 +96,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## target-ability-on-stack
-
-Blocks **2** cards.
-
-- **(selector)** a target kind for an activated or triggered ability on the stack, so "target spell or ability" can bind either an ability object or a spell
-  <br>Why the existing vocabulary won't do: Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/automtg/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of "target spell or ability" is unsayable even once retargeting exists.
-- **(selector)** A target kind that binds an activated or triggered ability on the stack, plus a way to restrict it to abilities you control ("target activated or triggered ability you control") and, for cards that need it, to one of the two ability kinds.
-  <br>Why the existing vocabulary won't do: TargetModel.kind is a closed Literal of permanent, player, spell, card_in_graveyard, card_in_exile, any, spell_or_permanent (src/automtg/cards/schema.py:197-205), and the stack-facing kinds enumerate only spells: both the `spell` branch and the spell half of `spell_or_permanent` in `enumerate_target_tuples` filter with `item.is_spell` (src/automtg/engine/targeting.py:84-114), and `StackItem.is_spell` is `self.kind == "spell"` (src/automtg/engine/structs.py:816). So an ability on the stack is not offered as a legal target by any spec that exists, the target could never be announced at activation, and `still_legal` has no branch that would re-check one. This is the same missing kind already recorded for Deflecting Swat's "target spell or ability".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deflecting Swat** (rank 75) — `deflecting_swat`
-  - You may choose new targets for target spell or ability.
-- **Peter Parker's Camera** (rank 3634) — `peter_parker_s_camera`
-  - {2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy.
 
 </details>
 
@@ -187,20 +168,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## copy-ability
-
-Blocks **1** card.
-
-- **(op)** An op that copies an activated or triggered ability that is already on the stack (706.10 applied to abilities, 707.10), putting a second StackItem of kind "ability" on top of the stack that carries the original's source_oid, ability_index, granted_by/granted_def_id, bindings (the objects its cost named), x and modes -- a copy that was never activated, so no cost is paid again and the source permanent is not tapped again -- with the existing new_targets choice offered for it. It also needs the retarget helper to read the copied ABILITY's target specs rather than the card's: _choose_new_targets pulls specs from state.registry.get(def_id).targets, which is the card-level target list, and an ability's targets live on the AbilityModel, so an ability copy retargeted through it would be offered the wrong pool (usually an empty one).
-  <br>Why the existing vocabulary won't do: `copy_spell` is the only copy-onto-the-stack op and it refuses abilities by construction: `_spell_named_by` (src/automtg/engine/effects/ops_stack.py:15-47) returns None for "a stack item that is an ability rather than a spell", and `put_copy_on_stack` (ops_stack.py:199-230) always builds `kind="spell"` from a `new_object` card token with an `oid`, which is not what an ability item is (an ability StackItem has no oid and is identified by source_oid + ability_index, src/automtg/engine/stack.py:283-300 and 398-412). So a copy_spell written here would silently do nothing whenever the target is an ability -- the exact quiet wrong card the brief forbids. `double_triggers` is the closest existing capability and is a different card on three axes: it is a static read in `collect` (src/automtg/engine/triggers.py:466-492) that queues an extra TRIGGER at the moment the event fires, so it never touches something already on the stack, it cannot see an activated ability at all, and it has no targeting and no "you may choose new targets" (it just `_queue`s the same trigger twice). `new_targets` cannot be borrowed either: the loader hard-refuses it on any op but copy_spell (src/automtg/cards/loader/effects.py:888-894). `copy_permanent` copies battlefield objects and `cast_copy` casts a copy of a card, neither of which is a stack ability.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Peter Parker's Camera** (rank 3634) — `peter_parker_s_camera`
-  - {2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy.
 
 </details>
 
@@ -482,6 +449,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## target-ability-on-stack
+
+Blocks **1** card.
+
+- **(selector)** a target kind for an activated or triggered ability on the stack, so "target spell or ability" can bind either an ability object or a spell
+  <br>Why the existing vocabulary won't do: Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/automtg/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of "target spell or ability" is unsayable even once retargeting exists.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deflecting Swat** (rank 75) — `deflecting_swat`
+  - You may choose new targets for target spell or ability.
 
 </details>
 

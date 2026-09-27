@@ -204,6 +204,16 @@ class TargetModel(BaseModel):
         "card_in_exile",
         "any",
         "spell_or_permanent",
+        #: "Copy target activated or triggered ability **you control**" -- Peter
+        #: Parker's Camera, Lithoform Engine, Strionic Resonator.
+        #:
+        #: `"spell"` cannot say it and is not a near miss: both stack-facing
+        #: branches of `enumerate_target_tuples` filter on `item.is_spell`, which
+        #: is `kind == "spell"`, so an ability on the stack was unreachable as a
+        #: target rather than merely awkward to name. 113.7a is why they are
+        #: different things at all -- an ability on the stack is not a spell and
+        #: has no card behind it, only a source, an index and its bindings.
+        "ability_on_stack",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not

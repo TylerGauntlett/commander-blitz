@@ -154,6 +154,41 @@ def add_dummy_spell(game: Game, seat: int = 1) -> None:
         push_spell(game.state, obj.oid, seat)
 
 
+def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
+    """Put an **ability** on the stack for an `ability_on_stack` target to find.
+
+    The sibling of `add_dummy_spell` above, and needed for the same reason at a
+    different kind of object: the fodder helpers stock the *battlefield*, and an
+    ability on the stack is not on it, so Peter Parker's Camera reported as
+    unusable on a board that simply held no ability to copy.
+
+    The seat defaults to **the controller's own**, which is the opposite of
+    `add_dummy_spell`'s default and is the printed clause: every card in this
+    family says "an ability **you control**" (the Camera, Lithoform Engine,
+    Strionic Resonator), where every counterspell wants the opponent's.
+
+    Any permanent with a non-mana activated ability will do, since
+    `_ability_matches` reads only the controller -- so this picks the first one in
+    the pool rather than trying to satisfy a selector it knows nothing about.
+    """
+    from automtg.engine.stack import push_activated_ability
+
+    for card_id in sorted(registry.ids()):
+        card = registry.get(card_id)
+        ability = next(
+            (a for a in card.abilities if a.is_activated and not a.is_mana_ability),
+            None,
+        )
+        if ability is None or ability.targets:
+            # No targets, so putting it on the stack needs no choices made.
+            continue
+        obj = new_object(game.state, card_id, owner=seat, zone=Zone.BATTLEFIELD)
+        obj.controller = seat
+        game.state.battlefield.append(obj.oid)
+        push_activated_ability(game.state, obj.oid, ability.index, seat)
+        return
+
+
 def drive(game: Game, limit: int = 60) -> None:
     """Answer every decision with the first legal action until the game settles."""
     for _ in range(limit):
@@ -884,6 +919,18 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             if spec.kind != "spell":
                 continue
             add_dummy_spell(game, 0 if spec.selector.get("controller") == "you" else 1)
+        return
+    if any(spec.kind == "ability_on_stack" for spec in ability.targets):
+        # Peter Parker's Camera -- "Copy target activated or triggered ability you
+        # control." The spell branch above, one kind of stack object over: the
+        # fodder stocks the battlefield and an ability on the stack is not there,
+        # so the Camera was unaimed rather than broken.
+        for spec in ability.targets:
+            if spec.kind != "ability_on_stack":
+                continue
+            add_dummy_ability(
+                game, registry, 1 if spec.selector.get("controller") == "opponent" else 0
+            )
         return
     for spec in ability.targets:
         if spec.kind == "card_in_graveyard":

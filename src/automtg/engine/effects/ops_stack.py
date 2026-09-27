@@ -539,3 +539,96 @@ def op_reflexive_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
         ability=ability.index,
         trigger="reflexive",
     )
+
+
+@register("copy_ability")
+def op_copy_ability(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Copy target activated or triggered ability you control. You may choose
+    new targets for the copy." -- Peter Parker's Camera, Lithoform Engine,
+    Strionic Resonator.
+
+    706.10 for an **ability**, and it is a different op from `copy_spell` rather
+    than a flag on it, because the two copy different kinds of object.
+    `_spell_named_by` returns None for an ability on purpose, and
+    `put_copy_on_stack` builds `kind="spell"` around a `new_object` card token
+    with an `oid` -- which an ability StackItem does not have. It is
+    `source_oid` + `ability_index` + `granted_by` + `bindings`, and nothing else.
+    A `copy_spell` written on this card would load clean and silently do nothing,
+    which is why the gap record refused it.
+
+    So the copy is `dataclasses.replace` with a fresh sid: every field of the
+    original is kept, which is what 706.10's "copiable values" means here --
+    including the ``bindings`` the trigger captured, so a copied "whenever a land
+    enters" ability still knows which land, and the ``x`` that was announced.
+
+    The copy goes **on top** of the stack (706.10) and so resolves first, which is
+    the whole reason the card is worth playing.
+
+    ``new_targets`` is offered from the **ability's** own specs, not the card's.
+    `_choose_new_targets` reads `card.targets` and would hand an ability copy the
+    wrong pool -- usually empty, since the card that grants an activated ability
+    rarely targets at its own level -- so this asks `ability_of` for the specs the
+    ability actually declared.
+    """
+    from dataclasses import replace
+
+    from ..stack import ability_of, announce_targets
+
+    refs = ctx.targets.get(str(spec.get("target", "t1")), ())
+    sids = [ref.id for ref in refs if getattr(ref, "kind", None) == "stack"]
+    for sid in sids:
+        original = ctx.state.stack_item(sid)
+        if original is None or original.is_spell:
+            # Already resolved, or never an ability. 608.2b's fizzle, and the
+            # printed behaviour: a Camera activation whose target resolved first
+            # does nothing.
+            continue
+        copy = replace(original, sid=ctx.state.alloc_sid())
+        if spec.get("new_targets"):
+            ability = ability_of(ctx.state, original)
+            specs = getattr(ability, "targets", ()) or ()
+            if specs:
+                chosen = yield from _choose_new_targets_for(
+                    ctx, original, specs, original.controller
+                )
+                if chosen is not None:
+                    copy = replace(copy, targets=tuple(chosen))
+        ctx.state.stack.append(copy)
+        announce_targets(ctx.state, copy)
+
+
+def _choose_new_targets_for(ctx: EffectContext, original, specs, chooser: int):
+    """`_choose_new_targets`, but for target specs handed in rather than read off
+    a card.
+
+    Split out instead of parameterising the original, because the original's whole
+    contract is "the specs of the card this spell was cast from" and an ability's
+    live somewhere else entirely -- on the `Ability`, reachable only through
+    `ability_of`, which has to account for a *granted* ability living in the
+    granter's list. One caller each, and the two cannot drift into disagreeing
+    about which specs a copy is offered.
+    """
+    from ..targeting import describe_ref, enumerate_target_tuples
+    from .context import ask_mode
+
+    options = enumerate_target_tuples(
+        ctx.state,
+        chooser,
+        specs,
+        original.source_oid,
+        exclude_sid=original.sid,
+        bindings=dict(original.bindings or {}),
+        x=original.x,
+    )
+    if len(options) <= 1:
+        return None
+    labels = [
+        ", ".join(describe_ref(ctx.state, ref) for ref in tuple_) or "no targets"
+        for tuple_ in options
+    ]
+    # `ask_mode` hands back a *list* of chosen indices even for one pick, which is
+    # what lets it serve "choose two modes" as well; one pick is a list of one.
+    picked = yield from ask_mode(ctx, "Choose new targets for the copy", labels, chooser)
+    if not picked:
+        return None
+    return options[picked[0]]

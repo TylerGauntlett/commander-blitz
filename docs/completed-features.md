@@ -17621,3 +17621,69 @@ precisely so the next reader re-checks instead.
   permanent not burning a `skip_next_untap`**; the cap letting one land through
   where `skip_untap_step` lets none, which is the Rising Waters contrast; the
   self-untapped gate applying and lifting; and the two loader refusals.
+
+## Copying an **ability** on the stack — Peter Parker's Camera — 113.7a / 706.10
+
+### Overview
+
+*"{2}, {T}, Remove a film counter from this artifact: Copy target activated or
+triggered ability you control. You may choose new targets for the copy."*
+
+Two things were missing, and neither was a near miss.
+
+### An ability could not be targeted at all
+
+`TargetModel.kind` was a closed Literal, and **both** stack-facing branches of
+`enumerate_target_tuples` filtered on `item.is_spell`, which is exactly
+`kind == "spell"`. So an ability on the stack was *unreachable* as a target rather
+than awkward to name. 113.7a is why they are different things: an ability on the
+stack has no card behind it, only a source, an index and its bindings.
+
+`ability_on_stack` is its own kind, and its matcher **deliberately does not reuse
+`_spell_matches`**. Every clause that function reads — types, colours, subtypes,
+mana value — is a characteristic of a printed face. Asked about an ability it
+would answer about the *source permanent*, so "target activated ability" would
+quietly become "target ability of a creature" the first time anybody wrote a
+`types` clause. That is the same silently-inert selector `_spell_matches`'s own
+docstring says it exists to prevent, and the test pins that an unrelated clause is
+ignored rather than misread.
+
+### `copy_spell` would have loaded and copied nothing
+
+`_spell_named_by` returns `None` for an ability on purpose, and
+`put_copy_on_stack` builds `kind="spell"` around a `new_object` card token with an
+`oid` — which an ability StackItem has not got. A Camera written with `copy_spell`
+compiles, passes its gates and does nothing at all. That is why the gap record
+refused it instead of shipping it.
+
+`copy_ability` is `dataclasses.replace` with a fresh sid, which is what 706.10's
+copiable values amount to here: every field of the original, **including the
+bindings the trigger captured** (so a copied "whenever a land enters" still knows
+which land) and the announced `x`. On top of the stack, so it resolves first,
+which is the whole reason the card is worth playing.
+
+Its new-targets path reads the **ability's** specs through `ability_of` rather
+than the card's. `_choose_new_targets` reads `card.targets` and would hand an
+ability copy a pool that is usually empty — the card granting an activated ability
+rarely targets at its own level — which the gap record had identified in advance.
+
+### What is deliberately not built
+
+**"Target *triggered* ability" alone is not expressible**, and that is a refusal
+rather than an oversight. Strionic Resonator copies a triggered ability only,
+where the Camera and Lithoform Engine take either — but `StackItem.kind` is
+`"ability"` for both and nothing on the item records which it was. Guessing from
+`bindings` would be wrong, since an activated ability's cost writes bindings too
+(`costs.bind_paid_object`). A card needing that distinction needs a field first,
+and is a gap record until it has one.
+
+### Tests
+
+- `tests/unit/test_copy_ability.py` — an ability on the stack offered as a target,
+  **a spell on the stack not enlarging the pool** (this is the complement of the
+  `spell` kind, not a widening of it), and an opponent's ability excluded by the
+  one honoured clause; the copy put on the stack, on top, with a fresh sid, and
+  **keeping both its bindings and its X**; fizzling rather than crashing when the
+  target has already resolved or is a spell; and the matcher honouring
+  `controller` while ignoring a clause it cannot answer. The whole file errors
+  without the change.

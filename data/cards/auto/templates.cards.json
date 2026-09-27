@@ -78958,6 +78958,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "film"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "peter_parker_s_camera",
+      "mana_cost": "{1}",
+      "name": "Peter Parker's Camera",
+      "oracle_text": "This artifact enters with three film counters on it.\n{2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy.",
+      "replacements": [
+        {
+          "amount": 3,
+          "counter": "film",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

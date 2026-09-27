@@ -899,13 +899,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"which the card does not declare"
             )
     if "new_targets" in effect:
-        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
-        # `copy_spell` alone: the choice is a decision per copy, and storm,
-        # replicate, conspire and gravestorm all go through the same op without
-        # wanting nine prompts. Written anywhere else it would read as a promise
-        # nothing keeps.
-        if op != "copy_spell":
-            raise DslError(f"{where}: 'new_targets' only applies to copy_spell, not {op!r}")
+        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on the
+        # two copy ops: the choice is a decision per copy, and storm, replicate,
+        # conspire and gravestorm all go through `copy_spell` without wanting nine
+        # prompts. Written anywhere else it would read as a promise nothing keeps.
+        #
+        # `copy_ability` carries it for the same printed clause on a different
+        # kind of object -- Peter Parker's Camera and Lithoform Engine both say
+        # it -- and offers the pool from the **ability's** own specs rather than
+        # the card's, which is the whole reason it is a separate op.
+        if op not in ("copy_spell", "copy_ability"):
+            raise DslError(
+                f"{where}: 'new_targets' only applies to copy_spell and "
+                f"copy_ability, not {op!r}"
+            )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
     if op == "copy_spell" and "controller" in effect:

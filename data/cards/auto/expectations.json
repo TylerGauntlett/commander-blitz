@@ -7151,6 +7151,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "peter_parker_s_camera": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "film"
+    },
+    "zone": "battlefield"
+  },
   "phantom_monster": {
     "zone": "battlefield"
   },
