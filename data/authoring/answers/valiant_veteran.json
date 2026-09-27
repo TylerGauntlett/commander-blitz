@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "valiant_veteran",
+    "name": "Valiant Veteran",
+    "oracle_text": "Other Soldiers you control get +1/+1.\n{3}{W}{W}, Exile this card from your graveyard: Put a +1/+1 counter on each Soldier you control.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Kor", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "text": "Other Soldiers you control get +1/+1.",
+        "affects": {
+          "controller": "you",
+          "exclude_self": true,
+          "types": ["Creature"],
+          "subtypes": ["Soldier"]
+        },
+        "power": { "const": 1 },
+        "toughness": { "const": 1 }
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{W}{W}, Exile this card from your graveyard: Put a +1/+1 counter on each Soldier you control.",
+        "active_zones": ["graveyard"],
+        "cost": {
+          "mana": "{3}{W}{W}",
+          "exile_from_graveyard": {
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": { "const": 1 },
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "subtypes": ["Soldier"],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 1 }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "resolute_reinforcements",
+    "name": "Resolute Reinforcements",
+    "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nWhen this creature enters, create a 1/1 white Soldier creature token.",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "flash"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, create a 1/1 white Soldier creature token.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "soldier_1_1_w",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34,
+    "tokens": {
+      "id": "soldier_1_1_w",
+      "count": 1
+    }
+  }
+}

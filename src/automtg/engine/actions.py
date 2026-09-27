@@ -307,6 +307,20 @@ class PendingDecision:
 
     kind: DecisionKind
     player: int
+    #: Whose declaration this is, when somebody **else** is making it.
+    #:
+    #: "You choose which creatures block this combat and how those creatures
+    #: block" -- Odric, Master Tactician. `player` is always the seat being
+    #: asked, so the client and the encoder need no special case; this names the
+    #: seat the answer is *about*, which is what every legality check reads.
+    #: `legal_blocks`, `blocks_valid`, `can_block` and
+    #: `unmet_block_requirements` therefore keep asking about the defender
+    #: exactly as they did when the defender answered for themselves -- only who
+    #: is holding the prompt changes, which is the whole of what the printed card
+    #: says.
+    #:
+    #: `None` for every ordinary decision, which is all of them but this one.
+    on_behalf_of: int | None = None
     prompt: str = ""
     options: tuple[DecisionOption, ...] = ()
     min_count: int = 1
@@ -315,6 +329,11 @@ class PendingDecision:
     selected: list[int] = field(default_factory=list)
     #: Extra payload (e.g. the source card id) for display and for the encoder.
     context: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def subject(self) -> int:
+        """The seat this decision is *about*, which is usually the one asked."""
+        return self.player if self.on_behalf_of is None else self.on_behalf_of
 
     @property
     def allow_done(self) -> bool:

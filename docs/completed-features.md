@@ -16838,3 +16838,1033 @@ read.
   a missing `amount`, and `any_one_color` beside `mana` or `split`.
 - `tests/data/any_one_color_mana.cards.json` -- the card, the contrast card, and
   the four spells that are the corners of the restriction.
+
+## The gate-3 claimant `warp` never had — the mechanic was built, the bookkeeping was not
+
+### Overview
+
+Two cards in the Myrel, Shield of Argive import — **Exalted Sunborn** (`Warp
+{1}{W}`) and **Haliya, Guided by Light** (`Warp {W}`) — were filed as gap records
+against a capability called `warp`. Two workers, independently and without
+seeing each other, reached the same conclusion: warp is not missing.
+
+The mechanic is complete and has been since Tannuk shipped. `CardModel.warp`
+parses, the loader refuses a warp cost equal to the printed one and refuses warp
+on a nonpermanent, `casting.warp_cost` offers the second cast line, and
+`stack._place_after_resolution` supplies both rules-given riders — the
+`DelayedTrigger` that exiles the permanent at the next end step, and the
+`playable: "later_turns"` permission that casts it from exile afterwards. Both
+workers built the finished card, loaded it, and confirmed the sandbox offers
+*both* cast lines.
+
+What was missing was one branch in `src/automtg/cards/authoring/verify.py`.
+`_covered` carries a claimant for every other card-level alternative cost —
+`kicker`, `multikicker`, `strive`, `emerge`, `evoke`, `bestow`, `mutate`, `gift`,
+`ascend` — and carried none for `warp`. So `residual_text` on a completely
+correct card returned exactly `Warp {1}{W}`, and gate 3 rejected it as
+half-implemented. `warp` is not in `KNOWN_KEYWORDS` either, so `lift_keywords`
+could not consume the line and there was no honest way to claim it from inside
+the card.
+
+Nothing had ever hit this, which is why it survived: the only warp in the shipped
+pool was the `grant_warp` **static** on another permanent, whose printed line
+that static's own `text` already claims. The card-level field had no card.
+
+### Tier: none of A–E — an authoring-pipeline claimant, no engine change
+
+One branch, placed beside `mutate`'s and written strict for `bestow`'s stated
+reason:
+
+```python
+if card.warp is not None and stripped.lower().startswith("warp "):
+    return _declares_printed_cost(stripped[len("warp ") :], card.warp)
+```
+
+Strict matters here. The whole printed line *is* the price, so a permissive
+first-word check would let a card declaring `warp: "{1}{W}"` claim a printed
+`Warp {3}{W}{W}` — a strictly cheaper card wearing the real one's words. An
+unparsable or mismatched cost fails closed and the line stays residual.
+
+| the near miss | why it is not this |
+|---|---|
+| adding `"warp"` to `KNOWN_KEYWORDS` | it is a price, not a keyword; the loader rejects it as one, and `lift_keywords` consuming the line would claim the cost without checking it |
+| a permissive claimant on the first word | laundering — see the strictness above, and the test that pins it |
+| an ability carrying the line as its `text` | an ability is activated, triggered or static; a card-level alternative cost is none of the three, which is precisely why bestow and mutate needed claimants too |
+| a `delayed_trigger` ability for the exile rider | the card prints no sentence for it, so the residual gate would reject the ability itself — and the engine already owes the rider |
+
+Deliberately **not** changed: `fidelity.unimplemented_mechanics`'s `declared`
+set. It looked like the same omission, but it returns early on
+`if not card.spell_effects`, and the loader refuses warp on anything that is not
+a permanent card — a permanent has no `spell_effects`, so the branch is
+unreachable for warp and adding it would be dead code.
+
+Also left for its own change: `verify.find_play` has no `warped` flag, so gate 5
+measures a warp card on its **printed** line. That is correct for both cards here
+(each expectation describes the ordinary cast), and it is honest — but it does
+mean no card yet measures its own warp half at gate 5.
+
+### Tests
+
+- `tests/unit/test_warp.py::TestThePrintedWarpLineIsClaimed` — the printed line
+  claimed by the field; the line left residual when the field is absent (the
+  claimant is the field, not the word); a cheaper declared cost failing to claim
+  a dearer printed one; and a real printing's reminder text not having to match,
+  since `_declares_printed_cost` cuts at the parenthesis before parsing. The
+  first and last fail without the branch.
+
+## Five printed tokens the closed pool did not have — Myrel, Shield of Argive — 111.4
+
+### Overview
+
+Five cards in one deck were blocked on nothing but a token. `create_token` names
+an id in a **closed** list, `validate_token_references` refuses an id the pool
+does not hold, and no key on the op recolours, resizes or retypes what it names —
+so "the nearly-right token" is not a cheaper option, it is the only option, and
+it is wrong. Five workers reached that conclusion independently and each filed a
+gap rather than substituting.
+
+| the printed token | the card | the near miss, and why it is a different card |
+|---|---|---|
+| 1/1 colorless Soldier **artifact** | Myrel, Shield of Argive | `soldier_1_1_w` is white and not an artifact — and Myrel's X *counts Soldiers*, so the wrong token feeds the wrong number back into the card that made it |
+| 2/2 white Spirit | Anafenza, Unyielding Lineage | `spirit_1_1_c` is half the body and colourless; endure is **modal**, so substituting it makes the counters half strictly better than the token half on every board |
+| 4/4 colorless Eldrazi Angel, flying + vigilance | Angelic Aberration | `angel_4_4_w_flying_vigilance` is the right body and keywords in the wrong colour with the wrong types — and the card is **Devoid**, so a white token would contradict the card printing it |
+| 4/4 white Bird Soldier, flying | The Eagles Are Coming! | `bird_1_1_w_flying` is a quarter of the body; `angel_4_4_w_flying` is the right body with types that would misfeed this deck's four Soldier counters |
+| 1/1 white Cat | Ocelot Pride | `cat_beast_2_2_w` is the wrong body *and* a Beast — and Ocelot Pride copies every token that entered this turn, so the error is made and then **doubled** |
+
+### Tier: none of A–E — five entries in `data/cards/tokens.cards.json`
+
+No engine change. The capability was data the whole time, which is what made it
+the cheapest item on the roadmap and the one blocking the most cards — including
+the commander.
+
+Four of the five cards were blocked on a *second* capability as well, so this
+change unblocked one card outright (Anafenza) and moved the other four down to a
+single remaining need each: `base_power_toughness`, `cant_activate_abilities`,
+`entered_this_turn_selector`, and `kicked_target_count` +
+`return_to_hand_binding`. Their gap records were edited rather than deleted, so
+`report_gaps` stops counting a capability that has shipped.
+
+### Tests
+
+- `tests/unit/test_token_pool.py` — one class per token, each pinning the
+  characteristic that makes its near miss wrong, and each asserting **the near
+  miss still exists as a separate token**, so nobody later "consolidates" the
+  pair the way the section in `card-dsl.md` warns about. The colourlessness of
+  Myrel's Soldier and of the Aberration's Angel, the Cat not being a Beast, and
+  the Bird Soldier carrying both creature types are the four that would silently
+  change a card if they drifted.
+
+## Grand Abolisher's other half — "…or activate abilities of artifacts, creatures, or enchantments" — Myrel, Shield of Argive — 605.1a / 101.2
+
+### Overview
+
+`cant_cast_spells` shipped with Voice of Victory and its docstring has said ever
+since that it deliberately stops only the casting half, listing "activating
+abilities" among what it leaves alone and closing with "Grand Abolisher's second
+half is a different static". `tests/unit/test_cant_cast_spells.py` repeats it in
+its own module docstring. Myrel, Shield of Argive is the card that finally needed
+the other half: its first line is that whole sentence, and writing it as
+`cant_cast_spells` alone would have dropped a printed clause.
+
+### Tier: a new player-wide static, plus a second reader the obvious version misses
+
+`cant_activate_abilities`, in `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`,
+with `player_cant_activate(state, pid, oid)` beside `player_cant_cast_spells`.
+
+**It takes the object as well as the player**, which is the whole structural
+difference between the two halves. Casting is something a player does;
+activating is something a player does *to a permanent*. That is also why
+`affects` is **required** here where its twin refuses it:
+
+| the near miss | why it is not this |
+|---|---|
+| no filter (`affects` optional, as on `cant_cast_spells`) | every printed card in the family names its types — filterless it would also stop an opponent cracking a fetchland or moving a planeswalker's loyalty, a strictly stronger lock than anything printed and one that looks correct on the board. The loader refuses it |
+| an `amount` beside it | a prohibition has no size; a number reads as "can't activate more than N", a different card that nothing enforces. Refused |
+| `lock_abilities` | an **op**, recorded as an until-end-of-turn `TempEffect` over a fixed set of object ids — it cannot be an ongoing static, is dropped at cleanup, and never sees a permanent played afterwards |
+| `detain` | the same shape, expiring at the next untap |
+| `lose_all_abilities` | strictly wider and permanent: it strips triggered, static and mana abilities too, so the opponent's Sol Ring would stop making mana on their own turn |
+
+**The second reader is the part worth recording.** A version read only in
+`legality._activate_actions` passes every obvious test and is still wrong: the
+mana solver reaches `costs._sources_of` without ever building a priority action,
+so an opponent's mana creature would keep tapping right through the lock. 605.1a
+makes a mana ability an activated ability and the printed line excepts nothing.
+`ObjectState.abilities_locked` already documents exactly this split for
+`lock_abilities` — "Covers mana abilities too, which is why the mana solver has
+to ask as well as legality" — so both sites now check this static beside that
+flag.
+
+One subtlety the filter language decides for us: `controller` defaults to the
+**source's** controller, so "your opponents' permanents" is written
+`controller: "opponent"` beside the types. That is exact rather than approximate
+for this family, since a player may only activate abilities of permanents they
+control. And `_matches` gates on the battlefield, which is also the printed
+reading — these cards leave an opponent free to cycle from hand or activate from
+a graveyard.
+
+### Tests
+
+- `tests/unit/test_cant_activate_abilities.py` — the lock across all three named
+  card types and the control position without it; `affects_player` sparing its
+  own controller; the `condition` sleeping on the opponent's turn, with the
+  unconditional version pinning that the sleep is the condition's doing and not
+  a hole; **the land that proves the filter is real**, both as the predicate and
+  at the mana solver, with a creature on the same board still stopped so the
+  land is exempt by type rather than by the static having lapsed; and the
+  605.1a boundary — a locked creature's mana ability withheld from
+  `_sources_of`, with a no-lock control so the empty list is the lock's doing
+  and not summoning sickness. Plus the four loader refusals.
+- Both read sites are load-bearing and proven so: stashing `legality.py` and
+  `costs.py` fails exactly one test each.
+- `tests/data/cant_activate_abilities.cards.json` — the two Abolishers. The
+  permanents whose abilities are under test are the shared ones in
+  `testing.cards.json`, the way `test_cant_cast_spells.py` reuses `t_dork`.
+
+## `entered_this_turn` on the effect side — gathering the turn's arrivals, not counting them — Ocelot Pride — 400.7
+
+### Overview
+
+Ocelot Pride: *"…then if you have the city's blessing, **for each token you
+control that entered this turn**, create a token that's a copy of it."*
+
+The reading already existed in every filter language in the engine except the
+one this card needs. `characteristics._matches` answers it for statics (Zurgo
+and Ojutai's "as long as it entered this turn"),
+`cost_reduction._object_matches` answers it on the cost side, and
+`triggers.matches_card_filter` answers it for trigger filters. Only
+`effects.selectors` could not say it — and `validate_selector` turns any key
+outside `SELECTOR_KEYS` into a load error, so the clause was a **refused card
+rather than a silently wrong one**, which is the failure mode worth having.
+
+### Tier: A — one selector key and one ledger read
+
+`entered_this_turn` in `SELECTOR_KEYS`, answered from
+`TurnLedger.entered_this_turn(oid)`, checked beside the existing
+`attacked_this_turn` clause and deliberately outside the combat block for the
+same reason: it is a turn-ledger question rather than a board one, so it
+survives the permanent having since been tapped, animated or moved.
+
+| the near miss | why it is not this |
+|---|---|
+| `permanents_entered_this_turn` (the **value**) | reads the same ledger and yields a *number*. `for_each` needs the object pool to bind `each` for `copy_permanent` — a number cannot be copied |
+| `created_with: "self"` | hard-restricted to the literal string `"self"`, so it gathers only the tokens *this source* made and misses every token another card made this turn, which is most of what Ocelot Pride copies |
+| a bare `is_token: true` | gathers the whole token board, so a deck making Cats for six turns copies all of them at once. The two compose; this key is the narrowing clause |
+| `entered_turn` on the object | that field is what `summoning_sick` reads. It is not the arrival record 400.7 makes meaningful, and a permanent that left and came back is a new arrival |
+
+### Tests
+
+- `tests/unit/test_entered_this_turn_selector.py` — the arrival gathered and the
+  permanent that was already standing excluded, with an unfiltered control
+  proving the exclusion is the key's doing and not the position's; composition
+  with `controller`, measured by an opponent's arrival on the same turn; `false`
+  as the complement; and 400.7 — a permanent exiled and returned counts again,
+  which is the claim that separates the ledger from `entered_turn`. Four of the
+  eight fail without the key.
+
+## `base_power` / `base_toughness` — the size before anything was done to it — Angelic Aberration — 613.2 layer 7a/7b
+
+### Overview
+
+Angelic Aberration: *"When this creature enters, sacrifice any number of
+creatures **each with base power or toughness 1 or less**. Create that many 4/4
+colorless Eldrazi Angel creature tokens with flying and vigilance."*
+
+The effect-side selector already had `power` and `toughness`, and they read the
+**live** value — `chars(state, oid)`, after every continuous effect. The printed
+word "base" is the card declining to read those layers, and that is not a
+spelling difference: on any board carrying a +1/+1 counter or an anthem the two
+keys name different creatures **in both directions**.
+
+- The live keys **spare** the 1/1 the card is meant to sacrifice, the moment
+  anybody puts a counter on it.
+- They **swallow** a creature whose printed line is 2/2 but which is currently a
+  1/1 under a -1/-1 counter.
+
+Either way the card eats a different set and makes a different number of Angels,
+and nothing on screen says so — the failure the gap record existed to prevent.
+
+### Tier: A — two selector keys reading a function that already existed
+
+`base_power` and `base_toughness` in `SELECTOR_KEYS`, answered from
+`characteristics._base_pt`. That function is the one the pipeline itself starts
+from and the one static filters stop at, and its docstring says why it exists:
+"One function, so the filter's idea of where a creature's size begins cannot
+drift from the pipeline's." The effect selector is now the third caller on the
+same argument.
+
+Off the battlefield there is nothing to layer anything onto, so the printed
+value *is* the base one and both spellings agree — pinned, so the branch cannot
+quietly start returning 0 for a card in hand.
+
+| the near miss | why it is not this |
+|---|---|
+| `power` / `toughness` | the live size. The whole gap, in both directions — see above |
+| a `static_filter_keys` filter | reads printed characteristics correctly, but applies only to static abilities; this is a triggered ability's effect selector |
+| printed P/T off `card` directly | misses the three things `_base_pt` folds in that genuinely change what the object *is* rather than what was done to it: a copy exception's base size (707.9b), bestow's 0/0 while attached (702.103b), and a face-down permanent's 2/2 shell (707.2) |
+
+### Tests
+
+- `tests/unit/test_base_power_toughness_selector.py` — the 1/1 gathered and the
+  2/2 not; either half of the printed "or" sufficing; **the 1/1 still gathered
+  while wearing three +1/+1 counters**, with the live-key contrast on the same
+  board showing it would have been dropped; the mirror, where a -1/-1 counter
+  makes a 2/2 live-1/1 that the live keys take and the printed card does not;
+  a card in hand answering from its printed line; and the loader still refusing
+  a key it cannot answer. Four of the nine fail without the keys.
+- The counter tests drive `primitives.add_counters` rather than writing
+  `obj.counters` directly, because `chars` is cached against
+  `state.char_version` and a poked dict never invalidates it — a test that
+  wrote the dict would pass while measuring nothing.
+
+## `lose_keyword` — "lose first strike and can't have or gain first strike" — Archetype of Courage — 613.1b
+
+### Overview
+
+The keyword pipeline in `characteristics._compute` was additive from end to end.
+Every step does `keywords.update(...)` — the `grant_keyword` statics at layer 2,
+keyword counters at 2b (122.1c), the until-end-of-turn grants at 6, suspend's
+haste at 7, `granted_keywords` at 8 — and no step ever discarded one. The only
+subtractive thing in the whole static language was `lose_all_abilities`.
+
+### Tier: B — a new continuous effect, and the layer position *is* the feature
+
+This is the case the extend-dsl skill means when it says the layer position is
+the whole design question, and the answer lands at the opposite end of the file
+from the near miss.
+
+`lose_all_abilities` sits at **layer 1**, deliberately *before* the grants,
+because 613.1b keeps whatever is added after a removal: Imprisoned in the Moon
+plus a Levitation leaves the permanent flying, and that is correct.
+
+Archetype's sentence is the other kind. "Can't have **or gain**" is a standing
+prohibition, not a one-time subtraction, so `lose_keyword` must outrank every
+adder above it — which makes it the **last** step, after even
+`granted_keywords`.
+
+**The position is pinned rather than asserted.** Moving the block above layer 2
+fails exactly two tests — the opponent's own first-strike anthem, and a
+first-strike counter — and nothing else. So a version placed early passes eleven
+of the thirteen tests in the file and is wrong on precisely the boards the card
+exists for, which is why those two tests are written the way they are.
+
+| the near miss | why it is not this |
+|---|---|
+| `lose_all_abilities` | wrong twice over — too broad (it takes the opponents' flying and their triggered and activated abilities, which is half a Humility) *and* at the wrong end of the pipeline, where a later anthem hands the keyword back |
+| a negation flag on `grant_keyword` | neither the op options nor the static reader knows anything but `keywords`, and the two effects want opposite layer positions, so one entry could not carry both |
+| `not_keywords` in a filter | narrows which permanents a static *sees*; it removes nothing |
+
+`keywords` and `affects` are both required. An empty keyword list is an inert
+static wearing a printed prohibition; an absent filter defaults to
+`controller: "you"` and would make the card hose its own controller.
+
+### Tests
+
+- `tests/unit/test_lose_keyword.py` — the keyword taken from the opponents'
+  creature, with a no-static control; its own side untouched (the filter is the
+  printed "your opponents"); the whole printed card doing both halves at once;
+  **the prohibition beating a later grant** (the opponent's own anthem) and
+  **beating a keyword counter**, each with a control proving the adder is real
+  and the position is not rigged; another keyword surviving on the same board so
+  the breadth difference from `lose_all_abilities` is measured; and the two
+  loader refusals.
+- `tests/data/lose_keyword.cards.json` — the Archetype as printed, its lose half
+  alone, the two opponent-side anthems and a creature with first strike printed.
+
+## `enters_tapped` — the arrival somebody *else* taxes — Authority of the Consuls — 614.1
+
+### Overview
+
+Authority of the Consuls: *"Creatures your opponents control enter tapped."*
+
+This is the one thing a card's own `replacements` can never say. That list is a
+closed `self_*` Literal — `self_enters`, `self_enters_tapped`,
+`self_enters_with_counters`, `self_enters_prepared`, `self_enters_as_copy`,
+`self_enters_replaced` — and every branch is read off the **arriving** card's
+printed face, so each speaks only about itself. `self_enters_tapped` on Authority
+taps the enchantment and leaves the opponents entirely alone.
+
+**That is not hypothetical: ten cards in the shipped pool have exactly that
+defect**, because `self_enters_tapped` was the only spelling available when the
+template tier wrote them — Imposing Sovereign, Kismet, Frozen Aether, Loxodon
+Gatekeeper, Root Maze, Orb of Dreams, Kinjalli's Sunwing, Thalia Heretic Cathar,
+Uphill Battle and Spider-Woman. Each one taps *itself* on arrival and does
+nothing to its opponents. They are repaired in the commit after this one; this
+one is the machinery they needed.
+
+### Tier: a new static, read at the one place `obj.tapped` is decided
+
+`_apply_board_enters_tapped` in `zones._enter_battlefield`, before the printed
+replacement loop. Both only ever set `tapped` to True and neither reads the
+other, so the order is free; before, so the printed "…unless you pay 3 life"
+branch keeps the last word on its own card.
+
+Reading it *there* is the point. `obj.tapped` is decided in one place and every
+arrival funnels through it — a resolved cast, a `put_onto_battlefield`, a token
+created straight onto the battlefield, a return from a graveyard. A version hung
+off the cast path passes the obvious test and lets a reanimated creature walk in
+untapped.
+
+**The arriving permanent is excluded as a source.** Orb of Dreams says
+"Permanents enter tapped" and does not tap itself: a permanent's own static is
+not applying to its own entrance. By this point the arriving object is already in
+`state.battlefield` — which is what makes the ordinary `_matches` filter language
+usable here at all — so without an explicit exclusion every symmetric card in
+the family would acquire the very self-tapping bug this static exists to fix.
+
+| the near miss | why it is not this |
+|---|---|
+| `self_enters_tapped` on the taxing card | reads the arriving card's own face, so it taps the enchantment. **The live bug on ten cards** |
+| the `enters_tapped` bool in `ability_keys` | a rider on a `cast_from_graveyard` static, reaching only a spell cast under that one graveyard permission |
+| a `permanent_enters` trigger running `tap` | materially different: a stack window, a chance to respond, and the creature could attack with haste before it resolved |
+| `skip_untap_step` | a turn too late — it holds a permanent down *next* untap rather than taxing the arrival |
+
+`affects` is required and an `amount` is refused. The filter is the printed
+clause, and it defaults to your own side; "Permanents enter tapped" is written
+with `controller: "any"` said out loud, so the symmetric case is a statement
+rather than an omission.
+
+### Tests
+
+- `tests/unit/test_enters_tapped.py` — the opponent's creature tapped with a
+  no-static control; the controller's own creature untouched; **every arrival
+  route** (a graveyard return and a token, not just a hand arrival); the narrow
+  filter leaving an opponent's land alone where the Kismet-width one catches it;
+  the symmetric version catching both sides; **the symmetric permanent not
+  tapping itself**, with a second copy proving the exclusion is about the
+  arriving object and not a self-blind effect; and the loader refusals. Six of
+  the thirteen fail without the change.
+
+## An unbounded optional `{X}` — the ceiling the card does not print — Decree of Justice — 118.3
+
+### Overview
+
+Decree of Justice: *"When you cycle this card, you may pay {X}. If you do, create
+X 1/1 white Soldier creature tokens."*
+
+`may`'s `x` spec required `max`, and its docstring justified that by saying a
+missing ceiling was "pay any amount, which is join forces and not this". That
+conflated two different mechanics. `op_join_forces` walks `state.turn_order` and
+asks **every** player for `{1}` at a time, repeatedly, binding the summed units;
+Decree's X is announced **once**, by its controller alone, and no opponent may add
+to it.
+
+Meanwhile a great many cards print no ceiling at all, and for those 118.3 — what
+the player can actually pay — is the only bound there is.
+
+### Tier: a loader relaxation and one branch in `_announce_x`
+
+`max` is now optional; `as` is still required (without it the payment charges for
+X and nothing reads the number, so the card pays for X cards and draws none).
+With `max` absent, `_announce_x` runs the affordability probe under
+`max_affordable_x`'s own default cap instead of a printed one.
+
+**Why the fabricated number was not an option.** This is the part worth
+recording: `_announce_x` passes `x.max` straight to `max_affordable_x` as the
+probe `cap`. So an invented ceiling is not a placeholder that something else
+overrides — it silently *becomes* the card's real maximum. A Decree written with
+`"max": {"const": 20}` is a card with a printed rule it does not have, and on a
+board with more than twenty mana it makes fewer Soldiers than the real one. That
+is exactly the class of error the gap-record discipline exists to catch, and the
+worker who filed it had verified the whole rest of the card with a throwaway
+ceiling rather than shipping one.
+
+| the near miss | why it is not this |
+|---|---|
+| a fabricated `max` | load-bearing, not cosmetic — it becomes the ceiling. See above |
+| `join_forces` | asks every player, repeatedly, and binds the sum. A different card |
+| `cost_keys.x_value` | a *defined* X ("X is the mana value of that card") that `costs.defined_x` computes without asking, and it lives on an activated ability's cost rather than inside a resolution |
+| `may` + `repeat` around `{1}` | pays one at a time and lets the results inform the next payment, which no printed "pay {X}" does |
+
+### Tests
+
+- `tests/unit/test_pay_x_on_resolution.py::TestAnUnboundedX` — X running up to
+  affordability where the printed-ceiling Well stops at the life gained, **with
+  the bounded contrast measured on the same board**, so relaxing the requirement
+  is shown not to have relaxed the rule; the `as` binding still read by the "if
+  you do"; and the zero-mana boundary still asking nothing.
+- The old `test_no_ceiling` refusal is now `test_no_ceiling_is_allowed_now`,
+  carrying the reasoning for the change rather than being deleted.
+- `tests/data/pay_x.cards.json` gains `t_well_unbounded`, the same trigger with
+  no printed maximum.
+
+## A total damage shield — "prevent **all** damage", not absorb N — Rescue Retriever — 702.63a
+
+### Overview
+
+Rescue Retriever: *"Prevent all damage that would be dealt to other attacking
+Soldiers you control."*
+
+`docs/rules-coverage.md` recorded this as unimplemented, and the reason is the
+interesting part: the `prevent_damage` static existed and refused an absent
+`amount` rather than reading it as infinite, so there was no way to say "all" —
+only a number.
+
+**A big number is not "all."** Absorb is per source and per instance, so any
+finite N is a per-source cap the printed card never named. A Soldier under
+absorb 2 is untouched by three 1/1 attackers and takes four from a single 6/6;
+under a total shield it takes nothing from either. Writing the card with
+`amount: 999` would be a different card that happens to look the same on most
+boards.
+
+### Tier: B — a bool beside the number, at the same seam as protection
+
+`prevent_all` on the static, answered by `characteristics.prevents_all_damage`.
+A bool rather than a sentinel int, shaped after `protected_from` for the reason
+that one is a bool: it settles the whole damage event however big it is. Read in
+`primitives.damage_permanent` beside the protection branch, and **before** absorb
+— with both on one creature the shield has already taken everything, and absorb
+would otherwise fire a second `DAMAGE_PREVENTED` for damage that no longer
+exists. A total shield contributes nothing to the absorb sum, so a caller reading
+only the number cannot conflate them.
+
+| the near miss | why it is not this |
+|---|---|
+| `amount` with a large N | a per-source cap (702.63a), not a shield. Three small attackers get through absorb 2 |
+| `protection` | prevents all the damage *and* stops the creature being blocked, enchanted and targeted — a shielded attacking Soldier written that way is unblockable |
+| the `prevent_damage` **op** | shields a *player*, refuses `objects`, and needs a `duration`; this is continuous while its source stands |
+| `indestructible` | the damage is still dealt and still marks the creature; only the lethal check changes |
+
+**Both narrowing clauses are the card.** "Other" is `exclude_self` and
+"attacking" is the `attacking` filter key. A version dropping either would look
+identical on a board where everything happens to be attacking, which is why both
+are pinned separately.
+
+### Tests
+
+- `tests/unit/test_prevent_all_damage.py` — a large hit and a small one each
+  prevented entirely, with a no-shield control and the permanent left with zero
+  marked damage; **the absorb sum staying zero** so the two rules are shown not
+  to be the same question; three separate sources each prevented in full, which
+  a per-source cap cannot claim; the Retriever not shielding **itself**; a
+  Soldier **at home** unprotected; a non-Soldier unprotected; an unnarrowed
+  contrast card shielding all of them, proving the clauses narrow rather than the
+  static being inert; and the three loader refusals.
+
+## `choose_blockers` — the defender's declaration, made by somebody else — Odric, Master Tactician — 509.1
+
+### Overview
+
+Odric, Master Tactician: *"Whenever Odric and at least three other creatures
+attack, **you** choose which creatures block this combat and how those creatures
+block."*
+
+Nothing in the combat-flag family can say this, and the obstruction is *kind*
+rather than breadth. `must_block` and `cant_block` each constrain **one** creature
+and leave the defender free everywhere else — they cannot stop the defender adding
+blockers the effect never named — and "and **how** those creatures block", the
+assignment of each blocker to an attacker, has no spelling at all in a
+per-creature requirement. `block_restriction`'s filter only says what may *not*
+block a given attacker.
+
+Underneath, `turn._next_blocker_decision` issued
+`PendingDecision(kind=DECLARE_BLOCKERS, player=pid)` to each seat in
+`combat.pending_blockers` with no way to reassign it.
+
+### Tier: C-adjacent — no new DecisionKind, but a new thing a decision can say
+
+The design that makes this safe is splitting **who is asked** from **whose
+declaration it is**:
+
+- `PendingDecision.on_behalf_of` names the second, with a `subject` property that
+  resolves to `player` for every ordinary decision.
+- `CombatState.blocker_chooser` records the thief, read by
+  `_next_blocker_decision` when it hands the prompt out.
+- `legality._blocker_actions` and `game._dispatch_blockers` read `subject`.
+
+**No legality check changed.** `legal_blocks` still offers the defender's
+creatures, `add_blocker` still validates against them, and `blocks_valid` /
+`unmet_block_requirements` still hold the defender to their own menace and lures.
+So a stolen declaration is exactly as legal as the defender's own would have been
+— Odric may choose badly but not illegally, which is the printed card. Reusing
+`player` instead would have offered the *attacker's* creatures as blockers, which
+is the one mistake this shape forecloses.
+
+Deliberately **not** a new `DecisionKind`: the decision is the same one, asked of
+a different seat, so the client, the encoder and `verify.py`'s auto-answer table
+all keep working untouched. That is the extend-dsl routing rule applied — the
+cheaper tier composed rather than a new kind invented.
+
+Recorded on `CombatState` rather than on a player because "this combat" is the
+printed duration: it dies with `state.combat`, needs no clock, and an extra combat
+granted the same turn correctly begins free of it.
+
+### Tests
+
+- `tests/unit/test_choose_blockers.py` — the attacker holding the prompt with
+  `on_behalf_of` still naming the defender, and a control showing the defender is
+  asked without the op; **the blocks offered being the defender's creatures and
+  not the thief's**, which is the safety of the whole design; menace still
+  requiring two blockers under a stolen declaration, and `legal_blocks` still
+  computed for the defender; the record dying with the combat, a fresh combat
+  starting free of it, and the op inert with no combat at all; plus three tests
+  driving a **real turn** to show the defender is never asked. Stashing
+  `turn.py` fails three of them.
+
+## Approach of the Second Sun — three clauses, three seams that already existed
+
+### Overview
+
+*"If this spell was cast from your hand and you've cast another spell named
+Approach of the Second Sun this game, you win the game. Otherwise, put it into
+its owner's library seventh from the top and you gain 7 life."*
+
+Only "you win the game" and "you gain 7 life" were sayable. Each of the other
+three clauses needed one small addition at a seam that was already there, and
+each had a near miss that would have been silently wrong.
+
+### `cast_from_hand` — a sibling, not a negation
+
+A condition leaf reading the `obj.cast_from_hand` stamp `stack.push_spell` already
+writes beside `cast_from_graveyard`. It cannot be the negation of that key: a
+spell cast from exile (foretell, plot, adventure), off a Citadel top or from the
+command zone was cast from **neither**, and a copy was never cast at all (707.10)
+— so a copy of Approach must not win the game. `zone_is` cannot answer it either,
+reporting the source's *current* zone, which for any resolving sorcery is the
+stack.
+
+### `spells_cast_this_game` — the same shape over a ledger with no turn boundary
+
+`TurnLedger.spells_cast_ids` is cleared at every turn boundary, so on the turn
+that matters it reads empty and a card written against it could never win. The
+new tally lives on `GameState` and is written in the **same** `emit` SPELL_CAST
+fold as the per-turn one, so the two cannot disagree about what counted as a cast.
+
+**"Another" is the card's job, deliberately.** `push_spell` fires SPELL_CAST as
+the spell goes on the stack, so by the time its own effects run it has already
+recorded itself, and a card meaning "another" compares `> 1`. Subtracting one
+inside the leaf would be wrong for every sentence that does *not* say "another",
+and nothing inside it can tell which was meant.
+
+### `tucks_itself` — the eighth rider, and the only one with a depth
+
+`_place_after_resolution` already carried seven riders that replace the graveyard
+a resolving spell goes to. This is the eighth, and the only one whose destination
+is a **library** and whose value is an ordinal rather than a flag. `move_object`
+already accepted `to_index`, and the ordinal converts the way `op_put_on_top`
+does, for its stated reason: a card tucked sixth when the card says seventh is
+drawn a turn early, which is the whole of what the depth buys.
+
+Written as a `put_on_top` op in the card's own effects it would reach nothing —
+`_place_after_resolution` runs *after* `spell_effects` — which is the same reason
+`exiles_itself` is a rider.
+
+### Two defects this shipped with, both in the harness rather than the card
+
+Worth recording because the codebase had warned about the second one in advance.
+
+1. **Gate 4 rejected a correct card.** `verify._play_once` allows a nonpermanent
+   to end in a graveyard, widened to exile for `exiles_itself` and `rebound`. The
+   third rider was added without teaching the gate, so Approach failed gate 4
+   while behaving exactly as printed. Widening it is **not** weakening it: the
+   gate's own docstring admits only a *declared* flag, so a spell that merely
+   finds itself in a library still fails.
+
+2. **The two harnesses disagreed.** `tests/cards/test_every_card_works.py` keeps
+   its own copy of that allowlist, and its comment says plainly that the two
+   "have to agree or a card passes one gate and fails the other for the same
+   behaviour." Only one was widened, so `--collect` accepted the card and
+   `tests/cards` then failed it. Both are now in sync, and that comment records
+   Approach as the card that proved the warning real.
+
+3. **`CARD_LEVEL_RIDER_KEYS` in `packet.py` is hand-maintained**, unlike
+   `condition_keys` and `value_keys` which are derived and picked the new leaves
+   up for free. So a worker reading "put it into its owner's library" would have
+   been told the vocabulary has no word for it — the "most gaps are documentation
+   gaps" failure exactly. Added.
+
+### Tests
+
+- `tests/unit/test_approach_of_the_second_sun.py` — `cast_from_hand` true and
+  false, and **an object cast from exile answering false to both keys**, which is
+  the claim that makes it a separate word rather than a negation; the game-long
+  tally counting a cast, **surviving a `TurnLedger.clear()`**, honouring a name
+  filter, and staying per-player; the `> 1` boundary measured as a pair — one
+  cast gains 7 and does not win, two casts win; the tuck landing at index 6 and
+  not in the graveyard, with a no-rider contrast; and the flag the gate reads.
+  All fourteen fail without the change.
+
+## The Eagles Are Coming! — a target list sized by a cost, and a delay that counts what came back — 601.2b / 601.2c
+
+### Overview
+
+*"Kicker {2}{W}{W}. Choose target creature you own. **If this spell was kicked,
+instead choose any number of target creatures you own.** Return each chosen
+creature to your hand. At the beginning of the next upkeep, create a 4/4 white
+Bird Soldier creature token with flying **for each creature returned to your hand
+this way**."*
+
+Kicker was never the gap — `kicker` is a card-level cost and `{"kicked": true}` is
+a live condition. Two other things were.
+
+### The target count, and a rules order the engine had half right
+
+`targeting.resolve_count`'s docstring said a spell's own targets are fixed
+"before it has been paid for", and concluded there was nothing to read there. The
+first half is true and the conclusion is not: payment is 601.2h, but **kicker is
+announced at 601.2b, one step before targets are declared at 601.2c**. The choice
+is already made when the targets are chosen, which is exactly why this card can be
+printed at all.
+
+What was missing was plumbing. `_cast_variant` receives one tuple set, built from
+the printed counts, and is handed to the unkicked and kicked lines alike — so the
+kicked line now enumerates its own from `_kicked_targets`. `dataclasses.replace`
+rather than mutation, because the specs hang off the CardDef and are shared by
+every cast of every copy.
+
+A **second count** rather than a value expression, because the two sizes are not
+two numbers: unkicked is exactly one, kicked is `"any"`, and no arithmetic yields
+the second. `_kicked_targets` returns `None` when nothing carries the key, so
+every other kicker card reuses the shared enumeration and costs nothing.
+
+### The binding, which is what makes the delayed half sayable
+
+`return_to_hand` had no `as`, though `op_exile` and `op_sacrifice` both do. It
+matters here for a reason those two rarely meet: the sentence that counts the
+return lives inside a `delay`, and a `{"target": …}` there is **refused by name**
+because `_run_delayed` rebuilds its context with `targets={}`. `op_delay` *does*
+copy `ctx.bindings` forward, so a binding survives where a target cannot — and
+that refusal's own docstring already named `as` as the intended idiom.
+
+### Three guards that had to learn about this, and all three would have failed closed
+
+Worth recording, because each is a registry that a new key has to be taught:
+
+1. **`RECORDING_OPS`** — the explicit allowlist of ops that write bindings. An
+   `as` on an op outside it is refused, precisely so a binding nothing writes
+   cannot read back as 0. `return_to_hand` joins it.
+2. **The half-a-kicker guard** — "has a 'kicker' cost that no effect reads via
+   'kicked'" exists to catch a spell that charges more and does the same thing.
+   `count_if_kicked` is a *third* way to read the choice (beside an `if` and
+   `buyback`) and reads it without any `if` in the effects at all, so the guard
+   counted this card as half a kicker until taught.
+3. **`_op_options`** in the packet is **derived** by walking each op's source for
+   `spec.get(...)`, so the new `as` advertised itself with no list to update —
+   the contrast with `CARD_LEVEL_RIDER_KEYS`, which is curated and had to be
+   edited by hand for `tucks_itself` one commit earlier.
+
+### Tests
+
+- `tests/unit/test_the_eagles_are_coming.py` — the unkicked line taking exactly
+  one target and **the kicked line offering more, measured on the same board**,
+  which is the only way to show the switch rather than assert it; both lines
+  offered at once, since 601.2b is a choice; `_kicked_targets` returning `None`
+  for an ordinary card, so nothing else changed; the binding recording what was
+  returned, absent without the key, **accumulating** across two calls, and
+  written before the moves; and the loader refusing `count_if_kicked` with no
+  kicker. Five of the ten fail without the change.
+
+## `untap_limit` — a cap on how many untap, and who chooses — Winter Orb — 502.2
+
+### Overview
+
+Winter Orb: *"As long as this artifact is untapped, players can't untap more than
+one land during their untap steps."*
+
+`untap_held`'s own docstring already said what this is not, and even named the
+card: `skip_untap_step` marks every permanent its filter describes and
+`untap_all` skips all of them — an all-or-nothing hold, with no number and nobody
+choosing. Written that way Winter Orb is **Rising Waters**, every land held down,
+which is strictly harsher. The gap record refused that substitution rather than
+shipping it, and `TestItIsNotAHold` now measures the difference on one board
+instead of describing it.
+
+### Tier: a new player-wide static, and the untap step's first question
+
+- `player_statics.untap_caps` returns one `(maximum, candidates)` pair per
+  applicable static — the tapped permanents this player controls that the
+  filter describes.
+- `turn._untap_step` **became a generator** and asks `ask_objects`. 502.2 untaps;
+  it does not choose, so this is the first question the untap step has ever put
+  to anybody. The cleanup step's discard ask was the precedent for a turn-based
+  action asking anything at all.
+- `primitives.untap_all` takes `capped_out`.
+
+**The choice is the untapping player's**, which is the printed wording and also
+the only reading that is not a different card: an engine picking for them would
+be deciding whether Winter Orb locks out the Sol Ring or the Island, differently
+every game. That is why the question is asked in `turn`, which is a generator,
+rather than inside `untap_all`, which is not and whose every other caller wants
+no decision at all.
+
+**Where the check sits matters too.** `capped_out` is consulted beside the
+`untap_held` check and *before* `skip_next_untap`, so a permanent the cap already
+stopped does not also burn a one-shot skip that was waiting for a later untap
+step — the same argument `untap_all` already makes for `held`, and it is pinned.
+
+Caps are **unioned** across statics rather than replaced, so two land-cappers
+leave the intersection of what each allowed, which is what "can't" means twice
+over.
+
+### The half that needed nothing
+
+The gap record's second need was an "as long as this permanent is untapped" gate,
+listed as a plausible but **unproven** near miss — `exists` over
+`{"self_only": true, "tapped": false}` — and recorded rather than guessed at.
+
+It works as-is. A static carrying that condition applies while its source is
+untapped and lifts the moment the source is tapped, which is the whole of how
+this card is beaten in play: tap the Orb on the opponent's end step and your own
+untap step is free. `TestTheSelfUntappedGate` is the proof.
+
+That makes five capabilities this import filed as missing which already existed
+in some form — Ascend, Kicker, cycling, warp's claimant, and this — every one of
+them found by reading or running the engine rather than inheriting the record's
+conclusion. The gap format carries `confidence` and `why_existing_wont_do`
+precisely so the next reader re-checks instead.
+
+### Tests
+
+- `tests/unit/test_untap_limit.py` — the cap and its candidates reported, and
+  nothing capped without the static; only the **named types** capped, so a
+  creature is not a candidate; the opponent capped too, since the printed word is
+  "players"; only the chosen land untapping, with a no-cap control; **a capped
+  permanent not burning a `skip_next_untap`**; the cap letting one land through
+  where `skip_untap_step` lets none, which is the Rising Waters contrast; the
+  self-untapped gate applying and lifting; and the two loader refusals.
+
+## Copying an **ability** on the stack — Peter Parker's Camera — 113.7a / 706.10
+
+### Overview
+
+*"{2}, {T}, Remove a film counter from this artifact: Copy target activated or
+triggered ability you control. You may choose new targets for the copy."*
+
+Two things were missing, and neither was a near miss.
+
+### An ability could not be targeted at all
+
+`TargetModel.kind` was a closed Literal, and **both** stack-facing branches of
+`enumerate_target_tuples` filtered on `item.is_spell`, which is exactly
+`kind == "spell"`. So an ability on the stack was *unreachable* as a target rather
+than awkward to name. 113.7a is why they are different things: an ability on the
+stack has no card behind it, only a source, an index and its bindings.
+
+`ability_on_stack` is its own kind, and its matcher **deliberately does not reuse
+`_spell_matches`**. Every clause that function reads — types, colours, subtypes,
+mana value — is a characteristic of a printed face. Asked about an ability it
+would answer about the *source permanent*, so "target activated ability" would
+quietly become "target ability of a creature" the first time anybody wrote a
+`types` clause. That is the same silently-inert selector `_spell_matches`'s own
+docstring says it exists to prevent, and the test pins that an unrelated clause is
+ignored rather than misread.
+
+### `copy_spell` would have loaded and copied nothing
+
+`_spell_named_by` returns `None` for an ability on purpose, and
+`put_copy_on_stack` builds `kind="spell"` around a `new_object` card token with an
+`oid` — which an ability StackItem has not got. A Camera written with `copy_spell`
+compiles, passes its gates and does nothing at all. That is why the gap record
+refused it instead of shipping it.
+
+`copy_ability` is `dataclasses.replace` with a fresh sid, which is what 706.10's
+copiable values amount to here: every field of the original, **including the
+bindings the trigger captured** (so a copied "whenever a land enters" still knows
+which land) and the announced `x`. On top of the stack, so it resolves first,
+which is the whole reason the card is worth playing.
+
+Its new-targets path reads the **ability's** specs through `ability_of` rather
+than the card's. `_choose_new_targets` reads `card.targets` and would hand an
+ability copy a pool that is usually empty — the card granting an activated ability
+rarely targets at its own level — which the gap record had identified in advance.
+
+### What is deliberately not built
+
+**"Target *triggered* ability" alone is not expressible**, and that is a refusal
+rather than an oversight. Strionic Resonator copies a triggered ability only,
+where the Camera and Lithoform Engine take either — but `StackItem.kind` is
+`"ability"` for both and nothing on the item records which it was. Guessing from
+`bindings` would be wrong, since an activated ability's cost writes bindings too
+(`costs.bind_paid_object`). A card needing that distinction needs a field first,
+and is a gap record until it has one.
+
+### Tests
+
+- `tests/unit/test_copy_ability.py` — an ability on the stack offered as a target,
+  **a spell on the stack not enlarging the pool** (this is the complement of the
+  `spell` kind, not a widening of it), and an opponent's ability excluded by the
+  one honoured clause; the copy put on the stack, on top, with a fresh sid, and
+  **keeping both its bindings and its X**; fizzling rather than crashing when the
+  target has already resolved or is a spell; and the matcher honouring
+  `controller` while ignoring a clause it cannot answer. The whole file errors
+  without the change.
+
+## Rules subsystem: game-outcome prohibitions — Angel's Grace — 104.3b / 614
+
+### Why this is a subsystem and not a capability
+
+`sba.declare_win`'s own docstring listed this among the things **"deliberately not
+modelled, because no card in the pool needs it yet"**, and said where it belonged:
+"that is replacement-shaped and belongs beside the other continuous
+prohibitions, not in this function." `docs/rules-coverage.md` recorded the same
+omission under the "You win the game" row.
+
+`sba._eliminate` and `sba.declare_win` were the engine's only two writers of a
+game result, and neither had any notion of a seat that may not lose or may not
+win. Angel's Grace is the first card in the pool to need it, and the same pass
+unblocks the Platinum Angel / Abyssal Persecutor family those notes name.
+
+Built as its own commit under the import-moxfield skill's rule 2, which permits a
+subsystem when the deck is the deliverable, provided it is said out loud first.
+It was.
+
+### Two tables, because they are three sentences
+
+`OutcomeLock` (`state.outcome_locks`) carries **`cant_lose` and `cant_win` as
+independent flags**. That is the design decision worth defending: Angel's Grace
+prints both halves about *different seats* ("**you** can't lose… **your
+opponents** can't win"), Platinum Angel prints both about the same seats, and
+Abyssal Persecutor prints only "you can't win the game". A single symmetric flag
+would make every card in the family read like Platinum Angel.
+
+`LifeFloor` (`state.life_floors`) is its own table rather than a third field on
+the lock, because separate cards print it separately and one timed table per
+rules-relevant thing is the shape every other table here already has.
+
+Both are **timed tables** rather than statics, for `LifeLock`'s three stated
+reasons applied unchanged: Angel's Grace is an Instant, so no permanent is left to
+carry a static; the prohibition ends at a fixed moment rather than when a source
+leaves; and the effect belongs to no object. The *continuous* form — Platinum
+Angel — is a static and is deliberately still unbuilt.
+
+### 104.3b is the whole card, and it is not a rewrite of the life total
+
+A player under `cant_lose` **keeps playing at zero or negative life** and loses
+the moment the lock ends. That is what Angel's Grace buys: a turn at 1 life or
+less to find an answer. So this is a check inside `_player_losses`, not a rewrite:
+
+| the near miss | why it is a different card |
+|---|---|
+| setting life to 1 | shows the wrong number, and stops every "whenever you lose life" trigger on the way |
+| `prevent_damage` the op | a Fog — the total never moves, so a player at 40 ends the turn at **40** rather than at 1 |
+| `lock_life_total` | forbids the total *changing*, in both directions: it blocks the life gain Angel's Grace is cast alongside, and says nothing about the other three loss reasons or about an opponent winning |
+| `replace_damage` | a multiplier with no floor, and a static besides — an Instant cannot install one |
+
+**`cant_lose` holds off all four loss reasons**, not just life: the printed text is
+"you can't lose the game", full stop, so an empty library, 21 commander damage and
+ten poison counters are held off too.
+
+**The floor covers damage only**, which is also the printed word — an ordinary
+`lose_life` walks past it, so a Phyrexian cost still takes you below 1. That is
+why it is read in `damage_player` and nowhere else.
+
+### Where the win check sits, and why one layer down would break
+
+`player_cant_win` is consulted in `declare_win`, **not** in `_eliminate`. A win is
+*implemented* by eliminating every other player, so a check one layer down would
+eliminate some opponents and then stop — leaving a game with no declared result
+and a half-dismantled board. The test asserts nobody was eliminated at all.
+
+The floor is applied **after** the life-loss multiplier, for the reason the
+multiplier sits where it does: Furnace of Rath doubling a hit that is then floored
+at 1 still leaves you at 1, where flooring first would let the doubling carry you
+below it.
+
+### Tests
+
+- `tests/unit/test_cant_lose_the_game.py` (20) — the floor landing a 100-damage
+  hit on exactly 1, leaving small hits alone, protecting only the named seat, and
+  **the stricter of two floors winning**; the floor ignored by a plain
+  `lose_life` with damage on the same board still floored; a locked player sitting
+  at -4 life **with the total not rewritten**, held off every loss reason, and the
+  other seat unprotected; **the whole arc of the card in one test** — saved at
+  negative life, then eliminated on the very next sweep once the cleanup step
+  drops the lock; the two flags shown independent in both directions; and a win
+  refused whole, with nobody eliminated.
+
+## Rules subsystem: replacing the graveyard itself — Rest in Peace — 616.1 / 404.1
+
+### Why this is a subsystem and not a capability
+
+`docs/rules-coverage.md` recorded this in the strongest terms it uses: "There is
+still no rule-616 machinery: no event object, no 'replaced by' chain, and no
+asking the affected player which of two applicable replacements to apply first",
+and "a replacement of anything other than those four is engine work rather than a
+new key in a card file."
+
+Built as its own commit under the import-moxfield skill's rule 2, which permits a
+subsystem when the deck is the deliverable, provided it is said out loud first. It
+was. And it is deliberately still **a named hook and not the start of a system** —
+the eighth — because the alternative is a rule-616 event pipeline that no card in
+the pool has asked for.
+
+What makes it a subsystem rather than another multiplier is that it is the first
+named hook to replace a **zone change** rather than a quantity. Every hook before
+it takes a number and returns a bigger number: `replace_token_creation`,
+`replace_counters`, `replace_damage`, `replace_draw`, `replace_mill`, the two life
+hooks. This one changes where an object ends up, so it had to be read at the one
+place every zone change funnels through, and it had to order against the two
+replacements already living there.
+
+### "From anywhere" is the whole clause, and it is what `dies_to` cannot say
+
+The engine already had `obj.dies_to` — "if it would die this turn, exile it
+instead" — and `move_object` reads it only when `from_zone is Zone.BATTLEFIELD`.
+Rest in Peace says **from anywhere**, so `replace_graveyard` is gated on
+`to_zone is Zone.GRAVEYARD` **alone**. It therefore catches a milled card, a
+discard, a countered or resolved spell leaving the stack, a token dying, a card
+put there from exile or the command zone, and a permanent dying, for every player
+at once.
+
+| the near miss | why it is a different card |
+|---|---|
+| `replace_deaths` | an **op**, so it cannot be a permanent's ongoing static; it snapshots object ids at resolution and marks `dies_to` on each, so it reaches nothing drawn, milled or cast afterwards; and it is battlefield-gated |
+| a `dies` trigger that exiles | uses the stack, misses milling, discarding and spells, and lets the card be reanimated in response |
+| `cant_cast_spells_from_zones` | stops one *use* of the graveyard and leaves the cards in it, so delirium, threshold, escape, Tarmogoyf and every graveyard count still see them |
+| `replace_mill` | multiplies a mill's **count** and still sends the cards to the graveyard |
+
+### Ordering against the commander replacement, and 616.1
+
+616.1 gives the choice between two applicable replacements to the affected
+player, and this engine does not ask — it already does not ask for the commander
+case, which `rules-coverage.md` records as "the owner always chooses the command
+zone". So this hook runs **after** it, and a commander dying under Rest in Peace
+reaches its command zone: by the time this runs, `to_zone` is no longer a
+graveyard. Ordered the other way round it would exile people's commanders, which
+is the one ordering mistake here that would be visible in a game.
+
+### Owner, not controller — and no default for whose
+
+`affects_player` is read against the object's **owner** (404.1 puts a card in its
+owner's graveyard however control changed), compared against the *source's
+controller*, which is the right reading for "your graveyard" on a stolen
+enchantment. Reading the owner on both ends would exile a stolen card that should
+reach its owner's pile untouched.
+
+It is **required** by the loader and has **no default in the reader either**, for
+`enters_tapped`'s reason: there is no honest default when the printed cards
+disagree, and the default that suggests itself — `"any"` — is precisely what turns
+Leyline of the Void into Rest in Peace. The reader originally defaulted to `"any"`
+behind the loader's guarantee; that is now a `continue`, so a malformed static does
+nothing anybody could mistake for the card working.
+
+`destination` is a field rather than a hard-coded exile because the same sentence
+is printed about a library by the Kozilek and Ulamog family. `affects_token`
+defaults to catching tokens, which is the printed "a card **or token**" every card
+in this family says.
+
+Deliberately **not** added to `PLAYER_WIDE_STATIC_EFFECTS` despite taking
+`affects_player`: that set is subtracted from `GRANTABLE_STATIC_EFFECTS` because
+its readers walk printed faces through `_active_player_statics`, and this one reads
+`_battlefield_statics`, which sees a granted ability. A granted `replace_graveyard`
+works, so marking it ungrantable would be a refusal with nothing behind it.
+
+### Unblocked
+
+Rest in Peace, and the family behind it: Leyline of the Void, Planar Void,
+Kozilek/Ulamog-style "shuffle it into its owner's library instead", and the
+Yixlid Jailer neighbourhood.
+
+### Tests
+
+- `tests/unit/test_replace_graveyard.py` (20) — every "from anywhere" route walked
+  separately, because a battlefield-gated version passes a death test and lets
+  every mill through: a permanent dying, a mill, a discard, a spell leaving the
+  stack, a card put there from exile, and the graveyard observably **staying
+  empty**; both sides caught, since Rest in Peace is symmetric and that is the
+  drawback it is built around; a token caught; Leyline's owner filter sparing its
+  controller's own cards while exiling the opponent's; Planar Void's type filter
+  taking a creature and leaving an instant; a library destination; **a dying
+  commander still reaching the command zone** with an ordinary creature on the
+  same board exiled, which is the replacement ordering; the loader refusing a
+  missing `affects_player` and an unreachable destination; and the reader's
+  fail-closed behaviour pinned in both directions through the same seam.

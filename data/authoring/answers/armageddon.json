@@ -1,0 +1,23 @@
+{
+  "card": {
+    "id": "armageddon",
+    "name": "Armageddon",
+    "oracle_text": "Destroy all lands.",
+    "mana_cost": "{3}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {"zone": "battlefield", "types": ["Land"], "count": "all"}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 2,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {"0": 33}
+  }
+}

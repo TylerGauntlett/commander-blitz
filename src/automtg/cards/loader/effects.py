@@ -131,17 +131,32 @@ def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
 def _validate_pay_x(effect: Mapping[str, Any], where: str) -> None:
     """``may``'s ``x``: the ceiling on an announced X, and where X is bound.
 
-    Both halves are required. A missing ``max`` is "pay any amount", which is
-    join forces and not this; a missing ``as`` pays for X cards and draws none.
+    ``as`` is required -- without it the payment charges for X and nothing reads
+    the number, so the card pays for X cards and draws none.
+
+    ``max`` is **optional**, and its absence is a statement. A printed ceiling
+    ("less than or equal to the amount of life you gained" -- Well of Lost
+    Dreams) is the rule the card makes, and omitting it there would pay for ten
+    cards off a one-life gain. But a great many cards print no ceiling at all --
+    Decree of Justice's "you may pay {X}. If you do, create X 1/1 white Soldier
+    creature tokens" -- and for those the only bound is 118.3, what the player
+    can actually pay. Requiring a number there forced an invented one, and the
+    invented number was load-bearing rather than cosmetic: `_announce_x` feeds
+    it to `max_affordable_x` as the probe `cap`, so a made-up 20 is a printed
+    rule the card does not have.
+
+    This is *not* join forces, which the old docstring conflated it with.
+    `op_join_forces` walks every player in turn order asking for `{1}` at a
+    time and binds the sum; an unbounded X here is announced once, by one
+    player, and no opponent may add to it.
     """
     spec = effect["x"]
     if not isinstance(spec, Mapping):
-        raise DslError(f"{where}.x: must be an object with 'max' and 'as'")
+        raise DslError(f"{where}.x: must be an object with 'as' and an optional 'max'")
     if unknown := set(spec) - {"max", "as", "prompt"}:
         raise DslError(f"{where}.x: unsupported keys {sorted(unknown)} (takes 'max', 'as', 'prompt')")
-    if "max" not in spec:
-        raise DslError(f"{where}.x.max: the printed ceiling on X is required")
-    validate_value(spec["max"], f"{where}.x.max")
+    if "max" in spec:
+        validate_value(spec["max"], f"{where}.x.max")
     if not (isinstance(spec.get("as"), str) and spec["as"]):
         raise DslError(f"{where}.x.as: a binding name for the announced X is required")
     if effect.get("repeat"):
@@ -884,13 +899,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"which the card does not declare"
             )
     if "new_targets" in effect:
-        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
-        # `copy_spell` alone: the choice is a decision per copy, and storm,
-        # replicate, conspire and gravestorm all go through the same op without
-        # wanting nine prompts. Written anywhere else it would read as a promise
-        # nothing keeps.
-        if op != "copy_spell":
-            raise DslError(f"{where}: 'new_targets' only applies to copy_spell, not {op!r}")
+        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on the
+        # two copy ops: the choice is a decision per copy, and storm, replicate,
+        # conspire and gravestorm all go through `copy_spell` without wanting nine
+        # prompts. Written anywhere else it would read as a promise nothing keeps.
+        #
+        # `copy_ability` carries it for the same printed clause on a different
+        # kind of object -- Peter Parker's Camera and Lithoform Engine both say
+        # it -- and offers the pool from the **ability's** own specs rather than
+        # the card's, which is the whole reason it is a separate op.
+        if op not in ("copy_spell", "copy_ability"):
+            raise DslError(
+                f"{where}: 'new_targets' only applies to copy_spell and "
+                f"copy_ability, not {op!r}"
+            )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
     if op == "copy_spell" and "controller" in effect:

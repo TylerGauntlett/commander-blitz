@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "archetype_of_courage",
+    "name": "Archetype of Courage",
+    "oracle_text": "Creatures you control have first strike.\nCreatures your opponents control lose first strike and can't have or gain first strike.",
+    "mana_cost": "{1}{W}{W}",
+    "types": ["Enchantment", "Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control have first strike.",
+        "effect": "grant_keyword",
+        "keywords": ["first_strike"],
+        "affects": { "controller": "you", "types": ["Creature"] }
+      },
+      {
+        "kind": "static",
+        "text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+        "effect": "lose_keyword",
+        "keywords": ["first_strike"],
+        "affects": { "controller": "opponent", "types": ["Creature"] }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "hand_size": { "0": 1 },
+    "life": { "0": 40, "1": 40 }
+  }
+}

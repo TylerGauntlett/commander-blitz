@@ -1,0 +1,50 @@
+{
+  "_comment": "Cards that exist only for the Approach of the Second Sun test (tests/unit/test_approach_of_the_second_sun.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_approach` is the printed card: the cast-from-hand condition, the game-long name count compared `> 1` because the spell has already recorded itself, and the `tucks_itself: 7` rider on the Otherwise branch. `t_approach_tuck_only` drops the win half so the tuck depth can be measured on its own, and `t_plain_gain` is an unrelated spell used to show the game-long counter only counts matching names.",
+  "cards": [
+    {
+      "id": "t_approach",
+      "name": "Test Approach",
+      "oracle_text": "If this spell was cast from your hand and you've cast another spell named Test Approach this game, you win the game. Otherwise, put it into its owner's library seventh from the top and you gain 7 life.",
+      "mana_cost": "{6}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "tucks_itself": 7,
+      "spell_effects": [
+        {
+          "op": "if",
+          "condition": {
+            "all": [
+              { "cast_from_hand": true },
+              {
+                "cmp": ">",
+                "left": {
+                  "spells_cast_this_game": {
+                    "player": "you",
+                    "filter": { "name": "Test Approach" }
+                  }
+                },
+                "right": { "const": 1 }
+              }
+            ]
+          },
+          "then": [{ "op": "win_game", "player": "you" }],
+          "else": [{ "op": "gain_life", "player": "you", "amount": { "const": 7 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_approach_tuck_only",
+      "name": "Test Approach Tuck Only",
+      "oracle_text": "Put it into its owner's library seventh from the top and you gain 7 life.",
+      "mana_cost": "{6}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "tucks_itself": 7,
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 7 } }
+      ]
+    }
+  ]
+}

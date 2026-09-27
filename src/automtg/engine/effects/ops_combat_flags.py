@@ -637,3 +637,42 @@ def op_cant_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
         source=ctx.source_oid,
     )
     yield from ()
+
+
+@register("choose_blockers")
+def op_choose_blockers(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You choose which creatures block this combat and how those creatures
+    block." -- Odric, Master Tactician.
+
+    Not a restriction on any one creature, which is what makes it a different
+    thing from every other op in this file. `must_block` and `cant_block` each
+    constrain one blocker and leave the defender free everywhere else, so no
+    combination of them can say this: the defender could still add blockers the
+    effect never named, and "and **how** those creatures block" -- which attacker
+    each one is assigned to -- has no spelling at all in a per-creature
+    requirement.
+
+    So what moves is the *decision*, not the creatures. `CombatState.blocker_chooser`
+    records the seat that will answer DECLARE_BLOCKERS for every defender this
+    combat, and `turn._next_blocker_decision` reads it when it hands the prompt
+    out. Every legality check is untouched and still asks about the defender:
+    `legal_blocks` offers the defender's creatures, `add_blocker` validates
+    against them, and `blocks_valid` / `unmet_block_requirements` still hold the
+    defender to their own lures and menace. A stolen declaration is therefore
+    exactly as legal as the defender's own would have been, which is the printed
+    card -- Odric may choose badly but may not choose illegally.
+
+    Recorded on the combat rather than on a player, because "this combat" is the
+    printed duration: it dies with `state.combat` and needs no clock of its own,
+    and a second combat granted the same turn correctly begins free of it. That
+    is also why it needs no entry in the until-end-of-turn machinery.
+
+    ``player`` names who chooses and defaults to the ability's controller, which
+    is every printed card of this shape.
+    """
+    combat = ctx.state.combat
+    if combat is None:
+        return
+    chooser = _players(ctx, spec.get("player", "you"))
+    combat.blocker_chooser = chooser[0] if chooser else ctx.controller
+    yield from ()

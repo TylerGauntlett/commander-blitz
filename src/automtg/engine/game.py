@@ -228,7 +228,10 @@ class Game:
     def _dispatch_blockers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state
         if action.kind is ActionKind.ADD_BLOCKER:
-            add_blocker(state, action.source, action.targets[0].id, decision.player)
+            # `subject`, not `player`: the block belongs to the defender even when
+            # Odric's controller is the one declaring it, so `add_blocker` keeps
+            # validating against the defender's creatures and requirements.
+            add_blocker(state, action.source, action.targets[0].id, decision.subject)
             return
         state.pending_decision = None
         combat = state.combat

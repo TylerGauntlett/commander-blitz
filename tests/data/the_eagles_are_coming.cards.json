@@ -1,0 +1,38 @@
+{
+  "_comment": "Cards that exist only for The Eagles Are Coming! test (tests/unit/test_the_eagles_are_coming.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_eagles` is the printed card: kicker, a target count that switches to 'any' when kicked, an `as` binding on return_to_hand, and a delayed trigger counting what came back. `t_eagles_no_kicker` is the same spell without the kicker line, and exists only to be refused by the loader for carrying `count_if_kicked` with no kicker to announce.",
+  "cards": [
+    {
+      "id": "t_eagles",
+      "name": "Test Eagles",
+      "oracle_text": "Kicker {2}{W}{W}\nChoose target creature you own. If this spell was kicked, instead choose any number of target creatures you own. Return each chosen creature to your hand. At the beginning of the next upkeep, create a 4/4 white Bird Soldier creature token with flying for each creature returned to your hand this way.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "kicker": "{2}{W}{W}",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "count_if_kicked": "any",
+          "selector": { "zone": "battlefield", "owner": "you", "types": ["Creature"] }
+        }
+      ],
+      "spell_effects": [
+        { "op": "return_to_hand", "objects": { "target": "t1" }, "as": "returned" },
+        {
+          "op": "delay",
+          "step": "upkeep",
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "bird_soldier_4_4_w_flying",
+              "amount": { "count": { "binding": "returned" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

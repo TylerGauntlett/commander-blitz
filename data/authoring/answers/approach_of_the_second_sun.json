@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "approach_of_the_second_sun",
+    "name": "Approach of the Second Sun",
+    "oracle_text": "If this spell was cast from your hand and you've cast another spell named Approach of the Second Sun this game, you win the game. Otherwise, put Approach of the Second Sun into its owner's library seventh from the top and you gain 7 life.",
+    "mana_cost": "{6}{W}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "tucks_itself": 7,
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {
+          "all": [
+            {
+              "cast_from_hand": true
+            },
+            {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_game": {
+                  "player": "you",
+                  "filter": {
+                    "name": "Approach of the Second Sun"
+                  }
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        "then": [
+          {
+            "op": "win_game",
+            "player": "you"
+          }
+        ],
+        "else": [
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "const": 7
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "life": {
+      "0": 47
+    },
+    "library_size": {
+      "0": 41
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "library"
+  }
+}

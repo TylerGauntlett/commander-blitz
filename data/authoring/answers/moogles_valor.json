@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "moogles_valor",
+    "name": "Moogles' Valor",
+    "oracle_text": "For each creature you control, create a 1/2 white Moogle creature token with lifelink. Then creatures you control gain indestructible until end of turn.",
+    "mana_cost": "{3}{W}{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "spell_effects": [
+      {
+        "op": "create_token",
+        "token": "moogle_1_2_w_lifelink",
+        "amount": {
+          "creatures_you_control": true
+        }
+      },
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "indestructible"
+        ],
+        "duration": "until_end_of_turn",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "tokens": {
+      "id": "moogle_1_2_w_lifelink",
+      "count": 2
+    },
+    "battlefield_count": 34,
+    "granted": {
+      "keywords": [
+        "indestructible"
+      ],
+      "count": 4
+    }
+  }
+}

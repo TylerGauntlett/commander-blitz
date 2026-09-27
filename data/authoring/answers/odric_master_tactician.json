@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "odric_master_tactician",
+    "name": "Odric, Master Tactician",
+    "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Soldier"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 3,
+    "toughness": 4,
+    "keywords": ["first_strike"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever Odric and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self",
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "attacking": true
+              }
+            },
+            "right": {"const": 4}
+          }
+        },
+        "effects": [
+          {"op": "choose_blockers", "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

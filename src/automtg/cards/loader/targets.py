@@ -35,6 +35,7 @@ def _compile_targets(
     on_trigger: bool = False,
     mode_count: int | None = None,
     mana_cost: str | None = None,
+    has_kicker: bool = False,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -129,6 +130,27 @@ def _compile_targets(
     # The ordering rule is about the refs a *cast* stores, and a mode-owned spec
     # stores its refs after every card-level one -- so it is the card-level list
     # that has to end in the variable-size spec, not the printed list.
+    for spec in specs:
+        if spec.count_if_kicked is None:
+            continue
+        # "If this spell was kicked, instead choose any number of target
+        # creatures you own." Legal at 601.2c because kicker is announced one
+        # step earlier at 601.2b -- but only for a card that *has* a kicker to
+        # announce, and only for the card's own targets. A triggered ability's
+        # targets are declared when the trigger goes on the stack (603.3d), where
+        # there is no cast to have been kicked, so the clause would read as
+        # unkicked for ever and the card would quietly be the small half.
+        if not on_spell:
+            raise DslError(
+                f"{where}.{spec.id}: 'count_if_kicked' is about a cast, and a "
+                f"triggered ability's targets are declared without one -- it would "
+                f"read as unkicked for ever"
+            )
+        if not has_kicker:
+            raise DslError(
+                f"{where}.{spec.id}: 'count_if_kicked' on a card with no 'kicker' "
+                f"names a choice that can never be made"
+            )
     fixed = [spec for spec in specs if spec.mode is None]
     variable = [i for i, spec in enumerate(fixed) if spec.variable_size]
     if len(variable) > 1:
@@ -325,6 +347,11 @@ def _compile_target(
         kind=model.kind,
         selector=dict(model.selector),
         count=dict(model.count) if isinstance(model.count, dict) else model.count,
+        count_if_kicked=(
+            dict(model.count_if_kicked)
+            if isinstance(model.count_if_kicked, dict)
+            else model.count_if_kicked
+        ),
         up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,

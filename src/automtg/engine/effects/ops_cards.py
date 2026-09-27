@@ -828,7 +828,32 @@ def _matches_library(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) 
 
 @register("return_to_hand")
 def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put the chosen objects into their owners' hands.
+
+    ``as`` records what this op actually returned, for the sentences that count
+    it afterwards: "create a 4/4 white Bird Soldier creature token with flying
+    **for each creature returned to your hand this way**" -- The Eagles Are
+    Coming!. The same key `op_exile` and `op_sacrifice` carry, written in the
+    same place and for the same reason.
+
+    **The binding is what makes the delayed half sayable at all.** The Eagles'
+    tail is a `delay` to the next upkeep, and a `{"target": …}` inside a delay is
+    refused by name -- `_run_delayed` rebuilds its context with `targets={}`, so
+    the reference would resolve to nothing. `op_delay` *does* copy `ctx.bindings`
+    forward, so a binding survives where a target does not, and that refusal's
+    own docstring names `as` as the intended idiom.
+    """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Return to hand")
+    if name := spec.get("as"):
+        # Written before the moves, where `op_exile` and `op_sacrifice` write
+        # theirs: the binding records what this op *returned*, not whatever is in
+        # a hand once it is done. Extended rather than replaced, so a
+        # `for_each_player` loop around this op accumulates instead of keeping
+        # only the last seat's cards.
+        previous = ctx.bindings.get(name) or []
+        if not isinstance(previous, list):
+            previous = [previous]
+        ctx.bindings[name] = [*previous, *oids]
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:

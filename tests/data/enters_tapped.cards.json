@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards that exist only for the board-side enters-tapped test (tests/unit/test_enters_tapped.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_authority` is Authority of the Consuls' first line -- creatures your opponents control enter tapped. `t_kismet_like` widens it to artifacts, creatures and lands, the Kismet/Frozen Aether/Loxodon Gatekeeper wording. `t_orb` is Orb of Dreams' symmetric 'Permanents enter tapped', written with an explicit controller 'any', and it is the card that must NOT tap itself on arrival.",
+  "cards": [
+    {
+      "id": "t_authority",
+      "name": "Test Authority",
+      "oracle_text": "Creatures your opponents control enter tapped.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control enter tapped.",
+          "effect": "enters_tapped",
+          "affects": { "controller": "opponent", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_kismet_like",
+      "name": "Test Kismet",
+      "oracle_text": "Artifacts, creatures, and lands your opponents control enter tapped.",
+      "mana_cost": "{3}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Artifacts, creatures, and lands your opponents control enter tapped.",
+          "effect": "enters_tapped",
+          "affects": {
+            "controller": "opponent",
+            "any_types": ["Artifact", "Creature", "Land"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_orb",
+      "name": "Test Orb",
+      "oracle_text": "Permanents enter tapped.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Permanents enter tapped.",
+          "effect": "enters_tapped",
+          "affects": { "controller": "any" }
+        }
+      ]
+    }
+  ]
+}

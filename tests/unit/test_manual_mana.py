@@ -40,15 +40,43 @@ from automtg.engine.mana import SYMBOL_INDEX
 #: the realistic case: you tap a rock because you are about to spend the mana.
 FILLER_HAND = ["mountain"]
 
+#: A five-colour commander, for the Commander's Sphere positions below.
+#:
+#: The Sphere is this file's fixture for "one permanent, five mana options", and
+#: it used to offer five off an empty command zone -- because
+#: `data/cards/core.cards.json` wrote "any color in your commander's color
+#: identity" as five fixed `choose_mode` modes, which is a strictly better card
+#: in any deck narrower than five colours. That is fixed, so the five options
+#: now have to be *earned* by a commander that actually has five colours.
+#:
+#: The fixture is better for it: these tests assert that the option the player
+#: picks is the mana that arrives, and they now do so on a card that is telling
+#: the truth about which options exist.
+WUBRG = ["the_ur_dragon"]
+
 
 def position(
-    builder, cards, *, manual: bool = False, offer_all: bool = False, hand=None, pid: int = 0
+    builder,
+    cards,
+    *,
+    manual: bool = False,
+    offer_all: bool = False,
+    hand=None,
+    pid: int = 0,
+    commander=(),
 ):
-    """A main phase with `cards` on the battlefield and the flags set."""
+    """A main phase with `cards` on the battlefield and the flags set.
+
+    `commander` fills the command zone, which every Commander's Sphere position
+    below needs. Its mana ability is "any color **in your commander's color
+    identity**", so with an empty command zone 903.4 narrows it to *no* colours
+    and the ability offers nothing -- see `WUBRG` below.
+    """
     game = (
         builder()
         .battlefield(pid, cards)
         .hand(pid, FILLER_HAND if hand is None else hand)
+        .commander(pid, list(commander))
         .step(Step.PRECOMBAT_MAIN)
         .active(pid)
         # The flags decide which actions exist, so they have to be set before the
@@ -119,13 +147,13 @@ class TestTheTapOnlyOnesAreAPreference:
         # The roadmap's example. Its mana ability is a five-mode `choose_mode`
         # that the solver resolves by picking an option index; manual mana turns
         # that index into the player's choice.
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         mana = [a for a in activations(game, "commanders_sphere") if a.mana_option is not None]
         assert len(mana) == 5
         assert sorted(a.mana_option for a in mana) == [0, 1, 2, 3, 4]
 
     def test_each_colour_names_itself(self, builder):
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         labels = {a.option_label for a in activations(game, "commanders_sphere") if a.option_label}
         assert labels == {"{W}", "{U}", "{B}", "{R}", "{G}"}
 
@@ -133,7 +161,7 @@ class TestTheTapOnlyOnesAreAPreference:
         # The non-mana ability was always reachable; turning the flag on must
         # not displace it.
         for manual in (False, True):
-            game = position(builder, ["commanders_sphere"], manual=manual)
+            game = position(builder, ["commanders_sphere"], manual=manual, commander=WUBRG)
             texts = [a.base_label for a in activations(game, "commanders_sphere")]
             assert any("Sacrifice" in text for text in texts), manual
 
@@ -179,7 +207,7 @@ class TestAPermanentWithMoreThanOneOptionShowsBoth:
         assert activations(game, "mind_stone") == []
 
     def test_commanders_sphere_reads_as_five_colours_plus_a_sacrifice(self, builder):
-        game = position(builder, ["commanders_sphere"], offer_all=True)
+        game = position(builder, ["commanders_sphere"], offer_all=True, commander=WUBRG)
         offered = activations(game, "commanders_sphere")
         assert sorted(a.option_label for a in offered if a.option_label) == sorted(
             ["{W}", "{U}", "{B}", "{R}", "{G}"]
@@ -193,7 +221,7 @@ class TestTheChosenYieldIsWhatArrives:
     )
     def test_it_adds_the_colour_that_was_picked(self, builder, option, symbol):
         # The whole point: not "some mana", but the one the player chose.
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         action = next(
             a for a in activations(game, "commanders_sphere") if a.mana_option == option
         )
@@ -201,7 +229,7 @@ class TestTheChosenYieldIsWhatArrives:
         assert pool_of(game) == {symbol: 1}
 
     def test_the_source_ends_up_tapped(self, builder):
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         action = next(a for a in activations(game, "commanders_sphere") if a.mana_option == 0)
         game.apply(action)
         sphere = next(
@@ -214,21 +242,21 @@ class TestManaAbilitiesNeverUseTheStack:
     """Rule 605.3a. The whole reason `_activate_mana` is not `_activate`."""
 
     def test_nothing_goes_on_the_stack(self, builder):
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         game.apply(next(a for a in activations(game, "commanders_sphere") if a.mana_option == 0))
         assert game.state.stack == []
 
     def test_the_player_keeps_priority(self, builder):
         # If this went on the stack the window would pass to the opponent, and
         # the mana would empty before its controller could spend it.
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         game.apply(next(a for a in activations(game, "commanders_sphere") if a.mana_option == 0))
         assert game.state.priority_player == 0
 
     def test_the_mana_is_still_floating_afterwards(self, builder):
         # It went to the pool rather than vanishing, which is what makes it
         # spendable on the spell the player tapped for in the first place.
-        game = position(builder, ["commanders_sphere"], manual=True)
+        game = position(builder, ["commanders_sphere"], manual=True, commander=WUBRG)
         game.apply(next(a for a in activations(game, "commanders_sphere") if a.mana_option == 0))
         assert pool_of(game) == {"W": 1}
         assert game.state.pending_decision is not None, "the window stayed open"

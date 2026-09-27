@@ -204,6 +204,16 @@ class TargetModel(BaseModel):
         "card_in_exile",
         "any",
         "spell_or_permanent",
+        #: "Copy target activated or triggered ability **you control**" -- Peter
+        #: Parker's Camera, Lithoform Engine, Strionic Resonator.
+        #:
+        #: `"spell"` cannot say it and is not a near miss: both stack-facing
+        #: branches of `enumerate_target_tuples` filter on `item.is_spell`, which
+        #: is `kind == "spell"`, so an ability on the stack was unreachable as a
+        #: target rather than merely awkward to name. 113.7a is why they are
+        #: different things at all -- an ability on the stack is not a spell and
+        #: has no card behind it, only a source, an index and its bindings.
+        "ability_on_stack",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
@@ -225,6 +235,16 @@ class TargetModel(BaseModel):
     #: refuses one on a card's own `targets` because a spell's are chosen before
     #: it has been paid for and the expression would read zero.
     count: int | Literal["any"] | dict[str, Any] = 1
+    #: The ``count`` this spec takes instead **when the spell was kicked** --
+    #: "If this spell was kicked, instead choose any number of target
+    #: creatures you own" (The Eagles Are Coming!).
+    #:
+    #: A second count and not a value expression, because the two sizes are
+    #: not two numbers: unkicked is exactly one, kicked is ``"any"``, and no
+    #: arithmetic yields the second. Refused on a card with no ``kicker``, and
+    #: refused on a triggered ability's targets, which have no cast to have
+    #: been kicked.
+    count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,
@@ -605,6 +625,27 @@ class AbilityModel(BaseModel):
     subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
+    #: ``prevent_damage``'s total shield: "Prevent **all** damage that would be
+    #: dealt to other attacking Soldiers you control" (Rescue Retriever).
+    #:
+    #: A separate flag rather than a magic ``amount``, because absorb N and a
+    #: total shield are different rules and the difference is not a number.
+    #: 702.63a's absorb is per source and per instance, so a large N is still a
+    #: finite per-source cap the card never printed -- three 1/1s get through an
+    #: absorb 2 and do nothing to a total shield. The loader requires exactly
+    #: one of this and ``amount``.
+    prevent_all: bool = False
+    #: Where `replace_graveyard` sends a card instead -- "exile it instead"
+    #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
+    #: exile because the same sentence is printed about a library by the
+    #: Kozilek and Ulamog family, and defaulting it silently would make the
+    #: two indistinguishable in a card file.
+    destination: str | None = None
+    #: Whether `replace_graveyard` also catches a **token** -- the printed "a
+    #: card **or token**" (Rest in Peace). Defaults to catching them, which is
+    #: what every printed card in the family says; `false` is how one that
+    #: named only cards would opt out.
+    affects_token: bool | None = None
     #: Two different clauses sharing one field, because the card files read
     #: better for it and the two can never collide -- an ability is static or
     #: activated, never both.
@@ -994,6 +1035,17 @@ class CardModel(BaseModel):
     #: "self_only": true}` reaches nothing and the line would silently do
     #: nothing at all. Not `exile_self` either, which is a **cost** key.
     exiles_itself: bool = False
+    #: "Otherwise, put it into its owner's library **seventh from the top**"
+    #: -- Approach of the Second Sun. The rider beside `exiles_itself` that
+    #: redirects to a *library* rather than to exile, and the only one that
+    #: carries a **depth**: the printed ordinal, counting from 1, the same
+    #: way `put_on_top`'s `from_top` does.
+    #:
+    #: Written as a `put_on_top` op in the card's own effects it would reach
+    #: nothing -- `_place_after_resolution` runs after `spell_effects` and
+    #: moves a nonpermanent to the graveyard unconditionally -- which is the
+    #: same reason `exiles_itself` is a rider and not an op.
+    tucks_itself: int | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text

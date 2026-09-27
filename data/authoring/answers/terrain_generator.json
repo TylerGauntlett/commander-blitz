@@ -1,0 +1,76 @@
+{
+  "card": {
+    "id": "terrain_generator",
+    "name": "Terrain Generator",
+    "oracle_text": "{T}: Add {C}.\n{2}, {T}: You may put a basic land card from your hand onto the battlefield tapped.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, {T}: You may put a basic land card from your hand onto the battlefield tapped.",
+        "cost": {
+          "mana": "{2}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a basic land card from your hand onto the battlefield tapped?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              }
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "tapped": true,
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "chooser": "controller",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "supertypes": [
+                    "Basic"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

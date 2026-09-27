@@ -1,0 +1,97 @@
+{
+  "_comment": "Cards that exist only for the stolen-blocker-declaration test (tests/unit/test_choose_blockers.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tactician` is Odric, Master Tactician's printed line -- the battalion trigger written the way the shipped pool writes it (Frontline Medic: `attacks` with `source: \"self\"` and a count over an `attacking` selector) plus the op that takes the declaration over. A bare `you_attack` is NOT the same card: it carries no requirement that the source be among the attackers, so Odric would fire while sitting at home behind four others. `t_tactician_now` drops the three-other-creatures condition so the takeover can be measured with a small attack. The menace creature used to show the defender's own requirements still binding the thief is the shared `t_menacer` in testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_tactician",
+      "name": "Test Tactician",
+      "oracle_text": "Whenever this creature and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "attacking": true
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "choose_blockers",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tactician_now",
+      "name": "Test Tactician Now",
+      "oracle_text": "Whenever this creature attacks, you choose which creatures block this combat and how those creatures block.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you choose which creatures block this combat and how those creatures block.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "choose_blockers",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

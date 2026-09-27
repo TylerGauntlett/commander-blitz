@@ -122,10 +122,44 @@ def _player_losses(state: GameState) -> bool:
             # because a player at 40 life who loses to poison did not run out
             # of life, and a log that said so would be lying about the game.
             reason = LossReason.POISON
+        if reason is not None and player_cant_lose(state, player.pid):
+            # 104.3b: "You can't lose the game this turn" (Angel's Grace). The
+            # player keeps playing at zero or negative life and loses the moment
+            # the lock ends, which is the whole of what the card buys -- a turn
+            # at 1 life or less to find an answer.
+            #
+            # Checked here rather than by rewriting the life total, because every
+            # printed card in this family is a prohibition on the *outcome*: a
+            # version that set life to 1 would also stop "whenever you lose
+            # life" triggers and would show the wrong number on the board.
+            #
+            # All four loss reasons are covered, not just life. Angel's Grace
+            # says "you can't lose the game", full stop, so an empty library, 21
+            # commander damage and ten poison counters are all held off too.
+            reason = None
         if reason is not None:
             _eliminate(state, player.pid, reason)
             changed = True
     return changed
+
+
+def player_cant_lose(state: GameState, pid: int) -> bool:
+    """Whether an `OutcomeLock` is holding this seat in the game -- 104.3b.
+
+    Short-circuits on the empty list, which is what `state.outcome_locks` is in
+    every game that plays none of these cards.
+    """
+    return any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks)
+
+
+def player_cant_win(state: GameState, pid: int) -> bool:
+    """Whether an `OutcomeLock` forbids this seat winning -- 104.3b.
+
+    The other half of the same sentence, and a separate question because most
+    cards print only one of the two: Abyssal Persecutor says "you can't win the
+    game" and nothing about losing.
+    """
+    return any(lock.player == pid and lock.cant_win for lock in state.outcome_locks)
 
 
 def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
@@ -296,6 +330,16 @@ def declare_win(state: GameState, pid: int) -> None:
       Recorded in docs/rules-coverage.md.
     """
     if state.game_over or not state.is_alive(pid):
+        return
+    if player_cant_win(state, pid):
+        # "Your opponents can't win the game this turn" (Angel's Grace), read
+        # from this seat's side: 104.3b makes it a prohibition on *winning*, so
+        # the win simply does not happen and the game carries on.
+        #
+        # Here rather than inside `_eliminate`, because a win is implemented by
+        # eliminating everybody else: checked one layer down it would eliminate
+        # some opponents and then stop, leaving a game whose result nobody had
+        # declared and whose board had been half dismantled.
         return
     for other in state.alive():
         if other != pid:

@@ -104,6 +104,47 @@ STATIC_EFFECTS = frozenset(
     {
         "buff",
         "grant_keyword",
+        # Archetype of Courage and its cycle: "Creatures your opponents control
+        # lose first strike and **can't have or gain** first strike."  The
+        # subtractive twin of `grant_keyword`, and the *last* step of the
+        # keyword pipeline rather than an early one -- "can't have or gain" is a
+        # standing prohibition, so it has to outrank every adder, where
+        # `lose_all_abilities` at layer 1 is deliberately early because 613.1b
+        # keeps whatever is added after a removal. Named keywords only, which is
+        # what separates it from `lose_all_abilities`: that one would also take
+        # the opponents' flying and their triggered and activated abilities.
+        "lose_keyword",
+        # Authority of the Consuls; Imposing Sovereign; Kismet; Frozen
+        # Aether; Loxodon Gatekeeper; Root Maze; Orb of Dreams; Thalia,
+        # Heretic Cathar.  "<permanents> your opponents control enter
+        # tapped."  The one thing a card's own `replacements` can never say:
+        # that list is a closed `self_*` Literal read off the ARRIVING card,
+        # so `self_enters_tapped` on Authority taps the enchantment and
+        # leaves the opponents alone. Read in `zones._enter_battlefield`,
+        # where `obj.tapped` is decided, so it catches every arrival --
+        # cast, put onto the battlefield, a token, or returned from a
+        # graveyard. `affects` is required: the filter is the printed clause
+        # and it defaults to your own side.
+        "enters_tapped",
+        # Winter Orb: "As long as this artifact is untapped, players can't
+        # untap more than one land during their untap steps."  A **count**,
+        # which is the whole difference from `skip_untap_step` next door: that
+        # one marks each matching permanent and skips every one of them, an
+        # all-or-nothing hold with no number and nobody choosing, so Winter
+        # Orb written with it is Rising Waters. Read by
+        # `player_statics.untap_caps`, and the untapping player picks which
+        # permanents untap -- asked in `turn._untap_step`, the first question
+        # the untap step has ever put to anybody.
+        "untap_limit",
+        # Rest in Peace; Leyline of the Void; Planar Void.  "If a card or
+        # token would be put into a graveyard from anywhere, exile it
+        # instead."  The FIFTH named hook on the enters/leaves replacement
+        # whitelist, and not the start of a rule-616 system -- see
+        # docs/rules-coverage.md. Read in `zones.move_object`, gated on the
+        # destination alone so the printed "from anywhere" really is
+        # anywhere, and ordered after the commander replacement so a
+        # commander still reaches its command zone.
+        "replace_graveyard",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."
@@ -485,6 +526,20 @@ STATIC_EFFECTS = frozenset(
         # Not `split_second`, which lives on the stack and binds every player,
         # and not `epic`, which is a card-level rider with no seat or duration.
         "cant_cast_spells",
+        # Grand Abolisher; Myrel, Shield of Argive.  "…or activate abilities of
+        # artifacts, creatures, or enchantments."  The *other half* of the
+        # sentence above, and a separate static because it prohibits a different
+        # action: `cant_cast_spells`'s own docstring lists "activating abilities"
+        # among the things it deliberately does not stop.
+        #
+        # Unlike its twin, `affects` is **required** rather than refused. Every
+        # printed card in this family names permanent types, so a filterless
+        # version would stop opponents' lands and planeswalkers too -- a
+        # strictly stronger lock than anything printed. Read in
+        # `legality._activate_actions` and in `costs._sources_of`, because 605.1a
+        # makes a mana ability an activated ability and a locked permanent that
+        # still taps for mana makes the lock worthless.
+        "cant_activate_abilities",
         # Tidal Barracuda; Leyline of Anticipation; Vedalken Orrery.  "Any
         # player may cast spells as though they had flash."  The permissive twin
         # of the prohibition above, and the only static that widens a *timing*
@@ -551,6 +606,8 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_mill",
         "replace_empty_draw",
         "cant_cast_spells",
+        "cant_activate_abilities",
+        "untap_limit",
         "cast_as_though_flash",
         "cant_gain_life",
     }

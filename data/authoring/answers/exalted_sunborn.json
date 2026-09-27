@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "exalted_sunborn",
+    "name": "Exalted Sunborn",
+    "oracle_text": "Flying, lifelink\nIf one or more tokens would be created under your control, twice that many of those tokens are created instead.\nWarp {1}{W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+    "mana_cost": "{3}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel", "Wizard"],
+    "power": 4,
+    "toughness": 5,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying", "lifelink"],
+    "warp": "{1}{W}",
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.",
+        "effect": "replace_token_creation",
+        "token_multiplier": 2
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1},
+    "library_size": {"0": 40}
+  }
+}

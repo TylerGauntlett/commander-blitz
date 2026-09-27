@@ -26,7 +26,7 @@ from .enums import Zone
 from .events import EventType
 from .primitives import attach, attach_to_player
 from .structs import StackItem, TargetRef, TriggerInstance
-from .targeting import filter_legal
+from .targeting import filter_legal, kicked_targets
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -659,6 +659,18 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         specs = (BESTOW_TARGET,)
     elif item.mutated:
         specs = (MUTATE_TARGET,)
+    # "If this spell was kicked, instead choose any number of target creatures
+    # you own" -- The Eagles Are Coming!. Substituted here for the same reason
+    # bestow's specs are asked here: **declaration and resolution have to agree
+    # about what the specs are.**
+    #
+    # `filter_legal` below splits the stored refs into per-spec buckets and reads
+    # `TargetSpec.variable_size`, which is false for the printed `count: 1`. With
+    # the substitution only in legality, a kicked Eagles stored two refs and then
+    # bucketed one, orphaning the rest -- the card looked right at the prompt and
+    # silently returned a single creature.
+    if item.kicked and (swapped := kicked_targets(specs)) is not None:
+        specs = swapped
     targets, any_legal = filter_legal(
         # `item.x` so 608.2b re-checks the target against the X that was
         # actually paid: "target ... with mana value X" is a question with an X
@@ -892,6 +904,20 @@ def _place_after_resolution(
     # the printed line would silently do nothing.
     if card.exiles_itself and destination is Zone.GRAVEYARD:
         destination = Zone.EXILE
+    # "Otherwise, put it into its owner's library **seventh from the top**" --
+    # Approach of the Second Sun. The eighth rider on this slot, and the only one
+    # whose destination is a library and that carries a depth. Like every other
+    # rider it replaces only the *graveyard*, so a card that won the game (or was
+    # countered, or exiled) never reaches it.
+    #
+    # `to_index` is the printed ordinal minus one, the same conversion
+    # `op_put_on_top` makes and for its stated reason: the card says "seventh",
+    # and a card tucked sixth is drawn a turn early, which is the whole of what
+    # the depth buys.
+    tuck_to = None
+    if card.tucks_itself is not None and destination is Zone.GRAVEYARD:
+        destination = Zone.LIBRARY
+        tuck_to = max(0, card.tucks_itself - 1)
     # `granted_rebound` beside the printed flag, and the disjunction is the
     # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
     # and a spell that was handed it are the same spell from here on. Both are
@@ -955,7 +981,20 @@ def _place_after_resolution(
         # is where most riot creatures arrive. Last of the four: the copy offer
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
-    move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+    if tuck_to is None:
+        move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+    else:
+        # `to_player=obj.owner` is already what every other destination uses here,
+        # which is also what "into its **owner's** library" needs -- the
+        # difference only shows on a spell somebody else took control of.
+        move_object(
+            state,
+            obj.oid,
+            destination,
+            to_player=obj.owner,
+            to_index=tuck_to,
+            cause="resolved",
+        )
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
         # `reset_permanent_state` clears it on the way onto the battlefield,

@@ -126,6 +126,34 @@ def move_object(
         target_player = owner
         cause = cause or "commander_replacement"
 
+    # -- "if a card or token would be put into a graveyard, exile it instead" --
+    # Rest in Peace, Leyline of the Void, Planar Void. The **fifth** named hook
+    # on the replacement whitelist `docs/rules-coverage.md` describes, and not the
+    # start of a rule-616 system: there is still no event object and no
+    # "replaced by" chain, and a replacement of anything other than these five
+    # remains engine work.
+    #
+    # Gated on `to_zone` **alone**, where `dies_to` below is also gated on
+    # `from_zone is Zone.BATTLEFIELD`. That is the printed difference: "from
+    # anywhere" catches a milled card, a discard, a countered or resolved spell
+    # leaving the stack, a token that dies, a card put there from exile or the
+    # command zone, and a permanent dying -- for every player at once.
+    #
+    # **After the commander replacement above, which therefore wins.** 616.1
+    # gives the choice between two applicable replacements to the affected
+    # player, and the engine does not ask -- it already does not ask for the
+    # commander case, which `rules-coverage.md` records as "the owner always
+    # chooses the command zone". A commander dying under Rest in Peace goes to
+    # the command zone, which is what a player picks in practice; by the time
+    # this runs `to_zone` is no longer a graveyard, so this hook simply does not
+    # apply. Ordered the other way round it would exile people's commanders.
+    if to_zone is Zone.GRAVEYARD:
+        redirect = _graveyard_replacement(state, obj, card)
+        if redirect is not None:
+            to_zone = redirect
+            target_player = owner
+            cause = cause or "graveyard_replaced"
+
     # -- "if it would die this turn, exile it instead" ----------------------
     # Gallifrey Falls, Anger of the Gods, the whole exile-wrath family. Applied
     # here rather than in `destroy` because the printed word is **die**, which
@@ -706,6 +734,101 @@ def offer_riot_choice(state: GameState, oid: int, controller: int):
     obj.riot_choice = RIOT_HASTE if chosen and chosen[0] == 1 else RIOT_COUNTER
 
 
+def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
+    """"Creatures your opponents control enter tapped." Authority of the Consuls.
+
+    The whole family -- Imposing Sovereign, Kismet, Frozen Aether, Loxodon
+    Gatekeeper, Root Maze, Orb of Dreams, Thalia Heretic Cathar -- and the one
+    thing a card's own ``replacements`` can never say. That list is a closed
+    ``self_*`` Literal read off the **arriving** card, so every branch of it
+    speaks about itself; `self_enters_tapped` on Authority taps the enchantment
+    and leaves the opponents alone. This is the other direction: a static on one
+    permanent, about somebody else's arrivals, however they arrive -- cast, put
+    onto the battlefield, created as a token, returned from a graveyard -- since
+    they all funnel through here.
+
+    Read before the printed loop below, not after, and it does not matter which:
+    both only ever set ``tapped`` to True, and neither reads the other. Before,
+    so the printed "…unless you pay 3 life" branch keeps the last word on its own
+    card.
+
+    **The arriving permanent is excluded as a source.** Orb of Dreams says
+    "Permanents enter tapped" and does not tap itself: a permanent's own static
+    is not applying to its own entrance, and by this point in `_enter_battlefield`
+    the object is already in ``state.battlefield`` -- which is what makes the
+    ordinary `_matches` filter language work here at all, and would otherwise
+    make every symmetric card in the family tap itself on arrival. That is the
+    same defect, reached from the other side, that `self_enters_tapped` gave ten
+    of these cards.
+    """
+    from .characteristics import _battlefield_statics, _matches
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "enters_tapped":
+            continue
+        if source_obj.oid == obj.oid:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            obj.tapped = True
+            return
+
+
+def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> Zone | None:
+    """Where a card or token headed for a graveyard actually goes -- 614.
+
+    "If a card or token would be put into a graveyard from anywhere, exile it
+    instead." -- Rest in Peace; Leyline of the Void says it about one player's
+    cards, Planar Void about a different subset again.
+
+    Returns the replacement zone, or ``None`` when no static on the board speaks
+    about this object. Short-circuits before touching the statics at all when
+    there are none, because this runs on **every** zone change into a graveyard --
+    every mill, discard, death and resolved spell in the game.
+
+    `affects_player` is read against the object's **owner**, not its controller.
+    That is the printed relation: Leyline of the Void says "your opponents'
+    graveyards", and a creature you have stolen still goes to its owner's
+    graveyard (404.1), so the seat whose graveyard is being replaced is the
+    owner's. Reading the controller would exile a stolen card that should go to
+    its owner's pile untouched.
+
+    `affects` narrows by printed characteristics -- "creature cards", "instant and
+    sorcery cards" -- and is matched against the printed face rather than derived
+    characteristics, because the object is leaving and by this point its
+    battlefield state is gone. `_matches_printed` is the same matcher
+    `graveyard_cast_allows` uses, and for its reason.
+
+    A **token** is covered by default, which is the printed "a card **or token**".
+    `affects_token: false` is how a card that says only "card" would opt out; no
+    printed card in this family does, so nothing sets it today and the default is
+    the common case rather than a guess.
+    """
+    from .characteristics import _battlefield_statics, _matches_printed
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_graveyard":
+            continue
+        if obj.is_token and static.get("affects_token") is False:
+            continue
+        # No default. The loader already refuses a `replace_graveyard` without
+        # `affects_player`, so this is defence in depth rather than a live path
+        # -- but the default that suggests itself here is `"any"`, and `"any"` is
+        # precisely what turns Leyline of the Void into Rest in Peace. A static
+        # that reached this point malformed should do nothing at all, which is
+        # the failure a test can see, rather than silently becoming the most
+        # powerful card in the family.
+        if (who := static.get("affects_player")) is None:
+            continue
+        if who == "you" and obj.owner != source_obj.controller:
+            continue
+        if who == "opponent" and obj.owner == source_obj.controller:
+            continue
+        if (filt := static.get("affects")) is not None and not _matches_printed(card, filt):
+            continue
+        return Zone(str(static.get("destination", "exile")))
+    return None
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -748,6 +871,7 @@ def _enter_battlefield(
     # The same one-arrival answer, from `offer_enters_copy` a moment ago.
     copy_on_arrival = obj.enters_copy_of
     obj.enters_copy_of = None
+    _apply_board_enters_tapped(state, obj)
     for replacement in card.replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here

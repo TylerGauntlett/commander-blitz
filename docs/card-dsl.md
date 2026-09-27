@@ -310,6 +310,7 @@ it, but a card that needed correcting was authored wrong.
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
+| Combat decisions | `choose_blockers` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `repeat_while` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
@@ -334,9 +335,12 @@ Every key is optional; all present keys must match.
   "tapped": false, "attacking": true, "blocking": false,
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
+  "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
-  "power":      { "op": ">=", "value": { "const": 3 } },
+  "power":      { "op": ">=", "value": { "const": 3 } },   // the LIVE size, after counters and anthems
+  "base_power": { "op": "<=", "value": { "const": 1 } },   // Angelic Aberration -- 613.2 layer 7a/7b
+  "base_toughness": { "op": "<=", "value": { "const": 1 } },
   "toughness":  { "op": "<=", "value": { "const": 2 } },
   "mana_value": { "op": "<=", "value": { "const": 3 } },
   "x_in_mana_cost": true,         // "target spell WITH {X} IN ITS MANA COST" -- see below
@@ -6026,8 +6030,56 @@ never cast), playing lands and the special actions suspend and foretell (116.2),
 and activated abilities (Grand Abolisher's second sentence is a different
 static). It takes no spell filter yet, and `affects` or `amount` beside it is a
 load error rather than ignored — "can't cast **creature** spells" written with a
-filter would otherwise load as a lock on every spell. Drannith Magistrate,
-Deafening Silence and Grand Abolisher remain gaps.
+filter would otherwise load as a lock on every spell. Drannith Magistrate and
+Deafening Silence remain gaps.
+
+`cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
+activate abilities of artifacts, creatures, or enchantments", and the first line
+of Myrel, Shield of Argive. One printed sentence, **two statics**, because the
+two halves prohibit different actions:
+
+```jsonc
+{ "kind": "static",
+  "text": "…or activate abilities of artifacts, creatures, or enchantments during your turn.",
+  "effect": "cant_activate_abilities",
+  "affects_player": "opponent",
+  "affects": { "controller": "opponent",
+               "any_types": ["Artifact", "Creature", "Enchantment"] },
+  "condition": { "is_your_turn": true } }
+```
+
+The difference from its twin is that **`affects` is required rather than
+refused**, and it is the one thing to get right here. Casting is something a
+player does; activating is something a player does *to a permanent*, so the
+predicate takes the object as well as the seat. Every printed card in this family
+names the permanent types it reaches, and a filterless version would also stop an
+opponent cracking a fetchland or moving a planeswalker's loyalty — a strictly
+stronger lock than anything printed, and one that looks right on the board. The
+loader refuses it, and refuses an `amount` too: a prohibition has no size, and a
+number would read as "can't activate more than N", which nothing enforces.
+
+The filter's `controller` defaults to the **source's**, as everywhere in this
+language, so "your opponents' permanents" is `controller: "opponent"` beside the
+types. That is exact rather than approximate for this family, since a player may
+only activate abilities of permanents they control.
+
+Read in two places, and the second is the one a first attempt misses.
+`legality._activate_actions` withholds the priority actions, and
+`costs._sources_of` withholds the **mana** ones — 605.1a makes a mana ability an
+activated ability and the printed line excepts nothing, so a lock read only at
+legality would leave an opponent's Llanowar Elves tapping all through your turn.
+That is the same split `ObjectState.abilities_locked` already documents for
+`lock_abilities`, which is why both sites ask this beside that flag rather than
+instead of it.
+
+`_matches` gates on the battlefield, which is also the printed reading: these
+cards stop abilities of artifact, creature and enchantment *permanents*, and
+leave an opponent free to cycle a card from hand or activate one from a
+graveyard. The near misses are `lock_abilities` (an op, recorded as an
+until-end-of-turn `TempEffect` over a fixed set of object ids, so it cannot be an
+ongoing static and never sees a permanent played afterwards), `detain` (the same
+shape, expiring at the next untap) and `lose_all_abilities` (strictly wider and
+permanent — it would stop the opponent's Sol Ring on their own turn too).
 
 `cast_as_though_flash` is its permissive twin — Tidal Barracuda's "Any player may
 cast spells as though they had flash", and Leyline of Anticipation and Vedalken
@@ -6229,10 +6281,33 @@ from 0 up to the **smaller** of `max` and what they can pay, and exactly that X 
 charged. `pay.times` is the near miss: it scales a cost by a number the card
 computes, so it could only charge X equal to the life gained, never less.
 
+**`max` is optional**, because a printed ceiling is a rule the *card* makes and
+not every card makes one:
+
+```jsonc
+// Decree of Justice: when you cycle this card, you may pay {X}.
+//                    If you do, create X 1/1 white Soldier creature tokens.
+{ "op": "may", "pay": { "mana": "{X}" },
+  "x": { "as": "paid_x" },
+  "effects": [ { "op": "create_token", "token": "soldier_1_1_w",
+                 "amount": { "binding": "paid_x" } } ] }
+```
+
+With `max` absent the only bound is the one 118.3 makes — what the player can
+actually pay — and the affordability probe runs under its own default cap, which
+is the engine's guard against a pathological board rather than anything the card
+claims. This is **not** join forces: `op_join_forces` walks every player in turn
+order asking `{1}` at a time and binds the sum, where an unbounded `x` here is
+announced once by one player and no opponent may add to it.
+
+Supplying a made-up ceiling instead is not a cosmetic shortcut. `_announce_x`
+hands `x.max` straight to `max_affordable_x` as the probe `cap`, so an invented
+20 silently *becomes* the card's real maximum — which is why this was filed as a
+gap rather than approximated.
+
 `{X}` in an optional `pay` without `x` is refused (nothing would announce X, so
-it would charge {0}), as is `x` without an `{X}`, without `max` or `as`, on any
-op but a `may` with a `pay`, and beside `repeat`, `pay.times` or
-`pay.mana_reduction`.
+it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
+`may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
 
 ### "…unless that player pays {1}"
 
@@ -6856,12 +6931,39 @@ carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 absorb N and is keyed to an **object** — `characteristics.prevented_damage`
 matches each entry's `affects` filter against a permanent, and
 `static_filter_keys` has no way to name a seat at all. It is also per source and
-per instance rather than "all damage this turn", it cannot be spelled `"all"`
-(the loader requires a number), and being a static it is continuous while its
-source stands on the battlefield — a Squire carrying one would fog its
-controller every future turn, which is a Worship. Same relationship `cant_block`
-the op has with `cant_block` the static, and the same three inversions: the
-subject, the clock, and who owns it.
+per instance rather than "all damage this turn", and being a static it is
+continuous while its source stands on the battlefield — a Squire carrying one
+would fog its controller every future turn, which is a Worship. Same relationship
+`cant_block` the op has with `cant_block` the static, and the same three
+inversions: the subject, the clock, and who owns it.
+
+The static **can** say "all", with `prevent_all` rather than a number:
+
+```jsonc
+// Rescue Retriever: prevent all damage that would be dealt to other attacking
+//                   Soldiers you control.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "affects": { "controller": "you", "subtypes": ["Soldier"],
+               "attacking": true, "exclude_self": true } }
+```
+
+A flag and not a very large `amount`, because absorb N and a total shield are
+different rules and the difference is not a number. 702.63a's absorb is per
+source and per instance, so any finite N is a per-source cap the printed card
+never named: a Soldier under absorb 2 is untouched by three 1/1 attackers and
+takes four from one 6/6, where a total shield takes nothing from either. It is
+answered by `characteristics.prevents_all_damage`, a bool like `protected_from`
+because it settles the whole event however big it is, and read in
+`primitives.damage_permanent` beside the protection branch and before absorb.
+
+Protection is the other near miss and is three extra cards' worth of text: it
+prevents all the damage *and* stops the creature being blocked, enchanted and
+targeted, so a shielded attacking Soldier written that way is unblockable.
+
+The loader requires exactly **one** of `prevent_all` and `amount` — absorb 0
+prevents nothing and would print a line that never fires, while both together are
+two answers to one question — and refuses `prevent_all` on any other static,
+since a flag nothing reads is a printed line that does nothing.
 
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
@@ -8771,6 +8873,45 @@ list, so the two cannot disagree about what index 0 means.
 **A keyword goes with the abilities** (113.1a), and the removal happens *before*
 the grant layers, which is 613.1b: a Levitation played afterwards still grants
 flying, and a vigilance counter (613.1f) still gives vigilance.
+
+### `lose_keyword` — the other kind of removal, at the other end of the pipeline
+
+Archetype of Courage: *"Creatures your opponents control **lose first strike and
+can't have or gain first strike**."*
+
+```jsonc
+{ "kind": "static",
+  "text": "Creatures your opponents control lose first strike and can't have or gain first strike.",
+  "effect": "lose_keyword",
+  "keywords": ["first_strike"],
+  "affects": { "controller": "opponent", "types": ["Creature"] } }
+```
+
+Read the paragraph directly above this one and then this sentence, because the
+two are opposites and the printed text is what decides which applies.
+`lose_all_abilities` is **early**, before the grant layers, and that is 613.1b
+being honoured — what is added afterwards survives. `lose_keyword` is **last**,
+after the `grant_keyword` statics, after keyword counters (122.1c), after the
+until-end-of-turn grants, after suspend's haste and after `granted_keywords`.
+The reason is the second half of the printed clause: "can't have *or gain*" is a
+standing prohibition rather than a one-time subtraction, so nothing may hand the
+keyword back.
+
+That position is load-bearing and is pinned as such: moving the block above the
+grant layers fails exactly the two tests in `test_lose_keyword.py` that assert
+the prohibition — an opponent's own first-strike anthem, and a first-strike
+counter — and nothing else. A version placed early passes every other test in
+the file and is wrong on the only boards the card is played against.
+
+`keywords` and `affects` are both **required**. An empty keyword list subtracts
+nothing and would print a prohibition over an inert static; an absent filter
+defaults to `controller: "you"` and would strip the keyword from the card's own
+side, which is the opposite of every printed card in this cycle.
+
+`lose_all_abilities` is the near miss and is wrong on breadth as well as
+position: it would take the opponents' flying, their triggered abilities and
+their activated abilities too, which is half a Humility rather than a
+first-strike hoser.
 
 ### `grant_ability` as a static, and where the line now runs
 
@@ -11539,13 +11680,25 @@ pairs in the pool now differ by exactly one word:
 | `angel_4_4_w_flying` | `angel_4_4_w_flying_vigilance` | vigilance |
 | `illusion_1_1_u` | `illusion_1_1_u_flying` | flying |
 | `knight_2_2_wu_vigilance` | `knight_2_2_w_vigilance` | blue |
+| `soldier_1_1_c` | `soldier_1_1_w` | colorless, and an artifact |
+| `spirit_2_2_w` | `spirit_1_1_c` | the body, and the colour |
+| `cat_1_1_w` | `cat_beast_2_2_w` | Beast, and the body |
+| `bird_soldier_4_4_w_flying` | `bird_1_1_w_flying` | the body |
+| `eldrazi_angel_4_4_c_flying_vigilance` | `angel_4_4_w_flying_vigilance` | Eldrazi, and colorless |
+
+The bottom five arrived together, from one deck, and two of them show how the
+error compounds rather than staying cosmetic. Myrel, Shield of Argive makes
+colorless Soldier **artifact** tokens and counts Soldiers to decide how many —
+so a white non-artifact Soldier would feed the wrong number back into the card
+that made it. Ocelot Pride's next sentence *copies every token that entered this
+turn*, so the near miss is not made once, it is made and then doubled.
 
 Two consequences. The packet's `token_ids` carries each id's **printed
 description** rather than the bare id, so matching a printed token against the
 list is a lookup rather than a guess. And a token added to the pool gets its
-assertion written by hand — `tests/unit/test_deck_tokens.py` and
-`tests/unit/test_artifact_tokens.py` are where that lives, and they are the only
-coverage a token definition ever has.
+assertion written by hand — `tests/unit/test_token_pool.py`,
+`tests/unit/test_deck_tokens.py` and `tests/unit/test_artifact_tokens.py` are
+where that lives, and they are the only coverage a token definition ever has.
 
 A token's *size* need not be a number. Urza's Saga's Construct is a printed 0/0
 carrying "This token gets +1/+1 for each artifact you control", which is a static
@@ -13782,6 +13935,18 @@ card that is not a permanent, which would print the reminder text, reach neither
 rider and simply cost less. Dearer than printed is **not** refused, unlike evoke
 proper: warp buys a turn on the board now and the card back later, and that is a
 trade a player takes at a premium.
+
+The printed `Warp {1}{R}` line is claimed at gate 3 by **the field**, the way
+`bestow`'s and `mutate`'s are — there is no ability that could honestly carry it,
+since an ability is activated, triggered or static and a price is none of the
+three. The claimant is strict: a card declaring `warp: "{1}{R}"` cannot claim a
+printed "Warp {3}{R}{R}", because the whole line *is* the price and a looser
+check would wave through a strictly cheaper card wearing the real one's words.
+This was the last card-level alternative cost without a claimant, and nothing had
+hit it because the only warp in the shipped pool was the `grant_warp` static
+above, whose line that static's own `text` already claims — so a correct warp
+card loaded, offered both cast lines, exiled and came back, and was still
+rejected as half-implemented.
 
 ### "When you cast this spell…"
 

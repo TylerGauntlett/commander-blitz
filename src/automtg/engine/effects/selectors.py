@@ -16,7 +16,7 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import chars
+from ..characteristics import _base_pt, chars
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from .context import EffectContext, ask_objects
@@ -164,10 +164,32 @@ SELECTOR_KEYS = frozenset(
         #: `None`. Answered from `TurnLedger.creatures_attacked`, the same
         #: per-turn record the `attackers_this_turn` value counts.
         "attacked_this_turn",
+        #: "For each token you control **that entered this turn**, create a
+        #: token that's a copy of it" -- Ocelot Pride. Answered from
+        #: ``TurnLedger.entered_this_turn``, the same record
+        #: `permanents_entered_this_turn` counts -- but this gathers the objects
+        #: rather than counting them, which is what `for_each` needs to bind
+        #: `each` for the copy.
+        #:
+        #: The reading already existed in the other three filter languages --
+        #: `characteristics._matches` for statics, `cost_reduction._object_matches`
+        #: and `triggers.matches_card_filter` -- and only the effect-side selector
+        #: could not say it. `created_with: "self"` is the near miss and answers a
+        #: narrower question: only the tokens *this source* made, which misses
+        #: every token another card made this turn.
+        "entered_this_turn",
         "blocking",
         "is_commander",
         "is_token",
         "power",
+        #: "…each with **base** power or toughness 1 or less" -- Angelic
+        #: Aberration. 613.2 layer 7a/7b: the copiable size, before
+        #: counters, anthems, Auras, Equipment and pump. `power` and
+        #: `toughness` above read the *live* value, and on any board with a
+        #: counter or an anthem the two name different creatures in both
+        #: directions.
+        "base_power",
+        "base_toughness",
         "toughness",
         "mana_value",
         #: "Counter target spell **with {X} in its mana cost**" -- Frontline
@@ -938,6 +960,16 @@ def matches(
     ):
         return False
 
+    # Beside its neighbour above and for the same reason: a turn-ledger question
+    # rather than a board one, so it survives the permanent having since been
+    # tapped, animated or moved within the battlefield. `entered_this_turn` is
+    # the arrival record 400.7 makes meaningful -- a permanent that left and
+    # came back is a new object with a new entry, which is the printed reading.
+    if "entered_this_turn" in selector and state.turn_ledger.entered_this_turn(oid) != bool(
+        selector["entered_this_turn"]
+    ):
+        return False
+
     combat = state.combat
     if "attacking" in selector and bool(combat and combat.attacking(oid)) != bool(
         selector["attacking"]
@@ -977,6 +1009,29 @@ def matches(
             return False
     if (spec := selector.get("toughness")) is not None:
         value = c.toughness if c else (card.toughness or 0)
+        if not _compare(value, spec, ctx):
+            return False
+    # "…each with **base** power or toughness 1 or less" -- Angelic Aberration.
+    # 613.2 layer 7a/7b: the copiable size, before counters, anthems, Auras,
+    # Equipment and pump. `characteristics._base_pt` is the one function that
+    # answers it -- the same one `_compute` starts from and static filters stop
+    # at -- so this cannot drift from the pipeline's idea of where a creature's
+    # size begins.
+    #
+    # Distinct from `power`/`toughness` above, which read the *live* value, and
+    # on any board carrying a +1/+1 counter or an anthem the two name different
+    # creatures in both directions: the live keys would spare the 1/1s this card
+    # sacrifices and swallow a big creature whose printed line is small.
+    #
+    # Off the battlefield there is no object to layer anything onto, so the
+    # printed value is already the base one and both spellings agree.
+    for key, index in (("base_power", 0), ("base_toughness", 1)):
+        if (spec := selector.get(key)) is None:
+            continue
+        if use_derived:
+            value = _base_pt(state, obj)[index]
+        else:
+            value = (card.power if index == 0 else card.toughness) or 0
         if not _compare(value, spec, ctx):
             return False
     if (spec := selector.get("mana_value")) is not None and not _compare(

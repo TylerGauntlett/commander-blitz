@@ -1,0 +1,60 @@
+{
+  "_comment": "Cards that exist only for the game-outcome prohibition test (tests/unit/test_cant_lose_the_game.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_grace` is Angel's Grace as printed -- split second, both halves of the 104.3b prohibition, and the damage floor. `t_grace_lose_only` and `t_grace_floor_only` split it so each half can be measured without the other, since most printed cards in this family carry only one. `t_persecutor_like` is the asymmetric case the two-flag design exists for: you can't win, said about yourself, with nothing about losing.",
+  "cards": [
+    {
+      "id": "t_grace",
+      "name": "Test Grace",
+      "oracle_text": "Split second\nYou can't lose the game this turn and your opponents can't win the game this turn. Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "split_second": true,
+      "spell_effects": [
+        {
+          "op": "cant_lose_the_game",
+          "cant_lose": "you",
+          "cant_win": "each_opponent",
+          "duration": "this_turn"
+        },
+        { "op": "damage_life_floor", "player": "you", "floor": 1, "duration": "this_turn" }
+      ]
+    },
+    {
+      "id": "t_grace_lose_only",
+      "name": "Test Grace Lose Only",
+      "oracle_text": "You can't lose the game this turn.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        { "op": "cant_lose_the_game", "cant_lose": "you", "duration": "this_turn" }
+      ]
+    },
+    {
+      "id": "t_grace_floor_only",
+      "name": "Test Grace Floor Only",
+      "oracle_text": "Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        { "op": "damage_life_floor", "player": "you", "floor": 1, "duration": "this_turn" }
+      ]
+    },
+    {
+      "id": "t_persecutor_like",
+      "name": "Test Persecutor",
+      "oracle_text": "You can't win the game.",
+      "mana_cost": "{2}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        { "op": "cant_lose_the_game", "cant_win": "you", "duration": "this_turn" }
+      ]
+    }
+  ]
+}

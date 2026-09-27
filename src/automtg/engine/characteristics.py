@@ -544,6 +544,35 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    while the card is still in exile.
         keywords.update(obj.granted_keywords)
 
+        # 9. "Creatures your opponents control **lose first strike and can't
+        #    have or gain first strike**" -- Archetype of Courage, and the rest
+        #    of that cycle.
+        #
+        #    Last, and that is the whole design of it. `lose_all_abilities` at
+        #    layer 1 is deliberately *early*, because 613.1b keeps whatever is
+        #    added after a removal -- an Imprisoned in the Moon plus a
+        #    Levitation leaves the permanent flying. This sentence is the other
+        #    kind: "can't have or gain" is a standing prohibition, not a
+        #    one-time subtraction, so it has to outrank every adder above it --
+        #    the grants at 2, keyword counters at 2b, the until-end-of-turn
+        #    grants at 6, suspend's haste at 7 and `granted_keywords` at 8.
+        #    Placed anywhere earlier, an opponent's anthem or a first_strike
+        #    counter would hand the keyword straight back and the card would
+        #    read as working while doing nothing on the only boards it matters.
+        #    Moving this block above layer 2 fails exactly the two tests in
+        #    `test_lose_keyword.py` that assert the prohibition, and nothing
+        #    else -- which is why those two are there.
+        #
+        #    It subtracts named keywords only, which is what separates it from
+        #    `lose_all_abilities`: that one would also take the opponents'
+        #    flying, their triggered abilities and their activated abilities,
+        #    turning a first-strike hoser into half a Humility.
+        for source_obj, static in statics:
+            if static.get("effect") != "lose_keyword":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                keywords -= set(static.get("keywords", ()))
+
     return Characteristics(
         power=power,
         toughness=toughness,
@@ -1879,8 +1908,41 @@ def prevented_damage(state: GameState, oid: int) -> int:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
+        if static.get("prevent_all"):
+            # A total shield is answered by `prevents_all_damage` below, not by
+            # a number here. Skipped rather than summed as 0, so the two never
+            # meet: `amount` is absent on such a static and `_static_value`
+            # would read it as 0 and contribute nothing anyway.
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def prevents_all_damage(state: GameState, oid: int) -> bool:
+    """Whether **all** damage to this permanent is prevented.
+
+    "Prevent all damage that would be dealt to other attacking Soldiers you
+    control" -- Rescue Retriever. Its own question rather than a very large
+    :func:`prevented_damage`, because absorb and a total shield are different
+    rules and the difference is not a number: 702.63a's absorb is per source and
+    per instance, so any finite N is a per-source cap the card never printed --
+    three 1/1 attackers get through an absorb 2 and do nothing at all to a total
+    shield.
+
+    Shaped after `protected_from` rather than after absorb, for the reason that
+    one is a bool: it answers the whole damage event however big it is. What it
+    deliberately is *not* is protection, which also stops the creature being
+    blocked, enchanted and targeted -- reusing that would make every shielded
+    Soldier unblockable, which is three extra cards' worth of text.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    return any(
+        static.get("prevent_all") and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _battlefield_statics(state)
+        if static.get("effect") == "prevent_damage"
+    )
 
 
 def crew_power_bonus(state: GameState, oid: int) -> int:

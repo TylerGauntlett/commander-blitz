@@ -1,0 +1,31 @@
+{
+  "card": {
+    "id": "ballyrush_banneret",
+    "name": "Ballyrush Banneret",
+    "oracle_text": "Kithkin spells and Soldier spells you cast cost {1} less to cast.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Kithkin", "Soldier"],
+    "power": 2,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "spell_cost_reduction",
+        "text": "Kithkin spells and Soldier spells you cast cost {1} less to cast.",
+        "affects_spells": {
+          "controller": "you",
+          "subtypes": ["Kithkin", "Soldier"]
+        },
+        "amount": { "const": 1 }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 1 }
+  }
+}
