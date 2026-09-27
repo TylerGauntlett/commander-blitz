@@ -110786,6 +110786,33 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "enters_tapped",
+          "kind": "static",
+          "text": "Creatures and nonbasic lands your opponents control enter tapped."
+        },
+        {
+          "affects": {
+            "controller": "opponent",
+            "not_supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "enters_tapped",
+          "kind": "static",
+          "text": "Creatures and nonbasic lands your opponents control enter tapped."
+        }
+      ],
       "color_identity": [
         "W"
       ],
@@ -110800,11 +110827,6 @@
       "name": "Thalia, Heretic Cathar",
       "oracle_text": "First strike\nCreatures and nonbasic lands your opponents control enter tapped.",
       "power": 3,
-      "replacements": [
-        {
-          "event": "self_enters_tapped"
-        }
-      ],
       "source": "auto",
       "subtypes": [
         "Human",
