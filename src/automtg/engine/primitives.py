@@ -1683,7 +1683,7 @@ def _hand_back_control(state: GameState, handbacks: list[tuple[int, TempEffect]]
         change_control(state, oid, previous, source=temp.source, duration="permanent")
 
 
-def untap_all(state: GameState, pid: int) -> list[int]:
+def untap_all(state: GameState, pid: int, *, capped_out: set[int] | None = None) -> list[int]:
     """Untap step: untap every permanent this player controls.
 
     Except the ones something is holding down.  The hold ends when its source
@@ -1705,6 +1705,17 @@ def untap_all(state: GameState, pid: int) -> list[int]:
             # somebody else's one-shot. A permanent held by both is held by the
             # static for as long as its source is out, and the flag is still
             # waiting when that source leaves.
+            continue
+        if capped_out is not None and oid in capped_out:
+            # Winter Orb: this permanent is one the untapping player did *not*
+            # pick under an `untap_limit`. Beside the `held` check and before
+            # `skip_next_untap` for the same reason -- a permanent the cap
+            # already stopped must not also burn a one-shot skip that was
+            # waiting for a later untap step.
+            #
+            # Decided by the caller rather than here, because the choice is the
+            # untapping player's and this function cannot ask: see
+            # `turn._untap_step`, which is a generator and does the asking.
             continue
         if obj.skip_next_untap:
             # Spent by *this* untap step whether or not there was anything to

@@ -1,0 +1,61 @@
+{
+  "_comment": "Cards that exist only for the untap-cap test (tests/unit/test_untap_limit.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_winter_orb` is Winter Orb as printed -- a cap of one land, gated on the Orb itself being untapped, which is how the card is beaten. `t_winter_orb_ungated` drops the self-untapped condition so the cap can be measured without also tapping the source, and `t_stasis_like` is the harsher card Winter Orb is NOT: a skip_untap_step version that holds every land down, kept here so the difference between a cap and a hold is asserted rather than described.",
+  "cards": [
+    {
+      "id": "t_winter_orb",
+      "name": "Test Winter Orb",
+      "oracle_text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps.",
+          "effect": "untap_limit",
+          "affects_player": "any",
+          "affects": { "controller": "any", "types": ["Land"] },
+          "amount": { "const": 1 },
+          "condition": { "exists": { "self_only": true, "tapped": false } }
+        }
+      ]
+    },
+    {
+      "id": "t_winter_orb_ungated",
+      "name": "Test Winter Orb Ungated",
+      "oracle_text": "Players can't untap more than one land during their untap steps.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Players can't untap more than one land during their untap steps.",
+          "effect": "untap_limit",
+          "affects_player": "any",
+          "affects": { "controller": "any", "types": ["Land"] },
+          "amount": { "const": 1 }
+        }
+      ]
+    },
+    {
+      "id": "t_stasis_like",
+      "name": "Test Stasis Like",
+      "oracle_text": "Lands don't untap during their controllers' untap steps.",
+      "mana_cost": "{2}{U}",
+      "types": ["Artifact"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Lands don't untap during their controllers' untap steps.",
+          "effect": "skip_untap_step",
+          "affects": { "controller": "any", "types": ["Land"] }
+        }
+      ]
+    }
+  ]
+}

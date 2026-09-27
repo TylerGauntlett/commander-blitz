@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **31** capabilities.
+**25 cards** blocked by **30** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [untap-limit](#untap-limit) | 1 | 3327 | static_effect |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
 ## cast-as-though-flash
@@ -483,22 +482,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## untap-limit
-
-Blocks **1** card.
-
-- **(static_effect)** A player-wide static that caps how MANY matching permanents a player may untap during their untap step -- an effect taking a filter ("land") and a maximum (1), where the untapping player chooses which one permanent untaps and every other match stays tapped. It also needs the untap step to offer that choice as a decision, since today nothing in the untap step ever asks the active player anything.
-  <br>Why the existing vocabulary won't do: `skip_untap_step` is the closest static and is the wrong shape: `player_statics.untap_held` marks each permanent matching its `affects` filter and `primitives.untap_all` skips every marked one, so it is an all-or-nothing hold per permanent with no count and no chooser. Writing Winter Orb with it would stop ALL of a player's lands untapping (a strictly harsher card, Rising Waters/Stasis territory), which is exactly the approximation the brief forbids. `untap_during_each_untap_step` is its inverse (untap more, not fewer) and `freeze_opponent_lands` freezes a whole side's lands for mana rather than capping a count. `static_max_per_turn` is unrelated -- the loader only reads it on `free_cast_permission`/flashback grants, not on an untap effect. Nothing in `static_effects` carries a numeric ceiling on an untap step, and `untap_all` has no branch that ever asks a player which permanent to untap.
-- **(static_effect)** An "as long as this permanent is untapped" gate on a static ability -- the static switches off while its own source is tapped, which is how Winter Orb is answered (tap the Orb on the opponent's end step).
-  <br>Why the existing vocabulary won't do: `static_condition_keys` offers `counters`, `cmp`, `exists`, `is_attached`, `is_your_turn`, `top_of_library` and the boolean combinators. `exists` over `{"self_only": true, "tapped": false}` is the near miss and may well read the source's tapped state, but it is unproven for a self-referential untapped check and is worthless without the capping effect above, so it is recorded here rather than guessed at.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Winter Orb** (rank 3327) — `winter_orb`
-  - As long as this artifact is untapped, players can't untap more than one land during their untap steps.
 
 </details>
 

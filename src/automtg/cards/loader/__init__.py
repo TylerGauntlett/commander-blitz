@@ -3456,6 +3456,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
 
+    if model.effect == "untap_limit":
+        if model.amount is None:
+            # A cap with no number is not a cap. Absent, `_static_value` reads it
+            # as 0 and the card becomes "can't untap **any** lands" -- Rising
+            # Waters rather than Winter Orb, and strictly harsher than anything
+            # this effect is meant to express.
+            raise DslError(
+                f"{where}: untap_limit needs an 'amount' -- the most that may untap. "
+                f"Without it the cap is zero, which is a different and harsher card"
+            )
+        if model.affects is None:
+            # Which permanents are capped is the printed clause: Winter Orb says
+            # lands. Filterless it would cap every permanent the player controls,
+            # and the filter language defaults to the source's own side anyway.
+            raise DslError(
+                f"{where}: untap_limit needs 'affects' naming which permanents are "
+                f"capped -- Winter Orb says lands, and a filterless cap holds down "
+                f"the whole board"
+            )
+
     if model.effect == "enters_tapped":
         if model.affects is None:
             # Whose permanents arrive tapped is the printed clause, and the

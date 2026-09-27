@@ -229,7 +229,8 @@
    "reveal_library_top",
    "skip_draw_step",
    "skip_extra_turn",
-   "spend_mana_as_any_color"
+   "spend_mana_as_any_color",
+   "untap_limit"
   ],
   "PLURAL_PLAYER_SPEC_NAMES": [
    "all",
@@ -393,6 +394,7 @@
    "spells_cant_be_countered",
    "spend_mana_as_any_color",
    "untap_during_each_untap_step",
+   "untap_limit",
    "ward"
   ],
   "STATIC_FILTER_KEYS": [
@@ -507,7 +509,8 @@
    "reveal_library_top",
    "skip_draw_step",
    "skip_extra_turn",
-   "spend_mana_as_any_color"
+   "spend_mana_as_any_color",
+   "untap_limit"
   ],
   "WARP_GRANT_FILTER_KEYS": [
    "any_of",

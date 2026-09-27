@@ -11334,6 +11334,13 @@
       "graveyard"
     ]
   },
+  "winter_orb": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "winter_soldier_bucky_barnes": {
     "zone": "battlefield"
   },

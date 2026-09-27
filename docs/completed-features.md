@@ -17552,3 +17552,72 @@ Worth recording, because each is a registry that a new key has to be taught:
   returned, absent without the key, **accumulating** across two calls, and
   written before the moves; and the loader refusing `count_if_kicked` with no
   kicker. Five of the ten fail without the change.
+
+## `untap_limit` — a cap on how many untap, and who chooses — Winter Orb — 502.2
+
+### Overview
+
+Winter Orb: *"As long as this artifact is untapped, players can't untap more than
+one land during their untap steps."*
+
+`untap_held`'s own docstring already said what this is not, and even named the
+card: `skip_untap_step` marks every permanent its filter describes and
+`untap_all` skips all of them — an all-or-nothing hold, with no number and nobody
+choosing. Written that way Winter Orb is **Rising Waters**, every land held down,
+which is strictly harsher. The gap record refused that substitution rather than
+shipping it, and `TestItIsNotAHold` now measures the difference on one board
+instead of describing it.
+
+### Tier: a new player-wide static, and the untap step's first question
+
+- `player_statics.untap_caps` returns one `(maximum, candidates)` pair per
+  applicable static — the tapped permanents this player controls that the
+  filter describes.
+- `turn._untap_step` **became a generator** and asks `ask_objects`. 502.2 untaps;
+  it does not choose, so this is the first question the untap step has ever put
+  to anybody. The cleanup step's discard ask was the precedent for a turn-based
+  action asking anything at all.
+- `primitives.untap_all` takes `capped_out`.
+
+**The choice is the untapping player's**, which is the printed wording and also
+the only reading that is not a different card: an engine picking for them would
+be deciding whether Winter Orb locks out the Sol Ring or the Island, differently
+every game. That is why the question is asked in `turn`, which is a generator,
+rather than inside `untap_all`, which is not and whose every other caller wants
+no decision at all.
+
+**Where the check sits matters too.** `capped_out` is consulted beside the
+`untap_held` check and *before* `skip_next_untap`, so a permanent the cap already
+stopped does not also burn a one-shot skip that was waiting for a later untap
+step — the same argument `untap_all` already makes for `held`, and it is pinned.
+
+Caps are **unioned** across statics rather than replaced, so two land-cappers
+leave the intersection of what each allowed, which is what "can't" means twice
+over.
+
+### The half that needed nothing
+
+The gap record's second need was an "as long as this permanent is untapped" gate,
+listed as a plausible but **unproven** near miss — `exists` over
+`{"self_only": true, "tapped": false}` — and recorded rather than guessed at.
+
+It works as-is. A static carrying that condition applies while its source is
+untapped and lifts the moment the source is tapped, which is the whole of how
+this card is beaten in play: tap the Orb on the opponent's end step and your own
+untap step is free. `TestTheSelfUntappedGate` is the proof.
+
+That makes five capabilities this import filed as missing which already existed
+in some form — Ascend, Kicker, cycling, warp's claimant, and this — every one of
+them found by reading or running the engine rather than inheriting the record's
+conclusion. The gap format carries `confidence` and `why_existing_wont_do`
+precisely so the next reader re-checks instead.
+
+### Tests
+
+- `tests/unit/test_untap_limit.py` — the cap and its candidates reported, and
+  nothing capped without the static; only the **named types** capped, so a
+  creature is not a candidate; the opponent capped too, since the printed word is
+  "players"; only the chosen land untapping, with a no-cap control; **a capped
+  permanent not burning a `skip_next_untap`**; the cap letting one land through
+  where `skip_untap_step` lets none, which is the Rising Waters contrast; the
+  self-untapped gate applying and lifting; and the two loader refusals.

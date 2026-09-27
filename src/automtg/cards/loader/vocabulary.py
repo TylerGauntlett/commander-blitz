@@ -126,6 +126,16 @@ STATIC_EFFECTS = frozenset(
         # graveyard. `affects` is required: the filter is the printed clause
         # and it defaults to your own side.
         "enters_tapped",
+        # Winter Orb: "As long as this artifact is untapped, players can't
+        # untap more than one land during their untap steps."  A **count**,
+        # which is the whole difference from `skip_untap_step` next door: that
+        # one marks each matching permanent and skips every one of them, an
+        # all-or-nothing hold with no number and nobody choosing, so Winter
+        # Orb written with it is Rising Waters. Read by
+        # `player_statics.untap_caps`, and the untapping player picks which
+        # permanents untap -- asked in `turn._untap_step`, the first question
+        # the untap step has ever put to anybody.
+        "untap_limit",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."
@@ -588,6 +598,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_empty_draw",
         "cant_cast_spells",
         "cant_activate_abilities",
+        "untap_limit",
         "cast_as_though_flash",
         "cant_gain_life",
     }

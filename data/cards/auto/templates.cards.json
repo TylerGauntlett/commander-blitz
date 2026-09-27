@@ -125623,6 +125623,41 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "affects_player": "any",
+          "amount": {
+            "const": 1
+          },
+          "condition": {
+            "exists": {
+              "self_only": true,
+              "tapped": false
+            }
+          },
+          "effect": "untap_limit",
+          "kind": "static",
+          "text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "winter_orb",
+      "mana_cost": "{2}",
+      "name": "Winter Orb",
+      "oracle_text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

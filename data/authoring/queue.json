@@ -316772,12 +316772,12 @@
     },
     "Winter Orb": {
       "edhrec_rank": 3327,
-      "gate": "template",
+      "gate": null,
       "name": "Winter Orb",
-      "reason": "no template for: As long as this artifact is untapped, players can't untap more than one land during their ",
+      "reason": "",
       "scryfall_id": "838f66d8-4f2d-4418-958c-e79aee0ce8aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Winter Sky": {
