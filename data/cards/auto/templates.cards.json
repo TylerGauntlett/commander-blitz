@@ -3252,6 +3252,37 @@
       "colors": [
         "W"
       ],
+      "id": "angel_s_grace",
+      "mana_cost": "{W}",
+      "name": "Angel's Grace",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nYou can't lose the game this turn and your opponents can't win the game this turn. Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "cant_lose": "you",
+          "cant_win": "each_opponent",
+          "duration": "this_turn",
+          "op": "cant_lose_the_game"
+        },
+        {
+          "duration": "this_turn",
+          "floor": 1,
+          "op": "damage_life_floor",
+          "player": "you"
+        }
+      ],
+      "split_second": true,
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "angel_s_mercy",
       "mana_cost": "{2}{W}{W}",
       "name": "Angel's Mercy",
@@ -86048,6 +86079,48 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, exile all graveyards.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects_player": "any",
+          "destination": "exile",
+          "effect": "replace_graveyard",
+          "kind": "static",
+          "text": "If a card or token would be put into a graveyard from anywhere, exile it instead."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rest_in_peace",
+      "mana_cost": "{1}{W}",
+      "name": "Rest in Peace",
+      "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

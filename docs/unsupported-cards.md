@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**24 cards** blocked by **29** capabilities.
+**23 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,10 +20,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-lose-the-game](#cant-lose-the-game) | 1 | 2015 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [damage-life-floor](#damage-life-floor) | 1 | 2015 | replacement |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
@@ -141,21 +139,6 @@ Blocks **1** card.
 
 </details>
 
-## cant-lose-the-game
-
-Blocks **1** card.
-
-- **(op)** A resolution-time effect an Instant can install that suspends rule 104.3's loss checks for a named player for a duration, and suspends rule 104.2's win checks for the other seats for the same duration (rule 104.3h / 104.2c: Angel's Grace, Platinum Angel, Phyrexian Unlife's neighbours, Abyssal Persecutor's inverse, Gideon of the Trials' emblem, Lich's Mirror). Suggested shape: an op such as `cant_lose_game` taking `player` (the usual player spec, default "you") and `duration` ("this_turn", plus "permanent" so the same machinery can later back a Platinum Angel static), leaving a record beside `structs.DamageShield` and `structs.LifeLock` -- both of which are already installed by ops and consulted later rather than applied at resolution -- and a companion `cant_win_game` axis (or an `opponents_cant_win` flag on the same record). It has to be read in `_player_losses` in src/automtg/engine/sba.py:108, which today assigns a `LossReason` from `player.life <= 0`, `player.attempted_draw_from_empty`, `max_commander_damage()` and `player.poison` with no immunity check of any kind, and in whatever path `op_win_game` (src/automtg/engine/effects/ops_player.py) takes, so that an opponent resolving Approach of the Second Sun, Thassa's Oracle or Laboratory Maniac simply does not win while the shield is up. 104.3h also requires that a player who would lose while the effect is live keeps playing at 0 or negative life without the SBA firing again the instant the shield ends being wrong -- the check is re-evaluated continuously, so an Angel's Grace player still at -5 at end of turn loses then, which is the printed card and is why this cannot be faked by setting life.
-  <br>Why the existing vocabulary won't do: `lock_life_total` (src/automtg/engine/effects/ops_life.py:129) is the closest thing in `reference` and is a different card: it forbids the life total from CHANGING in either direction, so it also stops every gain, and its own docstring says it was built for Teferi's Protection. Angel's Grace lets your life move freely -- it is routinely cast at 40 and leaves you at 1 -- and, crucially, it covers the other three loss reasons `_player_losses` checks (drawing from an empty library, 21 commander damage, 10 poison) which no amount of life freezing touches. `prevent_damage` the op (ops_life.py:83) is a Fog: it stops the damage happening at all, so an Angel's Grace written that way would leave you at 40 instead of at 1 and would not stop a Lava Spike-free kill through mill, infect or an opponent's alternate win at all. `win_game` (in `ops`) is the only game-outcome op that exists and it only makes a player win; there is no op, static_effect or card_level_rider that forbids an outcome, and `static_effects` has no `cant_lose_game` or `cant_win_game` entry -- the nearest, `cant_gain_life` and `cant_cast_spells`, are player-wide prohibitions on an ACTION, not on the state-based outcome. `set_flag`/`set_turn_flag` plus a `has_turn_flag` condition can record that the spell resolved, but nothing in the engine reads a flag when deciding who has lost, so the flag would be inert. The engine already documents this as a known, deliberate omission in two places, and both agree on the shape: `src/automtg/engine/sba.py:289` lists, under "Deliberately not modelled, because no card in the pool needs it yet", `**"You can't win the game" / "can't lose the game"** (Platinum Angel, Abyssal Persecutor). That is replacement-shaped and belongs beside the other continuous prohibitions, not in this function.` -- and `docs/rules-coverage.md` repeats it in the `"You win the game"` row as one of three simplifications, `no "can't win the game" / "can't lose the game" (Platinum Angel, Abyssal Persecutor -- a continuous prohibition over the subsystem, not a clause of the op)`. Angel's Grace is the card in the pool that now needs it. That same row also explains why the opponents' half cannot be bolted onto `win_game`: `sba.declare_win` implements a win by ELIMINATING every other player through `_eliminate` and then letting `check_game_over` find one seat alive, so an opponent's Approach or Thassa's Oracle never consults anything that a shield on your seat could veto -- the prohibition has to sit over the subsystem, exactly as both notes say.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angel's Grace** (rank 2015) — `angel_s_grace`
-  - You can't lose the game this turn and your opponents can't win the game this turn.
-  - Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.
-
-</details>
-
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -182,21 +165,6 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
-## damage-life-floor
-
-Blocks **1** card.
-
-- **(replacement)** A duration-scoped, player-scoped damage replacement installed by a resolving spell that clamps the resulting life total at a floor instead of preventing the damage: "damage that would reduce your life total to less than 1 reduces it to 1 instead" (Angel's Grace) and its relatives (Worship-style "your life total can't go below 1" is nearby but is a different, permanent, non-damage-only sentence). Suggested shape: extend the existing `prevent_damage` op family with a sibling such as `damage_life_floor` taking `player`, `duration` ("this_turn") and `floor` (1), installing a record beside `structs.DamageShield` that `primitives.damage_player` consults AFTER it has computed the amount: instead of zeroing the damage it caps the applied amount at `life - floor`, so a 40-life player taking 39 or 100 damage ends at exactly 1, the damage is still dealt (so lifelink, `dealt_damage` / `deals_damage_to_player` triggers and `damage_taken_this_turn` all still see it), and only the excess is replaced. That distinction is the whole card: Angel's Grace does not prevent damage, it floors the total, which is why it combos with Ad Nauseam rather than fogging.
-  <br>Why the existing vocabulary won't do: The `replace_damage` static_effect is the closest named thing and is not a replacement of the life change at all -- it is a MULTIPLIER. `player_statics.damage_multiplier` (src/automtg/engine/player_statics.py:1527) walks `_battlefield_statics` for `effect == "replace_damage"` and returns a product read by `primitives.damage_permanent` and `primitives.damage_player`; it is Furnace of Rath, Fiery Emancipation and Twinflame Tyrant, it carries `damage_multiplier`, `affects`, `affects_player` and `combat_only` and has no floor, cap or clamp key. It also cannot be installed here at all: it is a `static_effect`, so it must live on a permanent on the battlefield and be gathered from `_battlefield_statics`, and Angel's Grace is an Instant that must install the effect for one turn from the stack -- exactly the three-way mismatch `op_lock_life_total`'s own docstring records about `replace_life_loss`. `prevent_damage` the op has the right shape (player spec, duration, installs a `structs.DamageShield` consulted by `primitives.damage_player`) but the wrong effect: it prevents the damage entirely, so the life total never moves, which is a strictly different and much stronger card and would be a silent approximation. `replace_life_loss` multiplies a loss and is a static besides; a multiplier of 0 is still a blanket rewrite, not a floor. `lock_life_total` freezes the total rather than flooring it and blocks gains too. No op in `ops` writes a life total directly, and `gain_life`/`lose_life` run after the damage has already been applied, so no combination of them can be a replacement effect.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angel's Grace** (rank 2015) — `angel_s_grace`
-  - You can't lose the game this turn and your opponents can't win the game this turn.
-  - Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead.
 
 </details>
 

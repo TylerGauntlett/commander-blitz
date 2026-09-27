@@ -298,6 +298,22 @@
   "angel_of_the_god_pharaoh": {
     "zone": "battlefield"
   },
+  "angel_s_grace": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "angel_s_mercy": {
     "life": {
       "0": 47
@@ -7836,6 +7852,19 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "rest_in_peace": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 0
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "restless_spire": {
     "battlefield_count": 33,

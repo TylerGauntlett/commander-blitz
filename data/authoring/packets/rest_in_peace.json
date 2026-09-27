@@ -66,6 +66,7 @@
       "create_instead",
       "damage_multiplier",
       "damage_source",
+      "destination",
       "draw_multiplier",
       "effect",
       "effects",
@@ -92,6 +93,7 @@
       "once_each_turn",
       "pay_life_instead",
       "power",
+      "prevent_all",
       "require_all",
       "sorcery_speed_only",
       "static_max_per_turn",
@@ -155,6 +157,7 @@
     ],
     "card_level_rider_keys": [
       "exiles_itself",
+      "tucks_itself",
       "uncounterable",
       "rebound",
       "split_second",
@@ -172,6 +175,7 @@
       "any",
       "cast_during",
       "cast_from_graveyard",
+      "cast_from_hand",
       "cmp",
       "combat_damage_by",
       "cost_option",
@@ -459,6 +463,11 @@
         "player",
         "zones"
       ],
+      "cant_lose_the_game": [
+        "cant_lose",
+        "cant_win",
+        "duration"
+      ],
       "cant_sacrifice": [
         "duration",
         "objects"
@@ -477,6 +486,9 @@
       "change_text": [
         "objects",
         "to"
+      ],
+      "choose_blockers": [
+        "player"
       ],
       "choose_color": [
         "prompt"
@@ -509,6 +521,10 @@
       "connive": [
         "amount",
         "objects"
+      ],
+      "copy_ability": [
+        "new_targets",
+        "target"
       ],
       "copy_permanent": [
         "amount",
@@ -551,6 +567,11 @@
         "player",
         "source_object",
         "target"
+      ],
+      "damage_life_floor": [
+        "duration",
+        "floor",
+        "player"
       ],
       "delay": [
         "effects",
@@ -880,6 +901,7 @@
         "objects"
       ],
       "return_to_hand": [
+        "as",
         "objects"
       ],
       "return_to_origin": [
@@ -1026,11 +1048,13 @@
       "cant_attack_player",
       "cant_block",
       "cant_cast_spells_from_zones",
+      "cant_lose_the_game",
       "cant_sacrifice",
       "cascade",
       "cast_copy",
       "cast_from_hand",
       "change_text",
+      "choose_blockers",
       "choose_color",
       "choose_mode",
       "choose_permanents",
@@ -1038,11 +1062,13 @@
       "choose_type",
       "clash",
       "connive",
+      "copy_ability",
       "copy_permanent",
       "copy_spell",
       "counter",
       "create_token",
       "damage",
+      "damage_life_floor",
       "delay",
       "delayed_trigger",
       "destroy",
@@ -1163,6 +1189,8 @@
       "attacked_this_turn",
       "attacking",
       "attacking_player",
+      "base_power",
+      "base_toughness",
       "binding",
       "blocked",
       "blocking",
@@ -1175,6 +1203,7 @@
       "damaged_by",
       "drawn_this_turn",
       "encoded_by",
+      "entered_this_turn",
       "exclude_binding",
       "exclude_self",
       "exiled_with",
@@ -1240,6 +1269,7 @@
       "black_mana_as_phyrexian",
       "block_restriction",
       "buff",
+      "cant_activate_abilities",
       "cant_attack",
       "cant_attack_alone",
       "cant_attack_you",
@@ -1256,6 +1286,7 @@
       "double_land_triggers",
       "double_nonland_mana",
       "double_triggers",
+      "enters_tapped",
       "extra_land_drops",
       "free_cast_permission",
       "freeze_opponent_lands",
@@ -1264,6 +1295,7 @@
       "grant_warp",
       "look_at_library_top",
       "lose_all_abilities",
+      "lose_keyword",
       "no_hand_limit",
       "play_lands_from_graveyard",
       "play_lands_from_library_top",
@@ -1273,6 +1305,7 @@
       "replace_damage",
       "replace_draw",
       "replace_empty_draw",
+      "replace_graveyard",
       "replace_life_gain",
       "replace_life_loss",
       "replace_mill",
@@ -1289,6 +1322,7 @@
       "spells_cant_be_countered",
       "spend_mana_as_any_color",
       "untap_during_each_untap_step",
+      "untap_limit",
       "ward"
     ],
     "static_filter_keys": [
@@ -1338,6 +1372,7 @@
     ],
     "target_keys": [
       "count",
+      "count_if_kicked",
       "id",
       "kind",
       "mode",
@@ -1358,7 +1393,9 @@
       "bird_1_1_u_flying_vigilance": "1/1 blue Bird creature with flying and vigilance",
       "bird_1_1_w_flying": "1/1 white Bird creature with flying",
       "bird_2_2_u_flying": "2/2 blue Bird creature with flying",
+      "bird_soldier_4_4_w_flying": "4/4 white Bird Soldier creature with flying",
       "blood_token": "colorless Blood artifact -- {1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+      "cat_1_1_w": "1/1 white Cat creature",
       "cat_beast_2_2_w": "2/2 white Cat Beast creature",
       "citizen_1_1_gw": "1/1 green white Citizen creature",
       "clue_token": "colorless Clue artifact -- {2}, Sacrifice this artifact: Draw a card.",
@@ -1367,6 +1404,7 @@
       "dinosaur_3_1_r": "3/1 red Dinosaur creature",
       "dragon_5_5_r_flying": "5/5 red Dragon creature with flying",
       "drake_2_2_u_flying": "2/2 blue Drake creature with flying",
+      "eldrazi_angel_4_4_c_flying_vigilance": "4/4 colorless Eldrazi Angel creature with flying and vigilance",
       "eldrazi_spawn_0_1_c": "0/1 colorless Eldrazi Spawn creature -- Sacrifice this token: Add {C}.",
       "elemental_2_2_g": "2/2 green Elemental creature",
       "elephant_3_3_g": "3/3 green Elephant creature",
@@ -1403,8 +1441,10 @@
       "plant_0_1_g": "0/1 green Plant creature",
       "saproling_1_1_g": "1/1 green Saproling creature",
       "shapeshifter_3_2_c_changeling": "3/2 colorless Shapeshifter creature -- Changeling (This card is every creature type.)",
+      "soldier_1_1_c": "1/1 colorless Soldier artifact creature",
       "soldier_1_1_w": "1/1 white Soldier creature",
       "spirit_1_1_c": "1/1 colorless Spirit creature",
+      "spirit_2_2_w": "2/2 white Spirit creature",
       "tentacle_1_1_u": "1/1 blue Tentacle creature",
       "thopter_1_1_c_flying": "1/1 colorless Thopter artifact creature with flying",
       "treasure_token": "colorless Treasure artifact -- {T}, Sacrifice this artifact: Add one mana of any color.",
@@ -1538,6 +1578,7 @@
       "power_of",
       "resolutions_this_turn",
       "rolled",
+      "spells_cast_this_game",
       "spells_cast_this_turn",
       "sum",
       "times",

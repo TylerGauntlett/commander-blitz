@@ -339,6 +339,10 @@
     "artist": "E. M. Gist",
     "scryfall_id": "ad202785-a91f-4dc8-bcc0-eb1bd49f162e"
   },
+  "angel_s_grace": {
+    "artist": "Justin Hernandez & Alexis Hernandez",
+    "scryfall_id": "de0f22af-fb85-4178-8a35-ec3ff031f4df"
+  },
   "angel_s_mercy": {
     "artist": "Andrew Robinson",
     "scryfall_id": "43e6d650-4e96-43a3-8b94-7f044d3b2f82"
@@ -8022,6 +8026,10 @@
   "response_resurgence": {
     "artist": "Daarken",
     "scryfall_id": "2502d3bf-1956-4294-b4d5-38eee79eeda1"
+  },
+  "rest_in_peace": {
+    "artist": "Mark Buckingham & D'Israeli",
+    "scryfall_id": "4266ac5c-40dc-4fe3-9f42-e03cea5277ea"
   },
   "restless_spire": {
     "artist": "Sergey Glushakov",

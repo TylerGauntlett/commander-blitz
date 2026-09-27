@@ -8712,12 +8712,12 @@
     },
     "Angel's Grace": {
       "edhrec_rank": 2015,
-      "gate": "template",
+      "gate": null,
       "name": "Angel's Grace",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "de0f22af-fb85-4178-8a35-ec3ff031f4df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Angel's Herald": {
@@ -221502,12 +221502,12 @@
     },
     "Rest in Peace": {
       "edhrec_rank": 2287,
-      "gate": "template",
+      "gate": null,
       "name": "Rest in Peace",
-      "reason": "no template for: When this enchantment enters, exile all graveyards",
+      "reason": "",
       "scryfall_id": "4266ac5c-40dc-4fe3-9f42-e03cea5277ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Restart Sequence": {

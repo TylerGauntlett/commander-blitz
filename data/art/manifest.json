@@ -505,6 +505,12 @@
     "file": "angel_of_the_god_pharaoh.jpg",
     "scryfall_id": "ad202785-a91f-4dc8-bcc0-eb1bd49f162e"
   },
+  "angel_s_grace": {
+    "artist": "Justin Hernandez & Alexis Hernandez",
+    "bytes": 75697,
+    "file": "angel_s_grace.jpg",
+    "scryfall_id": "de0f22af-fb85-4178-8a35-ec3ff031f4df"
+  },
   "angel_s_mercy": {
     "artist": "Andrew Robinson",
     "bytes": 69793,
@@ -12001,6 +12007,12 @@
     "bytes": 56244,
     "file": "response_resurgence.jpg",
     "scryfall_id": "2502d3bf-1956-4294-b4d5-38eee79eeda1"
+  },
+  "rest_in_peace": {
+    "artist": "Mark Buckingham & D'Israeli",
+    "bytes": 64619,
+    "file": "rest_in_peace.jpg",
+    "scryfall_id": "4266ac5c-40dc-4fe3-9f42-e03cea5277ea"
   },
   "restless_spire": {
     "artist": "Sergey Glushakov",
