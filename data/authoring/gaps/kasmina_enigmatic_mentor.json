@@ -1,0 +1,18 @@
+{
+  "card_id": "kasmina_enigmatic_mentor",
+  "name": "Kasmina, Enigmatic Mentor",
+  "oracle_text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.\nâˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.",
+  "blocked_sentences": [
+    "âˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card."
+  ],
+  "needs": [
+    {
+      "capability": "wizard_2_2_u",
+      "kind": "token",
+      "what": "a token definition for a 2/2 blue Wizard creature token (no abilities), e.g. id wizard_2_2_u",
+      "why_existing_wont_do": "token_ids is a closed list with no Wizard token at all; the only 2/2 blue creature tokens are bird_2_2_u_flying and drake_2_2_u_flying, which have flying and the wrong subtype"
+    }
+  ],
+  "closest_existing": ["bird_2_2_u_flying", "drake_2_2_u_flying"],
+  "confidence": "high"
+}

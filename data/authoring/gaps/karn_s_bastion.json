@@ -1,0 +1,14 @@
+{
+  "card_id": "karn_s_bastion",
+  "name": "Karn's Bastion",
+  "oracle_text": "{T}: Add {C}.\n{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "blocked_sentences": ["{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"],
+  "needs": [{
+    "capability": "proliferate",
+    "kind": "op",
+    "what": "a rules-accurate proliferate: the controller chooses any subset of permanents (any controller) and players that have counters, then each chosen one gets another counter of each kind already there (including player counters such as poison)",
+    "why_existing_wont_do": "The existing proliferate op (keys: objects) is a simplification with no choice, and never touches players or opponents' permanents, so it cannot add poison/experience counters to players or loyalty/counters to permanents the opponent controls, nor let the controller decline"
+  }],
+  "closest_existing": ["proliferate", "add_counters"],
+  "confidence": "high"
+}

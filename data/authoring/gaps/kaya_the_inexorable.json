@@ -1,0 +1,31 @@
+{
+  "card_id": "kaya_the_inexorable",
+  "name": "Kaya the Inexorable",
+  "oracle_text": "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\"\n−3: Exile target nonland permanent.\n−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\"",
+  "blocked_sentences": [
+    "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\"",
+    "−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\""
+  ],
+  "needs": [
+    {
+      "capability": "spirit_1_1_w_flying",
+      "kind": "token",
+      "what": "a 1/1 white Spirit creature token with flying (token id e.g. spirit_1_1_w_flying)",
+      "why_existing_wont_do": "token_ids has spirit_1_1_c (colorless, no flying) and spirit_2_2_w (2/2, no flying); neither is the printed token"
+    },
+    {
+      "capability": "dies_or_exiled_trigger",
+      "kind": "trigger_event",
+      "what": "a self trigger for 'When this creature dies or is put into exile' -- fires when the permanent goes from the battlefield to the graveyard OR to exile, and whose effects can return that card from whichever zone it landed in to its owner's hand",
+      "why_existing_wont_do": "trigger_events has 'dies' and 'leaves_battlefield', but nothing documents a destination filter on leaves_battlefield to restrict it to graveyard-or-exile (bounce/tuck must not fire it), and return_to_hand/return_from_graveyard are not documented to follow the card into exile"
+    },
+    {
+      "capability": "cast_free_from_zones",
+      "kind": "op",
+      "what": "an op letting the player cast one spell matching a selector (supertypes Legendary) from their hand, their graveyard, or exile cards they own, without paying its mana cost, as an optional choice at resolution",
+      "why_existing_wont_do": "cast_from_hand takes only player/selector and reads the hand only; look_at_top/reveal_until cast_free only cast from the top of the library; grant_playable/play_exiled give permission but not a free cast now across three zones"
+    }
+  ],
+  "closest_existing": ["cast_from_hand", "grant_ability", "emblem", "leaves_battlefield", "spirit_2_2_w"],
+  "confidence": "high"
+}

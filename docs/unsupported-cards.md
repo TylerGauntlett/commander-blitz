@@ -10,56 +10,65 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**38 cards** blocked by **42** capabilities.
+**43 cards** blocked by **51** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [proliferate](#proliferate) | 4 | 1030 | decision, op |
+| [proliferate](#proliferate) | 5 | 207 | decision, op |
 | [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 3 | 10717 | op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [loyalty-x](#loyalty-x) | 2 | 11489 | cost |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-search-library](#cant-search-library) | 1 | 2591 | static_effect |
+| [cast-free-from-zones](#cast-free-from-zones) | 1 | 6000 | op |
 | [choose-direction](#choose-direction) | 1 | 4736 | decision |
 | [compleated](#compleated) | 1 | 6703 | replacement |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
+| [dies-or-exiled-trigger](#dies-or-exiled-trigger) | 1 | 6000 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [fractal-token](#fractal-token) | 1 | 12306 | token |
+| [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
 | [has-counters-filter](#has-counters-filter) | 1 | 674 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [loyalty-x](#loyalty-x) | 1 | 11489 | cost |
+| [look-at-top-typed-picks](#look-at-top-typed-picks) | 1 | 8946 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [must-attack-planeswalker](#must-attack-planeswalker) | 1 | 11218 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [octopus-8-8-u](#octopus-8-8-u) | 1 | 8946 | token |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
 | [prevent-damage-from-source](#prevent-damage-from-source) | 1 | 10717 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spirit-1-1-w-flying](#spirit-1-1-w-flying) | 1 | 6000 | token |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-illusion-2-2-u-sac-when-targeted](#token-illusion-2-2-u-sac-when-targeted) | 1 | 13060 | token |
 | [until-your-next-turn](#until-your-next-turn) | 1 | 10717 | engine |
 | [until-your-next-turn-ability-lock](#until-your-next-turn-ability-lock) | 1 | 12562 | op |
 | [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+| [wizard-2-2-u](#wizard-2-2-u) | 1 | 6632 | token |
 
 ## proliferate
 
-Blocks **4** cards.
+Blocks **5** cards.
 
 - **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
   <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
@@ -69,9 +78,13 @@ Blocks **4** cards.
   <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: `objects` only) is a simplification: it offers no choice and never reaches players (poison, experience, etc.) or opponents' permanents, so writing it would silently do something narrower than the printed text. The `spell_cast` trigger with a noncreature filter is expressible; only the proliferate itself is blocked.
 - **(op)** a full proliferate (701.34): the controller chooses any number of permanents AND/OR players that have counters (including opponents' permanents and players' poison/energy counters), then each chosen gets one more counter of each kind already there
   <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: objects only) is a simplification: it offers no choice and never touches players or opponents' permanents, so it would add counters the controller may not want and miss poison counters on opponents
+- **(op)** a rules-accurate proliferate: the controller chooses any subset of permanents (any controller) and players that have counters, then each chosen one gets another counter of each kind already there (including player counters such as poison)
+  <br>Why the existing vocabulary won't do: The existing proliferate op (keys: objects) is a simplification with no choice, and never touches players or opponents' permanents, so it cannot add poison/experience counters to players or loyalty/counters to permanents the opponent controls, nor let the controller decline
 
 <details><summary>Cards waiting on this</summary>
 
+- **Karn's Bastion** (rank 207) — `karn_s_bastion`
+  - {4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 - **Inexorable Tide** (rank 1030) — `inexorable_tide`
   - Whenever you cast a spell, proliferate.
 - **Flux Channeler** (rank 1290) — `flux_channeler`
@@ -181,6 +194,26 @@ Blocks **2** cards.
 
 </details>
 
+## loyalty-x
+
+Blocks **2** cards.
+
+- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
+  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
+- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
+  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
+  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -234,6 +267,21 @@ Blocks **1** card.
 
 - **Ashiok, Dream Render** (rank 2591) — `ashiok_dream_render`
   - Spells and abilities your opponents control can't cause their controller to search their library.
+
+</details>
+
+## cast-free-from-zones
+
+Blocks **1** card.
+
+- **(op)** an op letting the player cast one spell matching a selector (supertypes Legendary) from their hand, their graveyard, or exile cards they own, without paying its mana cost, as an optional choice at resolution
+  <br>Why the existing vocabulary won't do: cast_from_hand takes only player/selector and reads the hand only; look_at_top/reveal_until cast_free only cast from the top of the library; grant_playable/play_exiled give permission but not a free cast now across three zones
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
+  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
+  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
 
 </details>
 
@@ -306,6 +354,21 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+
+</details>
+
+## dies-or-exiled-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a self trigger for 'When this creature dies or is put into exile' -- fires when the permanent goes from the battlefield to the graveyard OR to exile, and whose effects can return that card from whichever zone it landed in to its owner's hand
+  <br>Why the existing vocabulary won't do: trigger_events has 'dies' and 'leaves_battlefield', but nothing documents a destination filter on leaves_battlefield to restrict it to graveyard-or-exile (bounce/tuck must not fire it), and return_to_hand/return_from_graveyard are not documented to follow the card into exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
+  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
+  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
 
 </details>
 
@@ -398,6 +461,38 @@ Blocks **1** card.
 
 </details>
 
+## fractal-token
+
+Blocks **1** card.
+
+- **(token)** a 0/0 green and blue Fractal creature token
+  <br>Why the existing vocabulary won't do: token_ids has no Fractal; the only 0/0 tokens are germ_0_0_b and construct_0_0_c_artifact_buff
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
+## grant-loyalty-abilities
+
+Blocks **1** card.
+
+- **(static_effect)** a static that gives each other planeswalker you control copies of this permanent's loyalty abilities (activated against the other planeswalker's own loyalty)
+  <br>Why the existing vocabulary won't do: grant_ability grants an authored ability spec, not 'the loyalty abilities of <source>'; and the -X ability it would copy is itself inexpressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
 ## has-counters-filter
 
 Blocks **1** card.
@@ -441,17 +536,18 @@ Blocks **1** card.
 
 </details>
 
-## loyalty-x
+## look-at-top-typed-picks
 
 Blocks **1** card.
 
-- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
-  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
+- **(op)** look_at_top picking up to one card of each of several distinct type filters (one creature card and one land card) into hand, rest to graveyard
+  <br>Why the existing vocabulary won't do: look_at_top's objects is a single selector with a count: count 2 over Creature-or-Land would allow two creatures or two lands; destinations entries carry a count and zone but no per-destination type filter, and no shipped card uses a per-type 'and/or' pick
 
 <details><summary>Cards waiting on this</summary>
 
-- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
-  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
+- **Kiora, Master of the Depths** (rank 8946) — `kiora_master_of_the_depths`
+  - −8: You get an emblem with "Whenever a creature you control enters, you may have it fight target creature." Then create three 8/8 blue Octopus creature tokens.
+  - −2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
 
 </details>
 
@@ -499,6 +595,21 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
+
+</details>
+
+## octopus-8-8-u
+
+Blocks **1** card.
+
+- **(token)** a token definition for an 8/8 blue Octopus creature token (no abilities), e.g. id octopus_8_8_u
+  <br>Why the existing vocabulary won't do: token_ids is a closed list; the only 8/8 blue token is kraken_8_8_u, which has creature type Kraken, not Octopus, so substituting it would be a different token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kiora, Master of the Depths** (rank 8946) — `kiora_master_of_the_depths`
+  - −8: You get an emblem with "Whenever a creature you control enters, you may have it fight target creature." Then create three 8/8 blue Octopus creature tokens.
+  - −2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
 
 </details>
 
@@ -592,6 +703,22 @@ Blocks **1** card.
 
 </details>
 
+## shares-color-with-source
+
+Blocks **1** card.
+
+- **(selector)** a search_library selector matching instant/sorcery cards that share a color with the source planeswalker, exiled then castable free
+  <br>Why the existing vocabulary won't do: search_library options include share_subtype and any_color but nothing for sharing a color with the source; low certainty whether a selector key covers it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
 ## single-target-spell-restriction
 
 Blocks **1** card.
@@ -618,6 +745,21 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## spirit-1-1-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white Spirit creature token with flying (token id e.g. spirit_1_1_w_flying)
+  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_c (colorless, no flying) and spirit_2_2_w (2/2, no flying); neither is the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
+  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
+  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
 
 </details>
 
@@ -703,5 +845,19 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
+
+</details>
+
+## wizard-2-2-u
+
+Blocks **1** card.
+
+- **(token)** a token definition for a 2/2 blue Wizard creature token (no abilities), e.g. id wizard_2_2_u
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Wizard token at all; the only 2/2 blue creature tokens are bird_2_2_u_flying and drake_2_2_u_flying, which have flying and the wrong subtype
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kasmina, Enigmatic Mentor** (rank 6632) — `kasmina_enigmatic_mentor`
+  - âˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.
 
 </details>

@@ -141422,12 +141422,12 @@
     },
     "Jace, Unraveler of Secrets": {
       "edhrec_rank": 6627,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Unraveler of Secrets",
-      "reason": "no template for: +1: Scry 1, then draw a card",
+      "reason": "",
       "scryfall_id": "3d9c8217-013d-4e75-bdd1-9c46c8467edb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jace, Unraveler of Secrets Emblem": {

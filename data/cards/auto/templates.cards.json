@@ -54901,6 +54901,119 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Scry 1, then draw a card."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Return target creature to its owner's hand."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: You get an emblem with \"Whenever an opponent casts their first spell each turn, counter that spell.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "sid": {
+                    "binding": "sid"
+                  }
+                }
+              ],
+              "kind": "triggered",
+              "text": "Whenever an opponent casts their first spell each turn, counter that spell.",
+              "trigger": {
+                "controller": "opponent",
+                "event": "spell_cast",
+                "nth": 1
+              }
+            }
+          ]
+        }
+      ],
+      "id": "jace_unraveler_of_secrets",
+      "loyalty": 5,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Jace, Unraveler of Secrets",
+      "oracle_text": "+1: Scry 1, then draw a card.\n−2: Return target creature to its owner's hand.\n−8: You get an emblem with \"Whenever an opponent casts their first spell each turn, counter that spell.\"",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "replace_empty_draw",
           "kind": "static",
