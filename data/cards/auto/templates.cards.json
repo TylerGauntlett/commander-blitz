@@ -54787,6 +54787,120 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "+1: Draw a card. Target player mills a card."
+        },
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 10
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "0: Target player mills ten cards."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 20
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "−7: Any number of target players each draw twenty cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jace_memory_adept",
+      "loyalty": 4,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Jace, Memory Adept",
+      "oracle_text": "+1: Draw a card. Target player mills a card.\n0: Target player mills ten cards.\n−7: Any number of target players each draw twenty cards.",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "replace_empty_draw",
           "kind": "static",

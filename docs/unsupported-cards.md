@@ -10,13 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**33 cards** blocked by **37** capabilities.
+**38 cards** blocked by **42** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [proliferate](#proliferate) | 3 | 1290 | decision, op |
+| [proliferate](#proliferate) | 4 | 1030 | decision, op |
+| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 3 | 10717 | op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -30,31 +32,34 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [double-counters](#double-counters) | 1 | 1835 | op |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [has-counters-filter](#has-counters-filter) | 1 | 674 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [loyalty-x](#loyalty-x) | 1 | 11489 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [must-attack-planeswalker](#must-attack-planeswalker) | 1 | 11218 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
-| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 1 | 13773 | op |
+| [prevent-damage-from-source](#prevent-damage-from-source) | 1 | 10717 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [token-illusion-2-2-u-sac-when-targeted](#token-illusion-2-2-u-sac-when-targeted) | 1 | 13060 | token |
+| [until-your-next-turn](#until-your-next-turn) | 1 | 10717 | engine |
 | [until-your-next-turn-ability-lock](#until-your-next-turn-ability-lock) | 1 | 12562 | op |
 | [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
 ## proliferate
 
-Blocks **3** cards.
+Blocks **4** cards.
 
 - **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
   <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
@@ -62,15 +67,43 @@ Blocks **3** cards.
   <br>Why the existing vocabulary won't do: The existing proliferate op is a simplification: it makes no choice and never touches players or opponents' permanents, so it does not implement rule 701.27
 - **(op)** a full proliferate (701.34): the controller chooses any number of permanents and/or players that have counters (any controller, opponents included), then each chosen one gets another counter of each kind already on it
   <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: `objects` only) is a simplification: it offers no choice and never reaches players (poison, experience, etc.) or opponents' permanents, so writing it would silently do something narrower than the printed text. The `spell_cast` trigger with a noncreature filter is expressible; only the proliferate itself is blocked.
+- **(op)** a full proliferate (701.34): the controller chooses any number of permanents AND/OR players that have counters (including opponents' permanents and players' poison/energy counters), then each chosen gets one more counter of each kind already there
+  <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: objects only) is a simplification: it offers no choice and never touches players or opponents' permanents, so it would add counters the controller may not want and miss poison counters on opponents
 
 <details><summary>Cards waiting on this</summary>
 
+- **Inexorable Tide** (rank 1030) — `inexorable_tide`
+  - Whenever you cast a spell, proliferate.
 - **Flux Channeler** (rank 1290) — `flux_channeler`
   - Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 - **Contentious Plan** (rank 2236) — `contentious_plan`
   - Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 - **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
   - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+
+</details>
+
+## prevent-damage-to-permanent
+
+Blocks **3** cards.
+
+- **(op)** A one-shot prevention effect scoped to a permanent (here the source itself) with a 'this turn' duration: 'Prevent all damage that would be dealt to him this turn.' -- e.g. `prevent_damage` taking `objects` beside `player`, installing a per-object DamageShield cleared at cleanup
+  <br>Why the existing vocabulary won't do: The `prevent_damage` op takes only `player` and `duration` and shields a seat, never a permanent. The `prevent_damage` static with `prevent_all` can shield a permanent but is continuous with no 'this turn' clock, so as a printed static on Gideon it would protect him on every turn. The `grant_ability` op cannot hand over a static (granted statics are never read by `_battlefield_statics`). `grant_protection` from_everything would also stop targeting/blocking/attachment, a different card.
+- **(op)** prevent all damage that would be dealt to a specific permanent (here the source itself) this turn
+  <br>Why the existing vocabulary won't do: prevent_damage takes only duration and player -- it prevents damage to a player, not to an object; there is no objects/self_only option for a permanent
+- **(op)** an op that prevents all damage that would be dealt to a permanent (here the source itself) this turn
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' op only shields a player and its loader rejects 'objects'; the 'prevent_damage' static lives on a permanent's printed abilities and cannot be granted until end of turn by a resolving ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
+- **Gideon Jura** (rank 11218) — `gideon_jura`
+  - +2: During target opponent's next turn, creatures that player controls attack Gideon Jura if able.
+  - 0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.
+- **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
+  - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -107,6 +140,25 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## double-counters
+
+Blocks **2** cards.
+
+- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
+  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
+- **(replacement)** a static replacement that doubles every counter of every kind the controller would put on any permanent or any player (Doubling Season / Innkeeper's Talent level 3)
+  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier is the closest, but the known simplification does not cover counters placed on players nor every kind on every permanent; listed as a known gap by the orchestrator
+
+<details><summary>Cards waiting on this</summary>
+
+- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
+  - Permanents you control with counters on them have ward {1}.
+  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
+- **Deepglow Skate** (rank 1835) — `deepglow_skate`
+  - When this creature enters, double the number of each kind of counter on any number of target permanents.
 
 </details>
 
@@ -300,20 +352,6 @@ Blocks **1** card.
 
 </details>
 
-## double-counters
-
-Blocks **1** card.
-
-- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
-  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deepglow Skate** (rank 1835) — `deepglow_skate`
-  - When this creature enters, double the number of each kind of counter on any number of target permanents.
-
-</details>
-
 ## escape
 
 Blocks **1** card.
@@ -357,6 +395,21 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## has-counters-filter
+
+Blocks **1** card.
+
+- **(selector)** a static_filter_key matching permanents that have one or more counters (of any kind) on them, so a static grant (ward {1}) applies dynamically to 'permanents you control with counters on them'
+  <br>Why the existing vocabulary won't do: static_filter_keys (types, controller, tapped, keywords, power, ...) read only printed/state characteristics and have nothing for counters; counters_on exists only as a value, not a filter, so the ward static's `affects` cannot be narrowed to permanents with counters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
+  - Permanents you control with counters on them have ward {1}.
+  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
 
 </details>
 
@@ -414,6 +467,21 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## must-attack-planeswalker
+
+Blocks **1** card.
+
+- **(op)** a player-scoped attack requirement lasting through the target opponent's next turn: every creature that player controls during that turn (including ones that arrive later) must attack a specific defender, the source planeswalker, if able
+  <br>Why the existing vocabulary won't do: must_attack sets a flag only on creatures already on the battlefield at resolution, takes durations this_turn/next_combat only, and names no defender -- it cannot require attacking Gideon rather than the player, and it misses creatures that enter during that turn. The attacks_if_able static likewise has no defender and no 'target opponent's next turn' duration; cant_attack_player is a prohibition, not a requirement
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gideon Jura** (rank 11218) — `gideon_jura`
+  - +2: During target opponent's next turn, creatures that player controls attack Gideon Jura if able.
+  - 0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -479,17 +547,18 @@ Blocks **1** card.
 
 </details>
 
-## prevent-damage-to-permanent
+## prevent-damage-from-source
 
 Blocks **1** card.
 
-- **(op)** A one-shot prevention effect scoped to a permanent (here the source itself) with a 'this turn' duration: 'Prevent all damage that would be dealt to him this turn.' -- e.g. `prevent_damage` taking `objects` beside `player`, installing a per-object DamageShield cleared at cleanup
-  <br>Why the existing vocabulary won't do: The `prevent_damage` op takes only `player` and `duration` and shields a seat, never a permanent. The `prevent_damage` static with `prevent_all` can shield a permanent but is continuous with no 'this turn' clock, so as a printed static on Gideon it would protect him on every turn. The `grant_ability` op cannot hand over a static (granted statics are never read by `_battlefield_statics`). `grant_protection` from_everything would also stop targeting/blocking/attachment, a different card.
+- **(op)** an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability
 
 <details><summary>Cards waiting on this</summary>
 
-- **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
-  - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -563,6 +632,35 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
+
+</details>
+
+## token-illusion-2-2-u-sac-when-targeted
+
+Blocks **1** card.
+
+- **(token)** a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it." (e.g. id illusion_2_2_u_sac_when_targeted), a becomes_target trigger with targeted_by spell and a self-sacrifice effect
+  <br>Why the existing vocabulary won't do: token_ids is closed; the only Illusions are illusion_1_1_u and illusion_1_1_u_flying, both 1/1 and without the sacrifice-when-targeted trigger, so neither is the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jace, Cunning Castaway** (rank 13060) — `jace_cunning_castaway`
+  - −2: Create a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it."
+
+</details>
+
+## until-your-next-turn
+
+Blocks **1** card.
+
+- **(engine)** a duration 'until your next turn' for the source-prevention effect above
+  <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 

@@ -1,0 +1,31 @@
+{
+  "card_id": "gideon_of_the_trials",
+  "name": "Gideon of the Trials",
+  "oracle_text": "+1: Until your next turn, prevent all damage target permanent would deal.\n0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.\n0: You get an emblem with \"As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.\"",
+  "blocked_sentences": [
+    "+1: Until your next turn, prevent all damage target permanent would deal.",
+    "Prevent all damage that would be dealt to him this turn."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_damage_from_source",
+      "kind": "op",
+      "what": "an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration",
+      "why_existing_wont_do": "The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability"
+    },
+    {
+      "capability": "until_your_next_turn",
+      "kind": "engine",
+      "what": "a duration 'until your next turn' for the source-prevention effect above",
+      "why_existing_wont_do": "playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn"
+    },
+    {
+      "capability": "prevent_damage_to_permanent",
+      "kind": "op",
+      "what": "an op that prevents all damage that would be dealt to a permanent (here the source itself) this turn",
+      "why_existing_wont_do": "The 'prevent_damage' op only shields a player and its loader rejects 'objects'; the 'prevent_damage' static lives on a permanent's printed abilities and cannot be granted until end of turn by a resolving ability"
+    }
+  ],
+  "closest_existing": ["prevent_damage", "animate", "cant_lose_the_game", "emblem"],
+  "confidence": "high"
+}

@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "jace_memory_adept",
+    "name": "Jace, Memory Adept",
+    "oracle_text": "+1: Draw a card. Target player mills a card.\n0: Target player mills ten cards.\n−7: Any number of target players each draw twenty cards.",
+    "mana_cost": "{3}{U}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Jace"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "loyalty": 4,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Draw a card. Target player mills a card.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {"id": "t1", "kind": "player", "selector": {"controller": "any"}}
+        ],
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "0: Target player mills ten cards.",
+        "cost": {"loyalty": 0},
+        "targets": [
+          {"id": "t1", "kind": "player", "selector": {"controller": "any"}}
+        ],
+        "effects": [
+          {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 10}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: Any number of target players each draw twenty cards.",
+        "cost": {"loyalty": -7},
+        "targets": [
+          {"id": "t1", "kind": "player", "count": "any", "selector": {"controller": "any"}}
+        ],
+        "effects": [
+          {"op": "draw", "player": {"target": "t1"}, "amount": {"const": 20}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

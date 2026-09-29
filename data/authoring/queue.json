@@ -141372,12 +141372,12 @@
     },
     "Jace, Memory Adept": {
       "edhrec_rank": 6075,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Memory Adept",
-      "reason": "no template for: +1: Draw a card. Target player mills a card",
+      "reason": "",
       "scryfall_id": "2801a4ad-5d44-4414-af62-458c7f90dad6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jace, Mirror Mage": {

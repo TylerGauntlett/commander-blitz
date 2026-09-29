@@ -5012,6 +5012,10 @@
   "izzet_signet": {
     "zone": "battlefield"
   },
+  "jace_memory_adept": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jace_wielder_of_mysteries": {
     "battlefield_count": 33,
     "counters": {
