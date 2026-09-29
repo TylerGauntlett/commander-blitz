@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "deploy_the_gatewatch",
+    "name": "Deploy the Gatewatch",
+    "oracle_text": "Look at the top seven cards of your library. Put up to two planeswalker cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+    "mana_cost": "{4}{W}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "look_at_top",
+        "amount": {"const": 7},
+        "objects": {"types": ["Planeswalker"], "count": 2, "optional": true},
+        "destination": "battlefield",
+        "rest_to_bottom": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {"0": 40},
+    "hand_size": {"0": 1},
+    "battlefield_count": 32
+  }
+}

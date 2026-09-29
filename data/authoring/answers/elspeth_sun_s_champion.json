@@ -1,0 +1,75 @@
+{
+  "card": {
+    "id": "elspeth_sun_s_champion",
+    "name": "Elspeth, Sun's Champion",
+    "oracle_text": "+1: Create three 1/1 white Soldier creature tokens.\n−3: Destroy all creatures with power 4 or greater.\n−7: You get an emblem with \"Creatures you control get +2/+2 and have flying.\"",
+    "mana_cost": "{4}{W}{W}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Elspeth"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "loyalty": 4,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Create three 1/1 white Soldier creature tokens.",
+        "cost": {"loyalty": 1},
+        "effects": [
+          {"op": "create_token", "token": "soldier_1_1_w", "amount": {"const": 3}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−3: Destroy all creatures with power 4 or greater.",
+        "cost": {"loyalty": -3},
+        "effects": [
+          {
+            "op": "destroy",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "any",
+              "types": ["Creature"],
+              "power": {"op": ">=", "value": {"const": 4}},
+              "count": "all"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: You get an emblem with \"Creatures you control get +2/+2 and have flying.\"",
+        "cost": {"loyalty": -7},
+        "effects": [
+          {"op": "emblem", "player": "you", "emblem": 0}
+        ]
+      }
+    ],
+    "emblems": [
+      {
+        "abilities": [
+          {
+            "kind": "static",
+            "effect": "buff",
+            "affects": {"controller": "you", "types": ["Creature"]},
+            "power": {"const": 2},
+            "toughness": {"const": 2},
+            "text": "Creatures you control get +2/+2 and have flying."
+          },
+          {
+            "kind": "static",
+            "effect": "grant_keyword",
+            "affects": {"controller": "you", "types": ["Creature"]},
+            "keywords": ["flying"],
+            "text": "Creatures you control get +2/+2 and have flying."
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

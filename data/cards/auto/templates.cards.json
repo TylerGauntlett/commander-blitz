@@ -26879,6 +26879,39 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "deploy_the_gatewatch",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Deploy the Gatewatch",
+      "oracle_text": "Look at the top seven cards of your library. Put up to two planeswalker cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": 2,
+            "optional": true,
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "op": "look_at_top",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -31358,6 +31391,124 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create three 1/1 white Soldier creature tokens."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: Destroy all creatures with power 4 or greater."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You get an emblem with \"Creatures you control get +2/+2 and have flying.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "buff",
+              "kind": "static",
+              "power": {
+                "const": 2
+              },
+              "text": "Creatures you control get +2/+2 and have flying.",
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "grant_keyword",
+              "keywords": [
+                "flying"
+              ],
+              "kind": "static",
+              "text": "Creatures you control get +2/+2 and have flying."
+            }
+          ]
+        }
+      ],
+      "id": "elspeth_sun_s_champion",
+      "loyalty": 4,
+      "mana_cost": "{4}{W}{W}",
+      "name": "Elspeth, Sun's Champion",
+      "oracle_text": "+1: Create three 1/1 white Soldier creature tokens.\n−3: Destroy all creatures with power 4 or greater.\n−7: You get an emblem with \"Creatures you control get +2/+2 and have flying.\"",
+      "source": "auto",
+      "subtypes": [
+        "Elspeth"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -38951,6 +39102,47 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "fracture",
+      "mana_cost": "{W}{B}",
+      "name": "Fracture",
+      "oracle_text": "Destroy target artifact, enchantment, or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

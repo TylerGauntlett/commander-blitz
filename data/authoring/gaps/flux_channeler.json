@@ -1,0 +1,18 @@
+{
+  "card_id": "flux_channeler",
+  "name": "Flux Channeler",
+  "oracle_text": "Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "blocked_sentences": [
+    "Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+  ],
+  "needs": [
+    {
+      "capability": "proliferate",
+      "kind": "op",
+      "what": "a full proliferate (701.34): the controller chooses any number of permanents and/or players that have counters (any controller, opponents included), then each chosen one gets another counter of each kind already on it",
+      "why_existing_wont_do": "The existing `proliferate` op (options: `objects` only) is a simplification: it offers no choice and never reaches players (poison, experience, etc.) or opponents' permanents, so writing it would silently do something narrower than the printed text. The `spell_cast` trigger with a noncreature filter is expressible; only the proliferate itself is blocked."
+    }
+  ],
+  "closest_existing": ["proliferate", "add_counters"],
+  "confidence": "high"
+}

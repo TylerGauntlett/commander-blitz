@@ -2472,6 +2472,16 @@
     },
     "zone": "graveyard"
   },
+  "deploy_the_gatewatch": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "deranged_whelp": {
     "zone": "battlefield"
   },
@@ -2861,6 +2871,13 @@
     "zone": "battlefield"
   },
   "elite_vanguard": {
+    "zone": "battlefield"
+  },
+  "elspeth_sun_s_champion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "elves_of_deep_shadow": {
@@ -3629,6 +3646,13 @@
   },
   "foul_orchard": {
     "zone": "battlefield"
+  },
+  "fracture": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "frantic_search": {
     "graveyard_size": {

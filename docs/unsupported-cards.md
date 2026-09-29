@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **34** capabilities.
+**33 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [proliferate](#proliferate) | 3 | 1290 | decision, op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [proliferate](#proliferate) | 2 | 2236 | decision, op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -42,12 +42,37 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
+| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 1 | 13773 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [until-your-next-turn-ability-lock](#until-your-next-turn-ability-lock) | 1 | 12562 | op |
+| [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+
+## proliferate
+
+Blocks **3** cards.
+
+- **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
+  <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
+- **(op)** a proliferate op that lets the controller choose any number of permanents (any controller) and/or players that have counters, then adds one more counter of each kind already on each chosen object or player (including player counters such as poison/energy/experience)
+  <br>Why the existing vocabulary won't do: The existing proliferate op is a simplification: it makes no choice and never touches players or opponents' permanents, so it does not implement rule 701.27
+- **(op)** a full proliferate (701.34): the controller chooses any number of permanents and/or players that have counters (any controller, opponents included), then each chosen one gets another counter of each kind already on it
+  <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: `objects` only) is a simplification: it offers no choice and never reaches players (poison, experience, etc.) or opponents' permanents, so writing it would silently do something narrower than the printed text. The `spell_cast` trigger with a noncreature filter is expressible; only the proliferate itself is blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flux Channeler** (rank 1290) — `flux_channeler`
+  - Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+- **Contentious Plan** (rank 2236) — `contentious_plan`
+  - Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+- **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
+  - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+
+</details>
 
 ## cast-as-though-flash
 
@@ -101,24 +126,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## proliferate
-
-Blocks **2** cards.
-
-- **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
-  <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
-- **(op)** a proliferate op that lets the controller choose any number of permanents (any controller) and/or players that have counters, then adds one more counter of each kind already on each chosen object or player (including player counters such as poison/energy/experience)
-  <br>Why the existing vocabulary won't do: The existing proliferate op is a simplification: it makes no choice and never touches players or opponents' permanents, so it does not implement rule 701.27
-
-<details><summary>Cards waiting on this</summary>
-
-- **Contentious Plan** (rank 2236) — `contentious_plan`
-  - Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
-- **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
-  - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 
 </details>
 
@@ -472,6 +479,20 @@ Blocks **1** card.
 
 </details>
 
+## prevent-damage-to-permanent
+
+Blocks **1** card.
+
+- **(op)** A one-shot prevention effect scoped to a permanent (here the source itself) with a 'this turn' duration: 'Prevent all damage that would be dealt to him this turn.' -- e.g. `prevent_damage` taking `objects` beside `player`, installing a per-object DamageShield cleared at cleanup
+  <br>Why the existing vocabulary won't do: The `prevent_damage` op takes only `player` and `duration` and shields a seat, never a permanent. The `prevent_damage` static with `prevent_all` can shield a permanent but is continuous with no 'this turn' clock, so as a printed static on Gideon it would protect him on every turn. The `grant_ability` op cannot hand over a static (granted statics are never read by `_battlefield_statics`). `grant_protection` from_everything would also stop targeting/blocking/attachment, a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
+  - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
+
+</details>
+
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -542,6 +563,34 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
+
+</details>
+
+## until-your-next-turn-ability-lock
+
+Blocks **1** card.
+
+- **(op)** a `duration: "until_your_next_turn"` on `lock_abilities` ("its activated abilities can't be activated until your next turn"), cleared in the granting player's untap step
+  <br>Why the existing vocabulary won't do: `lock_abilities` takes only `objects` and records an until_eot TempEffect, so the lock ends at this turn's cleanup and the opponent can activate freely on their turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dovin Baan** (rank 12562) — `dovin_baan`
+  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
+
+</details>
+
+## until-your-next-turn-pump
+
+Blocks **1** card.
+
+- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -3/-0 set by a planeswalker's loyalty ability lasts through the opponent's turn and is cleared in the controller's next untap step
+  <br>Why the existing vocabulary won't do: `pump` carries no duration in its implementation (op_pump always calls `pump`, an until_eot TempEffect cleared at cleanup), so the -3/-0 would expire before the opponent's turn -- exactly when the card matters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dovin Baan** (rank 12562) — `dovin_baan`
+  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
 
 </details>
 

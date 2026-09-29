@@ -66632,12 +66632,12 @@
     },
     "Deploy the Gatewatch": {
       "edhrec_rank": 10749,
-      "gate": "template",
+      "gate": null,
       "name": "Deploy the Gatewatch",
-      "reason": "no template for: Look at the top seven cards of your library. Put up to two planeswalker cards from among t",
+      "reason": "",
       "scryfall_id": "34f4c453-97b4-4cd5-a766-85e5647f71d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Deploy to the Front": {
@@ -81532,12 +81532,12 @@
     },
     "Elspeth, Sun's Champion": {
       "edhrec_rank": 810,
-      "gate": "template",
+      "gate": null,
       "name": "Elspeth, Sun's Champion",
-      "reason": "no template for: +1: Create three 1/1 white Soldier creature tokens",
+      "reason": "",
       "scryfall_id": "6f816d97-10f0-4d92-aa21-254754530554",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Elspeth, Sun's Champion Emblem": {
@@ -101512,12 +101512,12 @@
     },
     "Fracture": {
       "edhrec_rank": 1245,
-      "gate": "template",
+      "gate": null,
       "name": "Fracture",
-      "reason": "no template for: Destroy target artifact, enchantment, or planeswalker",
+      "reason": "",
       "scryfall_id": "34005b2e-6270-4ac3-9d35-021d916125ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Fractured Identity": {
