@@ -103,6 +103,28 @@
   "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
+  "ajani_the_greathearted": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "ajani_unyielding": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "akoum_refuge": {
     "life": {
       "0": 41

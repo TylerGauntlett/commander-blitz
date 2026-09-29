@@ -1,0 +1,28 @@
+{
+  "card_id": "ajani_sleeper_agent",
+  "name": "Ajani, Sleeper Agent",
+  "oracle_text": "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library.\n−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.\n−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\"",
+  "blocked_sentences": [
+    "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)",
+    "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "compleated",
+      "kind": "replacement",
+      "what": "a planeswalker enters-with-loyalty replacement: if life was paid for any Phyrexian pip while casting it, it enters with two fewer loyalty counters (rule 702.150)",
+      "why_existing_wont_do": "Casting already lets a Phyrexian pip be bought with 2 life (paying_phyrexian), but nothing records that life was paid for the cast spell and nothing reduces starting loyalty; no keyword, condition (cost_option/was_cast) or card-level key covers it"
+    },
+    {
+      "capability": "distribute_counters",
+      "kind": "op",
+      "what": "place N +1/+1 counters divided as the controller chooses among up to N target creatures (each target gets at least one), with the division chosen on activation (rule 601.2d)",
+      "why_existing_wont_do": "add_counters takes one amount applied to every object it names; target_keys has count/up_to but no division; no op or decision distributes a total among targets"
+    }
+  ],
+  "closest_existing": [
+    "add_counters",
+    "paying_phyrexian mana"
+  ],
+  "confidence": "high"
+}

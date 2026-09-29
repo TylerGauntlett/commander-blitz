@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **26** capabilities.
+**26 cards** blocked by **31** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,10 +20,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [choose-direction](#choose-direction) | 1 | 4736 | decision |
+| [compleated](#compleated) | 1 | 6703 | replacement |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -34,6 +37,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
+| [proliferate](#proliferate) | 1 | 2469 | decision |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -138,6 +143,35 @@ Blocks **1** card.
 
 </details>
 
+## choose-direction
+
+Blocks **1** card.
+
+- **(decision)** A 'choose left or right' decision whose answer is bound, plus a player spec 'the next player in the chosen direction' relative to a for_each_player binding (seat-order neighbour: left = next in turn order, right = previous), so that inside for_each_player a gain_control can take objects {controller: <neighbour of each_player>, not_types: [Land], exclude_self: true} with player = each_player. All control changes must be simultaneous (the permanents are snapshotted before any control moves), otherwise the rotation cascades.
+  <br>Why the existing vocabulary won't do: choose_player picks an arbitrary player, not a seat-relative neighbour; for_each_player + gain_control can hand each player objects, but no player spec or selector key (controller/owner/binding) expresses 'the next player to the left/right of the bound player', and sequential per-player gain_control would re-read already-moved permanents instead of rotating the board simultaneously
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aminatou, the Fateshifter** (rank 4736) — `aminatou_the_fateshifter`
+  - −6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction.
+
+</details>
+
+## compleated
+
+Blocks **1** card.
+
+- **(replacement)** a planeswalker enters-with-loyalty replacement: if life was paid for any Phyrexian pip while casting it, it enters with two fewer loyalty counters (rule 702.150)
+  <br>Why the existing vocabulary won't do: Casting already lets a Phyrexian pip be bought with 2 life (paying_phyrexian), but nothing records that life was paid for the cast spell and nothing reduces starting loyalty; no keyword, condition (cost_option/was_cast) or card-level key covers it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
+  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
+
+</details>
+
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -192,6 +226,21 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## distribute-counters
+
+Blocks **1** card.
+
+- **(op)** place N +1/+1 counters divided as the controller chooses among up to N target creatures (each target gets at least one), with the division chosen on activation (rule 601.2d)
+  <br>Why the existing vocabulary won't do: add_counters takes one amount applied to every object it names; target_keys has count/up_to but no division; no op or decision distributes a total among targets
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
+  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
 
 </details>
 
@@ -343,6 +392,34 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## prevent-all-but
+
+Blocks **1** card.
+
+- **(static_effect)** a static damage-prevention effect that caps each source's damage event at N ("prevent all but 1 of that damage"), applying to a player (affects_player: you) as well as to permanents matching a filter (planeswalkers you control), usable on an emblem
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static is either absorb-N (prevents N, lets the rest through) or `prevent_all` (prevents everything), and is read only by `damage_permanent` so it never protects a player; 'all but 1' is the inverse of absorb-N (lets 1 through, prevents the rest). `replace_damage` is a multiplier refused below 2, and `damage_life_floor` is a life-total floor op, not a per-source cap.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ajani Steadfast** (rank 5225) — `ajani_steadfast`
+  - −7: You get an emblem with "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
+
+</details>
+
+## proliferate
+
+Blocks **1** card.
+
+- **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
+  <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
+  - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 
 </details>
 

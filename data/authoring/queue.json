@@ -4678,7 +4678,7 @@
       "scryfall_id": "51825d35-cdb2-40fa-ab89-1625161b04af",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ajani Steadfast Emblem": {
       "edhrec_rank": null,
@@ -4702,13 +4702,13 @@
     },
     "Ajani Unyielding": {
       "edhrec_rank": 10549,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani Unyielding",
-      "reason": "no template for: +2: Reveal the top three cards of your library. Put all nonland permanent cards revealed t",
+      "reason": "",
       "scryfall_id": "41000308-144d-4d3b-afec-e3928d20edfc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ajani Vengeant": {
       "edhrec_rank": 14186,
@@ -4918,7 +4918,7 @@
       "scryfall_id": "5d14829d-3119-4c65-8e9a-5281771bbaf3",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ajani, Sleeper Agent Emblem": {
       "edhrec_rank": null,
@@ -4962,13 +4962,13 @@
     },
     "Ajani, the Greathearted": {
       "edhrec_rank": 4035,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani, the Greathearted",
-      "reason": "no template for: Creatures you control have vigilance",
+      "reason": "",
       "scryfall_id": "e4ec092e-af23-4f4b-91f1-f63d50e40b30",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Akal Pakal, First Among Equals": {
       "edhrec_rank": 11994,
@@ -7358,7 +7358,7 @@
       "scryfall_id": "3748cbe2-ae41-49fd-823a-40c52496b65b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ammit Eternal": {
       "edhrec_rank": 11143,
@@ -14708,7 +14708,7 @@
       "scryfall_id": "dd6f76d4-a2b3-40e5-b6a7-b27c42caf615",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ashiok, Nightmare Muse": {
       "edhrec_rank": 7044,
@@ -14728,7 +14728,7 @@
       "scryfall_id": "599c3c9f-dfb7-4357-9d9c-9a1a4616b103",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ashiok, Sculptor of Fears": {
       "edhrec_rank": 11604,
@@ -15818,7 +15818,7 @@
       "scryfall_id": "20e44330-f880-455e-852c-16d0a985cdf0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Atraxi Warden": {
       "edhrec_rank": 15272,
@@ -35018,7 +35018,7 @@
       "scryfall_id": "2aa2713b-5df0-4e54-89bf-30b5aeba9ac7",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Brokers Charm": {
       "edhrec_rank": 6110,
@@ -38178,7 +38178,7 @@
       "scryfall_id": "4719ac60-2cff-4abb-b9cc-b677d3ac945c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Call the Mountain Chocobo": {
       "edhrec_rank": 13150,
@@ -52638,7 +52638,7 @@
       "scryfall_id": "8e30deb6-9e1f-4545-ae30-c30ba6c7b3a0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Contest of Claws": {
       "edhrec_rank": 5171,
@@ -64828,7 +64828,7 @@
       "scryfall_id": "fef1c2a5-d5d8-4c1e-9b14-ee202a5f16b1",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Deepmuck Desperado": {
       "edhrec_rank": 10018,
@@ -66638,7 +66638,7 @@
       "scryfall_id": "34f4c453-97b4-4cd5-a766-85e5647f71d5",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Deploy to the Front": {
       "edhrec_rank": 6062,
@@ -72508,7 +72508,7 @@
       "scryfall_id": "8c2d6fde-5c3b-48c3-828c-832f00570824",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Doubtless One": {
       "edhrec_rank": 21279,
@@ -72578,7 +72578,7 @@
       "scryfall_id": "2344e710-4570-41b6-af84-a3e7d784003a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Dovin Baan Emblem": {
       "edhrec_rank": null,
@@ -81538,7 +81538,7 @@
       "scryfall_id": "6f816d97-10f0-4d92-aa21-254754530554",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Elspeth, Sun's Champion Emblem": {
       "edhrec_rank": null,
@@ -99078,7 +99078,7 @@
       "scryfall_id": "26a679fa-cefc-4222-a12c-3ab886940956",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Fluxcharger": {
       "edhrec_rank": 27946,
@@ -101518,7 +101518,7 @@
       "scryfall_id": "34005b2e-6270-4ac3-9d35-021d916125ee",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Fractured Identity": {
       "edhrec_rank": 4561,
@@ -108828,7 +108828,7 @@
       "scryfall_id": "d608df31-bcc6-4fec-89f1-5cefe5c2ec99",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gideon of the Trials": {
       "edhrec_rank": 10717,
@@ -108838,7 +108838,7 @@
       "scryfall_id": "959ce13f-519f-4472-bbd1-f26a972723d7",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gideon of the Trials Emblem": {
       "edhrec_rank": null,
@@ -109008,7 +109008,7 @@
       "scryfall_id": "f9eadb92-2a87-4b3b-90b5-f10cb1cfda0f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gideon, Martial Paragon": {
       "edhrec_rank": 16450,
@@ -136008,7 +136008,7 @@
       "scryfall_id": "a992fad9-1dd1-47fe-b315-a62f7875f3be",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Infantry Shield": {
       "edhrec_rank": 3375,
@@ -137118,7 +137118,7 @@
       "scryfall_id": "941b0afc-0e8f-45f2-ae7f-07595e164611",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Innocence Kami": {
       "edhrec_rank": 29229,
@@ -141358,7 +141358,7 @@
       "scryfall_id": "b75f56f2-88fd-44ba-ad02-56ea3391f173",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Jace, Ingenious Mind-Mage": {
       "edhrec_rank": 13442,
@@ -141378,7 +141378,7 @@
       "scryfall_id": "2801a4ad-5d44-4414-af62-458c7f90dad6",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Jace, Mirror Mage": {
       "edhrec_rank": 7535,
@@ -141428,7 +141428,7 @@
       "scryfall_id": "3d9c8217-013d-4e75-bdd1-9c46c8467edb",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Jace, Unraveler of Secrets Emblem": {
       "edhrec_rank": null,
@@ -146138,7 +146138,7 @@
       "scryfall_id": "22017ec2-3552-4865-af76-dba042b141f5",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Karn's Sylex": {
       "edhrec_rank": 13220,
@@ -146508,7 +146508,7 @@
       "scryfall_id": "178bf300-38cf-4ab2-9e66-6fcaa112b649",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kasmina, Enigmatic Mentor": {
       "edhrec_rank": 6632,
@@ -146518,7 +146518,7 @@
       "scryfall_id": "ca2b53e2-aa6a-4cb2-899c-8e022e822ffc",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kassandra, Eagle Bearer": {
       "edhrec_rank": 7360,
@@ -146928,7 +146928,7 @@
       "scryfall_id": "166c0bd1-b59d-4644-832f-888a4ca3a0aa",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kaya the Inexorable Emblem": {
       "edhrec_rank": null,
@@ -149488,7 +149488,7 @@
       "scryfall_id": "4b63c228-3265-4029-9bc0-36b3e31dfb53",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kiora, Master of the Depths Emblem": {
       "edhrec_rank": null,
@@ -149518,7 +149518,7 @@
       "scryfall_id": "0c5c6b15-b72d-4341-92c2-7469210452da",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kiora, the Crashing Wave Emblem": {
       "edhrec_rank": null,
@@ -158978,7 +158978,7 @@
       "scryfall_id": "7a097413-b77c-45e8-a4ac-5b2dc1d34e16",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Liliana, Heretical Healer // Liliana, Defiant Necromancer": {
       "edhrec_rank": 4434,
@@ -159028,7 +159028,7 @@
       "scryfall_id": "50269303-0bd9-474e-bd16-e0d13a5cbb74",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Liliana, the Last Hope Emblem": {
       "edhrec_rank": null,
@@ -183438,7 +183438,7 @@
       "scryfall_id": "4816d092-e34b-4397-8599-43d8e85a8f39",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Narset Transcendent Emblem": {
       "edhrec_rank": null,
@@ -183528,7 +183528,7 @@
       "scryfall_id": "fe5b4aaf-1d0b-43a6-b20f-45235cb53db0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Narstad Scrapper": {
       "edhrec_rank": 31304,
@@ -187818,7 +187818,7 @@
       "scryfall_id": "bbaaa98a-ec40-4ff1-8762-a719cf1c475d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Nissa, Vital Force Emblem": {
       "edhrec_rank": null,
@@ -187838,7 +187838,7 @@
       "scryfall_id": "a548acc7-bf37-4bb3-83c9-6e5fdb501f56",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Nissa, Who Shakes the World": {
       "edhrec_rank": 1614,
@@ -190088,7 +190088,7 @@
       "scryfall_id": "968c7d5a-b037-4ff7-b6d2-df00adf5691b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Oath of Chandra": {
       "edhrec_rank": 14565,
@@ -190138,7 +190138,7 @@
       "scryfall_id": "b8a3f02b-9408-46a5-8d25-f5cec553d600",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Oath of Jace": {
       "edhrec_rank": 10040,
@@ -190208,7 +190208,7 @@
       "scryfall_id": "35b8ec5d-bb33-4733-883e-9002951ae2fb",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Oath of Scholars": {
       "edhrec_rank": 22894,
@@ -191888,7 +191888,7 @@
       "scryfall_id": "016b0750-d48d-4b6e-ac9c-a7904371a914",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Oko, the Ringleader": {
       "edhrec_rank": 11746,
@@ -210448,7 +210448,7 @@
       "scryfall_id": "ad6ed9f1-2014-49e2-91c6-2b55c8d60cdc",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Putrid Cyclops": {
       "edhrec_rank": 31591,
@@ -229618,7 +229618,7 @@
       "scryfall_id": "8340aa81-7c7f-4b0b-8d98-d3414cac331c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Rural Recruit": {
       "edhrec_rank": 25550,
@@ -255408,7 +255408,7 @@
       "scryfall_id": "d25c3609-a200-4532-9df8-8e92c24544bc",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Sorin, Imperious Bloodlord": {
       "edhrec_rank": 3985,
@@ -255448,7 +255448,7 @@
       "scryfall_id": "a1cb8205-e08a-4d32-8912-cb1203350be6",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Sorin, Solemn Visitor Emblem": {
       "edhrec_rank": null,
@@ -274788,7 +274788,7 @@
       "scryfall_id": "aeae9feb-8153-496c-bb12-8db5e2e089a9",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tamiyo, Compleated Sage": {
       "edhrec_rank": 8994,
@@ -274798,7 +274798,7 @@
       "scryfall_id": "222a736e-d819-452d-aeda-eb848c4b2302",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tamiyo, Field Researcher": {
       "edhrec_rank": 2959,
@@ -274808,7 +274808,7 @@
       "scryfall_id": "576ba8db-fad9-4c48-96be-a8a7e5f43039",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tamiyo, Field Researcher Emblem": {
       "edhrec_rank": null,
@@ -276578,7 +276578,7 @@
       "scryfall_id": "368c6e60-804c-447c-bc2b-ac9dc4cab5e7",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Teferi, Temporal Archmage Emblem": {
       "edhrec_rank": null,
@@ -276608,7 +276608,7 @@
       "scryfall_id": "5a47d968-bba0-4277-b5d7-eb9e1acd7953",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Teferi, Timebender": {
       "edhrec_rank": 17036,
@@ -276698,7 +276698,7 @@
       "scryfall_id": "2d389264-e2d2-4589-9636-faa11fe46710",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tel-Jilad Archers": {
       "edhrec_rank": 28358,
@@ -280158,7 +280158,7 @@
       "scryfall_id": "1ca66955-d900-45b6-9a40-38467689a68d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "The Chase Is On": {
       "edhrec_rank": 18618,
@@ -305298,7 +305298,7 @@
       "scryfall_id": "26b098d7-9b8d-47a1-9694-22b0f0ef25ff",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Viral Spawning": {
       "edhrec_rank": 16283,
@@ -308218,7 +308218,7 @@
       "scryfall_id": "a6ab9d2b-6cb3-4477-8d0e-712c530383bd",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Vraska's Conquistador": {
       "edhrec_rank": 28240,
@@ -308338,7 +308338,7 @@
       "scryfall_id": "967b7272-33a6-46e9-b0aa-4757aee54b3a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Vraska, Scheming Gorgon": {
       "edhrec_rank": 15421,

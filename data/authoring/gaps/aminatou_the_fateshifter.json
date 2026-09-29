@@ -1,0 +1,18 @@
+{
+  "card_id": "aminatou_the_fateshifter",
+  "name": "Aminatou, the Fateshifter",
+  "oracle_text": "+1: Draw a card, then put a card from your hand on top of your library.\n−1: Exile another target permanent you own, then return it to the battlefield under your control.\n−6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction.\nAminatou, the Fateshifter can be your commander.",
+  "blocked_sentences": [
+    "−6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction."
+  ],
+  "needs": [
+    {
+      "capability": "choose_direction",
+      "kind": "decision",
+      "what": "A 'choose left or right' decision whose answer is bound, plus a player spec 'the next player in the chosen direction' relative to a for_each_player binding (seat-order neighbour: left = next in turn order, right = previous), so that inside for_each_player a gain_control can take objects {controller: <neighbour of each_player>, not_types: [Land], exclude_self: true} with player = each_player. All control changes must be simultaneous (the permanents are snapshotted before any control moves), otherwise the rotation cascades.",
+      "why_existing_wont_do": "choose_player picks an arbitrary player, not a seat-relative neighbour; for_each_player + gain_control can hand each player objects, but no player spec or selector key (controller/owner/binding) expresses 'the next player to the left/right of the bound player', and sequential per-player gain_control would re-read already-moved permanents instead of rotating the board simultaneously"
+    }
+  ],
+  "closest_existing": ["for_each_player", "gain_control", "choose_player"],
+  "confidence": "high"
+}
