@@ -187832,12 +187832,12 @@
     },
     "Nissa, Voice of Zendikar": {
       "edhrec_rank": 5092,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa, Voice of Zendikar",
-      "reason": "no template for: +1: Create a 0/1 green Plant creature token",
+      "reason": "",
       "scryfall_id": "a548acc7-bf37-4bb3-83c9-6e5fdb501f56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nissa, Who Shakes the World": {
@@ -190082,12 +190082,12 @@
     },
     "Oath of Ajani": {
       "edhrec_rank": 11063,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Ajani",
-      "reason": "no template for: When enters, put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "968c7d5a-b037-4ff7-b6d2-df00adf5691b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oath of Chandra": {
@@ -210442,12 +210442,12 @@
     },
     "Putrefy": {
       "edhrec_rank": 335,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Putrefy",
-      "reason": "no template for: Destroy target artifact or creature. It can't be regenerated",
+      "reason": "player 0 graveyard_size is 4, expected 3; your battlefield is 31, expected 32; opponent battlefield is 6, expected 5",
       "scryfall_id": "ad6ed9f1-2014-49e2-91c6-2b55c8d60cdc",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": true
     },
     "Putrid Cyclops": {

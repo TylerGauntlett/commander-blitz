@@ -74161,6 +74161,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "plant_0_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 0/1 green Plant creature token."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Put a +1/+1 counter on each creature you control."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "amount": {
+                "lands_you_control": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "lands_you_control": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You gain X life and draw X cards, where X is the number of lands you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nissa_voice_of_zendikar",
+      "loyalty": 3,
+      "mana_cost": "{1}{G}{G}",
+      "name": "Nissa, Voice of Zendikar",
+      "oracle_text": "+1: Create a 0/1 green Plant creature token.\n−2: Put a +1/+1 counter on each creature you control.\n−7: You gain X life and draw X cards, where X is the number of lands you control.",
+      "source": "auto",
+      "subtypes": [
+        "Nissa"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -75072,6 +75159,67 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Oath of Ajani enters, put a +1/+1 counter on each creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Planeswalker spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "oath_of_ajani",
+      "mana_cost": "{G}{W}",
+      "name": "Oath of Ajani",
+      "oracle_text": "When Oath of Ajani enters, put a +1/+1 counter on each creature you control.\nPlaneswalker spells you cast cost {1} less to cast.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

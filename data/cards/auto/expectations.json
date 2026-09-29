@@ -6770,6 +6770,10 @@
   "nip_gwyllion": {
     "zone": "battlefield"
   },
+  "nissa_voice_of_zendikar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nissas_pilgrimage": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -6850,6 +6854,10 @@
     "life": {
       "0": 42
     }
+  },
+  "oath_of_ajani": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "oath_of_eorl": {
     "battlefield_count": 35,

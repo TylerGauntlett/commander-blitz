@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**48 cards** blocked by **54** capabilities.
+**51 cards** blocked by **58** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,6 +22,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [loyalty-x](#loyalty-x) | 2 | 11489 | cost |
+| [missing-token](#missing-token) | 2 | 7381 | op, token |
 | [prevent-damage-from-source](#prevent-damage-from-source) | 2 | 7679 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -39,7 +40,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [draw-limit](#draw-limit) | 1 | 936 | static_effect |
+| [enters-with-additional-counters](#enters-with-additional-counters) | 1 | 7381 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
+| [exchange-control](#exchange-control) | 1 | 2058 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [fractal-token](#fractal-token) | 1 | 12306 | token |
@@ -48,19 +51,20 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-typed-picks](#look-at-top-typed-picks) | 1 | 8946 | op |
-| [missing-token](#missing-token) | 1 | 7679 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [must-attack-planeswalker](#must-attack-planeswalker) | 1 | 11218 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [octopus-8-8-u](#octopus-8-8-u) | 1 | 8946 | token |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [permanent-animate](#permanent-animate) | 1 | 2058 | op |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spend-mana-as-any-color-spell-filter](#spend-mana-as-any-color-spell-filter) | 1 | 7715 | static_effect |
 | [spirit-1-1-w-flying](#spirit-1-1-w-flying) | 1 | 6000 | token |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-illusion-2-2-u-sac-when-targeted](#token-illusion-2-2-u-sac-when-targeted) | 1 | 13060 | token |
@@ -247,6 +251,26 @@ Blocks **2** cards.
   - Each other planeswalker you control has the loyalty abilities of Kasmina.
   - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
   - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
+## missing-token
+
+Blocks **2** cards.
+
+- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
+  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
+- **(token)** a 1/1 white Kor Ally creature token (creature types Kor and Ally, no abilities), e.g. id kor_ally_1_1_w
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Kor Ally; human_soldier_1_1_w, soldier_1_1_w and warrior_1_1_w_vigilance are other creature types, which matters for Ally and Kor type-matters cards
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
+  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
+  - Each planeswalker you control enters with an additional loyalty counter on it.
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
 
 </details>
 
@@ -499,6 +523,21 @@ Blocks **1** card.
 
 </details>
 
+## enters-with-additional-counters
+
+Blocks **1** card.
+
+- **(static_effect)** a static replacement on permanents you control matching a filter (types: Planeswalker) that makes them enter the battlefield with N additional counters of a kind (loyalty) beyond those they would normally enter with; it must apply only to the entering event, not to later counter placements
+  <br>Why the existing vocabulary won't do: replace_counters with counter: loyalty and counter_addend: 1 applies to every loyalty-counter placement, so it would also add one to each +N loyalty activation, which the printed card does not do; enters_tapped is the only enters-with static and it carries no counters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
+  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
+  - Each planeswalker you control enters with an additional loyalty counter on it.
+
+</details>
+
 ## escape
 
 Blocks **1** card.
@@ -512,6 +551,21 @@ Blocks **1** card.
 
 - **Underworld Breach** (rank 388) — `underworld_breach`
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+
+</details>
+
+## exchange-control
+
+Blocks **1** card.
+
+- **(op)** an atomic exchange of control between two targeted permanents (701.12): each controller gains control of the other's permanent, permanently; if either target is illegal on resolution, or both have the same controller, no exchange happens at all
+  <br>Why the existing vocabulary won't do: gain_control moves one set of objects to one player. Two gain_control ops are not an exchange: the second would need 'the player who controlled the other target' as its player (no such player spec), and if one target became illegal the other half would still happen, which 701.12b forbids. aura_swap is an exchange but only Aura-in-hand for Aura-on-battlefield.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oko, Thief of Crowns** (rank 2058) — `oko_thief_of_crowns`
+  - +1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3.
+  - −5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.
 
 </details>
 
@@ -635,21 +689,6 @@ Blocks **1** card.
 
 </details>
 
-## missing-token
-
-Blocks **1** card.
-
-- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
-  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
-  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
-  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
-
-</details>
-
 ## multikicker
 
 Blocks **1** card.
@@ -743,6 +782,21 @@ Blocks **1** card.
 
 </details>
 
+## permanent-animate
+
+Blocks **1** card.
+
+- **(op)** an animate with no end-of-turn expiry that SETS characteristics rather than adding to them: the target becomes a green Elk creature with base P/T 3/3 indefinitely -- its colour becomes exactly green, its card types become exactly Creature (an artifact stops being an artifact), its creature types become exactly Elk (layer 4/5/7b, per Oko's rulings) -- paired with the existing lose_all_abilities op
+  <br>Why the existing vocabulary won't do: op animate (primitives.animate) stores a TempEffect in until_eot, so it wears off at cleanup, and it ADDS types/subtypes to what is printed ('it's still a land'), so an Oko'd artifact would stay an artifact and keep its other creature types. It takes no duration key. set_types/set_colors/set_pt exist only as statics read off the printed face, not as a one-shot op on a target; grant_ability's op cannot grant a static. lose_all_abilities op itself is fine (permanent).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oko, Thief of Crowns** (rank 2058) — `oko_thief_of_crowns`
+  - +1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3.
+  - −5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.
+
+</details>
+
 ## prevent-all-but
 
 Blocks **1** card.
@@ -829,6 +883,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## spend-mana-as-any-color-spell-filter
+
+Blocks **1** card.
+
+- **(static_effect)** the player-wide spend_mana_as_any_color static narrowed by an affects_spells filter (here {"types": ["Planeswalker"]}), loosening coloured pips only in the cast cost of spells matching the filter -- not activated-ability costs, not other spells
+  <br>Why the existing vocabulary won't do: spend_mana_as_any_color is unfiltered (Chromatic Orrery): it loosens every cost the player pays, spells and abilities alike, and the loader explicitly refuses 'affects'/'amount' on it; player_spends_mana_as_any_color takes no spell. The any_color flag on exile/grant_playable/look_at_top rides on one specific card made playable, not on a class of spells cast from hand.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oath of Nissa** (rank 7715) — `oath_of_nissa`
+  - You may spend mana as though it were mana of any color to cast planeswalker spells.
 
 </details>
 
