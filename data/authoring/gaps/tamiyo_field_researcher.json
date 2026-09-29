@@ -1,0 +1,18 @@
+{
+  "card_id": "tamiyo_field_researcher",
+  "name": "Tamiyo, Field Researcher",
+  "oracle_text": "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.\n−2: Tap up to two target nonland permanents. They don't untap during their controller's next untap step.\n−7: Draw three cards. You get an emblem with \"You may cast spells from your hand without paying their mana costs.\"",
+  "blocked_sentences": [
+    "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "until_your_next_turn",
+      "kind": "engine",
+      "what": "a `delayed_trigger` duration \"until_your_next_turn\" (subscription lasts across turns, repeats on every firing, and ends in the controller's next untap step), plus a `subject` that may name up to two targeted creatures so the trigger fires when EITHER of them deals combat damage (to a player, planeswalker or creature)",
+      "why_existing_wont_do": "op_delayed_trigger only accepts DELAYED_DURATIONS = this_turn / until_it_fires / once_this_turn, none of which lasts through opponents' turns and repeats; its `subject` resolves the selector and keeps only chosen[0], so a two-creature target set watches just one creature"
+    }
+  ],
+  "closest_existing": ["delayed_trigger"],
+  "confidence": "high"
+}

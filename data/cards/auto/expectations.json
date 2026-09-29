@@ -7579,6 +7579,16 @@
     },
     "zone": "graveyard"
   },
+  "putrefy": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "pygmy_allosaurus": {
     "zone": "battlefield"
   },
@@ -8241,6 +8251,12 @@
   },
   "runeclaw_bear": {
     "zone": "battlefield"
+  },
+  "rupture_spire": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "rushwood_dryad": {
     "zone": "battlefield"

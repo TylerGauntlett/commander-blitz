@@ -10,19 +10,20 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**51 cards** blocked by **58** capabilities.
+**56 cards** blocked by **60** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [until-your-next-turn](#until-your-next-turn) | 6 | 2959 | engine, op, value |
 | [proliferate](#proliferate) | 5 | 207 | decision, op |
+| [loyalty-x](#loyalty-x) | 4 | 8994 | cost |
+| [missing-token](#missing-token) | 4 | 7381 | op, token |
 | [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 4 | 7679 | op |
-| [until-your-next-turn](#until-your-next-turn) | 4 | 4790 | engine, op, value |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [compleated](#compleated) | 2 | 6703 | keyword, replacement |
 | [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [loyalty-x](#loyalty-x) | 2 | 11489 | cost |
-| [missing-token](#missing-token) | 2 | 7381 | op, token |
 | [prevent-damage-from-source](#prevent-damage-from-source) | 2 | 7679 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -30,8 +31,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-cast-spells-filter](#cant-cast-spells-filter) | 1 | 7975 | static_effect |
 | [cant-search-library](#cant-search-library) | 1 | 2591 | static_effect |
 | [cast-free-from-zones](#cast-free-from-zones) | 1 | 6000 | op |
+| [choose-card-name](#choose-card-name) | 1 | 8335 | decision |
 | [choose-direction](#choose-direction) | 1 | 4736 | decision |
-| [compleated](#compleated) | 1 | 6703 | replacement |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -57,6 +58,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [octopus-8-8-u](#octopus-8-8-u) | 1 | 8946 | token |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [opponent-cant-force-discard-or-sacrifice](#opponent-cant-force-discard-or-sacrifice) | 1 | 8335 | static_effect |
 | [permanent-animate](#permanent-animate) | 1 | 2058 | op |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -72,6 +74,42 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 | [wizard-2-2-u](#wizard-2-2-u) | 1 | 6632 | token |
+
+## until-your-next-turn
+
+Blocks **6** cards.
+
+- **(engine)** a duration 'until your next turn' for the source-prevention effect above
+  <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
+- **(value)** the duration "until your next turn" (ends as the controller's next turn begins) on the two prevention effects above
+  <br>Why the existing vocabulary won't do: No op among those that could carry the prevention exposes an until-your-next-turn duration
+- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -2/-1 set by a loyalty ability lasts through the opponents' turns and is cleared in the controller's next untap step (as turn._untap_step already does for block prohibitions, unblockables, life locks and cast locks)
+  <br>Why the existing vocabulary won't do: op_pump (ops_characteristics.py) reads only power, toughness and objects and always wears off at cleanup; `duration` is listed in op_options for pump but is ignored, so writing it would silently end the -2/-1 at end of this turn
+- **(op)** a `duration: "until_your_next_turn"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step
+  <br>Why the existing vocabulary won't do: `animate` takes no `duration` (op_options: colors, keywords, objects, power, subtypes, toughness, types, your_turn_keywords); op_animate in ops_characteristics.py always applies an until-end-of-turn animation and grant_keyword, so the land would stop being a creature at cleanup instead of lasting until Nissa's controller's next turn
+- **(op)** a duration "until_your_next_turn" (ending in the controller's next untap step, like the existing BlockProhibition/PlayerProtection/LifeLock durations) on both `pump` and `grant_keyword`, applied to all creatures you control at resolution: +1/+0 and lifelink that survive cleanup and the opponents' turn
+  <br>Why the existing vocabulary won't do: `pump` takes no `duration` at all (op_pump always makes an until-end-of-turn pump), and `grant_keyword` only distinguishes until_end_of_turn from "permanent"; the until_your_next_turn durations that exist are on cant_block/unblockable/grant_protection(player)/lock_life_total/cant_cast_spells_from_zones, not on P/T or keyword grants. Using end-of-turn would drop the lifelink/+1 during the opponent's turn, which is the point of the ability
+- **(engine)** a `delayed_trigger` duration "until_your_next_turn" (subscription lasts across turns, repeats on every firing, and ends in the controller's next untap step), plus a `subject` that may name up to two targeted creatures so the trigger fires when EITHER of them deals combat damage (to a player, planeswalker or creature)
+  <br>Why the existing vocabulary won't do: op_delayed_trigger only accepts DELAYED_DURATIONS = this_turn / until_it_fires / once_this_turn, none of which lasts through opponents' turns and repeats; its `subject` resolves the selector and keeps only chosen[0], so a two-creature target set watches just one creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Field Researcher** (rank 2959) — `tamiyo_field_researcher`
+  - +1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.
+- **Nissa, Vital Force** (rank 4790) — `nissa_vital_force`
+  - +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+- **Liliana, the Last Hope** (rank 7764) — `liliana_the_last_hope`
+  - +1: Up to one target creature gets -2/-1 until your next turn.
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
+- **Sorin, Solemn Visitor** (rank 11301) — `sorin_solemn_visitor`
+  - +1: Until your next turn, creatures you control get +1/+0 and gain lifelink.
+
+</details>
 
 ## proliferate
 
@@ -103,6 +141,68 @@ Blocks **5** cards.
 
 </details>
 
+## loyalty-x
+
+Blocks **4** cards.
+
+- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
+  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
+- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
+  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
+- **(cost)** a -X loyalty cost where the controller chooses X (removing X loyalty counters) and X is readable by the ability effects (damage X to target creature or planeswalker, gain X life)
+  <br>Why the existing vocabulary won't do: cost.loyalty takes only a fixed signed integer; x_value/pay_life_x cover mana and life, not loyalty
+- **(cost)** A −X loyalty cost where X is chosen on activation and the effects read X (here: target nonland permanent card in your graveyard with mana value X, then create a token copy of that exiled card)
+  <br>Why the existing vocabulary won't do: cost.loyalty takes only fixed signed integers; x_value exists as a cost key but nothing ties it to removing X loyalty counters, and creating a token copy of a card (not a permanent) from exile is not an established copy_permanent usage
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
+  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
+  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+- **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
+  - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
+  - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
+- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
+  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+
+</details>
+
+## missing-token
+
+Blocks **4** cards.
+
+- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
+  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
+- **(token)** a 1/1 white Kor Ally creature token (creature types Kor and Ally, no abilities), e.g. id kor_ally_1_1_w
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Kor Ally; human_soldier_1_1_w, soldier_1_1_w and warrior_1_1_w_vigilance are other creature types, which matters for Ally and Kor type-matters cards
+- **(op)** a token 1/1 black Vampire Knight creature with lifelink (subtypes Vampire Knight)
+  <br>Why the existing vocabulary won't do: token_ids has vampire_1_1_b_lifelink (Vampire only) and vampire_rogue_1_1_b_lifelink, but no Vampire Knight; substituting would change creature types
+- **(token)** Tamiyo's Notebook: legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+  <br>Why the existing vocabulary won't do: No such entry in token_ids; the closest artifact tokens (clue_token etc.) are different objects
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
+  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
+  - Each planeswalker you control enters with an additional loyalty counter on it.
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
+  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
+  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+- **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
+  - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
+  - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
+
+</details>
+
 ## prevent-damage-to-permanent
 
 Blocks **4** cards.
@@ -129,34 +229,6 @@ Blocks **4** cards.
   - 0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.
 - **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
   - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
-
-</details>
-
-## until-your-next-turn
-
-Blocks **4** cards.
-
-- **(engine)** a duration 'until your next turn' for the source-prevention effect above
-  <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
-- **(value)** the duration "until your next turn" (ends as the controller's next turn begins) on the two prevention effects above
-  <br>Why the existing vocabulary won't do: No op among those that could carry the prevention exposes an until-your-next-turn duration
-- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -2/-1 set by a loyalty ability lasts through the opponents' turns and is cleared in the controller's next untap step (as turn._untap_step already does for block prohibitions, unblockables, life locks and cast locks)
-  <br>Why the existing vocabulary won't do: op_pump (ops_characteristics.py) reads only power, toughness and objects and always wears off at cleanup; `duration` is listed in op_options for pump but is ignored, so writing it would silently end the -2/-1 at end of this turn
-- **(op)** a `duration: "until_your_next_turn"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step
-  <br>Why the existing vocabulary won't do: `animate` takes no `duration` (op_options: colors, keywords, objects, power, subtypes, toughness, types, your_turn_keywords); op_animate in ops_characteristics.py always applies an until-end-of-turn animation and grant_keyword, so the land would stop being a creature at cleanup instead of lasting until Nissa's controller's next turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nissa, Vital Force** (rank 4790) — `nissa_vital_force`
-  - +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.
-- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
-  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
-  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
-- **Liliana, the Last Hope** (rank 7764) — `liliana_the_last_hope`
-  - +1: Up to one target creature gets -2/-1 until your next turn.
-- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
-  - +1: Until your next turn, prevent all damage target permanent would deal.
-  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -196,6 +268,27 @@ Blocks **2** cards.
 
 </details>
 
+## compleated
+
+Blocks **2** cards.
+
+- **(replacement)** a planeswalker enters-with-loyalty replacement: if life was paid for any Phyrexian pip while casting it, it enters with two fewer loyalty counters (rule 702.150)
+  <br>Why the existing vocabulary won't do: Casting already lets a Phyrexian pip be bought with 2 life (paying_phyrexian), but nothing records that life was paid for the cast spell and nothing reduces starting loyalty; no keyword, condition (cost_option/was_cast) or card-level key covers it
+- **(keyword)** The Compleated keyword: when a Phyrexian hybrid symbol {G/U/P} in the planeswalker's cost is paid with 2 life, it enters with two fewer loyalty counters per such symbol paid with life
+  <br>Why the existing vocabulary won't do: The keyword list has no compleated, and no card-level cost key or condition reads whether Phyrexian mana was paid with life to reduce starting loyalty; `loyalty` is a fixed integer on the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
+  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
+- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
+  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
+  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+
+</details>
+
 ## double-counters
 
 Blocks **2** cards.
@@ -231,46 +324,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## loyalty-x
-
-Blocks **2** cards.
-
-- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
-  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
-- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
-  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
-  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
-
-</details>
-
-## missing-token
-
-Blocks **2** cards.
-
-- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
-  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
-- **(token)** a 1/1 white Kor Ally creature token (creature types Kor and Ally, no abilities), e.g. id kor_ally_1_1_w
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Kor Ally; human_soldier_1_1_w, soldier_1_1_w and warrior_1_1_w_vigilance are other creature types, which matters for Ally and Kor type-matters cards
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
-  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
-  - Each planeswalker you control enters with an additional loyalty counter on it.
-- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
-  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
-  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
 
 </details>
 
@@ -379,6 +432,21 @@ Blocks **1** card.
 
 </details>
 
+## choose-card-name
+
+Blocks **1** card.
+
+- **(decision)** an op that has the controller choose a card name (optionally restricted, here to nonland names) and binds it, so a later selector can match `name` against the chosen binding; here used by look_at_top over the top four cards, all cards with the chosen name to hand, rest to graveyard
+  <br>Why the existing vocabulary won't do: choose_color and choose_type exist but no name choice; the selector key `name` takes a fixed literal, and look_at_top's selector cannot refer to a chosen name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Collector of Tales** (rank 8335) — `tamiyo_collector_of_tales`
+  - Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.
+  - +1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.
+
+</details>
+
 ## choose-direction
 
 Blocks **1** card.
@@ -390,21 +458,6 @@ Blocks **1** card.
 
 - **Aminatou, the Fateshifter** (rank 4736) — `aminatou_the_fateshifter`
   - −6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction.
-
-</details>
-
-## compleated
-
-Blocks **1** card.
-
-- **(replacement)** a planeswalker enters-with-loyalty replacement: if life was paid for any Phyrexian pip while casting it, it enters with two fewer loyalty counters (rule 702.150)
-  <br>Why the existing vocabulary won't do: Casting already lets a Phyrexian pip be bought with 2 life (paying_phyrexian), but nothing records that life was paid for the cast spell and nothing reduces starting loyalty; no keyword, condition (cost_option/was_cast) or card-level key covers it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
-  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
 
 </details>
 
@@ -779,6 +832,21 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## opponent-cant-force-discard-or-sacrifice
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: you) stopping any discard or sacrifice of your cards/permanents whose cause is a spell or ability controlled by an opponent; your own spells, abilities and costs still discard/sacrifice normally
+  <br>Why the existing vocabulary won't do: static_effects has cant_sacrifice (which stops sacrifice regardless of who causes it, and says nothing about the cause's controller) and nothing at all about discard; no static reads the controller of the causing spell or ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Collector of Tales** (rank 8335) — `tamiyo_collector_of_tales`
+  - Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.
+  - +1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.
 
 </details>
 

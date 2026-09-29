@@ -210442,12 +210442,12 @@
     },
     "Putrefy": {
       "edhrec_rank": 335,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Putrefy",
-      "reason": "player 0 graveyard_size is 4, expected 3; your battlefield is 31, expected 32; opponent battlefield is 6, expected 5",
+      "reason": "",
       "scryfall_id": "ad6ed9f1-2014-49e2-91c6-2b55c8d60cdc",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Putrid Cyclops": {
@@ -229612,12 +229612,12 @@
     },
     "Rupture Spire": {
       "edhrec_rank": 6093,
-      "gate": "template",
+      "gate": null,
       "name": "Rupture Spire",
-      "reason": "no template for: When this land enters, sacrifice it unless you pay {1}",
+      "reason": "",
       "scryfall_id": "8340aa81-7c7f-4b0b-8d98-d3414cac331c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Rural Recruit": {

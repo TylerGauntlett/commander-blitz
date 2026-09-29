@@ -1,0 +1,27 @@
+{
+  "card_id": "tamiyo_collector_of_tales",
+  "name": "Tamiyo, Collector of Tales",
+  "oracle_text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.\n+1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.\n−3: Return target card from your graveyard to your hand.",
+  "blocked_sentences": [
+    "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+    "+1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "opponent_cant_force_discard_or_sacrifice",
+      "kind": "static_effect",
+      "what": "a player-wide static (affects_player: you) stopping any discard or sacrifice of your cards/permanents whose cause is a spell or ability controlled by an opponent; your own spells, abilities and costs still discard/sacrifice normally",
+      "why_existing_wont_do": "static_effects has cant_sacrifice (which stops sacrifice regardless of who causes it, and says nothing about the cause's controller) and nothing at all about discard; no static reads the controller of the causing spell or ability",
+      "closest": "cant_sacrifice"
+    },
+    {
+      "capability": "choose_card_name",
+      "kind": "decision",
+      "what": "an op that has the controller choose a card name (optionally restricted, here to nonland names) and binds it, so a later selector can match `name` against the chosen binding; here used by look_at_top over the top four cards, all cards with the chosen name to hand, rest to graveyard",
+      "why_existing_wont_do": "choose_color and choose_type exist but no name choice; the selector key `name` takes a fixed literal, and look_at_top's selector cannot refer to a chosen name",
+      "closest": "choose_type"
+    }
+  ],
+  "closest_existing": ["cant_sacrifice", "choose_type", "look_at_top"],
+  "confidence": "high"
+}
