@@ -8,7 +8,7 @@
   ],
   "needs": [
     {
-      "capability": "spirit_1_1_w_flying",
+      "capability": "missing_token",
       "kind": "token",
       "what": "a 1/1 white Spirit creature token with flying (token id e.g. spirit_1_1_w_flying)",
       "why_existing_wont_do": "token_ids has spirit_1_1_c (colorless, no flying) and spirit_2_2_w (2/2, no flying); neither is the printed token"
@@ -26,6 +26,12 @@
       "why_existing_wont_do": "cast_from_hand takes only player/selector and reads the hand only; look_at_top/reveal_until cast_free only cast from the top of the library; grant_playable/play_exiled give permission but not a free cast now across three zones"
     }
   ],
-  "closest_existing": ["cast_from_hand", "grant_ability", "emblem", "leaves_battlefield", "spirit_2_2_w"],
+  "closest_existing": [
+    "cast_from_hand",
+    "grant_ability",
+    "emblem",
+    "leaves_battlefield",
+    "spirit_2_2_w"
+  ],
   "confidence": "high"
 }

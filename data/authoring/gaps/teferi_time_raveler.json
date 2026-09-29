@@ -1,0 +1,25 @@
+{
+  "card_id": "teferi_time_raveler",
+  "name": "Teferi, Time Raveler",
+  "oracle_text": "Each opponent can cast spells only any time they could cast a sorcery.\n+1: Until your next turn, you may cast sorcery spells as though they had flash.\n−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card.",
+  "blocked_sentences": [
+    "Each opponent can cast spells only any time they could cast a sorcery.",
+    "+1: Until your next turn, you may cast sorcery spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_at_sorcery_speed",
+      "kind": "static_effect",
+      "what": "a player-wide static (affects_player: \"opponent\") restricting every spell those players cast to sorcery timing: only during their own main phase with an empty stack (307.1 timing), overriding flash and cast_as_though_flash",
+      "why_existing_wont_do": "cant_cast_spells is an outright prohibition and static_condition_keys has no phase or empty-stack test, so it cannot be conditioned to 'outside sorcery timing'; cast_as_though_flash points the other way"
+    },
+    {
+      "capability": "until_your_next_turn",
+      "kind": "op",
+      "what": "a one-shot effect from a loyalty ability giving its controller permission to cast Sorcery spells as though they had flash, lasting until their next turn (cleared in their untap step), limited to sorcery spells only",
+      "why_existing_wont_do": "cast_as_though_flash exists only as a static and the loader refuses any 'affects' spell filter on it, so it cannot be narrowed to sorcery spells; no op grants it for a duration, and grant_ability durations have no until-your-next-turn for a granted static"
+    }
+  ],
+  "closest_existing": ["cant_cast_spells", "cast_as_though_flash", "grant_ability"],
+  "confidence": "high"
+}

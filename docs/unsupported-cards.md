@@ -10,27 +10,28 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**56 cards** blocked by **60** capabilities.
+**64 cards** blocked by **58** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [until-your-next-turn](#until-your-next-turn) | 6 | 2959 | engine, op, value |
-| [proliferate](#proliferate) | 5 | 207 | decision, op |
+| [missing-token](#missing-token) | 11 | 6000 | op, token |
+| [until-your-next-turn](#until-your-next-turn) | 9 | 1139 | engine, op, value |
+| [proliferate](#proliferate) | 6 | 207 | decision, op |
 | [loyalty-x](#loyalty-x) | 4 | 8994 | cost |
-| [missing-token](#missing-token) | 4 | 7381 | op, token |
-| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 4 | 7679 | op |
+| [prevent-damage-permanent](#prevent-damage-permanent) | 4 | 7679 | op |
+| [double-counters](#double-counters) | 3 | 190 | op, replacement |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [compleated](#compleated) | 2 | 6703 | keyword, replacement |
-| [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [prevent-damage-from-source](#prevent-damage-from-source) | 2 | 7679 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [can-be-commander](#can-be-commander) | 1 | 4330 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-cast-spells-filter](#cant-cast-spells-filter) | 1 | 7975 | static_effect |
 | [cant-search-library](#cant-search-library) | 1 | 2591 | static_effect |
 | [cast-free-from-zones](#cast-free-from-zones) | 1 | 6000 | op |
+| [cast-only-at-sorcery-speed](#cast-only-at-sorcery-speed) | 1 | 1139 | static_effect |
 | [choose-card-name](#choose-card-name) | 1 | 8335 | decision |
 | [choose-direction](#choose-direction) | 1 | 4736 | decision |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -45,40 +46,105 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exchange-control](#exchange-control) | 1 | 2058 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [extra-loyalty-activation](#extra-loyalty-activation) | 1 | 2923 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [fractal-token](#fractal-token) | 1 | 12306 | token |
 | [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
 | [has-counters-filter](#has-counters-filter) | 1 | 674 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-typed-picks](#look-at-top-typed-picks) | 1 | 8946 | op |
+| [loyalty-activations-this-turn](#loyalty-activations-this-turn) | 1 | 2923 | value |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [must-attack-planeswalker](#must-attack-planeswalker) | 1 | 11218 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
-| [octopus-8-8-u](#octopus-8-8-u) | 1 | 8946 | token |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [opponent-cant-force-discard-or-sacrifice](#opponent-cant-force-discard-or-sacrifice) | 1 | 8335 | static_effect |
 | [permanent-animate](#permanent-animate) | 1 | 2058 | op |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
+| [proliferate-twice](#proliferate-twice) | 1 | 1238 | replacement |
+| [remove-counters-from-among](#remove-counters-from-among) | 1 | 1238 | cost |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spend-mana-as-any-color-spell-filter](#spend-mana-as-any-color-spell-filter) | 1 | 7715 | static_effect |
-| [spirit-1-1-w-flying](#spirit-1-1-w-flying) | 1 | 6000 | token |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
-| [token-illusion-2-2-u-sac-when-targeted](#token-illusion-2-2-u-sac-when-targeted) | 1 | 13060 | token |
-| [until-your-next-turn-ability-lock](#until-your-next-turn-ability-lock) | 1 | 12562 | op |
-| [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-| [wizard-2-2-u](#wizard-2-2-u) | 1 | 6632 | token |
+
+## missing-token
+
+Blocks **11** cards.
+
+- **(token)** a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it." (e.g. id illusion_2_2_u_sac_when_targeted), a becomes_target trigger with targeted_by spell and a self-sacrifice effect
+  <br>Why the existing vocabulary won't do: token_ids is closed; the only Illusions are illusion_1_1_u and illusion_1_1_u_flying, both 1/1 and without the sacrifice-when-targeted trigger, so neither is the printed token
+- **(token)** a 0/0 green and blue Fractal creature token
+  <br>Why the existing vocabulary won't do: token_ids has no Fractal; the only 0/0 tokens are germ_0_0_b and construct_0_0_c_artifact_buff
+- **(token)** a token definition for a 2/2 blue Wizard creature token (no abilities), e.g. id wizard_2_2_u
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Wizard token at all; the only 2/2 blue creature tokens are bird_2_2_u_flying and drake_2_2_u_flying, which have flying and the wrong subtype
+- **(token)** a 1/1 white Spirit creature token with flying (token id e.g. spirit_1_1_w_flying)
+  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_c (colorless, no flying) and spirit_2_2_w (2/2, no flying); neither is the printed token
+- **(token)** a token definition for an 8/8 blue Octopus creature token (no abilities), e.g. id octopus_8_8_u
+  <br>Why the existing vocabulary won't do: token_ids is a closed list; the only 8/8 blue token is kraken_8_8_u, which has creature type Kraken, not Octopus, so substituting it would be a different token
+- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
+  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
+- **(token)** a 1/1 white Kor Ally creature token (creature types Kor and Ally, no abilities), e.g. id kor_ally_1_1_w
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Kor Ally; human_soldier_1_1_w, soldier_1_1_w and warrior_1_1_w_vigilance are other creature types, which matters for Ally and Kor type-matters cards
+- **(op)** a token 1/1 black Vampire Knight creature with lifelink (subtypes Vampire Knight)
+  <br>Why the existing vocabulary won't do: token_ids has vampire_1_1_b_lifelink (Vampire only) and vampire_rogue_1_1_b_lifelink, but no Vampire Knight; substituting would change creature types
+- **(token)** Tamiyo's Notebook: legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+  <br>Why the existing vocabulary won't do: No such entry in token_ids; the closest artifact tokens (clue_token etc.) are different objects
+- **(token)** a token id for a 2/2 black Pirate creature token with menace (e.g. pirate_2_2_b_menace)
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Pirate token; the nearest 2/2 black creature is zombie_2_2_b, which has the wrong creature type and no menace
+- **(token)** 1/1 black Assassin creature token with "Whenever this creature deals combat damage to a player, that player loses the game."
+  <br>Why the existing vocabulary won't do: token_ids has no Assassin token; vampire_1_1_b is the nearest 1/1 black creature but lacks the Assassin type and the lose-the-game trigger
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
+  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
+  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
+- **Kasmina, Enigmatic Mentor** (rank 6632) — `kasmina_enigmatic_mentor`
+  - âˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.
+- **Vraska the Unseen** (rank 7322) — `vraska_the_unseen`
+  - +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.
+  - −7: Create three 1/1 black Assassin creature tokens with "Whenever this token deals combat damage to a player, that player loses the game."
+- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
+  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
+  - Each planeswalker you control enters with an additional loyalty counter on it.
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+- **Vraska, Relic Seeker** (rank 8470) — `vraska_relic_seeker`
+  - +2: Create a 2/2 black Pirate creature token with menace.
+- **Kiora, Master of the Depths** (rank 8946) — `kiora_master_of_the_depths`
+  - −8: You get an emblem with "Whenever a creature you control enters, you may have it fight target creature." Then create three 8/8 blue Octopus creature tokens.
+  - −2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
+- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
+  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
+  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+- **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
+  - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
+  - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
+- **Jace, Cunning Castaway** (rank 13060) — `jace_cunning_castaway`
+  - −2: Create a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it."
+
+</details>
 
 ## until-your-next-turn
 
-Blocks **6** cards.
+Blocks **9** cards.
 
+- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -3/-0 set by a planeswalker's loyalty ability lasts through the opponent's turn and is cleared in the controller's next untap step
+  <br>Why the existing vocabulary won't do: `pump` carries no duration in its implementation (op_pump always calls `pump`, an until_eot TempEffect cleared at cleanup), so the -3/-0 would expire before the opponent's turn -- exactly when the card matters
+- **(op)** a `duration: "until_your_next_turn"` on `lock_abilities` ("its activated abilities can't be activated until your next turn"), cleared in the granting player's untap step
+  <br>Why the existing vocabulary won't do: `lock_abilities` takes only `objects` and records an until_eot TempEffect, so the lock ends at this turn's cleanup and the opponent can activate freely on their turn
 - **(engine)** a duration 'until your next turn' for the source-prevention effect above
   <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
 - **(value)** the duration "until your next turn" (ends as the controller's next turn begins) on the two prevention effects above
@@ -91,13 +157,23 @@ Blocks **6** cards.
   <br>Why the existing vocabulary won't do: `pump` takes no `duration` at all (op_pump always makes an until-end-of-turn pump), and `grant_keyword` only distinguishes until_end_of_turn from "permanent"; the until_your_next_turn durations that exist are on cant_block/unblockable/grant_protection(player)/lock_life_total/cant_cast_spells_from_zones, not on P/T or keyword grants. Using end-of-turn would drop the lifelink/+1 during the opponent's turn, which is the point of the ability
 - **(engine)** a `delayed_trigger` duration "until_your_next_turn" (subscription lasts across turns, repeats on every firing, and ends in the controller's next untap step), plus a `subject` that may name up to two targeted creatures so the trigger fires when EITHER of them deals combat damage (to a player, planeswalker or creature)
   <br>Why the existing vocabulary won't do: op_delayed_trigger only accepts DELAYED_DURATIONS = this_turn / until_it_fires / once_this_turn, none of which lasts through opponents' turns and repeats; its `subject` resolves the selector and keeps only chosen[0], so a two-creature target set watches just one creature
+- **(op)** a one-shot effect from a loyalty ability giving its controller permission to cast Sorcery spells as though they had flash, lasting until their next turn (cleared in their untap step), limited to sorcery spells only
+  <br>Why the existing vocabulary won't do: cast_as_though_flash exists only as a static and the loader refuses any 'affects' spell filter on it, so it cannot be narrowed to sorcery spells; no op grants it for a duration, and grant_ability durations have no until-your-next-turn for a granted static
+- **(op)** a delayed_trigger duration 'until_your_next_turn' (ending in the activating player's next untap step), so a loyalty ability can set up 'whenever a creature deals combat damage to <this planeswalker>, destroy that creature' that stays live through the opponents' turns
+  <br>Why the existing vocabulary won't do: delayed_trigger's durations are only this_turn, until_it_fires and once_this_turn (DELAYED_DURATIONS); this_turn ends before any opponent can attack Vraska and until_it_fires would stop after the first creature and never expire. Also needs the trigger to watch combat damage dealt TO the source planeswalker by any creature, binding the damage source for destroy
 
 <details><summary>Cards waiting on this</summary>
 
+- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
+  - Each opponent can cast spells only any time they could cast a sorcery.
+  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
 - **Tamiyo, Field Researcher** (rank 2959) — `tamiyo_field_researcher`
   - +1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.
 - **Nissa, Vital Force** (rank 4790) — `nissa_vital_force`
   - +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.
+- **Vraska the Unseen** (rank 7322) — `vraska_the_unseen`
+  - +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.
+  - −7: Create three 1/1 black Assassin creature tokens with "Whenever this token deals combat damage to a player, that player loses the game."
 - **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
   - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
   - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
@@ -108,12 +184,14 @@ Blocks **6** cards.
   - Prevent all damage that would be dealt to him this turn.
 - **Sorin, Solemn Visitor** (rank 11301) — `sorin_solemn_visitor`
   - +1: Until your next turn, creatures you control get +1/+0 and gain lifelink.
+- **Dovin Baan** (rank 12562) — `dovin_baan`
+  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
 
 </details>
 
 ## proliferate
 
-Blocks **5** cards.
+Blocks **6** cards.
 
 - **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
   <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
@@ -125,6 +203,8 @@ Blocks **5** cards.
   <br>Why the existing vocabulary won't do: The existing `proliferate` op (options: objects only) is a simplification: it offers no choice and never touches players or opponents' permanents, so it would add counters the controller may not want and miss poison counters on opponents
 - **(op)** a rules-accurate proliferate: the controller chooses any subset of permanents (any controller) and players that have counters, then each chosen one gets another counter of each kind already there (including player counters such as poison)
   <br>Why the existing vocabulary won't do: The existing proliferate op (keys: objects) is a simplification with no choice, and never touches players or opponents' permanents, so it cannot add poison/experience counters to players or loyalty/counters to permanents the opponent controls, nor let the controller decline
+- **(op)** a proliferate op (701.34) where the controller chooses any number of permanents AND/OR players (any controller) that have counters, then each chosen one gets one more counter of each kind already there -- including poison counters on opponents, which is the whole point on an infect card
+  <br>Why the existing vocabulary won't do: The existing `proliferate` op is a simplification: it offers no choice and never touches players or opponents' permanents, so it cannot add poison counters to an opponent and would put counters on things the controller would decline (e.g. -1/-1 counters on their own creatures)
 
 <details><summary>Cards waiting on this</summary>
 
@@ -138,6 +218,8 @@ Blocks **5** cards.
   - Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 - **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
   - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+- **Viral Drake** (rank 7027) — `viral_drake`
+  - {3}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 
 </details>
 
@@ -172,38 +254,7 @@ Blocks **4** cards.
 
 </details>
 
-## missing-token
-
-Blocks **4** cards.
-
-- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
-  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
-- **(token)** a 1/1 white Kor Ally creature token (creature types Kor and Ally, no abilities), e.g. id kor_ally_1_1_w
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Kor Ally; human_soldier_1_1_w, soldier_1_1_w and warrior_1_1_w_vigilance are other creature types, which matters for Ally and Kor type-matters cards
-- **(op)** a token 1/1 black Vampire Knight creature with lifelink (subtypes Vampire Knight)
-  <br>Why the existing vocabulary won't do: token_ids has vampire_1_1_b_lifelink (Vampire only) and vampire_rogue_1_1_b_lifelink, but no Vampire Knight; substituting would change creature types
-- **(token)** Tamiyo's Notebook: legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
-  <br>Why the existing vocabulary won't do: No such entry in token_ids; the closest artifact tokens (clue_token etc.) are different objects
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
-  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
-  - Each planeswalker you control enters with an additional loyalty counter on it.
-- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
-  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
-  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
-- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
-  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
-  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
-- **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
-  - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
-  - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
-
-</details>
-
-## prevent-damage-to-permanent
+## prevent-damage-permanent
 
 Blocks **4** cards.
 
@@ -211,10 +262,14 @@ Blocks **4** cards.
   <br>Why the existing vocabulary won't do: The `prevent_damage` op takes only `player` and `duration` and shields a seat, never a permanent. The `prevent_damage` static with `prevent_all` can shield a permanent but is continuous with no 'this turn' clock, so as a printed static on Gideon it would protect him on every turn. The `grant_ability` op cannot hand over a static (granted statics are never read by `_battlefield_statics`). `grant_protection` from_everything would also stop targeting/blocking/attachment, a different card.
 - **(op)** prevent all damage that would be dealt to a specific permanent (here the source itself) this turn
   <br>Why the existing vocabulary won't do: prevent_damage takes only duration and player -- it prevents damage to a player, not to an object; there is no objects/self_only option for a permanent
+- **(op)** an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability
 - **(op)** an op that prevents all damage that would be dealt to a permanent (here the source itself) this turn
   <br>Why the existing vocabulary won't do: The 'prevent_damage' op only shields a player and its loader rejects 'objects'; the 'prevent_damage' static lives on a permanent's printed abilities and cannot be granted until end of turn by a resolving ability
 - **(op)** a one-shot prevention effect that prevents all damage that would be dealt to a chosen permanent (here a targeted permanent an opponent controls) for a duration
   <br>Why the existing vocabulary won't do: The prevent_damage op takes only `duration` and `player` and has no `objects`, so it cannot single out one permanent; the prevent_damage static applies only while a source permanent is on the battlefield
+- **(op)** a one-shot prevention effect that prevents all damage that would be dealt by a chosen permanent (the same target) for a duration, combat and noncombat
+  <br>Why the existing vocabulary won't do: prevent_damage has no source selector; there is no op that prevents damage dealt by a specific object
 
 <details><summary>Cards waiting on this</summary>
 
@@ -229,6 +284,29 @@ Blocks **4** cards.
   - 0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.
 - **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
   - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
+
+</details>
+
+## double-counters
+
+Blocks **3** cards.
+
+- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
+  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
+- **(replacement)** a replace_counters static that applies only to counters put on by an EFFECT, not to counters put on as a COST -- e.g. an `effects_only: true` key on replace_counters, with the loyalty-cost payment in costs.py (`cost.loyalty > 0` -> add_counters) marking its placement as a cost so counter_placement_replacements skips it. Per the Doubling Season ruling, a planeswalker's +N loyalty ability puts N counters (the cost is not doubled), while a planeswalker entering with loyalty, add_counters, proliferate, etc. are doubled.
+  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier: 2 and affects {controller: you} is the documented shape, but it is read in primitives.add_counters, the single funnel that costs.py also calls to pay a positive loyalty cost; nothing on the call or the static distinguishes cost from effect. So every +1 loyalty activation would become +2 -- a strictly stronger card, and visible in this Atraxa deck, which runs several planeswalkers. (The token sentence is expressible: replace_token_creation with token_multiplier: 2.)
+- **(replacement)** a static replacement that doubles every counter of every kind the controller would put on any permanent or any player (Doubling Season / Innkeeper's Talent level 3)
+  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier is the closest, but the known simplification does not cover counters placed on players nor every kind on every permanent; listed as a known gap by the orchestrator
+
+<details><summary>Cards waiting on this</summary>
+
+- **Doubling Season** (rank 190) — `doubling_season`
+  - If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.
+- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
+  - Permanents you control with counters on them have ward {1}.
+  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
+- **Deepglow Skate** (rank 1835) — `deepglow_skate`
+  - When this creature enters, double the number of each kind of counter on any number of target permanents.
 
 </details>
 
@@ -289,25 +367,6 @@ Blocks **2** cards.
 
 </details>
 
-## double-counters
-
-Blocks **2** cards.
-
-- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
-  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
-- **(replacement)** a static replacement that doubles every counter of every kind the controller would put on any permanent or any player (Doubling Season / Innkeeper's Talent level 3)
-  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier is the closest, but the known simplification does not cover counters placed on players nor every kind on every permanent; listed as a known gap by the orchestrator
-
-<details><summary>Cards waiting on this</summary>
-
-- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
-  - Permanents you control with counters on them have ward {1}.
-  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
-- **Deepglow Skate** (rank 1835) — `deepglow_skate`
-  - When this creature enters, double the number of each kind of counter on any number of target permanents.
-
-</details>
-
 ## lose-the-game
 
 Blocks **2** cards.
@@ -324,26 +383,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## prevent-damage-from-source
-
-Blocks **2** cards.
-
-- **(op)** an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability
-- **(op)** a one-shot prevention effect that prevents all damage that would be dealt by a chosen permanent (the same target) for a duration, combat and noncombat
-  <br>Why the existing vocabulary won't do: prevent_damage has no source selector; there is no op that prevents damage dealt by a specific object
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
-  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
-  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
-- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
-  - +1: Until your next turn, prevent all damage target permanent would deal.
-  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -372,6 +411,20 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## can-be-commander
+
+Blocks **1** card.
+
+- **(engine)** A card-level flag (e.g. `can_be_commander: true`) for the printed deck-building permission "<this card> can be your commander" (rule 903.3d), which the residual gate recognises as claiming that line, and which `registry.validate_deck` reads so that only legendary creatures and cards carrying the flag are legal commanders.
+  <br>Why the existing vocabulary won't do: No key in card_level_cost_keys, card_level_face_keys or card_level_rider_keys says anything about commander eligibility, and `verify._covered` has no claimant for the line, so it can only be claimed by an ability whose text is that sentence -- but it is neither an activated, triggered nor static ability and no static_effect means it. `registry.validate_deck` meanwhile accepts ANY legendary planeswalker as commander (`card.is_creature or "Planeswalker" in card.types`), which is broader than the printed rule, so the permission is not modelled per card. The other three lines are expressible: +1 is look_at_top amount 2 to hand with rest_to_bottom; -1 is untap over a permanent target with count 4 and up_to; -10 is the emblem op with an emblem static activate_loyalty_as_though_instant whose affects is {controller: you, types: [Planeswalker]} (command-zone statics are gathered by _command_zone_statics).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi, Temporal Archmage** (rank 4330) — `teferi_temporal_archmage`
+  - Teferi, Temporal Archmage can be your commander.
 
 </details>
 
@@ -429,6 +482,21 @@ Blocks **1** card.
 - **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
   - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
   - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
+
+</details>
+
+## cast-only-at-sorcery-speed
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: "opponent") restricting every spell those players cast to sorcery timing: only during their own main phase with an empty stack (307.1 timing), overriding flash and cast_as_though_flash
+  <br>Why the existing vocabulary won't do: cant_cast_spells is an outright prohibition and static_condition_keys has no phase or empty-stack test, so it cannot be conditioned to 'outside sorcery timing'; cast_as_though_flash points the other way
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
+  - Each opponent can cast spells only any time they could cast a sorcery.
+  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
 
 </details>
 
@@ -637,6 +705,21 @@ Blocks **1** card.
 
 </details>
 
+## extra-loyalty-activation
+
+Blocks **1** card.
+
+- **(op)** an op granting, for each planeswalker you control, one additional loyalty-ability activation this turn that ignores the once-per-turn loyalty limit (rule 606.3), usable once per planeswalker per resolution
+  <br>Why the existing vocabulary won't do: the static activate_loyalty_as_though_instant only changes timing, not the once-per-turn count; no op in reference touches the loyalty activation limit
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Chain Veil** (rank 2923) — `the_chain_veil`
+  - At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.
+  - {4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.
+
+</details>
+
 ## extra-turn
 
 Blocks **1** card.
@@ -649,22 +732,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## fractal-token
-
-Blocks **1** card.
-
-- **(token)** a 0/0 green and blue Fractal creature token
-  <br>Why the existing vocabulary won't do: token_ids has no Fractal; the only 0/0 tokens are germ_0_0_b and construct_0_0_c_artifact_buff
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
 
 </details>
 
@@ -742,6 +809,21 @@ Blocks **1** card.
 
 </details>
 
+## loyalty-activations-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-player turn ledger value counting how many loyalty abilities of planeswalkers that player activated this turn (e.g. {"loyalty_activations_this_turn": "you"}), usable as an intervening-if condition on an end_step trigger compared against 0
+  <br>Why the existing vocabulary won't do: value_keys has spells_cast_this_turn, life_gained_this_turn, cards_drawn_this_turn etc. but nothing counting loyalty activations; has_turn_flag would need every planeswalker's loyalty cost to set a flag, which no card-level mechanism does, and an ability_activated trigger setting a flag would be an unprinted helper trigger that also misses activations before The Chain Veil entered
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Chain Veil** (rank 2923) — `the_chain_veil`
+  - At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.
+  - {4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.
+
+</details>
+
 ## multikicker
 
 Blocks **1** card.
@@ -786,21 +868,6 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
-
-</details>
-
-## octopus-8-8-u
-
-Blocks **1** card.
-
-- **(token)** a token definition for an 8/8 blue Octopus creature token (no abilities), e.g. id octopus_8_8_u
-  <br>Why the existing vocabulary won't do: token_ids is a closed list; the only 8/8 blue token is kraken_8_8_u, which has creature type Kraken, not Octopus, so substituting it would be a different token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kiora, Master of the Depths** (rank 8946) — `kiora_master_of_the_depths`
-  - −8: You get an emblem with "Whenever a creature you control enters, you may have it fight target creature." Then create three 8/8 blue Octopus creature tokens.
-  - −2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
 
 </details>
 
@@ -876,6 +943,36 @@ Blocks **1** card.
 
 - **Ajani Steadfast** (rank 5225) — `ajani_steadfast`
   - −7: You get an emblem with "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
+
+</details>
+
+## proliferate-twice
+
+Blocks **1** card.
+
+- **(replacement)** a player-wide static replacement: if you would proliferate, proliferate twice instead (each proliferate event performed twice, each with its own choice)
+  <br>Why the existing vocabulary won't do: static_effects has replace_draw/replace_life_gain/replace_mill/replace_counters/replace_token_creation multipliers but nothing that replaces the proliferate action; the proliferate op has no hook for a replacement
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tekuthal, Inquiry Dominus** (rank 1238) — `tekuthal_inquiry_dominus`
+  - If you would proliferate, proliferate twice instead.
+  - {1}{U/P}{U/P}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on Tekuthal. ({U/P} can be paid with either {U} or 2 life.)
+
+</details>
+
+## remove-counters-from-among
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that removes N counters of any kinds, distributed as the payer chooses among other permanents matching a selector (other artifacts, creatures and planeswalkers you control)
+  <br>Why the existing vocabulary won't do: the remove_counters cost (engine/costs.py) only removes a single named counter kind from the source object itself; it takes no selector, no exclude_self and no any-kind removal across several permanents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tekuthal, Inquiry Dominus** (rank 1238) — `tekuthal_inquiry_dominus`
+  - If you would proliferate, proliferate twice instead.
+  - {1}{U/P}{U/P}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on Tekuthal. ({U/P} can be paid with either {U} or 2 life.)
 
 </details>
 
@@ -968,21 +1065,6 @@ Blocks **1** card.
 
 </details>
 
-## spirit-1-1-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 white Spirit creature token with flying (token id e.g. spirit_1_1_w_flying)
-  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_c (colorless, no flying) and spirit_2_2_w (2/2, no flying); neither is the printed token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
-  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
-  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
-
-</details>
-
 ## target-ability-on-stack
 
 Blocks **1** card.
@@ -997,48 +1079,6 @@ Blocks **1** card.
 
 </details>
 
-## token-illusion-2-2-u-sac-when-targeted
-
-Blocks **1** card.
-
-- **(token)** a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it." (e.g. id illusion_2_2_u_sac_when_targeted), a becomes_target trigger with targeted_by spell and a self-sacrifice effect
-  <br>Why the existing vocabulary won't do: token_ids is closed; the only Illusions are illusion_1_1_u and illusion_1_1_u_flying, both 1/1 and without the sacrifice-when-targeted trigger, so neither is the printed token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jace, Cunning Castaway** (rank 13060) — `jace_cunning_castaway`
-  - −2: Create a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it."
-
-</details>
-
-## until-your-next-turn-ability-lock
-
-Blocks **1** card.
-
-- **(op)** a `duration: "until_your_next_turn"` on `lock_abilities` ("its activated abilities can't be activated until your next turn"), cleared in the granting player's untap step
-  <br>Why the existing vocabulary won't do: `lock_abilities` takes only `objects` and records an until_eot TempEffect, so the lock ends at this turn's cleanup and the opponent can activate freely on their turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dovin Baan** (rank 12562) — `dovin_baan`
-  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
-
-</details>
-
-## until-your-next-turn-pump
-
-Blocks **1** card.
-
-- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -3/-0 set by a planeswalker's loyalty ability lasts through the opponent's turn and is cleared in the controller's next untap step
-  <br>Why the existing vocabulary won't do: `pump` carries no duration in its implementation (op_pump always calls `pump`, an until_eot TempEffect cleared at cleanup), so the -3/-0 would expire before the opponent's turn -- exactly when the card matters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dovin Baan** (rank 12562) — `dovin_baan`
-  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
-
-</details>
-
 ## variant-dependent-targets
 
 Blocks **1** card.
@@ -1050,19 +1090,5 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-
-</details>
-
-## wizard-2-2-u
-
-Blocks **1** card.
-
-- **(token)** a token definition for a 2/2 blue Wizard creature token (no abilities), e.g. id wizard_2_2_u
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Wizard token at all; the only 2/2 blue creature tokens are bird_2_2_u_flying and drake_2_2_u_flying, which have flying and the wrong subtype
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigmatic Mentor** (rank 6632) — `kasmina_enigmatic_mentor`
-  - âˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.
 
 </details>

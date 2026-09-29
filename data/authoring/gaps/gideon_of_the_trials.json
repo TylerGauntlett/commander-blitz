@@ -8,7 +8,7 @@
   ],
   "needs": [
     {
-      "capability": "prevent_damage_from_source",
+      "capability": "prevent_damage_permanent",
       "kind": "op",
       "what": "an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration",
       "why_existing_wont_do": "The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability"
@@ -20,12 +20,17 @@
       "why_existing_wont_do": "playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn"
     },
     {
-      "capability": "prevent_damage_to_permanent",
+      "capability": "prevent_damage_permanent",
       "kind": "op",
       "what": "an op that prevents all damage that would be dealt to a permanent (here the source itself) this turn",
       "why_existing_wont_do": "The 'prevent_damage' op only shields a player and its loader rejects 'objects'; the 'prevent_damage' static lives on a permanent's printed abilities and cannot be granted until end of turn by a resolving ability"
     }
   ],
-  "closest_existing": ["prevent_damage", "animate", "cant_lose_the_game", "emblem"],
+  "closest_existing": [
+    "prevent_damage",
+    "animate",
+    "cant_lose_the_game",
+    "emblem"
+  ],
   "confidence": "high"
 }

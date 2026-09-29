@@ -8,7 +8,7 @@
   ],
   "needs": [
     {
-      "capability": "octopus_8_8_u",
+      "capability": "missing_token",
       "kind": "token",
       "what": "a token definition for an 8/8 blue Octopus creature token (no abilities), e.g. id octopus_8_8_u",
       "why_existing_wont_do": "token_ids is a closed list; the only 8/8 blue token is kraken_8_8_u, which has creature type Kraken, not Octopus, so substituting it would be a different token"
@@ -20,6 +20,9 @@
       "why_existing_wont_do": "look_at_top's objects is a single selector with a count: count 2 over Creature-or-Land would allow two creatures or two lands; destinations entries carry a count and zone but no per-destination type filter, and no shipped card uses a per-type 'and/or' pick"
     }
   ],
-  "closest_existing": ["create_token", "look_at_top"],
+  "closest_existing": [
+    "create_token",
+    "look_at_top"
+  ],
   "confidence": "high"
 }

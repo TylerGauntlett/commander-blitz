@@ -1,0 +1,25 @@
+{
+  "card_id": "the_chain_veil",
+  "name": "The Chain Veil",
+  "oracle_text": "At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.\n{4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.",
+  "blocked_sentences": [
+    "At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.",
+    "{4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn."
+  ],
+  "needs": [
+    {
+      "capability": "loyalty_activations_this_turn",
+      "kind": "value",
+      "what": "a per-player turn ledger value counting how many loyalty abilities of planeswalkers that player activated this turn (e.g. {\"loyalty_activations_this_turn\": \"you\"}), usable as an intervening-if condition on an end_step trigger compared against 0",
+      "why_existing_wont_do": "value_keys has spells_cast_this_turn, life_gained_this_turn, cards_drawn_this_turn etc. but nothing counting loyalty activations; has_turn_flag would need every planeswalker's loyalty cost to set a flag, which no card-level mechanism does, and an ability_activated trigger setting a flag would be an unprinted helper trigger that also misses activations before The Chain Veil entered"
+    },
+    {
+      "capability": "extra_loyalty_activation",
+      "kind": "op",
+      "what": "an op granting, for each planeswalker you control, one additional loyalty-ability activation this turn that ignores the once-per-turn loyalty limit (rule 606.3), usable once per planeswalker per resolution",
+      "why_existing_wont_do": "the static activate_loyalty_as_though_instant only changes timing, not the once-per-turn count; no op in reference touches the loyalty activation limit"
+    }
+  ],
+  "closest_existing": ["activate_loyalty_as_though_instant", "has_turn_flag", "spells_cast_this_turn"],
+  "confidence": "high"
+}

@@ -14,12 +14,17 @@
       "why_existing_wont_do": "must_attack sets a flag only on creatures already on the battlefield at resolution, takes durations this_turn/next_combat only, and names no defender -- it cannot require attacking Gideon rather than the player, and it misses creatures that enter during that turn. The attacks_if_able static likewise has no defender and no 'target opponent's next turn' duration; cant_attack_player is a prohibition, not a requirement"
     },
     {
-      "capability": "prevent_damage_to_permanent",
+      "capability": "prevent_damage_permanent",
       "kind": "op",
       "what": "prevent all damage that would be dealt to a specific permanent (here the source itself) this turn",
       "why_existing_wont_do": "prevent_damage takes only duration and player -- it prevents damage to a player, not to an object; there is no objects/self_only option for a permanent"
     }
   ],
-  "closest_existing": ["must_attack", "attacks_if_able", "prevent_damage", "animate"],
+  "closest_existing": [
+    "must_attack",
+    "attacks_if_able",
+    "prevent_damage",
+    "animate"
+  ],
   "confidence": "high"
 }

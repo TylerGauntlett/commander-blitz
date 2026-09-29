@@ -8,13 +8,13 @@
   ],
   "needs": [
     {
-      "capability": "prevent_damage_to_permanent",
+      "capability": "prevent_damage_permanent",
       "kind": "op",
       "what": "a one-shot prevention effect that prevents all damage that would be dealt to a chosen permanent (here a targeted permanent an opponent controls) for a duration",
       "why_existing_wont_do": "The prevent_damage op takes only `duration` and `player` and has no `objects`, so it cannot single out one permanent; the prevent_damage static applies only while a source permanent is on the battlefield"
     },
     {
-      "capability": "prevent_damage_from_source",
+      "capability": "prevent_damage_permanent",
       "kind": "op",
       "what": "a one-shot prevention effect that prevents all damage that would be dealt by a chosen permanent (the same target) for a duration, combat and noncombat",
       "why_existing_wont_do": "prevent_damage has no source selector; there is no op that prevents damage dealt by a specific object"
@@ -32,6 +32,11 @@
       "why_existing_wont_do": "token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list"
     }
   ],
-  "closest_existing": ["prevent_damage", "kraken_8_8_u", "emblem", "extra_land_drop"],
+  "closest_existing": [
+    "prevent_damage",
+    "kraken_8_8_u",
+    "emblem",
+    "extra_land_drop"
+  ],
   "confidence": "high"
 }

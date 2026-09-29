@@ -1,0 +1,18 @@
+{
+  "card_id": "vraska_relic_seeker",
+  "name": "Vraska, Relic Seeker",
+  "oracle_text": "+2: Create a 2/2 black Pirate creature token with menace.\n−3: Destroy target artifact, creature, or enchantment. Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n−10: Target player's life total becomes 1.",
+  "blocked_sentences": [
+    "+2: Create a 2/2 black Pirate creature token with menace."
+  ],
+  "needs": [
+    {
+      "capability": "missing_token",
+      "kind": "token",
+      "what": "a token id for a 2/2 black Pirate creature token with menace (e.g. pirate_2_2_b_menace)",
+      "why_existing_wont_do": "token_ids is a closed list and has no Pirate token; the nearest 2/2 black creature is zombie_2_2_b, which has the wrong creature type and no menace"
+    }
+  ],
+  "closest_existing": ["zombie_2_2_b"],
+  "confidence": "high"
+}

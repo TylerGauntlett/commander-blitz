@@ -15,7 +15,7 @@
       "why_existing_wont_do": "cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal"
     },
     {
-      "capability": "fractal_token",
+      "capability": "missing_token",
       "kind": "token",
       "what": "a 0/0 green and blue Fractal creature token",
       "why_existing_wont_do": "token_ids has no Fractal; the only 0/0 tokens are germ_0_0_b and construct_0_0_c_artifact_buff"
@@ -33,6 +33,10 @@
       "why_existing_wont_do": "search_library options include share_subtype and any_color but nothing for sharing a color with the source; low certainty whether a selector key covers it"
     }
   ],
-  "closest_existing": ["grant_ability", "search_library", "free_cast_permission"],
+  "closest_existing": [
+    "grant_ability",
+    "search_library",
+    "free_cast_permission"
+  ],
   "confidence": "high"
 }

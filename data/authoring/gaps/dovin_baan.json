@@ -7,18 +7,22 @@
   ],
   "needs": [
     {
-      "capability": "until_your_next_turn_pump",
+      "capability": "until_your_next_turn",
       "kind": "op",
       "what": "a `duration: \"until_your_next_turn\"` on `pump`, so a -3/-0 set by a planeswalker's loyalty ability lasts through the opponent's turn and is cleared in the controller's next untap step",
       "why_existing_wont_do": "`pump` carries no duration in its implementation (op_pump always calls `pump`, an until_eot TempEffect cleared at cleanup), so the -3/-0 would expire before the opponent's turn -- exactly when the card matters"
     },
     {
-      "capability": "until_your_next_turn_ability_lock",
+      "capability": "until_your_next_turn",
       "kind": "op",
       "what": "a `duration: \"until_your_next_turn\"` on `lock_abilities` (\"its activated abilities can't be activated until your next turn\"), cleared in the granting player's untap step",
       "why_existing_wont_do": "`lock_abilities` takes only `objects` and records an until_eot TempEffect, so the lock ends at this turn's cleanup and the opponent can activate freely on their turn"
     }
   ],
-  "closest_existing": ["pump", "lock_abilities", "cant_block (until_your_next_turn duration)"],
+  "closest_existing": [
+    "pump",
+    "lock_abilities",
+    "cant_block (until_your_next_turn duration)"
+  ],
   "confidence": "high"
 }
