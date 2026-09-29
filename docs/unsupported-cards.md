@@ -10,20 +10,23 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**43 cards** blocked by **51** capabilities.
+**48 cards** blocked by **54** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [proliferate](#proliferate) | 5 | 207 | decision, op |
-| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 3 | 10717 | op |
+| [prevent-damage-to-permanent](#prevent-damage-to-permanent) | 4 | 7679 | op |
+| [until-your-next-turn](#until-your-next-turn) | 4 | 4790 | engine, op, value |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [double-counters](#double-counters) | 2 | 674 | op, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [loyalty-x](#loyalty-x) | 2 | 11489 | cost |
+| [prevent-damage-from-source](#prevent-damage-from-source) | 2 | 7679 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-cast-spells-filter](#cant-cast-spells-filter) | 1 | 7975 | static_effect |
 | [cant-search-library](#cant-search-library) | 1 | 2591 | static_effect |
 | [cast-free-from-zones](#cast-free-from-zones) | 1 | 6000 | op |
 | [choose-direction](#choose-direction) | 1 | 4736 | decision |
@@ -35,6 +38,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
+| [draw-limit](#draw-limit) | 1 | 936 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -44,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-typed-picks](#look-at-top-typed-picks) | 1 | 8946 | op |
+| [missing-token](#missing-token) | 1 | 7679 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [must-attack-planeswalker](#must-attack-planeswalker) | 1 | 11218 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -51,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
-| [prevent-damage-from-source](#prevent-damage-from-source) | 1 | 10717 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
@@ -60,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spirit-1-1-w-flying](#spirit-1-1-w-flying) | 1 | 6000 | token |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-illusion-2-2-u-sac-when-targeted](#token-illusion-2-2-u-sac-when-targeted) | 1 | 13060 | token |
-| [until-your-next-turn](#until-your-next-turn) | 1 | 10717 | engine |
 | [until-your-next-turn-ability-lock](#until-your-next-turn-ability-lock) | 1 | 12562 | op |
 | [until-your-next-turn-pump](#until-your-next-turn-pump) | 1 | 12562 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
@@ -98,7 +101,7 @@ Blocks **5** cards.
 
 ## prevent-damage-to-permanent
 
-Blocks **3** cards.
+Blocks **4** cards.
 
 - **(op)** A one-shot prevention effect scoped to a permanent (here the source itself) with a 'this turn' duration: 'Prevent all damage that would be dealt to him this turn.' -- e.g. `prevent_damage` taking `objects` beside `player`, installing a per-object DamageShield cleared at cleanup
   <br>Why the existing vocabulary won't do: The `prevent_damage` op takes only `player` and `duration` and shields a seat, never a permanent. The `prevent_damage` static with `prevent_all` can shield a permanent but is continuous with no 'this turn' clock, so as a printed static on Gideon it would protect him on every turn. The `grant_ability` op cannot hand over a static (granted statics are never read by `_battlefield_statics`). `grant_protection` from_everything would also stop targeting/blocking/attachment, a different card.
@@ -106,9 +109,14 @@ Blocks **3** cards.
   <br>Why the existing vocabulary won't do: prevent_damage takes only duration and player -- it prevents damage to a player, not to an object; there is no objects/self_only option for a permanent
 - **(op)** an op that prevents all damage that would be dealt to a permanent (here the source itself) this turn
   <br>Why the existing vocabulary won't do: The 'prevent_damage' op only shields a player and its loader rejects 'objects'; the 'prevent_damage' static lives on a permanent's printed abilities and cannot be granted until end of turn by a resolving ability
+- **(op)** a one-shot prevention effect that prevents all damage that would be dealt to a chosen permanent (here a targeted permanent an opponent controls) for a duration
+  <br>Why the existing vocabulary won't do: The prevent_damage op takes only `duration` and `player` and has no `objects`, so it cannot single out one permanent; the prevent_damage static applies only while a source permanent is on the battlefield
 
 <details><summary>Cards waiting on this</summary>
 
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
 - **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
   - +1: Until your next turn, prevent all damage target permanent would deal.
   - Prevent all damage that would be dealt to him this turn.
@@ -117,6 +125,34 @@ Blocks **3** cards.
   - 0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.
 - **Gideon, Champion of Justice** (rank 13773) — `gideon_champion_of_justice`
   - 0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.
+
+</details>
+
+## until-your-next-turn
+
+Blocks **4** cards.
+
+- **(engine)** a duration 'until your next turn' for the source-prevention effect above
+  <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
+- **(value)** the duration "until your next turn" (ends as the controller's next turn begins) on the two prevention effects above
+  <br>Why the existing vocabulary won't do: No op among those that could carry the prevention exposes an until-your-next-turn duration
+- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -2/-1 set by a loyalty ability lasts through the opponents' turns and is cleared in the controller's next untap step (as turn._untap_step already does for block prohibitions, unblockables, life locks and cast locks)
+  <br>Why the existing vocabulary won't do: op_pump (ops_characteristics.py) reads only power, toughness and objects and always wears off at cleanup; `duration` is listed in op_options for pump but is ignored, so writing it would silently end the -2/-1 at end of this turn
+- **(op)** a `duration: "until_your_next_turn"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step
+  <br>Why the existing vocabulary won't do: `animate` takes no `duration` (op_options: colors, keywords, objects, power, subtypes, toughness, types, your_turn_keywords); op_animate in ops_characteristics.py always applies an until-end-of-turn animation and grant_keyword, so the land would stop being a creature at cleanup instead of lasting until Nissa's controller's next turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nissa, Vital Force** (rank 4790) — `nissa_vital_force`
+  - +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+- **Liliana, the Last Hope** (rank 7764) — `liliana_the_last_hope`
+  - +1: Up to one target creature gets -2/-1 until your next turn.
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -214,6 +250,26 @@ Blocks **2** cards.
 
 </details>
 
+## prevent-damage-from-source
+
+Blocks **2** cards.
+
+- **(op)** an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability
+- **(op)** a one-shot prevention effect that prevents all damage that would be dealt by a chosen permanent (the same target) for a duration, combat and noncombat
+  <br>Why the existing vocabulary won't do: prevent_damage has no source selector; there is no op that prevents damage dealt by a specific object
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
+  - +1: Until your next turn, prevent all damage target permanent would deal.
+  - Prevent all damage that would be dealt to him this turn.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -253,6 +309,20 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cant-cast-spells-filter
+
+Blocks **1** card.
+
+- **(static_effect)** a spell filter on the player-wide cant_cast_spells static, so an emblem can say "Your opponents can't cast noncreature spells" (affects_player: opponent, spells matching not_types: [Creature] are refused at cast time, creature spells still allowed)
+  <br>Why the existing vocabulary won't do: cant_cast_spells is total: the loader refuses 'affects' or 'amount' on it and nothing reads a spell filter, so it would stop creature spells too (a strictly stronger lock). cant_cast_spells_from_zones filters by zone, not spell type, and spell_cost_increase only taxes rather than forbids
+
+<details><summary>Cards waiting on this</summary>
+
+- **Narset Transcendent** (rank 7975) — `narset_transcendent`
+  - −9: You get an emblem with "Your opponents can't cast noncreature spells."
 
 </details>
 
@@ -415,6 +485,20 @@ Blocks **1** card.
 
 </details>
 
+## draw-limit
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: "opponent") capping how many cards the affected player may draw each turn (max 1), counting every draw that turn including ones made before the permanent entered (cards_drawn_this_turn ledger); any draw beyond the cap simply does not happen (rule 121.2-style 'can't' draw, not a replacement)
+  <br>Why the existing vocabulary won't do: replace_draw only multiplies draws (draw_multiplier) and skip_draw_step only removes the draw step; static_max_per_turn is read only by cast_from_graveyard permissions; cant_cast_spells / cant_gain_life are the right player-wide 'can't' shape but no static forbids drawing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Narset, Parter of Veils** (rank 936) — `narset_parter_of_veils`
+  - Each opponent can't draw more than one card each turn.
+
+</details>
+
 ## escape
 
 Blocks **1** card.
@@ -551,6 +635,21 @@ Blocks **1** card.
 
 </details>
 
+## missing-token
+
+Blocks **1** card.
+
+- **(op)** token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u
+  <br>Why the existing vocabulary won't do: token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kiora, the Crashing Wave** (rank 7679) — `kiora_the_crashing_wave`
+  - +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
+  - −5: You get an emblem with "At the beginning of your end step, create a 9/9 blue Kraken creature token."
+
+</details>
+
 ## multikicker
 
 Blocks **1** card.
@@ -655,21 +754,6 @@ Blocks **1** card.
 
 - **Ajani Steadfast** (rank 5225) — `ajani_steadfast`
   - −7: You get an emblem with "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
-
-</details>
-
-## prevent-damage-from-source
-
-Blocks **1** card.
-
-- **(op)** an op that prevents all damage a chosen (targeted) permanent would deal, to any recipient, for a duration
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' op shields only a player (takes 'duration' and 'player', rejects 'objects'); the 'prevent_damage' static is a shield on damage dealt TO the static's affected objects, not damage dealt BY a target, and cannot be created by a resolving loyalty ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
-  - +1: Until your next turn, prevent all damage target permanent would deal.
-  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 
@@ -788,21 +872,6 @@ Blocks **1** card.
 
 - **Jace, Cunning Castaway** (rank 13060) — `jace_cunning_castaway`
   - −2: Create a 2/2 blue Illusion creature token with "When this token becomes the target of a spell, sacrifice it."
-
-</details>
-
-## until-your-next-turn
-
-Blocks **1** card.
-
-- **(engine)** a duration 'until your next turn' for the source-prevention effect above
-  <br>Why the existing vocabulary won't do: playable_durations are end_of_your_next_turn, later_turns, this_turn, while_exiled, your_next_end_step; none ends at the start of your next turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
-  - +1: Until your next turn, prevent all damage target permanent would deal.
-  - Prevent all damage that would be dealt to him this turn.
 
 </details>
 

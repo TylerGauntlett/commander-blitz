@@ -1,0 +1,18 @@
+{
+  "card_id": "nissa_vital_force",
+  "name": "Nissa, Vital Force",
+  "oracle_text": "+1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.\n−3: Return target permanent card from your graveyard to your hand.\n−6: You get an emblem with \"Whenever a land you control enters, you may draw a card.\"",
+  "blocked_sentences": [
+    "+1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land."
+  ],
+  "needs": [
+    {
+      "capability": "until_your_next_turn",
+      "kind": "op",
+      "what": "a `duration: \"until_your_next_turn\"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step",
+      "why_existing_wont_do": "`animate` takes no `duration` (op_options: colors, keywords, objects, power, subtypes, toughness, types, your_turn_keywords); op_animate in ops_characteristics.py always applies an until-end-of-turn animation and grant_keyword, so the land would stop being a creature at cleanup instead of lasting until Nissa's controller's next turn"
+    }
+  ],
+  "closest_existing": ["animate"],
+  "confidence": "high"
+}

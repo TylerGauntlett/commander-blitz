@@ -1,0 +1,18 @@
+{
+  "card_id": "narset_parter_of_veils",
+  "name": "Narset, Parter of Veils",
+  "oracle_text": "Each opponent can't draw more than one card each turn.\n−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+  "blocked_sentences": [
+    "Each opponent can't draw more than one card each turn."
+  ],
+  "needs": [
+    {
+      "capability": "draw_limit",
+      "kind": "static_effect",
+      "what": "a player-wide static (affects_player: \"opponent\") capping how many cards the affected player may draw each turn (max 1), counting every draw that turn including ones made before the permanent entered (cards_drawn_this_turn ledger); any draw beyond the cap simply does not happen (rule 121.2-style 'can't' draw, not a replacement)",
+      "why_existing_wont_do": "replace_draw only multiplies draws (draw_multiplier) and skip_draw_step only removes the draw step; static_max_per_turn is read only by cast_from_graveyard permissions; cant_cast_spells / cant_gain_life are the right player-wide 'can't' shape but no static forbids drawing"
+    }
+  ],
+  "closest_existing": ["replace_draw", "skip_draw_step", "cant_gain_life"],
+  "confidence": "high"
+}

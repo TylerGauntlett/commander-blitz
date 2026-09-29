@@ -5621,6 +5621,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "liliana_dreadhorde_general": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "living_laser": {
     "zone": "battlefield"
   },

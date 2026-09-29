@@ -158972,12 +158972,12 @@
     },
     "Liliana, Dreadhorde General": {
       "edhrec_rank": 793,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Dreadhorde General",
-      "reason": "no template for: Whenever a creature you control dies, draw a card",
+      "reason": "",
       "scryfall_id": "7a097413-b77c-45e8-a4ac-5b2dc1d34e16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Liliana, Heretical Healer // Liliana, Defiant Necromancer": {
