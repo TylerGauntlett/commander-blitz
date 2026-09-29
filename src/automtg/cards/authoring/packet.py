@@ -24,11 +24,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 from ..images import IndexEntry
 from ..proxy import CardFacts, build_proxy, facts_from_index
-from ..registry import CardRegistry, data_dir
+from ..registry import CardRegistry, authored_card_paths, data_dir
 from .verify import EXPECTATION_KEYS
 
 #: The card-level alternative and additional costs, which live on the *card*
@@ -930,13 +931,19 @@ def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> lis
     Worked examples beat prose: the fastest way to show how a trigger is written
     is a card that already has one. Chosen by shared type and by whether they
     carry the kind of ability this card is going to need.
+
+    The registry should be the whole pool, machine-authored cards included:
+    every one of them passed the same six gates, and some shapes exist *only*
+    there. No hand-written card is a planeswalker, so a packet drawn from the
+    hand-written files alone showed a planeswalker three creatures and never
+    the signed `cost.loyalty` its every ability is written with.
     """
     from ..schema import CardModel
 
     wanted_types = set(card.type_line.replace("—", " ").split())
     scored: list[tuple[int, dict]] = []
     for existing in registry:
-        if existing.is_token or not existing.oracle_text:
+        if existing.is_token or not existing.oracle_text or existing.name == card.name:
             continue
         score = len(wanted_types & set(existing.types))
         if any(a.is_triggered for a in existing.abilities) and "When" in card.oracle_text:
@@ -960,8 +967,29 @@ def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> lis
     return [payload for _, payload in scored[:limit]]
 
 
+@lru_cache(maxsize=1)
+def _authored_json() -> dict[str, dict]:
+    """Every authored card as it was written, keyed by id.
+
+    A compiled `Ability` does not keep the JSON it came from, so a worked
+    example rebuilt from the registry would show a card's name and types and
+    none of its abilities -- which are the whole point of showing it.
+    """
+    out: dict[str, dict] = {}
+    for path in authored_card_paths():
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        for entry in raw["cards"] if isinstance(raw, dict) else raw:
+            if isinstance(entry, dict) and "id" in entry:
+                out[entry["id"]] = entry
+    return out
+
+
 def _as_payload(card) -> dict:
-    """A compiled card back into the JSON shape a packet shows."""
+    """A compiled card back into the JSON shape a packet shows: the card as it
+    was authored when its file can be found, else the characteristics alone."""
+    authored = _authored_json().get(card.id)
+    if authored is not None:
+        return {k: v for k, v in authored.items() if not k.startswith("_")}
     return {
         "id": card.id,
         "name": card.name,
