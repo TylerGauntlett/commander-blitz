@@ -1,0 +1,18 @@
+{
+  "card_id": "ashiok_dream_render",
+  "name": "Ashiok, Dream Render",
+  "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.\n−1: Target player mills four cards. Then exile each opponent's graveyard.",
+  "blocked_sentences": [
+    "Spells and abilities your opponents control can't cause their controller to search their library."
+  ],
+  "needs": [
+    {
+      "capability": "cant_search_library",
+      "kind": "static_effect",
+      "what": "a player-wide static (affects_player: \"opponent\") that makes any search_library / search_zones (library part) effect from a spell or ability controlled by an affected player fail to search when the player searching is that same controller -- the search finds nothing, but the rest of the effect (e.g. shuffle) still happens; searches of other players' libraries, and searches caused by other players' spells, are unaffected",
+      "why_existing_wont_do": "static_effects has cant_cast_spells, cant_activate_abilities and cant_gain_life, but nothing that restricts library searching; search_library carries no hook a static can veto, and no replacement static covers it"
+    }
+  ],
+  "closest_existing": ["cant_activate_abilities", "cant_cast_spells"],
+  "confidence": "high"
+}

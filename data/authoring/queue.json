@@ -35012,12 +35012,12 @@
     },
     "Brokers Ascendancy": {
       "edhrec_rank": 2893,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Ascendancy",
-      "reason": "no template for: At the beginning of your end step, put a +1/+1 counter on each creature you control and a ",
+      "reason": "",
       "scryfall_id": "2aa2713b-5df0-4e54-89bf-30b5aeba9ac7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Brokers Charm": {
@@ -38172,12 +38172,12 @@
     },
     "Call the Gatewatch": {
       "edhrec_rank": 11465,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Gatewatch",
-      "reason": "no template for: Search your library for a planeswalker card, reveal it, put it into your hand, then shuffl",
+      "reason": "",
       "scryfall_id": "4719ac60-2cff-4abb-b9cc-b677d3ac945c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Call the Mountain Chocobo": {

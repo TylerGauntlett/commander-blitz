@@ -1318,6 +1318,10 @@
   "brimstone_dragon": {
     "zone": "battlefield"
   },
+  "brokers_ascendancy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bronze_sable": {
     "zone": "battlefield"
   },
@@ -1435,6 +1439,15 @@
     "tokens": {
       "count": 2,
       "id": "human_soldier_1_1_w"
+    },
+    "zone": "graveyard"
+  },
+  "call_the_gatewatch": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "graveyard"
   },

@@ -10,16 +10,18 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **31** capabilities.
+**30 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [proliferate](#proliferate) | 2 | 2236 | decision, op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-search-library](#cant-search-library) | 1 | 2591 | static_effect |
 | [choose-direction](#choose-direction) | 1 | 4736 | decision |
 | [compleated](#compleated) | 1 | 6703 | replacement |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -28,17 +30,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
+| [double-counters](#double-counters) | 1 | 1835 | op |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [loyalty-x](#loyalty-x) | 1 | 11489 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [prevent-all-but](#prevent-all-but) | 1 | 5225 | static_effect |
-| [proliferate](#proliferate) | 1 | 2469 | decision |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -101,6 +104,24 @@ Blocks **2** cards.
 
 </details>
 
+## proliferate
+
+Blocks **2** cards.
+
+- **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
+  <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
+- **(op)** a proliferate op that lets the controller choose any number of permanents (any controller) and/or players that have counters, then adds one more counter of each kind already on each chosen object or player (including player counters such as poison/energy/experience)
+  <br>Why the existing vocabulary won't do: The existing proliferate op is a simplification: it makes no choice and never touches players or opponents' permanents, so it does not implement rule 701.27
+
+<details><summary>Cards waiting on this</summary>
+
+- **Contentious Plan** (rank 2236) — `contentious_plan`
+  - Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+- **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
+  - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -140,6 +161,20 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cant-search-library
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: "opponent") that makes any search_library / search_zones (library part) effect from a spell or ability controlled by an affected player fail to search when the player searching is that same controller -- the search finds nothing, but the rest of the effect (e.g. shuffle) still happens; searches of other players' libraries, and searches caused by other players' spells, are unaffected
+  <br>Why the existing vocabulary won't do: static_effects has cant_cast_spells, cant_activate_abilities and cant_gain_life, but nothing that restricts library searching; search_library carries no hook a static can veto, and no replacement static covers it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashiok, Dream Render** (rank 2591) — `ashiok_dream_render`
+  - Spells and abilities your opponents control can't cause their controller to search their library.
 
 </details>
 
@@ -258,6 +293,20 @@ Blocks **1** card.
 
 </details>
 
+## double-counters
+
+Blocks **1** card.
+
+- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
+  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deepglow Skate** (rank 1835) — `deepglow_skate`
+  - When this creature enters, double the number of each kind of counter on any number of target permanents.
+
+</details>
+
 ## escape
 
 Blocks **1** card.
@@ -329,6 +378,20 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## loyalty-x
+
+Blocks **1** card.
+
+- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
+  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
+  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
 
 </details>
 
@@ -406,20 +469,6 @@ Blocks **1** card.
 
 - **Ajani Steadfast** (rank 5225) — `ajani_steadfast`
   - −7: You get an emblem with "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
-
-</details>
-
-## proliferate
-
-Blocks **1** card.
-
-- **(decision)** a full 701.27a proliferate: the controller chooses any number of permanents (any controller) and/or players that have counters, then each chosen one gets one more counter of each kind already on it -- including player counters such as poison (Player.poison) on opponents, and -1/-1 or other counters on opponents' permanents
-  <br>Why the existing vocabulary won't do: The `proliferate` op (ops_combat_flags.py) takes only `objects` and mechanically adds a counter of every kind to every permanent the selector matches (default: permanents you control). It never touches players, so an opponent's poison counters cannot be proliferated, and it offers no choice, so widening `objects` to all permanents would force-grow opponents' planeswalker loyalty and other counters the player would decline. Either selector choice diverges from the printed 'choose any number of permanents and/or players'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Atraxa, Praetors' Voice** (rank 2469) — `atraxa_praetors_voice`
-  - At the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 
 </details>
 

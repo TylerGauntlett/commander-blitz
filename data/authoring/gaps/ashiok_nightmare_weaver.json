@@ -1,0 +1,18 @@
+{
+  "card_id": "ashiok_nightmare_weaver",
+  "name": "Ashiok, Nightmare Weaver",
+  "oracle_text": "+2: Exile the top three cards of target opponent's library.\n−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.\n−10: Exile all cards from all opponents' hands and graveyards.",
+  "blocked_sentences": [
+    "−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types."
+  ],
+  "needs": [
+    {
+      "capability": "loyalty_x",
+      "kind": "cost",
+      "what": "a variable loyalty cost \"−X\" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {\"x\": ...}` on a `put_onto_battlefield` over `{\"zone\": \"exile\", \"exiled_with\": \"self\", \"types\": [\"Creature\"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.",
+      "why_existing_wont_do": "Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount."
+    }
+  ],
+  "closest_existing": ["loyalty", "x_value", "remove_counters", "put_onto_battlefield", "add_subtype"],
+  "confidence": "high"
+}

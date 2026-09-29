@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "call_the_gatewatch",
+    "name": "Call the Gatewatch",
+    "oracle_text": "Search your library for a planeswalker card, reveal it, put it into your hand, then shuffle.",
+    "mana_cost": "{2}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 1,
+        "destination": "hand",
+        "reveal": true,
+        "selector": {"types": ["Planeswalker"]}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {"0": 40},
+    "hand_size": {"0": 1}
+  }
+}
