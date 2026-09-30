@@ -347,6 +347,10 @@ def _object_matches(
     # while pricing cannot depend on a static that has not run.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
+        filt["has_counters"]
+    ):
+        return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
         return False
     # "…for each creature that entered this turn". Honoured here because the

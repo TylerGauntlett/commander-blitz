@@ -1495,6 +1495,22 @@ creature a static had made a Human both count, and so the entry survives the
 permanent leaving. That last part is the point: a Human that entered and died
 this turn still entered, and there is nothing left on the board to ask.
 
+#### `has_counters` — "with counters on them"
+
+```jsonc
+// Innkeeper's Talent (level 2): "Permanents you control with counters on them
+//  have ward {1}."
+{ "kind": "static", "level": 2, "effect": "ward", "cost": { "mana": "{1}" },
+  "affects": { "controller": "you", "has_counters": true } }
+```
+
+One or more counters of **any** kind (122.1); `false` is "with no counters on
+it". A static filter key for `tapped`'s licence — counters are board state no
+layer writes, since no static puts a counter on anything — and honoured by every
+reader of the filter language (the layer pipeline, trigger filters, cost
+reductions) and by the effect-side selector. The answer moves the moment a
+counter arrives or leaves.
+
 #### `entered_this_turn` — the same fact asked of **one** permanent
 
 ```jsonc

@@ -138,6 +138,9 @@ SELECTOR_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "tapped",
+        #: "…with counters on them" / "…with a counter on it": one or more
+        #: counters of any kind. Also a static filter key (Innkeeper's Talent).
+        "has_counters",
         "attacking",
         #: "Whenever an opponent attacks **you** with two or more creatures" --
         #: Trouble in Pairs. A creature attacking this player *itself*, and not
@@ -912,6 +915,10 @@ def matches(
             return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
+        return False
+    if "has_counters" in selector and any(n > 0 for n in obj.counters.values()) != bool(
+        selector["has_counters"]
+    ):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False

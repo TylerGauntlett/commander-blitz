@@ -820,6 +820,10 @@ STATIC_FILTER_KEYS = frozenset(
         # so it is as safe here as `types` is. See `mana.printed_cost_is`.
         "mana_cost",
         "tapped",
+        # "Permanents you control **with counters on them** have ward {1}"
+        # (Innkeeper's Talent). Board state no layer writes -- no static puts a
+        # counter on anything -- so it is an input for `tapped`'s reason.
+        "has_counters",
         "is_commander",
         # "Commander creatures you **own**."  903.3 makes ownership the relation
         # the commander rules use, and it is the one place where the printed

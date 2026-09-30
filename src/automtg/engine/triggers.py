@@ -1639,6 +1639,10 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
+        filt["has_counters"]
+    ):
+        return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the
     # silently-wider filter the two clauses above exist to prevent. It reads the

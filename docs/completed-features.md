@@ -18641,3 +18641,19 @@ placement, so Doubling Season applies (2 → 6) and `counter_placed` fires.
   each by their own count, a permanent with none untouched; Doubling Season doubles
   the placement; `counter_placed` reports it; the loader refuses a missing `objects`.
 
+## A filter for "with counters on them" — Innkeeper's Talent — 122.1
+
+"Permanents you control with counters on them have ward {1}." `STATIC_FILTER_KEYS`
+had nothing for counters (`counters_on` is a value), so the ward static could not
+be narrowed and the card would have warded everything. `has_counters: true|false`
+is one or more counters of any kind, read by `characteristics._matches` (via
+`has_any_counter`), `triggers.matches_card_filter`, `cost_reduction` and the
+effect-side selector. Admissible for `tapped`'s reason: no layer writes counters.
+
+### Tests
+
+- `tests/unit/test_has_counters_filter.py` — no counters, no ward; a +1/+1 or a
+  charge counter grants it; removing the last takes it away; an opponent's
+  permanent is not warded; `false` matches only counterless permanents; the
+  effect-side selector picks out permanents with counters.
+

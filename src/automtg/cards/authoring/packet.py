@@ -880,6 +880,9 @@ def reference() -> dict:
             " `replace_counters` with `counter_multiplier: 2`, `put_by: \"you\"`"
             " and `affects_player: \"any\"`, and no `affects` -- keyed on who"
             " puts the counters, any permanent, and players (poison).",
+            "\"…with counters on them\" / \"…with a counter on it\" is the"
+            " filter key `has_counters: true` (any kind of counter), valid in a"
+            " static's `affects` and in an effect selector.",
             "\"…tapped and attacking that player or a planeswalker they control\""
             " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
             " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"

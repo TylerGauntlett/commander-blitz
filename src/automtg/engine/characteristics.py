@@ -1667,6 +1667,11 @@ def _matches_printed(
     return True
 
 
+def has_any_counter(obj: GameObject) -> bool:
+    """Does ``obj`` have one or more counters of any kind on it (122.1)?"""
+    return any(n > 0 for n in obj.counters.values())
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -1808,6 +1813,12 @@ def _matches_wherever(
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
+        return False
+    # "Permanents you control **with counters on them** have ward {1}"
+    # (Innkeeper's Talent). Counters are board state no layer writes -- a
+    # static never puts one on -- so this is a pipeline input for `tapped`'s
+    # reason, and the answer moves the moment a counter arrives or leaves.
+    if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
