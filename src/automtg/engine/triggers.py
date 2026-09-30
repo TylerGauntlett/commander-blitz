@@ -953,6 +953,12 @@ def _matches(
     if spec.not_cause is not None and event.data.get("cause") == spec.not_cause:
         return False
 
+    # "When this creature dies **or is put into exile**" -- where it went. An
+    # emission without a `to_zone` fails the clause rather than passing it,
+    # for the `mana_ability` check's reason: wider is the dangerous direction.
+    if spec.to_zones is not None and event.data.get("to_zone") not in spec.to_zones:
+        return False
+
     # "When **a spell or ability an opponent controls** causes you to discard
     # this card" -- Orvar, the All-Form. Who made the discard happen, which is a
     # different question from who discarded: `_actor` answers the `controller`

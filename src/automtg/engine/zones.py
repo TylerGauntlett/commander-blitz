@@ -356,6 +356,10 @@ def move_object(
             had_counters=had_counters,
             had_power=had_power,
             had_toughness=had_toughness,
+            # Where it went, for a trigger's `to_zones`: "when this creature
+            # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
+            # must not fire on a bounce or a tuck.
+            to_zone=to_zone.value,
         )
         # "Whenever you sacrifice a token…" -- fired beside DIES rather than
         # instead of it, because a sacrificed permanent really does die and

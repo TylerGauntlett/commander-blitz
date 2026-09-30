@@ -623,6 +623,11 @@ class TriggerSpec:
     #: Named for `or_planeswalker`, the effect-side key with the same job on
     #: `attacking` -- same word, same disjunction, same default.
     or_battle: bool = False
+    #: For ``leaves_battlefield``: the zone names the permanent must have gone
+    #: to -- "when this creature dies **or is put into exile**" is
+    #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
+    #: `move_object` stamps on every departure. ``None`` is any destination.
+    to_zones: tuple[str, ...] | None = None
 
 
 def count_mode_specs(effects: Any) -> int:

@@ -352,6 +352,11 @@ class TriggerModel(BaseModel):
     #: other card using this event is "to one or more players", and a swing that
     #: connected only with a battle must not fire those.
     or_battle: bool = False
+    #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
+    #: "When this creature **dies or is put into exile**" -- Kaya the
+    #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
+    #: a tuck must not fire it. Refused on every other event.
+    to_zones: list[str] | None = None
 
 
 class AbilityModel(BaseModel):

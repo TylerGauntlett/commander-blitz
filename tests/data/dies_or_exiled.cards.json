@@ -1,0 +1,38 @@
+{
+  "_comment": "Shapes for tests/unit/test_dies_or_exiled_trigger.py. t_ghostform_source holds Kaya the Inexorable's quoted ability for grant_ability to hand to a creature; it has no abilities of its own.",
+  "cards": [
+    {
+      "id": "t_ghostform_source",
+      "name": "Test Ghostform Source",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self",
+            "controller": "any",
+            "to_zones": ["graveyard", "exile"]
+          },
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "union": [
+                  {"zone": "graveyard", "self_only": true},
+                  {"zone": "exile", "self_only": true}
+                ]
+              }
+            },
+            {"op": "create_token", "token": "spirit_1_1_w_flying"}
+          ]
+        }
+      ]
+    }
+  ]
+}

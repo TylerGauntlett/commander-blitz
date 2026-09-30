@@ -18447,3 +18447,29 @@ requires both selectors, checks their targets are declared, and refuses a
   owner; no part happens when either target is gone, when a target left after
   the check, or when one player controls both; the loader requires both halves,
   refuses an undeclared target and refuses a duration.
+
+## "When this creature dies or is put into exile" — a destination on leaves_battlefield
+
+### Overview
+
+Kaya the Inexorable's +1 grants "When this creature dies or is put into exile,
+return it to its owner's hand and create a 1/1 white Spirit creature token with
+flying." `dies` missed the exile half. Bare `leaves_battlefield` fired on a
+bounce or a tuck too, and would make a Spirit for free.
+
+### Tier: A — a trigger clause on an existing event
+
+`move_object` adds `to_zone` to the `leaves_battlefield` event. `TriggerModel` and
+`TriggerSpec` gain `to_zones`, and `triggers._matches` refuses a departure whose
+destination is not listed. An event with no destination fails the clause. The
+loader allows `to_zones` on `leaves_battlefield` only, with zones a permanent can
+leave to. Returning the card needs no new op: `return_to_hand` over a `union` of
+graveyard and exile `self_only` branches.
+
+### Tests
+
+- `tests/unit/test_dies_or_exiled_trigger.py` — a granted ghostform fires on a
+  death and on an exile, returning the card and making the Spirit; it does not
+  fire on a bounce or a tuck; the card that came back is a new object and dies
+  plainly; the loader takes the clause on `leaves_battlefield`, refuses it
+  elsewhere and refuses a zone nothing leaves to.

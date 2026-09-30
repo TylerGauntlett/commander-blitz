@@ -2134,6 +2134,23 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"506.2's battle half and means nothing on "
                 f"{model.trigger.event!r}"
             )
+        if model.trigger.to_zones is not None:
+            # "When this creature dies or is put into exile." Only a departure
+            # carries a destination, so anywhere else this would be a filter
+            # that never applies -- `not_cause`'s refusal, for its reason.
+            if model.trigger.event != "leaves_battlefield":
+                raise DslError(
+                    f"{where}: 'to_zones' narrows a leaves_battlefield trigger to "
+                    f"where the permanent went, and means nothing on "
+                    f"{model.trigger.event!r}"
+                )
+            departures = {"library", "hand", "graveyard", "exile", "command"}
+            bad = [z for z in model.trigger.to_zones if z not in departures]
+            if bad or not model.trigger.to_zones:
+                raise DslError(
+                    f"{where}: 'to_zones' names zones a permanent can leave to, "
+                    f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
+                )
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -2151,6 +2168,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             batched=model.trigger.batched,
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
+            to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(

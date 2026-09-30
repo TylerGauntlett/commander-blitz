@@ -3249,7 +3249,8 @@ the ability's own controller, so that key can only ever ask about you. See
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
-    "targeted_by": "spell"           // `becomes_target` only: a spell, not an ability
+    "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
+    "to_zones": ["graveyard", "exile"] // `leaves_battlefield` only: where it went
   },
   "effects": [ ... ]
 }
@@ -3262,6 +3263,16 @@ Checked on the trigger rather than as a condition because by the time the abilit
 resolves the cause is no longer anywhere to be read. Without it Kodama of the
 East Tree triggers on the permanent it just put down, and again on that one's,
 until the loop guard kills the game.
+
+`to_zones` is "when this creature **dies or is put into exile**" -- Kaya the
+Inexorable's ghostform. `dies` misses the exile half, and bare
+`leaves_battlefield` also fires on a bounce or a tuck. `move_object` stamps the
+destination on every `leaves_battlefield` event as `to_zone`, and the trigger
+fires only when that zone is in the list. It is allowed on `leaves_battlefield`
+only, and names zones a permanent can leave to (`library`, `hand`, `graveyard`,
+`exile`, `command`). To return the card from whichever zone it reached, use a
+`union` of `{"zone": "graveyard", "self_only": true}` and `{"zone": "exile",
+"self_only": true}`.
 
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
