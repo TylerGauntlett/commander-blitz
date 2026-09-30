@@ -35,6 +35,9 @@ COUNTER_THRESHOLD = 3
 #: An ability whose whole effect is one of these is a combat trick, and worth
 #: nothing at all outside combat.
 COMBAT_TRICK_OPS = frozenset({"pump", "grant_keyword"})
+#: Counter kinds that hurt the permanent's controller, so proliferate grows
+#: them on an opponent's permanent and never on ours.
+HARMFUL_COUNTERS = frozenset({"-1/-1", "stun"})
 
 
 class HeuristicAgent:
@@ -371,7 +374,34 @@ class HeuristicAgent:
             return max(choices, key=lambda a: self._land_search_score(state, seat, a))
         if purpose == "destroy":
             return max(choices, key=lambda a: self._creature_value(state, a))
+        if purpose == "proliferate":
+            # A free multi-select: `choices[0]` would grow whatever came first
+            # -- an opponent's planeswalker, the -1/-1 counters on our own
+            # creature -- and then the next, until everything had grown.
+            wanted = [a for a in choices if self._proliferate_helps(state, seat, a)]
+            return wanted[0] if wanted else _first(actions, ActionKind.FINISH_DECLARATION) or choices[0]
         return choices[0]
+
+    def _proliferate_helps(self, state: GameState, seat: int, action: Action) -> bool:
+        """Is one more of every counter already on this permanent or player good for us?
+
+        Ours when none of its counters hurts its controller (loyalty, +1/+1,
+        charge, lore); theirs when every one of them does (-1/-1, stun). A
+        player's only counter is poison, which is good on anybody but us.
+        """
+        if not action.targets:
+            return False
+        ref = action.targets[0]
+        if ref.kind == "player":
+            return ref.id != seat
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            return False
+        kinds = [kind for kind, n in obj.counters.items() if n > 0]
+        if not kinds:
+            return False
+        harmful = [kind in HARMFUL_COUNTERS for kind in kinds]
+        return not any(harmful) if obj.controller == seat else all(harmful)
 
     def _creature_value(self, state: GameState, action: Action) -> float:
         oid = _target_oid(action)

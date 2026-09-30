@@ -79,8 +79,10 @@ def run(game, controller: int = 0, **effect) -> None:
     ctx = EffectContext(state=game.state, controller=controller)
     gen = execute(ctx, [effect])
     with contextlib.suppress(StopIteration):
+        decision = next(gen)
         while True:
-            next(gen)
+            # Proliferate's "any number" is answered with everything offered.
+            decision = gen.send(list(range(len(decision.options))))
 
 
 def counters_of(game, oid: int) -> dict[str, int]:

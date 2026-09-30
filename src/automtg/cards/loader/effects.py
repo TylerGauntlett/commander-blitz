@@ -1639,6 +1639,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "add_poison" and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
+    if op == "proliferate" and "objects" in effect:
+        # The retired simplification's narrowing key. 701.27a is a free choice
+        # over every permanent and player with a counter, which the op now asks;
+        # a selector would silently decide it for the player instead.
+        raise DslError(
+            f"{where}: proliferate takes no 'objects' -- the controller chooses "
+            f"what to proliferate as it resolves (701.27a)"
+        )
     if op == "detain" and not effect.get("objects"):
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.

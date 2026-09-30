@@ -314,6 +314,27 @@ it, but a card that needed correcting was authored wrong.
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `repeat_while` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
+### Proliferate — a choice over permanents and players
+
+```jsonc
+{ "op": "proliferate" }
+```
+
+"Choose any number of permanents and/or players, then give each another counter
+of each kind already there" (701.27a). The op takes no keys: as it resolves, the
+controller is asked one `ask_targets` decision (purpose `"proliferate"`, minimum
+0, maximum everything offered) over every permanent **any** player controls that
+has a counter and every player with a counter — `PlayerState.poison`, the only
+player counter the engine has. Each chosen one gets one more of each kind it
+carries, read per object at resolution. It is not targeting, so hexproof does not
+stop it.
+
+The op used to proliferate every permanent its controller had with a counter and
+took an `objects` selector to narrow that. Both are gone, and the loader refuses
+`objects`: a selector decides for the player what the printed word lets them
+choose, and an infect card's proliferate is worthless if it cannot reach an
+opponent's poison.
+
 ## Selectors — "which objects"
 
 Every key is optional; all present keys must match.

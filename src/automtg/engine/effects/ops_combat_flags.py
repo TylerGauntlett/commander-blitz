@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..errors import DslError
+from ..events import EventType
 from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
@@ -17,11 +18,12 @@ from ..primitives import (
     remove_counters,
     restrict_attack,
 )
+from ..structs import TargetRef
 from . import register
 from .board_helpers import (
     _players,
 )
-from .context import EffectContext
+from .context import EffectContext, ask_targets
 from .selectors import (
     choose_objects,
     resolve_pool,
@@ -59,34 +61,73 @@ def op_detain(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("proliferate")
 def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
-    """ "Choose any number of permanents and/or players with a counter on them,
-    then give each another counter of each kind already there." (701.27a)
+    """ "Choose any number of permanents and/or players, then give each another
+    counter of each kind already there." (701.27a)
 
-    The census called this blocked because "counter kinds are not enumerable
-    off an object". They always were -- `GameObject.counters` is a dict keyed by
-    kind -- and what was actually missing is that proliferate is not an
-    add-counters with a filter. It is *"of each kind already there"*, so the
-    kinds are read per permanent at resolution and differ between them: the
-    same proliferate adds a +1/+1 here and a loyalty counter there.
+    Not an `add_counters` with a filter: the kinds are read **per chosen thing,
+    at resolution**, and differ between them -- one proliferate adds a +1/+1
+    here, a loyalty counter there and a poison counter to an opponent.
 
-    Simplified in one way, and it is the documented kind. Rule 701.27a lets the
-    player choose *any number*; this proliferates every permanent they control
-    that has a counter. The choice only ever matters for counters you would
-    rather not grow -- a -1/-1 counter on your own creature -- and offering a
-    free multi-select over the whole board is a large decision for a rare
-    downside. `objects` narrows it when a card wants that.
+    **The choice is the card.** The controller picks any subset of every
+    permanent (any controller) and every player with a counter, in one
+    `ask_targets` decision with mixed object and player refs. Only things that
+    already carry a counter are offered, because choosing anything else adds
+    nothing (it "never starts a kind"). A choice, not a sweep, because what you
+    decline is the point as often as what you pick: an infect deck grows an
+    opponent's poison and their -1/-1 counters and never their planeswalker's
+    loyalty, and nobody grows the -1/-1 counters on their own creature.
+
+    Proliferate is not targeting (the word "target" is absent), so hexproof and
+    shroud do not stop it -- which is why the decision's purpose is
+    ``"proliferate"`` and not ``"target"``.
+
+    A player's counters are `PlayerState.poison`: it is the only per-player
+    counter the engine has, so energy and experience would join here when a
+    card first needs them.
     """
-    selector = dict(spec.get("objects") or {"controller": "you"})
-    for oid in resolve_pool(ctx, selector):
-        obj = ctx.state.objects.get(oid)
+    state = ctx.state
+    refs: list[tuple[str, TargetRef]] = []
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is not None and obj.on_battlefield and any(n > 0 for n in obj.counters.values()):
+            refs.append((ctx.name_of(oid), TargetRef.obj(oid)))
+    for player in state.players:
+        if not player.has_lost and player.poison > 0:
+            seat = player.name or f"Player {player.pid}"
+            refs.append((f"{seat} (poison)", TargetRef.player(player.pid)))
+    picked = yield from ask_targets(
+        ctx,
+        "Proliferate: choose any number of permanents and/or players",
+        refs,
+        0,
+        len(refs),
+        ctx.controller,
+        purpose="proliferate",
+    )
+    # Snapshotted before anything is added: the kinds are the ones "already
+    # there" as proliferate resolves, and `add_counters` mutates the dict.
+    plan = [
+        (ref, list(state.objects[ref.id].counters.items()) if ref.kind == "object" else [])
+        for ref in picked
+    ]
+    for ref, kinds in plan:
+        if ref.kind == "player":
+            player = state.players[ref.id]
+            player.poison += 1
+            state.emit(
+                EventType.POISON_ADDED,
+                player=ref.id,
+                source=ctx.source_oid,
+                amount=1,
+                total=player.poison,
+            )
+            continue
+        obj = state.objects.get(ref.id)
         if obj is None or not obj.on_battlefield:
             continue
-        # Snapshotted: `add_counters` mutates the dict being read, and the
-        # kinds are "already there" as of the moment proliferate resolves.
-        for kind, amount in list(obj.counters.items()):
+        for kind, amount in kinds:
             if amount > 0:
-                add_counters(ctx.state, oid, kind, 1, source=ctx.source_oid)
-    yield from ()
+                add_counters(state, ref.id, kind, 1, source=ctx.source_oid)
 
 
 @register("set_flag")

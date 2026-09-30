@@ -18109,3 +18109,43 @@ hit.
   noncombat damage does not, and in a duel the hit wins; a `condition` on the op
   is refused.
 
+
+## Proliferate as the printed choice — permanents and players — 701.27a
+
+### Overview
+
+Atraxa, Praetors' Voice; Contentious Plan; Flux Channeler; Inexorable Tide; Karn's
+Bastion; Viral Drake. Each prints "proliferate", and the `proliferate` op was a
+documented simplification of it: every permanent its controller had with a counter
+grew, nothing else could, and there was no choice. That is a different card twice
+over — Viral Drake could not grow the poison it deals, and a -1/-1 counter on your
+own creature grew whether you wanted it to or not.
+
+### Tier: A — an existing op made exact, composing `ask_targets`
+
+No new decision kind, event or API field. The op now builds `(label, ref)` pairs
+for every battlefield permanent (any controller) with a counter and every player
+with poison, and asks the controller one `ask_targets` decision with minimum 0 and
+maximum all, `purpose="proliferate"`. `ask_targets` already mixes object and player
+refs over `DecisionKind.CHOOSE_OBJECTS`, so the RL encoder, the client dialog and
+the authoring verifier answer it unchanged. The chosen kinds are snapshotted before
+anything is added; a chosen player's poison grows by one with a `POISON_ADDED`
+event, so a tenth counter is lethal through the ordinary state-based action.
+
+The retired `objects` narrowing key is now a load error — no card used it, and a
+selector would silently make the choice for the player.
+
+The heuristic agent gets a `proliferate` branch: its own permanents unless one of
+their counters is harmful (-1/-1, stun), opponents' permanents only when every
+counter there is harmful, opponents' poison, never its own; then it finishes.
+
+### Tests
+
+- `tests/unit/test_proliferate.py` — one of each kind already there, per
+  permanent; nothing without a counter is offered and an empty board asks nothing;
+  the decision is one any-number question to the controller; choosing nothing
+  grows nothing and only the chosen grow; an opponent's permanent and a hexproof
+  one can be chosen; an opponent's poison grows, as a poison event, and the tenth
+  is lethal; the loader refuses `objects`; the heuristic agent grows what helps
+  and declines what hurts, including killing an opponent's creature with its
+  second -1/-1 counter while leaving its own alone.
