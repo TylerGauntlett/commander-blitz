@@ -18082,3 +18082,30 @@ no sorcery-timing condition, and `cast_as_though_flash` widens.
   permission overridden, a free cast refused for the locked seat and allowed for
   the controller, the lock lifting when its source leaves, and the loader
   requiring `affects_player` and refusing a filter.
+
+## `lose_game` — Vraska the Unseen's Assassin token
+
+"Whenever this creature deals combat damage to a player, that player loses the
+game." `win_game` was the only op that reached a result, and written on the
+controller it eliminates every other seat — in a pod, players the Assassin never
+hit.
+
+### What changed
+
+- `sba.declare_loss(state, pids)`: eliminates exactly the named living seats via
+  `_eliminate` (new `LossReason.LOST_BY_EFFECT`), then `check_game_over`; all are
+  eliminated before the check, so everyone losing is a draw (104.4a).
+- `lose_game` op in `ops_player` (player spec, default `"you"`); the loader
+  refuses a `condition` on it as it does on `win_game`.
+- `assassin_1_1_b_lose_game` in `data/cards/tokens.cards.json`: the 1/1 black
+  Assassin with the trigger (`player: {"binding": "event_player"}`).
+- Frontend loss-reason label for `lost_by_effect`.
+
+### Tests
+
+- `tests/unit/test_lose_game.py` — the default seat loses; in a pod only the named
+  seat leaves (one `PLAYER_LOST`) and its permanents go; a repeat is a no-op;
+  everyone losing is a draw; the Assassin's combat hit eliminates only that player,
+  noncombat damage does not, and in a duel the hit wins; a `condition` on the op
+  is refused.
+

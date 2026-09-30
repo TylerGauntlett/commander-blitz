@@ -116,6 +116,7 @@ const LOSS_REASONS: Record<string, string> = {
   commander_damage: "21 commander damage",
   poison: "ten poison counters",
   concede: "conceded",
+  lost_by_effect: "a card made them lose the game",
 };
 
 export function stepLabel(step: string): string {

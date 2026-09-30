@@ -13902,15 +13902,35 @@ misread in the vocabulary, and the first way anybody will try to write Luck
 Bobblehead's line, since the condition is where the card's entire cost lives.
 Wrapped in an `if` it is one more line and it means what it says.
 
-*Deliberately left out.* There is **no `lose_game` op**: losing is the mechanism
-here rather than a second op, so the engine half already exists and the op is two
-lines whenever a card wants it — Door to Nothingness and Demonic Pact are the
-family and neither is in the pool. There is no "can't win the game" / "can't lose
-the game" either (Platinum Angel, Abyssal Persecutor); that is a continuous
+*Deliberately left out.* `lose_game` is its own op (below), not this one aimed
+elsewhere. There is no "can't win the game" / "can't lose the game" (Platinum Angel, Abyssal Persecutor); that is a continuous
 prohibition over this whole subsystem, not a clause of this op. And the pod's
 ending is a simplification — by 800.4 a player who wins a multiplayer game leaves
 it and the survivors play on, while here the game ends for everybody. See
 [rules-coverage.md](rules-coverage.md).
+
+### "That player loses the game"
+
+```jsonc
+// Vraska the Unseen's Assassin token — "Whenever this creature deals combat
+// damage to a player, that player loses the game."
+{ "kind": "triggered",
+  "trigger": { "event": "deals_combat_damage_to_player", "source": "self" },
+  "effects": [ { "op": "lose_game", "player": { "binding": "event_player" } } ] }
+
+// The Pact cycle's unpaid upkeep — "If you don't, you lose the game."
+{ "op": "lose_game" }
+```
+
+`lose_game` takes the ordinary player spec and defaults to `"you"`. It is 104.3a,
+and it eliminates **only** the named seats — through the same `sba._eliminate` a
+lethal life total reaches, with `loss_reason` `lost_by_effect` — and then calls
+`check_game_over`. `win_game` on the controller is the near miss: in a duel it is
+the same result, but in a pod `declare_win` removes *every* other seat, so one
+Assassin hit would eliminate players it never touched. Every seat the spec names
+is eliminated before the game-over check, so "each player loses the game" is a
+draw (104.4a). A `condition` on the op is a load error, for `win_game`'s reason:
+wrap it in an `if`.
 
 ### "No maximum hand size for the rest of the game"
 

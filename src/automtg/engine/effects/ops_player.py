@@ -161,12 +161,9 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
 
     Two things this deliberately does not do:
 
-    - **There is no `lose_game` op.** Losing is the mechanism here rather than a
-      second op -- "you win the game" *is* every opponent losing -- so the engine
-      half already exists and the op is two lines whenever a card wants it. Door
-      to Nothingness and Demonic Pact are the family, and neither is in the pool;
-      registering the name now would be a vocabulary item with no card behind it,
-      which is the thing this repo's load-time checks exist to keep out.
+    - **It is not `lose_game` on everybody else.** The effect is the same in a
+      duel, but `lose_game` names one seat and eliminates only that one (104.3a);
+      this eliminates every opponent (104.2a).
     - **It does not check "can't win the game".** Platinum Angel and Abyssal
       Persecutor are a continuous prohibition over this whole subsystem, not a
       clause of this op, and nothing in the pool has one.
@@ -184,6 +181,25 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
 
     for pid in select_players(ctx, spec.get("player", "you")):
         declare_win(ctx.state, pid)
+
+
+@register("lose_game")
+def op_lose_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "That player loses the game." Vraska the Unseen's Assassin tokens.
+
+    104.3a: only the named player leaves. The Assassin writes it
+    ``{"op": "lose_game", "player": {"binding": "event_player"}}`` -- the seat
+    its combat damage hit -- and in a pod the other opponents play on, which is
+    the whole difference from `win_game` on the controller. Also the unpaid
+    branch of the Pact cycle (``"player": "you"``, the default).
+
+    Every seat the spec names loses at once: `sba.declare_loss` eliminates them
+    all before it asks whether the game is over, so "each player loses the
+    game" is a draw (104.4a).
+    """
+    from ..sba import declare_loss
+
+    declare_loss(ctx.state, select_players(ctx, spec.get("player", "you")))
 
 
 @register("extra_turn")

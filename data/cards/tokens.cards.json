@@ -69,6 +69,44 @@
       "is_token": true
     },
     {
+      "id": "assassin_1_1_b_lose_game",
+      "name": "Assassin Token",
+      "oracle_text": "1/1 black Assassin creature token with \"Whenever this creature deals combat damage to a player, that player loses the game.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Assassin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, that player loses the game.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "lose_game",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "badger_3_3_g",
       "name": "Badger Token",
       "types": [

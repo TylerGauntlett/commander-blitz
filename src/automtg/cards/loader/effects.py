@@ -733,7 +733,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `may` without a `pay` has no {X} to announce, and every other op
         # ignores the key -- the card would load and draw 0.
         raise DslError(f"{where}: 'x' announces the {{X}} of a may's 'pay', not of {op!r}")
-    if op == "win_game" and "condition" in effect:
+    if op in ("win_game", "lose_game") and "condition" in effect:
         # "**If you rolled 6 exactly seven times**, you win the game" (Luck
         # Bobblehead). A top-level `condition` is read by `if` and by `may` and
         # by nobody else, so written on this op it is accepted,
@@ -743,8 +743,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # the card's entire cost lives. Wrapped in an `if` it is one more line
         # and it means what it says.
         raise DslError(
-            f"{where}: win_game reads no 'condition' -- wrap it in an "
-            f"{{'op': 'if', 'condition': …, 'then': [{{'op': 'win_game'}}]}}"
+            f"{where}: {op} reads no 'condition' -- wrap it in an "
+            f"{{'op': 'if', 'condition': …, 'then': [{{'op': {op!r}}}]}}"
         )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole

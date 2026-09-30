@@ -19,6 +19,8 @@ from .primitives import clear_goad, clear_permanent_shields, drop_attack_require
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Iterable
+
     from .state import GameState
 
 #: Safety valve: SBAs that keep changing something forever indicate a rules bug.
@@ -352,6 +354,28 @@ def declare_win(state: GameState, pid: int) -> None:
     for other in state.alive():
         if other != pid:
             _eliminate(state, other, LossReason.OPPONENT_WON)
+    check_game_over(state)
+
+
+def declare_loss(state: GameState, pids: Iterable[int]) -> None:
+    """ "That player loses the game" -- 104.3a.
+
+    The mirror of :func:`declare_win`, and narrower on purpose: it eliminates
+    **only** the named seat, through the same `_eliminate` a lethal life total
+    reaches, then asks `check_game_over`. Written as `declare_win` on an
+    opponent it would be a different sentence -- in a pod, one Assassin hit
+    would knock out every other seat too.
+
+    Every named seat is eliminated before the game-over check, so "each player
+    loses the game" is a draw (104.4a) rather than a win for whichever seat the
+    loop reached last. A game already over, or a seat already gone, is a no-op.
+    "Can't lose the game" (Platinum Angel) is not modelled.
+    """
+    if state.game_over:
+        return
+    for pid in pids:
+        if state.is_alive(pid):
+            _eliminate(state, pid, LossReason.LOST_BY_EFFECT)
     check_game_over(state)
 
 

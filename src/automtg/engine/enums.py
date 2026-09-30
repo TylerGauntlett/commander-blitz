@@ -423,6 +423,10 @@ class LossReason(str, Enum):
     #: the argument POISON has: this seat did not run out of life, did not deck
     #: itself and did not concede, and the frontend prints the reason to them.
     OPPONENT_WON = "opponent_won"
+    #: A card said "that player loses the game" (104.3a) -- Vraska the Unseen's
+    #: Assassins, the Pact cycle's unpaid upkeep. Not OPPONENT_WON: nobody won,
+    #: and in a pod the others play on.
+    LOST_BY_EFFECT = "lost_by_effect"
 
 
 #: Which card type each subtype belongs to -- 205.3, as one flat table.
