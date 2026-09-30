@@ -303,7 +303,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `rotate_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
 | Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `prevent_damage_permanent` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
@@ -10247,6 +10247,34 @@ Call for Aid says the same three sentences about a *set* rather than one
 targeted permanent, and there the follow-on clauses have nowhere to point once
 control has moved — which is what `as` is for; see *Bindings* above and the
 `cant_sacrifice` op below.
+
+### "Choose left or right" — passing the board around the table
+
+```jsonc
+// Aminatou, the Fateshifter −6 — "Choose left or right. Each player gains
+// control of all nonland permanents other than Aminatou controlled by the next
+// player in the chosen direction."
+{ "op": "rotate_control",
+  "objects": { "not_types": ["Land"], "exclude_self": true } }
+```
+
+`rotate_control` resolves `objects` once, reads every permanent's controller
+**before** anything moves, then hands each one to the player whose neighbour in
+the chosen direction controlled it. **Left** is the next seat in turn order,
+**right** the previous one; seats that have left the game are skipped. Each move
+is an ordinary `change_control`, so the 302.6 and 506.4 rows above apply, and it
+is permanent.
+
+`for_each_player` around `gain_control` is the near miss and it cascades: the
+first seat takes its neighbour's board, the next seat's `gain_control` then reads
+a neighbour holding two boards and takes both, and one player ends up with
+everything. The exchange is simultaneous, which only one op can say.
+
+The controller is asked left-or-right as a `CHOOSE_MODE` (labels `Left`,
+`Right`; context `purpose: "choose_direction"` and `takes_from`, the seat each
+answer takes from). A table where both directions name the same neighbour — a
+duel — is not asked. `direction: "left" | "right"` fixes the answer; any other
+spelling, or a missing `objects`, is a load error.
 
 ## "Its activated abilities can't be activated this turn"
 

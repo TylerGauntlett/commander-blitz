@@ -390,6 +390,11 @@ class HeuristicAgent:
             # creature -- and then the next, until everything had grown.
             wanted = [a for a in choices if self._proliferate_helps(state, seat, a)]
             return wanted[0] if wanted else _first(actions, ActionKind.FINISH_DECLARATION) or choices[0]
+        if purpose == "choose_direction":
+            # Aminatou's rotation: `choices[0]` is always "left", whatever sits
+            # there. Take the richer board -- we lose ours either way.
+            seats = list(decision.context.get("takes_from") or [])
+            return max(choices, key=lambda a: self._board_worth(state, seats, a))
         return choices[0]
 
     def _name_hits(self, state: GameState, seat: int, decision, action: Action) -> int:
@@ -402,6 +407,17 @@ class HeuristicAgent:
             1
             for oid in state.players[seat].library
             if state.card_of(state.objects[oid]).name == label
+        )
+
+    def _board_worth(self, state: GameState, seats: Sequence[int], action: Action) -> int:
+        """Total mana value of the nonland permanents the seat behind this answer controls."""
+        index = action.choice if action.choice is not None else -1
+        if not 0 <= index < len(seats):
+            return 0
+        return sum(
+            state.card_of(obj).mana_value
+            for obj in state.battlefield_objects(seats[index])
+            if not state.card_of(obj).is_land
         )
 
     def _counter_spare(self, state: GameState, action: Action) -> tuple[int, int, int]:

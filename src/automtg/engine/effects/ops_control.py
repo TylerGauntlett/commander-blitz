@@ -16,6 +16,7 @@ from ..player_statics import forced_discard_or_sacrifice_barred
 # anything that reached for it first -- the card loader, wanting the reduction
 # filter's vocabulary from the function that reads it -- got a partially
 # initialised module instead.
+from ..primitives import change_control
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
@@ -420,6 +421,83 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     if chosen is None:
         return
     ctx.bindings[str(spec["as"])] = int(chosen)
+
+
+#: "Choose left or right." The answer's labels, in the order `rotate_control`
+#: asks them. Left is the next seat in turn order (play passes to the left).
+DIRECTIONS = ("left", "right")
+
+
+def neighbour(state: GameState, pid: int, direction: str) -> int:
+    """The next living player to ``pid``'s left or right.
+
+    Left is the seat that takes the next turn (`state.next_alive_index`); right
+    is the one before. A player who has left the game is skipped (800.4a), and a
+    lone survivor is their own neighbour.
+    """
+    n = state.num_players
+    step = 1 if direction == "left" else -1
+    for offset in range(1, n + 1):
+        candidate = (pid + step * offset) % n
+        if state.is_alive(candidate):
+            return candidate
+    return pid
+
+
+@register("rotate_control")
+def op_rotate_control(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose left or right. Each player gains control of all nonland
+    permanents other than Aminatou controlled by the next player in the chosen
+    direction." Aminatou, the Fateshifter's -6.
+
+    One op rather than `for_each_player` around `gain_control`, because the
+    exchange is **simultaneous**: written as a loop, the first player takes their
+    neighbour's board, and the second player's `gain_control` then re-reads a
+    neighbour who now controls *two* boards and takes both -- the rotation
+    cascades round the table and the last seat ends up with everything. Here
+    the pool is resolved once, every permanent's current controller is read
+    before any control moves, and then each permanent passes to the player
+    whose neighbour in the chosen direction controlled it.
+
+    ``objects`` is the selector over what rotates (Aminatou: ``not_types:
+    ["Land"]`` with ``exclude_self``); nothing outside it moves. ``direction``
+    fixes the answer for a card that prints one; without it the controller is
+    asked, with ``purpose: "choose_direction"`` and the seat each direction
+    takes from, and a table where both directions name the same neighbour (a
+    duel) is not asked at all.
+
+    `change_control` is the one primitive, so every permanent that moves is
+    summoning sick for its new controller (302.6) and leaves combat (506.4).
+    The change is permanent -- the printed line has no duration.
+    """
+    state = ctx.state
+    living = state.alive()
+    pool = resolve_pool(ctx, spec.get("objects"))
+    # Who controls what, read before anything moves.
+    before = [(oid, state.objects[oid].controller) for oid in pool if oid in state.objects]
+    direction = spec.get("direction")
+    if direction is None:
+        takes_from = {d: neighbour(state, ctx.controller, d) for d in DIRECTIONS}
+        if len({takes_from[d] for d in DIRECTIONS}) == 1:
+            direction = DIRECTIONS[0]
+        else:
+            picked = yield from ask_mode(
+                ctx,
+                str(spec.get("prompt") or "Choose left or right"),
+                [d.capitalize() for d in DIRECTIONS],
+                ctx.controller,
+                extra={
+                    "purpose": "choose_direction",
+                    "takes_from": [takes_from[d] for d in DIRECTIONS],
+                },
+            )
+            direction = DIRECTIONS[picked[0] if picked else 0]
+    # Each player gains what their neighbour in that direction controlled, so a
+    # permanent controlled by Q goes to the player whose neighbour is Q.
+    receiver = {neighbour(state, pid, str(direction)): pid for pid in living}
+    for oid, was in before:
+        if was in receiver:
+            change_control(state, oid, receiver[was], source=ctx.source_oid)
 
 
 def _creature_types(ctx: EffectContext) -> frozenset[str]:

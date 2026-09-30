@@ -1540,6 +1540,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
                 f"(use 'until_end_of_turn' or 'permanent')"
             )
+    if op == "rotate_control":
+        # Aminatou's -6. Without a pool the op rotates nothing and the card
+        # reads as a board swap that never happens; a misspelt direction would
+        # silently fall through to "right".
+        if "objects" not in effect:
+            raise DslError(f"{where}: rotate_control needs 'objects' -- what passes around the table")
+        if "direction" in effect and effect["direction"] not in ("left", "right"):
+            raise DslError(
+                f"{where}: rotate_control direction is 'left' or 'right', not {effect['direction']!r}"
+            )
     if op == "discard":
         if "up_to" in effect and not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: discard's 'up_to' is a boolean")

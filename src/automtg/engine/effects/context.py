@@ -9,7 +9,7 @@ which suspends the whole resolution until a driver answers.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
@@ -215,6 +215,7 @@ def ask_mode(
     count: int = 1,
     up_to: int | None = None,
     purpose: str | None = None,
+    extra: Mapping[str, Any] | None = None,
 ) -> Generator[PendingDecision, list[int], list[int]]:
     """Ask the controller to choose one or more modes of a modal spell.
 
@@ -227,6 +228,10 @@ def ask_mode(
     instead" -- Akroma's Will. Without it a range is unsayable, and the
     short-circuit below turns "choose up to two of two" into "take both", which
     is a different card every time taking one was the better line.
+
+    ``extra`` is merged into the decision's ``context`` -- a ``purpose`` tag and
+    whatever the heuristic agent needs to answer it (Aminatou's left-or-right
+    names the seat each direction takes from).
     """
     maximum = count if up_to is None else max(count, up_to)
     # Nothing to ask when every mode has to be taken anyway.
@@ -243,6 +248,7 @@ def ask_mode(
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
             **({"purpose": purpose} if purpose else {}),
+            **(extra or {}),
         },
     )
     answer = yield decision

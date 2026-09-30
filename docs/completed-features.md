@@ -18309,3 +18309,33 @@ heuristic agent's `_choice` names the label its library holds most copies of.
   among them and "Another card name" mill all four; the heuristic agent names
   what its library holds most of; the loader requires `as`, refuses an unknown
   card type and a `name` that is neither a literal nor a binding.
+
+## `rotate_control` — Aminatou, the Fateshifter's −6
+
+"Choose left or right. Each player gains control of all nonland permanents other
+than Aminatou controlled by the next player in the chosen direction."
+`for_each_player` around `gain_control` could hand each seat a board, but no player
+spec named a seat-relative neighbour, and the loop cascades: the second seat reads a
+neighbour who already holds two boards.
+
+### What changed
+
+- `rotate_control` op in `ops_control` (`objects` selector, optional fixed
+  `direction`): resolves the pool once, reads controllers before anything moves, and
+  gives each permanent to the player whose neighbour in the chosen direction
+  controlled it via `change_control`. `neighbour(state, pid, direction)` beside it —
+  left is the next living seat in turn order, right the previous.
+- The question is `ask_mode` with labels Left/Right; `ask_mode` gained an `extra`
+  context argument so the decision carries `purpose: "choose_direction"` and
+  `takes_from`. Not asked when both directions name the same seat (a duel).
+- Loader: `objects` required, `direction` must be `left` or `right`.
+- Heuristic agent: a `choose_direction` branch takes the direction whose donor seat
+  has the most nonland mana value (`choices[0]` was always "left").
+
+### Tests
+
+- `tests/unit/test_rotate_control.py` — left and right each move every permanent
+  exactly one seat and never cascade; a fixed direction asks nobody; lands and the
+  source stay put; an eliminated seat is skipped; the pod question and its context;
+  a duel swaps boards without asking; moved creatures are summoning sick and the
+  change is permanent; the agent takes the richer board; the loader refusals.

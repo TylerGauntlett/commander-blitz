@@ -1,0 +1,17 @@
+{
+  "_comment": "Cards that exist only for the rotate_control test (tests/unit/test_rotate_control.py). `t_fateshift` is Aminatou, the Fateshifter's -6 as a sorcery, so the heuristic agent's left-or-right answer can be driven through a real cast.",
+  "cards": [
+    {
+      "id": "t_fateshift",
+      "name": "Test Fateshift",
+      "oracle_text": "Choose left or right. Each player gains control of all nonland permanents controlled by the next player in the chosen direction.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "rotate_control", "objects": {"not_types": ["Land"]}}
+      ]
+    }
+  ]
+}
