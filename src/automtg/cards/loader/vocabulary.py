@@ -525,6 +525,15 @@ STATIC_EFFECTS = frozenset(
         # in `replacements._draw_one`, before the doublers, so an empty library
         # wins on the first of a doubled pair rather than after both have failed.
         "replace_empty_draw",
+        # Tekuthal, Inquiry Dominus.  "If you would proliferate, proliferate
+        # twice instead."  A replacement of an *action* rather than a quantity:
+        # proliferate has no count to multiply, so each one is performed again,
+        # with its own choice.  Read by the `proliferate` op through
+        # `player_statics.proliferate_times`; two of them compound to four
+        # (616.1), each applying once (614.5).  Key-less beyond
+        # `affects_player`, like `replace_empty_draw`: "twice" is the whole
+        # printed size and no card says any other.
+        "replace_proliferate",
         # Voice of Victory.  "Your opponents can't cast spells during your
         # turn."  A prohibition on a *player*, so it takes `affects_player` and
         # no `affects`, and it is read wherever a spell can be cast rather than
@@ -620,6 +629,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         # cost and dredge are all replaced, whoever caused them.
         "replace_mill",
         "replace_empty_draw",
+        "replace_proliferate",
         "cant_cast_spells",
         "cant_activate_abilities",
         "untap_limit",

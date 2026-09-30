@@ -4890,6 +4890,23 @@
       ]
     },
     {
+      "id": "t_proliferate_doubler",
+      "name": "Test Proliferate Doubler",
+      "oracle_text": "If you would proliferate, proliferate twice instead.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would proliferate, proliferate twice instead.",
+          "effect": "replace_proliferate",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
       "id": "t_provoker",
       "name": "Test Provoker",
       "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",

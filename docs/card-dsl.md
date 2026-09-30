@@ -5836,6 +5836,22 @@ each source is visited once none applies twice (614.5) without needing the
 A mill of zero is not an event, so no doubler applies — "one or more" is read
 rather than left to arithmetic.
 
+## Proliferating twice
+
+    Tekuthal, Inquiry Dominus — "If you would proliferate, proliferate twice
+    instead."
+
+```jsonc
+{ "kind": "static", "effect": "replace_proliferate", "affects_player": "you" }
+```
+
+A player-wide static with no size key: "twice" is the whole printed size. The
+loader refuses `affects` and `amount`. Read by the `proliferate` op through
+`player_statics.proliferate_times`, and it replaces the **action**, not a count:
+proliferate has no number in it, so each repetition is a whole proliferate with
+its own choice, asked after the one before it resolved. Two of them compound to
+four (616.1), each applying once (614.5).
+
 ## Not untapping at all
 
     Back to Basics — "Nonbasic lands don't untap during their controllers'

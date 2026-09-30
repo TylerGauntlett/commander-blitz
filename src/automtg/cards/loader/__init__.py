@@ -3269,6 +3269,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: replace_empty_draw takes 'affects_player' and an "
             f"optional 'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "replace_proliferate" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # "If you would proliferate, proliferate twice instead" names a player
+        # and has no size but "twice"; a filter or an amount written here would
+        # load clean and change nothing, printing a line that promises more.
+        raise DslError(
+            f"{where}: replace_proliferate takes 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")

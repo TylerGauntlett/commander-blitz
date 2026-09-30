@@ -261,6 +261,24 @@ def mill_multiplier(state: GameState, pid: int) -> int:
     return factor
 
 
+def proliferate_times(state: GameState, pid: int) -> int:
+    """How many proliferates one "proliferate" by ``pid`` becomes (`replace_proliferate`).
+
+    Tekuthal, Inquiry Dominus: "If you would proliferate, proliferate twice
+    instead." Proliferate (701.27a) is an action with no number in it, so the
+    replacement is to *perform it again* -- each time with its own choice, the
+    second seeing the counters the first added. Two Tekuthals are two
+    replacements of the same event, each applying once (614.5) to the event the
+    other produced (616.1), so one proliferate becomes four: the product, as in
+    `mill_multiplier`.
+    """
+    times = 1
+    for obj, static in _active_player_statics(state, "replace_proliferate"):
+        if _reaches_player(obj, static, pid):
+            times *= 2
+    return times
+
+
 def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
     """Would the card ``pid`` is about to draw be the first of *their* draw step?
 

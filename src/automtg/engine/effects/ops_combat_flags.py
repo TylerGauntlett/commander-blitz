@@ -9,6 +9,7 @@ from typing import Any
 from ..errors import DslError
 from ..events import EventType
 from ..objects import PLUS_ONE
+from ..player_statics import proliferate_times
 from ..primitives import (
     add_counters,
     forbid_block,
@@ -84,7 +85,18 @@ def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
     A player's counters are `PlayerState.poison`: it is the only per-player
     counter the engine has, so energy and experience would join here when a
     card first needs them.
+
+    "If you would proliferate, proliferate twice instead" (Tekuthal, the
+    `replace_proliferate` static) is read here, once, before the first: each
+    repetition is a whole proliferate with its own choice, asked after the one
+    before it resolved. See `player_statics.proliferate_times`.
     """
+    for _ in range(proliferate_times(ctx.state, ctx.controller)):
+        yield from _proliferate_once(ctx)
+
+
+def _proliferate_once(ctx: EffectContext):
+    """One 701.27a proliferate: the choice, then one of each kind on each."""
     state = ctx.state
     refs: list[tuple[str, TargetRef]] = []
     for oid in state.battlefield:

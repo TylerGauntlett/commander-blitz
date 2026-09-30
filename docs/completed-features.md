@@ -18149,3 +18149,28 @@ counter there is harmful, opponents' poison, never its own; then it finishes.
   is lethal; the loader refuses `objects`; the heuristic agent grows what helps
   and declines what hurts, including killing an opponent's creature with its
   second -1/-1 counter while leaving its own alone.
+
+## Proliferating twice — "If you would proliferate, proliferate twice instead" — 614.1a / 616.1
+
+### Overview
+
+Tekuthal, Inquiry Dominus. The `replace_*` family had draw, mill, life, tokens,
+counters and damage, and nothing that replaced the proliferate action.
+
+### Tier: B — a player-wide static read by one op
+
+`replace_proliferate` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`
+(so it requires `affects_player` and is not grantable); the loader refuses
+`affects` and `amount`, since "twice" is the whole size.
+`player_statics.proliferate_times` returns 2 to the power of the active statics
+reaching the proliferating player, and the `proliferate` op runs that many whole
+proliferates, each asking its own choice after the previous one resolved. Two
+Tekuthals are four proliferates (616.1); none applies twice (614.5).
+
+### Tests
+
+- `tests/unit/test_replace_proliferate.py` — one doubler is two proliferates and
+  none is one; two compound to four; the second choice may decline what the first
+  took, and sees what the first grew; an opponent's doubler does not double mine;
+  a doubler that has left stops; the loader requires `affects_player` and refuses
+  an `amount`.
