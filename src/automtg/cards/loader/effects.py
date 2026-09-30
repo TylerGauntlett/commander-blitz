@@ -1795,6 +1795,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(effect["amount"], f"{where}.amount")
         if "from" in effect:
             validate_selector(effect["from"], f"{where}.from")
+    if op == "double_counters" and not effect.get("objects"):
+        # Without `objects` the pool is empty and nothing doubles: a Deepglow
+        # Skate that loads clean and does nothing.
+        raise DslError(
+            f"{where}: double_counters needs 'objects' naming the permanents "
+            f"whose counters are doubled"
+        )
     if op == "must_block" and not effect.get("objects"):
         # Without `objects` the op resolves an empty pool and requires nothing
         # of anybody, which is a provoke that loads clean and does nothing --

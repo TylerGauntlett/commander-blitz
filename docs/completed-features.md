@@ -18626,3 +18626,18 @@ one names the putter, reaches an opponent's permanents, and reaches players.
   recipient-keyed static never reaches a player; POISON_ADDED reports the doubled
   amount; the loader accepts `put_by` in place of `affects` and refuses it elsewhere.
 
+## Doubling the counters on a permanent — Deepglow Skate — 122.1
+
+"Double the number of each kind of counter on any number of target permanents."
+`add_counters` names one kind and the card names none; `proliferate` adds one of each
+kind; `move_counters` takes from elsewhere. The `double_counters` op (in
+`effects/ops_counters.py`, `objects` required by the loader) reads each permanent's
+kinds at resolution and puts that many more of each on through `add_counters` — a
+placement, so Doubling Season applies (2 → 6) and `counter_placed` fires.
+
+### Tests
+
+- `tests/unit/test_double_counters.py` — every kind on one permanent, several targets
+  each by their own count, a permanent with none untouched; Doubling Season doubles
+  the placement; `counter_placed` reports it; the loader refuses a missing `objects`.
+

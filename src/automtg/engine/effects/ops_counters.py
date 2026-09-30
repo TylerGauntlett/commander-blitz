@@ -44,6 +44,33 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
 
 
+@register("double_counters")
+def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Double the number of each kind of counter on any number of target
+    permanents." -- Deepglow Skate.
+
+    122.1 lets a permanent carry any number of kinds, and the card names none,
+    so the kinds are read off each permanent at resolution: for every kind
+    already there, put that many more on. That is a *placement* -- Deepglow's
+    ruling says so, and it is why this goes through `add_counters` rather than
+    writing the dict: a Doubling Season sees an effect putting N counters and
+    doubles that, so 2 becomes 6, and "whenever a counter is put on" triggers.
+
+    Snapshotted per permanent before any placement, so a replacement that adds
+    a kind (none printed yet) cannot be doubled in the same pass, and a kind
+    with zero counters is nothing to double. Not `proliferate`, which adds one
+    of each kind, and not `move_counters`, which takes from somewhere else.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Double the counters on")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        for kind, amount in list(obj.counters.items()):
+            if amount > 0:
+                add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+
+
 @register("remove_counters")
 def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))

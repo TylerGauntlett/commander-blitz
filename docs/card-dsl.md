@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-134 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+135 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -340,7 +340,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `rotate_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` `exchange_control` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `double_counters` `detain` `gain_control` `rotate_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` `exchange_control` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
 | Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `prevent_damage_permanent` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
@@ -2225,6 +2225,24 @@ against a doubling is not asked; doubling last means "prevent the next 3" answer
 3 of the printed damage, the order the damaged object's controller would have
 chosen — the judgement the shield counter already makes. Several compound by
 multiplication, so between two of these the unasked order cannot show.
+
+### Doubling the counters on a permanent
+
+```jsonc
+// Deepglow Skate
+{ "kind": "triggered",
+  "text": "When this creature enters, double the number of each kind of counter on any number of target permanents.",
+  "trigger": { "event": "self_enters" },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": "any",
+                 "selector": { "controller": "any" } } ],
+  "effects": [ { "op": "double_counters", "objects": { "target": "t1" } } ] }
+```
+
+For each permanent, every kind of counter on it at resolution gets that many
+more — through `add_counters`, so it is a placement: Doubling Season doubles what
+it puts (2 become 6) and "whenever a counter is put on" triggers. Not
+`proliferate` (one of each kind) and not `move_counters` (from somewhere else).
+`objects` is required.
 
 ### Counters replaced on the way in
 
