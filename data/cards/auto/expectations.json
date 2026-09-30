@@ -11068,6 +11068,14 @@
   "vorstclaw": {
     "zone": "battlefield"
   },
+  "vraska_relic_seeker": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "vulpine_goliath": {
     "zone": "battlefield"
   },

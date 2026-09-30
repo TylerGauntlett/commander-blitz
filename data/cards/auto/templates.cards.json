@@ -123130,6 +123130,175 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "pirate_2_2_b_menace"
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: Create a 2/2 black Pirate creature token with menace."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target artifact, creature, or enchantment. Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")"
+        },
+        {
+          "cost": {
+            "loyalty": -10
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "life_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "life_of": {
+                          "target": "t1"
+                        }
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ]
+            },
+            {
+              "condition": {
+                "cmp": "<",
+                "left": {
+                  "life_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "const": 1
+                      },
+                      {
+                        "life_of": {
+                          "target": "t1"
+                        }
+                      }
+                    ]
+                  },
+                  "op": "gain_life",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "−10: Target player's life total becomes 1."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "vraska_relic_seeker",
+      "loyalty": 6,
+      "mana_cost": "{4}{B}{G}",
+      "name": "Vraska, Relic Seeker",
+      "oracle_text": "+2: Create a 2/2 black Pirate creature token with menace.\n−3: Destroy target artifact, creature, or enchantment. Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n−10: Target player's life total becomes 1.",
+      "source": "auto",
+      "subtypes": [
+        "Vraska"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

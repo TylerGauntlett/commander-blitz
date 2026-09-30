@@ -308332,12 +308332,12 @@
     },
     "Vraska, Relic Seeker": {
       "edhrec_rank": 8470,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska, Relic Seeker",
-      "reason": "no template for: +2: Create a 2/2 black Pirate creature token with menace",
+      "reason": "",
       "scryfall_id": "967b7272-33a6-46e9-b0aa-4757aee54b3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vraska, Scheming Gorgon": {

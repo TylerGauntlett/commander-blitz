@@ -24,12 +24,6 @@
       "kind": "value",
       "what": "the duration \"until your next turn\" (ends as the controller's next turn begins) on the two prevention effects above",
       "why_existing_wont_do": "No op among those that could carry the prevention exposes an until-your-next-turn duration"
-    },
-    {
-      "capability": "missing_token",
-      "kind": "op",
-      "what": "token 9/9 blue Kraken creature token (no abilities), e.g. id kraken_9_9_u",
-      "why_existing_wont_do": "token_ids has only kraken_8_8_u (8/8 blue Kraken); a 9/9 is not in the closed list"
     }
   ],
   "closest_existing": [

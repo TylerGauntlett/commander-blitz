@@ -12,12 +12,6 @@
       "kind": "cost",
       "what": "a -X loyalty cost where the controller chooses X (removing X loyalty counters) and X is readable by the ability effects (damage X to target creature or planeswalker, gain X life)",
       "why_existing_wont_do": "cost.loyalty takes only a fixed signed integer; x_value/pay_life_x cover mana and life, not loyalty"
-    },
-    {
-      "capability": "missing_token",
-      "kind": "op",
-      "what": "a token 1/1 black Vampire Knight creature with lifelink (subtypes Vampire Knight)",
-      "why_existing_wont_do": "token_ids has vampire_1_1_b_lifelink (Vampire only) and vampire_rogue_1_1_b_lifelink, but no Vampire Knight; substituting would change creature types"
     }
   ],
   "closest_existing": [

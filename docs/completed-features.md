@@ -17903,11 +17903,12 @@ has no `lose_game` op, and `win_game` for the Assassin's controller would knock
 out every other opponent in a pod. It waits on `lose_the_game`, the capability
 Pact of Negation's gap record already names.
 
-Only Vraska, Relic Seeker was blocked on nothing else. Kasmina, Enigmatic
-Mentor's record named only the token, but its first line ("cost {2} more") is a
-*mana* tax and `spell_cost_increase` charges life only, so it keeps a
-`spell_cost_increase_mana` need instead. The other eight keep their remaining
-needs, with `missing_token` removed.
+Vraska, Relic Seeker was blocked on nothing else and is now authored. Jace,
+Cunning Castaway's record also named only the token, so it is ready for another
+authoring pass; its record stays as it was until that pass writes an answer. Kasmina, Enigmatic Mentor's record named only the token, but its
+first line ("cost {2} more") is a *mana* tax and `spell_cost_increase` charges
+life only, so it keeps a `spell_cost_increase_mana` need instead. The other seven
+keep their remaining needs, with `missing_token` removed.
 
 ### Tests
 

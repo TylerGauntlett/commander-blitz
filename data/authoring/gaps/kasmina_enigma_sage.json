@@ -15,12 +15,6 @@
       "why_existing_wont_do": "cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal"
     },
     {
-      "capability": "missing_token",
-      "kind": "token",
-      "what": "a 0/0 green and blue Fractal creature token",
-      "why_existing_wont_do": "token_ids has no Fractal; the only 0/0 tokens are germ_0_0_b and construct_0_0_c_artifact_buff"
-    },
-    {
       "capability": "grant_loyalty_abilities",
       "kind": "static_effect",
       "what": "a static that gives each other planeswalker you control copies of this permanent's loyalty abilities (activated against the other planeswalker's own loyalty)",

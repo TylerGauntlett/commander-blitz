@@ -19,14 +19,13 @@
       "kind": "cost",
       "what": "A −X loyalty cost where X is chosen on activation and the effects read X (here: target nonland permanent card in your graveyard with mana value X, then create a token copy of that exiled card)",
       "why_existing_wont_do": "cost.loyalty takes only fixed signed integers; x_value exists as a cost key but nothing ties it to removing X loyalty counters, and creating a token copy of a card (not a permanent) from exile is not an established copy_permanent usage"
-    },
-    {
-      "capability": "missing_token",
-      "kind": "token",
-      "what": "Tamiyo's Notebook: legendary colorless Book artifact token with \"Spells you cast cost {2} less to cast\" and \"{T}: Draw a card.\"",
-      "why_existing_wont_do": "No such entry in token_ids; the closest artifact tokens (clue_token etc.) are different objects"
     }
   ],
-  "closest_existing": ["x_value", "copy_permanent", "create_token", "skip_untap"],
+  "closest_existing": [
+    "x_value",
+    "copy_permanent",
+    "create_token",
+    "skip_untap"
+  ],
   "confidence": "high"
 }

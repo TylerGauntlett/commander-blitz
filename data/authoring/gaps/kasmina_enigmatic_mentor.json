@@ -3,19 +3,19 @@
   "name": "Kasmina, Enigmatic Mentor",
   "oracle_text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.\nâˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.",
   "blocked_sentences": [
-    "âˆ’2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card."
+    "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast."
   ],
   "needs": [
     {
-      "capability": "missing_token",
-      "kind": "token",
-      "what": "a token definition for a 2/2 blue Wizard creature token (no abilities), e.g. id wizard_2_2_u",
-      "why_existing_wont_do": "token_ids is a closed list with no Wizard token at all; the only 2/2 blue creature tokens are bird_2_2_u_flying and drake_2_2_u_flying, which have flying and the wrong subtype"
+      "capability": "spell_cost_increase_mana",
+      "kind": "static_effect",
+      "what": "a spell_cost_increase that charges generic MANA ({2}) rather than life, with affects_spells {controller: opponent} and targeting {controller: you, any_types: [Creature, Planeswalker]} -- the Thalia / Kasmina tax on spells aimed at your permanents",
+      "why_existing_wont_do": "spell_cost_increase exists (Terror of the Peaks) but player_statics.spell_life_tax reads only cost.pay_life; nothing adds generic mana to a spell's price, and spell_cost_reduction refuses a negative amount. The -2 is now expressible (wizard_2_2_u was added)."
     }
   ],
   "closest_existing": [
-    "bird_2_2_u_flying",
-    "drake_2_2_u_flying"
+    "spell_cost_increase",
+    "spell_cost_reduction"
   ],
   "confidence": "high"
 }
