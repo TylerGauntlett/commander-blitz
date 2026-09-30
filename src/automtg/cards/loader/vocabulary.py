@@ -512,6 +512,15 @@ STATIC_EFFECTS = frozenset(
         # the library drops out of the pool and the rest of the effect -- the
         # shuffle included -- still happens.
         "cant_search_library",
+        # Tamiyo, Collector of Tales.  "Spells and abilities your opponents
+        # control can't cause you to discard cards or sacrifice permanents."
+        # Keyed on the *cause's controller*, which is the whole difference from
+        # `cant_sacrifice`: that one protects a permanent from every sacrifice,
+        # your own Altar included, and says nothing of discard.  Read through
+        # `player_statics.forced_discard_or_sacrifice_barred` by `op_discard`,
+        # connive, `op_sacrifice` and a `may`'s `pay` -- the places a resolving
+        # spell or ability makes a player discard or sacrifice.
+        "opponents_cant_force_discard_or_sacrifice",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -655,6 +664,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_gain_life",
         "draw_limit",
         "cant_search_library",
+        "opponents_cant_force_discard_or_sacrifice",
     }
 )
 

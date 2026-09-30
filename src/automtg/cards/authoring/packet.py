@@ -710,6 +710,11 @@ def reference() -> dict:
             " controller to search their library\" is the player-wide static"
             " `cant_search_library` with `affects_player: \"opponent\"`. Their"
             " own searches find nothing in their library but still shuffle.",
+            "\"Spells and abilities your opponents control can't cause you to"
+            " discard cards or sacrifice permanents\" is the player-wide static"
+            " `opponents_cant_force_discard_or_sacrifice` with `affects_player:"
+            " \"you\"` -- keyed on who controls the cause, so your own spells"
+            " and costs still discard and sacrifice. Not `cant_sacrifice`.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

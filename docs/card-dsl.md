@@ -5899,6 +5899,7 @@ library is no 104.3c attempt. `amount` is required (absent it would read 0,
 
 ```jsonc
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
+{ "kind": "static", "effect": "opponents_cant_force_discard_or_sacrifice", "affects_player": "you" }
 ```
 
 A player-wide prohibition read by `search_library` and `search_zones` through
@@ -5908,6 +5909,26 @@ drops out of the pool. Everything else still happens — a graveyard half of an
 "and/or" search is searched, and the shuffle is performed. My spell making an
 opponent search (Path to Exile) is not named. Takes `affects_player` and an
 optional `condition`; `affects` and `amount` are refused.
+
+## "Can't cause you to discard cards or sacrifice permanents"
+
+    Tamiyo, Collector of Tales — "Spells and abilities your opponents control
+    can't cause you to discard cards or sacrifice permanents."
+
+```jsonc
+{ "kind": "static", "effect": "opponents_cant_force_discard_or_sacrifice",
+  "affects_player": "you" }
+```
+
+Keyed on the controller of the **cause**, read through
+`player_statics.forced_discard_or_sacrifice_barred`: `discard` skips the
+shielded player (they are not asked), connive draws but does not discard,
+`sacrifice` leaves their permanents out of the pool (the rest of an edict still
+resolves), and a `may` whose `pay` sacrifices or discards is not offered to
+them — an opponent's "unless you sacrifice" runs its `else`. Their own spells,
+abilities and costs are untouched. Not `cant_sacrifice`, which protects a
+permanent from every sacrifice. Takes `affects_player` and an optional
+`condition`; `affects` and `amount` are refused.
 
 ## Not untapping at all
 

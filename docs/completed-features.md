@@ -18257,3 +18257,28 @@ search still happen.
   "and/or" search is still searched; the static's controller searches freely; my
   spell making the opponent search is not stopped; it lifts when the source
   leaves; the loader requires `affects_player` and refuses `affects`/`amount`.
+
+## Shielded from an opponent's discard and sacrifice — "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents" — 101.2
+
+### Overview
+
+Tamiyo, Collector of Tales. `cant_sacrifice` protects permanents from every
+sacrifice whoever asks, and nothing covered discard; no static read who caused
+either.
+
+### Tier: B — a player-wide static read where effects discard or sacrifice
+
+`opponents_cant_force_discard_or_sacrifice` joins `STATIC_EFFECTS` and
+`PLAYER_WIDE_STATIC_EFFECTS`; the loader refuses `affects` and `amount`.
+`player_statics.forced_discard_or_sacrifice_barred(state, pid, cause)` is true
+when a static reaches `pid` and the cause is another seat. Read by `op_discard`
+(skips the player), connive (no discard), `op_sacrifice` (narrows the pool) and
+`may` with a sacrifice/discard `pay` (runs `else`, as an unpayable cost).
+
+### Tests
+
+- `tests/unit/test_opponents_cant_force_discard_or_sacrifice.py` — an
+  opponent's discard spell and edict skip me while reaching them; an opponent's
+  "unless you sacrifice" is not offered and the punishment lands; my own discard
+  and edict still hit me; the opponent is not shielded; it lifts when the source
+  leaves; an uncaused discard is never barred; loader guards.

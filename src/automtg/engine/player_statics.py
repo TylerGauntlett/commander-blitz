@@ -229,6 +229,28 @@ def search_forbidden(state: GameState, searcher: int, cause_controller: int | No
     )
 
 
+def forced_discard_or_sacrifice_barred(
+    state: GameState, pid: int, cause_controller: int | None
+) -> bool:
+    """May a spell or ability ``cause_controller`` controls not make ``pid`` discard or sacrifice?
+
+    Tamiyo, Collector of Tales: "Spells and abilities your opponents control
+    can't cause you to discard cards or sacrifice permanents." Keyed on who
+    controls the *cause*, the fact `primitives.discard_cards`' ``caused_by``
+    already carries for Orvar: ``None`` (the cleanup discard, a cost the player
+    pays for their own spell) is nobody's doing and is never barred, and neither
+    is ``pid``'s own spell. Any other seat is an opponent (102.2).
+    """
+    if cause_controller is None or cause_controller == pid:
+        return False
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(
+            state, "opponents_cant_force_discard_or_sacrifice"
+        )
+    )
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 

@@ -9,7 +9,7 @@ from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
-from ..player_statics import search_forbidden
+from ..player_statics import forced_discard_or_sacrifice_barred, search_forbidden
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object, offer_enters_replacement, offer_riot_choice
 from . import register
@@ -130,6 +130,10 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
+            continue
+        if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):
+            # Tamiyo, Collector of Tales: an opponent's spell can't make this
+            # player discard. Skipped before the choice, so they are not asked.
             continue
         take = len(hand) if whole_hand else min(amount, len(hand))
         if random:
@@ -1301,6 +1305,10 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         yield from _replacements().draw(ctx.state, pid, amount)
         hand = list(ctx.state.players[pid].hand)
         take = min(amount, len(hand))
+        if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):
+            # An opponent's ability made this creature connive: the draw
+            # happens and the discard -- theirs to cause -- does not.
+            take = 0
         picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
         # Read the faces before the move: a card in a graveyard is still
         # readable, but reading first means this does not depend on that.

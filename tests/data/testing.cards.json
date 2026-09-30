@@ -13845,6 +13845,31 @@
           "affects_player": "opponent"
         }
       ]
+    },
+    {
+      "id": "t_tamiyo_shield",
+      "name": "Test Tamiyo Shield",
+      "oracle_text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+          "effect": "opponents_cant_force_discard_or_sacrifice",
+          "affects_player": "you"
+        }
+      ]
     }
   ]
 }

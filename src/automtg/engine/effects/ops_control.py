@@ -7,6 +7,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost
+from ..player_statics import forced_discard_or_sacrifice_barred
 
 # `can_pay` and `pay` are imported inside the two ops that charge a cost rather
 # than here, the way `combat`, `game`, `legality` and `replacements` already
@@ -97,6 +98,17 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
         if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
+            yield from execute(ctx, spec.get("else") or [])
+            return
+        if (
+            cost is not None
+            and (cost.sacrifice or cost.discard or cost.discard_self)
+            and forced_discard_or_sacrifice_barred(ctx.state, chooser, ctx.controller)
+        ):
+            # Tamiyo, Collector of Tales: "…can't cause you to discard cards or
+            # sacrifice permanents." An opponent's "unless you sacrifice" (Torment
+            # of Hailfire) would be that opponent's ability causing the
+            # sacrifice, so it is not offered and the punishment lands.
             yield from execute(ctx, spec.get("else") or [])
             return
         if not (yield from ask_yes_no(ctx, prompt, chooser)):

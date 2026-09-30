@@ -3289,6 +3289,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: cant_search_library takes 'affects_player' and an "
             f"optional 'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "opponents_cant_force_discard_or_sacrifice" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # The sentence names players and a cause, nothing else. A permanent
+        # filter ("can't cause you to sacrifice creatures") would load clean
+        # and shield every permanent and every card in hand.
+        raise DslError(
+            f"{where}: opponents_cant_force_discard_or_sacrifice takes "
+            f"'affects_player' and an optional 'condition', and no 'affects' "
+            f"or 'amount'"
+        )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes

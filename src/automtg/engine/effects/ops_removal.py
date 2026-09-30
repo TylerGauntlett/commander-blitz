@@ -9,6 +9,7 @@ from typing import Any
 from ..enums import Zone
 from ..errors import DslError
 from ..objects import playable_duration_of
+from ..player_statics import forced_discard_or_sacrifice_barred
 from ..primitives import (
     add_counters,
     attach,
@@ -483,6 +484,16 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     selector = dict(spec.get("objects") or {})
     selector.setdefault("controller", "you")
     pool = [oid for oid in resolve_pool(ctx, selector) if not sacrifice_forbidden(ctx.state, oid)]
+    # Tamiyo, Collector of Tales: "Spells and abilities your opponents control
+    # can't cause you to ... sacrifice permanents." Narrowed out of the pool for
+    # the reason above -- the rest of an edict still reaches everybody else.
+    pool = [
+        oid
+        for oid in pool
+        if not forced_discard_or_sacrifice_barred(
+            ctx.state, ctx.state.objects[oid].controller, ctx.controller
+        )
+    ]
     oids = yield from pick_from_pool(ctx, pool, selector, "Sacrifice", "sacrifice")
     if name := spec.get("as"):
         # Written before the sacrifice, so the binding is a record of the choice
