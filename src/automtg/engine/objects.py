@@ -481,6 +481,14 @@ class GameObject:
     #: "until end of turn" on it lasts as long as the permanent does, and one
     #: that wore off at cleanup would be a strictly weaker card.
     granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
+    #: The same thing for an animation: "Target artifact or creature ... becomes
+    #: a green Elk creature with base power and toughness 3/3" -- Oko, Thief of
+    #: Crowns, which prints no duration. `TempEffect(kind="animate")` entries
+    #: kept out of `until_eot` so cleanup does not sweep them, and read by
+    #: `characteristics._compute` together with the timed ones in timestamp
+    #: order. Reset with the rest of the battlefield state: an Elk that is
+    #: blinked comes back as what it was printed as (400.7).
+    animations: list[TempEffect] = field(default_factory=list)
     #: "That land doesn't untap during its controller's next untap step."  A
     #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
     #: which holds for as long as its source is on the battlefield.  Two
@@ -1024,6 +1032,7 @@ class GameObject:
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
         self.granted_abilities_permanent = []
+        self.animations = []
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
@@ -1168,6 +1177,7 @@ class GameObject:
             "is_commander": self.is_commander,
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
+            "animations": [t.to_dict() for t in self.animations],
             "monstrous": self.monstrous,
             "class_level": self.class_level,
             "flags": sorted(self.flags),

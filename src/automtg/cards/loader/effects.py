@@ -2413,6 +2413,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for c in effect.get("colors", ()) or ():
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")
+        # Oko's "becomes a green Elk creature with base power and toughness
+        # 3/3" prints no duration. Enumerated rather than truthy for the reason
+        # `gain_control`'s is: a misspelt "until_end_of_turn" read as anything
+        # but itself is a permanent animation, the strictly better card.
+        duration = effect.get("duration", "until_end_of_turn")
+        if duration not in CONTROL_DURATIONS:
+            raise DslError(
+                f"{where}: animate's 'duration' is one of {list(CONTROL_DURATIONS)}, "
+                f"got {duration!r}"
+            )
+        if duration == "permanent" and effect.get("your_turn_keywords"):
+            raise DslError(
+                f"{where}: your_turn_keywords rides a timed animation only -- "
+                f"no printed indefinite animation carries one"
+            )
+        if not isinstance(effect.get("exact", False), bool):
+            raise DslError(
+                f"{where}: animate's 'exact' is true or false -- whether the "
+                f"colours, card types and creature types named replace the "
+                f"permanent's own ('becomes a green Elk creature') rather than "
+                f"adding to them ('it's still a land')"
+            )
     if op == "delay":
         # A misspelled step would schedule something that never comes due -- a
         # card that reads "at the beginning of the next upkeep, draw a card" and

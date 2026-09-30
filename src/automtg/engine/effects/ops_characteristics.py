@@ -320,6 +320,14 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     # have no printed line of its own to claim -- the residual gate's objection,
     # and the reason Raging Ravine still fails.
     your_turn_keywords = [str(k) for k in spec.get("your_turn_keywords", ())]
+    # "Target artifact or creature loses all abilities and **becomes a green Elk
+    # creature with base power and toughness 3/3**." Oko, Thief of Crowns. No
+    # printed duration, so `duration: "permanent"` -- the loader refuses any
+    # other spelling than the pair `gain_control` takes -- and no "in addition
+    # to its other types", so `exact`: the colours, card types and creature
+    # types named replace the permanent's own.
+    permanent = spec.get("duration", "until_end_of_turn") == "permanent"
+    exact = bool(spec.get("exact", False))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Animate")
     for oid in oids:
         animate(
@@ -332,9 +340,11 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
             colors=colors,
             your_turn_keywords=your_turn_keywords,
             source=ctx.source_oid,
+            permanent=permanent,
+            exact=exact,
         )
         for keyword in keywords:
-            grant_keyword(ctx.state, oid, keyword, source=ctx.source_oid)
+            grant_keyword(ctx.state, oid, keyword, source=ctx.source_oid, permanent=permanent)
 
 
 @register("monstrosity")

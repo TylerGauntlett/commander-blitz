@@ -18388,3 +18388,35 @@ stronger card.
   not off an opponent's, and not for less mana; a non-planeswalker spell and an
   activated ability are not loosened; the Orrery still reaches both; the loader
   accepts the filter and refuses `controller`, an empty filter and `affects`.
+
+## An indefinite animation that sets what it becomes — 611.2a / 613.1d-e / 613.4b
+
+### Overview
+
+Oko, Thief of Crowns: "Target artifact or creature loses all abilities and
+becomes a green Elk creature with base power and toughness 3/3." `animate` wore
+off at cleanup and added types ("it's still a land"). Oko prints no duration,
+and per its rulings the target loses its other colours, card types and creature
+types but keeps its supertypes.
+
+### Tier: B — a continuous effect with a new lifetime
+
+`animate` gained `duration` (`"until_end_of_turn"`, the default, or `"permanent"`,
+the same spellings as `gain_control`) and `exact`. A permanent animation goes on
+the new `GameObject.animations` list, which cleanup does not sweep and
+`reset_permanent_state` clears. `TempEffect` gained `exact` and a `timestamp`
+from `GameState.alloc_timestamp`. `characteristics._compute` applies timed and
+permanent animations together in timestamp order, so the later one sets the base
+P/T. An `exact` animation replaces colours and card types, and it replaces
+creature types too, dropping any subtype whose card type is gone (205.1b). The
+loader refuses an unknown `duration`, a non-boolean `exact` and
+`your_turn_keywords` on a permanent animation.
+
+### Tests
+
+- `tests/unit/test_permanent_animate.py` — an Oko'd Sol Ring is only a green Elk
+  creature 3/3 and taps for nothing; a Goblin stops being a Goblin and red; a
+  legend stays legendary; a Forest stops being a land and a Forest; an anthem,
+  counters and pumps add to the 3/3; the later of a timed and a permanent
+  animation sets the size, and the timed one still ends at cleanup; the Elk
+  survives cleanup; leaving the battlefield ends it; the loader guards.

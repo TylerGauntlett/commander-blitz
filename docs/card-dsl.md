@@ -9885,6 +9885,37 @@ animated land played this turn correctly stops making mana too.
 `{T}` is *not* part of the cost — a manland that is tapped for mana cannot then
 attack, and that falls out of the tap rather than being written down.
 
+### "…becomes a green Elk creature with base power and toughness 3/3"
+
+Oko, Thief of Crowns' +1 is the same op with two flags:
+
+```jsonc
+{ "op": "lose_all_abilities", "objects": { "target": "t1" } },
+{ "op": "animate",
+  "power": { "const": 3 }, "toughness": { "const": 3 },
+  "types": ["Creature"], "subtypes": ["Elk"], "colors": ["G"],
+  "duration": "permanent",   // no printed duration; default "until_end_of_turn"
+  "exact": true,             // replaces colours, card types and creature types
+  "objects": { "target": "t1" } }
+```
+
+- **`duration`** takes `gain_control`'s two spellings, and anything else is a
+  load error, because a misspelt `"until_end_of_turn"` would read as the
+  permanent animation, which is the strictly better card. A permanent animation
+  sits on `GameObject.animations`, which cleanup never sweeps. It ends when the
+  permanent changes zones. Its `keywords` are granted for as long as the
+  permanent lasts. `your_turn_keywords` is refused on it.
+- **`exact`** is the difference between "it's still a land" and "becomes a green
+  Elk creature". The colours become exactly `colors` and the card types exactly
+  `types`. The creature types become exactly `subtypes`, and a non-creature
+  subtype whose card type is gone goes with it (205.1b). Supertypes stay, so an
+  Oko'd legend is a legendary Elk.
+
+Every animation carries a timestamp, and timed and permanent animations are
+applied together in that order, so the later one sets the base P/T. Oko then a
+creature-land's own animation gives the 4/4 for the turn and the 3/3 Elk
+afterwards.
+
 ## Monstrosity, and holding creatures down
 
 ```jsonc

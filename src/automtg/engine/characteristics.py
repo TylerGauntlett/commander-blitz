@@ -357,12 +357,35 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     and it would erase an anthem, put after the counters and it would
         #     erase them too.  Here, everything below layers on top, which is
         #     what the real layer system does with a 7b effect.
-        for temp in obj.until_eot:
-            if temp.kind != "animate":
-                continue
-            types.update(temp.types)
+        #
+        #     Timed and indefinite animations (Oko's Elk, `obj.animations`) are
+        #     read together in timestamp order, so whichever began later sets
+        #     the base size -- a creature-land animated and then Oko'd is a 3/3
+        #     Elk for the turn, and one Oko'd and then animated is the 4/4.
+        #
+        #     An `exact` animation replaces rather than adds: its colours become
+        #     exactly these, its card types exactly these, and its creature
+        #     types exactly these ("becomes a green Elk creature"). Subtypes of
+        #     a card type it no longer has go with that type (205.1b, the rule
+        #     `set_types` below applies too); supertypes are untouched.
+        animations = sorted(
+            (*obj.animations, *(t for t in obj.until_eot if t.kind == "animate")),
+            key=lambda t: t.timestamp,
+        )
+        for temp in animations:
+            if temp.exact:
+                types = set(temp.types)
+                subtypes = {
+                    sub
+                    for sub in subtypes
+                    if SUBTYPE_CLASS.get(sub, "Creature") in types
+                    and SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
+                }
+                colors = set(temp.colors)
+            else:
+                types.update(temp.types)
+                colors.update(temp.colors)
             subtypes.update(temp.subtypes)
-            colors.update(temp.colors)
             power = temp.power
             toughness = temp.toughness
 

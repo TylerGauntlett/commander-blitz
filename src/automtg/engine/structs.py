@@ -104,6 +104,19 @@ class TempEffect:
     #: everywhere else; "is it my turn" is a pipeline *input* the way a counter
     #: or a tapped flag is, so it can be read without opening that door.
     only_your_turn: bool = False
+    #: For ``kind == "animate"``: the colours, card types and creature types
+    #: named *replace* the permanent's own rather than adding to them. Oko,
+    #: Thief of Crowns: "becomes a green Elk creature with base power and
+    #: toughness 3/3" -- an Oko'd artifact stops being an artifact and an Oko'd
+    #: Goblin stops being a Goblin, per the card's rulings. Supertypes are never
+    #: touched: an Oko'd legend is a legendary Elk.
+    exact: bool = False
+    #: For ``kind == "animate"``: when it began (613.7), from
+    #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
+    #: later one wins, which has to be decidable across the two lists an
+    #: animation can live in -- `until_eot`, and `GameObject.animations` for one
+    #: with no duration -- so list order alone cannot answer it.
+    timestamp: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -117,6 +130,7 @@ class TempEffect:
             "colors": list(self.colors),
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
+            "exact": self.exact,
         }
 
 

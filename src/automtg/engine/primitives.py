@@ -1488,6 +1488,8 @@ def animate(
     keywords: Sequence[str] = (),
     your_turn_keywords: Sequence[str] = (),
     source: int | None = None,
+    permanent: bool = False,
+    exact: bool = False,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
 
@@ -1498,24 +1500,42 @@ def animate(
 
     Types and subtypes are added rather than replacing what is printed.  Every
     card that says this also says "it's still a land", so the additive reading is
-    the ordinary case and there is nothing to opt into.
+    the ordinary case.
+
+    ``permanent`` and ``exact`` are the other sentence: Oko, Thief of Crowns'
+    "target artifact or creature ... becomes a green Elk creature with base
+    power and toughness 3/3". No duration, so the entry goes on
+    `GameObject.animations`, which cleanup does not sweep; and no "in addition
+    to its other types", so the colours, card types and creature types named
+    replace the permanent's own (`TempEffect.exact`). Its keywords, if any, are
+    granted for as long as the permanent lasts. A your-turn-only keyword has no
+    permanent form and is refused rather than silently timed.
     """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(
-        TempEffect(
-            kind="animate",
-            power=power,
-            toughness=toughness,
-            types=tuple(types),
-            subtypes=tuple(subtypes),
-            colors=tuple(colors),
-            source=source,
-        )
+    if permanent and your_turn_keywords:
+        raise ValueError("animate: your_turn_keywords has no permanent form")
+    effect = TempEffect(
+        kind="animate",
+        power=power,
+        toughness=toughness,
+        types=tuple(types),
+        subtypes=tuple(subtypes),
+        colors=tuple(colors),
+        source=source,
+        exact=exact,
+        timestamp=state.alloc_timestamp(),
     )
+    if permanent:
+        obj.animations.append(effect)
+        obj.granted_keywords.update(keywords)
+        state.bump_chars()
+        _stats_changed(state, obj, power=power, toughness=toughness)
+        return
+    obj.until_eot.append(effect)
     # Keywords the animated body carries. `your_turn_keywords` is the quoted
     # half of the Restless cycle -- "with \"During your turn, this creature has
     # first strike\"" -- and it has to ride the animation rather than be a
