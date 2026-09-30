@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "narset_parter_of_veils",
+    "name": "Narset, Parter of Veils",
+    "oracle_text": "Each opponent can't draw more than one card each turn.\n−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+    "mana_cost": "{1}{U}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Narset"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "loyalty": 5,
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Each opponent can't draw more than one card each turn.",
+        "effect": "draw_limit",
+        "affects_player": "opponent",
+        "amount": {"const": 1}
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+        "cost": {"loyalty": -2},
+        "effects": [
+          {
+            "op": "look_at_top",
+            "amount": {"const": 4},
+            "objects": {"count": 1, "optional": true, "not_types": ["Creature", "Land"]},
+            "destination": "hand",
+            "rest_to_bottom": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "loyalty", "amount": 5}
+  }
+}
