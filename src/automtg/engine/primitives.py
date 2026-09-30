@@ -1918,6 +1918,19 @@ def clear_until_next_turn(state: GameState, player: int) -> None:
     effects (702.26d), and anything that has left the battlefield has had
     ``until_eot`` emptied already.
     """
+    # "Until your next turn, whenever ..." -- the event-watching delayed
+    # abilities on the same clock (Tamiyo, Field Researcher; Vraska the
+    # Unseen), keyed by the player who created them.
+    if state.delayed_triggers:
+        state.delayed_triggers = [
+            d
+            for d in state.delayed_triggers
+            if not (
+                d.trigger is not None
+                and d.duration == "until_your_next_turn"
+                and d.controller == player
+            )
+        ]
     changed = False
     for obj in state.objects.values():
         if not obj.until_eot:

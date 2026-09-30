@@ -11080,6 +11080,28 @@ first time a creature dies this turn") needs a third entry in
 `structs.DELAYED_DURATIONS`, not a different reading of these two. No such card is
 in the pool; when one arrives, that is where it goes.
 
+#### `until_your_next_turn`, and a subject of more than one object
+
+```jsonc
+// Tamiyo, Field Researcher — +1 (targets: t1, up to two creatures)
+{ "op": "delayed_trigger", "duration": "until_your_next_turn",
+  "trigger": { "event": "deals_combat_damage_to_player", "controller": "any",
+               "subject": { "target": "t1" } },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+The fourth duration is `this_turn`'s repeating subscription on 611.2b's clock:
+it fires every time, `turn._cleanup_step` leaves it alone, and
+`primitives.clear_until_next_turn` drops it in its **controller's** untap step (so
+a pod's other seats do not end it) and when that controller leaves the game.
+
+`subject` now keeps **every** object it resolves to, and any one of them firing is
+a match — "whenever **either** of those creatures". It used to keep `chosen[0]`
+and silently watch one of two. A subject that leaves the battlefield is struck out
+of the scope by `zones.move_object` (400.7: an oid survives the zone change, the
+object does not), and a subscription whose last subject left is dropped rather
+than read as unscoped.
+
 #### Why this is a `delayed_trigger` and not a duration on `exile`
 
 `link` is the same record under a neutral name, and **only** a record. Written

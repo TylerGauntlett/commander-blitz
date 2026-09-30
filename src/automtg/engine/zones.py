@@ -255,6 +255,7 @@ def move_object(
 
     if was_on_battlefield:
         _detach_all(state, oid)
+        _release_delayed_subject(state, oid)
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
@@ -1321,3 +1322,32 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
         "subtypes": sorted(c.subtypes),
         "colors": sorted(c.colors),
     }
+
+
+def _release_delayed_subject(state: GameState, oid: int) -> None:
+    """Strike a departing permanent out of every delayed ability watching it.
+
+    "Whenever **that creature** deals combat damage" names an *object*, and a
+    permanent that leaves the battlefield and comes back is a new one (400.7) --
+    but an oid survives every zone change, so a subscription still holding it
+    would go on watching the reanimated creature. Harmless while every scoped
+    subscription ended at cleanup; not once "until your next turn" (Tamiyo,
+    Field Researcher) lets one outlive the turn the creature died in.
+
+    A subscription whose last subject has left is dropped outright: an empty
+    scope would otherwise read as "no scope", which is every creature.
+    """
+    if not state.delayed_triggers:
+        return
+    from dataclasses import replace
+
+    kept = []
+    for delayed in state.delayed_triggers:
+        subjects = delayed.subject_oids
+        if subjects is None or oid not in subjects:
+            kept.append(delayed)
+            continue
+        remaining = tuple(s for s in subjects if s != oid)
+        if remaining:
+            kept.append(replace(delayed, subject_oids=remaining))
+    state.delayed_triggers = kept

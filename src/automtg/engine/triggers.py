@@ -586,7 +586,7 @@ def _delayed_matches(
         return False
 
     subject = _subject_oid(spec.event, event)
-    if delayed.subject_oid is not None and subject != delayed.subject_oid:
+    if delayed.subject_oids is not None and subject not in delayed.subject_oids:
         # "Whenever **that creature**…". The scope is the whole difference
         # between Hunter's Insight and a card that draws off every creature you
         # control, and it is compared against the event's *subject* -- which for

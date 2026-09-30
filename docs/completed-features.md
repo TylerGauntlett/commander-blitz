@@ -18822,3 +18822,44 @@ Liliana, the Last Hope; Sorin, Solemn Visitor; Nissa, Vital Force; Dovin Baan's 
   haste creature and land and then reverting; an eliminated controller's entries
   dropped and another seat's left alone; and the loader accepting both durations
   and refusing a misspelled one on each op.
+
+## Capability: delayed triggers that last "until your next turn" and watch more than one object
+
+### What was missing
+
+Tamiyo, Field Researcher's +1 -- "choose up to two target creatures. Until your
+next turn, whenever either of those creatures deals combat damage, you draw a
+card" -- and Vraska the Unseen's +1 install a delayed triggered ability that must
+be live on the opponents' turns. `delayed_trigger` had `this_turn` and
+`once_this_turn` (gone at cleanup) and `until_it_fires` (one firing, no end), and
+its `subject` resolved the selector and kept only the first object, so "either of
+those creatures" watched one.
+
+### How it works
+
+- `DELAYED_DURATIONS` gains `until_your_next_turn`. `_arm_delayed` treats it as
+  repeating, `turn._cleanup_step` keeps it, and `clear_until_next_turn` (the
+  helper the TempEffect capability added) drops the creating player's entries in
+  their untap step and on elimination.
+- `DelayedTrigger.subject_oid` became `subject_oids`, a tuple; `_delayed_matches`
+  asks membership.
+- `zones._release_delayed_subject` strikes a departing permanent out of every
+  scope (400.7) and drops a subscription with no subject left -- necessary now
+  that a scoped subscription can outlive the turn its creature died in.
+
+### Unblocks
+
+The duration half of Tamiyo, Field Researcher and Vraska the Unseen. Tamiyo also
+needs the "deals combat damage" (any recipient) trigger event; Vraska a scope on
+the damaged permanent and its token.
+
+### Tests
+
+- `tests/unit/test_delayed_trigger_until_your_next_turn.py` (14) -- either of two
+  subjects fires it and a third creature does not; it fires every time; it is live
+  on the opponent's turn and gone once the controller's next turn begins; a third
+  seat's turn does not end it; a `this_turn` subscription beside it still ends at
+  cleanup; a subject that dies and returns is no longer watched while the other
+  still is; the last subject leaving drops the subscription; an eliminated
+  controller's subscription is dropped and another seat's kept; and the loader
+  takes the duration with a two-target scope.

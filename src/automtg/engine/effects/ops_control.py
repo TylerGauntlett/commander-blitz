@@ -998,7 +998,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # would be nothing left to resolve it against. `choose_objects` is not
     # reached: the object is already chosen, as a target or a binding, and this
     # only reads which.
-    subject_oid = None
+    subject_oids = None
     if (subject := trigger.get("subject")) is not None:
         from .selectors import resolve_pool
 
@@ -1009,7 +1009,10 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
             # what the printed card says rather than a reason to watch
             # everything.
             return
-        subject_oid = chosen[0]
+        # Every object it resolved to: "whenever **either** of those
+        # creatures" (Tamiyo, Field Researcher) is scoped to the whole set, and
+        # keeping only the first would silently watch one of two.
+        subject_oids = tuple(dict.fromkeys(chosen))
     state.delayed_triggers.append(
         DelayedTrigger(
             step="",
@@ -1024,7 +1027,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 controller=str(trigger.get("controller", "you")),
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
-            subject_oid=subject_oid,
+            subject_oids=subject_oids,
             duration=str(spec.get("duration", "this_turn")),
         )
     )

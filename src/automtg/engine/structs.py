@@ -1105,7 +1105,15 @@ class DelayedTrigger:
     #: ``None`` is every delayed trigger printed before this one: Forth
     #: Eorlingas! watches *any* creature you control, so a scope would be a
     #: strictly narrower card.
-    subject_oid: int | None = None
+    #:
+    #: A **tuple**, because "choose up to two target creatures ... whenever
+    #: **either** of those creatures deals combat damage" (Tamiyo, Field
+    #: Researcher) watches every object the subject resolved to, and any one of
+    #: them firing is a match. An object that leaves the battlefield is struck
+    #: out of it by `zones.move_object` (400.7: it comes back a new object), and
+    #: a subscription whose last subject left is dropped -- which matters once
+    #: the subscription outlives the turn.
+    subject_oids: tuple[int, ...] | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
 
@@ -1144,7 +1152,15 @@ class DelayedTrigger:
 #: `until_it_fires` outlives the turn, so a Stormcaller whose controller casts
 #: nothing cheap copies a spell on some later turn instead.  Both were measured
 #: in a real game rather than reasoned about.
-DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn")
+#: ``until_your_next_turn``
+#:     "**Until your next turn**, whenever either of those creatures deals combat
+#:     damage, you draw a card" (Tamiyo, Field Researcher); "until your next
+#:     turn, whenever a creature deals combat damage to Vraska, destroy that
+#:     creature" (Vraska the Unseen). `this_turn`'s repeating subscription on
+#:     611.2b's clock: it fires **every** time, `turn._cleanup_step` leaves it
+#:     alone, and `primitives.clear_until_next_turn` drops it in its
+#:     controller's untap step -- and when that controller leaves the game.
+DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn", "until_your_next_turn")
 
 
 @dataclass(frozen=True)

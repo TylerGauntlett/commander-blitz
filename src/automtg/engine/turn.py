@@ -820,7 +820,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     state.delayed_triggers = [
         d
         for d in state.delayed_triggers
-        if d.trigger is None or d.duration == "until_it_fires"
+        # "Until your next turn, whenever ..." survives this cleanup too; its
+        # own clock is `clear_until_next_turn`, in the untap step.
+        if d.trigger is None or d.duration in ("until_it_fires", "until_your_next_turn")
     ]
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
