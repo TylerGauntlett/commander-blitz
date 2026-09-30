@@ -3279,6 +3279,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: replace_proliferate takes 'affects_player' and an "
             f"optional 'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "draw_limit":
+        # "Can't draw more than one card each turn" names players and a number.
+        # Without the number `_static_value` reads 0 and the card becomes
+        # "can't draw cards" -- a strictly harsher lock than Narset prints --
+        # and a permanent filter has nothing to mean on a draw.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: draw_limit needs an 'amount' -- the most cards the "
+                f"named players may draw each turn"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: draw_limit takes 'affects_player', 'amount' and an "
+                f"optional 'condition', and no 'affects'"
+            )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")

@@ -38,7 +38,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .enums import Zone
 from .events import EventType
-from .player_statics import draw_replacements, wins_on_empty_draw
+from .player_statics import draw_cap, draw_replacements, wins_on_empty_draw
 from .primitives import discard_cards, draw_cards, mill_cards
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -81,6 +81,15 @@ def _draw_one(
     dredge again. Every ordering the player could choose is one of those paths.
     Two doublers commute, so their order is not asked.
     """
+    # "Each opponent can't draw more than one card each turn" (Narset, Parter
+    # of Veils). A draw past the cap does not happen, and asked **first**
+    # because an event that cannot happen cannot be replaced either: no dredge,
+    # no empty-library win, no doubler turning it into two draws that would
+    # each be refused anyway. Nothing is attempted, so an empty library under
+    # the cap is not the 104.3c "will lose" attempt either.
+    cap = draw_cap(state, pid)
+    if cap is not None and state.cards_drawn_this_turn.get(pid, 0) >= cap:
+        return []
     replaced = yield from _dredge(state, pid)
     if replaced:
         return []

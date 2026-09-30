@@ -495,6 +495,15 @@ STATIC_EFFECTS = frozenset(
         # forbidden gain.  Not `lock_life_total`, which is a one-shot op with a
         # duration and forbids a loss as well.
         "cant_gain_life",
+        # Narset, Parter of Veils; Spirit of the Labyrinth.  "Each opponent
+        # can't draw more than one card each turn."  A cap on a *player's*
+        # draws, counted against `cards_drawn_this_turn` -- every card drawn
+        # that turn, including the ones drawn before the static existed.  Not a
+        # replacement: a draw past the cap does not happen at all, so it is
+        # asked in `replacements._draw_one` *before* dredge, the empty-library
+        # win and the doublers, none of which may replace a draw that cannot
+        # occur.  `amount` is the cap and is required.
+        "draw_limit",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -636,6 +645,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_as_though_flash",
         "cast_only_at_sorcery_speed",
         "cant_gain_life",
+        "draw_limit",
     }
 )
 

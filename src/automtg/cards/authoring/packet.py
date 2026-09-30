@@ -701,6 +701,11 @@ def reference() -> dict:
             " lifelink included, and no life-gain trigger fires; it beats a"
             " `replace_life_gain`. \"Damage can't be prevented\" and \"your"
             " life total can't change\" are other effects.",
+            "\"Each opponent can't draw more than one card each turn\" is the"
+            " player-wide static `draw_limit` with `affects_player:"
+            " \"opponent\"` and `amount: {\"const\": 1}` (\"each player\" is"
+            " `\"any\"`). It counts every card drawn that turn, and a draw past"
+            " the cap simply does not happen.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

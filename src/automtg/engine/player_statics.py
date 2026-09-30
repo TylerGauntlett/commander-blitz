@@ -193,6 +193,24 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def draw_cap(state: GameState, pid: int) -> int | None:
+    """The most cards ``pid`` may draw this turn, or ``None`` for no cap (`draw_limit`).
+
+    Narset, Parter of Veils: "Each opponent can't draw more than one card each
+    turn." The cap is on the turn, not on the time the static has existed, so
+    the caller compares it with `cards_drawn_this_turn` -- a card drawn before
+    Narset entered still counts (the printed ruling). Two caps are the smaller
+    of them: each is a separate "can't", and both have to be obeyed.
+    """
+    cap: int | None = None
+    for obj, static in _active_player_statics(state, "draw_limit"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        amount = max(0, _static_value(state, static.get("amount"), obj))
+        cap = amount if cap is None else min(cap, amount)
+    return cap
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 

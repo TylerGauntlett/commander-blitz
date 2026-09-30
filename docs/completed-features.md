@@ -18207,3 +18207,29 @@ planeswalker's last loyalty. `tests/cards/test_every_card_works.py` gained
   harmful first; forced choices are not asked; the agent takes the harmful
   counter first; the loader refuses a missing count, a named kind and a bad
   selector key; it is not a tap-only cost.
+
+## A cap on draws — "Each opponent can't draw more than one card each turn" — 101.2 / 121.2
+
+### Overview
+
+Narset, Parter of Veils. The draw family had doublers (`replace_draw`), a skipped
+draw step and an empty-library win, and nothing that forbade a draw.
+
+### Tier: B — a player-wide static read at the one draw seam
+
+`draw_limit` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`; the loader
+requires `amount` (the cap) and refuses `affects`. `player_statics.draw_cap`
+returns the smallest cap reaching the player, and `replacements._draw_one`
+refuses a draw once `cards_drawn_this_turn` has reached it — before dredge, the
+empty-library win and the doublers, because a draw that cannot happen cannot be
+replaced. Every post-opening-hand draw, the draw step included, passes there.
+
+### Tests
+
+- `tests/unit/test_draw_limit.py` — one draw then none; draw three is one; the
+  controller is uncapped under "each opponent" and capped under "each player";
+  a draw made before the static arrived counts; a new turn resets it; an upkeep
+  draw uses up the draw step's card; a doubled draw yields one; dredge is not
+  offered past the cap but is under it; an empty library neither wins (Lab
+  Maniac) nor loses past the cap; it lifts when the source leaves; the loader
+  requires `affects_player` and `amount` and refuses `affects`.

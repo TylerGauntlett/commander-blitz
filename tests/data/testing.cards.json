@@ -13768,6 +13768,58 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_narset_limit",
+      "name": "Test Narset Limit",
+      "oracle_text": "Each opponent can't draw more than one card each turn.",
+      "mana_cost": "{1}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each opponent can't draw more than one card each turn.",
+          "effect": "draw_limit",
+          "affects_player": "opponent",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_labyrinth_limit",
+      "name": "Test Labyrinth Limit",
+      "oracle_text": "Each player can't draw more than one card each turn.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each player can't draw more than one card each turn.",
+          "effect": "draw_limit",
+          "affects_player": "any",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
     }
   ]
 }

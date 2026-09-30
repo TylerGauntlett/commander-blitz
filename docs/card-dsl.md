@@ -5873,6 +5873,25 @@ proliferate has no number in it, so each repetition is a whole proliferate with
 its own choice, asked after the one before it resolved. Two of them compound to
 four (616.1), each applying once (614.5).
 
+## "Can't draw more than one card each turn"
+
+    Narset, Parter of Veils — "Each opponent can't draw more than one card each
+    turn." (Spirit of the Labyrinth: "Each player …", `affects_player: "any"`.)
+
+```jsonc
+{ "kind": "static", "effect": "draw_limit", "affects_player": "opponent",
+  "amount": { "const": 1 } }
+```
+
+A player-wide cap, read in `replacements._draw_one` through
+`player_statics.draw_cap` against the turn's `cards_drawn_this_turn` ledger, so a
+card drawn before the static arrived still counts. A draw past the cap does not
+happen (101.2) and is asked **before** dredge, `replace_empty_draw` and
+`replace_draw` — a draw that cannot happen cannot be replaced, so a doubled draw
+yields only the card the cap still allows, and a refused draw from an empty
+library is no 104.3c attempt. `amount` is required (absent it would read 0,
+"can't draw cards"); `affects` is refused. Two caps are the smaller.
+
 ## Not untapping at all
 
     Back to Basics — "Nonbasic lands don't untap during their controllers'
@@ -5945,6 +5964,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
+{ "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
