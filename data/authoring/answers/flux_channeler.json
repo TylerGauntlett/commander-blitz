@@ -1,0 +1,46 @@
+{
+  "card": {
+    "color_identity": [
+      "U"
+    ],
+    "colors": [
+      "U"
+    ],
+    "id": "flux_channeler",
+    "mana_cost": "{2}{U}",
+    "name": "Flux Channeler",
+    "oracle_text": "Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+    "power": 2,
+    "subtypes": [
+      "Human",
+      "Wizard"
+    ],
+    "toughness": 2,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a noncreature spell, proliferate.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "proliferate"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

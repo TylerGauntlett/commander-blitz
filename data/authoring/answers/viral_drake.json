@@ -1,0 +1,44 @@
+{
+  "card": {
+    "color_identity": [
+      "U"
+    ],
+    "colors": [
+      "U"
+    ],
+    "id": "viral_drake",
+    "keywords": [
+      "flying",
+      "infect"
+    ],
+    "mana_cost": "{3}{U}",
+    "name": "Viral Drake",
+    "oracle_text": "Flying\nInfect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\n{3}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+    "power": 1,
+    "subtypes": [
+      "Phyrexian",
+      "Drake"
+    ],
+    "toughness": 4,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{3}{U}: Proliferate.",
+        "cost": {
+          "mana": "{3}{U}"
+        },
+        "effects": [
+          {
+            "op": "proliferate"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

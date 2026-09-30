@@ -1,0 +1,57 @@
+{
+  "card": {
+    "color_identity": [
+      "B",
+      "G",
+      "U",
+      "W"
+    ],
+    "colors": [
+      "B",
+      "G",
+      "U",
+      "W"
+    ],
+    "id": "atraxa_praetors_voice",
+    "keywords": [
+      "flying",
+      "vigilance",
+      "deathtouch",
+      "lifelink"
+    ],
+    "mana_cost": "{G}{W}{U}{B}",
+    "name": "Atraxa, Praetors' Voice",
+    "oracle_text": "Flying, vigilance, deathtouch, lifelink\nAt the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+    "power": 4,
+    "subtypes": [
+      "Phyrexian",
+      "Angel",
+      "Horror"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "toughness": 4,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, proliferate.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "proliferate"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}
