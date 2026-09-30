@@ -504,6 +504,14 @@ STATIC_EFFECTS = frozenset(
         # win and the doublers, none of which may replace a draw that cannot
         # occur.  `amount` is the cap and is required.
         "draw_limit",
+        # Ashiok, Dream Render.  "Spells and abilities your opponents control
+        # can't cause their controller to search their library."  A player-wide
+        # prohibition on one precise search: the named player searching **their
+        # own** library because a spell or ability **they** control said so.
+        # Read by `ops_cards._search` through `player_statics.search_forbidden`;
+        # the library drops out of the pool and the rest of the effect -- the
+        # shuffle included -- still happens.
+        "cant_search_library",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -646,6 +654,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_only_at_sorcery_speed",
         "cant_gain_life",
         "draw_limit",
+        "cant_search_library",
     }
 )
 

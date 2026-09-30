@@ -5892,6 +5892,23 @@ yields only the card the cap still allows, and a refused draw from an empty
 library is no 104.3c attempt. `amount` is required (absent it would read 0,
 "can't draw cards"); `affects` is refused. Two caps are the smaller.
 
+## "Can't cause their controller to search their library"
+
+    Ashiok, Dream Render — "Spells and abilities your opponents control can't
+    cause their controller to search their library."
+
+```jsonc
+{ "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
+```
+
+A player-wide prohibition read by `search_library` and `search_zones` through
+`player_statics.search_forbidden`: when the searching player is both named by
+the static and the controller of the resolving spell or ability, their library
+drops out of the pool. Everything else still happens — a graveyard half of an
+"and/or" search is searched, and the shuffle is performed. My spell making an
+opponent search (Path to Exile) is not named. Takes `affects_player` and an
+optional `condition`; `affects` and `amount` are refused.
+
 ## Not untapping at all
 
     Back to Basics — "Nonbasic lands don't untap during their controllers'
@@ -5965,6 +5982,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
+{ "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }

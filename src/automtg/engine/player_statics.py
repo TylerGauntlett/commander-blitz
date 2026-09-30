@@ -211,6 +211,24 @@ def draw_cap(state: GameState, pid: int) -> int | None:
     return cap
 
 
+def search_forbidden(state: GameState, searcher: int, cause_controller: int | None) -> bool:
+    """May ``searcher`` not search their own library right now (`cant_search_library`)?
+
+    Ashiok, Dream Render: "Spells and abilities your opponents control can't
+    cause **their controller** to search **their** library." Only the case where
+    the searcher is the controller of the spell or ability doing the asking: my
+    Path to Exile making an opponent search is not named, and neither is an
+    opponent's effect searching somebody else's library -- the caller asks this
+    only about the searcher's own library.
+    """
+    if cause_controller is None or cause_controller != searcher:
+        return False
+    return any(
+        _reaches_player(obj, static, searcher)
+        for obj, static in _active_player_statics(state, "cant_search_library")
+    )
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 

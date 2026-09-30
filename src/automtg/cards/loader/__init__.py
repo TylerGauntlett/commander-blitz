@@ -3279,6 +3279,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: replace_proliferate takes 'affects_player' and an "
             f"optional 'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "cant_search_library" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # "…can't cause their controller to search their library" names players
+        # and nothing else; a filter ("search for creature cards") or a size
+        # written here would load clean and forbid every search.
+        raise DslError(
+            f"{where}: cant_search_library takes 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes

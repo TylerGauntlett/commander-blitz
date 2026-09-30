@@ -706,6 +706,10 @@ def reference() -> dict:
             " \"opponent\"` and `amount: {\"const\": 1}` (\"each player\" is"
             " `\"any\"`). It counts every card drawn that turn, and a draw past"
             " the cap simply does not happen.",
+            "\"Spells and abilities your opponents control can't cause their"
+            " controller to search their library\" is the player-wide static"
+            " `cant_search_library` with `affects_player: \"opponent\"`. Their"
+            " own searches find nothing in their library but still shuffle.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

@@ -13820,6 +13820,31 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_ashiok_lock",
+      "name": "Test Ashiok Lock",
+      "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.",
+      "mana_cost": "{1}{U}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause their controller to search their library.",
+          "effect": "cant_search_library",
+          "affects_player": "opponent"
+        }
+      ]
     }
   ]
 }

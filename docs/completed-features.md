@@ -18233,3 +18233,27 @@ replaced. Every post-opening-hand draw, the draw step included, passes there.
   offered past the cap but is under it; an empty library neither wins (Lab
   Maniac) nor loses past the cap; it lifts when the source leaves; the loader
   requires `affects_player` and `amount` and refuses `affects`.
+
+## A search that cannot happen — "Spells and abilities your opponents control can't cause their controller to search their library" — 101.2 / 701.19
+
+### Overview
+
+Ashiok, Dream Render. The player-wide "can't" statics covered casting,
+activating and life gain; nothing forbade a library search.
+
+### Tier: B — a player-wide static read by the search op
+
+`cant_search_library` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`;
+the loader refuses `affects` and `amount`. `player_statics.search_forbidden`
+answers whether a searcher is barred, true only when the searcher controls the
+resolving spell or ability and a static reaches them. `ops_cards._search` then
+leaves their library out of the pool; the shuffle and every other zone of the
+search still happen.
+
+### Tests
+
+- `tests/unit/test_cant_search_library.py` — an opponent's tutor finds nothing,
+  still shuffles and the rest of the spell resolves; the graveyard half of an
+  "and/or" search is still searched; the static's controller searches freely; my
+  spell making the opponent search is not stopped; it lifts when the source
+  leaves; the loader requires `affects_player` and refuses `affects`/`amount`.

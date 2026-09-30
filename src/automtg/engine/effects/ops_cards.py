@@ -9,6 +9,7 @@ from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
+from ..player_statics import search_forbidden
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object, offer_enters_replacement, offer_riot_choice
 from . import register
@@ -321,7 +322,14 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     found: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         pool: list[int] = []
+        # "Spells and abilities your opponents control can't cause their
+        # controller to search their library" (Ashiok, Dream Render). The
+        # library drops out of the pool and nothing else does: a graveyard half
+        # is still searched, and the shuffle below still happens.
+        barred = search_forbidden(ctx.state, pid, ctx.controller)
         for zone_name in zones:
+            if barred and zone_name == "library":
+                continue
             zone = ZONE_NAMES[zone_name]
             pool.extend(
                 oid
