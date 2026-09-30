@@ -395,6 +395,38 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("must_attack_planeswalker")
+def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "During target opponent's next turn, creatures that player controls
+    attack Gideon Jura if able." (Gideon Jura +2.)
+
+    A requirement naming **one attack target**, which nothing else could say:
+    `must_attack` flags the creatures on the battlefield at resolution, lasts
+    `this_turn`/`next_combat` and names no defender; the `attacks_if_able`
+    static and goad name no planeswalker either (goad points *away* from a
+    player). The creatures are the player's *during that turn*, arrivals
+    included, so the mark goes on the planeswalker and is read live by
+    `combat.required_attack_walkers`.
+
+    ``player`` is the compelled player (normally ``{"target": "t1"}``);
+    ``objects`` names the planeswalker to be attacked -- ``{"self_only": true}``
+    for Gideon Jura. Both required by the loader. The mark is pending until
+    that player's next untap step and ends in that turn's cleanup; it ends early
+    if the planeswalker leaves (400.7).
+    """
+    from ..primitives import require_attack_on
+
+    walkers = [
+        oid
+        for oid in resolve_pool(ctx, spec.get("objects") or {})
+        if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
+    ]
+    for pid in _players(ctx, spec["player"]):
+        for walker in walkers:
+            require_attack_on(ctx.state, walker, pid)
+    yield from ()
+
+
 @register("cant_attack_player")
 def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "You can't attack that player this turn." "They can't attack you this combat."

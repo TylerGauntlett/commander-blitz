@@ -177,7 +177,14 @@ def attack_required(state: GameState, oid: int) -> bool:
     # `must_attack` with a third duration.
     #
     # All three are "…if able", so all three go through `can_attack` below.
-    if not attack_compelled(state, oid) and not obj.goaded_by:
+    # A fourth: Gideon Jura's mark on a planeswalker, read live for its turn
+    # (`required_attack_walkers`), which also catches creatures that arrived
+    # after the ability resolved.
+    if (
+        not attack_compelled(state, oid)
+        and not obj.goaded_by
+        and not required_attack_walkers(state, oid)
+    ):
         if obj.must_attack is None:
             return False
         if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
@@ -316,6 +323,38 @@ def attack_target_forbidden(
     then let creatures attack.
     """
     obj = state.objects.get(oid)
+    if _attack_prohibited(state, oid, defender, permanent=permanent):
+        return True
+    # "During target opponent's next turn, creatures that player controls
+    # attack Gideon Jura if able" -- a requirement naming one attack target.
+    # Asked after the prohibitions, which a requirement never overrides
+    # (508.1d: "if able"), and before goad, with which it is weighed below.
+    if obj is not None and (required := required_attack_walkers(state, oid)):
+        return _misses_attack_requirements(state, oid, defender, permanent, required)
+    # Goad's second half (701.38a): "…and attacks a player other than you if
+    # able". `defender` is the defending *player* for both attack kinds -- a
+    # planeswalker's or battle's controller is the defending player (506.2) and
+    # `legal_permanent_defenders` passes it -- so one membership test covers
+    # the walker as well as the seat, which is what "goad reaches planeswalkers"
+    # means in code.
+    #
+    # "…if able" is the guard, and it is the difference between a restriction and
+    # a rule that can make a declaration impossible: with the goader the only
+    # thing left to attack, the creature attacks the goader.
+    if obj is not None and obj.goaded_by and defender in obj.goaded_by:
+        return _has_non_goader_defender(state, oid, obj.goaded_by)
+    return False
+
+
+def _attack_prohibited(
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
+) -> bool:
+    """The *prohibitions* half of `attack_target_forbidden` -- no requirements.
+
+    Split out so the requirement checks can ask "could this creature attack
+    there at all?" without re-entering the requirement logic that is asking.
+    """
+    obj = state.objects.get(oid)
     if state.attack_restrictions and obj is not None:
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
@@ -337,21 +376,86 @@ def attack_target_forbidden(
     # card that does not exist, and the over-reading is in the safe direction --
     # a battle that cannot be attacked is inert, where one that could be
     # attacked around a printed prohibition is a rules error.
-    if attack_defender_forbidden(state, oid, defender):
-        return True
-    # Goad's second half (701.38a): "…and attacks a player other than you if
-    # able". `defender` is the defending *player* for both attack kinds -- a
-    # planeswalker's or battle's controller is the defending player (506.2) and
-    # `legal_permanent_defenders` passes it -- so one membership test covers
-    # the walker as well as the seat, which is what "goad reaches planeswalkers"
-    # means in code.
-    #
-    # "…if able" is the guard, and it is the difference between a restriction and
-    # a rule that can make a declaration impossible: with the goader the only
-    # thing left to attack, the creature attacks the goader.
-    if obj is not None and obj.goaded_by and defender in obj.goaded_by:
-        return _has_non_goader_defender(state, oid, obj.goaded_by)
-    return False
+    return attack_defender_forbidden(state, oid, defender)
+
+
+def required_attack_walkers(state: GameState, oid: int) -> set[int]:
+    """The planeswalkers this creature must attack if able, right now.
+
+    Gideon Jura: "During target opponent's next turn, creatures that player
+    controls attack Gideon Jura if able." Read off the marks on the walkers
+    (`GameObject.must_be_attacked_by`), so a creature that arrives during that
+    turn is compelled too -- the sentence is about the *player's* creatures, not
+    a list taken when it resolved.
+
+    A walker is required only while the mark is armed for this very turn, the
+    creature's controller is the active player, it is still on the battlefield
+    as a planeswalker of somebody else's, and nothing *prohibits* this creature
+    attacking it -- 508.1d's "if able": a requirement never makes an illegal
+    attack legal. Empty in every game that plays none of these cards, after one
+    walk that reads a normally-empty dict.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.controller != state.active_player:
+        return set()
+    out: set[int] = set()
+    for pw in state.battlefield:
+        walker = state.objects.get(pw)
+        if walker is None or not walker.must_be_attacked_by:
+            continue
+        if walker.must_be_attacked_by.get(obj.controller) != state.turn:
+            continue
+        if walker.controller == obj.controller or not state.is_alive(walker.controller):
+            continue
+        if "Planeswalker" not in chars(state, pw).types:
+            continue
+        if _attack_prohibited(state, oid, walker.controller, permanent=pw):
+            continue
+        out.add(pw)
+    return out
+
+
+def _misses_attack_requirements(
+    state: GameState,
+    oid: int,
+    defender: int,
+    permanent: int | None,
+    required: set[int],
+) -> bool:
+    """Is attacking here worse than the best declaration 508.1d allows?
+
+    Rule 508.1d: the attack must obey the **maximum number of requirements**
+    possible without breaking a restriction. For a creature under a walker
+    requirement alone that is simple -- attack one of the required walkers.
+    Beside goad (701.38a) it is a count: attacking the walker obeys the walker
+    requirement, attacking something no goader controls obeys goad's, and a
+    walker no goader controls obeys both. Every candidate target is scored and
+    anything below the best is refused; ties are all allowed, so the player
+    still chooses between equally obedient attacks.
+    """
+    obj = state.objects.get(oid)
+    goaders = obj.goaded_by if obj is not None else set()
+
+    def score(seat: int, pw: int | None) -> int:
+        points = 1 if pw is not None and pw in required else 0
+        if goaders and seat not in goaders:
+            points += 1
+        return points
+
+    best = 0
+    seats = [pid for pid in state.alive() if pid != state.active_player]
+    for seat in seats:
+        if not _attack_prohibited(state, oid, seat):
+            best = max(best, score(seat, None))
+    for pw in state.battlefield:
+        pw_obj = state.objects.get(pw)
+        if pw_obj is None or pw_obj.controller not in seats:
+            continue
+        if not any(t in chars(state, pw).types for t in ATTACKABLE_TYPES):
+            continue
+        if not _attack_prohibited(state, oid, pw_obj.controller, permanent=pw):
+            best = max(best, score(pw_obj.controller, pw))
+    return score(defender, permanent) < best
 
 
 def _has_non_goader_defender(state: GameState, oid: int, goaders: set[int]) -> bool:

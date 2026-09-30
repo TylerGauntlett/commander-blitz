@@ -802,6 +802,14 @@ class GameObject:
     #: names this object, and `reset_permanent_state` ends it when the object
     #: leaves (400.7), which a table keyed by a zone-surviving oid could not.
     damage_shields: list[PermanentShield] = field(default_factory=list)
+    #: "During target opponent's next turn, creatures that player controls
+    #: attack Gideon Jura if able." On the **planeswalker**: compelled player ->
+    #: the turn the requirement is in force, or
+    #: `temp_effects.ATTACK_REQUIREMENT_PENDING` until that player's next untap
+    #: step arms it. Read by `combat.required_attack_walkers`; cleared by
+    #: `reset_permanent_state` (400.7 -- a Gideon that left and came back is not
+    #: the one they were told to attack).
+    must_be_attacked_by: dict[int, int] = field(default_factory=dict)
 
     #: "…exile all other tokens **created with this creature**" -- Faerie
     #: Artisans. The tokens an effect whose source is *this object* created,
@@ -1004,6 +1012,8 @@ class GameObject:
         self.goaded_by = set()
         # And no longer the permanent a prevention shield was aimed at.
         self.damage_shields = []
+        # Nor the planeswalker anybody was told to attack.
+        self.must_be_attacked_by = {}
         # The same new object: the tokens the old one made were not made by
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
@@ -1176,6 +1186,15 @@ class GameObject:
             **(
                 {"damage_shields": [shield.to_dict() for shield in self.damage_shields]}
                 if self.damage_shields
+                else {}
+            ),
+            **(
+                {
+                    "must_be_attacked_by": {
+                        str(pid): turn for pid, turn in sorted(self.must_be_attacked_by.items())
+                    }
+                }
+                if self.must_be_attacked_by
                 else {}
             ),
         }

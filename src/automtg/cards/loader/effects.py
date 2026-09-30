@@ -1063,6 +1063,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "must_attack_planeswalker":
+        # Both required. Without `objects` there is no walker to attack and the
+        # line does nothing; without `player`, defaulting to anybody would
+        # compel the wrong seat, and defaulting to the controller is a sentence
+        # that cannot bite (you cannot attack your own planeswalker).
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: must_attack_planeswalker needs 'objects' naming the "
+                f"planeswalker to be attacked ({{\"self_only\": true}} for Gideon Jura)"
+            )
+        if effect.get("player") is None:
+            raise DslError(
+                f"{where}: must_attack_planeswalker needs 'player' -- whose "
+                f"creatures must attack, during that player's next turn"
+            )
+        if "duration" in effect:
+            raise DslError(
+                f"{where}: must_attack_planeswalker takes no 'duration' -- it is "
+                f"always the named player's next turn"
+            )
     if op == "cant_block":
         # Two keys, and every way of getting them wrong loads cleanly and plays
         # a different card.

@@ -17990,3 +17990,36 @@ read only for permanents, so it could protect neither the player nor cap an even
   opponent and their planeswalker not; the surplus as a prevention event and the
   rest as ordinary damage; a doubler applied first (with its baseline); the
   loader's refusals (no amount, all but 0, no recipient).
+
+## `must_attack_planeswalker` — "creatures that player controls attack Gideon Jura if able" — 508.1d
+
+### The gap
+
+Gideon Jura's +2. `must_attack` flags only the creatures on the battlefield at
+resolution, lasts `this_turn`/`next_combat` and names no defender; the
+`attacks_if_able` static and goad name no planeswalker. Nothing could require an
+attack on one specific target, nor reach creatures arriving later in that turn.
+
+### What was built
+
+- `GameObject.must_be_attacked_by` on the planeswalker (compelled player → turn,
+  `ATTACK_REQUIREMENT_PENDING` until armed), cleared by `reset_permanent_state`.
+- `temp_effects.require_attack_on` / `arm_attack_requirements` (the compelled
+  player's untap step) / `clear_attack_requirements` (cleanup) /
+  `drop_attack_requirements` (elimination), re-exported from `primitives`.
+- `combat.required_attack_walkers`, read by `attack_required` (the creature must
+  attack) and `attack_target_forbidden` (only the walker is offered). The
+  prohibition half of `attack_target_forbidden` is split out as
+  `_attack_prohibited` so the requirement can ask "could it attack there?"
+  without recursion; beside goad, `_misses_attack_requirements` scores each
+  target by requirements obeyed and refuses anything below the best (508.1d).
+- The `must_attack_planeswalker` op (`player`, `objects`, both required; no
+  `duration`).
+
+### Tests
+
+- `tests/unit/test_must_attack_planeswalker.py` — compelled and walker-only
+  targets, the unmarked baseline, a creature arriving after the mark; "if able"
+  (tapped, prohibited from the walker); pending does not bite, the untap step
+  arms it, cleanup ends it, not on the controller's turn, elimination drops it;
+  400.7; both goad interactions; the loyalty ability end to end; the loader.

@@ -40,6 +40,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from .structs import TempEffect
 from .temp_effects import (  # noqa: F401
     _expired,
+    arm_attack_requirements,
+    clear_attack_requirements,
     clear_attack_restrictions,
     clear_block_prohibitions,
     clear_cast_locks,
@@ -52,6 +54,7 @@ from .temp_effects import (  # noqa: F401
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
+    drop_attack_requirements,
     forbid_block,
     forbid_sacrifice,
     goad_creature,
@@ -62,6 +65,7 @@ from .temp_effects import (  # noqa: F401
     lock_life_total,
     make_unblockable,
     permanent_shielded,
+    require_attack_on,
     restrict_attack,
     sacrifice_forbidden,
     set_life_floor,

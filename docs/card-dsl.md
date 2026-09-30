@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-131 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+132 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -303,7 +303,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
 | Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `prevent_damage_permanent` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
@@ -7067,6 +7067,29 @@ Applied in `primitives.damage_permanent` and `primitives.damage_player`
 the two and they would cap last, so a doubled hit still lands as 1. Read through
 `player_statics.damage_cap`, which walks `_battlefield_statics` — the command
 zone included, which is where an emblem lives.
+
+## "…creatures that player controls attack Gideon Jura if able"
+
+```jsonc
+// Gideon Jura, +2: "During target opponent's next turn, creatures that player
+//                   controls attack Gideon Jura if able."
+{"op": "must_attack_planeswalker", "player": {"target": "t1"},
+ "objects": {"self_only": true}}
+```
+
+A requirement that names **one attack target**. `must_attack` flags the creatures
+on the battlefield at resolution and names no defender; `attacks_if_able` and goad
+name no planeswalker (goad points *away* from a seat). Here the creatures are
+"that player's" during that turn — arrivals included — so the op marks the
+**planeswalker** (`GameObject.must_be_attacked_by`, compelled player → turn).
+
+Both keys are required and there is no `duration`: the mark is pending until the
+compelled player's next untap step arms it, and that turn's cleanup ends it. It
+also ends if the walker leaves (400.7). `combat.required_attack_walkers` reads it:
+during that turn each of the player's creatures that can attack must, and
+`attack_target_forbidden` offers only the walker — unless an attack restriction
+forbids the walker ("if able"). Beside goad, 508.1d is a count: each target is
+scored by the requirements an attack on it obeys and only the best are offered.
 
 ## "Whenever you attack"
 

@@ -13654,6 +13654,58 @@
           "text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
         }
       ]
+    },
+    {
+      "id": "t_taunting_walker",
+      "name": "Test Taunting Walker",
+      "oracle_text": "+2: During target opponent's next turn, creatures that player controls attack Test Taunting Walker if able.",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Planeswalker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Gideon"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "loyalty": 6,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+2: During target opponent's next turn, creatures that player controls attack Test Taunting Walker if able.",
+          "cost": {
+            "loyalty": 2
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "must_attack_planeswalker",
+              "player": {
+                "target": "t1"
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

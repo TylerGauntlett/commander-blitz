@@ -779,3 +779,73 @@ def _expired(entries: list, duration: str, player: int | None):
     return [
         e for e in entries if e.duration != duration or (player is not None and e.player != player)
     ]
+
+
+#: A walker requirement recorded but not yet in force: "during target
+#: opponent's **next** turn" starts when that player next untaps, not now.
+ATTACK_REQUIREMENT_PENDING = -1
+
+
+def require_attack_on(state: GameState, walker: int, player: int) -> bool:
+    """ "During target opponent's next turn, creatures that player controls
+    attack Gideon Jura if able." One rules-relevant thing: it writes the mark.
+
+    The mark lives on the **planeswalker** (`GameObject.must_be_attacked_by`),
+    keyed by the compelled player, for goad's reason: the effect names that
+    object, and 400.7 ends it when the object leaves -- `reset_permanent_state`
+    clears the field. It is **pending** until ``player``'s next untap step arms
+    it with that turn's number (`arm_attack_requirements`), and it ends in that
+    turn's cleanup (`clear_attack_requirements`).
+
+    Refused, returning ``False``, for a walker no longer on the battlefield, a
+    player out of the game (their turn is never coming), and the walker's own
+    controller (a creature cannot attack its own controller's planeswalker).
+    """
+    obj = state.objects.get(walker)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(player) or obj.controller == player:
+        return False
+    obj.must_be_attacked_by[player] = ATTACK_REQUIREMENT_PENDING
+    return True
+
+
+def arm_attack_requirements(state: GameState, player: int) -> None:
+    """Start every pending walker requirement on ``player`` -- their turn has come.
+
+    Called from `turn._untap_step` for the untapping player. "Next turn" is
+    whichever turn of theirs comes next, which a turn *number* could not say
+    when somebody is eliminated in between -- so the mark waits, pending, for
+    the player rather than for a number.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.must_be_attacked_by:
+            continue
+        if obj.must_be_attacked_by.get(player) == ATTACK_REQUIREMENT_PENDING:
+            obj.must_be_attacked_by[player] = state.turn
+
+
+def clear_attack_requirements(state: GameState) -> None:
+    """End the walker requirements that were in force this turn -- cleanup.
+
+    Only the armed ones whose turn is the one ending; a pending mark (installed
+    this turn, for the opponent's *next* turn) survives.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.must_be_attacked_by:
+            continue
+        obj.must_be_attacked_by = {
+            pid: turn
+            for pid, turn in obj.must_be_attacked_by.items()
+            if turn != state.turn
+        }
+
+
+def drop_attack_requirements(state: GameState, player: int) -> None:
+    """Forget every walker requirement on ``player`` -- they have left the game."""
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is not None and player in obj.must_be_attacked_by:
+            del obj.must_be_attacked_by[player]
