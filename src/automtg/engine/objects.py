@@ -625,6 +625,14 @@ class GameObject:
     #: because a "when you cast this spell" trigger reads it while the spell is
     #: still on the stack and a permanent's enters trigger may read it after.
     cast_additional: int = 0
+    #: How many of this spell's **printed Phyrexian** mana symbols were paid
+    #: for with life as it was cast (107.4f) -- compleated's count (702.150a).
+    #: Written by `game._cast` beside `cast_additional`, because the action's
+    #: `phyrexian` is the only record of it and it is gone once the spell is on
+    #: the stack. Read only on an arrival that was this cast
+    #: (`entered_by_cast`), so a walker that is later blinked or reanimated
+    #: enters at its full loyalty.
+    cast_phyrexian_life: int = 0
     #: Whether this object was cast **transformed** -- disturb. Kept beside the
     #: other `cast_*` flags rather than relying on `transformed`, because
     #: `reset_permanent_state` clears that on the way onto the battlefield

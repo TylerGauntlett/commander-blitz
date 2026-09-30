@@ -277,6 +277,15 @@ class Keyword(str, Enum):
     #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
     #: does it during a zone change rather than on the board.
     RIOT = "riot"
+    #: Compleated (702.150a): "If this permanent would enter with one or more
+    #: loyalty counters on it, it enters with two fewer loyalty counters on it
+    #: for each Phyrexian mana symbol life was paid for as it was cast."  A
+    #: 614.1c replacement on the arrival, read in `zones._enter_battlefield`
+    #: beside the starting-loyalty replacement it modifies, off
+    #: `GameObject.cast_phyrexian_life` -- which `game._cast` writes at the one
+    #: moment the answer exists, and which only an arrival that *was* this cast
+    #: (`entered_by_cast`) may read.
+    COMPLEATED = "compleated"
 
 
 LANDWALK_SUBTYPE = {

@@ -8513,6 +8513,26 @@ activated ability's cost. The `CHOOSE_X` it raises carries
 `context.loyalty_cost: true`, which the heuristic agent reads to answer
 one-short-of-everything rather than the maximum that always kills the walker.
 
+### `compleated` — the keyword
+
+"Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid,
+this planeswalker enters with two fewer loyalty counters.)" (702.150a)
+
+```jsonc
+{"mana_cost": "{2}{G}{G/U/P}{U}", "types": ["Planeswalker"], "loyalty": 5,
+ "keywords": ["compleated"]}
+```
+
+The keyword is the whole of it: the Phyrexian pip is already payable with life
+(107.4f), `game._cast` records how many printed Phyrexian symbols were paid
+that way (`GameObject.cast_phyrexian_life`), and `zones._enter_battlefield`
+takes two loyalty per symbol straight after the starting-loyalty replacement,
+floored at zero. Only on the arrival that was that cast — blinked or put onto
+the battlefield, the walker enters at full loyalty. Under K'rrik the life is
+attributed to his widened `{B}` pips first, since those are not Phyrexian
+symbols. The loader refuses the keyword on a card with no `loyalty` or no
+Phyrexian symbol in its cost.
+
 ## Battles
 
 ```jsonc

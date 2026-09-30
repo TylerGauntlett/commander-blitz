@@ -1536,6 +1536,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     types = frozenset(model.types)
     subtypes = frozenset(model.subtypes)
 
+    if "compleated" in model.keywords and (model.loyalty is None or not mana_cost.phyrexian_count):
+        # 702.150a reads the loyalty the card enters with and the Phyrexian
+        # symbols of its cost. Without either it would load and never once
+        # apply -- the keyword as a label on a card that does not have it.
+        raise DslError(
+            f"{where}: 'compleated' needs a printed 'loyalty' and a Phyrexian "
+            f"symbol in the mana cost -- it takes loyalty away per symbol paid "
+            f"with life"
+        )
+
     # "Cast this spell only before the combat damage step" (Berserk). Resolved
     # here rather than at the check, so a misspelled step is a load error: left
     # to the engine it would read as "no restriction" and the card would be a

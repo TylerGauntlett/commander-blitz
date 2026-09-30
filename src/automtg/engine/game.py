@@ -479,6 +479,10 @@ class Game:
             spell_life_tax,
         )
 
+        # Compleated (702.150a) counts **Phyrexian mana symbols** life was paid
+        # for, and K'rrik's widened {B} is not one. Counted before the widening
+        # so the two can be told apart below.
+        printed_phyrexian = cost.phyrexian_count
         if player_pays_life_for_black(state, pid):
             # K'rrik's black pips, read as Phyrexian ones exactly where
             # `_cast_variant` read them when it counted the lines -- on the
@@ -493,7 +497,13 @@ class Game:
         # 2 life" is charged 2 life and one blue pip fewer, and a line offered
         # without it is charged the printed cost. `action.phyrexian` is the
         # player's answer, the way `action.x` is; nothing re-decides it.
+        widened = cost.phyrexian_count - printed_phyrexian
         cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
+        # How many of the life payments bought a printed Phyrexian symbol. The
+        # pips all cost the same 2 life, so under K'rrik the life is attributed
+        # to his widened {B} first -- the reading the caster would choose, and
+        # the one `paying_phyrexian`'s single-symbol-first order already takes.
+        paid_phyrexian_symbols = max(0, action.phyrexian - widened)
 
         granted = state.objects[oid]
         if granted.playable_any_type and granted.playable_live(state.turn):
@@ -566,6 +576,9 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+        # Compleated's count, written onto the object now because the action is
+        # the only record of it; see `GameObject.cast_phyrexian_life`.
+        state.objects[oid].cast_phyrexian_life = paid_phyrexian_symbols
 
         # "Spells your opponents cast that target this creature cost an
         # additional 3 life to cast." Terror of the Peaks, and somebody *else's*

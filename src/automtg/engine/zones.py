@@ -777,6 +777,36 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
             return
 
 
+def _apply_compleated(obj: GameObject, card: CardDef) -> None:
+    """Compleated (702.150a): two fewer loyalty per Phyrexian symbol paid with life.
+
+    A modification of the starting-loyalty replacement the loop above has just
+    applied, so it runs straight after it and before the permanent is ever seen:
+    a Tamiyo cast for 2 life arrives with three loyalty and never with five.
+
+    "If this permanent **would enter with one or more** loyalty counters" -- a
+    walker whose loyalty the arrival gave none of is untouched, and the count is
+    floored at zero rather than going negative; a walker reduced to zero is then
+    binned by 704.5i, which is what the rule means to happen.
+
+    Only on the arrival that *was* the cast (`entered_by_cast`): the count is a
+    fact about how one casting was paid, and a walker blinked or reanimated later
+    enters with its printed loyalty.
+    """
+    if Keyword.COMPLEATED.value not in card.keywords:
+        return
+    if not obj.entered_by_cast or obj.cast_phyrexian_life <= 0:
+        return
+    loyalty = obj.counter("loyalty")
+    if loyalty <= 0:
+        return
+    remaining = max(0, loyalty - 2 * obj.cast_phyrexian_life)
+    if remaining:
+        obj.counters["loyalty"] = remaining
+    else:
+        obj.counters.pop("loyalty", None)
+
+
 def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> Zone | None:
     """Where a card or token headed for a graveyard actually goes -- 614.
 
@@ -996,6 +1026,8 @@ def _enter_battlefield(
                     str(replacement.get("counter", "+1/+1")),
                     evaluate_value(ctx, replacement.get("amount", 1)),
                 )
+
+    _apply_compleated(obj, card)
 
     # Riot (702.113), applied in the slot enters-with-counters occupies and for
     # its reason: 614.1c, so the creature is never on the battlefield without

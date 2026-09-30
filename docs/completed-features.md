@@ -18722,3 +18722,30 @@ None`.
   the `−X` description; one activation per X for a target reading X, none above
   the loyalty, and no second question; the heuristic's all-but-one and its
   boundary at one loyalty; the three loader refusals.
+
+## `compleated` — two fewer loyalty per Phyrexian symbol paid with life — Tamiyo, Compleated Sage — 702.150a
+
+Casting already let a Phyrexian pip be bought with 2 life (107.4f, the cast
+action's `phyrexian`), but nothing remembered it past the payment and nothing
+reduced the starting loyalty, so a Tamiyo cast for 2 life arrived at the full 5.
+
+### What changed
+
+- `Keyword.COMPLEATED`. The loader refuses it on a card with no `loyalty` or
+  no Phyrexian symbol in its mana cost.
+- `GameObject.cast_phyrexian_life`, written by `game._cast` after the payment:
+  how many **printed** Phyrexian symbols were paid with life. K'rrik's widened
+  `{B}` is not a Phyrexian symbol, so the life is attributed to those first.
+- `zones._apply_compleated`, run in `_enter_battlefield` straight after the
+  printed replacements (where the starting loyalty lands): two fewer loyalty
+  per symbol, floored at zero, and only when the walker would have entered
+  with some. Read only when `entered_by_cast`, so a later arrival of the same
+  object is at full loyalty.
+
+### Tests
+
+- `tests/unit/test_compleated.py` — mana paid: full loyalty; life paid: two
+  fewer and the life gone; the control card without the keyword; nothing
+  queued (a replacement); two symbols, one or both paid; the floor at zero and
+  the walker binned by 704.5i; a blinked walker and one put onto the
+  battlefield at full loyalty; the loader's three cases.
