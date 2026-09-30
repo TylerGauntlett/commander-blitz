@@ -13,6 +13,7 @@ from ..primitives import (
     damage_player,
     gain_life,
     lose_life,
+    shield_permanent,
     shield_player,
 )
 from . import register
@@ -123,6 +124,55 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
         raise DslError(f"unknown prevent_damage duration {duration!r}")
     for pid in select_players(ctx, spec.get("player", "you")):
         shield_player(ctx.state, pid, duration, source=ctx.source_oid)
+
+
+@register("prevent_damage_permanent")
+def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Prevent all damage that would be dealt to him this turn." (Gideon Jura,
+    Gideon, Champion of Justice.) "Until your next turn, prevent all damage
+    target permanent would deal." (Gideon of the Trials.) "…dealt to and dealt
+    by target permanent an opponent controls." (Kiora, the Crashing Wave.)
+
+    `prevent_damage` the op with the subject swapped from a seat to a
+    permanent, and able to face both ways. The `prevent_damage` *static* is the
+    near miss and cannot say any of these: it lives on a printed permanent and is
+    continuous while that permanent stands, so it has no "this turn" and no
+    "until your next turn", it cannot be installed by a resolving ability, and it
+    only ever stops damage dealt *to* what it matches.
+
+    ``objects`` is a selector resolved **now** -- ``{"self_only": true}`` for
+    Gideon, ``{"target": "t1"}`` for the targeted forms -- battlefield-filtered,
+    so a permanent that left in response gets nothing.
+
+    ``dealt`` is required: ``"to"``, ``"by"`` or ``"to_and_by"``. Required
+    rather than defaulted because the two readings are different cards and
+    neither is safe to guess -- a Fog on a creature versus a Pacifism on its
+    damage.
+
+    ``duration`` is required: ``this_turn`` (cleanup) or ``until_your_next_turn``
+    (the controller's next untap step). A prevention read as lasting longer than
+    it does is a strictly better card, silently.
+
+    Installs a `structs.PermanentShield` on each object and modifies nothing
+    else; `primitives.damage_permanent` and `primitives.damage_player` read it.
+    """
+    from ..structs import PERMANENT_SHIELD_DIRECTIONS, PERMANENT_SHIELD_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in PERMANENT_SHIELD_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown prevent_damage_permanent duration {duration!r}")
+    dealt = str(spec.get("dealt", "to"))
+    if dealt not in PERMANENT_SHIELD_DIRECTIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown prevent_damage_permanent direction {dealt!r}")
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        shield_permanent(
+            ctx.state,
+            oid,
+            dealt,
+            duration,
+            player=ctx.controller,
+            source=ctx.source_oid,
+        )
 
 
 @register("lock_life_total")

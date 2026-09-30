@@ -16,7 +16,7 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import TempEffect
+from .structs import PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
@@ -795,6 +795,13 @@ class GameObject:
     #: combat until the goader untaps. This is read live in
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
+    #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
+    #: and "until your next turn, prevent all damage target permanent would
+    #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
+    #: On the object rather than a state table for goad's reason: the effect
+    #: names this object, and `reset_permanent_state` ends it when the object
+    #: leaves (400.7), which a table keyed by a zone-surviving oid could not.
+    damage_shields: list[PermanentShield] = field(default_factory=list)
 
     #: "…exile all other tokens **created with this creature**" -- Faerie
     #: Artisans. The tokens an effect whose source is *this object* created,
@@ -995,6 +1002,8 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        # And no longer the permanent a prevention shield was aimed at.
+        self.damage_shields = []
         # The same new object: the tokens the old one made were not made by
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
@@ -1163,6 +1172,12 @@ class GameObject:
             "hasted_by_suspend": self.hasted_by_suspend,
             # Only on an emblem, so every other object's snapshot is unchanged.
             **({"emblem": self.emblem} if self.emblem is not None else {}),
+            # Only while a prevention shield stands, for the emblem line's reason.
+            **(
+                {"damage_shields": [shield.to_dict() for shield in self.damage_shields]}
+                if self.damage_shields
+                else {}
+            ),
         }
 
 

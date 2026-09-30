@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-123 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+131 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -305,7 +305,7 @@ it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
-| Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `lock_life_total` |
+| Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `prevent_damage_permanent` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
@@ -6995,6 +6995,49 @@ out on a blocked absorb creature.
 damage that was never dealt, so a Squire built on it grows only on the turns its
 own shield is down. `life_lost` fails the same way, and `damage_taken_this_turn`
 reads zero underneath a working shield by construction.
+
+## Preventing all damage to or by a **permanent**, for a while
+
+```jsonc
+// Gideon Jura, 0: "...Prevent all damage that would be dealt to him this turn."
+{"op": "prevent_damage_permanent", "objects": {"self_only": true},
+ "dealt": "to", "duration": "this_turn"}
+
+// Gideon of the Trials, +1: "Until your next turn, prevent all damage target
+//                            permanent would deal."
+{"op": "prevent_damage_permanent", "objects": {"target": "t1"},
+ "dealt": "by", "duration": "until_your_next_turn"}
+
+// Kiora, the Crashing Wave, +1: "...prevent all damage that would be dealt to
+//                                and dealt by target permanent an opponent controls."
+{"op": "prevent_damage_permanent", "objects": {"target": "t1"},
+ "dealt": "to_and_by", "duration": "until_your_next_turn"}
+```
+
+The `prevent_damage` op with the subject swapped from a seat to a permanent,
+and able to face both ways. The `prevent_damage` **static** is the near miss and
+cannot say any of these: it is continuous while its printed source stands on the
+battlefield (so printed on Gideon it would shield him every turn, not the one he
+animated in), a resolving ability cannot install one, and it only ever stops
+damage dealt *to* what it matches. `grant_protection` from everything would also
+stop blocking, targeting and attachment — a bigger card.
+
+All three keys are **required**. `dealt` is `"to"` (damage dealt to it),
+`"by"` (damage it deals, to permanents and players, combat and noncombat) or
+`"to_and_by"`; `duration` is `"this_turn"` (cleanup) or
+`"until_your_next_turn"` (the controller's next untap step, and dropped if they
+leave the game). `amount` is refused — it prevents all of it.
+
+The op writes a `structs.PermanentShield` **onto the object**
+(`GameObject.damage_shields`) rather than onto a state table, because the
+effect names that object and 400.7 ends it when the object leaves:
+`reset_permanent_state` clears the list, where a table keyed by a zone-surviving
+oid would follow a blinked creature into its next life. `primitives.damage_permanent`
+reads the recipient's `to` shield and the dealer's `by` shield beside the
+`prevent_all` branch; `primitives.damage_player` reads the dealer's `by` shield
+beside protection. Prevented damage was never dealt — no mark, no loyalty lost,
+no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
+`reason: "permanent_shield"`.
 
 ## "Whenever you attack"
 

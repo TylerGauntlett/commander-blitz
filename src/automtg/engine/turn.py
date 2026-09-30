@@ -32,6 +32,7 @@ from .primitives import (
     clear_life_floors,
     clear_life_locks,
     clear_outcome_locks,
+    clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -364,6 +365,10 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # says. Cleared here, at the top of that turn, so the opponents' last
     # chance to cast out of a graveyard was the turn cycle in between.
     clear_cast_locks(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, prevent all damage target permanent would deal."
+    # (Gideon of the Trials, Kiora, the Crashing Wave.) The same clock, keyed to
+    # the player who installed the shield.
+    clear_permanent_shields(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -767,6 +772,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # continuous while its source stands on the battlefield and would therefore
     # fog every future turn as well.
     clear_damage_shields(state, "this_turn")
+    # "Prevent all damage that would be dealt to him **this turn**." (Gideon
+    # Jura.) The permanent-scoped counterpart, on the same clock.
+    clear_permanent_shields(state, "this_turn")
     # "You can't sacrifice those creatures **this turn**." (Call for Aid.) The
     # fourth of these and owned by no permanent for the same reason: the sorcery
     # that said it is in a graveyard long before the opponent reaches for their

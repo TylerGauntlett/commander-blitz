@@ -17919,3 +17919,46 @@ keep their remaining needs, with `missing_token` removed.
   or a spell aimed at something else; the Notebook discounting generic mana only
   and only your spells, drawing on a tap, and losing a second copy to the legend
   rule.
+
+## `prevent_damage_permanent` — prevention on a permanent, to or by, with a clock — Gideon Jura, Gideon of the Trials, Kiora — 615.1
+
+### The gap
+
+Five cards in the Atraxa superfriends deck print a one-shot prevention aimed at a
+**permanent**: Gideon Jura's and Gideon, Champion of Justice's "prevent all damage
+that would be dealt to him this turn", Gideon of the Trials' "until your next turn,
+prevent all damage target permanent would deal", and Kiora, the Crashing Wave's
+"…dealt to and dealt by target permanent an opponent controls". The engine's two
+preventions could not say any of it: the `prevent_damage` op shields a seat and
+refuses `objects`, and the `prevent_damage` static is continuous for as long as its
+printed source stands, cannot be installed by a resolving ability, and only stops
+damage dealt *to* what it matches. Nothing could stop damage a permanent *deals*.
+
+### What was built
+
+- `structs.PermanentShield` (`dealt`: `to` / `by` / `to_and_by`; `duration`:
+  `this_turn` / `until_your_next_turn`; `player`, the clock; `source`).
+- `GameObject.damage_shields`, cleared by `reset_permanent_state` — on the object
+  rather than a state table because an oid survives zone changes and 400.7 ends
+  the effect when the object leaves.
+- `temp_effects.shield_permanent` / `permanent_shielded` / `clear_permanent_shields`,
+  re-exported from `primitives`.
+- Read in `primitives.damage_permanent` (recipient `to`, dealer `by`, beside the
+  `prevent_all` branch) and `primitives.damage_player` (dealer `by`, beside
+  protection). Fires `DAMAGE_PREVENTED` with `reason: "permanent_shield"`.
+- Cleared in `turn._cleanup_step` (`this_turn`), `turn._untap_step` (the untapping
+  player's `until_your_next_turn`) and `sba._eliminate` (a seat that never untaps
+  again).
+- The `prevent_damage_permanent` op in `ops_life.py`; the loader requires
+  `objects`, `dealt` and `duration` and refuses `amount`. The `prevent_damage` op's
+  refusal of `objects` now points at the new op.
+
+### Tests
+
+- `tests/unit/test_prevent_damage_permanent.py` — each direction and its
+  non-reach (a `to` shield still deals damage, a `by` shield still takes it), to
+  permanents and to players; the combat path through a pacified attacker; no
+  `DAMAGE_DEALT` for prevented damage; both clocks, neither clearing the other,
+  and an eliminated installer's shields dropped; 400.7 (a blinked permanent is
+  unshielded); the primitive's refusals; both test spells end to end; and the
+  loader's required keys.

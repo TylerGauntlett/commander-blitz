@@ -453,6 +453,72 @@ class DamageShield:
         }
 
 
+#: The two clocks a :class:`PermanentShield` can run on.  Both are printed:
+#: "prevent all damage that would be dealt to him **this turn**" (Gideon Jura,
+#: Gideon, Champion of Justice) and "**until your next turn**, prevent all damage
+#: target permanent would deal" (Gideon of the Trials, Kiora, the Crashing Wave).
+PERMANENT_SHIELD_DURATIONS = ("this_turn", "until_your_next_turn")
+
+#: Which way a :class:`PermanentShield` faces.  ``to`` stops damage dealt **to**
+#: the permanent, ``by`` stops damage the permanent **deals**, and ``to_and_by``
+#: is Kiora's "dealt to and dealt by" -- one printed clause, so one record.
+PERMANENT_SHIELD_DIRECTIONS = ("to", "by", "to_and_by")
+
+
+@dataclass(frozen=True)
+class PermanentShield:
+    """"Prevent all damage that would be dealt to him this turn." / "…target
+    permanent would deal."
+
+    :class:`DamageShield` aimed at a **permanent** instead of a seat, and able to
+    face either way.  Neither existing prevention could say it: the
+    `prevent_damage` *static* is continuous for as long as its source stands on
+    the battlefield (so as a printed line on Gideon it would shield him on every
+    turn, not the one he animated in), and the `prevent_damage` *op* is keyed to
+    a player.  Neither can stop damage a permanent *deals* at all.
+
+    Lives **on the object** (:attr:`GameObject.damage_shields`), not on a state
+    table, because the effect names that object and 400.7 ends it when the
+    object leaves: an oid survives every zone change, so a table entry would
+    follow a blinked creature into its next life, while
+    `reset_permanent_state` clears this list on the way out.  Goad and detain
+    are on the object for the same reason.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"until_your_next_turn"`` (cleared in :attr:`player`'s untap step, beside
+    detain, goad and the other "until your next turn" tables, and dropped when
+    that player leaves the game -- their untap step is never coming).
+
+    Not consumed by use, like `DamageShield`: every instance of damage in the
+    window is prevented, and each fires its own `DAMAGE_PREVENTED`.
+    """
+
+    #: ``to``, ``by`` or ``to_and_by`` -- see `PERMANENT_SHIELD_DIRECTIONS`.
+    dealt: str = "to"
+    duration: str = "this_turn"
+    #: Whose next turn ends it.  Meaningful only for ``until_your_next_turn``;
+    #: recorded for both because it is also who installed the shield.
+    player: int | None = None
+    #: The permanent or spell that installed it, for the log.
+    source: int | None = None
+
+    @property
+    def stops_damage_to(self) -> bool:
+        return self.dealt in ("to", "to_and_by")
+
+    @property
+    def stops_damage_by(self) -> bool:
+        return self.dealt in ("by", "to_and_by")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "dealt": self.dealt,
+            "duration": self.duration,
+            "player": self.player,
+            "source": self.source,
+        }
+
+
 #: The quality "protection from **everything**" (Teferi's Protection, The One
 #: Ring, Progenitus).  A sentinel in the same flat set of strings every other
 #: protection quality lives in, rather than a second field: four rules already

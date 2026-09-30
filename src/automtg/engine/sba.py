@@ -15,7 +15,7 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .primitives import clear_goad
+from .primitives import clear_goad, clear_permanent_shields
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -240,6 +240,11 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # escape could never fire either. Cleared with `clear_goad`, the same call
     # the untap step makes, because this *is* that player's last untap step.
     clear_goad(state, pid)
+    # And the same hole in the permanent-scoped prevention shields: "until your
+    # next turn, prevent all damage target permanent would deal" is cleared in
+    # the installing player's untap step, so a shield keyed to a seat that has
+    # left would pacify the creature it was aimed at for the rest of the game.
+    clear_permanent_shields(state, "until_your_next_turn", pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

@@ -13520,6 +13520,76 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_shield_to",
+      "name": "Test Shield To",
+      "oracle_text": "Prevent all damage that would be dealt to target creature this turn.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "prevent_damage_permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "dealt": "to",
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_shield_by",
+      "name": "Test Shield By",
+      "oracle_text": "Until your next turn, prevent all damage target permanent would deal.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {},
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "prevent_damage_permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "dealt": "by",
+          "duration": "until_your_next_turn"
+        }
+      ]
     }
   ]
 }

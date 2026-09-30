@@ -30,6 +30,8 @@ from automtg.engine.structs import (
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
     LIFE_LOCK_DURATIONS,
+    PERMANENT_SHIELD_DIRECTIONS,
+    PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -1184,8 +1186,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if "objects" in effect:
             raise DslError(
                 f"{where}: prevent_damage shields a *player* and takes no 'objects' "
-                f"-- prevention over permanents is the 'prevent_damage' static "
-                f"effect (absorb N) or 'protection'"
+                f"-- a one-shot prevention over permanents is the "
+                f"'prevent_damage_permanent' op, and a continuous one the "
+                f"'prevent_damage' static effect or 'protection'"
+            )
+    if op == "prevent_damage_permanent":
+        # All three keys required, and every omission loads clean and plays a
+        # different card: no `objects` shields nothing, a guessed `dealt` swaps a
+        # fog for a pacifism, and a guessed `duration` is a prevention lasting a
+        # turn cycle when the card said a turn (or the reverse).
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs 'objects' (the permanents "
+                f"shielded, chosen when it resolves -- {{\"self_only\": true}} for "
+                f"'him', {{\"target\": \"t1\"}} for 'target permanent')"
+            )
+        if str(effect.get("dealt")) not in PERMANENT_SHIELD_DIRECTIONS:
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs 'dealt' -- 'to' for "
+                f"damage that would be dealt to it, 'by' for damage it would deal, "
+                f"'to_and_by' for both (got {effect.get('dealt')!r})"
+            )
+        if str(effect.get("duration")) not in PERMANENT_SHIELD_DURATIONS:
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs a 'duration' "
+                f"(implemented: {sorted(PERMANENT_SHIELD_DURATIONS)}; "
+                f"got {effect.get('duration')!r})"
+            )
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: prevent_damage_permanent prevents ALL the damage and "
+                f"takes no 'amount'"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))

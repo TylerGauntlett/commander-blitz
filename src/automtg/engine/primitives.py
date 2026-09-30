@@ -47,6 +47,7 @@ from .temp_effects import (  # noqa: F401
     clear_life_floors,
     clear_life_locks,
     clear_outcome_locks,
+    clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -59,9 +60,11 @@ from .temp_effects import (  # noqa: F401
     lock_game_outcome,
     lock_life_total,
     make_unblockable,
+    permanent_shielded,
     restrict_attack,
     sacrifice_forbidden,
     set_life_floor,
+    shield_permanent,
     shield_player,
     shielded,
 )
@@ -427,6 +430,22 @@ def damage_player(
             reason="protection",
         )
         return 0
+    # "Until your next turn, prevent all damage target permanent would deal"
+    # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
+    # *dealer*, so it is asked here as well as in `damage_permanent`: the
+    # creature it was aimed at is exactly the one about to hit this player.
+    if permanent_shielded(state, source_oid, by=True):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="permanent_shield",
+        )
+        return 0
     # The player-side half of the doubling, placed for `damage_permanent`'s
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
@@ -603,6 +622,24 @@ def damage_permanent(
             amount=amount,
             to="permanent",
             reason="prevent_all",
+        )
+        return 0
+    # The one-shot counterpart of the total shield above: "prevent all damage
+    # that would be dealt to him this turn" (Gideon Jura) on the recipient, and
+    # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
+    # answer the whole event however big it is, so they sit beside it.
+    if permanent_shielded(state, oid, by=False) or permanent_shielded(
+        state, source_oid, by=True
+    ):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="permanent_shield",
         )
         return 0
     # Absorb (702.63a): "prevent N of that damage", per source and per instance.
