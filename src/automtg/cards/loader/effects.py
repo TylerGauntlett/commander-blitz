@@ -11,7 +11,7 @@ from typing import Any
 
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
+from automtg.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
 from automtg.engine.effects.ops_player import CASTABLE_ZONES
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import (
@@ -988,6 +988,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # failure this whole pass exists to stop. `cast_free` is refused with it
         # for the same reason the three keys above are: it replaces the branch
         # that would honour it.
+        # "Put one into your hand, one on the bottom and exile one" (Expressive
+        # Iteration); "a creature card and/or a land card" (Kiora, Master of the
+        # Depths). A step's `to` is a zone the op can reach, its `selector` a
+        # real selector and `up_to` a flag -- misspelt, each loads clean and the
+        # step silently takes any card, or insists on one the card says "may".
+        for i, step in enumerate(effect.get("destinations") or ()):
+            here = f"{where}.destinations[{i}]"
+            if not isinstance(step, Mapping):
+                raise DslError(f"{here}: each destination is an object")
+            unknown = set(step) - LOOK_STEP_KEYS
+            if unknown:
+                raise DslError(f"{here}: unknown keys {sorted(unknown)}")
+            if str(step.get("to", "hand")) not in DESTINATIONS:
+                raise DslError(f"{here}: unknown destination {step.get('to')!r}")
+            if "up_to" in step and not isinstance(step["up_to"], bool):
+                raise DslError(f"{here}: 'up_to' is a boolean")
+            if "selector" in step:
+                validate_selector(step["selector"], f"{here}.selector")
         if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
             raise DslError(
                 f"{where}: look_at_top 'face_down' needs destination 'exile' "

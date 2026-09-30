@@ -32,6 +32,13 @@ DESTINATIONS = {
     "library_bottom": Zone.LIBRARY,
 }
 
+#: The keys one step of `look_at_top`'s ``destinations`` reads: where it goes,
+#: how many, which cards it may take (``selector``), whether it may take fewer
+#: (``up_to``), and the exile-only flags `_move_found` honours per step.
+LOOK_STEP_KEYS = frozenset(
+    {"to", "count", "selector", "up_to", "playable_this_turn", "playable", "any_color", "face_down"}
+)
+
 
 def _replacements():
     """Imported lazily: `replacements` needs `costs`, which needs this package."""
@@ -653,19 +660,31 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             #
             # Each step draws from what the earlier ones left, which is what
             # makes the three choices one decision about one window.
+            #
+            # A step's own `selector` narrows what *it* may take, and `up_to`
+            # lets it take fewer, down to none -- Kiora, Master of the Depths:
+            # "You may put a creature card **and/or** a land card from among
+            # them into your hand." One pick of count 2 over Creature-or-Land
+            # would allow two creatures; two typed steps of one each, both
+            # optional, is exactly the sentence. A card that is both (Dryad
+            # Arbor) can answer either step, never both, because each step draws
+            # only from what the earlier ones left.
             remaining = list(pool)
             for step in steps:
                 if not remaining:
                     break
-                want = max(0, min(int(step.get("count", 1)), len(remaining)))
+                offered = remaining
+                if step_selector := step.get("selector"):
+                    offered = [o for o in remaining if _matches_library(ctx, o, step_selector)]
+                want = max(0, min(int(step.get("count", 1)), len(offered)))
                 if not want:
                     continue
                 where = DESTINATIONS[step.get("to", "hand")]
                 picked = yield from ask_objects(
                     ctx,
                     f"Put on {step.get('to', 'hand')}",
-                    remaining,
-                    want,
+                    offered,
+                    0 if step.get("up_to") else want,
                     want,
                     pid,
                     "look_at_top",

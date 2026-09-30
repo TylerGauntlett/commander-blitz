@@ -200,6 +200,27 @@ required — defaulted it would look at one card and say nothing about it.
 `cast_free` sends what was picked to the **stack** instead of to a destination
 zone — see [Casting for free out of the window](#casting-for-free-out-of-the-window).
 
+`destinations` splits one look into ordered steps, each drawing from what the
+earlier ones left — Expressive Iteration's "put one of them into your hand, put
+one on the bottom and exile one". A step is `{to, count}` plus, optionally, a
+`selector` narrowing what **that step** may take and `up_to: true` letting it take
+fewer, down to none. That pair is Kiora, Master of the Depths' "a creature card
+**and/or** a land card":
+
+```jsonc
+{ "op": "look_at_top", "amount": 4,
+  "destinations": [
+    { "to": "hand", "count": 1, "up_to": true, "selector": { "types": ["Creature"] } },
+    { "to": "hand", "count": 1, "up_to": true, "selector": { "types": ["Land"] } } ],
+  "rest_to": "graveyard" }
+```
+
+One pick of count 2 over Creature-or-Land is the near miss and takes two
+creatures. A creature land answers one step, never both. `rest_to` (or
+`rest_to_bottom`) takes everything looked at and not taken, including cards no
+step could take. Unknown step keys, a non-boolean `up_to`, an unknown `to` and a
+malformed step `selector` are load errors.
+
 `as` and `face_down` are Necropotence's third line, which needs both:
 
 ```jsonc

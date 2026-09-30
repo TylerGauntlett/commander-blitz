@@ -18339,3 +18339,27 @@ neighbour who already holds two boards.
   source stay put; an eliminated seat is skipped; the pod question and its context;
   a duel swaps boards without asking; moved creatures are summoning sick and the
   change is permanent; the agent takes the richer board; the loader refusals.
+
+## Typed picks from one look — Kiora, Master of the Depths' −2
+
+"Reveal the top four cards of your library. You may put a creature card and/or a
+land card from among them into your hand. Put the rest into your graveyard."
+`look_at_top`'s pick is one selector with one count, so count 2 over
+Creature-or-Land allowed two creatures, and its `destinations` steps carried a
+zone and a count but no type and no way to decline.
+
+### What changed
+
+- `look_at_top` `destinations` steps take an optional `selector` (what that step
+  may take, matched as a library card among what earlier steps left) and
+  `up_to: true` (0 to `count`). `rest_to` already swept the remainder.
+- `LOOK_STEP_KEYS` in `ops_cards`; the loader now validates every step: known keys
+  only, `to` in `DESTINATIONS`, boolean `up_to`, and a real `selector`.
+
+### Tests
+
+- `tests/unit/test_look_at_top_typed_picks.py` — each step offers only its own
+  type, at most one, and may be declined; two lands are never both taken; a
+  creature land answers one step either way; the rest (including cards no step
+  could take) go to the graveyard and no deeper card moves; the sorcery resolves
+  end to end; the four loader refusals.
