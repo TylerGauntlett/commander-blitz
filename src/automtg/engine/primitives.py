@@ -1531,7 +1531,9 @@ def animate(
     )
     if permanent:
         obj.animations.append(effect)
-        obj.granted_keywords.update(keywords)
+        for word in keywords:
+            obj.granted_keywords.add(word)
+            obj.granted_keyword_at[word] = effect.timestamp
         state.bump_chars()
         _stats_changed(state, obj, power=power, toughness=toughness)
         return
@@ -1543,10 +1545,18 @@ def animate(
     # have no printed line of its own to claim, which is the residual gate's
     # objection and the reason Raging Ravine still fails.
     for word in keywords:
-        obj.until_eot.append(TempEffect(kind="keyword", keyword=word, source=source))
+        obj.until_eot.append(
+            TempEffect(kind="keyword", keyword=word, source=source, timestamp=effect.timestamp)
+        )
     for word in your_turn_keywords:
         obj.until_eot.append(
-            TempEffect(kind="keyword", keyword=word, source=source, only_your_turn=True)
+            TempEffect(
+                kind="keyword",
+                keyword=word,
+                source=source,
+                only_your_turn=True,
+                timestamp=effect.timestamp,
+            )
         )
     state.bump_chars()
     _stats_changed(state, obj, power=power, toughness=toughness)
@@ -1576,8 +1586,17 @@ def grant_keyword(
         return
     if permanent:
         obj.granted_keywords.add(keyword)
+        # When, for a later "loses all abilities" to compare against (613.7).
+        obj.granted_keyword_at[keyword] = state.alloc_timestamp()
     else:
-        obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
+        obj.until_eot.append(
+            TempEffect(
+                kind="keyword",
+                keyword=keyword,
+                source=source,
+                timestamp=state.alloc_timestamp(),
+            )
+        )
     state.bump_chars()
     _stats_changed(state, obj, keyword=keyword)
 
@@ -1607,7 +1626,12 @@ def grant_ability(
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    effect = TempEffect(kind="ability", ability_index=ability_index, source=source)
+    effect = TempEffect(
+        kind="ability",
+        ability_index=ability_index,
+        source=source,
+        timestamp=state.alloc_timestamp(),
+    )
     if permanent:
         obj.granted_abilities_permanent.append(effect)
     else:

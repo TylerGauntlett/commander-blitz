@@ -95,7 +95,43 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None or not obj.on_battlefield:
             continue
         obj.lost_all_abilities = True
+        _drop_earlier_grants(obj, ctx.began_at)
     ctx.state.bump_chars()
+
+
+#: The `TempEffect` kinds that *are* abilities (layer 6), and so go when a
+#: permanent loses all abilities. A pump, an animation, a steal and an ability
+#: lock are not abilities and stay.
+_ABILITY_KINDS = frozenset({"keyword", "ability", "protection"})
+
+
+def _drop_earlier_grants(obj, cutoff: int) -> None:
+    """Take away every ability granted to ``obj`` before ``cutoff`` (613.7).
+
+    Oko, Thief of Crowns: "target artifact or creature loses all abilities".
+    The loss has a later timestamp than a flying granted earlier in the turn,
+    so the flying goes with the printed abilities; a flying granted *after*
+    Oko's +1 resolves is a later effect and survives. Both lists of grants are
+    walked -- the timed one (`until_eot`) and the ones for as long as the
+    permanent lasts (`granted_abilities_permanent`, `granted_keywords`) -- and
+    suspend's haste, which is a keyword too.
+
+    ``cutoff`` is the start of the resolution doing the removing, not the
+    moment of the removal. "It gains \"…\" **and loses all other
+    abilities**" (The Irencrag) is one simultaneous change, and the grant
+    written just before this op in the same effect list must survive it.
+    """
+    obj.until_eot = [
+        t for t in obj.until_eot if t.kind not in _ABILITY_KINDS or t.timestamp >= cutoff
+    ]
+    obj.granted_abilities_permanent = [
+        t for t in obj.granted_abilities_permanent if t.timestamp >= cutoff
+    ]
+    for word in list(obj.granted_keywords):
+        if obj.granted_keyword_at.get(word, 0) < cutoff:
+            obj.granted_keywords.discard(word)
+            obj.granted_keyword_at.pop(word, None)
+    obj.hasted_by_suspend = False
 
 
 @register("rename")
@@ -286,7 +322,12 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         for quality in qualities:
             obj.until_eot.append(
-                TempEffect(kind="protection", keyword=str(quality), source=ctx.source_oid)
+                TempEffect(
+                    kind="protection",
+                    keyword=str(quality),
+                    source=ctx.source_oid,
+                    timestamp=ctx.state.alloc_timestamp(),
+                )
             )
     ctx.state.bump_chars()
 

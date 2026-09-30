@@ -474,6 +474,11 @@ class GameObject:
     #: of the battlefield state, because a permanent that leaves and returns
     #: makes the choice again.
     granted_keywords: set[str] = field(default_factory=set)
+    #: When each of `granted_keywords` was granted (613.7), so a later "loses
+    #: all abilities" takes the earlier ones and leaves the later ones. A
+    #: keyword missing here -- riot's haste, written as the permanent arrives --
+    #: reads as 0, older than anything.
+    granted_keyword_at: dict[str, int] = field(default_factory=dict)
     #: The same thing for a whole ability: "It gains 'when this creature dies,
     #: draw a card'", with no printed duration -- Clavileño. Stored as the same
     #: `TempEffect` pointer `until_eot` holds, so `granted_abilities` reads both
@@ -1026,6 +1031,7 @@ class GameObject:
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
         self.granted_keywords = set()
+        self.granted_keyword_at = {}
         # Cleared like every other battlefield word, and deliberately: a spell
         # that was countered, or an instant that finished resolving, is in a
         # graveyard owing nobody haste. `move_object` restores it across this

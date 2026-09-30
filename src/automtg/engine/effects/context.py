@@ -62,6 +62,16 @@ class EffectContext:
     #: and cannot ask.  Carried here rather than looked up from the ledger
     #: because the ability index is not otherwise part of an effect's world.
     resolutions: int = 0
+    #: The first timestamp (613.7) this resolution may hand out. Everything
+    #: granted from here on happened *as part of* this spell or ability, which
+    #: is how "it gains X and loses all other abilities" keeps its X: the loss
+    #: removes only grants older than this. Filled from the state on
+    #: construction, and carried along by `dataclasses.replace`.
+    began_at: int = -1
+
+    def __post_init__(self) -> None:
+        if self.began_at < 0:
+            self.began_at = self.state.next_timestamp
 
     def target_refs(self, target_id: str) -> tuple[TargetRef, ...]:
         return self.targets.get(target_id, ())

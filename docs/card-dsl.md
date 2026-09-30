@@ -9943,6 +9943,14 @@ applied together in that order, so the later one sets the base P/T. Oko then a
 creature-land's own animation gives the 4/4 for the turn and the 3/3 Elk
 afterwards.
 
+
+`lose_all_abilities` as an **op** goes by timestamp (613.7). It removes every
+keyword, protection and granted ability given to the permanent *before the
+resolution that makes the loss*, whether timed or permanent, and suspend's haste
+too. A flying granted until end of turn before Oko's +1 is gone; one granted
+after it flies. Grants made earlier **in the same resolution** survive, which is
+what The Irencrag's "it gains … and loses all other abilities" needs. The
+cutoff is `EffectContext.began_at`, and every grant carries a timestamp.
 ## Monstrosity, and holding creatures down
 
 ```jsonc

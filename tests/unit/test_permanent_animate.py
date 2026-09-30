@@ -37,7 +37,14 @@ from automtg.engine.costs import mana_sources
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
-from automtg.engine.primitives import add_counters, animate, pump
+from automtg.engine.primitives import (
+    add_counters,
+    animate,
+    grant_ability,
+    grant_keyword,
+    granted_abilities,
+    pump,
+)
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import move_object
 from tests.conftest import only_oid, pass_until
@@ -201,6 +208,56 @@ class TestItLasts:
         c = chars(game.state, goblin)
         assert "Goblin" in c.subtypes
         assert "Elk" not in c.subtypes
+
+
+class TestLosingAbilitiesGoesByTimestamp:
+    """613.7: the loss removes what was granted before it, not what came after.
+
+    A Bear given flying until end of turn and then Elked is a 3/3 with no
+    flying; one Elked and then given flying flies. The same holds for a grant
+    that lasts as long as the permanent does, and for suspend's haste.
+    """
+
+    def test_a_keyword_granted_earlier_this_turn_is_lost(self, builder):
+        game = a_board(builder, "t_bear")
+        bear = only_oid(game, "t_bear")
+        grant_keyword(game.state, bear, "flying")
+        oko(game, bear)
+        assert "flying" not in chars(game.state, bear).keywords
+
+    def test_a_keyword_granted_afterwards_survives(self, builder):
+        game = a_board(builder, "t_bear")
+        bear = only_oid(game, "t_bear")
+        oko(game, bear)
+        grant_keyword(game.state, bear, "flying")
+        assert "flying" in chars(game.state, bear).keywords
+
+    def test_a_permanent_keyword_granted_earlier_is_lost(self, builder):
+        game = a_board(builder, "t_bear")
+        bear = only_oid(game, "t_bear")
+        grant_keyword(game.state, bear, "haste", permanent=True)
+        oko(game, bear)
+        assert "haste" not in chars(game.state, bear).keywords
+
+    def test_a_granted_ability_earlier_is_lost(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["t_ghostform_source"])
+            .battlefield(1, ["t_bear"])
+            .build()
+        )
+        bear = only_oid(game, "t_bear")
+        grant_ability(game.state, bear, 0, only_oid(game, "t_ghostform_source"), permanent=True)
+        assert len(list(granted_abilities(game.state, bear))) == 1
+        oko(game, bear)
+        assert list(granted_abilities(game.state, bear)) == []
+
+    def test_suspend_haste_is_lost(self, builder):
+        game = a_board(builder, "t_bear")
+        bear = only_oid(game, "t_bear")
+        game.state.objects[bear].hasted_by_suspend = True
+        oko(game, bear)
+        assert "haste" not in chars(game.state, bear).keywords
 
 
 class TestTheLoaderGuards:

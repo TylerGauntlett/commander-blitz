@@ -18529,3 +18529,29 @@ that is generic and {1} or more.
   generic mana and refuses coloured mana, {0}, and life with mana.
 - `tests/unit/test_spell_cost_increase.py` — the old "mana is refused" test is
   now "coloured mana is refused"; the sacrifice refusal names both currencies.
+
+## "Loses all abilities" by timestamp — 613.7
+
+### Overview
+
+Oko, Thief of Crowns' +1 must take away a keyword granted earlier that turn and
+leave one granted afterwards. The `lose_all_abilities` op set a flag that removed
+only the printed abilities. Every grant, older or newer, survived it.
+
+### Tier: B — timestamps on the grants
+
+Keyword, protection and ability grants now carry a `TempEffect.timestamp`, and
+permanent keyword grants record theirs in `GameObject.granted_keyword_at`.
+`EffectContext.began_at` is the first timestamp a resolution may hand out. The op
+drops every ability-kind grant older than that, in `until_eot`,
+`granted_abilities_permanent` and `granted_keywords`, and clears
+`hasted_by_suspend`. A grant made earlier in the same resolution, like The
+Irencrag's "gains … and loses all other abilities", is kept.
+
+### Tests
+
+- `tests/unit/test_permanent_animate.py::TestLosingAbilitiesGoesByTimestamp` — an
+  earlier until-end-of-turn keyword is lost and a later one kept; an earlier
+  permanent keyword and an earlier granted triggered ability are lost; suspend's
+  haste is lost. `test_lose_abilities_op.py` still holds the same-resolution
+  grant.
