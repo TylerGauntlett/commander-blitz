@@ -759,6 +759,12 @@ class AbilityModel(BaseModel):
     #: counters **would be put**" says (Hardened Scales, High Score) and what
     #: "if **you** would put" says (Vorinclex, Innkeeper's Talent).
     effects_only: bool = False
+    #: `replace_counters`: keyed on **who puts** the counters rather than on
+    #: what they land on -- Innkeeper's Talent's and Vorinclex's "if **you**
+    #: would put one or more counters on a permanent or player". ``"you"`` is
+    #: the only value. With it, ``affects`` may be omitted (any permanent,
+    #: whoever controls it) and ``affects_player`` reaches players (poison).
+    put_by: Literal["you"] | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:

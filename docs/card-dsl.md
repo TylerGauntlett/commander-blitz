@@ -2253,6 +2253,23 @@ counter on it, which is the card's ruling. Omitted, costs are replaced too, whic
 is what "counters **would be put**" (Hardened Scales, High Score) and "if **you**
 would put" say.
 
+```jsonc
+// Innkeeper's Talent (level 3), Vorinclex, Monstrous Raider's first half
+{ "effect": "replace_counters", "counter_multiplier": 2,
+  "put_by": "you",                           // "if YOU would put…"
+  "affects_player": "any" }                  // "…on a permanent or player"
+```
+
+`put_by` keys the replacement on **who puts** the counters (122.6a) rather than
+on what they land on, so `affects` may be omitted — every permanent, whoever
+controls it. The putter is the controller of the placing spell or ability
+(`primitives._putter`: the `source` every `add_counters` call names), or, with no
+source, the permanent's own controller — which is who pays a +N loyalty cost,
+ticks a Saga and puts the counters a permanent enters with. `affects_player`
+reaches **players**: poison counters go through `primitives.add_poison`, the one
+funnel for the `add_poison` op and infect damage. A recipient-keyed static
+(`affects` only) never reaches a player.
+
 The sixth named replacement, and the first about an **object** rather than a
 player — tokens, draws, life gain, life loss and milling all take
 `affects_player`; every printed counter replacement names what the counters

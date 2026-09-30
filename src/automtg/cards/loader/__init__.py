@@ -3129,11 +3129,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # than defaulted: a replacement with no filter applies to every counter
         # in the game including an opponent's, which is a strictly better card
         # than any that has been printed.
-        if model.affects is None:
+        # "If **you** would put…" (Innkeeper's Talent) is the one printed
+        # shape that names no recipient: `put_by` narrows it by who is putting
+        # the counters instead, so the filter may go.
+        if model.affects is None and model.put_by is None:
             raise DslError(
                 f"{where}: replace_counters needs 'affects' -- the permanents the "
-                f"counters would be put on; without it the replacement reaches "
-                f"every counter on the table, which no printed card says"
+                f"counters would be put on -- or 'put_by' (\"if you would put\"); "
+                f"without either the replacement reaches every counter on the "
+                f"table, which no printed card says"
             )
         if model.counter is not None:
             _check_counter_kind(model.counter, f"{where}.counter")
@@ -3172,10 +3176,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         model.counter_multiplier is not None
         or model.counter_addend is not None
         or model.effects_only
+        or model.put_by is not None
     ):
         raise DslError(
-            f"{where}: 'counter_multiplier'/'counter_addend'/'effects_only' only "
-            f"mean anything on a replace_counters static, not on {model.effect!r}"
+            f"{where}: 'counter_multiplier'/'counter_addend'/'effects_only'/'put_by' "
+            f"only mean anything on a replace_counters static, not on {model.effect!r}"
         )
 
     if model.effect == "replace_life_loss":
@@ -3480,6 +3485,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
         # permanents for `affects` to name.
+        pass
+    elif model.effect == "replace_counters" and model.put_by is not None:
+        # "If **you** would put…" (Innkeeper's Talent) names the putter and no
+        # recipient; its own guard above requires one of the two.
         pass
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
@@ -3792,6 +3801,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["counter"] = model.counter
     if model.effects_only:
         static["effects_only"] = True
+    if model.put_by is not None:
+        static["put_by"] = model.put_by
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
     if model.gain_multiplier is not None:

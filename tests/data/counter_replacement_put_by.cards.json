@@ -1,0 +1,46 @@
+{
+  "_comment": "Shapes for tests/unit/test_counter_replacement_put_by.py. t_pb_talent is Innkeeper's Talent's level-3 line as a plain enchantment: keyed on who puts the counters, every permanent and every player. t_pb_venom is a sorcery giving target opponent two poison counters; t_pb_graft puts a +1/+1 counter on any target creature.",
+  "cards": [
+    {
+      "id": "t_pb_talent",
+      "name": "Test Putter's Talent",
+      "oracle_text": "If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.",
+      "mana_cost": "{3}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.",
+          "effect": "replace_counters",
+          "counter_multiplier": 2,
+          "put_by": "you",
+          "affects_player": "any"
+        }
+      ]
+    },
+    {
+      "id": "t_pb_venom",
+      "name": "Test Venom",
+      "oracle_text": "Target opponent gets two poison counters.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "opponent"}}],
+      "spell_effects": [{"op": "add_poison", "player": {"target": "t1"}, "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_pb_graft",
+      "name": "Test Graft",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [{"id": "t1", "kind": "permanent", "selector": {"types": ["Creature"], "controller": "any"}}],
+      "spell_effects": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"target": "t1"}}]
+    }
+  ]
+}

@@ -7,8 +7,8 @@ from typing import Any
 
 from ..enums import Keyword
 from ..errors import DslError
-from ..events import EventType
 from ..primitives import (
+    add_poison,
     damage_permanent,
     damage_player,
     gain_life,
@@ -70,14 +70,9 @@ def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
     if amount <= 0:
         return
     for pid in select_players(ctx, spec.get("player", "opponent")):
-        ctx.state.players[pid].poison += amount
-        ctx.state.emit(
-            EventType.POISON_ADDED,
-            player=pid,
-            source=ctx.source_oid,
-            amount=amount,
-            total=ctx.state.players[pid].poison,
-        )
+        # Through the funnel, so a counter replacement that reaches players
+        # (Innkeeper's Talent) applies. The effect's controller puts them.
+        add_poison(ctx.state, pid, amount, source=ctx.source_oid, by=ctx.controller)
 
 
 @register("prevent_damage")

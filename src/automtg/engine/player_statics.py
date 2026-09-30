@@ -1759,7 +1759,12 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
 
 
 def counter_placement_replacements(
-    state: GameState, oid: int, kind: str, *, as_cost: bool = False
+    state: GameState,
+    oid: int,
+    kind: str,
+    *,
+    as_cost: bool = False,
+    by: int | None = None,
 ) -> list[Mapping[str, Any]]:
     """The active ``replace_counters`` statics that apply to this placement.
 
@@ -1782,20 +1787,70 @@ def counter_placement_replacements(
     ``as_cost`` is a placement made while paying a cost -- a planeswalker's +N
     loyalty ability. An ``effects_only`` static (Doubling Season's "if **an
     effect** would put") skips it, because a cost is not an effect.
+
+    ``by`` is the player **putting** the counters (122.6a), read by a static
+    with ``put_by`` -- Innkeeper's Talent's "if **you** would put". Such a
+    static names no recipient filter of its own and reaches every permanent.
     """
     obj = state.objects.get(oid)
     if obj is None:
         return []
     out: list[Mapping[str, Any]] = []
     for source_obj, static in _battlefield_statics(state):
-        if static.get("effect") != "replace_counters":
+        if not _counter_static_applies(source_obj, static, kind, as_cost=as_cost, by=by):
             continue
-        if as_cost and static.get("effects_only"):
+        affects = static.get("affects")
+        if affects is None and static.get("put_by") is not None:
+            # "…on a permanent": any permanent, whoever controls it.
+            affects = {"controller": "any"}
+        if not _matches(state, obj, source_obj, affects):
             continue
-        wanted = static.get("counter")
-        if wanted is not None and str(wanted) != kind:
+        out.append(static)
+    return out
+
+
+def _counter_static_applies(
+    source_obj: GameObject,
+    static: Mapping[str, Any],
+    kind: str,
+    *,
+    as_cost: bool,
+    by: int | None,
+) -> bool:
+    """The recipient-independent half of a ``replace_counters`` static's test:
+    the effect, the kind, cost versus effect, and who is putting them."""
+    if static.get("effect") != "replace_counters":
+        return False
+    if as_cost and static.get("effects_only"):
+        return False
+    wanted = static.get("counter")
+    if wanted is not None and str(wanted) != kind:
+        return False
+    if static.get("put_by") == "you" and (by is None or by != source_obj.controller):
+        return False
+    return True
+
+
+def player_counter_replacements(
+    state: GameState, pid: int, kind: str, *, by: int | None = None
+) -> list[Mapping[str, Any]]:
+    """The ``replace_counters`` statics that apply to counters put on a **player**.
+
+    Innkeeper's Talent's "…on a permanent **or player**", Vorinclex's too: a
+    poison counter is a counter (122.1), and "put on a player" is the printed
+    reach. Only a static that names players through ``affects_player`` reaches
+    one -- every recipient-keyed card before it ("a permanent you control")
+    names a permanent, and a player is not one. Read by
+    `primitives.add_poison` alone, in battlefield order for
+    `counter_placement_replacements`' reasons.
+    """
+    out: list[Mapping[str, Any]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("affects_player") is None:
             continue
-        if not _matches(state, obj, source_obj, static.get("affects")):
+        if not _counter_static_applies(source_obj, static, kind, as_cost=False, by=by):
+            continue
+        if not _reaches_player(source_obj, static, pid):
             continue
         out.append(static)
     return out

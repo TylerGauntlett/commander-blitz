@@ -875,6 +875,11 @@ def reference() -> dict:
             " effect\" excludes a cost, so a planeswalker's +1 still puts one"
             " loyalty counter. Without \"an effect\" in the sentence (Hardened"
             " Scales' \"would be put\") leave `effects_only` out: costs count.",
+            "\"If you would put one or more counters on a permanent or player,"
+            " put twice that many…\" (Innkeeper's Talent, Vorinclex) is"
+            " `replace_counters` with `counter_multiplier: 2`, `put_by: \"you\"`"
+            " and `affects_player: \"any\"`, and no `affects` -- keyed on who"
+            " puts the counters, any permanent, and players (poison).",
             "\"…tapped and attacking that player or a planeswalker they control\""
             " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
             " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"

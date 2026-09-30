@@ -18596,3 +18596,33 @@ three. Fixed by the entering change and pinned.
   planeswalker enters with twice its loyalty, an opponent's does not, a
   Hardened-Scales creature entering with two counters gets three, riot's counter
   is doubled; the loader places the key and refuses it on another static.
+
+## A counter replacement keyed on who puts them, reaching players — Innkeeper's Talent — 122.6a
+
+"If **you** would put one or more counters on a permanent or player, put twice that
+many of each of those kinds of counters on that permanent or player instead." Every
+earlier `replace_counters` card named the recipient ("a permanent you control"); this
+one names the putter, reaches an opponent's permanents, and reaches players.
+
+### What changed
+
+- `put_by: "you"` on `replace_counters` (schema, loader, compiled static). With it,
+  `affects` may be omitted — any permanent.
+- `add_counters(..., by=)`: who is putting. Defaults through `primitives._putter` to
+  the controller of `source`, or with no source the permanent's controller (a +N
+  loyalty cost, a Saga tick, counters a permanent enters with).
+- `primitives.add_poison`: the one funnel for poison — the `add_poison` op and infect
+  damage both used to write `player.poison` by hand. A `replace_counters` static with
+  `affects_player` applies there (`player_statics.player_counter_replacements`).
+- No `effects_only` on this line: "if you would put" includes a cost, so the Talent
+  doubles a +1 loyalty ability (its ruling).
+
+### Tests
+
+- `tests/unit/test_counter_replacement_put_by.py` — my counter on my creature and on
+  an opponent's is doubled, an opponent's on mine is not; the putter defaults to the
+  source's controller; an arrival and a loyalty cost are doubled; the `add_poison`
+  op and my infect damage are doubled, an opponent's infect is not; a
+  recipient-keyed static never reaches a player; POISON_ADDED reports the doubled
+  amount; the loader accepts `put_by` in place of `affects` and refuses it elsewhere.
+

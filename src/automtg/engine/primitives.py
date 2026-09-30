@@ -29,6 +29,7 @@ from .player_statics import (
     damage_cap,
     damage_multiplier,
     mill_multiplier,
+    player_counter_replacements,
     untap_held,
 )
 from .state import new_object
@@ -477,14 +478,7 @@ def damage_player(
     # two keywords.
     poisons = source_oid is not None and _has(state, source_oid, Keyword.INFECT)
     if poisons:
-        state.players[pid].poison += amount
-        state.emit(
-            EventType.POISON_ADDED,
-            player=pid,
-            source=source_oid,
-            amount=amount,
-            total=state.players[pid].poison,
-        )
+        add_poison(state, pid, amount, source=source_oid)
     else:
         # "Damage causes loss of life", so a replacement of the *loss* reaches
         # damage too -- Bloodletter of Aclazotz prints that reminder precisely
@@ -895,7 +889,13 @@ def untap_permanent(state: GameState, oid: int) -> bool:
 
 
 def _replaced_counter_amount(
-    state: GameState, oid: int, kind: str, amount: int, *, as_cost: bool = False
+    state: GameState,
+    oid: int,
+    kind: str,
+    amount: int,
+    *,
+    as_cost: bool = False,
+    by: int | None = None,
 ) -> int:
     """How many counters are actually put on, after every replacement applies.
 
@@ -932,10 +932,63 @@ def _replaced_counter_amount(
     is added once per *placement*, not once per counter -- which is what the
     printed "that many plus one" says.
     """
-    for static in counter_placement_replacements(state, oid, kind, as_cost=as_cost):
+    statics = counter_placement_replacements(state, oid, kind, as_cost=as_cost, by=by)
+    return _apply_counter_statics(statics, amount)
+
+
+def _apply_counter_statics(statics, amount: int) -> int:
+    """614.5: each static once, each seeing the amount the last one left."""
+    for static in statics:
         multiplier = int(static.get("counter_multiplier") or 1)
         addend = int(static.get("counter_addend") or 0)
         amount = amount * multiplier + addend
+    return amount
+
+
+def _putter(state: GameState, source: int | None, fallback: int | None) -> int | None:
+    """Who is putting the counters on (122.6a), for "if **you** would put".
+
+    The controller of the spell or ability doing it -- ``source`` is the object
+    every placement already names -- and, with no source, ``fallback``: the
+    recipient's controller for a permanent, which is who puts the counters a
+    permanent enters with, the lore counter a Saga ticks, and the loyalty a
+    +N cost pays.
+    """
+    if source is not None and (src := state.objects.get(source)) is not None:
+        return src.controller
+    return fallback
+
+
+def add_poison(
+    state: GameState,
+    pid: int,
+    amount: int,
+    *,
+    source: int | None = None,
+    by: int | None = None,
+) -> int:
+    """Give a player poison counters, after every counter replacement applies.
+
+    The one funnel for poison -- the `add_poison` op and infect damage both
+    come through -- so a replacement that reaches players (Innkeeper's
+    Talent's "…on a permanent **or player**") applies once per placement and
+    before POISON_ADDED reports the number that arrived.
+    """
+    if amount <= 0:
+        return 0
+    if by is None:
+        by = _putter(state, source, None)
+    amount = _apply_counter_statics(
+        player_counter_replacements(state, pid, "poison", by=by), amount
+    )
+    state.players[pid].poison += amount
+    state.emit(
+        EventType.POISON_ADDED,
+        player=pid,
+        source=source,
+        amount=amount,
+        total=state.players[pid].poison,
+    )
     return amount
 
 
@@ -947,8 +1000,13 @@ def add_counters(
     source: int | None = None,
     *,
     as_cost: bool = False,
+    by: int | None = None,
 ) -> int:
     """Put counters on a permanent, after every counter replacement applies.
+
+    ``by`` is the player putting them, for "if **you** would put" (Innkeeper's
+    Talent); omitted, it is the controller of ``source``, or with no source the
+    permanent's own controller -- see `_putter`.
 
     ``as_cost`` marks a placement made while paying a cost (a planeswalker's
     +N loyalty ability, `costs.pay`). A cost is not an effect (118.1), so a
@@ -965,7 +1023,11 @@ def add_counters(
         # that really arrived, and a Saga chapter comparison below has to see
         # the same total the board does. Only on the way up -- "would be put on"
         # is nothing to do with counters coming off.
-        amount = _replaced_counter_amount(state, oid, kind, amount, as_cost=as_cost)
+        if by is None:
+            by = _putter(state, source, obj.controller)
+        amount = _replaced_counter_amount(
+            state, oid, kind, amount, as_cost=as_cost, by=by
+        )
     # Read before the write. A Saga's chapter ability triggers on the count
     # *becoming* its number (714.2c), so the comparison needs both sides and
     # this is the only moment both exist.

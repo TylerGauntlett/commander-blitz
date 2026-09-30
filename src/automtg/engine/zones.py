@@ -852,7 +852,9 @@ def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: i
         return
     from .primitives import _replaced_counter_amount
 
-    obj.add_counter(kind, _replaced_counter_amount(state, obj.oid, kind, amount))
+    obj.add_counter(
+        kind, _replaced_counter_amount(state, obj.oid, kind, amount, by=obj.controller)
+    )
 
 
 def _enter_battlefield(
