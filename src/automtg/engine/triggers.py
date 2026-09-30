@@ -59,6 +59,14 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `EventType.COMBAT_DAMAGE_TO_PLANESWALKER` for why widening would quietly
     #: improve every saboteur in the pool.
     "deals_combat_damage_to_planeswalker": EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
+    #: "Whenever this creature deals combat damage, …" -- to a player, a
+    #: planeswalker, a battle **or a creature**, once per combat damage step
+    #: however many it hit. Tamiyo, Field Researcher's "whenever either of
+    #: those creatures deals combat damage". The two rows above are each one
+    #: kind of recipient and would miss a blocked creature; `dealt_damage` is
+    #: the victim's event and fires per recipient, so a trampler would pay
+    #: twice. See `EventType.CREATURE_DEALT_COMBAT_DAMAGE`.
+    "deals_combat_damage": EventType.CREATURE_DEALT_COMBAT_DAMAGE,
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
@@ -331,6 +339,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # `source: "self"` means "whenever *this* creature connects" rather
         # than "whenever anything connects with this planeswalker".
         "deals_combat_damage_to_planeswalker",
+        # The dealer, through the `event.source` fallthrough: the event has no
+        # `oid`, since what it hit may be several things or nothing with an oid.
+        "deals_combat_damage",
         "counter_placed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the

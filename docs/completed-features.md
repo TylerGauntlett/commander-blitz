@@ -18863,3 +18863,41 @@ the damaged permanent and its token.
   still is; the last subject leaving drops the subscription; an eliminated
   controller's subscription is dropped and another seat's kept; and the loader
   takes the duration with a two-target scope.
+
+## Capability: "whenever this creature deals combat damage" -- the `deals_combat_damage` trigger event
+
+### What was missing
+
+Tamiyo, Field Researcher's +1 draws "whenever either of those creatures deals
+combat damage" -- to anything. The engine's combat damage triggers were each one
+kind of recipient: `deals_combat_damage_to_player`,
+`deals_combat_damage_to_planeswalker`, and `dealt_damage` (the victim's event,
+per recipient). None heard a blocked creature hitting its blocker, and composing
+all three would fire twice for a trampler hitting its blocker and the player,
+where 510.2 makes that one event.
+
+### How it works
+
+`combat` now totals what each source actually dealt in a damage step (the return
+values of `damage_player`/`damage_permanent`, so prevention counts) and
+`_fire_per_source` fires one `EventType.CREATURE_DEALT_COMBAT_DAMAGE` per dealer,
+with `source` the dealer and `amount` the total. The trigger name
+`deals_combat_damage` maps to it and is in `OBJECT_SUBJECT_TRIGGERS`, the subject
+reached through the `event.source` fallthrough -- so `source: "self"` and a
+delayed trigger's `subject` both scope it to the dealer. The client keeps it
+silent in `describeEvent` and `beatsFor`, beside `creatures_dealt_combat_damage`,
+because each hit it summarises already has its line and its beat.
+
+### Unblocks
+
+Tamiyo, Field Researcher (with the delayed-trigger capability before it).
+
+### Tests
+
+- `tests/unit/test_deals_combat_damage.py` (5), over
+  `tests/data/deals_combat_damage.cards.json` -- an unblocked hit fires once; a
+  blocked creature hitting only its blocker fires; a trampler hitting its blocker
+  and the player fires once; a zero-power blocker fires nothing; and Tamiyo's
+  delayed shape draws off a blocked watched creature.
+- `frontend/tests/labels.test.ts`, `frontend/tests/events.test.ts` -- the event
+  has no log line and no beat.

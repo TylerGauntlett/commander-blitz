@@ -1,0 +1,58 @@
+{
+  "_comment": "Shapes for tests/unit/test_deals_combat_damage.py. t_dcd_scout draws whenever it deals combat damage, to anything; t_dcd_trampler is the same trigger on a 5/5 trampler, the creature that hits two things in one step and must still trigger once; t_dcd_wall is a 0/3 blocker.",
+  "cards": [
+    {
+      "id": "t_dcd_scout",
+      "name": "Test Combat Scout",
+      "oracle_text": "Whenever this creature deals combat damage, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage, draw a card.",
+          "trigger": {"event": "deals_combat_damage", "source": "self"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dcd_trampler",
+      "name": "Test Combat Trampler",
+      "oracle_text": "Trample\nWhenever this creature deals combat damage, draw a card.",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 5,
+      "toughness": 5,
+      "keywords": ["trample"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage, draw a card.",
+          "trigger": {"event": "deals_combat_damage", "source": "self"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dcd_wall",
+      "name": "Test Combat Wall",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 0,
+      "toughness": 3
+    }
+  ]
+}

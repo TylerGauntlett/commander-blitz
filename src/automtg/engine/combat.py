@@ -1368,18 +1368,25 @@ def deal_combat_damage(
     # would otherwise be answering a question its own first hit had changed.
     monarch_before = state.monarch
 
+    # What each source actually dealt, after prevention -- "deals combat damage"
+    # is about damage that was dealt, and a fully prevented blow is none.
+    dealt: dict[int, int] = {}
     for assignment in assignments:
+        amount = 0
         if assignment.to_player is not None:
-            damage_player(
+            amount = damage_player(
                 state, assignment.to_player, assignment.amount, assignment.source, is_combat=True
             )
         elif assignment.to_object is not None:
-            damage_permanent(
+            amount = damage_permanent(
                 state, assignment.to_object, assignment.amount, assignment.source, is_combat=True
             )
+        if amount and assignment.source is not None:
+            dealt[assignment.source] = dealt.get(assignment.source, 0) + amount
 
     _monarch_transfer(state, monarch_before, assignments)
     _fire_damage_batch(state, assignments)
+    _fire_per_source(state, dealt)
 
     if first_strike_step:
         combat.first_strike_done = True
@@ -1734,3 +1741,32 @@ def end_combat(state: GameState) -> None:
     # trigger fires at the beginning of each combat and the previous combat's
     # restriction has gone with the combat that bought it.
     clear_attack_restrictions(state, "this_combat")
+
+
+def _fire_per_source(state: GameState, dealt: dict[int, int]) -> None:
+    """"Whenever this creature deals combat damage, …" -- once per creature per
+    combat damage step, **whatever it hit and however many things**.
+
+    Tamiyo, Field Researcher: "whenever either of those creatures deals combat
+    damage, you draw a card." The three per-recipient events are each the wrong
+    half: `COMBAT_DAMAGE_TO_PLAYER` and `COMBAT_DAMAGE_TO_PLANESWALKER` miss a
+    blocked creature, and `DAMAGE_DEALT` fires once per recipient -- so a
+    trampler that hits its blocker and the player would trigger twice where the
+    printed ability triggers once (510.2 makes the step's damage one event).
+    Hanging the card on all three would be that double draw.
+
+    Read off the amounts actually dealt, after prevention, so a creature whose
+    every point was prevented dealt nothing and fires nothing. Fired once per
+    step, so first strike and regular damage are two firings (510.4), as for
+    every other combat damage event. ``source`` is the dealer and there is no
+    ``oid`` key, so `triggers._subject_oid` falls through to it.
+    """
+    for source_oid in sorted(dealt):
+        source = state.objects.get(source_oid)
+        fire(
+            state,
+            EventType.CREATURE_DEALT_COMBAT_DAMAGE,
+            player=None if source is None else source.controller,
+            source=source_oid,
+            amount=dealt[source_oid],
+        )

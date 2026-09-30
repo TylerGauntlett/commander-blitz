@@ -1879,6 +1879,24 @@ to the planeswalker instead of the creature connecting. Left off, the subject
 falls through to `event.source` — the dealer — exactly as on the player half, and
 `{"binding": "amount"}` carries the damage for "draw that many cards".
 
+### "…deals combat damage", to anything — `deals_combat_damage`
+
+```jsonc
+{ "kind": "triggered", "text": "Whenever this creature deals combat damage, draw a card.",
+  "trigger": { "event": "deals_combat_damage", "source": "self" }, … }
+```
+
+Once per dealing permanent per combat damage step, whatever it hit and however
+many things — a player, a planeswalker, a battle or a **blocker**. Fired by
+`combat._fire_per_source` from the amounts actually dealt (after prevention), as
+`EventType.CREATURE_DEALT_COMBAT_DAMAGE`, with the dealer as subject and the total
+on `amount`. Not the three per-recipient triggers composed: they miss a blocked
+creature, and a trampler that hits its blocker and the player "deals combat
+damage" once (510.2) where per-recipient triggers would fire twice. First strike
+and regular damage are two steps and two firings. Also takes a delayed trigger's
+`subject` — Tamiyo, Field Researcher's "whenever either of those creatures deals
+combat damage".
+
 ### A reduction that counts an *or* of characteristics
 
 ```jsonc

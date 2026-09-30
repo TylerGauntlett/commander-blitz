@@ -551,6 +551,14 @@ export function describeEvent(
      */
     case "creatures_dealt_combat_damage":
       return null;
+    /*
+     * And the per-creature summary, silent for the same reason: fired once per
+     * dealing creature per damage step, beside the per-hit events that already
+     * narrate every point of that damage, so that "whenever this creature deals
+     * combat damage" -- to anything -- can hear it once.
+     */
+    case "creature_dealt_combat_damage":
+      return null;
     case "blockers_declared":
       return "Blockers declared";
     // Payment used to be entirely silent, then was narrated by a second switch
