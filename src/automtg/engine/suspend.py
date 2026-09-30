@@ -208,7 +208,7 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
         # through the lock. The card stays where it is, the same outcome the
         # total prohibition below produces.
         return False
-    if player_cant_cast_spells(state, pid):
+    if player_cant_cast_spells(state, pid, state.card_of(obj)):
         # Voice of Victory (101.2): a "may cast" meets a "can't cast" and the
         # "can't" wins. The card stays exactly where it is -- in exile for a
         # suspend or a rebound, which is the no-legal-target outcome below, and

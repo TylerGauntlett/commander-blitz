@@ -1134,7 +1134,7 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
-def player_cant_cast_spells(state: GameState, pid: int) -> bool:
+def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = None) -> bool:
     """ "Your opponents can't cast spells during your turn." Voice of Victory.
 
     A prohibition on the *player*, read everywhere a spell can be cast rather
@@ -1156,8 +1156,29 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     `affects_player` picks out the stopped seats and `condition` is the
     "during your turn", both answered through `_active_player_statics`, so the
     lock lifts the instant the source leaves or the turn passes.
+
+    **A spell filter**, `affects_spells`, is Narset Transcendent's emblem:
+    "Your opponents can't cast **noncreature** spells." A filtered lock is a
+    claim about a *spell*, not about the seat, so it can only be answered with
+    the spell in hand -- ``card`` is the face being cast. Asked without one
+    (the seat-level early exits at the top of `_cast_actions` and the
+    resolution-time offers), only the *unfiltered* locks answer, because "this
+    player can cast nothing" is false while creature spells are still allowed.
+    Every site that knows which card is about to be cast passes it, so the
+    filtered lock is asked there -- `casting._cast_variant` for every offered
+    cast, and each resolution-time cast listed above.
     """
-    return _player_static(state, pid, "cant_cast_spells")
+    for obj, static in _active_player_statics(state, "cant_cast_spells"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
 
 
 def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:

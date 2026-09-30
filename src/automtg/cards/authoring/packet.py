@@ -678,10 +678,12 @@ def reference() -> dict:
             "\"Your opponents can't cast spells during your turn\" is the"
             " player-wide static `cant_cast_spells` with `affects_player:"
             " \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops"
-            " every spell from every zone, free casts included, and takes no"
-            " spell filter: \"can't cast creature spells\", \"from anywhere"
-            " other than their hands\" and \"more than one spell each turn\""
-            " are still gaps, and so is \"can't activate abilities\".",
+            " every spell from every zone, free casts included. \"Can't cast"
+            " noncreature spells\" is the same static with `affects_spells:"
+            " {\"not_types\": [\"Creature\"]}` (a spell filter: types, any_types,"
+            " not_types, subtypes, colors, name, ... -- no `controller`,"
+            " `affects_player` says whose). \"More than one spell each turn\""
+            " is still a gap.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"

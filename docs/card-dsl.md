@@ -6028,10 +6028,29 @@ with the rest, and a madness card is still exiled.
 What it leaves alone, on purpose: `copy_spell` and storm-style copies (707.10 —
 never cast), playing lands and the special actions suspend and foretell (116.2),
 and activated abilities (Grand Abolisher's second sentence is a different
-static). It takes no spell filter yet, and `affects` or `amount` beside it is a
-load error rather than ignored — "can't cast **creature** spells" written with a
-filter would otherwise load as a lock on every spell. Drannith Magistrate and
-Deafening Silence remain gaps.
+static). `affects` or `amount` beside it is a load error rather than ignored.
+Drannith Magistrate and Deafening Silence remain gaps.
+
+**A spell filter**, `affects_spells`, narrows it — Narset Transcendent's −9
+emblem, "Your opponents can't cast **noncreature** spells":
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast noncreature spells.",
+  "effect": "cant_cast_spells",
+  "affects_player": "opponent",
+  "affects_spells": { "not_types": ["Creature"] } }
+```
+
+The keys are `SPELL_FILTER_KEYS` without `controller` (`affects_player` already
+names the caster). A filtered lock is a claim about a *spell*, so it is read where
+the spell is known: `casting._cast_variant`, which every offered cast from every
+zone passes through with the face actually being cast, and each resolution-time
+cast above with the card it would cast (`cast_from_hand` also leaves a locked card
+out of its offer). The face is the spell *as cast*: a bestowed creature is an Aura
+spell (702.103b) and a face-down one is a nameless creature spell (708.2a). Asked
+about the seat alone — the early exit at the top of `_cast_actions` — only an
+unfiltered lock answers yes.
 
 `cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
 activate abilities of artifacts, creatures, or enchantments", and the first line
@@ -6810,7 +6829,7 @@ Avatar's Wrath's second line. A casting prohibition with a **zone filter** and a
 
 | near miss | why it is not this |
 |---|---|
-| `cant_cast_spells` (static) | total by construction — the loader refuses an `affects` or an `amount` beside it, so a narrower printed line cannot load as a strictly stronger lock. Written bare it shuts the opponents' *hands* too, which is a far harsher card. It is also a `static_effect`, and a sorcery leaves no permanent to carry one |
+| `cant_cast_spells` (static) | filters by spell (`affects_spells`), never by zone — the loader refuses an `affects` or an `amount` beside it, so a zone-narrowed printed line cannot load as a strictly stronger lock. Written bare it shuts the opponents' *hands* too, which is a far harsher card. It is also a `static_effect`, and a sorcery leaves no permanent to carry one |
 | `set_turn_flag` | inert: no legality path reads `has_turn_flag`, so a "flagged" player goes on casting — and it dies at the turn boundary, a turn too soon |
 | `detain`, `lock_abilities` | aimed at objects, not seats |
 | `delay`, `delayed_trigger` | schedule a future effect rather than hold a restriction open across the turns in between |

@@ -532,6 +532,10 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None:
             continue
         name = ctx.state.card_of(obj).name
+        if player_cant_cast_spells(ctx.state, ctx.controller, ctx.state.card_of(obj)):
+            # A filtered lock (Narset Transcendent's emblem) stops this copy
+            # alone; the total one was answered above.
+            continue
         if optional and not (
             yield from ask_yes_no(
                 ctx,

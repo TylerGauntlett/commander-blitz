@@ -2745,6 +2745,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
             )
+    elif model.effect == "cant_cast_spells" and model.affects_spells is not None:
+        # "Your opponents can't cast **noncreature** spells" -- Narset
+        # Transcendent's emblem. Optional, because Voice of Victory prints no
+        # filter: an omitted one is the total lock, a written one narrows it.
+        # `controller` is refused because `affects_player` already says whose
+        # casts are stopped, and a second answer could only restate it or
+        # contradict it.
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "free_cast_permission":
         # The same two guards `cast_from_graveyard` makes, and the stakes are
         # higher here than on any other `affects_spells` static: a permission
@@ -3285,13 +3299,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if model.effect == "cant_cast_spells" and (
             model.affects is not None or model.amount is not None
         ):
-            # Nothing reads either key. "Your opponents can't cast **creature**
-            # spells" written with a filter here would load clean and stop every
-            # spell -- a strictly stronger lock than the printed card, and one
-            # that looks right on screen. Refused until a spell filter is built.
+            # Nothing reads either key. The spell filter is `affects_spells`
+            # ("can't cast **noncreature** spells", Narset Transcendent's
+            # emblem), matched against the face being cast; `affects` picks out
+            # permanents and a spell being cast is not one.
             raise DslError(
-                f"{where}: cant_cast_spells stops every spell the named players "
-                f"would cast; it takes 'affects_player' and an optional "
+                f"{where}: cant_cast_spells takes 'affects_player', an optional "
+                f"'affects_spells' naming which spells it stops and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
         if model.effect == "cant_activate_abilities":

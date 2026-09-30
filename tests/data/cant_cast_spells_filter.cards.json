@@ -1,0 +1,56 @@
+{
+  "_comment": "Cards that exist only for the filtered cast prohibition test (tests/unit/test_cant_cast_spells_filter.py). `t_noncreature_lock_walker` is Narset Transcendent's -9 alone: an emblem with \"Your opponents can't cast noncreature spells.\" -- `cant_cast_spells` narrowed by an `affects_spells` filter. `t_noncreature_lock` is the same line on a permanent, so the lock can be seen to lift when its source leaves.",
+  "cards": [
+    {
+      "id": "t_noncreature_lock_walker",
+      "name": "Test Noncreature Lock Walker",
+      "oracle_text": "−9: You get an emblem with \"Your opponents can't cast noncreature spells.\"",
+      "mana_cost": "{2}{W}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Narset"],
+      "loyalty": 9,
+      "colors": ["W", "U"],
+      "color_identity": ["W", "U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−9: You get an emblem with \"Your opponents can't cast noncreature spells.\"",
+          "cost": {"loyalty": -9},
+          "effects": [{"op": "emblem", "player": "you", "emblem": 0}]
+        }
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "kind": "static",
+              "text": "Your opponents can't cast noncreature spells.",
+              "effect": "cant_cast_spells",
+              "affects_player": "opponent",
+              "affects_spells": {"not_types": ["Creature"]}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_noncreature_lock",
+      "name": "Test Noncreature Lock",
+      "oracle_text": "Your opponents can't cast noncreature spells.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast noncreature spells.",
+          "effect": "cant_cast_spells",
+          "affects_player": "opponent",
+          "affects_spells": {"not_types": ["Creature"]}
+        }
+      ]
+    }
+  ]
+}

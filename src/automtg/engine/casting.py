@@ -1234,6 +1234,37 @@ def _priced_tuples(
     return priced
 
 
+def _spell_as_cast(card: CardDef, face_down: bool, bestowed: bool) -> CardDef:
+    """The printed face a spell-type filter must read for this cast.
+
+    Almost always the face itself. Two variants change what the *spell* is:
+    a face-down spell is a nameless colorless 2/2 creature spell with no
+    subtypes (708.2a), and a bestowed spell is an Aura enchantment spell and
+    not a creature spell (702.103b). A filter asking "noncreature" of the
+    printed creature card would get both of them backwards.
+    """
+    import dataclasses
+
+    if face_down:
+        return dataclasses.replace(
+            card,
+            name="",
+            mana_cost=ManaCost(),
+            supertypes=frozenset(),
+            types=frozenset({"Creature"}),
+            subtypes=frozenset(),
+            keywords=frozenset(),
+            colors=frozenset(),
+        )
+    if bestowed:
+        return dataclasses.replace(
+            card,
+            types=frozenset({"Enchantment"}),
+            subtypes=frozenset({"Aura"}),
+        )
+    return card
+
+
 def _cast_variant(
     state: GameState,
     pid: int,
@@ -1277,6 +1308,14 @@ def _cast_variant(
     # passing through it -- and a mode-owned target is no more available to a
     # flashed-back spell than to a fresh one.
     if not modal_cast_ok(state, pid, card, oid):
+        return []
+    # "Your opponents can't cast **noncreature** spells" -- Narset
+    # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
+    # asked here because this is the one function every offered cast passes
+    # through with the face actually being cast in hand: the seat-level exit
+    # at the top of `_cast_actions` cannot know which spell it is, and a gate
+    # per zone would leave the rest open.
+    if player_cant_cast_spells(state, pid, _spell_as_cast(card, face_down, bestowed)):
         return []
 
     # Restricted mana ("spend only to cast a creature spell") is offered or

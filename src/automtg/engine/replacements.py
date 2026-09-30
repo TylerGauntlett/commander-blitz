@@ -246,7 +246,7 @@ def _offer_cast(
         # below is: a prompt the player cannot act on is an offer the engine
         # does not honour.
         return False
-    if player_cant_cast_spells(state, pid):
+    if player_cant_cast_spells(state, pid, state.card_of(obj)):
         # Voice of Victory (101.2): the "can't" beats the "may", and it is
         # checked before the question rather than after, because a prompt the
         # player cannot act on is an offer the engine does not honour. A madness

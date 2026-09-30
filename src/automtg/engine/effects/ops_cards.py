@@ -1510,7 +1510,7 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     obj = ctx.state.objects.get(oid)
     if obj is None:
         return False
-    if player_cant_cast_spells(ctx.state, pid):
+    if player_cant_cast_spells(ctx.state, pid, ctx.state.card_of(obj)):
         # Asked before the prompt: `cast_for_free` would refuse anyway, and a
         # "you may cast" question whose yes does nothing is a lie on screen.
         return False
@@ -1568,6 +1568,11 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             # matches it. Found by gate 5 -- the spare Forest in the sandbox
             # hand vanished, which is the whole reason that Forest is there.
             if "Land" not in ctx.state.card_of(ctx.state.objects[oid]).types
+            # Narset Transcendent's emblem: a spell this player can't cast is
+            # not on offer, which is also `cast_for_free`'s floor.
+            and not player_cant_cast_spells(
+                ctx.state, pid, ctx.state.card_of(ctx.state.objects[oid])
+            )
             and _matches_in_zone(ctx, oid, selector, "hand")
         ]
         if not pool:

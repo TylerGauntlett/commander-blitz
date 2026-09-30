@@ -18023,3 +18023,35 @@ attack on one specific target, nor reach creatures arriving later in that turn.
   (tapped, prohibited from the walker); pending does not bite, the untap step
   arms it, cleanup ends it, not on the controller's turn, elimination drops it;
   400.7; both goad interactions; the loyalty ability end to end; the loader.
+
+## `cant_cast_spells` spell filter — Narset Transcendent's emblem
+
+"Your opponents can't cast noncreature spells." `cant_cast_spells` was total by
+construction: the loader refused any filter beside it because nothing read one, so
+the emblem could only be written as a lock on every spell.
+
+### What changed
+
+- The static takes an optional `affects_spells` (the `SPELL_FILTER_KEYS` minus
+  `controller`, which `affects_player` already answers). Omitted, it is Voice of
+  Victory's total lock, unchanged.
+- `player_statics.player_cant_cast_spells(state, pid, card=None)`: with no card
+  only an unfiltered lock answers (a seat under the emblem can still cast
+  creatures); with the card, a filtered lock whose filter matches it answers too.
+- `casting._cast_variant` asks it with the face being cast, so every offered cast
+  from every zone meets the filter. `_spell_as_cast` supplies the spell's own
+  characteristics for the two variants that change them: bestow (an Aura spell,
+  702.103b) and face-down (a nameless creature spell, 708.2a).
+- The resolution-time casts pass the card: `suspend.cast_for_free`,
+  `replacements._offer_cast`, `_offer_free_cast`, `cast_copy` (per card), and
+  `cast_from_hand` drops locked cards from its offer.
+
+### Tests
+
+- `tests/unit/test_cant_cast_spells_filter.py` — creatures offered and
+  noncreatures withheld under the emblem; its owner unaffected; the seat-level
+  question false; a bestow cast withheld while the creature cast stays; a
+  flashback from the graveyard withheld; the free-cast floor refusing a bolt and
+  casting a bear; `cast_from_hand` offering only the creature; a permanent lock
+  lifting when it leaves; the loader accepting the filter and refusing `affects`,
+  `controller` and board-state keys.
