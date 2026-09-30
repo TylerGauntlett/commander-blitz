@@ -17868,3 +17868,53 @@ Yixlid Jailer neighbourhood.
   same board exiled, which is the replacement ordering; the loader refusing a
   missing `affects_player` and an unreachable destination; and the reader's
   fail-closed behaviour pinned in both directions through the same seam.
+
+## Ten printed tokens the Atraxa deck creates — Atraxa, Praetors' Voice — 111.4
+
+### Overview
+
+Eleven cards in the superfriends deck name a token the closed pool did not
+hold. Ten of the tokens are now data in `data/cards/tokens.cards.json`:
+
+| id | the card | the near miss, and why it is a different card |
+|---|---|---|
+| `wizard_2_2_u` | Kasmina, Enigmatic Mentor | `drake_2_2_u_flying` flies and is a Drake |
+| `fractal_0_0_gu` | Kasmina, Enigma Sage | no Fractal; `germ_0_0_b` is black |
+| `spirit_1_1_w_flying` | Kaya the Inexorable | `spirit_1_1_c` is colorless and does not fly |
+| `octopus_8_8_u` | Kiora, Master of the Depths | `kraken_8_8_u` is the right body, a Kraken |
+| `kraken_9_9_u` | Kiora, the Crashing Wave | `kraken_8_8_u` is one smaller |
+| `kor_ally_1_1_w` | Oath of Gideon | the white 1/1s are Soldiers and Humans, and Allies count Allies |
+| `vampire_knight_1_1_b_lifelink` | Sorin, Grim Nemesis | `vampire_1_1_b_lifelink` is no Knight |
+| `pirate_2_2_b_menace` | Vraska, Relic Seeker | `zombie_2_2_b` is a Zombie without menace |
+| `illusion_2_2_u_sac_when_targeted` | Jace, Cunning Castaway | `illusion_1_1_u` is a 1/1 with no trigger |
+| `tamiyos_notebook` | Tamiyo, Compleated Sage | nothing: a legendary Book with two abilities |
+
+### Tier: none of A–E
+
+No engine change. The two tokens with abilities compose shipped vocabulary: the
+Illusion is a `becomes_target` trigger with `targeted_by: "spell"` (Goldspan
+Dragon's clause) sacrificing `self_only`, and the Notebook is `supertypes:
+["Legendary"]`, a `spell_cost_reduction` of `{2}` on spells you cast, and a
+`{T}` `draw`.
+
+The eleventh, Vraska the Unseen's Assassin ("Whenever this creature deals combat
+damage to a player, that player loses the game"), is **not** added: the engine
+has no `lose_game` op, and `win_game` for the Assassin's controller would knock
+out every other opponent in a pod. It waits on `lose_the_game`, the capability
+Pact of Negation's gap record already names.
+
+Only Vraska, Relic Seeker was blocked on nothing else. Kasmina, Enigmatic
+Mentor's record named only the token, but its first line ("cost {2} more") is a
+*mana* tax and `spell_cost_increase` charges life only, so it keeps a
+`spell_cost_increase_mana` need instead. The other eight keep their remaining
+needs, with `missing_token` removed.
+
+### Tests
+
+- `tests/unit/test_atraxa_tokens.py` — size, colour, creature types and keywords
+  of each creature token read off the characteristics layer; each near miss still
+  a separate token; a bare Fractal put into the graveyard by 704.5f; the Illusion
+  sacrificed to your spell and an opponent's, and **not** to an activated ability
+  or a spell aimed at something else; the Notebook discounting generic mana only
+  and only your spells, drawing on a tap, and losing a second copy to the legend
+  rule.

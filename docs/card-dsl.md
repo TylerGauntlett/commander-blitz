@@ -11685,8 +11685,18 @@ pairs in the pool now differ by exactly one word:
 | `cat_1_1_w` | `cat_beast_2_2_w` | Beast, and the body |
 | `bird_soldier_4_4_w_flying` | `bird_1_1_w_flying` | the body |
 | `eldrazi_angel_4_4_c_flying_vigilance` | `angel_4_4_w_flying_vigilance` | Eldrazi, and colorless |
+| `octopus_8_8_u` | `kraken_8_8_u` | Octopus |
+| `kraken_9_9_u` | `kraken_8_8_u` | the body |
+| `vampire_knight_1_1_b_lifelink` | `vampire_1_1_b_lifelink` | Knight |
+| `spirit_1_1_w_flying` | `spirit_1_1_c` | white, and flying |
+| `illusion_2_2_u_sac_when_targeted` | `illusion_1_1_u` | the body, and a trigger |
 
-The bottom five arrived together, from one deck, and two of them show how the
+The five below the Eldrazi Angel came with the Atraxa superfriends deck, beside
+five with no neighbour at all (`wizard_2_2_u`, `fractal_0_0_gu`,
+`kor_ally_1_1_w`, `pirate_2_2_b_menace`, `tamiyos_notebook`); all ten are pinned
+in `tests/unit/test_atraxa_tokens.py`.
+
+The five above them arrived together, from one deck, and two of them show how the
 error compounds rather than staying cosmetic. Myrel, Shield of Argive makes
 colorless Soldier **artifact** tokens and counts Soldiers to decide how many —
 so a white non-artifact Soldier would feed the wrong number back into the card
@@ -11712,6 +11722,19 @@ Nor need a token's ability be about itself in combat. Shorikai's Pilot
 power were 2 greater", a [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater)
 static — and a vanilla 1/1 Pilot in its place would be the near miss this section
 is about, differing by one printed sentence rather than one word.
+
+A token may be legendary and may carry a trigger, and both are ordinary card
+fields. Tamiyo's Notebook (`tamiyos_notebook`) is `supertypes: ["Legendary"]`
+with its printed name, so the legend rule — which reads the name — keeps one; its
+"Spells you cast cost {2} less" is a plain `spell_cost_reduction` and its tap is
+an activated `draw`. Jace, Cunning Castaway's Illusion
+(`illusion_2_2_u_sac_when_targeted`) is a `becomes_target` trigger with
+`targeted_by: "spell"` — Goldspan Dragon's clause — whose effect sacrifices
+`self_only`; without `targeted_by` its own controller's equip would kill it.
+
+A token whose ability needs an op the engine lacks is not added. Vraska the
+Unseen's Assassin ("that player loses the game") waits on a `lose_game` op:
+`win_game` for its controller is a different sentence in a multiplayer game.
 
 ## Which mechanism a printed keyword lands on
 
