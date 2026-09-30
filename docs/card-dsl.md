@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-132 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+133 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -312,7 +312,7 @@ it, but a card that needed correcting was authored wrong.
 | Turn structure | `extra_combat` `extra_turn` |
 | Combat decisions | `choose_blockers` |
 | Dice | `roll_dice` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `repeat_while` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_card_name` `choose_player` `choose_permanents` `repeat` `repeat_while` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ### Proliferate — a choice over permanents and players
 
@@ -10934,6 +10934,28 @@ on another's output — which means a Xenograft naming Goblin does not turn a
 board of Bears into targets for a Goblin lord's anthem. `chars()` reports the
 type, and everything that reads `chars` — selectors, effect filters, the UI type
 line — sees it.
+
+## "Choose a card name"
+
+    Tamiyo, Collector of Tales, +1 — "Choose a nonland card name, then reveal
+    the top four cards of your library. Put all cards with the chosen name from
+    among them into your hand and the rest into your graveyard."
+
+```jsonc
+{ "op": "choose_card_name", "as": "named", "not_types": ["Land"] },
+{ "op": "look_at_top", "amount": { "const": 4 },
+  "objects": { "name": { "binding": "named" }, "count": "all" },
+  "destination": "hand", "rest_to": "graveyard" }
+```
+
+Binds the chosen **name** (a string) under `as`, which is required; a selector's
+`name` reads it as `{"binding": …}` (unbound, it matches nothing). `types` /
+`not_types` narrow which names may be chosen, judged on the printed card. The
+names offered are every distinct name among the cards the chooser owns, in
+every zone, plus "Another card name": a library holds only its owner's cards
+(400.3), so every other printed name has one outcome — it matches nothing — and
+that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
+`choose_card_name`; the heuristic agent names what its library holds most of.
 
 ## "Choose a color"
 

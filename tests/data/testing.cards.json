@@ -13870,6 +13870,44 @@
           "affects_player": "you"
         }
       ]
+    },
+    {
+      "id": "t_name_and_look",
+      "name": "Test Name And Look",
+      "oracle_text": "Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_card_name",
+          "as": "named",
+          "not_types": [
+            "Land"
+          ]
+        },
+        {
+          "op": "look_at_top",
+          "amount": {
+            "const": 4
+          },
+          "objects": {
+            "name": {
+              "binding": "named"
+            },
+            "count": "all"
+          },
+          "destination": "hand",
+          "rest_to": "graveyard"
+        }
+      ]
     }
   ]
 }

@@ -18282,3 +18282,30 @@ when a static reaches `pid` and the cause is another seat. Read by `op_discard`
   "unless you sacrifice" is not offered and the punishment lands; my own discard
   and edict still hit me; the opponent is not shielded; it lifts when the source
   leaves; an uncaused discard is never barred; loader guards.
+
+## Choosing a card name — "Choose a nonland card name, then reveal the top four cards" — 400.3
+
+### Overview
+
+Tamiyo, Collector of Tales' +1. The engine could choose a type, a colour and a
+player; there was no name choice, and the selector key `name` took only a
+literal.
+
+### Tier: A — a new op composing `ask_mode`, and a selector reading its binding
+
+`choose_card_name` (`ops_control`) offers every distinct name among the cards
+the chooser owns (narrowed by `types` / `not_types`) plus "Another card name",
+asks through `ask_mode` tagged `choose_card_name`, and binds the name under the
+required `as` (a `RECORDING_OPS` member). The effect-side selector's `name`
+accepts `{"binding": …}`; `validate_selector` refuses any other non-string. The
+heuristic agent's `_choice` names the label its library holds most copies of.
+
+### Tests
+
+- `tests/unit/test_choose_card_name.py` — one `CHOOSE_MODE` question tagged
+  `choose_card_name`; the offered names are the chooser's own nonland names plus
+  "Another card name", not an opponent's; every copy among the top four goes to
+  hand and the rest to the graveyard, a card below the fourth stays; a name not
+  among them and "Another card name" mill all four; the heuristic agent names
+  what its library holds most of; the loader requires `as`, refuses an unknown
+  card type and a `name` that is neither a literal nor a binding.

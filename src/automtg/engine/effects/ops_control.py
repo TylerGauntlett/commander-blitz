@@ -329,6 +329,56 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.state.bump_chars()
 
 
+#: The label of the one answer that is not a card the chooser owns: "a name no
+#: card in your library has". Bound as the empty string, which no selector matches.
+OTHER_CARD_NAME = "Another card name"
+
+
+@register("choose_card_name")
+def op_choose_card_name(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose a nonland card name" -- Tamiyo, Collector of Tales.
+
+    Binds the chosen name, a string, under ``as``; a later selector reads it as
+    ``{"name": {"binding": …}}``. ``types`` / ``not_types`` narrow which names
+    may be chosen ("a **nonland** card name" is ``not_types: ["Land"]``),
+    judged on the printed card.
+
+    **Which names are offered.** At a table any card name ever printed may be
+    named, but the only thing a name can do here is match cards the chooser
+    owns: the card it is compared against is in their own library, and a
+    library holds only its owner's cards (400.3). So every distinct name among
+    the cards the chooser owns, in every zone, is offered -- the chooser knows
+    their own deck list, so this shows nothing hidden -- plus
+    :data:`OTHER_CARD_NAME`, which stands for every other name ever printed:
+    they all have the same outcome, matching nothing. That is a real choice
+    (Tamiyo naming a card that is not there mills all four), and leaving it out
+    would take it from the player whenever every name they own might be on top.
+
+    **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
+    labels", exactly as `choose_type` and `choose_color` use it, tagged
+    ``choose_card_name`` so a seat can tell a name from a mode.
+    """
+    state = ctx.state
+    want = set(spec.get("types") or ())
+    unwanted = set(spec.get("not_types") or ())
+    names: set[str] = set()
+    for obj in state.objects.values():
+        if obj.owner != ctx.controller or obj.is_token:
+            continue
+        card = state.card_of(obj)
+        types = set(card.types)
+        if want and not (want & types):
+            continue
+        if unwanted & types:
+            continue
+        names.add(card.name)
+    labels = [*sorted(names), OTHER_CARD_NAME]
+    prompt = str(spec.get("prompt") or "Choose a card name")
+    picked = yield from ask_mode(ctx, prompt, labels, ctx.controller, purpose="choose_card_name")
+    chosen = labels[picked[0]] if picked else OTHER_CARD_NAME
+    ctx.bindings[str(spec["as"])] = "" if chosen == OTHER_CARD_NAME else chosen
+
+
 @register("choose_player")
 def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Choose an opponent." Demonstrate, and the untargeted way to name a seat.

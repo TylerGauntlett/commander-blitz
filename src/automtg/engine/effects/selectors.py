@@ -869,8 +869,17 @@ def matches(
         return False
     if (want := selector.get("not_keywords")) and set(want) & keywords:
         return False
-    if (want := selector.get("name")) and card.name != want:
-        return False
+    if (want := selector.get("name")) is not None:
+        if isinstance(want, Mapping):
+            # "Put all cards **with the chosen name** from among them into your
+            # hand" (Tamiyo, Collector of Tales): the name a `choose_card_name`
+            # earlier in the same effect bound. Unbound, it matches nothing --
+            # a name nobody chose names no card.
+            want = ctx.bindings.get(str(want.get("binding")))
+            if not isinstance(want, str) or not want:
+                return False
+        if card.name != want:
+            return False
     # "…for up to five Dragon cards **not named Tiamat**". Read off `card.name`
     # exactly as the positive clause one line up does, for the same reason it
     # does: nothing in the characteristics layer renames an object, so the
@@ -1588,6 +1597,18 @@ def validate_selector(selector: Any, where: str) -> None:
                 continue
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    # A literal name, or the name a `choose_card_name` bound. Anything else
+    # would be compared against a card name, match nothing and look fine.
+    wanted = selector.get("name")
+    if wanted is not None and not isinstance(wanted, str) and not (
+        isinstance(wanted, Mapping)
+        and set(wanted) == {"binding"}
+        and isinstance(wanted["binding"], str)
+    ):
+        raise DslError(
+            f"{where}: 'name' takes a card name or {{'binding': ...}} naming a "
+            f"choose_card_name's choice, got {wanted!r}"
+        )
     # Same argument, and sharper for the negated key: a misspelled *positive*
     # supertype selects nothing and is visible on the first board, where a
     # misspelled `not_supertypes` excludes nothing and looks like it worked.

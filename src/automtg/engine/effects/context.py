@@ -214,8 +214,13 @@ def ask_mode(
     chooser: int,
     count: int = 1,
     up_to: int | None = None,
+    purpose: str | None = None,
 ) -> Generator[PendingDecision, list[int], list[int]]:
     """Ask the controller to choose one or more modes of a modal spell.
+
+    ``purpose`` tags the decision the way `ask_objects`' does, for a seat that
+    answers a label question differently by what it is for -- a card name
+    (`choose_card_name`) is not a mode, and its first label is no better a guess.
 
     ``up_to`` makes ``count`` a floor rather than an exact number: "Choose one.
     If you control a commander as you cast this spell, you may choose both
@@ -234,7 +239,11 @@ def ask_mode(
         options=tuple(DecisionOption(label=label, value=i) for i, label in enumerate(labels)),
         min_count=count,
         max_count=min(maximum, len(labels)),
-        context={"source": ctx.source_oid, "source_name": ctx.source_name},
+        context={
+            "source": ctx.source_oid,
+            "source_name": ctx.source_name,
+            **({"purpose": purpose} if purpose else {}),
+        },
     )
     answer = yield decision
     return list(answer)

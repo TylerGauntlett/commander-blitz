@@ -379,6 +379,11 @@ class HeuristicAgent:
             # then the permanent carrying the most, never the last loyalty on a
             # planeswalker while anything else will do.
             return max(choices, key=lambda a: self._counter_spare(state, a))
+        if purpose == "choose_card_name":
+            # The first label is alphabetical, not good: name whatever this
+            # seat's library holds most copies of, so a Tamiyo look is likeliest
+            # to hit.
+            return max(choices, key=lambda a: self._name_hits(state, seat, decision, a))
         if purpose == "proliferate":
             # A free multi-select: `choices[0]` would grow whatever came first
             # -- an opponent's planeswalker, the -1/-1 counters on our own
@@ -386,6 +391,18 @@ class HeuristicAgent:
             wanted = [a for a in choices if self._proliferate_helps(state, seat, a)]
             return wanted[0] if wanted else _first(actions, ActionKind.FINISH_DECLARATION) or choices[0]
         return choices[0]
+
+    def _name_hits(self, state: GameState, seat: int, decision, action: Action) -> int:
+        """How many cards in this seat's library carry the label this action names."""
+        index = action.choice
+        if index is None or not 0 <= index < len(decision.options):
+            return 0
+        label = decision.options[index].label
+        return sum(
+            1
+            for oid in state.players[seat].library
+            if state.card_of(state.objects[oid]).name == label
+        )
 
     def _counter_spare(self, state: GameState, action: Action) -> tuple[int, int, int]:
         """How little one counter off this permanent costs us -- higher is better."""

@@ -715,6 +715,11 @@ def reference() -> dict:
             " `opponents_cant_force_discard_or_sacrifice` with `affects_player:"
             " \"you\"` -- keyed on who controls the cause, so your own spells"
             " and costs still discard and sacrifice. Not `cant_sacrifice`.",
+            "\"Choose a (nonland) card name\" is the op `choose_card_name` with"
+            " `as` (and `not_types: [\"Land\"]`); a later selector matches it"
+            " with `name: {\"binding\": <as>}` -- e.g. a `look_at_top` whose"
+            " `objects` is `{\"name\": {\"binding\": \"named\"}, \"count\":"
+            " \"all\"}` with `rest_to: \"graveyard\"`.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

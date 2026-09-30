@@ -39,6 +39,10 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: The one recorder whose binding is a **card name** -- a string, read
+        #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
+        #: Collector of Tales. See `ops_control.op_choose_card_name`.
+        "choose_card_name",
         "choose_player",
         #: The one recorder that does **nothing** to what it picked. Tragic
         #: Arrogance marks the survivors before the mass sacrifice; every other

@@ -924,6 +924,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # resolving player's and turned the half of demonstrate that balances
         # it into no clause at all.
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op == "choose_card_name":
+        # The name exists only as its binding, read by a selector's
+        # `{"name": {"binding": …}}` -- without 'as' it is a prompt whose
+        # answer is thrown away and the selector matches nothing.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_card_name needs an 'as' -- the chosen name is "
+                f"only reachable through the binding it is stored under"
+            )
+        for key in ("types", "not_types"):
+            names = effect.get(key)
+            if names is None:
+                continue
+            if not isinstance(names, (list, tuple)) or not names:
+                raise DslError(f"{where}: choose_card_name '{key}' takes a list of card types")
+            for name in names:
+                if name not in KNOWN_TYPES:
+                    raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose
