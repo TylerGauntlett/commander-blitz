@@ -1680,6 +1680,44 @@ def damage_multiplier(
     return multiplier
 
 
+def damage_cap(
+    state: GameState, target_oid: int | None, *, target_pid: int | None = None
+) -> int | None:
+    """The most of one damage event that may reach this recipient, or ``None``.
+
+    Ajani Steadfast's emblem: "If a source would deal damage to you or a
+    planeswalker you control, prevent all but 1 of that damage." Every
+    `prevent_all_but` static that names the recipient caps the event at its
+    ``amount``; with several, the smallest cap is the one that bites.
+
+    The recipient side reads exactly as `damage_multiplier`'s does -- ``affects``
+    for a permanent, ``affects_player`` for a seat, a union when both are
+    written -- because it is the same printed "to you or a planeswalker you
+    control" shape. Read by `primitives.damage_permanent` and
+    `primitives.damage_player` alone.
+    """
+    cap: int | None = None
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_all_but":
+            continue
+        recipient = static.get("affects")
+        seats = static.get("affects_player")
+        if target_oid is None:
+            if seats is None or target_pid is None:
+                continue
+            if not _reaches_player(source_obj, static, target_pid):
+                continue
+        else:
+            obj = state.objects.get(target_oid)
+            if recipient is None or obj is None:
+                continue
+            if not _matches(state, obj, source_obj, recipient):
+                continue
+        value = max(0, _static_value(state, static.get("amount"), source_obj))
+        cap = value if cap is None else min(cap, value)
+    return cap
+
+
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:
     """Does the token about to be created match this filter?
 

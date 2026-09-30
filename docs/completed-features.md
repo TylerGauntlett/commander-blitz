@@ -17962,3 +17962,31 @@ damage dealt *to* what it matches. Nothing could stop damage a permanent *deals*
   and an eliminated installer's shields dropped; 400.7 (a blinked permanent is
   unshielded); the primitive's refusals; both test spells end to end; and the
   loader's required keys.
+
+## `prevent_all_but` — "prevent all but 1 of that damage" — Ajani Steadfast — 615.1
+
+### The gap
+
+Ajani Steadfast's −7 emblem: "If a source would deal damage to you or a
+planeswalker you control, prevent all but 1 of that damage." The `prevent_damage`
+static is absorb N (prevents N, lets the rest through) or `prevent_all`, and is
+read only for permanents, so it could protect neither the player nor cap an event.
+
+### What was built
+
+- The `prevent_all_but` static: `amount` (required, ≥ 1) and recipients
+  `affects_player` and/or `affects` (at least one), read as a union.
+- `player_statics.damage_cap(state, target_oid, target_pid=...)` — the smallest
+  cap among the statics that reach the recipient, walking `_battlefield_statics`
+  (so an emblem in the command zone applies).
+- `primitives._apply_damage_cap`, called in `damage_permanent` and
+  `damage_player` right after the `replace_damage` multiplier; the surplus fires
+  `DAMAGE_PREVENTED` with `reason: "prevent_all_but"`.
+
+### Tests
+
+- `tests/unit/test_prevent_all_but.py` — a big hit capped to 1, a 1 untouched,
+  each event capped separately; your planeswalker covered, your creature, the
+  opponent and their planeswalker not; the surplus as a prevention event and the
+  rest as ordinary damage; a doubler applied first (with its baseline); the
+  loader's refusals (no amount, all but 0, no recipient).

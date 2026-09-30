@@ -3053,6 +3053,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"anything on a replace_damage static, not on {model.effect!r}"
         )
 
+    if model.effect == "prevent_all_but":
+        # "Prevent all but N of that damage." N is required: absent, the static
+        # would read 0 and be a total shield -- `prevent_damage`'s
+        # `prevent_all`, a much stronger card.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: prevent_all_but needs an 'amount' -- the damage that "
+                f"still gets through ('prevent all but 1' is 1)"
+            )
+        if isinstance(model.amount, int) and model.amount < 1:
+            raise DslError(
+                f"{where}.amount: must be 1 or more; all but 0 is the "
+                f"'prevent_damage' static's 'prevent_all'"
+            )
+        # At least one recipient: a cap on *every* damage event in the game is
+        # a sentence no printed card says, and it would shield the opponents too.
+        if model.affects is None and model.affects_player is None:
+            raise DslError(
+                f"{where}: prevent_all_but needs 'affects_player' (a seat, 'you') "
+                f"and/or 'affects' (permanents) -- whose damage is capped"
+            )
+
     if model.effect == "replace_counters":
         # `affects` names the permanent the counters would be put on, and every
         # printed card names one -- "on a creature you control", "on an
@@ -3336,6 +3358,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the usual "which permanents this static describes". Inquisitor's
         # Flail prints one line with each.
         "replace_damage",
+        # Ajani Steadfast's emblem names a seat *and* permanents -- "you or a
+        # planeswalker you control" -- so `affects` is one of two optional
+        # recipient filters, checked in the `prevent_all_but` branch above.
+        "prevent_all_but",
         # Rest in Peace names nothing at all -- "if **a card or token** would be
         # put into **a graveyard** from **anywhere**" -- so its filter is
         # genuinely optional and is the exception rather than the rule in this

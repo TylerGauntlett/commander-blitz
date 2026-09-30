@@ -465,6 +465,14 @@ STATIC_EFFECTS = frozenset(
         # deathtouch and infect, and only incidentally reduces a life total --
         # so doubling the loss leaves a doubled hit on a creature undoubled.
         "replace_damage",
+        # Ajani Steadfast's emblem: "If a source would deal damage to you or a
+        # planeswalker you control, prevent all but 1 of that damage." A cap on
+        # each damage event, the inverse of absorb N (which prevents N and lets
+        # the rest through). Recipient named by `affects` (permanents) and/or
+        # `affects_player` (seats), read as a union like `replace_damage`'s.
+        # Read by `primitives.damage_permanent` and `primitives.damage_player`
+        # through `player_statics.damage_cap`.
+        "prevent_all_but",
         # Bloodletter of Aclazotz.  "If an opponent would lose life during your
         # turn, they lose twice that much life instead."  The engine's *second*
         # replacement hook and, like the first, a named one rather than the

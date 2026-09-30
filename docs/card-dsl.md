@@ -3979,7 +3979,7 @@ characteristics — the loader rejects anything else. See
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
-`block_restriction` · `prevent_damage` · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
+`block_restriction` · `prevent_damage` · [`prevent_all_but`](#prevent-all-but-n-of-that-damage) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
@@ -7038,6 +7038,35 @@ reads the recipient's `to` shield and the dealer's `by` shield beside the
 beside protection. Prevented damage was never dealt — no mark, no loyalty lost,
 no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
 `reason: "permanent_shield"`.
+
+## Prevent all but N of that damage
+
+```jsonc
+// Ajani Steadfast's emblem: "If a source would deal damage to you or a
+//   planeswalker you control, prevent all but 1 of that damage."
+{ "kind": "static", "effect": "prevent_all_but", "amount": 1,
+  "affects_player": "you",
+  "affects": { "controller": "you", "types": ["Planeswalker"] } }
+```
+
+A cap on **each damage event**: whatever a source would deal, at most `amount`
+gets through and the surplus is prevented (`DAMAGE_PREVENTED`,
+`reason: "prevent_all_but"`). The inverse of absorb N — the `prevent_damage`
+static — which prevents N and lets the rest through: a 1-damage ping lands under
+this and is erased by a big absorb, so neither can stand in for the other.
+
+The recipient reads as `replace_damage`'s does: `affects_player` names seats,
+`affects` names permanents, and with both written they are a **union** ("you
+**or** a planeswalker you control"). At least one is required — a cap on every
+damage event in the game would shield the opponents too — and `amount` is
+required and at least 1 (all but 0 is `prevent_all`). With several caps the
+smallest bites.
+
+Applied in `primitives.damage_permanent` and `primitives.damage_player`
+**after** `replace_damage`'s multiplier: 616.1 lets the protected player order
+the two and they would cap last, so a doubled hit still lands as 1. Read through
+`player_statics.damage_cap`, which walks `_battlefield_statics` — the command
+zone included, which is where an emblem lives.
 
 ## "Whenever you attack"
 

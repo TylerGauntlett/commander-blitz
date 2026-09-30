@@ -26,6 +26,7 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .player_statics import (
     counter_placement_replacements,
+    damage_cap,
     damage_multiplier,
     mill_multiplier,
     untap_held,
@@ -458,6 +459,13 @@ def damage_player(
     amount *= damage_multiplier(
         state, source_oid, None, target_pid=pid, is_combat=is_combat
     )
+    # "Prevent all but 1 of that damage" (Ajani Steadfast's emblem). **After**
+    # the doubling, which is the order the protected player would pick (616.1):
+    # a doubled hit capped at 1 is still 1, where capping first and doubling
+    # after would let 2 through. The surplus was never dealt.
+    amount = _apply_damage_cap(state, amount, source_oid, None, pid)
+    if amount <= 0:
+        return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -565,6 +573,34 @@ def damage_player(
             defender=pid,
         )
     return amount
+
+
+def _apply_damage_cap(
+    state: GameState,
+    amount: int,
+    source_oid: int | None,
+    oid: int | None,
+    pid: int,
+) -> int:
+    """Cap one damage event under every `prevent_all_but` static that reaches it.
+
+    ``oid`` is the damaged permanent, or ``None`` for damage to the player
+    ``pid``. Fires `DAMAGE_PREVENTED` for the surplus and returns what is left.
+    """
+    cap = damage_cap(state, oid, target_pid=None if oid is not None else pid)
+    if cap is None or amount <= cap:
+        return amount
+    fire(
+        state,
+        EventType.DAMAGE_PREVENTED,
+        player=pid,
+        source=source_oid,
+        oid=oid,
+        amount=amount - cap,
+        to="player" if oid is None else "permanent",
+        reason="prevent_all_but",
+    )
+    return cap
 
 
 def damage_permanent(
@@ -710,6 +746,11 @@ def damage_permanent(
     # branches because each of those is a *different place to put the damage*
     # rather than a change to how much of it there is.
     amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+    # "…or a planeswalker you control, prevent all but 1 of that damage." After
+    # the doubling for the reason given in `damage_player`.
+    amount = _apply_damage_cap(state, amount, source_oid, oid, obj.controller)
+    if amount <= 0:
+        return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword

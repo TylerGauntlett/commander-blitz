@@ -13590,6 +13590,70 @@
           "duration": "until_your_next_turn"
         }
       ]
+    },
+    {
+      "id": "t_all_but_emblem",
+      "name": "Test All But Emblem",
+      "oracle_text": "You get an emblem with \"If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage.\"",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "emblem",
+          "player": "you",
+          "emblem": 0
+        }
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "kind": "static",
+              "effect": "prevent_all_but",
+              "amount": 1,
+              "affects_player": "you",
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Planeswalker"
+                ]
+              },
+              "text": "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_damage_doubler",
+      "name": "Test Damage Doubler",
+      "oracle_text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "mana_cost": "{1}{R}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+        }
+      ]
     }
   ]
 }
