@@ -1587,13 +1587,22 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
 
     selector = spec.get("selector") or {}
     prompt = "Cast a spell without paying its mana cost"
+    # "…from your hand, **from your graveyard, or from among cards you own in
+    # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
+    # zones, not one per zone: the sentence casts *a* spell. Each zone is read
+    # off the player's own list, and those lists are kept per **owner**, which
+    # is exactly "cards you own in exile". Defaults to the hand, so every card
+    # written before this reads as it did.
+    zones = [str(z) for z in spec.get("zones", ("hand",))]
     for pid in select_players(ctx, spec.get("player", "you")):
         if player_cant_cast_while_resolving(ctx.state, pid):
             # Voice of Victory: nothing to offer a player who cannot cast.
             continue
+        player = ctx.state.players[pid]
         pool = [
             oid
-            for oid in list(ctx.state.players[pid].hand)
+            for zone in zones
+            for oid in list(player.zone_list(Zone(zone)))
             # A land is not a spell and is never cast (305.9) -- it is *played*,
             # and only during your main phase with the stack empty. Excluded
             # here rather than left to each card's selector, because every
@@ -1608,7 +1617,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             and not player_cant_cast_while_resolving(
                 ctx.state, pid, ctx.state.card_of(ctx.state.objects[oid])
             )
-            and _matches_in_zone(ctx, oid, selector, "hand")
+            and _matches_in_zone(ctx, oid, selector, zone)
         ]
         if not pool:
             continue

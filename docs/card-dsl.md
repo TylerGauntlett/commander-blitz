@@ -95,6 +95,22 @@ card in hand qualifies, which is Electrodominance's bare "a spell". The op is
 optional by construction — the choice has a minimum of zero, so no `may` wrapper
 is needed — and a player with nothing matching is never asked.
 
+`zones` widens where the card may come from. Kaya the Inexorable's emblem casts
+"a legendary spell from your hand, from your graveyard, or from among cards you
+own in exile":
+
+```jsonc
+{ "op": "cast_from_hand",
+  "zones": ["hand", "graveyard", "exile"],   // default ["hand"]
+  "selector": { "supertypes": ["Legendary"] } }
+```
+
+It is **one** choice over the union of the zones, because the sentence casts *a*
+spell. Three ops would offer three. Each zone is the player's own list, and
+exile is kept per owner, so "cards you own in exile" needs no filter. A card an
+opponent owns is never offered. The loader takes `hand`, `graveyard` and
+`exile`, each at most once. The library top is `look_at_top`'s `cast_free`.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is

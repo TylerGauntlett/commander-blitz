@@ -18473,3 +18473,28 @@ graveyard and exile `self_only` branches.
   fire on a bounce or a tuck; the card that came back is a new object and dies
   plainly; the loader takes the clause on `leaves_battlefield`, refuses it
   elsewhere and refuses a zone nothing leaves to.
+
+## A free cast from hand, graveyard or exile — one choice over several zones
+
+### Overview
+
+Kaya the Inexorable's emblem: "At the beginning of your upkeep, you may cast a
+legendary spell from your hand, from your graveyard, or from among cards you own
+in exile without paying its mana cost." `cast_from_hand` made this optional free
+cast, but only from the hand.
+
+### Tier: A — an option on an existing op
+
+`cast_from_hand` takes `zones`, a list drawn from `hand`, `graveyard` and `exile`
+that defaults to `["hand"]`. The pool is built across every listed zone of the
+player's own lists (exile is per owner), with lands and can't-cast cards
+excluded as before, and each card is matched as a card in the zone it sits in.
+It is one `ask_objects` with a minimum of zero. The loader refuses an empty list,
+an unknown zone and a repeat.
+
+### Tests
+
+- `tests/unit/test_cast_free_from_zones.py` — the three zones form one pool; only
+  legendary cards are offered; an opponent's card in exile is not; the default is
+  still the hand; a legend is cast from the graveyard and from exile; declining
+  casts nothing; the loader guards.

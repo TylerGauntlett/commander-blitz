@@ -2413,6 +2413,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_selector(selector, f"{where}.selector")
         if "player" in effect:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if "zones" in effect:
+            # Kaya the Inexorable's emblem: hand, graveyard, and cards you own
+            # in exile. The three zones a player keeps cards of their own in and
+            # can cast out of; the library top is `look_at_top`'s `cast_free`.
+            zones = effect["zones"]
+            allowed = ("hand", "graveyard", "exile")
+            if (
+                not isinstance(zones, list)
+                or not zones
+                or any(z not in allowed for z in zones)
+                or len(set(zones)) != len(zones)
+            ):
+                raise DslError(
+                    f"{where}: cast_from_hand's 'zones' is a non-empty list drawn "
+                    f"from {list(allowed)}, got {zones!r}"
+                )
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
