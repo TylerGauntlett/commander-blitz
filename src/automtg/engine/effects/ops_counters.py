@@ -44,6 +44,36 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
 
 
+@register("distribute_counters")
+def op_distribute_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Distribute three +1/+1 counters among up to three target creatures."
+    -- Ajani, Sleeper Agent.
+
+    The division was announced as the ability was activated (601.2d, 602.2b)
+    and travels on the stack item as ``bindings["distribution"]``: one
+    ``[oid, n]`` pair per declared target, each ``n`` at least one --
+    `game.Game._ask_distribution` asked it. Here each target that is still
+    legal gets its share; a target that became illegal takes its share with it
+    (608.2b), and the rest are **not** redistributed -- asking again now would
+    let the split follow whatever happened in response, a strictly better card.
+    """
+    kind = str(spec.get("counter", "+1/+1"))
+    target_id = str((spec.get("objects") or {}).get("target"))
+    legal = set(ctx.target_oids(target_id))
+    division = (ctx.bindings.get("distribution") or {}).get(target_id)
+    if division is None:
+        # The loader keeps this op to activated abilities, whose activation
+        # always announces the division; with no announcement there is no
+        # division to honour, and inventing one would be a different card.
+        raise DslError(
+            f"distribute_counters for {target_id!r} resolved without an announced division"
+        )
+    for oid, share in division:
+        if int(oid) in legal and int(share) > 0:
+            add_counters(ctx.state, int(oid), kind, int(share), source=ctx.source_oid)
+    yield from ()
+
+
 @register("double_counters")
 def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Double the number of each kind of counter on any number of target

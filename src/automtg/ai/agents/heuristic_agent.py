@@ -395,6 +395,15 @@ class HeuristicAgent:
             # there. Take the richer board -- we lose ours either way.
             seats = list(decision.context.get("takes_from") or [])
             return max(choices, key=lambda a: self._board_worth(state, seats, a))
+        if purpose == "distribute":
+            # Another +1/+1 counter (Ajani, Sleeper Agent): on our own best
+            # creature, never an opponent's while one of ours is a target.
+            def ours(a: Action) -> bool:
+                oid = _target_oid(a)
+                return oid in state.objects and state.objects[oid].controller == seat
+
+            pool = [a for a in choices if ours(a)] or choices
+            return max(pool, key=lambda a: self._creature_value(state, a))
         return choices[0]
 
     def _name_hits(self, state: GameState, seat: int, decision, action: Action) -> int:

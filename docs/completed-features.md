@@ -18657,3 +18657,31 @@ effect-side selector. Admissible for `tapped`'s reason: no layer writes counters
   permanent is not warded; `false` matches only counterless permanents; the
   effect-side selector picks out permanents with counters.
 
+## Distributing counters among targets — Ajani, Sleeper Agent — 601.2d
+
+"Distribute three +1/+1 counters among up to three target creatures." `add_counters`
+takes one amount for every object, so the only near miss was one counter on each.
+
+### What changed
+
+- `distribute_counters` op (`effects/ops_counters.py`): honours the announced
+  division in `bindings["distribution"]`, skipping targets that became illegal.
+- `game.Game._ask_distribution`, called from `_activate` straight after modes and
+  targets, before the cost: every target gets one, then "which target gets
+  another?" per remaining counter via `ask_objects` (purpose `distribute`) — no new
+  decision kind, no frontend work. `targeting.declared_by_spec` splits the declared
+  refs per spec without a legality check.
+- Loader: `objects: {"target": id}` and a printed `amount` required; the op only as
+  a top-level effect of an activated ability; a target spec whose ceiling exceeds
+  the total is refused.
+- Heuristic agent: `distribute` puts each extra counter on its own best creature.
+
+### Tests
+
+- `tests/unit/test_distribute_counters.py` — one target takes all three and three
+  take one each with no question asked; two targets split 2/1 as chosen; the
+  division is on the stack item before it resolves; vigilance is granted; an
+  illegal target's share is lost, not redistributed; the heuristic agent favours
+  its own creature; the loader refuses a spell, a trigger, more targets than
+  counters, a computed amount and a non-target `objects`.
+

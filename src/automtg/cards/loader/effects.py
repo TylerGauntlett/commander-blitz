@@ -1795,6 +1795,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(effect["amount"], f"{where}.amount")
         if "from" in effect:
             validate_selector(effect["from"], f"{where}.from")
+    if op == "distribute_counters":
+        # "Distribute three +1/+1 counters among up to three target creatures"
+        # (601.2d). The division is announced as the ability is activated, over
+        # the targets just declared, so the op must name one target spec and a
+        # number printed on the card -- a computed total could not be divided
+        # before it is known.
+        objects = effect.get("objects")
+        if not (isinstance(objects, Mapping) and set(objects) == {"target"}):
+            raise DslError(
+                f"{where}: distribute_counters needs 'objects': {{\"target\": <id>}} -- "
+                f"the counters are divided among that target spec's choices"
+            )
+        amount = effect.get("amount")
+        if isinstance(amount, Mapping) and set(amount) == {"const"}:
+            amount = amount["const"]
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}: distribute_counters needs a printed 'amount' of 1 or more "
+                f"(an int or {{\"const\": n}}); the division is announced before "
+                f"anything could be computed"
+            )
     if op == "double_counters" and not effect.get("objects"):
         # Without `objects` the pool is empty and nothing doubles: a Deepglow
         # Skate that loads clean and does nothing.

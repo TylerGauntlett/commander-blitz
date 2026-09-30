@@ -1,0 +1,32 @@
+{
+  "_comment": "Shapes for tests/unit/test_distribute_counters.py. t_dc_walker carries Ajani, Sleeper Agent's minus line on a plain planeswalker; t_dc_bolt is a sorcery that kills a creature so a target can be made illegal in response.",
+  "cards": [
+    {
+      "id": "t_dc_walker",
+      "name": "Test Sleeper Walker",
+      "oracle_text": "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.",
+      "mana_cost": "{1}{G}{W}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Ajani"],
+      "loyalty": 5,
+      "colors": ["G", "W"],
+      "color_identity": ["G", "W"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.",
+          "cost": {"loyalty": -3},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 3, "up_to": true,
+             "selector": {"types": ["Creature"], "controller": "any"}}
+          ],
+          "effects": [
+            {"op": "distribute_counters", "counter": "+1/+1", "amount": 3, "objects": {"target": "t1"}},
+            {"op": "grant_keyword", "keywords": ["vigilance"], "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

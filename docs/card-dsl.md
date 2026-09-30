@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-135 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+136 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -340,7 +340,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `double_counters` `detain` `gain_control` `rotate_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` `exchange_control` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_attack_planeswalker` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `double_counters` `distribute_counters` `detain` `gain_control` `rotate_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` `exchange_control` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
 | Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `prevent_damage_permanent` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
@@ -2241,6 +2241,34 @@ against a doubling is not asked; doubling last means "prevent the next 3" answer
 3 of the printed damage, the order the damaged object's controller would have
 chosen — the judgement the shield counter already makes. Several compound by
 multiplication, so between two of these the unasked order cannot show.
+
+### Distributing counters among targets
+
+```jsonc
+// Ajani, Sleeper Agent
+{ "kind": "activated",
+  "text": "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.",
+  "cost": { "loyalty": -3 },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 3, "up_to": true,
+                 "selector": { "types": ["Creature"], "controller": "any" } } ],
+  "effects": [
+    { "op": "distribute_counters", "counter": "+1/+1", "amount": 3,
+      "objects": { "target": "t1" } },
+    { "op": "grant_keyword", "keywords": ["vigilance"], "objects": { "target": "t1" } } ] }
+```
+
+601.2d (602.2b for abilities): the division is **announced on activation**, over
+the targets just declared, each getting at least one. `game.Game._ask_distribution`
+asks it before the cost is paid — one extra counter at a time through
+`ask_objects` (purpose `distribute`), nothing asked when the split is forced —
+and it rides on the stack item as `bindings["distribution"]`. At resolution each
+still-legal target gets its share; an illegal one takes its share with it
+(608.2b) and nothing is redistributed. The loader accepts the op only as a
+**top-level effect of an activated ability** with a printed `amount` and
+`objects: {"target": id}`, and refuses a target spec that could name more objects
+than there are counters. A spell's or a trigger's "distribute" is refused — there
+is no announcement to read, and asking at resolution would let the split follow
+the responses.
 
 ### Doubling the counters on a permanent
 

@@ -726,6 +726,24 @@ def still_legal(
     return matches(ctx, ref.id, selector)
 
 
+def declared_by_spec(
+    specs: Sequence[TargetSpec], refs: Sequence[TargetRef]
+) -> dict[str, tuple[TargetRef, ...]]:
+    """The stored refs split per spec, with no legality check.
+
+    `filter_legal`'s positional split without the 608.2b re-check -- for a
+    question asked the moment the targets are declared, when every one of them
+    is legal by construction. `game.Game._ask_distribution` reads it.
+    """
+    out: dict[str, tuple[TargetRef, ...]] = {}
+    index = 0
+    for spec in specs:
+        take = len(refs) - index if spec.variable_size else max(1, spec.count)
+        out[spec.id] = tuple(refs[index : index + take])
+        index += take
+    return out
+
+
 def filter_legal(
     state: GameState,
     controller: int,

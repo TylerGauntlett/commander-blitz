@@ -502,6 +502,75 @@ def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str)
     return declared
 
 
+def _check_distribution_homes(model: CardModel, where: str) -> None:
+    """``distribute_counters`` only where its division can be announced.
+
+    601.2d/602.2b announce the division as a spell is cast or an ability is
+    activated, over the targets just declared, and `game.Game._activate` is
+    where this engine asks it -- so the op is accepted as a **top-level** effect
+    of an **activated** ability, and refused on a spell, a trigger or nested in
+    a branch, where there is no announcement to read and asking at resolution
+    would let the division follow the responses (a strictly better card).
+
+    Each target must get at least one counter, so a target spec whose
+    ceiling is larger than the total could be declared in a way no division
+    satisfies; that is refused too.
+    """
+    from .walk import _walk_effect_specs
+
+    def refuse_in(tree: Any, at: str) -> None:
+        for spec in _walk_effect_specs(tree):
+            if spec.get("op") == "distribute_counters":
+                raise DslError(
+                    f"{at}: distribute_counters is only supported as a top-level "
+                    f"effect of an activated ability, where its division is "
+                    f"announced on activation (602.2b)"
+                )
+
+    refuse_in(model.spell_effects, f"{where}.spell_effects")
+    for i, ability in enumerate(model.abilities):
+        at = f"{where}.abilities[{i}]"
+        if ability.kind != "activated":
+            refuse_in(ability.effects, at)
+            continue
+        for effect in ability.effects:
+            if not isinstance(effect, Mapping):
+                continue
+            refuse_in(
+                [e for key in ("then", "else", "effects") for e in effect.get(key) or ()]
+                + [
+                    e
+                    for mode in effect.get("modes") or ()
+                    if isinstance(mode, Mapping)
+                    for e in mode.get("effects") or ()
+                ],
+                at,
+            )
+            if effect.get("op") != "distribute_counters":
+                continue
+            target_id = (effect.get("objects") or {}).get("target")
+            amount = effect.get("amount")
+            if isinstance(amount, Mapping):
+                amount = amount.get("const")
+            if not isinstance(amount, int):
+                continue  # `_validate_effect` refuses a computed amount
+            for target in ability.targets:
+                if target.id != target_id:
+                    continue
+                if not isinstance(target.count, int) or target.count > amount:
+                    raise DslError(
+                        f"{at}: distribute_counters divides {amount} counters, so its "
+                        f"target {target_id!r} may name at most {amount} objects "
+                        f"(601.2d: each gets at least one); got count {target.count!r}"
+                    )
+                break
+            else:
+                raise DslError(
+                    f"{at}: distribute_counters names target {target_id!r}, which this "
+                    f"ability does not declare"
+                )
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -578,6 +647,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    _check_distribution_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:

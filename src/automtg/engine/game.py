@@ -13,7 +13,7 @@ is exactly one code path for "a player did something".
 
 from __future__ import annotations
 
-from collections.abc import Generator, Iterable, Sequence
+from collections.abc import Generator, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import legality, sba, stack, triggers, turn
@@ -893,6 +893,12 @@ class Game:
         else:
             modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
 
+        # 601.2d (602.2b applies it to abilities): "distribute …" is divided
+        # now, over the targets just declared and before the cost is paid.
+        distribution = yield from self._ask_distribution(
+            pid, card.name, oid, ability, modes, action.targets
+        )
+
         # `fire`, not `emit`: emit only writes the log, and an activation event
         # nothing listens for is the same silent no-op the cycling event below
         # was fixed for. This one had been a log line since activations existed.
@@ -927,6 +933,8 @@ class Game:
         # the stack item so the effects can read it. Empty for every cost that
         # names nothing, which is every cost but `tap_permanents` with `as`.
         bindings: dict[str, Any] = {}
+        if distribution:
+            bindings["distribution"] = distribution
         ok = yield from pay(
             state,
             pid,
@@ -968,6 +976,64 @@ class Game:
             # nothing listens to is the silent no-op this whole run exists to
             # add a listener for.
             triggers.fire(state, EventType.CYCLED, player=pid, source=oid, card=card.id)
+
+    def _ask_distribution(
+        self,
+        pid: int,
+        name: str,
+        source_oid: int,
+        ability,
+        modes,
+        targets,
+    ) -> Generator[Any, list[int], dict[str, list[list[int]]]]:
+        """Divide each top-level ``distribute_counters`` among its declared targets.
+
+        601.2d: every target gets at least one, and the rest are placed one at a
+        time -- "which target gets another?" -- which reaches every legal
+        division and asks nothing when the split is forced (as many targets as
+        counters, or a single target). Composed from `ask_objects`, so there is
+        no new decision kind; the purpose tag is ``distribute``.
+
+        Returns ``{target_id: [[oid, n], ...]}``, JSON-shaped because it rides
+        on the stack item's bindings.
+        """
+        from .effects.context import EffectContext, ask_objects
+        from .targeting import declared_by_spec
+
+        wanted = [
+            e
+            for e in ability.effects
+            if isinstance(e, Mapping) and e.get("op") == "distribute_counters"
+        ]
+        if not wanted:
+            return {}
+        declared = declared_by_spec(ability.specs_for_modes(modes), targets)
+        ctx = EffectContext(
+            state=self.state, controller=pid, source_oid=source_oid, source_name=name
+        )
+        out: dict[str, list[list[int]]] = {}
+        for spec in wanted:
+            target_id = str(spec["objects"]["target"])
+            oids = [r.id for r in declared.get(target_id, ()) if r.kind == "object"]
+            if not oids:
+                continue
+            amount = spec.get("amount", 1)
+            total = int(amount["const"] if isinstance(amount, Mapping) else amount)
+            shares = dict.fromkeys(oids, 1)
+            kind = str(spec.get("counter", "+1/+1"))
+            for left in range(total - len(oids), 0, -1):
+                picked = yield from ask_objects(
+                    ctx,
+                    f"Distribute: put another {kind} counter on which target? ({left} left)",
+                    oids,
+                    1,
+                    1,
+                    pid,
+                    "distribute",
+                )
+                shares[picked[0] if picked else oids[0]] += 1
+            out[target_id] = [[oid, n] for oid, n in shares.items()]
+        return out
 
     def _ask_x(
         self,

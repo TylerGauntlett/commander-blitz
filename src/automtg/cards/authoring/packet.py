@@ -883,6 +883,12 @@ def reference() -> dict:
             "\"…with counters on them\" / \"…with a counter on it\" is the"
             " filter key `has_counters: true` (any kind of counter), valid in a"
             " static's `affects` and in an effect selector.",
+            "\"Distribute N +1/+1 counters among up to N target creatures\" on an"
+            " ACTIVATED ability (a planeswalker's loyalty line) is"
+            " `distribute_counters` with `counter`, a printed `amount` and"
+            " `objects: {\"target\": \"t1\"}`, the target spec `count: N,"
+            " up_to: true`; the division is asked on activation. Not available"
+            " on spells or triggered abilities.",
             "\"…tapped and attacking that player or a planeswalker they control\""
             " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
             " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"
