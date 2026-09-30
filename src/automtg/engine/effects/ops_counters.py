@@ -251,6 +251,44 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(name)] = taken
 
 
+@register("exchange_control")
+def op_exchange_control(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exchange control of target artifact or creature you control and target
+    creature an opponent controls with power 3 or less." Oko, Thief of Crowns.
+
+    701.12a: each permanent's controller gains control of the other one, and it
+    lasts indefinitely. Two `gain_control` ops cannot say it. The second one
+    would need "the player who controlled the first target" as its player, and
+    no player spec names that. It would also run alone when the other target had
+    gone, and 701.12b forbids that: "if the entire exchange can't be completed,
+    no part of the exchange occurs." So this is one op over two selectors,
+    ``first`` and ``second``.
+
+    Nothing happens unless each selector comes to exactly one permanent still on
+    the battlefield, and the two are under different controllers. Targets that
+    became illegal were already dropped on resolution (608.2b), so a missing
+    target is an empty pool here. Two permanents under one controller are 701.12b
+    too, because the exchange would change nothing.
+
+    Both control changes go through `change_control`, so each permanent is
+    summoning sick for its new controller (302.6), leaves combat (506.4) and
+    announces itself.
+    """
+    firsts = yield from choose_objects(ctx, spec.get("first"), "Exchange control of")
+    seconds = yield from choose_objects(ctx, spec.get("second"), "Exchange control with")
+    if len(firsts) != 1 or len(seconds) != 1 or firsts[0] == seconds[0]:
+        return
+    a = ctx.state.objects.get(firsts[0])
+    b = ctx.state.objects.get(seconds[0])
+    if a is None or b is None or not a.on_battlefield or not b.on_battlefield:
+        return
+    if a.controller == b.controller:
+        return
+    a_controller, b_controller = a.controller, b.controller
+    change_control(ctx.state, a.oid, b_controller, source=ctx.source_oid)
+    change_control(ctx.state, b.oid, a_controller, source=ctx.source_oid)
+
+
 @register("choose_permanents")
 def op_choose_permanents(ctx: EffectContext, spec: Mapping[str, Any]):
     """Pick permanents and remember them, without doing anything to them.

@@ -1568,6 +1568,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: rotate_control direction is 'left' or 'right', not {effect['direction']!r}"
             )
+    if op == "exchange_control":
+        # 701.12: two permanents, each named. Without either half the op does
+        # nothing at all, which reads like the card and is not it.
+        for key in ("first", "second"):
+            sub = effect.get(key)
+            if not isinstance(sub, Mapping):
+                raise DslError(
+                    f"{where}: exchange_control needs '{key}', a selector naming one "
+                    f"of the two permanents to swap"
+                )
+            validate_selector(sub, f"{where}.{key}")
+            _validate_nested_player_refs(sub, f"{where}.{key}", target_kinds)
+            if "target" in sub and str(sub["target"]) not in target_kinds:
+                raise DslError(
+                    f"{where}.{key}: references target {sub['target']!r} which the "
+                    f"card does not declare"
+                )
+        if "duration" in effect:
+            # Every printed exchange is indefinite (701.12a). A duration nobody
+            # reads would be believed by whoever wrote it.
+            raise DslError(f"{where}: exchange_control is permanent and takes no 'duration'")
     if op == "discard":
         if "up_to" in effect and not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: discard's 'up_to' is a boolean")

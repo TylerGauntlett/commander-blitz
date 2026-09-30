@@ -18420,3 +18420,30 @@ loader refuses an unknown `duration`, a non-boolean `exact` and
   counters and pumps add to the 3/3; the later of a timed and a permanent
   animation sets the size, and the timed one still ends at cleanup; the Elk
   survives cleanup; leaving the battlefield ends it; the loader guards.
+
+## Exchanging control — 701.12
+
+### Overview
+
+Oko, Thief of Crowns' −5: "Exchange control of target artifact or creature you
+control and target creature an opponent controls with power 3 or less." Two
+`gain_control` ops cannot say it. The second needs the first target's old
+controller as its player, and it would still happen with the first target gone,
+which 701.12b forbids.
+
+### Tier: A — a new op composing `change_control`
+
+`exchange_control` in `ops_counters.py` (beside `gain_control`) resolves `first`
+and `second` to one permanent each. If both are on the battlefield under
+different controllers, it runs `change_control` on each toward the other's
+controller. Otherwise nothing happens. The loader guard in `loader/effects.py`
+requires both selectors, checks their targets are declared, and refuses a
+`duration`.
+
+### Tests
+
+- `tests/unit/test_exchange_control.py` — each side takes the other; ownership
+  stays; it survives the turn; the arrival is summoning sick and dies to its
+  owner; no part happens when either target is gone, when a target left after
+  the check, or when one player controls both; the loader requires both halves,
+  refuses an undeclared target and refuses a duration.
