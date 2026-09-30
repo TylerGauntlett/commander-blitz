@@ -859,6 +859,22 @@ class Game:
             # already answered and could contradict the targets already
             # declared. The same argument `ability_modes` makes below.
             x = action.x
+        elif ability.cost is not None and ability.cost.loyalty_x:
+            # "-X" (606.4, 107.3): announced now, before the cost is paid, and
+            # bounded by the loyalty there is to remove -- `costs.pay` takes
+            # exactly this many counters and the stack item carries it to the
+            # effects that read X.
+            from .effects.context import EffectContext, ask_x
+
+            source_obj = state.objects.get(oid)
+            ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
+            x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid),
+                f"Choose X for {card.name}",
+                ceiling,
+                pid,
+                loyalty_cost=True,
+            )
         elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and

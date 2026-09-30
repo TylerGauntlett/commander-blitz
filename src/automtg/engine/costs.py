@@ -1301,6 +1301,13 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or obj.counter("loyalty") < -cost.loyalty:
             return False
+    if cost.loyalty_x and x > 0:
+        # "-X": the same 606.4 test at the announced number. X = 0 is always
+        # payable, which is what lets legality offer the ability at its floor
+        # and `game._activate` bound the announcement by the loyalty there is.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.counter("loyalty") < x:
+            return False
     if cost.exile_from_graveyard is not None and not _graveyard_pool(state, pid, cost, source_oid):
         return False
 
@@ -1893,7 +1900,12 @@ def pay(
         # makes a planeswalker's loyalty spendable in response to removal.
         from .primitives import add_counters, remove_counters
 
-        if cost.loyalty > 0:
+        if cost.loyalty_x:
+            # "-X": the announced number, which `game._activate` bounded by
+            # the loyalty on the permanent.
+            if x > 0:
+                remove_counters(state, source_oid, "loyalty", x)
+        elif cost.loyalty > 0:
             # `as_cost`: a cost is not an effect, so Doubling Season's "if an
             # effect would put" leaves a +1 at one counter (its ruling).
             add_counters(state, source_oid, "loyalty", cost.loyalty, as_cost=True)

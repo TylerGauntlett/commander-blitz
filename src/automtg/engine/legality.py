@@ -778,6 +778,17 @@ def _ability_aims(
             # on existed.
             from .costs import mana_sources, most_life_for_mana
 
+            if ability.cost.loyalty_x:
+                # The ceiling of a -X is the loyalty there is to remove (606.4).
+                source_obj = state.objects.get(oid)
+                loyalty = source_obj.counter("loyalty") if source_obj is not None else 0
+                out_loyalty: list[tuple] = []
+                for value in range(max(0, loyalty) + 1):
+                    tuples = enumerate_target_tuples(
+                        state, pid, ability.targets, oid, x=value
+                    )
+                    out_loyalty.extend((value, (), targets) for targets in tuples)
+                return out_loyalty or None
             sources = mana_sources(state, pid, purpose=purpose)
             if ability.cost.tap:
                 # The tapped source cannot help pay for itself -- the same
@@ -866,7 +877,11 @@ def _targets_read_x(ability) -> bool:
     `costs.ability_mana` fills it in, so there is nothing to enumerate.
     """
     cost = ability.cost
-    if cost is None or not cost.mana.x_count or cost.x_value is not None:
+    if cost is None:
+        return False
+    # "-X: Exile target nonland permanent card with mana value X" -- Tamiyo. A
+    # loyalty X is announced as surely as a mana one.
+    if not cost.loyalty_x and (not cost.mana.x_count or cost.x_value is not None):
         return False
     specs = list(ability.targets) + [
         spec for specs in (ability.mode_targets or {}).values() for spec in specs

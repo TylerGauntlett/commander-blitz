@@ -365,6 +365,13 @@ class HeuristicAgent:
         # the better play in almost every position and exactly what the agent
         # saw before `CHOOSE_X` existed, when legality pinned X to the maximum.
         if purpose == "choose_x":
+            if decision.context.get("loyalty_cost"):
+                # A planeswalker's -X is paid in its own loyalty, and the
+                # ceiling is all of it: the maximum always kills the walker.
+                # One short of it spends everything but the permanent.
+                ceiling = max(a.choice or 0 for a in choices)
+                keep = [a for a in choices if (a.choice or 0) < ceiling]
+                return max(keep or choices, key=lambda a: a.choice or 0)
             return max(choices, key=lambda a: a.choice or 0)
         if purpose == "sacrifice":
             return min(choices, key=lambda a: self._creature_value(state, a))

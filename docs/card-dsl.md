@@ -2791,6 +2791,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "exile_self_from_hand": true,                   // Simian Spirit Guide: *this* card, out of hand
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
+  "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
@@ -8481,6 +8482,37 @@ up at instant speed on somebody else's turn.
 counts a single ability, so on a three-ability planeswalker it would allow two
 pluses and then a minus.
 
+### `loyalty_x` — a −X loyalty cost
+
+"−X: Sorin deals X damage to target creature or planeswalker and you gain X
+life." (606.4, 107.3)
+
+```jsonc
+{"kind": "activated", "text": "−X: You gain X life.",
+ "cost": {"loyalty_x": true},
+ "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]}
+```
+
+The controller announces X as the ability is activated, bounded by the loyalty
+on the planeswalker (a cost that removes counters that are not there cannot be
+paid), and X loyalty counters come off as the cost. The effects read the number
+with `{"x": true}` / `"x"`, exactly as they read an `{X}` in a mana cost. X = 0 is
+a legal announcement, and X equal to all of the loyalty is too — the walker then
+dies to 704.5i and the ability still resolves.
+
+It compiles to `loyalty: 0` plus the flag, so every "is this a loyalty
+ability?" reader — 606.3's once per turn, the forced sorcery timing, Teferi's
+permission — sees one. Not `remove_counters` (which would lose all three) and not
+`x_value` (which fills an `{X}` in a *mana* cost). A target whose filter reads X —
+Tamiyo's "card with mana value X" — is offered once per X from 0 to the loyalty,
+each activation carrying the targets legal at that X (601.2b before 601.2c).
+
+The loader refuses it beside `loyalty` (two numbers for one payment), beside an
+`{X}` in `mana` or `pay_life_x` (an ability announces one X), and anywhere but an
+activated ability's cost. The `CHOOSE_X` it raises carries
+`context.loyalty_cost: true`, which the heuristic agent reads to answer
+one-short-of-everything rather than the maximum that always kills the walker.
+
 ## Battles
 
 ```jsonc
@@ -13702,7 +13734,7 @@ Two guards, and the second is the one that moved:
 flashback branch alone — written here it would load clean and never apply.
 
 So is every cost that charges the **source permanent** — `tap`, `untap`,
-`loyalty`, `remove_counters`, `exile_self`, `exile_self_from_hand`,
+`loyalty`, `loyalty_x`, `remove_counters`, `exile_self`, `exile_self_from_hand`,
 `discard_self`, `pay_life_x` and `x_value` (`loader.NOT_A_CAST_TIME_COST`). The
 source of a cast-time cost is the spell itself, on its way from hand to stack:
 there is no permanent to tap, and the card a self-cost would take is the one

@@ -1,0 +1,63 @@
+{
+  "_comment": "Cards for tests/unit/test_loyalty_x.py. `t_lx_walker` is a two-ability walker whose minus is a variable loyalty cost -- Sorin, Grim Nemesis's -X reduced to 'you gain X life', so the X the effect reads is visible on a life total. `t_lx_aimer` is Tamiyo, Compleated Sage's shape: a -X whose target filter reads X ('with mana value X'), so the announcement has to come before the targets.",
+  "cards": [
+    {
+      "id": "t_lx_walker",
+      "name": "Test X Walker",
+      "oracle_text": "+1: You gain 2 life.\n−X: You gain X life.",
+      "mana_cost": "{2}{B}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Sorin"],
+      "loyalty": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "activated",
+          "text": "−X: You gain X life.",
+          "cost": {"loyalty_x": true},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_lx_aimer",
+      "name": "Test X Aimer",
+      "oracle_text": "−X: Destroy target artifact with mana value X.",
+      "mana_cost": "{2}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Tamiyo"],
+      "loyalty": 4,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−X: Destroy target artifact with mana value X.",
+          "cost": {"loyalty_x": true},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": ["Artifact"],
+                "mana_value": {"op": "=", "value": {"x": true}}
+              }
+            }
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

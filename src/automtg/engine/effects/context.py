@@ -272,6 +272,7 @@ def ask_x(
     chooser: int,
     *,
     per_point: int = 1,
+    loyalty_cost: bool = False,
 ) -> Generator[PendingDecision, list[int], int]:
     """Ask how big to make ``X`` before the cost is paid.
 
@@ -287,6 +288,11 @@ def ask_x(
     ``per_point`` is how much one point of ``X`` actually costs -- ``{X}{X}``
     charges twice -- and is passed through ``context`` so the client can say so
     rather than making the player work it out from the mana row.
+
+    ``loyalty_cost`` marks a planeswalker's -X (606.4): X is paid in the
+    source's own loyalty and the ceiling is all of it, so the maximum is the
+    one answer that always kills the planeswalker. Carried in ``context`` for
+    the agents that would otherwise take the largest X on offer.
     """
     if max_x <= 0:
         return 0
@@ -303,6 +309,7 @@ def ask_x(
             "per_point": per_point,
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
+            **({"loyalty_cost": True} if loyalty_cost else {}),
         },
     )
     answer = yield decision

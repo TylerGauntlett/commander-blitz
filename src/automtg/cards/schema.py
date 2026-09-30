@@ -140,6 +140,21 @@ class CostModel(BaseModel):
     #: is a cost rather than an effect, so it is paid whether or not the ability
     #: resolves and cannot be responded to in between.
     loyalty: int | None = None
+    #: "**-X**: Sorin deals X damage to target creature or planeswalker" -- a
+    #: variable loyalty cost (606.4, 107.3). The controller announces X as the
+    #: ability is activated, bounded by the loyalty the planeswalker has, and
+    #: removes that many loyalty counters as the cost; the ability's effects read
+    #: the number back with ``{"x": true}`` / ``"x"``, exactly as an ``{X}`` in a
+    #: mana cost is read.
+    #:
+    #: A flag beside ``loyalty`` rather than a spelling of it, and it compiles to
+    #: ``loyalty: 0`` plus the flag: every reader that asks "is this a loyalty
+    #: ability?" -- 606.3's once per turn, the forced sorcery timing, Teferi's
+    #: permission -- asks ``cost.loyalty is not None`` and so keeps working. Not
+    #: ``remove_counters``, which would drop every one of those. Not with
+    #: ``loyalty`` (two numbers for one payment) and not beside an ``{X}`` in
+    #: ``mana`` (an ability announces one X).
+    loyalty_x: bool = False
     exile_from_graveyard: dict[str, Any] | None = None
     #: How much less **this cost node** costs -- the same language a card's
     #: `cost_reduction` speaks, read by `costs.reduction_amount`:

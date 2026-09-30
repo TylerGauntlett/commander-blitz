@@ -93,6 +93,25 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             f"{where}.cost: 'pay_life_x' is the announced X, so there is no "
             f"'pay_life' amount to give as well (got {model.pay_life!r})"
         )
+    if model.loyalty_x:
+        # "-X". Three refusals, each a second number for one payment or a
+        # second X for one announcement, and each would otherwise load clean
+        # with one half never read.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' is a planeswalker's -X, a cost of an "
+                f"activated ability -- nothing else has loyalty to spend"
+            )
+        if model.loyalty is not None:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' is the whole loyalty cost (-X); give it "
+                f"or 'loyalty', not both (got loyalty {model.loyalty!r})"
+            )
+        if "X" in str(model.mana or "").upper() or model.pay_life_x:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' announces this ability's X, so the "
+                f"cost may not carry a second X in 'mana' or 'pay_life_x'"
+            )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "

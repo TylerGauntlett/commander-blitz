@@ -286,6 +286,12 @@ class Cost:
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
     loyalty: int | None = None
+    #: "-X" (606.4, 107.3): the controller announces X, bounded by the source's
+    #: loyalty, and removes X loyalty counters. Always carried with
+    #: ``loyalty == 0``, so every "is this a loyalty ability" check -- which asks
+    #: ``loyalty is not None`` -- sees one; `costs.can_pay` and `costs.pay` read
+    #: the announced ``x`` for the amount.
+    loyalty_x: bool = False
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -362,9 +368,14 @@ class Cost:
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
             # ability free to use twice in a turn.
+            # A -X ability is a loyalty ability whose fixed part is zero; the
+            # flag carries the announced amount.
             loyalty=(
-                int(spec["loyalty"]) if spec.get("loyalty") is not None else None
+                int(spec["loyalty"])
+                if spec.get("loyalty") is not None
+                else (0 if spec.get("loyalty_x") else None)
             ),
+            loyalty_x=bool(spec.get("loyalty_x")),
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
@@ -480,7 +491,9 @@ class Cost:
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
             parts.append(f"Remove {count} counters from among permanents")
-        if self.loyalty is not None:
+        if self.loyalty_x:
+            parts.append("-X")
+        elif self.loyalty is not None:
             parts.append(f"{self.loyalty:+d}")
         if self.exile_from_graveyard:
             parts.append("Exile from graveyard")

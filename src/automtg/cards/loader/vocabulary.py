@@ -49,6 +49,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "tap",
         "untap",
         "loyalty",
+        "loyalty_x",
         "remove_counters",
         "exile_self",
         "exile_self_from_hand",

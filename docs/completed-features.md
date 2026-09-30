@@ -18685,3 +18685,40 @@ takes one amount for every object, so the only near miss was one counter on each
   its own creature; the loader refuses a spell, a trigger, more targets than
   counters, a computed amount and a non-target `objects`.
 
+
+## `loyalty_x` — a −X loyalty cost — Sorin, Grim Nemesis — 606.4 / 107.3
+
+"−X: Sorin deals X damage to target creature or planeswalker and you gain X
+life." `cost.loyalty` was a signed integer, so a printed −X had no spelling. The
+two nearest keys are both wrong: `x_value` fills an `{X}` in a *mana* cost (the
+ability would cost mana and no loyalty), and `remove_counters` is not a loyalty
+cost — it would lose 606.3's once-per-turn limit, the loader's forced sorcery
+timing and Teferi's permission, every one of which asks `cost.loyalty is not
+None`.
+
+### What changed
+
+- `CostModel.loyalty_x` / `Cost.loyalty_x`. It compiles to `loyalty: 0` plus the
+  flag, so every loyalty-ability reader keeps working unchanged.
+- `game._activate` announces X before the cost is paid: a `CHOOSE_X` whose
+  ceiling is the loyalty on the planeswalker, tagged `context.loyalty_cost`.
+- `costs.can_pay` / `costs.pay` read the announced `x` and remove that many
+  loyalty counters.
+- `legality._targets_read_x` counts a loyalty X, and `_ability_aims` offers one
+  activation per X from 0 to the loyalty when the target filter reads X
+  (Tamiyo's "card with mana value X").
+- The loader refuses `loyalty_x` beside `loyalty`, beside an `{X}` in `mana` or
+  `pay_life_x`, and anywhere but an activated ability's cost; it is in
+  `NOT_A_CAST_TIME_COST`.
+- The heuristic agent answers a loyalty `CHOOSE_X` one short of the ceiling —
+  the maximum is the one answer that always kills the walker.
+
+### Tests
+
+- `tests/unit/test_loyalty_x.py` — X asked for and bounded by the loyalty; X
+  counters come off and the effect reads X (two values); X = 0 legal and still
+  the turn's loyalty ability; X = everything kills the walker and still
+  resolves; 606.3 in both directions; sorcery timing and an opponent's turn;
+  the `−X` description; one activation per X for a target reading X, none above
+  the loyalty, and no second question; the heuristic's all-but-one and its
+  boundary at one loyalty; the three loader refusals.
