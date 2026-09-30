@@ -684,6 +684,12 @@ def reference() -> dict:
             " not_types, subtypes, colors, name, ... -- no `controller`,"
             " `affects_player` says whose). \"More than one spell each turn\""
             " is still a gap.",
+            "\"You may spend mana as though it were mana of any color\" is the"
+            " player-wide static `spend_mana_as_any_color` with `affects_player:"
+            " \"you\"`; \"...to cast planeswalker spells\" is the same static"
+            " with `affects_spells: {\"types\": [\"Planeswalker\"]}` (the"
+            " `cant_cast_spells` spell filter), which loosens only the cast of"
+            " a matching spell and never an activated ability.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"

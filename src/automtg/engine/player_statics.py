@@ -535,8 +535,20 @@ def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "black_mana_as_phyrexian")
 
 
-def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
+def player_spends_mana_as_any_color(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
     """Whether every coloured pip this player pays may be paid with any mana.
+
+    **A spell filter**, `affects_spells`, is Oath of Nissa: "You may spend mana
+    as though it were mana of any color **to cast planeswalker spells**." That
+    is a claim about a spell being cast, so it is answered only when ``card``
+    -- the face being cast -- is passed and matches the printed filter. The
+    two cast-line sites (`casting._cast_variant` and `Game._cast`) pass it;
+    every other cost (`costs.spendable_requirement`, `costs.affordable_mana`:
+    activated abilities, "unless pays", madness and the rest) asks without one
+    and so is loosened only by an unfiltered static -- a planeswalker's own
+    loyalty-free activations, or any other ability, are not "casting".
 
     Chromatic Orrery: "You may spend mana as though it were mana of any color."
     The unrestricted twin of the permission `permission.playable_any_color`
@@ -558,7 +570,17 @@ def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
     not, because colourless is not a colour. Both fall out of
     `ManaCost.as_any_color`, which is what does the reading.
     """
-    return _player_static(state, pid, "spend_mana_as_any_color")
+    for obj, static in _active_player_statics(state, "spend_mana_as_any_color"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
 
 
 def player_skips_draw_step(state: GameState, pid: int) -> bool:

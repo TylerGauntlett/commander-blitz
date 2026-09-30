@@ -1,0 +1,42 @@
+{
+  "_comment": "Cards that exist only for the filtered any-colour test (tests/unit/test_spend_mana_as_any_color_spell_filter.py). `t_oath_static` is Oath of Nissa's second line alone; `t_azure_walker` is a {1}{U} planeswalker for it to reach. The off-colour sorcery and the {W}{W} activation it must not reach are `t_azure_bolt` and `t_chroma_font` from spend_mana_as_any_color_static.cards.json.",
+  "cards": [
+    {
+      "id": "t_oath_static",
+      "name": "Test Oath Static",
+      "oracle_text": "You may spend mana as though it were mana of any color to cast planeswalker spells.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may spend mana as though it were mana of any color to cast planeswalker spells.",
+          "effect": "spend_mana_as_any_color",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Planeswalker"]}
+        }
+      ]
+    },
+    {
+      "id": "t_azure_walker",
+      "name": "Test Azure Walker",
+      "oracle_text": "+1: You gain 1 life.",
+      "mana_cost": "{1}{U}",
+      "types": ["Planeswalker"],
+      "subtypes": ["Nissa"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "loyalty": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 1 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

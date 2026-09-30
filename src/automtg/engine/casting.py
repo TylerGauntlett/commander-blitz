@@ -1428,7 +1428,7 @@ def _cast_variant(
     # once for the whole variant and then folded in beside the permission a
     # `grant_playable` may also have left on the card. `Game._cast` reads the
     # same static at the same point.
-    spends_any_color = player_spends_mana_as_any_color(state, pid)
+    spends_any_color = player_spends_mana_as_any_color(state, pid, card)
     # Terror of the Peaks: "spells your opponents cast that target this creature
     # cost an additional 3 life to cast." An additional cost (601.2f) charged in
     # life, so it never reaches the payment solver -- it only narrows which

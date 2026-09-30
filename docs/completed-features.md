@@ -18363,3 +18363,28 @@ zone and a count but no type and no way to decline.
   creature land answers one step either way; the rest (including cards no step
   could take) go to the graveyard and no deeper card moves; the sorcery resolves
   end to end; the four loader refusals.
+
+## `spend_mana_as_any_color` with a spell filter — Oath of Nissa
+
+"You may spend mana as though it were mana of any color to cast planeswalker
+spells." The player-wide static was unfiltered (Chromatic Orrery) and the loader
+refused any narrowing, so the Oath could only be written as an Orrery — a strictly
+stronger card.
+
+### What changed
+
+- `player_spends_mana_as_any_color(state, pid, card=None)`: an unfiltered static
+  answers as before; one with `affects_spells` answers only for a `card` whose
+  printed face matches. `casting._cast_variant` and `Game._cast` pass the face
+  being cast; the `costs` sites (activated abilities and every other cost) pass
+  none, so a filtered static never reaches them.
+- Loader: `affects_spells` accepted on `spend_mana_as_any_color` with the
+  `cant_cast_spells` key set (no `controller`); an empty filter is refused.
+
+### Tests
+
+- `tests/unit/test_spend_mana_as_any_color_spell_filter.py` — an off-colour
+  planeswalker is castable and paid with off-colour lands; not without the Oath,
+  not off an opponent's, and not for less mana; a non-planeswalker spell and an
+  activated ability are not loosened; the Orrery still reaches both; the loader
+  accepts the filter and refuses `controller`, an empty filter and `affects`.

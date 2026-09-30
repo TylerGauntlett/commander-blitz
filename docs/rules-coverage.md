@@ -403,7 +403,9 @@ both of its printed shapes. Granted for one card -- Elder Brain's "...to cast
 it" -- it is the `any_color` flag on `exile` / `grant_playable`; said about a
 player, it is the `spend_mana_as_any_color` player-wide static (Chromatic
 Orrery), which loosens every coloured pip its controller pays, in a spell's cost
-and in an activated ability's alike. `{C}` is never loosened (colourless is not
+and in an activated ability's alike. With an `affects_spells` filter (Oath of
+Nissa's "...to cast planeswalker spells") it loosens only the cast of a spell
+whose printed face matches, and no activated ability. `{C}` is never loosened (colourless is not
 a colour) and colourless mana may be spent as a colour (the Mycosynth Lattice
 ruling). **Not modelled**: the waiver is applied to a cast line *before* a
 convoke or delve reduction is netted out, so a heavily convoked spell under an

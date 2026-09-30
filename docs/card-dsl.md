@@ -5055,6 +5055,22 @@ loosening lives in `costs.spendable_requirement` rather than in
 `costs.payable_mana`, because folding hybrid pips into generic inside the latter
 would hide them from the `phyrexian_count` that offers the life line.
 
+**`affects_spells`** narrows it to casting matching spells — Oath of Nissa:
+
+```jsonc
+// "You may spend mana as though it were mana of any color to cast planeswalker spells."
+{ "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you",
+  "affects_spells": { "types": ["Planeswalker"] } }
+```
+
+`player_spends_mana_as_any_color` takes the face being cast; the two cast-line
+sites (`casting._cast_variant`, `Game._cast`) pass it and a filtered static
+answers only when the printed face matches. Every other cost asks without a
+card, so a filtered static never loosens an activated ability — a planeswalker's
+own included, since activating is not casting. The filter takes the spell keys
+`cant_cast_spells` takes (no `controller`: `affects_player` is the payer), and an
+empty filter is a load error rather than an Orrery.
+
 ### `free_cast_permission` — Dracogenesis' standing free cast
 
 ```jsonc

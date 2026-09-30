@@ -2759,6 +2759,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"and no board state, and `affects_player` already names the "
                 f"caster; unsupported keys {sorted(unknown)}"
             )
+    elif model.effect == "spend_mana_as_any_color" and model.affects_spells is not None:
+        # "…to cast **planeswalker** spells" -- Oath of Nissa. Optional, because
+        # Chromatic Orrery prints no filter: omitted it loosens every cost the
+        # player pays, written it loosens only the cast of a matching spell.
+        # `controller` is refused for `cant_cast_spells`'s reason -- the payer
+        # is `affects_player` -- and an empty filter would read as unfiltered.
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would loosen every cost")
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"payer; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "free_cast_permission":
         # The same two guards `cast_from_graveyard` makes, and the stakes are
         # higher here than on any other `affects_spells` static: a permission
@@ -3334,13 +3349,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         ):
             # "You may spend mana as though it were mana of any color" names
             # players and nothing else. Nothing reads either key, so a filter
-            # written here -- an attempt at "…to cast Dragon spells" -- would
-            # load clean and loosen every cost the player pays, which is the
-            # strictly stronger card this guard exists to refuse.
+            # written here -- an attempt at "…to cast Dragon spells", which is
+            # `affects_spells`'s job -- would load clean and loosen every cost,
+            # the strictly stronger card this guard exists to refuse.
             raise DslError(
                 f"{where}: spend_mana_as_any_color loosens every cost the named "
-                f"players pay; it takes 'affects_player' and an optional "
-                f"'condition', and no 'affects' or 'amount'"
+                f"players pay; it takes 'affects_player', an optional 'affects_spells' "
+                f"and an optional 'condition', and no 'affects' or 'amount'"
             )
         if model.effect == "cant_cast_spells" and (
             model.affects is not None or model.amount is not None

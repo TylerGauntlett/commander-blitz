@@ -503,7 +503,7 @@ class Game:
             cost = cost.as_any_type()
         elif (
             granted.playable_any_color and granted.playable_live(state.turn)
-        ) or player_spends_mana_as_any_color(state, pid):
+        ) or player_spends_mana_as_any_color(state, pid, card):
             # Elder Brain's colour waiver, the paying half of the one
             # `_cast_variant` priced the line with -- or Chromatic Orrery's,
             # which says it about the player instead of about this card and so
