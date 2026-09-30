@@ -3032,6 +3032,27 @@ and all three make the ability **unavailable** when too little matches rather
 than cheaper: an ability whose bounce cost has nothing to bounce would cost only
 its mana, and a cost of five that settled for four would be a different card.
 
+### `remove_counters_from_among` — counters of any kind, off other permanents
+
+    Tekuthal, Inquiry Dominus — "Remove three counters from among other
+    artifacts, creatures, and planeswalkers you control: …"
+
+```jsonc
+"cost": { "mana": "{1}{U/P}{U/P}",
+          "remove_counters_from_among": {
+            "count": 3,
+            "any_types": ["Artifact", "Creature", "Planeswalker"],
+            "exclude_self": true } }
+```
+
+A selector over the battlefield (`controller` defaults to you) plus a required
+positive `count`. Payable when the matching permanents carry at least `count`
+counters between them; paid one counter at a time — which permanent
+(`ask_objects`, purpose `"remove_counter_cost"`), then which kind when it has
+more than one (`ask_mode`, harmful kinds such as -1/-1 and stun offered first) —
+so every split is expressible. Not `remove_counters`, which takes one **named**
+kind off the **source**; the loader refuses a `counter` key here.
+
 ## Player specs
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·

@@ -352,6 +352,7 @@ class TestActivatedAbilities:
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
+            _provide_the_counter_fodder(game, registry, ability)
             _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
@@ -604,6 +605,30 @@ def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         fodder.tapped = True
         game.state.battlefield.append(fodder.oid)
+
+
+def _provide_the_counter_fodder(game: Game, registry, ability) -> None:
+    """Put out a permanent carrying enough counters for a
+    `remove_counters_from_among` cost.
+
+    Tekuthal removes "three counters from among other artifacts, creatures, and
+    planeswalkers you control", and the generic board carries no counters at
+    all. One permanent of the selector's first type with that many +1/+1
+    counters pays it, which is all the sandbox needs -- the split is the
+    payer's and `test_remove_counters_from_among.py` pins it.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "remove_counters_from_among", None) if cost else None
+    if not spec:
+        return
+    wanted = int(spec.get("count", 1) or 1)
+    types = spec.get("types") or (spec.get("any_types") or ["Creature"])[:1]
+    match = _fodder_for(registry, {"types": list(types)})
+    if match is None:
+        return
+    fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    fodder.counters[PLUS_ONE] = wanted
+    game.state.battlefield.append(fodder.oid)
 
 
 def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -> None:

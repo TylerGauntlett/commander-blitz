@@ -18174,3 +18174,36 @@ Tekuthals are four proliferates (616.1); none applies twice (614.5).
   took, and sees what the first grew; an opponent's doubler does not double mine;
   a doubler that has left stops; the loader requires `affects_player` and refuses
   an `amount`.
+
+## Removing counters from among other permanents — a cost — 602.2b / 118.3
+
+### Overview
+
+Tekuthal, Inquiry Dominus: "Remove three counters from among other artifacts,
+creatures, and planeswalkers you control". The `remove_counters` cost takes one
+named kind off the source; this is any kinds, off other permanents a selector
+names, split as the payer chooses.
+
+### Tier: A — a new cost composing `ask_objects` and `ask_mode`
+
+`Cost.remove_counters_from_among` (a selector plus `count`) in `schema.py`,
+`carddef.py` (`from_spec`, `is_tap_only`, `describe`), the loader guard in
+`loader/mana.py` (positive `count`, no named `counter`, a valid selector), and
+`costs.py`: `_counter_removal_pool` builds the matching permanents that carry a
+counter, `can_pay` sums their counters, and `pay` removes one at a time — which
+permanent, then which kind when there are several (harmful kinds first). No new
+decision kind. The heuristic agent answers `"remove_counter_cost"` by taking a
+harmful counter first, then from the permanent with the most, sparing a
+planeswalker's last loyalty. `tests/cards/test_every_card_works.py` gained
+`_provide_the_counter_fodder` so the sandbox can pay the cost.
+
+### Tests
+
+- `tests/unit/test_remove_counters_from_among.py` — three on one permanent pay,
+  three split pay, two is one short and the ability is not offered; any kinds
+  count; the source's own counters and an enchantment's do not; the counters come
+  off and the ability resolves; the cost is asked before the ability is on the
+  stack; the payer chooses the split; a permanent with two kinds asks which,
+  harmful first; forced choices are not asked; the agent takes the harmful
+  counter first; the loader refuses a missing count, a named kind and a bad
+  selector key; it is not a tap-only cost.

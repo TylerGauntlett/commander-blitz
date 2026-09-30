@@ -220,6 +220,9 @@ class Cost:
     #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
     #: permanents.
     untap_permanents: Mapping[str, Any] | None = None
+    #: "Remove N counters from among <permanents> you control" -- see
+    #: `CostModel.remove_counters_from_among`. Any kinds, any split.
+    remove_counters_from_among: Mapping[str, Any] | None = None
     #: "Mill a card" as a cost -- see `CostModel.mill`. No selector: the cards
     #: come off the top of the activating player's own library.
     mill: int = 0
@@ -338,6 +341,11 @@ class Cost:
             untap_permanents=(
                 dict(spec["untap_permanents"]) if spec.get("untap_permanents") else None
             ),
+            remove_counters_from_among=(
+                dict(spec["remove_counters_from_among"])
+                if spec.get("remove_counters_from_among")
+                else None
+            ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
@@ -408,6 +416,7 @@ class Cost:
             and self.return_to_hand is None
             and self.tap_permanents is None
             and self.untap_permanents is None
+            and self.remove_counters_from_among is None
             and self.discard == 0
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
@@ -468,6 +477,9 @@ class Cost:
             parts.append(f"Pay {amount} life")
         if self.remove_counters:
             parts.append("Remove counters")
+        if self.remove_counters_from_among:
+            count = self.remove_counters_from_among.get("count", 1)
+            parts.append(f"Remove {count} counters from among permanents")
         if self.loyalty is not None:
             parts.append(f"{self.loyalty:+d}")
         if self.exile_from_graveyard:

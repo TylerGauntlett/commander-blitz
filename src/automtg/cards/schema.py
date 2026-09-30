@@ -60,6 +60,13 @@ class CostModel(BaseModel):
     #: ``total_power``: crew is a printed sum, and no printed line unbends a
     #: board by power.
     untap_permanents: dict[str, Any] | None = None
+    #: "Remove three counters from among other artifacts, creatures, and
+    #: planeswalkers you control" -- Tekuthal, Inquiry Dominus. A selector over
+    #: the battlefield (controller defaults to you) with a ``count``: that many
+    #: counters of **any** kinds, split among the matching permanents however
+    #: the payer likes. Not ``remove_counters``, which takes one named kind off
+    #: the source itself.
+    remove_counters_from_among: dict[str, Any] | None = None
     #: "**Mill a card**" as part of an activation cost -- Millikin, Deranged
     #: Assistant, The Warring Triad. Cards come off the top of the *activating*
     #: player's library, so there is nothing to choose and no selector.

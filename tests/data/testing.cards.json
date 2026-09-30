@@ -4890,6 +4890,51 @@
       ]
     },
     {
+      "id": "t_counter_eater",
+      "name": "Test Counter Eater",
+      "oracle_text": "{1}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on this creature.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on this creature.",
+          "cost": {
+            "mana": "{1}",
+            "remove_counters_from_among": {
+              "count": 3,
+              "any_types": [
+                "Artifact",
+                "Creature",
+                "Planeswalker"
+              ],
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "indestructible",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_proliferate_doubler",
       "name": "Test Proliferate Doubler",
       "oracle_text": "If you would proliferate, proliferate twice instead.",

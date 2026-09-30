@@ -374,6 +374,11 @@ class HeuristicAgent:
             return max(choices, key=lambda a: self._land_search_score(state, seat, a))
         if purpose == "destroy":
             return max(choices, key=lambda a: self._creature_value(state, a))
+        if purpose == "remove_counter_cost":
+            # Take a counter off whatever misses it least: a harmful one first,
+            # then the permanent carrying the most, never the last loyalty on a
+            # planeswalker while anything else will do.
+            return max(choices, key=lambda a: self._counter_spare(state, a))
         if purpose == "proliferate":
             # A free multi-select: `choices[0]` would grow whatever came first
             # -- an opponent's planeswalker, the -1/-1 counters on our own
@@ -381,6 +386,17 @@ class HeuristicAgent:
             wanted = [a for a in choices if self._proliferate_helps(state, seat, a)]
             return wanted[0] if wanted else _first(actions, ActionKind.FINISH_DECLARATION) or choices[0]
         return choices[0]
+
+    def _counter_spare(self, state: GameState, action: Action) -> tuple[int, int, int]:
+        """How little one counter off this permanent costs us -- higher is better."""
+        oid = _target_oid(action)
+        obj = state.objects.get(oid) if oid is not None else None
+        if obj is None:
+            return (0, 0, 0)
+        held = {kind: n for kind, n in obj.counters.items() if n > 0}
+        harmful = any(kind in HARMFUL_COUNTERS for kind in held)
+        last_loyalty = held.get("loyalty", 0) == 1 and len(held) == 1
+        return (int(harmful), int(not last_loyalty), sum(held.values()))
 
     def _proliferate_helps(self, state: GameState, seat: int, action: Action) -> bool:
         """Is one more of every counter already on this permanent or player good for us?
