@@ -3524,25 +3524,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'costs an additional 0 to cast' is not a card"
             )
         priced = prune_cost(model.cost.model_dump())
-        # Life and nothing else, which is narrower than ward and narrower than
-        # `attack_tax` in the other direction. Mana is refused because it would
-        # have to reach the payment solver: legality prices a cast line by
-        # solving for its pips, so a surcharge in mana changes which lands tap
-        # and which target tuples are affordable, and every one of those seams
-        # is a place the offer and the charge could disagree. Life touches none
-        # of them -- it is a second resource checked beside the mana. A
-        # sacrifice or a discard is refused for `attack_tax`'s reason: it would
-        # ask a question inside the cast, where nothing can answer one.
-        if set(priced) - {"pay_life"}:
+        # Life **or** generic mana, one of them, and nothing else. Life is
+        # Terror of the Peaks; generic mana is Kasmina, Enigmatic Mentor's
+        # "cost {2} more to cast", netted into `costs.cost_reduction` as a
+        # negative discount so the offer and the charge read one number (see
+        # `player_statics.spell_mana_tax`). Coloured mana is refused: the
+        # discount arithmetic is generic-only, and a coloured surcharge would
+        # silently become a generic one. A sacrifice or a discard is refused for
+        # `attack_tax`'s reason: it would ask a question inside the cast, where
+        # nothing can answer one.
+        currency = "mana" if "mana" in priced else "pay_life"
+        if set(priced) - {currency}:
             raise DslError(
-                f"{where}: spell_cost_increase is paid in life only; give its "
-                f"'cost' a 'pay_life' and nothing else, not "
-                f"{sorted(set(priced) - {'pay_life'})}"
+                f"{where}: spell_cost_increase is paid in life or in generic mana, "
+                f"one of them; give its 'cost' a 'pay_life' or a 'mana' and "
+                f"nothing else, not {sorted(set(priced) - {currency})}"
             )
+        if currency == "mana":
+            surcharge = ManaCost.parse(str(priced["mana"]))
+            if surcharge.generic < 1 or surcharge.mana_value() != surcharge.generic:
+                raise DslError(
+                    f"{where}.cost.mana: spell_cost_increase's mana is generic "
+                    f"only, one or more, got {priced['mana']!r}"
+                )
         # `prune_cost` drops a `pay_life` of 0, so the missing key and the
         # written zero arrive here as the same thing -- which is right: both are
         # ward {0}, a line that prints on the card and charges nobody.
-        if not isinstance(priced.get("pay_life"), int) or priced["pay_life"] < 1:
+        elif not isinstance(priced.get("pay_life"), int) or priced["pay_life"] < 1:
             # A value expression would be evaluated against the *taxing*
             # permanent's controller while the other player is the one paying,
             # and no printed card asks for one. A literal 0 is the ward refusal

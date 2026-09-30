@@ -2279,6 +2279,8 @@ from .player_statics import (  # noqa: F401
     players_freezing_opponent_lands,
     printed_token_matches,
     spell_cost_reduction,
+    spell_mana_tax,
+    spell_mana_tax_targeted,
     token_creation_replacements,
     untap_also,
 )

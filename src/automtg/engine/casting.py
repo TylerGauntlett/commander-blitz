@@ -29,6 +29,7 @@ from .player_statics import (
     player_spends_mana_as_any_color,
     spell_life_tax,
     spell_life_tax_on_board,
+    spell_mana_tax_targeted,
 )
 from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
@@ -1506,7 +1507,7 @@ def _cast_variant(
             static.get("targeting") is not None
             for _, static in _battlefield_statics(state)
             if static.get("effect") == "spell_cost_reduction"
-        )
+        ) or spell_mana_tax_targeted(state)  # Kasmina's surcharge is per tuple too
         # Convoke and delve reduce the generic part, exactly as a cost reduction
         # does -- and go through the same clamp, so neither can make a spell free
         # of its coloured pips.

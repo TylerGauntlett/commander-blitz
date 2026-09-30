@@ -18498,3 +18498,34 @@ an unknown zone and a repeat.
   legendary cards are offered; an opponent's card in exile is not; the default is
   still the hand; a legend is cast from the graveyard and from exile; declining
   casts nothing; the loader guards.
+
+## "Cost {2} more to cast" — spell_cost_increase priced in generic mana — 601.2f
+
+### Overview
+
+Kasmina, Enigmatic Mentor: "Spells your opponents cast that target a creature or
+planeswalker you control cost {2} more to cast." `spell_cost_increase` charged
+life only (Terror of the Peaks). Its loader refused mana so that a surcharge
+could not make the offer and the charge disagree.
+
+### Tier: B — an existing static with a second currency
+
+`player_statics.spell_mana_tax` reads the mana-priced statics with the life tax's
+filters, meanly at the gate and exactly per tuple. `cost_reduction.cost_reduction`
+subtracts it, making the total a negative discount where it applies. Legality,
+`casting._priced_tuples` and `Game._cast` all read that number already.
+`casting._cast_variant` turns on per-tuple pricing when a targeted mana tax is on
+the board (`spell_mana_tax_targeted`). `spell_life_tax_on_board` now counts only
+life-priced statics. The loader takes one currency: `pay_life` ≥ 1, or `mana`
+that is generic and {1} or more.
+
+### Tests
+
+- `tests/unit/test_spell_cost_increase_mana.py` — a spell aimed at my creature
+  costs {2} more; aimed at their own it does not; an untargeted tax reaches
+  every spell and two stack; an aim the caster cannot afford is not offered
+  while the same spell aimed elsewhere is; the surcharge is paid (three
+  Mountains for a Bolt); the taxing player is not taxed; the loader takes
+  generic mana and refuses coloured mana, {0}, and life with mana.
+- `tests/unit/test_spell_cost_increase.py` — the old "mana is refused" test is
+  now "coloured mana is refused"; the sacrifice refusal names both currencies.

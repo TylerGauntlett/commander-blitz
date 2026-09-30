@@ -10485,11 +10485,10 @@ its total and clamps the result at zero, so `amount: -3` would load clean, print
 end to end, so it could never charge life.
 
 **The price lives in a `cost` node**, the way `ward`'s and `attack_tax`'s do, and
-the loader holds it to a `pay_life` of 1 or more and nothing else. Mana is
-refused because it would have to reach the payment solver, where a surcharge
-changes which lands tap and which target tuples are affordable; life is checked
-beside the mana and touches none of it. A sacrifice or a discard is refused for
-`attack_tax`'s reason — it would have to ask a question inside the cast.
+the loader holds it to **one** currency: a `pay_life` of 1 or more, or a generic
+`mana` of {1} or more (below). Coloured mana, both at once, a sacrifice or a
+discard are refused. The last two are refused for `attack_tax`'s reason: they
+would have to ask a question inside the cast.
 
 **It is a cost, and every consequence follows from that.** It is paid as the
 spell is cast (601.2h), so a countered spell has still been paid for. It is not
@@ -10511,6 +10510,28 @@ reading it generously and the same principle: be generous to the caster before
 any target exists. `targets=None` leaves a `targeting` tax *out*, because
 charging speculatively would refuse a spell the player can afford to aim
 somewhere else; the per-tuple pass then charges each aim exactly.
+
+### …and in mana
+
+```jsonc
+// Kasmina, Enigmatic Mentor — "Spells your opponents cast that target a
+// creature or planeswalker you control cost {2} more to cast."
+{ "kind": "static", "effect": "spell_cost_increase",
+  "affects_spells": { "controller": "opponent" },
+  "targeting": { "controller": "you", "any_types": ["Creature", "Planeswalker"] },
+  "cost": { "mana": "{2}" } }
+```
+
+The same static with generic mana as the price, read by
+`player_statics.spell_mana_tax`. It is netted into `costs.cost_reduction` as a
+**negative discount**, which is the number legality, `casting._priced_tuples` and
+`Game._cast` already share. So the offer and the charge price it identically,
+and 601.2f's order holds: increases are added, reductions subtracted, and the
+generic part is never below zero. A `targeting` clause makes the price differ per
+target tuple, so its presence turns on the same per-tuple pricing a targeted
+discount does. The gate reads it meanly, as the life tax does. Generic only,
+because the discount arithmetic is generic only. A coloured surcharge would
+silently turn generic, so it is refused.
 
 ## Kicker
 

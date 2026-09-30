@@ -977,6 +977,77 @@ def spell_life_tax(
     return total
 
 
+def spell_mana_tax(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
+    """How much more **generic mana** ``pid`` must pay to cast ``card`` (601.2f).
+
+    "Spells your opponents cast that target a creature or planeswalker you
+    control cost {2} more to cast." Kasmina, Enigmatic Mentor. The same
+    `spell_cost_increase` static as `spell_life_tax`, with the price written as
+    ``cost.mana`` instead of ``cost.pay_life``. The loader holds it to generic
+    mana alone.
+
+    The filters read exactly as the life tax reads them: ``affects_spells`` on
+    the printed face, and ``targeting`` against the refs the cast chose, read
+    **meanly** while ``targets`` is ``None``. At a gate, before any target
+    exists, the tax is left out, so a spell affordable aimed elsewhere is not
+    refused, and each tuple is then priced exactly.
+
+    Netted into `cost_reduction.cost_reduction` as a negative discount, which is
+    the number legality, `casting._priced_tuples` and `Game._cast` all already
+    share. So the offer and the charge cannot disagree, and 601.2f's order
+    (increases, then reductions, generic never below zero) is the clamp the
+    solver already applies.
+    """
+    from .mana import ManaCost
+
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_increase":
+            continue
+        mana = (static.get("cost") or {}).get("mana")
+        if not mana:
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if not _matches_printed(card, resolved):
+            continue
+        if (aimed := static.get("targeting")) is not None:
+            if targets is None:
+                continue
+            if not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            ):
+                continue
+        total += ManaCost.parse(str(mana)).generic
+    return total
+
+
+def spell_mana_tax_targeted(state: GameState) -> bool:
+    """Is a mana-priced `spell_cost_increase` with a `targeting` clause active?
+
+    Such a tax changes the price per target tuple, so `casting._cast_variant`
+    has to price each tuple on its own, as it does for a targeted discount.
+    """
+    return any(
+        static.get("effect") == "spell_cost_increase"
+        and (static.get("cost") or {}).get("mana")
+        and static.get("targeting") is not None
+        for _, static in _battlefield_statics(state)
+    )
+
+
 def spell_life_tax_on_board(state: GameState) -> bool:
     """Is any `spell_cost_increase` static active at all?
 
@@ -986,7 +1057,10 @@ def spell_life_tax_on_board(state: GameState) -> bool:
     and the per-tuple walk happens only for the boards that have one.
     """
     return any(
-        static.get("effect") == "spell_cost_increase" for _, static in _battlefield_statics(state)
+        static.get("effect") == "spell_cost_increase"
+        # A mana-priced one (Kasmina) is `spell_mana_tax`'s, and taxes no life.
+        and (static.get("cost") or {}).get("pay_life")
+        for _, static in _battlefield_statics(state)
     )
 
 
