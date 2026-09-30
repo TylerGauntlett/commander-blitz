@@ -2236,10 +2236,22 @@ multiplication, so between two of these the unasked order cannot show.
   "counter_addend": 1,                       // "that many plus one"
   "affects": { "controller": "you", "types": ["Creature"] } }
 
-// Doubling Season, Corpsejack Menace
+// Corpsejack Menace ("+1/+1 counters would be put on a creature you control")
+{ "effect": "replace_counters", "counter": "+1/+1", "counter_multiplier": 2,
+  "affects": { "controller": "you", "types": ["Creature"] } }
+
+// Doubling Season ("if an effect would put one or more counters…")
 { "effect": "replace_counters", "counter_multiplier": 2,
+  "effects_only": true,                      // a cost is not an effect
   "affects": { "controller": "you" } }       // no `counter`: every kind
 ```
+
+`effects_only` is Doubling Season's "if **an effect** would put". A cost is not
+an effect (118.1), so a planeswalker's +1 loyalty ability — paid through
+`add_counters(..., as_cost=True)` in `costs.py` — still puts exactly one loyalty
+counter on it, which is the card's ruling. Omitted, costs are replaced too, which
+is what "counters **would be put**" (Hardened Scales, High Score) and "if **you**
+would put" say.
 
 The sixth named replacement, and the first about an **object** rather than a
 player — tokens, draws, life gain, life loss and milling all take
@@ -2255,7 +2267,10 @@ which a card uses exactly one.
 
 Read in `primitives.add_counters`, the single funnel every placement comes
 through — the `add_counters` op, `move_counters`, `proliferate`, the `counters`
-key on `put_onto_battlefield`, entering with counters — so it applies once per
+key on `put_onto_battlefield` — and the counters a permanent **enters with**
+(122.6: those are "put on" it too; a planeswalker's starting loyalty, riot's
+counter, every `self_enters_with_counters`) are replaced by the same statics in
+`zones._enter_with_counters`, which fires no `counter_placed`. So it applies once per
 batch, and *before* `counter_placed` fires or a Saga chapter comparison reads
 the new total. A replacement that fired the event with the pre-replacement
 number would be a card lying to every trigger watching it. Only on the way in:

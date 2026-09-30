@@ -18555,3 +18555,44 @@ Irencrag's "gains … and loses all other abilities", is kept.
   permanent keyword and an earlier granted triggered ability are lost; suspend's
   haste is lost. `test_lose_abilities_op.py` still holds the same-resolution
   grant.
+
+## Counter replacements tell a cost from an effect — Doubling Season — 118.1 / 122.6
+
+"If **an effect** would put one or more counters on a permanent you control, it
+puts twice that many of those counters on that permanent instead." The documented
+shape was `replace_counters` with `counter_multiplier: 2`, but `primitives.add_counters`
+is also the function `costs.py` calls to pay a positive loyalty cost, so every +1
+loyalty ability under a Doubling Season became +2 — a strictly stronger card, and
+visible in the Atraxa superfriends deck. A cost is not an effect, and the card's
+ruling says so.
+
+### What changed
+
+- `effects_only: true` on `replace_counters` (schema, loader guard, compiled
+  static). `counter_placement_replacements(..., as_cost=True)` skips such a
+  static; `add_counters` takes `as_cost` and `costs.py` passes it for the loyalty
+  payment. The default is unchanged — "would be put" reaches costs.
+- **Entering with counters is now replaced.** 122.6 counts counters a permanent is
+  given as it enters as "put on" it, but `zones._enter_battlefield` wrote them
+  straight onto the object. `zones._enter_with_counters` now asks the same
+  statics for every `self_enters_with_counters` replacement and for riot's
+  counter (no `counter_placed`, as before). Doubling Season doubles a
+  planeswalker's starting loyalty (its ruling).
+
+### Shipped card audit
+
+Every card using `replace_counters` in `data/cards`: only **High Score** ("if one
+or more +1/+1 counters would be put on a creature you control"). "Would be put"
+names no effect, so it correctly reaches costs (and no cost in the engine puts
++1/+1 counters anyway). It **was** wrong for creatures entering with +1/+1
+counters — a creature that "enters with two +1/+1 counters" arrived with two, not
+three. Fixed by the entering change and pinned.
+
+### Tests
+
+- `tests/unit/test_counter_replacement_effects_only.py` — a +1 cost puts one
+  loyalty counter under `effects_only`, the same walker's effect is doubled, the
+  un-flagged static still doubles the cost, a minus cost is untouched; a
+  planeswalker enters with twice its loyalty, an opponent's does not, a
+  Hardened-Scales creature entering with two counters gets three, riot's counter
+  is doubled; the loader places the key and refuses it on another static.

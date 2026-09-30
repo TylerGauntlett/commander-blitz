@@ -1,0 +1,67 @@
+{
+  "_comment": "Shapes for tests/unit/test_counter_replacement_effects_only.py. t_ceo_season is Doubling Season's counter line, effects_only; t_ceo_walker is a planeswalker with a +1 and a +0 whose effect puts a loyalty counter on it, so a cost and an effect can be told apart on one permanent; t_ceo_hydra enters with two +1/+1 counters, one route a counter is given as a permanent arrives (riot, borrowed from riot.cards.json, is the other).",
+  "cards": [
+    {
+      "id": "t_ceo_season",
+      "name": "Test Effect Season",
+      "oracle_text": "If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "mana_cost": "{4}{G}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+          "effect": "replace_counters",
+          "counter_multiplier": 2,
+          "effects_only": true,
+          "affects": {"controller": "you"}
+        }
+      ]
+    },
+    {
+      "id": "t_ceo_walker",
+      "name": "Test Season Walker",
+      "oracle_text": "+1: You gain 2 life.\n+0: Put a loyalty counter on this planeswalker.",
+      "mana_cost": "{2}{G}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Garruk"],
+      "loyalty": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "activated",
+          "text": "+0: Put a loyalty counter on this planeswalker.",
+          "cost": {"loyalty": 0},
+          "effects": [
+            {"op": "add_counters", "counter": "loyalty", "amount": {"const": 1}, "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ceo_hydra",
+      "name": "Test Season Hydra",
+      "oracle_text": "This creature enters with two +1/+1 counters on it.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Hydra"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2}
+      ]
+    }
+  ]
+}

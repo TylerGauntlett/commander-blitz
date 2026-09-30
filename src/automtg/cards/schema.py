@@ -751,6 +751,14 @@ class AbilityModel(BaseModel):
     #: `counter` on `TriggerModel`, which is a different model and a different
     #: question ("whenever a +1/+1 counter is put on this creature").
     counter: str | None = None
+    #: `replace_counters`: only counters an **effect** puts on. Doubling
+    #: Season's "if **an effect** would put one or more counters…" -- and a
+    #: cost is not an effect (118.1, 602.2b), so a planeswalker's +1 loyalty
+    #: ability still puts exactly one loyalty counter on as its cost. Omitted,
+    #: the replacement reaches costs too, which is what "if one or more
+    #: counters **would be put**" says (Hardened Scales, High Score) and what
+    #: "if **you** would put" says (Vorinclex, Innkeeper's Talent).
+    effects_only: bool = False
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:

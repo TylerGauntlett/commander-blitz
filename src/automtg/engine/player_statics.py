@@ -1759,7 +1759,7 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
 
 
 def counter_placement_replacements(
-    state: GameState, oid: int, kind: str
+    state: GameState, oid: int, kind: str, *, as_cost: bool = False
 ) -> list[Mapping[str, Any]]:
     """The active ``replace_counters`` statics that apply to this placement.
 
@@ -1778,6 +1778,10 @@ def counter_placement_replacements(
     choice to the affected player and this engine does not ask -- see
     `primitives._replaced_counter_amount`, which owns that divergence together
     with 614.5.
+
+    ``as_cost`` is a placement made while paying a cost -- a planeswalker's +N
+    loyalty ability. An ``effects_only`` static (Doubling Season's "if **an
+    effect** would put") skips it, because a cost is not an effect.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1785,6 +1789,8 @@ def counter_placement_replacements(
     out: list[Mapping[str, Any]] = []
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "replace_counters":
+            continue
+        if as_cost and static.get("effects_only"):
             continue
         wanted = static.get("counter")
         if wanted is not None and str(wanted) != kind:

@@ -868,6 +868,13 @@ def reference() -> dict:
             " instead) and a static takes one or the other. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"If an effect would put one or more counters on a permanent you"
+            " control, it puts twice that many…\" (Doubling Season) is a"
+            " `replace_counters` static with `counter_multiplier: 2`,"
+            " `affects: {controller: you}` and `effects_only: true` -- \"an"
+            " effect\" excludes a cost, so a planeswalker's +1 still puts one"
+            " loyalty counter. Without \"an effect\" in the sentence (Hardened"
+            " Scales' \"would be put\") leave `effects_only` out: costs count.",
             "\"…tapped and attacking that player or a planeswalker they control\""
             " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
             " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"

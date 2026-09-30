@@ -1894,7 +1894,9 @@ def pay(
         from .primitives import add_counters, remove_counters
 
         if cost.loyalty > 0:
-            add_counters(state, source_oid, "loyalty", cost.loyalty)
+            # `as_cost`: a cost is not an effect, so Doubling Season's "if an
+            # effect would put" leaves a +1 at one counter (its ruling).
+            add_counters(state, source_oid, "loyalty", cost.loyalty, as_cost=True)
         elif cost.loyalty < 0:
             remove_counters(state, source_oid, "loyalty", -cost.loyalty)
 

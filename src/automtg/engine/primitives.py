@@ -894,7 +894,9 @@ def untap_permanent(state: GameState, oid: int) -> bool:
     return True
 
 
-def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int) -> int:
+def _replaced_counter_amount(
+    state: GameState, oid: int, kind: str, amount: int, *, as_cost: bool = False
+) -> int:
     """How many counters are actually put on, after every replacement applies.
 
     "If one or more +1/+1 counters would be put on a creature you control,
@@ -930,7 +932,7 @@ def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int)
     is added once per *placement*, not once per counter -- which is what the
     printed "that many plus one" says.
     """
-    for static in counter_placement_replacements(state, oid, kind):
+    for static in counter_placement_replacements(state, oid, kind, as_cost=as_cost):
         multiplier = int(static.get("counter_multiplier") or 1)
         addend = int(static.get("counter_addend") or 0)
         amount = amount * multiplier + addend
@@ -938,8 +940,22 @@ def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int)
 
 
 def add_counters(
-    state: GameState, oid: int, kind: str, amount: int, source: int | None = None
+    state: GameState,
+    oid: int,
+    kind: str,
+    amount: int,
+    source: int | None = None,
+    *,
+    as_cost: bool = False,
 ) -> int:
+    """Put counters on a permanent, after every counter replacement applies.
+
+    ``as_cost`` marks a placement made while paying a cost (a planeswalker's
+    +N loyalty ability, `costs.pay`). A cost is not an effect (118.1), so a
+    replacement printed "if **an effect** would put" -- Doubling Season,
+    ``effects_only`` -- leaves it alone, while "if counters **would be put**"
+    and "if **you** would put" still apply.
+    """
     obj = state.objects.get(oid)
     if obj is None or amount == 0:
         return 0
@@ -949,7 +965,7 @@ def add_counters(
         # that really arrived, and a Saga chapter comparison below has to see
         # the same total the board does. Only on the way up -- "would be put on"
         # is nothing to do with counters coming off.
-        amount = _replaced_counter_amount(state, oid, kind, amount)
+        amount = _replaced_counter_amount(state, oid, kind, amount, as_cost=as_cost)
     # Read before the write. A Saga's chapter ability triggers on the count
     # *becoming* its number (714.2c), so the comparison needs both sides and
     # this is the only moment both exist.

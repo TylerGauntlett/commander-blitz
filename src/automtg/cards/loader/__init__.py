@@ -3168,10 +3168,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: replace_counters needs 'counter_addend' (\"that many "
                 f"plus one\") or 'counter_multiplier' (\"twice that many\")"
             )
-    elif model.counter_multiplier is not None or model.counter_addend is not None:
+    elif (
+        model.counter_multiplier is not None
+        or model.counter_addend is not None
+        or model.effects_only
+    ):
         raise DslError(
-            f"{where}: 'counter_multiplier'/'counter_addend' only mean anything on "
-            f"a replace_counters static, not on {model.effect!r}"
+            f"{where}: 'counter_multiplier'/'counter_addend'/'effects_only' only "
+            f"mean anything on a replace_counters static, not on {model.effect!r}"
         )
 
     if model.effect == "replace_life_loss":
@@ -3786,6 +3790,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["counter_addend"] = model.counter_addend
     if model.counter is not None:
         static["counter"] = model.counter
+    if model.effects_only:
+        static["effects_only"] = True
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
     if model.gain_multiplier is not None:

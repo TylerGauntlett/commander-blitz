@@ -833,6 +833,28 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
     return None
 
 
+def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: int) -> None:
+    """Give an arriving permanent the counters it enters with, replaced.
+
+    122.6: counters a permanent is given *as it enters* are "put on" it, so a
+    counter replacement applies to them exactly as to a placement on the
+    battlefield -- Doubling Season doubles a planeswalker's starting loyalty,
+    and Hardened Scales makes a creature that "enters with two +1/+1 counters"
+    enter with three. Not through `primitives.add_counters`, because an arrival
+    fires no COUNTER_PLACED (the permanent was never on the battlefield
+    without them) and a Saga's chapter comparison is `sagas.entered`'s.
+
+    Not a cost (122.6a: the permanent's controller puts them), so every
+    applicable static applies, ``effects_only`` included.
+    """
+    if amount <= 0:
+        obj.add_counter(kind, amount)
+        return
+    from .primitives import _replaced_counter_amount
+
+    obj.add_counter(kind, _replaced_counter_amount(state, obj.oid, kind, amount))
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -964,9 +986,11 @@ def _enter_battlefield(
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
-                    obj.add_counter(str(kind), evaluate_value(ctx, amount))
+                    _enter_with_counters(state, obj, str(kind), evaluate_value(ctx, amount))
             else:
-                obj.add_counter(
+                _enter_with_counters(
+                    state,
+                    obj,
                     str(replacement.get("counter", "+1/+1")),
                     evaluate_value(ctx, replacement.get("amount", 1)),
                 )
@@ -988,7 +1012,7 @@ def _enter_battlefield(
     if riot_choice == RIOT_HASTE:
         obj.granted_keywords.add(Keyword.HASTE.value)
     elif riot_choice == RIOT_COUNTER:
-        obj.add_counter("+1/+1", 1)
+        _enter_with_counters(state, obj, "+1/+1", 1)
 
     # "…it gains haste until end of turn" (Arena of Glory), in the slot beside
     # riot and for a neighbouring reason: the creature is never on the
