@@ -6133,6 +6133,26 @@ Barracuda prints on one card. Like its twin it takes no spell filter yet, and
 cast **Spirit** spells as though they had flash" written with a filter would
 otherwise hand the permission to every spell.
 
+`cast_only_at_sorcery_speed` points the other way — Teferi, Time Raveler's "Each
+opponent can cast spells only any time they could cast a sorcery":
+
+```jsonc
+{ "kind": "static",
+  "text": "Each opponent can cast spells only any time they could cast a sorcery.",
+  "effect": "cast_only_at_sorcery_speed",
+  "affects_player": "opponent" }
+```
+
+307.1's window — the player's own main phase, stack empty — for every spell the
+named players cast. `_timing_ok` asks it *before* the flash branches, so an
+instant, a flash spell and a `cast_as_though_flash` permission all lose their
+speed (101.2: "only" beats "may"). The resolution-time casts (cascade, suspend,
+rebound, madness, miracle, `cast_from_hand`, `cast_copy`) refuse it too, through
+`player_cant_cast_while_resolving`: each happens while something is resolving, so
+the stack is not empty and the player could not cast a sorcery then.
+`cant_cast_spells` is the near miss — a prohibition, with no condition that can say
+"outside sorcery timing". `affects` or `amount` beside it is a load error.
+
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
 Dryad of the Ilysian Grove is two drops from anywhere, which is correct.

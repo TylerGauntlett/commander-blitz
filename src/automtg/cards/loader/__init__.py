@@ -3333,6 +3333,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"limit; it takes 'affects_player', 'affects' and an optional "
                     f"'condition', and no 'amount'"
                 )
+        if model.effect == "cast_only_at_sorcery_speed" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # Teferi, Time Raveler names players and every spell they cast.
+            # Nothing reads either key, so a filter here would load clean and
+            # lock every spell anyway -- a card that reads narrower than it is.
+            raise DslError(
+                f"{where}: cast_only_at_sorcery_speed holds every spell the named "
+                f"players cast to sorcery timing; it takes 'affects_player' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
         if model.effect == "cast_as_though_flash" and (
             model.affects is not None or model.amount is not None
         ):

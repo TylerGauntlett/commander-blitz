@@ -24,6 +24,7 @@ from .player_statics import (
     free_cast_permission,
     granted_warp_cost,
     player_casts_as_though_flash,
+    player_casts_only_at_sorcery_speed,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
     spell_life_tax,
@@ -437,11 +438,19 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     printed on an instant, and every other branch below returns True for an
     instant before anything could reach it -- a restriction written after them
     would load, read as the printed card and never once refuse a cast.
+    `cast_only_at_sorcery_speed` (Teferi, Time Raveler) narrows too, for the
+    player rather than the card, and is asked second for the same reason.
     """
     if card.cast_before_step is not None and state.step >= _window_closes_at(
         card.cast_before_step
     ):
         return False
+    if player_casts_only_at_sorcery_speed(state, pid):
+        # Teferi, Time Raveler. The other narrowing, and asked before flash for
+        # the same reason as the step above: an instant, a flash spell and a
+        # `cast_as_though_flash` permission all say "may", and 101.2 gives
+        # "only" the last word.
+        return sorcery_speed
     if card.is_instant or Keyword.FLASH.value in card.keywords:
         return True
     if sorcery_speed:

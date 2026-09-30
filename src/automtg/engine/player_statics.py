@@ -1181,6 +1181,38 @@ def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = N
     return False
 
 
+def player_casts_only_at_sorcery_speed(state: GameState, pid: int) -> bool:
+    """ "Each opponent can cast spells only any time they could cast a sorcery."
+
+    Teferi, Time Raveler. A *timing* restriction on the player: 307.1's
+    window -- their own main phase, the stack empty -- for every spell they
+    cast, instants and flash spells included.
+
+    Read in `casting._timing_ok` **before** its flash branches, because the
+    printed card and `cast_as_though_flash` both say "may" and this says
+    "only": 101.2 gives the restriction the last word. And read at every
+    resolution-time cast (`suspend.cast_for_free`, `replacements._offer_cast`,
+    the "you may cast" offers and `cast_copy`), because each of those happens
+    while a spell or ability is resolving -- the stack is not empty, so the
+    player could not cast a sorcery then and cannot cast this.
+    """
+    return _player_static(state, pid, "cast_only_at_sorcery_speed")
+
+
+def player_cant_cast_while_resolving(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
+    """May ``pid`` not cast a spell in the middle of a resolution right now?
+
+    The question every resolution-time cast asks: a prohibition
+    (`player_cant_cast_spells`, filtered by ``card`` when it is known) or a
+    sorcery-timing lock, which a resolving effect can never satisfy.
+    """
+    return player_cant_cast_spells(state, pid, card) or player_casts_only_at_sorcery_speed(
+        state, pid
+    )
+
+
 def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
     """ "…or activate abilities of artifacts, creatures, or enchantments."
 

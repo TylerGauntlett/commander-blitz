@@ -18055,3 +18055,30 @@ the emblem could only be written as a lock on every spell.
   casting a bear; `cast_from_hand` offering only the creature; a permanent lock
   lifting when it leaves; the loader accepting the filter and refusing `affects`,
   `controller` and board-state keys.
+
+## `cast_only_at_sorcery_speed` — Teferi, Time Raveler's static
+
+"Each opponent can cast spells only any time they could cast a sorcery." No static
+could narrow a player's timing window: `cant_cast_spells` forbids outright and has
+no sorcery-timing condition, and `cast_as_though_flash` widens.
+
+### What changed
+
+- New player-wide static `cast_only_at_sorcery_speed` (takes `affects_player` and
+  an optional `condition`; `affects`/`amount` refused).
+- `player_statics.player_casts_only_at_sorcery_speed`, read in
+  `casting._timing_ok` after `cast_before_step` and before the instant/flash and
+  `cast_as_though_flash` branches, so it overrides all three (101.2).
+- `player_statics.player_cant_cast_while_resolving` folds the prohibition and the
+  timing lock into the one question the resolution-time casts ask:
+  `suspend.cast_for_free`, `replacements._offer_cast`, `_offer_free_cast`,
+  `cast_from_hand` and `cast_copy`.
+
+### Tests
+
+- `tests/unit/test_cast_only_at_sorcery_speed.py` — an instant withheld off turn
+  and in the opponent's own combat, both spells castable in their main phase, the
+  control without the lock, its controller unaffected, Tidal Barracuda's
+  permission overridden, a free cast refused for the locked seat and allowed for
+  the controller, the lock lifting when its source leaves, and the loader
+  requiring `affects_player` and refusing a filter.

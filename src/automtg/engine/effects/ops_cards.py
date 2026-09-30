@@ -1504,13 +1504,13 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     belongs to suspend, and a cascaded creature that could attack immediately
     would be a strictly better card.
     """
-    from ..player_statics import player_cant_cast_spells
+    from ..player_statics import player_cant_cast_while_resolving
     from ..suspend import cast_for_free
 
     obj = ctx.state.objects.get(oid)
     if obj is None:
         return False
-    if player_cant_cast_spells(ctx.state, pid, ctx.state.card_of(obj)):
+    if player_cant_cast_while_resolving(ctx.state, pid, ctx.state.card_of(obj)):
         # Asked before the prompt: `cast_for_free` would refuse anyway, and a
         # "you may cast" question whose yes does nothing is a lie on screen.
         return False
@@ -1546,14 +1546,14 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     may", so no `may` wrapper is needed and declining costs no second question.
     A player with nothing matching is not asked at all.
     """
-    from ..player_statics import player_cant_cast_spells
+    from ..player_statics import player_cant_cast_while_resolving
     from ..suspend import cast_for_free
     from .selectors import select_players
 
     selector = spec.get("selector") or {}
     prompt = "Cast a spell without paying its mana cost"
     for pid in select_players(ctx, spec.get("player", "you")):
-        if player_cant_cast_spells(ctx.state, pid):
+        if player_cant_cast_while_resolving(ctx.state, pid):
             # Voice of Victory: nothing to offer a player who cannot cast.
             continue
         pool = [
@@ -1570,7 +1570,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             if "Land" not in ctx.state.card_of(ctx.state.objects[oid]).types
             # Narset Transcendent's emblem: a spell this player can't cast is
             # not on offer, which is also `cast_for_free`'s floor.
-            and not player_cant_cast_spells(
+            and not player_cant_cast_while_resolving(
                 ctx.state, pid, ctx.state.card_of(ctx.state.objects[oid])
             )
             and _matches_in_zone(ctx, oid, selector, "hand")

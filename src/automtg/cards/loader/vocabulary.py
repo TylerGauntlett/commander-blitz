@@ -558,6 +558,13 @@ STATIC_EFFECTS = frozenset(
         # has no `zone` with which to name the cards in hand, and the permission
         # has to cover cards drawn after the source arrived.
         "cast_as_though_flash",
+        # Teferi, Time Raveler.  "Each opponent can cast spells only any time
+        # they could cast a sorcery."  The narrowing twin of the permission
+        # above: 307.1's window for every spell those players cast.  Read in
+        # `casting._timing_ok` *before* the flash branches (101.2: the "only"
+        # beats every "may"), and at each resolution-time cast, which happens
+        # with the stack non-empty and so is never sorcery timing.
+        "cast_only_at_sorcery_speed",
         # Teferi, Master of Time.  "You may activate loyalty abilities of Teferi
         # on any player's turn any time you could cast an instant."  `affects`
         # says whose loyalty abilities are freed -- `{"self_only": true}` is the
@@ -617,6 +624,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_activate_abilities",
         "untap_limit",
         "cast_as_though_flash",
+        "cast_only_at_sorcery_speed",
         "cant_gain_life",
     }
 )
