@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "oath_of_nissa",
+    "name": "Oath of Nissa",
+    "oracle_text": "When Oath of Nissa enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.\nYou may spend mana as though it were mana of any color to cast planeswalker spells.",
+    "mana_cost": "{G}",
+    "types": ["Enchantment"],
+    "supertypes": ["Legendary"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Oath of Nissa enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {
+            "op": "look_at_top",
+            "amount": {"const": 3},
+            "objects": {"any_types": ["Creature", "Land", "Planeswalker"], "count": 1, "optional": true},
+            "destination": "hand",
+            "rest_to_bottom": true
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "You may spend mana as though it were mana of any color to cast planeswalker spells.",
+        "effect": "spend_mana_as_any_color",
+        "affects_player": "you",
+        "affects_spells": {"types": ["Planeswalker"]}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
