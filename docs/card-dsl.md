@@ -13216,6 +13216,37 @@ evaporates at cleanup, so from the next turn a riot creature that chose haste
 looks exactly like one that chose the counter. A misspelled duration is refused
 rather than defaulted, because defaulting means shipping the wrong half.
 
+### "Until your next turn" on a pump, a keyword, an animation or a lock
+
+```jsonc
+// Liliana, the Last Hope — +1
+{ "op": "pump", "power": -2, "toughness": -1, "objects": { "target": "t1" },
+  "duration": "until_your_next_turn" }
+// Dovin Baan — +1, the second half
+{ "op": "lock_abilities", "objects": { "target": "t1" },
+  "duration": "until_your_next_turn" }
+// Sorin, Solemn Visitor — +1 (the set is fixed as it resolves, 611.2c)
+{ "op": "grant_keyword", "keyword": "lifelink", "duration": "until_your_next_turn",
+  "objects": { "types": ["Creature"], "controller": "you" } }
+// Nissa, Vital Force — +1, after an `untap`
+{ "op": "animate", "power": 5, "toughness": 5, "subtypes": ["Elemental"],
+  "keywords": ["haste"], "objects": { "target": "t1" },
+  "duration": "until_your_next_turn" }
+```
+
+`pump`, `lock_abilities` and `animate` take `duration` of `until_end_of_turn`
+(the default) or `until_your_next_turn`; `grant_keyword` takes those two and
+`permanent`. The long one (611.2b) is **the controller's** next turn — the player
+who activated the ability, not the controller of the creature it points at — so
+in a pod it survives every opponent's turn. It rides the same `TempEffect` list
+as the end-of-turn form, with `until_player` set: `clear_until_eot` passes over
+it and `clear_until_next_turn` drops it in that player's untap step, beside the
+other `until_your_next_turn` tables, and `sba` drops it when that player leaves
+the game. An `animate`'s keywords share its clock. Before this the key was read
+by none of the four ops, so a card that wrote it loaded and wore off at cleanup —
+before the only turns a planeswalker's +1 is printed for. Any other spelling is
+refused.
+
 ## Granting an ability
 
 The quoted half of `gains trample and "Whenever this creature deals combat damage

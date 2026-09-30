@@ -1543,13 +1543,32 @@ def _stats_changed(
     )
 
 
-def pump(state: GameState, oid: int, power: int, toughness: int, source: int | None = None) -> None:
+def pump(
+    state: GameState,
+    oid: int,
+    power: int,
+    toughness: int,
+    source: int | None = None,
+    *,
+    until_player: int | None = None,
+) -> None:
+    """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
+    **until your next turn**" (Liliana, the Last Hope). See
+    `TempEffect.until_player` for where the longer one wears off."""
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(TempEffect(kind="pump", power=power, toughness=toughness, source=source))
+    obj.until_eot.append(
+        TempEffect(
+            kind="pump",
+            power=power,
+            toughness=toughness,
+            source=source,
+            until_player=until_player,
+        )
+    )
     state.bump_chars()
     _stats_changed(state, obj, power=power, toughness=toughness)
 
@@ -1568,6 +1587,7 @@ def animate(
     source: int | None = None,
     permanent: bool = False,
     exact: bool = False,
+    until_player: int | None = None,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
 
@@ -1606,6 +1626,7 @@ def animate(
         source=source,
         exact=exact,
         timestamp=state.alloc_timestamp(),
+        until_player=until_player,
     )
     if permanent:
         obj.animations.append(effect)
@@ -1624,7 +1645,7 @@ def animate(
     # objection and the reason Raging Ravine still fails.
     for word in keywords:
         obj.until_eot.append(
-            TempEffect(kind="keyword", keyword=word, source=source, timestamp=effect.timestamp)
+            TempEffect(kind="keyword", keyword=word, source=source, timestamp=effect.timestamp, until_player=until_player)
         )
     for word in your_turn_keywords:
         obj.until_eot.append(
@@ -1634,6 +1655,7 @@ def animate(
                 source=source,
                 only_your_turn=True,
                 timestamp=effect.timestamp,
+                until_player=until_player,
             )
         )
     state.bump_chars()
@@ -1647,6 +1669,7 @@ def grant_keyword(
     source: int | None = None,
     *,
     permanent: bool = False,
+    until_player: int | None = None,
 ) -> None:
     """Give a permanent a keyword, until end of turn or for as long as it lasts.
 
@@ -1673,6 +1696,7 @@ def grant_keyword(
                 keyword=keyword,
                 source=source,
                 timestamp=state.alloc_timestamp(),
+                until_player=until_player,
             )
         )
     state.bump_chars()
@@ -1811,18 +1835,26 @@ def granted_abilities(state: GameState, oid: int):
             yield source, card.grantable_abilities[temp.ability_index]
 
 
-def lock_abilities(state: GameState, oid: int, source: int | None = None) -> None:
+def lock_abilities(
+    state: GameState,
+    oid: int,
+    source: int | None = None,
+    *,
+    until_player: int | None = None,
+) -> None:
     """ "Its activated abilities can't be activated this turn."
 
     Recorded as an until-end-of-turn effect like a pump, so the cleanup step
-    already knows to remove it and no new lifetime has to be tracked.
+    already knows to remove it and no new lifetime has to be tracked -- and with
+    ``until_player``, Dovin Baan's "…until your next turn", on the pump's longer
+    clock for the same reason.
     """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(TempEffect(kind="lock_abilities", source=source))
+    obj.until_eot.append(TempEffect(kind="lock_abilities", source=source, until_player=until_player))
 
 
 def clear_until_eot(state: GameState) -> None:
@@ -1859,10 +1891,43 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying = None
             obj.copying_name = None
             obj.copying_until_eot = False
-        handbacks.extend((oid, temp) for temp in obj.until_eot if temp.kind == "control")
-        obj.until_eot.clear()
+        handbacks.extend(
+            (oid, temp)
+            for temp in obj.until_eot
+            if temp.kind == "control" and temp.until_player is None
+        )
+        # "…until **your next turn**" rides the same list and outlives this
+        # cleanup: it is `clear_until_next_turn`'s, in its player's untap step.
+        obj.until_eot = [temp for temp in obj.until_eot if temp.until_player is not None]
     state.bump_chars()
     _hand_back_control(state, handbacks)
+
+
+def clear_until_next_turn(state: GameState, player: int) -> None:
+    """ "…until your next turn" (611.2b): drop ``player``'s timed entries.
+
+    Called from ``player``'s untap step -- the first thing their next turn does
+    -- and from elimination, because a seat that has left never has that turn
+    and its effects would otherwise stand for the rest of the game (800.4a's
+    "until that turn would have begun", read the way every other
+    ``until_your_next_turn`` table here reads it).
+
+    Keyed by the **player** and never by a turn number, for detain's reason:
+    eliminating somebody moves everybody else's "next turn". Walks every object
+    rather than the battlefield list because a phased-out permanent keeps its
+    effects (702.26d), and anything that has left the battlefield has had
+    ``until_eot`` emptied already.
+    """
+    changed = False
+    for obj in state.objects.values():
+        if not obj.until_eot:
+            continue
+        kept = [temp for temp in obj.until_eot if temp.until_player != player]
+        if len(kept) != len(obj.until_eot):
+            obj.until_eot = kept
+            changed = True
+    if changed:
+        state.bump_chars()
 
 
 def _hand_back_control(state: GameState, handbacks: list[tuple[int, TempEffect]]) -> None:

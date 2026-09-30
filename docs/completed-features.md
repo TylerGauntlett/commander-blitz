@@ -18776,3 +18776,49 @@ static about another permanent's arrival, and it carries no counters.
   adding two, nothing queued; a +1 activation still +1, a creature and an
   opponent's walker untouched; compleated to zero then the Oath's counter
   keeping the walker; the loader's four refusals.
+
+## Capability: "until your next turn" on `pump`, `lock_abilities`, `animate` and `grant_keyword` — 611.2b
+
+### What was missing
+
+Four planeswalker +1s in the Atraxa superfriends deck print an effect on a
+permanent that lasts "until your next turn": Liliana, the Last Hope (-2/-1),
+Dovin Baan (-3/-0 and an ability lock), Sorin, Solemn Visitor (+1/+0 and
+lifelink on everything you control) and Nissa, Vital Force (a land that is a 5/5
+haste Elemental). The engine had the clock on five player-level tables (block
+prohibitions, unblockables, player protection, life locks, cast locks) and not on
+the per-object `TempEffect` list all four ops write to, so each of them ended at
+this turn's cleanup -- before the opponents' turns, which are the only turns the
++1 is printed for. `pump` even advertised `duration` in `op_options` (a template
+wrote `until_end_of_turn` on it) and ignored it.
+
+### How it works
+
+`TempEffect.until_player` names the seat whose next turn ends the entry; `None`
+is the ordinary cleanup clock. The ops read `duration` through one helper,
+`until_player_of`, which answers `ctx.controller` for `until_your_next_turn` --
+the activating player, not the affected creature's controller. The entry stays in
+`until_eot`, so the characteristic layers, `abilities_locked`, legality and the
+mana solver needed no change. `clear_until_eot` keeps entries that carry a
+`until_player`; the new `primitives.clear_until_next_turn(state, pid)` drops them
+in that player's untap step (beside the other `until_your_next_turn` clears, and
+before phasing) and in `sba._eliminate`, since an eliminated seat never has that
+turn. An `animate`'s keywords share its clock. The loader refuses any other
+`duration` spelling on all four ops.
+
+### Unblocks
+
+Liliana, the Last Hope; Sorin, Solemn Visitor; Nissa, Vital Force; Dovin Baan's +1.
+
+### Tests
+
+- `tests/unit/test_until_your_next_turn.py` (19) -- the -2/-1 standing on the
+  opponent's turn and gone at the controller's next; a three-seat pod where it
+  survives both opponents' turns (the affected creature's controller is not the
+  clock); an end-of-turn pump beside it still ending at cleanup; Dovin's lock
+  binding the Dork's mana ability through the opponent's turn and lifting after,
+  and the plain lock still turn-scoped; Sorin's +1/+0 and lifelink on your
+  creatures only, lasting and then ending; Nissa's animated land staying a 5/5
+  haste creature and land and then reverting; an eliminated controller's entries
+  dropped and another seat's left alone; and the loader accepting both durations
+  and refusing a misspelled one on each op.

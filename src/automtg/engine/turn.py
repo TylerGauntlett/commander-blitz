@@ -39,6 +39,7 @@ from .primitives import (
     clear_sacrifice_restrictions,
     clear_unblockables,
     clear_until_eot,
+    clear_until_next_turn,
     untap_all,
     untap_permanent,
 )
@@ -375,6 +376,12 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # attack Gideon Jura if able." This is that next turn: arm the marks
     # waiting on the untapping player, so they bite for exactly this turn.
     arm_attack_requirements(state, player.pid)
+    # "Until your next turn, up to one target creature gets -2/-1." (Liliana,
+    # the Last Hope.) The pumps, keyword grants, animations and ability locks a
+    # loyalty ability stretched past cleanup -- the same clock as the tables
+    # above, keyed by the same seat, and cleared before `_phase` for the same
+    # reason protection is.
+    clear_until_next_turn(state, player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.

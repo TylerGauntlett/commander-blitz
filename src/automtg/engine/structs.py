@@ -117,6 +117,17 @@ class TempEffect:
     #: animation can live in -- `until_eot`, and `GameObject.animations` for one
     #: with no duration -- so list order alone cannot answer it.
     timestamp: int = 0
+    #: "…**until your next turn**" (611.2b) rather than until end of turn: the
+    #: seat whose next turn ends it, and ``None`` for the ordinary cleanup
+    #: clock. Liliana, the Last Hope's -2/-1, Dovin Baan's lock, Sorin, Solemn
+    #: Visitor's lifelink and Nissa, Vital Force's 5/5 land all have to be
+    #: standing on the opponents' turns, which is the whole point of printing
+    #: them on a loyalty ability. The entry stays in the same list -- so
+    #: `chars`, legality and the mana solver read it with no change -- and
+    #: `clear_until_eot` passes over it; `clear_until_next_turn` drops it in
+    #: that player's untap step, beside every other ``until_your_next_turn``
+    #: table, and keyed by the player for the same reason those are.
+    until_player: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -131,6 +142,7 @@ class TempEffect:
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
             "exact": self.exact,
+            "until_player": self.until_player,
         }
 
 

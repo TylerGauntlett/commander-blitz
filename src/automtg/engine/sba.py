@@ -15,7 +15,12 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .primitives import clear_goad, clear_permanent_shields, drop_attack_requirements
+from .primitives import (
+    clear_goad,
+    clear_permanent_shields,
+    clear_until_next_turn,
+    drop_attack_requirements,
+)
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -250,6 +255,9 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # Hygiene for Gideon Jura's mark: a compelled player who has left never
     # takes the turn it waits for.
     drop_attack_requirements(state, pid)
+    # And the same hole in the per-object entries: a -2/-1 or a lifelink "until
+    # your next turn" keyed to a seat that has left would stand for good.
+    clear_until_next_turn(state, pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

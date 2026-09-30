@@ -1698,11 +1698,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
         "until_end_of_turn",
+        "until_your_next_turn",
         "permanent",
     ):
         raise DslError(
             f"{where}: unknown grant_keyword duration {effect['duration']!r} "
-            f"(use 'until_end_of_turn' or 'permanent')"
+            f"(use 'until_end_of_turn', 'until_your_next_turn' or 'permanent')"
+        )
+    # And the same trap on the other three `TempEffect` ops: `duration` was
+    # read by none of them, so "gets -2/-1 until your next turn" written with
+    # it loaded and quietly wore off at this turn's cleanup -- before the only
+    # turns Liliana, the Last Hope's +1 is printed for.
+    if op in ("pump", "animate", "lock_abilities") and effect.get(
+        "duration", "until_end_of_turn"
+    ) not in ("until_end_of_turn", "until_your_next_turn"):
+        raise DslError(
+            f"{where}: unknown {op} duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn' or 'until_your_next_turn')"
         )
     if op == "add_poison" and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
