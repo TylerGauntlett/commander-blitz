@@ -1440,6 +1440,149 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "keywords": [
+                "first_strike",
+                "vigilance",
+                "lifelink"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Until end of turn, up to one target creature gets +1/+1 and gains first strike, vigilance, and lifelink."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "loyalty",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Planeswalker"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Put a +1/+1 counter on each creature you control and a loyalty counter on each other planeswalker you control."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You get an emblem with \"If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Planeswalker"
+                ]
+              },
+              "affects_player": "you",
+              "amount": 1,
+              "effect": "prevent_all_but",
+              "kind": "static",
+              "text": "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
+            }
+          ]
+        }
+      ],
+      "id": "ajani_steadfast",
+      "loyalty": 4,
+      "mana_cost": "{3}{W}",
+      "name": "Ajani Steadfast",
+      "oracle_text": "+1: Until end of turn, up to one target creature gets +1/+1 and gains first strike, vigilance, and lifelink.\n−2: Put a +1/+1 counter on each creature you control and a loyalty counter on each other planeswalker you control.\n−7: You get an emblem with \"If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage.\"",
+      "source": "auto",
+      "subtypes": [
+        "Ajani"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "types": [
@@ -6123,6 +6266,74 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "cant_search_library",
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause their controller to search their library."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "−1: Target player mills four cards. Then exile each opponent's graveyard."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "ashiok_dream_render",
+      "loyalty": 5,
+      "mana_cost": "{1}{U/B}{U/B}",
+      "name": "Ashiok, Dream Render",
+      "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.\n−1: Target player mills four cards. Then exile each opponent's graveyard.",
+      "source": "auto",
+      "subtypes": [
+        "Ashiok"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "controller": "you",
@@ -6385,6 +6596,59 @@
         "Beast"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, proliferate.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "atraxa_praetors_voice",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{G}{W}{U}{B}",
+      "name": "Atraxa, Praetors' Voice",
+      "oracle_text": "Flying, vigilance, deathtouch, lifelink\nAt the beginning of your end step, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Angel",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -21923,6 +22187,34 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "contentious_plan",
+      "mana_cost": "{1}{U}",
+      "name": "Contentious Plan",
+      "oracle_text": "Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "proliferate"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -37982,6 +38274,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, proliferate.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flux_channeler",
+      "mana_cost": "{2}{U}",
+      "name": "Flux Channeler",
+      "oracle_text": "Whenever you cast a noncreature spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -41907,6 +42241,252 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": {
+                    "target": "t1"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "counter": "loyalty",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "+1: Put a loyalty counter on Gideon for each creature target opponent controls."
+        },
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "counters_on": {
+                  "counter": "loyalty",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "subtypes": [
+                "Human",
+                "Soldier"
+              ],
+              "toughness": {
+                "counters_on": {
+                  "counter": "loyalty",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "dealt": "to",
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn."
+        },
+        {
+          "cost": {
+            "loyalty": -15
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "text": "−15: Exile all other permanents."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gideon_champion_of_justice",
+      "loyalty": 4,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Gideon, Champion of Justice",
+      "oracle_text": "+1: Put a loyalty counter on Gideon for each creature target opponent controls.\n0: Until end of turn, Gideon becomes a Human Soldier creature with power and toughness each equal to the number of loyalty counters on him and gains indestructible. He's still a planeswalker. Prevent all damage that would be dealt to him this turn.\n−15: Exile all other permanents.",
+      "source": "auto",
+      "subtypes": [
+        "Gideon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "must_attack_planeswalker",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "+2: During target opponent's next turn, creatures that player controls attack Gideon Jura if able."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Destroy target tapped creature."
+        },
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 6
+              },
+              "subtypes": [
+                "Human",
+                "Soldier"
+              ],
+              "toughness": {
+                "const": 6
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "dealt": "to",
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gideon_jura",
+      "loyalty": 6,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Gideon Jura",
+      "oracle_text": "+2: During target opponent's next turn, creatures that player controls attack Gideon Jura if able.\n−2: Destroy target tapped creature.\n0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn.",
+      "source": "auto",
+      "subtypes": [
+        "Gideon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -53339,6 +53919,37 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, proliferate.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "inexorable_tide",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Inexorable Tide",
+      "oracle_text": "Whenever you cast a spell, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -54782,6 +55393,101 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card.",
+              "trigger": {
+                "controller": "you",
+                "event": "creatures_deal_combat_damage"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "illusion_2_2_u_sac_when_targeted"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Create a 2/2 blue Illusion creature token with \"When this token becomes the target of a spell, sacrifice it.\""
+        },
+        {
+          "cost": {
+            "loyalty": -5
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "except_": {
+                "remove_supertypes": [
+                  "Legendary"
+                ]
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "text": "−5: Create two tokens that are copies of Jace, except they're not legendary."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jace_cunning_castaway",
+      "loyalty": 3,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Jace, Cunning Castaway",
+      "oracle_text": "+1: Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card.\n−2: Create a 2/2 blue Illusion creature token with \"When this token becomes the target of a spell, sacrifice it.\"\n−5: Create two tokens that are copies of Jace, except they're not legendary.",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -56796,6 +57502,46 @@
         },
         {
           "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Proliferate."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "karn_s_bastion",
+      "name": "Karn's Bastion",
+      "oracle_text": "{T}: Add {C}.\n{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -58156,6 +58902,120 @@
       "mana_cost": "{2}{G/U}",
       "name": "Kiora, Behemoth Beckoner",
       "oracle_text": "Whenever a creature you control with power 4 or greater enters, draw a card.\n−1: Untap target permanent.",
+      "source": "auto",
+      "subtypes": [
+        "Kiora"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "dealt": "to_and_by",
+              "duration": "until_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "extra_land_drop",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−1: Draw a card. You may play an additional land this turn."
+        },
+        {
+          "cost": {
+            "loyalty": -5
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−5: You get an emblem with \"At the beginning of your end step, create a 9/9 blue Kraken creature token.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "kraken_9_9_u"
+                }
+              ],
+              "kind": "triggered",
+              "text": "At the beginning of your end step, create a 9/9 blue Kraken creature token.",
+              "trigger": {
+                "controller": "you",
+                "event": "end_step"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "kiora_the_crashing_wave",
+      "loyalty": 2,
+      "mana_cost": "{2}{G}{U}",
+      "name": "Kiora, the Crashing Wave",
+      "oracle_text": "+1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.\n−1: Draw a card. You may play an additional land this turn.\n−5: You get an emblem with \"At the beginning of your end step, create a 9/9 blue Kraken creature token.\"",
       "source": "auto",
       "subtypes": [
         "Kiora"
@@ -72564,6 +73424,188 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "amount": {
+            "const": 1
+          },
+          "effect": "draw_limit",
+          "kind": "static",
+          "text": "Each opponent can't draw more than one card each turn."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "not_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "narset_parter_of_veils",
+      "loyalty": 5,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Narset, Parter of Veils",
+      "oracle_text": "Each opponent can't draw more than one card each turn.\n−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "subtypes": [
+        "Narset"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "not_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Look at the top card of your library. If it's a noncreature, nonland card, you may reveal it and put it into your hand."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "op": "grant_rebound"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you next cast an instant or sorcery spell from your hand this turn, it gains rebound.",
+              "trigger": {
+                "condition": {
+                  "all": [
+                    {
+                      "exists": {
+                        "any_types": [
+                          "Instant",
+                          "Sorcery"
+                        ],
+                        "binding": "subject",
+                        "zone": "stack"
+                      }
+                    },
+                    {
+                      "cast_from_hand": true,
+                      "of": "subject"
+                    }
+                  ]
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: When you next cast an instant or sorcery spell from your hand this turn, it gains rebound."
+        },
+        {
+          "cost": {
+            "loyalty": -9
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−9: You get an emblem with \"Your opponents can't cast noncreature spells.\""
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects_player": "opponent",
+              "affects_spells": {
+                "not_types": [
+                  "Creature"
+                ]
+              },
+              "effect": "cant_cast_spells",
+              "kind": "static",
+              "text": "Your opponents can't cast noncreature spells."
+            }
+          ]
+        }
+      ],
+      "id": "narset_transcendent",
+      "loyalty": 6,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Narset Transcendent",
+      "oracle_text": "+1: Look at the top card of your library. If it's a noncreature, nonland card, you may reveal it and put it into your hand.\n−2: When you next cast an instant or sorcery spell from your hand this turn, it gains rebound. (Exile the spell as it resolves. At the beginning of your next upkeep, you may cast that card from exile without paying its mana cost.)\n−9: You get an emblem with \"Your opponents can't cast noncreature spells.\"",
+      "source": "auto",
+      "subtypes": [
+        "Narset"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -78716,6 +79758,58 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "pact_of_negation",
+      "mana_cost": "{0}",
+      "name": "Pact of Negation",
+      "oracle_text": "Counter target spell.\nAt the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "op": "lose_game",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}{U}{U}"
+              },
+              "prompt": "Pay {3}{U}{U}? If you don't, you lose the game."
+            }
+          ],
+          "op": "delay",
+          "step": "upkeep",
+          "text": "At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",
+          "your_turn": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -109340,6 +110434,96 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "opponents_cant_force_discard_or_sacrifice",
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents."
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "as": "named",
+              "not_types": [
+                "Land"
+              ],
+              "op": "choose_card_name"
+            },
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "count": "all",
+                "name": {
+                  "binding": "named"
+                }
+              },
+              "op": "look_at_top",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "gy_card"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_card",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "−3: Return target card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "tamiyo_collector_of_tales",
+      "loyalty": 5,
+      "mana_cost": "{2}{G}{U}",
+      "name": "Tamiyo, Collector of Tales",
+      "oracle_text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.\n+1: Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.\n−3: Return target card from your graveyard to your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Tamiyo"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -110549,6 +111733,71 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_proliferate",
+          "kind": "static",
+          "text": "If you would proliferate, proliferate twice instead."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U/P}{U/P}",
+            "remove_counters_from_among": {
+              "any_types": [
+                "Artifact",
+                "Creature",
+                "Planeswalker"
+              ],
+              "count": 3,
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "indestructible",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U/P}{U/P}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on Tekuthal."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tekuthal_inquiry_dominus",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Tekuthal, Inquiry Dominus",
+      "oracle_text": "Flying\nIf you would proliferate, proliferate twice instead.\n{1}{U/P}{U/P}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on Tekuthal. ({U/P} can be paid with either {U} or 2 life.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -121812,6 +123061,46 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Proliferate."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "viral_drake",
+      "keywords": [
+        "flying",
+        "infect"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Viral Drake",
+      "oracle_text": "Flying\nInfect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\n{3}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Drake"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

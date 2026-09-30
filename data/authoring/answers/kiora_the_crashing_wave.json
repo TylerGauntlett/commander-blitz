@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "kiora_the_crashing_wave",
+    "name": "Kiora, the Crashing Wave",
+    "oracle_text": "+1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.\n−1: Draw a card. You may play an additional land this turn.\n−5: You get an emblem with \"At the beginning of your end step, create a 9/9 blue Kraken creature token.\"",
+    "mana_cost": "{2}{G}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Kiora"],
+    "colors": ["G", "U"],
+    "color_identity": ["G", "U"],
+    "loyalty": 2,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "controller": "opponent"}
+          }
+        ],
+        "effects": [
+          {
+            "op": "prevent_damage_permanent",
+            "objects": {"target": "t1"},
+            "dealt": "to_and_by",
+            "duration": "until_your_next_turn"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−1: Draw a card. You may play an additional land this turn.",
+        "cost": {"loyalty": -1},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {"op": "extra_land_drop", "player": "you", "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−5: You get an emblem with \"At the beginning of your end step, create a 9/9 blue Kraken creature token.\"",
+        "cost": {"loyalty": -5},
+        "effects": [
+          {"op": "emblem", "player": "you", "emblem": 0}
+        ]
+      }
+    ],
+    "emblems": [
+      {
+        "abilities": [
+          {
+            "kind": "triggered",
+            "text": "At the beginning of your end step, create a 9/9 blue Kraken creature token.",
+            "trigger": {"event": "end_step", "controller": "you"},
+            "effects": [
+              {"op": "create_token", "token": "kraken_9_9_u", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

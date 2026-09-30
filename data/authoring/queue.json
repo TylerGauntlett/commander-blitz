@@ -4672,12 +4672,12 @@
     },
     "Ajani Steadfast": {
       "edhrec_rank": 5225,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani Steadfast",
-      "reason": "no template for: +1: Until end of turn, up to one target creature gets +1/+1 and gains first strike, vigila",
+      "reason": "",
       "scryfall_id": "51825d35-cdb2-40fa-ab89-1625161b04af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ajani Steadfast Emblem": {
@@ -14702,12 +14702,12 @@
     },
     "Ashiok, Dream Render": {
       "edhrec_rank": 2591,
-      "gate": "template",
+      "gate": null,
       "name": "Ashiok, Dream Render",
-      "reason": "no template for: Spells and abilities your opponents control can't cause their controller to search their l",
+      "reason": "",
       "scryfall_id": "dd6f76d4-a2b3-40e5-b6a7-b27c42caf615",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ashiok, Nightmare Muse": {
@@ -15812,12 +15812,12 @@
     },
     "Atraxa, Praetors' Voice": {
       "edhrec_rank": 2469,
-      "gate": "template",
+      "gate": null,
       "name": "Atraxa, Praetors' Voice",
-      "reason": "no template for: At the beginning of your end step, proliferate",
+      "reason": "",
       "scryfall_id": "20e44330-f880-455e-852c-16d0a985cdf0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Atraxi Warden": {
@@ -52632,12 +52632,12 @@
     },
     "Contentious Plan": {
       "edhrec_rank": 2236,
-      "gate": "template",
+      "gate": null,
       "name": "Contentious Plan",
-      "reason": "no template for: Proliferate",
+      "reason": "",
       "scryfall_id": "8e30deb6-9e1f-4545-ae30-c30ba6c7b3a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Contest of Claws": {
@@ -99072,12 +99072,12 @@
     },
     "Flux Channeler": {
       "edhrec_rank": 1290,
-      "gate": "template",
+      "gate": null,
       "name": "Flux Channeler",
-      "reason": "no template for: Whenever you cast a noncreature spell, proliferate",
+      "reason": "",
       "scryfall_id": "26a679fa-cefc-4222-a12c-3ab886940956",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Fluxcharger": {
@@ -108822,12 +108822,12 @@
     },
     "Gideon Jura": {
       "edhrec_rank": 11218,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon Jura",
-      "reason": "no template for: +2: During target opponent's next turn, creatures that player controls attack if able",
+      "reason": "",
       "scryfall_id": "d608df31-bcc6-4fec-89f1-5cefe5c2ec99",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gideon of the Trials": {
@@ -109002,12 +109002,12 @@
     },
     "Gideon, Champion of Justice": {
       "edhrec_rank": 13773,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon, Champion of Justice",
-      "reason": "no template for: +1: Put a loyalty counter on Gideon for each creature target opponent controls",
+      "reason": "",
       "scryfall_id": "f9eadb92-2a87-4b3b-90b5-f10cb1cfda0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gideon, Martial Paragon": {
@@ -136002,12 +136002,12 @@
     },
     "Inexorable Tide": {
       "edhrec_rank": 1030,
-      "gate": "template",
+      "gate": null,
       "name": "Inexorable Tide",
-      "reason": "no template for: Whenever you cast a spell, proliferate",
+      "reason": "",
       "scryfall_id": "a992fad9-1dd1-47fe-b315-a62f7875f3be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Infantry Shield": {
@@ -141352,12 +141352,12 @@
     },
     "Jace, Cunning Castaway": {
       "edhrec_rank": 13060,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Cunning Castaway",
-      "reason": "no template for: +1: Whenever one or more creatures you control deal combat damage to a player this turn, d",
+      "reason": "",
       "scryfall_id": "b75f56f2-88fd-44ba-ad02-56ea3391f173",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jace, Ingenious Mind-Mage": {
@@ -146132,12 +146132,12 @@
     },
     "Karn's Bastion": {
       "edhrec_rank": 207,
-      "gate": "template",
+      "gate": null,
       "name": "Karn's Bastion",
-      "reason": "no template for: {4}, {T}: Proliferate",
+      "reason": "",
       "scryfall_id": "22017ec2-3552-4865-af76-dba042b141f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Karn's Sylex": {
@@ -149512,12 +149512,12 @@
     },
     "Kiora, the Crashing Wave": {
       "edhrec_rank": 7679,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora, the Crashing Wave",
-      "reason": "no template for: +1: Until your next turn, prevent all damage that would be dealt to and dealt by target pe",
+      "reason": "",
       "scryfall_id": "0c5c6b15-b72d-4341-92c2-7469210452da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kiora, the Crashing Wave Emblem": {
@@ -183432,12 +183432,12 @@
     },
     "Narset Transcendent": {
       "edhrec_rank": 7975,
-      "gate": "template",
+      "gate": null,
       "name": "Narset Transcendent",
-      "reason": "no template for: +1: Look at the top card of your library. If it's a noncreature, nonland card, you may rev",
+      "reason": "",
       "scryfall_id": "4816d092-e34b-4397-8599-43d8e85a8f39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Narset Transcendent Emblem": {
@@ -183522,12 +183522,12 @@
     },
     "Narset, Parter of Veils": {
       "edhrec_rank": 936,
-      "gate": "template",
+      "gate": null,
       "name": "Narset, Parter of Veils",
-      "reason": "no template for: Each opponent can't draw more than one card each turn",
+      "reason": "",
       "scryfall_id": "fe5b4aaf-1d0b-43a6-b20f-45235cb53db0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Narstad Scrapper": {
@@ -196732,12 +196732,12 @@
     },
     "Pact of Negation": {
       "edhrec_rank": 361,
-      "gate": "template",
+      "gate": null,
       "name": "Pact of Negation",
-      "reason": "no template for: Counter target spell",
+      "reason": "",
       "scryfall_id": "cb91055f-215a-4243-835b-35de515a2ba5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Pact of the Serpent": {
@@ -274782,12 +274782,12 @@
     },
     "Tamiyo, Collector of Tales": {
       "edhrec_rank": 8335,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Collector of Tales",
-      "reason": "no template for: Spells and abilities your opponents control can't cause you to discard cards or sacrifice ",
+      "reason": "",
       "scryfall_id": "aeae9feb-8153-496c-bb12-8db5e2e089a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tamiyo, Compleated Sage": {
@@ -276692,12 +276692,12 @@
     },
     "Tekuthal, Inquiry Dominus": {
       "edhrec_rank": 1238,
-      "gate": "template",
+      "gate": null,
       "name": "Tekuthal, Inquiry Dominus",
-      "reason": "no template for: If you would proliferate, proliferate twice instead",
+      "reason": "",
       "scryfall_id": "2d389264-e2d2-4589-9636-faa11fe46710",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tel-Jilad Archers": {
@@ -305292,12 +305292,12 @@
     },
     "Viral Drake": {
       "edhrec_rank": 7027,
-      "gate": "template",
+      "gate": null,
       "name": "Viral Drake",
-      "reason": "no template for: {3}{U}: Proliferate",
+      "reason": "",
       "scryfall_id": "26b098d7-9b8d-47a1-9694-22b0f0ef25ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Viral Spawning": {

@@ -103,6 +103,14 @@
   "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
+  "ajani_steadfast": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "ajani_the_greathearted": {
     "battlefield_count": 33,
     "counters": {
@@ -615,6 +623,13 @@
   "ashcoat_bear": {
     "zone": "battlefield"
   },
+  "ashiok_dream_render": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "ashnod_s_altar": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -633,6 +648,9 @@
     "zone": "battlefield"
   },
   "assault_zeppelid": {
+    "zone": "battlefield"
+  },
+  "atraxa_praetors_voice": {
     "zone": "battlefield"
   },
   "auntie_s_hovel": {
@@ -1969,6 +1987,15 @@
   },
   "contaminated_landscape": {
     "zone": "battlefield"
+  },
+  "contentious_plan": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "contingency_plan": {
     "zone": "graveyard"
@@ -3538,6 +3565,9 @@
     },
     "zone": "graveyard"
   },
+  "flux_channeler": {
+    "zone": "battlefield"
+  },
   "flying_dolphin_fish": {
     "zone": "battlefield"
   },
@@ -3936,6 +3966,22 @@
     ]
   },
   "giant_warthog": {
+    "zone": "battlefield"
+  },
+  "gideon_champion_of_justice": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "gideon_jura": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "gift_of_granite": {
@@ -4904,6 +4950,9 @@
       "graveyard"
     ]
   },
+  "inexorable_tide": {
+    "zone": "battlefield"
+  },
   "infernal_grasp": {
     "life": {
       "0": 38,
@@ -5010,6 +5059,14 @@
     "zone": "battlefield"
   },
   "izzet_signet": {
+    "zone": "battlefield"
+  },
+  "jace_cunning_castaway": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "jace_memory_adept": {
@@ -5178,6 +5235,9 @@
   "kari_zev_skyship_raider": {
     "zone": "battlefield"
   },
+  "karn_s_bastion": {
+    "zone": "battlefield"
+  },
   "karplusan_forest": {
     "zone": "battlefield"
   },
@@ -5289,6 +5349,10 @@
       "amount": 7,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "kiora_the_crashing_wave": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kismet": {
@@ -6627,6 +6691,20 @@
   "nantuko_elder": {
     "zone": "battlefield"
   },
+  "narset_parter_of_veils": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "narset_transcendent": {
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "nature_s_lore": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -7133,6 +7211,9 @@
         "trample"
       ]
     },
+    "zone": "graveyard"
+  },
+  "pact_of_negation": {
     "zone": "graveyard"
   },
   "painful_truths": {
@@ -9873,6 +9954,13 @@
   "talruum_minotaur": {
     "zone": "battlefield"
   },
+  "tamiyo_collector_of_tales": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "tandem_lookout": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9966,6 +10054,9 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
   "tempest_drake": {
@@ -10932,6 +11023,9 @@
     "zone": "battlefield"
   },
   "vineglimmer_snarl": {
+    "zone": "battlefield"
+  },
+  "viral_drake": {
     "zone": "battlefield"
   },
   "viridescent_bog": {

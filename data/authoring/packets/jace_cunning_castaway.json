@@ -90,6 +90,224 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, draw a card.",
+          "trigger": {
+            "event": "creature_dies"
+          }
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 2/2 black Zombie creature token."
+        },
+        {
+          "cost": {
+            "loyalty": -4
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 2,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "−4: Each player sacrifices two creatures of their choice."
+        },
+        {
+          "cost": {
+            "loyalty": -9
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep an artifact"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Battle"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep a battle"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep a creature"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Enchantment"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep an enchantment"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep a land"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Planeswalker"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Keep a planeswalker"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "chooser": "none",
+                "controller": "opponent",
+                "count": "all",
+                "exclude_binding": "kept",
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "activated",
+          "text": "−9: Each opponent chooses a permanent they control of each permanent type and sacrifices the rest."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_dreadhorde_general",
+      "loyalty": 6,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Liliana, Dreadhorde General",
+      "oracle_text": "Whenever a creature you control dies, draw a card.\n+1: Create a 2/2 black Zombie creature token.\n−4: Each player sacrifices two creatures of their choice.\n−9: Each opponent chooses a permanent they control of each permanent type and sacrifices the rest.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "damage",
               "player": {
                 "binding": "event_player"
@@ -159,123 +377,6 @@
       "source": "auto",
       "subtypes": [
         "Nixilis"
-      ],
-      "supertypes": [
-        "Legendary"
-      ],
-      "types": [
-        "Planeswalker"
-      ]
-    },
-    {
-      "abilities": [
-        {
-          "effects": [
-            {
-              "amount": {
-                "const": 1
-              },
-              "op": "draw",
-              "player": "you"
-            }
-          ],
-          "kind": "triggered",
-          "text": "At the beginning of each opponent's draw step, you draw a card.",
-          "trigger": {
-            "controller": "opponent",
-            "event": "draw_step"
-          }
-        },
-        {
-          "cost": {
-            "loyalty": 1
-          },
-          "effects": [
-            {
-              "op": "create_token",
-              "token": "illusion_1_1_u"
-            }
-          ],
-          "kind": "activated",
-          "text": "+1: Create a 1/1 blue Illusion creature token."
-        },
-        {
-          "cost": {
-            "loyalty": -2
-          },
-          "effects": [
-            {
-              "objects": {
-                "target": "t1"
-              },
-              "op": "return_to_hand"
-            }
-          ],
-          "kind": "activated",
-          "targets": [
-            {
-              "count": "any",
-              "id": "t1",
-              "kind": "permanent",
-              "one_per_player": true,
-              "selector": {
-                "any_types": [
-                  "Artifact",
-                  "Creature"
-                ],
-                "controller": "opponent",
-                "zone": "battlefield"
-              }
-            }
-          ],
-          "text": "−2: For each opponent, return up to one target artifact or creature that player controls to its owner's hand."
-        },
-        {
-          "cost": {
-            "loyalty": -6
-          },
-          "effects": [
-            {
-              "amount": {
-                "const": 3
-              },
-              "op": "draw",
-              "player": "you"
-            },
-            {
-              "amount": {
-                "cards_in_hand": "you"
-              },
-              "counter": "+1/+1",
-              "objects": {
-                "controller": "you",
-                "count": "all",
-                "types": [
-                  "Creature"
-                ],
-                "zone": "battlefield"
-              },
-              "op": "add_counters"
-            }
-          ],
-          "kind": "activated",
-          "text": "−6: Draw three cards. Then put X +1/+1 counters on each creature you control, where X is the number of cards in your hand."
-        }
-      ],
-      "color_identity": [
-        "U"
-      ],
-      "colors": [
-        "U"
-      ],
-      "id": "the_theorist_jace_beleren",
-      "loyalty": 3,
-      "mana_cost": "{2}{U}{U}",
-      "name": "The Theorist, Jace Beleren",
-      "oracle_text": "At the beginning of each opponent's draw step, you draw a card.\n+1: Create a 1/1 blue Illusion creature token.\n−2: For each opponent, return up to one target artifact or creature that player controls to its owner's hand.\n−6: Draw three cards. Then put X +1/+1 counters on each creature you control, where X is the number of cards in your hand.",
-      "source": "auto",
-      "subtypes": [
-        "Jace"
       ],
       "supertypes": [
         "Legendary"
@@ -469,6 +570,7 @@
       "pay_life",
       "pay_life_x",
       "remove_counters",
+      "remove_counters_from_among",
       "return_to_hand",
       "sacrifice",
       "tap",
@@ -579,10 +681,14 @@
       "A `tap_permanents` cost may carry `as`, naming THE one permanent it tapped so the ability's effects can read it: Station (\"Tap another creature you control: Put charge counters equal to its power on this Planet\") is `{\"tap_permanents\": {\"types\": [\"Creature\"], \"exclude_self\": true, \"as\": \"stationed\"}}` with `sorcery_speed_only` and an `add_counters` whose amount is `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count` above 1 or a `total_power` beside it.",
       "A station striation -- \"12+ | {U}, {T}: Add {U} for each artifact you control.\" -- is an activated ability with `threshold: {\"counter\": \"charge\", \"at_least\": 12}` whose `text` is the whole printed line, prefix included. The permanent HAS it only at that many counters. Activated abilities only; gated abilities go after every ungated one, in rising order. Not `condition`, which leaves the ability on the permanent.",
       "`condition_keys` and `value_keys` are what an `if` can ask and what an amount can be. `counters_on` reads a counter count off an object, so \"if this has no +1/+1 counters on it\" is a `cmp` against `{\"const\": 0}` and needs no new op.",
-      "\"Your opponents can't cast spells during your turn\" is the player-wide static `cant_cast_spells` with `affects_player: \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops every spell from every zone, free casts included, and takes no spell filter: \"can't cast creature spells\", \"from anywhere other than their hands\" and \"more than one spell each turn\" are still gaps, and so is \"can't activate abilities\".",
+      "\"Your opponents can't cast spells during your turn\" is the player-wide static `cant_cast_spells` with `affects_player: \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops every spell from every zone, free casts included. \"Can't cast noncreature spells\" is the same static with `affects_spells: {\"not_types\": [\"Creature\"]}` (a spell filter: types, any_types, not_types, subtypes, colors, name, ... -- no `controller`, `affects_player` says whose). \"More than one spell each turn\" is still a gap.",
       "\"If you would gain life, you gain twice that much life instead\" is the player-wide static `replace_life_gain` with `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real replacement read wherever life is gained, lifelink included, so it is NOT a `you_gain_life` trigger that gains again.",
       "\"If you gained life this turn\" is the value `{\"life_gained_this_turn\": \"you\"}` compared `>` against `{\"const\": 0}` -- on a trigger, as its `condition` (an intervening if). It is the turn's ledger, so it counts gains made before the permanent entered; never an unprinted `you_gain_life` trigger setting a flag.",
       "\"Your opponents can't gain life\" is the player-wide static `cant_gain_life` with `affects_player: \"opponent\"` (\"you\" and \"any\" for the other sentences). Every gain is stopped, lifelink included, and no life-gain trigger fires; it beats a `replace_life_gain`. \"Damage can't be prevented\" and \"your life total can't change\" are other effects.",
+      "\"Each opponent can't draw more than one card each turn\" is the player-wide static `draw_limit` with `affects_player: \"opponent\"` and `amount: {\"const\": 1}` (\"each player\" is `\"any\"`). It counts every card drawn that turn, and a draw past the cap simply does not happen.",
+      "\"Spells and abilities your opponents control can't cause their controller to search their library\" is the player-wide static `cant_search_library` with `affects_player: \"opponent\"`. Their own searches find nothing in their library but still shuffle.",
+      "\"Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents\" is the player-wide static `opponents_cant_force_discard_or_sacrifice` with `affects_player: \"you\"` -- keyed on who controls the cause, so your own spells and costs still discard and sacrifice. Not `cant_sacrifice`.",
+      "\"Choose a (nonland) card name\" is the op `choose_card_name` with `as` (and `not_types: [\"Land\"]`); a later selector matches it with `name: {\"binding\": <as>}` -- e.g. a `look_at_top` whose `objects` is `{\"name\": {\"binding\": \"named\"}, \"count\": \"all\"}` with `rest_to: \"graveyard\"`.",
       "\"If you would draw a card, draw two cards instead\" is the player-wide static `replace_draw` with `affects_player: \"you\"` and `draw_multiplier: 2`; \"...except the first one you draw in each of your draw steps\" adds `except_first_in_draw_step: true`. It is a real replacement of each draw, so it is NOT a `draw` trigger that draws an extra card. \"Skip your draw step\" is `skip_draw_step`, and a replacement that does something other than draw more cards (\"exile the top card instead\") is still a gap.",
       "\"Crew N\" is an activated ability whose `cost` is `tap_permanents` with `total_power: N`. \"This creature crews Vehicles as though its power were 2 greater\" is the static `crew_power_bonus` with `affects: {\"self_only\": true}` and `amount: {\"const\": 2}` -- not `buff`, which changes real power. The Pilot token printing that line is `pilot_1_1_c_crew2`; a Pilot that also \"saddles Mounts\" is a different token and is still a gap.",
       "`static_condition_keys` is what a static ability's optional `condition` may ask -- an \"as long as ...\" clause that switches the whole static on and off as the board moves. It is a third language, neither `condition_keys` nor `static_filter_keys`.",
@@ -741,6 +847,12 @@
       ],
       "choose_blockers": [
         "player"
+      ],
+      "choose_card_name": [
+        "as",
+        "not_types",
+        "prompt",
+        "types"
       ],
       "choose_color": [
         "prompt"
@@ -1011,6 +1123,9 @@
       "lose_all_abilities": [
         "objects"
       ],
+      "lose_game": [
+        "player"
+      ],
       "lose_life": [
         "amount",
         "as",
@@ -1052,6 +1167,10 @@
         "duration",
         "objects"
       ],
+      "must_attack_planeswalker": [
+        "objects",
+        "player"
+      ],
       "must_block": [
         "attacker",
         "objects"
@@ -1080,7 +1199,9 @@
         "duration",
         "player"
       ],
-      "proliferate": [
+      "prevent_damage_permanent": [
+        "dealt",
+        "duration",
         "objects"
       ],
       "pump": [
@@ -1307,6 +1428,7 @@
       "cast_from_hand",
       "change_text",
       "choose_blockers",
+      "choose_card_name",
       "choose_color",
       "choose_mode",
       "choose_permanents",
@@ -1358,6 +1480,7 @@
       "look_at_hand",
       "look_at_top",
       "lose_all_abilities",
+      "lose_game",
       "lose_life",
       "manifest",
       "may",
@@ -1366,6 +1489,7 @@
       "monstrosity",
       "move_counters",
       "must_attack",
+      "must_attack_planeswalker",
       "must_block",
       "no_maximum_hand_size",
       "noop",
@@ -1374,6 +1498,7 @@
       "phase_out",
       "play_exiled",
       "prevent_damage",
+      "prevent_damage_permanent",
       "proliferate",
       "pump",
       "put_on_top",
@@ -1530,14 +1655,17 @@
       "cant_cast_spells",
       "cant_gain_life",
       "cant_sacrifice",
+      "cant_search_library",
       "cast_as_though_flash",
       "cast_from_graveyard",
       "cast_from_library_top",
+      "cast_only_at_sorcery_speed",
       "crew_power_bonus",
       "double_land_mana",
       "double_land_triggers",
       "double_nonland_mana",
       "double_triggers",
+      "draw_limit",
       "enters_tapped",
       "extra_land_drops",
       "free_cast_permission",
@@ -1549,8 +1677,10 @@
       "lose_all_abilities",
       "lose_keyword",
       "no_hand_limit",
+      "opponents_cant_force_discard_or_sacrifice",
       "play_lands_from_graveyard",
       "play_lands_from_library_top",
+      "prevent_all_but",
       "prevent_damage",
       "protection",
       "replace_counters",
@@ -1561,6 +1691,7 @@
       "replace_life_gain",
       "replace_life_loss",
       "replace_mill",
+      "replace_proliferate",
       "replace_token_creation",
       "reveal_library_top",
       "set_colors",
@@ -1638,6 +1769,7 @@
       "angel_4_4_w_flying": "4/4 white Angel creature with flying",
       "angel_4_4_w_flying_vigilance": "4/4 white Angel creature with flying and vigilance",
       "ape_3_3_g": "3/3 green Ape creature",
+      "assassin_1_1_b_lose_game": "1/1 black Assassin creature -- Whenever this creature deals combat damage to a player, that player loses the game.",
       "badger_3_3_g": "3/3 green Badger creature",
       "beast_3_3_g": "3/3 green Beast creature",
       "beast_4_4_g": "4/4 green Beast creature",
@@ -1665,6 +1797,7 @@
       "fish_1_1_u": "1/1 blue Fish creature",
       "food_token": "colorless Food artifact -- {2}, {T}, Sacrifice this artifact: You gain 3 life.",
       "forest_dryad_1_1_g_land": "1/1 green Forest Dryad land creature -- {T}: Add {G}.",
+      "fractal_0_0_gu": "0/0 green blue Fractal creature",
       "frog_lizard_3_3_g": "3/3 green Frog Lizard creature",
       "germ_0_0_b": "0/0 black Phyrexian Germ creature",
       "gnome_1_1_c": "1/1 colorless Gnome artifact creature",
@@ -1675,6 +1808,7 @@
       "human_soldier_1_1_w": "1/1 white Human Soldier creature",
       "illusion_1_1_u": "1/1 blue Illusion creature",
       "illusion_1_1_u_flying": "1/1 blue Illusion creature with flying",
+      "illusion_2_2_u_sac_when_targeted": "2/2 blue Illusion creature -- When this token becomes the target of a spell, sacrifice it.",
       "inkling_2_1_wb_flying": "2/1 white black Inkling creature with flying",
       "insect_1_1_g": "1/1 green Insect creature",
       "junk_token": "colorless Junk artifact -- {T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
@@ -1683,20 +1817,26 @@
       "knight_2_2_w_vigilance": "2/2 white Knight creature with vigilance",
       "knight_2_2_wu_vigilance": "2/2 white blue Knight creature with vigilance",
       "komas_coil_3_3_u": "3/3 blue Serpent creature",
+      "kor_ally_1_1_w": "1/1 white Kor Ally creature",
       "kraken_8_8_u": "8/8 blue Kraken creature",
+      "kraken_9_9_u": "9/9 blue Kraken creature",
       "lander_token": "colorless Lander artifact -- {2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
       "map_token": "colorless Map artifact -- {1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
       "monk_1_1_w_prowess": "1/1 white Monk creature -- Prowess",
       "moogle_1_2_w_lifelink": "1/2 white Moogle creature with lifelink",
+      "octopus_8_8_u": "8/8 blue Octopus creature",
       "ox_2_2_w": "2/2 white Ox creature",
       "pilot_1_1_c_crew2": "1/1 colorless Pilot creature -- This token crews Vehicles as though its power were 2 greater.",
+      "pirate_2_2_b_menace": "2/2 black Pirate creature with menace",
       "plant_0_1_g": "0/1 green Plant creature",
       "saproling_1_1_g": "1/1 green Saproling creature",
       "shapeshifter_3_2_c_changeling": "3/2 colorless Shapeshifter creature -- Changeling (This card is every creature type.)",
       "soldier_1_1_c": "1/1 colorless Soldier artifact creature",
       "soldier_1_1_w": "1/1 white Soldier creature",
       "spirit_1_1_c": "1/1 colorless Spirit creature",
+      "spirit_1_1_w_flying": "1/1 white Spirit creature with flying",
       "spirit_2_2_w": "2/2 white Spirit creature",
+      "tamiyos_notebook": "colorless Book artifact -- Spells you cast cost {2} less to cast.",
       "tentacle_1_1_u": "1/1 blue Tentacle creature",
       "thopter_1_1_c_flying": "1/1 colorless Thopter artifact creature with flying",
       "treasure_token": "colorless Treasure artifact -- {T}, Sacrifice this artifact: Add one mana of any color.",
@@ -1707,10 +1847,12 @@
       "vampire_1_1_wb_lifelink": "1/1 white black Vampire creature with lifelink",
       "vampire_2_2_b_flying": "2/2 black Vampire creature with flying",
       "vampire_demon_4_3_wb_flying": "4/3 white black Vampire Demon creature with flying",
+      "vampire_knight_1_1_b_lifelink": "1/1 black Vampire Knight creature with lifelink",
       "vampire_rogue_1_1_b_lifelink": "1/1 black Vampire Rogue creature with lifelink",
       "warrior_1_1_r": "1/1 red Warrior creature",
       "warrior_1_1_w_vigilance": "1/1 white Warrior creature with vigilance",
       "wicked_role": "colorless Aura Role enchantment -- Enchanted creature gets +1/+1.",
+      "wizard_2_2_u": "2/2 blue Wizard creature",
       "zombie_2_2_b": "2/2 black Zombie creature"
     },
     "trigger_events": [
