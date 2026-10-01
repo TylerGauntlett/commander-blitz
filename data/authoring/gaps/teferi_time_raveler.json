@@ -3,23 +3,16 @@
   "name": "Teferi, Time Raveler",
   "oracle_text": "Each opponent can cast spells only any time they could cast a sorcery.\n+1: Until your next turn, you may cast sorcery spells as though they had flash.\n−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card.",
   "blocked_sentences": [
-    "Each opponent can cast spells only any time they could cast a sorcery.",
     "+1: Until your next turn, you may cast sorcery spells as though they had flash."
   ],
   "needs": [
     {
-      "capability": "cast_only_at_sorcery_speed",
-      "kind": "static_effect",
-      "what": "a player-wide static (affects_player: \"opponent\") restricting every spell those players cast to sorcery timing: only during their own main phase with an empty stack (307.1 timing), overriding flash and cast_as_though_flash",
-      "why_existing_wont_do": "cant_cast_spells is an outright prohibition and static_condition_keys has no phase or empty-stack test, so it cannot be conditioned to 'outside sorcery timing'; cast_as_though_flash points the other way"
-    },
-    {
-      "capability": "until_your_next_turn",
+      "capability": "flash_permission_until_next_turn",
       "kind": "op",
-      "what": "a one-shot effect from a loyalty ability giving its controller permission to cast Sorcery spells as though they had flash, lasting until their next turn (cleared in their untap step), limited to sorcery spells only",
-      "why_existing_wont_do": "cast_as_though_flash exists only as a static and the loader refuses any 'affects' spell filter on it, so it cannot be narrowed to sorcery spells; no op grants it for a duration, and grant_ability durations have no until-your-next-turn for a granted static"
+      "what": "a one-shot effect op (from a loyalty ability) that writes a per-player timing permission read by casting._timing_ok -- 'you may cast sorcery spells as though they had flash' -- lasting until the granting player's next turn (cleared in their untap step, dropped if they leave), covering cards drawn after it resolved, with a spell filter narrowing it to Sorcery spells",
+      "why_existing_wont_do": "cast_as_though_flash exists only as a static (no op form, no duration) and refuses any spell filter, so it can be neither time-limited nor narrowed to sorceries; grant_keyword flash is not read by _timing_ok (it reads printed keywords) and cannot reach cards not yet in hand; the until_your_next_turn duration exists only on pump/lock_abilities/animate/grant_keyword/cant_block/prevent_damage_permanent/lock_life_total/grant_protection/delayed_trigger; an emblem with the static would be permanent"
     }
   ],
-  "closest_existing": ["cant_cast_spells", "cast_as_though_flash", "grant_ability"],
+  "closest_existing": ["cast_as_though_flash", "grant_keyword", "emblem"],
   "confidence": "high"
 }

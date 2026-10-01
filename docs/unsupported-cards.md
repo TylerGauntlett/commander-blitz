@@ -10,38 +10,33 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **39** capabilities.
+**26 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [until-your-next-turn](#until-your-next-turn) | 6 | 1139 | engine, op |
-| [loyalty-x](#loyalty-x) | 3 | 8994 | cost |
-| [can-be-commander](#can-be-commander) | 2 | 4330 | engine |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [lose-the-game](#lose-the-game) | 2 | 1512 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game-static](#cant-lose-the-game-static) | 1 | 10717 | static_effect |
-| [cast-only-at-sorcery-speed](#cast-only-at-sorcery-speed) | 1 | 1139 | static_effect |
-| [compleated](#compleated) | 1 | 8994 | keyword |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [enters-with-additional-counters](#enters-with-additional-counters) | 1 | 7381 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [exile-top-linked](#exile-top-linked) | 1 | 11489 | op |
 | [extra-loyalty-activation](#extra-loyalty-activation) | 1 | 2923 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [flash-permission-until-next-turn](#flash-permission-until-next-turn) | 1 | 1139 | op |
+| [free-cast-from-hand](#free-cast-from-hand) | 1 | 2959 | static_effect |
 | [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [loyalty-activations-this-turn](#loyalty-activations-this-turn) | 1 | 2923 | value |
-| [missing-token](#missing-token) | 1 | 7322 | token |
+| [loyalty-x](#loyalty-x) | 1 | 12306 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -53,87 +48,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## until-your-next-turn
-
-Blocks **6** cards.
-
-- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -2/-1 set by a loyalty ability lasts through the opponents' turns and is cleared in the controller's next untap step (as turn._untap_step already does for block prohibitions, unblockables, life locks and cast locks)
-  <br>Why the existing vocabulary won't do: op_pump (ops_characteristics.py) reads only power, toughness and objects and always wears off at cleanup; `duration` is listed in op_options for pump but is ignored, so writing it would silently end the -2/-1 at end of this turn
-- **(op)** a `duration: "until_your_next_turn"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step
-  <br>Why the existing vocabulary won't do: `animate` takes no `duration` (op_options: colors, keywords, objects, power, subtypes, toughness, types, your_turn_keywords); op_animate in ops_characteristics.py always applies an until-end-of-turn animation and grant_keyword, so the land would stop being a creature at cleanup instead of lasting until Nissa's controller's next turn
-- **(op)** a duration "until_your_next_turn" (ending in the controller's next untap step, like the existing BlockProhibition/PlayerProtection/LifeLock durations) on both `pump` and `grant_keyword`, applied to all creatures you control at resolution: +1/+0 and lifelink that survive cleanup and the opponents' turn
-  <br>Why the existing vocabulary won't do: `pump` takes no `duration` at all (op_pump always makes an until-end-of-turn pump), and `grant_keyword` only distinguishes until_end_of_turn from "permanent"; the until_your_next_turn durations that exist are on cant_block/unblockable/grant_protection(player)/lock_life_total/cant_cast_spells_from_zones, not on P/T or keyword grants. Using end-of-turn would drop the lifelink/+1 during the opponent's turn, which is the point of the ability
-- **(engine)** a `delayed_trigger` duration "until_your_next_turn" (subscription lasts across turns, repeats on every firing, and ends in the controller's next untap step), plus a `subject` that may name up to two targeted creatures so the trigger fires when EITHER of them deals combat damage (to a player, planeswalker or creature)
-  <br>Why the existing vocabulary won't do: op_delayed_trigger only accepts DELAYED_DURATIONS = this_turn / until_it_fires / once_this_turn, none of which lasts through opponents' turns and repeats; its `subject` resolves the selector and keeps only chosen[0], so a two-creature target set watches just one creature
-- **(op)** a one-shot effect from a loyalty ability giving its controller permission to cast Sorcery spells as though they had flash, lasting until their next turn (cleared in their untap step), limited to sorcery spells only
-  <br>Why the existing vocabulary won't do: cast_as_though_flash exists only as a static and the loader refuses any 'affects' spell filter on it, so it cannot be narrowed to sorcery spells; no op grants it for a duration, and grant_ability durations have no until-your-next-turn for a granted static
-- **(op)** a delayed_trigger duration 'until_your_next_turn' (ending in the activating player's next untap step), so a loyalty ability can set up 'whenever a creature deals combat damage to <this planeswalker>, destroy that creature' that stays live through the opponents' turns
-  <br>Why the existing vocabulary won't do: delayed_trigger's durations are only this_turn, until_it_fires and once_this_turn (DELAYED_DURATIONS); this_turn ends before any opponent can attack Vraska and until_it_fires would stop after the first creature and never expire. Also needs the trigger to watch combat damage dealt TO the source planeswalker by any creature, binding the damage source for destroy
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
-  - Each opponent can cast spells only any time they could cast a sorcery.
-  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
-- **Tamiyo, Field Researcher** (rank 2959) — `tamiyo_field_researcher`
-  - +1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.
-- **Nissa, Vital Force** (rank 4790) — `nissa_vital_force`
-  - +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.
-- **Vraska the Unseen** (rank 7322) — `vraska_the_unseen`
-  - +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.
-  - −7: Create three 1/1 black Assassin creature tokens with "Whenever this token deals combat damage to a player, that player loses the game."
-- **Liliana, the Last Hope** (rank 7764) — `liliana_the_last_hope`
-  - +1: Up to one target creature gets -2/-1 until your next turn.
-- **Sorin, Solemn Visitor** (rank 11301) — `sorin_solemn_visitor`
-  - +1: Until your next turn, creatures you control get +1/+0 and gain lifelink.
-
-</details>
-
-## loyalty-x
-
-Blocks **3** cards.
-
-- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
-  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
-- **(cost)** a -X loyalty cost where the controller chooses X (removing X loyalty counters) and X is readable by the ability effects (damage X to target creature or planeswalker, gain X life)
-  <br>Why the existing vocabulary won't do: cost.loyalty takes only a fixed signed integer; x_value/pay_life_x cover mana and life, not loyalty
-- **(cost)** A −X loyalty cost where X is chosen on activation and the effects read X (here: target nonland permanent card in your graveyard with mana value X, then create a token copy of that exiled card)
-  <br>Why the existing vocabulary won't do: cost.loyalty takes only fixed signed integers; x_value exists as a cost key but nothing ties it to removing X loyalty counters, and creating a token copy of a card (not a permanent) from exile is not an established copy_permanent usage
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
-  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
-  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
-- **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
-  - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
-  - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
-
-</details>
-
-## can-be-commander
-
-Blocks **2** cards.
-
-- **(engine)** A card-level flag for the printed deck-building permission "<this card> can be your commander" (rule 903.3d) that the residual gate recognises as claiming that line and `registry.validate_deck` reads -- the same need as Teferi, Temporal Archmage's gap record.
-  <br>Why the existing vocabulary won't do: No card-level key says anything about commander eligibility and `verify._covered` has no claimant for the line; it is neither an activated, triggered nor static ability. The -6 is now `rotate_control` with objects {not_types: [Land], exclude_self: true}.
-- **(engine)** A card-level flag (e.g. `can_be_commander: true`) for the printed deck-building permission "<this card> can be your commander" (rule 903.3d), which the residual gate recognises as claiming that line, and which `registry.validate_deck` reads so that only legendary creatures and cards carrying the flag are legal commanders.
-  <br>Why the existing vocabulary won't do: No key in card_level_cost_keys, card_level_face_keys or card_level_rider_keys says anything about commander eligibility, and `verify._covered` has no claimant for the line, so it can only be claimed by an ability whose text is that sentence -- but it is neither an activated, triggered nor static ability and no static_effect means it. `registry.validate_deck` meanwhile accepts ANY legendary planeswalker as commander (`card.is_creature or "Planeswalker" in card.types`), which is broader than the printed rule, so the permission is not modelled per card. The other three lines are expressible: +1 is look_at_top amount 2 to hand with rest_to_bottom; -1 is untap over a permanent target with count 4 and up_to; -10 is the emblem op with an emblem static activate_loyalty_as_though_instant whose affects is {controller: you, types: [Planeswalker]} (command-zone statics are gathered by _command_zone_statics).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Temporal Archmage** (rank 4330) — `teferi_temporal_archmage`
-  - Teferi, Temporal Archmage can be your commander.
-- **Aminatou, the Fateshifter** (rank 4736) — `aminatou_the_fateshifter`
-  - Aminatou, the Fateshifter can be your commander.
-
-</details>
 
 ## cast-as-though-flash
 
@@ -168,26 +82,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## lose-the-game
-
-Blocks **2** cards.
-
-- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn
-  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
-- **(op)** a lose_game op taking a player spec, used by the Assassin token's deals_combat_damage_to_player trigger on the damaged player
-  <br>Why the existing vocabulary won't do: win_game is the only op reaching a game result; ops_player.py says there is no lose_game op
-
-<details><summary>Cards waiting on this</summary>
-
-- **Final Fortune** (rank 1512) — `final_fortune`
-  - Take an extra turn after this one.
-  - At the beginning of that turn's end step, you lose the game.
-- **Vraska the Unseen** (rank 7322) — `vraska_the_unseen`
-  - +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.
-  - −7: Create three 1/1 black Assassin creature tokens with "Whenever this token deals combat damage to a player, that player loses the game."
 
 </details>
 
@@ -244,37 +138,6 @@ Blocks **1** card.
 
 - **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
   - 0: You get an emblem with "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game."
-
-</details>
-
-## cast-only-at-sorcery-speed
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "opponent") restricting every spell those players cast to sorcery timing: only during their own main phase with an empty stack (307.1 timing), overriding flash and cast_as_though_flash
-  <br>Why the existing vocabulary won't do: cant_cast_spells is an outright prohibition and static_condition_keys has no phase or empty-stack test, so it cannot be conditioned to 'outside sorcery timing'; cast_as_though_flash points the other way
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
-  - Each opponent can cast spells only any time they could cast a sorcery.
-  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
-
-</details>
-
-## compleated
-
-Blocks **1** card.
-
-- **(keyword)** The Compleated keyword: when a Phyrexian hybrid symbol {G/U/P} in the planeswalker's cost is paid with 2 life, it enters with two fewer loyalty counters per such symbol paid with life
-  <br>Why the existing vocabulary won't do: The keyword list has no compleated, and no card-level cost key or condition reads whether Phyrexian mana was paid with life to reduce starting loyalty; `loyalty` is a fixed integer on the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
-  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
-  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
 
 </details>
 
@@ -349,21 +212,6 @@ Blocks **1** card.
 
 </details>
 
-## enters-with-additional-counters
-
-Blocks **1** card.
-
-- **(static_effect)** a static replacement on permanents you control matching a filter (types: Planeswalker) that makes them enter the battlefield with N additional counters of a kind (loyalty) beyond those they would normally enter with; it must apply only to the entering event, not to later counter placements
-  <br>Why the existing vocabulary won't do: replace_counters with counter: loyalty and counter_addend: 1 applies to every loyalty-counter placement, so it would also add one to each +N loyalty activation, which the printed card does not do; enters_tapped is the only enters-with static and it carries no counters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oath of Gideon** (rank 7381) — `oath_of_gideon`
-  - When Oath of Gideon enters, create two 1/1 white Kor Ally creature tokens.
-  - Each planeswalker you control enters with an additional loyalty counter on it.
-
-</details>
-
 ## escape
 
 Blocks **1** card.
@@ -395,20 +243,6 @@ Blocks **1** card.
 
 </details>
 
-## exile-top-linked
-
-Blocks **1** card.
-
-- **(op)** exile the top N cards of a (target player's) library while writing the `exiled_by` link to the source, so the planeswalker's later −X can find them with `{"zone": "exile", "exiled_with": "self"}` -- e.g. `link: true` honoured on `look_at_top` with `destination: "exile"` and `objects: {"count": "all"}` (writing `exiled_by` after the move), or a `top: N` selector key usable by the `exile` op over `{"zone": "library", "player": {"target": "t1"}}`. The rest of the card is now expressible: −X is `cost.loyalty_x` + `choose_permanents` over `{zone: exile, controller: any, exiled_with: self, types: [Creature], mana_value: {op: =, value: {x: true}}, count: 1, as: ...}` then `put_onto_battlefield` (controller you) and `add_subtype` Nightmare on that binding; −10 is `exile` over opponents' hands and graveyards.
-  <br>Why the existing vocabulary won't do: `look_at_top` exiles the top N but `_move_found` deliberately writes no `exiled_by` (docs/card-dsl.md, `as` section), so `exiled_with: self` matches nothing; its `as` binding lives for one resolution only, while the −X is a later activation. The `exile` op writes the link (`link`/`until_leaves`) but its selector has no way to say 'the top three cards of a library' -- a `count: 3` over a library zone is a player choice, not the top three. Exiling the look_at_top binding a second time with `link` would move exile->exile and fire a spurious zone change.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
-  - +2: Exile the top three cards of target opponent's library.
-
-</details>
-
 ## extra-loyalty-activation
 
 Blocks **1** card.
@@ -436,6 +270,34 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## flash-permission-until-next-turn
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect op (from a loyalty ability) that writes a per-player timing permission read by casting._timing_ok -- 'you may cast sorcery spells as though they had flash' -- lasting until the granting player's next turn (cleared in their untap step, dropped if they leave), covering cards drawn after it resolved, with a spell filter narrowing it to Sorcery spells
+  <br>Why the existing vocabulary won't do: cast_as_though_flash exists only as a static (no op form, no duration) and refuses any spell filter, so it can be neither time-limited nor narrowed to sorceries; grant_keyword flash is not read by _timing_ok (it reads printed keywords) and cannot reach cards not yet in hand; the until_your_next_turn duration exists only on pump/lock_abilities/animate/grant_keyword/cant_block/prevent_damage_permanent/lock_life_total/grant_protection/delayed_trigger; an emblem with the static would be permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
+  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
+
+</details>
+
+## free-cast-from-hand
+
+Blocks **1** card.
+
+- **(static_effect)** a zone restriction on the `free_cast_permission` static (e.g. `zones: ["hand"]`, or a `zone` key in its `affects_spells` filter) so the free cast line is offered only for spells cast from their caster's hand -- Tamiyo's emblem and Omniscience both say "from your hand"
+  <br>Why the existing vocabulary won't do: free_cast_permission is asked inside casting._cast_options, which every cast lane calls -- hand, command zone (commander), adventure exile, grant_playable exile/graveyard, graveyard-cast permissions -- so it frees spells from every zone; its affects_spells takes SPELL_FILTER_KEYS only, which has no zone key. Written as-is the emblem would also cast your commander, flashback-style graveyard casts and exiled 'you may play' cards for free, a strictly better card than printed. The +1 (delayed_trigger until_your_next_turn on deals_combat_damage with a multi-object subject) and the −2 (tap + skip_untap) are now expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Field Researcher** (rank 2959) — `tamiyo_field_researcher`
+  - −7: Draw three cards. You get an emblem with "You may cast spells from your hand without paying their mana costs."
 
 </details>
 
@@ -483,6 +345,21 @@ Blocks **1** card.
 
 </details>
 
+## lose-the-game
+
+Blocks **1** card.
+
+- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn
+  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Final Fortune** (rank 1512) — `final_fortune`
+  - Take an extra turn after this one.
+  - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
 ## loyalty-activations-this-turn
 
 Blocks **1** card.
@@ -498,18 +375,19 @@ Blocks **1** card.
 
 </details>
 
-## missing-token
+## loyalty-x
 
 Blocks **1** card.
 
-- **(token)** 1/1 black Assassin creature token with "Whenever this creature deals combat damage to a player, that player loses the game."
-  <br>Why the existing vocabulary won't do: token_ids has no Assassin token; vampire_1_1_b is the nearest 1/1 black creature but lacks the Assassin type and the lose-the-game trigger. Not added with the other Atraxa tokens: the token's own trigger needs a lose_game op (capability lose_the_game), and win_game for the Assassin's controller would eliminate every other opponent in a pod. Define the token (e.g. assassin_1_1_b_lose_game) once lose_the_game ships.
+- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
+  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
 
 <details><summary>Cards waiting on this</summary>
 
-- **Vraska the Unseen** (rank 7322) — `vraska_the_unseen`
-  - +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.
-  - −7: Create three 1/1 black Assassin creature tokens with "Whenever this token deals combat damage to a player, that player loses the game."
+- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
+  - Each other planeswalker you control has the loyalty abilities of Kasmina.
+  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
+  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
 
 </details>
 

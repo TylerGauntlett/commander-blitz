@@ -254,6 +254,14 @@
   "ambush_viper": {
     "zone": "battlefield"
   },
+  "aminatou_the_fateshifter": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "amphin_cutthroat": {
     "zone": "battlefield"
   },
@@ -637,6 +645,14 @@
   "ashiok_dream_render": {
     "counters": {
       "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "ashiok_nightmare_weaver": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
       "kind": "loyalty"
     },
     "zone": "battlefield"
@@ -5748,6 +5764,14 @@
     },
     "zone": "battlefield"
   },
+  "liliana_the_last_hope": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "living_laser": {
     "zone": "battlefield"
   },
@@ -10163,6 +10187,14 @@
     },
     "zone": "battlefield"
   },
+  "teferi_temporal_archmage": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
@@ -11273,6 +11305,14 @@
     "battlefield_count": 33,
     "counters": {
       "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "vraska_the_unseen": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
       "kind": "loyalty"
     },
     "zone": "battlefield"

@@ -2910,6 +2910,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Draw a card, then put a card from your hand on top of your library."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "face": "front",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile_and_return"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "exclude_self": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−1: Exile another target permanent you own, then return it to the battlefield under your control."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "objects": {
+                "exclude_self": true,
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "rotate_control"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "aminatou_the_fateshifter",
+      "loyalty": 3,
+      "mana_cost": "{W}{U}{B}",
+      "name": "Aminatou, the Fateshifter",
+      "oracle_text": "+1: Draw a card, then put a card from your hand on top of your library.\n−1: Exile another target permanent you own, then return it to the battlefield under your control.\n−6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction.\nAminatou, the Fateshifter can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Aminatou"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -6506,6 +6605,135 @@
       "mana_cost": "{1}{U/B}{U/B}",
       "name": "Ashiok, Dream Render",
       "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.\n−1: Target player mills four cards. Then exile each opponent's graveyard.",
+      "source": "auto",
+      "subtypes": [
+        "Ashiok"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "exile",
+              "link": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "+2: Exile the top three cards of target opponent's library."
+        },
+        {
+          "cost": {
+            "loyalty_x": true
+          },
+          "effects": [
+            {
+              "as": "nightmare",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature card exiled with Ashiok"
+            },
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "nightmare"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "objects": {
+                "binding": "nightmare"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Nightmare"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types."
+        },
+        {
+          "cost": {
+            "loyalty": -10
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "zone": "hand"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "text": "−10: Exile all cards from all opponents' hands and graveyards."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "ashiok_nightmare_weaver",
+      "loyalty": 3,
+      "mana_cost": "{1}{U}{B}",
+      "name": "Ashiok, Nightmare Weaver",
+      "oracle_text": "+2: Exile the top three cards of target opponent's library.\n−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.\n−10: Exile all cards from all opponents' hands and graveyards.",
       "source": "auto",
       "subtypes": [
         "Ashiok"
@@ -63822,6 +64050,141 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": -2,
+              "toughness": -1
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "+1: Up to one target creature gets -2/-1 until your next turn."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Mill two cards, then you may return a creature card from your graveyard to your hand."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "sum": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "count": {
+                          "controller": "you",
+                          "subtypes": [
+                            "Zombie"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      }
+                    ]
+                  },
+                  "op": "create_token",
+                  "token": "zombie_2_2_b"
+                }
+              ],
+              "kind": "triggered",
+              "text": "At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.",
+              "trigger": {
+                "controller": "you",
+                "event": "end_step"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "liliana_the_last_hope",
+      "loyalty": 3,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Liliana, the Last Hope",
+      "oracle_text": "+1: Up to one target creature gets -2/-1 until your next turn.\n−2: Mill two cards, then you may return a creature card from your graveyard to your hand.\n−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\"",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -113428,6 +113791,110 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destinations": [
+                {
+                  "count": 1,
+                  "to": "hand"
+                }
+              ],
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Look at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 4,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "−1: Untap up to four target permanents."
+        },
+        {
+          "cost": {
+            "loyalty": -10
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−10: You get an emblem with \"You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Planeswalker"
+                ]
+              },
+              "effect": "activate_loyalty_as_though_instant",
+              "kind": "static",
+              "text": "You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant."
+            }
+          ]
+        }
+      ],
+      "id": "teferi_temporal_archmage",
+      "loyalty": 5,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Teferi, Temporal Archmage",
+      "oracle_text": "+1: Look at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library.\n−1: Untap up to four target permanents.\n−10: You get an emblem with \"You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.\"\nTeferi, Temporal Archmage can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Teferi"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "replace_proliferate",
           "kind": "static",
@@ -126266,6 +126733,105 @@
       "mana_cost": "{4}{B}{G}",
       "name": "Vraska, Relic Seeker",
       "oracle_text": "+2: Create a 2/2 black Pirate creature token with menace.\n−3: Destroy target artifact, creature, or enchantment. Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n−10: Target player's life total becomes 1.",
+      "source": "auto",
+      "subtypes": [
+        "Vraska"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.",
+              "trigger": {
+                "controller": "any",
+                "event": "deals_combat_damage_to_planeswalker",
+                "recipient": {
+                  "self_only": true
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target nonland permanent."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "assassin_1_1_b_lose_game"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: Create three 1/1 black Assassin creature tokens with \"Whenever this token deals combat damage to a player, that player loses the game.\""
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "vraska_the_unseen",
+      "loyalty": 5,
+      "mana_cost": "{3}{B}{G}",
+      "name": "Vraska the Unseen",
+      "oracle_text": "+1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.\n−3: Destroy target nonland permanent.\n−7: Create three 1/1 black Assassin creature tokens with \"Whenever this token deals combat damage to a player, that player loses the game.\"",
       "source": "auto",
       "subtypes": [
         "Vraska"

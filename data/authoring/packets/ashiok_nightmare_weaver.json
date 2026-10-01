@@ -12,6 +12,190 @@
           },
           "effects": [
             {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "any_types": [
+                    "Creature",
+                    "Planeswalker"
+                  ],
+                  "binding": "top_card",
+                  "zone": "library"
+                }
+              },
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "bottom": true,
+                      "objects": {
+                        "binding": "top_card",
+                        "zone": "library"
+                      },
+                      "op": "put_on_top"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put it on the bottom of your library?"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "top_card"
+                  },
+                  "op": "return_to_hand"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": 3,
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "distribute_counters"
+            },
+            {
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "add_poison",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "kind": "triggered",
+              "targets": [
+                {
+                  "id": "t1",
+                  "kind": "player",
+                  "selector": {
+                    "controller": "opponent"
+                  }
+                }
+              ],
+              "text": "Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.",
+              "trigger": {
+                "event": "spell_cast",
+                "filter": {
+                  "any_types": [
+                    "Creature",
+                    "Planeswalker"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "id": "ajani_sleeper_agent",
+      "keywords": [
+        "compleated"
+      ],
+      "loyalty": 4,
+      "mana_cost": "{1}{G}{G/W/P}{W}",
+      "name": "Ajani, Sleeper Agent",
+      "oracle_text": "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library.\n−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.\n−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\"",
+      "source": "auto",
+      "subtypes": [
+        "Ajani"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -233,141 +417,6 @@
       "mana_cost": "{2}{G}{W}",
       "name": "Ajani, the Greathearted",
       "oracle_text": "Creatures you control have vigilance.\n+1: You gain 3 life.\n−2: Put a +1/+1 counter on each creature you control and a loyalty counter on each other planeswalker you control.",
-      "source": "auto",
-      "subtypes": [
-        "Ajani"
-      ],
-      "supertypes": [
-        "Legendary"
-      ],
-      "types": [
-        "Planeswalker"
-      ]
-    },
-    {
-      "abilities": [
-        {
-          "cost": {
-            "loyalty": 2
-          },
-          "effects": [
-            {
-              "amount": {
-                "const": 3
-              },
-              "destination": "hand",
-              "objects": {
-                "count": "all",
-                "not_types": [
-                  "Land",
-                  "Instant",
-                  "Sorcery"
-                ]
-              },
-              "op": "look_at_top",
-              "rest_to_bottom": true
-            }
-          ],
-          "kind": "activated",
-          "text": "+2: Reveal the top three cards of your library. Put all nonland permanent cards revealed this way into your hand and the rest on the bottom of your library in any order."
-        },
-        {
-          "cost": {
-            "loyalty": -2
-          },
-          "effects": [
-            {
-              "as": "victim",
-              "op": "snapshot",
-              "target": "t1"
-            },
-            {
-              "objects": {
-                "target": "t1"
-              },
-              "op": "exile"
-            },
-            {
-              "amount": {
-                "power_of": {
-                  "var": "victim"
-                }
-              },
-              "op": "gain_life",
-              "player": {
-                "controller_of": "victim"
-              }
-            }
-          ],
-          "kind": "activated",
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "selector": {
-                "types": [
-                  "Creature"
-                ],
-                "zone": "battlefield"
-              }
-            }
-          ],
-          "text": "−2: Exile target creature. Its controller gains life equal to its power."
-        },
-        {
-          "cost": {
-            "loyalty": -9
-          },
-          "effects": [
-            {
-              "amount": {
-                "const": 5
-              },
-              "counter": "+1/+1",
-              "objects": {
-                "controller": "you",
-                "count": "all",
-                "types": [
-                  "Creature"
-                ],
-                "zone": "battlefield"
-              },
-              "op": "add_counters"
-            },
-            {
-              "amount": {
-                "const": 5
-              },
-              "counter": "loyalty",
-              "objects": {
-                "controller": "you",
-                "count": "all",
-                "exclude_self": true,
-                "types": [
-                  "Planeswalker"
-                ],
-                "zone": "battlefield"
-              },
-              "op": "add_counters"
-            }
-          ],
-          "kind": "activated",
-          "text": "−9: Put five +1/+1 counters on each creature you control and five loyalty counters on each other planeswalker you control."
-        }
-      ],
-      "color_identity": [
-        "G",
-        "W"
-      ],
-      "colors": [
-        "G",
-        "W"
-      ],
-      "id": "ajani_unyielding",
-      "loyalty": 4,
-      "mana_cost": "{4}{G}{W}",
-      "name": "Ajani Unyielding",
-      "oracle_text": "+2: Reveal the top three cards of your library. Put all nonland permanent cards revealed this way into your hand and the rest on the bottom of your library in any order.\n−2: Exile target creature. Its controller gains life equal to its power.\n−9: Put five +1/+1 counters on each creature you control and five loyalty counters on each other planeswalker you control.",
       "source": "auto",
       "subtypes": [
         "Ajani"
@@ -973,6 +1022,7 @@
         "whole_hand"
       ],
       "distribute_counters": [
+        "amount",
         "counter",
         "objects"
       ],
@@ -1130,6 +1180,7 @@
         "destination_if",
         "destinations",
         "face_down",
+        "link",
         "objects",
         "playable",
         "playable_this_turn",
@@ -1310,6 +1361,7 @@
         "destination",
         "destination_if",
         "face_down",
+        "link",
         "objects",
         "playable",
         "playable_this_turn",
@@ -1349,6 +1401,7 @@
         "destination_if",
         "distinct_names",
         "face_down",
+        "link",
         "playable",
         "playable_this_turn",
         "player",
@@ -1366,6 +1419,7 @@
         "destination_if",
         "distinct_names",
         "face_down",
+        "link",
         "playable",
         "playable_this_turn",
         "player",
@@ -1685,8 +1739,10 @@
       "cant_block_alone",
       "cant_cast_spells",
       "cant_gain_life",
+      "cant_lose_the_game",
       "cant_sacrifice",
       "cant_search_library",
+      "cant_win_the_game",
       "cast_as_though_flash",
       "cast_from_graveyard",
       "cast_from_library_top",

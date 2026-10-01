@@ -7352,12 +7352,12 @@
     },
     "Aminatou, the Fateshifter": {
       "edhrec_rank": 4736,
-      "gate": "template",
+      "gate": null,
       "name": "Aminatou, the Fateshifter",
-      "reason": "no template for: +1: Draw a card, then put a card from your hand on top of your library",
+      "reason": "",
       "scryfall_id": "3748cbe2-ae41-49fd-823a-40c52496b65b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ammit Eternal": {
@@ -14722,12 +14722,12 @@
     },
     "Ashiok, Nightmare Weaver": {
       "edhrec_rank": 11489,
-      "gate": "template",
+      "gate": null,
       "name": "Ashiok, Nightmare Weaver",
-      "reason": "no template for: +2: Exile the top three cards of target opponent's library",
+      "reason": "",
       "scryfall_id": "599c3c9f-dfb7-4357-9d9c-9a1a4616b103",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ashiok, Sculptor of Fears": {
@@ -159022,12 +159022,12 @@
     },
     "Liliana, the Last Hope": {
       "edhrec_rank": 7764,
-      "gate": "compile",
+      "gate": null,
       "name": "Liliana, the Last Hope",
-      "reason": "liliana_the_last_hope.abilities[0].target[t1]: 'up to one target' is 'optional': true -- 'up_to' is for a ceiling above one",
+      "reason": "",
       "scryfall_id": "50269303-0bd9-474e-bd16-e0d13a5cbb74",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Liliana, the Last Hope Emblem": {
@@ -276572,12 +276572,12 @@
     },
     "Teferi, Temporal Archmage": {
       "edhrec_rank": 4330,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Temporal Archmage",
-      "reason": "no template for: +1: Look at the top two cards of your library. Put one of them into your hand and the othe",
+      "reason": "",
       "scryfall_id": "368c6e60-804c-447c-bc2b-ac9dc4cab5e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teferi, Temporal Archmage Emblem": {
@@ -308212,12 +308212,12 @@
     },
     "Vraska the Unseen": {
       "edhrec_rank": 7322,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska the Unseen",
-      "reason": "no template for: +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that ",
+      "reason": "",
       "scryfall_id": "a6ab9d2b-6cb3-4477-8d0e-712c530383bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vraska's Conquistador": {
