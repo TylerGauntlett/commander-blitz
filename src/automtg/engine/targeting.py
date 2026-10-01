@@ -474,14 +474,22 @@ def _spec_options(
         ceiling = len(options) if count == "any" else min(int(count), len(options))
         if size_cap is not None:
             ceiling = min(ceiling, size_cap)
-        subsets = [
-            tuple(c)
-            for size in range(ceiling, 0, -1)
-            for c in itertools.combinations(options, size)
-            if (not spec.one_per_player or _one_each(state, c))
-            and _within_total(state, c, spec.total_mana_value)
-        ]
-        return list(dict.fromkeys([*subsets[: _room(limit, [()])], ()]))
+        # Lazily, and stopped at the limit: every subset of a 38-permanent
+        # board is 2**38 of them, and Deepglow Skate's "any number of target
+        # permanents" -- any controller, any type -- asked for exactly that
+        # list before slicing it, which hung the verifier. Same order, same
+        # filters; it just never builds what it is about to throw away.
+        subsets = itertools.islice(
+            (
+                tuple(c)
+                for size in range(ceiling, 0, -1)
+                for c in itertools.combinations(options, size)
+                if (not spec.one_per_player or _one_each(state, c))
+                and _within_total(state, c, spec.total_mana_value)
+            ),
+            _room(limit, [()]),
+        )
+        return list(dict.fromkeys([*subsets, ()]))
     if count <= 0:
         # A computed count of zero -- "one target for each time this was
         # kicked", kicked no times. Not the same as no legal choice: the ability
