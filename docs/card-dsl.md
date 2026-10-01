@@ -8533,6 +8533,29 @@ attributed to his widened `{B}` pips first, since those are not Phyrexian
 symbols. The loader refuses the keyword on a card with no `loyalty` or no
 Phyrexian symbol in its cost.
 
+### `enters_with_additional_counters` — a static about other arrivals
+
+"Each planeswalker you control enters with an additional loyalty counter on
+it." — Oath of Gideon (614.1c)
+
+```jsonc
+{"kind": "static",
+ "text": "Each planeswalker you control enters with an additional loyalty counter on it.",
+ "effect": "enters_with_additional_counters",
+ "affects": {"controller": "you", "types": ["Planeswalker"]},
+ "counter": "loyalty", "amount": 1}
+```
+
+The board-wide `enters_tapped` static's shape with a quantity: read in
+`zones._enter_battlefield` on every arrival (cast, put onto the battlefield, a
+token), after the arriving card's own replacements and after compleated — the
+order 616.1 lets the controller choose and the one that keeps a walker
+compleated took to zero. Each matching static adds its own amount; the
+arriving permanent is never its own source. **Not** `replace_counters` with
+`counter_addend: 1`, which replaces every placement and would turn each +1
+loyalty cost into +2. `affects`, `counter` and a whole `amount` of 1 or more are
+all required.
+
 ## Battles
 
 ```jsonc

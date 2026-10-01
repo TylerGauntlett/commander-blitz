@@ -127,6 +127,15 @@ STATIC_EFFECTS = frozenset(
         # graveyard. `affects` is required: the filter is the printed clause
         # and it defaults to your own side.
         "enters_tapped",
+        # Oath of Gideon: "Each planeswalker you control enters with an
+        # additional loyalty counter on it."  `enters_tapped`'s shape with a
+        # quantity: a static on one permanent about other permanents'
+        # arrivals, read in `zones._enter_battlefield` after the arriving
+        # card's own replacements.  Not `replace_counters` with an addend,
+        # which reaches every placement -- a +1 loyalty cost too -- and the
+        # printed card touches only the arrival.  Takes `affects`, `counter`
+        # and `amount`.
+        "enters_with_additional_counters",
         # Winter Orb: "As long as this artifact is untapped, players can't
         # untap more than one land during their untap steps."  A **count**,
         # which is the whole difference from `skip_untap_step` next door: that

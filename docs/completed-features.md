@@ -18749,3 +18749,30 @@ reduced the starting loyalty, so a Tamiyo cast for 2 life arrived at the full 5.
   queued (a replacement); two symbols, one or both paid; the floor at zero and
   the walker binned by 704.5i; a blinked walker and one put onto the
   battlefield at full loyalty; the loader's three cases.
+
+## `enters_with_additional_counters` — Oath of Gideon — 614.1c
+
+"Each planeswalker you control enters with an additional loyalty counter on
+it." The nearest shape, `replace_counters` with `counter_addend: 1`, replaces
+every placement of a loyalty counter, so it would also make each +1 loyalty
+cost a +2 — which the printed card never does. `enters_tapped` was the only
+static about another permanent's arrival, and it carries no counters.
+
+### What changed
+
+- A static effect `enters_with_additional_counters` taking `affects`,
+  `counter` and `amount` (all required; `amount` a whole number of 1 or more).
+- `zones._apply_board_additional_counters`, called in `_enter_battlefield`
+  after the arriving card's own replacements and after compleated: every
+  matching static on the battlefield adds its amount, the arriving permanent
+  excluded as a source. The compleated-then-Oath order is the one 616.1 lets
+  the controller choose, and the one that keeps a walker compleated took to
+  zero.
+
+### Tests
+
+- `tests/unit/test_enters_with_additional_counters.py` — a cast walker enters
+  with one more, the control without the Oath, an uncast arrival, two Oaths
+  adding two, nothing queued; a +1 activation still +1, a creature and an
+  opponent's walker untouched; compleated to zero then the Oath's counter
+  keeping the walker; the loader's four refusals.

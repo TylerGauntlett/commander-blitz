@@ -3760,6 +3760,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"quantity; it takes 'affects' and an optional 'condition'"
             )
 
+    if model.effect == "enters_with_additional_counters":
+        # Oath of Gideon: "Each planeswalker you control enters with an
+        # additional loyalty counter on it." All three are the printed clause,
+        # and each one missing loads as a different card: no filter reaches
+        # every arrival on the table, no kind has nothing to add, and no amount
+        # adds none.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: enters_with_additional_counters needs 'affects' naming "
+                f"whose arrivals get the counters -- Oath of Gideon says "
+                f"planeswalkers you control"
+            )
+        if model.counter is None:
+            raise DslError(
+                f"{where}: enters_with_additional_counters needs 'counter', the "
+                f"kind the arrival gets more of"
+            )
+        _check_counter_kind(model.counter, f"{where}.counter")
+        if not isinstance(model.amount, int) or isinstance(model.amount, bool) or model.amount < 1:
+            raise DslError(
+                f"{where}: enters_with_additional_counters needs 'amount', a whole "
+                f"number of 1 or more (got {model.amount!r})"
+            )
+
     if model.effect == "lose_keyword":
         # Named keywords only. An empty list would subtract nothing and load
         # clean, printing "can't have or gain first strike" over an inert

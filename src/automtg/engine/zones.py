@@ -777,6 +777,33 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
             return
 
 
+def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
+    """ "Each planeswalker you control enters with an additional loyalty counter
+    on it." Oath of Gideon (614.1c).
+
+    `_apply_board_enters_tapped`'s shape with a quantity: a static on one
+    permanent about other permanents' arrivals, whichever way they arrive. A
+    replacement on the *entering* and nothing else -- which is the whole reason
+    it is not `replace_counters` with an addend: that one reaches every
+    placement, so it would also add one to each +1 loyalty cost, and the
+    printed card never does.
+
+    Applied after the arriving card's own replacements, so the counter is added
+    to the loyalty it was going to have. Every matching static adds its own
+    amount (two Oaths, two counters). The arriving permanent is excluded as a
+    source, as in `_apply_board_enters_tapped`.
+    """
+    from .characteristics import _battlefield_statics, _matches
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "enters_with_additional_counters":
+            continue
+        if source_obj.oid == obj.oid:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            obj.add_counter(str(static.get("counter")), int(static.get("amount", 1)))
+
+
 def _apply_compleated(obj: GameObject, card: CardDef) -> None:
     """Compleated (702.150a): two fewer loyalty per Phyrexian symbol paid with life.
 
@@ -1028,6 +1055,10 @@ def _enter_battlefield(
                 )
 
     _apply_compleated(obj, card)
+    # After compleated, which is the order 616.1 lets the controller pick and
+    # the one they would: a walker taken to zero by compleated still gets
+    # Oath of Gideon's counter, where the other order would lose it.
+    _apply_board_additional_counters(state, obj)
 
     # Riot (702.113), applied in the slot enters-with-counters occupies and for
     # its reason: 614.1c, so the creature is never on the battlefield without

@@ -1,0 +1,24 @@
+{
+  "_comment": "Cards for tests/unit/test_enters_with_additional_counters.py. `t_oath` is Oath of Gideon's second line alone: each planeswalker you control enters with an additional loyalty counter. `t_walker` (testing.cards.json, loyalty 4, '+1: gain 2 life') is what arrives.",
+  "cards": [
+    {
+      "id": "t_oath",
+      "name": "Test Oath",
+      "oracle_text": "Each planeswalker you control enters with an additional loyalty counter on it.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each planeswalker you control enters with an additional loyalty counter on it.",
+          "effect": "enters_with_additional_counters",
+          "affects": {"controller": "you", "types": ["Planeswalker"]},
+          "counter": "loyalty",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}
