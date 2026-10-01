@@ -701,6 +701,11 @@ def reference() -> dict:
             " intervening if). It is the turn's ledger, so it counts gains made"
             " before the permanent entered; never an unprinted `you_gain_life`"
             " trigger setting a flag.",
+            "\"If you didn't activate a loyalty ability of a planeswalker this"
+            " turn\" is the value `{\"loyalty_activations_this_turn\": \"you\"}`"
+            " compared `==` against `{\"const\": 0}`, as the trigger's"
+            " `condition`. A per-player tally counted at activation, so it"
+            " remembers a planeswalker that has since left.",
             "\"Your opponents can't gain life\" is the player-wide static"
             " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
             " and \"any\" for the other sentences). Every gain is stopped,"

@@ -18932,3 +18932,34 @@ Vraska the Unseen's +1. The card still waits on its -7's Assassin token.
   is not hers; noncombat damage does not fire it; the subscription leaves with
   her and does not follow a recast; and the loader takes the scope and refuses it
   on an event with no recipient or naming no specific permanent.
+
+## `loyalty_activations_this_turn` — "if you didn't activate a loyalty ability of a planeswalker this turn"
+
+### Overview
+
+The Chain Veil: *"At the beginning of your end step, **if you didn't activate a
+loyalty ability of a planeswalker this turn**, you lose 2 life."*
+
+### Why the existing vocabulary would not do
+
+`ability_activations` is keyed by oid and ability index, so by the end step a
+walker that minused itself away, or was flickered into a new object, is unreadable.
+A `has_turn_flag` set by an unprinted `ability_activated` trigger on the Veil
+misses every activation made before the Veil entered.
+
+### The shape
+
+- **`TurnLedger.loyalty_activations`**, per activating player, cleared with the
+  ledger at cleanup.
+- Counted in `Game._activate` beside the per-ability tally, at activation (602.2),
+  when the ability has a loyalty cost and its source is a planeswalker.
+- **`{"loyalty_activations_this_turn": <player spec>}`**, a value leaf; "didn't"
+  is a `cmp` `==` 0 on the trigger's `condition`.
+
+### Guarded by
+
+`tests/unit/test_loyalty_activations_this_turn.py`: counted for its player, zero,
+per player, a walker that minused itself to the graveyard still counting, a
+planeswalker's `{T}` ability not counting, the condition, an unknown spelling
+refused, the end-step trigger with and without an activation and only on its
+controller's turn, and the tally gone next turn.

@@ -1383,6 +1383,18 @@ class TurnLedger:
     #: back.
     ability_activations: dict[tuple[int, int], int] = field(default_factory=dict)
 
+    #: How many **loyalty abilities of planeswalkers** each player has
+    #: activated this turn -- The Chain Veil's "if you didn't activate a loyalty
+    #: ability of a planeswalker this turn". Keyed by the activating player.
+    #:
+    #: Not derivable from `ability_activations` above: that one is keyed by an
+    #: oid and an index, and by the end step the planeswalker that was used may
+    #: be in a graveyard with its ability list unreadable, or a different object
+    #: after a flicker. Counted at the activation (in `Game._activate`, beside
+    #: the per-ability tally), so an activation that was countered or whose
+    #: source died paying its minus still counts -- it was activated.
+    loyalty_activations: dict[int, int] = field(default_factory=dict)
+
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
     #: hasn't been **exerted this turn**" (Combat Celebrant, 701.40b).
@@ -1501,6 +1513,7 @@ class TurnLedger:
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()
+        self.loyalty_activations.clear()
         self.cards_to_graveyard = 0
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()

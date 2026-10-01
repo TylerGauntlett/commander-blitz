@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
-from .characteristics import abilities_of, mana_source_traits
+from .characteristics import abilities_of, chars, mana_source_traits
 from .combat import add_attacker, add_blocker, finish_attackers
 from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -851,6 +851,18 @@ class Game:
         # that strands mid-payment still spends the turn's allowance -- the same
         # reading `resolutions_this_turn` takes of its own event.
         state.turn_ledger.activated(oid, action.ability_index)
+        # "…if you didn't activate a loyalty ability of **a planeswalker** this
+        # turn" (The Chain Veil). Counted per player at the same moment and for
+        # the same reason as the line above, and only when the source is a
+        # planeswalker as it is activated -- the printed sentence names the
+        # permanent type, not just the cost.
+        if (
+            ability.cost is not None
+            and ability.cost.loyalty is not None
+            and "Planeswalker" in chars(state, oid).types
+        ):
+            tally = state.turn_ledger.loyalty_activations
+            tally[pid] = tally.get(pid, 0) + 1
 
         # "…or activate an ability of a creature source of the chosen type."
         # What this activation pays *for*, so Cavern of Souls mana is available

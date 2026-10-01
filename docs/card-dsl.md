@@ -1228,6 +1228,7 @@ Anywhere a number is expected:
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
+{ "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
