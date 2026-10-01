@@ -978,7 +978,7 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # spec asks for it, so every other target stays an ordinary creature.
         if spec.selector.get("is_commander"):
             obj.is_commander = True
-        # Gideon Jura's "−2: Destroy target **tapped** creature." Every creature
+        # Gideon Jura's "-2: Destroy target **tapped** creature." Every creature
         # the sandbox holds is untapped, so the ability read as unusable when it
         # was only unaimed. Tapped only when the spec asks, like the flag above.
         if spec.selector.get("tapped"):

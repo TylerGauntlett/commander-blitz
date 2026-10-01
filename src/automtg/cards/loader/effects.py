@@ -1729,7 +1729,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # read by none of them, so "gets -2/-1 until your next turn" written with
     # it loaded and quietly wore off at this turn's cleanup -- before the only
     # turns Liliana, the Last Hope's +1 is printed for.
-    if op in ("pump", "animate", "lock_abilities") and effect.get(
+    # (`animate` is guarded with the rest of its keys below: it also takes Oko's
+    # `permanent`, which neither of the other two has.)
+    if op in ("pump", "lock_abilities") and effect.get(
         "duration", "until_end_of_turn"
     ) not in ("until_end_of_turn", "until_your_next_turn"):
         raise DslError(
@@ -2514,10 +2516,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # 3/3" prints no duration. Enumerated rather than truthy for the reason
         # `gain_control`'s is: a misspelt "until_end_of_turn" read as anything
         # but itself is a permanent animation, the strictly better card.
+        # Nissa, Vital Force's land stays a 5/5 "until your next turn".
         duration = effect.get("duration", "until_end_of_turn")
-        if duration not in CONTROL_DURATIONS:
+        allowed = (*CONTROL_DURATIONS, "until_your_next_turn")
+        if duration not in allowed:
             raise DslError(
-                f"{where}: animate's 'duration' is one of {list(CONTROL_DURATIONS)}, "
+                f"{where}: animate's 'duration' is one of {list(allowed)}, "
                 f"got {duration!r}"
             )
         if duration == "permanent" and effect.get("your_turn_keywords"):
