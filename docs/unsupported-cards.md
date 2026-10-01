@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **34** capabilities.
+**22 cards** blocked by **29** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-lose-the-game-static](#cant-lose-the-game-static) | 1 | 10717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -27,15 +26,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [extra-loyalty-activation](#extra-loyalty-activation) | 1 | 2923 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [flash-permission-until-next-turn](#flash-permission-until-next-turn) | 1 | 1139 | op |
-| [free-cast-from-hand](#free-cast-from-hand) | 1 | 2959 | static_effect |
 | [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
-| [loyalty-activations-this-turn](#loyalty-activations-this-turn) | 1 | 2923 | value |
 | [loyalty-x](#loyalty-x) | 1 | 12306 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -124,20 +119,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cant-lose-the-game-static
-
-Blocks **1** card.
-
-- **(static_effect)** a continuous static (usable on an emblem) with a condition: "as long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game" -- the Platinum Angel shape with an `as long as` condition, read by sba._player_losses / declare_win
-  <br>Why the existing vocabulary won't do: `cant_lose_the_game` is a one-shot op with a turn-scoped OutcomeLock (Angel's Grace); docs/completed-features.md records the continuous (Platinum Angel) static as deliberately unbuilt, and no static_effect prohibits losing or winning
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gideon of the Trials** (rank 10717) — `gideon_of_the_trials`
-  - 0: You get an emblem with "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game."
 
 </details>
 
@@ -243,21 +224,6 @@ Blocks **1** card.
 
 </details>
 
-## extra-loyalty-activation
-
-Blocks **1** card.
-
-- **(op)** an op granting, for each planeswalker you control, one additional loyalty-ability activation this turn that ignores the once-per-turn loyalty limit (rule 606.3), usable once per planeswalker per resolution
-  <br>Why the existing vocabulary won't do: the static activate_loyalty_as_though_instant only changes timing, not the once-per-turn count; no op in reference touches the loyalty activation limit
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Chain Veil** (rank 2923) — `the_chain_veil`
-  - At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.
-  - {4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.
-
-</details>
-
 ## extra-turn
 
 Blocks **1** card.
@@ -270,34 +236,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## flash-permission-until-next-turn
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect op (from a loyalty ability) that writes a per-player timing permission read by casting._timing_ok -- 'you may cast sorcery spells as though they had flash' -- lasting until the granting player's next turn (cleared in their untap step, dropped if they leave), covering cards drawn after it resolved, with a spell filter narrowing it to Sorcery spells
-  <br>Why the existing vocabulary won't do: cast_as_though_flash exists only as a static (no op form, no duration) and refuses any spell filter, so it can be neither time-limited nor narrowed to sorceries; grant_keyword flash is not read by _timing_ok (it reads printed keywords) and cannot reach cards not yet in hand; the until_your_next_turn duration exists only on pump/lock_abilities/animate/grant_keyword/cant_block/prevent_damage_permanent/lock_life_total/grant_protection/delayed_trigger; an emblem with the static would be permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
-  - +1: Until your next turn, you may cast sorcery spells as though they had flash.
-
-</details>
-
-## free-cast-from-hand
-
-Blocks **1** card.
-
-- **(static_effect)** a zone restriction on the `free_cast_permission` static (e.g. `zones: ["hand"]`, or a `zone` key in its `affects_spells` filter) so the free cast line is offered only for spells cast from their caster's hand -- Tamiyo's emblem and Omniscience both say "from your hand"
-  <br>Why the existing vocabulary won't do: free_cast_permission is asked inside casting._cast_options, which every cast lane calls -- hand, command zone (commander), adventure exile, grant_playable exile/graveyard, graveyard-cast permissions -- so it frees spells from every zone; its affects_spells takes SPELL_FILTER_KEYS only, which has no zone key. Written as-is the emblem would also cast your commander, flashback-style graveyard casts and exiled 'you may play' cards for free, a strictly better card than printed. The +1 (delayed_trigger until_your_next_turn on deals_combat_damage with a multi-object subject) and the −2 (tap + skip_untap) are now expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tamiyo, Field Researcher** (rank 2959) — `tamiyo_field_researcher`
-  - −7: Draw three cards. You get an emblem with "You may cast spells from your hand without paying their mana costs."
 
 </details>
 
@@ -357,21 +295,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## loyalty-activations-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn ledger value counting how many loyalty abilities of planeswalkers that player activated this turn (e.g. {"loyalty_activations_this_turn": "you"}), usable as an intervening-if condition on an end_step trigger compared against 0
-  <br>Why the existing vocabulary won't do: value_keys has spells_cast_this_turn, life_gained_this_turn, cards_drawn_this_turn etc. but nothing counting loyalty activations; has_turn_flag would need every planeswalker's loyalty cost to set a flag, which no card-level mechanism does, and an ability_activated trigger setting a flag would be an unprinted helper trigger that also misses activations before The Chain Veil entered
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Chain Veil** (rank 2923) — `the_chain_veil`
-  - At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.
-  - {4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.
 
 </details>
 

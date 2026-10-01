@@ -108832,12 +108832,12 @@
     },
     "Gideon of the Trials": {
       "edhrec_rank": 10717,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon of the Trials",
-      "reason": "no template for: +1: Until your next turn, prevent all damage target permanent would deal",
+      "reason": "",
       "scryfall_id": "959ce13f-519f-4472-bbd1-f26a972723d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gideon of the Trials Emblem": {
@@ -274802,12 +274802,12 @@
     },
     "Tamiyo, Field Researcher": {
       "edhrec_rank": 2959,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Field Researcher",
-      "reason": "no template for: +1: Choose up to two target creatures. Until your next turn, whenever either of those crea",
+      "reason": "",
       "scryfall_id": "576ba8db-fad9-4c48-96be-a8a7e5f43039",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tamiyo, Field Researcher Emblem": {
@@ -276602,12 +276602,12 @@
     },
     "Teferi, Time Raveler": {
       "edhrec_rank": 1139,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Time Raveler",
-      "reason": "no template for: Each opponent can cast spells only any time they could cast a sorcery",
+      "reason": "",
       "scryfall_id": "5a47d968-bba0-4277-b5d7-eb9e1acd7953",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teferi, Timebender": {
@@ -280152,12 +280152,12 @@
     },
     "The Chain Veil": {
       "edhrec_rank": 2923,
-      "gate": "template",
+      "gate": null,
       "name": "The Chain Veil",
-      "reason": "no template for: At the beginning of your end step, if you didn't activate a loyalty ability of a planeswal",
+      "reason": "",
       "scryfall_id": "1ca66955-d900-45b6-9a40-38467689a68d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Chase Is On": {

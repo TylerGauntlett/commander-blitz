@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "teferi_time_raveler",
+    "name": "Teferi, Time Raveler",
+    "oracle_text": "Each opponent can cast spells only any time they could cast a sorcery.\n+1: Until your next turn, you may cast sorcery spells as though they had flash.\n−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card.",
+    "mana_cost": "{1}{W}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Teferi"],
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "loyalty": 4,
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Each opponent can cast spells only any time they could cast a sorcery.",
+        "effect": "cast_only_at_sorcery_speed",
+        "affects_player": "opponent"
+      },
+      {
+        "kind": "activated",
+        "text": "+1: Until your next turn, you may cast sorcery spells as though they had flash.",
+        "cost": {"loyalty": 1},
+        "effects": [
+          {"op": "grant_flash_permission", "types": ["Sorcery"], "duration": "until_your_next_turn"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card.",
+        "cost": {"loyalty": -3},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "optional": true,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "any",
+              "any_types": ["Artifact", "Creature", "Enchantment"]
+            }
+          }
+        ],
+        "effects": [
+          {"op": "return_to_hand", "objects": {"target": "t1"}},
+          {"op": "draw", "player": "you", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 4}
+  }
+}

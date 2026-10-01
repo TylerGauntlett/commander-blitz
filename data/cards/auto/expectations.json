@@ -4027,6 +4027,14 @@
     },
     "zone": "battlefield"
   },
+  "gideon_of_the_trials": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "gift_of_granite": {
     "zone": [
       "battlefield",
@@ -10092,6 +10100,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tamiyo_field_researcher": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "tandem_lookout": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10191,6 +10207,14 @@
     "battlefield_count": 33,
     "counters": {
       "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "teferi_time_raveler": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
       "kind": "loyalty"
     },
     "zone": "battlefield"
@@ -10323,6 +10347,10 @@
     "zone": "battlefield"
   },
   "thaumaturge_s_familiar": {
+    "zone": "battlefield"
+  },
+  "the_chain_veil": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_council_of_four": {

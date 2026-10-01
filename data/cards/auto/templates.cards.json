@@ -43114,6 +43114,152 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "dealt": "by",
+              "duration": "until_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Until your next turn, prevent all damage target permanent would deal."
+        },
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "subtypes": [
+                "Human",
+                "Soldier"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "dealt": "to",
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn."
+        },
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: You get an emblem with \"As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects_player": "you",
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Gideon"
+                  ],
+                  "types": [
+                    "Planeswalker"
+                  ]
+                }
+              },
+              "effect": "cant_lose_the_game",
+              "kind": "static",
+              "text": "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game."
+            },
+            {
+              "affects_player": "opponent",
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Gideon"
+                  ],
+                  "types": [
+                    "Planeswalker"
+                  ]
+                }
+              },
+              "effect": "cant_win_the_game",
+              "kind": "static",
+              "text": "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game."
+            }
+          ]
+        }
+      ],
+      "id": "gideon_of_the_trials",
+      "loyalty": 3,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Gideon of the Trials",
+      "oracle_text": "+1: Until your next turn, prevent all damage target permanent would deal.\n0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.\n0: You get an emblem with \"As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.\"",
+      "source": "auto",
+      "subtypes": [
+        "Gideon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -112577,6 +112723,151 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "delayed_trigger",
+              "trigger": {
+                "controller": "any",
+                "event": "deals_combat_damage",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "skip_untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "−2: Tap up to two target nonland permanents. They don't untap during their controller's next untap step."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: Draw three cards. You get an emblem with \"You may cast spells from your hand without paying their mana costs.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects_player": "you",
+              "affects_spells": {
+                "from_zone": "hand"
+              },
+              "effect": "free_cast_permission",
+              "kind": "static",
+              "text": "You may cast spells from your hand without paying their mana costs."
+            }
+          ]
+        }
+      ],
+      "id": "tamiyo_field_researcher",
+      "loyalty": 4,
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Tamiyo, Field Researcher",
+      "oracle_text": "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.\n−2: Tap up to two target nonland permanents. They don't untap during their controller's next untap step.\n−7: Draw three cards. You get an emblem with \"You may cast spells from your hand without paying their mana costs.\"",
+      "source": "auto",
+      "subtypes": [
+        "Tamiyo"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -113881,6 +114172,93 @@
       "mana_cost": "{4}{U}{U}",
       "name": "Teferi, Temporal Archmage",
       "oracle_text": "+1: Look at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library.\n−1: Untap up to four target permanents.\n−10: You get an emblem with \"You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.\"\nTeferi, Temporal Archmage can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Teferi"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "effect": "cast_only_at_sorcery_speed",
+          "kind": "static",
+          "text": "Each opponent can cast spells only any time they could cast a sorcery."
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "op": "grant_flash_permission",
+              "types": [
+                "Sorcery"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until your next turn, you may cast sorcery spells as though they had flash."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "teferi_time_raveler",
+      "loyalty": 4,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Teferi, Time Raveler",
+      "oracle_text": "Each opponent can cast spells only any time they could cast a sorcery.\n+1: Until your next turn, you may cast sorcery spells as though they had flash.\n−3: Return up to one target artifact, creature, or enchantment to its owner's hand. Draw a card.",
       "source": "auto",
       "subtypes": [
         "Teferi"
@@ -115613,6 +115991,62 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "loyalty_activations_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "extra_loyalty_activation"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_chain_veil",
+      "mana_cost": "{4}",
+      "name": "The Chain Veil",
+      "oracle_text": "At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.\n{4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
