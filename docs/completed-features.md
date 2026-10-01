@@ -18993,3 +18993,12 @@ carrying the same `condition`. `player_statics.outcome_barred_by_static` answers
 them, and `sba.player_cant_lose` / `player_cant_win` consult it beside the op's
 turn-scoped locks, so every loss reason the op holds off is held off here too.
 Test: `tests/unit/test_cant_lose_the_game_static.py`.
+
+## `extra_loyalty_activation` — The Chain Veil's "as though none of its loyalty abilities have been activated" — 606.3
+
+Legality tested for *any* loyalty activation of a permanent this turn, so "one more" had no
+representation. `TurnLedger.extra_loyalty_activations` (oid -> count, cleared with the
+ledger) holds the grant; legality now counts the activations made and allows one plus
+the grant. The op names the walkers there as it resolves, so a walker arriving later
+keeps its single activation, and a second Veil activation is a second extra.
+Test: `tests/unit/test_extra_loyalty_activation.py`.

@@ -1394,6 +1394,14 @@ class TurnLedger:
     #: the per-ability tally), so an activation that was countered or whose
     #: source died paying its minus still counts -- it was activated.
     loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: Extra loyalty activations a permanent may make this turn, beyond 606.3's
+    #: one: oid -> how many. The Chain Veil: "For each planeswalker you
+    #: control, you may activate one of its loyalty abilities once this turn
+    #: as though none of its loyalty abilities have been activated this turn"
+    #: -- an *additional* activation per walker (its ruling), so two Veil
+    #: activations are two. Keyed by oid, so a walker that arrives after the
+    #: Veil resolved gets nothing, as printed.
+    extra_loyalty_activations: dict[int, int] = field(default_factory=dict)
 
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
@@ -1514,6 +1522,7 @@ class TurnLedger:
         self.combat_damage_types.clear()
         self.ability_activations.clear()
         self.loyalty_activations.clear()
+        self.extra_loyalty_activations.clear()
         self.cards_to_graveyard = 0
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()

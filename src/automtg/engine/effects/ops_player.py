@@ -132,6 +132,30 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("extra_loyalty_activation")
+def op_extra_loyalty_activation(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "For each planeswalker you control, you may activate one of its loyalty
+    abilities once this turn as though none of its loyalty abilities have been
+    activated this turn." -- The Chain Veil.
+
+    606.3 allows one loyalty activation per permanent per turn; this raises that
+    ceiling by one for each walker the selector names *as it resolves* (the
+    default is planeswalkers you control). Additional, not a reset: a walker
+    that has not activated yet may now activate twice, which is the card's
+    ruling, and a second Veil activation is a second extra. The timing half of
+    606.3 is untouched -- still your main phase with an empty stack.
+    """
+    from .selectors import resolve_pool
+
+    selector = dict(spec.get("objects") or {"controller": "you", "types": ["Planeswalker"]})
+    extra = ctx.state.turn_ledger.extra_loyalty_activations
+    for oid in resolve_pool(ctx, selector):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            extra[oid] = extra.get(oid, 0) + 1
+    yield from ()
+
+
 @register("win_game")
 def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     """ "You win the game." Halo Fountain and Luck Bobblehead.

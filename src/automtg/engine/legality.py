@@ -716,13 +716,18 @@ def _ability_aims(
     # turn. The second half is a limit on the *permanent*: Sorin has three, and
     # `once_each_turn` -- which counts one ability -- would let him plus twice
     # and then minus, three cards' worth of a card.
+    #
+    # Counted rather than tested for any: The Chain Veil grants a walker one
+    # more loyalty activation this turn, so the ceiling is one plus whatever
+    # `extra_loyalty_activations` holds for this permanent.
     if ability.cost is not None and ability.cost.loyalty is not None:
         siblings = abilities_of(state, oid)
-        if any(
+        used = sum(
             state.turn_ledger.activations(oid, other.index)
             for other in siblings
             if other.cost is not None and other.cost.loyalty is not None
-        ):
+        )
+        if used >= 1 + state.turn_ledger.extra_loyalty_activations.get(oid, 0):
             return None
     if ability.activation_condition is not None and not _activation_allowed(
         state, pid, oid, ability
