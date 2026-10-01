@@ -668,7 +668,7 @@ whatever attacked, which is different on every trigger.
 | | |
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
-| `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted |
+| `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted. `"self"` names the ability's own source instead of a binding: Kasmina, Enigma Sage's "a card that shares a color with **this planeswalker**" |
 | `shares_a_name_with` | the same clause on names — Legions to Ashes' "all tokens that player controls **with the same name as that permanent**". `name` cannot stand in: it takes a literal string fixed when the card is written. Alone in the family in **tolerating a bound object that has already left the battlefield**, so a spell that exiles its target and its copies together works whichever order the two ops run in |
 | `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
 
@@ -4221,6 +4221,18 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
 `extra_land_drops`, plus the player-wide ones below.
+
+#### Granting another permanent's loyalty abilities
+
+"Each other planeswalker you control has the loyalty abilities of Kasmina"
+(Kasmina, Enigma Sage) needs nothing new: write the loyalty abilities once as
+the card's own `abilities`, again as `grantable_abilities`, and add one
+`grant_ability` static per grantable (`"ability": 0`, `1`, `2`) with
+`affects: {"types": ["Planeswalker"], "exclude_self": true}`. A granted loyalty
+ability is paid from the loyalty of the walker that has it, counts toward that
+walker's one-per-turn limit (606.3) -- `abilities_of` renumbers granted abilities
+after the printed ones, so their indices never collide -- and "this planeswalker"
+in it (`shares_a_color_with: "self"`, a `self_only` selector) is that walker.
 
 #### `owner` — "creatures you **own**"
 

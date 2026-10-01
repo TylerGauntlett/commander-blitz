@@ -775,7 +775,12 @@ def matches(
         # same one intimidate has: a **colorless** object shares a colour with
         # nothing, itself included, so an intersection is the right test and
         # "is not a different colour" would be its opposite.
-        other = _bound_oid(ctx, str(name))
+        # `"self"` is the ability's own source -- Kasmina, Enigma Sage's "an
+        # instant or sorcery card that shares a color with **this
+        # planeswalker**", which on a granted copy is the walker that has it.
+        # Read off the object wherever it now is, so a walker that spent its
+        # last loyalty on the -8 still answers with the colours it had.
+        other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
         if other is None:
             return False
         theirs = chars(state, other).colors if state.objects.get(other) else frozenset()
