@@ -550,7 +550,9 @@ def _cast_options(
     #
     # Skipped when the caller already priced this line free -- a plotted Dragon
     # is offered free once, not twice.
-    if not free and free_cast_permission(state, pid, card):
+    if not free and free_cast_permission(
+        state, pid, card, zone=state.objects[oid].zone.value if oid in state.objects else None
+    ):
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
         )

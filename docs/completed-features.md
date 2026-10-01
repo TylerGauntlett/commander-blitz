@@ -19010,3 +19010,11 @@ and a loyalty ability leaves no permanent to carry one. The op writes a
 `structs.FlashPermission` (player, card types, duration) to `GameState.flash_permissions`;
 `casting._timing_ok` reads it; it wears off in the granter's untap step (or at cleanup
 for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flash_permission.py`.
+
+## `free_cast_permission` `from_zone` — Tamiyo, Field Researcher's "from your hand"
+
+`free_cast_permission` was zone-blind and is asked by every cast lane, so Omniscience's
+"from your hand" could not be said without freeing commanders and graveyard casts as
+well. `affects_spells` now accepts `from_zone: "hand"` (the only printed value); the
+cast-line builder passes the zone the spell is cast from, and a caller that names no
+zone is refused rather than freed. Test: `tests/unit/test_free_cast_from_hand.py`.

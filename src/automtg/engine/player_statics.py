@@ -1621,7 +1621,9 @@ def library_top_cast_permission(state: GameState, pid: int):
     return None
 
 
-def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
+def free_cast_permission(
+    state: GameState, pid: int, card: CardDef, zone: str | None = None
+) -> bool:
     """May ``pid`` cast ``card`` right now **without paying its mana cost**?
 
     "You may cast Dragon spells without paying their mana costs" --
@@ -1666,6 +1668,13 @@ def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
+        # "…from your hand" (Tamiyo, Field Researcher's emblem; Omniscience).
+        # ``zone`` is where this cast is being made from; a caller that does not
+        # say is refused rather than freed, so a new cast lane fails closed.
+        if "from_zone" in filt:
+            if zone != filt["from_zone"]:
+                continue
+            filt = {k: v for k, v in filt.items() if k != "from_zone"}
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if _matches_printed(card, resolved):
             return True

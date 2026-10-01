@@ -113,6 +113,7 @@ from .vocabulary import (  # noqa: F401
     COUNTERS_ON_ARRIVAL_OPS,
     DEFENDING_TRIGGERS,
     DELAYED_TRIGGER_KEYS,
+    FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
     KEYWORD_ALIASES,
     KNOWN_COLORS,
@@ -2889,11 +2890,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: free_cast_permission needs 'affects_spells' naming which "
                 f"spells it frees -- without one it is Omniscience"
             )
-        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        unknown = set(model.affects_spells) - FREE_CAST_FILTER_KEYS
         if unknown:
             raise DslError(
                 f"{where}.affects_spells: a card in hand has a printed face "
                 f"and a caster and no board state; unsupported keys {sorted(unknown)}"
+            )
+        if model.affects_spells.get("from_zone", "hand") != "hand":
+            raise DslError(
+                f"{where}.affects_spells.from_zone: only 'hand' is printed "
+                f"(\"from your hand\"); got {model.affects_spells['from_zone']!r}"
             )
     elif model.effect == "grant_warp":
         # `free_cast_permission`'s two guards, and a third the price needs.

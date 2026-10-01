@@ -793,6 +793,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: zone it is cast out of.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
 
+#: `SPELL_FILTER_KEYS` plus the zone a free cast is offered from.
+#:
+#: "You may cast spells **from your hand** without paying their mana costs" --
+#: Tamiyo, Field Researcher's emblem, and Omniscience. `free_cast_permission` is
+#: asked by every cast lane (hand, command zone, graveyard and exile
+#: permissions), so without this it frees a commander and every flashback-style
+#: cast too. Read by `player_statics.free_cast_permission` itself, with the zone
+#: the spell is being cast from, and kept out of the shared set for
+#: `exclude_self`'s reason. The only value is "hand": no printing names another.
+FREE_CAST_FILTER_KEYS = SPELL_FILTER_KEYS | {"from_zone"}
+
 #: `SPELL_FILTER_KEYS` plus the one word a **union of two printed shapes** needs.
 #:
 #: "**Artifact cards and red creature cards** in your hand have warp {2}{R}" --
