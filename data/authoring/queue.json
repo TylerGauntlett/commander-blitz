@@ -4912,12 +4912,12 @@
     },
     "Ajani, Sleeper Agent": {
       "edhrec_rank": 6703,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani, Sleeper Agent",
-      "reason": "no template for: Compleated",
+      "reason": "",
       "scryfall_id": "5d14829d-3119-4c65-8e9a-5281771bbaf3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ajani, Sleeper Agent Emblem": {
@@ -64822,12 +64822,12 @@
     },
     "Deepglow Skate": {
       "edhrec_rank": 1835,
-      "gate": "template",
+      "gate": null,
       "name": "Deepglow Skate",
-      "reason": "no template for: When this creature enters, double the number of each kind of counter on any number of targ",
+      "reason": "",
       "scryfall_id": "fef1c2a5-d5d8-4c1e-9b14-ee202a5f16b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Deepmuck Desperado": {
@@ -72502,12 +72502,12 @@
     },
     "Doubling Season": {
       "edhrec_rank": 190,
-      "gate": "template",
+      "gate": null,
       "name": "Doubling Season",
-      "reason": "no template for: If an effect would create one or more tokens under your control, it creates twice that man",
+      "reason": "",
       "scryfall_id": "8c2d6fde-5c3b-48c3-828c-832f00570824",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Doubtless One": {
@@ -72572,12 +72572,12 @@
     },
     "Dovin Baan": {
       "edhrec_rank": 12562,
-      "gate": "template",
+      "gate": null,
       "name": "Dovin Baan",
-      "reason": "no template for: +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities",
+      "reason": "",
       "scryfall_id": "2344e710-4570-41b6-af84-a3e7d784003a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dovin Baan Emblem": {
@@ -137112,12 +137112,12 @@
     },
     "Innkeeper's Talent": {
       "edhrec_rank": 674,
-      "gate": "template",
+      "gate": null,
       "name": "Innkeeper's Talent",
-      "reason": "no template for: At the beginning of combat on your turn, put a +1/+1 counter on target creature you contro",
+      "reason": "",
       "scryfall_id": "941b0afc-0e8f-45f2-ae7f-07595e164611",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Innocence Kami": {

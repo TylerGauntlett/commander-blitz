@@ -1445,6 +1445,192 @@
           },
           "effects": [
             {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "any_types": [
+                    "Creature",
+                    "Planeswalker"
+                  ],
+                  "binding": "top_card",
+                  "zone": "library"
+                }
+              },
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "bottom": true,
+                      "objects": {
+                        "binding": "top_card",
+                        "zone": "library"
+                      },
+                      "op": "put_on_top"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put it on the bottom of your library?"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "top_card"
+                  },
+                  "op": "return_to_hand"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": 3,
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "distribute_counters"
+            },
+            {
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "add_poison",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "kind": "triggered",
+              "targets": [
+                {
+                  "count": 1,
+                  "id": "t1",
+                  "kind": "player",
+                  "selector": {
+                    "controller": "opponent"
+                  }
+                }
+              ],
+              "text": "Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.",
+              "trigger": {
+                "controller": "you",
+                "event": "spell_cast",
+                "filter": {
+                  "any_types": [
+                    "Creature",
+                    "Planeswalker"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "id": "ajani_sleeper_agent",
+      "keywords": [
+        "compleated"
+      ],
+      "loyalty": 4,
+      "mana_cost": "{1}{G}{G/W/P}{W}",
+      "name": "Ajani, Sleeper Agent",
+      "oracle_text": "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library.\n−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.\n−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\"",
+      "source": "auto",
+      "subtypes": [
+        "Ajani"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -26646,6 +26832,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "double_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, double the number of each kind of counter on any number of target permanents.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "deepglow_skate",
+      "mana_cost": "{4}{U}",
+      "name": "Deepglow Skate",
+      "oracle_text": "When this creature enters, double the number of each kind of counter on any number of target permanents.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Fish"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -28590,6 +28826,40 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead",
+          "token_multiplier": 2
+        },
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "counter_multiplier": 2,
+          "effect": "replace_counters",
+          "effects_only": true,
+          "kind": "static",
+          "text": "If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "doubling_season",
+      "mana_cost": "{4}{G}",
+      "name": "Doubling Season",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -28607,6 +28877,130 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": -3
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "lock_abilities"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−1: You gain 2 life and draw a card."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You get an emblem with \"Your opponents can't untap more than two permanents during their untap steps.\""
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "any"
+              },
+              "affects_player": "opponent",
+              "amount": {
+                "const": 2
+              },
+              "effect": "untap_limit",
+              "kind": "static",
+              "text": "Your opponents can't untap more than two permanents during their untap steps."
+            }
+          ]
+        }
+      ],
+      "id": "dovin_baan",
+      "loyalty": 3,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Dovin Baan",
+      "oracle_text": "+1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.\n−1: You gain 2 life and draw a card.\n−7: You get an emblem with \"Your opponents can't untap more than two permanents during their untap steps.\"",
+      "source": "auto",
+      "subtypes": [
+        "Dovin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -54079,6 +54473,98 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{G}: Level 2"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "has_counters": true
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "level": 2,
+          "text": "Permanents you control with counters on them have ward {1}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{3}{G}: Level 3"
+        },
+        {
+          "affects_player": "any",
+          "counter_multiplier": 2,
+          "effect": "replace_counters",
+          "kind": "static",
+          "level": 3,
+          "put_by": "you",
+          "text": "If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "innkeeper_s_talent",
+      "mana_cost": "{1}{G}",
+      "name": "Innkeeper's Talent",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of combat on your turn, put a +1/+1 counter on target creature you control.\n{G}: Level 2\nPermanents you control with counters on them have ward {1}.\n{3}{G}: Level 3\nIf you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

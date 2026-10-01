@@ -103,6 +103,17 @@
   "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
+  "ajani_sleeper_agent": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "ajani_steadfast": {
     "battlefield_count": 33,
     "counters": {
@@ -2451,6 +2462,10 @@
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },
+  "deepglow_skate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deer_dog": {
     "zone": "battlefield"
   },
@@ -2636,7 +2651,19 @@
       "0": 46
     }
   },
+  "doubling_season": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "douser_of_lights": {
+    "zone": "battlefield"
+  },
+  "dovin_baan": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "dracogenesis": {
@@ -4964,6 +4991,10 @@
     "zone": "battlefield"
   },
   "inkwell_leviathan": {
+    "zone": "battlefield"
+  },
+  "innkeeper_s_talent": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inquisitor_s_flail": {

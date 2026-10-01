@@ -3,16 +3,16 @@
   "name": "Ashiok, Nightmare Weaver",
   "oracle_text": "+2: Exile the top three cards of target opponent's library.\n−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.\n−10: Exile all cards from all opponents' hands and graveyards.",
   "blocked_sentences": [
-    "−X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types."
+    "+2: Exile the top three cards of target opponent's library."
   ],
   "needs": [
     {
-      "capability": "loyalty_x",
-      "kind": "cost",
-      "what": "a variable loyalty cost \"−X\" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {\"x\": ...}` on a `put_onto_battlefield` over `{\"zone\": \"exile\", \"exiled_with\": \"self\", \"types\": [\"Creature\"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.",
-      "why_existing_wont_do": "Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount."
+      "capability": "exile_top_linked",
+      "kind": "op",
+      "what": "exile the top N cards of a (target player's) library while writing the `exiled_by` link to the source, so the planeswalker's later −X can find them with `{\"zone\": \"exile\", \"exiled_with\": \"self\"}` -- e.g. `link: true` honoured on `look_at_top` with `destination: \"exile\"` and `objects: {\"count\": \"all\"}` (writing `exiled_by` after the move), or a `top: N` selector key usable by the `exile` op over `{\"zone\": \"library\", \"player\": {\"target\": \"t1\"}}`. The rest of the card is now expressible: −X is `cost.loyalty_x` + `choose_permanents` over `{zone: exile, controller: any, exiled_with: self, types: [Creature], mana_value: {op: =, value: {x: true}}, count: 1, as: ...}` then `put_onto_battlefield` (controller you) and `add_subtype` Nightmare on that binding; −10 is `exile` over opponents' hands and graveyards.",
+      "why_existing_wont_do": "`look_at_top` exiles the top N but `_move_found` deliberately writes no `exiled_by` (docs/card-dsl.md, `as` section), so `exiled_with: self` matches nothing; its `as` binding lives for one resolution only, while the −X is a later activation. The `exile` op writes the link (`link`/`until_leaves`) but its selector has no way to say 'the top three cards of a library' -- a `count: 3` over a library zone is a player choice, not the top three. Exiling the look_at_top binding a second time with `link` would move exile->exile and fire a spurious zone change."
     }
   ],
-  "closest_existing": ["loyalty", "x_value", "remove_counters", "put_onto_battlefield", "add_subtype"],
+  "closest_existing": ["look_at_top", "exile", "hideaway"],
   "confidence": "high"
 }

@@ -10,36 +10,34 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**41 cards** blocked by **41** capabilities.
+**36 cards** blocked by **39** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [until-your-next-turn](#until-your-next-turn) | 7 | 1139 | engine, op |
-| [loyalty-x](#loyalty-x) | 4 | 8994 | cost |
-| [double-counters](#double-counters) | 3 | 190 | op, replacement |
+| [until-your-next-turn](#until-your-next-turn) | 6 | 1139 | engine, op |
+| [loyalty-x](#loyalty-x) | 3 | 8994 | cost |
 | [can-be-commander](#can-be-commander) | 2 | 4330 | engine |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [compleated](#compleated) | 2 | 6703 | keyword, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 1512 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game-static](#cant-lose-the-game-static) | 1 | 10717 | static_effect |
 | [cast-only-at-sorcery-speed](#cast-only-at-sorcery-speed) | 1 | 1139 | static_effect |
+| [compleated](#compleated) | 1 | 8994 | keyword |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [enters-with-additional-counters](#enters-with-additional-counters) | 1 | 7381 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [exile-top-linked](#exile-top-linked) | 1 | 11489 | op |
 | [extra-loyalty-activation](#extra-loyalty-activation) | 1 | 2923 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
-| [has-counters-filter](#has-counters-filter) | 1 | 674 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [loyalty-activations-this-turn](#loyalty-activations-this-turn) | 1 | 2923 | value |
@@ -58,12 +56,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 
 ## until-your-next-turn
 
-Blocks **7** cards.
+Blocks **6** cards.
 
-- **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -3/-0 set by a planeswalker's loyalty ability lasts through the opponent's turn and is cleared in the controller's next untap step
-  <br>Why the existing vocabulary won't do: `pump` carries no duration in its implementation (op_pump always calls `pump`, an until_eot TempEffect cleared at cleanup), so the -3/-0 would expire before the opponent's turn -- exactly when the card matters
-- **(op)** a `duration: "until_your_next_turn"` on `lock_abilities` ("its activated abilities can't be activated until your next turn"), cleared in the granting player's untap step
-  <br>Why the existing vocabulary won't do: `lock_abilities` takes only `objects` and records an until_eot TempEffect, so the lock ends at this turn's cleanup and the opponent can activate freely on their turn
 - **(op)** a `duration: "until_your_next_turn"` on `pump`, so a -2/-1 set by a loyalty ability lasts through the opponents' turns and is cleared in the controller's next untap step (as turn._untap_step already does for block prohibitions, unblockables, life locks and cast locks)
   <br>Why the existing vocabulary won't do: op_pump (ops_characteristics.py) reads only power, toughness and objects and always wears off at cleanup; `duration` is listed in op_options for pump but is ignored, so writing it would silently end the -2/-1 at end of this turn
 - **(op)** a `duration: "until_your_next_turn"` option on the `animate` op (and on the keyword it grants), so a land becomes a 5/5 Elemental creature with haste that stays animated through opponents' turns and ends in the controller's next untap step
@@ -93,17 +87,13 @@ Blocks **7** cards.
   - +1: Up to one target creature gets -2/-1 until your next turn.
 - **Sorin, Solemn Visitor** (rank 11301) — `sorin_solemn_visitor`
   - +1: Until your next turn, creatures you control get +1/+0 and gain lifelink.
-- **Dovin Baan** (rank 12562) — `dovin_baan`
-  - +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.
 
 </details>
 
 ## loyalty-x
 
-Blocks **4** cards.
+Blocks **3** cards.
 
-- **(cost)** a variable loyalty cost "−X" (606.4 / 107.3): the controller announces X on activation, removes X loyalty counters from the planeswalker as the cost (payable only if it has at least X), and the ability's effects read that X via the `x` value -- here as `mana_value: {"x": ...}` on a `put_onto_battlefield` over `{"zone": "exile", "exiled_with": "self", "types": ["Creature"]}` followed by `add_subtype` Nightmare on the moved card. The +2 must also exile with a link (`exile` op's `link`) so `exiled_with: self` finds those cards.
-  <br>Why the existing vocabulary won't do: Cost.loyalty is a signed int only (schema.py) -- there is no way to write X; `x_value` fills an {X} in a mana cost, not a loyalty cost; `remove_counters` as a cost would drop the loyalty-ability status (606.3 once-per-turn, sorcery timing and interaction with loyalty-ability statics are keyed on cost.loyalty being set) and has no announced-X amount.
 - **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
   <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
 - **(cost)** a -X loyalty cost where the controller chooses X (removing X loyalty counters) and X is readable by the ability effects (damage X to target creature or planeswalker, gain X life)
@@ -120,35 +110,10 @@ Blocks **4** cards.
 - **Sorin, Grim Nemesis** (rank 9535) — `sorin_grim_nemesis`
   - âˆ’X: Sorin deals X damage to target creature or planeswalker and you gain X life
   - âˆ’9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players
-- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
-  - −X: Put a creature card with mana value X exiled with Ashiok onto the battlefield under your control. That creature is a Nightmare in addition to its other types.
 - **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
   - Each other planeswalker you control has the loyalty abilities of Kasmina.
   - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
   - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
-
-</details>
-
-## double-counters
-
-Blocks **3** cards.
-
-- **(op)** an op that, for each object in `objects`, reads every kind of counter currently on it and puts that many more of each kind on it (doubling each kind independently, including counters of kinds not known at authoring time), used with a target of `up_to` any number of permanents
-  <br>Why the existing vocabulary won't do: add_counters takes a single named `counter` kind, so it cannot iterate over whatever kinds a permanent happens to carry; `counters_on` reads only a named kind; move_counters has `all_kinds` but moves between objects rather than adding a copy of each kind to the same object; proliferate adds only one of each kind and is itself a known simplification; for_each iterates objects, not counter kinds
-- **(replacement)** a replace_counters static that applies only to counters put on by an EFFECT, not to counters put on as a COST -- e.g. an `effects_only: true` key on replace_counters, with the loyalty-cost payment in costs.py (`cost.loyalty > 0` -> add_counters) marking its placement as a cost so counter_placement_replacements skips it. Per the Doubling Season ruling, a planeswalker's +N loyalty ability puts N counters (the cost is not doubled), while a planeswalker entering with loyalty, add_counters, proliferate, etc. are doubled.
-  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier: 2 and affects {controller: you} is the documented shape, but it is read in primitives.add_counters, the single funnel that costs.py also calls to pay a positive loyalty cost; nothing on the call or the static distinguishes cost from effect. So every +1 loyalty activation would become +2 -- a strictly stronger card, and visible in this Atraxa deck, which runs several planeswalkers. (The token sentence is expressible: replace_token_creation with token_multiplier: 2.)
-- **(replacement)** a static replacement that doubles every counter of every kind the controller would put on any permanent or any player (Doubling Season / Innkeeper's Talent level 3)
-  <br>Why the existing vocabulary won't do: replace_counters with counter_multiplier is the closest, but the known simplification does not cover counters placed on players nor every kind on every permanent; listed as a known gap by the orchestrator
-
-<details><summary>Cards waiting on this</summary>
-
-- **Doubling Season** (rank 190) — `doubling_season`
-  - If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.
-- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
-  - Permanents you control with counters on them have ward {1}.
-  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
-- **Deepglow Skate** (rank 1835) — `deepglow_skate`
-  - When this creature enters, double the number of each kind of counter on any number of target permanents.
 
 </details>
 
@@ -203,27 +168,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## compleated
-
-Blocks **2** cards.
-
-- **(replacement)** a planeswalker enters-with-loyalty replacement: if life was paid for any Phyrexian pip while casting it, it enters with two fewer loyalty counters (rule 702.150)
-  <br>Why the existing vocabulary won't do: Casting already lets a Phyrexian pip be bought with 2 life (paying_phyrexian), but nothing records that life was paid for the cast spell and nothing reduces starting loyalty; no keyword, condition (cost_option/was_cast) or card-level key covers it
-- **(keyword)** The Compleated keyword: when a Phyrexian hybrid symbol {G/U/P} in the planeswalker's cost is paid with 2 life, it enters with two fewer loyalty counters per such symbol paid with life
-  <br>Why the existing vocabulary won't do: The keyword list has no compleated, and no card-level cost key or condition reads whether Phyrexian mana was paid with life to reduce starting loyalty; `loyalty` is a fixed integer on the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
-  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
-- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
-  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
-  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
 
 </details>
 
@@ -318,6 +262,22 @@ Blocks **1** card.
 
 </details>
 
+## compleated
+
+Blocks **1** card.
+
+- **(keyword)** The Compleated keyword: when a Phyrexian hybrid symbol {G/U/P} in the planeswalker's cost is paid with 2 life, it enters with two fewer loyalty counters per such symbol paid with life
+  <br>Why the existing vocabulary won't do: The keyword list has no compleated, and no card-level cost key or condition reads whether Phyrexian mana was paid with life to reduce starting loyalty; `loyalty` is a fixed integer on the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tamiyo, Compleated Sage** (rank 8994) — `tamiyo_compleated_sage`
+  - Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
+  - −X: Exile target nonland permanent card with mana value X from your graveyard. Create a token that's a copy of that card.
+  - −7: Create Tamiyo's Notebook, a legendary colorless Book artifact token with "Spells you cast cost {2} less to cast" and "{T}: Draw a card."
+
+</details>
+
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -372,21 +332,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## distribute-counters
-
-Blocks **1** card.
-
-- **(op)** place N +1/+1 counters divided as the controller chooses among up to N target creatures (each target gets at least one), with the division chosen on activation (rule 601.2d)
-  <br>Why the existing vocabulary won't do: add_counters takes one amount applied to every object it names; target_keys has count/up_to but no division; no op or decision distributes a total among targets
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ajani, Sleeper Agent** (rank 6703) — `ajani_sleeper_agent`
-  - Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)
-  - −3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.
 
 </details>
 
@@ -450,6 +395,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-top-linked
+
+Blocks **1** card.
+
+- **(op)** exile the top N cards of a (target player's) library while writing the `exiled_by` link to the source, so the planeswalker's later −X can find them with `{"zone": "exile", "exiled_with": "self"}` -- e.g. `link: true` honoured on `look_at_top` with `destination: "exile"` and `objects: {"count": "all"}` (writing `exiled_by` after the move), or a `top: N` selector key usable by the `exile` op over `{"zone": "library", "player": {"target": "t1"}}`. The rest of the card is now expressible: −X is `cost.loyalty_x` + `choose_permanents` over `{zone: exile, controller: any, exiled_with: self, types: [Creature], mana_value: {op: =, value: {x: true}}, count: 1, as: ...}` then `put_onto_battlefield` (controller you) and `add_subtype` Nightmare on that binding; −10 is `exile` over opponents' hands and graveyards.
+  <br>Why the existing vocabulary won't do: `look_at_top` exiles the top N but `_move_found` deliberately writes no `exiled_by` (docs/card-dsl.md, `as` section), so `exiled_with: self` matches nothing; its `as` binding lives for one resolution only, while the −X is a later activation. The `exile` op writes the link (`link`/`until_leaves`) but its selector has no way to say 'the top three cards of a library' -- a `count: 3` over a library zone is a player choice, not the top three. Exiling the look_at_top binding a second time with `link` would move exile->exile and fire a spurious zone change.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashiok, Nightmare Weaver** (rank 11489) — `ashiok_nightmare_weaver`
+  - +2: Exile the top three cards of target opponent's library.
+
+</details>
+
 ## extra-loyalty-activation
 
 Blocks **1** card.
@@ -493,21 +452,6 @@ Blocks **1** card.
   - Each other planeswalker you control has the loyalty abilities of Kasmina.
   - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
   - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
-
-</details>
-
-## has-counters-filter
-
-Blocks **1** card.
-
-- **(selector)** a static_filter_key matching permanents that have one or more counters (of any kind) on them, so a static grant (ward {1}) applies dynamically to 'permanents you control with counters on them'
-  <br>Why the existing vocabulary won't do: static_filter_keys (types, controller, tapped, keywords, power, ...) read only printed/state characteristics and have nothing for counters; counters_on exists only as a value, not a filter, so the ward static's `affects` cannot be narrowed to permanents with counters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Innkeeper's Talent** (rank 674) — `innkeeper_s_talent`
-  - Permanents you control with counters on them have ward {1}.
-  - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
 
 </details>
 
