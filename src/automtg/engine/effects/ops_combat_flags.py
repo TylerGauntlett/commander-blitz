@@ -7,11 +7,11 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..errors import DslError
-from ..events import EventType
 from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
 from ..primitives import (
     add_counters,
+    add_poison,
     forbid_block,
     forbid_sacrifice,
     goad_creature,
@@ -124,15 +124,11 @@ def _proliferate_once(ctx: EffectContext):
     ]
     for ref, kinds in plan:
         if ref.kind == "player":
-            player = state.players[ref.id]
-            player.poison += 1
-            state.emit(
-                EventType.POISON_ADDED,
-                player=ref.id,
-                source=ctx.source_oid,
-                amount=1,
-                total=player.poison,
-            )
+            # Through `add_poison`, the one funnel for poison, so a counter
+            # replacement that reaches players (Innkeeper's Talent's "...on a
+            # permanent or player") applies -- writing the field directly
+            # skipped it.
+            add_poison(state, ref.id, 1, source=ctx.source_oid, by=ctx.controller)
             continue
         obj = state.objects.get(ref.id)
         if obj is None or not obj.on_battlefield:
