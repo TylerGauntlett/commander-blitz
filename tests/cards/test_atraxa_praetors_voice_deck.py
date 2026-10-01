@@ -36,8 +36,6 @@ Plains to cast it with, is a reason for priority to stop.
 
 from __future__ import annotations
 
-import pytest
-
 from automtg.engine import legality
 from automtg.engine.characteristics import chars
 from automtg.engine.cost_reduction import cost_reduction
@@ -805,11 +803,37 @@ class TestDeepglowSkate:
         )
         return game.pending()
 
+    def pick(self, game, *oids):
+        """Answer the targeting one permanent at a time, then stop -- "any
+        number" is asked as a pick-then-done, so any subset can be chosen."""
+        self.target_decision(game)
+        for oid in oids:
+            game.apply(
+                next(
+                    a
+                    for a in game.legal_actions()
+                    if a.kind is ActionKind.CHOOSE and a.targets and a.targets[0].id == oid
+                )
+            )
+        done = next(
+            (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION), None
+        )
+        if done is not None:
+            game.apply(done)
+
+    def test_every_permanent_is_offered_one_at_a_time(self, builder):
+        """Each legal permanent is its own option, so the choice is the player's
+        rather than a list of pre-built subsets cut at the option limit."""
+        game, walker, bear, theirs = self.board(builder)
+        decision = self.target_decision(game)
+        offered = {o.ref.id for o in decision.options if o.ref is not None}
+        assert {walker, bear, theirs} <= offered
+        assert decision.min_count == 0
+
     def test_it_doubles_each_kind_on_each_chosen_permanent(self, builder):
         """Every permanent chosen -- the option the engine offers first."""
         game, walker, bear, theirs = self.board(builder)
-        decision = self.target_decision(game)
-        game.apply(next(a for a in game.legal_actions() if a.choice == decision.options[0].value))
+        self.pick(game, walker, bear, theirs)
         resolve(game)
 
         assert loyalty(game, walker) == 8
@@ -819,24 +843,11 @@ class TestDeepglowSkate:
             "nothing to double stays nothing"
         )
 
-    @pytest.mark.xfail(
-        reason=(
-            "a trigger's 'any number of target permanents' is enumerated as whole "
-            "subsets, largest first, cut at targeting.MAX_TARGET_OPTIONS (12): on a "
-            "real board the small pick (just your walker and creature) is never offered"
-        ),
-        strict=True,
-    )
     def test_it_can_double_just_your_own_two(self, builder):
         """ "any number of **target** permanents" -- the superfriends pick is your
         walker and your creature, and never the opponent's walker."""
         game, walker, bear, theirs = self.board(builder)
-        decision = self.target_decision(game)
-        wanted = next(
-            (o for o in decision.options if o.label == "Test Walker, Test Bear"), None
-        )
-        assert wanted is not None, "the two-permanent pick was not offered"
-        game.apply(next(a for a in game.legal_actions() if a.choice == wanted.value))
+        self.pick(game, walker, bear)
         resolve(game)
 
         assert loyalty(game, walker) == 8
