@@ -5244,10 +5244,26 @@
   "kasimir_the_lone_wolf": {
     "zone": "battlefield"
   },
+  "kasmina_enigmatic_mentor": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "kavu_climber": {
     "hand_size": {
       "0": 2
     }
+  },
+  "kaya_the_inexorable": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
   },
   "kazandu_refuge": {
     "life": {
@@ -5347,6 +5363,14 @@
     "battlefield_count": 33,
     "counters": {
       "amount": 7,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "kiora_master_of_the_depths": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
       "kind": "loyalty"
     },
     "zone": "battlefield"
@@ -6949,6 +6973,10 @@
     },
     "zone": "battlefield"
   },
+  "oath_of_nissa": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ob_nixilis_reignited": {
     "battlefield_count": 33,
     "counters": {
@@ -7035,6 +7063,14 @@
     "zone": "battlefield"
   },
   "oko_s_accomplices": {
+    "zone": "battlefield"
+  },
+  "oko_thief_of_crowns": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "old_ghastbark": {

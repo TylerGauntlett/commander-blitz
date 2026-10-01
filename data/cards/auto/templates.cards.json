@@ -57621,6 +57621,76 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "spell_cost_increase",
+          "kind": "static",
+          "targeting": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "you"
+          },
+          "text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "wizard_2_2_u"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kasmina_enigmatic_mentor",
+      "loyalty": 5,
+      "mana_cost": "{3}{U}",
+      "name": "Kasmina, Enigmatic Mentor",
+      "oracle_text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.\n−2: Create a 2/2 blue Wizard creature token. Draw a card, then discard a card.",
+      "source": "auto",
+      "subtypes": [
+        "Kasmina"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -57656,6 +57726,180 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "ghostform",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\""
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Exile target nonland permanent."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\""
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "op": "cast_from_hand",
+                  "selector": {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  "zones": [
+                    "hand",
+                    "graveyard",
+                    "exile"
+                  ]
+                }
+              ],
+              "kind": "triggered",
+              "text": "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.",
+              "trigger": {
+                "controller": "you",
+                "event": "upkeep"
+              }
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "union": [
+                  {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  {
+                    "self_only": true,
+                    "zone": "exile"
+                  }
+                ]
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "any",
+            "event": "leaves_battlefield",
+            "source": "self",
+            "to_zones": [
+              "graveyard",
+              "exile"
+            ]
+          }
+        }
+      ],
+      "id": "kaya_the_inexorable",
+      "loyalty": 5,
+      "mana_cost": "{3}{W}{B}",
+      "name": "Kaya the Inexorable",
+      "oracle_text": "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\"\n−3: Exile target nonland permanent.\n−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\"",
+      "source": "auto",
+      "subtypes": [
+        "Kaya"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -58902,6 +59146,186 @@
       "mana_cost": "{2}{G/U}",
       "name": "Kiora, Behemoth Beckoner",
       "oracle_text": "Whenever a creature you control with power 4 or greater enters, draw a card.\n−1: Untap target permanent.",
+      "source": "auto",
+      "subtypes": [
+        "Kiora"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "id": "t2",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Untap up to one target creature and up to one target land."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destinations": [
+                {
+                  "count": 1,
+                  "selector": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "to": "hand",
+                  "up_to": true
+                },
+                {
+                  "count": 1,
+                  "selector": {
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "to": "hand",
+                  "up_to": true
+                }
+              ],
+              "op": "look_at_top",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "octopus_8_8_u"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: You get an emblem with \"Whenever a creature you control enters, you may have it fight target creature.\" Then create three 8/8 blue Octopus creature tokens."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "subject"
+                      },
+                      "op": "fight",
+                      "other": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Have it fight target creature?"
+                }
+              ],
+              "kind": "triggered",
+              "targets": [
+                {
+                  "count": 1,
+                  "id": "t1",
+                  "kind": "permanent",
+                  "selector": {
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              ],
+              "text": "Whenever a creature you control enters, you may have it fight target creature.",
+              "trigger": {
+                "controller": "you",
+                "event": "permanent_enters",
+                "filter": {
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "id": "kiora_master_of_the_depths",
+      "loyalty": 4,
+      "mana_cost": "{2}{G}{U}",
+      "name": "Kiora, Master of the Depths",
+      "oracle_text": "+1: Untap up to one target creature and up to one target land.\n−2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.\n−8: You get an emblem with \"Whenever a creature you control enters, you may have it fight target creature.\" Then create three 8/8 blue Octopus creature tokens.",
       "source": "auto",
       "subtypes": [
         "Kiora"
@@ -76355,6 +76779,64 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Land",
+                  "Planeswalker"
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Oath of Nissa enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "spend_mana_as_any_color",
+          "kind": "static",
+          "text": "You may spend mana as though it were mana of any color to cast planeswalker spells."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "oath_of_nissa",
+      "mana_cost": "{G}",
+      "name": "Oath of Nissa",
+      "oracle_text": "When Oath of Nissa enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.\nYou may spend mana as though it were mana of any color to cast planeswalker spells.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },
@@ -77873,6 +78355,146 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: Create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")"
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "lose_all_abilities"
+            },
+            {
+              "colors": [
+                "G"
+              ],
+              "duration": "permanent",
+              "exact": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elk"
+              ],
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3."
+        },
+        {
+          "cost": {
+            "loyalty": -5
+          },
+          "effects": [
+            {
+              "first": {
+                "target": "t1"
+              },
+              "op": "exchange_control",
+              "second": {
+                "target": "t2"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "id": "t2",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "oko_thief_of_crowns",
+      "loyalty": 4,
+      "mana_cost": "{1}{G}{U}",
+      "name": "Oko, Thief of Crowns",
+      "oracle_text": "+2: Create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n+1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3.\n−5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.",
+      "source": "auto",
+      "subtypes": [
+        "Oko"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {

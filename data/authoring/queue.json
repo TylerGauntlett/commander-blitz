@@ -146512,12 +146512,12 @@
     },
     "Kasmina, Enigmatic Mentor": {
       "edhrec_rank": 6632,
-      "gate": "template",
+      "gate": null,
       "name": "Kasmina, Enigmatic Mentor",
-      "reason": "no template for: Spells your opponents cast that target a creature or planeswalker you control cost {2} mor",
+      "reason": "",
       "scryfall_id": "ca2b53e2-aa6a-4cb2-899c-8e022e822ffc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kassandra, Eagle Bearer": {
@@ -146922,12 +146922,12 @@
     },
     "Kaya the Inexorable": {
       "edhrec_rank": 6000,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya the Inexorable",
-      "reason": "no template for: +1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this cre",
+      "reason": "",
       "scryfall_id": "166c0bd1-b59d-4644-832f-888a4ca3a0aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kaya the Inexorable Emblem": {
@@ -149482,12 +149482,12 @@
     },
     "Kiora, Master of the Depths": {
       "edhrec_rank": 8946,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora, Master of the Depths",
-      "reason": "no template for: +1: Untap up to one target creature and up to one target land",
+      "reason": "",
       "scryfall_id": "4b63c228-3265-4029-9bc0-36b3e31dfb53",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kiora, Master of the Depths Emblem": {
@@ -190202,12 +190202,12 @@
     },
     "Oath of Nissa": {
       "edhrec_rank": 7715,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Nissa",
-      "reason": "no template for: When enters, look at the top three cards of your library. You may reveal a creature, land,",
+      "reason": "",
       "scryfall_id": "35b8ec5d-bb33-4733-883e-9002951ae2fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oath of Scholars": {
@@ -191882,12 +191882,12 @@
     },
     "Oko, Thief of Crowns": {
       "edhrec_rank": 2058,
-      "gate": "template",
+      "gate": null,
       "name": "Oko, Thief of Crowns",
-      "reason": "no template for: +2: Create a Food token",
+      "reason": "",
       "scryfall_id": "016b0750-d48d-4b6e-ac9c-a7904371a914",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oko, the Ringleader": {

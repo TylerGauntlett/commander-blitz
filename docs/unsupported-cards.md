@@ -10,35 +10,31 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**46 cards** blocked by **49** capabilities.
+**41 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [until-your-next-turn](#until-your-next-turn) | 7 | 1139 | engine, op |
 | [loyalty-x](#loyalty-x) | 4 | 8994 | cost |
 | [double-counters](#double-counters) | 3 | 190 | op, replacement |
+| [can-be-commander](#can-be-commander) | 2 | 4330 | engine |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [compleated](#compleated) | 2 | 6703 | keyword, replacement |
 | [lose-the-game](#lose-the-game) | 2 | 1512 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [can-be-commander](#can-be-commander) | 1 | 4330 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-lose-the-game-static](#cant-lose-the-game-static) | 1 | 10717 | static_effect |
-| [cast-free-from-zones](#cast-free-from-zones) | 1 | 6000 | op |
 | [cast-only-at-sorcery-speed](#cast-only-at-sorcery-speed) | 1 | 1139 | static_effect |
-| [choose-direction](#choose-direction) | 1 | 4736 | decision |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
-| [dies-or-exiled-trigger](#dies-or-exiled-trigger) | 1 | 6000 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters](#distribute-counters) | 1 | 6703 | op |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [enters-with-additional-counters](#enters-with-additional-counters) | 1 | 7381 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
-| [exchange-control](#exchange-control) | 1 | 2058 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-loyalty-activation](#extra-loyalty-activation) | 1 | 2923 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -46,21 +42,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [has-counters-filter](#has-counters-filter) | 1 | 674 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [look-at-top-typed-picks](#look-at-top-typed-picks) | 1 | 8946 | op |
 | [loyalty-activations-this-turn](#loyalty-activations-this-turn) | 1 | 2923 | value |
 | [missing-token](#missing-token) | 1 | 7322 | token |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [permanent-animate](#permanent-animate) | 1 | 2058 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-cost-increase-mana](#spell-cost-increase-mana) | 1 | 6632 | static_effect |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spend-mana-as-any-color-spell-filter](#spend-mana-as-any-color-spell-filter) | 1 | 7715 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
@@ -157,6 +149,24 @@ Blocks **3** cards.
   - If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.
 - **Deepglow Skate** (rank 1835) — `deepglow_skate`
   - When this creature enters, double the number of each kind of counter on any number of target permanents.
+
+</details>
+
+## can-be-commander
+
+Blocks **2** cards.
+
+- **(engine)** A card-level flag for the printed deck-building permission "<this card> can be your commander" (rule 903.3d) that the residual gate recognises as claiming that line and `registry.validate_deck` reads -- the same need as Teferi, Temporal Archmage's gap record.
+  <br>Why the existing vocabulary won't do: No card-level key says anything about commander eligibility and `verify._covered` has no claimant for the line; it is neither an activated, triggered nor static ability. The -6 is now `rotate_control` with objects {not_types: [Land], exclude_self: true}.
+- **(engine)** A card-level flag (e.g. `can_be_commander: true`) for the printed deck-building permission "<this card> can be your commander" (rule 903.3d), which the residual gate recognises as claiming that line, and which `registry.validate_deck` reads so that only legendary creatures and cards carrying the flag are legal commanders.
+  <br>Why the existing vocabulary won't do: No key in card_level_cost_keys, card_level_face_keys or card_level_rider_keys says anything about commander eligibility, and `verify._covered` has no claimant for the line, so it can only be claimed by an ability whose text is that sentence -- but it is neither an activated, triggered nor static ability and no static_effect means it. `registry.validate_deck` meanwhile accepts ANY legendary planeswalker as commander (`card.is_creature or "Planeswalker" in card.types`), which is broader than the printed rule, so the permission is not modelled per card. The other three lines are expressible: +1 is look_at_top amount 2 to hand with rest_to_bottom; -1 is untap over a permanent target with count 4 and up_to; -10 is the emblem op with an emblem static activate_loyalty_as_though_instant whose affects is {controller: you, types: [Planeswalker]} (command-zone statics are gathered by _command_zone_statics).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi, Temporal Archmage** (rank 4330) — `teferi_temporal_archmage`
+  - Teferi, Temporal Archmage can be your commander.
+- **Aminatou, the Fateshifter** (rank 4736) — `aminatou_the_fateshifter`
+  - Aminatou, the Fateshifter can be your commander.
 
 </details>
 
@@ -265,20 +275,6 @@ Blocks **1** card.
 
 </details>
 
-## can-be-commander
-
-Blocks **1** card.
-
-- **(engine)** A card-level flag (e.g. `can_be_commander: true`) for the printed deck-building permission "<this card> can be your commander" (rule 903.3d), which the residual gate recognises as claiming that line, and which `registry.validate_deck` reads so that only legendary creatures and cards carrying the flag are legal commanders.
-  <br>Why the existing vocabulary won't do: No key in card_level_cost_keys, card_level_face_keys or card_level_rider_keys says anything about commander eligibility, and `verify._covered` has no claimant for the line, so it can only be claimed by an ability whose text is that sentence -- but it is neither an activated, triggered nor static ability and no static_effect means it. `registry.validate_deck` meanwhile accepts ANY legendary planeswalker as commander (`card.is_creature or "Planeswalker" in card.types`), which is broader than the printed rule, so the permission is not modelled per card. The other three lines are expressible: +1 is look_at_top amount 2 to hand with rest_to_bottom; -1 is untap over a permanent target with count 4 and up_to; -10 is the emblem op with an emblem static activate_loyalty_as_though_instant whose affects is {controller: you, types: [Planeswalker]} (command-zone statics are gathered by _command_zone_statics).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Temporal Archmage** (rank 4330) — `teferi_temporal_archmage`
-  - Teferi, Temporal Archmage can be your commander.
-
-</details>
-
 ## cant-be-countered
 
 Blocks **1** card.
@@ -307,21 +303,6 @@ Blocks **1** card.
 
 </details>
 
-## cast-free-from-zones
-
-Blocks **1** card.
-
-- **(op)** an op letting the player cast one spell matching a selector (supertypes Legendary) from their hand, their graveyard, or exile cards they own, without paying its mana cost, as an optional choice at resolution
-  <br>Why the existing vocabulary won't do: cast_from_hand takes only player/selector and reads the hand only; look_at_top/reveal_until cast_free only cast from the top of the library; grant_playable/play_exiled give permission but not a free cast now across three zones
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
-  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
-  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
-
-</details>
-
 ## cast-only-at-sorcery-speed
 
 Blocks **1** card.
@@ -334,20 +315,6 @@ Blocks **1** card.
 - **Teferi, Time Raveler** (rank 1139) — `teferi_time_raveler`
   - Each opponent can cast spells only any time they could cast a sorcery.
   - +1: Until your next turn, you may cast sorcery spells as though they had flash.
-
-</details>
-
-## choose-direction
-
-Blocks **1** card.
-
-- **(decision)** A 'choose left or right' decision whose answer is bound, plus a player spec 'the next player in the chosen direction' relative to a for_each_player binding (seat-order neighbour: left = next in turn order, right = previous), so that inside for_each_player a gain_control can take objects {controller: <neighbour of each_player>, not_types: [Land], exclude_self: true} with player = each_player. All control changes must be simultaneous (the permanents are snapshotted before any control moves), otherwise the rotation cascades.
-  <br>Why the existing vocabulary won't do: choose_player picks an arbitrary player, not a seat-relative neighbour; for_each_player + gain_control can hand each player objects, but no player spec or selector key (controller/owner/binding) expresses 'the next player to the left/right of the bound player', and sequential per-player gain_control would re-read already-moved permanents instead of rotating the board simultaneously
-
-<details><summary>Cards waiting on this</summary>
-
-- **Aminatou, the Fateshifter** (rank 4736) — `aminatou_the_fateshifter`
-  - −6: Choose left or right. Each player gains control of all nonland permanents other than Aminatou controlled by the next player in the chosen direction.
 
 </details>
 
@@ -391,21 +358,6 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-
-</details>
-
-## dies-or-exiled-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a self trigger for 'When this creature dies or is put into exile' -- fires when the permanent goes from the battlefield to the graveyard OR to exile, and whose effects can return that card from whichever zone it landed in to its owner's hand
-  <br>Why the existing vocabulary won't do: trigger_events has 'dies' and 'leaves_battlefield', but nothing documents a destination filter on leaves_battlefield to restrict it to graveyard-or-exile (bounce/tuck must not fire it), and return_to_hand/return_from_graveyard are not documented to follow the card into exile
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kaya the Inexorable** (rank 6000) — `kaya_the_inexorable`
-  - +1: Put a ghostform counter on up to one target nontoken creature. It gains "When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying."
-  - −7: You get an emblem with "At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost."
 
 </details>
 
@@ -480,21 +432,6 @@ Blocks **1** card.
 
 - **Underworld Breach** (rank 388) — `underworld_breach`
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-
-</details>
-
-## exchange-control
-
-Blocks **1** card.
-
-- **(op)** an atomic exchange of control between two targeted permanents (701.12): each controller gains control of the other's permanent, permanently; if either target is illegal on resolution, or both have the same controller, no exchange happens at all
-  <br>Why the existing vocabulary won't do: gain_control moves one set of objects to one player. Two gain_control ops are not an exchange: the second would need 'the player who controlled the other target' as its player (no such player spec), and if one target became illegal the other half would still happen, which 701.12b forbids. aura_swap is an exchange but only Aura-in-hand for Aura-on-battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oko, Thief of Crowns** (rank 2058) — `oko_thief_of_crowns`
-  - +1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3.
-  - −5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.
 
 </details>
 
@@ -602,21 +539,6 @@ Blocks **1** card.
 
 </details>
 
-## look-at-top-typed-picks
-
-Blocks **1** card.
-
-- **(op)** look_at_top picking up to one card of each of several distinct type filters (one creature card and one land card) into hand, rest to graveyard
-  <br>Why the existing vocabulary won't do: look_at_top's objects is a single selector with a count: count 2 over Creature-or-Land would allow two creatures or two lands; destinations entries carry a count and zone but no per-destination type filter, and no shipped card uses a per-type 'and/or' pick
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kiora, Master of the Depths** (rank 8946) — `kiora_master_of_the_depths`
-  - −8: You get an emblem with "Whenever a creature you control enters, you may have it fight target creature." Then create three 8/8 blue Octopus creature tokens.
-  - −2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
-
-</details>
-
 ## loyalty-activations-this-turn
 
 Blocks **1** card.
@@ -710,21 +632,6 @@ Blocks **1** card.
 
 </details>
 
-## permanent-animate
-
-Blocks **1** card.
-
-- **(op)** an animate with no end-of-turn expiry that SETS characteristics rather than adding to them: the target becomes a green Elk creature with base P/T 3/3 indefinitely -- its colour becomes exactly green, its card types become exactly Creature (an artifact stops being an artifact), its creature types become exactly Elk (layer 4/5/7b, per Oko's rulings) -- paired with the existing lose_all_abilities op
-  <br>Why the existing vocabulary won't do: op animate (primitives.animate) stores a TempEffect in until_eot, so it wears off at cleanup, and it ADDS types/subtypes to what is printed ('it's still a land'), so an Oko'd artifact would stay an artifact and keep its other creature types. It takes no duration key. set_types/set_colors/set_pt exist only as statics read off the printed face, not as a one-shot op on a target; grant_ability's op cannot grant a static. lose_all_abilities op itself is fine (permanent).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oko, Thief of Crowns** (rank 2058) — `oko_thief_of_crowns`
-  - +1: Target artifact or creature loses all abilities and becomes a green Elk creature with base power and toughness 3/3.
-  - −5: Exchange control of target artifact or creature you control and target creature an opponent controls with power 3 or less.
-
-</details>
-
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -785,20 +692,6 @@ Blocks **1** card.
 
 </details>
 
-## spell-cost-increase-mana
-
-Blocks **1** card.
-
-- **(static_effect)** a spell_cost_increase that charges generic MANA ({2}) rather than life, with affects_spells {controller: opponent} and targeting {controller: you, any_types: [Creature, Planeswalker]} -- the Thalia / Kasmina tax on spells aimed at your permanents
-  <br>Why the existing vocabulary won't do: spell_cost_increase exists (Terror of the Peaks) but player_statics.spell_life_tax reads only cost.pay_life; nothing adds generic mana to a spell's price, and spell_cost_reduction refuses a negative amount. The -2 is now expressible (wizard_2_2_u was added).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigmatic Mentor** (rank 6632) — `kasmina_enigmatic_mentor`
-  - Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.
-
-</details>
-
 ## spells-cast-per-player
 
 Blocks **1** card.
@@ -811,20 +704,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## spend-mana-as-any-color-spell-filter
-
-Blocks **1** card.
-
-- **(static_effect)** the player-wide spend_mana_as_any_color static narrowed by an affects_spells filter (here {"types": ["Planeswalker"]}), loosening coloured pips only in the cast cost of spells matching the filter -- not activated-ability costs, not other spells
-  <br>Why the existing vocabulary won't do: spend_mana_as_any_color is unfiltered (Chromatic Orrery): it loosens every cost the player pays, spells and abilities alike, and the loader explicitly refuses 'affects'/'amount' on it; player_spends_mana_as_any_color takes no spell. The any_color flag on exile/grant_playable/look_at_top rides on one specific card made playable, not on a class of spells cast from hand.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oath of Nissa** (rank 7715) — `oath_of_nissa`
-  - You may spend mana as though it were mana of any color to cast planeswalker spells.
 
 </details>
 
