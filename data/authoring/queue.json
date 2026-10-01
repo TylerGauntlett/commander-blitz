@@ -159022,12 +159022,12 @@
     },
     "Liliana, the Last Hope": {
       "edhrec_rank": 7764,
-      "gate": "template",
+      "gate": "compile",
       "name": "Liliana, the Last Hope",
-      "reason": "no template for: +1: Up to one target creature gets -2/-1 until your next turn",
+      "reason": "liliana_the_last_hope.abilities[0].target[t1]: 'up to one target' is 'optional': true -- 'up_to' is for a ceiling above one",
       "scryfall_id": "50269303-0bd9-474e-bd16-e0d13a5cbb74",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": true
     },
     "Liliana, the Last Hope Emblem": {
@@ -187812,12 +187812,12 @@
     },
     "Nissa, Vital Force": {
       "edhrec_rank": 4790,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa, Vital Force",
-      "reason": "no template for: +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creatu",
+      "reason": "",
       "scryfall_id": "bbaaa98a-ec40-4ff1-8762-a719cf1c475d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nissa, Vital Force Emblem": {
@@ -190132,12 +190132,12 @@
     },
     "Oath of Gideon": {
       "edhrec_rank": 7381,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Gideon",
-      "reason": "no template for: When enters, create two 1/1 white Kor Ally creature tokens",
+      "reason": "",
       "scryfall_id": "b8a3f02b-9408-46a5-8d25-f5cec553d600",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oath of Jace": {
@@ -255402,12 +255402,12 @@
     },
     "Sorin, Grim Nemesis": {
       "edhrec_rank": 9535,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Grim Nemesis",
-      "reason": "no template for: +1: Reveal the top card of your library and put that card into your hand. Each opponent lo",
+      "reason": "",
       "scryfall_id": "d25c3609-a200-4532-9df8-8e92c24544bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sorin, Imperious Bloodlord": {
@@ -255442,12 +255442,12 @@
     },
     "Sorin, Solemn Visitor": {
       "edhrec_rank": 11301,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Solemn Visitor",
-      "reason": "no template for: +1: Until your next turn, creatures you control get +1/+0 and gain lifelink",
+      "reason": "",
       "scryfall_id": "a1cb8205-e08a-4d32-8912-cb1203350be6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sorin, Solemn Visitor Emblem": {
@@ -274792,12 +274792,12 @@
     },
     "Tamiyo, Compleated Sage": {
       "edhrec_rank": 8994,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Compleated Sage",
-      "reason": "no template for: Compleated",
+      "reason": "",
       "scryfall_id": "222a736e-d819-452d-aeda-eb848c4b2302",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tamiyo, Field Researcher": {

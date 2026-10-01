@@ -6903,6 +6903,14 @@
   "nip_gwyllion": {
     "zone": "battlefield"
   },
+  "nissa_vital_force": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "nissa_voice_of_zendikar": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7001,6 +7009,14 @@
     "tokens": {
       "count": 2,
       "id": "human_soldier_1_1_w"
+    },
+    "zone": "battlefield"
+  },
+  "oath_of_gideon": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "kor_ally_1_1_w"
     },
     "zone": "battlefield"
   },
@@ -9398,7 +9414,27 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sorin_grim_nemesis": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "sorin_imperious_bloodlord": {
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "sorin_solemn_visitor": {
+    "battlefield_count": 33,
     "counters": {
       "amount": 4,
       "kind": "loyalty"
@@ -10026,6 +10062,10 @@
       "amount": 5,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "tamiyo_compleated_sage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tandem_lookout": {

@@ -1,0 +1,75 @@
+{
+  "card": {
+    "id": "nissa_vital_force",
+    "name": "Nissa, Vital Force",
+    "oracle_text": "+1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.\n−3: Return target permanent card from your graveyard to your hand.\n−6: You get an emblem with \"Whenever a land you control enters, you may draw a card.\"",
+    "mana_cost": "{3}{G}{G}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Nissa"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "loyalty": 5,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creature with haste. It's still a land.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {"id": "t1", "kind": "permanent", "count": 1,
+           "selector": {"zone": "battlefield", "controller": "you", "types": ["Land"]}}
+        ],
+        "effects": [
+          {"op": "untap", "objects": {"target": "t1"}},
+          {"op": "animate",
+           "power": {"const": 5}, "toughness": {"const": 5},
+           "types": ["Creature"], "subtypes": ["Elemental"],
+           "keywords": ["haste"],
+           "objects": {"target": "t1"},
+           "duration": "until_your_next_turn"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−3: Return target permanent card from your graveyard to your hand.",
+        "cost": {"loyalty": -3},
+        "targets": [
+          {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+           "selector": {"zone": "graveyard", "controller": "you",
+                        "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker", "Battle"]}}
+        ],
+        "effects": [
+          {"op": "return_from_graveyard", "destination": "hand", "objects": {"target": "t1"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−6: You get an emblem with \"Whenever a land you control enters, you may draw a card.\"",
+        "cost": {"loyalty": -6},
+        "effects": [
+          {"op": "emblem", "player": "you", "emblem": 0}
+        ]
+      }
+    ],
+    "emblems": [
+      {
+        "abilities": [
+          {
+            "kind": "triggered",
+            "text": "Whenever a land you control enters, you may draw a card.",
+            "trigger": {"event": "permanent_enters", "controller": "you", "filter": {"types": ["Land"]}},
+            "effects": [
+              {"op": "may", "prompt": "Draw a card?",
+               "effects": [{"op": "draw", "amount": {"const": 1}, "player": "you"}]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 5}
+  }
+}
