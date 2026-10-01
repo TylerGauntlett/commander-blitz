@@ -146502,12 +146502,12 @@
     },
     "Kasmina, Enigma Sage": {
       "edhrec_rank": 12306,
-      "gate": "template",
+      "gate": null,
       "name": "Kasmina, Enigma Sage",
-      "reason": "no template for: Each other planeswalker you control has the loyalty abilities of Kasmina",
+      "reason": "",
       "scryfall_id": "178bf300-38cf-4ab2-9e66-6fcaa112b649",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kasmina, Enigmatic Mentor": {

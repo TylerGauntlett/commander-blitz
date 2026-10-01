@@ -5299,6 +5299,10 @@
   "kasimir_the_lone_wolf": {
     "zone": "battlefield"
   },
+  "kasmina_enigma_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kasmina_enigmatic_mentor": {
     "battlefield_count": 33,
     "counters": {

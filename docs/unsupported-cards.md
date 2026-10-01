@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **29** capabilities.
+**21 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,18 +27,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [grant-loyalty-abilities](#grant-loyalty-abilities) | 1 | 12306 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
-| [loyalty-x](#loyalty-x) | 1 | 12306 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [shares-color-with-source](#shares-color-with-source) | 1 | 12306 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -239,22 +236,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-loyalty-abilities
-
-Blocks **1** card.
-
-- **(static_effect)** a static that gives each other planeswalker you control copies of this permanent's loyalty abilities (activated against the other planeswalker's own loyalty)
-  <br>Why the existing vocabulary won't do: grant_ability grants an authored ability spec, not 'the loyalty abilities of <source>'; and the -X ability it would copy is itself inexpressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
-
-</details>
-
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -295,22 +276,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## loyalty-x
-
-Blocks **1** card.
-
-- **(cost)** a -X loyalty cost where X is chosen on activation and read by the ability's effects (X +1/+1 counters)
-  <br>Why the existing vocabulary won't do: cost_keys.loyalty takes only a fixed signed integer; x_value exists but is not wired to loyalty removal
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
 
 </details>
 
@@ -404,22 +369,6 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## shares-color-with-source
-
-Blocks **1** card.
-
-- **(selector)** a search_library selector matching instant/sorcery cards that share a color with the source planeswalker, exiled then castable free
-  <br>Why the existing vocabulary won't do: search_library options include share_subtype and any_color but nothing for sharing a color with the source; low certainty whether a selector key covers it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kasmina, Enigma Sage** (rank 12306) — `kasmina_enigma_sage`
-  - Each other planeswalker you control has the loyalty abilities of Kasmina.
-  - −X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.
-  - −8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.
 
 </details>
 

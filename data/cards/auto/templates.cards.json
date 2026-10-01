@@ -58481,6 +58481,229 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "exclude_self": true,
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "exclude_self": true,
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+        },
+        {
+          "ability": 2,
+          "affects": {
+            "exclude_self": true,
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+        },
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: Scry 1."
+        },
+        {
+          "cost": {
+            "loyalty_x": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "fractal",
+              "op": "create_token",
+              "token": "fractal_0_0_gu"
+            },
+            {
+              "amount": {
+                "x": true
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "fractal"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "as": "found",
+              "count": 1,
+              "destination": "exile",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "shares_a_color_with": "self"
+              },
+              "shuffle": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "found"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast that card without paying its mana cost?"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: Scry 1."
+        },
+        {
+          "cost": {
+            "loyalty_x": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "fractal",
+              "op": "create_token",
+              "token": "fractal_0_0_gu"
+            },
+            {
+              "amount": {
+                "x": true
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "fractal"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "as": "found",
+              "count": 1,
+              "destination": "exile",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "shares_a_color_with": "self"
+              },
+              "shuffle": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "found"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast that card without paying its mana cost?"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost."
+        }
+      ],
+      "id": "kasmina_enigma_sage",
+      "loyalty": 2,
+      "mana_cost": "{1}{G}{U}",
+      "name": "Kasmina, Enigma Sage",
+      "oracle_text": "Each other planeswalker you control has the loyalty abilities of Kasmina.\n+2: Scry 1.\n−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.\n−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.",
+      "source": "auto",
+      "subtypes": [
+        "Kasmina"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "opponent"
           },
