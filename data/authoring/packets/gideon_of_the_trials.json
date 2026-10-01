@@ -908,6 +908,9 @@
         "amount",
         "player"
       ],
+      "extra_loyalty_activation": [
+        "objects"
+      ],
       "extra_turn": [
         "player"
       ],
@@ -1378,6 +1381,7 @@
       "explore",
       "extra_combat",
       "extra_land_drop",
+      "extra_loyalty_activation",
       "extra_turn",
       "fight",
       "for_each",

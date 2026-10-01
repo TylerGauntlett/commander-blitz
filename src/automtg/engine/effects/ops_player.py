@@ -132,6 +132,28 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("grant_flash_permission")
+def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, you may cast sorcery spells as though they had
+    flash." -- Teferi, Time Raveler's +1.
+
+    The one-shot, timed form of the `cast_as_though_flash` static: a loyalty
+    ability leaves no permanent to carry a static, the permission ends at a fixed
+    moment, and it covers cards drawn after it resolved -- so it is written to
+    the player's timed table and read by `casting._timing_ok`. ``types`` narrows
+    it to spells of those card types; ``duration`` is required.
+    """
+    from ..primitives import grant_flash_permission
+
+    types = tuple(str(t) for t in spec.get("types") or ())
+    duration = str(spec["duration"])
+    for pid in select_players(ctx, spec.get("player", "you")):
+        grant_flash_permission(
+            ctx.state, pid, types=types, duration=duration, source=ctx.source_oid
+        )
+    yield from ()
+
+
 @register("extra_loyalty_activation")
 def op_extra_loyalty_activation(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "For each planeswalker you control, you may activate one of its loyalty

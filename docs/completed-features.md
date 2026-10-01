@@ -19002,3 +19002,11 @@ ledger) holds the grant; legality now counts the activations made and allows one
 the grant. The op names the walkers there as it resolves, so a walker arriving later
 keeps its single activation, and a second Veil activation is a second extra.
 Test: `tests/unit/test_extra_loyalty_activation.py`.
+
+## `grant_flash_permission` — Teferi, Time Raveler's "until your next turn, you may cast sorcery spells as though they had flash"
+
+`cast_as_though_flash` existed only as a static, with no duration and no spell filter,
+and a loyalty ability leaves no permanent to carry one. The op writes a
+`structs.FlashPermission` (player, card types, duration) to `GameState.flash_permissions`;
+`casting._timing_ok` reads it; it wears off in the granter's untap step (or at cleanup
+for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flash_permission.py`.

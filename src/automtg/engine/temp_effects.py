@@ -400,6 +400,32 @@ def clear_life_locks(state: GameState, duration: str, player: int | None = None)
     state.life_locks = _expired(state.life_locks, duration, player)
 
 
+def grant_flash_permission(
+    state: GameState,
+    pid: int,
+    *,
+    types: tuple[str, ...] = (),
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> None:
+    """Let ``pid`` cast spells of ``types`` at instant speed for ``duration``."""
+    from .structs import FlashPermission
+
+    state.flash_permissions.append(
+        FlashPermission(player=pid, types=tuple(types), duration=duration, source=source)
+    )
+
+
+def clear_flash_permissions(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the flash permissions of one duration -- their wearing-off.
+
+    ``until_your_next_turn`` goes in the granting player's untap step, the
+    same clock as every other "until your next turn" table, and with them when
+    they leave the game; ``this_turn`` goes at cleanup.
+    """
+    state.flash_permissions = _expired(state.flash_permissions, duration, player)
+
+
 def clear_outcome_locks(state: GameState, duration: str, player: int | None = None) -> None:
     """Drop the outcome locks of one duration -- their wearing-off.
 

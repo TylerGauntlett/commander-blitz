@@ -456,6 +456,14 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
         return True
     if sorcery_speed:
         return True
+    # Teferi, Time Raveler's +1: "Until your next turn, you may cast sorcery
+    # spells as though they had flash" -- the timed, per-player permission a
+    # loyalty ability leaves behind, narrowed to the card types it names.
+    if any(
+        perm.player == pid and (not perm.types or set(perm.types) & set(card.types))
+        for perm in state.flash_permissions
+    ):
+        return True
     return player_casts_as_though_flash(state, pid)
 
 

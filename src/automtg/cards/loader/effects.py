@@ -1746,6 +1746,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: unknown {op} duration {effect['duration']!r} "
             f"(use 'until_end_of_turn' or 'until_your_next_turn')"
         )
+    if op == "grant_flash_permission":
+        # Without a duration the permission would have no clock to end on, and a
+        # misspelt type would narrow it to nothing -- the +1 doing nothing.
+        from automtg.engine.structs import FLASH_PERMISSION_DURATIONS
+
+        if effect.get("duration") not in FLASH_PERMISSION_DURATIONS:
+            raise DslError(
+                f"{where}: grant_flash_permission needs a 'duration' in "
+                f"{list(FLASH_PERMISSION_DURATIONS)}"
+            )
+        for t in effect.get("types") or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
     if op == "add_poison" and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "proliferate" and "objects" in effect:

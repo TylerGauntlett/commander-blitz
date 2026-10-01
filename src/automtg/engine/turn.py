@@ -30,6 +30,7 @@ from .primitives import (
     clear_block_prohibitions,
     clear_cast_locks,
     clear_damage_shields,
+    clear_flash_permissions,
     clear_goad,
     clear_life_floors,
     clear_life_locks,
@@ -382,6 +383,9 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # above, keyed by the same seat, and cleared before `_phase` for the same
     # reason protection is.
     clear_until_next_turn(state, player.pid)
+    # Teferi, Time Raveler's +1 -- "until your next turn, you may cast sorcery
+    # spells as though they had flash" -- on the same clock.
+    clear_flash_permissions(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -756,6 +760,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # again and finds the lock gone. 104.3b's "this turn" must not survive into
     # the next one.
     clear_outcome_locks(state, "this_turn")
+    clear_flash_permissions(state, "this_turn")
     clear_life_floors(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on

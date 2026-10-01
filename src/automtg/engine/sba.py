@@ -266,6 +266,10 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # And the same hole in the per-object entries: a -2/-1 or a lifelink "until
     # your next turn" keyed to a seat that has left would stand for good.
     clear_until_next_turn(state, pid)
+    # And a timed flash permission keyed to a seat that has left.
+    from .temp_effects import clear_flash_permissions
+
+    clear_flash_permissions(state, "until_your_next_turn", pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

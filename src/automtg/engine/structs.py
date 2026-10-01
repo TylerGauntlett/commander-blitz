@@ -667,6 +667,33 @@ class OutcomeLock:
     source: int | None = None
 
 
+@dataclass(frozen=True)
+class FlashPermission:
+    """ "Until your next turn, you may cast sorcery spells as though they had
+    flash." -- Teferi, Time Raveler's +1.
+
+    The timed, one-shot twin of the `cast_as_though_flash` static: a loyalty
+    ability leaves no permanent behind whose static could carry it, the
+    permission ends at a fixed moment rather than when a source leaves, and it
+    covers cards drawn after it resolved -- so it belongs to the *player*, in a
+    timed table beside `outcome_locks`, and `casting._timing_ok` reads it.
+    ``types`` narrows it to spells of those card types (empty: every spell).
+    """
+
+    #: Who may cast at instant speed.
+    player: int
+    #: The card types it covers; empty for every spell.
+    types: tuple[str, ...] = ()
+    #: ``this_turn`` or ``until_your_next_turn``.
+    duration: str = "until_your_next_turn"
+    #: What installed it, for the log.
+    source: int | None = None
+
+
+#: The durations a `FlashPermission` may carry.
+FLASH_PERMISSION_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
 #: The durations a `LifeFloor` may carry.
 LIFE_FLOOR_DURATIONS = ("this_turn",)
 

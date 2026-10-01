@@ -20,6 +20,7 @@ from .structs import (
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
+    FlashPermission,
     GraveyardCastGrant,
     LifeFloor,
     LifeLock,
@@ -379,6 +380,10 @@ class GameState:
     #: `outcome_locks`, installed by the same Instant and swept in the same
     #: cleanup step, and read only by `primitives.damage_player`.
     life_floors: list[LifeFloor] = field(default_factory=list)
+    #: "Until your next turn, you may cast sorcery spells as though they had
+    #: flash" -- see :class:`structs.FlashPermission`. Read by
+    #: `casting._timing_ok`; empty in every game that plays none of these.
+    flash_permissions: list[FlashPermission] = field(default_factory=list)
     #: "Until your next turn, your opponents can't cast spells from anywhere
     #: other than their hands" -- see :class:`structs.CastLock`.
     #:
