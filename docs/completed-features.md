@@ -18983,3 +18983,13 @@ writes no `exiled_by` (it would strand Florian's declined cards), so nothing cou
 those cards again. `link: true` on an exile destination now writes the record, exactly
 as the `exile` op's `link` does; the loader refuses it on any other destination.
 Test: `tests/unit/test_look_at_top_link.py`.
+
+## `cant_lose_the_game` / `cant_win_the_game` statics — Gideon of the Trials' emblem — 104.3b
+
+The continuous form of the outcome prohibition, previously recorded as deliberately
+unbuilt: two player-wide statics, one per half of "you can't lose the game and your
+opponents can't win the game", each naming its seats with `affects_player` and both
+carrying the same `condition`. `player_statics.outcome_barred_by_static` answers for
+them, and `sba.player_cant_lose` / `player_cant_win` consult it beside the op's
+turn-scoped locks, so every loss reason the op holds off is held off here too.
+Test: `tests/unit/test_cant_lose_the_game_static.py`.

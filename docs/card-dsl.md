@@ -14484,8 +14484,14 @@ Bobblehead's line, since the condition is where the card's entire cost lives.
 Wrapped in an `if` it is one more line and it means what it says.
 
 *Deliberately left out.* `lose_game` is its own op (below), not this one aimed
-elsewhere. There is no "can't win the game" / "can't lose the game" (Platinum Angel, Abyssal Persecutor); that is a continuous
-prohibition over this whole subsystem, not a clause of this op. And the pod's
+elsewhere. "Can't win the game" / "can't lose the game" is not a clause of this op: the
+one-shot form is the `cant_lose_the_game` op (Angel's Grace), and the continuous
+form is the pair of player-wide statics `cant_lose_the_game` and
+`cant_win_the_game`, each naming its players with `affects_player` and taking an
+optional `condition` -- Gideon of the Trials' emblem, "as long as you control a
+Gideon planeswalker, you can't lose the game and your opponents can't win the
+game", is one of each with the same condition. `sba.player_cant_lose` /
+`player_cant_win` read both forms. And the pod's
 ending is a simplification — by 800.4 a player who wins a multiplayer game leaves
 it and the survivors play on, while here the game ends for everybody. See
 [rules-coverage.md](rules-coverage.md).

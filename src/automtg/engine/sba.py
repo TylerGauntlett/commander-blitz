@@ -156,7 +156,11 @@ def player_cant_lose(state: GameState, pid: int) -> bool:
     Short-circuits on the empty list, which is what `state.outcome_locks` is in
     every game that plays none of these cards.
     """
-    return any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks)
+    if any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks):
+        return True
+    from .player_statics import outcome_barred_by_static
+
+    return outcome_barred_by_static(state, pid, "cant_lose_the_game")
 
 
 def player_cant_win(state: GameState, pid: int) -> bool:
@@ -166,7 +170,11 @@ def player_cant_win(state: GameState, pid: int) -> bool:
     cards print only one of the two: Abyssal Persecutor says "you can't win the
     game" and nothing about losing.
     """
-    return any(lock.player == pid and lock.cant_win for lock in state.outcome_locks)
+    if any(lock.player == pid and lock.cant_win for lock in state.outcome_locks):
+        return True
+    from .player_statics import outcome_barred_by_static
+
+    return outcome_barred_by_static(state, pid, "cant_win_the_game")
 
 
 def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:

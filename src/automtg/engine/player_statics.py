@@ -193,6 +193,21 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
+    """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
+
+    Gideon of the Trials' emblem: "As long as you control a Gideon planeswalker,
+    you can't lose the game and your opponents can't win the game" (104.3b). The
+    continuous twin of the `cant_lose_the_game` op's turn-scoped `OutcomeLock`;
+    its "as long as" is the static's ordinary `condition`, which
+    `_active_player_statics` honours -- the emblem stops protecting anybody the
+    moment the last Gideon leaves, and starts again when one arrives.
+    """
+    return any(
+        _reaches_player(obj, static, pid) for obj, static in _active_player_statics(state, effect)
+    )
+
+
 def draw_cap(state: GameState, pid: int) -> int | None:
     """The most cards ``pid`` may draw this turn, or ``None`` for no cap (`draw_limit`).
 

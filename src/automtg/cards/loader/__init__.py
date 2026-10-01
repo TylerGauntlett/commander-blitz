@@ -3422,6 +3422,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"'affects_player' and an optional 'condition', and no 'affects' "
             f"or 'amount'"
         )
+    if model.effect in ("cant_lose_the_game", "cant_win_the_game") and (
+        model.affects is not None or model.amount is not None
+    ):
+        # "You can't lose the game" names players and nothing else; a permanent
+        # filter or a number has nothing to mean on the outcome of a game.
+        raise DslError(
+            f"{where}: {model.effect} takes 'affects_player' and an optional "
+            f"'condition', and no 'affects' or 'amount'"
+        )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes

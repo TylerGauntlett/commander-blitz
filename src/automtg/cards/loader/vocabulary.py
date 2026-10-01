@@ -514,6 +514,14 @@ STATIC_EFFECTS = frozenset(
         # win and the doublers, none of which may replace a draw that cannot
         # occur.  `amount` is the cap and is required.
         "draw_limit",
+        # Gideon of the Trials' emblem: "As long as you control a Gideon
+        # planeswalker, you can't lose the game and your opponents can't win
+        # the game." The continuous form of the `cant_lose_the_game` op
+        # (Platinum Angel's shape), one static per half of the sentence --
+        # each names its players with `affects_player` and both carry the same
+        # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
+        "cant_lose_the_game",
+        "cant_win_the_game",
         # Ashiok, Dream Render.  "Spells and abilities your opponents control
         # can't cause their controller to search their library."  A player-wide
         # prohibition on one precise search: the named player searching **their
@@ -675,6 +683,8 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "draw_limit",
         "cant_search_library",
         "opponents_cant_force_discard_or_sacrifice",
+        "cant_lose_the_game",
+        "cant_win_the_game",
     }
 )
 
