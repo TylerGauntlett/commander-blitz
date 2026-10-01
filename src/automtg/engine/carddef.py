@@ -38,6 +38,10 @@ _ANY_NUMBER = re.compile(r"A deck can have any number of cards named ([^.\n]+)\.
 #: reads a word rather than an integer.
 _UP_TO = re.compile(r"A deck can have up to (\w+) cards named ([^.\n]+)\.")
 
+#: 903.3's exception: "Teferi, Temporal Archmage can be your commander." A card
+#: that is not a legendary creature may lead a deck only when its text says so.
+_CAN_BE_COMMANDER = re.compile(r"(?m)^([^\n]+?) can be your commander\.$")
+
 #: Magic spells its small numbers out in rules text.  A word outside this map
 #: leaves :attr:`CardDef.deck_copy_limit` at the one-copy default rather than
 #: guessing: an unread limit must reject a legal deck, never admit an illegal
@@ -1406,6 +1410,20 @@ class CardDef:
         to check a deck against, and this is the case where there is no number.
         """
         match = _ANY_NUMBER.search(self.oracle_text)
+        return match is not None and match.group(1).strip() == self.name
+
+    @property
+    def can_be_commander(self) -> bool:
+        """Does the card's own text let it lead a Commander deck (903.3)?
+
+        "Teferi, Temporal Archmage can be your commander." -- the other
+        deck-construction sentence a card can print, read the way
+        :attr:`any_number_in_deck` reads its own: matched against the card's
+        *own* name, so a card that merely quotes another's text gains nothing.
+        A legendary creature needs no sentence; ``validate_deck`` asks this only
+        of everything else.
+        """
+        match = _CAN_BE_COMMANDER.search(self.oracle_text)
         return match is not None and match.group(1).strip() == self.name
 
     @property

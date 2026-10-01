@@ -18963,3 +18963,14 @@ per player, a walker that minused itself to the graveyard still counting, a
 planeswalker's `{T}` ability not counting, the condition, an unknown spelling
 refused, the end-step trigger with and without an activation and only on its
 controller's turn, and the tally gone next turn.
+
+## `can_be_commander` — "Teferi, Temporal Archmage can be your commander." — 903.3
+
+903.3 makes a commander a legendary creature, with one printed exception. `validate_deck`
+accepted any legendary creature *or planeswalker* and never read the exception, which was
+right for Teferi only because it was wrong for every other walker. Now
+`CardDef.can_be_commander` reads the sentence (named against the card's own name, like
+Persistent Petitioners' copy limit), `validate_deck` asks for a creature or that sentence,
+and `verify._covered` accepts the line on a card that carries it. No shipped deck had a
+non-creature commander. Witnesses: Teferi, Temporal Archmage; Aminatou, the Fateshifter.
+Test: `tests/unit/test_can_be_commander.py`.
