@@ -1031,6 +1031,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: look_at_top 'face_down' needs destination 'exile' "
                 f"(a card is only face down in exile); got {destination!r}"
             )
+        # `link` records "exiled with <this>"; anywhere but exile it would load
+        # and link nothing -- a later "exiled with" selector finding no cards.
+        if "link" in effect and (
+            not isinstance(effect["link"], bool) or (effect["link"] and destination != "exile")
+        ):
+            raise DslError(
+                f"{where}: look_at_top 'link' is a boolean and needs destination 'exile'"
+            )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card

@@ -254,7 +254,14 @@ exactly the card this activation exiled. `exiled_with: "self"` cannot stand in:
 Florian's declined cards in exile — see
 [Casting for free out of the window](#casting-for-free-out-of-the-window)), so
 the selector matches nothing and the delayed return silently hands back no card
-at all. Even with the link written it would be *source-wide* where the printed
+at all.
+
+**`link`** is the opt-in for when the printed card *does* want the record:
+Ashiok, Nightmare Weaver's "+2: Exile the top three cards of target opponent's
+library" and its later "a creature card … **exiled with Ashiok**". `link: true`
+(exile destinations only; a load error elsewhere) writes the same `exiled_by` the
+`exile` op's `link` writes, so `{"zone": "exile", "exiled_with": "self"}` finds the
+cards on a later activation. Off by default, which keeps Florian's guarantee. Even with the link written it would be *source-wide* where the printed
 "that card" is per-activation. The binding accumulates across seats, like
 `discard`'s and `mill`'s, so a `player: "each_player"` look binds every seat's
 cards rather than the last one's.

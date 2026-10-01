@@ -36,7 +36,17 @@ DESTINATIONS = {
 #: how many, which cards it may take (``selector``), whether it may take fewer
 #: (``up_to``), and the exile-only flags `_move_found` honours per step.
 LOOK_STEP_KEYS = frozenset(
-    {"to", "count", "selector", "up_to", "playable_this_turn", "playable", "any_color", "face_down"}
+    {
+        "to",
+        "count",
+        "selector",
+        "up_to",
+        "playable_this_turn",
+        "playable",
+        "any_color",
+        "face_down",
+        "link",
+    }
 )
 
 
@@ -560,6 +570,15 @@ def _move_found(
         # key only works on the cards that spell the exile out as its own step.
         # Written after the move, like `exile` writes it, because
         # `reset_permanent_state` runs on the way and would wipe the pair.
+        # "Exile the top three cards of target opponent's library" and later
+        # "…a creature card … exiled with Ashiok" (Ashiok, Nightmare Weaver).
+        # `link` writes the same `exiled_by` record the `exile` op's `link`
+        # does, so a later `{"zone": "exile", "exiled_with": "self"}` finds
+        # them -- after the move, because `reset_permanent_state` would wipe it.
+        if destination is Zone.EXILE and spec.get("link") and ctx.source_oid is not None:
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.exiled_by = ctx.source_oid
         if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:

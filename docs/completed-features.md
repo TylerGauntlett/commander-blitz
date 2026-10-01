@@ -18974,3 +18974,12 @@ Persistent Petitioners' copy limit), `validate_deck` asks for a creature or that
 and `verify._covered` accepts the line on a card that carries it. No shipped deck had a
 non-creature commander. Witnesses: Teferi, Temporal Archmage; Aminatou, the Fateshifter.
 Test: `tests/unit/test_can_be_commander.py`.
+
+## `look_at_top` `link` — cards exiled off the top remember who exiled them — Ashiok, Nightmare Weaver
+
+Ashiok's +2 exiles the top three cards of an opponent's library and its −X later puts "a
+creature card … exiled with Ashiok" onto the battlefield. `_move_found` deliberately
+writes no `exiled_by` (it would strand Florian's declined cards), so nothing could name
+those cards again. `link: true` on an exile destination now writes the record, exactly
+as the `exile` op's `link` does; the loader refuses it on any other destination.
+Test: `tests/unit/test_look_at_top_link.py`.
