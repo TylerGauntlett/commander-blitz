@@ -1343,11 +1343,17 @@ def _release_delayed_subject(state: GameState, oid: int) -> None:
 
     kept = []
     for delayed in state.delayed_triggers:
-        subjects = delayed.subject_oids
-        if subjects is None or oid not in subjects:
+        # The permanent being hit is released the same way as the one hitting:
+        # a Vraska that died and was recast is a new Vraska, and the old +1's
+        # subscription is not hers.
+        for field in ("subject_oids", "recipient_oids"):
+            scope = getattr(delayed, field)
+            if scope is None or oid not in scope:
+                continue
+            remaining = tuple(s for s in scope if s != oid)
+            delayed = replace(delayed, **{field: remaining}) if remaining else None
+            if delayed is None:
+                break
+        if delayed is not None:
             kept.append(delayed)
-            continue
-        remaining = tuple(s for s in subjects if s != oid)
-        if remaining:
-            kept.append(replace(delayed, subject_oids=remaining))
     state.delayed_triggers = kept

@@ -404,6 +404,14 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
     }
 )
 
+#: DSL trigger name -> the event key naming the permanent the damage landed on,
+#: for a delayed trigger's ``recipient`` scope ("whenever a creature deals combat
+#: damage **to Vraska**"). Only events whose recipient is a permanent distinct
+#: from their subject: on `dealt_damage` the victim already *is* the subject.
+RECIPIENT_KEYS: dict[str, str] = {
+    "deals_combat_damage_to_planeswalker": "planeswalker",
+}
+
 #: DSL trigger name -> which half of a two-shaped damage event it is about.
 #:
 #: `DAMAGE_DEALT` and `DAMAGE_PREVENTED` each cover two different sentences and
@@ -604,6 +612,13 @@ def _delayed_matches(
         # a damage event is the dealer, the same object `source: "self"` means
         # on an ordinary trigger.
         return False
+    if delayed.recipient_oids is not None:
+        # "…deals combat damage **to Vraska**". The permanent on the receiving
+        # end, read off the key its event carries it under.
+        key = RECIPIENT_KEYS.get(spec.event)
+        hit = event.data.get(key) if key is not None else None
+        if hit is None or int(hit) not in delayed.recipient_oids:
+            return False
     actor = _actor(state, spec.event, event, subject)
     if actor is not None:
         if spec.controller == "you" and actor != delayed.controller:

@@ -1013,6 +1013,16 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
         # creatures" (Tamiyo, Field Researcher) is scoped to the whole set, and
         # keeping only the first would silently watch one of two.
         subject_oids = tuple(dict.fromkeys(chosen))
+    # "…deals combat damage **to Vraska**" -- the permanent being hit, named the
+    # same way and resolved at the same moment, for the same reason.
+    recipient_oids = None
+    if (recipient := trigger.get("recipient")) is not None:
+        from .selectors import resolve_pool
+
+        hit = resolve_pool(ctx, recipient)
+        if not hit:
+            return
+        recipient_oids = tuple(dict.fromkeys(hit))
     state.delayed_triggers.append(
         DelayedTrigger(
             step="",
@@ -1028,6 +1038,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
             subject_oids=subject_oids,
+            recipient_oids=recipient_oids,
             duration=str(spec.get("duration", "this_turn")),
         )
     )

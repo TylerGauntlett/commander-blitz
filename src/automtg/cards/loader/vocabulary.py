@@ -1260,4 +1260,4 @@ PLURAL_PLAYER_SPEC_NAMES = frozenset({"opponent", "each_opponent", "each_player"
 #: The pure event filters -- `counter`, `nth`, `not_cause`, `mana_ability`,
 #: `defending` -- are left out because no card asks for them here, not because
 #: they could not work. `_delayed_matches` gains a line each when one does.
-DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition", "subject"})
+DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition", "subject", "recipient"})

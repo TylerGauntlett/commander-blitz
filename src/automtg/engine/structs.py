@@ -1114,6 +1114,13 @@ class DelayedTrigger:
     #: a subscription whose last subject left is dropped -- which matters once
     #: the subscription outlives the turn.
     subject_oids: tuple[int, ...] | None = None
+    #: "Whenever a creature deals combat damage **to Vraska**" -- the other end
+    #: of the hit. The objects the damage must land on, resolved as the ability
+    #: is created exactly as ``subject_oids`` is, and compared against the
+    #: event's recipient (`triggers.RECIPIENT_KEYS`) rather than its subject --
+    #: the subject stays the dealer, so "destroy **that creature**" is
+    #: ``{"binding": "subject"}``. Released by `zones.move_object` the same way.
+    recipient_oids: tuple[int, ...] | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
 

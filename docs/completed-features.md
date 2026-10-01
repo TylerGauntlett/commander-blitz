@@ -18901,3 +18901,34 @@ Tamiyo, Field Researcher (with the delayed-trigger capability before it).
   delayed shape draws off a blocked watched creature.
 - `frontend/tests/labels.test.ts`, `frontend/tests/events.test.ts` -- the event
   has no log line and no beat.
+
+## Capability: a delayed trigger scoped to the permanent being hit -- `trigger.recipient`
+
+### What was missing
+
+Vraska the Unseen's +1: "until your next turn, whenever a creature deals combat
+damage to Vraska the Unseen, destroy that creature." A delayed trigger could be
+scoped to the dealer (`subject`) and not to the permanent hit, so
+`deals_combat_damage_to_planeswalker` with `controller: "any"` would destroy
+whatever hit *any* planeswalker.
+
+### How it works
+
+`DELAYED_TRIGGER_KEYS` gains `recipient`, validated as a `target`, `binding` or
+`self_only` selector and only on an event in the new `triggers.RECIPIENT_KEYS`
+(event name -> the payload key naming the recipient). `op_delayed_trigger`
+resolves it to `DelayedTrigger.recipient_oids`; `_delayed_matches` compares the
+event's recipient against it; `zones._release_delayed_subject` releases it like a
+subject. The subject binding is still the dealer.
+
+### Unblocks
+
+Vraska the Unseen's +1. The card still waits on its -7's Assassin token.
+
+### Tests
+
+- `tests/unit/test_delayed_trigger_recipient.py` (8) -- a creature hitting Vraska
+  is destroyed and another is not; every hitter is; a hit on another planeswalker
+  is not hers; noncombat damage does not fire it; the subscription leaves with
+  her and does not follow a recast; and the loader takes the scope and refuses it
+  on an event with no recipient or naming no specific permanent.

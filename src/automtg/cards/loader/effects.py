@@ -473,6 +473,26 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
                 f"'subject' to scope against (events that do: "
                 f"{sorted(OBJECT_SUBJECT_TRIGGERS)})"
             )
+    if (recipient := trigger.get("recipient")) is not None:
+        # "…deals combat damage **to Vraska**" -- the permanent being hit.
+        # Only on an event whose recipient is a permanent the event names apart
+        # from its subject; anywhere else it would be compared with nothing and
+        # the subscription would never fire.
+        from automtg.engine.triggers import RECIPIENT_KEYS
+
+        if not isinstance(recipient, Mapping) or not (
+            set(recipient) & {"target", "binding", "self_only"}
+        ):
+            raise DslError(
+                f"{where}.trigger.recipient: names the permanent being hit -- a "
+                f"{{'target': ...}}, a {{'binding': ...}} or {{'self_only': true}}"
+            )
+        validate_selector(recipient, f"{where}.trigger.recipient")
+        if event not in RECIPIENT_KEYS:
+            raise DslError(
+                f"{where}.trigger: {event!r} names no recipient for a 'recipient' "
+                f"to scope against (events that do: {sorted(RECIPIENT_KEYS)})"
+            )
     validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
     # How long the subscription lasts, and what firing does to it. A misspelled
     # value would fall through to the `this_turn` default and quietly retime the

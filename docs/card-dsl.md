@@ -1848,6 +1848,27 @@ A target that is gone by resolution installs no subscription at all. 608.2b took
 it, so there is no "that creature" to watch, and watching everything instead
 would be a strictly better card.
 
+#### `recipient` — the permanent being hit
+
+```jsonc
+// Vraska the Unseen — +1
+{ "op": "delayed_trigger", "duration": "until_your_next_turn",
+  "trigger": { "event": "deals_combat_damage_to_planeswalker", "controller": "any",
+               "recipient": { "self_only": true } },
+  "effects": [ { "op": "destroy", "objects": { "binding": "subject" } } ] }
+```
+
+The other end of the hit: `subject` scopes the **dealer**, `recipient` the
+permanent the damage lands on — "whenever a creature deals combat damage **to
+Vraska**". Named as a `target`, a `binding` or `self_only` (the permanent whose
+ability created the subscription), resolved when it is created, and compared
+against the key the event carries its recipient under (`triggers.RECIPIENT_KEYS`:
+`planeswalker` on `deals_combat_damage_to_planeswalker`, the only event so far
+whose recipient is a permanent apart from its subject). The loader refuses it on
+any other event. The subject stays the dealer, so "destroy that creature" is
+`{"binding": "subject"}`. A recipient leaving the battlefield is released the way
+a subject is.
+
 ### "…deals combat damage to a player or planeswalker"
 
 ```jsonc
