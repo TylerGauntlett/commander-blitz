@@ -705,7 +705,20 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     `exclude_binding` sparing the copy this resolution just made.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
-    oids = resolve_pool(ctx, spec.get("objects"))
+    selector = spec.get("objects") or {}
+    oids = resolve_pool(ctx, selector)
+    if (
+        not oids
+        and isinstance(selector, Mapping)
+        and selector.get("self_only")
+        and "zone" not in selector
+        and ctx.source_oid in ctx.state.objects
+    ):
+        # 608.2h: "create two tokens that are copies of Jace" from a -5 that
+        # spent his last loyalty. He is in the graveyard by the time it
+        # resolves (704.5i), and a battlefield-only pool finds nothing -- but
+        # the copy uses his last known information, which is what he was.
+        oids = [ctx.source_oid]
     if not oids:
         return
     controllers = _players(ctx, spec.get("controller", "you"))

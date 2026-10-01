@@ -31,8 +31,6 @@ castable instant in each seat's hand is a reason for priority to stop.
 
 from __future__ import annotations
 
-import pytest
-
 from automtg.engine import combat as combat_mod
 from automtg.engine import legality, sba
 from automtg.engine.characteristics import chars
@@ -1124,12 +1122,6 @@ class TestJaceCunningCastaway:
         assert game.state.objects[jace].zone is Zone.BATTLEFIELD, "the legend rule spared him"
         assert loyalty(game, jace) == 1
 
-    @pytest.mark.xfail(
-        reason="copy_permanent's self_only pool is battlefield-only, so a Jace that "
-        "paid his last loyalty and died to 704.5i before the -5 resolved copies "
-        "nothing instead of using last known information",
-        strict=True,
-    )
     def test_minus_five_from_exactly_five_still_makes_the_copies(self, builder):
         """The usual way the ability is used: Jace goes to 0 and dies as the cost
         is paid, and the copies still arrive from his last known information
