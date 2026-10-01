@@ -502,6 +502,56 @@ def _choose_trigger_modes(
     return tuple(sorted(offered[i] for i in picked))
 
 
+def _choose_any_number(
+    state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
+) -> Generator[Any, list[int], tuple[TargetRef, ...] | None]:
+    """"…any number of target permanents" as a pick-then-done, or ``None``.
+
+    Deepglow Skate. `enumerate_target_tuples` offers whole subsets, largest
+    first, cut at `MAX_TARGET_OPTIONS` -- right for a fixed count, and for "any
+    number" it means a board of more than a handful of permanents offers only
+    "everything", "everything but one" and "none": the printed choice of *which*
+    permanents is gone. So a trigger whose one spec is an unconstrained ``any``
+    asks for its targets one at a time over every legal single target, from zero
+    up to all of them, through the same `ask_targets` shape a mode-owned target
+    uses. A spec with a cross-target rule (one per player, a total mana value)
+    keeps the subset enumeration, which is the only thing that can check it.
+    """
+    from dataclasses import replace
+
+    from .effects.context import EffectContext, ask_targets
+    from .targeting import describe_ref, enumerate_target_tuples
+
+    if len(specs) != 1:
+        return None
+    spec = specs[0]
+    if spec.count != "any" or spec.one_per_player or spec.total_mana_value is not None:
+        return None
+    single = replace(spec, count=1, optional=False, up_to=False)
+    candidates = [
+        combo[0]
+        for combo in enumerate_target_tuples(
+            state, trig.controller, [single], trig.source_oid, bindings=trig.bindings,
+            limit=10_000,
+        )
+        if combo
+    ]
+    if not candidates:
+        return ()
+    ctx = EffectContext(
+        state=state, controller=trig.controller, source_oid=trig.source_oid
+    )
+    chosen = yield from ask_targets(
+        ctx,
+        f"Choose targets for {trig.description}" if trig.description else "Choose targets",
+        [(describe_ref(state, ref), ref) for ref in candidates],
+        0,
+        len(candidates),
+        trig.controller,
+    )
+    return tuple(chosen)
+
+
 def _choose_trigger_targets(
     state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
@@ -521,6 +571,10 @@ def _choose_trigger_targets(
     from .actions import DecisionOption, PendingDecision
     from .enums import DecisionKind
     from .targeting import describe_ref, enumerate_target_tuples
+
+    picked = yield from _choose_any_number(state, trig, specs)
+    if picked is not None:
+        return picked
 
     options = enumerate_target_tuples(
         state, trig.controller, specs, trig.source_oid, bindings=trig.bindings

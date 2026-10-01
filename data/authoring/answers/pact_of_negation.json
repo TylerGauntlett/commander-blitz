@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "pact_of_negation",
+    "name": "Pact of Negation",
+    "oracle_text": "Counter target spell.\nAt the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",
+    "mana_cost": "{0}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [{"id": "t1", "kind": "spell", "selector": {}, "count": 1}],
+    "spell_effects": [
+      {"op": "counter", "target": "t1"},
+      {
+        "op": "delay",
+        "step": "upkeep",
+        "your_turn": true,
+        "text": "At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Pay {3}{U}{U}? If you don't, you lose the game.",
+            "pay": {"mana": "{3}{U}{U}"},
+            "effects": [],
+            "else": [{"op": "lose_game", "player": "you"}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard"
+  }
+}

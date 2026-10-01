@@ -1282,6 +1282,11 @@ def can_pay(
         return False
     if cost.untap_permanents is not None and not _untap_cost_pool(state, pid, cost, source_oid):
         return False
+    if cost.remove_counters_from_among is not None:
+        needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
+        pool = _counter_removal_pool(state, pid, cost, source_oid)
+        if sum(_counters_on(state, oid) for oid in pool) < needed:
+            return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         kind = str(cost.remove_counters.get("counter", "+1/+1"))
@@ -1295,6 +1300,13 @@ def can_pay(
         # `remove_counters`, which can never add.
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or obj.counter("loyalty") < -cost.loyalty:
+            return False
+    if cost.loyalty_x and x > 0:
+        # "-X": the same 606.4 test at the announced number. X = 0 is always
+        # payable, which is what lets legality offer the ability at its floor
+        # and `game._activate` bound the announcement by the loyalty there is.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.counter("loyalty") < x:
             return False
     if cost.exile_from_graveyard is not None and not _graveyard_pool(state, pid, cost, source_oid):
         return False
@@ -1561,6 +1573,37 @@ def _untap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | N
     return pool if len(pool) >= count else []
 
 
+def _counter_removal_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """The permanents a `remove_counters_from_among` cost may take counters off.
+
+    Tekuthal: "Remove three counters from among **other** artifacts, creatures,
+    and planeswalkers you control" -- the selector says which permanents
+    (``exclude_self`` for "other"), and only those that carry a counter are in
+    the pool, since one without has nothing to give.
+    """
+    from .effects.selectors import resolve_pool
+
+    spec = dict(cost.remove_counters_from_among or {})
+    spec.pop("count", None)
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return [oid for oid in resolve_pool(ctx, spec) if _counters_on(state, oid) > 0]
+
+
+def _counters_on(state: GameState, oid: int) -> int:
+    obj = state.objects.get(oid)
+    return sum(n for n in obj.counters.values() if n > 0) if obj is not None else 0
+
+
+#: Counter kinds that hurt the permanent they are on, offered first when a
+#: cost asks which kind to remove -- so the default answer is the kind the
+#: payer would most like gone.
+_HARMFUL_COUNTERS = ("-1/-1", "stun")
+
+
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     from .effects.selectors import resolve_pool
 
@@ -1802,6 +1845,45 @@ def pay(
         for oid in picked:
             untap_permanent(state, oid)
 
+    if cost.remove_counters_from_among is not None:
+        # One counter at a time: which permanent, then -- if it carries more
+        # than one kind -- which kind. "From among" lets the payer split the
+        # removal however they like (all three off one permanent, or one off
+        # each), and asking per counter is the one question that can say every
+        # split without a distribution decision the engine does not have.
+        from .primitives import remove_counters
+
+        needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
+        while needed > 0:
+            pool = _counter_removal_pool(state, pid, cost, source_oid)
+            if not pool:
+                break
+            picked = yield from ask_objects(
+                ctx,
+                f"Remove a counter ({needed} more)",
+                pool,
+                1,
+                1,
+                pid,
+                "remove_counter_cost",
+            )
+            if not picked:
+                break
+            chosen = picked[0]
+            held = {k: n for k, n in state.objects[chosen].counters.items() if n > 0}
+            kinds = sorted(held, key=lambda k: (k not in _HARMFUL_COUNTERS, -held[k], k))
+            kind = kinds[0]
+            if len(kinds) > 1:
+                [index] = yield from ask_mode(
+                    ctx,
+                    f"Remove which counter from {ctx.name_of(chosen)}?",
+                    [f"{k} counter ({held[k]})" for k in kinds],
+                    pid,
+                )
+                kind = kinds[index]
+            remove_counters(state, chosen, kind, 1)
+            needed -= 1
+
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters
 
@@ -1818,8 +1900,15 @@ def pay(
         # makes a planeswalker's loyalty spendable in response to removal.
         from .primitives import add_counters, remove_counters
 
-        if cost.loyalty > 0:
-            add_counters(state, source_oid, "loyalty", cost.loyalty)
+        if cost.loyalty_x:
+            # "-X": the announced number, which `game._activate` bounded by
+            # the loyalty on the permanent.
+            if x > 0:
+                remove_counters(state, source_oid, "loyalty", x)
+        elif cost.loyalty > 0:
+            # `as_cost`: a cost is not an effect, so Doubling Season's "if an
+            # effect would put" leaves a +1 at one counter (its ruling).
+            add_counters(state, source_oid, "loyalty", cost.loyalty, as_cost=True)
         elif cost.loyalty < 0:
             remove_counters(state, source_oid, "loyalty", -cost.loyalty)
 

@@ -9,7 +9,7 @@ which suspends the whole resolution until a driver answers.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
@@ -62,6 +62,16 @@ class EffectContext:
     #: and cannot ask.  Carried here rather than looked up from the ledger
     #: because the ability index is not otherwise part of an effect's world.
     resolutions: int = 0
+    #: The first timestamp (613.7) this resolution may hand out. Everything
+    #: granted from here on happened *as part of* this spell or ability, which
+    #: is how "it gains X and loses all other abilities" keeps its X: the loss
+    #: removes only grants older than this. Filled from the state on
+    #: construction, and carried along by `dataclasses.replace`.
+    began_at: int = -1
+
+    def __post_init__(self) -> None:
+        if self.began_at < 0:
+            self.began_at = self.state.next_timestamp
 
     def target_refs(self, target_id: str) -> tuple[TargetRef, ...]:
         return self.targets.get(target_id, ())
@@ -214,14 +224,24 @@ def ask_mode(
     chooser: int,
     count: int = 1,
     up_to: int | None = None,
+    purpose: str | None = None,
+    extra: Mapping[str, Any] | None = None,
 ) -> Generator[PendingDecision, list[int], list[int]]:
     """Ask the controller to choose one or more modes of a modal spell.
+
+    ``purpose`` tags the decision the way `ask_objects`' does, for a seat that
+    answers a label question differently by what it is for -- a card name
+    (`choose_card_name`) is not a mode, and its first label is no better a guess.
 
     ``up_to`` makes ``count`` a floor rather than an exact number: "Choose one.
     If you control a commander as you cast this spell, you may choose both
     instead" -- Akroma's Will. Without it a range is unsayable, and the
     short-circuit below turns "choose up to two of two" into "take both", which
     is a different card every time taking one was the better line.
+
+    ``extra`` is merged into the decision's ``context`` -- a ``purpose`` tag and
+    whatever the heuristic agent needs to answer it (Aminatou's left-or-right
+    names the seat each direction takes from).
     """
     maximum = count if up_to is None else max(count, up_to)
     # Nothing to ask when every mode has to be taken anyway.
@@ -234,7 +254,12 @@ def ask_mode(
         options=tuple(DecisionOption(label=label, value=i) for i, label in enumerate(labels)),
         min_count=count,
         max_count=min(maximum, len(labels)),
-        context={"source": ctx.source_oid, "source_name": ctx.source_name},
+        context={
+            "source": ctx.source_oid,
+            "source_name": ctx.source_name,
+            **({"purpose": purpose} if purpose else {}),
+            **(extra or {}),
+        },
     )
     answer = yield decision
     return list(answer)
@@ -247,6 +272,7 @@ def ask_x(
     chooser: int,
     *,
     per_point: int = 1,
+    loyalty_cost: bool = False,
 ) -> Generator[PendingDecision, list[int], int]:
     """Ask how big to make ``X`` before the cost is paid.
 
@@ -262,6 +288,11 @@ def ask_x(
     ``per_point`` is how much one point of ``X`` actually costs -- ``{X}{X}``
     charges twice -- and is passed through ``context`` so the client can say so
     rather than making the player work it out from the mana row.
+
+    ``loyalty_cost`` marks a planeswalker's -X (606.4): X is paid in the
+    source's own loyalty and the ceiling is all of it, so the maximum is the
+    one answer that always kills the planeswalker. Carried in ``context`` for
+    the agents that would otherwise take the largest X on offer.
     """
     if max_x <= 0:
         return 0
@@ -278,6 +309,7 @@ def ask_x(
             "per_point": per_point,
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
+            **({"loyalty_cost": True} if loyalty_cost else {}),
         },
     )
     answer = yield decision

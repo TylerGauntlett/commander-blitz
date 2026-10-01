@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "nissa_voice_of_zendikar",
+    "name": "Nissa, Voice of Zendikar",
+    "oracle_text": "+1: Create a 0/1 green Plant creature token.\n−2: Put a +1/+1 counter on each creature you control.\n−7: You gain X life and draw X cards, where X is the number of lands you control.",
+    "mana_cost": "{1}{G}{G}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Nissa"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "loyalty": 3,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Create a 0/1 green Plant creature token.",
+        "cost": {"loyalty": 1},
+        "effects": [
+          {"op": "create_token", "token": "plant_0_1_g", "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Put a +1/+1 counter on each creature you control.",
+        "cost": {"loyalty": -2},
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: You gain X life and draw X cards, where X is the number of lands you control.",
+        "cost": {"loyalty": -7},
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"lands_you_control": true}},
+          {"op": "draw", "player": "you", "amount": {"lands_you_control": true}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

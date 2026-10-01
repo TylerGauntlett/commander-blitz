@@ -210,6 +210,23 @@ describe("describeEvent", () => {
     expect(describeEvent(event({ type: "step_ended" }), names)).toBeNull();
     expect(describeEvent(event({ type: "mana_added" }), names)).toBeNull();
   });
+
+  it("stays silent about the per-creature combat damage summary", () => {
+    // Fired beside the per-hit events for the very same damage, so that "whenever
+    // this creature deals combat damage" can hear it once; a line here would
+    // repeat the life loss already narrated.
+    expect(
+      describeEvent(
+        event({
+          type: "creature_dealt_combat_damage",
+          player: 0,
+          source: 5,
+          data: { amount: 3 },
+        }),
+        names,
+      ),
+    ).toBeNull();
+  });
 });
 
 describe("exitPhrase", () => {

@@ -26,8 +26,10 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .player_statics import (
     counter_placement_replacements,
+    damage_cap,
     damage_multiplier,
     mill_multiplier,
+    player_counter_replacements,
     untap_held,
 )
 from .state import new_object
@@ -39,29 +41,38 @@ if TYPE_CHECKING:  # pragma: no cover
     from .structs import TempEffect
 from .temp_effects import (  # noqa: F401
     _expired,
+    arm_attack_requirements,
+    clear_attack_requirements,
     clear_attack_restrictions,
     clear_block_prohibitions,
     clear_cast_locks,
     clear_damage_shields,
+    clear_flash_permissions,
     clear_goad,
     clear_life_floors,
     clear_life_locks,
     clear_outcome_locks,
+    clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
+    drop_attack_requirements,
     forbid_block,
     forbid_sacrifice,
     goad_creature,
+    grant_flash_permission,
     grant_player_protection,
     life_floor,
     lock_casting_zones,
     lock_game_outcome,
     lock_life_total,
     make_unblockable,
+    permanent_shielded,
+    require_attack_on,
     restrict_attack,
     sacrifice_forbidden,
     set_life_floor,
+    shield_permanent,
     shield_player,
     shielded,
 )
@@ -427,6 +438,22 @@ def damage_player(
             reason="protection",
         )
         return 0
+    # "Until your next turn, prevent all damage target permanent would deal"
+    # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
+    # *dealer*, so it is asked here as well as in `damage_permanent`: the
+    # creature it was aimed at is exactly the one about to hit this player.
+    if permanent_shielded(state, source_oid, by=True):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="permanent_shield",
+        )
+        return 0
     # The player-side half of the doubling, placed for `damage_permanent`'s
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
@@ -439,6 +466,13 @@ def damage_player(
     amount *= damage_multiplier(
         state, source_oid, None, target_pid=pid, is_combat=is_combat
     )
+    # "Prevent all but 1 of that damage" (Ajani Steadfast's emblem). **After**
+    # the doubling, which is the order the protected player would pick (616.1):
+    # a doubled hit capped at 1 is still 1, where capping first and doubling
+    # after would let 2 through. The surplus was never dealt.
+    amount = _apply_damage_cap(state, amount, source_oid, None, pid)
+    if amount <= 0:
+        return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -446,14 +480,7 @@ def damage_player(
     # two keywords.
     poisons = source_oid is not None and _has(state, source_oid, Keyword.INFECT)
     if poisons:
-        state.players[pid].poison += amount
-        state.emit(
-            EventType.POISON_ADDED,
-            player=pid,
-            source=source_oid,
-            amount=amount,
-            total=state.players[pid].poison,
-        )
+        add_poison(state, pid, amount, source=source_oid)
     else:
         # "Damage causes loss of life", so a replacement of the *loss* reaches
         # damage too -- Bloodletter of Aclazotz prints that reminder precisely
@@ -548,6 +575,34 @@ def damage_player(
     return amount
 
 
+def _apply_damage_cap(
+    state: GameState,
+    amount: int,
+    source_oid: int | None,
+    oid: int | None,
+    pid: int,
+) -> int:
+    """Cap one damage event under every `prevent_all_but` static that reaches it.
+
+    ``oid`` is the damaged permanent, or ``None`` for damage to the player
+    ``pid``. Fires `DAMAGE_PREVENTED` for the surplus and returns what is left.
+    """
+    cap = damage_cap(state, oid, target_pid=None if oid is not None else pid)
+    if cap is None or amount <= cap:
+        return amount
+    fire(
+        state,
+        EventType.DAMAGE_PREVENTED,
+        player=pid,
+        source=source_oid,
+        oid=oid,
+        amount=amount - cap,
+        to="player" if oid is None else "permanent",
+        reason="prevent_all_but",
+    )
+    return cap
+
+
 def damage_permanent(
     state: GameState,
     oid: int,
@@ -603,6 +658,24 @@ def damage_permanent(
             amount=amount,
             to="permanent",
             reason="prevent_all",
+        )
+        return 0
+    # The one-shot counterpart of the total shield above: "prevent all damage
+    # that would be dealt to him this turn" (Gideon Jura) on the recipient, and
+    # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
+    # answer the whole event however big it is, so they sit beside it.
+    if permanent_shielded(state, oid, by=False) or permanent_shielded(
+        state, source_oid, by=True
+    ):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="permanent_shield",
         )
         return 0
     # Absorb (702.63a): "prevent N of that damage", per source and per instance.
@@ -673,6 +746,11 @@ def damage_permanent(
     # branches because each of those is a *different place to put the damage*
     # rather than a change to how much of it there is.
     amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+    # "…or a planeswalker you control, prevent all but 1 of that damage." After
+    # the doubling for the reason given in `damage_player`.
+    amount = _apply_damage_cap(state, amount, source_oid, oid, obj.controller)
+    if amount <= 0:
+        return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword
@@ -812,7 +890,15 @@ def untap_permanent(state: GameState, oid: int) -> bool:
     return True
 
 
-def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int) -> int:
+def _replaced_counter_amount(
+    state: GameState,
+    oid: int,
+    kind: str,
+    amount: int,
+    *,
+    as_cost: bool = False,
+    by: int | None = None,
+) -> int:
     """How many counters are actually put on, after every replacement applies.
 
     "If one or more +1/+1 counters would be put on a creature you control,
@@ -848,16 +934,88 @@ def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int)
     is added once per *placement*, not once per counter -- which is what the
     printed "that many plus one" says.
     """
-    for static in counter_placement_replacements(state, oid, kind):
+    statics = counter_placement_replacements(state, oid, kind, as_cost=as_cost, by=by)
+    return _apply_counter_statics(statics, amount)
+
+
+def _apply_counter_statics(statics, amount: int) -> int:
+    """614.5: each static once, each seeing the amount the last one left."""
+    for static in statics:
         multiplier = int(static.get("counter_multiplier") or 1)
         addend = int(static.get("counter_addend") or 0)
         amount = amount * multiplier + addend
     return amount
 
 
-def add_counters(
-    state: GameState, oid: int, kind: str, amount: int, source: int | None = None
+def _putter(state: GameState, source: int | None, fallback: int | None) -> int | None:
+    """Who is putting the counters on (122.6a), for "if **you** would put".
+
+    The controller of the spell or ability doing it -- ``source`` is the object
+    every placement already names -- and, with no source, ``fallback``: the
+    recipient's controller for a permanent, which is who puts the counters a
+    permanent enters with, the lore counter a Saga ticks, and the loyalty a
+    +N cost pays.
+    """
+    if source is not None and (src := state.objects.get(source)) is not None:
+        return src.controller
+    return fallback
+
+
+def add_poison(
+    state: GameState,
+    pid: int,
+    amount: int,
+    *,
+    source: int | None = None,
+    by: int | None = None,
 ) -> int:
+    """Give a player poison counters, after every counter replacement applies.
+
+    The one funnel for poison -- the `add_poison` op and infect damage both
+    come through -- so a replacement that reaches players (Innkeeper's
+    Talent's "…on a permanent **or player**") applies once per placement and
+    before POISON_ADDED reports the number that arrived.
+    """
+    if amount <= 0:
+        return 0
+    if by is None:
+        by = _putter(state, source, None)
+    amount = _apply_counter_statics(
+        player_counter_replacements(state, pid, "poison", by=by), amount
+    )
+    state.players[pid].poison += amount
+    state.emit(
+        EventType.POISON_ADDED,
+        player=pid,
+        source=source,
+        amount=amount,
+        total=state.players[pid].poison,
+    )
+    return amount
+
+
+def add_counters(
+    state: GameState,
+    oid: int,
+    kind: str,
+    amount: int,
+    source: int | None = None,
+    *,
+    as_cost: bool = False,
+    by: int | None = None,
+) -> int:
+    """Put counters on a permanent, after every counter replacement applies.
+
+    ``by`` is the player putting them, for "if **you** would put" (Innkeeper's
+    Talent); omitted, it is the controller of ``source``, or with no source the
+    permanent's own controller -- see `_putter`.
+
+    ``as_cost`` marks a placement made while paying a cost (a planeswalker's
+    +N loyalty ability, `costs.pay`). A cost is not an effect (118.1), so a
+    replacement printed "if **an effect** would put" -- Doubling Season,
+    ``effects_only`` -- leaves it alone, while "if counters **would be put**"
+    and "if **you** would put" still apply.
+    """
     obj = state.objects.get(oid)
     if obj is None or amount == 0:
         return 0
@@ -867,7 +1025,11 @@ def add_counters(
         # that really arrived, and a Saga chapter comparison below has to see
         # the same total the board does. Only on the way up -- "would be put on"
         # is nothing to do with counters coming off.
-        amount = _replaced_counter_amount(state, oid, kind, amount)
+        if by is None:
+            by = _putter(state, source, obj.controller)
+        amount = _replaced_counter_amount(
+            state, oid, kind, amount, as_cost=as_cost, by=by
+        )
     # Read before the write. A Saga's chapter ability triggers on the count
     # *becoming* its number (714.2c), so the comparison needs both sides and
     # this is the only moment both exist.
@@ -1383,13 +1545,32 @@ def _stats_changed(
     )
 
 
-def pump(state: GameState, oid: int, power: int, toughness: int, source: int | None = None) -> None:
+def pump(
+    state: GameState,
+    oid: int,
+    power: int,
+    toughness: int,
+    source: int | None = None,
+    *,
+    until_player: int | None = None,
+) -> None:
+    """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
+    **until your next turn**" (Liliana, the Last Hope). See
+    `TempEffect.until_player` for where the longer one wears off."""
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(TempEffect(kind="pump", power=power, toughness=toughness, source=source))
+    obj.until_eot.append(
+        TempEffect(
+            kind="pump",
+            power=power,
+            toughness=toughness,
+            source=source,
+            until_player=until_player,
+        )
+    )
     state.bump_chars()
     _stats_changed(state, obj, power=power, toughness=toughness)
 
@@ -1406,6 +1587,9 @@ def animate(
     keywords: Sequence[str] = (),
     your_turn_keywords: Sequence[str] = (),
     source: int | None = None,
+    permanent: bool = False,
+    exact: bool = False,
+    until_player: int | None = None,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
 
@@ -1416,24 +1600,45 @@ def animate(
 
     Types and subtypes are added rather than replacing what is printed.  Every
     card that says this also says "it's still a land", so the additive reading is
-    the ordinary case and there is nothing to opt into.
+    the ordinary case.
+
+    ``permanent`` and ``exact`` are the other sentence: Oko, Thief of Crowns'
+    "target artifact or creature ... becomes a green Elk creature with base
+    power and toughness 3/3". No duration, so the entry goes on
+    `GameObject.animations`, which cleanup does not sweep; and no "in addition
+    to its other types", so the colours, card types and creature types named
+    replace the permanent's own (`TempEffect.exact`). Its keywords, if any, are
+    granted for as long as the permanent lasts. A your-turn-only keyword has no
+    permanent form and is refused rather than silently timed.
     """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(
-        TempEffect(
-            kind="animate",
-            power=power,
-            toughness=toughness,
-            types=tuple(types),
-            subtypes=tuple(subtypes),
-            colors=tuple(colors),
-            source=source,
-        )
+    if permanent and your_turn_keywords:
+        raise ValueError("animate: your_turn_keywords has no permanent form")
+    effect = TempEffect(
+        kind="animate",
+        power=power,
+        toughness=toughness,
+        types=tuple(types),
+        subtypes=tuple(subtypes),
+        colors=tuple(colors),
+        source=source,
+        exact=exact,
+        timestamp=state.alloc_timestamp(),
+        until_player=until_player,
     )
+    if permanent:
+        obj.animations.append(effect)
+        for word in keywords:
+            obj.granted_keywords.add(word)
+            obj.granted_keyword_at[word] = effect.timestamp
+        state.bump_chars()
+        _stats_changed(state, obj, power=power, toughness=toughness)
+        return
+    obj.until_eot.append(effect)
     # Keywords the animated body carries. `your_turn_keywords` is the quoted
     # half of the Restless cycle -- "with \"During your turn, this creature has
     # first strike\"" -- and it has to ride the animation rather than be a
@@ -1441,10 +1646,19 @@ def animate(
     # have no printed line of its own to claim, which is the residual gate's
     # objection and the reason Raging Ravine still fails.
     for word in keywords:
-        obj.until_eot.append(TempEffect(kind="keyword", keyword=word, source=source))
+        obj.until_eot.append(
+            TempEffect(kind="keyword", keyword=word, source=source, timestamp=effect.timestamp, until_player=until_player)
+        )
     for word in your_turn_keywords:
         obj.until_eot.append(
-            TempEffect(kind="keyword", keyword=word, source=source, only_your_turn=True)
+            TempEffect(
+                kind="keyword",
+                keyword=word,
+                source=source,
+                only_your_turn=True,
+                timestamp=effect.timestamp,
+                until_player=until_player,
+            )
         )
     state.bump_chars()
     _stats_changed(state, obj, power=power, toughness=toughness)
@@ -1457,6 +1671,7 @@ def grant_keyword(
     source: int | None = None,
     *,
     permanent: bool = False,
+    until_player: int | None = None,
 ) -> None:
     """Give a permanent a keyword, until end of turn or for as long as it lasts.
 
@@ -1474,8 +1689,18 @@ def grant_keyword(
         return
     if permanent:
         obj.granted_keywords.add(keyword)
+        # When, for a later "loses all abilities" to compare against (613.7).
+        obj.granted_keyword_at[keyword] = state.alloc_timestamp()
     else:
-        obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
+        obj.until_eot.append(
+            TempEffect(
+                kind="keyword",
+                keyword=keyword,
+                source=source,
+                timestamp=state.alloc_timestamp(),
+                until_player=until_player,
+            )
+        )
     state.bump_chars()
     _stats_changed(state, obj, keyword=keyword)
 
@@ -1505,7 +1730,12 @@ def grant_ability(
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    effect = TempEffect(kind="ability", ability_index=ability_index, source=source)
+    effect = TempEffect(
+        kind="ability",
+        ability_index=ability_index,
+        source=source,
+        timestamp=state.alloc_timestamp(),
+    )
     if permanent:
         obj.granted_abilities_permanent.append(effect)
     else:
@@ -1607,18 +1837,26 @@ def granted_abilities(state: GameState, oid: int):
             yield source, card.grantable_abilities[temp.ability_index]
 
 
-def lock_abilities(state: GameState, oid: int, source: int | None = None) -> None:
+def lock_abilities(
+    state: GameState,
+    oid: int,
+    source: int | None = None,
+    *,
+    until_player: int | None = None,
+) -> None:
     """ "Its activated abilities can't be activated this turn."
 
     Recorded as an until-end-of-turn effect like a pump, so the cleanup step
-    already knows to remove it and no new lifetime has to be tracked.
+    already knows to remove it and no new lifetime has to be tracked -- and with
+    ``until_player``, Dovin Baan's "…until your next turn", on the pump's longer
+    clock for the same reason.
     """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(TempEffect(kind="lock_abilities", source=source))
+    obj.until_eot.append(TempEffect(kind="lock_abilities", source=source, until_player=until_player))
 
 
 def clear_until_eot(state: GameState) -> None:
@@ -1655,10 +1893,56 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying = None
             obj.copying_name = None
             obj.copying_until_eot = False
-        handbacks.extend((oid, temp) for temp in obj.until_eot if temp.kind == "control")
-        obj.until_eot.clear()
+        handbacks.extend(
+            (oid, temp)
+            for temp in obj.until_eot
+            if temp.kind == "control" and temp.until_player is None
+        )
+        # "…until **your next turn**" rides the same list and outlives this
+        # cleanup: it is `clear_until_next_turn`'s, in its player's untap step.
+        obj.until_eot = [temp for temp in obj.until_eot if temp.until_player is not None]
     state.bump_chars()
     _hand_back_control(state, handbacks)
+
+
+def clear_until_next_turn(state: GameState, player: int) -> None:
+    """ "…until your next turn" (611.2b): drop ``player``'s timed entries.
+
+    Called from ``player``'s untap step -- the first thing their next turn does
+    -- and from elimination, because a seat that has left never has that turn
+    and its effects would otherwise stand for the rest of the game (800.4a's
+    "until that turn would have begun", read the way every other
+    ``until_your_next_turn`` table here reads it).
+
+    Keyed by the **player** and never by a turn number, for detain's reason:
+    eliminating somebody moves everybody else's "next turn". Walks every object
+    rather than the battlefield list because a phased-out permanent keeps its
+    effects (702.26d), and anything that has left the battlefield has had
+    ``until_eot`` emptied already.
+    """
+    # "Until your next turn, whenever ..." -- the event-watching delayed
+    # abilities on the same clock (Tamiyo, Field Researcher; Vraska the
+    # Unseen), keyed by the player who created them.
+    if state.delayed_triggers:
+        state.delayed_triggers = [
+            d
+            for d in state.delayed_triggers
+            if not (
+                d.trigger is not None
+                and d.duration == "until_your_next_turn"
+                and d.controller == player
+            )
+        ]
+    changed = False
+    for obj in state.objects.values():
+        if not obj.until_eot:
+            continue
+        kept = [temp for temp in obj.until_eot if temp.until_player != player]
+        if len(kept) != len(obj.until_eot):
+            obj.until_eot = kept
+            changed = True
+    if changed:
+        state.bump_chars()
 
 
 def _hand_back_control(state: GameState, handbacks: list[tuple[int, TempEffect]]) -> None:

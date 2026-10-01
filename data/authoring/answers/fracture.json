@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "fracture",
+    "name": "Fracture",
+    "oracle_text": "Destroy target artifact, enchantment, or planeswalker.",
+    "mana_cost": "{W}{B}",
+    "types": ["Instant"],
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "any_types": ["Artifact", "Enchantment", "Planeswalker"]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {"op": "destroy", "objects": {"target": "t1"}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5,
+    "graveyard_size": {"0": 3}
+  }
+}

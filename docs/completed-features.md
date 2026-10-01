@@ -17868,3 +17868,1153 @@ Yixlid Jailer neighbourhood.
   same board exiled, which is the replacement ordering; the loader refusing a
   missing `affects_player` and an unreachable destination; and the reader's
   fail-closed behaviour pinned in both directions through the same seam.
+
+## Ten printed tokens the Atraxa deck creates — Atraxa, Praetors' Voice — 111.4
+
+### Overview
+
+Eleven cards in the superfriends deck name a token the closed pool did not
+hold. Ten of the tokens are now data in `data/cards/tokens.cards.json`:
+
+| id | the card | the near miss, and why it is a different card |
+|---|---|---|
+| `wizard_2_2_u` | Kasmina, Enigmatic Mentor | `drake_2_2_u_flying` flies and is a Drake |
+| `fractal_0_0_gu` | Kasmina, Enigma Sage | no Fractal; `germ_0_0_b` is black |
+| `spirit_1_1_w_flying` | Kaya the Inexorable | `spirit_1_1_c` is colorless and does not fly |
+| `octopus_8_8_u` | Kiora, Master of the Depths | `kraken_8_8_u` is the right body, a Kraken |
+| `kraken_9_9_u` | Kiora, the Crashing Wave | `kraken_8_8_u` is one smaller |
+| `kor_ally_1_1_w` | Oath of Gideon | the white 1/1s are Soldiers and Humans, and Allies count Allies |
+| `vampire_knight_1_1_b_lifelink` | Sorin, Grim Nemesis | `vampire_1_1_b_lifelink` is no Knight |
+| `pirate_2_2_b_menace` | Vraska, Relic Seeker | `zombie_2_2_b` is a Zombie without menace |
+| `illusion_2_2_u_sac_when_targeted` | Jace, Cunning Castaway | `illusion_1_1_u` is a 1/1 with no trigger |
+| `tamiyos_notebook` | Tamiyo, Compleated Sage | nothing: a legendary Book with two abilities |
+
+### Tier: none of A–E
+
+No engine change. The two tokens with abilities compose shipped vocabulary: the
+Illusion is a `becomes_target` trigger with `targeted_by: "spell"` (Goldspan
+Dragon's clause) sacrificing `self_only`, and the Notebook is `supertypes:
+["Legendary"]`, a `spell_cost_reduction` of `{2}` on spells you cast, and a
+`{T}` `draw`.
+
+The eleventh, Vraska the Unseen's Assassin ("Whenever this creature deals combat
+damage to a player, that player loses the game"), is **not** added: the engine
+has no `lose_game` op, and `win_game` for the Assassin's controller would knock
+out every other opponent in a pod. It waits on `lose_the_game`, the capability
+Pact of Negation's gap record already names.
+
+Vraska, Relic Seeker was blocked on nothing else and is now authored. Jace,
+Cunning Castaway's record also named only the token, so it is ready for another
+authoring pass; its record stays as it was until that pass writes an answer. Kasmina, Enigmatic Mentor's record named only the token, but its
+first line ("cost {2} more") is a *mana* tax and `spell_cost_increase` charges
+life only, so it keeps a `spell_cost_increase_mana` need instead. The other seven
+keep their remaining needs, with `missing_token` removed.
+
+### Tests
+
+- `tests/unit/test_atraxa_tokens.py` — size, colour, creature types and keywords
+  of each creature token read off the characteristics layer; each near miss still
+  a separate token; a bare Fractal put into the graveyard by 704.5f; the Illusion
+  sacrificed to your spell and an opponent's, and **not** to an activated ability
+  or a spell aimed at something else; the Notebook discounting generic mana only
+  and only your spells, drawing on a tap, and losing a second copy to the legend
+  rule.
+
+## `prevent_damage_permanent` — prevention on a permanent, to or by, with a clock — Gideon Jura, Gideon of the Trials, Kiora — 615.1
+
+### The gap
+
+Five cards in the Atraxa superfriends deck print a one-shot prevention aimed at a
+**permanent**: Gideon Jura's and Gideon, Champion of Justice's "prevent all damage
+that would be dealt to him this turn", Gideon of the Trials' "until your next turn,
+prevent all damage target permanent would deal", and Kiora, the Crashing Wave's
+"…dealt to and dealt by target permanent an opponent controls". The engine's two
+preventions could not say any of it: the `prevent_damage` op shields a seat and
+refuses `objects`, and the `prevent_damage` static is continuous for as long as its
+printed source stands, cannot be installed by a resolving ability, and only stops
+damage dealt *to* what it matches. Nothing could stop damage a permanent *deals*.
+
+### What was built
+
+- `structs.PermanentShield` (`dealt`: `to` / `by` / `to_and_by`; `duration`:
+  `this_turn` / `until_your_next_turn`; `player`, the clock; `source`).
+- `GameObject.damage_shields`, cleared by `reset_permanent_state` — on the object
+  rather than a state table because an oid survives zone changes and 400.7 ends
+  the effect when the object leaves.
+- `temp_effects.shield_permanent` / `permanent_shielded` / `clear_permanent_shields`,
+  re-exported from `primitives`.
+- Read in `primitives.damage_permanent` (recipient `to`, dealer `by`, beside the
+  `prevent_all` branch) and `primitives.damage_player` (dealer `by`, beside
+  protection). Fires `DAMAGE_PREVENTED` with `reason: "permanent_shield"`.
+- Cleared in `turn._cleanup_step` (`this_turn`), `turn._untap_step` (the untapping
+  player's `until_your_next_turn`) and `sba._eliminate` (a seat that never untaps
+  again).
+- The `prevent_damage_permanent` op in `ops_life.py`; the loader requires
+  `objects`, `dealt` and `duration` and refuses `amount`. The `prevent_damage` op's
+  refusal of `objects` now points at the new op.
+
+### Tests
+
+- `tests/unit/test_prevent_damage_permanent.py` — each direction and its
+  non-reach (a `to` shield still deals damage, a `by` shield still takes it), to
+  permanents and to players; the combat path through a pacified attacker; no
+  `DAMAGE_DEALT` for prevented damage; both clocks, neither clearing the other,
+  and an eliminated installer's shields dropped; 400.7 (a blinked permanent is
+  unshielded); the primitive's refusals; both test spells end to end; and the
+  loader's required keys.
+
+## `prevent_all_but` — "prevent all but 1 of that damage" — Ajani Steadfast — 615.1
+
+### The gap
+
+Ajani Steadfast's −7 emblem: "If a source would deal damage to you or a
+planeswalker you control, prevent all but 1 of that damage." The `prevent_damage`
+static is absorb N (prevents N, lets the rest through) or `prevent_all`, and is
+read only for permanents, so it could protect neither the player nor cap an event.
+
+### What was built
+
+- The `prevent_all_but` static: `amount` (required, ≥ 1) and recipients
+  `affects_player` and/or `affects` (at least one), read as a union.
+- `player_statics.damage_cap(state, target_oid, target_pid=...)` — the smallest
+  cap among the statics that reach the recipient, walking `_battlefield_statics`
+  (so an emblem in the command zone applies).
+- `primitives._apply_damage_cap`, called in `damage_permanent` and
+  `damage_player` right after the `replace_damage` multiplier; the surplus fires
+  `DAMAGE_PREVENTED` with `reason: "prevent_all_but"`.
+
+### Tests
+
+- `tests/unit/test_prevent_all_but.py` — a big hit capped to 1, a 1 untouched,
+  each event capped separately; your planeswalker covered, your creature, the
+  opponent and their planeswalker not; the surplus as a prevention event and the
+  rest as ordinary damage; a doubler applied first (with its baseline); the
+  loader's refusals (no amount, all but 0, no recipient).
+
+## `must_attack_planeswalker` — "creatures that player controls attack Gideon Jura if able" — 508.1d
+
+### The gap
+
+Gideon Jura's +2. `must_attack` flags only the creatures on the battlefield at
+resolution, lasts `this_turn`/`next_combat` and names no defender; the
+`attacks_if_able` static and goad name no planeswalker. Nothing could require an
+attack on one specific target, nor reach creatures arriving later in that turn.
+
+### What was built
+
+- `GameObject.must_be_attacked_by` on the planeswalker (compelled player → turn,
+  `ATTACK_REQUIREMENT_PENDING` until armed), cleared by `reset_permanent_state`.
+- `temp_effects.require_attack_on` / `arm_attack_requirements` (the compelled
+  player's untap step) / `clear_attack_requirements` (cleanup) /
+  `drop_attack_requirements` (elimination), re-exported from `primitives`.
+- `combat.required_attack_walkers`, read by `attack_required` (the creature must
+  attack) and `attack_target_forbidden` (only the walker is offered). The
+  prohibition half of `attack_target_forbidden` is split out as
+  `_attack_prohibited` so the requirement can ask "could it attack there?"
+  without recursion; beside goad, `_misses_attack_requirements` scores each
+  target by requirements obeyed and refuses anything below the best (508.1d).
+- The `must_attack_planeswalker` op (`player`, `objects`, both required; no
+  `duration`).
+
+### Tests
+
+- `tests/unit/test_must_attack_planeswalker.py` — compelled and walker-only
+  targets, the unmarked baseline, a creature arriving after the mark; "if able"
+  (tapped, prohibited from the walker); pending does not bite, the untap step
+  arms it, cleanup ends it, not on the controller's turn, elimination drops it;
+  400.7; both goad interactions; the loyalty ability end to end; the loader.
+
+## `cant_cast_spells` spell filter — Narset Transcendent's emblem
+
+"Your opponents can't cast noncreature spells." `cant_cast_spells` was total by
+construction: the loader refused any filter beside it because nothing read one, so
+the emblem could only be written as a lock on every spell.
+
+### What changed
+
+- The static takes an optional `affects_spells` (the `SPELL_FILTER_KEYS` minus
+  `controller`, which `affects_player` already answers). Omitted, it is Voice of
+  Victory's total lock, unchanged.
+- `player_statics.player_cant_cast_spells(state, pid, card=None)`: with no card
+  only an unfiltered lock answers (a seat under the emblem can still cast
+  creatures); with the card, a filtered lock whose filter matches it answers too.
+- `casting._cast_variant` asks it with the face being cast, so every offered cast
+  from every zone meets the filter. `_spell_as_cast` supplies the spell's own
+  characteristics for the two variants that change them: bestow (an Aura spell,
+  702.103b) and face-down (a nameless creature spell, 708.2a).
+- The resolution-time casts pass the card: `suspend.cast_for_free`,
+  `replacements._offer_cast`, `_offer_free_cast`, `cast_copy` (per card), and
+  `cast_from_hand` drops locked cards from its offer.
+
+### Tests
+
+- `tests/unit/test_cant_cast_spells_filter.py` — creatures offered and
+  noncreatures withheld under the emblem; its owner unaffected; the seat-level
+  question false; a bestow cast withheld while the creature cast stays; a
+  flashback from the graveyard withheld; the free-cast floor refusing a bolt and
+  casting a bear; `cast_from_hand` offering only the creature; a permanent lock
+  lifting when it leaves; the loader accepting the filter and refusing `affects`,
+  `controller` and board-state keys.
+
+## `cast_only_at_sorcery_speed` — Teferi, Time Raveler's static
+
+"Each opponent can cast spells only any time they could cast a sorcery." No static
+could narrow a player's timing window: `cant_cast_spells` forbids outright and has
+no sorcery-timing condition, and `cast_as_though_flash` widens.
+
+### What changed
+
+- New player-wide static `cast_only_at_sorcery_speed` (takes `affects_player` and
+  an optional `condition`; `affects`/`amount` refused).
+- `player_statics.player_casts_only_at_sorcery_speed`, read in
+  `casting._timing_ok` after `cast_before_step` and before the instant/flash and
+  `cast_as_though_flash` branches, so it overrides all three (101.2).
+- `player_statics.player_cant_cast_while_resolving` folds the prohibition and the
+  timing lock into the one question the resolution-time casts ask:
+  `suspend.cast_for_free`, `replacements._offer_cast`, `_offer_free_cast`,
+  `cast_from_hand` and `cast_copy`.
+
+### Tests
+
+- `tests/unit/test_cast_only_at_sorcery_speed.py` — an instant withheld off turn
+  and in the opponent's own combat, both spells castable in their main phase, the
+  control without the lock, its controller unaffected, Tidal Barracuda's
+  permission overridden, a free cast refused for the locked seat and allowed for
+  the controller, the lock lifting when its source leaves, and the loader
+  requiring `affects_player` and refusing a filter.
+
+## `lose_game` — Vraska the Unseen's Assassin token
+
+"Whenever this creature deals combat damage to a player, that player loses the
+game." `win_game` was the only op that reached a result, and written on the
+controller it eliminates every other seat — in a pod, players the Assassin never
+hit.
+
+### What changed
+
+- `sba.declare_loss(state, pids)`: eliminates exactly the named living seats via
+  `_eliminate` (new `LossReason.LOST_BY_EFFECT`), then `check_game_over`; all are
+  eliminated before the check, so everyone losing is a draw (104.4a).
+- `lose_game` op in `ops_player` (player spec, default `"you"`); the loader
+  refuses a `condition` on it as it does on `win_game`.
+- `assassin_1_1_b_lose_game` in `data/cards/tokens.cards.json`: the 1/1 black
+  Assassin with the trigger (`player: {"binding": "event_player"}`).
+- Frontend loss-reason label for `lost_by_effect`.
+
+### Tests
+
+- `tests/unit/test_lose_game.py` — the default seat loses; in a pod only the named
+  seat leaves (one `PLAYER_LOST`) and its permanents go; a repeat is a no-op;
+  everyone losing is a draw; the Assassin's combat hit eliminates only that player,
+  noncombat damage does not, and in a duel the hit wins; a `condition` on the op
+  is refused.
+
+
+## Proliferate as the printed choice — permanents and players — 701.27a
+
+### Overview
+
+Atraxa, Praetors' Voice; Contentious Plan; Flux Channeler; Inexorable Tide; Karn's
+Bastion; Viral Drake. Each prints "proliferate", and the `proliferate` op was a
+documented simplification of it: every permanent its controller had with a counter
+grew, nothing else could, and there was no choice. That is a different card twice
+over — Viral Drake could not grow the poison it deals, and a -1/-1 counter on your
+own creature grew whether you wanted it to or not.
+
+### Tier: A — an existing op made exact, composing `ask_targets`
+
+No new decision kind, event or API field. The op now builds `(label, ref)` pairs
+for every battlefield permanent (any controller) with a counter and every player
+with poison, and asks the controller one `ask_targets` decision with minimum 0 and
+maximum all, `purpose="proliferate"`. `ask_targets` already mixes object and player
+refs over `DecisionKind.CHOOSE_OBJECTS`, so the RL encoder, the client dialog and
+the authoring verifier answer it unchanged. The chosen kinds are snapshotted before
+anything is added; a chosen player's poison grows by one with a `POISON_ADDED`
+event, so a tenth counter is lethal through the ordinary state-based action.
+
+The retired `objects` narrowing key is now a load error — no card used it, and a
+selector would silently make the choice for the player.
+
+The heuristic agent gets a `proliferate` branch: its own permanents unless one of
+their counters is harmful (-1/-1, stun), opponents' permanents only when every
+counter there is harmful, opponents' poison, never its own; then it finishes.
+
+### Tests
+
+- `tests/unit/test_proliferate.py` — one of each kind already there, per
+  permanent; nothing without a counter is offered and an empty board asks nothing;
+  the decision is one any-number question to the controller; choosing nothing
+  grows nothing and only the chosen grow; an opponent's permanent and a hexproof
+  one can be chosen; an opponent's poison grows, as a poison event, and the tenth
+  is lethal; the loader refuses `objects`; the heuristic agent grows what helps
+  and declines what hurts, including killing an opponent's creature with its
+  second -1/-1 counter while leaving its own alone.
+
+## Proliferating twice — "If you would proliferate, proliferate twice instead" — 614.1a / 616.1
+
+### Overview
+
+Tekuthal, Inquiry Dominus. The `replace_*` family had draw, mill, life, tokens,
+counters and damage, and nothing that replaced the proliferate action.
+
+### Tier: B — a player-wide static read by one op
+
+`replace_proliferate` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`
+(so it requires `affects_player` and is not grantable); the loader refuses
+`affects` and `amount`, since "twice" is the whole size.
+`player_statics.proliferate_times` returns 2 to the power of the active statics
+reaching the proliferating player, and the `proliferate` op runs that many whole
+proliferates, each asking its own choice after the previous one resolved. Two
+Tekuthals are four proliferates (616.1); none applies twice (614.5).
+
+### Tests
+
+- `tests/unit/test_replace_proliferate.py` — one doubler is two proliferates and
+  none is one; two compound to four; the second choice may decline what the first
+  took, and sees what the first grew; an opponent's doubler does not double mine;
+  a doubler that has left stops; the loader requires `affects_player` and refuses
+  an `amount`.
+
+## Removing counters from among other permanents — a cost — 602.2b / 118.3
+
+### Overview
+
+Tekuthal, Inquiry Dominus: "Remove three counters from among other artifacts,
+creatures, and planeswalkers you control". The `remove_counters` cost takes one
+named kind off the source; this is any kinds, off other permanents a selector
+names, split as the payer chooses.
+
+### Tier: A — a new cost composing `ask_objects` and `ask_mode`
+
+`Cost.remove_counters_from_among` (a selector plus `count`) in `schema.py`,
+`carddef.py` (`from_spec`, `is_tap_only`, `describe`), the loader guard in
+`loader/mana.py` (positive `count`, no named `counter`, a valid selector), and
+`costs.py`: `_counter_removal_pool` builds the matching permanents that carry a
+counter, `can_pay` sums their counters, and `pay` removes one at a time — which
+permanent, then which kind when there are several (harmful kinds first). No new
+decision kind. The heuristic agent answers `"remove_counter_cost"` by taking a
+harmful counter first, then from the permanent with the most, sparing a
+planeswalker's last loyalty. `tests/cards/test_every_card_works.py` gained
+`_provide_the_counter_fodder` so the sandbox can pay the cost.
+
+### Tests
+
+- `tests/unit/test_remove_counters_from_among.py` — three on one permanent pay,
+  three split pay, two is one short and the ability is not offered; any kinds
+  count; the source's own counters and an enchantment's do not; the counters come
+  off and the ability resolves; the cost is asked before the ability is on the
+  stack; the payer chooses the split; a permanent with two kinds asks which,
+  harmful first; forced choices are not asked; the agent takes the harmful
+  counter first; the loader refuses a missing count, a named kind and a bad
+  selector key; it is not a tap-only cost.
+
+## A cap on draws — "Each opponent can't draw more than one card each turn" — 101.2 / 121.2
+
+### Overview
+
+Narset, Parter of Veils. The draw family had doublers (`replace_draw`), a skipped
+draw step and an empty-library win, and nothing that forbade a draw.
+
+### Tier: B — a player-wide static read at the one draw seam
+
+`draw_limit` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`; the loader
+requires `amount` (the cap) and refuses `affects`. `player_statics.draw_cap`
+returns the smallest cap reaching the player, and `replacements._draw_one`
+refuses a draw once `cards_drawn_this_turn` has reached it — before dredge, the
+empty-library win and the doublers, because a draw that cannot happen cannot be
+replaced. Every post-opening-hand draw, the draw step included, passes there.
+
+### Tests
+
+- `tests/unit/test_draw_limit.py` — one draw then none; draw three is one; the
+  controller is uncapped under "each opponent" and capped under "each player";
+  a draw made before the static arrived counts; a new turn resets it; an upkeep
+  draw uses up the draw step's card; a doubled draw yields one; dredge is not
+  offered past the cap but is under it; an empty library neither wins (Lab
+  Maniac) nor loses past the cap; it lifts when the source leaves; the loader
+  requires `affects_player` and `amount` and refuses `affects`.
+
+## A search that cannot happen — "Spells and abilities your opponents control can't cause their controller to search their library" — 101.2 / 701.19
+
+### Overview
+
+Ashiok, Dream Render. The player-wide "can't" statics covered casting,
+activating and life gain; nothing forbade a library search.
+
+### Tier: B — a player-wide static read by the search op
+
+`cant_search_library` joins `STATIC_EFFECTS` and `PLAYER_WIDE_STATIC_EFFECTS`;
+the loader refuses `affects` and `amount`. `player_statics.search_forbidden`
+answers whether a searcher is barred, true only when the searcher controls the
+resolving spell or ability and a static reaches them. `ops_cards._search` then
+leaves their library out of the pool; the shuffle and every other zone of the
+search still happen.
+
+### Tests
+
+- `tests/unit/test_cant_search_library.py` — an opponent's tutor finds nothing,
+  still shuffles and the rest of the spell resolves; the graveyard half of an
+  "and/or" search is still searched; the static's controller searches freely; my
+  spell making the opponent search is not stopped; it lifts when the source
+  leaves; the loader requires `affects_player` and refuses `affects`/`amount`.
+
+## Shielded from an opponent's discard and sacrifice — "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents" — 101.2
+
+### Overview
+
+Tamiyo, Collector of Tales. `cant_sacrifice` protects permanents from every
+sacrifice whoever asks, and nothing covered discard; no static read who caused
+either.
+
+### Tier: B — a player-wide static read where effects discard or sacrifice
+
+`opponents_cant_force_discard_or_sacrifice` joins `STATIC_EFFECTS` and
+`PLAYER_WIDE_STATIC_EFFECTS`; the loader refuses `affects` and `amount`.
+`player_statics.forced_discard_or_sacrifice_barred(state, pid, cause)` is true
+when a static reaches `pid` and the cause is another seat. Read by `op_discard`
+(skips the player), connive (no discard), `op_sacrifice` (narrows the pool) and
+`may` with a sacrifice/discard `pay` (runs `else`, as an unpayable cost).
+
+### Tests
+
+- `tests/unit/test_opponents_cant_force_discard_or_sacrifice.py` — an
+  opponent's discard spell and edict skip me while reaching them; an opponent's
+  "unless you sacrifice" is not offered and the punishment lands; my own discard
+  and edict still hit me; the opponent is not shielded; it lifts when the source
+  leaves; an uncaused discard is never barred; loader guards.
+
+## Choosing a card name — "Choose a nonland card name, then reveal the top four cards" — 400.3
+
+### Overview
+
+Tamiyo, Collector of Tales' +1. The engine could choose a type, a colour and a
+player; there was no name choice, and the selector key `name` took only a
+literal.
+
+### Tier: A — a new op composing `ask_mode`, and a selector reading its binding
+
+`choose_card_name` (`ops_control`) offers every distinct name among the cards
+the chooser owns (narrowed by `types` / `not_types`) plus "Another card name",
+asks through `ask_mode` tagged `choose_card_name`, and binds the name under the
+required `as` (a `RECORDING_OPS` member). The effect-side selector's `name`
+accepts `{"binding": …}`; `validate_selector` refuses any other non-string. The
+heuristic agent's `_choice` names the label its library holds most copies of.
+
+### Tests
+
+- `tests/unit/test_choose_card_name.py` — one `CHOOSE_MODE` question tagged
+  `choose_card_name`; the offered names are the chooser's own nonland names plus
+  "Another card name", not an opponent's; every copy among the top four goes to
+  hand and the rest to the graveyard, a card below the fourth stays; a name not
+  among them and "Another card name" mill all four; the heuristic agent names
+  what its library holds most of; the loader requires `as`, refuses an unknown
+  card type and a `name` that is neither a literal nor a binding.
+
+## `rotate_control` — Aminatou, the Fateshifter's −6
+
+"Choose left or right. Each player gains control of all nonland permanents other
+than Aminatou controlled by the next player in the chosen direction."
+`for_each_player` around `gain_control` could hand each seat a board, but no player
+spec named a seat-relative neighbour, and the loop cascades: the second seat reads a
+neighbour who already holds two boards.
+
+### What changed
+
+- `rotate_control` op in `ops_control` (`objects` selector, optional fixed
+  `direction`): resolves the pool once, reads controllers before anything moves, and
+  gives each permanent to the player whose neighbour in the chosen direction
+  controlled it via `change_control`. `neighbour(state, pid, direction)` beside it —
+  left is the next living seat in turn order, right the previous.
+- The question is `ask_mode` with labels Left/Right; `ask_mode` gained an `extra`
+  context argument so the decision carries `purpose: "choose_direction"` and
+  `takes_from`. Not asked when both directions name the same seat (a duel).
+- Loader: `objects` required, `direction` must be `left` or `right`.
+- Heuristic agent: a `choose_direction` branch takes the direction whose donor seat
+  has the most nonland mana value (`choices[0]` was always "left").
+
+### Tests
+
+- `tests/unit/test_rotate_control.py` — left and right each move every permanent
+  exactly one seat and never cascade; a fixed direction asks nobody; lands and the
+  source stay put; an eliminated seat is skipped; the pod question and its context;
+  a duel swaps boards without asking; moved creatures are summoning sick and the
+  change is permanent; the agent takes the richer board; the loader refusals.
+
+## Typed picks from one look — Kiora, Master of the Depths' −2
+
+"Reveal the top four cards of your library. You may put a creature card and/or a
+land card from among them into your hand. Put the rest into your graveyard."
+`look_at_top`'s pick is one selector with one count, so count 2 over
+Creature-or-Land allowed two creatures, and its `destinations` steps carried a
+zone and a count but no type and no way to decline.
+
+### What changed
+
+- `look_at_top` `destinations` steps take an optional `selector` (what that step
+  may take, matched as a library card among what earlier steps left) and
+  `up_to: true` (0 to `count`). `rest_to` already swept the remainder.
+- `LOOK_STEP_KEYS` in `ops_cards`; the loader now validates every step: known keys
+  only, `to` in `DESTINATIONS`, boolean `up_to`, and a real `selector`.
+
+### Tests
+
+- `tests/unit/test_look_at_top_typed_picks.py` — each step offers only its own
+  type, at most one, and may be declined; two lands are never both taken; a
+  creature land answers one step either way; the rest (including cards no step
+  could take) go to the graveyard and no deeper card moves; the sorcery resolves
+  end to end; the four loader refusals.
+
+## `spend_mana_as_any_color` with a spell filter — Oath of Nissa
+
+"You may spend mana as though it were mana of any color to cast planeswalker
+spells." The player-wide static was unfiltered (Chromatic Orrery) and the loader
+refused any narrowing, so the Oath could only be written as an Orrery — a strictly
+stronger card.
+
+### What changed
+
+- `player_spends_mana_as_any_color(state, pid, card=None)`: an unfiltered static
+  answers as before; one with `affects_spells` answers only for a `card` whose
+  printed face matches. `casting._cast_variant` and `Game._cast` pass the face
+  being cast; the `costs` sites (activated abilities and every other cost) pass
+  none, so a filtered static never reaches them.
+- Loader: `affects_spells` accepted on `spend_mana_as_any_color` with the
+  `cant_cast_spells` key set (no `controller`); an empty filter is refused.
+
+### Tests
+
+- `tests/unit/test_spend_mana_as_any_color_spell_filter.py` — an off-colour
+  planeswalker is castable and paid with off-colour lands; not without the Oath,
+  not off an opponent's, and not for less mana; a non-planeswalker spell and an
+  activated ability are not loosened; the Orrery still reaches both; the loader
+  accepts the filter and refuses `controller`, an empty filter and `affects`.
+
+## An indefinite animation that sets what it becomes — 611.2a / 613.1d-e / 613.4b
+
+### Overview
+
+Oko, Thief of Crowns: "Target artifact or creature loses all abilities and
+becomes a green Elk creature with base power and toughness 3/3." `animate` wore
+off at cleanup and added types ("it's still a land"). Oko prints no duration,
+and per its rulings the target loses its other colours, card types and creature
+types but keeps its supertypes.
+
+### Tier: B — a continuous effect with a new lifetime
+
+`animate` gained `duration` (`"until_end_of_turn"`, the default, or `"permanent"`,
+the same spellings as `gain_control`) and `exact`. A permanent animation goes on
+the new `GameObject.animations` list, which cleanup does not sweep and
+`reset_permanent_state` clears. `TempEffect` gained `exact` and a `timestamp`
+from `GameState.alloc_timestamp`. `characteristics._compute` applies timed and
+permanent animations together in timestamp order, so the later one sets the base
+P/T. An `exact` animation replaces colours and card types, and it replaces
+creature types too, dropping any subtype whose card type is gone (205.1b). The
+loader refuses an unknown `duration`, a non-boolean `exact` and
+`your_turn_keywords` on a permanent animation.
+
+### Tests
+
+- `tests/unit/test_permanent_animate.py` — an Oko'd Sol Ring is only a green Elk
+  creature 3/3 and taps for nothing; a Goblin stops being a Goblin and red; a
+  legend stays legendary; a Forest stops being a land and a Forest; an anthem,
+  counters and pumps add to the 3/3; the later of a timed and a permanent
+  animation sets the size, and the timed one still ends at cleanup; the Elk
+  survives cleanup; leaving the battlefield ends it; the loader guards.
+
+## Exchanging control — 701.12
+
+### Overview
+
+Oko, Thief of Crowns' −5: "Exchange control of target artifact or creature you
+control and target creature an opponent controls with power 3 or less." Two
+`gain_control` ops cannot say it. The second needs the first target's old
+controller as its player, and it would still happen with the first target gone,
+which 701.12b forbids.
+
+### Tier: A — a new op composing `change_control`
+
+`exchange_control` in `ops_counters.py` (beside `gain_control`) resolves `first`
+and `second` to one permanent each. If both are on the battlefield under
+different controllers, it runs `change_control` on each toward the other's
+controller. Otherwise nothing happens. The loader guard in `loader/effects.py`
+requires both selectors, checks their targets are declared, and refuses a
+`duration`.
+
+### Tests
+
+- `tests/unit/test_exchange_control.py` — each side takes the other; ownership
+  stays; it survives the turn; the arrival is summoning sick and dies to its
+  owner; no part happens when either target is gone, when a target left after
+  the check, or when one player controls both; the loader requires both halves,
+  refuses an undeclared target and refuses a duration.
+
+## "When this creature dies or is put into exile" — a destination on leaves_battlefield
+
+### Overview
+
+Kaya the Inexorable's +1 grants "When this creature dies or is put into exile,
+return it to its owner's hand and create a 1/1 white Spirit creature token with
+flying." `dies` missed the exile half. Bare `leaves_battlefield` fired on a
+bounce or a tuck too, and would make a Spirit for free.
+
+### Tier: A — a trigger clause on an existing event
+
+`move_object` adds `to_zone` to the `leaves_battlefield` event. `TriggerModel` and
+`TriggerSpec` gain `to_zones`, and `triggers._matches` refuses a departure whose
+destination is not listed. An event with no destination fails the clause. The
+loader allows `to_zones` on `leaves_battlefield` only, with zones a permanent can
+leave to. Returning the card needs no new op: `return_to_hand` over a `union` of
+graveyard and exile `self_only` branches.
+
+### Tests
+
+- `tests/unit/test_dies_or_exiled_trigger.py` — a granted ghostform fires on a
+  death and on an exile, returning the card and making the Spirit; it does not
+  fire on a bounce or a tuck; the card that came back is a new object and dies
+  plainly; the loader takes the clause on `leaves_battlefield`, refuses it
+  elsewhere and refuses a zone nothing leaves to.
+
+## A free cast from hand, graveyard or exile — one choice over several zones
+
+### Overview
+
+Kaya the Inexorable's emblem: "At the beginning of your upkeep, you may cast a
+legendary spell from your hand, from your graveyard, or from among cards you own
+in exile without paying its mana cost." `cast_from_hand` made this optional free
+cast, but only from the hand.
+
+### Tier: A — an option on an existing op
+
+`cast_from_hand` takes `zones`, a list drawn from `hand`, `graveyard` and `exile`
+that defaults to `["hand"]`. The pool is built across every listed zone of the
+player's own lists (exile is per owner), with lands and can't-cast cards
+excluded as before, and each card is matched as a card in the zone it sits in.
+It is one `ask_objects` with a minimum of zero. The loader refuses an empty list,
+an unknown zone and a repeat.
+
+### Tests
+
+- `tests/unit/test_cast_free_from_zones.py` — the three zones form one pool; only
+  legendary cards are offered; an opponent's card in exile is not; the default is
+  still the hand; a legend is cast from the graveyard and from exile; declining
+  casts nothing; the loader guards.
+
+## "Cost {2} more to cast" — spell_cost_increase priced in generic mana — 601.2f
+
+### Overview
+
+Kasmina, Enigmatic Mentor: "Spells your opponents cast that target a creature or
+planeswalker you control cost {2} more to cast." `spell_cost_increase` charged
+life only (Terror of the Peaks). Its loader refused mana so that a surcharge
+could not make the offer and the charge disagree.
+
+### Tier: B — an existing static with a second currency
+
+`player_statics.spell_mana_tax` reads the mana-priced statics with the life tax's
+filters, meanly at the gate and exactly per tuple. `cost_reduction.cost_reduction`
+subtracts it, making the total a negative discount where it applies. Legality,
+`casting._priced_tuples` and `Game._cast` all read that number already.
+`casting._cast_variant` turns on per-tuple pricing when a targeted mana tax is on
+the board (`spell_mana_tax_targeted`). `spell_life_tax_on_board` now counts only
+life-priced statics. The loader takes one currency: `pay_life` ≥ 1, or `mana`
+that is generic and {1} or more.
+
+### Tests
+
+- `tests/unit/test_spell_cost_increase_mana.py` — a spell aimed at my creature
+  costs {2} more; aimed at their own it does not; an untargeted tax reaches
+  every spell and two stack; an aim the caster cannot afford is not offered
+  while the same spell aimed elsewhere is; the surcharge is paid (three
+  Mountains for a Bolt); the taxing player is not taxed; the loader takes
+  generic mana and refuses coloured mana, {0}, and life with mana.
+- `tests/unit/test_spell_cost_increase.py` — the old "mana is refused" test is
+  now "coloured mana is refused"; the sacrifice refusal names both currencies.
+
+## "Loses all abilities" by timestamp — 613.7
+
+### Overview
+
+Oko, Thief of Crowns' +1 must take away a keyword granted earlier that turn and
+leave one granted afterwards. The `lose_all_abilities` op set a flag that removed
+only the printed abilities. Every grant, older or newer, survived it.
+
+### Tier: B — timestamps on the grants
+
+Keyword, protection and ability grants now carry a `TempEffect.timestamp`, and
+permanent keyword grants record theirs in `GameObject.granted_keyword_at`.
+`EffectContext.began_at` is the first timestamp a resolution may hand out. The op
+drops every ability-kind grant older than that, in `until_eot`,
+`granted_abilities_permanent` and `granted_keywords`, and clears
+`hasted_by_suspend`. A grant made earlier in the same resolution, like The
+Irencrag's "gains … and loses all other abilities", is kept.
+
+### Tests
+
+- `tests/unit/test_permanent_animate.py::TestLosingAbilitiesGoesByTimestamp` — an
+  earlier until-end-of-turn keyword is lost and a later one kept; an earlier
+  permanent keyword and an earlier granted triggered ability are lost; suspend's
+  haste is lost. `test_lose_abilities_op.py` still holds the same-resolution
+  grant.
+
+## Counter replacements tell a cost from an effect — Doubling Season — 118.1 / 122.6
+
+"If **an effect** would put one or more counters on a permanent you control, it
+puts twice that many of those counters on that permanent instead." The documented
+shape was `replace_counters` with `counter_multiplier: 2`, but `primitives.add_counters`
+is also the function `costs.py` calls to pay a positive loyalty cost, so every +1
+loyalty ability under a Doubling Season became +2 — a strictly stronger card, and
+visible in the Atraxa superfriends deck. A cost is not an effect, and the card's
+ruling says so.
+
+### What changed
+
+- `effects_only: true` on `replace_counters` (schema, loader guard, compiled
+  static). `counter_placement_replacements(..., as_cost=True)` skips such a
+  static; `add_counters` takes `as_cost` and `costs.py` passes it for the loyalty
+  payment. The default is unchanged — "would be put" reaches costs.
+- **Entering with counters is now replaced.** 122.6 counts counters a permanent is
+  given as it enters as "put on" it, but `zones._enter_battlefield` wrote them
+  straight onto the object. `zones._enter_with_counters` now asks the same
+  statics for every `self_enters_with_counters` replacement and for riot's
+  counter (no `counter_placed`, as before). Doubling Season doubles a
+  planeswalker's starting loyalty (its ruling).
+
+### Shipped card audit
+
+Every card using `replace_counters` in `data/cards`: only **High Score** ("if one
+or more +1/+1 counters would be put on a creature you control"). "Would be put"
+names no effect, so it correctly reaches costs (and no cost in the engine puts
++1/+1 counters anyway). It **was** wrong for creatures entering with +1/+1
+counters — a creature that "enters with two +1/+1 counters" arrived with two, not
+three. Fixed by the entering change and pinned.
+
+### Tests
+
+- `tests/unit/test_counter_replacement_effects_only.py` — a +1 cost puts one
+  loyalty counter under `effects_only`, the same walker's effect is doubled, the
+  un-flagged static still doubles the cost, a minus cost is untouched; a
+  planeswalker enters with twice its loyalty, an opponent's does not, a
+  Hardened-Scales creature entering with two counters gets three, riot's counter
+  is doubled; the loader places the key and refuses it on another static.
+
+## A counter replacement keyed on who puts them, reaching players — Innkeeper's Talent — 122.6a
+
+"If **you** would put one or more counters on a permanent or player, put twice that
+many of each of those kinds of counters on that permanent or player instead." Every
+earlier `replace_counters` card named the recipient ("a permanent you control"); this
+one names the putter, reaches an opponent's permanents, and reaches players.
+
+### What changed
+
+- `put_by: "you"` on `replace_counters` (schema, loader, compiled static). With it,
+  `affects` may be omitted — any permanent.
+- `add_counters(..., by=)`: who is putting. Defaults through `primitives._putter` to
+  the controller of `source`, or with no source the permanent's controller (a +N
+  loyalty cost, a Saga tick, counters a permanent enters with).
+- `primitives.add_poison`: the one funnel for poison — the `add_poison` op and infect
+  damage both used to write `player.poison` by hand. A `replace_counters` static with
+  `affects_player` applies there (`player_statics.player_counter_replacements`).
+- No `effects_only` on this line: "if you would put" includes a cost, so the Talent
+  doubles a +1 loyalty ability (its ruling).
+
+### Tests
+
+- `tests/unit/test_counter_replacement_put_by.py` — my counter on my creature and on
+  an opponent's is doubled, an opponent's on mine is not; the putter defaults to the
+  source's controller; an arrival and a loyalty cost are doubled; the `add_poison`
+  op and my infect damage are doubled, an opponent's infect is not; a
+  recipient-keyed static never reaches a player; POISON_ADDED reports the doubled
+  amount; the loader accepts `put_by` in place of `affects` and refuses it elsewhere.
+
+## Doubling the counters on a permanent — Deepglow Skate — 122.1
+
+"Double the number of each kind of counter on any number of target permanents."
+`add_counters` names one kind and the card names none; `proliferate` adds one of each
+kind; `move_counters` takes from elsewhere. The `double_counters` op (in
+`effects/ops_counters.py`, `objects` required by the loader) reads each permanent's
+kinds at resolution and puts that many more of each on through `add_counters` — a
+placement, so Doubling Season applies (2 → 6) and `counter_placed` fires.
+
+### Tests
+
+- `tests/unit/test_double_counters.py` — every kind on one permanent, several targets
+  each by their own count, a permanent with none untouched; Doubling Season doubles
+  the placement; `counter_placed` reports it; the loader refuses a missing `objects`.
+
+## A filter for "with counters on them" — Innkeeper's Talent — 122.1
+
+"Permanents you control with counters on them have ward {1}." `STATIC_FILTER_KEYS`
+had nothing for counters (`counters_on` is a value), so the ward static could not
+be narrowed and the card would have warded everything. `has_counters: true|false`
+is one or more counters of any kind, read by `characteristics._matches` (via
+`has_any_counter`), `triggers.matches_card_filter`, `cost_reduction` and the
+effect-side selector. Admissible for `tapped`'s reason: no layer writes counters.
+
+### Tests
+
+- `tests/unit/test_has_counters_filter.py` — no counters, no ward; a +1/+1 or a
+  charge counter grants it; removing the last takes it away; an opponent's
+  permanent is not warded; `false` matches only counterless permanents; the
+  effect-side selector picks out permanents with counters.
+
+## Distributing counters among targets — Ajani, Sleeper Agent — 601.2d
+
+"Distribute three +1/+1 counters among up to three target creatures." `add_counters`
+takes one amount for every object, so the only near miss was one counter on each.
+
+### What changed
+
+- `distribute_counters` op (`effects/ops_counters.py`): honours the announced
+  division in `bindings["distribution"]`, skipping targets that became illegal.
+- `game.Game._ask_distribution`, called from `_activate` straight after modes and
+  targets, before the cost: every target gets one, then "which target gets
+  another?" per remaining counter via `ask_objects` (purpose `distribute`) — no new
+  decision kind, no frontend work. `targeting.declared_by_spec` splits the declared
+  refs per spec without a legality check.
+- Loader: `objects: {"target": id}` and a printed `amount` required; the op only as
+  a top-level effect of an activated ability; a target spec whose ceiling exceeds
+  the total is refused.
+- Heuristic agent: `distribute` puts each extra counter on its own best creature.
+
+### Tests
+
+- `tests/unit/test_distribute_counters.py` — one target takes all three and three
+  take one each with no question asked; two targets split 2/1 as chosen; the
+  division is on the stack item before it resolves; vigilance is granted; an
+  illegal target's share is lost, not redistributed; the heuristic agent favours
+  its own creature; the loader refuses a spell, a trigger, more targets than
+  counters, a computed amount and a non-target `objects`.
+
+
+## `loyalty_x` — a −X loyalty cost — Sorin, Grim Nemesis — 606.4 / 107.3
+
+"−X: Sorin deals X damage to target creature or planeswalker and you gain X
+life." `cost.loyalty` was a signed integer, so a printed −X had no spelling. The
+two nearest keys are both wrong: `x_value` fills an `{X}` in a *mana* cost (the
+ability would cost mana and no loyalty), and `remove_counters` is not a loyalty
+cost — it would lose 606.3's once-per-turn limit, the loader's forced sorcery
+timing and Teferi's permission, every one of which asks `cost.loyalty is not
+None`.
+
+### What changed
+
+- `CostModel.loyalty_x` / `Cost.loyalty_x`. It compiles to `loyalty: 0` plus the
+  flag, so every loyalty-ability reader keeps working unchanged.
+- `game._activate` announces X before the cost is paid: a `CHOOSE_X` whose
+  ceiling is the loyalty on the planeswalker, tagged `context.loyalty_cost`.
+- `costs.can_pay` / `costs.pay` read the announced `x` and remove that many
+  loyalty counters.
+- `legality._targets_read_x` counts a loyalty X, and `_ability_aims` offers one
+  activation per X from 0 to the loyalty when the target filter reads X
+  (Tamiyo's "card with mana value X").
+- The loader refuses `loyalty_x` beside `loyalty`, beside an `{X}` in `mana` or
+  `pay_life_x`, and anywhere but an activated ability's cost; it is in
+  `NOT_A_CAST_TIME_COST`.
+- The heuristic agent answers a loyalty `CHOOSE_X` one short of the ceiling —
+  the maximum is the one answer that always kills the walker.
+
+### Tests
+
+- `tests/unit/test_loyalty_x.py` — X asked for and bounded by the loyalty; X
+  counters come off and the effect reads X (two values); X = 0 legal and still
+  the turn's loyalty ability; X = everything kills the walker and still
+  resolves; 606.3 in both directions; sorcery timing and an opponent's turn;
+  the `−X` description; one activation per X for a target reading X, none above
+  the loyalty, and no second question; the heuristic's all-but-one and its
+  boundary at one loyalty; the three loader refusals.
+
+## `compleated` — two fewer loyalty per Phyrexian symbol paid with life — Tamiyo, Compleated Sage — 702.150a
+
+Casting already let a Phyrexian pip be bought with 2 life (107.4f, the cast
+action's `phyrexian`), but nothing remembered it past the payment and nothing
+reduced the starting loyalty, so a Tamiyo cast for 2 life arrived at the full 5.
+
+### What changed
+
+- `Keyword.COMPLEATED`. The loader refuses it on a card with no `loyalty` or
+  no Phyrexian symbol in its mana cost.
+- `GameObject.cast_phyrexian_life`, written by `game._cast` after the payment:
+  how many **printed** Phyrexian symbols were paid with life. K'rrik's widened
+  `{B}` is not a Phyrexian symbol, so the life is attributed to those first.
+- `zones._apply_compleated`, run in `_enter_battlefield` straight after the
+  printed replacements (where the starting loyalty lands): two fewer loyalty
+  per symbol, floored at zero, and only when the walker would have entered
+  with some. Read only when `entered_by_cast`, so a later arrival of the same
+  object is at full loyalty.
+
+### Tests
+
+- `tests/unit/test_compleated.py` — mana paid: full loyalty; life paid: two
+  fewer and the life gone; the control card without the keyword; nothing
+  queued (a replacement); two symbols, one or both paid; the floor at zero and
+  the walker binned by 704.5i; a blinked walker and one put onto the
+  battlefield at full loyalty; the loader's three cases.
+
+## `enters_with_additional_counters` — Oath of Gideon — 614.1c
+
+"Each planeswalker you control enters with an additional loyalty counter on
+it." The nearest shape, `replace_counters` with `counter_addend: 1`, replaces
+every placement of a loyalty counter, so it would also make each +1 loyalty
+cost a +2 — which the printed card never does. `enters_tapped` was the only
+static about another permanent's arrival, and it carries no counters.
+
+### What changed
+
+- A static effect `enters_with_additional_counters` taking `affects`,
+  `counter` and `amount` (all required; `amount` a whole number of 1 or more).
+- `zones._apply_board_additional_counters`, called in `_enter_battlefield`
+  after the arriving card's own replacements and after compleated: every
+  matching static on the battlefield adds its amount, the arriving permanent
+  excluded as a source. The compleated-then-Oath order is the one 616.1 lets
+  the controller choose, and the one that keeps a walker compleated took to
+  zero.
+
+### Tests
+
+- `tests/unit/test_enters_with_additional_counters.py` — a cast walker enters
+  with one more, the control without the Oath, an uncast arrival, two Oaths
+  adding two, nothing queued; a +1 activation still +1, a creature and an
+  opponent's walker untouched; compleated to zero then the Oath's counter
+  keeping the walker; the loader's four refusals.
+
+## Capability: "until your next turn" on `pump`, `lock_abilities`, `animate` and `grant_keyword` — 611.2b
+
+### What was missing
+
+Four planeswalker +1s in the Atraxa superfriends deck print an effect on a
+permanent that lasts "until your next turn": Liliana, the Last Hope (-2/-1),
+Dovin Baan (-3/-0 and an ability lock), Sorin, Solemn Visitor (+1/+0 and
+lifelink on everything you control) and Nissa, Vital Force (a land that is a 5/5
+haste Elemental). The engine had the clock on five player-level tables (block
+prohibitions, unblockables, player protection, life locks, cast locks) and not on
+the per-object `TempEffect` list all four ops write to, so each of them ended at
+this turn's cleanup -- before the opponents' turns, which are the only turns the
++1 is printed for. `pump` even advertised `duration` in `op_options` (a template
+wrote `until_end_of_turn` on it) and ignored it.
+
+### How it works
+
+`TempEffect.until_player` names the seat whose next turn ends the entry; `None`
+is the ordinary cleanup clock. The ops read `duration` through one helper,
+`until_player_of`, which answers `ctx.controller` for `until_your_next_turn` --
+the activating player, not the affected creature's controller. The entry stays in
+`until_eot`, so the characteristic layers, `abilities_locked`, legality and the
+mana solver needed no change. `clear_until_eot` keeps entries that carry a
+`until_player`; the new `primitives.clear_until_next_turn(state, pid)` drops them
+in that player's untap step (beside the other `until_your_next_turn` clears, and
+before phasing) and in `sba._eliminate`, since an eliminated seat never has that
+turn. An `animate`'s keywords share its clock. The loader refuses any other
+`duration` spelling on all four ops.
+
+### Unblocks
+
+Liliana, the Last Hope; Sorin, Solemn Visitor; Nissa, Vital Force; Dovin Baan's +1.
+
+### Tests
+
+- `tests/unit/test_until_your_next_turn.py` (19) -- the -2/-1 standing on the
+  opponent's turn and gone at the controller's next; a three-seat pod where it
+  survives both opponents' turns (the affected creature's controller is not the
+  clock); an end-of-turn pump beside it still ending at cleanup; Dovin's lock
+  binding the Dork's mana ability through the opponent's turn and lifting after,
+  and the plain lock still turn-scoped; Sorin's +1/+0 and lifelink on your
+  creatures only, lasting and then ending; Nissa's animated land staying a 5/5
+  haste creature and land and then reverting; an eliminated controller's entries
+  dropped and another seat's left alone; and the loader accepting both durations
+  and refusing a misspelled one on each op.
+
+## Capability: delayed triggers that last "until your next turn" and watch more than one object
+
+### What was missing
+
+Tamiyo, Field Researcher's +1 -- "choose up to two target creatures. Until your
+next turn, whenever either of those creatures deals combat damage, you draw a
+card" -- and Vraska the Unseen's +1 install a delayed triggered ability that must
+be live on the opponents' turns. `delayed_trigger` had `this_turn` and
+`once_this_turn` (gone at cleanup) and `until_it_fires` (one firing, no end), and
+its `subject` resolved the selector and kept only the first object, so "either of
+those creatures" watched one.
+
+### How it works
+
+- `DELAYED_DURATIONS` gains `until_your_next_turn`. `_arm_delayed` treats it as
+  repeating, `turn._cleanup_step` keeps it, and `clear_until_next_turn` (the
+  helper the TempEffect capability added) drops the creating player's entries in
+  their untap step and on elimination.
+- `DelayedTrigger.subject_oid` became `subject_oids`, a tuple; `_delayed_matches`
+  asks membership.
+- `zones._release_delayed_subject` strikes a departing permanent out of every
+  scope (400.7) and drops a subscription with no subject left -- necessary now
+  that a scoped subscription can outlive the turn its creature died in.
+
+### Unblocks
+
+The duration half of Tamiyo, Field Researcher and Vraska the Unseen. Tamiyo also
+needs the "deals combat damage" (any recipient) trigger event; Vraska a scope on
+the damaged permanent and its token.
+
+### Tests
+
+- `tests/unit/test_delayed_trigger_until_your_next_turn.py` (14) -- either of two
+  subjects fires it and a third creature does not; it fires every time; it is live
+  on the opponent's turn and gone once the controller's next turn begins; a third
+  seat's turn does not end it; a `this_turn` subscription beside it still ends at
+  cleanup; a subject that dies and returns is no longer watched while the other
+  still is; the last subject leaving drops the subscription; an eliminated
+  controller's subscription is dropped and another seat's kept; and the loader
+  takes the duration with a two-target scope.
+
+## Capability: "whenever this creature deals combat damage" -- the `deals_combat_damage` trigger event
+
+### What was missing
+
+Tamiyo, Field Researcher's +1 draws "whenever either of those creatures deals
+combat damage" -- to anything. The engine's combat damage triggers were each one
+kind of recipient: `deals_combat_damage_to_player`,
+`deals_combat_damage_to_planeswalker`, and `dealt_damage` (the victim's event,
+per recipient). None heard a blocked creature hitting its blocker, and composing
+all three would fire twice for a trampler hitting its blocker and the player,
+where 510.2 makes that one event.
+
+### How it works
+
+`combat` now totals what each source actually dealt in a damage step (the return
+values of `damage_player`/`damage_permanent`, so prevention counts) and
+`_fire_per_source` fires one `EventType.CREATURE_DEALT_COMBAT_DAMAGE` per dealer,
+with `source` the dealer and `amount` the total. The trigger name
+`deals_combat_damage` maps to it and is in `OBJECT_SUBJECT_TRIGGERS`, the subject
+reached through the `event.source` fallthrough -- so `source: "self"` and a
+delayed trigger's `subject` both scope it to the dealer. The client keeps it
+silent in `describeEvent` and `beatsFor`, beside `creatures_dealt_combat_damage`,
+because each hit it summarises already has its line and its beat.
+
+### Unblocks
+
+Tamiyo, Field Researcher (with the delayed-trigger capability before it).
+
+### Tests
+
+- `tests/unit/test_deals_combat_damage.py` (5), over
+  `tests/data/deals_combat_damage.cards.json` -- an unblocked hit fires once; a
+  blocked creature hitting only its blocker fires; a trampler hitting its blocker
+  and the player fires once; a zero-power blocker fires nothing; and Tamiyo's
+  delayed shape draws off a blocked watched creature.
+- `frontend/tests/labels.test.ts`, `frontend/tests/events.test.ts` -- the event
+  has no log line and no beat.
+
+## Capability: a delayed trigger scoped to the permanent being hit -- `trigger.recipient`
+
+### What was missing
+
+Vraska the Unseen's +1: "until your next turn, whenever a creature deals combat
+damage to Vraska the Unseen, destroy that creature." A delayed trigger could be
+scoped to the dealer (`subject`) and not to the permanent hit, so
+`deals_combat_damage_to_planeswalker` with `controller: "any"` would destroy
+whatever hit *any* planeswalker.
+
+### How it works
+
+`DELAYED_TRIGGER_KEYS` gains `recipient`, validated as a `target`, `binding` or
+`self_only` selector and only on an event in the new `triggers.RECIPIENT_KEYS`
+(event name -> the payload key naming the recipient). `op_delayed_trigger`
+resolves it to `DelayedTrigger.recipient_oids`; `_delayed_matches` compares the
+event's recipient against it; `zones._release_delayed_subject` releases it like a
+subject. The subject binding is still the dealer.
+
+### Unblocks
+
+Vraska the Unseen's +1. The card still waits on its -7's Assassin token.
+
+### Tests
+
+- `tests/unit/test_delayed_trigger_recipient.py` (8) -- a creature hitting Vraska
+  is destroyed and another is not; every hitter is; a hit on another planeswalker
+  is not hers; noncombat damage does not fire it; the subscription leaves with
+  her and does not follow a recast; and the loader takes the scope and refuses it
+  on an event with no recipient or naming no specific permanent.
+
+## `loyalty_activations_this_turn` — "if you didn't activate a loyalty ability of a planeswalker this turn"
+
+### Overview
+
+The Chain Veil: *"At the beginning of your end step, **if you didn't activate a
+loyalty ability of a planeswalker this turn**, you lose 2 life."*
+
+### Why the existing vocabulary would not do
+
+`ability_activations` is keyed by oid and ability index, so by the end step a
+walker that minused itself away, or was flickered into a new object, is unreadable.
+A `has_turn_flag` set by an unprinted `ability_activated` trigger on the Veil
+misses every activation made before the Veil entered.
+
+### The shape
+
+- **`TurnLedger.loyalty_activations`**, per activating player, cleared with the
+  ledger at cleanup.
+- Counted in `Game._activate` beside the per-ability tally, at activation (602.2),
+  when the ability has a loyalty cost and its source is a planeswalker.
+- **`{"loyalty_activations_this_turn": <player spec>}`**, a value leaf; "didn't"
+  is a `cmp` `==` 0 on the trigger's `condition`.
+
+### Guarded by
+
+`tests/unit/test_loyalty_activations_this_turn.py`: counted for its player, zero,
+per player, a walker that minused itself to the graveyard still counting, a
+planeswalker's `{T}` ability not counting, the condition, an unknown spelling
+refused, the end-step trigger with and without an activation and only on its
+controller's turn, and the tally gone next turn.
+
+## `can_be_commander` — "Teferi, Temporal Archmage can be your commander." — 903.3
+
+903.3 makes a commander a legendary creature, with one printed exception. `validate_deck`
+accepted any legendary creature *or planeswalker* and never read the exception, which was
+right for Teferi only because it was wrong for every other walker. Now
+`CardDef.can_be_commander` reads the sentence (named against the card's own name, like
+Persistent Petitioners' copy limit), `validate_deck` asks for a creature or that sentence,
+and `verify._covered` accepts the line on a card that carries it. No shipped deck had a
+non-creature commander. Witnesses: Teferi, Temporal Archmage; Aminatou, the Fateshifter.
+Test: `tests/unit/test_can_be_commander.py`.
+
+## `look_at_top` `link` — cards exiled off the top remember who exiled them — Ashiok, Nightmare Weaver
+
+Ashiok's +2 exiles the top three cards of an opponent's library and its −X later puts "a
+creature card … exiled with Ashiok" onto the battlefield. `_move_found` deliberately
+writes no `exiled_by` (it would strand Florian's declined cards), so nothing could name
+those cards again. `link: true` on an exile destination now writes the record, exactly
+as the `exile` op's `link` does; the loader refuses it on any other destination.
+Test: `tests/unit/test_look_at_top_link.py`.
+
+## `cant_lose_the_game` / `cant_win_the_game` statics — Gideon of the Trials' emblem — 104.3b
+
+The continuous form of the outcome prohibition, previously recorded as deliberately
+unbuilt: two player-wide statics, one per half of "you can't lose the game and your
+opponents can't win the game", each naming its seats with `affects_player` and both
+carrying the same `condition`. `player_statics.outcome_barred_by_static` answers for
+them, and `sba.player_cant_lose` / `player_cant_win` consult it beside the op's
+turn-scoped locks, so every loss reason the op holds off is held off here too.
+Test: `tests/unit/test_cant_lose_the_game_static.py`.
+
+## `extra_loyalty_activation` — The Chain Veil's "as though none of its loyalty abilities have been activated" — 606.3
+
+Legality tested for *any* loyalty activation of a permanent this turn, so "one more" had no
+representation. `TurnLedger.extra_loyalty_activations` (oid -> count, cleared with the
+ledger) holds the grant; legality now counts the activations made and allows one plus
+the grant. The op names the walkers there as it resolves, so a walker arriving later
+keeps its single activation, and a second Veil activation is a second extra.
+Test: `tests/unit/test_extra_loyalty_activation.py`.
+
+## `grant_flash_permission` — Teferi, Time Raveler's "until your next turn, you may cast sorcery spells as though they had flash"
+
+`cast_as_though_flash` existed only as a static, with no duration and no spell filter,
+and a loyalty ability leaves no permanent to carry one. The op writes a
+`structs.FlashPermission` (player, card types, duration) to `GameState.flash_permissions`;
+`casting._timing_ok` reads it; it wears off in the granter's untap step (or at cleanup
+for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flash_permission.py`.
+
+## `free_cast_permission` `from_zone` — Tamiyo, Field Researcher's "from your hand"
+
+`free_cast_permission` was zone-blind and is asked by every cast lane, so Omniscience's
+"from your hand" could not be said without freeing commanders and graveyard casts as
+well. `affects_spells` now accepts `from_zone: "hand"` (the only printed value); the
+cast-line builder passes the zone the spell is cast from, and a caller that names no
+zone is refused rather than freed. Test: `tests/unit/test_free_cast_from_hand.py`.

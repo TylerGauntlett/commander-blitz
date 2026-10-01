@@ -234,7 +234,10 @@ def write_packets(batch: list[Entry]) -> int:
     the second costs no rework once the first has proved the loop.
     """
     index = load_index()
-    registry = _hand_written()
+    # The whole pool, not `_hand_written()`: the registry here only chooses
+    # worked examples, and some shapes -- every planeswalker -- exist only
+    # among the machine-authored cards. See `packet.examples_for`.
+    registry = default_registry().registry
     written = 0
     for entry in batch:
         catalog = index.by_scryfall_id(entry.scryfall_id) or index.lookup(

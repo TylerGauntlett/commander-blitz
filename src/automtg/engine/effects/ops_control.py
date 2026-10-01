@@ -7,6 +7,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost
+from ..player_statics import forced_discard_or_sacrifice_barred
 
 # `can_pay` and `pay` are imported inside the two ops that charge a cost rather
 # than here, the way `combat`, `game`, `legality` and `replacements` already
@@ -15,6 +16,7 @@ from ..carddef import Cost
 # anything that reached for it first -- the card loader, wanting the reduction
 # filter's vocabulary from the function that reads it -- got a partially
 # initialised module instead.
+from ..primitives import change_control
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
@@ -97,6 +99,17 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
         if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
+            yield from execute(ctx, spec.get("else") or [])
+            return
+        if (
+            cost is not None
+            and (cost.sacrifice or cost.discard or cost.discard_self)
+            and forced_discard_or_sacrifice_barred(ctx.state, chooser, ctx.controller)
+        ):
+            # Tamiyo, Collector of Tales: "…can't cause you to discard cards or
+            # sacrifice permanents." An opponent's "unless you sacrifice" (Torment
+            # of Hailfire) would be that opponent's ability causing the
+            # sacrifice, so it is not offered and the punishment lands.
             yield from execute(ctx, spec.get("else") or [])
             return
         if not (yield from ask_yes_no(ctx, prompt, chooser)):
@@ -317,6 +330,56 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.state.bump_chars()
 
 
+#: The label of the one answer that is not a card the chooser owns: "a name no
+#: card in your library has". Bound as the empty string, which no selector matches.
+OTHER_CARD_NAME = "Another card name"
+
+
+@register("choose_card_name")
+def op_choose_card_name(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose a nonland card name" -- Tamiyo, Collector of Tales.
+
+    Binds the chosen name, a string, under ``as``; a later selector reads it as
+    ``{"name": {"binding": …}}``. ``types`` / ``not_types`` narrow which names
+    may be chosen ("a **nonland** card name" is ``not_types: ["Land"]``),
+    judged on the printed card.
+
+    **Which names are offered.** At a table any card name ever printed may be
+    named, but the only thing a name can do here is match cards the chooser
+    owns: the card it is compared against is in their own library, and a
+    library holds only its owner's cards (400.3). So every distinct name among
+    the cards the chooser owns, in every zone, is offered -- the chooser knows
+    their own deck list, so this shows nothing hidden -- plus
+    :data:`OTHER_CARD_NAME`, which stands for every other name ever printed:
+    they all have the same outcome, matching nothing. That is a real choice
+    (Tamiyo naming a card that is not there mills all four), and leaving it out
+    would take it from the player whenever every name they own might be on top.
+
+    **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
+    labels", exactly as `choose_type` and `choose_color` use it, tagged
+    ``choose_card_name`` so a seat can tell a name from a mode.
+    """
+    state = ctx.state
+    want = set(spec.get("types") or ())
+    unwanted = set(spec.get("not_types") or ())
+    names: set[str] = set()
+    for obj in state.objects.values():
+        if obj.owner != ctx.controller or obj.is_token:
+            continue
+        card = state.card_of(obj)
+        types = set(card.types)
+        if want and not (want & types):
+            continue
+        if unwanted & types:
+            continue
+        names.add(card.name)
+    labels = [*sorted(names), OTHER_CARD_NAME]
+    prompt = str(spec.get("prompt") or "Choose a card name")
+    picked = yield from ask_mode(ctx, prompt, labels, ctx.controller, purpose="choose_card_name")
+    chosen = labels[picked[0]] if picked else OTHER_CARD_NAME
+    ctx.bindings[str(spec["as"])] = "" if chosen == OTHER_CARD_NAME else chosen
+
+
 @register("choose_player")
 def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Choose an opponent." Demonstrate, and the untargeted way to name a seat.
@@ -358,6 +421,83 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     if chosen is None:
         return
     ctx.bindings[str(spec["as"])] = int(chosen)
+
+
+#: "Choose left or right." The answer's labels, in the order `rotate_control`
+#: asks them. Left is the next seat in turn order (play passes to the left).
+DIRECTIONS = ("left", "right")
+
+
+def neighbour(state: GameState, pid: int, direction: str) -> int:
+    """The next living player to ``pid``'s left or right.
+
+    Left is the seat that takes the next turn (`state.next_alive_index`); right
+    is the one before. A player who has left the game is skipped (800.4a), and a
+    lone survivor is their own neighbour.
+    """
+    n = state.num_players
+    step = 1 if direction == "left" else -1
+    for offset in range(1, n + 1):
+        candidate = (pid + step * offset) % n
+        if state.is_alive(candidate):
+            return candidate
+    return pid
+
+
+@register("rotate_control")
+def op_rotate_control(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose left or right. Each player gains control of all nonland
+    permanents other than Aminatou controlled by the next player in the chosen
+    direction." Aminatou, the Fateshifter's -6.
+
+    One op rather than `for_each_player` around `gain_control`, because the
+    exchange is **simultaneous**: written as a loop, the first player takes their
+    neighbour's board, and the second player's `gain_control` then re-reads a
+    neighbour who now controls *two* boards and takes both -- the rotation
+    cascades round the table and the last seat ends up with everything. Here
+    the pool is resolved once, every permanent's current controller is read
+    before any control moves, and then each permanent passes to the player
+    whose neighbour in the chosen direction controlled it.
+
+    ``objects`` is the selector over what rotates (Aminatou: ``not_types:
+    ["Land"]`` with ``exclude_self``); nothing outside it moves. ``direction``
+    fixes the answer for a card that prints one; without it the controller is
+    asked, with ``purpose: "choose_direction"`` and the seat each direction
+    takes from, and a table where both directions name the same neighbour (a
+    duel) is not asked at all.
+
+    `change_control` is the one primitive, so every permanent that moves is
+    summoning sick for its new controller (302.6) and leaves combat (506.4).
+    The change is permanent -- the printed line has no duration.
+    """
+    state = ctx.state
+    living = state.alive()
+    pool = resolve_pool(ctx, spec.get("objects"))
+    # Who controls what, read before anything moves.
+    before = [(oid, state.objects[oid].controller) for oid in pool if oid in state.objects]
+    direction = spec.get("direction")
+    if direction is None:
+        takes_from = {d: neighbour(state, ctx.controller, d) for d in DIRECTIONS}
+        if len({takes_from[d] for d in DIRECTIONS}) == 1:
+            direction = DIRECTIONS[0]
+        else:
+            picked = yield from ask_mode(
+                ctx,
+                str(spec.get("prompt") or "Choose left or right"),
+                [d.capitalize() for d in DIRECTIONS],
+                ctx.controller,
+                extra={
+                    "purpose": "choose_direction",
+                    "takes_from": [takes_from[d] for d in DIRECTIONS],
+                },
+            )
+            direction = DIRECTIONS[picked[0] if picked else 0]
+    # Each player gains what their neighbour in that direction controlled, so a
+    # permanent controlled by Q goes to the player whose neighbour is Q.
+    receiver = {neighbour(state, pid, str(direction)): pid for pid in living}
+    for oid, was in before:
+        if was in receiver:
+            change_control(state, oid, receiver[was], source=ctx.source_oid)
 
 
 def _creature_types(ctx: EffectContext) -> frozenset[str]:
@@ -858,7 +998,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # would be nothing left to resolve it against. `choose_objects` is not
     # reached: the object is already chosen, as a target or a binding, and this
     # only reads which.
-    subject_oid = None
+    subject_oids = None
     if (subject := trigger.get("subject")) is not None:
         from .selectors import resolve_pool
 
@@ -869,7 +1009,20 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
             # what the printed card says rather than a reason to watch
             # everything.
             return
-        subject_oid = chosen[0]
+        # Every object it resolved to: "whenever **either** of those
+        # creatures" (Tamiyo, Field Researcher) is scoped to the whole set, and
+        # keeping only the first would silently watch one of two.
+        subject_oids = tuple(dict.fromkeys(chosen))
+    # "…deals combat damage **to Vraska**" -- the permanent being hit, named the
+    # same way and resolved at the same moment, for the same reason.
+    recipient_oids = None
+    if (recipient := trigger.get("recipient")) is not None:
+        from .selectors import resolve_pool
+
+        hit = resolve_pool(ctx, recipient)
+        if not hit:
+            return
+        recipient_oids = tuple(dict.fromkeys(hit))
     state.delayed_triggers.append(
         DelayedTrigger(
             step="",
@@ -884,7 +1037,8 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 controller=str(trigger.get("controller", "you")),
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
-            subject_oid=subject_oid,
+            subject_oids=subject_oids,
+            recipient_oids=recipient_oids,
             duration=str(spec.get("duration", "this_turn")),
         )
     )

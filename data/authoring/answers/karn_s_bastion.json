@@ -1,0 +1,44 @@
+{
+  "card": {
+    "abilities": [
+      {
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "mana": "{C}",
+            "op": "add_mana"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {C}."
+      },
+      {
+        "kind": "activated",
+        "text": "{4}, {T}: Proliferate.",
+        "cost": {
+          "mana": "{4}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "proliferate"
+          }
+        ]
+      }
+    ],
+    "color_identity": [],
+    "colors": [],
+    "id": "karn_s_bastion",
+    "name": "Karn's Bastion",
+    "oracle_text": "{T}: Add {C}.\n{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+    "types": [
+      "Land"
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

@@ -35,6 +35,9 @@ COUNTER_THRESHOLD = 3
 #: An ability whose whole effect is one of these is a combat trick, and worth
 #: nothing at all outside combat.
 COMBAT_TRICK_OPS = frozenset({"pump", "grant_keyword"})
+#: Counter kinds that hurt the permanent's controller, so proliferate grows
+#: them on an opponent's permanent and never on ours.
+HARMFUL_COUNTERS = frozenset({"-1/-1", "stun"})
 
 
 class HeuristicAgent:
@@ -362,6 +365,13 @@ class HeuristicAgent:
         # the better play in almost every position and exactly what the agent
         # saw before `CHOOSE_X` existed, when legality pinned X to the maximum.
         if purpose == "choose_x":
+            if decision.context.get("loyalty_cost"):
+                # A planeswalker's -X is paid in its own loyalty, and the
+                # ceiling is all of it: the maximum always kills the walker.
+                # One short of it spends everything but the permanent.
+                ceiling = max(a.choice or 0 for a in choices)
+                keep = [a for a in choices if (a.choice or 0) < ceiling]
+                return max(keep or choices, key=lambda a: a.choice or 0)
             return max(choices, key=lambda a: a.choice or 0)
         if purpose == "sacrifice":
             return min(choices, key=lambda a: self._creature_value(state, a))
@@ -371,7 +381,92 @@ class HeuristicAgent:
             return max(choices, key=lambda a: self._land_search_score(state, seat, a))
         if purpose == "destroy":
             return max(choices, key=lambda a: self._creature_value(state, a))
+        if purpose == "remove_counter_cost":
+            # Take a counter off whatever misses it least: a harmful one first,
+            # then the permanent carrying the most, never the last loyalty on a
+            # planeswalker while anything else will do.
+            return max(choices, key=lambda a: self._counter_spare(state, a))
+        if purpose == "choose_card_name":
+            # The first label is alphabetical, not good: name whatever this
+            # seat's library holds most copies of, so a Tamiyo look is likeliest
+            # to hit.
+            return max(choices, key=lambda a: self._name_hits(state, seat, decision, a))
+        if purpose == "proliferate":
+            # A free multi-select: `choices[0]` would grow whatever came first
+            # -- an opponent's planeswalker, the -1/-1 counters on our own
+            # creature -- and then the next, until everything had grown.
+            wanted = [a for a in choices if self._proliferate_helps(state, seat, a)]
+            return wanted[0] if wanted else _first(actions, ActionKind.FINISH_DECLARATION) or choices[0]
+        if purpose == "choose_direction":
+            # Aminatou's rotation: `choices[0]` is always "left", whatever sits
+            # there. Take the richer board -- we lose ours either way.
+            seats = list(decision.context.get("takes_from") or [])
+            return max(choices, key=lambda a: self._board_worth(state, seats, a))
+        if purpose == "distribute":
+            # Another +1/+1 counter (Ajani, Sleeper Agent): on our own best
+            # creature, never an opponent's while one of ours is a target.
+            def ours(a: Action) -> bool:
+                oid = _target_oid(a)
+                return oid in state.objects and state.objects[oid].controller == seat
+
+            pool = [a for a in choices if ours(a)] or choices
+            return max(pool, key=lambda a: self._creature_value(state, a))
         return choices[0]
+
+    def _name_hits(self, state: GameState, seat: int, decision, action: Action) -> int:
+        """How many cards in this seat's library carry the label this action names."""
+        index = action.choice
+        if index is None or not 0 <= index < len(decision.options):
+            return 0
+        label = decision.options[index].label
+        return sum(
+            1
+            for oid in state.players[seat].library
+            if state.card_of(state.objects[oid]).name == label
+        )
+
+    def _board_worth(self, state: GameState, seats: Sequence[int], action: Action) -> int:
+        """Total mana value of the nonland permanents the seat behind this answer controls."""
+        index = action.choice if action.choice is not None else -1
+        if not 0 <= index < len(seats):
+            return 0
+        return sum(
+            state.card_of(obj).mana_value
+            for obj in state.battlefield_objects(seats[index])
+            if not state.card_of(obj).is_land
+        )
+
+    def _counter_spare(self, state: GameState, action: Action) -> tuple[int, int, int]:
+        """How little one counter off this permanent costs us -- higher is better."""
+        oid = _target_oid(action)
+        obj = state.objects.get(oid) if oid is not None else None
+        if obj is None:
+            return (0, 0, 0)
+        held = {kind: n for kind, n in obj.counters.items() if n > 0}
+        harmful = any(kind in HARMFUL_COUNTERS for kind in held)
+        last_loyalty = held.get("loyalty", 0) == 1 and len(held) == 1
+        return (int(harmful), int(not last_loyalty), sum(held.values()))
+
+    def _proliferate_helps(self, state: GameState, seat: int, action: Action) -> bool:
+        """Is one more of every counter already on this permanent or player good for us?
+
+        Ours when none of its counters hurts its controller (loyalty, +1/+1,
+        charge, lore); theirs when every one of them does (-1/-1, stun). A
+        player's only counter is poison, which is good on anybody but us.
+        """
+        if not action.targets:
+            return False
+        ref = action.targets[0]
+        if ref.kind == "player":
+            return ref.id != seat
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            return False
+        kinds = [kind for kind, n in obj.counters.items() if n > 0]
+        if not kinds:
+            return False
+        harmful = [kind in HARMFUL_COUNTERS for kind in kinds]
+        return not any(harmful) if obj.controller == seat else all(harmful)
 
     def _creature_value(self, state: GameState, action: Action) -> float:
         oid = _target_oid(action)

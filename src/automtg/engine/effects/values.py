@@ -94,6 +94,11 @@ VALUE_KEYS = frozenset(
         # "…if you gained life this turn" -- Witch of the Moors. The gain twin
         # of the line above; "did it happen" is a `cmp` against 0.
         "life_gained_this_turn",
+        # "…if you didn't activate a loyalty ability of a planeswalker this
+        # turn" -- The Chain Veil. How many, per activating player; "didn't"
+        # is a `cmp` `==` 0. Counted at activation, so a planeswalker that has
+        # since died or left still counts.
+        "loyalty_activations_this_turn",
         "spells_cast_this_turn",
         #: Approach of the Second Sun's "this game". The same shape as the key
         #: above over a ledger with no turn boundary on it -- `spells_cast_ids`
@@ -487,6 +492,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)
+    if "loyalty_activations_this_turn" in expr:
+        pids = _players(ctx, expr["loyalty_activations_this_turn"])
+        return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
     if "combats_this_turn" in expr:
         # Counting the combat in progress, so during the first combat this is 1.
         # `GameState.combat_number` is the near miss and is monotonic for the

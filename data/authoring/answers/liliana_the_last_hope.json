@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "liliana_the_last_hope",
+    "name": "Liliana, the Last Hope",
+    "oracle_text": "+1: Up to one target creature gets -2/-1 until your next turn.\n−2: Mill two cards, then you may return a creature card from your graveyard to your hand.\n−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\"",
+    "mana_cost": "{1}{B}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Planeswalker"],
+    "subtypes": ["Liliana"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "loyalty": 3,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Up to one target creature gets -2/-1 until your next turn.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {"id": "t1", "kind": "permanent", "count": 1, "optional": true,
+           "selector": {"types": ["Creature"]}}
+        ],
+        "effects": [
+          {"op": "pump", "power": -2, "toughness": -1,
+           "objects": {"target": "t1"}, "duration": "until_your_next_turn"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Mill two cards, then you may return a creature card from your graveyard to your hand.",
+        "cost": {"loyalty": -2},
+        "effects": [
+          {"op": "mill", "player": "you", "amount": {"const": 2}},
+          {"op": "return_from_graveyard", "destination": "hand",
+           "objects": {"zone": "graveyard", "controller": "you",
+                       "types": ["Creature"], "count": 1, "optional": true}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\"",
+        "cost": {"loyalty": -7},
+        "effects": [
+          {"op": "emblem", "player": "you", "emblem": 0}
+        ]
+      }
+    ],
+    "emblems": [
+      {
+        "abilities": [
+          {
+            "kind": "triggered",
+            "text": "At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.",
+            "trigger": {"event": "end_step", "controller": "you"},
+            "effects": [
+              {"op": "create_token", "token": "zombie_2_2_b",
+               "amount": {"sum": [
+                 {"const": 2},
+                 {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Zombie"]}}
+               ]}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 3}
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "card": {
+    "id": "ajani_the_greathearted",
+    "name": "Ajani, the Greathearted",
+    "oracle_text": "Creatures you control have vigilance.\n+1: You gain 3 life.\n−2: Put a +1/+1 counter on each creature you control and a loyalty counter on each other planeswalker you control.",
+    "mana_cost": "{2}{G}{W}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Ajani"],
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "loyalty": 5,
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control have vigilance.",
+        "effect": "grant_keyword",
+        "affects": {"controller": "you", "types": ["Creature"]},
+        "keywords": ["vigilance"]
+      },
+      {
+        "kind": "activated",
+        "text": "+1: You gain 3 life.",
+        "cost": {"loyalty": 1},
+        "effects": [{"op": "gain_life", "amount": {"const": 3}, "player": "you"}]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Put a +1/+1 counter on each creature you control and a loyalty counter on each other planeswalker you control.",
+        "cost": {"loyalty": -2},
+        "effects": [
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1},
+           "objects": {"controller": "you", "count": "all", "types": ["Creature"], "zone": "battlefield"}},
+          {"op": "add_counters", "counter": "loyalty", "amount": {"const": 1},
+           "objects": {"controller": "you", "count": "all", "types": ["Planeswalker"], "zone": "battlefield", "exclude_self": true}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 5},
+    "granted": {"keywords": ["vigilance"], "count": 2}
+  }
+}

@@ -38,6 +38,10 @@ _ANY_NUMBER = re.compile(r"A deck can have any number of cards named ([^.\n]+)\.
 #: reads a word rather than an integer.
 _UP_TO = re.compile(r"A deck can have up to (\w+) cards named ([^.\n]+)\.")
 
+#: 903.3's exception: "Teferi, Temporal Archmage can be your commander." A card
+#: that is not a legendary creature may lead a deck only when its text says so.
+_CAN_BE_COMMANDER = re.compile(r"(?m)^([^\n]+?) can be your commander\.$")
+
 #: Magic spells its small numbers out in rules text.  A word outside this map
 #: leaves :attr:`CardDef.deck_copy_limit` at the one-copy default rather than
 #: guessing: an unread limit must reject a legal deck, never admit an illegal
@@ -220,6 +224,9 @@ class Cost:
     #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
     #: permanents.
     untap_permanents: Mapping[str, Any] | None = None
+    #: "Remove N counters from among <permanents> you control" -- see
+    #: `CostModel.remove_counters_from_among`. Any kinds, any split.
+    remove_counters_from_among: Mapping[str, Any] | None = None
     #: "Mill a card" as a cost -- see `CostModel.mill`. No selector: the cards
     #: come off the top of the activating player's own library.
     mill: int = 0
@@ -283,6 +290,12 @@ class Cost:
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
     loyalty: int | None = None
+    #: "-X" (606.4, 107.3): the controller announces X, bounded by the source's
+    #: loyalty, and removes X loyalty counters. Always carried with
+    #: ``loyalty == 0``, so every "is this a loyalty ability" check -- which asks
+    #: ``loyalty is not None`` -- sees one; `costs.can_pay` and `costs.pay` read
+    #: the announced ``x`` for the amount.
+    loyalty_x: bool = False
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -338,6 +351,11 @@ class Cost:
             untap_permanents=(
                 dict(spec["untap_permanents"]) if spec.get("untap_permanents") else None
             ),
+            remove_counters_from_among=(
+                dict(spec["remove_counters_from_among"])
+                if spec.get("remove_counters_from_among")
+                else None
+            ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
@@ -354,9 +372,14 @@ class Cost:
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
             # ability free to use twice in a turn.
+            # A -X ability is a loyalty ability whose fixed part is zero; the
+            # flag carries the announced amount.
             loyalty=(
-                int(spec["loyalty"]) if spec.get("loyalty") is not None else None
+                int(spec["loyalty"])
+                if spec.get("loyalty") is not None
+                else (0 if spec.get("loyalty_x") else None)
             ),
+            loyalty_x=bool(spec.get("loyalty_x")),
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
@@ -408,6 +431,7 @@ class Cost:
             and self.return_to_hand is None
             and self.tap_permanents is None
             and self.untap_permanents is None
+            and self.remove_counters_from_among is None
             and self.discard == 0
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
@@ -468,7 +492,12 @@ class Cost:
             parts.append(f"Pay {amount} life")
         if self.remove_counters:
             parts.append("Remove counters")
-        if self.loyalty is not None:
+        if self.remove_counters_from_among:
+            count = self.remove_counters_from_among.get("count", 1)
+            parts.append(f"Remove {count} counters from among permanents")
+        if self.loyalty_x:
+            parts.append("-X")
+        elif self.loyalty is not None:
             parts.append(f"{self.loyalty:+d}")
         if self.exile_from_graveyard:
             parts.append("Exile from graveyard")
@@ -611,6 +640,11 @@ class TriggerSpec:
     #: Named for `or_planeswalker`, the effect-side key with the same job on
     #: `attacking` -- same word, same disjunction, same default.
     or_battle: bool = False
+    #: For ``leaves_battlefield``: the zone names the permanent must have gone
+    #: to -- "when this creature dies **or is put into exile**" is
+    #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
+    #: `move_object` stamps on every departure. ``None`` is any destination.
+    to_zones: tuple[str, ...] | None = None
 
 
 def count_mode_specs(effects: Any) -> int:
@@ -1376,6 +1410,20 @@ class CardDef:
         to check a deck against, and this is the case where there is no number.
         """
         match = _ANY_NUMBER.search(self.oracle_text)
+        return match is not None and match.group(1).strip() == self.name
+
+    @property
+    def can_be_commander(self) -> bool:
+        """Does the card's own text let it lead a Commander deck (903.3)?
+
+        "Teferi, Temporal Archmage can be your commander." -- the other
+        deck-construction sentence a card can print, read the way
+        :attr:`any_number_in_deck` reads its own: matched against the card's
+        *own* name, so a card that merely quotes another's text gains nothing.
+        A legendary creature needs no sentence; ``validate_deck`` asks this only
+        of everything else.
+        """
+        match = _CAN_BE_COMMANDER.search(self.oracle_text)
         return match is not None and match.group(1).strip() == self.name
 
     @property

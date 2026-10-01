@@ -104,6 +104,30 @@ class TempEffect:
     #: everywhere else; "is it my turn" is a pipeline *input* the way a counter
     #: or a tapped flag is, so it can be read without opening that door.
     only_your_turn: bool = False
+    #: For ``kind == "animate"``: the colours, card types and creature types
+    #: named *replace* the permanent's own rather than adding to them. Oko,
+    #: Thief of Crowns: "becomes a green Elk creature with base power and
+    #: toughness 3/3" -- an Oko'd artifact stops being an artifact and an Oko'd
+    #: Goblin stops being a Goblin, per the card's rulings. Supertypes are never
+    #: touched: an Oko'd legend is a legendary Elk.
+    exact: bool = False
+    #: For ``kind == "animate"``: when it began (613.7), from
+    #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
+    #: later one wins, which has to be decidable across the two lists an
+    #: animation can live in -- `until_eot`, and `GameObject.animations` for one
+    #: with no duration -- so list order alone cannot answer it.
+    timestamp: int = 0
+    #: "…**until your next turn**" (611.2b) rather than until end of turn: the
+    #: seat whose next turn ends it, and ``None`` for the ordinary cleanup
+    #: clock. Liliana, the Last Hope's -2/-1, Dovin Baan's lock, Sorin, Solemn
+    #: Visitor's lifelink and Nissa, Vital Force's 5/5 land all have to be
+    #: standing on the opponents' turns, which is the whole point of printing
+    #: them on a loyalty ability. The entry stays in the same list -- so
+    #: `chars`, legality and the mana solver read it with no change -- and
+    #: `clear_until_eot` passes over it; `clear_until_next_turn` drops it in
+    #: that player's untap step, beside every other ``until_your_next_turn``
+    #: table, and keyed by the player for the same reason those are.
+    until_player: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -117,6 +141,8 @@ class TempEffect:
             "colors": list(self.colors),
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
+            "exact": self.exact,
+            "until_player": self.until_player,
         }
 
 
@@ -453,6 +479,72 @@ class DamageShield:
         }
 
 
+#: The two clocks a :class:`PermanentShield` can run on.  Both are printed:
+#: "prevent all damage that would be dealt to him **this turn**" (Gideon Jura,
+#: Gideon, Champion of Justice) and "**until your next turn**, prevent all damage
+#: target permanent would deal" (Gideon of the Trials, Kiora, the Crashing Wave).
+PERMANENT_SHIELD_DURATIONS = ("this_turn", "until_your_next_turn")
+
+#: Which way a :class:`PermanentShield` faces.  ``to`` stops damage dealt **to**
+#: the permanent, ``by`` stops damage the permanent **deals**, and ``to_and_by``
+#: is Kiora's "dealt to and dealt by" -- one printed clause, so one record.
+PERMANENT_SHIELD_DIRECTIONS = ("to", "by", "to_and_by")
+
+
+@dataclass(frozen=True)
+class PermanentShield:
+    """"Prevent all damage that would be dealt to him this turn." / "…target
+    permanent would deal."
+
+    :class:`DamageShield` aimed at a **permanent** instead of a seat, and able to
+    face either way.  Neither existing prevention could say it: the
+    `prevent_damage` *static* is continuous for as long as its source stands on
+    the battlefield (so as a printed line on Gideon it would shield him on every
+    turn, not the one he animated in), and the `prevent_damage` *op* is keyed to
+    a player.  Neither can stop damage a permanent *deals* at all.
+
+    Lives **on the object** (:attr:`GameObject.damage_shields`), not on a state
+    table, because the effect names that object and 400.7 ends it when the
+    object leaves: an oid survives every zone change, so a table entry would
+    follow a blinked creature into its next life, while
+    `reset_permanent_state` clears this list on the way out.  Goad and detain
+    are on the object for the same reason.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"until_your_next_turn"`` (cleared in :attr:`player`'s untap step, beside
+    detain, goad and the other "until your next turn" tables, and dropped when
+    that player leaves the game -- their untap step is never coming).
+
+    Not consumed by use, like `DamageShield`: every instance of damage in the
+    window is prevented, and each fires its own `DAMAGE_PREVENTED`.
+    """
+
+    #: ``to``, ``by`` or ``to_and_by`` -- see `PERMANENT_SHIELD_DIRECTIONS`.
+    dealt: str = "to"
+    duration: str = "this_turn"
+    #: Whose next turn ends it.  Meaningful only for ``until_your_next_turn``;
+    #: recorded for both because it is also who installed the shield.
+    player: int | None = None
+    #: The permanent or spell that installed it, for the log.
+    source: int | None = None
+
+    @property
+    def stops_damage_to(self) -> bool:
+        return self.dealt in ("to", "to_and_by")
+
+    @property
+    def stops_damage_by(self) -> bool:
+        return self.dealt in ("by", "to_and_by")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "dealt": self.dealt,
+            "duration": self.duration,
+            "player": self.player,
+            "source": self.source,
+        }
+
+
 #: The quality "protection from **everything**" (Teferi's Protection, The One
 #: Ring, Progenitus).  A sentinel in the same flat set of strings every other
 #: protection quality lives in, rather than a second field: four rules already
@@ -573,6 +665,33 @@ class OutcomeLock:
     duration: str = "this_turn"
     #: What installed it, for the log.
     source: int | None = None
+
+
+@dataclass(frozen=True)
+class FlashPermission:
+    """ "Until your next turn, you may cast sorcery spells as though they had
+    flash." -- Teferi, Time Raveler's +1.
+
+    The timed, one-shot twin of the `cast_as_though_flash` static: a loyalty
+    ability leaves no permanent behind whose static could carry it, the
+    permission ends at a fixed moment rather than when a source leaves, and it
+    covers cards drawn after it resolved -- so it belongs to the *player*, in a
+    timed table beside `outcome_locks`, and `casting._timing_ok` reads it.
+    ``types`` narrows it to spells of those card types (empty: every spell).
+    """
+
+    #: Who may cast at instant speed.
+    player: int
+    #: The card types it covers; empty for every spell.
+    types: tuple[str, ...] = ()
+    #: ``this_turn`` or ``until_your_next_turn``.
+    duration: str = "until_your_next_turn"
+    #: What installed it, for the log.
+    source: int | None = None
+
+
+#: The durations a `FlashPermission` may carry.
+FLASH_PERMISSION_DURATIONS = ("this_turn", "until_your_next_turn")
 
 
 #: The durations a `LifeFloor` may carry.
@@ -1013,7 +1132,22 @@ class DelayedTrigger:
     #: ``None`` is every delayed trigger printed before this one: Forth
     #: Eorlingas! watches *any* creature you control, so a scope would be a
     #: strictly narrower card.
-    subject_oid: int | None = None
+    #:
+    #: A **tuple**, because "choose up to two target creatures ... whenever
+    #: **either** of those creatures deals combat damage" (Tamiyo, Field
+    #: Researcher) watches every object the subject resolved to, and any one of
+    #: them firing is a match. An object that leaves the battlefield is struck
+    #: out of it by `zones.move_object` (400.7: it comes back a new object), and
+    #: a subscription whose last subject left is dropped -- which matters once
+    #: the subscription outlives the turn.
+    subject_oids: tuple[int, ...] | None = None
+    #: "Whenever a creature deals combat damage **to Vraska**" -- the other end
+    #: of the hit. The objects the damage must land on, resolved as the ability
+    #: is created exactly as ``subject_oids`` is, and compared against the
+    #: event's recipient (`triggers.RECIPIENT_KEYS`) rather than its subject --
+    #: the subject stays the dealer, so "destroy **that creature**" is
+    #: ``{"binding": "subject"}``. Released by `zones.move_object` the same way.
+    recipient_oids: tuple[int, ...] | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
 
@@ -1052,7 +1186,15 @@ class DelayedTrigger:
 #: `until_it_fires` outlives the turn, so a Stormcaller whose controller casts
 #: nothing cheap copies a spell on some later turn instead.  Both were measured
 #: in a real game rather than reasoned about.
-DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn")
+#: ``until_your_next_turn``
+#:     "**Until your next turn**, whenever either of those creatures deals combat
+#:     damage, you draw a card" (Tamiyo, Field Researcher); "until your next
+#:     turn, whenever a creature deals combat damage to Vraska, destroy that
+#:     creature" (Vraska the Unseen). `this_turn`'s repeating subscription on
+#:     611.2b's clock: it fires **every** time, `turn._cleanup_step` leaves it
+#:     alone, and `primitives.clear_until_next_turn` drops it in its
+#:     controller's untap step -- and when that controller leaves the game.
+DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn", "until_your_next_turn")
 
 
 @dataclass(frozen=True)
@@ -1268,6 +1410,26 @@ class TurnLedger:
     #: back.
     ability_activations: dict[tuple[int, int], int] = field(default_factory=dict)
 
+    #: How many **loyalty abilities of planeswalkers** each player has
+    #: activated this turn -- The Chain Veil's "if you didn't activate a loyalty
+    #: ability of a planeswalker this turn". Keyed by the activating player.
+    #:
+    #: Not derivable from `ability_activations` above: that one is keyed by an
+    #: oid and an index, and by the end step the planeswalker that was used may
+    #: be in a graveyard with its ability list unreadable, or a different object
+    #: after a flicker. Counted at the activation (in `Game._activate`, beside
+    #: the per-ability tally), so an activation that was countered or whose
+    #: source died paying its minus still counts -- it was activated.
+    loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: Extra loyalty activations a permanent may make this turn, beyond 606.3's
+    #: one: oid -> how many. The Chain Veil: "For each planeswalker you
+    #: control, you may activate one of its loyalty abilities once this turn
+    #: as though none of its loyalty abilities have been activated this turn"
+    #: -- an *additional* activation per walker (its ruling), so two Veil
+    #: activations are two. Keyed by oid, so a walker that arrives after the
+    #: Veil resolved gets nothing, as printed.
+    extra_loyalty_activations: dict[int, int] = field(default_factory=dict)
+
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
     #: hasn't been **exerted this turn**" (Combat Celebrant, 701.40b).
@@ -1386,6 +1548,8 @@ class TurnLedger:
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()
+        self.loyalty_activations.clear()
+        self.extra_loyalty_activations.clear()
         self.cards_to_graveyard = 0
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()

@@ -26,6 +26,25 @@ from .selectors import (
 )
 from .values import evaluate_value
 
+#: The two clocks a pump, an animation, a timed keyword grant and an ability
+#: lock may run on. ``grant_keyword`` adds ``permanent`` (riot) to these.
+TIMED_DURATIONS = ("until_end_of_turn", "until_your_next_turn")
+
+
+def until_player_of(ctx: EffectContext, spec: Mapping[str, Any]) -> int | None:
+    """The seat whose next turn ends this effect, or ``None`` for cleanup.
+
+    "Until **your** next turn" (611.2b) is the *controller's* -- the player who
+    activated the loyalty ability, not the owner of the creature it points at --
+    which is what `ctx.controller` is while the effect resolves.
+    """
+    duration = str(spec.get("duration", "until_end_of_turn"))
+    if duration == "until_your_next_turn":
+        return ctx.controller
+    if duration not in (*TIMED_DURATIONS, "permanent"):  # pragma: no cover - loader guards
+        raise ValueError(f"unknown duration {duration!r}")
+    return None
+
 
 @register("add_subtype")
 def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -95,7 +114,43 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None or not obj.on_battlefield:
             continue
         obj.lost_all_abilities = True
+        _drop_earlier_grants(obj, ctx.began_at)
     ctx.state.bump_chars()
+
+
+#: The `TempEffect` kinds that *are* abilities (layer 6), and so go when a
+#: permanent loses all abilities. A pump, an animation, a steal and an ability
+#: lock are not abilities and stay.
+_ABILITY_KINDS = frozenset({"keyword", "ability", "protection"})
+
+
+def _drop_earlier_grants(obj, cutoff: int) -> None:
+    """Take away every ability granted to ``obj`` before ``cutoff`` (613.7).
+
+    Oko, Thief of Crowns: "target artifact or creature loses all abilities".
+    The loss has a later timestamp than a flying granted earlier in the turn,
+    so the flying goes with the printed abilities; a flying granted *after*
+    Oko's +1 resolves is a later effect and survives. Both lists of grants are
+    walked -- the timed one (`until_eot`) and the ones for as long as the
+    permanent lasts (`granted_abilities_permanent`, `granted_keywords`) -- and
+    suspend's haste, which is a keyword too.
+
+    ``cutoff`` is the start of the resolution doing the removing, not the
+    moment of the removal. "It gains \"…\" **and loses all other
+    abilities**" (The Irencrag) is one simultaneous change, and the grant
+    written just before this op in the same effect list must survive it.
+    """
+    obj.until_eot = [
+        t for t in obj.until_eot if t.kind not in _ABILITY_KINDS or t.timestamp >= cutoff
+    ]
+    obj.granted_abilities_permanent = [
+        t for t in obj.granted_abilities_permanent if t.timestamp >= cutoff
+    ]
+    for word in list(obj.granted_keywords):
+        if obj.granted_keyword_at.get(word, 0) < cutoff:
+            obj.granted_keywords.discard(word)
+            obj.granted_keyword_at.pop(word, None)
+    obj.hasted_by_suspend = False
 
 
 @register("rename")
@@ -198,9 +253,10 @@ def op_change_text(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_pump(ctx: EffectContext, spec: Mapping[str, Any]):
     power = evaluate_value(ctx, spec.get("power", 0))
     toughness = evaluate_value(ctx, spec.get("toughness", 0))
+    until_player = until_player_of(ctx, spec)
     oids = yield from choose_objects(ctx, spec.get("objects"), "Pump")
     for oid in oids:
-        pump(ctx.state, oid, power, toughness, source=ctx.source_oid)
+        pump(ctx.state, oid, power, toughness, source=ctx.source_oid, until_player=until_player)
 
 
 @register("grant_keyword")
@@ -215,10 +271,19 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     keywords = spec.get("keywords") or ([spec["keyword"]] if "keyword" in spec else [])
     permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
+    # "…and gain lifelink **until your next turn**" -- Sorin, Solemn Visitor.
+    until_player = until_player_of(ctx, spec)
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant")
     for oid in oids:
         for keyword in keywords:
-            grant_keyword(ctx.state, oid, str(keyword), source=ctx.source_oid, permanent=permanent)
+            grant_keyword(
+                ctx.state,
+                oid,
+                str(keyword),
+                source=ctx.source_oid,
+                permanent=permanent,
+                until_player=until_player,
+            )
 
 
 @register("grant_protection")
@@ -286,7 +351,12 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         for quality in qualities:
             obj.until_eot.append(
-                TempEffect(kind="protection", keyword=str(quality), source=ctx.source_oid)
+                TempEffect(
+                    kind="protection",
+                    keyword=str(quality),
+                    source=ctx.source_oid,
+                    timestamp=ctx.state.alloc_timestamp(),
+                )
             )
     ctx.state.bump_chars()
 
@@ -320,6 +390,17 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     # have no printed line of its own to claim -- the residual gate's objection,
     # and the reason Raging Ravine still fails.
     your_turn_keywords = [str(k) for k in spec.get("your_turn_keywords", ())]
+    # "Target artifact or creature loses all abilities and **becomes a green Elk
+    # creature with base power and toughness 3/3**." Oko, Thief of Crowns. No
+    # printed duration, so `duration: "permanent"` -- the loader refuses any
+    # other spelling than the pair `gain_control` takes -- and no "in addition
+    # to its other types", so `exact`: the colours, card types and creature
+    # types named replace the permanent's own.
+    permanent = spec.get("duration", "until_end_of_turn") == "permanent"
+    exact = bool(spec.get("exact", False))
+    # "**Until your next turn**, it becomes a 5/5 Elemental creature with
+    # haste" -- Nissa, Vital Force. The body and its keywords share the clock.
+    until_player = until_player_of(ctx, spec)
     oids = yield from choose_objects(ctx, spec.get("objects"), "Animate")
     for oid in oids:
         animate(
@@ -332,9 +413,19 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
             colors=colors,
             your_turn_keywords=your_turn_keywords,
             source=ctx.source_oid,
+            permanent=permanent,
+            exact=exact,
+            until_player=until_player,
         )
         for keyword in keywords:
-            grant_keyword(ctx.state, oid, keyword, source=ctx.source_oid)
+            grant_keyword(
+                ctx.state,
+                oid,
+                keyword,
+                source=ctx.source_oid,
+                permanent=permanent,
+                until_player=until_player,
+            )
 
 
 @register("monstrosity")
@@ -476,10 +567,15 @@ def op_lock_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Separate from `tap`, which usually accompanies it, because the two are
     different halves of the sentence and a card may want only one.
+
+    ``duration: "until_your_next_turn"`` is Dovin Baan's "…**until your next
+    turn**, … its activated abilities can't be activated", which must still
+    bind on the opponent's turn -- the only turn it matters on.
     """
+    until_player = until_player_of(ctx, spec)
     oids = yield from choose_objects(ctx, spec.get("objects"), "Lock")
     for oid in oids:
-        lock_abilities(ctx.state, oid, source=ctx.source_oid)
+        lock_abilities(ctx.state, oid, source=ctx.source_oid, until_player=until_player)
 
 
 @register("set_pt")

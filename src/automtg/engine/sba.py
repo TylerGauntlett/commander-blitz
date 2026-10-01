@@ -15,10 +15,17 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .primitives import clear_goad
+from .primitives import (
+    clear_goad,
+    clear_permanent_shields,
+    clear_until_next_turn,
+    drop_attack_requirements,
+)
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Iterable
+
     from .state import GameState
 
 #: Safety valve: SBAs that keep changing something forever indicate a rules bug.
@@ -149,7 +156,11 @@ def player_cant_lose(state: GameState, pid: int) -> bool:
     Short-circuits on the empty list, which is what `state.outcome_locks` is in
     every game that plays none of these cards.
     """
-    return any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks)
+    if any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks):
+        return True
+    from .player_statics import outcome_barred_by_static
+
+    return outcome_barred_by_static(state, pid, "cant_lose_the_game")
 
 
 def player_cant_win(state: GameState, pid: int) -> bool:
@@ -159,7 +170,11 @@ def player_cant_win(state: GameState, pid: int) -> bool:
     cards print only one of the two: Abyssal Persecutor says "you can't win the
     game" and nothing about losing.
     """
-    return any(lock.player == pid and lock.cant_win for lock in state.outcome_locks)
+    if any(lock.player == pid and lock.cant_win for lock in state.outcome_locks):
+        return True
+    from .player_statics import outcome_barred_by_static
+
+    return outcome_barred_by_static(state, pid, "cant_win_the_game")
 
 
 def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
@@ -240,6 +255,21 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # escape could never fire either. Cleared with `clear_goad`, the same call
     # the untap step makes, because this *is* that player's last untap step.
     clear_goad(state, pid)
+    # And the same hole in the permanent-scoped prevention shields: "until your
+    # next turn, prevent all damage target permanent would deal" is cleared in
+    # the installing player's untap step, so a shield keyed to a seat that has
+    # left would pacify the creature it was aimed at for the rest of the game.
+    clear_permanent_shields(state, "until_your_next_turn", pid)
+    # Hygiene for Gideon Jura's mark: a compelled player who has left never
+    # takes the turn it waits for.
+    drop_attack_requirements(state, pid)
+    # And the same hole in the per-object entries: a -2/-1 or a lifelink "until
+    # your next turn" keyed to a seat that has left would stand for good.
+    clear_until_next_turn(state, pid)
+    # And a timed flash permission keyed to a seat that has left.
+    from .temp_effects import clear_flash_permissions
+
+    clear_flash_permissions(state, "until_your_next_turn", pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()
@@ -344,6 +374,28 @@ def declare_win(state: GameState, pid: int) -> None:
     for other in state.alive():
         if other != pid:
             _eliminate(state, other, LossReason.OPPONENT_WON)
+    check_game_over(state)
+
+
+def declare_loss(state: GameState, pids: Iterable[int]) -> None:
+    """ "That player loses the game" -- 104.3a.
+
+    The mirror of :func:`declare_win`, and narrower on purpose: it eliminates
+    **only** the named seat, through the same `_eliminate` a lethal life total
+    reaches, then asks `check_game_over`. Written as `declare_win` on an
+    opponent it would be a different sentence -- in a pod, one Assassin hit
+    would knock out every other seat too.
+
+    Every named seat is eliminated before the game-over check, so "each player
+    loses the game" is a draw (104.4a) rather than a win for whichever seat the
+    loop reached last. A game already over, or a seat already gone, is a no-op.
+    "Can't lose the game" (Platinum Angel) is not modelled.
+    """
+    if state.game_over:
+        return
+    for pid in pids:
+        if state.is_alive(pid):
+            _eliminate(state, pid, LossReason.LOST_BY_EFFECT)
     check_game_over(state)
 
 

@@ -204,6 +204,10 @@ const SILENT = new Set([
   // batch at once. `damage_dealt` owns the numeral for each hit; a beat for the
   // summary would sound the combat a second time.
   "creatures_dealt_combat_damage",
+  // The per-creature summary of the same hits: once per dealing creature per
+  // step, for "whenever this creature deals combat damage" to anything. Every
+  // hit already has its own beat.
+  "creature_dealt_combat_damage",
 ]);
 
 /**

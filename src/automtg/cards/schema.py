@@ -60,6 +60,13 @@ class CostModel(BaseModel):
     #: ``total_power``: crew is a printed sum, and no printed line unbends a
     #: board by power.
     untap_permanents: dict[str, Any] | None = None
+    #: "Remove three counters from among other artifacts, creatures, and
+    #: planeswalkers you control" -- Tekuthal, Inquiry Dominus. A selector over
+    #: the battlefield (controller defaults to you) with a ``count``: that many
+    #: counters of **any** kinds, split among the matching permanents however
+    #: the payer likes. Not ``remove_counters``, which takes one named kind off
+    #: the source itself.
+    remove_counters_from_among: dict[str, Any] | None = None
     #: "**Mill a card**" as part of an activation cost -- Millikin, Deranged
     #: Assistant, The Warring Triad. Cards come off the top of the *activating*
     #: player's library, so there is nothing to choose and no selector.
@@ -133,6 +140,21 @@ class CostModel(BaseModel):
     #: is a cost rather than an effect, so it is paid whether or not the ability
     #: resolves and cannot be responded to in between.
     loyalty: int | None = None
+    #: "**-X**: Sorin deals X damage to target creature or planeswalker" -- a
+    #: variable loyalty cost (606.4, 107.3). The controller announces X as the
+    #: ability is activated, bounded by the loyalty the planeswalker has, and
+    #: removes that many loyalty counters as the cost; the ability's effects read
+    #: the number back with ``{"x": true}`` / ``"x"``, exactly as an ``{X}`` in a
+    #: mana cost is read.
+    #:
+    #: A flag beside ``loyalty`` rather than a spelling of it, and it compiles to
+    #: ``loyalty: 0`` plus the flag: every reader that asks "is this a loyalty
+    #: ability?" -- 606.3's once per turn, the forced sorcery timing, Teferi's
+    #: permission -- asks ``cost.loyalty is not None`` and so keeps working. Not
+    #: ``remove_counters``, which would drop every one of those. Not with
+    #: ``loyalty`` (two numbers for one payment) and not beside an ``{X}`` in
+    #: ``mana`` (an ability announces one X).
+    loyalty_x: bool = False
     exile_from_graveyard: dict[str, Any] | None = None
     #: How much less **this cost node** costs -- the same language a card's
     #: `cost_reduction` speaks, read by `costs.reduction_amount`:
@@ -345,6 +367,11 @@ class TriggerModel(BaseModel):
     #: other card using this event is "to one or more players", and a swing that
     #: connected only with a battle must not fire those.
     or_battle: bool = False
+    #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
+    #: "When this creature **dies or is put into exile**" -- Kaya the
+    #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
+    #: a tuck must not fire it. Refused on every other event.
+    to_zones: list[str] | None = None
 
 
 class AbilityModel(BaseModel):
@@ -739,6 +766,20 @@ class AbilityModel(BaseModel):
     #: `counter` on `TriggerModel`, which is a different model and a different
     #: question ("whenever a +1/+1 counter is put on this creature").
     counter: str | None = None
+    #: `replace_counters`: only counters an **effect** puts on. Doubling
+    #: Season's "if **an effect** would put one or more counters…" -- and a
+    #: cost is not an effect (118.1, 602.2b), so a planeswalker's +1 loyalty
+    #: ability still puts exactly one loyalty counter on as its cost. Omitted,
+    #: the replacement reaches costs too, which is what "if one or more
+    #: counters **would be put**" says (Hardened Scales, High Score) and what
+    #: "if **you** would put" says (Vorinclex, Innkeeper's Talent).
+    effects_only: bool = False
+    #: `replace_counters`: keyed on **who puts** the counters rather than on
+    #: what they land on -- Innkeeper's Talent's and Vorinclex's "if **you**
+    #: would put one or more counters on a permanent or player". ``"you"`` is
+    #: the only value. With it, ``affects`` may be omitted (any permanent,
+    #: whoever controls it) and ``affects_player`` reaches players (poison).
+    put_by: Literal["you"] | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:

@@ -93,6 +93,25 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             f"{where}.cost: 'pay_life_x' is the announced X, so there is no "
             f"'pay_life' amount to give as well (got {model.pay_life!r})"
         )
+    if model.loyalty_x:
+        # "-X". Three refusals, each a second number for one payment or a
+        # second X for one announcement, and each would otherwise load clean
+        # with one half never read.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' is a planeswalker's -X, a cost of an "
+                f"activated ability -- nothing else has loyalty to spend"
+            )
+        if model.loyalty is not None:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' is the whole loyalty cost (-X); give it "
+                f"or 'loyalty', not both (got loyalty {model.loyalty!r})"
+            )
+        if "X" in str(model.mana or "").upper() or model.pay_life_x:
+            raise DslError(
+                f"{where}.cost: 'loyalty_x' announces this ability's X, so the "
+                f"cost may not carry a second X in 'mana' or 'pay_life_x'"
+            )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "
@@ -168,6 +187,24 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"to 'tap_permanents'; give a 'count'"
             )
         validate_selector(model.untap_permanents, f"{where}.cost.untap_permanents")
+    if model.remove_counters_from_among is not None:
+        among = dict(model.remove_counters_from_among)
+        count = among.pop("count", None)
+        if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+            # "Remove three counters from among..." always prints the number,
+            # and a default of one would load a strictly cheaper card.
+            raise DslError(
+                f"{where}.cost.remove_counters_from_among: needs a positive integer "
+                f"'count', got {count!r}"
+            )
+        if "counter" in among:
+            # A named kind is `remove_counters`' sentence; "counters" here means
+            # any kinds, and a filter nothing reads would print as honoured.
+            raise DslError(
+                f"{where}.cost.remove_counters_from_among: removes counters of any "
+                f"kind; a named 'counter' kind is not read"
+            )
+        validate_selector(among, f"{where}.cost.remove_counters_from_among")
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())

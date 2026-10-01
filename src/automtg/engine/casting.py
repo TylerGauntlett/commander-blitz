@@ -24,10 +24,12 @@ from .player_statics import (
     free_cast_permission,
     granted_warp_cost,
     player_casts_as_though_flash,
+    player_casts_only_at_sorcery_speed,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
     spell_life_tax,
     spell_life_tax_on_board,
+    spell_mana_tax_targeted,
 )
 from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
@@ -437,14 +439,30 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     printed on an instant, and every other branch below returns True for an
     instant before anything could reach it -- a restriction written after them
     would load, read as the printed card and never once refuse a cast.
+    `cast_only_at_sorcery_speed` (Teferi, Time Raveler) narrows too, for the
+    player rather than the card, and is asked second for the same reason.
     """
     if card.cast_before_step is not None and state.step >= _window_closes_at(
         card.cast_before_step
     ):
         return False
+    if player_casts_only_at_sorcery_speed(state, pid):
+        # Teferi, Time Raveler. The other narrowing, and asked before flash for
+        # the same reason as the step above: an instant, a flash spell and a
+        # `cast_as_though_flash` permission all say "may", and 101.2 gives
+        # "only" the last word.
+        return sorcery_speed
     if card.is_instant or Keyword.FLASH.value in card.keywords:
         return True
     if sorcery_speed:
+        return True
+    # Teferi, Time Raveler's +1: "Until your next turn, you may cast sorcery
+    # spells as though they had flash" -- the timed, per-player permission a
+    # loyalty ability leaves behind, narrowed to the card types it names.
+    if any(
+        perm.player == pid and (not perm.types or set(perm.types) & set(card.types))
+        for perm in state.flash_permissions
+    ):
         return True
     return player_casts_as_though_flash(state, pid)
 
@@ -532,7 +550,9 @@ def _cast_options(
     #
     # Skipped when the caller already priced this line free -- a plotted Dragon
     # is offered free once, not twice.
-    if not free and free_cast_permission(state, pid, card):
+    if not free and free_cast_permission(
+        state, pid, card, zone=state.objects[oid].zone.value if oid in state.objects else None
+    ):
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
         )
@@ -1234,6 +1254,37 @@ def _priced_tuples(
     return priced
 
 
+def _spell_as_cast(card: CardDef, face_down: bool, bestowed: bool) -> CardDef:
+    """The printed face a spell-type filter must read for this cast.
+
+    Almost always the face itself. Two variants change what the *spell* is:
+    a face-down spell is a nameless colorless 2/2 creature spell with no
+    subtypes (708.2a), and a bestowed spell is an Aura enchantment spell and
+    not a creature spell (702.103b). A filter asking "noncreature" of the
+    printed creature card would get both of them backwards.
+    """
+    import dataclasses
+
+    if face_down:
+        return dataclasses.replace(
+            card,
+            name="",
+            mana_cost=ManaCost(),
+            supertypes=frozenset(),
+            types=frozenset({"Creature"}),
+            subtypes=frozenset(),
+            keywords=frozenset(),
+            colors=frozenset(),
+        )
+    if bestowed:
+        return dataclasses.replace(
+            card,
+            types=frozenset({"Enchantment"}),
+            subtypes=frozenset({"Aura"}),
+        )
+    return card
+
+
 def _cast_variant(
     state: GameState,
     pid: int,
@@ -1277,6 +1328,14 @@ def _cast_variant(
     # passing through it -- and a mode-owned target is no more available to a
     # flashed-back spell than to a fresh one.
     if not modal_cast_ok(state, pid, card, oid):
+        return []
+    # "Your opponents can't cast **noncreature** spells" -- Narset
+    # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
+    # asked here because this is the one function every offered cast passes
+    # through with the face actually being cast in hand: the seat-level exit
+    # at the top of `_cast_actions` cannot know which spell it is, and a gate
+    # per zone would leave the rest open.
+    if player_cant_cast_spells(state, pid, _spell_as_cast(card, face_down, bestowed)):
         return []
 
     # Restricted mana ("spend only to cast a creature spell") is offered or
@@ -1380,7 +1439,7 @@ def _cast_variant(
     # once for the whole variant and then folded in beside the permission a
     # `grant_playable` may also have left on the card. `Game._cast` reads the
     # same static at the same point.
-    spends_any_color = player_spends_mana_as_any_color(state, pid)
+    spends_any_color = player_spends_mana_as_any_color(state, pid, card)
     # Terror of the Peaks: "spells your opponents cast that target this creature
     # cost an additional 3 life to cast." An additional cost (601.2f) charged in
     # life, so it never reaches the payment solver -- it only narrows which
@@ -1458,7 +1517,7 @@ def _cast_variant(
             static.get("targeting") is not None
             for _, static in _battlefield_statics(state)
             if static.get("effect") == "spell_cost_reduction"
-        )
+        ) or spell_mana_tax_targeted(state)  # Kasmina's surcharge is per tuple too
         # Convoke and delve reduce the generic part, exactly as a cost reduction
         # does -- and go through the same clamp, so neither can make a spell free
         # of its coloured pips.

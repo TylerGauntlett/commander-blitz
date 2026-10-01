@@ -1,0 +1,31 @@
+{
+  "card": {
+    "id": "deepglow_skate",
+    "name": "Deepglow Skate",
+    "oracle_text": "When this creature enters, double the number of each kind of counter on any number of target permanents.",
+    "mana_cost": "{4}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Fish"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, double the number of each kind of counter on any number of target permanents.",
+        "trigger": { "event": "self_enters", "source": "self" },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": "any",
+            "selector": { "controller": "any", "zone": "battlefield" }
+          }
+        ],
+        "effects": [ { "op": "double_counters", "objects": { "target": "t1" } } ]
+      }
+    ]
+  },
+  "expectation": { "zone": "battlefield", "battlefield_count": 33 }
+}

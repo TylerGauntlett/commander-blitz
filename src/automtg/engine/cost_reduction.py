@@ -12,6 +12,7 @@ from .characteristics import (
     chars,
     compare_pt,
     spell_cost_reduction,
+    spell_mana_tax,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -41,6 +42,12 @@ def cost_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> i
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
     total = spell_cost_reduction(state, pid, card, targets)
+    # And the one that points the other way: Kasmina's "spells your opponents
+    # cast that target a creature or planeswalker you control cost {2} more".
+    # Netted in as a negative discount, so the offer and the charge price it
+    # through the same number -- see `spell_mana_tax`. The total may therefore
+    # be negative, which every caller already folds into an `extra_generic`.
+    total -= spell_mana_tax(state, pid, card, targets)
     return total + reduction_amount(state, pid, card.cost_reduction)
 
 
@@ -339,6 +346,10 @@ def _object_matches(
     # a tapped flag, a token flag or a combat assignment -- so reading them
     # while pricing cannot depend on a static that has not run.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+        return False
+    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
+        filt["has_counters"]
+    ):
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
         return False

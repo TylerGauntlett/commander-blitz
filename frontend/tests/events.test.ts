@@ -66,6 +66,12 @@ describe("beatsFor", () => {
     expect(shakes(small).length).toBe(0);
   });
 
+  it("gives the per-creature combat damage summary no beat of its own", () => {
+    // Every hit it summarises already has a beat; a second would sound the
+    // combat twice.
+    expect(beatsFor([event("creature_dealt_combat_damage", { amount: 3 })], NAMES)).toEqual([]);
+  });
+
   it("ignores zero and negative damage", () => {
     expect(beatsFor([event("damage_dealt", { amount: 0, to: "player" })], NAMES)).toEqual([]);
   });

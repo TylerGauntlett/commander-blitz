@@ -13,13 +13,13 @@ is exactly one code path for "a player did something".
 
 from __future__ import annotations
 
-from collections.abc import Generator, Iterable, Sequence
+from collections.abc import Generator, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
-from .characteristics import abilities_of, mana_source_traits
+from .characteristics import abilities_of, chars, mana_source_traits
 from .combat import add_attacker, add_blocker, finish_attackers
 from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -479,6 +479,10 @@ class Game:
             spell_life_tax,
         )
 
+        # Compleated (702.150a) counts **Phyrexian mana symbols** life was paid
+        # for, and K'rrik's widened {B} is not one. Counted before the widening
+        # so the two can be told apart below.
+        printed_phyrexian = cost.phyrexian_count
         if player_pays_life_for_black(state, pid):
             # K'rrik's black pips, read as Phyrexian ones exactly where
             # `_cast_variant` read them when it counted the lines -- on the
@@ -493,7 +497,13 @@ class Game:
         # 2 life" is charged 2 life and one blue pip fewer, and a line offered
         # without it is charged the printed cost. `action.phyrexian` is the
         # player's answer, the way `action.x` is; nothing re-decides it.
+        widened = cost.phyrexian_count - printed_phyrexian
         cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
+        # How many of the life payments bought a printed Phyrexian symbol. The
+        # pips all cost the same 2 life, so under K'rrik the life is attributed
+        # to his widened {B} first -- the reading the caster would choose, and
+        # the one `paying_phyrexian`'s single-symbol-first order already takes.
+        paid_phyrexian_symbols = max(0, action.phyrexian - widened)
 
         granted = state.objects[oid]
         if granted.playable_any_type and granted.playable_live(state.turn):
@@ -503,7 +513,7 @@ class Game:
             cost = cost.as_any_type()
         elif (
             granted.playable_any_color and granted.playable_live(state.turn)
-        ) or player_spends_mana_as_any_color(state, pid):
+        ) or player_spends_mana_as_any_color(state, pid, card):
             # Elder Brain's colour waiver, the paying half of the one
             # `_cast_variant` priced the line with -- or Chromatic Orrery's,
             # which says it about the player instead of about this card and so
@@ -566,6 +576,9 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+        # Compleated's count, written onto the object now because the action is
+        # the only record of it; see `GameObject.cast_phyrexian_life`.
+        state.objects[oid].cast_phyrexian_life = paid_phyrexian_symbols
 
         # "Spells your opponents cast that target this creature cost an
         # additional 3 life to cast." Terror of the Peaks, and somebody *else's*
@@ -838,6 +851,18 @@ class Game:
         # that strands mid-payment still spends the turn's allowance -- the same
         # reading `resolutions_this_turn` takes of its own event.
         state.turn_ledger.activated(oid, action.ability_index)
+        # "…if you didn't activate a loyalty ability of **a planeswalker** this
+        # turn" (The Chain Veil). Counted per player at the same moment and for
+        # the same reason as the line above, and only when the source is a
+        # planeswalker as it is activated -- the printed sentence names the
+        # permanent type, not just the cost.
+        if (
+            ability.cost is not None
+            and ability.cost.loyalty is not None
+            and "Planeswalker" in chars(state, oid).types
+        ):
+            tally = state.turn_ledger.loyalty_activations
+            tally[pid] = tally.get(pid, 0) + 1
 
         # "…or activate an ability of a creature source of the chosen type."
         # What this activation pays *for*, so Cavern of Souls mana is available
@@ -859,6 +884,22 @@ class Game:
             # already answered and could contradict the targets already
             # declared. The same argument `ability_modes` makes below.
             x = action.x
+        elif ability.cost is not None and ability.cost.loyalty_x:
+            # "-X" (606.4, 107.3): announced now, before the cost is paid, and
+            # bounded by the loyalty there is to remove -- `costs.pay` takes
+            # exactly this many counters and the stack item carries it to the
+            # effects that read X.
+            from .effects.context import EffectContext, ask_x
+
+            source_obj = state.objects.get(oid)
+            ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
+            x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid),
+                f"Choose X for {card.name}",
+                ceiling,
+                pid,
+                loyalty_cost=True,
+            )
         elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
@@ -892,6 +933,12 @@ class Game:
             modes = action.ability_modes
         else:
             modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
+
+        # 601.2d (602.2b applies it to abilities): "distribute …" is divided
+        # now, over the targets just declared and before the cost is paid.
+        distribution = yield from self._ask_distribution(
+            pid, card.name, oid, ability, modes, action.targets
+        )
 
         # `fire`, not `emit`: emit only writes the log, and an activation event
         # nothing listens for is the same silent no-op the cycling event below
@@ -927,6 +974,8 @@ class Game:
         # the stack item so the effects can read it. Empty for every cost that
         # names nothing, which is every cost but `tap_permanents` with `as`.
         bindings: dict[str, Any] = {}
+        if distribution:
+            bindings["distribution"] = distribution
         ok = yield from pay(
             state,
             pid,
@@ -968,6 +1017,64 @@ class Game:
             # nothing listens to is the silent no-op this whole run exists to
             # add a listener for.
             triggers.fire(state, EventType.CYCLED, player=pid, source=oid, card=card.id)
+
+    def _ask_distribution(
+        self,
+        pid: int,
+        name: str,
+        source_oid: int,
+        ability,
+        modes,
+        targets,
+    ) -> Generator[Any, list[int], dict[str, list[list[int]]]]:
+        """Divide each top-level ``distribute_counters`` among its declared targets.
+
+        601.2d: every target gets at least one, and the rest are placed one at a
+        time -- "which target gets another?" -- which reaches every legal
+        division and asks nothing when the split is forced (as many targets as
+        counters, or a single target). Composed from `ask_objects`, so there is
+        no new decision kind; the purpose tag is ``distribute``.
+
+        Returns ``{target_id: [[oid, n], ...]}``, JSON-shaped because it rides
+        on the stack item's bindings.
+        """
+        from .effects.context import EffectContext, ask_objects
+        from .targeting import declared_by_spec
+
+        wanted = [
+            e
+            for e in ability.effects
+            if isinstance(e, Mapping) and e.get("op") == "distribute_counters"
+        ]
+        if not wanted:
+            return {}
+        declared = declared_by_spec(ability.specs_for_modes(modes), targets)
+        ctx = EffectContext(
+            state=self.state, controller=pid, source_oid=source_oid, source_name=name
+        )
+        out: dict[str, list[list[int]]] = {}
+        for spec in wanted:
+            target_id = str(spec["objects"]["target"])
+            oids = [r.id for r in declared.get(target_id, ()) if r.kind == "object"]
+            if not oids:
+                continue
+            amount = spec.get("amount", 1)
+            total = int(amount["const"] if isinstance(amount, Mapping) else amount)
+            shares = dict.fromkeys(oids, 1)
+            kind = str(spec.get("counter", "+1/+1"))
+            for left in range(total - len(oids), 0, -1):
+                picked = yield from ask_objects(
+                    ctx,
+                    f"Distribute: put another {kind} counter on which target? ({left} left)",
+                    oids,
+                    1,
+                    1,
+                    pid,
+                    "distribute",
+                )
+                shares[picked[0] if picked else oids[0]] += 1
+            out[target_id] = [[oid, n] for oid, n in shares.items()]
+        return out
 
     def _ask_x(
         self,

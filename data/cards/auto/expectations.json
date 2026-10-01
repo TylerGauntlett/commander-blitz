@@ -103,6 +103,47 @@
   "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
+  "ajani_sleeper_agent": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "ajani_steadfast": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "ajani_the_greathearted": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "ajani_unyielding": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "akoum_refuge": {
     "life": {
       "0": 41
@@ -211,6 +252,14 @@
     "zone": "battlefield"
   },
   "ambush_viper": {
+    "zone": "battlefield"
+  },
+  "aminatou_the_fateshifter": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "amphin_cutthroat": {
@@ -593,6 +642,21 @@
   "ashcoat_bear": {
     "zone": "battlefield"
   },
+  "ashiok_dream_render": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "ashiok_nightmare_weaver": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "ashnod_s_altar": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -611,6 +675,9 @@
     "zone": "battlefield"
   },
   "assault_zeppelid": {
+    "zone": "battlefield"
+  },
+  "atraxa_praetors_voice": {
     "zone": "battlefield"
   },
   "auntie_s_hovel": {
@@ -1296,6 +1363,10 @@
   "brimstone_dragon": {
     "zone": "battlefield"
   },
+  "brokers_ascendancy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bronze_sable": {
     "zone": "battlefield"
   },
@@ -1413,6 +1484,15 @@
     "tokens": {
       "count": 2,
       "id": "human_soldier_1_1_w"
+    },
+    "zone": "graveyard"
+  },
+  "call_the_gatewatch": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "graveyard"
   },
@@ -1935,6 +2015,15 @@
   "contaminated_landscape": {
     "zone": "battlefield"
   },
+  "contentious_plan": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "contingency_plan": {
     "zone": "graveyard"
   },
@@ -2389,6 +2478,10 @@
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },
+  "deepglow_skate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deer_dog": {
     "zone": "battlefield"
   },
@@ -2434,6 +2527,16 @@
     },
     "library_size": {
       "0": 39
+    },
+    "zone": "graveyard"
+  },
+  "deploy_the_gatewatch": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "graveyard"
   },
@@ -2564,7 +2667,19 @@
       "0": 46
     }
   },
+  "doubling_season": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "douser_of_lights": {
+    "zone": "battlefield"
+  },
+  "dovin_baan": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "dracogenesis": {
@@ -2826,6 +2941,13 @@
     "zone": "battlefield"
   },
   "elite_vanguard": {
+    "zone": "battlefield"
+  },
+  "elspeth_sun_s_champion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "elves_of_deep_shadow": {
@@ -3486,6 +3608,9 @@
     },
     "zone": "graveyard"
   },
+  "flux_channeler": {
+    "zone": "battlefield"
+  },
   "flying_dolphin_fish": {
     "zone": "battlefield"
   },
@@ -3594,6 +3719,13 @@
   },
   "foul_orchard": {
     "zone": "battlefield"
+  },
+  "fracture": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "frantic_search": {
     "graveyard_size": {
@@ -3877,6 +4009,30 @@
     ]
   },
   "giant_warthog": {
+    "zone": "battlefield"
+  },
+  "gideon_champion_of_justice": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "gideon_jura": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "gideon_of_the_trials": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "gift_of_granite": {
@@ -4845,6 +5001,9 @@
       "graveyard"
     ]
   },
+  "inexorable_tide": {
+    "zone": "battlefield"
+  },
   "infernal_grasp": {
     "life": {
       "0": 38,
@@ -4856,6 +5015,10 @@
     "zone": "battlefield"
   },
   "inkwell_leviathan": {
+    "zone": "battlefield"
+  },
+  "innkeeper_s_talent": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inquisitor_s_flail": {
@@ -4951,6 +5114,26 @@
     "zone": "battlefield"
   },
   "izzet_signet": {
+    "zone": "battlefield"
+  },
+  "jace_cunning_castaway": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "jace_memory_adept": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jace_unraveler_of_secrets": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "jace_wielder_of_mysteries": {
@@ -5107,16 +5290,39 @@
   "kari_zev_skyship_raider": {
     "zone": "battlefield"
   },
+  "karn_s_bastion": {
+    "zone": "battlefield"
+  },
   "karplusan_forest": {
     "zone": "battlefield"
   },
   "kasimir_the_lone_wolf": {
     "zone": "battlefield"
   },
+  "kasmina_enigma_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kasmina_enigmatic_mentor": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "kavu_climber": {
     "hand_size": {
       "0": 2
     }
+  },
+  "kaya_the_inexorable": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
   },
   "kazandu_refuge": {
     "life": {
@@ -5218,6 +5424,18 @@
       "amount": 7,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "kiora_master_of_the_depths": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "kiora_the_crashing_wave": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kismet": {
@@ -5548,6 +5766,22 @@
   },
   "lilah_undefeated_slickshot": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "liliana_dreadhorde_general": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "liliana_the_last_hope": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "living_laser": {
@@ -6548,6 +6782,20 @@
   "nantuko_elder": {
     "zone": "battlefield"
   },
+  "narset_parter_of_veils": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "narset_transcendent": {
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "nature_s_lore": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -6691,6 +6939,18 @@
   "nip_gwyllion": {
     "zone": "battlefield"
   },
+  "nissa_vital_force": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "nissa_voice_of_zendikar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nissas_pilgrimage": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -6772,6 +7032,10 @@
       "0": 42
     }
   },
+  "oath_of_ajani": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "oath_of_eorl": {
     "battlefield_count": 35,
     "counters": {
@@ -6782,6 +7046,18 @@
       "count": 2,
       "id": "human_soldier_1_1_w"
     },
+    "zone": "battlefield"
+  },
+  "oath_of_gideon": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "kor_ally_1_1_w"
+    },
+    "zone": "battlefield"
+  },
+  "oath_of_nissa": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ob_nixilis_reignited": {
@@ -6870,6 +7146,14 @@
     "zone": "battlefield"
   },
   "oko_s_accomplices": {
+    "zone": "battlefield"
+  },
+  "oko_thief_of_crowns": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "old_ghastbark": {
@@ -7046,6 +7330,9 @@
         "trample"
       ]
     },
+    "zone": "graveyard"
+  },
+  "pact_of_negation": {
     "zone": "graveyard"
   },
   "painful_truths": {
@@ -7489,6 +7776,16 @@
     },
     "life": {
       "0": 42
+    },
+    "zone": "graveyard"
+  },
+  "putrefy": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
     },
     "zone": "graveyard"
   },
@@ -8154,6 +8451,12 @@
   },
   "runeclaw_bear": {
     "zone": "battlefield"
+  },
+  "rupture_spire": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "rushwood_dryad": {
     "zone": "battlefield"
@@ -9147,7 +9450,27 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sorin_grim_nemesis": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "sorin_imperious_bloodlord": {
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "sorin_solemn_visitor": {
+    "battlefield_count": 33,
     "counters": {
       "amount": 4,
       "kind": "loyalty"
@@ -9770,6 +10093,25 @@
   "talruum_minotaur": {
     "zone": "battlefield"
   },
+  "tamiyo_collector_of_tales": {
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "tamiyo_compleated_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tamiyo_field_researcher": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "tandem_lookout": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9863,6 +10205,25 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "teferi_temporal_archmage": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "teferi_time_raveler": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
   "tempest_drake": {
@@ -9990,6 +10351,10 @@
     "zone": "battlefield"
   },
   "thaumaturge_s_familiar": {
+    "zone": "battlefield"
+  },
+  "the_chain_veil": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_council_of_four": {
@@ -10831,6 +11196,9 @@
   "vineglimmer_snarl": {
     "zone": "battlefield"
   },
+  "viral_drake": {
+    "zone": "battlefield"
+  },
   "viridescent_bog": {
     "zone": "battlefield"
   },
@@ -10963,6 +11331,22 @@
     "zone": "battlefield"
   },
   "vorstclaw": {
+    "zone": "battlefield"
+  },
+  "vraska_relic_seeker": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "vraska_the_unseen": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "vulpine_goliath": {

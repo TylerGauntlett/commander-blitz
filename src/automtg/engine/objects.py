@@ -16,7 +16,7 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import TempEffect
+from .structs import PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
@@ -474,6 +474,11 @@ class GameObject:
     #: of the battlefield state, because a permanent that leaves and returns
     #: makes the choice again.
     granted_keywords: set[str] = field(default_factory=set)
+    #: When each of `granted_keywords` was granted (613.7), so a later "loses
+    #: all abilities" takes the earlier ones and leaves the later ones. A
+    #: keyword missing here -- riot's haste, written as the permanent arrives --
+    #: reads as 0, older than anything.
+    granted_keyword_at: dict[str, int] = field(default_factory=dict)
     #: The same thing for a whole ability: "It gains 'when this creature dies,
     #: draw a card'", with no printed duration -- Clavileño. Stored as the same
     #: `TempEffect` pointer `until_eot` holds, so `granted_abilities` reads both
@@ -481,6 +486,14 @@ class GameObject:
     #: "until end of turn" on it lasts as long as the permanent does, and one
     #: that wore off at cleanup would be a strictly weaker card.
     granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
+    #: The same thing for an animation: "Target artifact or creature ... becomes
+    #: a green Elk creature with base power and toughness 3/3" -- Oko, Thief of
+    #: Crowns, which prints no duration. `TempEffect(kind="animate")` entries
+    #: kept out of `until_eot` so cleanup does not sweep them, and read by
+    #: `characteristics._compute` together with the timed ones in timestamp
+    #: order. Reset with the rest of the battlefield state: an Elk that is
+    #: blinked comes back as what it was printed as (400.7).
+    animations: list[TempEffect] = field(default_factory=list)
     #: "That land doesn't untap during its controller's next untap step."  A
     #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
     #: which holds for as long as its source is on the battlefield.  Two
@@ -612,6 +625,14 @@ class GameObject:
     #: because a "when you cast this spell" trigger reads it while the spell is
     #: still on the stack and a permanent's enters trigger may read it after.
     cast_additional: int = 0
+    #: How many of this spell's **printed Phyrexian** mana symbols were paid
+    #: for with life as it was cast (107.4f) -- compleated's count (702.150a).
+    #: Written by `game._cast` beside `cast_additional`, because the action's
+    #: `phyrexian` is the only record of it and it is gone once the spell is on
+    #: the stack. Read only on an arrival that was this cast
+    #: (`entered_by_cast`), so a walker that is later blinked or reanimated
+    #: enters at its full loyalty.
+    cast_phyrexian_life: int = 0
     #: Whether this object was cast **transformed** -- disturb. Kept beside the
     #: other `cast_*` flags rather than relying on `transformed`, because
     #: `reset_permanent_state` clears that on the way onto the battlefield
@@ -795,6 +816,21 @@ class GameObject:
     #: combat until the goader untaps. This is read live in
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
+    #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
+    #: and "until your next turn, prevent all damage target permanent would
+    #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
+    #: On the object rather than a state table for goad's reason: the effect
+    #: names this object, and `reset_permanent_state` ends it when the object
+    #: leaves (400.7), which a table keyed by a zone-surviving oid could not.
+    damage_shields: list[PermanentShield] = field(default_factory=list)
+    #: "During target opponent's next turn, creatures that player controls
+    #: attack Gideon Jura if able." On the **planeswalker**: compelled player ->
+    #: the turn the requirement is in force, or
+    #: `temp_effects.ATTACK_REQUIREMENT_PENDING` until that player's next untap
+    #: step arms it. Read by `combat.required_attack_walkers`; cleared by
+    #: `reset_permanent_state` (400.7 -- a Gideon that left and came back is not
+    #: the one they were told to attack).
+    must_be_attacked_by: dict[int, int] = field(default_factory=dict)
 
     #: "…exile all other tokens **created with this creature**" -- Faerie
     #: Artisans. The tokens an effect whose source is *this object* created,
@@ -995,16 +1031,22 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        # And no longer the permanent a prevention shield was aimed at.
+        self.damage_shields = []
+        # Nor the planeswalker anybody was told to attack.
+        self.must_be_attacked_by = {}
         # The same new object: the tokens the old one made were not made by
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
         self.granted_keywords = set()
+        self.granted_keyword_at = {}
         # Cleared like every other battlefield word, and deliberately: a spell
         # that was countered, or an instant that finished resolving, is in a
         # graveyard owing nobody haste. `move_object` restores it across this
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
         self.granted_abilities_permanent = []
+        self.animations = []
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
@@ -1149,6 +1191,7 @@ class GameObject:
             "is_commander": self.is_commander,
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
+            "animations": [t.to_dict() for t in self.animations],
             "monstrous": self.monstrous,
             "class_level": self.class_level,
             "flags": sorted(self.flags),
@@ -1163,6 +1206,21 @@ class GameObject:
             "hasted_by_suspend": self.hasted_by_suspend,
             # Only on an emblem, so every other object's snapshot is unchanged.
             **({"emblem": self.emblem} if self.emblem is not None else {}),
+            # Only while a prevention shield stands, for the emblem line's reason.
+            **(
+                {"damage_shields": [shield.to_dict() for shield in self.damage_shields]}
+                if self.damage_shields
+                else {}
+            ),
+            **(
+                {
+                    "must_be_attacked_by": {
+                        str(pid): turn for pid, turn in sorted(self.must_be_attacked_by.items())
+                    }
+                }
+                if self.must_be_attacked_by
+                else {}
+            ),
         }
 
 

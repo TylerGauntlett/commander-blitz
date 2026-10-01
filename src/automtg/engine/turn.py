@@ -24,18 +24,23 @@ from .events import EventType
 from .player import MAX_HAND_SIZE
 from .player_statics import untap_caps
 from .primitives import (
+    arm_attack_requirements,
+    clear_attack_requirements,
     clear_attack_restrictions,
     clear_block_prohibitions,
     clear_cast_locks,
     clear_damage_shields,
+    clear_flash_permissions,
     clear_goad,
     clear_life_floors,
     clear_life_locks,
     clear_outcome_locks,
+    clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
     clear_until_eot,
+    clear_until_next_turn,
     untap_all,
     untap_permanent,
 )
@@ -364,6 +369,23 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # says. Cleared here, at the top of that turn, so the opponents' last
     # chance to cast out of a graveyard was the turn cycle in between.
     clear_cast_locks(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, prevent all damage target permanent would deal."
+    # (Gideon of the Trials, Kiora, the Crashing Wave.) The same clock, keyed to
+    # the player who installed the shield.
+    clear_permanent_shields(state, "until_your_next_turn", player.pid)
+    # "During target opponent's next turn, creatures that player controls
+    # attack Gideon Jura if able." This is that next turn: arm the marks
+    # waiting on the untapping player, so they bite for exactly this turn.
+    arm_attack_requirements(state, player.pid)
+    # "Until your next turn, up to one target creature gets -2/-1." (Liliana,
+    # the Last Hope.) The pumps, keyword grants, animations and ability locks a
+    # loyalty ability stretched past cleanup -- the same clock as the tables
+    # above, keyed by the same seat, and cleared before `_phase` for the same
+    # reason protection is.
+    clear_until_next_turn(state, player.pid)
+    # Teferi, Time Raveler's +1 -- "until your next turn, you may cast sorcery
+    # spells as though they had flash" -- on the same clock.
+    clear_flash_permissions(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -738,6 +760,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # again and finds the lock gone. 104.3b's "this turn" must not survive into
     # the next one.
     clear_outcome_locks(state, "this_turn")
+    clear_flash_permissions(state, "this_turn")
     clear_life_floors(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on
@@ -767,6 +790,11 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # continuous while its source stands on the battlefield and would therefore
     # fog every future turn as well.
     clear_damage_shields(state, "this_turn")
+    # "Prevent all damage that would be dealt to him **this turn**." (Gideon
+    # Jura.) The permanent-scoped counterpart, on the same clock.
+    clear_permanent_shields(state, "this_turn")
+    # And Gideon Jura's "during target opponent's next turn" ends with it.
+    clear_attack_requirements(state)
     # "You can't sacrifice those creatures **this turn**." (Call for Aid.) The
     # fourth of these and owned by no permanent for the same reason: the sorcery
     # that said it is in a graveyard long before the opponent reaches for their
@@ -797,7 +825,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     state.delayed_triggers = [
         d
         for d in state.delayed_triggers
-        if d.trigger is None or d.duration == "until_it_fires"
+        # "Until your next turn, whenever ..." survives this cleanup too; its
+        # own clock is `clear_until_next_turn`, in the untap step.
+        if d.trigger is None or d.duration in ("until_it_fires", "until_your_next_turn")
     ]
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or

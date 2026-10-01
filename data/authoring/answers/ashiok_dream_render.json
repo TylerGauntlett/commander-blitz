@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "ashiok_dream_render",
+    "name": "Ashiok, Dream Render",
+    "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.\n−1: Target player mills four cards. Then exile each opponent's graveyard.",
+    "mana_cost": "{1}{U/B}{U/B}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Ashiok"],
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "loyalty": 5,
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Spells and abilities your opponents control can't cause their controller to search their library.",
+        "effect": "cant_search_library",
+        "affects_player": "opponent"
+      },
+      {
+        "kind": "activated",
+        "text": "−1: Target player mills four cards. Then exile each opponent's graveyard.",
+        "cost": {"loyalty": -1},
+        "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}}],
+        "effects": [
+          {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 4}},
+          {"op": "exile", "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "loyalty", "amount": 5}
+  }
+}

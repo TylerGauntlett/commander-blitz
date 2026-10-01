@@ -116,6 +116,7 @@ const LOSS_REASONS: Record<string, string> = {
   commander_damage: "21 commander damage",
   poison: "ten poison counters",
   concede: "conceded",
+  lost_by_effect: "a card made them lose the game",
 };
 
 export function stepLabel(step: string): string {
@@ -549,6 +550,14 @@ export function describeEvent(
      * summary of the three lines above it.
      */
     case "creatures_dealt_combat_damage":
+      return null;
+    /*
+     * And the per-creature summary, silent for the same reason: fired once per
+     * dealing creature per damage step, beside the per-hit events that already
+     * narrate every point of that damage, so that "whenever this creature deals
+     * combat damage" -- to anything -- can hear it once.
+     */
+    case "creature_dealt_combat_damage":
       return null;
     case "blockers_declared":
       return "Blockers declared";

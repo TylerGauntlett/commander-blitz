@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **26** capabilities.
+**21 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -30,6 +29,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -74,25 +74,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## lose-the-game
-
-Blocks **2** cards.
-
-- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn
-  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
-- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba._eliminate` a lethal life total reaches and then calling `check_game_over` -- the mirror of `win_game`, needed as the `else` branch of the Pact cycle's unpaid upkeep and by Demonic Pact / Door to Nothingness
-  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result and there is no losing counterpart -- `src/automtg/engine/effects/ops_player.py` says so in as many words ("There is no `lose_game` op"). Writing the clause as `win_game` on the opponent is not the same sentence: `sba.declare_win` eliminates every *other* seat, so in a pod one unpaid Pact would knock out the two innocent opponents as well as its controller, and it also silently reverses which seat the result belongs to. Nothing else can reduce a specific player to a loss on purpose: `lose_life` and `damage` only take a seat to zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pact of Negation** (rank 361) — `pact_of_negation`
-  - At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.
-- **Final Fortune** (rank 1512) — `final_fortune`
-  - Take an extra turn after this one.
-  - At the beginning of that turn's end step, you lose the game.
 
 </details>
 
@@ -280,6 +261,21 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## lose-the-game
+
+Blocks **1** card.
+
+- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn
+  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Final Fortune** (rank 1512) — `final_fortune`
+  - Take an extra turn after this one.
+  - At the beginning of that turn's end step, you lose the game.
 
 </details>
 

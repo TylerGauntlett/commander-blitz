@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "vraska_the_unseen",
+    "name": "Vraska the Unseen",
+    "oracle_text": "+1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.\n−3: Destroy target nonland permanent.\n−7: Create three 1/1 black Assassin creature tokens with \"Whenever this token deals combat damage to a player, that player loses the game.\"",
+    "mana_cost": "{3}{B}{G}",
+    "supertypes": ["Legendary"],
+    "types": ["Planeswalker"],
+    "subtypes": ["Vraska"],
+    "colors": ["B", "G"],
+    "color_identity": ["B", "G"],
+    "loyalty": 5,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.",
+        "cost": {"loyalty": 1},
+        "effects": [
+          {
+            "op": "delayed_trigger",
+            "duration": "until_your_next_turn",
+            "text": "Until your next turn, whenever a creature deals combat damage to Vraska, destroy that creature.",
+            "trigger": {
+              "event": "deals_combat_damage_to_planeswalker",
+              "controller": "any",
+              "recipient": {"self_only": true}
+            },
+            "effects": [{"op": "destroy", "objects": {"binding": "subject"}}]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−3: Destroy target nonland permanent.",
+        "cost": {"loyalty": -3},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "not_types": ["Land"]}
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: Create three 1/1 black Assassin creature tokens with \"Whenever this token deals combat damage to a player, that player loses the game.\"",
+        "cost": {"loyalty": -7},
+        "effects": [
+          {"op": "create_token", "token": "assassin_1_1_b_lose_game", "amount": {"const": 3}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 5}
+  }
+}

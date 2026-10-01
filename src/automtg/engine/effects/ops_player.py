@@ -132,6 +132,52 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("grant_flash_permission")
+def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, you may cast sorcery spells as though they had
+    flash." -- Teferi, Time Raveler's +1.
+
+    The one-shot, timed form of the `cast_as_though_flash` static: a loyalty
+    ability leaves no permanent to carry a static, the permission ends at a fixed
+    moment, and it covers cards drawn after it resolved -- so it is written to
+    the player's timed table and read by `casting._timing_ok`. ``types`` narrows
+    it to spells of those card types; ``duration`` is required.
+    """
+    from ..primitives import grant_flash_permission
+
+    types = tuple(str(t) for t in spec.get("types") or ())
+    duration = str(spec["duration"])
+    for pid in select_players(ctx, spec.get("player", "you")):
+        grant_flash_permission(
+            ctx.state, pid, types=types, duration=duration, source=ctx.source_oid
+        )
+    yield from ()
+
+
+@register("extra_loyalty_activation")
+def op_extra_loyalty_activation(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "For each planeswalker you control, you may activate one of its loyalty
+    abilities once this turn as though none of its loyalty abilities have been
+    activated this turn." -- The Chain Veil.
+
+    606.3 allows one loyalty activation per permanent per turn; this raises that
+    ceiling by one for each walker the selector names *as it resolves* (the
+    default is planeswalkers you control). Additional, not a reset: a walker
+    that has not activated yet may now activate twice, which is the card's
+    ruling, and a second Veil activation is a second extra. The timing half of
+    606.3 is untouched -- still your main phase with an empty stack.
+    """
+    from .selectors import resolve_pool
+
+    selector = dict(spec.get("objects") or {"controller": "you", "types": ["Planeswalker"]})
+    extra = ctx.state.turn_ledger.extra_loyalty_activations
+    for oid in resolve_pool(ctx, selector):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            extra[oid] = extra.get(oid, 0) + 1
+    yield from ()
+
+
 @register("win_game")
 def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     """ "You win the game." Halo Fountain and Luck Bobblehead.
@@ -161,12 +207,9 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
 
     Two things this deliberately does not do:
 
-    - **There is no `lose_game` op.** Losing is the mechanism here rather than a
-      second op -- "you win the game" *is* every opponent losing -- so the engine
-      half already exists and the op is two lines whenever a card wants it. Door
-      to Nothingness and Demonic Pact are the family, and neither is in the pool;
-      registering the name now would be a vocabulary item with no card behind it,
-      which is the thing this repo's load-time checks exist to keep out.
+    - **It is not `lose_game` on everybody else.** The effect is the same in a
+      duel, but `lose_game` names one seat and eliminates only that one (104.3a);
+      this eliminates every opponent (104.2a).
     - **It does not check "can't win the game".** Platinum Angel and Abyssal
       Persecutor are a continuous prohibition over this whole subsystem, not a
       clause of this op, and nothing in the pool has one.
@@ -184,6 +227,25 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
 
     for pid in select_players(ctx, spec.get("player", "you")):
         declare_win(ctx.state, pid)
+
+
+@register("lose_game")
+def op_lose_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "That player loses the game." Vraska the Unseen's Assassin tokens.
+
+    104.3a: only the named player leaves. The Assassin writes it
+    ``{"op": "lose_game", "player": {"binding": "event_player"}}`` -- the seat
+    its combat damage hit -- and in a pod the other opponents play on, which is
+    the whole difference from `win_game` on the controller. Also the unpaid
+    branch of the Pact cycle (``"player": "you"``, the default).
+
+    Every seat the spec names loses at once: `sba.declare_loss` eliminates them
+    all before it asks whether the game is over, so "each player loses the
+    game" is a draw (104.4a).
+    """
+    from ..sba import declare_loss
+
+    declare_loss(ctx.state, select_players(ctx, spec.get("player", "you")))
 
 
 @register("extra_turn")

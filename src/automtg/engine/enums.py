@@ -277,6 +277,15 @@ class Keyword(str, Enum):
     #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
     #: does it during a zone change rather than on the board.
     RIOT = "riot"
+    #: Compleated (702.150a): "If this permanent would enter with one or more
+    #: loyalty counters on it, it enters with two fewer loyalty counters on it
+    #: for each Phyrexian mana symbol life was paid for as it was cast."  A
+    #: 614.1c replacement on the arrival, read in `zones._enter_battlefield`
+    #: beside the starting-loyalty replacement it modifies, off
+    #: `GameObject.cast_phyrexian_life` -- which `game._cast` writes at the one
+    #: moment the answer exists, and which only an arrival that *was* this cast
+    #: (`entered_by_cast`) may read.
+    COMPLEATED = "compleated"
 
 
 LANDWALK_SUBTYPE = {
@@ -423,6 +432,10 @@ class LossReason(str, Enum):
     #: the argument POISON has: this seat did not run out of life, did not deck
     #: itself and did not concede, and the frontend prints the reason to them.
     OPPONENT_WON = "opponent_won"
+    #: A card said "that player loses the game" (104.3a) -- Vraska the Unseen's
+    #: Assassins, the Pact cycle's unpaid upkeep. Not OPPONENT_WON: nobody won,
+    #: and in a pod the others play on.
+    LOST_BY_EFFECT = "lost_by_effect"
 
 
 #: Which card type each subtype belongs to -- 205.3, as one flat table.

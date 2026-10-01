@@ -9,6 +9,7 @@ from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
+from ..player_statics import forced_discard_or_sacrifice_barred, search_forbidden
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object, offer_enters_replacement, offer_riot_choice
 from . import register
@@ -30,6 +31,23 @@ DESTINATIONS = {
     "library_top": Zone.LIBRARY,
     "library_bottom": Zone.LIBRARY,
 }
+
+#: The keys one step of `look_at_top`'s ``destinations`` reads: where it goes,
+#: how many, which cards it may take (``selector``), whether it may take fewer
+#: (``up_to``), and the exile-only flags `_move_found` honours per step.
+LOOK_STEP_KEYS = frozenset(
+    {
+        "to",
+        "count",
+        "selector",
+        "up_to",
+        "playable_this_turn",
+        "playable",
+        "any_color",
+        "face_down",
+        "link",
+    }
+)
 
 
 def _replacements():
@@ -129,6 +147,10 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
+            continue
+        if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):
+            # Tamiyo, Collector of Tales: an opponent's spell can't make this
+            # player discard. Skipped before the choice, so they are not asked.
             continue
         take = len(hand) if whole_hand else min(amount, len(hand))
         if random:
@@ -321,7 +343,14 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     found: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         pool: list[int] = []
+        # "Spells and abilities your opponents control can't cause their
+        # controller to search their library" (Ashiok, Dream Render). The
+        # library drops out of the pool and nothing else does: a graveyard half
+        # is still searched, and the shuffle below still happens.
+        barred = search_forbidden(ctx.state, pid, ctx.controller)
         for zone_name in zones:
+            if barred and zone_name == "library":
+                continue
             zone = ZONE_NAMES[zone_name]
             pool.extend(
                 oid
@@ -541,6 +570,15 @@ def _move_found(
         # key only works on the cards that spell the exile out as its own step.
         # Written after the move, like `exile` writes it, because
         # `reset_permanent_state` runs on the way and would wipe the pair.
+        # "Exile the top three cards of target opponent's library" and later
+        # "…a creature card … exiled with Ashiok" (Ashiok, Nightmare Weaver).
+        # `link` writes the same `exiled_by` record the `exile` op's `link`
+        # does, so a later `{"zone": "exile", "exiled_with": "self"}` finds
+        # them -- after the move, because `reset_permanent_state` would wipe it.
+        if destination is Zone.EXILE and spec.get("link") and ctx.source_oid is not None:
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.exiled_by = ctx.source_oid
         if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
@@ -641,19 +679,31 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             #
             # Each step draws from what the earlier ones left, which is what
             # makes the three choices one decision about one window.
+            #
+            # A step's own `selector` narrows what *it* may take, and `up_to`
+            # lets it take fewer, down to none -- Kiora, Master of the Depths:
+            # "You may put a creature card **and/or** a land card from among
+            # them into your hand." One pick of count 2 over Creature-or-Land
+            # would allow two creatures; two typed steps of one each, both
+            # optional, is exactly the sentence. A card that is both (Dryad
+            # Arbor) can answer either step, never both, because each step draws
+            # only from what the earlier ones left.
             remaining = list(pool)
             for step in steps:
                 if not remaining:
                     break
-                want = max(0, min(int(step.get("count", 1)), len(remaining)))
+                offered = remaining
+                if step_selector := step.get("selector"):
+                    offered = [o for o in remaining if _matches_library(ctx, o, step_selector)]
+                want = max(0, min(int(step.get("count", 1)), len(offered)))
                 if not want:
                     continue
                 where = DESTINATIONS[step.get("to", "hand")]
                 picked = yield from ask_objects(
                     ctx,
                     f"Put on {step.get('to', 'hand')}",
-                    remaining,
-                    want,
+                    offered,
+                    0 if step.get("up_to") else want,
                     want,
                     pid,
                     "look_at_top",
@@ -1293,6 +1343,10 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         yield from _replacements().draw(ctx.state, pid, amount)
         hand = list(ctx.state.players[pid].hand)
         take = min(amount, len(hand))
+        if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):
+            # An opponent's ability made this creature connive: the draw
+            # happens and the discard -- theirs to cause -- does not.
+            take = 0
         picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
         # Read the faces before the move: a card in a graveyard is still
         # readable, but reading first means this does not depend on that.
@@ -1504,13 +1558,13 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     belongs to suspend, and a cascaded creature that could attack immediately
     would be a strictly better card.
     """
-    from ..player_statics import player_cant_cast_spells
+    from ..player_statics import player_cant_cast_while_resolving
     from ..suspend import cast_for_free
 
     obj = ctx.state.objects.get(oid)
     if obj is None:
         return False
-    if player_cant_cast_spells(ctx.state, pid):
+    if player_cant_cast_while_resolving(ctx.state, pid, ctx.state.card_of(obj)):
         # Asked before the prompt: `cast_for_free` would refuse anyway, and a
         # "you may cast" question whose yes does nothing is a lie on screen.
         return False
@@ -1546,19 +1600,28 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     may", so no `may` wrapper is needed and declining costs no second question.
     A player with nothing matching is not asked at all.
     """
-    from ..player_statics import player_cant_cast_spells
+    from ..player_statics import player_cant_cast_while_resolving
     from ..suspend import cast_for_free
     from .selectors import select_players
 
     selector = spec.get("selector") or {}
     prompt = "Cast a spell without paying its mana cost"
+    # "…from your hand, **from your graveyard, or from among cards you own in
+    # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
+    # zones, not one per zone: the sentence casts *a* spell. Each zone is read
+    # off the player's own list, and those lists are kept per **owner**, which
+    # is exactly "cards you own in exile". Defaults to the hand, so every card
+    # written before this reads as it did.
+    zones = [str(z) for z in spec.get("zones", ("hand",))]
     for pid in select_players(ctx, spec.get("player", "you")):
-        if player_cant_cast_spells(ctx.state, pid):
+        if player_cant_cast_while_resolving(ctx.state, pid):
             # Voice of Victory: nothing to offer a player who cannot cast.
             continue
+        player = ctx.state.players[pid]
         pool = [
             oid
-            for oid in list(ctx.state.players[pid].hand)
+            for zone in zones
+            for oid in list(player.zone_list(Zone(zone)))
             # A land is not a spell and is never cast (305.9) -- it is *played*,
             # and only during your main phase with the stack empty. Excluded
             # here rather than left to each card's selector, because every
@@ -1568,7 +1631,12 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             # matches it. Found by gate 5 -- the spare Forest in the sandbox
             # hand vanished, which is the whole reason that Forest is there.
             if "Land" not in ctx.state.card_of(ctx.state.objects[oid]).types
-            and _matches_in_zone(ctx, oid, selector, "hand")
+            # Narset Transcendent's emblem: a spell this player can't cast is
+            # not on offer, which is also `cast_for_free`'s floor.
+            and not player_cant_cast_while_resolving(
+                ctx.state, pid, ctx.state.card_of(ctx.state.objects[oid])
+            )
+            and _matches_in_zone(ctx, oid, selector, zone)
         ]
         if not pool:
             continue

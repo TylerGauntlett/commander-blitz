@@ -115,6 +115,9 @@
  * scroll -- `center` alone would clip the overflowing start edge.
  */
 .play__opponents {
+  /* Placed, not auto-flowed -- see `.play__mine`. */
+  grid-row: 1;
+  grid-column: 1;
   display: flex;
   gap: 10px;
   justify-content: safe center;
@@ -134,6 +137,17 @@
    and going would move that width and with it the solved card size. Reserving the
    gutter costs ~10px of lane width permanently and buys a stable measurement. */
 .play__mine {
+  /*
+   * PLACED IN ROW 2, explicitly, because the stack shares this cell.
+   *
+   * `.stackpanel` names `grid-row: 2` and auto-placement runs after explicit
+   * placement, so an auto-flowed board found its cell taken and moved to an
+   * implicit third row whenever the stack was non-empty -- the viewer's board
+   * dropped 10px each time a spell or trigger waited, and came back when it
+   * resolved. Two items placed in one cell overlap, which is the design.
+   */
+  grid-row: 2;
+  grid-column: 1;
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;

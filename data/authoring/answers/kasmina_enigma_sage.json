@@ -1,0 +1,123 @@
+{
+  "card": {
+    "id": "kasmina_enigma_sage",
+    "name": "Kasmina, Enigma Sage",
+    "oracle_text": "Each other planeswalker you control has the loyalty abilities of Kasmina.\n+2: Scry 1.\n−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.\n−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.",
+    "mana_cost": "{1}{G}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Kasmina"],
+    "loyalty": 2,
+    "colors": ["G", "U"],
+    "color_identity": ["G", "U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"types": ["Planeswalker"], "exclude_self": true},
+        "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 1,
+        "affects": {"types": ["Planeswalker"], "exclude_self": true},
+        "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 2,
+        "affects": {"types": ["Planeswalker"], "exclude_self": true},
+        "text": "Each other planeswalker you control has the loyalty abilities of Kasmina."
+      },
+      {
+        "kind": "activated",
+        "text": "+2: Scry 1.",
+        "cost": {"loyalty": 2},
+        "effects": [
+          {"op": "scry", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.",
+        "cost": {"loyalty_x": true},
+        "effects": [
+          {"op": "create_token", "token": "fractal_0_0_gu", "amount": {"const": 1}, "as": "fractal"},
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"x": true}, "objects": {"binding": "fractal"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.",
+        "cost": {"loyalty": -8},
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "exile",
+            "shuffle": true,
+            "as": "found",
+            "selector": {"any_types": ["Instant", "Sorcery"], "shares_a_color_with": "self"}
+          },
+          {
+            "op": "may",
+            "prompt": "Cast that card without paying its mana cost?",
+            "effects": [
+              {"op": "play_exiled", "objects": {"binding": "found"}}
+            ]
+          }
+        ]
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "activated",
+        "text": "+2: Scry 1.",
+        "cost": {"loyalty": 2},
+        "effects": [
+          {"op": "scry", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−X: Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it.",
+        "cost": {"loyalty_x": true},
+        "effects": [
+          {"op": "create_token", "token": "fractal_0_0_gu", "amount": {"const": 1}, "as": "fractal"},
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"x": true}, "objects": {"binding": "fractal"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−8: Search your library for an instant or sorcery card that shares a color with this planeswalker, exile that card, then shuffle. You may cast that card without paying its mana cost.",
+        "cost": {"loyalty": -8},
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "exile",
+            "shuffle": true,
+            "as": "found",
+            "selector": {"any_types": ["Instant", "Sorcery"], "shares_a_color_with": "self"}
+          },
+          {
+            "op": "may",
+            "prompt": "Cast that card without paying its mana cost?",
+            "effects": [
+              {"op": "play_exiled", "objects": {"binding": "found"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
