@@ -4890,6 +4890,68 @@
       ]
     },
     {
+      "id": "t_counter_eater",
+      "name": "Test Counter Eater",
+      "oracle_text": "{1}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on this creature.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Remove three counters from among other artifacts, creatures, and planeswalkers you control: Put an indestructible counter on this creature.",
+          "cost": {
+            "mana": "{1}",
+            "remove_counters_from_among": {
+              "count": 3,
+              "any_types": [
+                "Artifact",
+                "Creature",
+                "Planeswalker"
+              ],
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "indestructible",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_proliferate_doubler",
+      "name": "Test Proliferate Doubler",
+      "oracle_text": "If you would proliferate, proliferate twice instead.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would proliferate, proliferate twice instead.",
+          "effect": "replace_proliferate",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
       "id": "t_provoker",
       "name": "Test Provoker",
       "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",
@@ -13518,6 +13580,332 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "t_shield_to",
+      "name": "Test Shield To",
+      "oracle_text": "Prevent all damage that would be dealt to target creature this turn.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "prevent_damage_permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "dealt": "to",
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_shield_by",
+      "name": "Test Shield By",
+      "oracle_text": "Until your next turn, prevent all damage target permanent would deal.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {},
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "prevent_damage_permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "dealt": "by",
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_all_but_emblem",
+      "name": "Test All But Emblem",
+      "oracle_text": "You get an emblem with \"If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage.\"",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "emblem",
+          "player": "you",
+          "emblem": 0
+        }
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "kind": "static",
+              "effect": "prevent_all_but",
+              "amount": 1,
+              "affects_player": "you",
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Planeswalker"
+                ]
+              },
+              "text": "If a source would deal damage to you or a planeswalker you control, prevent all but 1 of that damage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_damage_doubler",
+      "name": "Test Damage Doubler",
+      "oracle_text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "mana_cost": "{1}{R}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+        }
+      ]
+    },
+    {
+      "id": "t_taunting_walker",
+      "name": "Test Taunting Walker",
+      "oracle_text": "+2: During target opponent's next turn, creatures that player controls attack Test Taunting Walker if able.",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Planeswalker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Gideon"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "loyalty": 6,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+2: During target opponent's next turn, creatures that player controls attack Test Taunting Walker if able.",
+          "cost": {
+            "loyalty": 2
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "must_attack_planeswalker",
+              "player": {
+                "target": "t1"
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_narset_limit",
+      "name": "Test Narset Limit",
+      "oracle_text": "Each opponent can't draw more than one card each turn.",
+      "mana_cost": "{1}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each opponent can't draw more than one card each turn.",
+          "effect": "draw_limit",
+          "affects_player": "opponent",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_labyrinth_limit",
+      "name": "Test Labyrinth Limit",
+      "oracle_text": "Each player can't draw more than one card each turn.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each player can't draw more than one card each turn.",
+          "effect": "draw_limit",
+          "affects_player": "any",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ashiok_lock",
+      "name": "Test Ashiok Lock",
+      "oracle_text": "Spells and abilities your opponents control can't cause their controller to search their library.",
+      "mana_cost": "{1}{U}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause their controller to search their library.",
+          "effect": "cant_search_library",
+          "affects_player": "opponent"
+        }
+      ]
+    },
+    {
+      "id": "t_tamiyo_shield",
+      "name": "Test Tamiyo Shield",
+      "oracle_text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+          "effect": "opponents_cant_force_discard_or_sacrifice",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_name_and_look",
+      "name": "Test Name And Look",
+      "oracle_text": "Choose a nonland card name, then reveal the top four cards of your library. Put all cards with the chosen name from among them into your hand and the rest into your graveyard.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_card_name",
+          "as": "named",
+          "not_types": [
+            "Land"
+          ]
+        },
+        {
+          "op": "look_at_top",
+          "amount": {
+            "const": 4
+          },
+          "objects": {
+            "name": {
+              "binding": "named"
+            },
+            "count": "all"
+          },
+          "destination": "hand",
+          "rest_to": "graveyard"
         }
       ]
     }

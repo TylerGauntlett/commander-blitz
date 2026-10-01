@@ -400,6 +400,32 @@ def clear_life_locks(state: GameState, duration: str, player: int | None = None)
     state.life_locks = _expired(state.life_locks, duration, player)
 
 
+def grant_flash_permission(
+    state: GameState,
+    pid: int,
+    *,
+    types: tuple[str, ...] = (),
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> None:
+    """Let ``pid`` cast spells of ``types`` at instant speed for ``duration``."""
+    from .structs import FlashPermission
+
+    state.flash_permissions.append(
+        FlashPermission(player=pid, types=tuple(types), duration=duration, source=source)
+    )
+
+
+def clear_flash_permissions(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the flash permissions of one duration -- their wearing-off.
+
+    ``until_your_next_turn`` goes in the granting player's untap step, the
+    same clock as every other "until your next turn" table, and with them when
+    they leave the game; ``this_turn`` goes at cleanup.
+    """
+    state.flash_permissions = _expired(state.flash_permissions, duration, player)
+
+
 def clear_outcome_locks(state: GameState, duration: str, player: int | None = None) -> None:
     """Drop the outcome locks of one duration -- their wearing-off.
 
@@ -671,6 +697,83 @@ def shielded(state: GameState, pid: int) -> bool:
     return any(s.player == pid for s in state.damage_shields)
 
 
+def shield_permanent(
+    state: GameState,
+    oid: int,
+    dealt: str,
+    duration: str = "this_turn",
+    player: int | None = None,
+    source: int | None = None,
+) -> bool:
+    """Prevent all damage dealt to and/or by the permanent ``oid`` for ``duration``.
+
+    One rules-relevant thing: it writes a `structs.PermanentShield` onto the
+    object.  Reading it back is `permanent_shielded`'s job, and the two damage
+    primitives are its only readers.
+
+    Refused, returning ``False``, for a permanent that is no longer on the
+    battlefield (it left in response, and a shield on a card in a graveyard
+    would ride back with it if `reset_permanent_state` ever stopped clearing
+    it), for an ``until_your_next_turn`` shield keyed to nobody or to a seat
+    that has left (its clock is never coming), and for an exact duplicate --
+    a second copy of the same prevention changes nothing observable.
+    """
+    from .structs import (
+        PERMANENT_SHIELD_DIRECTIONS,
+        PERMANENT_SHIELD_DURATIONS,
+        PermanentShield,
+    )
+
+    if duration not in PERMANENT_SHIELD_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown permanent shield duration {duration!r}")
+    if dealt not in PERMANENT_SHIELD_DIRECTIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown permanent shield direction {dealt!r}")
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if duration == "until_your_next_turn" and (player is None or not state.is_alive(player)):
+        return False
+    entry = PermanentShield(dealt=dealt, duration=duration, player=player, source=source)
+    if entry in obj.damage_shields:
+        return False
+    obj.damage_shields.append(entry)
+    return True
+
+
+def permanent_shielded(state: GameState, oid: int | None, *, by: bool) -> bool:
+    """Is damage dealt **to** (``by=False``) or **by** (``by=True``) ``oid`` prevented?
+
+    Asked on every instance of damage, so the common case -- an object carrying
+    no shield -- is one attribute read.  A spell or an object that is not on the
+    battlefield never carries one (`reset_permanent_state` clears the list on
+    every zone change), so no zone check is needed here.
+    """
+    if oid is None:
+        return False
+    obj = state.objects.get(oid)
+    if obj is None or not obj.damage_shields:
+        return False
+    if by:
+        return any(shield.stops_damage_by for shield in obj.damage_shields)
+    return any(shield.stops_damage_to for shield in obj.damage_shields)
+
+
+def clear_permanent_shields(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the permanent shields of one duration -- their wearing-off.
+
+    The two hooks and two clocks of every timed table: `turn._cleanup_step` for
+    ``this_turn``, `turn._untap_step` for the ``until_your_next_turn`` shields
+    installed by whoever is untapping, and `sba._eliminate` for a seat that will
+    never untap again.  Walks the battlefield because the shields live on the
+    objects, and only a permanent can carry one.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.damage_shields:
+            continue
+        obj.damage_shields = _expired(obj.damage_shields, duration, player)
+
+
 def clear_damage_shields(state: GameState, duration: str) -> None:
     """Drop the damage shields of one duration -- their wearing-off.
 
@@ -702,3 +805,73 @@ def _expired(entries: list, duration: str, player: int | None):
     return [
         e for e in entries if e.duration != duration or (player is not None and e.player != player)
     ]
+
+
+#: A walker requirement recorded but not yet in force: "during target
+#: opponent's **next** turn" starts when that player next untaps, not now.
+ATTACK_REQUIREMENT_PENDING = -1
+
+
+def require_attack_on(state: GameState, walker: int, player: int) -> bool:
+    """ "During target opponent's next turn, creatures that player controls
+    attack Gideon Jura if able." One rules-relevant thing: it writes the mark.
+
+    The mark lives on the **planeswalker** (`GameObject.must_be_attacked_by`),
+    keyed by the compelled player, for goad's reason: the effect names that
+    object, and 400.7 ends it when the object leaves -- `reset_permanent_state`
+    clears the field. It is **pending** until ``player``'s next untap step arms
+    it with that turn's number (`arm_attack_requirements`), and it ends in that
+    turn's cleanup (`clear_attack_requirements`).
+
+    Refused, returning ``False``, for a walker no longer on the battlefield, a
+    player out of the game (their turn is never coming), and the walker's own
+    controller (a creature cannot attack its own controller's planeswalker).
+    """
+    obj = state.objects.get(walker)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(player) or obj.controller == player:
+        return False
+    obj.must_be_attacked_by[player] = ATTACK_REQUIREMENT_PENDING
+    return True
+
+
+def arm_attack_requirements(state: GameState, player: int) -> None:
+    """Start every pending walker requirement on ``player`` -- their turn has come.
+
+    Called from `turn._untap_step` for the untapping player. "Next turn" is
+    whichever turn of theirs comes next, which a turn *number* could not say
+    when somebody is eliminated in between -- so the mark waits, pending, for
+    the player rather than for a number.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.must_be_attacked_by:
+            continue
+        if obj.must_be_attacked_by.get(player) == ATTACK_REQUIREMENT_PENDING:
+            obj.must_be_attacked_by[player] = state.turn
+
+
+def clear_attack_requirements(state: GameState) -> None:
+    """End the walker requirements that were in force this turn -- cleanup.
+
+    Only the armed ones whose turn is the one ending; a pending mark (installed
+    this turn, for the opponent's *next* turn) survives.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.must_be_attacked_by:
+            continue
+        obj.must_be_attacked_by = {
+            pid: turn
+            for pid, turn in obj.must_be_attacked_by.items()
+            if turn != state.turn
+        }
+
+
+def drop_attack_requirements(state: GameState, player: int) -> None:
+    """Forget every walker requirement on ``player`` -- they have left the game."""
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is not None and player in obj.must_be_attacked_by:
+            del obj.must_be_attacked_by[player]

@@ -220,6 +220,7 @@ This is the long tail, and where the build order comes from.
 | Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
 | Coven | free | condition `cmp` on `{"distinct": {"of": "power"}}` over creatures you control | `distinct` |
 | Crew | shipped | `tap_permanents` with a `total_power`, summed off **derived** power plus each creature's `crew_power_bonus` ("crews Vehicles as though its power were N greater"); *Vehicle* is free text | — |
+| Compleated | shipped | `Keyword`, applied in `zones._enter_battlefield` straight after the starting-loyalty replacement: two fewer loyalty per printed Phyrexian symbol paid with life, counted by `game._cast` onto `GameObject.cast_phyrexian_life` and read only on the arrival that was that cast (`entered_by_cast`) | `compleated` |
 | Cumulative upkeep | shipped | `upkeep` trigger, `add_counters`, then `may` `pay` with a `times` multiplier off the counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand`. The label also lifts evoke's cheaper-than-printed guard, since a dash may cost more | — |

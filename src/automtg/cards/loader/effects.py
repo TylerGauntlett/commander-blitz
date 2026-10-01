@@ -11,7 +11,7 @@ from typing import Any
 
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
+from automtg.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
 from automtg.engine.effects.ops_player import CASTABLE_ZONES
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import (
@@ -30,6 +30,8 @@ from automtg.engine.structs import (
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
     LIFE_LOCK_DURATIONS,
+    PERMANENT_SHIELD_DIRECTIONS,
+    PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -471,6 +473,26 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
                 f"'subject' to scope against (events that do: "
                 f"{sorted(OBJECT_SUBJECT_TRIGGERS)})"
             )
+    if (recipient := trigger.get("recipient")) is not None:
+        # "…deals combat damage **to Vraska**" -- the permanent being hit.
+        # Only on an event whose recipient is a permanent the event names apart
+        # from its subject; anywhere else it would be compared with nothing and
+        # the subscription would never fire.
+        from automtg.engine.triggers import RECIPIENT_KEYS
+
+        if not isinstance(recipient, Mapping) or not (
+            set(recipient) & {"target", "binding", "self_only"}
+        ):
+            raise DslError(
+                f"{where}.trigger.recipient: names the permanent being hit -- a "
+                f"{{'target': ...}}, a {{'binding': ...}} or {{'self_only': true}}"
+            )
+        validate_selector(recipient, f"{where}.trigger.recipient")
+        if event not in RECIPIENT_KEYS:
+            raise DslError(
+                f"{where}.trigger: {event!r} names no recipient for a 'recipient' "
+                f"to scope against (events that do: {sorted(RECIPIENT_KEYS)})"
+            )
     validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
     # How long the subscription lasts, and what firing does to it. A misspelled
     # value would fall through to the `this_turn` default and quietly retime the
@@ -731,7 +753,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `may` without a `pay` has no {X} to announce, and every other op
         # ignores the key -- the card would load and draw 0.
         raise DslError(f"{where}: 'x' announces the {{X}} of a may's 'pay', not of {op!r}")
-    if op == "win_game" and "condition" in effect:
+    if op in ("win_game", "lose_game") and "condition" in effect:
         # "**If you rolled 6 exactly seven times**, you win the game" (Luck
         # Bobblehead). A top-level `condition` is read by `if` and by `may` and
         # by nobody else, so written on this op it is accepted,
@@ -741,8 +763,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # the card's entire cost lives. Wrapped in an `if` it is one more line
         # and it means what it says.
         raise DslError(
-            f"{where}: win_game reads no 'condition' -- wrap it in an "
-            f"{{'op': 'if', 'condition': …, 'then': [{{'op': 'win_game'}}]}}"
+            f"{where}: {op} reads no 'condition' -- wrap it in an "
+            f"{{'op': 'if', 'condition': …, 'then': [{{'op': {op!r}}}]}}"
         )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole
@@ -922,6 +944,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # resolving player's and turned the half of demonstrate that balances
         # it into no clause at all.
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op == "choose_card_name":
+        # The name exists only as its binding, read by a selector's
+        # `{"name": {"binding": …}}` -- without 'as' it is a prompt whose
+        # answer is thrown away and the selector matches nothing.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_card_name needs an 'as' -- the chosen name is "
+                f"only reachable through the binding it is stored under"
+            )
+        for key in ("types", "not_types"):
+            names = effect.get(key)
+            if names is None:
+                continue
+            if not isinstance(names, (list, tuple)) or not names:
+                raise DslError(f"{where}: choose_card_name '{key}' takes a list of card types")
+            for name in names:
+                if name not in KNOWN_TYPES:
+                    raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose
@@ -968,10 +1008,36 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # failure this whole pass exists to stop. `cast_free` is refused with it
         # for the same reason the three keys above are: it replaces the branch
         # that would honour it.
+        # "Put one into your hand, one on the bottom and exile one" (Expressive
+        # Iteration); "a creature card and/or a land card" (Kiora, Master of the
+        # Depths). A step's `to` is a zone the op can reach, its `selector` a
+        # real selector and `up_to` a flag -- misspelt, each loads clean and the
+        # step silently takes any card, or insists on one the card says "may".
+        for i, step in enumerate(effect.get("destinations") or ()):
+            here = f"{where}.destinations[{i}]"
+            if not isinstance(step, Mapping):
+                raise DslError(f"{here}: each destination is an object")
+            unknown = set(step) - LOOK_STEP_KEYS
+            if unknown:
+                raise DslError(f"{here}: unknown keys {sorted(unknown)}")
+            if str(step.get("to", "hand")) not in DESTINATIONS:
+                raise DslError(f"{here}: unknown destination {step.get('to')!r}")
+            if "up_to" in step and not isinstance(step["up_to"], bool):
+                raise DslError(f"{here}: 'up_to' is a boolean")
+            if "selector" in step:
+                validate_selector(step["selector"], f"{here}.selector")
         if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
             raise DslError(
                 f"{where}: look_at_top 'face_down' needs destination 'exile' "
                 f"(a card is only face down in exile); got {destination!r}"
+            )
+        # `link` records "exiled with <this>"; anywhere but exile it would load
+        # and link nothing -- a later "exiled with" selector finding no cards.
+        if "link" in effect and (
+            not isinstance(effect["link"], bool) or (effect["link"] and destination != "exile")
+        ):
+            raise DslError(
+                f"{where}: look_at_top 'link' is a boolean and needs destination 'exile'"
             )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
@@ -1061,6 +1127,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "must_attack_planeswalker":
+        # Both required. Without `objects` there is no walker to attack and the
+        # line does nothing; without `player`, defaulting to anybody would
+        # compel the wrong seat, and defaulting to the controller is a sentence
+        # that cannot bite (you cannot attack your own planeswalker).
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: must_attack_planeswalker needs 'objects' naming the "
+                f"planeswalker to be attacked ({{\"self_only\": true}} for Gideon Jura)"
+            )
+        if effect.get("player") is None:
+            raise DslError(
+                f"{where}: must_attack_planeswalker needs 'player' -- whose "
+                f"creatures must attack, during that player's next turn"
+            )
+        if "duration" in effect:
+            raise DslError(
+                f"{where}: must_attack_planeswalker takes no 'duration' -- it is "
+                f"always the named player's next turn"
+            )
     if op == "cant_block":
         # Two keys, and every way of getting them wrong loads cleanly and plays
         # a different card.
@@ -1184,8 +1270,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if "objects" in effect:
             raise DslError(
                 f"{where}: prevent_damage shields a *player* and takes no 'objects' "
-                f"-- prevention over permanents is the 'prevent_damage' static "
-                f"effect (absorb N) or 'protection'"
+                f"-- a one-shot prevention over permanents is the "
+                f"'prevent_damage_permanent' op, and a continuous one the "
+                f"'prevent_damage' static effect or 'protection'"
+            )
+    if op == "prevent_damage_permanent":
+        # All three keys required, and every omission loads clean and plays a
+        # different card: no `objects` shields nothing, a guessed `dealt` swaps a
+        # fog for a pacifism, and a guessed `duration` is a prevention lasting a
+        # turn cycle when the card said a turn (or the reverse).
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs 'objects' (the permanents "
+                f"shielded, chosen when it resolves -- {{\"self_only\": true}} for "
+                f"'him', {{\"target\": \"t1\"}} for 'target permanent')"
+            )
+        if str(effect.get("dealt")) not in PERMANENT_SHIELD_DIRECTIONS:
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs 'dealt' -- 'to' for "
+                f"damage that would be dealt to it, 'by' for damage it would deal, "
+                f"'to_and_by' for both (got {effect.get('dealt')!r})"
+            )
+        if str(effect.get("duration")) not in PERMANENT_SHIELD_DURATIONS:
+            raise DslError(
+                f"{where}: prevent_damage_permanent needs a 'duration' "
+                f"(implemented: {sorted(PERMANENT_SHIELD_DURATIONS)}; "
+                f"got {effect.get('duration')!r})"
+            )
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: prevent_damage_permanent prevents ALL the damage and "
+                f"takes no 'amount'"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
@@ -1471,6 +1586,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
                 f"(use 'until_end_of_turn' or 'permanent')"
             )
+    if op == "rotate_control":
+        # Aminatou's -6. Without a pool the op rotates nothing and the card
+        # reads as a board swap that never happens; a misspelt direction would
+        # silently fall through to "right".
+        if "objects" not in effect:
+            raise DslError(f"{where}: rotate_control needs 'objects' -- what passes around the table")
+        if "direction" in effect and effect["direction"] not in ("left", "right"):
+            raise DslError(
+                f"{where}: rotate_control direction is 'left' or 'right', not {effect['direction']!r}"
+            )
+    if op == "exchange_control":
+        # 701.12: two permanents, each named. Without either half the op does
+        # nothing at all, which reads like the card and is not it.
+        for key in ("first", "second"):
+            sub = effect.get(key)
+            if not isinstance(sub, Mapping):
+                raise DslError(
+                    f"{where}: exchange_control needs '{key}', a selector naming one "
+                    f"of the two permanents to swap"
+                )
+            validate_selector(sub, f"{where}.{key}")
+            _validate_nested_player_refs(sub, f"{where}.{key}", target_kinds)
+            if "target" in sub and str(sub["target"]) not in target_kinds:
+                raise DslError(
+                    f"{where}.{key}: references target {sub['target']!r} which the "
+                    f"card does not declare"
+                )
+        if "duration" in effect:
+            # Every printed exchange is indefinite (701.12a). A duration nobody
+            # reads would be believed by whoever wrote it.
+            raise DslError(f"{where}: exchange_control is permanent and takes no 'duration'")
     if op == "discard":
         if "up_to" in effect and not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: discard's 'up_to' is a boolean")
@@ -1580,14 +1726,49 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
         "until_end_of_turn",
+        "until_your_next_turn",
         "permanent",
     ):
         raise DslError(
             f"{where}: unknown grant_keyword duration {effect['duration']!r} "
-            f"(use 'until_end_of_turn' or 'permanent')"
+            f"(use 'until_end_of_turn', 'until_your_next_turn' or 'permanent')"
         )
+    # And the same trap on the other three `TempEffect` ops: `duration` was
+    # read by none of them, so "gets -2/-1 until your next turn" written with
+    # it loaded and quietly wore off at this turn's cleanup -- before the only
+    # turns Liliana, the Last Hope's +1 is printed for.
+    # (`animate` is guarded with the rest of its keys below: it also takes Oko's
+    # `permanent`, which neither of the other two has.)
+    if op in ("pump", "lock_abilities") and effect.get(
+        "duration", "until_end_of_turn"
+    ) not in ("until_end_of_turn", "until_your_next_turn"):
+        raise DslError(
+            f"{where}: unknown {op} duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn' or 'until_your_next_turn')"
+        )
+    if op == "grant_flash_permission":
+        # Without a duration the permission would have no clock to end on, and a
+        # misspelt type would narrow it to nothing -- the +1 doing nothing.
+        from automtg.engine.structs import FLASH_PERMISSION_DURATIONS
+
+        if effect.get("duration") not in FLASH_PERMISSION_DURATIONS:
+            raise DslError(
+                f"{where}: grant_flash_permission needs a 'duration' in "
+                f"{list(FLASH_PERMISSION_DURATIONS)}"
+            )
+        for t in effect.get("types") or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
     if op == "add_poison" and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
+    if op == "proliferate" and "objects" in effect:
+        # The retired simplification's narrowing key. 701.27a is a free choice
+        # over every permanent and player with a counter, which the op now asks;
+        # a selector would silently decide it for the player instead.
+        raise DslError(
+            f"{where}: proliferate takes no 'objects' -- the controller chooses "
+            f"what to proliferate as it resolves (701.27a)"
+        )
     if op == "detain" and not effect.get("objects"):
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.
@@ -1669,6 +1850,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(effect["amount"], f"{where}.amount")
         if "from" in effect:
             validate_selector(effect["from"], f"{where}.from")
+    if op == "distribute_counters":
+        # "Distribute three +1/+1 counters among up to three target creatures"
+        # (601.2d). The division is announced as the ability is activated, over
+        # the targets just declared, so the op must name one target spec and a
+        # number printed on the card -- a computed total could not be divided
+        # before it is known.
+        objects = effect.get("objects")
+        if not (isinstance(objects, Mapping) and set(objects) == {"target"}):
+            raise DslError(
+                f"{where}: distribute_counters needs 'objects': {{\"target\": <id>}} -- "
+                f"the counters are divided among that target spec's choices"
+            )
+        amount = effect.get("amount")
+        if isinstance(amount, Mapping) and set(amount) == {"const"}:
+            amount = amount["const"]
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}: distribute_counters needs a printed 'amount' of 1 or more "
+                f"(an int or {{\"const\": n}}); the division is announced before "
+                f"anything could be computed"
+            )
+    if op == "double_counters" and not effect.get("objects"):
+        # Without `objects` the pool is empty and nothing doubles: a Deepglow
+        # Skate that loads clean and does nothing.
+        raise DslError(
+            f"{where}: double_counters needs 'objects' naming the permanents "
+            f"whose counters are doubled"
+        )
     if op == "must_block" and not effect.get("objects"):
         # Without `objects` the op resolves an empty pool and requires nothing
         # of anybody, which is a provoke that loads clean and does nothing --
@@ -2287,6 +2496,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_selector(selector, f"{where}.selector")
         if "player" in effect:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if "zones" in effect:
+            # Kaya the Inexorable's emblem: hand, graveyard, and cards you own
+            # in exile. The three zones a player keeps cards of their own in and
+            # can cast out of; the library top is `look_at_top`'s `cast_free`.
+            zones = effect["zones"]
+            allowed = ("hand", "graveyard", "exile")
+            if (
+                not isinstance(zones, list)
+                or not zones
+                or any(z not in allowed for z in zones)
+                or len(set(zones)) != len(zones)
+            ):
+                raise DslError(
+                    f"{where}: cast_from_hand's 'zones' is a non-empty list drawn "
+                    f"from {list(allowed)}, got {zones!r}"
+                )
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
@@ -2308,6 +2533,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for c in effect.get("colors", ()) or ():
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")
+        # Oko's "becomes a green Elk creature with base power and toughness
+        # 3/3" prints no duration. Enumerated rather than truthy for the reason
+        # `gain_control`'s is: a misspelt "until_end_of_turn" read as anything
+        # but itself is a permanent animation, the strictly better card.
+        # Nissa, Vital Force's land stays a 5/5 "until your next turn".
+        duration = effect.get("duration", "until_end_of_turn")
+        allowed = (*CONTROL_DURATIONS, "until_your_next_turn")
+        if duration not in allowed:
+            raise DslError(
+                f"{where}: animate's 'duration' is one of {list(allowed)}, "
+                f"got {duration!r}"
+            )
+        if duration == "permanent" and effect.get("your_turn_keywords"):
+            raise DslError(
+                f"{where}: your_turn_keywords rides a timed animation only -- "
+                f"no printed indefinite animation carries one"
+            )
+        if not isinstance(effect.get("exact", False), bool):
+            raise DslError(
+                f"{where}: animate's 'exact' is true or false -- whether the "
+                f"colours, card types and creature types named replace the "
+                f"permanent's own ('becomes a green Elk creature') rather than "
+                f"adding to them ('it's still a land')"
+            )
     if op == "delay":
         # A misspelled step would schedule something that never comes due -- a
         # card that reads "at the beginning of the next upkeep, draw a card" and

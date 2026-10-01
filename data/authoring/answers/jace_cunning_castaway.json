@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "jace_cunning_castaway",
+    "name": "Jace, Cunning Castaway",
+    "oracle_text": "+1: Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card.\n−2: Create a 2/2 blue Illusion creature token with \"When this token becomes the target of a spell, sacrifice it.\"\n−5: Create two tokens that are copies of Jace, except they're not legendary.",
+    "mana_cost": "{1}{U}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Planeswalker"],
+    "subtypes": ["Jace"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "loyalty": 3,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card.",
+        "cost": {"loyalty": 1},
+        "effects": [
+          {
+            "op": "delayed_trigger",
+            "text": "Whenever one or more creatures you control deal combat damage to a player this turn, draw a card, then discard a card.",
+            "trigger": {"event": "creatures_deal_combat_damage", "controller": "you"},
+            "effects": [
+              {"op": "draw", "player": "you", "amount": {"const": 1}},
+              {"op": "discard", "player": "you", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Create a 2/2 blue Illusion creature token with \"When this token becomes the target of a spell, sacrifice it.\"",
+        "cost": {"loyalty": -2},
+        "effects": [
+          {"op": "create_token", "token": "illusion_2_2_u_sac_when_targeted"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−5: Create two tokens that are copies of Jace, except they're not legendary.",
+        "cost": {"loyalty": -5},
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {"self_only": true},
+            "controller": "you",
+            "amount": {"const": 2},
+            "except_": {"remove_supertypes": ["Legendary"]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 3}
+  }
+}

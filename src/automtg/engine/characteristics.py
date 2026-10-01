@@ -357,12 +357,35 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     and it would erase an anthem, put after the counters and it would
         #     erase them too.  Here, everything below layers on top, which is
         #     what the real layer system does with a 7b effect.
-        for temp in obj.until_eot:
-            if temp.kind != "animate":
-                continue
-            types.update(temp.types)
+        #
+        #     Timed and indefinite animations (Oko's Elk, `obj.animations`) are
+        #     read together in timestamp order, so whichever began later sets
+        #     the base size -- a creature-land animated and then Oko'd is a 3/3
+        #     Elk for the turn, and one Oko'd and then animated is the 4/4.
+        #
+        #     An `exact` animation replaces rather than adds: its colours become
+        #     exactly these, its card types exactly these, and its creature
+        #     types exactly these ("becomes a green Elk creature"). Subtypes of
+        #     a card type it no longer has go with that type (205.1b, the rule
+        #     `set_types` below applies too); supertypes are untouched.
+        animations = sorted(
+            (*obj.animations, *(t for t in obj.until_eot if t.kind == "animate")),
+            key=lambda t: t.timestamp,
+        )
+        for temp in animations:
+            if temp.exact:
+                types = set(temp.types)
+                subtypes = {
+                    sub
+                    for sub in subtypes
+                    if SUBTYPE_CLASS.get(sub, "Creature") in types
+                    and SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
+                }
+                colors = set(temp.colors)
+            else:
+                types.update(temp.types)
+                colors.update(temp.colors)
             subtypes.update(temp.subtypes)
-            colors.update(temp.colors)
             power = temp.power
             toughness = temp.toughness
 
@@ -1644,6 +1667,11 @@ def _matches_printed(
     return True
 
 
+def has_any_counter(obj: GameObject) -> bool:
+    """Does ``obj`` have one or more counters of any kind on it (122.1)?"""
+    return any(n > 0 for n in obj.counters.values())
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -1785,6 +1813,12 @@ def _matches_wherever(
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
+        return False
+    # "Permanents you control **with counters on them** have ward {1}"
+    # (Innkeeper's Talent). Counters are board state no layer writes -- a
+    # static never puts one on -- so this is a pipeline input for `tapped`'s
+    # reason, and the answer moves the moment a counter arrives or leaves.
+    if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
@@ -2256,6 +2290,8 @@ from .player_statics import (  # noqa: F401
     players_freezing_opponent_lands,
     printed_token_matches,
     spell_cost_reduction,
+    spell_mana_tax,
+    spell_mana_tax_targeted,
     token_creation_replacements,
     untap_also,
 )

@@ -1,0 +1,20 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_extra_loyalty_activation.py. `t_veil_tap` is The Chain Veil's second ability alone.",
+  "cards": [
+    {
+      "id": "t_veil_tap",
+      "name": "Test Veil Tap",
+      "oracle_text": "{T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn.",
+          "cost": {"tap": true},
+          "effects": [{"op": "extra_loyalty_activation"}]
+        }
+      ]
+    }
+  ]
+}

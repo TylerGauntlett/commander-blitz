@@ -110,3 +110,36 @@ class TestTheUnboundCase:
 class TestTheLoader:
     def test_the_key_is_known(self):
         validate_selector({"shares_a_color_with": "it"}, "test")
+
+
+class TestSelfIsTheAbilitysSource:
+    """Kasmina, Enigma Sage: "…an instant or sorcery card that shares a color
+    with **this planeswalker**." `"self"` names the ability's source rather than
+    a binding, so a granted copy reads the walker that has it."""
+
+    def _game(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, [FOREST, BEAR, BEAR, ARTIFACT])
+            .build(advance=False)
+        )
+
+    def test_a_green_source_finds_the_green_creature(self, builder):
+        game = self._game(builder)
+        source, other = [o.oid for o in creatures(game) if o.def_id == BEAR]
+        ctx = EffectContext(state=game.state, controller=0, source_oid=source)
+        pool = resolve_pool(ctx, {"zone": "battlefield", "shares_a_color_with": "self"})
+        assert other in pool
+
+    def test_a_colorless_permanent_is_not_found(self, builder):
+        game = self._game(builder)
+        source = next(o.oid for o in creatures(game) if o.def_id == BEAR)
+        artifact = next(o.oid for o in creatures(game) if o.def_id == ARTIFACT)
+        ctx = EffectContext(state=game.state, controller=0, source_oid=source)
+        pool = resolve_pool(ctx, {"zone": "battlefield", "shares_a_color_with": "self"})
+        assert artifact not in pool
+
+    def test_with_no_source_nothing_matches(self, builder):
+        game = self._game(builder)
+        ctx = EffectContext(state=game.state, controller=0)
+        assert resolve_pool(ctx, {"zone": "battlefield", "shares_a_color_with": "self"}) == []

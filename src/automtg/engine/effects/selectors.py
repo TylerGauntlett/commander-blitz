@@ -138,6 +138,9 @@ SELECTOR_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "tapped",
+        #: "…with counters on them" / "…with a counter on it": one or more
+        #: counters of any kind. Also a static filter key (Innkeeper's Talent).
+        "has_counters",
         "attacking",
         #: "Whenever an opponent attacks **you** with two or more creatures" --
         #: Trouble in Pairs. A creature attacking this player *itself*, and not
@@ -772,7 +775,12 @@ def matches(
         # same one intimidate has: a **colorless** object shares a colour with
         # nothing, itself included, so an intersection is the right test and
         # "is not a different colour" would be its opposite.
-        other = _bound_oid(ctx, str(name))
+        # `"self"` is the ability's own source -- Kasmina, Enigma Sage's "an
+        # instant or sorcery card that shares a color with **this
+        # planeswalker**", which on a granted copy is the walker that has it.
+        # Read off the object wherever it now is, so a walker that spent its
+        # last loyalty on the -8 still answers with the colours it had.
+        other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
         if other is None:
             return False
         theirs = chars(state, other).colors if state.objects.get(other) else frozenset()
@@ -869,8 +877,17 @@ def matches(
         return False
     if (want := selector.get("not_keywords")) and set(want) & keywords:
         return False
-    if (want := selector.get("name")) and card.name != want:
-        return False
+    if (want := selector.get("name")) is not None:
+        if isinstance(want, Mapping):
+            # "Put all cards **with the chosen name** from among them into your
+            # hand" (Tamiyo, Collector of Tales): the name a `choose_card_name`
+            # earlier in the same effect bound. Unbound, it matches nothing --
+            # a name nobody chose names no card.
+            want = ctx.bindings.get(str(want.get("binding")))
+            if not isinstance(want, str) or not want:
+                return False
+        if card.name != want:
+            return False
     # "…for up to five Dragon cards **not named Tiamat**". Read off `card.name`
     # exactly as the positive clause one line up does, for the same reason it
     # does: nothing in the characteristics layer renames an object, so the
@@ -903,6 +920,10 @@ def matches(
             return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
+        return False
+    if "has_counters" in selector and any(n > 0 for n in obj.counters.values()) != bool(
+        selector["has_counters"]
+    ):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
@@ -1588,6 +1609,18 @@ def validate_selector(selector: Any, where: str) -> None:
                 continue
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    # A literal name, or the name a `choose_card_name` bound. Anything else
+    # would be compared against a card name, match nothing and look fine.
+    wanted = selector.get("name")
+    if wanted is not None and not isinstance(wanted, str) and not (
+        isinstance(wanted, Mapping)
+        and set(wanted) == {"binding"}
+        and isinstance(wanted["binding"], str)
+    ):
+        raise DslError(
+            f"{where}: 'name' takes a card name or {{'binding': ...}} naming a "
+            f"choose_card_name's choice, got {wanted!r}"
+        )
     # Same argument, and sharper for the negated key: a misspelled *positive*
     # supertype selects nothing and is visible on the first board, where a
     # misspelled `not_supertypes` excludes nothing and looks like it worked.

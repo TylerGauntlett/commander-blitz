@@ -1,0 +1,67 @@
+{
+  "_comment": "Cards for tests/unit/test_compleated.py. `t_compleated_walker` is Tamiyo, Compleated Sage's cost and loyalty ({2}{G}{G/U/P}{U}, 5) with the keyword. `t_phyrexian_walker` is the same card without it -- the control, and the proof that paying life alone moves nothing. `t_twice_compleated` has two Phyrexian pips and loyalty 3, so paying both takes it past zero: the floor.",
+  "cards": [
+    {
+      "id": "t_compleated_walker",
+      "name": "Test Compleated Walker",
+      "oracle_text": "Compleated ({G/U/P} can be paid with {G}, {U}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: You gain 2 life.",
+      "mana_cost": "{2}{G}{G/U/P}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Tamiyo"],
+      "loyalty": 5,
+      "colors": ["G", "U"],
+      "color_identity": ["G", "U"],
+      "keywords": ["compleated"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        }
+      ]
+    },
+    {
+      "id": "t_phyrexian_walker",
+      "name": "Test Phyrexian Walker",
+      "oracle_text": "+1: You gain 2 life.",
+      "mana_cost": "{2}{G}{G/U/P}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Nissa"],
+      "loyalty": 5,
+      "colors": ["G", "U"],
+      "color_identity": ["G", "U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        }
+      ]
+    },
+    {
+      "id": "t_twice_compleated",
+      "name": "Test Twice Compleated",
+      "oracle_text": "Compleated ({W/P} can be paid with {W} or 2 life. For each {W/P} paid with life, this planeswalker enters with two fewer loyalty counters.)\n+1: You gain 2 life.",
+      "mana_cost": "{1}{W/P}{W/P}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Elspeth"],
+      "loyalty": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["compleated"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        }
+      ]
+    }
+  ]
+}

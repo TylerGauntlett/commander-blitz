@@ -1,0 +1,23 @@
+{
+  "_comment": "Shapes for tests/unit/test_has_counters_filter.py. t_hc_warden is Innkeeper's Talent's level-2 line as a plain enchantment: permanents you control with counters on them have ward {1}.",
+  "cards": [
+    {
+      "id": "t_hc_warden",
+      "name": "Test Counter Warden",
+      "oracle_text": "Permanents you control with counters on them have ward {1}.",
+      "mana_cost": "{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Permanents you control with counters on them have ward {1}.",
+          "effect": "ward",
+          "cost": {"mana": "{1}"},
+          "affects": {"controller": "you", "has_counters": true}
+        }
+      ]
+    }
+  ]
+}

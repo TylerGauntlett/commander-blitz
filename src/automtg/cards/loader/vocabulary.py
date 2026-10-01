@@ -49,6 +49,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "tap",
         "untap",
         "loyalty",
+        "loyalty_x",
         "remove_counters",
         "exile_self",
         "exile_self_from_hand",
@@ -126,6 +127,15 @@ STATIC_EFFECTS = frozenset(
         # graveyard. `affects` is required: the filter is the printed clause
         # and it defaults to your own side.
         "enters_tapped",
+        # Oath of Gideon: "Each planeswalker you control enters with an
+        # additional loyalty counter on it."  `enters_tapped`'s shape with a
+        # quantity: a static on one permanent about other permanents'
+        # arrivals, read in `zones._enter_battlefield` after the arriving
+        # card's own replacements.  Not `replace_counters` with an addend,
+        # which reaches every placement -- a +1 loyalty cost too -- and the
+        # printed card touches only the arrival.  Takes `affects`, `counter`
+        # and `amount`.
+        "enters_with_additional_counters",
         # Winter Orb: "As long as this artifact is untapped, players can't
         # untap more than one land during their untap steps."  A **count**,
         # which is the whole difference from `skip_untap_step` next door: that
@@ -465,6 +475,14 @@ STATIC_EFFECTS = frozenset(
         # deathtouch and infect, and only incidentally reduces a life total --
         # so doubling the loss leaves a doubled hit on a creature undoubled.
         "replace_damage",
+        # Ajani Steadfast's emblem: "If a source would deal damage to you or a
+        # planeswalker you control, prevent all but 1 of that damage." A cap on
+        # each damage event, the inverse of absorb N (which prevents N and lets
+        # the rest through). Recipient named by `affects` (permanents) and/or
+        # `affects_player` (seats), read as a union like `replace_damage`'s.
+        # Read by `primitives.damage_permanent` and `primitives.damage_player`
+        # through `player_statics.damage_cap`.
+        "prevent_all_but",
         # Bloodletter of Aclazotz.  "If an opponent would lose life during your
         # turn, they lose twice that much life instead."  The engine's *second*
         # replacement hook and, like the first, a named one rather than the
@@ -487,6 +505,40 @@ STATIC_EFFECTS = frozenset(
         # forbidden gain.  Not `lock_life_total`, which is a one-shot op with a
         # duration and forbids a loss as well.
         "cant_gain_life",
+        # Narset, Parter of Veils; Spirit of the Labyrinth.  "Each opponent
+        # can't draw more than one card each turn."  A cap on a *player's*
+        # draws, counted against `cards_drawn_this_turn` -- every card drawn
+        # that turn, including the ones drawn before the static existed.  Not a
+        # replacement: a draw past the cap does not happen at all, so it is
+        # asked in `replacements._draw_one` *before* dredge, the empty-library
+        # win and the doublers, none of which may replace a draw that cannot
+        # occur.  `amount` is the cap and is required.
+        "draw_limit",
+        # Gideon of the Trials' emblem: "As long as you control a Gideon
+        # planeswalker, you can't lose the game and your opponents can't win
+        # the game." The continuous form of the `cant_lose_the_game` op
+        # (Platinum Angel's shape), one static per half of the sentence --
+        # each names its players with `affects_player` and both carry the same
+        # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
+        "cant_lose_the_game",
+        "cant_win_the_game",
+        # Ashiok, Dream Render.  "Spells and abilities your opponents control
+        # can't cause their controller to search their library."  A player-wide
+        # prohibition on one precise search: the named player searching **their
+        # own** library because a spell or ability **they** control said so.
+        # Read by `ops_cards._search` through `player_statics.search_forbidden`;
+        # the library drops out of the pool and the rest of the effect -- the
+        # shuffle included -- still happens.
+        "cant_search_library",
+        # Tamiyo, Collector of Tales.  "Spells and abilities your opponents
+        # control can't cause you to discard cards or sacrifice permanents."
+        # Keyed on the *cause's controller*, which is the whole difference from
+        # `cant_sacrifice`: that one protects a permanent from every sacrifice,
+        # your own Altar included, and says nothing of discard.  Read through
+        # `player_statics.forced_discard_or_sacrifice_barred` by `op_discard`,
+        # connive, `op_sacrifice` and a `may`'s `pay` -- the places a resolving
+        # spell or ability makes a player discard or sacrifice.
+        "opponents_cant_force_discard_or_sacrifice",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -517,6 +569,15 @@ STATIC_EFFECTS = frozenset(
         # in `replacements._draw_one`, before the doublers, so an empty library
         # wins on the first of a doubled pair rather than after both have failed.
         "replace_empty_draw",
+        # Tekuthal, Inquiry Dominus.  "If you would proliferate, proliferate
+        # twice instead."  A replacement of an *action* rather than a quantity:
+        # proliferate has no count to multiply, so each one is performed again,
+        # with its own choice.  Read by the `proliferate` op through
+        # `player_statics.proliferate_times`; two of them compound to four
+        # (616.1), each applying once (614.5).  Key-less beyond
+        # `affects_player`, like `replace_empty_draw`: "twice" is the whole
+        # printed size and no card says any other.
+        "replace_proliferate",
         # Voice of Victory.  "Your opponents can't cast spells during your
         # turn."  A prohibition on a *player*, so it takes `affects_player` and
         # no `affects`, and it is read wherever a spell can be cast rather than
@@ -550,6 +611,13 @@ STATIC_EFFECTS = frozenset(
         # has no `zone` with which to name the cards in hand, and the permission
         # has to cover cards drawn after the source arrived.
         "cast_as_though_flash",
+        # Teferi, Time Raveler.  "Each opponent can cast spells only any time
+        # they could cast a sorcery."  The narrowing twin of the permission
+        # above: 307.1's window for every spell those players cast.  Read in
+        # `casting._timing_ok` *before* the flash branches (101.2: the "only"
+        # beats every "may"), and at each resolution-time cast, which happens
+        # with the stack non-empty and so is never sorcery timing.
+        "cast_only_at_sorcery_speed",
         # Teferi, Master of Time.  "You may activate loyalty abilities of Teferi
         # on any player's turn any time you could cast an instant."  `affects`
         # says whose loyalty abilities are freed -- `{"self_only": true}` is the
@@ -605,11 +673,18 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         # cost and dredge are all replaced, whoever caused them.
         "replace_mill",
         "replace_empty_draw",
+        "replace_proliferate",
         "cant_cast_spells",
         "cant_activate_abilities",
         "untap_limit",
         "cast_as_though_flash",
+        "cast_only_at_sorcery_speed",
         "cant_gain_life",
+        "draw_limit",
+        "cant_search_library",
+        "opponents_cant_force_discard_or_sacrifice",
+        "cant_lose_the_game",
+        "cant_win_the_game",
     }
 )
 
@@ -718,6 +793,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: zone it is cast out of.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
 
+#: `SPELL_FILTER_KEYS` plus the zone a free cast is offered from.
+#:
+#: "You may cast spells **from your hand** without paying their mana costs" --
+#: Tamiyo, Field Researcher's emblem, and Omniscience. `free_cast_permission` is
+#: asked by every cast lane (hand, command zone, graveyard and exile
+#: permissions), so without this it frees a commander and every flashback-style
+#: cast too. Read by `player_statics.free_cast_permission` itself, with the zone
+#: the spell is being cast from, and kept out of the shared set for
+#: `exclude_self`'s reason. The only value is "hand": no printing names another.
+FREE_CAST_FILTER_KEYS = SPELL_FILTER_KEYS | {"from_zone"}
+
 #: `SPELL_FILTER_KEYS` plus the one word a **union of two printed shapes** needs.
 #:
 #: "**Artifact cards and red creature cards** in your hand have warp {2}{R}" --
@@ -765,6 +851,10 @@ STATIC_FILTER_KEYS = frozenset(
         # so it is as safe here as `types` is. See `mana.printed_cost_is`.
         "mana_cost",
         "tapped",
+        # "Permanents you control **with counters on them** have ward {1}"
+        # (Innkeeper's Talent). Board state no layer writes -- no static puts a
+        # counter on anything -- so it is an input for `tapped`'s reason.
+        "has_counters",
         "is_commander",
         # "Commander creatures you **own**."  903.3 makes ownership the relation
         # the commander rules use, and it is the one place where the printed
@@ -1191,4 +1281,4 @@ PLURAL_PLAYER_SPEC_NAMES = frozenset({"opponent", "each_opponent", "each_player"
 #: The pure event filters -- `counter`, `nth`, `not_cause`, `mana_ability`,
 #: `defending` -- are left out because no card asks for them here, not because
 #: they could not work. `_delayed_matches` gains a line each when one does.
-DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition", "subject"})
+DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition", "subject", "recipient"})

@@ -1,0 +1,83 @@
+{
+  "card": {
+    "id": "tamiyo_field_researcher",
+    "name": "Tamiyo, Field Researcher",
+    "oracle_text": "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.\n−2: Tap up to two target nonland permanents. They don't untap during their controller's next untap step.\n−7: Draw three cards. You get an emblem with \"You may cast spells from your hand without paying their mana costs.\"",
+    "mana_cost": "{1}{G}{W}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Tamiyo"],
+    "colors": ["G", "U", "W"],
+    "color_identity": ["G", "U", "W"],
+    "loyalty": 4,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "+1: Choose up to two target creatures. Until your next turn, whenever either of those creatures deals combat damage, you draw a card.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 2,
+            "up_to": true,
+            "selector": {"zone": "battlefield", "controller": "any", "types": ["Creature"]}
+          }
+        ],
+        "effects": [
+          {
+            "op": "delayed_trigger",
+            "duration": "until_your_next_turn",
+            "trigger": {"event": "deals_combat_damage", "controller": "any", "subject": {"target": "t1"}},
+            "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: Tap up to two target nonland permanents. They don't untap during their controller's next untap step.",
+        "cost": {"loyalty": -2},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 2,
+            "up_to": true,
+            "selector": {"zone": "battlefield", "controller": "any", "not_types": ["Land"]}
+          }
+        ],
+        "effects": [
+          {"op": "tap", "objects": {"target": "t1"}},
+          {"op": "skip_untap", "objects": {"target": "t1"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−7: Draw three cards. You get an emblem with \"You may cast spells from your hand without paying their mana costs.\"",
+        "cost": {"loyalty": -7},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 3}},
+          {"op": "emblem", "player": "you", "emblem": 0}
+        ]
+      }
+    ],
+    "emblems": [
+      {
+        "abilities": [
+          {
+            "kind": "static",
+            "effect": "free_cast_permission",
+            "affects_player": "you",
+            "affects_spells": {"from_zone": "hand"},
+            "text": "You may cast spells from your hand without paying their mana costs."
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 4}
+  }
+}

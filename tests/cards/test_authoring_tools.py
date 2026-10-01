@@ -418,6 +418,29 @@ class TestPacketFiles:
         assert all("id" in example for example in packet.examples)
         assert json.loads(packet.to_json())["card_id"] == packet.card_id
 
+    def test_a_planeswalker_is_shown_a_planeswalker(self, real_registry):
+        # No hand-written card is a planeswalker; the worked example that
+        # shows a signed `cost.loyalty` exists only among the authored cards,
+        # so drawing examples from the hand-written files alone never shows it.
+        entry = row(
+            "Jace, Wielder of Mysteries",
+            "+1: Target player mills two cards. Draw a card.",
+            type_line="Legendary Planeswalker — Jace",
+            mana_cost="{1}{U}{U}{U}",
+            colors="U",
+            color_identity="U",
+        )
+        packet = P.build_packet(entry, real_registry, "no template matched")
+        assert packet.examples
+        assert all("Planeswalker" in example["types"] for example in packet.examples)
+        assert any(
+            "loyalty" in ability.get("cost", {})
+            for example in packet.examples
+            for ability in example["abilities"]
+        )
+        # ...and never itself, when it is being re-authored.
+        assert "Jace, Wielder of Mysteries" not in {e["name"] for e in packet.examples}
+
 
 # ---------------------------------------------------------------- templates
 

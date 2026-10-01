@@ -1,0 +1,50 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_cant_lose_the_game_static.py. `t_gideon_emblem_holder` carries Gideon of the Trials' emblem text as two statics on a permanent, so the test can make it enter and leave; `t_test_gideon` is a Gideon planeswalker for its condition to see.",
+  "cards": [
+    {
+      "id": "t_gideon_emblem_holder",
+      "name": "Test Gideon Emblem Holder",
+      "oracle_text": "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.",
+          "effect": "cant_lose_the_game",
+          "affects_player": "you",
+          "condition": {"exists": {"controller": "you", "types": ["Planeswalker"], "subtypes": ["Gideon"]}}
+        },
+        {
+          "kind": "static",
+          "text": "As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.",
+          "effect": "cant_win_the_game",
+          "affects_player": "opponent",
+          "condition": {"exists": {"controller": "you", "types": ["Planeswalker"], "subtypes": ["Gideon"]}}
+        }
+      ]
+    },
+    {
+      "id": "t_test_gideon",
+      "name": "Test Gideon",
+      "oracle_text": "+1: You gain 1 life.",
+      "mana_cost": "{W}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Gideon"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "loyalty": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 1 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

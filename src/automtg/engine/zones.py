@@ -255,6 +255,7 @@ def move_object(
 
     if was_on_battlefield:
         _detach_all(state, oid)
+        _release_delayed_subject(state, oid)
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
@@ -356,6 +357,10 @@ def move_object(
             had_counters=had_counters,
             had_power=had_power,
             had_toughness=had_toughness,
+            # Where it went, for a trigger's `to_zones`: "when this creature
+            # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
+            # must not fire on a bounce or a tuck.
+            to_zone=to_zone.value,
         )
         # "Whenever you sacrifice a token…" -- fired beside DIES rather than
         # instead of it, because a sacrificed permanent really does die and
@@ -773,6 +778,63 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
             return
 
 
+def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
+    """ "Each planeswalker you control enters with an additional loyalty counter
+    on it." Oath of Gideon (614.1c).
+
+    `_apply_board_enters_tapped`'s shape with a quantity: a static on one
+    permanent about other permanents' arrivals, whichever way they arrive. A
+    replacement on the *entering* and nothing else -- which is the whole reason
+    it is not `replace_counters` with an addend: that one reaches every
+    placement, so it would also add one to each +1 loyalty cost, and the
+    printed card never does.
+
+    Applied after the arriving card's own replacements, so the counter is added
+    to the loyalty it was going to have. Every matching static adds its own
+    amount (two Oaths, two counters). The arriving permanent is excluded as a
+    source, as in `_apply_board_enters_tapped`.
+    """
+    from .characteristics import _battlefield_statics, _matches
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "enters_with_additional_counters":
+            continue
+        if source_obj.oid == obj.oid:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            obj.add_counter(str(static.get("counter")), int(static.get("amount", 1)))
+
+
+def _apply_compleated(obj: GameObject, card: CardDef) -> None:
+    """Compleated (702.150a): two fewer loyalty per Phyrexian symbol paid with life.
+
+    A modification of the starting-loyalty replacement the loop above has just
+    applied, so it runs straight after it and before the permanent is ever seen:
+    a Tamiyo cast for 2 life arrives with three loyalty and never with five.
+
+    "If this permanent **would enter with one or more** loyalty counters" -- a
+    walker whose loyalty the arrival gave none of is untouched, and the count is
+    floored at zero rather than going negative; a walker reduced to zero is then
+    binned by 704.5i, which is what the rule means to happen.
+
+    Only on the arrival that *was* the cast (`entered_by_cast`): the count is a
+    fact about how one casting was paid, and a walker blinked or reanimated later
+    enters with its printed loyalty.
+    """
+    if Keyword.COMPLEATED.value not in card.keywords:
+        return
+    if not obj.entered_by_cast or obj.cast_phyrexian_life <= 0:
+        return
+    loyalty = obj.counter("loyalty")
+    if loyalty <= 0:
+        return
+    remaining = max(0, loyalty - 2 * obj.cast_phyrexian_life)
+    if remaining:
+        obj.counters["loyalty"] = remaining
+    else:
+        obj.counters.pop("loyalty", None)
+
+
 def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> Zone | None:
     """Where a card or token headed for a graveyard actually goes -- 614.
 
@@ -827,6 +889,30 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
             continue
         return Zone(str(static.get("destination", "exile")))
     return None
+
+
+def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: int) -> None:
+    """Give an arriving permanent the counters it enters with, replaced.
+
+    122.6: counters a permanent is given *as it enters* are "put on" it, so a
+    counter replacement applies to them exactly as to a placement on the
+    battlefield -- Doubling Season doubles a planeswalker's starting loyalty,
+    and Hardened Scales makes a creature that "enters with two +1/+1 counters"
+    enter with three. Not through `primitives.add_counters`, because an arrival
+    fires no COUNTER_PLACED (the permanent was never on the battlefield
+    without them) and a Saga's chapter comparison is `sagas.entered`'s.
+
+    Not a cost (122.6a: the permanent's controller puts them), so every
+    applicable static applies, ``effects_only`` included.
+    """
+    if amount <= 0:
+        obj.add_counter(kind, amount)
+        return
+    from .primitives import _replaced_counter_amount
+
+    obj.add_counter(
+        kind, _replaced_counter_amount(state, obj.oid, kind, amount, by=obj.controller)
+    )
 
 
 def _enter_battlefield(
@@ -960,12 +1046,20 @@ def _enter_battlefield(
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
-                    obj.add_counter(str(kind), evaluate_value(ctx, amount))
+                    _enter_with_counters(state, obj, str(kind), evaluate_value(ctx, amount))
             else:
-                obj.add_counter(
+                _enter_with_counters(
+                    state,
+                    obj,
                     str(replacement.get("counter", "+1/+1")),
                     evaluate_value(ctx, replacement.get("amount", 1)),
                 )
+
+    _apply_compleated(obj, card)
+    # After compleated, which is the order 616.1 lets the controller pick and
+    # the one they would: a walker taken to zero by compleated still gets
+    # Oath of Gideon's counter, where the other order would lose it.
+    _apply_board_additional_counters(state, obj)
 
     # Riot (702.113), applied in the slot enters-with-counters occupies and for
     # its reason: 614.1c, so the creature is never on the battlefield without
@@ -984,7 +1078,7 @@ def _enter_battlefield(
     if riot_choice == RIOT_HASTE:
         obj.granted_keywords.add(Keyword.HASTE.value)
     elif riot_choice == RIOT_COUNTER:
-        obj.add_counter("+1/+1", 1)
+        _enter_with_counters(state, obj, "+1/+1", 1)
 
     # "…it gains haste until end of turn" (Arena of Glory), in the slot beside
     # riot and for a neighbouring reason: the creature is never on the
@@ -1228,3 +1322,38 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
         "subtypes": sorted(c.subtypes),
         "colors": sorted(c.colors),
     }
+
+
+def _release_delayed_subject(state: GameState, oid: int) -> None:
+    """Strike a departing permanent out of every delayed ability watching it.
+
+    "Whenever **that creature** deals combat damage" names an *object*, and a
+    permanent that leaves the battlefield and comes back is a new one (400.7) --
+    but an oid survives every zone change, so a subscription still holding it
+    would go on watching the reanimated creature. Harmless while every scoped
+    subscription ended at cleanup; not once "until your next turn" (Tamiyo,
+    Field Researcher) lets one outlive the turn the creature died in.
+
+    A subscription whose last subject has left is dropped outright: an empty
+    scope would otherwise read as "no scope", which is every creature.
+    """
+    if not state.delayed_triggers:
+        return
+    from dataclasses import replace
+
+    kept = []
+    for delayed in state.delayed_triggers:
+        # The permanent being hit is released the same way as the one hitting:
+        # a Vraska that died and was recast is a new Vraska, and the old +1's
+        # subscription is not hers.
+        for field in ("subject_oids", "recipient_oids"):
+            scope = getattr(delayed, field)
+            if scope is None or oid not in scope:
+                continue
+            remaining = tuple(s for s in scope if s != oid)
+            delayed = replace(delayed, **{field: remaining}) if remaining else None
+            if delayed is None:
+                break
+        if delayed is not None:
+            kept.append(delayed)
+    state.delayed_triggers = kept

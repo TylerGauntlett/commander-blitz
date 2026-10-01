@@ -4672,13 +4672,13 @@
     },
     "Ajani Steadfast": {
       "edhrec_rank": 5225,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani Steadfast",
-      "reason": "no template for: +1: Until end of turn, up to one target creature gets +1/+1 and gains first strike, vigila",
+      "reason": "",
       "scryfall_id": "51825d35-cdb2-40fa-ab89-1625161b04af",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ajani Steadfast Emblem": {
       "edhrec_rank": null,
@@ -4702,13 +4702,13 @@
     },
     "Ajani Unyielding": {
       "edhrec_rank": 10549,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani Unyielding",
-      "reason": "no template for: +2: Reveal the top three cards of your library. Put all nonland permanent cards revealed t",
+      "reason": "",
       "scryfall_id": "41000308-144d-4d3b-afec-e3928d20edfc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ajani Vengeant": {
       "edhrec_rank": 14186,
@@ -4912,13 +4912,13 @@
     },
     "Ajani, Sleeper Agent": {
       "edhrec_rank": 6703,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani, Sleeper Agent",
-      "reason": "no template for: Compleated",
+      "reason": "",
       "scryfall_id": "5d14829d-3119-4c65-8e9a-5281771bbaf3",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ajani, Sleeper Agent Emblem": {
       "edhrec_rank": null,
@@ -4962,13 +4962,13 @@
     },
     "Ajani, the Greathearted": {
       "edhrec_rank": 4035,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani, the Greathearted",
-      "reason": "no template for: Creatures you control have vigilance",
+      "reason": "",
       "scryfall_id": "e4ec092e-af23-4f4b-91f1-f63d50e40b30",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Akal Pakal, First Among Equals": {
       "edhrec_rank": 11994,
@@ -7352,13 +7352,13 @@
     },
     "Aminatou, the Fateshifter": {
       "edhrec_rank": 4736,
-      "gate": "template",
+      "gate": null,
       "name": "Aminatou, the Fateshifter",
-      "reason": "no template for: +1: Draw a card, then put a card from your hand on top of your library",
+      "reason": "",
       "scryfall_id": "3748cbe2-ae41-49fd-823a-40c52496b65b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ammit Eternal": {
       "edhrec_rank": 11143,
@@ -14702,13 +14702,13 @@
     },
     "Ashiok, Dream Render": {
       "edhrec_rank": 2591,
-      "gate": "template",
+      "gate": null,
       "name": "Ashiok, Dream Render",
-      "reason": "no template for: Spells and abilities your opponents control can't cause their controller to search their l",
+      "reason": "",
       "scryfall_id": "dd6f76d4-a2b3-40e5-b6a7-b27c42caf615",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ashiok, Nightmare Muse": {
       "edhrec_rank": 7044,
@@ -14722,13 +14722,13 @@
     },
     "Ashiok, Nightmare Weaver": {
       "edhrec_rank": 11489,
-      "gate": "template",
+      "gate": null,
       "name": "Ashiok, Nightmare Weaver",
-      "reason": "no template for: +2: Exile the top three cards of target opponent's library",
+      "reason": "",
       "scryfall_id": "599c3c9f-dfb7-4357-9d9c-9a1a4616b103",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ashiok, Sculptor of Fears": {
       "edhrec_rank": 11604,
@@ -15812,13 +15812,13 @@
     },
     "Atraxa, Praetors' Voice": {
       "edhrec_rank": 2469,
-      "gate": "template",
+      "gate": null,
       "name": "Atraxa, Praetors' Voice",
-      "reason": "no template for: At the beginning of your end step, proliferate",
+      "reason": "",
       "scryfall_id": "20e44330-f880-455e-852c-16d0a985cdf0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Atraxi Warden": {
       "edhrec_rank": 15272,
@@ -35012,13 +35012,13 @@
     },
     "Brokers Ascendancy": {
       "edhrec_rank": 2893,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Ascendancy",
-      "reason": "no template for: At the beginning of your end step, put a +1/+1 counter on each creature you control and a ",
+      "reason": "",
       "scryfall_id": "2aa2713b-5df0-4e54-89bf-30b5aeba9ac7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Brokers Charm": {
       "edhrec_rank": 6110,
@@ -38172,13 +38172,13 @@
     },
     "Call the Gatewatch": {
       "edhrec_rank": 11465,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Gatewatch",
-      "reason": "no template for: Search your library for a planeswalker card, reveal it, put it into your hand, then shuffl",
+      "reason": "",
       "scryfall_id": "4719ac60-2cff-4abb-b9cc-b677d3ac945c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Call the Mountain Chocobo": {
       "edhrec_rank": 13150,
@@ -52632,13 +52632,13 @@
     },
     "Contentious Plan": {
       "edhrec_rank": 2236,
-      "gate": "template",
+      "gate": null,
       "name": "Contentious Plan",
-      "reason": "no template for: Proliferate",
+      "reason": "",
       "scryfall_id": "8e30deb6-9e1f-4545-ae30-c30ba6c7b3a0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Contest of Claws": {
       "edhrec_rank": 5171,
@@ -64822,13 +64822,13 @@
     },
     "Deepglow Skate": {
       "edhrec_rank": 1835,
-      "gate": "template",
+      "gate": null,
       "name": "Deepglow Skate",
-      "reason": "no template for: When this creature enters, double the number of each kind of counter on any number of targ",
+      "reason": "",
       "scryfall_id": "fef1c2a5-d5d8-4c1e-9b14-ee202a5f16b1",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Deepmuck Desperado": {
       "edhrec_rank": 10018,
@@ -66632,13 +66632,13 @@
     },
     "Deploy the Gatewatch": {
       "edhrec_rank": 10749,
-      "gate": "template",
+      "gate": null,
       "name": "Deploy the Gatewatch",
-      "reason": "no template for: Look at the top seven cards of your library. Put up to two planeswalker cards from among t",
+      "reason": "",
       "scryfall_id": "34f4c453-97b4-4cd5-a766-85e5647f71d5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Deploy to the Front": {
       "edhrec_rank": 6062,
@@ -72502,13 +72502,13 @@
     },
     "Doubling Season": {
       "edhrec_rank": 190,
-      "gate": "template",
+      "gate": null,
       "name": "Doubling Season",
-      "reason": "no template for: If an effect would create one or more tokens under your control, it creates twice that man",
+      "reason": "",
       "scryfall_id": "8c2d6fde-5c3b-48c3-828c-832f00570824",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Doubtless One": {
       "edhrec_rank": 21279,
@@ -72572,13 +72572,13 @@
     },
     "Dovin Baan": {
       "edhrec_rank": 12562,
-      "gate": "template",
+      "gate": null,
       "name": "Dovin Baan",
-      "reason": "no template for: +1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities",
+      "reason": "",
       "scryfall_id": "2344e710-4570-41b6-af84-a3e7d784003a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dovin Baan Emblem": {
       "edhrec_rank": null,
@@ -81532,13 +81532,13 @@
     },
     "Elspeth, Sun's Champion": {
       "edhrec_rank": 810,
-      "gate": "template",
+      "gate": null,
       "name": "Elspeth, Sun's Champion",
-      "reason": "no template for: +1: Create three 1/1 white Soldier creature tokens",
+      "reason": "",
       "scryfall_id": "6f816d97-10f0-4d92-aa21-254754530554",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Elspeth, Sun's Champion Emblem": {
       "edhrec_rank": null,
@@ -99072,13 +99072,13 @@
     },
     "Flux Channeler": {
       "edhrec_rank": 1290,
-      "gate": "template",
+      "gate": null,
       "name": "Flux Channeler",
-      "reason": "no template for: Whenever you cast a noncreature spell, proliferate",
+      "reason": "",
       "scryfall_id": "26a679fa-cefc-4222-a12c-3ab886940956",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fluxcharger": {
       "edhrec_rank": 27946,
@@ -101512,13 +101512,13 @@
     },
     "Fracture": {
       "edhrec_rank": 1245,
-      "gate": "template",
+      "gate": null,
       "name": "Fracture",
-      "reason": "no template for: Destroy target artifact, enchantment, or planeswalker",
+      "reason": "",
       "scryfall_id": "34005b2e-6270-4ac3-9d35-021d916125ee",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fractured Identity": {
       "edhrec_rank": 4561,
@@ -108822,23 +108822,23 @@
     },
     "Gideon Jura": {
       "edhrec_rank": 11218,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon Jura",
-      "reason": "no template for: +2: During target opponent's next turn, creatures that player controls attack if able",
+      "reason": "",
       "scryfall_id": "d608df31-bcc6-4fec-89f1-5cefe5c2ec99",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gideon of the Trials": {
       "edhrec_rank": 10717,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon of the Trials",
-      "reason": "no template for: +1: Until your next turn, prevent all damage target permanent would deal",
+      "reason": "",
       "scryfall_id": "959ce13f-519f-4472-bbd1-f26a972723d7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gideon of the Trials Emblem": {
       "edhrec_rank": null,
@@ -109002,13 +109002,13 @@
     },
     "Gideon, Champion of Justice": {
       "edhrec_rank": 13773,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon, Champion of Justice",
-      "reason": "no template for: +1: Put a loyalty counter on Gideon for each creature target opponent controls",
+      "reason": "",
       "scryfall_id": "f9eadb92-2a87-4b3b-90b5-f10cb1cfda0f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gideon, Martial Paragon": {
       "edhrec_rank": 16450,
@@ -136002,13 +136002,13 @@
     },
     "Inexorable Tide": {
       "edhrec_rank": 1030,
-      "gate": "template",
+      "gate": null,
       "name": "Inexorable Tide",
-      "reason": "no template for: Whenever you cast a spell, proliferate",
+      "reason": "",
       "scryfall_id": "a992fad9-1dd1-47fe-b315-a62f7875f3be",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Infantry Shield": {
       "edhrec_rank": 3375,
@@ -137112,13 +137112,13 @@
     },
     "Innkeeper's Talent": {
       "edhrec_rank": 674,
-      "gate": "template",
+      "gate": null,
       "name": "Innkeeper's Talent",
-      "reason": "no template for: At the beginning of combat on your turn, put a +1/+1 counter on target creature you contro",
+      "reason": "",
       "scryfall_id": "941b0afc-0e8f-45f2-ae7f-07595e164611",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Innocence Kami": {
       "edhrec_rank": 29229,
@@ -141352,13 +141352,13 @@
     },
     "Jace, Cunning Castaway": {
       "edhrec_rank": 13060,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Cunning Castaway",
-      "reason": "no template for: +1: Whenever one or more creatures you control deal combat damage to a player this turn, d",
+      "reason": "",
       "scryfall_id": "b75f56f2-88fd-44ba-ad02-56ea3391f173",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Jace, Ingenious Mind-Mage": {
       "edhrec_rank": 13442,
@@ -141372,13 +141372,13 @@
     },
     "Jace, Memory Adept": {
       "edhrec_rank": 6075,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Memory Adept",
-      "reason": "no template for: +1: Draw a card. Target player mills a card",
+      "reason": "",
       "scryfall_id": "2801a4ad-5d44-4414-af62-458c7f90dad6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Jace, Mirror Mage": {
       "edhrec_rank": 7535,
@@ -141422,13 +141422,13 @@
     },
     "Jace, Unraveler of Secrets": {
       "edhrec_rank": 6627,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Unraveler of Secrets",
-      "reason": "no template for: +1: Scry 1, then draw a card",
+      "reason": "",
       "scryfall_id": "3d9c8217-013d-4e75-bdd1-9c46c8467edb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Jace, Unraveler of Secrets Emblem": {
       "edhrec_rank": null,
@@ -146132,13 +146132,13 @@
     },
     "Karn's Bastion": {
       "edhrec_rank": 207,
-      "gate": "template",
+      "gate": null,
       "name": "Karn's Bastion",
-      "reason": "no template for: {4}, {T}: Proliferate",
+      "reason": "",
       "scryfall_id": "22017ec2-3552-4865-af76-dba042b141f5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Karn's Sylex": {
       "edhrec_rank": 13220,
@@ -146502,23 +146502,23 @@
     },
     "Kasmina, Enigma Sage": {
       "edhrec_rank": 12306,
-      "gate": "template",
+      "gate": null,
       "name": "Kasmina, Enigma Sage",
-      "reason": "no template for: Each other planeswalker you control has the loyalty abilities of Kasmina",
+      "reason": "",
       "scryfall_id": "178bf300-38cf-4ab2-9e66-6fcaa112b649",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kasmina, Enigmatic Mentor": {
       "edhrec_rank": 6632,
-      "gate": "template",
+      "gate": null,
       "name": "Kasmina, Enigmatic Mentor",
-      "reason": "no template for: Spells your opponents cast that target a creature or planeswalker you control cost {2} mor",
+      "reason": "",
       "scryfall_id": "ca2b53e2-aa6a-4cb2-899c-8e022e822ffc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kassandra, Eagle Bearer": {
       "edhrec_rank": 7360,
@@ -146922,13 +146922,13 @@
     },
     "Kaya the Inexorable": {
       "edhrec_rank": 6000,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya the Inexorable",
-      "reason": "no template for: +1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this cre",
+      "reason": "",
       "scryfall_id": "166c0bd1-b59d-4644-832f-888a4ca3a0aa",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kaya the Inexorable Emblem": {
       "edhrec_rank": null,
@@ -149482,13 +149482,13 @@
     },
     "Kiora, Master of the Depths": {
       "edhrec_rank": 8946,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora, Master of the Depths",
-      "reason": "no template for: +1: Untap up to one target creature and up to one target land",
+      "reason": "",
       "scryfall_id": "4b63c228-3265-4029-9bc0-36b3e31dfb53",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kiora, Master of the Depths Emblem": {
       "edhrec_rank": null,
@@ -149512,13 +149512,13 @@
     },
     "Kiora, the Crashing Wave": {
       "edhrec_rank": 7679,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora, the Crashing Wave",
-      "reason": "no template for: +1: Until your next turn, prevent all damage that would be dealt to and dealt by target pe",
+      "reason": "",
       "scryfall_id": "0c5c6b15-b72d-4341-92c2-7469210452da",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kiora, the Crashing Wave Emblem": {
       "edhrec_rank": null,
@@ -158972,13 +158972,13 @@
     },
     "Liliana, Dreadhorde General": {
       "edhrec_rank": 793,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Dreadhorde General",
-      "reason": "no template for: Whenever a creature you control dies, draw a card",
+      "reason": "",
       "scryfall_id": "7a097413-b77c-45e8-a4ac-5b2dc1d34e16",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Liliana, Heretical Healer // Liliana, Defiant Necromancer": {
       "edhrec_rank": 4434,
@@ -159022,13 +159022,13 @@
     },
     "Liliana, the Last Hope": {
       "edhrec_rank": 7764,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, the Last Hope",
-      "reason": "no template for: +1: Up to one target creature gets -2/-1 until your next turn",
+      "reason": "",
       "scryfall_id": "50269303-0bd9-474e-bd16-e0d13a5cbb74",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Liliana, the Last Hope Emblem": {
       "edhrec_rank": null,
@@ -183432,13 +183432,13 @@
     },
     "Narset Transcendent": {
       "edhrec_rank": 7975,
-      "gate": "template",
+      "gate": null,
       "name": "Narset Transcendent",
-      "reason": "no template for: +1: Look at the top card of your library. If it's a noncreature, nonland card, you may rev",
+      "reason": "",
       "scryfall_id": "4816d092-e34b-4397-8599-43d8e85a8f39",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Narset Transcendent Emblem": {
       "edhrec_rank": null,
@@ -183522,13 +183522,13 @@
     },
     "Narset, Parter of Veils": {
       "edhrec_rank": 936,
-      "gate": "template",
+      "gate": null,
       "name": "Narset, Parter of Veils",
-      "reason": "no template for: Each opponent can't draw more than one card each turn",
+      "reason": "",
       "scryfall_id": "fe5b4aaf-1d0b-43a6-b20f-45235cb53db0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Narstad Scrapper": {
       "edhrec_rank": 31304,
@@ -187812,13 +187812,13 @@
     },
     "Nissa, Vital Force": {
       "edhrec_rank": 4790,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa, Vital Force",
-      "reason": "no template for: +1: Untap target land you control. Until your next turn, it becomes a 5/5 Elemental creatu",
+      "reason": "",
       "scryfall_id": "bbaaa98a-ec40-4ff1-8762-a719cf1c475d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Nissa, Vital Force Emblem": {
       "edhrec_rank": null,
@@ -187832,13 +187832,13 @@
     },
     "Nissa, Voice of Zendikar": {
       "edhrec_rank": 5092,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa, Voice of Zendikar",
-      "reason": "no template for: +1: Create a 0/1 green Plant creature token",
+      "reason": "",
       "scryfall_id": "a548acc7-bf37-4bb3-83c9-6e5fdb501f56",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Nissa, Who Shakes the World": {
       "edhrec_rank": 1614,
@@ -190082,13 +190082,13 @@
     },
     "Oath of Ajani": {
       "edhrec_rank": 11063,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Ajani",
-      "reason": "no template for: When enters, put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "968c7d5a-b037-4ff7-b6d2-df00adf5691b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Oath of Chandra": {
       "edhrec_rank": 14565,
@@ -190132,13 +190132,13 @@
     },
     "Oath of Gideon": {
       "edhrec_rank": 7381,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Gideon",
-      "reason": "no template for: When enters, create two 1/1 white Kor Ally creature tokens",
+      "reason": "",
       "scryfall_id": "b8a3f02b-9408-46a5-8d25-f5cec553d600",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Oath of Jace": {
       "edhrec_rank": 10040,
@@ -190202,13 +190202,13 @@
     },
     "Oath of Nissa": {
       "edhrec_rank": 7715,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Nissa",
-      "reason": "no template for: When enters, look at the top three cards of your library. You may reveal a creature, land,",
+      "reason": "",
       "scryfall_id": "35b8ec5d-bb33-4733-883e-9002951ae2fb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Oath of Scholars": {
       "edhrec_rank": 22894,
@@ -191882,13 +191882,13 @@
     },
     "Oko, Thief of Crowns": {
       "edhrec_rank": 2058,
-      "gate": "template",
+      "gate": null,
       "name": "Oko, Thief of Crowns",
-      "reason": "no template for: +2: Create a Food token",
+      "reason": "",
       "scryfall_id": "016b0750-d48d-4b6e-ac9c-a7904371a914",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Oko, the Ringleader": {
       "edhrec_rank": 11746,
@@ -196732,12 +196732,12 @@
     },
     "Pact of Negation": {
       "edhrec_rank": 361,
-      "gate": "template",
+      "gate": null,
       "name": "Pact of Negation",
-      "reason": "no template for: Counter target spell",
+      "reason": "",
       "scryfall_id": "cb91055f-215a-4243-835b-35de515a2ba5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Pact of the Serpent": {
@@ -210442,13 +210442,13 @@
     },
     "Putrefy": {
       "edhrec_rank": 335,
-      "gate": "template",
+      "gate": null,
       "name": "Putrefy",
-      "reason": "no template for: Destroy target artifact or creature. It can't be regenerated",
+      "reason": "",
       "scryfall_id": "ad6ed9f1-2014-49e2-91c6-2b55c8d60cdc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Putrid Cyclops": {
       "edhrec_rank": 31591,
@@ -229612,13 +229612,13 @@
     },
     "Rupture Spire": {
       "edhrec_rank": 6093,
-      "gate": "template",
+      "gate": null,
       "name": "Rupture Spire",
-      "reason": "no template for: When this land enters, sacrifice it unless you pay {1}",
+      "reason": "",
       "scryfall_id": "8340aa81-7c7f-4b0b-8d98-d3414cac331c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Rural Recruit": {
       "edhrec_rank": 25550,
@@ -255402,13 +255402,13 @@
     },
     "Sorin, Grim Nemesis": {
       "edhrec_rank": 9535,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Grim Nemesis",
-      "reason": "no template for: +1: Reveal the top card of your library and put that card into your hand. Each opponent lo",
+      "reason": "",
       "scryfall_id": "d25c3609-a200-4532-9df8-8e92c24544bc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sorin, Imperious Bloodlord": {
       "edhrec_rank": 3985,
@@ -255442,13 +255442,13 @@
     },
     "Sorin, Solemn Visitor": {
       "edhrec_rank": 11301,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Solemn Visitor",
-      "reason": "no template for: +1: Until your next turn, creatures you control get +1/+0 and gain lifelink",
+      "reason": "",
       "scryfall_id": "a1cb8205-e08a-4d32-8912-cb1203350be6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sorin, Solemn Visitor Emblem": {
       "edhrec_rank": null,
@@ -274782,33 +274782,33 @@
     },
     "Tamiyo, Collector of Tales": {
       "edhrec_rank": 8335,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Collector of Tales",
-      "reason": "no template for: Spells and abilities your opponents control can't cause you to discard cards or sacrifice ",
+      "reason": "",
       "scryfall_id": "aeae9feb-8153-496c-bb12-8db5e2e089a9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tamiyo, Compleated Sage": {
       "edhrec_rank": 8994,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Compleated Sage",
-      "reason": "no template for: Compleated",
+      "reason": "",
       "scryfall_id": "222a736e-d819-452d-aeda-eb848c4b2302",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tamiyo, Field Researcher": {
       "edhrec_rank": 2959,
-      "gate": "template",
+      "gate": null,
       "name": "Tamiyo, Field Researcher",
-      "reason": "no template for: +1: Choose up to two target creatures. Until your next turn, whenever either of those crea",
+      "reason": "",
       "scryfall_id": "576ba8db-fad9-4c48-96be-a8a7e5f43039",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tamiyo, Field Researcher Emblem": {
       "edhrec_rank": null,
@@ -276572,13 +276572,13 @@
     },
     "Teferi, Temporal Archmage": {
       "edhrec_rank": 4330,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Temporal Archmage",
-      "reason": "no template for: +1: Look at the top two cards of your library. Put one of them into your hand and the othe",
+      "reason": "",
       "scryfall_id": "368c6e60-804c-447c-bc2b-ac9dc4cab5e7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi, Temporal Archmage Emblem": {
       "edhrec_rank": null,
@@ -276602,13 +276602,13 @@
     },
     "Teferi, Time Raveler": {
       "edhrec_rank": 1139,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Time Raveler",
-      "reason": "no template for: Each opponent can cast spells only any time they could cast a sorcery",
+      "reason": "",
       "scryfall_id": "5a47d968-bba0-4277-b5d7-eb9e1acd7953",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi, Timebender": {
       "edhrec_rank": 17036,
@@ -276692,13 +276692,13 @@
     },
     "Tekuthal, Inquiry Dominus": {
       "edhrec_rank": 1238,
-      "gate": "template",
+      "gate": null,
       "name": "Tekuthal, Inquiry Dominus",
-      "reason": "no template for: If you would proliferate, proliferate twice instead",
+      "reason": "",
       "scryfall_id": "2d389264-e2d2-4589-9636-faa11fe46710",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tel-Jilad Archers": {
       "edhrec_rank": 28358,
@@ -280152,13 +280152,13 @@
     },
     "The Chain Veil": {
       "edhrec_rank": 2923,
-      "gate": "template",
+      "gate": null,
       "name": "The Chain Veil",
-      "reason": "no template for: At the beginning of your end step, if you didn't activate a loyalty ability of a planeswal",
+      "reason": "",
       "scryfall_id": "1ca66955-d900-45b6-9a40-38467689a68d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "The Chase Is On": {
       "edhrec_rank": 18618,
@@ -305292,13 +305292,13 @@
     },
     "Viral Drake": {
       "edhrec_rank": 7027,
-      "gate": "template",
+      "gate": null,
       "name": "Viral Drake",
-      "reason": "no template for: {3}{U}: Proliferate",
+      "reason": "",
       "scryfall_id": "26b098d7-9b8d-47a1-9694-22b0f0ef25ff",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Viral Spawning": {
       "edhrec_rank": 16283,
@@ -308212,13 +308212,13 @@
     },
     "Vraska the Unseen": {
       "edhrec_rank": 7322,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska the Unseen",
-      "reason": "no template for: +1: Until your next turn, whenever a creature deals combat damage to Vraska, destroy that ",
+      "reason": "",
       "scryfall_id": "a6ab9d2b-6cb3-4477-8d0e-712c530383bd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Vraska's Conquistador": {
       "edhrec_rank": 28240,
@@ -308332,13 +308332,13 @@
     },
     "Vraska, Relic Seeker": {
       "edhrec_rank": 8470,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska, Relic Seeker",
-      "reason": "no template for: +2: Create a 2/2 black Pirate creature token with menace",
+      "reason": "",
       "scryfall_id": "967b7272-33a6-46e9-b0aa-4757aee54b3a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Vraska, Scheming Gorgon": {
       "edhrec_rank": 15421,

@@ -254,7 +254,10 @@ def validate_deck(deck: DeckList, registry: CardRegistry) -> list[str]:
         card = registry.get(cmd_id)
         if not card.is_legendary:
             problems.append(f"commander {cmd_id!r} is not legendary")
-        if not (card.is_creature or "Planeswalker" in card.types):
+        # 903.3: a legendary creature, or a card that says it "can be your
+        # commander". A legendary planeswalker without that line cannot lead a
+        # deck -- the check used to wave every one of them through.
+        if not (card.is_creature or card.can_be_commander):
             problems.append(f"commander {cmd_id!r} is not a creature")
 
     identity: set[str] = set()

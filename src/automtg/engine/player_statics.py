@@ -193,6 +193,79 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
+    """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
+
+    Gideon of the Trials' emblem: "As long as you control a Gideon planeswalker,
+    you can't lose the game and your opponents can't win the game" (104.3b). The
+    continuous twin of the `cant_lose_the_game` op's turn-scoped `OutcomeLock`;
+    its "as long as" is the static's ordinary `condition`, which
+    `_active_player_statics` honours -- the emblem stops protecting anybody the
+    moment the last Gideon leaves, and starts again when one arrives.
+    """
+    return any(
+        _reaches_player(obj, static, pid) for obj, static in _active_player_statics(state, effect)
+    )
+
+
+def draw_cap(state: GameState, pid: int) -> int | None:
+    """The most cards ``pid`` may draw this turn, or ``None`` for no cap (`draw_limit`).
+
+    Narset, Parter of Veils: "Each opponent can't draw more than one card each
+    turn." The cap is on the turn, not on the time the static has existed, so
+    the caller compares it with `cards_drawn_this_turn` -- a card drawn before
+    Narset entered still counts (the printed ruling). Two caps are the smaller
+    of them: each is a separate "can't", and both have to be obeyed.
+    """
+    cap: int | None = None
+    for obj, static in _active_player_statics(state, "draw_limit"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        amount = max(0, _static_value(state, static.get("amount"), obj))
+        cap = amount if cap is None else min(cap, amount)
+    return cap
+
+
+def search_forbidden(state: GameState, searcher: int, cause_controller: int | None) -> bool:
+    """May ``searcher`` not search their own library right now (`cant_search_library`)?
+
+    Ashiok, Dream Render: "Spells and abilities your opponents control can't
+    cause **their controller** to search **their** library." Only the case where
+    the searcher is the controller of the spell or ability doing the asking: my
+    Path to Exile making an opponent search is not named, and neither is an
+    opponent's effect searching somebody else's library -- the caller asks this
+    only about the searcher's own library.
+    """
+    if cause_controller is None or cause_controller != searcher:
+        return False
+    return any(
+        _reaches_player(obj, static, searcher)
+        for obj, static in _active_player_statics(state, "cant_search_library")
+    )
+
+
+def forced_discard_or_sacrifice_barred(
+    state: GameState, pid: int, cause_controller: int | None
+) -> bool:
+    """May a spell or ability ``cause_controller`` controls not make ``pid`` discard or sacrifice?
+
+    Tamiyo, Collector of Tales: "Spells and abilities your opponents control
+    can't cause you to discard cards or sacrifice permanents." Keyed on who
+    controls the *cause*, the fact `primitives.discard_cards`' ``caused_by``
+    already carries for Orvar: ``None`` (the cleanup discard, a cost the player
+    pays for their own spell) is nobody's doing and is never barred, and neither
+    is ``pid``'s own spell. Any other seat is an opponent (102.2).
+    """
+    if cause_controller is None or cause_controller == pid:
+        return False
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(
+            state, "opponents_cant_force_discard_or_sacrifice"
+        )
+    )
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 
@@ -259,6 +332,24 @@ def mill_multiplier(state: GameState, pid: int) -> int:
             continue
         factor *= max(1, int(static.get("mill_multiplier", 1)))
     return factor
+
+
+def proliferate_times(state: GameState, pid: int) -> int:
+    """How many proliferates one "proliferate" by ``pid`` becomes (`replace_proliferate`).
+
+    Tekuthal, Inquiry Dominus: "If you would proliferate, proliferate twice
+    instead." Proliferate (701.27a) is an action with no number in it, so the
+    replacement is to *perform it again* -- each time with its own choice, the
+    second seeing the counters the first added. Two Tekuthals are two
+    replacements of the same event, each applying once (614.5) to the event the
+    other produced (616.1), so one proliferate becomes four: the product, as in
+    `mill_multiplier`.
+    """
+    times = 1
+    for obj, static in _active_player_statics(state, "replace_proliferate"):
+        if _reaches_player(obj, static, pid):
+            times *= 2
+    return times
 
 
 def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
@@ -459,8 +550,20 @@ def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "black_mana_as_phyrexian")
 
 
-def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
+def player_spends_mana_as_any_color(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
     """Whether every coloured pip this player pays may be paid with any mana.
+
+    **A spell filter**, `affects_spells`, is Oath of Nissa: "You may spend mana
+    as though it were mana of any color **to cast planeswalker spells**." That
+    is a claim about a spell being cast, so it is answered only when ``card``
+    -- the face being cast -- is passed and matches the printed filter. The
+    two cast-line sites (`casting._cast_variant` and `Game._cast`) pass it;
+    every other cost (`costs.spendable_requirement`, `costs.affordable_mana`:
+    activated abilities, "unless pays", madness and the rest) asks without one
+    and so is loosened only by an unfiltered static -- a planeswalker's own
+    loyalty-free activations, or any other ability, are not "casting".
 
     Chromatic Orrery: "You may spend mana as though it were mana of any color."
     The unrestricted twin of the permission `permission.playable_any_color`
@@ -482,7 +585,17 @@ def player_spends_mana_as_any_color(state: GameState, pid: int) -> bool:
     not, because colourless is not a colour. Both fall out of
     `ManaCost.as_any_color`, which is what does the reading.
     """
-    return _player_static(state, pid, "spend_mana_as_any_color")
+    for obj, static in _active_player_statics(state, "spend_mana_as_any_color"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
 
 
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
@@ -879,6 +992,77 @@ def spell_life_tax(
     return total
 
 
+def spell_mana_tax(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
+    """How much more **generic mana** ``pid`` must pay to cast ``card`` (601.2f).
+
+    "Spells your opponents cast that target a creature or planeswalker you
+    control cost {2} more to cast." Kasmina, Enigmatic Mentor. The same
+    `spell_cost_increase` static as `spell_life_tax`, with the price written as
+    ``cost.mana`` instead of ``cost.pay_life``. The loader holds it to generic
+    mana alone.
+
+    The filters read exactly as the life tax reads them: ``affects_spells`` on
+    the printed face, and ``targeting`` against the refs the cast chose, read
+    **meanly** while ``targets`` is ``None``. At a gate, before any target
+    exists, the tax is left out, so a spell affordable aimed elsewhere is not
+    refused, and each tuple is then priced exactly.
+
+    Netted into `cost_reduction.cost_reduction` as a negative discount, which is
+    the number legality, `casting._priced_tuples` and `Game._cast` all already
+    share. So the offer and the charge cannot disagree, and 601.2f's order
+    (increases, then reductions, generic never below zero) is the clamp the
+    solver already applies.
+    """
+    from .mana import ManaCost
+
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_increase":
+            continue
+        mana = (static.get("cost") or {}).get("mana")
+        if not mana:
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if not _matches_printed(card, resolved):
+            continue
+        if (aimed := static.get("targeting")) is not None:
+            if targets is None:
+                continue
+            if not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            ):
+                continue
+        total += ManaCost.parse(str(mana)).generic
+    return total
+
+
+def spell_mana_tax_targeted(state: GameState) -> bool:
+    """Is a mana-priced `spell_cost_increase` with a `targeting` clause active?
+
+    Such a tax changes the price per target tuple, so `casting._cast_variant`
+    has to price each tuple on its own, as it does for a targeted discount.
+    """
+    return any(
+        static.get("effect") == "spell_cost_increase"
+        and (static.get("cost") or {}).get("mana")
+        and static.get("targeting") is not None
+        for _, static in _battlefield_statics(state)
+    )
+
+
 def spell_life_tax_on_board(state: GameState) -> bool:
     """Is any `spell_cost_increase` static active at all?
 
@@ -888,7 +1072,10 @@ def spell_life_tax_on_board(state: GameState) -> bool:
     and the per-tuple walk happens only for the boards that have one.
     """
     return any(
-        static.get("effect") == "spell_cost_increase" for _, static in _battlefield_statics(state)
+        static.get("effect") == "spell_cost_increase"
+        # A mana-priced one (Kasmina) is `spell_mana_tax`'s, and taxes no life.
+        and (static.get("cost") or {}).get("pay_life")
+        for _, static in _battlefield_statics(state)
     )
 
 
@@ -1134,7 +1321,7 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
-def player_cant_cast_spells(state: GameState, pid: int) -> bool:
+def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = None) -> bool:
     """ "Your opponents can't cast spells during your turn." Voice of Victory.
 
     A prohibition on the *player*, read everywhere a spell can be cast rather
@@ -1156,8 +1343,61 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     `affects_player` picks out the stopped seats and `condition` is the
     "during your turn", both answered through `_active_player_statics`, so the
     lock lifts the instant the source leaves or the turn passes.
+
+    **A spell filter**, `affects_spells`, is Narset Transcendent's emblem:
+    "Your opponents can't cast **noncreature** spells." A filtered lock is a
+    claim about a *spell*, not about the seat, so it can only be answered with
+    the spell in hand -- ``card`` is the face being cast. Asked without one
+    (the seat-level early exits at the top of `_cast_actions` and the
+    resolution-time offers), only the *unfiltered* locks answer, because "this
+    player can cast nothing" is false while creature spells are still allowed.
+    Every site that knows which card is about to be cast passes it, so the
+    filtered lock is asked there -- `casting._cast_variant` for every offered
+    cast, and each resolution-time cast listed above.
     """
-    return _player_static(state, pid, "cant_cast_spells")
+    for obj, static in _active_player_statics(state, "cant_cast_spells"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
+
+
+def player_casts_only_at_sorcery_speed(state: GameState, pid: int) -> bool:
+    """ "Each opponent can cast spells only any time they could cast a sorcery."
+
+    Teferi, Time Raveler. A *timing* restriction on the player: 307.1's
+    window -- their own main phase, the stack empty -- for every spell they
+    cast, instants and flash spells included.
+
+    Read in `casting._timing_ok` **before** its flash branches, because the
+    printed card and `cast_as_though_flash` both say "may" and this says
+    "only": 101.2 gives the restriction the last word. And read at every
+    resolution-time cast (`suspend.cast_for_free`, `replacements._offer_cast`,
+    the "you may cast" offers and `cast_copy`), because each of those happens
+    while a spell or ability is resolving -- the stack is not empty, so the
+    player could not cast a sorcery then and cannot cast this.
+    """
+    return _player_static(state, pid, "cast_only_at_sorcery_speed")
+
+
+def player_cant_cast_while_resolving(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
+    """May ``pid`` not cast a spell in the middle of a resolution right now?
+
+    The question every resolution-time cast asks: a prohibition
+    (`player_cant_cast_spells`, filtered by ``card`` when it is known) or a
+    sorcery-timing lock, which a resolving effect can never satisfy.
+    """
+    return player_cant_cast_spells(state, pid, card) or player_casts_only_at_sorcery_speed(
+        state, pid
+    )
 
 
 def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
@@ -1381,7 +1621,9 @@ def library_top_cast_permission(state: GameState, pid: int):
     return None
 
 
-def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
+def free_cast_permission(
+    state: GameState, pid: int, card: CardDef, zone: str | None = None
+) -> bool:
     """May ``pid`` cast ``card`` right now **without paying its mana cost**?
 
     "You may cast Dragon spells without paying their mana costs" --
@@ -1426,6 +1668,13 @@ def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
+        # "…from your hand" (Tamiyo, Field Researcher's emblem; Omniscience).
+        # ``zone`` is where this cast is being made from; a caller that does not
+        # say is refused rather than freed, so a new cast lane fails closed.
+        if "from_zone" in filt:
+            if zone != filt["from_zone"]:
+                continue
+            filt = {k: v for k, v in filt.items() if k != "from_zone"}
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if _matches_printed(card, resolved):
             return True
@@ -1534,7 +1783,12 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
 
 
 def counter_placement_replacements(
-    state: GameState, oid: int, kind: str
+    state: GameState,
+    oid: int,
+    kind: str,
+    *,
+    as_cost: bool = False,
+    by: int | None = None,
 ) -> list[Mapping[str, Any]]:
     """The active ``replace_counters`` statics that apply to this placement.
 
@@ -1553,18 +1807,74 @@ def counter_placement_replacements(
     choice to the affected player and this engine does not ask -- see
     `primitives._replaced_counter_amount`, which owns that divergence together
     with 614.5.
+
+    ``as_cost`` is a placement made while paying a cost -- a planeswalker's +N
+    loyalty ability. An ``effects_only`` static (Doubling Season's "if **an
+    effect** would put") skips it, because a cost is not an effect.
+
+    ``by`` is the player **putting** the counters (122.6a), read by a static
+    with ``put_by`` -- Innkeeper's Talent's "if **you** would put". Such a
+    static names no recipient filter of its own and reaches every permanent.
     """
     obj = state.objects.get(oid)
     if obj is None:
         return []
     out: list[Mapping[str, Any]] = []
     for source_obj, static in _battlefield_statics(state):
-        if static.get("effect") != "replace_counters":
+        if not _counter_static_applies(source_obj, static, kind, as_cost=as_cost, by=by):
             continue
-        wanted = static.get("counter")
-        if wanted is not None and str(wanted) != kind:
+        affects = static.get("affects")
+        if affects is None and static.get("put_by") is not None:
+            # "…on a permanent": any permanent, whoever controls it.
+            affects = {"controller": "any"}
+        if not _matches(state, obj, source_obj, affects):
             continue
-        if not _matches(state, obj, source_obj, static.get("affects")):
+        out.append(static)
+    return out
+
+
+def _counter_static_applies(
+    source_obj: GameObject,
+    static: Mapping[str, Any],
+    kind: str,
+    *,
+    as_cost: bool,
+    by: int | None,
+) -> bool:
+    """The recipient-independent half of a ``replace_counters`` static's test:
+    the effect, the kind, cost versus effect, and who is putting them."""
+    if static.get("effect") != "replace_counters":
+        return False
+    if as_cost and static.get("effects_only"):
+        return False
+    wanted = static.get("counter")
+    if wanted is not None and str(wanted) != kind:
+        return False
+    if static.get("put_by") == "you" and (by is None or by != source_obj.controller):
+        return False
+    return True
+
+
+def player_counter_replacements(
+    state: GameState, pid: int, kind: str, *, by: int | None = None
+) -> list[Mapping[str, Any]]:
+    """The ``replace_counters`` statics that apply to counters put on a **player**.
+
+    Innkeeper's Talent's "…on a permanent **or player**", Vorinclex's too: a
+    poison counter is a counter (122.1), and "put on a player" is the printed
+    reach. Only a static that names players through ``affects_player`` reaches
+    one -- every recipient-keyed card before it ("a permanent you control")
+    names a permanent, and a player is not one. Read by
+    `primitives.add_poison` alone, in battlefield order for
+    `counter_placement_replacements`' reasons.
+    """
+    out: list[Mapping[str, Any]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("affects_player") is None:
+            continue
+        if not _counter_static_applies(source_obj, static, kind, as_cost=False, by=by):
+            continue
+        if not _reaches_player(source_obj, static, pid):
             continue
         out.append(static)
     return out
@@ -1678,6 +1988,44 @@ def damage_multiplier(
                     continue
         multiplier *= max(1, int(static.get("damage_multiplier") or 1))
     return multiplier
+
+
+def damage_cap(
+    state: GameState, target_oid: int | None, *, target_pid: int | None = None
+) -> int | None:
+    """The most of one damage event that may reach this recipient, or ``None``.
+
+    Ajani Steadfast's emblem: "If a source would deal damage to you or a
+    planeswalker you control, prevent all but 1 of that damage." Every
+    `prevent_all_but` static that names the recipient caps the event at its
+    ``amount``; with several, the smallest cap is the one that bites.
+
+    The recipient side reads exactly as `damage_multiplier`'s does -- ``affects``
+    for a permanent, ``affects_player`` for a seat, a union when both are
+    written -- because it is the same printed "to you or a planeswalker you
+    control" shape. Read by `primitives.damage_permanent` and
+    `primitives.damage_player` alone.
+    """
+    cap: int | None = None
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_all_but":
+            continue
+        recipient = static.get("affects")
+        seats = static.get("affects_player")
+        if target_oid is None:
+            if seats is None or target_pid is None:
+                continue
+            if not _reaches_player(source_obj, static, target_pid):
+                continue
+        else:
+            obj = state.objects.get(target_oid)
+            if recipient is None or obj is None:
+                continue
+            if not _matches(state, obj, source_obj, recipient):
+                continue
+        value = max(0, _static_value(state, static.get("amount"), source_obj))
+        cap = value if cap is None else min(cap, value)
+    return cap
 
 
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:

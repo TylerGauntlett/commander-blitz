@@ -24,11 +24,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 from ..images import IndexEntry
 from ..proxy import CardFacts, build_proxy, facts_from_index
-from ..registry import CardRegistry, data_dir
+from ..registry import CardRegistry, authored_card_paths, data_dir
 from .verify import EXPECTATION_KEYS
 
 #: The card-level alternative and additional costs, which live on the *card*
@@ -677,10 +678,18 @@ def reference() -> dict:
             "\"Your opponents can't cast spells during your turn\" is the"
             " player-wide static `cant_cast_spells` with `affects_player:"
             " \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops"
-            " every spell from every zone, free casts included, and takes no"
-            " spell filter: \"can't cast creature spells\", \"from anywhere"
-            " other than their hands\" and \"more than one spell each turn\""
-            " are still gaps, and so is \"can't activate abilities\".",
+            " every spell from every zone, free casts included. \"Can't cast"
+            " noncreature spells\" is the same static with `affects_spells:"
+            " {\"not_types\": [\"Creature\"]}` (a spell filter: types, any_types,"
+            " not_types, subtypes, colors, name, ... -- no `controller`,"
+            " `affects_player` says whose). \"More than one spell each turn\""
+            " is still a gap.",
+            "\"You may spend mana as though it were mana of any color\" is the"
+            " player-wide static `spend_mana_as_any_color` with `affects_player:"
+            " \"you\"`; \"...to cast planeswalker spells\" is the same static"
+            " with `affects_spells: {\"types\": [\"Planeswalker\"]}` (the"
+            " `cant_cast_spells` spell filter), which loosens only the cast of"
+            " a matching spell and never an activated ability.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
@@ -692,12 +701,36 @@ def reference() -> dict:
             " intervening if). It is the turn's ledger, so it counts gains made"
             " before the permanent entered; never an unprinted `you_gain_life`"
             " trigger setting a flag.",
+            "\"If you didn't activate a loyalty ability of a planeswalker this"
+            " turn\" is the value `{\"loyalty_activations_this_turn\": \"you\"}`"
+            " compared `==` against `{\"const\": 0}`, as the trigger's"
+            " `condition`. A per-player tally counted at activation, so it"
+            " remembers a planeswalker that has since left.",
             "\"Your opponents can't gain life\" is the player-wide static"
             " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
             " and \"any\" for the other sentences). Every gain is stopped,"
             " lifelink included, and no life-gain trigger fires; it beats a"
             " `replace_life_gain`. \"Damage can't be prevented\" and \"your"
             " life total can't change\" are other effects.",
+            "\"Each opponent can't draw more than one card each turn\" is the"
+            " player-wide static `draw_limit` with `affects_player:"
+            " \"opponent\"` and `amount: {\"const\": 1}` (\"each player\" is"
+            " `\"any\"`). It counts every card drawn that turn, and a draw past"
+            " the cap simply does not happen.",
+            "\"Spells and abilities your opponents control can't cause their"
+            " controller to search their library\" is the player-wide static"
+            " `cant_search_library` with `affects_player: \"opponent\"`. Their"
+            " own searches find nothing in their library but still shuffle.",
+            "\"Spells and abilities your opponents control can't cause you to"
+            " discard cards or sacrifice permanents\" is the player-wide static"
+            " `opponents_cant_force_discard_or_sacrifice` with `affects_player:"
+            " \"you\"` -- keyed on who controls the cause, so your own spells"
+            " and costs still discard and sacrifice. Not `cant_sacrifice`.",
+            "\"Choose a (nonland) card name\" is the op `choose_card_name` with"
+            " `as` (and `not_types: [\"Land\"]`); a later selector matches it"
+            " with `name: {\"binding\": <as>}` -- e.g. a `look_at_top` whose"
+            " `objects` is `{\"name\": {\"binding\": \"named\"}, \"count\":"
+            " \"all\"}` with `rest_to: \"graveyard\"`.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"
@@ -840,6 +873,27 @@ def reference() -> dict:
             " instead) and a static takes one or the other. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"If an effect would put one or more counters on a permanent you"
+            " control, it puts twice that many…\" (Doubling Season) is a"
+            " `replace_counters` static with `counter_multiplier: 2`,"
+            " `affects: {controller: you}` and `effects_only: true` -- \"an"
+            " effect\" excludes a cost, so a planeswalker's +1 still puts one"
+            " loyalty counter. Without \"an effect\" in the sentence (Hardened"
+            " Scales' \"would be put\") leave `effects_only` out: costs count.",
+            "\"If you would put one or more counters on a permanent or player,"
+            " put twice that many…\" (Innkeeper's Talent, Vorinclex) is"
+            " `replace_counters` with `counter_multiplier: 2`, `put_by: \"you\"`"
+            " and `affects_player: \"any\"`, and no `affects` -- keyed on who"
+            " puts the counters, any permanent, and players (poison).",
+            "\"…with counters on them\" / \"…with a counter on it\" is the"
+            " filter key `has_counters: true` (any kind of counter), valid in a"
+            " static's `affects` and in an effect selector.",
+            "\"Distribute N +1/+1 counters among up to N target creatures\" on an"
+            " ACTIVATED ability (a planeswalker's loyalty line) is"
+            " `distribute_counters` with `counter`, a printed `amount` and"
+            " `objects: {\"target\": \"t1\"}`, the target spec `count: N,"
+            " up_to: true`; the division is asked on activation. Not available"
+            " on spells or triggered abilities.",
             "\"…tapped and attacking that player or a planeswalker they control\""
             " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
             " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"
@@ -930,13 +984,19 @@ def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> lis
     Worked examples beat prose: the fastest way to show how a trigger is written
     is a card that already has one. Chosen by shared type and by whether they
     carry the kind of ability this card is going to need.
+
+    The registry should be the whole pool, machine-authored cards included:
+    every one of them passed the same six gates, and some shapes exist *only*
+    there. No hand-written card is a planeswalker, so a packet drawn from the
+    hand-written files alone showed a planeswalker three creatures and never
+    the signed `cost.loyalty` its every ability is written with.
     """
     from ..schema import CardModel
 
     wanted_types = set(card.type_line.replace("—", " ").split())
     scored: list[tuple[int, dict]] = []
     for existing in registry:
-        if existing.is_token or not existing.oracle_text:
+        if existing.is_token or not existing.oracle_text or existing.name == card.name:
             continue
         score = len(wanted_types & set(existing.types))
         if any(a.is_triggered for a in existing.abilities) and "When" in card.oracle_text:
@@ -960,8 +1020,29 @@ def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> lis
     return [payload for _, payload in scored[:limit]]
 
 
+@lru_cache(maxsize=1)
+def _authored_json() -> dict[str, dict]:
+    """Every authored card as it was written, keyed by id.
+
+    A compiled `Ability` does not keep the JSON it came from, so a worked
+    example rebuilt from the registry would show a card's name and types and
+    none of its abilities -- which are the whole point of showing it.
+    """
+    out: dict[str, dict] = {}
+    for path in authored_card_paths():
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        for entry in raw["cards"] if isinstance(raw, dict) else raw:
+            if isinstance(entry, dict) and "id" in entry:
+                out[entry["id"]] = entry
+    return out
+
+
 def _as_payload(card) -> dict:
-    """A compiled card back into the JSON shape a packet shows."""
+    """A compiled card back into the JSON shape a packet shows: the card as it
+    was authored when its file can be found, else the characteristics alone."""
+    authored = _authored_json().get(card.id)
+    if authored is not None:
+        return {k: v for k, v in authored.items() if not k.startswith("_")}
     return {
         "id": card.id,
         "name": card.name,

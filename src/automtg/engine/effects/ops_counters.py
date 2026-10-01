@@ -44,6 +44,63 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
 
 
+@register("distribute_counters")
+def op_distribute_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Distribute three +1/+1 counters among up to three target creatures."
+    -- Ajani, Sleeper Agent.
+
+    The division was announced as the ability was activated (601.2d, 602.2b)
+    and travels on the stack item as ``bindings["distribution"]``: one
+    ``[oid, n]`` pair per declared target, each ``n`` at least one --
+    `game.Game._ask_distribution` asked it. Here each target that is still
+    legal gets its share; a target that became illegal takes its share with it
+    (608.2b), and the rest are **not** redistributed -- asking again now would
+    let the split follow whatever happened in response, a strictly better card.
+    """
+    kind = str(spec.get("counter", "+1/+1"))
+    target_id = str((spec.get("objects") or {}).get("target"))
+    legal = set(ctx.target_oids(target_id))
+    division = (ctx.bindings.get("distribution") or {}).get(target_id)
+    if division is None:
+        # The loader keeps this op to activated abilities, whose activation
+        # always announces the division; with no announcement there is no
+        # division to honour, and inventing one would be a different card.
+        raise DslError(
+            f"distribute_counters for {target_id!r} resolved without an announced division"
+        )
+    for oid, share in division:
+        if int(oid) in legal and int(share) > 0:
+            add_counters(ctx.state, int(oid), kind, int(share), source=ctx.source_oid)
+    yield from ()
+
+
+@register("double_counters")
+def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Double the number of each kind of counter on any number of target
+    permanents." -- Deepglow Skate.
+
+    122.1 lets a permanent carry any number of kinds, and the card names none,
+    so the kinds are read off each permanent at resolution: for every kind
+    already there, put that many more on. That is a *placement* -- Deepglow's
+    ruling says so, and it is why this goes through `add_counters` rather than
+    writing the dict: a Doubling Season sees an effect putting N counters and
+    doubles that, so 2 becomes 6, and "whenever a counter is put on" triggers.
+
+    Snapshotted per permanent before any placement, so a replacement that adds
+    a kind (none printed yet) cannot be doubled in the same pass, and a kind
+    with zero counters is nothing to double. Not `proliferate`, which adds one
+    of each kind, and not `move_counters`, which takes from somewhere else.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Double the counters on")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        for kind, amount in list(obj.counters.items()):
+            if amount > 0:
+                add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+
+
 @register("remove_counters")
 def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
@@ -249,6 +306,44 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     ]
     if name := spec.get("as"):
         ctx.bindings[str(name)] = taken
+
+
+@register("exchange_control")
+def op_exchange_control(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exchange control of target artifact or creature you control and target
+    creature an opponent controls with power 3 or less." Oko, Thief of Crowns.
+
+    701.12a: each permanent's controller gains control of the other one, and it
+    lasts indefinitely. Two `gain_control` ops cannot say it. The second one
+    would need "the player who controlled the first target" as its player, and
+    no player spec names that. It would also run alone when the other target had
+    gone, and 701.12b forbids that: "if the entire exchange can't be completed,
+    no part of the exchange occurs." So this is one op over two selectors,
+    ``first`` and ``second``.
+
+    Nothing happens unless each selector comes to exactly one permanent still on
+    the battlefield, and the two are under different controllers. Targets that
+    became illegal were already dropped on resolution (608.2b), so a missing
+    target is an empty pool here. Two permanents under one controller are 701.12b
+    too, because the exchange would change nothing.
+
+    Both control changes go through `change_control`, so each permanent is
+    summoning sick for its new controller (302.6), leaves combat (506.4) and
+    announces itself.
+    """
+    firsts = yield from choose_objects(ctx, spec.get("first"), "Exchange control of")
+    seconds = yield from choose_objects(ctx, spec.get("second"), "Exchange control with")
+    if len(firsts) != 1 or len(seconds) != 1 or firsts[0] == seconds[0]:
+        return
+    a = ctx.state.objects.get(firsts[0])
+    b = ctx.state.objects.get(seconds[0])
+    if a is None or b is None or not a.on_battlefield or not b.on_battlefield:
+        return
+    if a.controller == b.controller:
+        return
+    a_controller, b_controller = a.controller, b.controller
+    change_control(ctx.state, a.oid, b_controller, source=ctx.source_oid)
+    change_control(ctx.state, b.oid, a_controller, source=ctx.source_oid)
 
 
 @register("choose_permanents")
@@ -512,7 +607,7 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     got here -- so nothing gained a prompt.
     """
     from ..effects.ops_stack import put_copy_on_stack
-    from ..player_statics import player_cant_cast_spells
+    from ..player_statics import player_cant_cast_while_resolving
     from ..structs import StackItem
     from .context import ask_yes_no
     from .selectors import resolve_pool
@@ -522,7 +617,7 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     else:
         oids = [ctx.source_oid] if ctx.source_oid is not None else []
     optional = bool(spec.get("optional"))
-    if player_cant_cast_spells(ctx.state, ctx.controller):
+    if player_cant_cast_while_resolving(ctx.state, ctx.controller):
         # 707.12: casting a copy of a card *is* casting a spell, even though
         # this engine builds it as a copy -- so Voice of Victory stops it, where
         # `copy_spell` (a copy that was never cast, 707.10) is untouched.
@@ -532,6 +627,10 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None:
             continue
         name = ctx.state.card_of(obj).name
+        if player_cant_cast_while_resolving(ctx.state, ctx.controller, ctx.state.card_of(obj)):
+            # A filtered lock (Narset Transcendent's emblem) stops this copy
+            # alone; the total one was answered above.
+            continue
         if optional and not (
             yield from ask_yes_no(
                 ctx,

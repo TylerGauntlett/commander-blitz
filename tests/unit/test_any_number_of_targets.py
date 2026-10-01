@@ -111,6 +111,27 @@ class TestTheOrder:
         assert len(casts(game)[-1].targets) == 0
 
 
+class TestABigBoardIsNotEnumerated:
+    """Deepglow Skate: "…on any number of target permanents" -- any controller.
+
+    Every subset of a forty-creature board is 2**40 of them, and the list was
+    built in full before being cut to the option limit, so the authoring
+    verifier hung on the card. Subsets are now generated lazily and stopped at
+    the limit; the order guarantees above must survive that.
+    """
+
+    def test_forty_creatures_cap_at_the_option_limit(self, builder):
+        from automtg.engine.targeting import MAX_TARGET_OPTIONS
+
+        offered = casts(board(builder, 40))
+        assert 0 < len(offered) <= MAX_TARGET_OPTIONS
+
+    def test_the_whole_board_still_comes_first_and_none_last(self, builder):
+        offered = casts(board(builder, 40))
+        assert len(offered[0].targets) == 40
+        assert offered[-1].targets == ()
+
+
 class TestItActuallyResolves:
     def test_all_three_go_back_to_hand(self, builder):
         game = board(builder, 3)

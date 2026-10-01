@@ -59,6 +59,14 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `EventType.COMBAT_DAMAGE_TO_PLANESWALKER` for why widening would quietly
     #: improve every saboteur in the pool.
     "deals_combat_damage_to_planeswalker": EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
+    #: "Whenever this creature deals combat damage, …" -- to a player, a
+    #: planeswalker, a battle **or a creature**, once per combat damage step
+    #: however many it hit. Tamiyo, Field Researcher's "whenever either of
+    #: those creatures deals combat damage". The two rows above are each one
+    #: kind of recipient and would miss a blocked creature; `dealt_damage` is
+    #: the victim's event and fires per recipient, so a trampler would pay
+    #: twice. See `EventType.CREATURE_DEALT_COMBAT_DAMAGE`.
+    "deals_combat_damage": EventType.CREATURE_DEALT_COMBAT_DAMAGE,
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
@@ -331,6 +339,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # `source: "self"` means "whenever *this* creature connects" rather
         # than "whenever anything connects with this planeswalker".
         "deals_combat_damage_to_planeswalker",
+        # The dealer, through the `event.source` fallthrough: the event has no
+        # `oid`, since what it hit may be several things or nothing with an oid.
+        "deals_combat_damage",
         "counter_placed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the
@@ -392,6 +403,14 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "chapter",
     }
 )
+
+#: DSL trigger name -> the event key naming the permanent the damage landed on,
+#: for a delayed trigger's ``recipient`` scope ("whenever a creature deals combat
+#: damage **to Vraska**"). Only events whose recipient is a permanent distinct
+#: from their subject: on `dealt_damage` the victim already *is* the subject.
+RECIPIENT_KEYS: dict[str, str] = {
+    "deals_combat_damage_to_planeswalker": "planeswalker",
+}
 
 #: DSL trigger name -> which half of a two-shaped damage event it is about.
 #:
@@ -586,13 +605,20 @@ def _delayed_matches(
         return False
 
     subject = _subject_oid(spec.event, event)
-    if delayed.subject_oid is not None and subject != delayed.subject_oid:
+    if delayed.subject_oids is not None and subject not in delayed.subject_oids:
         # "Whenever **that creature**…". The scope is the whole difference
         # between Hunter's Insight and a card that draws off every creature you
         # control, and it is compared against the event's *subject* -- which for
         # a damage event is the dealer, the same object `source: "self"` means
         # on an ordinary trigger.
         return False
+    if delayed.recipient_oids is not None:
+        # "…deals combat damage **to Vraska**". The permanent on the receiving
+        # end, read off the key its event carries it under.
+        key = RECIPIENT_KEYS.get(spec.event)
+        hit = event.data.get(key) if key is not None else None
+        if hit is None or int(hit) not in delayed.recipient_oids:
+            return False
     actor = _actor(state, spec.event, event, subject)
     if actor is not None:
         if spec.controller == "you" and actor != delayed.controller:
@@ -951,6 +977,12 @@ def _matches(
     # and it has to be checked here rather than as a condition, because by the
     # time the ability resolves the cause is no longer anywhere to be read.
     if spec.not_cause is not None and event.data.get("cause") == spec.not_cause:
+        return False
+
+    # "When this creature dies **or is put into exile**" -- where it went. An
+    # emission without a `to_zone` fails the clause rather than passing it,
+    # for the `mana_ability` check's reason: wider is the dangerous direction.
+    if spec.to_zones is not None and event.data.get("to_zone") not in spec.to_zones:
         return False
 
     # "When **a spell or ability an opponent controls** causes you to discard
@@ -1632,6 +1664,10 @@ def matches_card_filter(
     # Only meaningful on an arrival; a `dies` filter writing it reads a
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+        return False
+    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
+        filt["has_counters"]
+    ):
         return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

@@ -1,0 +1,25 @@
+{
+  "_comment": "Cards that exist only for the typed-picks test (tests/unit/test_look_at_top_typed_picks.py). `t_depths_dig` is Kiora, Master of the Depths' -2 as a sorcery.",
+  "cards": [
+    {
+      "id": "t_depths_dig",
+      "name": "Test Depths Dig",
+      "oracle_text": "Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "amount": 4,
+          "destinations": [
+            {"to": "hand", "count": 1, "up_to": true, "selector": {"types": ["Creature"]}},
+            {"to": "hand", "count": 1, "up_to": true, "selector": {"types": ["Land"]}}
+          ],
+          "rest_to": "graveyard"
+        }
+      ]
+    }
+  ]
+}

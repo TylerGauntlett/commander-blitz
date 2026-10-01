@@ -1,0 +1,42 @@
+{
+  "_comment": "Shapes for tests/unit/test_spell_cost_increase_mana.py. t_mana_toll_mentor is Kasmina, Enigmatic Mentor's static on an enchantment: spells your opponents cast that target a creature or planeswalker you control cost {2} more. t_mana_toll_all taxes every spell an opponent casts by {1}, so the two can be seen to stack.",
+  "cards": [
+    {
+      "id": "t_mana_toll_mentor",
+      "name": "Test Mana Toll Mentor",
+      "oracle_text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.",
+      "mana_cost": "{3}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast that target a creature or planeswalker you control cost {2} more to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {"controller": "opponent"},
+          "targeting": {"controller": "you", "any_types": ["Creature", "Planeswalker"]},
+          "cost": {"mana": "{2}"}
+        }
+      ]
+    },
+    {
+      "id": "t_mana_toll_all",
+      "name": "Test Mana Toll Everything",
+      "oracle_text": "Spells your opponents cast cost {1} more to cast.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells your opponents cast cost {1} more to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {"controller": "opponent"},
+          "cost": {"mana": "{1}"}
+        }
+      ]
+    }
+  ]
+}

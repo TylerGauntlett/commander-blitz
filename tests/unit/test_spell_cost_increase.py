@@ -35,11 +35,12 @@ resolves.
 fire on a countered spell, and losing 3 life *after the fact* is something the
 caster cannot decline by simply not casting.
 
-The resource is the last design point. Life, and the loader refuses anything
-else: mana would have to reach the payment solver, where a surcharge changes
-which lands tap and which tuples are affordable, and every one of those seams is
-a place the offer and the charge could disagree. Life is checked beside the mana
-and touches none of it.
+The resource is the last design point. Life is checked beside the mana and
+touches none of the payment solver. Generic mana (Kasmina, Enigmatic Mentor) is
+the other currency the static takes. It is netted into `costs.cost_reduction` as
+a negative discount, so it reaches the solver through the one number the offer
+and the charge already share; `test_spell_cost_increase_mana.py` covers it. Both
+at once, coloured mana, or anything else is still a load error.
 """
 
 from __future__ import annotations
@@ -330,15 +331,16 @@ class TestTheLoader:
         with pytest.raises(DslError, match="1 or more"):
             compile_card(CardModel.model_validate(probe(cost={})))
 
-    def test_mana_is_refused(self):
-        """It would have to reach the payment solver, where the offer and the
-        charge have four more chances to disagree. No printed card asks for it."""
-        with pytest.raises(DslError, match="paid in life only"):
-            compile_card(CardModel.model_validate(probe(cost={"mana": "{1}"})))
+    def test_coloured_mana_is_refused(self):
+        """Generic mana is Kasmina's and is `test_spell_cost_increase_mana.py`'s.
+        A coloured surcharge would become a generic one in the discount
+        arithmetic, so it is refused rather than read loosely."""
+        with pytest.raises(DslError, match="generic"):
+            compile_card(CardModel.model_validate(probe(cost={"mana": "{R}"})))
 
     def test_a_sacrifice_is_refused(self):
         """`attack_tax`'s reason: it would ask a question inside the cast."""
-        with pytest.raises(DslError, match="paid in life only"):
+        with pytest.raises(DslError, match="paid in life or in generic mana"):
             compile_card(
                 CardModel.model_validate(
                     probe(cost={"pay_life": 3, "sacrifice": {"types": ["Creature"]}})

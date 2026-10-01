@@ -1,0 +1,22 @@
+{
+  "_comment": "Cards that exist only for the sorcery-timing lock test (tests/unit/test_cast_only_at_sorcery_speed.py). `t_sorcery_timer` is Teferi, Time Raveler's static alone: \"Each opponent can cast spells only any time they could cast a sorcery.\"",
+  "cards": [
+    {
+      "id": "t_sorcery_timer",
+      "name": "Test Sorcery Timer",
+      "oracle_text": "Each opponent can cast spells only any time they could cast a sorcery.",
+      "mana_cost": "{1}{W}{U}",
+      "types": ["Enchantment"],
+      "colors": ["W", "U"],
+      "color_identity": ["W", "U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each opponent can cast spells only any time they could cast a sorcery.",
+          "effect": "cast_only_at_sorcery_speed",
+          "affects_player": "opponent"
+        }
+      ]
+    }
+  ]
+}

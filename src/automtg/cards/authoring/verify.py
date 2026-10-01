@@ -1202,6 +1202,13 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.uncounterable and "can't be countered" in stripped.lower():
         return True
 
+    # "Teferi, Temporal Archmage can be your commander." is the other
+    # deck-construction sentence (903.3), read by `validate_deck` through
+    # `CardDef.can_be_commander` -- strict the same way the "any number" line
+    # below is: claimed only when the sentence names this card.
+    if card.can_be_commander and stripped.lower().endswith("can be your commander"):
+        return True
+
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
     # ordinary `if`, so no ability carries this line either.
     if card.kicker is not None and stripped.lower().startswith("kicker "):
