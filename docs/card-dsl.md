@@ -14184,6 +14184,26 @@ Two guards, and the second is the one that moved:
   is exempt: Force of Will's line is unconditional and printed, and what it takes
   instead of mana is the reason it is a fair card.
 
+**On a permanent** the node is unchanged — Sephara, Sky's Blade:
+
+```jsonc
+// "You may pay {W} and tap four untapped creatures you control with flying
+//  rather than pay this spell's mana cost."
+"alternative_cost": { "mana": "{W}",
+  "tap_permanents": { "types": ["Creature"], "keywords": ["flying"], "count": 4 } }
+```
+
+`tap_permanents` is read off the battlefield, so the spell (in hand while 601.2h
+pays) never taps itself, and summoning-sick fliers pay — 302.6 restricts a
+creature's own `{T}`, not a cost that taps other permanents. The printed line is
+claimed at gate 3 by **the field**, the way bestow's is: instants never needed a
+claimant because `spell_effects` claims every line of a spell, and a creature has
+none. The claimant is strict — the printed mana must parse to `mana`, "tap N
+untapped <noun> you control with <keyword>" must be the `tap_permanents` count,
+types and keywords, "pay N life" the `pay_life`, and sacrifice / return / exile
+from hand / discard must be printed exactly when declared. Any other field on the
+node fails closed. A card declaring `{U}` cannot claim a printed `{W}`.
+
 `mana_reduction` is refused here. "Costs {X} less to cast **this way**" is
 `graveyard_cost`'s rider and only `costs.variant_reduction` reads it, off the
 flashback branch alone — written here it would load clean and never apply.

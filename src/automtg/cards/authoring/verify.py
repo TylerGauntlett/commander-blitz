@@ -35,7 +35,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from automtg.engine.actions import PendingDecision
-from automtg.engine.carddef import CardDef
+from automtg.engine.carddef import CardDef, Cost
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import AutoMtgError, DslError
 from automtg.engine.game import Game
@@ -1152,6 +1152,137 @@ _STRIVE_LINE = re.compile(
 )
 
 
+#: The two printed shapes of a card-level alternative cost (118.9), read off the
+#: self-reference-folded, lower-cased line: "[If <condition>, ]you may <payment>
+#: rather than pay this spell's mana cost" and "[If <condition>, ]you may cast
+#: this spell without paying its mana cost". Anchored at both ends, so a
+#: sentence that merely *mentions* a free cast -- "you may cast a card exiled
+#: with ~ without paying its mana cost" -- is not read as the card's own price.
+_ALTERNATIVE_COST_LINE = re.compile(
+    r"^(?:if [^,]+, )?you may (?P<payment>.+?) rather than pay (?:~'s|its) mana cost$",
+    re.IGNORECASE,
+)
+_FREE_CAST_LINE = re.compile(
+    r"^(?:if [^,]+, )?you may cast ~ without paying (?:its|~'s) mana cost$",
+    re.IGNORECASE,
+)
+#: "tap four untapped creatures you control with flying" -- `tap_permanents`.
+_TAP_PAYMENT = re.compile(
+    r"\btap (?P<count>\w+) untapped (?P<noun>.+?) you control"
+    r"(?: with (?P<keywords>.+?))?(?= and |$)"
+)
+_PAY_LIFE = re.compile(r"\bpay (\d+) life\b")
+_NUMBER_WORDS = {
+    "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+    "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+}  # fmt: skip
+#: The `alternative_cost` fields the claimant below reads off the printed line.
+#: Any *other* field set on the node is a payment the claimant cannot see, so
+#: it fails closed rather than wave it through.
+_READ_ALTERNATIVE_FIELDS = frozenset(
+    {
+        "mana",
+        "tap_permanents",
+        "pay_life",
+        "sacrifice",
+        "return_to_hand",
+        "exile_from_hand",
+        "discard",
+        "discard_selector",
+    }
+)
+#: Selector keys a printed "tap N untapped <noun> you control with <keyword>"
+#: can state. A selector narrowed any other way prints words this does not read.
+_READ_TAP_KEYS = frozenset({"types", "subtypes", "any_types", "keywords", "controller", "count"})
+
+
+def _declares_printed_tap(payment: str, declared: Any) -> bool:
+    """Whether "tap N untapped <noun> you control[ with <keywords>]" is the pool.
+
+    Both directions, because either mismatch is a different card: a declared
+    pool the line does not print is a dearer card, and a printed narrowing the
+    pool does not carry -- "with flying" over a bare `Creature` selector -- is a
+    cheaper one.
+    """
+    match = _TAP_PAYMENT.search(payment)
+    if match is None or declared is None:
+        return match is None and declared is None
+    spec = dict(declared)
+    if set(spec) - _READ_TAP_KEYS or spec.get("controller", "you") != "you":
+        return False
+    if _NUMBER_WORDS.get(match.group("count"), -1) != int(spec.get("count", 1) or 1):
+        return False
+    wanted = {
+        str(word).lower()
+        for key in ("types", "subtypes", "any_types")
+        for word in spec.get(key) or ()
+    }
+    filler = {"and/or", "and", "or", "other"}
+    printed = {
+        word[:-1] if word.endswith("s") else word
+        for word in re.split(r"[\s,]+", match.group("noun"))
+        if word and word not in filler
+    }
+    if printed != wanted:
+        return False
+    keywords = match.group("keywords")
+    printed_keywords = (
+        {word for word in re.split(r",\s*|\s+and\s+|\s+or\s+", keywords) if word}
+        if keywords
+        else set()
+    )
+    return printed_keywords == {str(k).lower() for k in spec.get("keywords") or ()}
+
+
+def _declares_printed_alternative_cost(line: str, card: CardDef) -> bool:
+    """Whether this printed line is the card's own ``alternative_cost``, exactly.
+
+    ``line`` is self-reference-folded, with its trailing period stripped. The mana symbols printed
+    in the payment must be the declared ``mana`` (none printed means none
+    charged), the "tap N untapped …" clause must be the declared
+    ``tap_permanents``, and "pay N life" the declared ``pay_life``. The other
+    payments it can name -- sacrifice, return, exile from hand, discard -- must
+    appear on the line exactly when they are declared. A field this does not
+    read fails closed.
+    """
+    cost = card.alternative_cost
+    if cost is None:
+        return False
+    default = Cost()
+    for name in Cost.__dataclass_fields__:
+        if name not in _READ_ALTERNATIVE_FIELDS and getattr(cost, name) != getattr(
+            default, name
+        ):
+            return False
+    if _FREE_CAST_LINE.match(line):
+        # "…cast this spell without paying its mana cost": nothing is paid.
+        return cost.mana.is_free() and cost.charges_nothing()
+    match = _ALTERNATIVE_COST_LINE.match(line)
+    if match is None:
+        return False
+    symbols = re.findall(r"\{[^}]+\}", match.group("payment"))
+    payment = match.group("payment").lower()
+    if symbols:
+        if not _declares_printed_cost("".join(symbols), cost.mana):
+            return False
+    elif not cost.mana.is_free():
+        return False
+    if not _declares_printed_tap(payment, cost.tap_permanents):
+        return False
+    life = _PAY_LIFE.search(payment)
+    if not isinstance(cost.pay_life, int):
+        return False
+    if (int(life.group(1)) if life else 0) != cost.pay_life:
+        return False
+    verbs = (
+        (r"\bsacrifice\b", cost.sacrifice is not None),
+        (r"\breturn\b", cost.return_to_hand is not None),
+        (r"\bexile\b.*\bfrom your hand\b", cost.exile_from_hand is not None),
+        (r"\bdiscard\b", bool(cost.discard)),
+    )
+    return all((re.search(verb, payment) is not None) == declared for verb, declared in verbs)
+
+
 def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     """Whether the mana symbols printed after a keyword are the ones charged.
 
@@ -1358,6 +1489,28 @@ def _covered(card: CardDef, line: str) -> bool:
     # at all, and its printed cost went unclaimed.
     if card.additional_cost is not None and stripped.lower().startswith(
         "as an additional cost"
+    ):
+        return True
+
+    # "You may pay {W} and tap four untapped creatures you control with flying
+    # rather than pay this spell's mana cost." -- Sephara, Sky's Blade. The
+    # card-level `alternative_cost` (118.9), offered by `casting` beside the
+    # printed cost and charged by `game._cast`, and the claimant this list had
+    # never needed: every card shipped with one was an instant, whose lines
+    # `spell_effects` claims wholesale. A permanent has no `spell_effects`, and
+    # no AbilityModel can honestly carry a cost -- one is activated, triggered
+    # or static, and this is none of the three.
+    #
+    # Strict like bestow's and multikicker's claimants, and for their reason:
+    # the line *is* the price. The printed mana must be the declared `mana`,
+    # the printed "tap N untapped <noun> with <keyword>" the declared
+    # `tap_permanents`, and the printed life the declared `pay_life`, so a card
+    # declaring `{U}` cannot claim a printed `{W}` and one tapping three cannot
+    # claim "tap four". Not an early `return False` on a mismatch: a sentence
+    # that is not this card's price falls through to the ability claimants
+    # below like any other line.
+    if card.alternative_cost is not None and _declares_printed_alternative_cost(
+        folded_line, card
     ):
         return True
 

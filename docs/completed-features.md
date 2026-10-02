@@ -19223,3 +19223,30 @@ lifting when it leaves, and the loader's refusals.
   putter, once-each-turn, printed enters-with, Doubling Season's replaced amount,
   starting loyalty with Oath of Gideon, the Saga single chapter, and the near
   misses (no counters, a non-Angel under Giada, an opponent's arrival).
+
+## `alternative_cost` on a permanent — Sephara, Sky's Blade's "{W} and tap four untapped creatures you control with flying" — 118.9 / 601.2h / 302.6
+
+The engine already cast it: `alternative_cost` is a full `Cost`, `tap_permanents` is
+Captivating Vampire's cost, `casting` offers the line beside the printed one and
+`game._cast` charges it. The pool is read off the battlefield, so the spell in hand
+never taps itself, and summoning-sick fliers pay (302.6 restricts only a creature's own
+{T}/{Q}). The heuristic agent takes the line when the printed cost is out of reach.
+
+What was missing was the residual-gate claimant: the seven shipped users are instants,
+whose lines `spell_effects` claims wholesale. `verify._covered` now claims "[If …, ]you
+may <payment> rather than pay this spell's mana cost" and "[If …, ]you may cast this
+spell without paying its mana cost" only when the card declares `alternative_cost` and
+the printed payment matches it — mana symbols parse to `mana` (none printed means
+free), "tap N untapped <noun> you control with <keyword>" is the `tap_permanents`
+count/types/keywords, "pay N life" is `pay_life`, sacrifice/return/exile-from-hand/
+discard are printed exactly when declared, and any other field fails closed. A mismatch
+falls through to the ordinary ability claimants rather than claiming.
+
+- `tests/unit/test_alternative_cost_permanent.py` (+
+  `tests/data/alternative_cost_permanent.cards.json`) — offered with four fliers and a
+  Plains, not with three (the spell is not one of them), not with tapped fliers or
+  non-fliers or without the {W}; sick fliers pay; it taps exactly four and one Plains;
+  five fliers is a choice; the agent takes it; the claimant claims the right line,
+  refuses wrong colour / amount / count / narrowing / type / missing tap / unread field,
+  ignores a mere mention of a free cast, and reads all seven shipped instants' lines.
+- Unblocks Sephara, Sky's Blade.
