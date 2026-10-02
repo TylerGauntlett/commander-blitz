@@ -1203,9 +1203,25 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: alternative they look like, since a static carries no `effects` and so it
 #: would be two abilities claiming one printed line, which the residual gate
 #: exists to refuse. Same spelling and shape as the effect-side `times`.
+#: `starting_life_of` and `sum` arrived together, for Righteous Valkyrie: "as
+#: long as you have at least 7 life more than your starting life total" is
+#: ``life >= starting + 7``, a comparison against a *sum*, and every printed
+#: threshold on a starting life total has that shape. A starting life total is
+#: written once when the seat is created, so it is a pipeline input on stronger
+#: terms than a life total; `sum` adds leaves that are all inputs, so it is safe
+#: for the reason `times` is.
 STATIC_VALUE_KEYS = (
     frozenset(
-        {"const", "count", "times", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+        {
+            "const",
+            "count",
+            "times",
+            "sum",
+            "mana_symbols",
+            "counters_on",
+            "permanents_entered_this_turn",
+            "starting_life_of",
+        }
     )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS

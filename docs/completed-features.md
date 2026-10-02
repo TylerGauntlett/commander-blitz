@@ -19110,3 +19110,16 @@ handing over a `spell_cast` trigger with `max_per_turn: 1`. Test:
 `tests/unit/test_shares_creature_type_with_source.py` (the commander's types not
 Folk Hero's, per-commander partners, once each turn, an opponent's commander gets
 nothing, a stolen commander you own keeps it for its thief, Folk Hero leaving).
+
+## `starting_life_of` — "at least 7 life more than your starting life total" — 103.4
+
+Righteous Valkyrie and Angel of Destiny measure from a seat's starting life total, and
+the engine had only the module constant `STARTING_LIFE`, so either card could only be
+written with a `const` 47 or 55 — a 40-life assumption baked into the card.
+`PlayerState.starting_life` now records the number per seat when the game is created,
+and `{"starting_life_of": "you"}` reads it in the effect value language and in a
+static's condition (one seat only: the plural specs are refused at load, and a static
+accepts `"you"`). The static value language gained `sum`, because the printed threshold
+is an offset (`life >= starting + 7`). The life total it is compared against refreshes
+the static as it moves through `primitives._move_life`, so the anthem switches the
+moment the total crosses the line. Test: `tests/unit/test_starting_life_total.py`.

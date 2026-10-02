@@ -17,6 +17,7 @@ forms::
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
+    {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
     {"sum": [a, b, ...]}              arithmetic
@@ -62,6 +63,17 @@ VALUE_KEYS = frozenset(
         # has…"), `max_life_of` the universal ("each opponent has…").
         "min_life_of",
         "max_life_of",
+        # "…if you have at least 15 life more than **your starting life
+        # total**" -- Angel of Destiny; Righteous Valkyrie asks the same of 7.
+        # Rule 103.4: the number the seat began the game with, recorded on
+        # `PlayerState.starting_life`. A `const` 40 is the near miss, and it is
+        # a format assumption written into a card -- the printed sentence is
+        # relative, and it means 27 in a game that started at 20.
+        #
+        # One seat only: a starting life total is a fact about one player, and
+        # summed over a table it measures nothing a card prints. The plural
+        # specs are refused at load (`validate_value`).
+        "starting_life_of",
         "cards_in_hand",
         # "…for each card you've drawn this turn."  A tally of an event, not a
         # count of objects, and the two stop agreeing the moment anything is
@@ -392,6 +404,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_of" in expr:
         pids = _players(ctx, expr["life_of"])
         return sum(ctx.state.players[p].life for p in pids)
+    if "starting_life_of" in expr:
+        # At most one seat, by the load-time check; nobody (a target that has
+        # left the game) reads 0, the same answer `life_of` gives.
+        pids = _players(ctx, expr["starting_life_of"])
+        return sum(ctx.state.players[p].starting_life for p in pids)
     if "commander_color_identity" in expr:
         # "Pay life equal to the number of colors in your commanders' color
         # identity." War Room. The union across a player's commanders, so
@@ -1090,6 +1107,25 @@ def validate_half(spec: Any, where: str) -> None:
     validate_value(spec["of"], f"{where}.of")
 
 
+#: The player specs that can name more than one seat. A starting life total is
+#: one player's (103.4), so ``starting_life_of`` refuses these: summed over the
+#: table it is 160 at a pod and 80 in a duel, which no printed sentence means.
+#: The same four words `loader.vocabulary.PLURAL_PLAYER_SPEC_NAMES` lists; the
+#: engine cannot import the loader, so the set is spelled here as well.
+PLURAL_PLAYER_SPECS = frozenset({"opponent", "each_opponent", "each_player", "all"})
+
+
+def validate_starting_life_of(who: Any, where: str) -> None:
+    """``starting_life_of`` names exactly one seat, never a set of them."""
+    if isinstance(who, str) and who in PLURAL_PLAYER_SPECS:
+        raise DslError(
+            f"{where}: {who!r} can name several players, and a starting life total "
+            f"is one player's (rule 103.4) -- name one seat ('you', a target, a binding)"
+        )
+    if who is None or isinstance(who, bool):
+        raise DslError(f"{where}: needs a player spec, e.g. 'you'")
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -1111,6 +1147,8 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    if "starting_life_of" in expr:
+        validate_starting_life_of(expr["starting_life_of"], f"{where}.starting_life_of")
     if "count" in expr:
         from .selectors import validate_selector
 

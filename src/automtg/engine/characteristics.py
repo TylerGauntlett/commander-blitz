@@ -1282,6 +1282,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         for factor in expr["times"]:
             result *= _static_value(state, factor, source)
         return result
+    if "sum" in expr:
+        # "At least 7 life more than your starting life total" (Righteous
+        # Valkyrie) -- a threshold offset from a measured number. The effect-side
+        # `sum`, with every term held to this language by the loader.
+        return sum(_static_value(state, term, source) for term in expr["sum"])
+    if "starting_life_of" in expr:
+        # Rule 103.4, recorded on the seat when the game began. A pipeline
+        # input on the strongest terms there are: nothing writes it after that.
+        pids = _static_players(state, source, expr["starting_life_of"])
+        return sum(state.players[p].starting_life for p in pids)
     if "mana_symbols" in expr:
         # Chroma -- Primalcrux's "power and toughness are each equal to the
         # number of green mana symbols in the mana costs of permanents you

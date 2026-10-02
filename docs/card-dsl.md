@@ -1221,6 +1221,7 @@ Anywhere a number is expected:
 { "life_of": "you" }                            // SUMS over its player spec
 { "min_life_of": "each_opponent" }              // the lowest, one player at a time
 { "max_life_of": "each_opponent" }              // the highest
+{ "starting_life_of": "you" }                   // the life total ONE seat began with (103.4)
 { "max_count_of": { "player": "each_opponent",  // "an opponent controls more
                     "objects": { "zone": "battlefield",   //  lands than you"
                                  "types": ["Land"] } } }
@@ -4335,6 +4336,8 @@ smaller than the effect-side `value_keys`:
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
+| `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
+| `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 
 `permanents_entered_this_turn` is the newest, and the one whose near miss is
 worst. Kinbinding reads "Creatures you control get +X/+X, where X is the number
@@ -4491,7 +4494,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -4592,6 +4595,35 @@ that reading is correct.
 Both work in the `if`-effect language and in a static's `condition`; the two are
 validated separately, so a leaf added to one and not the other would load in a
 card that then quietly read 0.
+
+#### "At least 7 life more than your starting life total"
+
+```jsonc
+// Righteous Valkyrie -- a static's condition
+{ "cmp": ">=", "left": { "min_life_of": "you" },
+  "right": { "sum": [ { "starting_life_of": "you" }, { "const": 7 } ] } }
+
+// Angel of Destiny -- a trigger's intervening-if
+{ "cmp": ">=", "left": { "life_of": "you" },
+  "right": { "sum": [ { "starting_life_of": "you" }, { "const": 15 } ] } }
+```
+
+Rule 103.4: every player begins the game with a starting life total — 40 in
+Commander (903.7). It is recorded on the seat as `PlayerState.starting_life`
+when the game is created and never written again. A `const` 47 is the near miss
+and is a format assumption written into the card: the printed sentence is
+relative, and it means 27 in a game that began at 20.
+
+One seat only. A starting life total is one player's, so the effect side refuses
+the plural specs (`opponent`, `each_opponent`, `each_player`, `all`) at load, and
+a static — whose source has a controller and nothing else to aim at — accepts
+only `"you"`. `sum` joined the static language with it, because every printed
+threshold on a starting life total is an offset from it; its terms are held to
+the static list exactly as `times`' factors are.
+
+A life change bumps the characteristics cache (`primitives._move_life`, which
+`gain_life`, `lose_life` and damage to a player all go through), so a static conditioned on a life total switches on and off the
+moment the life total crosses the line.
 
 #### Counting filters, and the `zone` key
 
