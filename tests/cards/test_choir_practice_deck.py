@@ -1300,3 +1300,363 @@ class TestValkyrieHarbinger:
         settle(game)
 
         assert tokens(game, VIGILANT_ANGEL_TOKEN) == []
+
+
+# ----------------------------------------------------------------------
+# lands, removal and the sweeper
+# ----------------------------------------------------------------------
+
+
+class TestBondersEnclave:
+    """ "{3}, {T}: Draw a card. Activate only if you control a creature with power
+    4 or greater." """
+
+    def board(self, builder, mine=(), theirs=()):
+        game = anchored(builder, ["bonders_enclave", *[PLAINS] * 3, *mine], theirs)
+        return game, only_oid(game, "bonders_enclave")
+
+    def test_with_a_power_four_creature_it_draws(self, builder):
+        game, enclave = self.board(builder, [BIG_ANGEL])
+        before = len(game.state.players[0].hand)
+        (draw,) = activations(game, enclave, 1)
+        game.apply(draw)
+        settle(game)
+
+        assert len(game.state.players[0].hand) == before + 1
+        assert game.state.objects[enclave].tapped
+
+    def test_power_three_is_not_enough(self, builder):
+        """The boundary: a 3/3 Resplendent Angel does not turn it on."""
+        game, enclave = self.board(builder, ["resplendent_angel"])
+
+        assert activations(game, enclave, 1) == []
+
+    def test_an_opponents_big_creature_does_not_count(self, builder):
+        """ "if **you** control"."""
+        game, enclave = self.board(builder, [SMALL_ANGEL], [BIG_ANGEL])
+
+        assert activations(game, enclave, 1) == []
+
+    def test_a_counter_grown_creature_counts(self, builder):
+        """Power, not printed power: a 1/1 with three +1/+1 counters is a 4/4."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["bonders_enclave", *[PLAINS] * 4])
+            .battlefield(0, [SMALL_ANGEL], counters={"+1/+1": 3})
+            .battlefield(1, [PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+
+        assert len(activations(game, only_oid(game, "bonders_enclave"), 1)) == 1
+
+
+class TestEmeriaTheSkyRuin:
+    """ "At the beginning of your upkeep, if you control seven or more Plains, you
+    may return target creature card from your graveyard to the battlefield." """
+
+    def upkeep(self, builder, *, plains: int, their_plains: int = 0):
+        """``plains`` counts every Plains player 0 controls, the anchor's included."""
+        b = (
+            builder(players=2)
+            .battlefield(0, ["emeria_the_sky_ruin", *[PLAINS] * plains])
+            .battlefield(1, [PLAINS] * max(1, their_plains))
+            .graveyard(0, [BIG_ANGEL])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(1)
+            .step(Step.END_STEP)
+        )
+        game = b.build()
+        pass_until(game, lambda g: g.state.active_player == 0 and g.state.step is Step.UPKEEP)
+        for _ in range(50):
+            decision = game.pending()
+            if decision is None or (
+                decision.kind is DecisionKind.PRIORITY
+                and not game.state.stack
+                and not game.state.pending_triggers
+            ):
+                break
+            if decision.kind is DecisionKind.MAY:
+                game.apply(find_action(game, ActionKind.YES))
+            elif decision.kind is DecisionKind.CHOOSE_OBJECTS:
+                choice = next(
+                    (a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE), None
+                )
+                game.apply(choice or find_action(game, ActionKind.FINISH_DECLARATION))
+            else:
+                game.apply(_default_answer(game, decision))
+        return game
+
+    def returned(self, game) -> bool:
+        return any(o.def_id == BIG_ANGEL for o in game.state.battlefield_objects(0))
+
+    def test_seven_plains_returns_a_creature(self, builder):
+        game = self.upkeep(builder, plains=7)
+
+        assert self.returned(game)
+
+    def test_six_plains_is_one_short(self, builder):
+        """Emeria is a land but not a Plains, so it does not count itself."""
+        game = self.upkeep(builder, plains=6)
+
+        assert not self.returned(game)
+
+    def test_the_opponents_plains_do_not_count(self, builder):
+        """ "if **you** control seven or more Plains"."""
+        game = self.upkeep(builder, plains=6, their_plains=10)
+
+        assert not self.returned(game)
+
+    def test_it_enters_tapped(self, builder):
+        game = anchored(builder, [], hand=["emeria_the_sky_ruin"])
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND))
+        settle(game)
+
+        assert game.state.objects[only_oid(game, "emeria_the_sky_ruin")].tapped
+
+
+class TestGraspOfFate:
+    """ "When this enchantment enters, for each opponent, exile up to one target
+    nonland permanent that player controls until this enchantment leaves the
+    battlefield." """
+
+    def cast(self, builder):
+        game = (
+            builder(players=3)
+            .battlefield(0, [*[PLAINS] * 3, SMALL_ANGEL])
+            .battlefield(1, [BEAR, PLAINS])
+            .battlefield(2, ["sol_ring", PLAINS])
+            .hand(0, ["grasp_of_fate", ANCHOR])
+            .hand(1, [ANCHOR])
+            .hand(2, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        cast_only(game, "grasp_of_fate")
+        pass_until(
+            game,
+            lambda g: g.pending() is not None and g.pending().kind is DecisionKind.CHOOSE_OBJECTS,
+        )
+        offered = {
+            game.state.objects[t.id].def_id
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CHOOSE
+            for t in a.targets
+        }
+        pick_everything(game)
+        return game, offered
+
+    def test_only_opponents_nonland_permanents_are_offered(self, builder):
+        """No land, and nothing of yours -- the Segovian Angel is not on the list."""
+        _game, offered = self.cast(builder)
+
+        assert offered == {BEAR, "sol_ring"}
+
+    def test_one_from_each_opponent_is_exiled(self, builder):
+        """ "for **each** opponent" -- a Bear from one seat and a Sol Ring from the other."""
+        game, _offered = self.cast(builder)
+
+        assert game.state.objects[oid_of(game, BEAR)].zone is Zone.EXILE
+        assert game.state.objects[oid_of(game, "sol_ring")].zone is Zone.EXILE
+
+    def test_they_come_back_when_it_leaves(self, builder):
+        """ "**until** this enchantment leaves the battlefield" -- under their owners."""
+        from automtg.engine.zones import destroy
+
+        game, _offered = self.cast(builder)
+        destroy(game.state, only_oid(game, "grasp_of_fate"))
+        game.state.bump_chars()
+        settle(game)
+
+        bear, ring = oid_of(game, BEAR), oid_of(game, "sol_ring")
+        assert game.state.objects[bear].zone is Zone.BATTLEFIELD
+        assert game.state.objects[ring].zone is Zone.BATTLEFIELD
+        assert game.state.objects[bear].controller == 1
+        assert game.state.objects[ring].controller == 2
+
+
+def oid_of(game, def_id: str) -> int:
+    """The one object with this def_id, in whatever zone it is."""
+    (oid,) = [o.oid for o in game.state.objects.values() if o.def_id == def_id]
+    return oid
+
+
+class TestFarewell:
+    """ "Choose one or more -- Exile all artifacts. / Exile all creatures. / Exile
+    all enchantments. / Exile all graveyards." """
+
+    def table(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, [*[PLAINS] * 6, SMALL_ANGEL, "sol_ring", "court_of_grace"])
+            .battlefield(1, [PLAINS, BEAR, "sol_ring", "grasp_of_fate"])
+            .graveyard(0, [BIG_ANGEL])
+            .graveyard(1, [BEAR])
+            .hand(0, ["farewell", ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+
+    def cast_modes(self, game, picks) -> None:
+        cast_only(game, "farewell")
+        for _ in range(200):
+            decision = game.pending()
+            if decision is None:
+                break
+            if decision.kind is DecisionKind.CHOOSE_MODE:
+                for want in picks:
+                    game.apply(
+                        next(
+                            a
+                            for a in game.legal_actions()
+                            if a.kind is ActionKind.CHOOSE and a.choice == want
+                        )
+                    )
+                done = next(
+                    (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION),
+                    None,
+                )
+                if done is not None:
+                    game.apply(done)
+                continue
+            if decision.kind is DecisionKind.PRIORITY and not game.state.stack:
+                break
+            game.apply(_default_answer(game, decision))
+
+    def on_battlefield(self, game, def_id: str) -> int:
+        return sum(1 for o in game.state.battlefield if game.state.objects[o].def_id == def_id)
+
+    def test_all_four_modes_are_offered(self, builder):
+        game = self.table(builder)
+        cast_only(game, "farewell")
+        pass_until(
+            game, lambda g: g.pending() is not None and g.pending().kind is DecisionKind.CHOOSE_MODE
+        )
+
+        assert [o.value for o in game.pending().options] == [0, 1, 2, 3]
+
+    def test_creatures_only_leaves_the_rest(self, builder):
+        """One mode is one mode: artifacts, enchantments and graveyards stay."""
+        game = self.table(builder)
+        self.cast_modes(game, [1])
+
+        assert self.on_battlefield(game, SMALL_ANGEL) == 0
+        assert self.on_battlefield(game, BEAR) == 0
+        assert self.on_battlefield(game, "sol_ring") == 2
+        assert self.on_battlefield(game, "court_of_grace") == 1
+        assert len(game.state.players[1].graveyard) == 1
+
+    def test_the_creatures_are_exiled_not_destroyed(self, builder):
+        """ "**Exile** all creatures" -- not destroy, so nothing lands in a graveyard
+        and indestructible would not save anything."""
+        game = self.table(builder)
+        angel = only_oid(game, SMALL_ANGEL, 0)
+        self.cast_modes(game, [1])
+
+        assert game.state.objects[angel].zone is Zone.EXILE
+
+    def test_two_modes_both_happen(self, builder):
+        """Artifacts and graveyards: both Sol Rings and both yards, and the creatures stay."""
+        game = self.table(builder)
+        self.cast_modes(game, [0, 3])
+
+        assert self.on_battlefield(game, "sol_ring") == 0
+        assert self.on_battlefield(game, SMALL_ANGEL) == 1
+        assert self.on_battlefield(game, "grasp_of_fate") == 1
+        assert game.state.players[1].graveyard == []
+        assert [game.state.objects[o].def_id for o in game.state.players[0].graveyard] == [
+            "farewell"
+        ], "the yards were exiled, then Farewell itself went to the graveyard"
+
+    def test_enchantments_mode_exiles_both_sides(self, builder):
+        game = self.table(builder)
+        self.cast_modes(game, [2])
+
+        assert self.on_battlefield(game, "court_of_grace") == 0
+        assert self.on_battlefield(game, "grasp_of_fate") == 0
+        assert self.on_battlefield(game, SMALL_ANGEL) == 1
+        assert self.on_battlefield(game, PLAINS) == 7, "lands are never touched"
+
+
+# ----------------------------------------------------------------------
+# the commander with the rest of the list
+# ----------------------------------------------------------------------
+
+
+class TestGiadaWithTheDeck:
+    """Giada's own lines have their unit tests (`test_enters_with_counters_per_angel.py`
+    on a stand-in, and the lane's tests on the real card); these are the places
+    the deck leans on her together with another card."""
+
+    def test_an_angel_entering_beside_giada_and_another_angel_gets_two(self, builder):
+        """One counter for each Angel already there: Giada and the Segovian Angel."""
+        game = anchored(builder, [GIADA, SMALL_ANGEL, *[PLAINS] * 4], hand=[BIG_ANGEL])
+        make_commander(game, only_oid(game, GIADA))
+        serra = cast(game, BIG_ANGEL)
+
+        assert plus(game, serra) == 2
+        assert pt(game, serra) == (6, 6)
+
+    def test_a_non_angel_beside_her_gets_none(self, builder):
+        game = anchored(builder, [GIADA, *[PLAINS] * 3], hand=[NOT_AN_ANGEL])
+        magus = cast(game, NOT_AN_ANGEL)
+
+        assert plus(game, magus) == 0
+
+    def test_youthful_valkyrie_sees_the_counters_and_grows_too(self, builder):
+        """Giada's counters go on the arrival, Youthful Valkyrie's on herself."""
+        game = anchored(builder, [GIADA, "youthful_valkyrie"], hand=[SMALL_ANGEL])
+        angel = cast(game, SMALL_ANGEL)
+
+        assert plus(game, angel) == 2, "Giada and the Valkyrie were already there"
+        assert plus(game, only_oid(game, "youthful_valkyrie")) == 1
+
+    def aspirant(self, builder, *, giada: bool, hand):
+        mine = ["starnheim_aspirant", PLAINS, PLAINS] + ([GIADA] if giada else [])
+        return frozen(builder, mine, [PLAINS], hand=hand)
+
+    def test_aspirant_and_giadas_mana_cast_a_five_drop_angel_off_two_plains(self, builder):
+        """Serra Angel is {3}{W}{W}; the Aspirant takes {2}, and Giada's Angel-only
+        {W} plus two Plains pay the {1}{W}{W} that is left."""
+        game = self.aspirant(builder, giada=True, hand=[BIG_ANGEL])
+
+        assert BIG_ANGEL in offers(game, 0, ActionKind.CAST)
+
+    def test_and_it_resolves_with_giadas_counter(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["starnheim_aspirant", PLAINS, PLAINS, GIADA])
+            .battlefield(1, [PLAINS])
+            .hand(0, [BIG_ANGEL])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        serra = cast(game, BIG_ANGEL)
+
+        assert game.state.objects[serra].zone is Zone.BATTLEFIELD
+        assert game.state.objects[only_oid(game, GIADA)].tapped, "Giada's mana was spent"
+        assert plus(game, serra) == 1, "one Angel already there -- the Aspirant is a Human"
+
+    def test_without_giada_two_plains_are_short(self, builder):
+        game = self.aspirant(builder, giada=False, hand=[BIG_ANGEL])
+
+        assert BIG_ANGEL not in offers(game, 0, ActionKind.CAST)
+
+    def test_giadas_mana_does_not_pay_for_a_non_angel(self, builder):
+        """The near miss: three sources and a three-mana non-Angel, still uncastable,
+        because one of the three only pays for Angels. Starnheim Aspirant itself is
+        the {2}{W} non-Angel here."""
+        game = frozen(builder, [PLAINS, PLAINS, GIADA], [PLAINS], hand=["starnheim_aspirant"])
+
+        assert "starnheim_aspirant" not in offers(game, 0, ActionKind.CAST)
+
+    def test_and_three_plains_do_pay_for_it(self, builder):
+        """The control: the same spell, with an unrestricted third source."""
+        game = frozen(builder, [PLAINS, PLAINS, PLAINS], [PLAINS], hand=["starnheim_aspirant"])
+
+        assert "starnheim_aspirant" in offers(game, 0, ActionKind.CAST)
