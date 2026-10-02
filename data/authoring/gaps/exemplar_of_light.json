@@ -1,0 +1,18 @@
+{
+  "card_id": "exemplar_of_light",
+  "name": "Exemplar of Light",
+  "oracle_text": "Flying\nWhenever you gain life, put a +1/+1 counter on this creature.\nWhenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn.",
+  "blocked_sentences": [
+    "Whenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "counter_placed_putter",
+      "kind": "trigger_event",
+      "what": "a `counter_placed` trigger clause that filters on WHO put the counters (\"whenever YOU put one or more +1/+1 counters on this creature\"): the COUNTER_PLACED event must carry the putting player (the `by` that `primitives.add_counters` already computes via `_putter` for replace_counters' `put_by`), and the trigger needs a key such as `put_by: \"you\"` (or `cause_controller` extended to counter_placed) compared against it",
+      "why_existing_wont_do": "`counter_placed` with `counter: \"+1/+1\"`, `source: \"self\"` and `max_per_turn: 1` covers everything except the putter. The event is fired with `player=obj.controller` and no putter field, so the trigger's `controller` clause reads the creature's controller, not who placed the counters -- an opponent's effect putting a +1/+1 counter on this creature (e.g. their targeted counter spell or their proliferate) would wrongly draw you a card. `cause_controller` is refused by the loader on any event but `discard`, and `put_by` exists only on the `replace_counters` static, not on triggers"
+    }
+  ],
+  "closest_existing": ["counter_placed", "replace_counters.put_by", "cause_controller"],
+  "confidence": "high"
+}

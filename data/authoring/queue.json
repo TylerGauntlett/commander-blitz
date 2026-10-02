@@ -62652,12 +62652,12 @@
     },
     "Dazzling Angel": {
       "edhrec_rank": 3116,
-      "gate": "template",
+      "gate": null,
       "name": "Dazzling Angel",
-      "reason": "no template for: Whenever another creature you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "a0bdf4d1-576f-41b6-a077-8725be608331",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dazzling Beauty": {
@@ -82872,12 +82872,12 @@
     },
     "Emeria, the Sky Ruin": {
       "edhrec_rank": 1027,
-      "gate": "template",
+      "gate": null,
       "name": "Emeria, the Sky Ruin",
-      "reason": "no template for: At the beginning of your upkeep, if you control seven or more Plains, you may return targe",
+      "reason": "",
       "scryfall_id": "90f148e6-1a5e-46fc-9557-40c5c0038069",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Emeritus of Abundance // Regrowth": {

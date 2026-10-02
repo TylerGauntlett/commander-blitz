@@ -1,0 +1,18 @@
+{
+  "card_id": "dawn_of_hope",
+  "name": "Dawn of Hope",
+  "oracle_text": "Whenever you gain life, you may pay {2}. If you do, draw a card.\n{3}{W}: Create a 1/1 white Soldier creature token with lifelink.",
+  "blocked_sentences": [
+    "{3}{W}: Create a 1/1 white Soldier creature token with lifelink."
+  ],
+  "needs": [
+    {
+      "capability": "soldier_1_1_w_lifelink",
+      "kind": "token",
+      "what": "a token definition for a 1/1 white Soldier creature token with lifelink (suggested id soldier_1_1_w_lifelink), so create_token can name it",
+      "why_existing_wont_do": "token_ids is a closed list: soldier_1_1_w is the right body but lacks lifelink, and the lifelink 1/1 white tokens (vampire_1_1_w_lifelink, moogle_1_2_w_lifelink) have the wrong creature type or size. Substituting either would change the card. The other line is expressible: a you_gain_life trigger with a may op carrying pay {2} and then draw 1."
+    }
+  ],
+  "closest_existing": ["soldier_1_1_w", "vampire_1_1_w_lifelink"],
+  "confidence": "high"
+}

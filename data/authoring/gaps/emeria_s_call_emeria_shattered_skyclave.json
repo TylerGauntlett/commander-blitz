@@ -1,0 +1,20 @@
+{
+  "card_id": "emeria_s_call_emeria_shattered_skyclave",
+  "name": "Emeria's Call // Emeria, Shattered Skyclave",
+  "oracle_text": "Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you control gain indestructible until your next turn.",
+  "blocked_sentences": [
+    "Create two 4/4 white Angel Warrior creature tokens with flying."
+  ],
+  "needs": [
+    {
+      "capability": "token_angel_warrior_4_4_w_flying",
+      "kind": "token",
+      "what": "a token definition for a 4/4 white Angel Warrior creature token with flying (subtypes Angel and Warrior), e.g. id angel_warrior_4_4_w_flying",
+      "why_existing_wont_do": "token_ids is a closed list; the nearest entries are angel_4_4_w_flying (Angel only, no Warrior subtype) and angel_4_4_w_flying_vigilance (extra vigilance). Substituting angel_4_4_w_flying would drop the Warrior creature type, which matters for Warrior tribal effects."
+    }
+  ],
+  "closest_existing": [
+    "angel_4_4_w_flying"
+  ],
+  "confidence": "high"
+}

@@ -2444,6 +2444,13 @@
     },
     "zone": "graveyard"
   },
+  "dazzling_angel": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "dead_weight": {
     "zone": [
       "battlefield",
@@ -3018,6 +3025,10 @@
       "id": "lander_token"
     },
     "zone": "graveyard"
+  },
+  "emeria_the_sky_ruin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "emeritus_of_woe_demonic_tutor": {
     "zone": "battlefield"
