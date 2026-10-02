@@ -789,6 +789,12 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
                 source=oid,
                 attacker=oid,
                 defender=combat.attackers[oid],
+                # The planeswalker or battle it attacks, when it attacks one
+                # rather than a seat. `defender` is that permanent's controller
+                # either way; the turn ledger needs to know the difference,
+                # because only a creature that attacked a *player* attacked
+                # that player (Angel of Destiny).
+                attacked_permanent=combat.attacking_permanent.get(oid),
             )
     combat.pending_blockers = [
         pid for pid in state.turn_order() if pid in set(combat.attackers.values())

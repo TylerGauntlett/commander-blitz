@@ -1287,7 +1287,7 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
+#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
 #: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
@@ -1400,6 +1400,15 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # reuses the mapping form it wraps rather than duplicating it.
             excluded = set(select_players(ctx, spec["not"]))
             return [pid for pid in state.alive() if pid not in excluded]
+        if "attacked_by" in spec:
+            # "…each player **this creature attacked this turn** loses the
+            # game" -- Angel of Destiny. Read off the turn ledger, because by the
+            # end step `state.combat` is gone and was the only thing that knew.
+            # Seat order, the living only, and nobody at all when the creature
+            # did not attack -- the safe direction for a card that ends games.
+            # "self" is the only subject (the loader refuses anything else).
+            seats = state.turn_ledger.players_attacked_by.get(ctx.source_oid, set())
+            return [pid for pid in state.alive() if pid in seats]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning

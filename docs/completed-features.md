@@ -19123,3 +19123,14 @@ accepts `"you"`). The static value language gained `sum`, because the printed th
 is an offset (`life >= starting + 7`). The life total it is compared against refreshes
 the static as it moves through `primitives._move_life`, so the anthem switches the
 moment the total crosses the line. Test: `tests/unit/test_starting_life_total.py`.
+
+## `{"attacked_by": "self"}` — "each player this creature attacked this turn" — Angel of Destiny
+
+The turn ledger knew which creatures each *seat* attacked with, never which players a
+given creature attacked, and `state.combat` — which did — is `None` by the end step.
+`TurnLedger.players_attacked_by` (attacker oid → seats) is now folded off each
+creature's `ATTACKS` event, which carries a new `attacked_permanent` key so an attack on
+a planeswalker or battle records no player (506.2). The record is dropped when the
+creature leaves the battlefield (400.7) and cleared with the ledger. The player spec
+`{"attacked_by": "self"}` reads it for the ability's source; the loader refuses any
+other subject. Test: `tests/unit/test_players_attacked_by.py`.

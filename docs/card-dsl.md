@@ -3278,7 +3278,7 @@ kind off the **source**; the loader refuses a `counter` key here.
 `"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
-`{ "binding": "name" }` · `{ "not": { … } }`
+`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -3297,6 +3297,32 @@ one derived from the turn structure, from who is playing, or from where a
 permanent is attached. It resolves to **nobody** when no promise was made, which
 is what makes a gift's reward conditional with no `if` around it. See
 [Gift](#gift--a-promise-made-to-one-opponent-for-nothing).
+
+### `attacked_by` — the players *this creature* attacked this turn
+
+```jsonc
+// Angel of Destiny: "At the beginning of your end step, if you have at least 15
+// life more than your starting life total, each player this creature attacked
+// this turn loses the game."
+"trigger": { "event": "end_step", "controller": "you",
+             "condition": { "cmp": ">=", "left": { "life_of": "you" },
+                            "right": { "sum": [ { "starting_life_of": "you" },
+                                                { "const": 15 } ] } } },
+"effects": [ { "op": "lose_game", "player": { "attacked_by": "self" } } ]
+```
+
+Read off `TurnLedger.players_attacked_by` (attacker oid → seats), written from
+each creature's `attacks` event, because by the end step `state.combat` — the
+only other thing that knew — is gone. `creatures_attacked` is the near miss: it
+is keyed by the attacking *seat*, so on a split attack at a pod it cannot say
+which opponent this creature swung at, and "each opponent" would end the game
+for a player the Angel never touched.
+
+Two rules shape the record. A creature attacking a **planeswalker or battle**
+attacked that permanent, not its controller (506.2), so it records no player.
+And the record goes when the creature **leaves the battlefield**: the oid
+survives the zone change but the object does not (400.7), and a flickered Angel
+attacked nobody. `"self"` is the only subject; anything else is a load error.
 
 ### `not` — the player a card *excludes*
 

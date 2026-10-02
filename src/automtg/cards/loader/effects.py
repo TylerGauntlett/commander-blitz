@@ -333,6 +333,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
         _validate_player_spec(rest, where, target_kinds)
         return
+    if "attacked_by" in who:
+        # "Each player this creature attacked this turn" -- Angel of Destiny.
+        # "self" is the only subject a card prints, and anything else would
+        # load and resolve to nobody, which on a card that ends games is the
+        # quiet failure.
+        if who["attacked_by"] != "self" or len(who) > 1:
+            raise DslError(
+                f"{where}: 'attacked_by' takes 'self' and stands alone "
+                f'({{"attacked_by": "self"}}), got {dict(who)!r}'
+            )
+        return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
         # spec, so whatever it wraps has to be a legal spec in its own right --

@@ -1336,6 +1336,21 @@ class TurnLedger:
     #: The two spellings of the question cannot disagree, because `attacked`
     #: below is derived rather than stored.
     creatures_attacked: dict[int, set[int]] = field(default_factory=dict)
+    #: Which **players** each creature attacked this turn: attacker oid -> the
+    #: seats it was declared against. "Each player **this creature** attacked
+    #: this turn loses the game" -- Angel of Destiny.
+    #:
+    #: The other direction from `creatures_attacked`, which is keyed by the
+    #: attacking *seat* and knows nothing of whom: on a split attack at a pod
+    #: it cannot say which opponent the Angel swung at, and by the end step
+    #: `state.combat` -- the only place that did know -- is `None`.
+    #:
+    #: Seats only. A creature attacking a planeswalker or a battle is attacking
+    #: that permanent and not its controller (506.2, 508.1b), so it records
+    #: nothing here. And it is forgotten when the creature leaves the
+    #: battlefield: an oid survives the zone change but the object does not
+    #: (400.7), and a flickered Angel back from exile attacked nobody.
+    players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -1546,6 +1561,7 @@ class TurnLedger:
     def clear(self) -> None:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
+        self.players_attacked_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()
