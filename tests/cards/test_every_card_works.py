@@ -652,6 +652,9 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     it would hide is a bug in the first.
     """
     condition = getattr(ability, "activation_condition", None)
+    if isinstance(condition, dict) and "exists" in condition:
+        _satisfy_an_exists(game, registry, condition["exists"])
+        return
     if not isinstance(condition, dict) or "cmp" not in condition:
         return
     if _satisfy_a_per_player_count(game, registry, condition):
@@ -773,6 +776,39 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         game.state.battlefield.append(fodder.oid)
 
 
+def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
+    """"Activate only if you control a creature with power 4 or greater" --
+    Bonders' Enclave.
+
+    Thirteenth of the family, and the first activation condition written as a
+    bare ``exists`` rather than a ``cmp`` over a count. Fanatic of Rhonas wears
+    the same clause, but on a mana ability, which this test never activates.
+
+    It puts out one real card from the pool whose *printed* power clears the
+    floor, rather than pumping a sandbox creature: the condition reads `chars`,
+    so a card that names the wrong characteristic still fails. Only "you control
+    it on the battlefield" and a ``>=`` power floor over a constant are read; any
+    other shape is left alone and the ability reports as unusable, which is the
+    honest answer when the harness cannot build the position.
+    """
+    if selector.get("controller", "you") != "you":
+        return
+    if selector.get("zone", "battlefield") != "battlefield":
+        return
+    min_power = None
+    power = selector.get("power")
+    if power is not None:
+        value = power.get("value") if isinstance(power, dict) else None
+        if power.get("op") != ">=" or not isinstance(value, dict) or "const" not in value:
+            return
+        min_power = int(value["const"])
+    match = _fodder_for(registry, selector, min_power=min_power)
+    if match is None:
+        return
+    fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    game.state.battlefield.append(fodder.oid)
+
+
 def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None:
     """"Activate only if two or more creatures entered the battlefield under your
     control this turn" -- Diamond City.
@@ -848,7 +884,7 @@ def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
     return True
 
 
-def _fodder_for(registry, selector: dict, count: int = 1):
+def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None = None):
     """The first card in the pool matching a counting filter's types.
 
     Shared by every helper that satisfies a requirement by putting permanents
@@ -875,6 +911,7 @@ def _fodder_for(registry, selector: dict, count: int = 1):
         and c.front_face is None
         and types <= set(c.types)
         and (not subtypes or subtypes & set(c.subtypes))
+        and (min_power is None or (c.power is not None and c.power >= min_power))
     ]
     if not matches:
         return None
