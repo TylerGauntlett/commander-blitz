@@ -438,7 +438,7 @@ def reference() -> dict:
     from automtg.engine.effects.values import VALUE_KEYS
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.objects import PLAYABLE_DURATIONS
-    from automtg.engine.triggers import TRIGGER_EVENTS
+    from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
     from ..loader import (
         COST_REDUCTION_FILTER_KEYS,
@@ -531,6 +531,12 @@ def reference() -> dict:
         #: `static_filter_keys` above is the far smaller printed-only subset,
         #: and being shown only the subset reads as the whole language.
         "selector_keys": sorted(SELECTOR_KEYS),
+        # The part of `selector_keys` a trigger's `filter` may use. A trigger
+        # filter is matched against the event's subject by its own function,
+        # which answers fewer keys than the effect-side selector; the loader
+        # refuses the rest, so a worker shown only `selector_keys` would write
+        # a filter that does not load.
+        "trigger_filter_keys": sorted(TRIGGER_FILTER_KEYS),
         "condition_keys": sorted(CONDITION_KEYS),
         "value_keys": sorted(VALUE_KEYS),
         # What an activated ability may charge. Omitted entirely until

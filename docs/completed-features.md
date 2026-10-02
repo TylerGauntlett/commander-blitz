@@ -19250,3 +19250,26 @@ falls through to the ordinary ability claimants rather than claiming.
   refuses wrong colour / amount / count / narrowing / type / missing tap / unread field,
   ignores a mere mention of a free cast, and reads all seven shipped instants' lines.
 - Unblocks Sephara, Sky's Blade.
+
+## `owner` in a trigger filter, and `TRIGGER_FILTER_KEYS` — Tome of Legends — 903.3
+
+"Whenever your commander enters or attacks" is two triggers with `controller: "any"`
+and `filter: {is_commander: true, owner: "you"}`. `owner` was a legal selector key
+(`selectors.matches` and the static filter read it) but `triggers.matches_card_filter`
+did not, so the filter loaded and fired on every commander at the table. It now reads
+`GameObject.owner` against the ability's controller: your commander attacking for the
+opponent who stole it adds a page, an opponent's commander you have stolen does not.
+
+The audit behind it: besides `owner`, 33 of `SELECTOR_KEYS` were accepted in a trigger filter and never
+read by the matcher (`name`, `not_name`, `not_colors`, `not_keywords`, `not_subtypes`,
+`attacking`, `blocking`, `blocked`, `attacked_this_turn`, `modified`, `damaged`,
+`base_power`, `base_toughness`, `x_in_mana_cost`, the `shares_*_with` relations,
+`exclude_binding`, `exiled_with`, `phased_out_with`, `drawn_this_turn`, `any_of`,
+`union`, and the pool-shaping keys `target`, `binding`, `player`, `count`, `chooser`,
+`random`, `optional`, `extreme`, `object_kind`), as was a player-spec or
+`enchanted_player` `controller`. No shipped card uses any of them, so rather than
+implementing keys with no witness the loader now validates a trigger filter (and a
+`double_triggers` `cause_filter`, matched by the same function) against
+`triggers.TRIGGER_FILTER_KEYS` — exactly the keys the matcher reads, held in step by a
+test — and refuses the rest. The packet reference names the list as
+`trigger_filter_keys`. Test: `tests/unit/test_trigger_filter_owner.py`.

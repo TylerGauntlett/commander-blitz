@@ -46,7 +46,11 @@ from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
 from automtg.engine.mana import ManaCost, ManaRestriction, compile_restriction
 from automtg.engine.sagas import LORE, SAGA
-from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
+from automtg.engine.triggers import (
+    ORDINAL_FILTER_KEYS,
+    TRIGGER_EVENTS,
+    validate_trigger_filter,
+)
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (  # noqa: F401
@@ -2079,7 +2083,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(implemented: {sorted(TRIGGER_EVENTS)})"
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
-        shares = (model.trigger.filter or {}).get("shares_a_creature_type_with")
+        validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        shares =(model.trigger.filter or {}).get("shares_a_creature_type_with")
         if shares is not None and shares != "self":
             # Nothing is bound when a trigger filter is asked, so a binding name
             # here would resolve to no object and the trigger would never fire --
@@ -2797,6 +2802,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.cause_filter: unknown keys {sorted(unknown)}; a cause "
                     f"is matched against the printed face of the event's subject"
                 )
+            # And it is matched by `matches_card_filter`, so the static keys
+            # that function never reads (`owner` until Tome of Legends,
+            # `attacking`, `not_keywords`, the count heads) would load here
+            # and be ignored.
+            validate_trigger_filter(model.cause_filter, f"{where}.cause_filter")
     elif model.cause_events or model.cause_controller or model.cause_filter:
         raise DslError(
             f"{where}: a cause clause only means something to 'double_triggers', "

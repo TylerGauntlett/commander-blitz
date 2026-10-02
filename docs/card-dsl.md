@@ -3482,6 +3482,26 @@ the ability's own controller, so that key can only ever ask about you. See
 }
 ```
 
+**A trigger `filter` is a subset of the selector language.** It is matched
+against the event's subject by `triggers.matches_card_filter`, which answers
+`TRIGGER_FILTER_KEYS` (the packet's `trigger_filter_keys`) and nothing else, and
+the loader refuses any other selector key there -- `name`, `attacking`,
+`not_colors` and the rest used to load and be silently dropped, a trigger
+strictly wider than the printed line. `controller` and `owner` take `you`,
+`opponent` or `any` only; a player spec or `enchanted_player` is refused for the
+same reason. A `double_triggers` `cause_filter` is matched by the same function
+and held to the same list.
+
+`owner` is "**your commander**" -- Tome of Legends, "Whenever your commander
+enters or attacks": two triggers, `permanent_enters` and `attacks`, each with
+`controller: "any"` and `filter: {"is_commander": true, "owner": "you"}`. Rule
+903.3 makes "your commander" the one you own, wherever it is and whoever
+controls it, so it still counts attacking for the opponent who stole it, and an
+opponent's commander you have stolen does not. `controller: "you"` in the filter
+(Norn's Choirmaster's "a commander you control") reads both of those boards the
+other way. Not an intervening-if either: 603.4 re-checks a `condition` on
+resolution, and the printed card has no "if".
+
 `not_cause` is "…**if it wasn't put onto the battlefield with this ability**".
 Zone changes carry a `cause`, and `put_onto_battlefield` can set its own, so an
 ability that puts permanents down can refuse to trigger on its own output.

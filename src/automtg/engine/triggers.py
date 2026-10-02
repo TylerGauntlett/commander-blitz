@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, TriggerSpec
 from .enums import Zone
-from .errors import RulesLoopError
+from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .state import MAX_TRIGGERS_PER_STEP
@@ -1479,6 +1479,87 @@ def _actor(
     return event.player
 
 
+#: Every key `matches_card_filter` reads -- and so every key a trigger `filter`
+#: (or a `double_triggers` `cause_filter`) may carry. The loader refuses the
+#: rest of `SELECTOR_KEYS` there.
+#:
+#: Not `SELECTOR_KEYS` itself, which is what the trigger filter used to be
+#: validated against: that list describes the *effect-side* selector, and a
+#: key `selectors.matches` honours and this function never reads loaded clean
+#: and was silently dropped -- a filter strictly wider than the printed line,
+#: with no gate able to see it. `zone`, `tapped`, `not_supertypes` and `owner`
+#: were each found that way, one card at a time; this closes the class. A key
+#: belongs here only once the function below answers it, and
+#: `tests/unit/test_trigger_filter_owner.py` holds the two in step.
+TRIGGER_FILTER_KEYS = frozenset(
+    {
+        "exclude_self",
+        "self_only",
+        "attached",
+        "haunted_by",
+        "encoded_by",
+        "damaged_by",
+        "controller",
+        "owner",
+        "zone",
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "not_supertypes",
+        "paid_by",
+        "created_with",
+        "shares_a_type_with_commander",
+        "shares_a_creature_type_with",
+        "colors",
+        "min_colors",
+        "keywords",
+        "is_token",
+        "is_commander",
+        "tapped",
+        "has_counters",
+        "entered_this_turn",
+        "attacking_player",
+        "mana_value",
+        "mana_cost",
+        "power",
+        "toughness",
+    }
+)
+
+#: The words `controller` and `owner` take in a trigger filter. The effect-side
+#: selector also accepts a player spec and "enchanted_player", and this function
+#: reads neither, so either would load and match every player's object.
+TRIGGER_FILTER_PLAYER_WORDS = frozenset({"you", "opponent", "any"})
+
+
+def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
+    """Refuse what `validate_selector` passes and `matches_card_filter` ignores.
+
+    Run *after* `validate_selector`, which has already refused unknown words and
+    malformed values; this narrows the effect-side language to the part a
+    trigger filter actually answers.
+    """
+    if not filt:
+        return
+    unread = set(filt) - TRIGGER_FILTER_KEYS
+    if unread:
+        raise DslError(
+            f"{where}: {sorted(unread)} would load and be ignored -- a trigger "
+            f"filter answers only {sorted(TRIGGER_FILTER_KEYS)}"
+        )
+    for key in ("controller", "owner"):
+        word = filt.get(key)
+        if word is not None and not (
+            isinstance(word, str) and word in TRIGGER_FILTER_PLAYER_WORDS
+        ):
+            raise DslError(
+                f"{where}: {key} {word!r} is not answered by a trigger filter "
+                f"(use one of {sorted(TRIGGER_FILTER_PLAYER_WORDS)})"
+            )
+
+
 def matches_card_filter(
     state: GameState,
     oid: int,
@@ -1557,6 +1638,23 @@ def matches_card_filter(
     if controller == "you" and obj.controller != ability_source.controller:
         return False
     if controller == "opponent" and obj.controller == ability_source.controller:
+        return False
+    # "Whenever **your commander** enters or attacks" -- Tome of Legends. 903.3
+    # makes "your commander" the commander you *own*, wherever it is and
+    # whoever controls it, so this is `GameObject.owner` and not `controller`:
+    # with `gain_control` implemented the two are different sets, and the
+    # control reading would miss your own commander attacking for the opponent
+    # who stole it and fire on theirs while you hold it. Owner never changes
+    # (`change_control` leaves it alone), so a subject that has left the
+    # battlefield answers it as well as a live one.
+    #
+    # `selectors.matches` and the static filter have read the word since
+    # Majestic Genesis and Visions of Glory; here it **loaded and was ignored**,
+    # so `{is_commander, owner: "you"}` fired on every commander at the table.
+    owner = filt.get("owner")
+    if owner == "you" and obj.owner != ability_source.controller:
+        return False
+    if owner == "opponent" and obj.owner == ability_source.controller:
         return False
 
     # "…an ability of an artifact, creature, or land **on the battlefield**."
