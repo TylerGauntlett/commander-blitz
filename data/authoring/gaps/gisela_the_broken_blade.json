@@ -1,0 +1,18 @@
+{
+  "card_id": "gisela_the_broken_blade",
+  "name": "Gisela, the Broken Blade",
+  "oracle_text": "Flying, first strike, lifelink\nAt the beginning of your end step, if you both own and control Gisela and a creature named Bruna, the Fading Light, exile them, then meld them into Brisela, Voice of Nightmares.",
+  "blocked_sentences": [
+    "At the beginning of your end step, if you both own and control Gisela and a creature named Bruna, the Fading Light, exile them, then meld them into Brisela, Voice of Nightmares."
+  ],
+  "needs": [
+    {
+      "capability": "meld",
+      "kind": "engine",
+      "what": "The meld partner card bruna_the_fading_light and the meld result card brisela_voice_of_nightmares must exist in the card pool (or an answer must be able to carry the meld result, and the partner, as companion entries) before this half can name them in melds_with / melds_into. The engine mechanism itself is present: the `meld` op, the `melds_with`/`melds_into` card riders, and an end_step trigger whose intervening-if condition checks a battlefield creature named \"Bruna, the Fading Light\" that you own and control.",
+      "why_existing_wont_do": "`link_meld_results` (src/automtg/cards/loader/linking.py) raises 'melds_with references unknown card' / 'melds_into references unknown card' at the registry gate when either id is absent, and the loader refuses melds_with without melds_into. Neither Bruna, the Fading Light nor Brisela, Voice of Nightmares is in data/cards (both are pending in queue.json; Brisela's own line \"Your opponents can't cast spells with mana value 3 or less\" is untemplated). The answer format's only companion slot is `back`, which is for one transforming back face, so it cannot bring in both the partner and the melded result. Writing the trigger without melds_with/melds_into would make `op_meld` raise DslError the first time it fires, and dropping the line would leave the printed sentence unimplemented."
+    }
+  ],
+  "closest_existing": ["meld", "melds_with", "melds_into", "back_face"],
+  "confidence": "high"
+}

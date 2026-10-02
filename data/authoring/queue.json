@@ -91472,12 +91472,12 @@
     },
     "Farewell": {
       "edhrec_rank": 167,
-      "gate": "template",
+      "gate": null,
       "name": "Farewell",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "4d8b6418-da30-4c68-b87c-3936eb77620c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Farfinder": {
@@ -116152,12 +116152,12 @@
     },
     "Grasp of Fate": {
       "edhrec_rank": 1133,
-      "gate": "template",
+      "gate": null,
       "name": "Grasp of Fate",
-      "reason": "no template for: When this enchantment enters, for each opponent, exile up to one target nonland permanent ",
+      "reason": "",
       "scryfall_id": "1ad46a46-4221-4e0e-8b46-49f517c231c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Grasp of Phantoms": {
@@ -137762,12 +137762,12 @@
     },
     "Inspiring Overseer": {
       "edhrec_rank": 1635,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Overseer",
-      "reason": "no template for: When this creature enters, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "79016cf3-6eea-4b21-9ff3-f187d606e19a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Inspiring Paladin": {

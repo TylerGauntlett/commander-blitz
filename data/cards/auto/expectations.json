@@ -3321,6 +3321,15 @@
   "farbog_revenant": {
     "zone": "battlefield"
   },
+  "farewell": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 1,
+      "1": 0
+    },
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
+  },
   "farseek": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -4362,6 +4371,11 @@
   "grappler_spider": {
     "zone": "battlefield"
   },
+  "grasp_of_fate": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "grasslands": {
     "zone": "battlefield"
   },
@@ -5083,6 +5097,19 @@
   },
   "inspiring_leader": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "inspiring_overseer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 41
+    },
     "zone": "battlefield"
   },
   "inspiring_vantage": {
