@@ -16972,12 +16972,12 @@
     },
     "Avacyn, Angel of Hope": {
       "edhrec_rank": 772,
-      "gate": "template",
+      "gate": null,
       "name": "Avacyn, Angel of Hope",
-      "reason": "no template for: Other permanents you control have indestructible",
+      "reason": "",
       "scryfall_id": "74e5dcec-ef1d-4461-bb23-61d98ff082dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Avacyn, Angel of Horror": {
@@ -25252,12 +25252,12 @@
     },
     "Bishop of Wings": {
       "edhrec_rank": 3809,
-      "gate": "template",
+      "gate": null,
       "name": "Bishop of Wings",
-      "reason": "no template for: Whenever an Angel you control enters, you gain 4 life",
+      "reason": "",
       "scryfall_id": "c369d381-b48e-43cf-a032-8bcb120f443e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bishop's Soldier": {
@@ -30782,12 +30782,12 @@
     },
     "Bonders' Enclave": {
       "edhrec_rank": 553,
-      "gate": "template",
+      "gate": null,
       "name": "Bonders' Enclave",
-      "reason": "no template for: {3}, {T}: Draw a card. Activate only if you control a creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "02a16e1e-1ea8-49af-9cde-2166134f7bdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bonds of Faith": {
@@ -54622,12 +54622,12 @@
     },
     "Court of Grace": {
       "edhrec_rank": 1645,
-      "gate": "template",
+      "gate": null,
       "name": "Court of Grace",
-      "reason": "no template for: When this enchantment enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "98292e80-3e4d-4da6-8e97-13c003c635da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Court of Ire": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "archivist_of_oghma",
+  "name": "Archivist of Oghma",
+  "oracle_text": "Flash\nWhenever an opponent searches their library, you gain 1 life and draw a card.",
+  "blocked_sentences": [
+    "Whenever an opponent searches their library, you gain 1 life and draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "library_searched",
+      "kind": "trigger_event",
+      "what": "a trigger event fired each time a player searches their library (701.23), carrying the searching player so a trigger can filter on `controller: opponent`; it must fire once per search instruction (search_library / search_zones including a library, fetchland and tutor costs alike), including searches that find nothing or are stopped by cant_search_library-style effects only if the search still occurs",
+      "why_existing_wont_do": "trigger_events has no search event: `ability_activated` and `spell_cast` fire on the cause rather than the search and would miss or over-count (a spell that searches conditionally, a land's fetch ability, a resolved tutor); `shuffle` is not an event either, and a shuffle is not a search. The static `cant_search_library` shows the engine knows when a search happens, but nothing exposes it to triggers"
+    }
+  ],
+  "closest_existing": ["cant_search_library", "ability_activated", "spell_cast"],
+  "confidence": "high"
+}

@@ -711,6 +711,16 @@
   "automatic_librarian": {
     "zone": "battlefield"
   },
+  "avacyn_angel_of_hope": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 33,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "avacyn_s_pilgrim": {
     "zone": "battlefield"
   },
@@ -1007,6 +1017,13 @@
       "0": 41
     }
   },
+  "bishop_of_wings": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "bishop_s_soldier": {
     "zone": "battlefield"
   },
@@ -1203,6 +1220,10 @@
     "zone": "battlefield"
   },
   "bolas_s_citadel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bonders_enclave": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2096,6 +2117,10 @@
     }
   },
   "courier_hawk": {
+    "zone": "battlefield"
+  },
+  "court_of_grace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "court_street_denizen": {
