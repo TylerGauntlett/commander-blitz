@@ -74212,12 +74212,12 @@
     },
     "Drannith Magistrate": {
       "edhrec_rank": 706,
-      "gate": "template",
+      "gate": null,
       "name": "Drannith Magistrate",
-      "reason": "no template for: Your opponents can't cast spells from anywhere other than their hands",
+      "reason": "",
       "scryfall_id": "d98bed02-600c-4cb3-bff5-960d362861fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Drannith Ruins": {
@@ -87932,12 +87932,12 @@
     },
     "Exemplar of Light": {
       "edhrec_rank": 1279,
-      "gate": "template",
+      "gate": null,
       "name": "Exemplar of Light",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "b7393efb-da40-4b55-a6ff-ce774f0815f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Exemplar of Strength": {
@@ -109872,12 +109872,12 @@
     },
     "Giver of Runes": {
       "edhrec_rank": 1395,
-      "gate": "template",
+      "gate": null,
       "name": "Giver of Runes",
-      "reason": "no template for: {T}: Another target creature you control gains protection from colorless or from the color",
+      "reason": "",
       "scryfall_id": "5adb3391-06cc-4fd2-9e72-a3500940b450",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gix's Caress": {
@@ -240362,12 +240362,12 @@
     },
     "Sephara, Sky's Blade": {
       "edhrec_rank": 1350,
-      "gate": "residual",
+      "gate": null,
       "name": "Sephara, Sky's Blade",
-      "reason": "printed text not represented: You may pay {W} and tap four untapped creatures you control with flying rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "f445f63a-73a9-4512-83ef-6be7409440bc",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sephiroth's Intervention": {
@@ -241012,12 +241012,12 @@
     },
     "Serra the Benevolent": {
       "edhrec_rank": 5859,
-      "gate": "template",
+      "gate": null,
       "name": "Serra the Benevolent",
-      "reason": "no template for: +2: Creatures you control with flying get +1/+1 until end of turn",
+      "reason": "",
       "scryfall_id": "8e3c139e-fcd5-4a23-bcac-b887c6e198e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Serra the Benevolent Emblem": {
@@ -289022,12 +289022,12 @@
     },
     "Tome of Legends": {
       "edhrec_rank": 2303,
-      "gate": "template",
+      "gate": null,
       "name": "Tome of Legends",
-      "reason": "no template for: This artifact enters with a page counter on it",
+      "reason": "",
       "scryfall_id": "3a50a89f-aca9-409e-b6b5-dbe3a361b96f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tome of the Guildpact": {

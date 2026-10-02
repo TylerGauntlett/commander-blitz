@@ -30873,6 +30873,39 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "cant_cast_spells_from_zones",
+          "except_zones": [
+            "hand"
+          ],
+          "kind": "static",
+          "text": "Your opponents can't cast spells from anywhere other than their hands."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "drannith_magistrate",
+      "mana_cost": "{1}{W}",
+      "name": "Drannith Magistrate",
+      "oracle_text": "Your opponents can't cast spells from anywhere other than their hands.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "count": 1,
@@ -35593,6 +35626,72 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "max_per_turn": 1,
+            "put_by": "you",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "exemplar_of_light",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Exemplar of Light",
+      "oracle_text": "Flying\nWhenever you gain life, put a +1/+1 counter on this creature.\nWhenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -45013,6 +45112,136 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "from_colorless": true,
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "from_colors": [
+                        "W"
+                      ],
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "from_colors": [
+                        "U"
+                      ],
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "from_colors": [
+                        "B"
+                      ],
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "from_colors": [
+                        "R"
+                      ],
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "from_colors": [
+                        "G"
+                      ],
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "grant_protection"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Another target creature you control gains protection from colorless or from the color of your choice until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "giver_of_runes",
+      "mana_cost": "{W}",
+      "name": "Giver of Runes",
+      "oracle_text": "{T}: Another target creature you control gains protection from colorless or from the color of your choice until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -99645,6 +99874,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control with flying have indestructible."
+        }
+      ],
+      "alternative_cost": {
+        "mana": "{W}",
+        "tap_permanents": {
+          "count": 4,
+          "keywords": [
+            "flying"
+          ],
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sephara_sky_s_blade",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{4}{W}{W}{W}",
+      "name": "Sephara, Sky's Blade",
+      "oracle_text": "You may pay {W} and tap four untapped creatures you control with flying rather than pay this spell's mana cost.\nFlying, lifelink\nOther creatures you control with flying have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -99882,6 +100171,112 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: Creatures you control with flying get +1/+1 until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "angel_4_4_w_flying_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: Create a 4/4 white Angel creature token with flying and vigilance."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects_player": "you",
+              "amount": 1,
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "effect": "damage_life_floor",
+              "kind": "static",
+              "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
+            }
+          ]
+        }
+      ],
+      "id": "serra_the_benevolent",
+      "loyalty": 4,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Serra the Benevolent",
+      "oracle_text": "+2: Creatures you control with flying get +1/+1 until end of turn.\n−3: Create a 4/4 white Angel creature token with flying and vigilance.\n−6: You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",
+      "source": "auto",
+      "subtypes": [
+        "Serra"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -121413,6 +121808,99 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "page",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever your commander enters or attacks, put a page counter on this artifact.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "is_commander": true,
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "page",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever your commander enters or attacks, put a page counter on this artifact.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "is_commander": true,
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "page"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Remove a page counter from this artifact: Draw a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tome_of_legends",
+      "mana_cost": "{2}",
+      "name": "Tome of Legends",
+      "oracle_text": "This artifact enters with a page counter on it.\nWhenever your commander enters or attacks, put a page counter on this artifact.\n{1}, {T}, Remove a page counter from this artifact: Draw a card.",
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "page",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {

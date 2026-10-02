@@ -2827,6 +2827,10 @@
     },
     "zone": "graveyard"
   },
+  "drannith_magistrate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dread_presence": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3248,6 +3252,16 @@
     "zone": "graveyard"
   },
   "executioner_s_hood": {
+    "zone": "battlefield"
+  },
+  "exemplar_of_light": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "exocomp": {
@@ -4203,6 +4217,10 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "giver_of_runes": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "gixian_puppeteer": {
     "battlefield_count": 33,
@@ -9002,6 +9020,17 @@
   "sentinels_of_glen_elendra": {
     "zone": "battlefield"
   },
+  "sephara_sky_s_blade": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "seraph_of_dawn": {
     "zone": "battlefield"
   },
@@ -9025,6 +9054,14 @@
     "zone": "battlefield"
   },
   "serra_sphinx": {
+    "zone": "battlefield"
+  },
+  "serra_the_benevolent": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "serra_zealot": {
@@ -10786,6 +10823,14 @@
     "zone": "battlefield"
   },
   "tolarian_scholar": {
+    "zone": "battlefield"
+  },
+  "tome_of_legends": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "page"
+    },
     "zone": "battlefield"
   },
   "tome_raider": {
