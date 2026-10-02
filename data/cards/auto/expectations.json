@@ -325,6 +325,13 @@
   "ancient_ziggurat": {
     "zone": "battlefield"
   },
+  "angel_of_destiny": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "angel_of_glory_s_rise": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -552,6 +559,16 @@
       "1": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "archivist_of_oghma": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "archmage_emeritus": {
@@ -3710,6 +3727,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "folk_hero": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fomori_nomad": {
@@ -8386,6 +8407,13 @@
     "zone": "battlefield"
   },
   "righteous_avengers": {
+    "zone": "battlefield"
+  },
+  "righteous_valkyrie": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "rimewood_falls": {

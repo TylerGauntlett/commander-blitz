@@ -3708,6 +3708,92 @@
         {
           "effects": [
             {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, you and that player each gain that much life.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "lose_game",
+              "player": {
+                "attacked_by": "self"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you have at least 15 life more than your starting life total, each player this creature attacked this turn loses the game.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "life_of": "you"
+              },
+              "right": {
+                "sum": [
+                  {
+                    "starting_life_of": "you"
+                  },
+                  {
+                    "const": 15
+                  }
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_destiny",
+      "keywords": [
+        "flying",
+        "double_strike"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Angel of Destiny",
+      "oracle_text": "Flying, double strike\nWhenever a creature you control deals combat damage to a player, you and that player each gain that much life.\nAt the beginning of your end step, if you have at least 15 life more than your starting life total, each player this creature attacked this turn loses the game.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Cleric"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "controller": "any",
                 "count": "all",
@@ -5744,6 +5830,57 @@
       "toughness": 2,
       "types": [
         "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent searches their library, you gain 1 life and draw a card",
+          "trigger": {
+            "controller": "opponent",
+            "event": "searches_library"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archivist_of_oghma",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Archivist of Oghma",
+      "oracle_text": "Flash\nWhenever an opponent searches their library, you gain 1 life and draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Halfling",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -40006,6 +40143,63 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "is_commander": true,
+            "owner": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "shares_a_creature_type_with": "self"
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "id": "folk_hero",
+      "mana_cost": "{1}{W}",
+      "name": "Folk Hero",
+      "oracle_text": "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.\"",
+      "source": "auto",
+      "subtypes": [
+        "Background"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -92812,6 +93006,92 @@
         "Soldier"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "toughness_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Angel or Cleric you control enters, you gain life equal to that creature's toughness.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Angel",
+                "Cleric"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "min_life_of": "you"
+            },
+            "right": {
+              "sum": [
+                {
+                  "starting_life_of": "you"
+                },
+                {
+                  "const": 7
+                }
+              ]
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "As long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "righteous_valkyrie",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Righteous Valkyrie",
+      "oracle_text": "Flying\nWhenever another Angel or Cleric you control enters, you gain life equal to that creature's toughness.\nAs long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Cleric"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

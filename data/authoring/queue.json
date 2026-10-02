@@ -8492,12 +8492,12 @@
     },
     "Angel of Destiny": {
       "edhrec_rank": 2900,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Destiny",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you and that player each ",
+      "reason": "",
       "scryfall_id": "74c6f0ea-689c-4fa7-a350-f5527b4ee2f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Angel of Finality": {
@@ -12152,12 +12152,12 @@
     },
     "Archivist of Oghma": {
       "edhrec_rank": 681,
-      "gate": "template",
+      "gate": null,
       "name": "Archivist of Oghma",
-      "reason": "no template for: Whenever an opponent searches their library, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "a5100d6c-ca6e-40e5-8c55-50e74237ced4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Archmage Ascension": {
@@ -99432,12 +99432,12 @@
     },
     "Folk Hero": {
       "edhrec_rank": 3974,
-      "gate": "template",
+      "gate": null,
       "name": "Folk Hero",
-      "reason": "no template for: Commander creatures you own have \"Whenever you cast a spell that shares a creature type wi",
+      "reason": "",
       "scryfall_id": "85bf7c95-4534-435b-bb25-f39340ecf9be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Folk Medicine": {
@@ -223882,12 +223882,12 @@
     },
     "Righteous Valkyrie": {
       "edhrec_rank": 2022,
-      "gate": "template",
+      "gate": null,
       "name": "Righteous Valkyrie",
-      "reason": "no template for: Whenever another Angel or Cleric you control enters, you gain life equal to that creature'",
+      "reason": "",
       "scryfall_id": "7e01a5ab-13ae-41a4-a196-d8bb2317d674",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Righteous War": {
