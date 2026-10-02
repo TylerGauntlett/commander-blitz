@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "angel_of_vitality",
+    "name": "Angel of Vitality",
+    "oracle_text": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\nThis creature gets +2/+2 as long as you have 25 or more life.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If you would gain life, you gain that much life plus 1 instead.",
+        "effect": "replace_life_gain",
+        "affects_player": "you",
+        "gain_addend": 1
+      },
+      {
+        "kind": "static",
+        "text": "This creature gets +2/+2 as long as you have 25 or more life.",
+        "effect": "buff",
+        "affects": {"self_only": true},
+        "power": {"const": 2},
+        "toughness": {"const": 2},
+        "condition": {
+          "cmp": ">=",
+          "left": {"max_life_of": "you"},
+          "right": {"const": 25}
+        }
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
