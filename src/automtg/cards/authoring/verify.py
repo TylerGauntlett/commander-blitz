@@ -530,7 +530,9 @@ def _answer(game: Game, decision: PendingDecision):
         # lands against 40 life, so a mana ceiling never reaches the cap.
         pid = decision.player
         life = game.state.players[pid].life if pid is not None else 0
-        alive = [a for a in choices if (a.choice or 0) < life]
+        # The ordinal is X less any floor `ask_x` put under the question.
+        floor = int(decision.context.get("min_x", 0))
+        alive = [a for a in choices if (a.choice or 0) + floor < life]
         if alive:
             return max(alive, key=lambda a: a.choice or 0)
         if choices:

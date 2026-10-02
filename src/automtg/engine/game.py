@@ -549,7 +549,18 @@ class Game:
         # becomes a real number. The ceiling is computed with the same `extra`
         # the payment below will use, so the largest offered X is always one the
         # player can actually pay for.
-        x = yield from self._ask_x(pid, card.name, cost, extra, spell_purpose(card))
+        #
+        # Floored by a mana-value lock (Brisela), which this line escapes only
+        # by announcing enough X -- asked of the same face legality asked it of.
+        from .casting import _spell_as_cast
+        from .characteristics import cast_lock_min_x
+
+        min_x = cast_lock_min_x(
+            state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
+        )
+        x = yield from self._ask_x(
+            pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
+        )
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
@@ -1104,8 +1115,13 @@ class Game:
         exclude_oid: int | None = None,
         cost_node: Cost | None = None,
         cost_source: int | None = None,
+        min_x: int = 0,
     ) -> Generator[Any, list[int], int]:
         """How big is X, if this cost has one at all?
+
+        ``min_x`` is the floor a mana-value casting lock puts under it -- see
+        `player_statics.cast_lock_min_x`. Legality offered the cast only when
+        the ceiling reached it.
 
         The ceiling is recomputed here rather than taken from the action,
         because the board can have moved between legality offering the spell and
@@ -1148,7 +1164,12 @@ class Game:
         ctx = EffectContext(state=state, controller=pid, source_oid=None)
         return (
             yield from ask_x(
-                ctx, f"Choose X for {name}", ceiling, pid, per_point=cost.x_count
+                ctx,
+                f"Choose X for {name}",
+                ceiling,
+                pid,
+                per_point=cost.x_count,
+                min_x=min_x,
             )
         )
 

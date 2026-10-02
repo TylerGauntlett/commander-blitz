@@ -688,8 +688,11 @@ def reference() -> dict:
             " noncreature spells\" is the same static with `affects_spells:"
             " {\"not_types\": [\"Creature\"]}` (a spell filter: types, any_types,"
             " not_types, subtypes, colors, name, ... -- no `controller`,"
-            " `affects_player` says whose). \"More than one spell each turn\""
-            " is still a gap.",
+            " `affects_player` says whose). \"Can't cast spells with mana value"
+            " 3 or less\" is `affects_spells: {\"mana_value\": {\"op\": \"<=\","
+            " \"value\": 3}}` -- this filter only, and the engine counts an X"
+            " spell's chosen X. \"More than one spell each turn\" is still a"
+            " gap.",
             "\"Your opponents can't cast spells from anywhere other than their"
             " hands\" on a permanent is the player-wide static"
             " `cant_cast_spells_from_zones` with `affects_player: \"opponent\"`"

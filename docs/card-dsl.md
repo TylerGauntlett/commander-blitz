@@ -6584,6 +6584,30 @@ spell (702.103b) and a face-down one is a nameless creature spell (708.2a). Aske
 about the seat alone — the early exit at the top of `_cast_actions` — only an
 unfiltered lock answers yes.
 
+**By mana value** — Brisela, Voice of Nightmares, "Your opponents can't cast spells
+with **mana value 3 or less**":
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast spells with mana value 3 or less.",
+  "effect": "cant_cast_spells",
+  "affects_player": "opponent",
+  "affects_spells": { "mana_value": { "op": "<=", "value": 3 } } }
+```
+
+`mana_value` is the selector language's comparison shape (or a bare number for
+"equal to") with a **literal** number, and this filter is the only spell filter
+that takes it (`CAST_LOCK_FILTER_KEYS`), because it is the only reader that knows
+the X a spell is cast for. 202.3e counts that X — the Brisela ruling says an
+opponent may cast an `{X}{R}` spell with X = 3 or more — so the lock is a *floor*
+on X rather than a yes or a no: `player_statics.cast_lock_min_x` finds the least X
+that lifts it, `_cast_variant` offers the line only when the board can pay that X,
+and `game._cast` passes it to `ask_x` as `min_x`, whose options then start there
+(the ordinal is X less the floor; `min_x` rides in the decision's `context` for
+the client's stepper). A price with no X to announce — a free cast, where 107.3b
+makes X 0 — keeps the locked mana value and is not offered. Pinned in
+`tests/unit/test_cant_cast_mana_value.py`.
+
 `cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
 activate abilities of artifacts, creatures, or enchantments", and the first line
 of Myrel, Shield of Argive. One printed sentence, **two statics**, because the

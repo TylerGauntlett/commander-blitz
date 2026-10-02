@@ -1428,7 +1428,9 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
-def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = None) -> bool:
+def player_cant_cast_spells(
+    state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
+) -> bool:
     """ "Your opponents can't cast spells during your turn." Voice of Victory.
 
     A prohibition on the *player*, read everywhere a spell can be cast rather
@@ -1470,9 +1472,42 @@ def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = N
             return True
         if card is not None:
             resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
-            if _matches_printed(card, resolved):
+            if _matches_printed(card, resolved, x=x):
                 return True
     return False
+
+
+#: How far `cast_lock_min_x` looks for an X that lifts a mana-value lock. Every
+#: printed threshold is a single digit, so an X past this is never the answer.
+_MAX_LOCK_X = 32
+
+
+def cast_lock_min_x(state: GameState, pid: int, card: CardDef) -> int | None:
+    """The smallest X ``card`` may be cast for under the casting locks, or None.
+
+    "Your opponents can't cast spells with mana value 3 or less" -- Brisela,
+    Voice of Nightmares. 202.3e counts the X a spell is cast with, so the lock
+    is a question about the cast and not about the card in hand: a Fireball is
+    castable for X = 3 (mana value 4) and not for X = 2. 601.2b announces X
+    before 601.2f totals the cost, so the answer is a *floor* on the X the
+    caster may announce rather than a yes or a no.
+
+    0 when nothing locks the cast -- which is every cast but one under a
+    mana-value lock. None when no X lifts it: an unfiltered lock, a filter that
+    does not read mana value, or a card with no X to raise.
+    """
+    if not player_cant_cast_spells(state, pid, card):
+        return 0
+    if not card.mana_cost.x_count:
+        return None
+    return next(
+        (
+            x
+            for x in range(1, _MAX_LOCK_X + 1)
+            if not player_cant_cast_spells(state, pid, card, x=x)
+        ),
+        None,
+    )
 
 
 def static_cast_locked_zones(state: GameState, pid: int) -> set[str]:

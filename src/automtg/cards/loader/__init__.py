@@ -110,6 +110,7 @@ from .vocabulary import (  # noqa: F401
     _FILTER_PLAYERS,
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
+    CAST_LOCK_FILTER_KEYS,
     CONTROLLED_TARGET_KINDS,
     COST_CONDITION_HEADS,
     COST_REDUCTION_FILTER_KEYS,
@@ -2891,13 +2892,32 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `controller` is refused because `affects_player` already says whose
         # casts are stopped, and a second answer could only restate it or
         # contradict it.
-        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        unknown = set(model.affects_spells) - CAST_LOCK_FILTER_KEYS
         if unknown:
             raise DslError(
                 f"{where}.affects_spells: a spell being cast has a printed face "
                 f"and no board state, and `affects_player` already names the "
                 f"caster; unsupported keys {sorted(unknown)}"
             )
+        if "mana_value" in model.affects_spells:
+            # Brisela. A literal number, because the face is matched with no
+            # context to evaluate a value spec in -- and an unknown operator
+            # here would otherwise surface mid-game as a crash on a cast.
+            wanted = model.affects_spells["mana_value"]
+            ok = isinstance(wanted, int) and not isinstance(wanted, bool)
+            if isinstance(wanted, Mapping):
+                value = wanted.get("value")
+                ok = (
+                    set(wanted) <= {"op", "value"}
+                    and wanted.get("op", ">=") in ("<", "<=", ">", ">=", "=", "==", "!=")
+                    and isinstance(value, int)
+                    and not isinstance(value, bool)
+                )
+            if not ok:
+                raise DslError(
+                    f"{where}.affects_spells.mana_value: a number, or "
+                    f"{{'op': '<=', 'value': 3}} with a literal number"
+                )
     elif model.effect == "spend_mana_as_any_color" and model.affects_spells is not None:
         # "…to cast **planeswalker** spells" -- Oath of Nissa. Optional, because
         # Chromatic Orrery prints no filter: omitted it loosens every cost the

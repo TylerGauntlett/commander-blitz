@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
-from .characteristics import chars, player_cant_cast_spells
+from .characteristics import cast_lock_min_x, chars, player_cant_cast_spells
 from .costs import (
     can_pay,
     commander_cost,
@@ -1335,7 +1335,12 @@ def _cast_variant(
     # through with the face actually being cast in hand: the seat-level exit
     # at the top of `_cast_actions` cannot know which spell it is, and a gate
     # per zone would leave the rest open.
-    if player_cant_cast_spells(state, pid, _spell_as_cast(card, face_down, bestowed)):
+    #
+    # Brisela's "mana value 3 or less" is the same lock asked of the cast rather
+    # than the card: an X spell escapes it for a large enough X (202.3e), so
+    # the answer is the least X the line may be cast for.
+    min_x = cast_lock_min_x(state, pid, _spell_as_cast(card, face_down, bestowed))
+    if min_x is None:
         return []
 
     # Restricted mana ("spend only to cast a creature spell") is offered or
@@ -1534,8 +1539,14 @@ def _cast_variant(
         # the player had and the choice was never offered at all.
         if (
             cost.x_count
-            and max_affordable_x(cost, pool, sources, extra_generic=extra_generic - discount) < 0
+            and max_affordable_x(cost, pool, sources, extra_generic=extra_generic - discount)
+            < min_x
         ):
+            continue
+        if min_x and not cost.x_count:
+            # A mana-value lock this line can only escape by announcing X, on a
+            # price with no X to announce -- "without paying its mana cost"
+            # makes X 0 (107.3b), so the spell keeps the mana value that locks it.
             continue
         x = 0
 

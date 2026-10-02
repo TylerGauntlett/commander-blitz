@@ -819,6 +819,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: zone it is cast out of.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
 
+#: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
+#:
+#: `SPELL_FILTER_KEYS` without `controller` -- `affects_player` already names
+#: the caster -- and with ``mana_value``: "Your opponents can't cast spells with
+#: **mana value 3 or less**" (Brisela, Voice of Nightmares), written
+#: ``{"op": "<=", "value": 3}``. Only this filter takes it, because only this
+#: reader knows the X the spell is being cast for (202.3e) -- see
+#: `player_statics.cast_lock_min_x`. Every other spell filter matches a card
+#: face at a moment when X means something else or nothing.
+CAST_LOCK_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"mana_value"}
+
 #: `SPELL_FILTER_KEYS` plus the zone a free cast is offered from.
 #:
 #: "You may cast spells **from your hand** without paying their mana costs" --

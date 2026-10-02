@@ -19308,3 +19308,17 @@ test — and refuses the rest. The packet reference names the list as
   order; Scales alone on an arrival with none = 0; Oath + Season walker = 10;
   Oath + Scales walker = 5 (Scales is creatures only); each with COUNTER_PLACED
   equal to the total.
+
+## `cant_cast_spells` by mana value — Brisela, Voice of Nightmares' "Your opponents can't cast spells with mana value 3 or less" — 202.3e, 107.3b
+
+The cast lock's `affects_spells` filter read the printed face only and had no
+mana-value key. It now takes `mana_value` (`{"op": "<=", "value": 3}` or a bare
+number, literal only; the loader refuses anything else), and only this filter does
+(`CAST_LOCK_FILTER_KEYS`), because it is the only reader that knows the X a spell is
+cast for. 202.3e counts that X, so `player_statics.cast_lock_min_x` returns the least
+X that lifts the lock (None when none does): `casting._cast_variant` offers an X line
+only when `max_affordable_x` reaches it and refuses a price with no X (a free cast,
+107.3b); `game._cast` passes it to `ask_x` as `min_x`, whose options start at the
+floor (ordinal = X - floor, `min_x` in the decision context). The client's X stepper
+reads `min_x` and the verifier's life guard adds it back. Test:
+`tests/unit/test_cant_cast_mana_value.py` (+ `tests/data/cant_cast_mana_value.cards.json`).

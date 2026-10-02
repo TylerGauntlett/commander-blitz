@@ -1593,6 +1593,7 @@ def _matches_printed(
     selector: Mapping[str, Any],
     added_subtypes: tuple[str, ...] = (),
     text_changes: tuple[tuple[str, str], ...] = (),
+    x: int = 0,
 ) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -1699,7 +1700,39 @@ def _matches_printed(
 
         if not printed_cost_is(card.mana_cost, wanted_cost):
             return False
+    # "Your opponents can't cast spells with **mana value 3 or less**" --
+    # Brisela, Voice of Nightmares. The selector language's comparison shape,
+    # `{"op": "<=", "value": 3}`, with a literal number, because a printed face
+    # has no context to evaluate anything richer against. Only a
+    # `cant_cast_spells` filter may write it (`CAST_LOCK_FILTER_KEYS`), and
+    # that reader passes ``x``: 202.3e counts the X a spell on the stack was
+    # cast with, so a Fireball cast for X = 3 has mana value 4.
+    if (wanted_mv := selector.get("mana_value")) is not None and not _compare_printed(
+        card.mana_value + x * card.mana_cost.x_count, wanted_mv
+    ):
+        return False
     return True
+
+
+def _compare_printed(value: int, spec: Any) -> bool:
+    """The static twin of `effects.selectors._compare`, over literal numbers only."""
+    if isinstance(spec, int):
+        return value == spec
+    other = int(spec.get("value", 0))
+    op = spec.get("op", ">=")
+    if op == ">=":
+        return value >= other
+    if op == "<=":
+        return value <= other
+    if op == ">":
+        return value > other
+    if op == "<":
+        return value < other
+    if op in ("=", "=="):
+        return value == other
+    if op == "!=":
+        return value != other
+    raise ValueError(f"unknown comparison operator {op!r}")
 
 
 def has_any_counter(obj: GameObject) -> bool:
@@ -2313,6 +2346,7 @@ from .player_statics import (  # noqa: F401
     block_alone_forbidden,
     block_forbidden,
     block_tax,
+    cast_lock_min_x,
     commander_subtypes,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
