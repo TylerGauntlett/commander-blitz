@@ -390,7 +390,7 @@ class Game:
             # The sacrificed creature pays for part of the spell, so it is netted
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
-            extra -= state.card(action.emerge_oid).mana_cost.mana_value()
+            extra -= state.card(action.emerge_oid).mana_value
         elif action.flashback and card.flashback is not None:
             cost = card.flashback.mana
             # "…costs {X} less to cast **this way**". Netted into `extra` on this

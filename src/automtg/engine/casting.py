@@ -1092,7 +1092,7 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
         and (subtype is None or subtype in c.subtypes)
         and not sacrifice_forbidden(state, other)
     ]
-    creatures.sort(key=lambda c: (-state.card(c).mana_cost.mana_value(), c))
+    creatures.sort(key=lambda c: (-state.card(c).mana_value, c))
     return creatures[:4]
 
 
@@ -1530,7 +1530,7 @@ def _cast_variant(
         if emerge_oid is not None:
             # The sacrifice pays for part of the spell. Generic-only and clamped by
             # `pay`, like every other reduction here.
-            discount += state.card(emerge_oid).mana_cost.mana_value()
+            discount += state.card(emerge_oid).mana_value
 
         # X is a *gate* here, not a value.  Legality asks only "is there any X this
         # is castable at", and `game._cast` then asks the player which one -- so the

@@ -1469,7 +1469,7 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
         # and no card must never beat one.
         if oid is None:
             return -1
-        return ctx.state.card_of(ctx.state.objects[oid]).mana_cost.mana_value()
+        return ctx.state.card_of(ctx.state.objects[oid]).mana_value
 
     won = value_of(revealed[you]) > value_of(revealed[other])
     ctx.bindings[CLASH_WON] = 1 if won else 0

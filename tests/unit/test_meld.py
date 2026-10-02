@@ -100,6 +100,44 @@ class TestTheMeldedPermanent:
         assert game.state.objects[gisela].merged_into == bruna
 
 
+class TestItsManaValue:
+    """The total of its front faces' -- the Brisela ruling: "Brisela's mana value is 11".
+
+    The melded card prints no mana cost, so read off the pool entry it would be
+    0, and every "mana value N or less" removal spell would reach a 9/10.
+    """
+
+    def test_it_is_the_sum_of_the_halves(self, builder):
+        game, bruna = position(builder)
+        meld(game, bruna)
+
+        # Test Bruna {5}{W}{W} is 7, Test Gisela {4}{W}{W} is 6.
+        assert game.state.card_of(game.state.objects[bruna]).mana_value == 13
+
+    def test_it_prints_no_mana_cost_all_the_same(self, builder):
+        game, bruna = position(builder)
+        meld(game, bruna)
+
+        melded = game.state.card_of(game.state.objects[bruna])
+        assert melded.mana_cost == game.state.registry.get(BRISELA).mana_cost
+
+    def test_the_pool_entry_is_untouched(self, builder):
+        """Synthesised per permanent, the way mutate's merged card is."""
+        game, bruna = position(builder)
+        meld(game, bruna)
+
+        assert game.state.registry.get(BRISELA).mana_value == 0
+
+    def test_apart_again_each_half_has_its_own(self, builder):
+        game, bruna = position(builder)
+        gisela = only_oid(game, GISELA)
+        meld(game, bruna)
+        destroy(game.state, bruna)
+
+        assert game.state.card_of(game.state.objects[bruna]).mana_value == 7
+        assert game.state.card_of(game.state.objects[gisela]).mana_value == 6
+
+
 class TestItIsANewPermanent:
     def test_it_entered_this_turn(self, builder):
         """701.37c exiles both and returns them melded, so it *enters*."""

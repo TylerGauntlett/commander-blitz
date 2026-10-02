@@ -1240,6 +1240,13 @@ class CardDef:
     #: back through ``parent_face`` so no deck may contain it.
     melds_with: str | None = None
     melds_into: str | None = None
+    #: A melded permanent's mana value: the total of its two front faces'
+    #: (the Brisela ruling -- "Brisela's mana value is 11"). The melded card
+    #: prints no mana cost, so ``mana_cost`` stays empty and this answers
+    #: `mana_value` instead. Never authored -- `op_meld` writes it onto the
+    #: `CardDef` it synthesises for the one permanent, the way mutate writes
+    #: its merged card, and the printed entry in the pool keeps ``None``.
+    melded_mana_value: int | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
     #: **Warp {1}{R}**: ``evoke``'s slot -- an alternative mana cost offered
@@ -1463,6 +1470,8 @@ class CardDef:
 
     @property
     def mana_value(self) -> int:
+        if self.melded_mana_value is not None:
+            return self.melded_mana_value
         return self.mana_cost.mana_value()
 
     def has_keyword(self, keyword: Keyword | str) -> bool:

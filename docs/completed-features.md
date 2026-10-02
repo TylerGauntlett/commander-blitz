@@ -19322,3 +19322,16 @@ only when `max_affordable_x` reaches it and refuses a price with no X (a free ca
 floor (ordinal = X - floor, `min_x` in the decision context). The client's X stepper
 reads `min_x` and the verifier's life guard adds it back. Test:
 `tests/unit/test_cant_cast_mana_value.py` (+ `tests/data/cant_cast_mana_value.cards.json`).
+
+## A melded permanent's mana value — Brisela, Voice of Nightmares — the meld rules
+
+The melded card prints no mana cost, so `op_meld`, which wrote the pool entry itself
+onto the permanent, left Brisela at mana value 0. Its mana value is the total of its
+front faces' (the ruling: "Brisela's mana value is 11"). `CardDef.melded_mana_value`
+(never authored) answers `CardDef.mana_value` when set; `op_meld` writes a
+synthesised `CardDef` — the pool entry plus that sum — exactly as mutate synthesises
+its merged card, so the pool entry and the printed empty `mana_cost` are untouched and
+the halves read their own values again once apart. The engine's five direct
+`mana_cost.mana_value()` reads of an object (emerge, convoke ordering, the
+total-mana-value value, target totals) now go through the property. Test:
+`tests/unit/test_meld.py::TestItsManaValue`.

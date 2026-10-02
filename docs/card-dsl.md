@@ -12302,13 +12302,18 @@ phasing did nothing.
 ## Meld — mutate's merged permanent, with the pair fixed by the card
 
 ```jsonc
-{ "id": "bruna_the_fading_light",
-  "melds_with": "gisela_the_broken_blade",
+{ "id": "gisela_the_broken_blade",
+  "melds_with": "bruna_the_fading_light",
   "melds_into": "brisela_voice_of_nightmares",
-  "abilities": [ { "kind": "triggered", "trigger": { "event": "end_step" },
-                   "condition": { … },
+  "abilities": [ { "kind": "triggered",
+                   "trigger": { "event": "end_step", "controller": "you",
+                                "condition": { … } },
                    "effects": [ { "op": "meld" } ] } ] }
 ```
+
+Only the half that prints the meld trigger carries `melds_with` / `melds_into`;
+the partner (Bruna) is an ordinary card whose "(Melds with …)" line is reminder
+text.
 
 Meld was `refused` as needing "a card-wide designated state the engine has no
 place to keep". By the time mutate shipped, the place existed: a permanent whose
@@ -12335,6 +12340,15 @@ The melded card entry is not a card anybody owns a copy of, and it is kept out
 of decks by `parent_face` — the same derived back-link a back face and a second
 castable face use. Three fields answering "is this a card anybody owns?" would
 be three places to forget, so there is one.
+
+**Its mana value is the total of its front faces'** (the Brisela ruling:
+"Brisela's mana value is 11"). The melded card prints no mana cost, so the pool
+entry's mana value is 0; `op_meld` therefore writes a synthesised `CardDef` onto
+the permanent — the pool entry with `melded_mana_value` set to the two halves'
+sum — exactly as mutate synthesises its merged card. `CardDef.mana_value` reads
+that field first, and the engine's few direct `mana_cost.mana_value()` reads of a
+permanent were moved onto the property. The printed `mana_cost` stays empty, and
+the field is never authored.
 
 "If you both own and control" is **not** implemented in the op. It is the card's
 own intervening-if `condition`, checked twice by `triggers` as 603.4 requires; a

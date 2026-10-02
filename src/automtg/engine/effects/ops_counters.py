@@ -237,7 +237,17 @@ def op_meld(ctx: EffectContext, spec: Mapping[str, Any]):
     # After the move, for `cast_transformed`'s reason: `reset_permanent_state`
     # clears both of these on the way onto the battlefield, which is right for
     # every permanent except one that arrives already melded.
-    melded.merged_card = state.registry.get(card.melds_into)
+    #
+    # Synthesised rather than the pool entry itself, for one field: a melded
+    # permanent's mana value is the total of its front faces' (Brisela's is
+    # 11), and the melded card prints no mana cost to carry it.
+    import dataclasses
+
+    partner_card = state.registry.get(state.objects[partner].def_id)
+    melded.merged_card = dataclasses.replace(
+        state.registry.get(card.melds_into),
+        melded_mana_value=card.mana_value + partner_card.mana_value,
+    )
     melded.merged_under = (partner,)
     partner_obj = state.objects[partner]
     partner_obj.zone = Zone.BATTLEFIELD
