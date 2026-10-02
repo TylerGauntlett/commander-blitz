@@ -1,0 +1,18 @@
+{
+  "card_id": "giada_font_of_hope",
+  "name": "Giada, Font of Hope",
+  "oracle_text": "Flying, vigilance\nEach other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control.\n{T}: Add {W}. Spend this mana only to cast an Angel spell.",
+  "blocked_sentences": [
+    "Each other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control."
+  ],
+  "needs": [
+    {
+      "capability": "enters_with_additional_counters_dynamic_amount",
+      "kind": "static_effect",
+      "what": "the enters_with_additional_counters static with a computed amount: a static_value_keys `count` evaluated as the permanent enters, over a selector (controller you, subtypes Angel) that excludes the arriving permanent itself (\"Angels you ALREADY control\"), e.g. amount {\"count\": {\"controller\": \"you\", \"subtypes\": [\"Angel\"]}} with the entrant excluded",
+      "why_existing_wont_do": "enters_with_additional_counters exists (Oath of Gideon) but _apply_board_additional_counters in src/automtg/engine/zones.py reads `int(static.get(\"amount\", 1))` -- a fixed integer only, so a value spec cannot be given. It also runs after the entrant is already in state.battlefield, so a naive count would include the arriving Angel. A permanent_enters trigger with add_counters would be a triggered ability rather than a replacement (counters arrive late, the creature enters as its base size, and it is respondable), which is an approximation the brief forbids. replace_counters only modifies counter placements, not the entering itself."
+    }
+  ],
+  "closest_existing": ["enters_with_additional_counters", "replace_counters"],
+  "confidence": "high"
+}

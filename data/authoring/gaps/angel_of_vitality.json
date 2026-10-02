@@ -1,0 +1,18 @@
+{
+  "card_id": "angel_of_vitality",
+  "name": "Angel of Vitality",
+  "oracle_text": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\nThis creature gets +2/+2 as long as you have 25 or more life.",
+  "blocked_sentences": [
+    "If you would gain life, you gain that much life plus 1 instead."
+  ],
+  "needs": [
+    {
+      "capability": "life_gain_addend",
+      "kind": "replacement",
+      "what": "an additive life-gain replacement: the player-wide static replace_life_gain with an addend (e.g. gain_addend: 1) so each life-gain event for the affected player becomes that amount plus N, applied wherever life is gained (lifelink included), ordered with any gain_multiplier per 616.1 controller choice",
+      "why_existing_wont_do": "replace_life_gain only carries gain_multiplier, which the loader requires to be 2 or more, and engine/player_statics.life_gain_multiplier only multiplies; there is no addend key (counter_addend exists only for replace_counters). A you_gain_life trigger that gains 1 more is a different card (it uses the stack, and would itself trigger/repeat)."
+    }
+  ],
+  "closest_existing": ["replace_life_gain", "replace_counters.counter_addend"],
+  "confidence": "high"
+}

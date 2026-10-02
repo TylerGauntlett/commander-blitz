@@ -347,6 +347,11 @@
   "angel_of_the_god_pharaoh": {
     "zone": "battlefield"
   },
+  "angel_of_the_ruins": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "angel_s_grace": {
     "graveyard_size": {
       "0": 3
@@ -380,6 +385,10 @@
     "graveyard_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "angelic_field_marshal": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "angelic_wall": {
