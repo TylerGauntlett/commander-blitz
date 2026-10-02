@@ -3472,6 +3472,7 @@ the ability's own controller, so that key can only ever ask about you. See
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
+    "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
     "to_zones": ["graveyard", "exile"] // `leaves_battlefield` only: where it went
@@ -3524,6 +3525,24 @@ written fired on *every* kind — and the shipped pool places `charge` and
 creature" would also draw off Arixmethes waking up. The kind is also copied into
 `bindings` beside `amount`, so effects can read what fired them. Rejected on any
 other event, for the same reason as `defending`.
+
+`put_by: "you"` is "whenever **you** put one or more +1/+1 counters on this
+creature" -- Exemplar of Light. `controller` on `counter_placed` reads the
+*recipient's* controller, so an opponent's Graft on your creature passes it and
+would draw you a card. The event also carries `put_by`, the player who put the
+counters (122.6a: the controller of the placing spell or ability, or the
+permanent's own controller for a cost or a Saga tick -- the same `_putter` the
+`replace_counters` static's `put_by` reads), and this clause requires it to be
+the ability's controller. "One or more" needs nothing further: `add_counters`
+fires one event per placement, so three counters at once are one trigger. A
+failed match never queues, so an opponent's placement does not spend a
+`max_per_turn: 1` cap. `"you"` is the only value; rejected on any other event.
+
+```jsonc
+// Exemplar of Light
+{ "event": "counter_placed", "source": "self", "counter": "+1/+1",
+  "put_by": "you", "max_per_turn": 1 }
+```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
 on a `draw` or a `spell_cast` trigger. `draw_cards` puts the ordinal of each draw on the event —

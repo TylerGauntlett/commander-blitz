@@ -19134,3 +19134,23 @@ a planeswalker or battle records no player (506.2). The record is dropped when t
 creature leaves the battlefield (400.7) and cleared with the ledger. The player spec
 `{"attacked_by": "self"}` reads it for the ability's source; the loader refuses any
 other subject. Test: `tests/unit/test_players_attacked_by.py`.
+
+## `counter_placed` keyed on the putter -- `put_by: "you"` on triggers
+
+Exemplar of Light: "Whenever **you** put one or more +1/+1 counters on this
+creature, draw a card. This ability triggers only once each turn."
+
+- `primitives.add_counters` already worked out who puts the counters (`_putter`,
+  122.6a) for `replace_counters`' `put_by`; COUNTER_PLACED now carries it as
+  `put_by` beside `player` (the recipient's controller).
+- `put_by: "you"` on a trigger (schema `TriggerModel`, `TriggerSpec`, loader,
+  `triggers._matches`): the event's putter must be the ability's controller. An
+  emission with no putter fails. Refused on any event but `counter_placed`;
+  `"you"` is the only value, mirroring the static.
+- "One or more" is already one event per placement; a failed match never
+  queues, so an opponent's placement does not spend the once-each-turn cap.
+- `tests/unit/test_counter_placed_put_by.py` (+ `tests/data/counter_placed_put_by.cards.json`)
+  -- mine fires, an opponent's (explicit `by` or their source) does not, both
+  players on the event, a spell end to end, three-at-once is one trigger, the
+  cap and its reset, and the loader guards.
+- Unblocks Exemplar of Light.

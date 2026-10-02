@@ -323,6 +323,14 @@ class TriggerModel(BaseModel):
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
     counter: str | None = None
+    #: For ``counter_placed``: "whenever **you** put one or more +1/+1 counters
+    #: on this creature" (Exemplar of Light). Who put the counters (122.6a) --
+    #: the controller of the placing spell or ability, or the permanent's own
+    #: controller for a cost or a Saga tick -- must be this ability's
+    #: controller. ``controller`` cannot say it: on ``counter_placed`` it reads
+    #: the recipient's controller, so an opponent's counter on your creature
+    #: passes it. Mirrors ``put_by`` on the ``replace_counters`` static.
+    put_by: Literal["you"] | None = None
     #: For ``ability_activated``: "…if it isn't a mana ability".  ``false``
     #: excludes mana abilities, ``true`` keeps only them, omitted is both.
     #: Both activation paths tag the event, so the two stop being

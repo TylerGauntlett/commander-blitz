@@ -2163,6 +2163,13 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{where}: 'counter' only means anything on a counter_placed trigger, "
                 f"not on {model.trigger.event!r}"
             )
+        if model.trigger.put_by is not None and model.trigger.event != "counter_placed":
+            # Only COUNTER_PLACED records who put something somewhere; on any
+            # other event the clause would read an absent putter and never fire.
+            raise DslError(
+                f"{where}: 'put_by' on a trigger only means anything on "
+                f"counter_placed, not on {model.trigger.event!r}"
+            )
         if model.trigger.counter is not None:
             # "Whenever a vigilance counter is put on this creature." The filter
             # is compared to the kind the primitive was handed, so a near-miss
@@ -2262,6 +2269,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             not_cause=model.trigger.not_cause,
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
+            put_by=model.trigger.put_by,
             mana_ability=model.trigger.mana_ability,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,

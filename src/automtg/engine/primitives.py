@@ -1072,6 +1072,12 @@ def add_counters(
             oid=oid,
             counter=kind,
             amount=amount,
+            # Who put them (122.6a), for "whenever **you** put one or more
+            # +1/+1 counters on this creature" (Exemplar of Light). `player` is
+            # the recipient's controller and answers a different question: an
+            # opponent's spell putting a counter on my creature has `player`
+            # me and `put_by` them.
+            put_by=by,
         )
         if kind == sagas.LORE:
             # Here rather than at each caller, because every way a lore counter

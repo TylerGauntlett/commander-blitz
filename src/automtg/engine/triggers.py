@@ -1023,6 +1023,16 @@ def _matches(
     if spec.counter is not None and event.data.get("counter") != spec.counter:
         return False
 
+    # "Whenever **you** put one or more +1/+1 counters on this creature" --
+    # Exemplar of Light. The putter, not the recipient's controller: the
+    # `controller` clause reads `event.player`, which is whoever controls the
+    # creature, so an opponent's counter on it passes that and must fail this.
+    # An emission with no putter fails too -- wider is the dangerous direction.
+    if spec.put_by == "you" and (
+        event.data.get("put_by") is None or event.data.get("put_by") != obj.controller
+    ):
+        return False
+
     # "II --". One CHAPTER_REACHED event carries the number the Saga's lore
     # counters just reached, and every chapter ability on that Saga is a candidate
     # for it, so this comparison is the whole of which chapter runs. Without it a

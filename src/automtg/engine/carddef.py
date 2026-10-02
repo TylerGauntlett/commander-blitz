@@ -534,6 +534,10 @@ class TriggerSpec:
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.
     counter: str | None = None
+    #: ``counter_placed`` only: "whenever **you** put one or more +1/+1
+    #: counters on this creature" -- the event's ``put_by`` (the putter,
+    #: 122.6a) must be this ability's controller.  Exemplar of Light.
+    put_by: str | None = None
     #: ``ability_activated`` only: "…**if it isn't a mana ability**".  ``False``
     #: means only non-mana activations fire it, ``True`` only mana ones, and
     #: ``None`` is every activation.
