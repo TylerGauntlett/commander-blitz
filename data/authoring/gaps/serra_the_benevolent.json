@@ -1,0 +1,18 @@
+{
+  "card_id": "serra_the_benevolent",
+  "name": "Serra the Benevolent",
+  "oracle_text": "+2: Creatures you control with flying get +1/+1 until end of turn.\n−3: Create a 4/4 white Angel creature token with flying and vigilance.\n−6: You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",
+  "blocked_sentences": [
+    "−6: You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\""
+  ],
+  "needs": [
+    {
+      "capability": "damage_life_floor_static",
+      "kind": "static_effect",
+      "what": "a player-wide static (usable on an emblem or a permanent, e.g. Worship) that floors damage to a player's life total at N -- 'damage that would reduce your life total to less than 1 reduces it to 1 instead' -- with affects_player and an optional static condition such as 'if you control a creature' (exists {controller: you, types: [Creature]}), read continuously by primitives.damage_player alongside the existing state.life_floors table",
+      "why_existing_wont_do": "The damage_life_floor op installs a timed LifeFloor record whose only legal duration is 'this_turn' (LIFE_FLOOR_DURATIONS), so it cannot express a permanent emblem, and as a one-shot it cannot re-check 'if you control a creature' at each damage event. No entry in static_effects floors a life total: replace_damage multiplies damage, prevent_all_but caps each damage event, replace_life_loss multiplies loss, and cant_lose_the_game is a different effect."
+    }
+  ],
+  "closest_existing": ["damage_life_floor", "prevent_all_but", "cant_lose_the_game"],
+  "confidence": "high"
+}

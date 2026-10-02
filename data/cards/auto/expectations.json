@@ -8241,6 +8241,10 @@
     },
     "zone": "battlefield"
   },
+  "resplendent_angel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "response_resurgence": {
     "granted": {
       "count": 2,
@@ -8936,6 +8940,13 @@
     "zone": "battlefield"
   },
   "seraph_of_the_suns": {
+    "zone": "battlefield"
+  },
+  "seraph_sanctuary": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 41
+    },
     "zone": "battlefield"
   },
   "serra_s_embrace": {
@@ -9758,6 +9769,10 @@
   "starlit_angel": {
     "zone": "battlefield"
   },
+  "starnheim_aspirant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "staunch_defenders": {
     "life": {
       "0": 44
@@ -10568,7 +10583,21 @@
   "thraben_valiant": {
     "zone": "battlefield"
   },
+  "thraben_watcher": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "thran_dynamo": {
+    "zone": "battlefield"
+  },
+  "three_tree_city": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "three_tree_rootweaver": {
@@ -11044,6 +11073,10 @@
   "urza_s_cave": {
     "zone": "battlefield"
   },
+  "urza_s_incubator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "urza_s_mine": {
     "zone": "battlefield"
   },
@@ -11080,6 +11113,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "valkyrie_harbinger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "valkyrior_skyrider": {
@@ -11896,6 +11933,10 @@
   "wizards_school": {
     "zone": "battlefield"
   },
+  "wojek_investigator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wolf_cove_villager": {
     "zone": "battlefield"
   },
@@ -12007,6 +12048,10 @@
     "zone": "battlefield"
   },
   "youthful_knight": {
+    "zone": "battlefield"
+  },
+  "youthful_valkyrie": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zagoth_crystal": {

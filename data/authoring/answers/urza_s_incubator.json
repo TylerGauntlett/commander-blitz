@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "urza_s_incubator",
+    "name": "Urza's Incubator",
+    "oracle_text": "As this artifact enters, choose a creature type.\nCreature spells of the chosen type cost {2} less to cast.",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this artifact enters, choose a creature type.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "choose_type", "prompt": "Choose a creature type"}
+        ]
+      },
+      {
+        "kind": "static",
+        "effect": "spell_cost_reduction",
+        "text": "Creature spells of the chosen type cost {2} less to cast.",
+        "affects_spells": {
+          "controller": "any",
+          "types": ["Creature"],
+          "subtypes": [{"chosen_type_of": "self"}]
+        },
+        "amount": {"const": 2}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

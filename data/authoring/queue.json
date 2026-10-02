@@ -221442,12 +221442,12 @@
     },
     "Resplendent Angel": {
       "edhrec_rank": 2091,
-      "gate": "template",
+      "gate": null,
       "name": "Resplendent Angel",
-      "reason": "no template for: At the beginning of each end step, if you gained 5 or more life this turn, create a 4/4 wh",
+      "reason": "",
       "scryfall_id": "59adbd35-9959-4a0f-babf-46ea3c15f018",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Resplendent Griffin": {
@@ -240362,12 +240362,12 @@
     },
     "Sephara, Sky's Blade": {
       "edhrec_rank": 1350,
-      "gate": "template",
+      "gate": "residual",
       "name": "Sephara, Sky's Blade",
-      "reason": "no template for: You may pay {W} and tap four untapped creatures you control with flying rather than pay th",
+      "reason": "printed text not represented: You may pay {W} and tap four untapped creatures you control with flying rather than pay this spell's mana cost",
       "scryfall_id": "f445f63a-73a9-4512-83ef-6be7409440bc",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": true
     },
     "Sephiroth's Intervention": {
@@ -240492,12 +240492,12 @@
     },
     "Seraph Sanctuary": {
       "edhrec_rank": 2314,
-      "gate": "template",
+      "gate": null,
       "name": "Seraph Sanctuary",
-      "reason": "no template for: Whenever an Angel you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "8ff49618-4612-4a44-a0b7-9d710a7cd60b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Seraph of Dawn": {
@@ -262962,12 +262962,12 @@
     },
     "Starnheim Aspirant": {
       "edhrec_rank": 3138,
-      "gate": "template",
+      "gate": null,
       "name": "Starnheim Aspirant",
-      "reason": "no template for: Angel spells you cast cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "170914cc-3c3d-4929-a45d-836a5b8a4090",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Starnheim Courser": {
@@ -284822,12 +284822,12 @@
     },
     "Thraben Watcher": {
       "edhrec_rank": 4824,
-      "gate": "template",
+      "gate": null,
       "name": "Thraben Watcher",
-      "reason": "no template for: Other nontoken creatures you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "9405c90b-4d6a-47d6-980b-de84aa93672d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Thrakkus the Butcher": {
@@ -285272,12 +285272,12 @@
     },
     "Three Tree City": {
       "edhrec_rank": 176,
-      "gate": "template",
+      "gate": null,
       "name": "Three Tree City",
-      "reason": "no template for: As enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "06008bcb-ce6b-482c-9253-f5b9b5e0718e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Three Tree Mascot": {
@@ -299712,12 +299712,12 @@
     },
     "Urza's Incubator": {
       "edhrec_rank": 313,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Incubator",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "c4589226-6072-409b-b598-ebd87f675a6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Urza's Mine": {
@@ -300462,12 +300462,12 @@
     },
     "Valkyrie Harbinger": {
       "edhrec_rank": 2824,
-      "gate": "template",
+      "gate": null,
       "name": "Valkyrie Harbinger",
-      "reason": "no template for: At the beginning of each end step, if you gained 4 or more life this turn, create a 4/4 wh",
+      "reason": "",
       "scryfall_id": "e976523b-55cf-4cc0-b537-bb7c629004b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Valkyrie's Call": {
@@ -318002,12 +318002,12 @@
     },
     "Wojek Investigator": {
       "edhrec_rank": 4670,
-      "gate": "template",
+      "gate": null,
       "name": "Wojek Investigator",
-      "reason": "no template for: At the beginning of your upkeep, investigate once for each opponent who has more cards in ",
+      "reason": "",
       "scryfall_id": "296574c6-3933-4ab3-b591-72514b244da9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Wojek Siren": {
@@ -321542,12 +321542,12 @@
     },
     "Youthful Valkyrie": {
       "edhrec_rank": 3108,
-      "gate": "template",
+      "gate": null,
       "name": "Youthful Valkyrie",
-      "reason": "no template for: Whenever another Angel you control enters, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "5aa62069-cb37-423a-a0d9-44f4bdebca45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Yuan Shao's Infantry": {

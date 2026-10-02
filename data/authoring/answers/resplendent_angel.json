@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "resplendent_angel",
+    "name": "Resplendent Angel",
+    "oracle_text": "Flying\nAt the beginning of each end step, if you gained 5 or more life this turn, create a 4/4 white Angel creature token with flying and vigilance.\n{3}{W}{W}{W}: Until end of turn, this creature gets +2/+2 and gains lifelink.",
+    "mana_cost": "{1}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each end step, if you gained 5 or more life this turn, create a 4/4 white Angel creature token with flying and vigilance.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "any",
+          "condition": {
+            "cmp": ">=",
+            "left": {"life_gained_this_turn": "you"},
+            "right": {"const": 5}
+          }
+        },
+        "effects": [
+          {"op": "create_token", "token": "angel_4_4_w_flying_vigilance", "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{W}{W}{W}: Until end of turn, this creature gets +2/+2 and gains lifelink.",
+        "cost": {"mana": "{3}{W}{W}{W}"},
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {"self_only": true, "zone": "battlefield"},
+            "power": {"const": 2},
+            "toughness": {"const": 2}
+          },
+          {
+            "op": "grant_keyword",
+            "keywords": ["lifelink"],
+            "objects": {"self_only": true, "zone": "battlefield"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
