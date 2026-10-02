@@ -4456,7 +4456,12 @@ the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and
 the fixed order stays acyclic. A **life total** is safe for exactly that reason
 too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
-can change what a player's life is.
+can change what a player's life is. "As long as **you** have 25 or more life"
+(Angel of Vitality) is `{"max_life_of": "you"} >= 25` — one player, so the
+minimum and the maximum agree. Every life total that moves in play goes through
+`primitives._move_life`, which invalidates the characteristic cache, so the
+answer follows the life total as it moves rather than standing until something
+unrelated bumps `char_version`.
 
 `life_of` itself is deliberately *not*, and the difference is the whole point.
 

@@ -19033,3 +19033,15 @@ group applies nothing (614.12: Giada returned together with an Angel does not gr
 it). A resolving permanent spell and a land drop now bump `event_batch` as their own
 events, so a token made while a spell waited on the stack is not mistaken for a
 simultaneous arrival. Test: `tests/unit/test_enters_with_counters_per_angel.py`.
+
+## A life total that moves refreshes the statics that read it — `primitives._move_life`
+
+A static `condition` may read a life total (`min_life_of` / `max_life_of`: Guul Draz
+Vampire's "as long as an opponent has 10 or less life", Angel of Vitality's "as long as
+you have 25 or more life"), and `chars` caches per `char_version`. Nothing that changed
+a life total bumped it, so a creature read at 40 kept its answer after its controller
+was burned to 10 until some unrelated zone change or resolution happened to invalidate
+the cache — every existing test set the life totals and bumped by hand. The three
+writers of a life total in play (`gain_life`, `lose_life`, the damage branch of
+`damage_player`) now go through `_move_life`, which bumps. Test:
+`tests/unit/test_player_quantifier.py::TestItFollowsTheLifeTotal`.
