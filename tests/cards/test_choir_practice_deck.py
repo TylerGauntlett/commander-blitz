@@ -1112,3 +1112,191 @@ class TestLyraArchangelOfDawn:
         cast(game, ANCHOR)
 
         assert plus(game, only_oid(game, SMALL_ANGEL, 0)) == 2
+
+
+# ----------------------------------------------------------------------
+# "if you gained life this turn": the end-step Angel makers
+# ----------------------------------------------------------------------
+
+
+def end_step_tokens(builder, card: str, gained: int, *, active: int = 0, token: str) -> int:
+    """``card`` on player 0's side; player 0 gains ``gained`` during ``active``'s
+    main phase; run to that turn's end step and count player 0's ``token``s.
+
+    The gain is the primitive rather than a spell so the amount is exact: every
+    gain spell in the pool is a fixed number, and the claims are about the
+    boundary between two adjacent ones.
+    """
+    from automtg.engine.primitives import gain_life
+
+    game = (
+        builder(players=2)
+        .battlefield(0, [card, PLAINS])
+        .battlefield(1, [PLAINS])
+        .hand(0, [ANCHOR])
+        .hand(1, [ANCHOR])
+        .active(active)
+        .step(Step.PRECOMBAT_MAIN)
+        .build()
+    )
+    if gained:
+        assert gain_life(game.state, 0, gained) == gained
+    pass_until(game, lambda g: g.state.step is Step.END_STEP and g.state.active_player == active)
+    settle(game)
+    assert game.state.active_player == active, "measured in the same turn's end step"
+    return len(tokens(game, token))
+
+
+class TestObNixilisTheAscended:
+    """ "When Ob Nixilis enters, destroy all tapped creatures your opponents
+    control. You gain 1 life for each creature destroyed this way." / "At the
+    beginning of each end step, if you gained life this turn, create a 4/4 white
+    Angel creature token with flying." """
+
+    def arrive(self, builder, theirs_tapped, theirs_untapped=(), mine_tapped=()):
+        game = (
+            builder(players=2)
+            .battlefield(0, [PLAINS] * 7)
+            .battlefield(0, list(mine_tapped), tapped=True)
+            .battlefield(1, list(theirs_tapped), tapped=True)
+            .battlefield(1, [*theirs_untapped, PLAINS])
+            .hand(0, ["ob_nixilis_the_ascended", ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        before = life(game)
+        cast(game, "ob_nixilis_the_ascended")
+        return game, life(game) - before
+
+    def test_it_destroys_the_tapped_and_gains_one_each(self, builder):
+        game, gained = self.arrive(builder, [BEAR, BEAR], [BEAR])
+
+        assert [o.def_id for o in game.state.battlefield_objects(1) if o.def_id == BEAR] == [BEAR]
+        assert not game.state.objects[only_oid(game, BEAR, 1)].tapped, "the untapped one stays"
+        assert gained == 2
+
+    def test_your_own_tapped_creatures_are_spared(self, builder):
+        """ "tapped creatures **your opponents** control"."""
+        game, gained = self.arrive(builder, [], mine_tapped=[BEAR])
+
+        assert game.state.objects[only_oid(game, BEAR, 0)].zone is Zone.BATTLEFIELD
+        assert gained == 0
+
+    def test_an_indestructible_creature_survives_and_is_not_counted(self, builder):
+        """ "for each creature **destroyed this way**", not for each tapped creature.
+
+        Two tapped creatures, one of them Darksteel Myr: one destroyed, one life.
+        """
+        game, gained = self.arrive(builder, ["darksteel_myr", BEAR])
+
+        assert game.state.objects[only_oid(game, "darksteel_myr", 1)].zone is Zone.BATTLEFIELD
+        assert [o for o in game.state.battlefield_objects(1) if o.def_id == BEAR] == []
+        assert gained == 1
+
+    def test_its_arrival_gain_turns_on_its_own_end_step_angel(self, builder):
+        """The two lines are one engine: kill one tapped creature, gain 1, and the
+        same turn's end step makes the Angel."""
+        game, gained = self.arrive(builder, [BEAR])
+        assert gained == 1
+        pass_until(game, lambda g: g.state.step is Step.END_STEP)
+        settle(game)
+
+        assert len(tokens(game, ANGEL_TOKEN)) == 1
+
+    def test_gaining_life_makes_an_angel_at_your_end_step(self, builder):
+        assert end_step_tokens(builder, "ob_nixilis_the_ascended", 1, token=ANGEL_TOKEN) == 1
+
+    def test_no_life_gained_no_angel(self, builder):
+        assert end_step_tokens(builder, "ob_nixilis_the_ascended", 0, token=ANGEL_TOKEN) == 0
+
+    def test_it_also_fires_at_an_opponents_end_step(self, builder):
+        """ "At the beginning of **each** end step" -- gain on their turn, Angel on theirs."""
+        assert (
+            end_step_tokens(builder, "ob_nixilis_the_ascended", 1, active=1, token=ANGEL_TOKEN)
+            == 1
+        )
+
+
+class TestResplendentAngel:
+    """ "At the beginning of each end step, if you gained 5 or more life this turn,
+    create a 4/4 white Angel creature token with flying and vigilance." /
+    "{3}{W}{W}{W}: Until end of turn, this creature gets +2/+2 and gains lifelink." """
+
+    def test_five_life_makes_an_angel(self, builder):
+        assert end_step_tokens(builder, "resplendent_angel", 5, token=VIGILANT_ANGEL_TOKEN) == 1
+
+    def test_four_life_is_one_short(self, builder):
+        """ "5 **or more**" -- the boundary, from below."""
+        assert end_step_tokens(builder, "resplendent_angel", 4, token=VIGILANT_ANGEL_TOKEN) == 0
+
+    def test_it_fires_at_an_opponents_end_step(self, builder):
+        assert (
+            end_step_tokens(builder, "resplendent_angel", 6, active=1, token=VIGILANT_ANGEL_TOKEN)
+            == 1
+        )
+
+    def test_the_token_has_flying_and_vigilance(self, builder):
+        """The plain Angel token would pass a count; this one has vigilance too."""
+        from automtg.engine.primitives import gain_life
+
+        game = anchored(builder, ["resplendent_angel"])
+        gain_life(game.state, 0, 5)
+        pass_until(game, lambda g: g.state.step is Step.END_STEP)
+        settle(game)
+        (token,) = tokens(game, VIGILANT_ANGEL_TOKEN)
+
+        assert {"flying", "vigilance"} <= keywords(game, token.oid)
+        assert pt(game, token.oid) == (4, 4)
+
+    def pumped(self, builder):
+        game = anchored(builder, ["resplendent_angel", *[PLAINS] * 6])
+        angel = only_oid(game, "resplendent_angel")
+        (pump,) = activations(game, angel)
+        game.apply(pump)
+        settle(game)
+        return game, angel
+
+    def test_the_activation_gives_plus_two_and_lifelink(self, builder):
+        game, angel = self.pumped(builder)
+
+        assert pt(game, angel) == (5, 5)
+        assert "lifelink" in keywords(game, angel)
+
+    def test_and_both_wear_off_at_end_of_turn(self, builder):
+        """ "**Until end of turn**" -- the pump is not a counter."""
+        game, angel = self.pumped(builder)
+        pass_until(game, lambda g: g.state.active_player == 1 and g.state.step is Step.UPKEEP)
+
+        assert pt(game, angel) == (3, 3)
+        assert "lifelink" not in keywords(game, angel)
+        assert plus(game, angel) == 0
+
+
+class TestValkyrieHarbinger:
+    """ "At the beginning of each end step, if you gained 4 or more life this turn,
+    create a 4/4 white Angel creature token with flying and vigilance." """
+
+    def test_four_life_makes_an_angel(self, builder):
+        assert end_step_tokens(builder, "valkyrie_harbinger", 4, token=VIGILANT_ANGEL_TOKEN) == 1
+
+    def test_three_life_is_one_short(self, builder):
+        """The threshold is 4, not Resplendent's 5 -- and not "any life"."""
+        assert end_step_tokens(builder, "valkyrie_harbinger", 3, token=VIGILANT_ANGEL_TOKEN) == 0
+
+    def test_it_fires_at_an_opponents_end_step(self, builder):
+        assert (
+            end_step_tokens(builder, "valkyrie_harbinger", 4, active=1, token=VIGILANT_ANGEL_TOKEN)
+            == 1
+        )
+
+    def test_an_opponent_gaining_life_does_not_count(self, builder):
+        """ "if **you** gained" -- player 1 gains 10 and the Harbinger's side sees none."""
+        from automtg.engine.primitives import gain_life
+
+        game = anchored(builder, ["valkyrie_harbinger"])
+        gain_life(game.state, 1, 10)
+        pass_until(game, lambda g: g.state.step is Step.END_STEP)
+        settle(game)
+
+        assert tokens(game, VIGILANT_ANGEL_TOKEN) == []
