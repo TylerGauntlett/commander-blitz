@@ -1237,6 +1237,11 @@ class EnteredPermanent:
     types: frozenset[str] = frozenset()
     subtypes: frozenset[str] = frozenset()
     colors: frozenset[str] = frozenset()
+    #: The `state.event_batch` the arrival belonged to -- which permanents
+    #: entered **together**. Giada, Font of Hope counts "each Angel you
+    #: *already* control", and an Angel arriving in the same event is not one
+    #: of them (`zones._apply_board_additional_counters`).
+    batch: int = -1
 
     def matches(
         self,

@@ -19018,3 +19018,18 @@ for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flas
 well. `affects_spells` now accepts `from_zone: "hand"` (the only printed value); the
 cast-line builder passes the zone the spell is cast from, and a caller that names no
 zone is refused rather than freed. Test: `tests/unit/test_free_cast_from_hand.py`.
+
+## `enters_with_additional_counters` counted amount — Giada, Font of Hope's "for each Angel you already control" — 614.1c / 614.12
+
+The static's `amount` was a fixed integer, so "an additional +1/+1 counter for each
+Angel you already control" could not be said, and the replacement ran after the
+arrival was in `state.battlefield`, so a naive count would include the Angel itself.
+`amount` may now be `{"count": <battlefield filter>}` (that alone; the loader refuses
+other value forms and other zones). `zones._apply_board_additional_counters` evaluates
+it as the permanent enters, leaving out the **entering group**: the arrival plus
+every permanent the turn ledger records as entering in the current
+`state.event_batch` (`EnteredPermanent` now carries its `batch`). A source in the
+group applies nothing (614.12: Giada returned together with an Angel does not grow
+it). A resolving permanent spell and a land drop now bump `event_batch` as their own
+events, so a token made while a spell waited on the stack is not mistaken for a
+simultaneous arrival. Test: `tests/unit/test_enters_with_counters_per_angel.py`.

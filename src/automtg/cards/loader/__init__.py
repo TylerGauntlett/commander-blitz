@@ -3793,10 +3793,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"kind the arrival gets more of"
             )
         _check_counter_kind(model.counter, f"{where}.counter")
-        if not isinstance(model.amount, int) or isinstance(model.amount, bool) or model.amount < 1:
+        if isinstance(model.amount, Mapping):
+            # Giada, Font of Hope: "...for each Angel you already control." A
+            # count of permanents and nothing else: the engine evaluates it
+            # leaving out the entering group ("already"), which only means
+            # something for a count over the battlefield -- a `times` or a life
+            # total would need its own reading of the word.
+            if set(model.amount) != {"count"}:
+                raise DslError(
+                    f"{where}: enters_with_additional_counters takes an 'amount' of "
+                    f"a whole number or {{'count': <battlefield filter>}} alone "
+                    f"(got {sorted(model.amount)})"
+                )
+            spec = model.amount["count"]
+            if isinstance(spec, Mapping) and str(spec.get("zone", "battlefield")) != "battlefield":
+                raise DslError(
+                    f"{where}.amount.count: counts what you already control, so it "
+                    f"is a battlefield filter (got zone {spec.get('zone')!r})"
+                )
+            _validate_static_count_filter(spec, f"{where}.amount.count")
+        elif (
+            not isinstance(model.amount, int) or isinstance(model.amount, bool) or model.amount < 1
+        ):
             raise DslError(
                 f"{where}: enters_with_additional_counters needs 'amount', a whole "
-                f"number of 1 or more (got {model.amount!r})"
+                f"number of 1 or more or a {{'count': ...}} (got {model.amount!r})"
             )
 
     if model.effect == "lose_keyword":

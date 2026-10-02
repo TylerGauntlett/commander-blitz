@@ -793,16 +793,45 @@ def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
     to the loyalty it was going to have. Every matching static adds its own
     amount (two Oaths, two counters). The arriving permanent is excluded as a
     source, as in `_apply_board_enters_tapped`.
-    """
-    from .characteristics import _battlefield_statics, _matches
 
+    **The amount may be a count** -- Giada, Font of Hope: "Each other Angel you
+    control enters with an additional +1/+1 counter on it **for each Angel you
+    already control**." Still the replacement, evaluated as the Angel enters,
+    so it is never on the battlefield at its printed size; a `permanent_enters`
+    trigger running `add_counters` would be respondable and late.
+
+    "Already" is the whole difficulty, because by this point the arrival is in
+    ``state.battlefield`` and an ordinary count would include it. So the count
+    leaves out the **entering group** -- the arrival itself and everything that
+    entered in the same simultaneous event (`state.event_batch`, read off the
+    turn ledger). Two Angels created by one effect see only the Angels that
+    were there before, which is the printed ruling. For the same reason a
+    source in that group applies nothing: Giada entering alongside an Angel was
+    not on the battlefield when the Angel's entry was decided (614.12).
+    """
+    from .characteristics import _battlefield_statics, _matches, _matching_objects
+
+    entering = {
+        entry.oid
+        for entry in state.turn_ledger.permanents_entered
+        if entry.batch == state.event_batch
+    } | {obj.oid}
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "enters_with_additional_counters":
             continue
-        if source_obj.oid == obj.oid:
+        if source_obj.oid in entering:
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
-            obj.add_counter(str(static.get("counter")), int(static.get("amount", 1)))
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        amount = static.get("amount", 1)
+        if isinstance(amount, Mapping):
+            amount = sum(
+                1
+                for other in _matching_objects(state, amount["count"], source_obj)
+                if other.oid not in entering
+            )
+        if int(amount) > 0:
+            obj.add_counter(str(static.get("counter")), int(amount))
 
 
 def _apply_compleated(obj: GameObject, card: CardDef) -> None:

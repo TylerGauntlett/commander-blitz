@@ -8612,8 +8612,28 @@ order 616.1 lets the controller choose and the one that keeps a walker
 compleated took to zero. Each matching static adds its own amount; the
 arriving permanent is never its own source. **Not** `replace_counters` with
 `counter_addend: 1`, which replaces every placement and would turn each +1
-loyalty cost into +2. `affects`, `counter` and a whole `amount` of 1 or more are
-all required.
+loyalty cost into +2. `affects`, `counter` and an `amount` are all required.
+
+**A counted amount** — Giada, Font of Hope: "Each other Angel you control enters
+with an additional +1/+1 counter on it for each Angel you already control."
+
+```jsonc
+{"kind": "static", "effect": "enters_with_additional_counters",
+ "affects": {"controller": "you", "subtypes": ["Angel"]},
+ "counter": "+1/+1",
+ "amount": {"count": {"controller": "you", "subtypes": ["Angel"]}}}
+```
+
+`amount` is a whole number of 1 or more, or `{"count": <battlefield filter>}` and
+nothing else (the filter is the static `count` filter, judged from the static's
+source). The count is taken as the permanent enters and **leaves out the
+entering group** — the arrival itself and everything that entered in the same
+simultaneous event (`state.event_batch`) — which is the word "already": two
+Angel tokens from one effect each count only the Angels that were there before.
+A source in the entering group applies nothing (614.12), so Giada returned
+together with an Angel gives it no counters. A count of 0 adds none. A resolving
+permanent spell and a land drop are each their own event, so a token made while
+the spell waited on the stack is counted.
 
 ## Battles
 

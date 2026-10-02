@@ -300,6 +300,8 @@ class Game:
         # with the choice. Last of the four, because the copy above decides
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
+        # Its own simultaneous event, as a resolving spell's arrival is.
+        state.event_batch += 1
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,

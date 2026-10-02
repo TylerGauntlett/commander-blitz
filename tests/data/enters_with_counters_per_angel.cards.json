@@ -1,0 +1,86 @@
+{
+  "_comment": "Cards for tests/unit/test_enters_with_counters_per_angel.py. `t_giada` is Giada, Font of Hope whole. `t_angel` is a {W} Angel to cast, `t_squire` the same body without the type, `t_angel_pair` makes two Angel tokens in one op (one simultaneous event) at instant speed, and `t_mass_return` puts every creature card in your graveyard onto the battlefield at once.",
+  "cards": [
+    {
+      "id": "t_giada",
+      "name": "Test Choir Giada",
+      "oracle_text": "Flying, vigilance\nEach other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control.\n{T}: Add {W}. Spend this mana only to cast an Angel spell.",
+      "mana_cost": "{1}{W}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["flying", "vigilance"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control.",
+          "effect": "enters_with_additional_counters",
+          "affects": {"controller": "you", "subtypes": ["Angel"]},
+          "counter": "+1/+1",
+          "amount": {"count": {"controller": "you", "subtypes": ["Angel"]}}
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W}. Spend this mana only to cast an Angel spell.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "mana_restriction": ["Angel"],
+          "effects": [{"op": "add_mana", "mana": "{W}"}]
+        }
+      ]
+    },
+    {
+      "id": "t_angel",
+      "name": "Test Choir Angel",
+      "oracle_text": "",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"]
+    },
+    {
+      "id": "t_squire",
+      "name": "Test Choir Squire",
+      "oracle_text": "",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"]
+    },
+    {
+      "id": "t_angel_pair",
+      "name": "Test Choir Angel Pair",
+      "oracle_text": "Create two 4/4 white Angel creature tokens with flying.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "create_token", "token": "angel_4_4_w_flying", "amount": {"const": 2}, "controller": "you"}
+      ]
+    },
+    {
+      "id": "t_mass_return",
+      "name": "Test Choir Mass Return",
+      "oracle_text": "Return all creature cards from your graveyard to the battlefield.",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+         "objects": {"zone": "graveyard", "controller": "you", "types": ["Creature"], "count": "all"}}
+      ]
+    }
+  ]
+}

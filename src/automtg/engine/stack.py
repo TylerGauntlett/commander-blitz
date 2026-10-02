@@ -1035,6 +1035,10 @@ def _place_after_resolution(
         # is where most riot creatures arrive. Last of the four: the copy offer
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
+    # A resolving spell's arrival is its own simultaneous event, not part of
+    # whichever op last bumped the counter -- a token an ability made while this
+    # spell waited is an Angel Giada's "already control" must count.
+    state.event_batch += 1
     if tuck_to is None:
         move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     else:

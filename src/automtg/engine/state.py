@@ -768,6 +768,7 @@ class GameState:
                         types=frozenset(c.types),
                         subtypes=frozenset(c.subtypes),
                         colors=frozenset(c.colors),
+                        batch=int(data.get("batch", -1)),
                     )
                 )
                 # The ledger is now a *static* magnitude too -- Kinbinding's
