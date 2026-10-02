@@ -529,6 +529,16 @@ STATIC_EFFECTS = frozenset(
         # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
         "cant_lose_the_game",
         "cant_win_the_game",
+        # Worship; Serra the Benevolent's emblem.  "If you control a creature,
+        # damage that would reduce your life total to less than 1 reduces it to
+        # 1 instead."  The continuous form of the `damage_life_floor` op
+        # (Angel's Grace's until-end-of-turn shape), as `cant_lose_the_game`
+        # is of its op: `amount` is the floor, `affects_player` the protected
+        # seats, and the "if you control a creature" is an ordinary static
+        # `condition`, asked again at every damage event.  Read by
+        # `primitives.damage_player` through `temp_effects.life_floor`, beside
+        # the timed table -- damage only, so a `lose_life` walks past it.
+        "damage_life_floor",
         # Ashiok, Dream Render.  "Spells and abilities your opponents control
         # can't cause their controller to search their library."  A player-wide
         # prohibition on one precise search: the named player searching **their
@@ -700,6 +710,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "opponents_cant_force_discard_or_sacrifice",
         "cant_lose_the_game",
         "cant_win_the_game",
+        "damage_life_floor",
     }
 )
 

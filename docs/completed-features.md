@@ -19181,3 +19181,21 @@ derived characteristics on the battlefield and printed ones elsewhere. All four 
 `"colorless"` as a colour letter, the flag beside `from_everything`, a non-boolean flag,
 and the sentinel words as `from_subtypes` entries. Test:
 `tests/unit/test_protection_from_colorless.py`.
+
+## `damage_life_floor` static — "damage that would reduce your life total to less than 1 reduces it to 1 instead" — Serra the Benevolent's emblem, Worship — 614
+
+The engine had only the one-shot form: Angel's Grace's `damage_life_floor` op, a
+timed `LifeFloor` whose only duration is "this turn". Serra the Benevolent's −6
+emblem lasts the game, and its "if you control a creature" must be re-asked at
+every damage event — the whole drawback of Worship — which a record written once
+cannot do. The `damage_life_floor` player-wide static (`amount` the floor, required
+and ≥ 1; `affects_player`; an optional `condition`; `affects` refused) is read by
+`player_statics.static_life_floor` through `_active_player_statics`, command zone
+included, and `temp_effects.life_floor` — the one reader `primitives.damage_player`
+asks — now takes the highest of the timed records and the statics. A floor on the
+loss, not a prevention: `DAMAGE_DEALT` carries the whole hit and `LIFE_LOST` only
+what left. Damage only, so `lose_life` and paid life walk past it. Test:
+`tests/unit/test_damage_life_floor_static.py` — lethal damage stops at 1 with a
+creature and kills without one, the condition read at the moment of damage both
+ways round, life loss as the near miss, the seat named, Worship on the battlefield
+lifting when it leaves, and the loader's refusals.

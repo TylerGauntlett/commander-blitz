@@ -13964,6 +13964,83 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_life_floor_emblem",
+      "name": "Test Life Floor Emblem",
+      "oracle_text": "You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "emblem",
+          "player": "you",
+          "emblem": 0
+        }
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "kind": "static",
+              "effect": "damage_life_floor",
+              "amount": 1,
+              "affects_player": "you",
+              "condition": {
+                "exists": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_worship",
+      "name": "Test Worship",
+      "oracle_text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "mana_cost": "{3}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "damage_life_floor",
+          "amount": 1,
+          "affects_player": "you",
+          "condition": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
+        }
+      ]
     }
   ]
 }

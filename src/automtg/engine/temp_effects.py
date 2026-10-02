@@ -263,8 +263,18 @@ def life_floor(state: GameState, pid: int) -> int | None:
     not take you below 3. Short-circuits on the empty list, which is what
     `state.life_floors` is in every game that plays none of these cards -- and it
     is read on every point of damage to a player, so that matters.
+
+    The `damage_life_floor` **static** (Worship, Serra the Benevolent's emblem)
+    is asked here too, so the one reader in `damage_player` sees both: the timed
+    record an Angel's Grace leaves and the continuous floor a permanent or an
+    emblem holds, the highest of all of them biting.
     """
+    from .player_statics import static_life_floor
+
     floors = [record.floor for record in state.life_floors if record.player == pid]
+    static = static_life_floor(state, pid)
+    if static is not None:
+        floors.append(static)
     return max(floors) if floors else None
 
 

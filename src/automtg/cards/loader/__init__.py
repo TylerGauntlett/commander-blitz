@@ -3485,6 +3485,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: {model.effect} takes 'affects_player' and an optional "
             f"'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "damage_life_floor":
+        # "Damage that would reduce your life total to less than 1 reduces it to
+        # 1 instead." The floor is required: absent, `_static_value` reads 0,
+        # and a floor of 0 is a different card -- it would let damage take you
+        # to exactly 0, which kills, so the static would load and protect
+        # nobody. A permanent filter has nothing to mean on a life total.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: damage_life_floor needs an 'amount' -- the life total "
+                f"damage may not take the named players below ('to 1 instead' is 1)"
+            )
+        if isinstance(model.amount, int) and model.amount < 1:
+            raise DslError(
+                f"{where}.amount: must be 1 or more; a floor of 0 or less stops "
+                f"nothing that would not already kill"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: damage_life_floor takes 'affects_player', 'amount' and "
+                f"an optional 'condition', and no 'affects'"
+            )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes

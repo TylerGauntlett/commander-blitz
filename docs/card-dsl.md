@@ -4314,7 +4314,8 @@ characteristics — the loader rejects anything else. See
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
-`block_restriction` · `prevent_damage` · [`prevent_all_but`](#prevent-all-but-n-of-that-damage) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
+`block_restriction` · `prevent_damage` · [`prevent_all_but`](#prevent-all-but-n-of-that-damage) ·
+[`damage_life_floor`](#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
@@ -6357,7 +6358,7 @@ not. It is **not** interchangeable with a `not_types` complement —
 
 ## Player-wide statics
 
-Twenty-six static effects describe the *player* rather than a characteristic, so
+Thirty-eight static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -6394,6 +6395,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cant_cast_spells_from_zones", "affects_player": "opponent", "except_zones": ["hand"] }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
+{ "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
 `replace_damage` is **not** on that list and still reads `affects_player`: it is
@@ -7654,6 +7656,33 @@ Applied in `primitives.damage_permanent` and `primitives.damage_player`
 the two and they would cap last, so a doubled hit still lands as 1. Read through
 `player_statics.damage_cap`, which walks `_battlefield_statics` — the command
 zone included, which is where an emblem lives.
+
+## Damage can't take you below 1
+
+```jsonc
+// Serra the Benevolent's emblem, and Worship: "If you control a creature,
+//   damage that would reduce your life total to less than 1 reduces it to 1
+//   instead."
+{ "kind": "static", "effect": "damage_life_floor", "amount": 1,
+  "affects_player": "you",
+  "condition": { "exists": { "controller": "you", "types": ["Creature"] } } }
+```
+
+The continuous form of the `damage_life_floor` op — Angel's Grace's "until end of
+turn" floor, which records a `LifeFloor` once and wears off at cleanup. The
+static lasts as long as its source (an emblem: the rest of the game), and its
+"if you control a creature" is an ordinary static `condition`, asked **at each
+damage event** by `_active_player_statics` — a floor whose last creature died
+between two hits no longer holds. `amount` is the floor, required and at least 1;
+`affects_player` names the protected seats; `affects` is refused.
+
+A **floor on the total, not a prevention**: the damage is dealt in full
+(`DAMAGE_DEALT`, lifelink and the commander tally all see it) and only the life
+loss stops at the floor, so `LIFE_LOST` carries what actually left. It floors
+**damage** only — the printed word — so paying life or a `lose_life` walks past
+it. Read in `primitives.damage_player` through `temp_effects.life_floor`, which
+takes the highest of the timed records and the statics; with several floors the
+highest bites.
 
 ## "…creatures that player controls attack Gideon Jura if able"
 

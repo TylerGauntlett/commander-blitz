@@ -239,6 +239,31 @@ def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+def static_life_floor(state: GameState, pid: int) -> int | None:
+    """The highest life floor an active `damage_life_floor` static gives ``pid``.
+
+    Worship, and Serra the Benevolent's emblem: "If you control a creature,
+    damage that would reduce your life total to less than 1 reduces it to 1
+    instead." The continuous twin of the `damage_life_floor` op's timed
+    `LifeFloor`. Its "if you control a creature" is the static's ordinary
+    `condition`, which `_active_player_statics` asks **now** -- this is read at
+    each damage event, so a floor whose last creature died earlier in the same
+    combat damage step no longer holds, and one whose creature arrived a moment
+    ago does. That is why it cannot be a one-shot: Angel's Grace's op records a
+    floor once and never re-reads anything.
+
+    The highest of several, for `temp_effects.life_floor`'s reason: two floors
+    are two prohibitions and the stricter one bites.
+    """
+    floor: int | None = None
+    for obj, static in _active_player_statics(state, "damage_life_floor"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        value = _static_value(state, static.get("amount"), obj)
+        floor = value if floor is None else max(floor, value)
+    return floor
+
+
 def draw_cap(state: GameState, pid: int) -> int | None:
     """The most cards ``pid`` may draw this turn, or ``None`` for no cap (`draw_limit`).
 
