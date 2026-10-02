@@ -604,3 +604,511 @@ class TestStarnheimAspirant:
         game = self.board(builder, aspirant=False)
 
         assert BIG_ANGEL not in offers(game, 0, ActionKind.CAST)
+
+
+# ----------------------------------------------------------------------
+# triggers on later events: arrivals, deaths, upkeeps, life gained
+# ----------------------------------------------------------------------
+
+
+def to_my_main(game, pid: int = 0) -> None:
+    """Run on to ``pid``'s precombat main, through its upkeep and draw."""
+    pass_until(game, lambda g: g.state.step is Step.PRECOMBAT_MAIN and g.state.active_player == pid)
+    settle(game)
+
+
+def before_my_turn(builder, mine=(), theirs=(), *, players: int = 2, hands=None):
+    """The last opponent's end step, every seat anchored; player 0 is next."""
+    hands = hands or {}
+    b = builder(players=players)
+    for pid in range(players):
+        board = [PLAINS, *(mine if pid == 0 else theirs if pid == 1 else ())]
+        b = b.battlefield(pid, board).hand(pid, [ANCHOR, *hands.get(pid, ())])
+    return b.active(players - 1).step(Step.END_STEP).build()
+
+
+def pick_everything(game, limit: int = 200) -> None:
+    """Settle, choosing every offered object on each `CHOOSE_OBJECTS` (proliferate)."""
+    for _ in range(limit):
+        decision = game.pending()
+        if decision is None:
+            return
+        if decision.kind is DecisionKind.CHOOSE_OBJECTS:
+            choice = next((a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE), None)
+            game.apply(choice or find_action(game, ActionKind.FINISH_DECLARATION))
+            continue
+        if (
+            decision.kind is DecisionKind.PRIORITY
+            and not game.state.stack
+            and not game.state.pending_triggers
+        ):
+            return
+        game.apply(_default_answer(game, decision))
+    raise AssertionError("the stack did not empty")
+
+
+def kill(game, oid: int) -> None:
+    """Destroy ``oid`` and let whatever watches for a death resolve."""
+    from automtg.engine.zones import destroy
+
+    assert destroy(game.state, oid)
+    game.state.bump_chars()
+    settle(game)
+
+
+class TestCourtOfGrace:
+    """ "When this enchantment enters, you become the monarch." / "At the beginning
+    of your upkeep, create a 1/1 white Spirit creature token with flying. If you're
+    the monarch, create a 4/4 white Angel creature token with flying instead." """
+
+    def test_casting_it_makes_you_the_monarch(self, builder):
+        game = anchored(builder, [PLAINS] * 3, hand=["court_of_grace"])
+        assert game.state.monarch is None
+        cast(game, "court_of_grace")
+
+        assert game.state.monarch == 0
+
+    def upkeep(self, builder, *, monarch):
+        game = before_my_turn(builder, ["court_of_grace"])
+        game.state.monarch = monarch
+        to_my_main(game)
+        return game
+
+    def test_as_the_monarch_your_upkeep_makes_an_angel_and_no_spirit(self, builder):
+        """ "…**instead**" -- exactly one token, never both."""
+        game = self.upkeep(builder, monarch=0)
+
+        assert len(tokens(game, ANGEL_TOKEN)) == 1
+        assert tokens(game, SPIRIT_TOKEN) == []
+
+    def test_not_the_monarch_your_upkeep_makes_a_spirit_and_no_angel(self, builder):
+        game = self.upkeep(builder, monarch=1)
+
+        assert len(tokens(game, SPIRIT_TOKEN)) == 1
+        assert tokens(game, ANGEL_TOKEN) == []
+
+    def test_with_no_monarch_at_all_it_is_a_spirit(self, builder):
+        game = self.upkeep(builder, monarch=None)
+
+        assert len(tokens(game, SPIRIT_TOKEN)) == 1
+        assert tokens(game, ANGEL_TOKEN) == []
+
+    def test_an_opponents_upkeep_makes_nothing(self, builder):
+        """ "At the beginning of **your** upkeep"."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["court_of_grace", PLAINS])
+            .battlefield(1, [PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .step(Step.END_STEP)
+            .build()
+        )
+        game.state.monarch = 0
+        to_my_main(game, pid=1)
+
+        assert tokens(game, ANGEL_TOKEN) == [] and tokens(game, SPIRIT_TOKEN) == []
+
+
+class TestBishopOfWings:
+    """ "Whenever an Angel you control enters, you gain 4 life." / "Whenever an
+    Angel you control dies, create a 1/1 white Spirit creature token with flying." """
+
+    def test_an_angel_entering_gains_four(self, builder):
+        game = anchored(builder, ["bishop_of_wings", PLAINS], hand=[SMALL_ANGEL])
+        before = life(game)
+        cast(game, SMALL_ANGEL)
+
+        assert life(game) == before + 4
+
+    def test_a_non_angel_entering_gains_nothing(self, builder):
+        game = anchored(builder, ["bishop_of_wings", *[PLAINS] * 4], hand=[NOT_AN_ANGEL])
+        before = life(game)
+        cast(game, NOT_AN_ANGEL)
+
+        assert life(game) == before
+
+    def test_an_opponents_angel_entering_gains_nothing(self, builder):
+        """ "an Angel **you control**"."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["bishop_of_wings", PLAINS])
+            .battlefield(1, [PLAINS, PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [SMALL_ANGEL, ANCHOR])
+            .active(1)
+            .build()
+        )
+        before = life(game, 0), life(game, 1)
+        cast(game, SMALL_ANGEL, pid=1)
+
+        assert (life(game, 0), life(game, 1)) == before, "nor its controller"
+
+    def test_an_angel_dying_makes_a_spirit(self, builder):
+        game = anchored(builder, ["bishop_of_wings", SMALL_ANGEL])
+        kill(game, only_oid(game, SMALL_ANGEL, 0))
+
+        assert len(tokens(game, SPIRIT_TOKEN)) == 1
+
+    def test_a_non_angel_dying_makes_nothing(self, builder):
+        game = anchored(builder, ["bishop_of_wings", BEAR])
+        kill(game, only_oid(game, BEAR, 0))
+
+        assert tokens(game, SPIRIT_TOKEN) == []
+
+    def test_an_opponents_angel_dying_makes_nothing(self, builder):
+        game = anchored(builder, ["bishop_of_wings"], [SMALL_ANGEL])
+        kill(game, only_oid(game, SMALL_ANGEL, 1))
+
+        assert tokens(game, SPIRIT_TOKEN) == [] and tokens(game, SPIRIT_TOKEN, 1) == []
+
+
+class TestSeraphSanctuary:
+    """ "When this land enters, you gain 1 life." / "Whenever an Angel you control
+    enters, you gain 1 life." """
+
+    def test_an_angel_entering_gains_one(self, builder):
+        game = anchored(builder, ["seraph_sanctuary"], hand=[SMALL_ANGEL])
+        before = life(game)
+        cast(game, SMALL_ANGEL)
+
+        assert life(game) == before + 1
+
+    def test_a_non_angel_entering_gains_nothing(self, builder):
+        game = anchored(builder, ["seraph_sanctuary", *[PLAINS] * 3], hand=[NOT_AN_ANGEL])
+        before = life(game)
+        cast(game, NOT_AN_ANGEL)
+
+        assert life(game) == before
+
+    def test_an_opponents_angel_gains_nothing(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["seraph_sanctuary", PLAINS])
+            .battlefield(1, [PLAINS, PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [SMALL_ANGEL, ANCHOR])
+            .active(1)
+            .build()
+        )
+        before = life(game, 0)
+        cast(game, SMALL_ANGEL, pid=1)
+
+        assert life(game, 0) == before
+
+    def test_its_own_arrival_gains_exactly_one(self, builder):
+        """The first line, and not the second too: a land entering is not an Angel."""
+        game = anchored(builder, [], hand=["seraph_sanctuary"])
+        before = life(game)
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND))
+        settle(game)
+
+        assert life(game) == before + 1
+
+
+class TestYouthfulValkyrie:
+    """ "Whenever another Angel you control enters, put a +1/+1 counter on this creature." """
+
+    def test_another_angel_grows_it(self, builder):
+        game = anchored(builder, ["youthful_valkyrie"], hand=[SMALL_ANGEL])
+        cast(game, SMALL_ANGEL)
+
+        assert plus(game, only_oid(game, "youthful_valkyrie")) == 1
+        assert plus(game, only_oid(game, SMALL_ANGEL)) == 0, "the counter is on this creature"
+
+    def test_a_non_angel_does_not(self, builder):
+        game = anchored(builder, ["youthful_valkyrie", *[PLAINS] * 3], hand=[NOT_AN_ANGEL])
+        cast(game, NOT_AN_ANGEL)
+
+        assert plus(game, only_oid(game, "youthful_valkyrie")) == 0
+
+    def test_its_own_arrival_does_not(self, builder):
+        """ "**another** Angel" -- the Valkyrie is an Angel itself."""
+        game = anchored(builder, [PLAINS], hand=["youthful_valkyrie"])
+        cast(game, "youthful_valkyrie")
+
+        assert plus(game, only_oid(game, "youthful_valkyrie")) == 0
+
+    def test_an_opponents_angel_does_not(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["youthful_valkyrie", PLAINS])
+            .battlefield(1, [PLAINS, PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [SMALL_ANGEL, ANCHOR])
+            .active(1)
+            .build()
+        )
+        cast(game, SMALL_ANGEL, pid=1)
+
+        assert plus(game, only_oid(game, "youthful_valkyrie")) == 0
+
+
+class TestDazzlingAngel:
+    """ "Whenever another creature you control enters, you gain 1 life." """
+
+    def test_another_creature_gains_one(self, builder):
+        """A creature, not an Angel: the Magus is a Human Wizard."""
+        game = anchored(builder, ["dazzling_angel", *[PLAINS] * 3], hand=[NOT_AN_ANGEL])
+        before = life(game)
+        cast(game, NOT_AN_ANGEL)
+
+        assert life(game) == before + 1
+
+    def test_a_token_counts(self, builder):
+        """No "nontoken" here, unlike Metastatic Evangel's line."""
+        game = anchored(builder, ["dazzling_angel"])
+        before = life(game)
+        create_token(game.state, ANGEL_TOKEN, 0)
+        settle(game)
+
+        assert life(game) == before + 1
+
+    def test_its_own_arrival_gains_nothing(self, builder):
+        game = anchored(builder, [PLAINS, PLAINS], hand=["dazzling_angel"])
+        before = life(game)
+        cast(game, "dazzling_angel")
+
+        assert life(game) == before
+
+    def test_an_opponents_creature_gains_nothing(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["dazzling_angel", PLAINS])
+            .battlefield(1, [PLAINS, PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [SMALL_ANGEL, ANCHOR])
+            .active(1)
+            .build()
+        )
+        before = life(game, 0)
+        cast(game, SMALL_ANGEL, pid=1)
+
+        assert life(game, 0) == before
+
+
+class TestMetastaticEvangel:
+    """ "Whenever another nontoken creature you control enters, proliferate." """
+
+    def board(self, builder, hand=()):
+        return (
+            builder(players=2)
+            .battlefield(0, ["metastatic_evangel", *[PLAINS] * 5])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .battlefield(1, [PLAINS])
+            .hand(0, [*hand, ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+
+    def test_a_nontoken_creature_proliferates(self, builder):
+        game = self.board(builder, hand=[SMALL_ANGEL])
+        cast_only(game, SMALL_ANGEL)
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 2
+
+    def test_a_token_does_not(self, builder):
+        """ "**nontoken**" -- the deck's 4/4 Angel tokens never proliferate."""
+        game = self.board(builder)
+        create_token(game.state, ANGEL_TOKEN, 0)
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+    def test_its_own_arrival_does_not(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [PLAINS, PLAINS])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .battlefield(1, [PLAINS])
+            .hand(0, ["metastatic_evangel", ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        cast_only(game, "metastatic_evangel")
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+    def test_a_noncreature_permanent_does_not(self, builder):
+        game = self.board(builder, hand=["court_of_grace"])
+        cast_only(game, "court_of_grace")
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+
+class TestNornsChoirmaster:
+    """ "Whenever a commander you control enters or attacks, proliferate." """
+
+    def test_your_commander_entering_proliferates(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["norn_s_choirmaster", PLAINS, PLAINS])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .commander(0, [GIADA])
+            .battlefield(1, [PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        cast_only(game, GIADA)
+        pick_everything(game)
+
+        assert game.state.objects[only_oid(game, GIADA, 0)].zone is Zone.BATTLEFIELD
+        assert plus(game, only_oid(game, BEAR, 0)) == 2
+
+    def test_the_same_card_that_is_not_your_commander_does_not(self, builder):
+        """The near miss: "a legendary creature" or "an Angel" is not "a commander"."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["norn_s_choirmaster", PLAINS, PLAINS])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .battlefield(1, [PLAINS])
+            .hand(0, [GIADA, ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .build()
+        )
+        cast_only(game, GIADA)
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+    def test_an_opponents_commander_entering_does_not(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["norn_s_choirmaster", PLAINS])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .battlefield(1, [PLAINS, PLAINS])
+            .commander(1, [GIADA])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(1)
+            .build()
+        )
+        cast_only(game, GIADA, pid=1)
+        pick_everything(game)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+    def swing(self, builder, *, commander: bool):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["norn_s_choirmaster", GIADA, PLAINS])
+            .battlefield(0, [BEAR], counters={"+1/+1": 1})
+            .battlefield(1, [PLAINS])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .step(Step.BEGIN_COMBAT)
+            .build()
+        )
+        giada = only_oid(game, GIADA, 0)
+        if commander:
+            make_commander(game, giada)
+        attack_options(game)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER and a.source == giada
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        pick_everything(game)
+        return game
+
+    def test_your_commander_attacking_proliferates(self, builder):
+        game = self.swing(builder, commander=True)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 2
+
+    def test_a_non_commander_attacking_does_not(self, builder):
+        game = self.swing(builder, commander=False)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 1
+
+
+class TestWojekInvestigator:
+    """ "At the beginning of your upkeep, investigate once for each opponent who has
+    more cards in hand than you." """
+
+    def clues(self, builder, hands):
+        game = before_my_turn(builder, ["wojek_investigator"], players=3, hands=hands)
+        to_my_main(game)
+        return len(tokens(game, "clue_token"))
+
+    def test_one_clue_per_opponent_with_more_cards(self, builder):
+        """Seat 1 holds three to my one; seat 2 holds one, the same as me."""
+        assert self.clues(builder, {1: [BEAR, BEAR]}) == 1
+
+    def test_an_equal_hand_is_not_more(self, builder):
+        """ "**more** cards" -- the boundary. Everyone holds one."""
+        assert self.clues(builder, {}) == 0
+
+    def test_two_such_opponents_are_two_clues(self, builder):
+        """ "once **for each** opponent", not once if any."""
+        assert self.clues(builder, {1: [BEAR, BEAR], 2: [BEAR, BEAR]}) == 2
+
+    def test_it_reads_your_hand_not_a_fixed_number(self, builder):
+        """Hold three and the seat holding three no longer counts."""
+        assert self.clues(builder, {0: [BEAR, BEAR], 1: [BEAR, BEAR]}) == 0
+
+
+class TestLyraArchangelOfDawn:
+    """ "Whenever you gain life, put a +1/+1 counter on each Angel you control."
+
+    Her printed text is the trigger and flying; there is no anthem line to test.
+    """
+
+    def board(self, builder, *, active: int = 0):
+        return (
+            builder(players=2)
+            .battlefield(0, ["lyra_archangel_of_dawn", SMALL_ANGEL, BEAR, PLAINS, PLAINS])
+            .battlefield(1, [SMALL_ANGEL, PLAINS, PLAINS])
+            .hand(0, [ANCHOR, ANCHOR])
+            .hand(1, [ANCHOR, ANCHOR])
+            .active(active)
+            .build()
+        )
+
+    def test_gaining_life_grows_each_of_your_angels(self, builder):
+        """Lyra herself included -- "each Angel you control" has no "other"."""
+        game = self.board(builder)
+        cast(game, ANCHOR)
+
+        assert plus(game, only_oid(game, "lyra_archangel_of_dawn")) == 1
+        assert plus(game, only_oid(game, SMALL_ANGEL, 0)) == 1
+
+    def test_a_non_angel_gets_nothing(self, builder):
+        game = self.board(builder)
+        cast(game, ANCHOR)
+
+        assert plus(game, only_oid(game, BEAR, 0)) == 0
+
+    def test_an_opponents_angel_gets_nothing(self, builder):
+        game = self.board(builder)
+        cast(game, ANCHOR)
+
+        assert plus(game, only_oid(game, SMALL_ANGEL, 1)) == 0
+
+    def test_an_opponent_gaining_life_does_nothing(self, builder):
+        """ "Whenever **you** gain life"."""
+        game = self.board(builder, active=1)
+        cast(game, ANCHOR, pid=1)
+
+        assert plus(game, only_oid(game, "lyra_archangel_of_dawn")) == 0
+        assert plus(game, only_oid(game, SMALL_ANGEL, 1)) == 0
+
+    def test_each_gain_is_its_own_counter(self, builder):
+        game = self.board(builder)
+        cast(game, ANCHOR)
+        cast(game, ANCHOR)
+
+        assert plus(game, only_oid(game, SMALL_ANGEL, 0)) == 2
