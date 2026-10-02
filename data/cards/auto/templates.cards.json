@@ -3767,6 +3767,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put two +1/+1 counters on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "create_token",
+                      "token": "servo_1_1_c"
+                    }
+                  ],
+                  "label": "Create two 1/1 colorless Servo artifact creature tokens."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Fabricate 2 (When this creature enters, put two +1/+1 counters on it or create two 1/1 colorless Servo artifact creature tokens.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_invention",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "lifelink"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Angel of Invention",
+      "oracle_text": "Flying, vigilance, lifelink\nFabricate 2 (When this creature enters, put two +1/+1 counters on it or create two 1/1 colorless Servo artifact creature tokens.)\nOther creatures you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -3988,6 +4076,62 @@
       "toughness": 7,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_life_gain",
+          "gain_addend": 1,
+          "kind": "static",
+          "text": "If you would gain life, you gain that much life plus 1 instead."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "max_life_of": "you"
+            },
+            "right": {
+              "const": 25
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "This creature gets +2/+2 as long as you have 25 or more life.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_vitality",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Angel of Vitality",
+      "oracle_text": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\nThis creature gets +2/+2 as long as you have 25 or more life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -5315,6 +5459,73 @@
       "name": "Archangel",
       "oracle_text": "Flying, vigilance",
       "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "self_only": true,
+              "tapped": false
+            }
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "attack_tax",
+          "kind": "static",
+          "or_planeswalkers": true,
+          "text": "As long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures."
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "attacking": true,
+              "self_only": true
+            }
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "block_tax",
+          "kind": "static",
+          "text": "As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archangel_of_tithes",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}{W}{W}",
+      "name": "Archangel of Tithes",
+      "oracle_text": "Flying\nAs long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.\nAs long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+      "power": 3,
       "source": "auto",
       "subtypes": [
         "Angel"
@@ -26471,6 +26682,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "prompt": "Pay {2} to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay {2}. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w_lifelink"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}: Create a 1/1 white Soldier creature token with lifelink."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dawn_of_hope",
+      "mana_cost": "{1}{W}",
+      "name": "Dawn of Hope",
+      "oracle_text": "Whenever you gain life, you may pay {2}. If you do, draw a card.\n{3}{W}: Create a 1/1 white Soldier creature token with lifelink.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -33144,6 +33415,88 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "emeria_s_call_emeria_shattered_skyclave",
+      "mana_cost": "{4}{W}{W}{W}",
+      "name": "Emeria's Call // Emeria, Shattered Skyclave",
+      "oracle_text": "Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you control gain indestructible until your next turn.",
+      "second_face": "emeria_shattered_skyclave",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "angel_warrior_4_4_w_flying"
+        },
+        {
+          "duration": "until_your_next_turn",
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "not_subtypes": [
+              "Angel"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "emeria_shattered_skyclave",
+      "name": "Emeria, Shattered Skyclave",
+      "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {W}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 3
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -33228,15 +33581,6 @@
     {
       "abilities": [
         {
-          "condition": {
-            "cmp": ">=",
-            "left": {
-              "creatures_died_this_turn": "all"
-            },
-            "right": {
-              "const": 2
-            }
-          },
           "effects": [
             {
               "objects": {
@@ -33248,6 +33592,15 @@
           "kind": "triggered",
           "text": "At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.",
           "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 2
+              }
+            },
             "controller": "you",
             "event": "end_step"
           }
@@ -43189,6 +43542,73 @@
         "Spirit"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Angel"
+            ]
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Angel"
+              ]
+            }
+          },
+          "counter": "+1/+1",
+          "effect": "enters_with_additional_counters",
+          "kind": "static",
+          "text": "Each other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": [
+            "Angel"
+          ],
+          "text": "{T}: Add {W}. Spend this mana only to cast an Angel spell."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "giada_font_of_hope",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Giada, Font of Hope",
+      "oracle_text": "Flying, vigilance\nEach other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control.\n{T}: Add {W}. Spend this mana only to cast an Angel spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -118333,9 +118753,6 @@
     {
       "abilities": [
         {
-          "condition": {
-            "was_cast": true
-          },
           "effects": [
             {
               "duration": "until_your_next_turn",
@@ -118347,6 +118764,9 @@
           "kind": "triggered",
           "text": "When The One Ring enters, if you cast it, you gain protection from everything until your next turn.",
           "trigger": {
+            "condition": {
+              "was_cast": true
+            },
             "event": "self_enters",
             "source": "self"
           }
@@ -118854,6 +119274,134 @@
       "toughness": 10,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "entered_this_turn": true,
+            "self_only": true
+          },
+          "effect": "activate_loyalty_as_though_instant",
+          "kind": "static",
+          "text": "As long as The Wandering Emperor entered this turn, you may activate her loyalty abilities any time you could cast an instant."
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "keywords": [
+                "first_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Put a +1/+1 counter on up to one target creature. It gains first strike until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "samurai_2_2_w_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "−1: Create a 2/2 white Samurai creature token with vigilance."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Exile target tapped creature. You gain 2 life."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "the_wandering_emperor",
+      "keywords": [
+        "flash"
+      ],
+      "loyalty": 3,
+      "mana_cost": "{2}{W}{W}",
+      "name": "The Wandering Emperor",
+      "oracle_text": "Flash\nAs long as The Wandering Emperor entered this turn, you may activate her loyalty abilities any time you could cast an instant.\n+1: Put a +1/+1 counter on up to one target creature. It gains first strike until end of turn.\n−1: Create a 2/2 white Samurai creature token with vigilance.\n−2: Exile target tapped creature. You gain 2 life.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -119887,9 +120435,6 @@
     {
       "abilities": [
         {
-          "condition": {
-            "was_cast": true
-          },
           "effects": [
             {
               "count": 5,
@@ -119909,6 +120454,9 @@
           "kind": "triggered",
           "text": "When Tiamat enters, if you cast it, search your library for up to five Dragon cards not named Tiamat that each have different names, reveal them, put them into your hand, then shuffle.",
           "trigger": {
+            "condition": {
+              "was_cast": true
+            },
             "event": "self_enters",
             "source": "self"
           }

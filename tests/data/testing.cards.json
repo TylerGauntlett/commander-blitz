@@ -7859,17 +7859,22 @@
           "text": "At the beginning of the end step, if you control three or more Elks, flip this.",
           "trigger": {
             "event": "end_step",
-            "controller": "you"
-          },
-          "condition": {
-            "count": {
-              "zone": "battlefield",
-              "controller": "you",
-              "subtypes": [
-                "Elk"
-              ]
-            },
-            "at_least": 3
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Elk"
+                  ]
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            }
           },
           "effects": [
             {
@@ -7924,17 +7929,22 @@
           "text": "At the beginning of your end step, meld them into Test Brisela.",
           "trigger": {
             "event": "end_step",
-            "controller": "you"
-          },
-          "condition": {
-            "count": {
-              "zone": "battlefield",
-              "controller": "you",
-              "subtypes": [
-                "Horror"
-              ]
-            },
-            "at_least": 1
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Horror"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            }
           },
           "effects": [
             {

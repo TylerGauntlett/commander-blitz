@@ -333,6 +333,14 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "angel_of_invention": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "angel_of_light": {
     "zone": "battlefield"
   },
@@ -350,6 +358,10 @@
   "angel_of_the_ruins": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
+  "angel_of_vitality": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "angel_s_grace": {
@@ -511,6 +523,10 @@
     "zone": "battlefield"
   },
   "archangel": {
+    "zone": "battlefield"
+  },
+  "archangel_of_tithes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "archdruid_s_charm": {
@@ -2409,6 +2425,10 @@
   "dawn_gryff": {
     "zone": "battlefield"
   },
+  "dawn_of_hope": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dawn_s_light_archer": {
     "zone": "battlefield"
   },
@@ -3023,6 +3043,20 @@
     "tokens": {
       "count": 1,
       "id": "lander_token"
+    },
+    "zone": "graveyard"
+  },
+  "emeria_s_call_emeria_shattered_skyclave": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "tokens": {
+      "count": 2,
+      "id": "angel_warrior_4_4_w_flying"
     },
     "zone": "graveyard"
   },
@@ -4030,6 +4064,10 @@
     "zone": "battlefield"
   },
   "ghostly_sentinel": {
+    "zone": "battlefield"
+  },
+  "giada_font_of_hope": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "giant_cockroach": {
@@ -10527,6 +10565,10 @@
     "zone": "battlefield"
   },
   "the_ur_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_wandering_emperor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

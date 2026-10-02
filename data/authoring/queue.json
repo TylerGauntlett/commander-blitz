@@ -8562,12 +8562,12 @@
     },
     "Angel of Invention": {
       "edhrec_rank": 4199,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Invention",
-      "reason": "no template for: Fabricate 2",
+      "reason": "",
       "scryfall_id": "37229823-00ce-47db-83e4-cbea90e70534",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Angel of Jubilation": {
@@ -8662,12 +8662,12 @@
     },
     "Angel of Vitality": {
       "edhrec_rank": 2076,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Vitality",
-      "reason": "no template for: If you would gain life, you gain that much life plus 1 instead",
+      "reason": "",
       "scryfall_id": "c279947e-168f-4af5-902b-aba724f52b8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Angel of the Dawn": {
@@ -11832,12 +11832,12 @@
     },
     "Archangel of Tithes": {
       "edhrec_rank": 2209,
-      "gate": "template",
+      "gate": null,
       "name": "Archangel of Tithes",
-      "reason": "no template for: As long as this creature is untapped, creatures can't attack you or planeswalkers you cont",
+      "reason": "",
       "scryfall_id": "c853d04c-864b-491c-8c6f-72d2d4874d2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Archangel of Wrath": {
@@ -62152,12 +62152,12 @@
     },
     "Dawn of Hope": {
       "edhrec_rank": 2408,
-      "gate": "template",
+      "gate": null,
       "name": "Dawn of Hope",
-      "reason": "no template for: Whenever you gain life, you may pay {2}. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "de36ecaa-62e0-4f1c-b07f-837a786dc897",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dawn of a New Age": {
@@ -82862,12 +82862,12 @@
     },
     "Emeria's Call // Emeria, Shattered Skyclave": {
       "edhrec_rank": 2832,
-      "gate": "template",
+      "gate": null,
       "name": "Emeria's Call // Emeria, Shattered Skyclave",
-      "reason": "no template for: Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you co",
+      "reason": "",
       "scryfall_id": "c470539a-9cc7-4175-8f7c-c982b6072b6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Emeria, the Sky Ruin": {
@@ -108322,12 +108322,12 @@
     },
     "Giada, Font of Hope": {
       "edhrec_rank": 1702,
-      "gate": "template",
+      "gate": null,
       "name": "Giada, Font of Hope",
-      "reason": "no template for: Each other Angel you control enters with an additional +1/+1 counter on it for each Angel ",
+      "reason": "",
       "scryfall_id": "89e2d714-2070-434a-9a81-276e72594e06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Giant Adephage": {
@@ -282802,12 +282802,12 @@
     },
     "The Wandering Emperor": {
       "edhrec_rank": 5593,
-      "gate": "template",
+      "gate": null,
       "name": "The Wandering Emperor",
-      "reason": "no template for: As long as entered this turn, you may activate her loyalty abilities any time you could ca",
+      "reason": "",
       "scryfall_id": "22edc832-993b-432a-8435-8d8a72799122",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Wandering Minstrel": {

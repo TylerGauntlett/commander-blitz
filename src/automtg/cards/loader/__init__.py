@@ -1912,6 +1912,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
+    # An ability-level `condition` is compiled into `activation_condition`, and
+    # only for an activated ability. On a triggered ability it used to load,
+    # pass every authoring gate and be dropped -- The One Ring granted
+    # protection however it arrived and Emeritus of Woe ignored "if two or more
+    # creatures died this turn". An intervening "if" (603.4) is the trigger's.
+    if model.condition and kind is not AbilityKind.ACTIVATED:
+        raise DslError(
+            f"{where}: 'condition' on a {kind.value} ability is never read -- an "
+            f"intervening 'if' (603.4) belongs in 'trigger.condition'"
+        )
+
     # How many modes a mode-owned target may point at, and `None` when there is
     # no single modal question to hang one on -- the same test
     # `Ability.cast_time_modes` makes, asked here because the loader has to
