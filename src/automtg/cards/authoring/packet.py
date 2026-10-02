@@ -23,6 +23,7 @@ asking for work that cannot be accepted.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -214,6 +215,12 @@ class Packet:
     #: thing a worker must never do is invent a line, and this is the field that
     #: keeps the other half from having to be invented.
     back_face: dict = field(default_factory=dict)
+    #: **Meld** (701.37): the card this half and its partner become, for the
+    #: half that prints "exile them, then meld them into <name>". The catalog
+    #: keeps the melded card as a row of its own and links nothing, so without
+    #: this a worker would have to invent the result's text. Same shape as
+    #: ``back_face``; empty for everything else.
+    meld_result: dict = field(default_factory=dict)
     #: Cards already in the pool with a similar shape, as worked examples.
     examples: list[dict] = field(default_factory=list)
     #: The vocabulary. Copied in rather than referenced, because the API worker
@@ -662,6 +669,17 @@ def reference() -> dict:
             " over. Either way the other half is an ordinary card entry in the"
             " same pool, and your packet's `back_face` block carries its printed"
             " text -- write it as a second entry, do not file a gap.",
+            "A **meld** half -- the one printing \"exile them, then meld them"
+            " into <name>\" -- carries `melds_with` (its partner's card id) and"
+            " `melds_into` (the result's id), and its end-step trigger is"
+            " `effects: [{\"op\": \"meld\"}]` with the \"if you both own and"
+            " control\" clause as `trigger.condition` (an `all` of two `exists`,"
+            " each with `owner: \"you\"`, `controller: \"you\"`, the partner"
+            " by `name`). The melded card goes in your answer's `back` -- your"
+            " packet's `meld_result` block carries its printed text -- and the"
+            " PARTNER does not: it is a card of its own with its own answer,"
+            " and `--collect` brings it into the pool. The partner's"
+            " \"(Melds with ...)\" line is reminder text and needs nothing.",
             "A `tap_permanents` cost may carry `as`, naming THE one permanent it"
             " tapped so the ability's effects can read it: Station (\"Tap another"
             " creature you control: Put charge counters equal to its power on"
@@ -1095,7 +1113,34 @@ def back_face_of(entry: IndexEntry) -> dict:
         "oracle_text": entry.back_oracle_text,
     }
 
-def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) -> Packet:
+_MELDS_INTO = re.compile(r"\bmeld them into ([^.]+)\.")
+
+
+def meld_result_of(entry: IndexEntry, index) -> dict:
+    """The melded card this half names, as a plain dict, or ``{}``.
+
+    Looked up by the name the printed sentence gives, because the catalog has no
+    other link between a meld half and its result.
+    """
+    found = _MELDS_INTO.search(entry.oracle_text or "")
+    if index is None or found is None:
+        return {}
+    result = index.lookup(found.group(1).strip(), token=False)
+    if result is None:
+        return {}
+    return {
+        "name": result.name,
+        "type_line": result.type_line,
+        "mana_cost": result.mana_cost,
+        "power": result.power,
+        "toughness": result.toughness,
+        "oracle_text": result.oracle_text,
+    }
+
+
+def build_packet(
+    entry: IndexEntry, registry: CardRegistry, template_said: str, index=None
+) -> Packet:
     facts = facts_from_index(entry)
     proxy = build_proxy(facts)
     starting_point: dict = {}
@@ -1118,6 +1163,7 @@ def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) 
         oracle_text=entry.oracle_text,
         starting_point=starting_point,
         back_face=back_face_of(entry),
+        meld_result=meld_result_of(entry, index),
         todo=todo or [entry.oracle_text],
         template_said=template_said,
         examples=examples_for(facts, registry),

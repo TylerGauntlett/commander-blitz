@@ -12315,6 +12315,18 @@ Only the half that prints the meld trigger carries `melds_with` / `melds_into`;
 the partner (Bruna) is an ordinary card whose "(Melds with …)" line is reminder
 text.
 
+**Authoring a pair.** The melded card is the half's to carry: it goes in the
+answer's `back` (one or a list) exactly as a transforming back face does, and the
+half's packet has a `meld_result` block with its printed text, because the catalog
+keeps the result as a row of its own and links nothing. The partner is **not** a
+companion — it is cast, drawn and decked like any card, so it has its own answer
+and expectation. When it is machine-authored it lives in the auto batch that the
+gates deliberately verify without, so `verify(..., partners=[...])` joins it to the
+pool (only the id `melds_with` names, and never over an existing card) and
+`--collect` supplies it from the batch and from this run's accepted answers,
+verifying every half that names a partner after the rest.
+`tests/cards/test_auto_cards.py` re-verifies the half the same way.
+
 Meld was `refused` as needing "a card-wide designated state the engine has no
 place to keep". By the time mutate shipped, the place existed: a permanent whose
 identity is a `CardDef` read through `card_of`, with the other card in

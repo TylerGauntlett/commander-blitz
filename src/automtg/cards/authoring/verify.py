@@ -757,6 +757,7 @@ def verify(
     oracle_text: str | None = None,
     supersedes: bool = False,
     companions: Sequence[dict] | None = None,
+    partners: Sequence[dict] | None = None,
 ) -> Verdict:
     """Run every gate over one candidate.
 
@@ -767,6 +768,14 @@ def verify(
     under the same id, so the duplicate-id gate should stand aside. Only
     ``--collect --supersede`` passes it, and only after the caller has committed
     to deleting the incumbent -- see ``scripts/author_cards.py``.
+
+    ``partners`` is the other half of a **meld pair** (701.37) when that half is
+    a machine-authored card of its own: Gisela names Bruna in ``melds_with``,
+    and `link_meld_results` refuses a partner that is not in the pool. Unlike a
+    companion, a partner is not this answer's to carry -- Bruna is cast, drawn
+    and decked like any card and was verified through her own answer -- so it
+    joins the pool here and is written nowhere. Only the id ``melds_with``
+    names is accepted, so the slot cannot smuggle in anything else.
     """
     card_id = str(payload.get("id") or "<no id>")
     verdict = Verdict(card_id=card_id)
@@ -822,6 +831,18 @@ def verify(
         # it arrives here rather than in a second answer file -- one card, one
         # answer, however many faces it has.
         pool = {**existing, card.id: card}
+        for partner in partners or ():
+            partner_card = compile_card(CardModel.model_validate(partner))
+            if partner_card.id != card.melds_with or partner_card.id in existing:
+                # Not this card's meld partner, or one the pool already has --
+                # either way not something the slot exists for.
+                verdict.failed_gate = "registry"
+                verdict.reason = (
+                    f"{partner_card.id!r} is not a meld partner this card needs "
+                    f"brought into the pool (melds_with is {card.melds_with!r})"
+                )
+                return verdict
+            pool[partner_card.id] = partner_card
         for extra in companions or ():
             extra_card = compile_card(CardModel.model_validate(extra))
             if extra_card.id in existing and not supersedes:

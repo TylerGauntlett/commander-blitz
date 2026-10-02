@@ -245,7 +245,7 @@ def write_packets(batch: list[Entry]) -> int:
         )
         if catalog is None:
             continue
-        packet = P.build_packet(catalog, registry, entry.reason or "not attempted")
+        packet = P.build_packet(catalog, registry, entry.reason or "not attempted", index)
         P.write_packet(packet)
         written += 1
     return written
@@ -343,6 +343,35 @@ def _companion_faces(answer: dict) -> list[dict]:
     return [dict(b) for b in back]
 
 
+def _meld_partners(payload: dict, staged: dict, registry: CardRegistry) -> list[dict]:
+    """The machine-authored other half of a meld pair this card names, if any.
+
+    Gisela prints the meld trigger and names Bruna in ``melds_with``;
+    `link_meld_results` refuses a partner the pool does not have. Bruna is an
+    ordinary card -- cast, drawn, decked -- with an answer and an expectation of
+    her own, so she is *not* a companion of Gisela's answer. When she is
+    hand-written she is already in ``registry``; when she was authored she is in
+    the auto batch, which ``registry`` deliberately leaves out, and this is the
+    one place she is handed across.
+    """
+    partner = payload.get("melds_with")
+    if not partner or partner in registry or partner not in staged:
+        return []
+    return [dict(staged[partner])]
+
+
+def _meld_halves_last(answers: dict[str, dict]) -> list[tuple[str, dict]]:
+    """Answers in file order, with every meld half that names a partner moved last.
+
+    So a pair authored in one run verifies the partner first and the half that
+    names it second, whatever the two ids sort as.
+    """
+    items = list(answers.items())
+    return [i for i in items if not i[1]["card"].get("melds_with")] + [
+        i for i in items if i[1]["card"].get("melds_with")
+    ]
+
+
 def _companion_collision(
     backs: list[dict], expectations: dict, card_id: str
 ) -> str | None:
@@ -393,7 +422,10 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
 
     tally = {"accepted": 0, "rejected": 0, "superseded": 0}
     superseded: set[str] = set()
-    for card_id, answer in P.read_answers().items():
+    # What a later answer in this run may lean on as a meld partner: the auto
+    # batch plus everything accepted so far, written or not (`--dry-run`).
+    staged = dict(cards)
+    for card_id, answer in _meld_halves_last(P.read_answers()):
         payload = dict(answer["card"])
         payload["id"] = card_id
         payload["source"] = "auto"
@@ -414,6 +446,7 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
             oracle_text=oracle,
             supersedes=replaces,
             companions=backs,
+            partners=_meld_partners(payload, staged, registry),
         )
 
         entry = by_name.get(payload.get("name", ""))
@@ -435,6 +468,7 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
             continue
 
         print(f"  {'supersede' if replaces else 'accept'} {card_id}")
+        staged[card_id] = payload
         if not dry_run:
             cards[card_id] = payload
             expectations[card_id] = expectation

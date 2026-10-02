@@ -19335,3 +19335,18 @@ the halves read their own values again once apart. The engine's five direct
 `mana_cost.mana_value()` reads of an object (emerge, convoke ordering, the
 total-mana-value value, target totals) now go through the property. Test:
 `tests/unit/test_meld.py::TestItsManaValue`.
+
+## Authoring a meld pair — Gisela, the Broken Blade + Bruna, the Fading Light → Brisela — 701.37
+
+The engine had meld (the op, `melds_with` / `melds_into`, `link_meld_results`) and only
+test cards used it: the pipeline could not ship a pair. Two holes. The melded card had
+no source text — the catalog keeps it as its own row and links nothing — so the half's
+packet now carries a `meld_result` block (`packet.meld_result_of`, looked up by the name
+in "meld them into <name>"), and the result travels in the answer's `back` like a back
+face. The partner is a card of its own with its own answer, and when machine-authored it
+sat in the auto batch the gates verify without, so `link_meld_results` refused the half:
+`verify` gained `partners` (only the id `melds_with` names, never over an existing card,
+written nowhere), `--collect` supplies it from the batch and this run's accepted answers
+(`_meld_partners`) and verifies partner-naming halves last (`_meld_halves_last`), and
+`tests/cards/test_auto_cards.py` treats `melds_into` as a face and passes the partner the
+same way. Tests: `tests/cards/test_authoring.py::TestAMeldPairIsTwoAnswersAndAResult`.
