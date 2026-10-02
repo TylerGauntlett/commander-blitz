@@ -33,6 +33,7 @@ from automtg.engine.structs import (
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
+    PROTECTION_SENTINELS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
@@ -311,6 +312,23 @@ def _validate_cast_lock_zones(named: Any, opened: Any, where: str) -> None:
             # the wrong card, silently.
             raise DslError(
                 f"{where}: unknown zone {zone!r} (implemented: {sorted(CASTABLE_ZONES)})"
+            )
+
+
+def _refuse_protection_sentinels(subtypes: Any, where: str) -> None:
+    """Refuse "colorless" or "everything" written as a protection *subtype*.
+
+    Both are qualities stored as sentinel strings in the same flat set the
+    subtypes go into, and ``from_subtypes`` is not checked against a subtype
+    list -- so ``"from_subtypes": ["colorless"]`` would load and quietly *be*
+    protection from colorless without the flag that says so. One spelling per
+    quality: ``from_colorless`` / ``from_everything``.
+    """
+    for i, entry in enumerate(subtypes or ()):
+        if entry in PROTECTION_SENTINELS:
+            raise DslError(
+                f"{where}.from_subtypes[{i}]: {entry!r} is not a subtype -- "
+                f"write 'from_{entry}': true"
             )
 
 
@@ -2381,6 +2399,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                         f"{where}.from_colors[{i}]: the only dynamic colour is "
                         f'{{"chosen_color_of": "self"}}, not {dict(entry)!r}'
                     )
+            elif entry in ("C", "colorless"):
+                # 105.2c: colorless is not a colour, so it is not a letter here.
+                raise DslError(
+                    f"{where}.from_colors[{i}]: colorless is not a colour -- "
+                    f"write 'from_colorless': true"
+                )
             elif entry not in KNOWN_COLORS:
                 raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
         # A grant with no recipient. `objects` alone was once the only shape, so
@@ -2398,17 +2422,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             and not effect.get("from_types")
             and not effect.get("from_subtypes")
             and not effect.get("from_everything")
+            and not effect.get("from_colorless")
         ):
             # Protection *from* nothing. It would install no qualities and read
             # on screen as a spell that resolved and did nothing at all.
             raise DslError(
                 f"{where}: grant_protection needs a quality -- 'from_colors', "
-                f"'from_types', 'from_subtypes' or 'from_everything'"
+                f"'from_types', 'from_subtypes', 'from_colorless' or 'from_everything'"
             )
-        if "from_everything" in effect and not isinstance(effect["from_everything"], bool):
+        for flag in ("from_everything", "from_colorless"):
+            if flag in effect and not isinstance(effect[flag], bool):
+                raise DslError(f"{where}: {flag!r} is a boolean, got {effect[flag]!r}")
+        if effect.get("from_colorless") and effect.get("from_everything"):
+            # Everything already contains every colourless source; writing both
+            # is a second sentence no card prints, and one of them dead weight.
             raise DslError(
-                f"{where}: 'from_everything' is a boolean, got {effect['from_everything']!r}"
+                f"{where}: 'from_everything' already covers colorless -- "
+                f"do not also write 'from_colorless'"
             )
+        _refuse_protection_sentinels(effect.get("from_subtypes"), where)
         duration = effect.get("duration")
         if duration is not None:
             if effect.get("player") is None:

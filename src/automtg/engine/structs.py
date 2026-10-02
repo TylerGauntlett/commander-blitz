@@ -554,6 +554,20 @@ class PermanentShield:
 #: is called "everything".
 PROTECTION_EVERYTHING = "everything"
 
+#: The quality "protection from **colorless**" (Giver of Runes, 702.16 with
+#: 105.2c).  Colorless is not a colour, so it cannot be a letter in
+#: ``from_colors``, and a colourless source has an empty colour set, so no
+#: quality built from what the source *has* could ever match it -- the match is
+#: on what it lacks.  A sentinel for :data:`PROTECTION_EVERYTHING`'s reason: one
+#: more string in the one flat set the four protection rules already read.  No
+#: card type, subtype or colour is called "colorless" either.
+PROTECTION_COLORLESS = "colorless"
+
+#: Qualities that are not read off the source's characteristics.  The loader
+#: refuses them as a written ``from_subtypes`` entry, where they would otherwise
+#: sneak in as the sentinel without the flag that means it.
+PROTECTION_SENTINELS = frozenset({PROTECTION_EVERYTHING, PROTECTION_COLORLESS})
+
 #: The durations a :class:`PlayerProtection` can carry.  Both printed sentences
 #: say "until your next turn"; ``this_turn`` is here because the cleanup step
 #: already sweeps every other timed table on that word and a protection that

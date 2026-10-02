@@ -86,7 +86,7 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
-from .structs import PROTECTION_EVERYTHING, Characteristics
+from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
 
@@ -2089,6 +2089,8 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         out.update(static.get("from_types", ()))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
+        if static.get("from_colorless"):
+            out.add(PROTECTION_COLORLESS)
         if static.get("from_colors_outside_commander_identity"):
             # "Your commander" is the static's controller's -- the Plate's, not
             # the equipped creature's, and it follows the Equipment when it
@@ -2249,9 +2251,18 @@ def _matches_protection(
     # the same rule `selectors.matches` follows, so "protection from Wizards"
     # sees a creature that was *granted* the Wizard subtype.
     if source.on_battlefield:
-        have = set(c.types) | set(c.subtypes) | set(c.colors)
+        colors = set(c.colors)
+        have = set(c.types) | set(c.subtypes) | colors
     else:
-        have = set(card.types) | set(card.subtypes) | set(card.colors)
+        colors = set(card.colors)
+        have = set(card.types) | set(card.subtypes) | colors
+    # "Protection from colorless" (Giver of Runes). Colorless is not a colour
+    # (105.2c), so it is the one quality matched on what the source *lacks*:
+    # a source with no colours at all, read off the same derived-or-printed
+    # characteristics as everything else, so a permanent a `set_colors` static
+    # has made colourless is matched and one given a colour is not.
+    if PROTECTION_COLORLESS in qualities and not colors:
+        return True
     return bool(have & qualities)
 
 

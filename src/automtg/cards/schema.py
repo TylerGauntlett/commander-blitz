@@ -716,6 +716,10 @@ class AbilityModel(BaseModel):
     #: protection is read (`characteristics.protection_from`); no commander at
     #: all is protection from all five (903.4).
     from_colors_outside_commander_identity: bool = False
+    #: "Protection from colorless" (702.16, 105.2c). A flag rather than a
+    #: ``from_colors`` letter because colorless is not a colour; matched against
+    #: any source with no colours at all.
+    from_colorless: bool = False
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not

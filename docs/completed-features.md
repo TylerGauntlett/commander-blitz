@@ -19167,3 +19167,17 @@ so `casting._cast_actions`, `suspend.cast_for_free` and `replacements._offer_cas
 enforce it by the call they already make — flashback, foretell, the Citadel top, cascade
 and the command zone (opponents cannot cast their commanders). It lifts the instant its
 source leaves and honours a `condition`. Test: `tests/unit/test_static_zone_cast_lock.py`.
+
+## `grant_protection` `from_colorless` — Giver of Runes — 702.16, 105.2c
+
+"Protection from colorless" had no spelling. `from_colors` holds colour letters and
+`_matches_protection` intersects the qualities with the source's types, subtypes and
+colours, so a colourless source — empty colour set — could match no quality at all.
+`from_colorless: true` on the op and on the printed `protection` static stores the
+sentinel `PROTECTION_COLORLESS` in the same flat set `from_everything` uses, and
+`_matches_protection` matches it on what the source lacks: no colours at all, from
+derived characteristics on the battlefield and printed ones elsewhere. All four rules
+(damage, enchant/equip, block, target) see it unchanged. The loader refuses `"C"` or
+`"colorless"` as a colour letter, the flag beside `from_everything`, a non-boolean flag,
+and the sentinel words as `from_subtypes` entries. Test:
+`tests/unit/test_protection_from_colorless.py`.

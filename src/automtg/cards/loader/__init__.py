@@ -50,6 +50,7 @@ from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (  # noqa: F401
+    _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
     _refuse_targets_inside_a_delay,
     _validate_attacking,
@@ -3936,6 +3937,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.from_colors_outside_commander_identity:
         # A quality, and the loudest kind of one: it is up to five colours.
         qualities.append("outside commander identity")
+    if model.from_colorless:
+        qualities.append("colorless")
     if model.effect == "protection":
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
@@ -3943,8 +3946,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if not qualities:
             raise DslError(
                 f"{where}: protection needs from_types/from_subtypes/from_colors/"
-                f"from_colors_outside_commander_identity"
+                f"from_colorless/from_colors_outside_commander_identity"
             )
+        _refuse_protection_sentinels(model.from_subtypes, where)
         if model.from_colors_outside_commander_identity and model.from_colors:
             # The computed set already covers every colour the commander lacks,
             # and a printed colour *inside* the identity is a second sentence no
@@ -3958,11 +3962,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
         for c in model.from_colors:
+            if c in ("C", "colorless"):
+                raise DslError(
+                    f"{where}: colorless is not a colour (105.2c) -- write "
+                    f"'from_colorless': true, not {c!r} in from_colors"
+                )
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown color {c!r} in from_colors")
     elif qualities:
         raise DslError(
-            f"{where}: from_types/from_subtypes/from_colors/"
+            f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
             f"from_colors_outside_commander_identity need effect 'protection'"
         )
 
@@ -4071,6 +4080,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             static[field_name] = list(value)
     if model.from_colors_outside_commander_identity:
         static["from_colors_outside_commander_identity"] = True
+    if model.from_colorless:
+        static["from_colorless"] = True
     if model.blockers is not None:
         static["blockers"] = dict(model.blockers)
     if model.require_all:

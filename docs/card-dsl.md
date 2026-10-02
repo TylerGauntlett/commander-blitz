@@ -7283,6 +7283,27 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
 
+**Protection from colorless** (Giver of Runes, 702.16 with 105.2c):
+
+```jsonc
+{"op": "grant_protection", "objects": {"target": "t1"}, "from_colorless": true}
+```
+
+Colorless is not a colour, so it is not a `from_colors` letter — `"C"` and
+`"colorless"` written there are load errors that name this flag. It is a boolean
+beside `from_everything` and stored the same way, as the sentinel quality
+`PROTECTION_COLORLESS` in the one flat set. It is the only quality matched on
+what the source **lacks**: `_matches_protection` stops a source with no colours
+at all (derived characteristics on the battlefield, printed ones elsewhere), and
+never one with any colour. Refused beside `from_everything`, which already
+covers it; `"colorless"` and `"everything"` are refused as `from_subtypes`
+entries, where the sentinel would otherwise load without its flag. The printed
+`protection` static takes the same `from_colorless: true`.
+
+"…protection from colorless or from the color of your choice" is a `choose_mode`
+of six `grant_protection` modes — `from_colorless`, then one per colour — the
+shape Brave the Elements' "Choose a color" already uses.
+
 ## "Exile <this card>." -- a spell that exiles itself
 
 ```jsonc
@@ -13449,6 +13470,10 @@ let you target your own protected creature.
 
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
+
+`"from_colorless": true` is protection from colorless — any source with no
+colours (105.2c: colorless is not a colour, so it is never a `from_colors`
+letter). See [Granting protection](#granting-protection).
 
 **Protection from the colours outside your commander's identity.** Commander's
 Plate — "Equipped creature gets +3/+3 and has protection from each color that's
