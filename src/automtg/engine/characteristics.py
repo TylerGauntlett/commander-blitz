@@ -145,6 +145,31 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+def creature_types_of(state: GameState, oid: int | None) -> frozenset[str]:
+    """The **creature types** an object currently has -- 205.3m, not its subtypes.
+
+    "…a spell that shares a creature type with this creature" -- Folk Hero. The
+    distinction is the whole point: subtypes are one flat set here, and a
+    Background, an Aura, an Equipment, an Arcane or an Adventure is a subtype
+    and *not* a creature type, so intersecting raw subtypes would let a
+    Background cast beside a Background commander "share a creature type".
+
+    Read off :func:`chars`, so a changeling's printed list and a granted type
+    count, and filtered through `SUBTYPE_CLASS` with Creature as the default --
+    the same default the type-replacement layer uses, which is how a Kindred
+    instant's Goblin counts (205.3m gives Kindred objects creature types) while
+    an ordinary instant, whose only subtypes are spell types, shares none. A
+    missing object has none.
+    """
+    if oid is None or state.objects.get(oid) is None:
+        return frozenset()
+    return frozenset(
+        sub
+        for sub in chars(state, oid).subtypes
+        if SUBTYPE_CLASS.get(sub, "Creature") == "Creature"
+    )
+
+
 def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
     """What the permanent at ``oid`` **is**, frozen for a pip of mana to carry.
 

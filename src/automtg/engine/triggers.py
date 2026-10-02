@@ -1643,6 +1643,24 @@ def matches_card_filter(
             theirs |= commander_subtypes(state, seat)
         if not (card.subtypes & theirs):
             return False
+    # "Whenever you cast a spell that shares a creature type with **this
+    # creature**…" -- Folk Hero's grant. Compared against the object that *has*
+    # the ability, which for a granted trigger is the recipient (the commander
+    # creature), never the granter -- `abilities_of` hands the copy over sourced
+    # on the recipient. Not `shares_a_type_with_commander`, which unions every
+    # commander's subtypes: a partner's types and a Background's "Background"
+    # would both answer a question the card does not ask.
+    #
+    # Creature types on both sides (205.3m) and derived on both sides, so a
+    # changeling spell shares with anything and a noncreature, non-Kindred
+    # spell shares with nothing.
+    if filt.get("shares_a_creature_type_with") is not None:
+        from .characteristics import creature_types_of
+
+        if not (
+            creature_types_of(state, oid) & creature_types_of(state, ability_source.oid)
+        ):
+            return False
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):
         return False

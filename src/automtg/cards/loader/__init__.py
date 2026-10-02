@@ -2077,6 +2077,15 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(implemented: {sorted(TRIGGER_EVENTS)})"
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
+        shares = (model.trigger.filter or {}).get("shares_a_creature_type_with")
+        if shares is not None and shares != "self":
+            # Nothing is bound when a trigger filter is asked, so a binding name
+            # here would resolve to no object and the trigger would never fire --
+            # the card would load and read as printed and do nothing.
+            raise DslError(
+                f"{where}.trigger.filter: shares_a_creature_type_with must be "
+                f"'self' (the object that has the ability), got {shares!r}"
+            )
         validate_condition(model.trigger.condition, f"{where}.trigger.condition")
         if model.trigger.defending is not None and model.trigger.event not in DEFENDING_TRIGGERS:
             # Silently ignoring it would produce a card that looks like it reads

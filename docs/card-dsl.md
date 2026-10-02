@@ -668,6 +668,7 @@ whatever attacked, which is different on every trigger.
 | | |
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
+| `shares_a_creature_type_with` | the **creature-types-only** clause (205.3m): `"self"` (the object that has the ability) or a binding name. A Background, Aura, Equipment or Arcane is a subtype and not a creature type, so it never counts; a Kindred spell's creature type does. The one spelling of this family a **trigger filter** honours — and there it must be `"self"`. Folk Hero: see [below](#that-shares-a-creature-type-with-this-creature) |
 | `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted. `"self"` names the ability's own source instead of a binding: Kasmina, Enigma Sage's "a card that shares a color with **this planeswalker**" |
 | `shares_a_name_with` | the same clause on names — Legions to Ashes' "all tokens that player controls **with the same name as that permanent**". `name` cannot stand in: it takes a literal string fixed when the card is written. Alone in the family in **tolerating a bound object that has already left the battlefield**, so a spell that exiles its target and its copies together works whichever order the two ops run in |
 | `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
@@ -9816,6 +9817,39 @@ the command zone — so there is nothing to find and the clause is always false.
 `is_commander` is the other near-miss and asks the opposite question: it is a
 predicate on the object being tested, not a reference to compare a different
 object against, and it is a battlefield test.
+
+## "…that shares a creature type with this creature"
+
+```jsonc
+// Folk Hero — "Commander creatures you own have "Whenever you cast a spell that
+// shares a creature type with this creature, draw a card. This ability
+// triggers only once each turn.""
+"grantable_abilities": [
+  {"kind": "triggered", "text": "Whenever you cast a spell that shares …",
+   "trigger": {"event": "spell_cast", "controller": "you",
+               "filter": {"shares_a_creature_type_with": "self"},
+               "max_per_turn": 1},
+   "effects": [{"op": "draw", "player": "you"}]}
+],
+"abilities": [
+  {"kind": "static", "effect": "grant_ability", "ability": 0,
+   "affects": {"types": ["Creature"], "is_commander": true, "owner": "you"}}
+]
+```
+
+`"self"` is the object that **has** the ability. On a granted trigger that is the
+recipient — `abilities_of` hands the copy over sourced on the commander creature —
+so Folk Hero compares against each commander's types, never its own.
+`shares_a_type_with_commander` is the near miss and is a broader card: it unions
+every commander's subtypes, so a partner answers for this creature and a
+Background commander contributes "Background".
+
+Creature types only, on both sides, through `characteristics.creature_types_of`:
+derived subtypes filtered by `SUBTYPE_CLASS` with Creature as the default. A
+changeling counts (its subtypes are the creature-type list), a Kindred Instant —
+Elf has Elf, an ordinary instant has none. A trigger filter may only say `"self"`
+(nothing is bound when it is asked, and the loader refuses anything else);
+effect-side it also takes a binding name.
 
 **A literal `subtypes` list is the approximation to refuse.** Which creature
 type matters is a property of the deck the card is played in, not of the card —

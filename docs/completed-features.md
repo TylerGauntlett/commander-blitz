@@ -19091,3 +19091,22 @@ library refused by `cant_search_library` does not. A new event, so the client
 narrates it: `describeEvent` ("AI 1 searches their library") and a `beatsFor`
 beat with the shuffle sound. Test: `tests/unit/test_library_searched.py`, plus
 vitest cases in `frontend/tests/labels.test.ts` and `frontend/tests/events.test.ts`.
+
+## `shares_a_creature_type_with` — "a spell that shares a creature type with this creature" — Folk Hero — 205.3m
+
+A trigger filter could not name the object that has the ability: `shares_a_type_with`
+reads a binding and is effect-side only, and `shares_a_type_with_commander` unions
+every commander's subtypes — a partner's types and a Background's "Background"
+included, a broader card than "this creature". `shares_a_creature_type_with: "self"`
+is honoured by `triggers.matches_card_filter` against the trigger's ability source,
+which for a granted trigger is the recipient (`abilities_of` sources the copy there),
+and by `selectors.matches` effect-side (`"self"` or a binding name). Both read
+`characteristics.creature_types_of` — derived subtypes filtered through
+`SUBTYPE_CLASS` with Creature as the default — so changelings share with anything, a
+Kindred instant has its creature type and Background/Aura/Arcane never count. The
+loader refuses anything but `"self"` in a trigger filter. Folk Hero is a
+`grant_ability` static to `{types: [Creature], is_commander: true, owner: "you"}`
+handing over a `spell_cast` trigger with `max_per_turn: 1`. Test:
+`tests/unit/test_shares_creature_type_with_source.py` (the commander's types not
+Folk Hero's, per-commander partners, once each turn, an opponent's commander gets
+nothing, a stolen commander you own keeps it for its thief, Folk Hero leaving).

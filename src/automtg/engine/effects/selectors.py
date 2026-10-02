@@ -236,6 +236,14 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "Whenever you cast a spell that shares a **creature type** with this
+        #: creature…" -- Folk Hero's grant. `"self"` (the object that has the
+        #: ability -- for a granted trigger, the recipient) or a binding name.
+        #: Creature types only (205.3m), where `shares_a_type_with` intersects
+        #: every subtype: a Background, Aura or Arcane is a subtype and not a
+        #: creature type. Honoured by trigger filters as well as here; a trigger
+        #: filter may only say `"self"`, since nothing is bound when it is asked.
+        "shares_a_creature_type_with",
         #: "…another permanent you control that **shares a permanent type**
         #: with it" -- Cloudstone Curio. The card-type twin of the clause
         #: above, reading `types` where that one reads `subtypes`. A separate
@@ -765,6 +773,16 @@ def matches(
         # here: both objects are on the battlefield, where every card type is a
         # permanent type (110.4a).
         if not (set(types) & set(theirs)):
+            return False
+    if (name := selector.get("shares_a_creature_type_with")) is not None:
+        # The creature-types-only twin of `shares_a_type_with` (205.3m), which
+        # also reads `"self"` -- the ability's own source -- the way
+        # `shares_a_color_with` does. Shared with `triggers.matches_card_filter`
+        # through `creature_types_of`, so the two halves cannot disagree.
+        from ..characteristics import creature_types_of
+
+        other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
+        if not (creature_types_of(state, oid) & creature_types_of(state, other)):
             return False
     if (who := selector.get("shares_a_type_with_commander")) is not None and not (
         subtypes & _commander_subtypes(ctx, str(who))
