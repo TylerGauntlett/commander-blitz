@@ -14,6 +14,7 @@ from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
+    life_gain_addend,
     life_gain_multiplier,
     life_loss_multiplier,
     player_cant_gain_life,
@@ -358,7 +359,13 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
         return 0
     # "You gain twice that much life instead" (614.1a). After the lock for the
     # reason `lose_life` reads its multiplier after it: twice nothing is nothing.
-    amount *= life_gain_multiplier(state, pid)
+    #
+    # "...that much life plus 1 instead" (Angel of Vitality) is added **first**:
+    # 616.1 gives the gaining player the order, (n+1)*2 is the larger gain and
+    # the one they pick, and this funnel cannot ask (see `life_gain_addend`).
+    # Below the `amount <= 0` return on purpose -- a gain of 0 is no life-gain
+    # event, so there is nothing for the Angel to add 1 to (its ruling).
+    amount = (amount + life_gain_addend(state, pid)) * life_gain_multiplier(state, pid)
     _move_life(state, pid, amount)
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
     return amount

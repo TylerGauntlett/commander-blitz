@@ -3305,28 +3305,46 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # a gain with an identical gain, and 0 is "you gain no life" -- which
         # is `cant_gain_life`, a different sentence that also stops the
         # life-gain triggers rather than firing them for nothing.
-        if model.gain_multiplier is None:
+        #
+        # Two axes, exactly one per card -- `replace_counters`' shape:
+        # "twice that much" (`gain_multiplier`) and "that much plus 1"
+        # (`gain_addend`, Angel of Vitality). One static carrying both would be
+        # a single replacement whose internal order nothing prints.
+        if model.gain_multiplier is not None and model.gain_addend is not None:
+            raise DslError(
+                f"{where}: replace_life_gain takes 'gain_multiplier' (\"twice "
+                f"that much\") or 'gain_addend' (\"that much plus 1\"), not both"
+            )
+        if model.gain_multiplier is not None:
+            if model.gain_multiplier < 2:
+                raise DslError(
+                    f"{where}.gain_multiplier: must be 2 or more; "
+                    f"1 replaces a gain with itself and 0 is \"can't gain life\", "
+                    f"which is a different effect"
+                )
+        elif model.gain_addend is not None:
+            if model.gain_addend < 1:
+                raise DslError(
+                    f"{where}.gain_addend: must be 1 or more; 0 replaces a gain "
+                    f"with itself, and a negative addend is a different card"
+                )
+        else:
             raise DslError(
                 f"{where}: replace_life_gain needs 'gain_multiplier' -- what the "
-                f"life gain is multiplied by"
-            )
-        if model.gain_multiplier < 2:
-            raise DslError(
-                f"{where}.gain_multiplier: must be 2 or more; "
-                f"1 replaces a gain with itself and 0 is \"can't gain life\", "
-                f"which is a different effect"
+                f"life gain is multiplied by -- or 'gain_addend' -- what is "
+                f"added to it"
             )
         if model.affects is not None or model.amount is not None:
             # "If you would gain life" names a player, and the size is
-            # `gain_multiplier`; nothing reads either key.
+            # `gain_multiplier` / `gain_addend`; nothing reads either key.
             raise DslError(
                 f"{where}: replace_life_gain takes 'affects_player', "
-                f"'gain_multiplier' and an optional 'condition', and no "
-                f"'affects' or 'amount'"
+                f"'gain_multiplier' or 'gain_addend', and an optional "
+                f"'condition', and no 'affects' or 'amount'"
             )
-    elif model.gain_multiplier is not None:
+    elif model.gain_multiplier is not None or model.gain_addend is not None:
         raise DslError(
-            f"{where}: 'gain_multiplier' only means anything on a "
+            f"{where}: 'gain_multiplier'/'gain_addend' only mean anything on a "
             f"replace_life_gain static, not on {model.effect!r}"
         )
     if model.effect == "replace_draw":
@@ -3947,6 +3965,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["loss_multiplier"] = model.loss_multiplier
     if model.gain_multiplier is not None:
         static["gain_multiplier"] = model.gain_multiplier
+    if model.gain_addend is not None:
+        static["gain_addend"] = model.gain_addend
     if model.draw_multiplier is not None:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:

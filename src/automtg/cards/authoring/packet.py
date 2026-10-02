@@ -694,7 +694,10 @@ def reference() -> dict:
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
             " replacement read wherever life is gained, lifelink included, so"
-            " it is NOT a `you_gain_life` trigger that gains again.",
+            " it is NOT a `you_gain_life` trigger that gains again. \"You gain"
+            " that much life plus 1 instead\" is the same static with"
+            " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
+            " never both).",
             "\"If you gained life this turn\" is the value"
             " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
             " `{\"const\": 0}` -- on a trigger, as its `condition` (an"

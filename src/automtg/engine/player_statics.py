@@ -159,7 +159,8 @@ def life_gain_multiplier(state: GameState, pid: int) -> int:
     long as" clause beside it is asked; **multiplied**, not summed, because two
     Archives are two replacements of one event each applying once (614.5) and
     a gain doubled twice is quadrupled; and 616.1's ordering is not asked,
-    which for a product cannot show.
+    which for a product cannot show -- it shows against an addend, and
+    :func:`life_gain_addend` owns that.
 
     Asked by `primitives.gain_life` only, which is the one place a life total
     goes up -- lifelink reaches it too (702.15b), so a lifelinking creature
@@ -169,8 +170,38 @@ def life_gain_multiplier(state: GameState, pid: int) -> int:
     multiplier = 1
     for obj, static in _active_player_statics(state, "replace_life_gain"):
         if _reaches_player(obj, static, pid):
-            multiplier *= int(static.get("gain_multiplier", 1))
+            multiplier *= int(static.get("gain_multiplier") or 1)
     return multiplier
+
+
+def life_gain_addend(state: GameState, pid: int) -> int:
+    """What is added to a life gain by ``pid`` right now.  Usually 0.
+
+    Angel of Vitality: "If you would gain life, you gain that much life **plus
+    1** instead."  The additive axis of ``replace_life_gain``, read exactly as
+    :func:`life_gain_multiplier` is -- through `_active_player_statics`, so a
+    condition is asked and the static lifts when its source leaves -- and
+    **summed**, because two Angels are two replacements each applying once to
+    the event (614.5): plus 1, then plus 1 again.
+
+    A static carries one axis or the other (the loader refuses both), so an
+    addend static contributes 0 here and a multiplier static contributes 0 to
+    this sum while contributing its factor to the product.
+
+    **616.1 and the order against a doubler.**  The affected player -- the one
+    gaining the life -- chooses which replacement applies first, and here the
+    order shows: under an Angel and an Archive a gain of 3 is (3+1)*2 = 8 or
+    3*2+1 = 7.  `primitives.gain_life` is not a generator (lifelink reaches it
+    from inside combat damage), so it cannot ask; it applies every addend
+    **before** every multiplier, which is the larger gain and the order the
+    gaining player picks.  The divergence -- a player who wanted the smaller
+    gain cannot have it -- is recorded in ``docs/rules-coverage.md``.
+    """
+    addend = 0
+    for obj, static in _active_player_statics(state, "replace_life_gain"):
+        if _reaches_player(obj, static, pid):
+            addend += int(static.get("gain_addend") or 0)
+    return addend
 
 
 def player_cant_gain_life(state: GameState, pid: int) -> bool:

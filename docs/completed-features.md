@@ -19045,3 +19045,19 @@ the cache — every existing test set the life totals and bumped by hand. The th
 writers of a life total in play (`gain_life`, `lose_life`, the damage branch of
 `damage_player`) now go through `_move_life`, which bumps. Test:
 `tests/unit/test_player_quantifier.py::TestItFollowsTheLifeTotal`.
+
+## `replace_life_gain` `gain_addend` — "you gain that much life plus 1 instead" — Angel of Vitality
+
+`replace_life_gain` carried only `gain_multiplier`, refused below 2, and "plus 1" is not
+a multiplier at any size. The static grew a second axis, `gain_addend` (exactly one of
+the two per static, the `replace_counters` shape), read by
+`player_statics.life_gain_addend` through `_active_player_statics` and applied in
+`primitives.gain_life` — the one funnel the `gain_life` op and lifelink both reach — so
+a gain of 3 is one `LIFE_GAINED` of 4, a lifelink hit of 5 gains 6, and a gain of 0 is
+no event and gets nothing. Two Angels add 2. Against a doubler 616.1 gives the order to
+the gaining player and the order shows; `gain_life` cannot ask (it runs inside combat
+damage), so every addend applies before every multiplier — the larger gain, the order
+the gaining player picks — regardless of arrival order, and the divergence is recorded
+in rules-coverage.md. Test: `tests/unit/test_life_gain_addend.py`, which also pins the
+Angel's other line, a static condition on its controller's own life total
+(`max_life_of: "you"`), following the life total as it moves.

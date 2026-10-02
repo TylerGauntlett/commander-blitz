@@ -795,6 +795,12 @@ class AbilityModel(BaseModel):
     #: with itself, and 0 is "you gain no life" -- `cant_gain_life`, a
     #: different sentence.
     gain_multiplier: int | None = None
+    #: ``replace_life_gain``: what is added to a life gain. Angel of Vitality's
+    #: "you gain that much life **plus 1** instead" is ``1``. The other axis of
+    #: the same static, as ``counter_addend`` is of ``replace_counters``: a card
+    #: uses exactly one of ``gain_multiplier`` and ``gain_addend``, and the
+    #: addend is refused below 1 because 0 replaces a gain with itself.
+    gain_addend: int | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1

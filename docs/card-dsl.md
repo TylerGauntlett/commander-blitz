@@ -4855,10 +4855,35 @@ doubled gain of 3, agreeing with the life total. It is not a `you_gain_life`
 trigger that gains again — that is a second gain on the stack, a second event
 every life-gain trigger pays out on, and a loop.
 
-`gain_multiplier` is required and must be **2 or more**: 1 replaces a gain with
+`gain_multiplier` must be **2 or more**: 1 replaces a gain with
 itself, and 0 is "you gain no life", which is a different sentence. Two doublers
 multiply (614.5). A locked life total (118.5) stays locked — twice nothing is
 nothing.
+
+### "…you gain that much life plus 1 instead"
+
+```jsonc
+// Angel of Vitality
+{ "kind": "static",
+  "text": "If you would gain life, you gain that much life plus 1 instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "you",
+  "gain_addend": 1 }
+```
+
+The other axis of the same static, as `counter_addend` is of `replace_counters`:
+"plus 1" is not a multiplier at any size. A static carries **exactly one** of
+`gain_multiplier` and `gain_addend` (both is a load error, and so is neither);
+`gain_addend` must be 1 or more. It is added once per life-gain **event**, not
+per point — a lifelink hit of 5 gains 6 — and a gain of 0 is no event, so nothing
+is added to it. Two Angels add 2 (614.5).
+
+**Against a doubler the order shows**, and 616.1 gives it to the player gaining
+the life: under an Angel and an Archive a gain of 3 is (3+1)×2 = 8 or 3×2+1 = 7.
+`gain_life` cannot ask — lifelink reaches it from inside combat damage — so it
+applies every addend before every multiplier, the larger gain and the order the
+gaining player picks, whichever permanent arrived first. A player who wanted the
+smaller gain cannot have it; that divergence is in `docs/rules-coverage.md`.
 
 ## "Your opponents can't gain life"
 
@@ -6224,6 +6249,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_addend": 1 }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
