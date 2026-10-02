@@ -17,8 +17,9 @@ ruling doubles. 122.6 counts counters a permanent is given *as it enters* as
 "put on" it, and they were written straight onto the object by
 `zones._enter_battlefield` with no replacement consulted -- so High Score, the
 shipped witness, let a creature that "enters with two +1/+1 counters" arrive
-with two rather than three. `zones._enter_with_counters` now asks the same
-statics, for every enters-with-counters replacement and for riot.
+with two rather than three. `zones._entering_counters` now asks the same
+statics, once, of everything the permanent enters with (see
+`tests/unit/test_counters_as_it_enters.py`).
 
 Without ``effects_only`` the static still reaches costs, which is what "if one
 or more counters **would be put**" says (Hardened Scales, High Score): the

@@ -2435,9 +2435,13 @@ Read in `primitives.add_counters`, the single funnel every placement comes
 through — the `add_counters` op, `move_counters`, `proliferate`, the `counters`
 key on `put_onto_battlefield` — and the counters a permanent **enters with**
 (122.6: those are "put on" it too; a planeswalker's starting loyalty, riot's
-counter, every `self_enters_with_counters`) are replaced by the same statics in
-`zones._enter_with_counters`; their `counter_placed` is fired once the permanent
-is on the battlefield, by `zones._fire_entered_with_counters`. So it applies once per
+counter, every `self_enters_with_counters`, `enters_with_additional_counters`)
+are gathered per kind and replaced by the same statics **once**, as one
+placement, in `zones._entering_counters` -- in the order 616.1 lets the
+controller choose, taken as the one leaving the most counters (Hardened Scales
+before Doubling Season; compleated wherever it costs least). Their
+`counter_placed` is fired once the permanent is on the battlefield, by
+`zones._fire_entered_with_counters`, with that total. So it applies once per
 batch, and *before* `counter_placed` fires or a Saga chapter comparison reads
 the new total. A replacement that fired the event with the pre-replacement
 number would be a card lying to every trigger watching it. Only on the way in:

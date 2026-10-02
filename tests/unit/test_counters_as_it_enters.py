@@ -15,7 +15,7 @@ the words a player reads: "An ability that triggers when counters are put on a
 permanent will trigger if that permanent somehow enters the battlefield with
 those counters."
 
-What was wrong: `zones._enter_with_counters` wrote the counters straight onto
+What was wrong: `zones._enter_battlefield` wrote the counters straight onto
 the arriving object and fired nothing, "because the permanent was never on the
 battlefield without them". That is why they are written *before* the arrival --
 the permanent is never seen at its printed size -- but it is not a reason for
@@ -35,6 +35,16 @@ included. What must not move:
 - an arrival with no counters reports nothing;
 - "you put" is still the putter: a creature entering under an opponent's
   control had its counters put by that opponent.
+
+**One placement.** Every "enters with" -- printed, starting loyalty, Giada's
+and Oath of Gideon's extra counters, riot -- is a replacement on the same
+event (614.1c, 306.5b), and so are Hardened Scales, Doubling Season and
+compleated. They were applied one source at a time, and Giada's and the Oath's
+were not replaced at all: Doubling Season with a printed-two Angel under Giada
+gave 2*2 + 1 = 5, and Hardened Scales gave an Angel entering with only Giada's
+counter nothing. Now the amounts are gathered per kind and put on once, in the
+order 616.1e-f lets the controller choose, taken as the one that leaves the
+most (`zones._entering_counters`), and COUNTER_PLACED reports that total.
 """
 
 from __future__ import annotations
@@ -51,7 +61,9 @@ EXEMPLAR = "t_cae_exemplar"  # Exemplar of Light as printed
 HYDRA = "t_cae_hydra"  # enters with two +1/+1 counters, draws on its own counters
 ALLY_WATCHER = "t_cae_ally_watcher"  # +1/+1 counters on a creature you control: gain 1
 PUTTER_WATCHER = "t_cae_putter_watcher"  # you put +1/+1 counters on any creature: draw
+ANGEL_HYDRA = "t_cae_angel_hydra"  # an Angel that enters with two +1/+1 counters
 SEASON = "t_ceo_season"  # Doubling Season's counter line
+SCALES = "t_rc_scales"  # Hardened Scales: +1/+1 counters on a creature you control, plus one
 WALKER = "t_walker"  # loyalty 4
 OATH = "t_oath"  # each planeswalker you control enters with an additional loyalty
 SAGA = "t_saga"  # I draw, II gain 2 life, III a Human Soldier
@@ -60,7 +72,7 @@ BEAR = "t_bear"
 
 
 #: Every card a test puts onto the battlefield, one in each player's hand.
-ARRIVALS = [EXEMPLAR, HYDRA, WALKER, SAGA, BEAR]
+ARRIVALS = [EXEMPLAR, HYDRA, ANGEL_HYDRA, WALKER, SAGA, BEAR]
 
 
 def board(builder, mine=()):
@@ -191,6 +203,59 @@ class TestEveryEntersWithPath:
         oid = arrive(game, WALKER)
         events = placed(game, oid, "loyalty")
         assert [(e.data["amount"], e.data["put_by"]) for e in events] == [(5, 0)]
+
+
+class TestOnePlacement:
+    """Every "enters with" is one event, and the counter replacements apply to
+    its total once (122.6, 614.5, 616.1)."""
+
+    def _arrive(self, game, card_id: str, kind: str) -> tuple[int, list[int]]:
+        oid = arrive(game, card_id)
+        return game.state.objects[oid].counter(kind), [
+            e.data["amount"] for e in placed(game, oid, kind)
+        ]
+
+    def test_doubling_season_doubles_printed_plus_giada(self, builder):
+        """A printed-two Angel under Giada (one Angel already there) under
+        Doubling Season: (2 + 1) * 2 = 6. It was 2*2 + 1 = 5 -- the Season
+        doubled the printed two and never saw Giada's."""
+        game = board(builder, mine=[GIADA, SEASON])
+        assert self._arrive(game, ANGEL_HYDRA, "+1/+1") == (6, [6])
+
+    def test_hardened_scales_adds_to_giadas_counter(self, builder):
+        """An Angel whose only counter is Giada's still enters with one or more,
+        so Hardened Scales applies: 1 + 1 = 2. It was 1."""
+        game = board(builder, mine=[GIADA, SCALES])
+        assert self._arrive(game, EXEMPLAR, "+1/+1") == (2, [2])
+
+    def test_hardened_scales_applies_once_to_the_total(self, builder):
+        """Printed two plus Giada's one is one placement of three, plus one:
+        four, not five."""
+        game = board(builder, mine=[GIADA, SCALES])
+        assert self._arrive(game, ANGEL_HYDRA, "+1/+1") == (4, [4])
+
+    def test_scales_then_season_is_the_controllers_order(self, builder):
+        """Hardened Scales before Doubling Season (616.1): (2 + 1) * 2 = 6
+        rather than 2 * 2 + 1 = 5, whichever arrived first."""
+        game = board(builder, mine=[SEASON, SCALES])
+        assert self._arrive(game, HYDRA, "+1/+1") == (6, [6])
+
+    def test_scales_alone_gives_nothing_to_an_arrival_with_none(self, builder):
+        """The near miss: "if one or more +1/+1 counters would be put" -- an
+        Angel under Hardened Scales with no Giada enters with none at all."""
+        game = board(builder, mine=[SCALES])
+        assert self._arrive(game, EXEMPLAR, "+1/+1") == (0, [])
+
+    def test_oath_and_season_on_a_walker(self, builder):
+        """Loyalty 4 plus the Oath's one, doubled: 10. It was 4*2 + 1 = 9."""
+        game = board(builder, mine=[OATH, SEASON])
+        assert self._arrive(game, WALKER, "loyalty") == (10, [10])
+
+    def test_oath_and_hardened_scales_on_a_walker(self, builder):
+        """Hardened Scales is about +1/+1 counters on a creature, so a
+        planeswalker's loyalty is the Oath's 4 + 1 and nothing more."""
+        game = board(builder, mine=[OATH, SCALES])
+        assert self._arrive(game, WALKER, "loyalty") == (5, [5])
 
 
 class TestTheSagaDoesNotDoubleTrigger:

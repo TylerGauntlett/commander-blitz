@@ -19273,3 +19273,38 @@ implementing keys with no witness the loader now validates a trigger filter (and
 `triggers.TRIGGER_FILTER_KEYS` — exactly the keys the matcher reads, held in step by a
 test — and refuses the rest. The packet reference names the list as
 `trigger_filter_keys`. Test: `tests/unit/test_trigger_filter_owner.py`.
+
+## Everything a permanent enters with is one counter placement -- 122.6 / 616.1 (fix)
+
+- **The bug.** Each "enters with" was replaced on its own (`_enter_with_counters`
+  per source), and `enters_with_additional_counters` (Giada, Font of Hope; Oath
+  of Gideon) wrote its counters with no replacement at all. Doubling Season with
+  a printed-two Angel under Giada gave 2*2 + 1 = 5, not (2+1)*2 = 6; Hardened
+  Scales gave an Angel entering with only Giada's counter nothing extra; a
+  walker under Oath of Gideon and Doubling Season got 4*2 + 1 = 9, not 10.
+- **The fix.** `zones._enter_battlefield` gathers every "enters with" amount per
+  counter kind -- printed `self_enters_with_counters`, starting loyalty (306.5b),
+  battle defense, a Saga's lore counter, `_board_additional_counters`, riot --
+  and `zones._entering_counters` puts them on as one placement: the `replace_counters`
+  statics and compleated (`_compleated_reduction`) are further replacements on
+  the same event, each applied once (614.5), in the order the controller chooses
+  (616.1e-f). The engine takes the order leaving the most counters, searched over
+  every order the rules allow (an "if one or more" replacement cannot be chosen
+  while the count is zero). COUNTER_PLACED reports that total.
+- **Compleated's order.** 702.150a applies only to an arrival that "would enter
+  with one or more loyalty counters", and its ruling says other replacements
+  "apply as normal". Under 616.1f it becomes choosable once *any* "enters with"
+  has applied, not necessarily the walker's own: with Oath of Gideon, Oath (1)
+  -> compleated (to 0) -> printed loyalty is a legal order, and the engine
+  takes it. `tests/unit/test_enters_with_additional_counters.py`'s three-loyalty,
+  four-life walker under the Oath now enters with 3 (it was pinned at 1, printed
+  -> compleated -> Oath). No ruling addresses the pair; this is the literal reading.
+- **Divergence kept.** A placement on the battlefield (`primitives.add_counters`)
+  still applies counter statics in battlefield order; only an arrival's
+  counters are ordered for the controller.
+- `tests/unit/test_counters_as_it_enters.py::TestOnePlacement`: Doubling Season +
+  printed-two Angel under Giada = 6; Hardened Scales + Giada alone = 2; Scales
+  once on printed + Giada = 4; Scales before Season = 6 regardless of arrival
+  order; Scales alone on an arrival with none = 0; Oath + Season walker = 10;
+  Oath + Scales walker = 5 (Scales is creatures only); each with COUNTER_PLACED
+  equal to the total.

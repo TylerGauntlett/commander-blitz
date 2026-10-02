@@ -11,8 +11,9 @@ What was wrong without this: the nearest shape, `replace_counters` with
 a loyalty counter -- so it would also turn each +1 loyalty cost into +2, which
 the printed card never does. `enters_tapped` is the only static about somebody
 else's arrival, and it carries no counters. The new static is its shape with a
-quantity, read in `zones._enter_battlefield` after the arriving card's own
-replacements (and after compleated, the order 616.1 lets the controller take).
+quantity, read in `zones._enter_battlefield` and put on with the arriving
+card's own "enters with" counters as one placement (122.6), in the order 616.1
+lets the controller take (`zones._entering_counters`).
 
 Witness: Oath of Gideon. `t_oath` is its second line.
 """
@@ -125,10 +126,20 @@ class TestOnlyTheArrival:
 
 
 class TestWithCompleated:
-    def test_compleated_first_then_the_oath(self, builder):
-        """3 loyalty, both {W/P} paid with life: compleated takes it to zero,
-        and the Oath's counter lands after -- the order 616.1 lets the
-        controller choose, and the one that keeps the walker."""
+    def test_the_controller_orders_all_three(self, builder):
+        """3 loyalty, both {W/P} paid with life (two fewer each, so four).
+
+        The starting loyalty (306.5b), the Oath and compleated are three
+        replacements on the one arrival, and 616.1e-f lets the controller apply
+        any applicable one, then any that is applicable *now*, until none is
+        left. Compleated is not applicable to an arrival with no loyalty yet;
+        after the Oath's one counter it is, and takes that one to zero; the
+        printed three then land. Three -- the most any order leaves, which is
+        the order a player picks (`zones._entering_counters`).
+
+        It used to be one: compleated was pinned straight after the printed
+        loyalty and the Oath after that, which is *an* order the controller
+        may choose and not the best one."""
         game = position(builder, hand=("t_twice_compleated",))
         action = next(
             a for a in game.legal_actions()
@@ -138,7 +149,7 @@ class TestWithCompleated:
         game.apply(action)
         settle(game)
         assert game.state.objects[action.source].zone is Zone.BATTLEFIELD
-        assert game.state.objects[action.source].counter("loyalty") == 1
+        assert game.state.objects[action.source].counter("loyalty") == 3
 
 
 class TestTheLoaderChecksIt:

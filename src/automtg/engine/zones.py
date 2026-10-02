@@ -778,7 +778,7 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
             return
 
 
-def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
+def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[str, int]]:
     """ "Each planeswalker you control enters with an additional loyalty counter
     on it." Oath of Gideon (614.1c).
 
@@ -789,10 +789,13 @@ def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
     placement, so it would also add one to each +1 loyalty cost, and the
     printed card never does.
 
-    Applied after the arriving card's own replacements, so the counter is added
-    to the loyalty it was going to have. Every matching static adds its own
-    amount (two Oaths, two counters). The arriving permanent is excluded as a
-    source, as in `_apply_board_enters_tapped`.
+    Returns ``(kind, amount)`` per matching static rather than writing them:
+    each is one more replacement on the single 122.6 placement
+    `_entering_counters` orders, so Hardened Scales and Doubling Season apply
+    to the total the permanent enters with and not to each source apart.
+    Every matching static adds its own amount (two Oaths, two counters). The
+    arriving permanent is excluded as a source, as in
+    `_apply_board_enters_tapped`.
 
     **The amount may be a count** -- Giada, Font of Hope: "Each other Angel you
     control enters with an additional +1/+1 counter on it **for each Angel you
@@ -816,6 +819,7 @@ def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
         for entry in state.turn_ledger.permanents_entered
         if entry.batch == state.event_batch
     } | {obj.oid}
+    out: list[tuple[str, int]] = []
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "enters_with_additional_counters":
             continue
@@ -831,37 +835,36 @@ def _apply_board_additional_counters(state: GameState, obj: GameObject) -> None:
                 if other.oid not in entering
             )
         if int(amount) > 0:
-            obj.add_counter(str(static.get("counter")), int(amount))
+            out.append((str(static.get("counter")), int(amount)))
+    return out
 
 
-def _apply_compleated(obj: GameObject, card: CardDef) -> None:
+def _compleated_reduction(obj: GameObject, card: CardDef) -> int:
     """Compleated (702.150a): two fewer loyalty per Phyrexian symbol paid with life.
 
-    A modification of the starting-loyalty replacement the loop above has just
-    applied, so it runs straight after it and before the permanent is ever seen:
-    a Tamiyo cast for 2 life arrives with three loyalty and never with five.
+    "If this permanent would enter with one or more loyalty counters on it and
+    the player who cast it chose to pay life for any of its Phyrexian mana
+    symbols, it enters with two fewer loyalty counters for each Phyrexian mana
+    symbol life was paid for." Returned as the number of counters to take off,
+    because it is one more replacement on the arrival's loyalty and
+    `_entering_counters` decides where in the order it goes -- the printed
+    ruling: "Any other replacement effect that would apply to the number of
+    loyalty counters it enters the battlefield with will apply as normal."
 
-    "If this permanent **would enter with one or more** loyalty counters" -- a
-    walker whose loyalty the arrival gave none of is untouched, and the count is
-    floored at zero rather than going negative; a walker reduced to zero is then
-    binned by 704.5i, which is what the rule means to happen.
+    "**Would enter with one or more**" is the floor and the guard both: a walker
+    the arrival gave no loyalty is untouched, and the count stops at zero; a
+    walker reduced to zero is then binned by 704.5i, which is what the rule
+    means to happen.
 
     Only on the arrival that *was* the cast (`entered_by_cast`): the count is a
     fact about how one casting was paid, and a walker blinked or reanimated later
     enters with its printed loyalty.
     """
     if Keyword.COMPLEATED.value not in card.keywords:
-        return
+        return 0
     if not obj.entered_by_cast or obj.cast_phyrexian_life <= 0:
-        return
-    loyalty = obj.counter("loyalty")
-    if loyalty <= 0:
-        return
-    remaining = max(0, loyalty - 2 * obj.cast_phyrexian_life)
-    if remaining:
-        obj.counters["loyalty"] = remaining
-    else:
-        obj.counters.pop("loyalty", None)
+        return 0
+    return 2 * obj.cast_phyrexian_life
 
 
 def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> Zone | None:
@@ -920,30 +923,121 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
     return None
 
 
-def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: int) -> None:
-    """Give an arriving permanent the counters it enters with, replaced.
+#: One replacement on the counters an arriving permanent is given, as
+#: `_entering_counters` orders them: ``("add", n)`` is an "enters with" (printed,
+#: starting loyalty, Giada, Oath of Gideon, riot); ``("scale", multiplier,
+#: addend)`` is a `replace_counters` static (Hardened Scales, Doubling Season);
+#: ``("reduce", n)`` is compleated.
+_EnteringEffect = tuple
 
-    122.6: counters a permanent is given *as it enters* are "put on" it, so a
-    counter replacement applies to them exactly as to a placement on the
-    battlefield -- Doubling Season doubles a planeswalker's starting loyalty,
-    and Hardened Scales makes a creature that "enters with two +1/+1 counters"
-    enter with three. Not through `primitives.add_counters`, because the
-    permanent is not on the battlefield yet: the counters are written now, so
-    it is never seen without them, and their COUNTER_PLACED is fired by
-    `_fire_entered_with_counters` once it has arrived. A Saga's chapter
-    comparison is `sagas.entered`'s, and nothing here reaches it.
+
+def _entering_effect_applies(effect: _EnteringEffect, count: int) -> bool:
+    """Whether a replacement applies to the arrival as it now stands (616.1).
+
+    An "enters with" always does. The other two say "**if** one or more
+    counters would be put" / "would enter with **one or more**", so on a count
+    of zero they are not applicable *yet* -- Hardened Scales does not give one
+    counter to a creature entering with none -- and become applicable once an
+    "enters with" has been applied (616.1e).
+    """
+    return effect[0] == "add" or count > 0
+
+
+def _apply_entering_effect(effect: _EnteringEffect, count: int) -> int:
+    """One replacement applied to the count the ones before it left."""
+    if effect[0] == "add":
+        return count + int(effect[1])
+    if effect[0] == "scale":
+        return count * int(effect[1]) + int(effect[2])
+    return max(0, count - int(effect[1]))
+
+
+def _entering_counters(
+    state: GameState, obj: GameObject, kind: str, adds: list[int], reduction: int = 0
+) -> int:
+    """How many ``kind`` counters an arriving permanent enters with -- one placement.
+
+    122.6: counters a permanent is given *as it enters* are "put on" it, and
+    they are put on in **one** event, however many effects contributed to the
+    number. Every "enters with" is a replacement effect (614.1c; a
+    planeswalker's loyalty is the intrinsic one in 306.5b), and so are Hardened
+    Scales, Doubling Season and compleated -- so they are all replacements on
+    the same event, each applied once (614.5), in the order the affected
+    permanent's controller chooses (616.1; Hardened Scales' ruling: "you choose
+    the order to apply those effects, no matter who controls the sources").
+
+    What was wrong before: each "enters with" was replaced on its own, and
+    Giada's and Oath of Gideon's extra counters were not replaced at all. So
+    Doubling Season with a printed-two Hydra under Giada gave 2*2 + 1 = 5
+    rather than (2+1)*2 = 6, Hardened Scales gave a creature entering with only
+    Giada's counter nothing extra, and a printed counter and a riot counter
+    would each have collected their own Hardened Scales bonus.
+
+    **The order is the controller's, and the engine takes the one that leaves
+    the most counters** -- the order a player picks for counters on their own
+    permanent, and the reason the choice is not asked: no shipped "enters with"
+    puts on a counter its controller would want fewer of. The search is over
+    every order of a handful of effects, deduplicated, and it matters in
+    exactly two places:
+
+    - **addends before multipliers**: Hardened Scales then Doubling Season is
+      (n+1)*2, the other way n*2+1.
+    - **compleated** (702.150a) is not always best last. It applies only to an
+      arrival that "would enter with one or more loyalty counters", so it can
+      be chosen only once some "enters with" has applied (616.1f) -- but not
+      necessarily the walker's own. A walker at three loyalty with both
+      symbols paid for in life (four fewer) under Oath of Gideon: Oath, then
+      compleated (one to zero), then the printed three, is three; printed then
+      Oath then compleated is zero, binned. With a multiplier it is the other
+      way round: 2L - 2k beats 2(L - 2k). Rather than encode the cases, every
+      order 616.1e-f allows is tried. This is the literal reading of 616.1 and
+      the compleated ruling ("any other replacement effect ... will apply as
+      normal"); no ruling addresses Oath of Gideon and compleated together.
+
+    `primitives.add_counters` keeps battlefield order for a placement on the
+    battlefield, the divergence `docs/rules-coverage.md` records; an arrival's
+    own counters are the one placement whose order is now the controller's.
 
     Not a cost (122.6a: the permanent's controller puts them), so every
-    applicable static applies, ``effects_only`` included.
+    applicable static applies, ``effects_only`` included. Written onto the
+    object by the caller before it is ever seen; the COUNTER_PLACED is
+    `_fire_entered_with_counters`'s, once it has arrived.
     """
-    if amount <= 0:
-        obj.add_counter(kind, amount)
-        return
-    from .primitives import _replaced_counter_amount
+    from .player_statics import counter_placement_replacements
 
-    obj.add_counter(
-        kind, _replaced_counter_amount(state, obj.oid, kind, amount, by=obj.controller)
-    )
+    effects: list[_EnteringEffect] = [("add", n) for n in adds if n > 0]
+    if not effects:
+        return 0
+    effects += [
+        (
+            "scale",
+            int(static.get("counter_multiplier") or 1),
+            int(static.get("counter_addend") or 0),
+        )
+        for static in counter_placement_replacements(state, obj.oid, kind, by=obj.controller)
+    ]
+    if reduction > 0:
+        effects.append(("reduce", reduction))
+
+    memo: dict[tuple[tuple[_EnteringEffect, ...], int], int] = {}
+
+    def best(remaining: tuple[_EnteringEffect, ...], count: int) -> int:
+        # 616.1e: one applicable replacement at a time, the controller's pick,
+        # until none still applies. Each is applied once (614.5) and is *not*
+        # skipped by being chosen late -- an inapplicable one simply cannot be
+        # chosen yet. Duplicates (two Oaths, two Seasons) are one choice.
+        key = (remaining, count)
+        if key not in memo:
+            options = [
+                best(remaining[:i] + remaining[i + 1 :], _apply_entering_effect(effect, count))
+                for i, effect in enumerate(remaining)
+                if (i == 0 or effect != remaining[i - 1])
+                and _entering_effect_applies(effect, count)
+            ]
+            memo[key] = max(options, default=count)
+        return memo[key]
+
+    return best(tuple(sorted(effects)), 0)
 
 
 def _fire_entered_with_counters(
@@ -1037,6 +1131,9 @@ def _enter_battlefield(
     # What it carried in, so the counters it enters with -- and only those --
     # are reported as put on it (122.6). See `_fire_entered_with_counters`.
     counters_before = dict(obj.counters)
+    # The "enters with" amounts, per kind, before any counter replacement: they
+    # are one placement (122.6) and are put on together below.
+    entering: dict[str, list[int]] = {}
 
     # Cleared once the loop below has read it: the answer belongs to this one
     # arrival, and a permanent that leaves and comes back is a new object
@@ -1135,20 +1232,16 @@ def _enter_battlefield(
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
-                    _enter_with_counters(state, obj, str(kind), evaluate_value(ctx, amount))
+                    entering.setdefault(str(kind), []).append(evaluate_value(ctx, amount))
             else:
-                _enter_with_counters(
-                    state,
-                    obj,
-                    str(replacement.get("counter", "+1/+1")),
-                    evaluate_value(ctx, replacement.get("amount", 1)),
+                entering.setdefault(str(replacement.get("counter", "+1/+1")), []).append(
+                    evaluate_value(ctx, replacement.get("amount", 1))
                 )
 
-    _apply_compleated(obj, card)
-    # After compleated, which is the order 616.1 lets the controller pick and
-    # the one they would: a walker taken to zero by compleated still gets
-    # Oath of Gideon's counter, where the other order would lose it.
-    _apply_board_additional_counters(state, obj)
+    # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same
+    # placement, so the counter replacements below see them in the total.
+    for kind, amount in _board_additional_counters(state, obj):
+        entering.setdefault(kind, []).append(amount)
 
     # Riot (702.113), applied in the slot enters-with-counters occupies and for
     # its reason: 614.1c, so the creature is never on the battlefield without
@@ -1167,7 +1260,18 @@ def _enter_battlefield(
     if riot_choice == RIOT_HASTE:
         obj.granted_keywords.add(Keyword.HASTE.value)
     elif riot_choice == RIOT_COUNTER:
-        _enter_with_counters(state, obj, "+1/+1", 1)
+        entering.setdefault("+1/+1", []).append(1)
+
+    # Every "enters with" gathered, the counters are put on in one placement
+    # (122.6), per kind: Hardened Scales and Doubling Season apply once to the
+    # total and compleated takes its place in the order -- `_entering_counters`.
+    reduction = _compleated_reduction(obj, card)
+    for kind, amounts in entering.items():
+        total = _entering_counters(
+            state, obj, kind, amounts, reduction if kind == "loyalty" else 0
+        )
+        if total > 0:
+            obj.add_counter(kind, total)
 
     # "…it gains haste until end of turn" (Arena of Glory), in the slot beside
     # riot and for a neighbouring reason: the creature is never on the

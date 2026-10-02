@@ -436,9 +436,10 @@ export function describeEvent(
      * The `counter_placed` line beside it already says "Oath of Eorl gets 1
      * lore", and that is the bookkeeping rather than the event: what a player
      * needs to read is *which chapter is happening*, since the three do
-     * different things and only one of them is about to end the card. It is also
-     * the only line that appears at all when a Saga enters, because the counter
-     * it enters with is placed by a replacement and emits nothing.
+     * different things and only one of them is about to end the card. A Saga
+     * entering gets the same pair: the lore counter it enters with is "put on"
+     * it too (122.6), so the engine emits `counter_placed` for it after the
+     * enters event, and the chapter line follows.
      *
      * Numbered in Roman, as the card is. A Saga's chapters are printed "I", "II",
      * "III" and a log reading "chapter 2" would not match the card the player is

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_counters_as_it_enters.py. t_cae_exemplar is Exemplar of Light as printed; t_cae_hydra enters with two +1/+1 counters and draws whenever you put +1/+1 counters on it; t_cae_ally_watcher gains 1 life whenever one or more +1/+1 counters are put on a creature you control; t_cae_putter_watcher draws whenever you put +1/+1 counters on any creature, whoever controls it.",
+  "_comment": "Shapes for tests/unit/test_counters_as_it_enters.py. t_cae_exemplar is Exemplar of Light as printed; t_cae_hydra enters with two +1/+1 counters and draws whenever you put +1/+1 counters on it; t_cae_angel_hydra is an Angel that enters with two, so Giada adds to a printed number; t_cae_ally_watcher gains 1 life whenever one or more +1/+1 counters are put on a creature you control; t_cae_putter_watcher draws whenever you put +1/+1 counters on any creature, whoever controls it.",
   "cards": [
     {
       "id": "t_cae_exemplar",
@@ -57,6 +57,21 @@
           "trigger": {"event": "counter_placed", "source": "self", "counter": "+1/+1", "put_by": "you"},
           "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
         }
+      ]
+    },
+    {
+      "id": "t_cae_angel_hydra",
+      "name": "Test Arrival Angel Hydra",
+      "oracle_text": "This creature enters with two +1/+1 counters on it.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel", "Hydra"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2}
       ]
     },
     {
