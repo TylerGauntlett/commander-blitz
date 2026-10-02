@@ -19076,3 +19076,18 @@ requirements (`combat.block_taxed`). The card's attack half needed
 controller's planeswalkers; Propaganda leaves it off. Both halves are gated by the
 existing static condition `exists` over `self_only` with `tapped: false` /
 `attacking: true`. Test: `tests/unit/test_block_tax.py`.
+
+## `searches_library` trigger — Archivist of Oghma's "whenever an opponent searches their library" — 701.19
+
+Nothing exposed a search to triggers: `cant_search_library` showed the engine knew
+where searches happen, but the act left no event, and the shuffle that ends one
+emits nothing. `EventType.LIBRARY_SEARCHED` is fired by `ops_cards._search` — the
+one routine behind `search_library` and `search_zones` — once per searching
+player, before the pool is offered, with the searcher as `player` and `owner` as
+whose library. The `searches_library` trigger name maps to it with a player
+subject, and `_actor` reads the searcher, so `controller: "opponent"` means an
+opponent searched whoever's spell asked. Empty and declined searches fire; a
+library refused by `cant_search_library` does not. A new event, so the client
+narrates it: `describeEvent` ("AI 1 searches their library") and a `beatsFor`
+beat with the shuffle sound. Test: `tests/unit/test_library_searched.py`, plus
+vitest cases in `frontend/tests/labels.test.ts` and `frontend/tests/events.test.ts`.

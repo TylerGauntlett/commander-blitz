@@ -3581,7 +3581,8 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated` · `damage_prevented` · `deals_damage_to_player`
+`ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
+`searches_library`
 
 ### Tiered, and reading back which price was paid
 
@@ -4064,6 +4065,23 @@ to re-derive "and that player was the monarch, so the crown just moved" — and 
 would still miss the other route in, where an opponent's own card crowns them with
 no damage anywhere. Nothing fires when a player who is *already* the monarch
 becomes it again, because the event is the crown moving.
+
+**`searches_library`** fires once per library search (701.19) — every tutor,
+fetchland and landcycling ability, since `search_library` and `search_zones` both
+go through `ops_cards._search`, which fires it. Its subject is a **player**: the
+`controller` clause and `event_player` name the **searcher**, so Archivist of
+Oghma's "whenever an opponent searches their library" is
+`{"event": "searches_library", "controller": "opponent"}`, and an opponent
+searching because of *your* Path to Exile counts, as the printed ruling says. A
+search that finds nothing, or where "up to one" is declined, is still a search
+and fires; two searches in one resolution fire twice; a `search_zones` over
+library and graveyard fires once. A library `cant_search_library` refuses was
+never searched and fires nothing, even when the graveyard half of the same
+search goes ahead. `look_at_top` is not a search and does not fire it. The event
+carries `owner` (whose library); every search op today searches the searcher's
+own. `spell_cast` and `ability_activated` are the near misses and fire on the
+cause: they count a conditional tutor that never searched and miss a search a
+trigger performed.
 
 **`becomes_untapped`** is inspired, and it is nearly all untap step. The event
 had always existed — `untap_permanent` fires it — but `untap_all` emitted one

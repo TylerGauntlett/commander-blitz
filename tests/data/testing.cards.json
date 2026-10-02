@@ -13918,6 +13918,52 @@
           "rest_to": "graveyard"
         }
       ]
+    },
+    {
+      "id": "t_search_watcher",
+      "name": "Test Search Watcher",
+      "oracle_text": "Whenever an opponent searches their library, you gain 1 life and draw a card.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent searches their library, you gain 1 life and draw a card.",
+          "trigger": {
+            "event": "searches_library",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

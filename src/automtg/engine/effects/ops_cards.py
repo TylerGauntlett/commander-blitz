@@ -328,7 +328,11 @@ def op_search_zones(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...]):
-    count = evaluate_value(ctx, spec.get("count", 1))
+    # Local, as in `ops_stack` and `ops_characteristics`: `triggers` imports
+    # the effect layer, so a module-level import here would be circular.
+    from ..triggers import fire
+
+    count =evaluate_value(ctx, spec.get("count", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
     selector = spec.get("selector") or {}
@@ -348,6 +352,20 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         # library drops out of the pool and nothing else does: a graveyard half
         # is still searched, and the shuffle below still happens.
         barred = search_forbidden(ctx.state, pid, ctx.controller)
+        if "library" in zones and not barred:
+            # "Whenever an opponent searches their library" (Archivist of
+            # Oghma). Fired before the pool is even looked at, because the
+            # search is the event and what it turns up is not: an empty pool,
+            # or a player declining "up to one", is still a search (701.19).
+            # A barred library was never searched, so it fires nothing -- the
+            # graveyard half of an "and/or" search below is not a library.
+            fire(
+                ctx.state,
+                EventType.LIBRARY_SEARCHED,
+                player=pid,
+                source=ctx.source_oid,
+                owner=pid,
+            )
         for zone_name in zones:
             if barred and zone_name == "library":
                 continue

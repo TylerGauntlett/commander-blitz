@@ -173,6 +173,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     "draw": EventType.DRAW,
     "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
+    #: "Whenever an opponent searches their library, you gain 1 life and draw
+    #: a card" -- Archivist of Oghma. One per search (701.19), fired by
+    #: `ops_cards._search`, the one place a library is ever searched; a search
+    #: `cant_search_library` refuses never happened and fires nothing.
+    #:
+    #: The subject is a **player**, so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS`, and `_actor` reads `event.player` -- the
+    #: searcher -- so `controller: "opponent"` is "an opponent searches".
+    #: `ability_activated` and `spell_cast` are the near misses and fire on the
+    #: cause rather than the search: a cracked fetchland and a resolved tutor
+    #: are both one search, and a "you may search" declined is none.
+    "searches_library": EventType.LIBRARY_SEARCHED,
     #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
     #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
     #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
@@ -1425,7 +1437,13 @@ def _actor(
     # opponent copying your spell, and stay silent when you copy theirs.
     # `put_copy_on_stack` puts the copy's controller on the event, which is who
     # did the copying -- 706.10 gives the copy to whoever created it.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
+    # `searches_library` is listed for the reason `becomes_monarch` is: the
+    # actor is the player who **searched**, so `controller: "opponent"` reads
+    # "an opponent searches their library". The fallthrough reaches the same
+    # answer only because the subject is not an object; the event's `source` is
+    # the tutor or fetchland that asked, and on Path to Exile that is *my* spell
+    # making *them* search, so a subject read off it would be the wrong seat.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

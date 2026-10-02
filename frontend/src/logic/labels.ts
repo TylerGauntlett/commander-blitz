@@ -490,6 +490,26 @@ export function describeEvent(
       return `${who} ${v("discard", "discards")} ${card ?? "a card"}`;
     case "cycled":
       return `${who} ${v("cycle", "cycles")} ${card ?? "a card"}`;
+    /*
+     * A library search (701.19) -- a tutor, a fetchland, landcycling.
+     *
+     * Nothing else in the log says it: the shuffle that ends a search emits
+     * nothing, and a search that finds nothing moves no card. That silence is
+     * what Archivist of Oghma's controller would be staring at -- life and a
+     * card arriving with no line to say why -- so the search gets its own.
+     *
+     * `owner` is whose library it was. Every search the engine has is of the
+     * searcher's own, which is "their library"; another player's is named, so
+     * the line cannot claim the wrong library if one ever is.
+     */
+    case "library_searched": {
+      const owner = typeof event.data.owner === "number" ? event.data.owner : event.player;
+      if (owner === event.player) {
+        return `${who} ${v("search your", "searches their")} library`;
+      }
+      const theirs = owner === null ? "a" : `${names[owner] ?? `P${owner}`}'s`;
+      return `${who} ${v("search", "searches")} ${theirs} library`;
+    }
     case "damage_dealt":
       if (amount === null || amount <= 0) return null;
       return event.data.to === "player"
