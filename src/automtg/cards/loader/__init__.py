@@ -53,6 +53,7 @@ from .effects import (  # noqa: F401
     _refuse_seats_read_as_objects,
     _refuse_targets_inside_a_delay,
     _validate_attacking,
+    _validate_cast_lock_zones,
     _validate_delayed_trigger,
     _validate_effect,
     _validate_enchanted_player,
@@ -3537,6 +3538,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'affects_spells' naming which spells it stops and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "cant_cast_spells_from_zones":
+            # Drannith Magistrate. The zone pair is the whole filter, checked by
+            # the op's own validator so the two forms accept the same zones.
+            # (`affects_spells` is already refused for every static outside the
+            # cost family, and must stay so here: the reader is the cast-lock
+            # union, which answers per zone and never sees the spell.)
+            if model.affects is not None or model.amount is not None:
+                raise DslError(
+                    f"{where}: cant_cast_spells_from_zones takes 'affects_player', "
+                    f"one of 'zones' or 'except_zones' and an optional 'condition', "
+                    f"and no 'affects' or 'amount'"
+                )
+            _validate_cast_lock_zones(model.zones, model.except_zones, where)
         if model.effect == "cant_activate_abilities":
             # The inverse guard to its twin directly above, and it points the
             # other way on purpose. Every printed card in this family names the
@@ -4098,6 +4112,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
+    if model.effect == "cant_cast_spells_from_zones":
+        # Resolved to the positive list here, once, by the op's own helper, so
+        # the static carries exactly what a `CastLock` row carries and the
+        # reader needs no inversion -- see `primitives.cast_locked_zones`.
+        from automtg.engine.effects.ops_player import shut_cast_zones
+
+        static["zones"] = shut_cast_zones(model.zones, model.except_zones)
+    elif model.zones is not None or model.except_zones is not None:
+        # Copied for one effect only. Left to load on any other static, the
+        # key would be read by nothing -- a "from" clause silently dropped.
+        raise DslError(
+            f"{where}: 'zones' / 'except_zones' belong to cant_cast_spells_from_zones, "
+            f"not {model.effect!r}"
+        )
     if model.effect == "grant_ability":
         # Which of the card's `grantable_abilities` is handed over. Carried onto
         # the compiled mapping rather than left on the model, because the

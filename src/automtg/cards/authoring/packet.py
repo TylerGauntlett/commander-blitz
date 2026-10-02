@@ -684,6 +684,14 @@ def reference() -> dict:
             " not_types, subtypes, colors, name, ... -- no `controller`,"
             " `affects_player` says whose). \"More than one spell each turn\""
             " is still a gap.",
+            "\"Your opponents can't cast spells from anywhere other than their"
+            " hands\" on a permanent is the player-wide static"
+            " `cant_cast_spells_from_zones` with `affects_player: \"opponent\"`"
+            " and `except_zones: [\"hand\"]` (or `zones: [\"graveyard\"]` for"
+            " \"from graveyards\"; exactly one of the two). It lasts while the"
+            " permanent does and shuts every road out of those zones, the"
+            " command zone included. The timed \"until your next turn\" form on"
+            " a spell is the op of the same name.",
             "\"You may spend mana as though it were mana of any color\" is the"
             " player-wide static `spend_mana_as_any_color` with `affects_player:"
             " \"you\"`; \"...to cast planeswalker spells\" is the same static"

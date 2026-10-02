@@ -31,6 +31,7 @@ from .player_statics import (
     damage_multiplier,
     mill_multiplier,
     player_counter_replacements,
+    static_cast_locked_zones,
     untap_held,
 )
 from .state import new_object
@@ -301,10 +302,15 @@ def cast_locked_zones(state: GameState, pid: int) -> frozenset[str]:
     Returns strings rather than `Zone` members because `Zone` is a `str` enum
     and the rows come from JSON: comparing `costs.zone_of(...)` against this set
     works either way, and the loader is the thing that validated the spelling.
+
+    **And the static form.** Drannith Magistrate prints the same sentence with
+    no clock -- "as long as it is on the battlefield" is what a static *is* --
+    so its `cant_cast_spells_from_zones` static is unioned in here, from
+    `player_statics.static_cast_locked_zones`. Here rather than at each road,
+    so the three readers above cover it without a line of their own, and a
+    Magistrate and a Wrath on one table are simply two locks in one union.
     """
-    if not state.cast_locks:
-        return frozenset()
-    shut: set[str] = set()
+    shut: set[str] = static_cast_locked_zones(state, pid)
     for lock in state.cast_locks:
         if pid in lock.affects:
             shut.update(lock.zones)

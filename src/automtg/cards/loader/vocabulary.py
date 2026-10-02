@@ -594,6 +594,13 @@ STATIC_EFFECTS = frozenset(
         # Not `split_second`, which lives on the stack and binds every player,
         # and not `epic`, which is a card-level rider with no seat or duration.
         "cant_cast_spells",
+        # Drannith Magistrate.  "Your opponents can't cast spells from anywhere
+        # other than their hands."  The *zone-filtered* twin of the static above,
+        # which is total or filtered only by the printed spell and so cannot say
+        # "from".  The battlefield-bound form of the `cant_cast_spells_from_zones`
+        # op (Avatar's Wrath's timed lock), taking the op's `zones` /
+        # `except_zones` and read by the op's reader, `primitives.cast_locked_zones`.
+        "cant_cast_spells_from_zones",
         # Grand Abolisher; Myrel, Shield of Argive.  "…or activate abilities of
         # artifacts, creatures, or enchantments."  The *other half* of the
         # sentence above, and a separate static because it prohibits a different
@@ -682,6 +689,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_empty_draw",
         "replace_proliferate",
         "cant_cast_spells",
+        "cant_cast_spells_from_zones",
         "cant_activate_abilities",
         "untap_limit",
         "cast_as_though_flash",

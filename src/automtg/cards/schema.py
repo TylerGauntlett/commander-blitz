@@ -630,6 +630,14 @@ class AbilityModel(BaseModel):
     #: reached a graveyard and from where are facts about *this copy* and not
     #: about the card, and `affects_spells` may only read the printed face.
     arrived_this_turn_from: list[str] | None = None
+    #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
+    #: spells **from** -- or, as ``except_zones``, the ones they still can.
+    #: Drannith Magistrate's "from anywhere other than their hands" is
+    #: ``except_zones: ["hand"]``. Exactly one of the two, spelled as the
+    #: one-shot op of the same name spells them; the loader resolves either to
+    #: the positive list the reader compares against.
+    zones: list[str] | None = None
+    except_zones: list[str] | None = None
     #: "…pay life equal to its **mana value** rather than pay its mana cost."
     #: Bolas's Citadel, on a `cast_from_library_top` static. An alternative cost
     #: imposed on somebody else's spell, which `spell_cost_reduction` cannot

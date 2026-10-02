@@ -289,6 +289,31 @@ def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
     walk(list(effects), where)
 
 
+def _validate_cast_lock_zones(named: Any, opened: Any, where: str) -> None:
+    """Check a cast lock's ``zones`` / ``except_zones`` pair.
+
+    One check for both forms of `cant_cast_spells_from_zones` -- the timed op
+    (Avatar's Wrath) and the battlefield static (Drannith Magistrate) -- so the
+    two spellings of one sentence cannot drift into accepting different cards.
+    """
+    if (named is None) == (opened is None):
+        # Both, or neither. Neither locks nothing while printing a
+        # prohibition; both are two answers to one question, and the
+        # positive list would silently win.
+        raise DslError(
+            f"{where}: cant_cast_spells_from_zones needs exactly one of "
+            f"'zones' (the shut ones) or 'except_zones' (the open ones)"
+        )
+    for zone in named if named is not None else opened:
+        if str(zone) not in CASTABLE_ZONES:
+            # A misspelled zone in `zones` locks one door fewer than the
+            # card says, and in `except_zones` locks one *more*. Both are
+            # the wrong card, silently.
+            raise DslError(
+                f"{where}: unknown zone {zone!r} (implemented: {sorted(CASTABLE_ZONES)})"
+            )
+
+
 def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Check one *player* spec -- an effect's ``player``, or a side of one.
 
@@ -2422,25 +2447,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     if op == "cant_cast_spells_from_zones":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
-        named = effect.get("zones")
-        opened = effect.get("except_zones")
-        if (named is None) == (opened is None):
-            # Both, or neither. Neither locks nothing while printing a
-            # prohibition; both are two answers to one question, and the
-            # positive list would silently win.
-            raise DslError(
-                f"{where}: cant_cast_spells_from_zones needs exactly one of "
-                f"'zones' (the shut ones) or 'except_zones' (the open ones)"
-            )
-        for zone in named if named is not None else opened:
-            if str(zone) not in CASTABLE_ZONES:
-                # A misspelled zone in `zones` locks one door fewer than the
-                # card says, and in `except_zones` locks one *more*. Both are
-                # the wrong card, silently.
-                raise DslError(
-                    f"{where}: unknown zone {zone!r} "
-                    f"(implemented: {sorted(CASTABLE_ZONES)})"
-                )
+        _validate_cast_lock_zones(effect.get("zones"), effect.get("except_zones"), where)
         duration = str(effect.get("duration", "until_your_next_turn"))
         if duration not in CAST_LOCK_DURATIONS:
             raise DslError(

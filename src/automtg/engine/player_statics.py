@@ -1450,6 +1450,29 @@ def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = N
     return False
 
 
+def static_cast_locked_zones(state: GameState, pid: int) -> set[str]:
+    """The zones a `cant_cast_spells_from_zones` **static** shuts for ``pid``.
+
+    "Your opponents can't cast spells from anywhere other than their hands."
+    -- Drannith Magistrate. The battlefield-bound twin of the timed
+    `structs.CastLock` row Avatar's Wrath leaves, and deliberately not a
+    reader of its own: `primitives.cast_locked_zones` unions this into the
+    table it already answers from, so every road that asks about a timed lock
+    -- `casting._cast_actions`, `suspend.cast_for_free`,
+    `replacements._offer_cast` -- asks about this one by the same call.
+
+    The zones were resolved at load time (``except_zones`` subtracted from
+    `ops_player.CASTABLE_ZONES`), so the static carries the positive list the
+    lock row does. Read through `_active_player_statics`, so the lock lifts the
+    instant Magistrate leaves and an "as long as" `condition` is honoured.
+    """
+    shut: set[str] = set()
+    for obj, static in _active_player_statics(state, "cant_cast_spells_from_zones"):
+        if _reaches_player(obj, static, pid):
+            shut.update(static.get("zones", ()))
+    return shut
+
+
 def player_casts_only_at_sorcery_speed(state: GameState, pid: int) -> bool:
     """ "Each opponent can cast spells only any time they could cast a sorcery."
 

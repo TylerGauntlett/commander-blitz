@@ -6391,6 +6391,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
+{ "kind": "static", "effect": "cant_cast_spells_from_zones", "affects_player": "opponent", "except_zones": ["hand"] }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
 ```
@@ -6531,7 +6532,9 @@ What it leaves alone, on purpose: `copy_spell` and storm-style copies (707.10 �
 never cast), playing lands and the special actions suspend and foretell (116.2),
 and activated abilities (Grand Abolisher's second sentence is a different
 static). `affects` or `amount` beside it is a load error rather than ignored.
-Drannith Magistrate and Deafening Silence remain gaps.
+Drannith Magistrate's zone-filtered form is the separate
+`cant_cast_spells_from_zones` static (see "Can't cast spells from anywhere other
+than their hands" below); Deafening Silence remains a gap.
 
 **A spell filter**, `affects_spells`, narrows it — Narset Transcendent's −9
 emblem, "Your opponents can't cast **noncreature** spells":
@@ -7374,6 +7377,28 @@ cast from (707.12).
 
 Pinned in `tests/unit/test_cant_cast_spells_from_zones.py`, where one flashback
 instant is a hand cast and a graveyard cast at once.
+
+**The static form** is Drannith Magistrate — the same sentence with no clock,
+because "for as long as it is on the battlefield" is what a static is:
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast spells from anywhere other than their hands.",
+  "effect": "cant_cast_spells_from_zones",
+  "affects_player": "opponent",
+  "except_zones": ["hand"] }
+```
+
+A player-wide static, so `affects_player` is required and an "as long as"
+`condition` is honoured. It takes the op's `zones` / `except_zones` (exactly one,
+validated by the op's own check) and the loader resolves either to the positive
+list once, with the op's own helper (`ops_player.shut_cast_zones`). It has **no
+reader of its own**: `primitives.cast_locked_zones` unions it in beside the
+`CastLock` rows, so the three roads above enforce it by the call they already
+make. A commander is cast from the command zone (903.8), so a Magistrate stops
+its opponents casting their commanders. `affects`, `amount` and `affects_spells`
+beside it are load errors, and `zones` / `except_zones` on any other static are
+refused. Pinned in `tests/unit/test_static_zone_cast_lock.py`.
 
 ## "Your life total can't change"
 

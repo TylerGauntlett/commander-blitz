@@ -19154,3 +19154,16 @@ creature, draw a card. This ability triggers only once each turn."
   players on the event, a spell end to end, three-at-once is one trigger, the
   cap and its reset, and the loader guards.
 - Unblocks Exemplar of Light.
+
+## `cant_cast_spells_from_zones` static — Drannith Magistrate's "Your opponents can't cast spells from anywhere other than their hands" — 101.2 / 903.8
+
+The engine had the sentence only as a timed one-shot (Avatar's Wrath: a `CastLock` row
+with a `this_turn` / `until_your_next_turn` clock), and the `cant_cast_spells` static
+has no "from". The new player-wide static `cant_cast_spells_from_zones` takes the op's
+`zones` / `except_zones` (validated by the op's own check, resolved to the positive list
+at load time by the op's own `ops_player.shut_cast_zones`) and has no reader of its own:
+`player_statics.static_cast_locked_zones` is unioned into `primitives.cast_locked_zones`,
+so `casting._cast_actions`, `suspend.cast_for_free` and `replacements._offer_cast`
+enforce it by the call they already make — flashback, foretell, the Citadel top, cascade
+and the command zone (opponents cannot cast their commanders). It lifts the instant its
+source leaves and honours a `condition`. Test: `tests/unit/test_static_zone_cast_lock.py`.
