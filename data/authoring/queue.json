@@ -163582,12 +163582,12 @@
     },
     "Lyra, Archangel of Dawn": {
       "edhrec_rank": 27636,
-      "gate": "template",
+      "gate": null,
       "name": "Lyra, Archangel of Dawn",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on each Angel you control",
+      "reason": "",
       "scryfall_id": "86a3866e-68a8-402c-baf0-1908e98e3995",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Lyra, Tolarian Archangel": {
@@ -165212,12 +165212,12 @@
     },
     "Magus of the Moat": {
       "edhrec_rank": 7457,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Moat",
-      "reason": "no template for: Creatures without flying can't attack",
+      "reason": "",
       "scryfall_id": "59264c1f-38f1-408b-a6e9-b7c6dcb46103",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Magus of the Moon": {
@@ -172262,12 +172262,12 @@
     },
     "Metastatic Evangel": {
       "edhrec_rank": 1504,
-      "gate": "template",
+      "gate": null,
       "name": "Metastatic Evangel",
-      "reason": "no template for: Whenever another nontoken creature you control enters, proliferate",
+      "reason": "",
       "scryfall_id": "774e115a-c0dc-4901-9a1f-87754304e378",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Metathran Aerostat": {
@@ -188622,12 +188622,12 @@
     },
     "Norn's Choirmaster": {
       "edhrec_rank": 3319,
-      "gate": "template",
+      "gate": null,
       "name": "Norn's Choirmaster",
-      "reason": "no template for: Whenever a commander you control enters or attacks, proliferate",
+      "reason": "",
       "scryfall_id": "1da10c9f-4c9f-4eee-8480-665c453215d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Norn's Decree": {
@@ -190372,12 +190372,12 @@
     },
     "Ob Nixilis, the Ascended": {
       "edhrec_rank": 26939,
-      "gate": "template",
+      "gate": null,
       "name": "Ob Nixilis, the Ascended",
-      "reason": "no template for: At the beginning of each end step, if you gained life this turn, create a 4/4 white Angel ",
+      "reason": "",
       "scryfall_id": "a022d35a-9d24-4818-9ff3-a522cfcb178e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ob Nixilis, the Fallen": {
@@ -198402,12 +198402,12 @@
     },
     "Patchwork Banner": {
       "edhrec_rank": 204,
-      "gate": "template",
+      "gate": null,
       "name": "Patchwork Banner",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "537ea7e7-e8e8-4736-bdd9-1085f1a7c259",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Patchwork Beastie": {

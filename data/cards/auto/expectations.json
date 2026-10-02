@@ -6040,6 +6040,10 @@
   "lynx": {
     "zone": "battlefield"
   },
+  "lyra_archangel_of_dawn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "macetail_hystrodon": {
     "zone": "battlefield"
   },
@@ -6084,6 +6088,10 @@
     "zone": "battlefield"
   },
   "magus_of_the_coffers": {
+    "zone": "battlefield"
+  },
+  "magus_of_the_moat": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mahamoti_djinn": {
@@ -6443,6 +6451,10 @@
     ]
   },
   "metallic_sliver": {
+    "zone": "battlefield"
+  },
+  "metastatic_evangel": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "meteor_golem": {
@@ -7046,6 +7058,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "norn_s_choirmaster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "norwood_archers": {
     "zone": "battlefield"
   },
@@ -7138,6 +7154,14 @@
       "amount": 5,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "ob_nixilis_the_ascended": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "ob_nixilis_the_hate_twisted": {
@@ -7448,6 +7472,11 @@
     "battlefield_count": 31,
     "opponent_battlefield_count": 7,
     "zone": "graveyard"
+  },
+  "patchwork_banner": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "path_of_ancestry": {
     "zone": "battlefield"
