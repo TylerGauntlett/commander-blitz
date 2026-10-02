@@ -49,6 +49,30 @@
       "is_token": true
     },
     {
+      "id": "angel_warrior_4_4_w_flying",
+      "name": "Angel Warrior Token",
+      "oracle_text": "4/4 white Angel Warrior creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel",
+        "Warrior"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "ape_3_3_g",
       "name": "Ape Token",
       "oracle_text": "3/3 green Ape creature token.",
@@ -1547,6 +1571,29 @@
       "is_token": true
     },
     {
+      "id": "samurai_2_2_w_vigilance",
+      "name": "Samurai Token",
+      "oracle_text": "2/2 white Samurai creature token with vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Samurai"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "saproling_1_1_g",
       "name": "Saproling Token",
       "types": [
@@ -1563,6 +1610,23 @@
       ],
       "power": 1,
       "toughness": 1,
+      "is_token": true
+    },
+    {
+      "id": "servo_1_1_c",
+      "name": "Servo Token",
+      "oracle_text": "1/1 colorless Servo artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Servo"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
       "is_token": true
     },
     {
@@ -1638,6 +1702,29 @@
       "toughness": 1,
       "colors": [],
       "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "soldier_1_1_w_lifelink",
+      "name": "Soldier Token",
+      "oracle_text": "1/1 white Soldier creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "is_token": true
     },
     {

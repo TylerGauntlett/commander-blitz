@@ -281,3 +281,105 @@ class TestOcelotPridesCatIsAOneOneWhite:
         assert other is not None
         assert (other.power, other.toughness) == (2, 2)
         assert "Beast" in other.subtypes
+
+
+class TestAngelOfInventionsServosAreColorlessArtifacts:
+    """Angel of Invention, Fabricate 2: *"create two **1/1 colorless Servo
+    artifact** creature tokens."*
+
+    The pool had three 1/1 colorless artifact creatures -- a Gnome, a Soldier
+    and a flying Thopter -- and no Servo. The subtype is load-bearing: Servo and
+    artifact-typal cards read it, and the Thopter's flying would make the token
+    half of Fabricate strictly better than printed.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("servo_1_1_c") is not None
+
+    def test_it_is_a_one_one_colorless_artifact_servo(self, pool):
+        servo = pool.get("servo_1_1_c")
+        assert (servo.power, servo.toughness) == (1, 1)
+        assert not servo.colors, "colorless -- the printed word"
+        assert "Artifact" in servo.types and "Creature" in servo.types
+        assert list(servo.subtypes) == ["Servo"]
+        assert not servo.keywords
+        assert servo.is_token
+
+
+class TestDawnOfHopesSoldiersHaveLifelink:
+    """Dawn of Hope: *"{3}{W}: Create a 1/1 white Soldier creature token with
+    **lifelink**."*
+
+    `soldier_1_1_w` is the right body without the keyword, and lifelink is the
+    engine of the card: each Soldier's combat damage gains life, which is what
+    feeds Dawn of Hope's own "whenever you gain life" draw. The vanilla Soldier
+    would sever the loop the card is built around.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("soldier_1_1_w_lifelink") is not None
+
+    def test_it_is_a_one_one_white_soldier_with_lifelink(self, pool):
+        soldier = pool.get("soldier_1_1_w_lifelink")
+        assert (soldier.power, soldier.toughness) == (1, 1)
+        assert sorted(soldier.colors) == ["W"]
+        assert list(soldier.subtypes) == ["Soldier"]
+        assert "lifelink" in soldier.keywords
+        assert soldier.is_creature and soldier.is_token
+        assert "Artifact" not in soldier.types
+
+    def test_the_vanilla_white_soldier_is_still_a_separate_token(self, pool):
+        other = pool.get("soldier_1_1_w")
+        assert other is not None
+        assert "lifelink" not in other.keywords
+
+
+class TestEmeriasCallsAngelsAreWarriorsToo:
+    """Emeria's Call: *"Create two 4/4 white **Angel Warrior** creature tokens
+    with flying."*
+
+    `angel_4_4_w_flying` is the right body and keyword with one creature type
+    missing. Warrior-typal cards count the second type, so the plain Angel is a
+    near miss rather than a stand-in.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("angel_warrior_4_4_w_flying") is not None
+
+    def test_it_is_a_four_four_white_angel_warrior_with_flying(self, pool):
+        token = pool.get("angel_warrior_4_4_w_flying")
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["W"]
+        assert set(token.subtypes) == {"Angel", "Warrior"}
+        assert "flying" in token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_plain_angel_is_still_a_separate_token(self, pool):
+        other = pool.get("angel_4_4_w_flying")
+        assert other is not None
+        assert "Warrior" not in other.subtypes
+
+
+class TestTheWanderingEmperorsSamurai:
+    """The Wandering Emperor, -1: *"Create a **2/2 white Samurai** creature
+    token with vigilance."*
+
+    `knight_2_2_w_vigilance` matches every characteristic but the creature
+    type, and Samurai- and Knight-typal cards read exactly that one.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("samurai_2_2_w_vigilance") is not None
+
+    def test_it_is_a_two_two_white_samurai_with_vigilance(self, pool):
+        token = pool.get("samurai_2_2_w_vigilance")
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Samurai"]
+        assert "vigilance" in token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_vigilance_knight_is_still_a_separate_token(self, pool):
+        other = pool.get("knight_2_2_w_vigilance")
+        assert other is not None
+        assert "Samurai" not in other.subtypes
