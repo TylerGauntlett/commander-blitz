@@ -19199,3 +19199,27 @@ what left. Damage only, so `lose_life` and paid life walk past it. Test:
 creature and kills without one, the condition read at the moment of damage both
 ways round, life loss as the near miss, the seat named, Worship on the battlefield
 lifting when it leaves, and the loader's refusals.
+
+## Counters a permanent enters with fire `counter_placed` -- 122.6 (fix)
+
+- **The bug.** `zones._enter_with_counters` wrote an arriving permanent's counters
+  onto it and fired nothing, "because the permanent was never on the battlefield
+  without them". 122.6 says counters given to an object as it enters are "put"
+  on it, and the Simic Ascendancy / Sharktocrab ruling says a trigger on counters
+  being put "will trigger if that permanent somehow enters the battlefield with
+  those counters". Exemplar of Light entering under Giada, Font of Hope drew
+  nothing.
+- **The fix.** `zones._fire_entered_with_counters`, called by `_enter_battlefield`
+  right after ENTERS_BATTLEFIELD (so the permanent's own "...on this creature" is a
+  candidate): one COUNTER_PLACED per counter kind, with the amount that actually
+  arrived -- printed `self_enters_with_counters`, starting loyalty, defense, a Saga's
+  first lore counter, `enters_with_additional_counters`, riot and compleated all
+  already applied, replacements included -- `put_by` the permanent's controller
+  (122.6a) and `source` the permanent.
+- **Unchanged.** A Saga's chapter I is still `sagas.entered`'s alone: the lore
+  COUNTER_PLACED reaches no chapter comparison, so chapter I triggers once.
+- `tests/unit/test_counters_as_it_enters.py` (+ `tests/data/counters_as_it_enters.cards.json`):
+  the Giada + Exemplar witness (cast and moved), the event's order, amount and
+  putter, once-each-turn, printed enters-with, Doubling Season's replaced amount,
+  starting loyalty with Oath of Gideon, the Saga single chapter, and the near
+  misses (no counters, a non-Angel under Giada, an opponent's arrival).

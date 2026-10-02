@@ -346,10 +346,11 @@ class TestEnteringWithALoreCounter:
 
         Every other enters trigger on the board reads the Saga as it arrives, and
         614.1c's rule for entering-with is that the permanent is *never seen*
-        without them. The order of the two events is the observable form of that:
-        COUNTER_PLACED is never emitted at all here, because the replacement
-        writes the counter directly, and by ENTERS_BATTLEFIELD it is already
-        there.
+        without them. The order of the events is the observable form of that:
+        the replacement writes the counter directly, and by ENTERS_BATTLEFIELD it
+        is already there. Its one COUNTER_PLACED (122.6: a counter given as it
+        enters is still "put" on it) is reported after the arrival, and it
+        reaches no second chapter I.
         """
         game = self.cast_it(builder)
         oid = only_oid(game, SAGA)
@@ -359,10 +360,13 @@ class TestEnteringWithALoreCounter:
         )
         reached = next(e for e in chapter_events(game))
         assert game.state.events.index(entered) < game.state.events.index(reached)
-        assert not [
+        placed = [
             e for e in game.state.events
-            if e.type == EventType.COUNTER_PLACED and e.source == oid
-        ], "the entry counter is placed by a replacement, which fires nothing"
+            if e.type == EventType.COUNTER_PLACED and e.data.get("oid") == oid
+        ]
+        assert [(e.data["counter"], e.data["amount"]) for e in placed] == [(sagas.LORE, 1)]
+        assert game.state.events.index(entered) < game.state.events.index(placed[0])
+        assert chapters(game) == [1]
 
     def test_a_one_chapter_saga_is_cast_and_gone(self, builder):
         """I, then 704.5s, in the one window between the cast and priority.

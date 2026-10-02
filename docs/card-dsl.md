@@ -2436,7 +2436,8 @@ through — the `add_counters` op, `move_counters`, `proliferate`, the `counters
 key on `put_onto_battlefield` — and the counters a permanent **enters with**
 (122.6: those are "put on" it too; a planeswalker's starting loyalty, riot's
 counter, every `self_enters_with_counters`) are replaced by the same statics in
-`zones._enter_with_counters`, which fires no `counter_placed`. So it applies once per
+`zones._enter_with_counters`; their `counter_placed` is fired once the permanent
+is on the battlefield, by `zones._fire_entered_with_counters`. So it applies once per
 batch, and *before* `counter_placed` fires or a Saga chapter comparison reads
 the new total. A replacement that fired the event with the pre-replacement
 number would be a card lying to every trigger watching it. Only on the way in:
@@ -8643,9 +8644,9 @@ this enters".
 `counter_placed` with `{"counter": "lore"}` is the near miss and is wrong twice.
 It fires on the counter being *placed*, where 714.2c fires on the count
 **reaching** the number — so a proliferated Saga advances by the wrong pattern,
-and a placement of two counters at once fires one chapter instead of two. And it
-does not fire at all on the counter a Saga *enters* with, which is chapter I on
-every Saga ever printed.
+and a placement of two counters at once fires one chapter instead of two. The
+counter a Saga *enters* with does fire it (122.6), but chapter I is
+`sagas.entered`'s, which compares counts and reaches it once.
 
 **`final_chapter`** is optional and derived from the highest chapter written.
 Write it by hand in exactly one case, which is the case it exists for: a Saga

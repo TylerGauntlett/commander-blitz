@@ -313,9 +313,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `counter_placed` with `{"counter": "lore"}` is the near miss, and it is
     #: what the gap record for Oath of Eorl proposed and then refused. It fires
     #: on the placement rather than on the count *reaching* the number, so a
-    #: proliferated Saga advances by the wrong pattern; and it fires not at all
-    #: on the counter a Saga **enters** with, which is chapter I on every Saga in
-    #: print.
+    #: proliferated Saga advances by the wrong pattern.
     "chapter": EventType.CHAPTER_REACHED,
 }
 

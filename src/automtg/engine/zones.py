@@ -927,9 +927,11 @@ def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: i
     counter replacement applies to them exactly as to a placement on the
     battlefield -- Doubling Season doubles a planeswalker's starting loyalty,
     and Hardened Scales makes a creature that "enters with two +1/+1 counters"
-    enter with three. Not through `primitives.add_counters`, because an arrival
-    fires no COUNTER_PLACED (the permanent was never on the battlefield
-    without them) and a Saga's chapter comparison is `sagas.entered`'s.
+    enter with three. Not through `primitives.add_counters`, because the
+    permanent is not on the battlefield yet: the counters are written now, so
+    it is never seen without them, and their COUNTER_PLACED is fired by
+    `_fire_entered_with_counters` once it has arrived. A Saga's chapter
+    comparison is `sagas.entered`'s, and nothing here reaches it.
 
     Not a cost (122.6a: the permanent's controller puts them), so every
     applicable static applies, ``effects_only`` included.
@@ -942,6 +944,61 @@ def _enter_with_counters(state: GameState, obj: GameObject, kind: str, amount: i
     obj.add_counter(
         kind, _replaced_counter_amount(state, obj.oid, kind, amount, by=obj.controller)
     )
+
+
+def _fire_entered_with_counters(
+    state: GameState, obj: GameObject, before: Mapping[str, int]
+) -> None:
+    """COUNTER_PLACED for the counters a permanent entered with -- 122.6.
+
+    "Some spells and abilities refer to counters being 'put' on an object.
+    This refers to putting counters on that object while it's on the
+    battlefield **and also to an object that's given counters as it enters
+    the battlefield**." So "whenever you put one or more +1/+1 counters on
+    this creature" (Exemplar of Light) triggers for the counters Giada, Font
+    of Hope gives it as it enters, and the printed ruling on Simic Ascendancy
+    and Sharktocrab says the same: "An ability that triggers when counters are
+    put on a permanent will trigger if that permanent somehow enters the
+    battlefield with those counters."
+
+    What was wrong without this: the counters were written straight onto the
+    object and nothing fired, on the reasoning that the permanent was never on
+    the battlefield without them. True, and the reason they are written
+    *before* the arrival -- but 122.6 says they were still put there.
+
+    Fired **after** ENTERS_BATTLEFIELD, so the permanent is on the battlefield
+    and its own "whenever ... on this creature" is among the candidates. One
+    event per kind, carrying what actually arrived -- every enters-with path
+    (printed counters, starting loyalty, a Saga's first lore counter, defense,
+    `enters_with_additional_counters`, riot, compleated) has already been
+    applied, replacements included, so the amount is the count on the object
+    less whatever it carried in. One event and not one per source, because it
+    is one event: the permanent entering with its counters, and "one or more"
+    triggers once for it.
+
+    ``put_by`` is the permanent's controller (122.6a: "the permanent's
+    controller puts them"), whoever's static supplied them. ``source`` is the
+    permanent itself -- no spell or ability placed them.
+
+    **Not a chapter.** A Saga's first lore counter is reported here like any
+    other, and chapter I is still `sagas.entered`'s alone: chapters ride
+    CHAPTER_REACHED, which only `sagas.chapters_reached` fires, and that is not
+    called from here -- so chapter I triggers exactly once.
+    """
+    for kind, have in list(obj.counters.items()):
+        amount = have - before.get(kind, 0)
+        if amount <= 0:
+            continue
+        fire(
+            state,
+            EventType.COUNTER_PLACED,
+            player=obj.controller,
+            source=obj.oid,
+            oid=obj.oid,
+            counter=kind,
+            amount=amount,
+            put_by=obj.controller,
+        )
 
 
 def _enter_battlefield(
@@ -977,6 +1034,9 @@ def _enter_battlefield(
     obj.entered_by_cast = cause == "resolved" and obj.cast_step is not None
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
+    # What it carried in, so the counters it enters with -- and only those --
+    # are reported as put on it (122.6). See `_fire_entered_with_counters`.
+    counters_before = dict(obj.counters)
 
     # Cleared once the loop below has read it: the answer belongs to this one
     # arrival, and a permanent that leaves and comes back is a new object
@@ -1158,10 +1218,12 @@ def _enter_battlefield(
         # group by on this event.
         batch=state.event_batch,
     )
+    _fire_entered_with_counters(state, obj, counters_before)
     # A Saga entered with its first lore counter (714.2b), so chapter I triggers
     # (714.2c). The counter itself was put on by the replacement loop above, which
-    # writes to the object directly and fires nothing -- so unlike every other
-    # route to a lore counter there is no `add_counters` call to reach the chapter
+    # writes to the object directly -- its COUNTER_PLACED is the one just fired,
+    # which reaches no chapter comparison -- so unlike every other route to a
+    # lore counter there is no `add_counters` call to reach the chapter
     # comparison through, and this is the one place that says so.
     sagas.entered(state, obj)
 
