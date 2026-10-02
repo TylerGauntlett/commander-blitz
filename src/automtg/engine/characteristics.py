@@ -2266,6 +2266,7 @@ from .player_statics import (  # noqa: F401
     attack_tax,
     block_alone_forbidden,
     block_forbidden,
+    block_tax,
     commander_subtypes,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,

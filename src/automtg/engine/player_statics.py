@@ -747,7 +747,9 @@ def any_defender_attack_prohibition(state: GameState) -> bool:
     )
 
 
-def attack_tax(state: GameState, oid: int, defender: int) -> str:
+def attack_tax(
+    state: GameState, oid: int, defender: int, *, planeswalker: bool = False
+) -> str:
     """The mana a creature's controller must pay to declare it against ``defender``.
 
     "Creatures can't attack you unless their controller pays {2} for each
@@ -769,27 +771,47 @@ def attack_tax(state: GameState, oid: int, defender: int) -> str:
     The per-creature scaling in the printed text falls out of *where* this is
     charged: the price is settled once per attacker as it is declared, so a
     three-creature attack pays {2} three times, exactly as 508.1g totals it.
+
+    ``planeswalker`` asks about an attack on one of ``defender``'s
+    planeswalkers rather than on the player. Only a static written with
+    ``or_planeswalkers`` taxes that -- Archangel of Tithes and Sphere of
+    Safety say "you **or planeswalkers you control**" out loud, Propaganda does
+    not, and attacking a planeswalker is not attacking its controller (506.2),
+    so the printed sentence decides it and nothing is inferred.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return ""
-    generic = 0
-    parts: list[str] = []
+    specs: list[Any] = []
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "attack_tax":
             continue
         # The tax protects the seat the permanent is under, which is the whole
-        # shape of the card: "creatures can't attack **you**".
+        # shape of the card: "creatures can't attack **you**". A planeswalker's
+        # controller is the defending player (506.2), so the same seat test
+        # covers "planeswalkers you control".
         if source_obj.controller != defender:
+            continue
+        if planeswalker and not static.get("or_planeswalkers"):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        # The same `cost` mapping ward stores, so the two go through one
-        # validator and there is one place for a price to be written.
-        spec = static.get("cost")
+        specs.append(static.get("cost"))
+    return _summed_mana(specs)
+
+
+def _summed_mana(specs: list[Any]) -> str:
+    """Several taxes' `cost` mappings as one mana string.
+
+    The same `cost` mapping ward stores, so every tax goes through one validator
+    and there is one place for a price to be written. Summed rather than
+    concatenated where they are plain generic, so two Propagandas read as {4}
+    instead of an unpayable "{2}{2}".
+    """
+    generic = 0
+    parts: list[str] = []
+    for spec in specs:
         inner = str((spec or {}).get("mana") or "").strip() if isinstance(spec, Mapping) else ""
-        # Summed rather than concatenated where they are plain generic, so two
-        # Propagandas read as {4} instead of an unpayable "{2}{2}".
         if inner.startswith("{") and inner.endswith("}") and inner[1:-1].isdigit():
             generic += int(inner[1:-1])
         elif inner:
@@ -797,6 +819,35 @@ def attack_tax(state: GameState, oid: int, defender: int) -> str:
     if generic:
         parts.insert(0, "{" + str(generic) + "}")
     return "".join(parts)
+
+
+def block_tax(state: GameState, oid: int) -> str:
+    """The mana a creature's controller must pay to declare it as a blocker.
+
+    "As long as this creature is attacking, creatures can't block unless their
+    controller pays {1} for each of those creatures" -- Archangel of Tithes.
+    `attack_tax`'s twin at declare-blockers (509.1d), and none of the blocking
+    near misses can say it: `cant_block` and the `cant_block` op are absolute,
+    and `block_restriction` refuses a blocker by what it *is* with no payment
+    path at all. Built on either, the Archangel would be a lock on blocking
+    rather than a toll on it.
+
+    No seat test, unlike `attack_tax`: the printed sentence names no player to
+    protect, only "creatures", and the `affects` filter is the whole of who
+    pays. Charged once per blocking creature, as it is declared -- a creature
+    blocks one attacker here, so one block is one creature and one price, which
+    is how 509.1d totals "for each of those creatures".
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ""
+    specs = [
+        static.get("cost")
+        for source_obj, static in _battlefield_statics(state)
+        if static.get("effect") == "block_tax"
+        and _matches(state, obj, source_obj, static.get("affects"))
+    ]
+    return _summed_mana(specs)
 
 
 def block_forbidden(state: GameState, oid: int) -> bool:

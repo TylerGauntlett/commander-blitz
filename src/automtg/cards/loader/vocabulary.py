@@ -373,6 +373,13 @@ STATIC_EFFECTS = frozenset(
         # absolute, so a card built on either is a lock rather than a tax --
         # strictly stronger than what is printed.
         "attack_tax",
+        # Archangel of Tithes: "creatures can't block unless their controller
+        # pays {1} for each of those creatures."  `attack_tax`'s twin at
+        # declare-blockers (509.1d), read by `characteristics.block_tax`.  The
+        # blocking near misses are all absolute -- `cant_block` forbids and
+        # `block_restriction` refuses by filter with no payment path -- so a card
+        # built on either would be a lock rather than a toll.
+        "block_tax",
         # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
         # control."  `attack_tax` with the price taken out, and read at the same
         # moment by `characteristics.attack_defender_forbidden` through

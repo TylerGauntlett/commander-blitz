@@ -717,6 +717,13 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``attack_tax``: the tax also prices an attack on a planeswalker the
+    #: static's controller controls -- "creatures can't attack you **or
+    #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of
+    #: Safety). Off by default, because Propaganda's sentence names only the
+    #: player and attacking a planeswalker is not attacking its controller
+    #: (506.2).
+    or_planeswalkers: bool = False
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

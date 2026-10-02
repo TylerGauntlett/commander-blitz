@@ -1323,6 +1323,44 @@ discard would have to ask a question inside the declare-attackers decision, and
 no printed pillowfort asks for one. A tax with no cost is refused for the reason
 ward {0} is — it is `cant_attack` wearing a costume.
 
+**`or_planeswalkers: true`** widens the tax to attacks on the static's
+controller's planeswalkers — "creatures can't attack you **or planeswalkers you
+control** unless ..." (Archangel of Tithes, Sphere of Safety). Off by default,
+because Propaganda's sentence names only the player and attacking a
+planeswalker is not attacking its controller (506.2). Priced, withheld and
+labelled on the walker's ADD_ATTACKER exactly as on the player's. Refused on any
+static but `attack_tax`.
+
+### Pricing a block rather than forbidding it
+
+```jsonc
+// Archangel of Tithes
+{ "kind": "static",
+  "text": "As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+  "effect": "block_tax",
+  "cost": { "mana": "{1}" },
+  "affects": { "controller": "any", "types": ["Creature"] },
+  "condition": { "exists": { "self_only": true, "attacking": true } } }
+```
+
+`attack_tax`'s twin at declare-blockers (509.1d), read by
+`characteristics.block_tax`. Every blocking near miss is absolute: `cant_block`
+(static and op) forbids, and `block_restriction` refuses a blocker by what it is
+with no payment path, so an Archangel built on either is a lock on blocking
+rather than a toll. **No seat test**: the sentence names no player, only
+"creatures", so `affects` is the whole of who pays — the blocker's controller.
+Priced once per blocking creature as it is declared (a creature blocks one
+attacker here, so one block is one price), withheld when unpayable (509.1e),
+the price in the label, and taxes from several permanents summed. Mana only and
+a cost required, for `attack_tax`'s reasons. **509.1c**: a player is never
+required to pay to obey a block requirement, so a provoked or lured creature
+under a block tax owes nothing (`combat.block_taxed` exempts it from
+`unmet_block_requirements` and from `_required_block`'s narrowing).
+
+"As long as this creature is untapped / is attacking" needs nothing new: the
+static condition `exists` over `{"self_only": true, "tapped": false}` or
+`{"self_only": true, "attacking": true}` reads the source's own board state.
+
 ### A static magnitude that counts in twos
 
 ```jsonc
@@ -4220,6 +4258,8 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
+[`attack_tax`](#pricing-an-attack-rather-than-forbidding-it) ·
+[`block_tax`](#pricing-a-block-rather-than-forbidding-it) ·
 `extra_land_drops`, plus the player-wide ones below.
 
 #### Granting another permanent's loyalty abilities

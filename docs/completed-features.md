@@ -19061,3 +19061,18 @@ the gaining player picks — regardless of arrival order, and the divergence is 
 in rules-coverage.md. Test: `tests/unit/test_life_gain_addend.py`, which also pins the
 Angel's other line, a static condition on its controller's own life total
 (`max_life_of: "you"`), following the life total as it moves.
+
+## `block_tax` static, and `attack_tax`'s `or_planeswalkers` — Archangel of Tithes — 509.1c–e
+
+"Creatures can't block unless their controller pays {1} for each of those
+creatures" had no expression: every blocking prohibition (`cant_block`,
+`block_restriction`) is absolute and none has a payment path. `block_tax` is
+`attack_tax`'s twin at declare-blockers: `player_statics.block_tax` sums the
+matching statics' mana, `legality._blocker_actions` withholds unpayable blocks and
+labels the price, and `Game._dispatch_blockers` charges the blocker's controller
+through the shared `_pay_combat_tax`. 509.1c exempts a taxed creature from block
+requirements (`combat.block_taxed`). The card's attack half needed
+`or_planeswalkers` on `attack_tax`, so the tax also prices an attack on the
+controller's planeswalkers; Propaganda leaves it off. Both halves are gated by the
+existing static condition `exists` over `self_only` with `tapped: false` /
+`attacking: true`. Test: `tests/unit/test_block_tax.py`.

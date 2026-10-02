@@ -145,12 +145,21 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
         # oid, so the choice is made once at declaration and nothing downstream
         # has to re-derive it.
         for walker in walkers:
+            # Archangel of Tithes: "creatures can't attack you **or
+            # planeswalkers you control** unless ...". Only a tax that says so
+            # reaches a walker, and it is withheld and labelled exactly as the
+            # player branch above is.
+            owner = state.objects[walker].controller
+            tax = combat_mod.attack_tax_cost(state, oid, owner, planeswalker=True)
+            if tax is not None and not combat_mod.combat_tax_payable(state, oid, tax):
+                continue
+            price = f" (pay {tax.mana})" if tax is not None else ""
             out.append(
                 Action(
                     kind=ActionKind.ADD_ATTACKER,
                     source=oid,
                     targets=(TargetRef.obj(walker),),
-                    label=f"Attack {state.card(walker).name} with {name}",
+                    label=f"Attack {state.card(walker).name} with {name}{price}",
                 )
             )
     # "…attacks this combat if able" is enforced by withholding the way out of
@@ -177,13 +186,28 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
 
 def _blocker_actions(state: GameState, pid: int) -> list[Action]:
     out: list[Action] = []
+    # Archangel of Tithes: "creatures can't block unless their controller pays
+    # {1} for each of those creatures". Priced once per blocker rather than per
+    # pair, since one creature offered against three attackers is one price;
+    # an unpayable tax is a prohibition (509.1e), so the block is withheld, and
+    # the price goes in the label as it does for an attack tax.
+    taxes: dict[int, object] = {}
     for blocker_oid, attacker_oid in combat_mod.legal_blocks(state, pid):
+        if blocker_oid not in taxes:
+            taxes[blocker_oid] = combat_mod.block_tax_cost(state, blocker_oid)
+        tax = taxes[blocker_oid]
+        if tax is not None and not combat_mod.combat_tax_payable(state, blocker_oid, tax):
+            continue
+        price = f" (pay {tax.mana})" if tax is not None else ""
         out.append(
             Action(
                 kind=ActionKind.ADD_BLOCKER,
                 source=blocker_oid,
                 targets=(TargetRef.obj(attacker_oid),),
-                label=f"Block {state.card(attacker_oid).name} with {state.card(blocker_oid).name}",
+                label=(
+                    f"Block {state.card(attacker_oid).name} with "
+                    f"{state.card(blocker_oid).name}{price}"
+                ),
             )
         )
     if combat_mod.blocks_valid(state, pid):

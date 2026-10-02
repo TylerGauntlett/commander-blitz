@@ -3618,27 +3618,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `op_may` charges it from a mapping and building it twice is two places
         # for the price to drift.
         _compile_cost(model.cost, where)
-    elif model.effect == "attack_tax":
-        # Propaganda. A tax with no price is `cant_attack` wearing a costume --
-        # an absolute lock that reads as if it could be bought off, which is
+    elif model.effect in ("attack_tax", "block_tax"):
+        # Propaganda, and Archangel of Tithes' blocking twin. A tax with no
+        # price is `cant_attack` (or `cant_block`) wearing a costume -- an
+        # absolute lock that reads as if it could be bought off, which is
         # strictly stronger than what is printed. The same refusal ward makes.
+        tax = model.effect
         if model.cost is None:
             raise DslError(
-                f"{where}: attack_tax needs a 'cost' -- a tax that prices "
+                f"{where}: {tax} needs a 'cost' -- a tax that prices "
                 f"nothing is a prohibition, not a tax"
             )
         # Mana and nothing else. A sacrifice or a discard would have to ask a
-        # question *inside* the declare-attackers decision, which would strand
-        # it -- and no printed pillowfort asks for one. Refused at load time so
-        # the restriction is a rule rather than an assumption `game.py` makes.
+        # question *inside* the declare-attackers (or -blockers) decision,
+        # which would strand it -- and no printed pillowfort asks for one.
+        # Refused at load time so the restriction is a rule rather than an
+        # assumption `game.py` makes.
         priced = prune_cost(model.cost.model_dump())
         if not str(priced.get("mana") or "").strip():
-            raise DslError(f"{where}: attack_tax is paid in mana; give its 'cost' a 'mana'")
+            raise DslError(f"{where}: {tax} is paid in mana; give its 'cost' a 'mana'")
         if set(priced) - {"mana"}:
             raise DslError(
-                f"{where}: attack_tax is paid in mana only, not "
+                f"{where}: {tax} is paid in mana only, not "
                 f"{sorted(set(priced) - {'mana'})} -- anything else would have "
-                f"to ask a question inside the attack declaration"
+                f"to ask a question inside the combat declaration"
             )
         _compile_cost(model.cost, where)
     elif model.effect == "spell_cost_increase":
@@ -3689,8 +3692,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif model.cost is not None:
         raise DslError(
             f"{where}: a static ability has no cost to pay; 'cost' means "
-            f"something only on 'ward', 'attack_tax' and 'spell_cost_increase' "
-            f"(and on activated abilities)"
+            f"something only on 'ward', 'attack_tax', 'block_tax' and "
+            f"'spell_cost_increase' (and on activated abilities)"
+        )
+    if model.or_planeswalkers and model.effect != "attack_tax":
+        # "...attack you **or planeswalkers you control**" is a clause of an
+        # attack tax and of nothing else; on any other static it would load,
+        # print and change nothing.
+        raise DslError(
+            f"{where}: 'or_planeswalkers' only means anything on an attack_tax, "
+            f"not on {model.effect!r}"
         )
 
     for field_name in ("power", "toughness", "amount"):
@@ -4028,8 +4039,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # two cards writing ward {1} must land on one ability, not two that only
         # differ by a `tap: false` nobody wrote.
         static["cost"] = prune_cost(model.cost.model_dump())
-    if model.effect == "attack_tax":
+    if model.effect in ("attack_tax", "block_tax"):
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.or_planeswalkers:
+        static["or_planeswalkers"] = True
     if model.effect == "spell_cost_increase":
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # reads `pay_life` off carries nothing the card did not write.

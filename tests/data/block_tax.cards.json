@@ -1,0 +1,55 @@
+{
+  "_comment": "Cards that exist only for the block-tax test (tests/unit/test_block_tax.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_block_toll` is the unconditional tax; `t_tithe_angel` is Archangel of Tithes' shape, both statics gated on its own combat state.",
+  "cards": [
+    {
+      "id": "t_block_toll",
+      "name": "Test Block Toll",
+      "oracle_text": "Creatures can't block unless their controller pays {1} for each of those creatures.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures can't block unless their controller pays {1} for each of those creatures.",
+          "effect": "block_tax",
+          "cost": {"mana": "{1}"},
+          "affects": {"controller": "any", "types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_tithe_angel",
+      "name": "Test Tithe Angel",
+      "oracle_text": "Flying\nAs long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.\nAs long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+      "mana_cost": "{1}{W}{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 3,
+      "toughness": 5,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.",
+          "effect": "attack_tax",
+          "cost": {"mana": "{1}"},
+          "or_planeswalkers": true,
+          "affects": {"controller": "any", "types": ["Creature"]},
+          "condition": {"exists": {"self_only": true, "tapped": false}}
+        },
+        {
+          "kind": "static",
+          "text": "As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+          "effect": "block_tax",
+          "cost": {"mana": "{1}"},
+          "affects": {"controller": "any", "types": ["Creature"]},
+          "condition": {"exists": {"self_only": true, "attacking": true}}
+        }
+      ]
+    }
+  ]
+}
