@@ -372,6 +372,25 @@ def _meld_halves_last(answers: dict[str, dict]) -> list[tuple[str, dict]]:
     ]
 
 
+def _finish_companion_entries(backs: list[dict], by_name: dict, front_entry) -> None:
+    """Mark the queue entry of every companion face this answer shipped as done.
+
+    A transforming back shares its front's catalog row, so it has no entry of its
+    own; a meld result is a row of its own. Brisela, Voice of Nightmares stayed
+    `pending` after Gisela shipped her, and `--tier agent` would have handed her
+    out as a card to author -- whose answer the registry then refuses as a
+    duplicate id. Only names the queue already holds, and never the front's own.
+    """
+    for back in backs:
+        companion = by_name.get(str(back.get("name", "")))
+        if companion is None or companion is front_entry:
+            continue
+        companion.status = "done"
+        companion.source = "agent"
+        companion.gate = None
+        companion.reason = ""
+
+
 def _companion_collision(
     backs: list[dict], expectations: dict, card_id: str
 ) -> str | None:
@@ -502,6 +521,7 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
             entry.source = "agent"
             entry.gate = None
             entry.reason = ""
+        _finish_companion_entries(backs, by_name, entry)
         tally["accepted"] += 1
 
     if not dry_run and tally["accepted"]:

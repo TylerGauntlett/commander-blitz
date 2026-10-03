@@ -884,6 +884,28 @@ class TestAMeldPairIsTwoAnswersAndAResult:
         # Not a meld half at all.
         assert _meld_partners(partner, staged, real_registry) == []
 
+    def test_the_collector_finishes_the_results_own_queue_entry(self):
+        """A meld result has a catalog row of its own, so it has a queue entry of
+        its own -- left `pending`, `--tier agent` hands Brisela out as a card to
+        author after Gisela already shipped her."""
+        from scripts.author_cards import _finish_companion_entries
+
+        from automtg.cards.authoring.queue import Entry
+
+        half, _, result = self.trio()
+        front = Entry(name=half["name"], scryfall_id="id-half", status="done")
+        meld = Entry(name=result["name"], scryfall_id="id-result", gate="template", reason="no template")
+        bystander = Entry(name="Sol Ring", scryfall_id="id-sol")
+        by_name = {e.name: e for e in (front, meld, bystander)}
+
+        _finish_companion_entries([result], by_name, front)
+
+        assert (meld.status, meld.gate, meld.reason, meld.source) == ("done", None, "", "agent")
+        assert bystander.status == "pending"
+        # A face the queue never held is not invented.
+        _finish_companion_entries([{"name": "Nobody"}], by_name, front)
+        assert set(by_name) == {half["name"], result["name"], "Sol Ring"}
+
     def test_the_collector_verifies_the_partner_first(self):
         """Whatever the two ids sort as, the half that names a partner goes last."""
         from scripts.author_cards import _meld_halves_last
