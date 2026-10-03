@@ -208,8 +208,42 @@ function axisAt(pad: Gamepad, index: number): number {
  * above 1.
  */
 export function hatDirs(value: number): readonly Dir[] {
-  if (!Number.isFinite(value) || value < -1.05 || value > 1.05) return [];
+  if (!isHatLive(value)) return [];
   return HAT[Math.round((value + 1) * 3.5)] ?? [];
+}
+
+function isHatLive(value: number): boolean {
+  return Number.isFinite(value) && value >= -1.05 && value <= 1.05;
+}
+
+/**
+ * Pads whose last axis has been seen at a hat's centred value.
+ *
+ * THE LAST AXIS IS ONLY A GUESS AT A HAT, and guessing wrong held Down forever.
+ * Plenty of non-standard pads end on a stick, a slider or a gyro axis instead
+ * -- and one resting at 0 reads, through `hatDirs`, as position 4: Down. The
+ * loop then saw Down held from the first frame: it auto-repeated and dragged
+ * the ring to the bottom of every screen (the deck catalogue's import box, on
+ * a Steam Deck), and no real Down could ever make an edge. Arrow keys "stopped
+ * working" on a machine that merely had such a pad attached, with nobody
+ * touching it.
+ *
+ * A real hat rests at CENTRE, which is outside -1..1 (see `hatDirs`), so it
+ * shows that value on the very first frame the pad is read; an ordinary axis
+ * never leaves -1..1 at all. Only a pad that has been seen centred has its last
+ * axis read as a hat. Keyed by slot and id, because a `Gamepad` is a snapshot
+ * and need not be the same object from one frame to the next.
+ */
+const hatSeen = new Set<string>();
+
+function hatOf(pad: Gamepad): readonly Dir[] {
+  const value = axisAt(pad, pad.axes.length - 1);
+  const key = `${pad.index}:${pad.id}`;
+  if (!hatSeen.has(key)) {
+    if (Number.isFinite(value) && !isHatLive(value)) hatSeen.add(key);
+    return [];
+  }
+  return hatDirs(value);
 }
 
 /** A HID trigger axis rests at -1 and bottoms out at 1; callers want 0..1. */
@@ -273,7 +307,8 @@ function readOne(pad: Gamepad, into: Reading, rmag: { value: number }): void {
   } else {
     // A hat rather than four buttons, and triggers as axes rather than buttons.
     // Without this, half of a non-standard pad is inert and NO direction works.
-    for (const dir of hatDirs(axisAt(pad, pad.axes.length - 1))) into.down.add(dir);
+    // ...but only once that last axis has shown it IS a hat -- see `hatSeen`.
+    for (const dir of hatOf(pad)) into.down.add(dir);
     const l2 = unipolar(axisAt(pad, HID_TRIGGER.l2));
     const r2 = unipolar(axisAt(pad, HID_TRIGGER.r2));
     into.l2 = Math.max(into.l2, l2);
@@ -942,6 +977,7 @@ export function resetPad(): void {
   prev.clear();
   dueAt.clear();
   runs.clear();
+  hatSeen.clear();
   latched = null;
   connected = false;
 }

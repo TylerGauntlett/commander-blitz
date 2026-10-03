@@ -30,6 +30,7 @@ import {
   budget,
   isOver,
   keepOpeningHand,
+  setInstant,
   startGame,
   takeAction,
   waitForOurTurn,
@@ -521,6 +522,69 @@ test.describe("a second gamepad in front of the real one", () => {
     const before = await cursor(page);
     await press(page, BTN.right);
     await expect.poll(() => cursor(page), { timeout: 4_000 }).not.toBe(before);
+  });
+});
+
+/**
+ * A pad the browser will not call standard, whose last axis is not a hat.
+ *
+ * `input/pad.ts` reads a non-standard pad's d-pad from its last axis, and an
+ * ordinary axis resting at 0 is hat position 4 -- Down. With such a pad merely
+ * attached (a Steam Deck's own controller in a desktop browser) the loop saw
+ * Down held from the first frame: the ring auto-repeated to the bottom of the
+ * deck catalogue and parked on the import box, and every arrow the player
+ * pressed was dragged straight back there. Nobody touches the pad here; the
+ * arrows are the only input, and they have to be the only thing moving the ring.
+ */
+test.describe("a pad whose last axis is not a hat", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("leaves the catalogue's ring where the arrows put it", async ({ page }) => {
+    await page.addInitScript(() => {
+      const pad = {
+        id: "28de-1205-Steam Deck",
+        index: 0,
+        connected: true,
+        mapping: "",
+        timestamp: 0,
+        // Sticks and a last axis at rest -- no hat centre anywhere.
+        axes: [0, 0, 0, 0],
+        buttons: Array.from({ length: 15 }, () => ({
+          pressed: false,
+          touched: false,
+          value: 0,
+        })),
+      };
+      navigator.getGamepads = () => [pad as unknown as Gamepad, null, null, null];
+    });
+    await setInstant(page);
+    await page.goto("/");
+    await page.getByTestId("create-pod").click();
+    await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+
+    await expect(page.getByTestId("change-deck")).toHaveAttribute("data-cursor", "");
+    await page.keyboard.press("Enter");
+    await page.getByTestId("deck-catalog").waitFor();
+
+    const ringOn = () =>
+      page.evaluate(
+        () => document.querySelector("[data-cursor]")?.getAttribute("data-testid") ?? null,
+      );
+    const TILE = /^deck-.+-take$/;
+
+    // Left alone, the ring stays on the deck it opened on.
+    await expect.poll(ringOn).toMatch(TILE);
+    const opened = await ringOn();
+    await frames(page, 90);
+    expect(await ringOn(), "the ring drifted with nothing pressed").toBe(opened);
+
+    // One arrow moves it one tile, and it stays there.
+    await page.keyboard.press("ArrowRight");
+    await expect.poll(ringOn).not.toBe(opened);
+    const moved = await ringOn();
+    expect(moved).toMatch(TILE);
+    await frames(page, 90);
+    expect(await ringOn(), "the ring was dragged off the tile the arrow chose").toBe(moved);
   });
 });
 
