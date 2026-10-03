@@ -288,6 +288,50 @@ describe("a non-standard pad", () => {
     expect(hits).toEqual([]);
   });
 
+  /*
+   * A last axis that is NOT a hat.
+   *
+   * Plenty of non-standard pads end on a stick, slider or gyro axis, and one
+   * resting at 0 is hat position 4 -- Down. Read as a hat, it held Down from the
+   * first frame: the ring auto-repeated to the bottom of the screen and no real
+   * Down could ever make an edge, with nobody touching the pad.
+   */
+  function plainPad(rest: number): Gamepad {
+    return pad({
+      id: "28de-1205-Steam Deck",
+      mapping: "" as GamepadMappingType,
+      buttons: 15,
+      axes: [0, 0, 0, rest],
+    });
+  }
+
+  it.each([0, -1, 0.5])("holds no direction from a last axis resting at %s", (rest) => {
+    const hits: string[] = [];
+    startPad();
+    for (const name of ["up", "down", "left", "right"] as const) {
+      on(name, () => hits.push(name));
+    }
+    slots = [plainPad(rest), null, null, null];
+    vi.advanceTimersByTime(1500);
+    expect(hits).toEqual([]);
+  });
+
+  it("lets the arrow keys drive beside a pad whose last axis is not a hat", () => {
+    const hits: string[] = [];
+    startPad();
+    for (const name of ["up", "down"] as const) on(name, () => hits.push(name));
+    slots = [plainPad(0), null, null, null];
+    vi.advanceTimersByTime(300);
+
+    for (const key of ["ArrowDown", "ArrowUp", "ArrowDown"]) {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key }));
+      vi.advanceTimersByTime(40);
+      window.dispatchEvent(new KeyboardEvent("keyup", { key }));
+      vi.advanceTimersByTime(80);
+    }
+    expect(hits).toEqual(["down", "up", "down"]);
+  });
+
   it("reads the triggers from their axes", () => {
     const hits: string[] = [];
     startPad();
