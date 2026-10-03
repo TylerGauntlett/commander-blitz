@@ -468,7 +468,9 @@ function aimRing(el: HTMLElement): void {
   // Kept for `nearestTo`, which needs to know where the ring WAS after the
   // element it was on has already left the document.
   lastAim = el.getBoundingClientRect();
-  retargetRing(target.rect, context, target.angle, () => ringTargetFor(el));
+  // A hand card sits under its right-hand neighbour; see `setRest`.
+  const layered = el.closest(".hand__slot") !== null;
+  retargetRing(target.rect, context, target.angle, () => ringTargetFor(el), layered);
 }
 
 /**

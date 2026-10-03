@@ -160,6 +160,8 @@ const RING = {
   angle: 0,
   /** `performance.now()` until which the loop keeps running to watch. See `followRing`. */
   until: 0,
+  /** The stop is overlapped by its neighbours. See `setRest`. */
+  layered: false,
   raf: 0,
   last: 0,
   speed: 0,
@@ -212,6 +214,7 @@ export function resetRing(): void {
   RING.speed = 0;
   RING.angle = 0;
   RING.until = 0;
+  RING.layered = false;
   measure = null;
   if (RING.raf) cancelAnimationFrame(RING.raf);
   RING.raf = 0;
@@ -250,6 +253,23 @@ function snap(): void {
   RING.gh = RING.h;
   RING.speed = 0;
   paint();
+  setRest(true);
+}
+
+/**
+ * HAND THE RING TO THE STOP'S OWN OUTLINE ONCE IT HAS LANDED -- on a stop that
+ * its neighbours overlap.
+ *
+ * `#ring` is a fixed box at `--z-ring`, above everything, which is right for
+ * travel and right for a stop in a modal. It is wrong in the hand fan: each
+ * card is partly under the card to its right, and a ring drawn over the whole
+ * card cut a gold rectangle straight across the neighbour. The card's own
+ * `[data-cursor]` outline is painted inside its slot's stacking context, so it
+ * goes under the neighbour exactly as the card does -- and at rest the two are
+ * the same rectangle, so stepping aside changes nothing else.
+ */
+function setRest(on: boolean): void {
+  document.getElementById("ring")?.classList.toggle("ring--rest", on && RING.layered);
 }
 
 /**
@@ -330,6 +350,7 @@ function frame(now: number): void {
 
   RING.speed = Math.hypot(RING.vx, RING.vy);
   paint();
+  setRest(!moving);
   // Re-queued here rather than through `wake()`, which would clear `last`.
   if (moving) RING.raf = requestAnimationFrame(frame);
   else RING.last = 0;
@@ -464,6 +485,7 @@ export function retargetRing(
   context: string,
   angle = 0,
   track: Measure | null = null,
+  layered = false,
 ): void {
   const ring = document.getElementById("ring");
   if (!ring) return;
@@ -474,6 +496,7 @@ export function retargetRing(
     return;
   }
   measure = track;
+  RING.layered = layered;
   RING.angle = angle;
   RING.tx = rect.left - PAD;
   RING.ty = rect.top - PAD;
