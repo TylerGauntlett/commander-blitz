@@ -2,7 +2,9 @@
 
 The deck was pinned by #22, #24 and #28 and then kept moving: the list gained
 Ghostly Prison, and a pasted link came back 90 of 91 distinct cards native,
-with the one pillowfort in it reading as inert text. This file holds the list
+with the one pillowfort in it reading as inert text. It moved again -- Canyon
+Slough and Zulaport Cutthroat out, Clever Concealment and Edgar, Ancient
+Bloodlord in -- and came back 90 of 91 with Edgar partial. This file holds the list
 as it now stands, imported through the same `importer.import_deck` a pasted
 link goes through, so a card dropping out of `data/cards/auto/` or an engine
 change invalidating one fails here rather than in a game.
@@ -42,17 +44,18 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Bloodthirsty Conqueror", 1),
     ("Bloodthrone Vampire", 1),
     ("Bojuka Bog", 1),
-    ("Canyon Slough", 1),
     ("Captivating Vampire", 1),
     ("Carrion Feeder", 1),
     ("Caves of Koilos", 1),
     ("Charismatic Conqueror", 1),
     ("Clavile\u00f1o, First of the Blessed", 1),
+    ("Clever Concealment", 1),
     ("Command Tower", 1),
     ("Cordial Vampire", 1),
     ("Cruel Celebrant", 1),
     ("Dark Ritual", 1),
     ("Dragonskull Summit", 1),
+    ("Edgar, Ancient Bloodlord", 1),
     ("Edgar, Charmed Groom // Edgar Markov's Coffin", 1),
     ("Elenda, the Dusk Rose", 1),
     ("Exotic Orchard", 1),
@@ -114,7 +117,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Voldaren Estate", 1),
     ("War Room", 1),
     ("Welcoming Vampire", 1),
-    ("Zulaport Cutthroat", 1),
 )
 
 pytestmark = pytest.mark.skipif(
@@ -163,7 +165,7 @@ class TestEveryCardIsNative:
 class TestTheManaBaseIsReal:
     def test_every_land_makes_mana_or_does_something(self, report):
         """A land generated as an inert permanent leaves a deck that looks like
-        35 lands and plays like fewer. `lands_inert` counts the ones doing
+        34 lands and plays like fewer. `lands_inert` counts the ones doing
         nothing at all."""
-        assert report.lands == 35
+        assert report.lands == 34
         assert report.lands_inert == 0
