@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, TriggerSpec
 from .enums import Zone
-from .errors import RulesLoopError
+from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .state import MAX_TRIGGERS_PER_STEP
@@ -173,6 +173,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     "draw": EventType.DRAW,
     "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
+    #: "Whenever an opponent searches their library, you gain 1 life and draw
+    #: a card" -- Archivist of Oghma. One per search (701.19), fired by
+    #: `ops_cards._search`, the one place a library is ever searched; a search
+    #: `cant_search_library` refuses never happened and fires nothing.
+    #:
+    #: The subject is a **player**, so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS`, and `_actor` reads `event.player` -- the
+    #: searcher -- so `controller: "opponent"` is "an opponent searches".
+    #: `ability_activated` and `spell_cast` are the near misses and fire on the
+    #: cause rather than the search: a cracked fetchland and a resolved tutor
+    #: are both one search, and a "you may search" declined is none.
+    "searches_library": EventType.LIBRARY_SEARCHED,
     #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
     #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
     #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
@@ -301,9 +313,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `counter_placed` with `{"counter": "lore"}` is the near miss, and it is
     #: what the gap record for Oath of Eorl proposed and then refused. It fires
     #: on the placement rather than on the count *reaching* the number, so a
-    #: proliferated Saga advances by the wrong pattern; and it fires not at all
-    #: on the counter a Saga **enters** with, which is chapter I on every Saga in
-    #: print.
+    #: proliferated Saga advances by the wrong pattern.
     "chapter": EventType.CHAPTER_REACHED,
 }
 
@@ -1011,6 +1021,16 @@ def _matches(
     if spec.counter is not None and event.data.get("counter") != spec.counter:
         return False
 
+    # "Whenever **you** put one or more +1/+1 counters on this creature" --
+    # Exemplar of Light. The putter, not the recipient's controller: the
+    # `controller` clause reads `event.player`, which is whoever controls the
+    # creature, so an opponent's counter on it passes that and must fail this.
+    # An emission with no putter fails too -- wider is the dangerous direction.
+    if spec.put_by == "you" and (
+        event.data.get("put_by") is None or event.data.get("put_by") != obj.controller
+    ):
+        return False
+
     # "II --". One CHAPTER_REACHED event carries the number the Saga's lore
     # counters just reached, and every chapter ability on that Saga is a candidate
     # for it, so this comparison is the whole of which chapter runs. Without it a
@@ -1425,7 +1445,13 @@ def _actor(
     # opponent copying your spell, and stay silent when you copy theirs.
     # `put_copy_on_stack` puts the copy's controller on the event, which is who
     # did the copying -- 706.10 gives the copy to whoever created it.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
+    # `searches_library` is listed for the reason `becomes_monarch` is: the
+    # actor is the player who **searched**, so `controller: "opponent"` reads
+    # "an opponent searches their library". The fallthrough reaches the same
+    # answer only because the subject is not an object; the event's `source` is
+    # the tutor or fetchland that asked, and on Path to Exile that is *my* spell
+    # making *them* search, so a subject read off it would be the wrong seat.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is
@@ -1451,6 +1477,87 @@ def _actor(
             return obj.controller
         return event.player
     return event.player
+
+
+#: Every key `matches_card_filter` reads -- and so every key a trigger `filter`
+#: (or a `double_triggers` `cause_filter`) may carry. The loader refuses the
+#: rest of `SELECTOR_KEYS` there.
+#:
+#: Not `SELECTOR_KEYS` itself, which is what the trigger filter used to be
+#: validated against: that list describes the *effect-side* selector, and a
+#: key `selectors.matches` honours and this function never reads loaded clean
+#: and was silently dropped -- a filter strictly wider than the printed line,
+#: with no gate able to see it. `zone`, `tapped`, `not_supertypes` and `owner`
+#: were each found that way, one card at a time; this closes the class. A key
+#: belongs here only once the function below answers it, and
+#: `tests/unit/test_trigger_filter_owner.py` holds the two in step.
+TRIGGER_FILTER_KEYS = frozenset(
+    {
+        "exclude_self",
+        "self_only",
+        "attached",
+        "haunted_by",
+        "encoded_by",
+        "damaged_by",
+        "controller",
+        "owner",
+        "zone",
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "not_supertypes",
+        "paid_by",
+        "created_with",
+        "shares_a_type_with_commander",
+        "shares_a_creature_type_with",
+        "colors",
+        "min_colors",
+        "keywords",
+        "is_token",
+        "is_commander",
+        "tapped",
+        "has_counters",
+        "entered_this_turn",
+        "attacking_player",
+        "mana_value",
+        "mana_cost",
+        "power",
+        "toughness",
+    }
+)
+
+#: The words `controller` and `owner` take in a trigger filter. The effect-side
+#: selector also accepts a player spec and "enchanted_player", and this function
+#: reads neither, so either would load and match every player's object.
+TRIGGER_FILTER_PLAYER_WORDS = frozenset({"you", "opponent", "any"})
+
+
+def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
+    """Refuse what `validate_selector` passes and `matches_card_filter` ignores.
+
+    Run *after* `validate_selector`, which has already refused unknown words and
+    malformed values; this narrows the effect-side language to the part a
+    trigger filter actually answers.
+    """
+    if not filt:
+        return
+    unread = set(filt) - TRIGGER_FILTER_KEYS
+    if unread:
+        raise DslError(
+            f"{where}: {sorted(unread)} would load and be ignored -- a trigger "
+            f"filter answers only {sorted(TRIGGER_FILTER_KEYS)}"
+        )
+    for key in ("controller", "owner"):
+        word = filt.get(key)
+        if word is not None and not (
+            isinstance(word, str) and word in TRIGGER_FILTER_PLAYER_WORDS
+        ):
+            raise DslError(
+                f"{where}: {key} {word!r} is not answered by a trigger filter "
+                f"(use one of {sorted(TRIGGER_FILTER_PLAYER_WORDS)})"
+            )
 
 
 def matches_card_filter(
@@ -1531,6 +1638,23 @@ def matches_card_filter(
     if controller == "you" and obj.controller != ability_source.controller:
         return False
     if controller == "opponent" and obj.controller == ability_source.controller:
+        return False
+    # "Whenever **your commander** enters or attacks" -- Tome of Legends. 903.3
+    # makes "your commander" the commander you *own*, wherever it is and
+    # whoever controls it, so this is `GameObject.owner` and not `controller`:
+    # with `gain_control` implemented the two are different sets, and the
+    # control reading would miss your own commander attacking for the opponent
+    # who stole it and fire on theirs while you hold it. Owner never changes
+    # (`change_control` leaves it alone), so a subject that has left the
+    # battlefield answers it as well as a live one.
+    #
+    # `selectors.matches` and the static filter have read the word since
+    # Majestic Genesis and Visions of Glory; here it **loaded and was ignored**,
+    # so `{is_commander, owner: "you"}` fired on every commander at the table.
+    owner = filt.get("owner")
+    if owner == "you" and obj.owner != ability_source.controller:
+        return False
+    if owner == "opponent" and obj.owner == ability_source.controller:
         return False
 
     # "…an ability of an artifact, creature, or land **on the battlefield**."
@@ -1624,6 +1748,24 @@ def matches_card_filter(
         for seat in seats:
             theirs |= commander_subtypes(state, seat)
         if not (card.subtypes & theirs):
+            return False
+    # "Whenever you cast a spell that shares a creature type with **this
+    # creature**…" -- Folk Hero's grant. Compared against the object that *has*
+    # the ability, which for a granted trigger is the recipient (the commander
+    # creature), never the granter -- `abilities_of` hands the copy over sourced
+    # on the recipient. Not `shares_a_type_with_commander`, which unions every
+    # commander's subtypes: a partner's types and a Background's "Background"
+    # would both answer a question the card does not ask.
+    #
+    # Creature types on both sides (205.3m) and derived on both sides, so a
+    # changeling spell shares with anything and a noncreature, non-Kindred
+    # spell shares with nothing.
+    if filt.get("shares_a_creature_type_with") is not None:
+        from .characteristics import creature_types_of
+
+        if not (
+            creature_types_of(state, oid) & creature_types_of(state, ability_source.oid)
+        ):
             return False
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):

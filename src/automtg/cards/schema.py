@@ -323,6 +323,14 @@ class TriggerModel(BaseModel):
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
     counter: str | None = None
+    #: For ``counter_placed``: "whenever **you** put one or more +1/+1 counters
+    #: on this creature" (Exemplar of Light). Who put the counters (122.6a) --
+    #: the controller of the placing spell or ability, or the permanent's own
+    #: controller for a cost or a Saga tick -- must be this ability's
+    #: controller. ``controller`` cannot say it: on ``counter_placed`` it reads
+    #: the recipient's controller, so an opponent's counter on your creature
+    #: passes it. Mirrors ``put_by`` on the ``replace_counters`` static.
+    put_by: Literal["you"] | None = None
     #: For ``ability_activated``: "…if it isn't a mana ability".  ``false``
     #: excludes mana abilities, ``true`` keeps only them, omitted is both.
     #: Both activation paths tag the event, so the two stop being
@@ -622,6 +630,14 @@ class AbilityModel(BaseModel):
     #: reached a graveyard and from where are facts about *this copy* and not
     #: about the card, and `affects_spells` may only read the printed face.
     arrived_this_turn_from: list[str] | None = None
+    #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
+    #: spells **from** -- or, as ``except_zones``, the ones they still can.
+    #: Drannith Magistrate's "from anywhere other than their hands" is
+    #: ``except_zones: ["hand"]``. Exactly one of the two, spelled as the
+    #: one-shot op of the same name spells them; the loader resolves either to
+    #: the positive list the reader compares against.
+    zones: list[str] | None = None
+    except_zones: list[str] | None = None
     #: "…pay life equal to its **mana value** rather than pay its mana cost."
     #: Bolas's Citadel, on a `cast_from_library_top` static. An alternative cost
     #: imposed on somebody else's spell, which `spell_cost_reduction` cannot
@@ -700,6 +716,10 @@ class AbilityModel(BaseModel):
     #: protection is read (`characteristics.protection_from`); no commander at
     #: all is protection from all five (903.4).
     from_colors_outside_commander_identity: bool = False
+    #: "Protection from colorless" (702.16, 105.2c). A flag rather than a
+    #: ``from_colors`` letter because colorless is not a colour; matched against
+    #: any source with no colours at all.
+    from_colorless: bool = False
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not
@@ -717,6 +737,13 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``attack_tax``: the tax also prices an attack on a planeswalker the
+    #: static's controller controls -- "creatures can't attack you **or
+    #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of
+    #: Safety). Off by default, because Propaganda's sentence names only the
+    #: player and attacking a planeswalker is not attacking its controller
+    #: (506.2).
+    or_planeswalkers: bool = False
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no
@@ -795,6 +822,12 @@ class AbilityModel(BaseModel):
     #: with itself, and 0 is "you gain no life" -- `cant_gain_life`, a
     #: different sentence.
     gain_multiplier: int | None = None
+    #: ``replace_life_gain``: what is added to a life gain. Angel of Vitality's
+    #: "you gain that much life **plus 1** instead" is ``1``. The other axis of
+    #: the same static, as ``counter_addend`` is of ``replace_counters``: a card
+    #: uses exactly one of ``gain_multiplier`` and ``gain_addend``, and the
+    #: addend is refused below 1 because 0 replaces a gain with itself.
+    gain_addend: int | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1

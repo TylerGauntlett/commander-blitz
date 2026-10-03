@@ -28,6 +28,15 @@ class PlayerState:
     name: str = ""
     deck_id: str = ""
     life: int = STARTING_LIFE
+    #: The life total this player **began the game with** (rule 103.4; 40 in
+    #: Commander by 903.7). Recorded per player rather than read off the module
+    #: constant, because it is a fact about this game and this seat: "as long as
+    #: you have at least 7 life more than your starting life total" (Righteous
+    #: Valkyrie) and Angel of Destiny's 15 are both measured from it, and a card
+    #: that hard-coded 47 would be a different card in any game that started
+    #: anywhere but 40. Written when the seat is created and never again --
+    #: gaining, losing, paying or setting life moves `life`, not this.
+    starting_life: int = STARTING_LIFE
 
     library: list[int] = field(default_factory=list)
     hand: list[int] = field(default_factory=list)
@@ -136,6 +145,7 @@ class PlayerState:
             "name": self.name,
             "deck_id": self.deck_id,
             "life": self.life,
+            "starting_life": self.starting_life,
             "library": list(self.library),
             "hand": list(self.hand),
             "graveyard": list(self.graveyard),

@@ -19018,3 +19018,335 @@ for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flas
 well. `affects_spells` now accepts `from_zone: "hand"` (the only printed value); the
 cast-line builder passes the zone the spell is cast from, and a caller that names no
 zone is refused rather than freed. Test: `tests/unit/test_free_cast_from_hand.py`.
+
+## `enters_with_additional_counters` counted amount — Giada, Font of Hope's "for each Angel you already control" — 614.1c / 614.12
+
+The static's `amount` was a fixed integer, so "an additional +1/+1 counter for each
+Angel you already control" could not be said, and the replacement ran after the
+arrival was in `state.battlefield`, so a naive count would include the Angel itself.
+`amount` may now be `{"count": <battlefield filter>}` (that alone; the loader refuses
+other value forms and other zones). `zones._apply_board_additional_counters` evaluates
+it as the permanent enters, leaving out the **entering group**: the arrival plus
+every permanent the turn ledger records as entering in the current
+`state.event_batch` (`EnteredPermanent` now carries its `batch`). A source in the
+group applies nothing (614.12: Giada returned together with an Angel does not grow
+it). A resolving permanent spell and a land drop now bump `event_batch` as their own
+events, so a token made while a spell waited on the stack is not mistaken for a
+simultaneous arrival. Test: `tests/unit/test_enters_with_counters_per_angel.py`.
+
+## A life total that moves refreshes the statics that read it — `primitives._move_life`
+
+A static `condition` may read a life total (`min_life_of` / `max_life_of`: Guul Draz
+Vampire's "as long as an opponent has 10 or less life", Angel of Vitality's "as long as
+you have 25 or more life"), and `chars` caches per `char_version`. Nothing that changed
+a life total bumped it, so a creature read at 40 kept its answer after its controller
+was burned to 10 until some unrelated zone change or resolution happened to invalidate
+the cache — every existing test set the life totals and bumped by hand. The three
+writers of a life total in play (`gain_life`, `lose_life`, the damage branch of
+`damage_player`) now go through `_move_life`, which bumps. Test:
+`tests/unit/test_player_quantifier.py::TestItFollowsTheLifeTotal`.
+
+## `replace_life_gain` `gain_addend` — "you gain that much life plus 1 instead" — Angel of Vitality
+
+`replace_life_gain` carried only `gain_multiplier`, refused below 2, and "plus 1" is not
+a multiplier at any size. The static grew a second axis, `gain_addend` (exactly one of
+the two per static, the `replace_counters` shape), read by
+`player_statics.life_gain_addend` through `_active_player_statics` and applied in
+`primitives.gain_life` — the one funnel the `gain_life` op and lifelink both reach — so
+a gain of 3 is one `LIFE_GAINED` of 4, a lifelink hit of 5 gains 6, and a gain of 0 is
+no event and gets nothing. Two Angels add 2. Against a doubler 616.1 gives the order to
+the gaining player and the order shows; `gain_life` cannot ask (it runs inside combat
+damage), so every addend applies before every multiplier — the larger gain, the order
+the gaining player picks — regardless of arrival order, and the divergence is recorded
+in rules-coverage.md. Test: `tests/unit/test_life_gain_addend.py`, which also pins the
+Angel's other line, a static condition on its controller's own life total
+(`max_life_of: "you"`), following the life total as it moves.
+
+## `block_tax` static, and `attack_tax`'s `or_planeswalkers` — Archangel of Tithes — 509.1c–e
+
+"Creatures can't block unless their controller pays {1} for each of those
+creatures" had no expression: every blocking prohibition (`cant_block`,
+`block_restriction`) is absolute and none has a payment path. `block_tax` is
+`attack_tax`'s twin at declare-blockers: `player_statics.block_tax` sums the
+matching statics' mana, `legality._blocker_actions` withholds unpayable blocks and
+labels the price, and `Game._dispatch_blockers` charges the blocker's controller
+through the shared `_pay_combat_tax`. 509.1c exempts a taxed creature from block
+requirements (`combat.block_taxed`). The card's attack half needed
+`or_planeswalkers` on `attack_tax`, so the tax also prices an attack on the
+controller's planeswalkers; Propaganda leaves it off. Both halves are gated by the
+existing static condition `exists` over `self_only` with `tapped: false` /
+`attacking: true`. Test: `tests/unit/test_block_tax.py`.
+
+## `searches_library` trigger — Archivist of Oghma's "whenever an opponent searches their library" — 701.19
+
+Nothing exposed a search to triggers: `cant_search_library` showed the engine knew
+where searches happen, but the act left no event, and the shuffle that ends one
+emits nothing. `EventType.LIBRARY_SEARCHED` is fired by `ops_cards._search` — the
+one routine behind `search_library` and `search_zones` — once per searching
+player, before the pool is offered, with the searcher as `player` and `owner` as
+whose library. The `searches_library` trigger name maps to it with a player
+subject, and `_actor` reads the searcher, so `controller: "opponent"` means an
+opponent searched whoever's spell asked. Empty and declined searches fire; a
+library refused by `cant_search_library` does not. A new event, so the client
+narrates it: `describeEvent` ("AI 1 searches their library") and a `beatsFor`
+beat with the shuffle sound. Test: `tests/unit/test_library_searched.py`, plus
+vitest cases in `frontend/tests/labels.test.ts` and `frontend/tests/events.test.ts`.
+
+## `shares_a_creature_type_with` — "a spell that shares a creature type with this creature" — Folk Hero — 205.3m
+
+A trigger filter could not name the object that has the ability: `shares_a_type_with`
+reads a binding and is effect-side only, and `shares_a_type_with_commander` unions
+every commander's subtypes — a partner's types and a Background's "Background"
+included, a broader card than "this creature". `shares_a_creature_type_with: "self"`
+is honoured by `triggers.matches_card_filter` against the trigger's ability source,
+which for a granted trigger is the recipient (`abilities_of` sources the copy there),
+and by `selectors.matches` effect-side (`"self"` or a binding name). Both read
+`characteristics.creature_types_of` — derived subtypes filtered through
+`SUBTYPE_CLASS` with Creature as the default — so changelings share with anything, a
+Kindred instant has its creature type and Background/Aura/Arcane never count. The
+loader refuses anything but `"self"` in a trigger filter. Folk Hero is a
+`grant_ability` static to `{types: [Creature], is_commander: true, owner: "you"}`
+handing over a `spell_cast` trigger with `max_per_turn: 1`. Test:
+`tests/unit/test_shares_creature_type_with_source.py` (the commander's types not
+Folk Hero's, per-commander partners, once each turn, an opponent's commander gets
+nothing, a stolen commander you own keeps it for its thief, Folk Hero leaving).
+
+## `starting_life_of` — "at least 7 life more than your starting life total" — 103.4
+
+Righteous Valkyrie and Angel of Destiny measure from a seat's starting life total, and
+the engine had only the module constant `STARTING_LIFE`, so either card could only be
+written with a `const` 47 or 55 — a 40-life assumption baked into the card.
+`PlayerState.starting_life` now records the number per seat when the game is created,
+and `{"starting_life_of": "you"}` reads it in the effect value language and in a
+static's condition (one seat only: the plural specs are refused at load, and a static
+accepts `"you"`). The static value language gained `sum`, because the printed threshold
+is an offset (`life >= starting + 7`). The life total it is compared against refreshes
+the static as it moves through `primitives._move_life`, so the anthem switches the
+moment the total crosses the line. Test: `tests/unit/test_starting_life_total.py`.
+
+## `{"attacked_by": "self"}` — "each player this creature attacked this turn" — Angel of Destiny
+
+The turn ledger knew which creatures each *seat* attacked with, never which players a
+given creature attacked, and `state.combat` — which did — is `None` by the end step.
+`TurnLedger.players_attacked_by` (attacker oid → seats) is now folded off each
+creature's `ATTACKS` event, which carries a new `attacked_permanent` key so an attack on
+a planeswalker or battle records no player (506.2). The record is dropped when the
+creature leaves the battlefield (400.7) and cleared with the ledger. The player spec
+`{"attacked_by": "self"}` reads it for the ability's source; the loader refuses any
+other subject. Test: `tests/unit/test_players_attacked_by.py`.
+
+## `counter_placed` keyed on the putter -- `put_by: "you"` on triggers
+
+Exemplar of Light: "Whenever **you** put one or more +1/+1 counters on this
+creature, draw a card. This ability triggers only once each turn."
+
+- `primitives.add_counters` already worked out who puts the counters (`_putter`,
+  122.6a) for `replace_counters`' `put_by`; COUNTER_PLACED now carries it as
+  `put_by` beside `player` (the recipient's controller).
+- `put_by: "you"` on a trigger (schema `TriggerModel`, `TriggerSpec`, loader,
+  `triggers._matches`): the event's putter must be the ability's controller. An
+  emission with no putter fails. Refused on any event but `counter_placed`;
+  `"you"` is the only value, mirroring the static.
+- "One or more" is already one event per placement; a failed match never
+  queues, so an opponent's placement does not spend the once-each-turn cap.
+- `tests/unit/test_counter_placed_put_by.py` (+ `tests/data/counter_placed_put_by.cards.json`)
+  -- mine fires, an opponent's (explicit `by` or their source) does not, both
+  players on the event, a spell end to end, three-at-once is one trigger, the
+  cap and its reset, and the loader guards.
+- Unblocks Exemplar of Light.
+
+## `cant_cast_spells_from_zones` static — Drannith Magistrate's "Your opponents can't cast spells from anywhere other than their hands" — 101.2 / 903.8
+
+The engine had the sentence only as a timed one-shot (Avatar's Wrath: a `CastLock` row
+with a `this_turn` / `until_your_next_turn` clock), and the `cant_cast_spells` static
+has no "from". The new player-wide static `cant_cast_spells_from_zones` takes the op's
+`zones` / `except_zones` (validated by the op's own check, resolved to the positive list
+at load time by the op's own `ops_player.shut_cast_zones`) and has no reader of its own:
+`player_statics.static_cast_locked_zones` is unioned into `primitives.cast_locked_zones`,
+so `casting._cast_actions`, `suspend.cast_for_free` and `replacements._offer_cast`
+enforce it by the call they already make — flashback, foretell, the Citadel top, cascade
+and the command zone (opponents cannot cast their commanders). It lifts the instant its
+source leaves and honours a `condition`. Test: `tests/unit/test_static_zone_cast_lock.py`.
+
+## `grant_protection` `from_colorless` — Giver of Runes — 702.16, 105.2c
+
+"Protection from colorless" had no spelling. `from_colors` holds colour letters and
+`_matches_protection` intersects the qualities with the source's types, subtypes and
+colours, so a colourless source — empty colour set — could match no quality at all.
+`from_colorless: true` on the op and on the printed `protection` static stores the
+sentinel `PROTECTION_COLORLESS` in the same flat set `from_everything` uses, and
+`_matches_protection` matches it on what the source lacks: no colours at all, from
+derived characteristics on the battlefield and printed ones elsewhere. All four rules
+(damage, enchant/equip, block, target) see it unchanged. The loader refuses `"C"` or
+`"colorless"` as a colour letter, the flag beside `from_everything`, a non-boolean flag,
+and the sentinel words as `from_subtypes` entries. Test:
+`tests/unit/test_protection_from_colorless.py`.
+
+## `damage_life_floor` static — "damage that would reduce your life total to less than 1 reduces it to 1 instead" — Serra the Benevolent's emblem, Worship — 614
+
+The engine had only the one-shot form: Angel's Grace's `damage_life_floor` op, a
+timed `LifeFloor` whose only duration is "this turn". Serra the Benevolent's −6
+emblem lasts the game, and its "if you control a creature" must be re-asked at
+every damage event — the whole drawback of Worship — which a record written once
+cannot do. The `damage_life_floor` player-wide static (`amount` the floor, required
+and ≥ 1; `affects_player`; an optional `condition`; `affects` refused) is read by
+`player_statics.static_life_floor` through `_active_player_statics`, command zone
+included, and `temp_effects.life_floor` — the one reader `primitives.damage_player`
+asks — now takes the highest of the timed records and the statics. A floor on the
+loss, not a prevention: `DAMAGE_DEALT` carries the whole hit and `LIFE_LOST` only
+what left. Damage only, so `lose_life` and paid life walk past it. Test:
+`tests/unit/test_damage_life_floor_static.py` — lethal damage stops at 1 with a
+creature and kills without one, the condition read at the moment of damage both
+ways round, life loss as the near miss, the seat named, Worship on the battlefield
+lifting when it leaves, and the loader's refusals.
+
+## Counters a permanent enters with fire `counter_placed` -- 122.6 (fix)
+
+- **The bug.** `zones._enter_with_counters` wrote an arriving permanent's counters
+  onto it and fired nothing, "because the permanent was never on the battlefield
+  without them". 122.6 says counters given to an object as it enters are "put"
+  on it, and the Simic Ascendancy / Sharktocrab ruling says a trigger on counters
+  being put "will trigger if that permanent somehow enters the battlefield with
+  those counters". Exemplar of Light entering under Giada, Font of Hope drew
+  nothing.
+- **The fix.** `zones._fire_entered_with_counters`, called by `_enter_battlefield`
+  right after ENTERS_BATTLEFIELD (so the permanent's own "...on this creature" is a
+  candidate): one COUNTER_PLACED per counter kind, with the amount that actually
+  arrived -- printed `self_enters_with_counters`, starting loyalty, defense, a Saga's
+  first lore counter, `enters_with_additional_counters`, riot and compleated all
+  already applied, replacements included -- `put_by` the permanent's controller
+  (122.6a) and `source` the permanent.
+- **Unchanged.** A Saga's chapter I is still `sagas.entered`'s alone: the lore
+  COUNTER_PLACED reaches no chapter comparison, so chapter I triggers once.
+- `tests/unit/test_counters_as_it_enters.py` (+ `tests/data/counters_as_it_enters.cards.json`):
+  the Giada + Exemplar witness (cast and moved), the event's order, amount and
+  putter, once-each-turn, printed enters-with, Doubling Season's replaced amount,
+  starting loyalty with Oath of Gideon, the Saga single chapter, and the near
+  misses (no counters, a non-Angel under Giada, an opponent's arrival).
+
+## `alternative_cost` on a permanent — Sephara, Sky's Blade's "{W} and tap four untapped creatures you control with flying" — 118.9 / 601.2h / 302.6
+
+The engine already cast it: `alternative_cost` is a full `Cost`, `tap_permanents` is
+Captivating Vampire's cost, `casting` offers the line beside the printed one and
+`game._cast` charges it. The pool is read off the battlefield, so the spell in hand
+never taps itself, and summoning-sick fliers pay (302.6 restricts only a creature's own
+{T}/{Q}). The heuristic agent takes the line when the printed cost is out of reach.
+
+What was missing was the residual-gate claimant: the seven shipped users are instants,
+whose lines `spell_effects` claims wholesale. `verify._covered` now claims "[If …, ]you
+may <payment> rather than pay this spell's mana cost" and "[If …, ]you may cast this
+spell without paying its mana cost" only when the card declares `alternative_cost` and
+the printed payment matches it — mana symbols parse to `mana` (none printed means
+free), "tap N untapped <noun> you control with <keyword>" is the `tap_permanents`
+count/types/keywords, "pay N life" is `pay_life`, sacrifice/return/exile-from-hand/
+discard are printed exactly when declared, and any other field fails closed. A mismatch
+falls through to the ordinary ability claimants rather than claiming.
+
+- `tests/unit/test_alternative_cost_permanent.py` (+
+  `tests/data/alternative_cost_permanent.cards.json`) — offered with four fliers and a
+  Plains, not with three (the spell is not one of them), not with tapped fliers or
+  non-fliers or without the {W}; sick fliers pay; it taps exactly four and one Plains;
+  five fliers is a choice; the agent takes it; the claimant claims the right line,
+  refuses wrong colour / amount / count / narrowing / type / missing tap / unread field,
+  ignores a mere mention of a free cast, and reads all seven shipped instants' lines.
+- Unblocks Sephara, Sky's Blade.
+
+## `owner` in a trigger filter, and `TRIGGER_FILTER_KEYS` — Tome of Legends — 903.3
+
+"Whenever your commander enters or attacks" is two triggers with `controller: "any"`
+and `filter: {is_commander: true, owner: "you"}`. `owner` was a legal selector key
+(`selectors.matches` and the static filter read it) but `triggers.matches_card_filter`
+did not, so the filter loaded and fired on every commander at the table. It now reads
+`GameObject.owner` against the ability's controller: your commander attacking for the
+opponent who stole it adds a page, an opponent's commander you have stolen does not.
+
+The audit behind it: besides `owner`, 33 of `SELECTOR_KEYS` were accepted in a trigger filter and never
+read by the matcher (`name`, `not_name`, `not_colors`, `not_keywords`, `not_subtypes`,
+`attacking`, `blocking`, `blocked`, `attacked_this_turn`, `modified`, `damaged`,
+`base_power`, `base_toughness`, `x_in_mana_cost`, the `shares_*_with` relations,
+`exclude_binding`, `exiled_with`, `phased_out_with`, `drawn_this_turn`, `any_of`,
+`union`, and the pool-shaping keys `target`, `binding`, `player`, `count`, `chooser`,
+`random`, `optional`, `extreme`, `object_kind`), as was a player-spec or
+`enchanted_player` `controller`. No shipped card uses any of them, so rather than
+implementing keys with no witness the loader now validates a trigger filter (and a
+`double_triggers` `cause_filter`, matched by the same function) against
+`triggers.TRIGGER_FILTER_KEYS` — exactly the keys the matcher reads, held in step by a
+test — and refuses the rest. The packet reference names the list as
+`trigger_filter_keys`. Test: `tests/unit/test_trigger_filter_owner.py`.
+
+## Everything a permanent enters with is one counter placement -- 122.6 / 616.1 (fix)
+
+- **The bug.** Each "enters with" was replaced on its own (`_enter_with_counters`
+  per source), and `enters_with_additional_counters` (Giada, Font of Hope; Oath
+  of Gideon) wrote its counters with no replacement at all. Doubling Season with
+  a printed-two Angel under Giada gave 2*2 + 1 = 5, not (2+1)*2 = 6; Hardened
+  Scales gave an Angel entering with only Giada's counter nothing extra; a
+  walker under Oath of Gideon and Doubling Season got 4*2 + 1 = 9, not 10.
+- **The fix.** `zones._enter_battlefield` gathers every "enters with" amount per
+  counter kind -- printed `self_enters_with_counters`, starting loyalty (306.5b),
+  battle defense, a Saga's lore counter, `_board_additional_counters`, riot --
+  and `zones._entering_counters` puts them on as one placement: the `replace_counters`
+  statics and compleated (`_compleated_reduction`) are further replacements on
+  the same event, each applied once (614.5), in the order the controller chooses
+  (616.1e-f). The engine takes the order leaving the most counters, searched over
+  every order the rules allow (an "if one or more" replacement cannot be chosen
+  while the count is zero). COUNTER_PLACED reports that total.
+- **Compleated's order.** 702.150a applies only to an arrival that "would enter
+  with one or more loyalty counters", and its ruling says other replacements
+  "apply as normal". Under 616.1f it becomes choosable once *any* "enters with"
+  has applied, not necessarily the walker's own: with Oath of Gideon, Oath (1)
+  -> compleated (to 0) -> printed loyalty is a legal order, and the engine
+  takes it. `tests/unit/test_enters_with_additional_counters.py`'s three-loyalty,
+  four-life walker under the Oath now enters with 3 (it was pinned at 1, printed
+  -> compleated -> Oath). No ruling addresses the pair; this is the literal reading.
+- **Divergence kept.** A placement on the battlefield (`primitives.add_counters`)
+  still applies counter statics in battlefield order; only an arrival's
+  counters are ordered for the controller.
+- `tests/unit/test_counters_as_it_enters.py::TestOnePlacement`: Doubling Season +
+  printed-two Angel under Giada = 6; Hardened Scales + Giada alone = 2; Scales
+  once on printed + Giada = 4; Scales before Season = 6 regardless of arrival
+  order; Scales alone on an arrival with none = 0; Oath + Season walker = 10;
+  Oath + Scales walker = 5 (Scales is creatures only); each with COUNTER_PLACED
+  equal to the total.
+
+## `cant_cast_spells` by mana value — Brisela, Voice of Nightmares' "Your opponents can't cast spells with mana value 3 or less" — 202.3e, 107.3b
+
+The cast lock's `affects_spells` filter read the printed face only and had no
+mana-value key. It now takes `mana_value` (`{"op": "<=", "value": 3}` or a bare
+number, literal only; the loader refuses anything else), and only this filter does
+(`CAST_LOCK_FILTER_KEYS`), because it is the only reader that knows the X a spell is
+cast for. 202.3e counts that X, so `player_statics.cast_lock_min_x` returns the least
+X that lifts the lock (None when none does): `casting._cast_variant` offers an X line
+only when `max_affordable_x` reaches it and refuses a price with no X (a free cast,
+107.3b); `game._cast` passes it to `ask_x` as `min_x`, whose options start at the
+floor (ordinal = X - floor, `min_x` in the decision context). The client's X stepper
+reads `min_x` and the verifier's life guard adds it back. Test:
+`tests/unit/test_cant_cast_mana_value.py` (+ `tests/data/cant_cast_mana_value.cards.json`).
+
+## A melded permanent's mana value — Brisela, Voice of Nightmares — the meld rules
+
+The melded card prints no mana cost, so `op_meld`, which wrote the pool entry itself
+onto the permanent, left Brisela at mana value 0. Its mana value is the total of its
+front faces' (the ruling: "Brisela's mana value is 11"). `CardDef.melded_mana_value`
+(never authored) answers `CardDef.mana_value` when set; `op_meld` writes a
+synthesised `CardDef` — the pool entry plus that sum — exactly as mutate synthesises
+its merged card, so the pool entry and the printed empty `mana_cost` are untouched and
+the halves read their own values again once apart. The engine's five direct
+`mana_cost.mana_value()` reads of an object (emerge, convoke ordering, the
+total-mana-value value, target totals) now go through the property. Test:
+`tests/unit/test_meld.py::TestItsManaValue`.
+
+## Authoring a meld pair — Gisela, the Broken Blade + Bruna, the Fading Light → Brisela — 701.37
+
+The engine had meld (the op, `melds_with` / `melds_into`, `link_meld_results`) and only
+test cards used it: the pipeline could not ship a pair. Two holes. The melded card had
+no source text — the catalog keeps it as its own row and links nothing — so the half's
+packet now carries a `meld_result` block (`packet.meld_result_of`, looked up by the name
+in "meld them into <name>"), and the result travels in the answer's `back` like a back
+face. The partner is a card of its own with its own answer, and when machine-authored it
+sat in the auto batch the gates verify without, so `link_meld_results` refused the half:
+`verify` gained `partners` (only the id `melds_with` names, never over an existing card,
+written nowhere), `--collect` supplies it from the batch and this run's accepted answers
+(`_meld_partners`) and verifies partner-naming halves last (`_meld_halves_last`), and
+`tests/cards/test_auto_cards.py` treats `melds_into` as a face and passes the partner the
+same way. Tests: `tests/cards/test_authoring.py::TestAMeldPairIsTwoAnswersAndAResult`.

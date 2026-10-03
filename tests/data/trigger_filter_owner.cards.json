@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_trigger_filter_owner.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_page_keeper` is Tome of Legends' trigger pair, written as the card writes it; `t_page_keeper_by_control` is the near miss -- the same triggers with `controller: \"you\"` in the filter instead of `owner: \"you\"` -- so the difference between the two readings is visible on one board.",
+  "cards": [
+    {
+      "id": "t_page_keeper",
+      "name": "Test Page Keeper",
+      "oracle_text": "Whenever your commander enters or attacks, put a page counter on this artifact.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever your commander enters, put a page counter on this artifact.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {"is_commander": true, "owner": "you"}
+          },
+          "effects": [
+            {"op": "add_counters", "counter": "page", "amount": {"const": 1}, "objects": {"self_only": true}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever your commander attacks, put a page counter on this artifact.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "filter": {"is_commander": true, "owner": "you"}
+          },
+          "effects": [
+            {"op": "add_counters", "counter": "page", "amount": {"const": 1}, "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_page_keeper_by_control",
+      "name": "Test Page Keeper By Control",
+      "oracle_text": "Whenever a commander you control attacks, put a page counter on this artifact.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a commander you control attacks, put a page counter on this artifact.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "filter": {"is_commander": true, "controller": "you"}
+          },
+          "effects": [
+            {"op": "add_counters", "counter": "page", "amount": {"const": 1}, "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    }
+  ]
+}

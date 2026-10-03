@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "folk_hero",
+    "name": "Folk Hero",
+    "oracle_text": "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.\"",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Background"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "shares_a_creature_type_with": "self"
+          },
+          "max_per_turn": 1
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you"
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.\"",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {
+          "types": [
+            "Creature"
+          ],
+          "is_commander": true,
+          "owner": "you"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

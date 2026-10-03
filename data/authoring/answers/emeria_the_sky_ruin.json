@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "emeria_the_sky_ruin",
+    "name": "Emeria, the Sky Ruin",
+    "oracle_text": "This land enters tapped.\nAt the beginning of your upkeep, if you control seven or more Plains, you may return target creature card from your graveyard to the battlefield.\n{T}: Add {W}.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["W"],
+    "replacements": [
+      {"event": "self_enters_tapped"}
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, if you control seven or more Plains, you may return target creature card from your graveyard to the battlefield.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"controller": "you", "subtypes": ["Plains"], "zone": "battlefield"}},
+            "right": {"const": 7}
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]},
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "objects": {"target": "t1"},
+            "destination": "battlefield",
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "cost": {"tap": true},
+        "effects": [{"mana": "{W}", "op": "add_mana"}],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {W}."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

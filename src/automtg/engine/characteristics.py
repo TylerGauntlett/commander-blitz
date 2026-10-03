@@ -86,7 +86,7 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
-from .structs import PROTECTION_EVERYTHING, Characteristics
+from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
 
@@ -143,6 +143,31 @@ def chars(state: GameState, oid: int) -> Characteristics:
     result = _compute(state, oid)
     state.char_cache[oid] = result
     return result
+
+
+def creature_types_of(state: GameState, oid: int | None) -> frozenset[str]:
+    """The **creature types** an object currently has -- 205.3m, not its subtypes.
+
+    "…a spell that shares a creature type with this creature" -- Folk Hero. The
+    distinction is the whole point: subtypes are one flat set here, and a
+    Background, an Aura, an Equipment, an Arcane or an Adventure is a subtype
+    and *not* a creature type, so intersecting raw subtypes would let a
+    Background cast beside a Background commander "share a creature type".
+
+    Read off :func:`chars`, so a changeling's printed list and a granted type
+    count, and filtered through `SUBTYPE_CLASS` with Creature as the default --
+    the same default the type-replacement layer uses, which is how a Kindred
+    instant's Goblin counts (205.3m gives Kindred objects creature types) while
+    an ordinary instant, whose only subtypes are spell types, shares none. A
+    missing object has none.
+    """
+    if oid is None or state.objects.get(oid) is None:
+        return frozenset()
+    return frozenset(
+        sub
+        for sub in chars(state, oid).subtypes
+        if SUBTYPE_CLASS.get(sub, "Creature") == "Creature"
+    )
 
 
 def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
@@ -1257,6 +1282,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         for factor in expr["times"]:
             result *= _static_value(state, factor, source)
         return result
+    if "sum" in expr:
+        # "At least 7 life more than your starting life total" (Righteous
+        # Valkyrie) -- a threshold offset from a measured number. The effect-side
+        # `sum`, with every term held to this language by the loader.
+        return sum(_static_value(state, term, source) for term in expr["sum"])
+    if "starting_life_of" in expr:
+        # Rule 103.4, recorded on the seat when the game began. A pipeline
+        # input on the strongest terms there are: nothing writes it after that.
+        pids = _static_players(state, source, expr["starting_life_of"])
+        return sum(state.players[p].starting_life for p in pids)
     if "mana_symbols" in expr:
         # Chroma -- Primalcrux's "power and toughness are each equal to the
         # number of green mana symbols in the mana costs of permanents you
@@ -1558,6 +1593,7 @@ def _matches_printed(
     selector: Mapping[str, Any],
     added_subtypes: tuple[str, ...] = (),
     text_changes: tuple[tuple[str, str], ...] = (),
+    x: int = 0,
 ) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -1664,7 +1700,39 @@ def _matches_printed(
 
         if not printed_cost_is(card.mana_cost, wanted_cost):
             return False
+    # "Your opponents can't cast spells with **mana value 3 or less**" --
+    # Brisela, Voice of Nightmares. The selector language's comparison shape,
+    # `{"op": "<=", "value": 3}`, with a literal number, because a printed face
+    # has no context to evaluate anything richer against. Only a
+    # `cant_cast_spells` filter may write it (`CAST_LOCK_FILTER_KEYS`), and
+    # that reader passes ``x``: 202.3e counts the X a spell on the stack was
+    # cast with, so a Fireball cast for X = 3 has mana value 4.
+    if (wanted_mv := selector.get("mana_value")) is not None and not _compare_printed(
+        card.mana_value + x * card.mana_cost.x_count, wanted_mv
+    ):
+        return False
     return True
+
+
+def _compare_printed(value: int, spec: Any) -> bool:
+    """The static twin of `effects.selectors._compare`, over literal numbers only."""
+    if isinstance(spec, int):
+        return value == spec
+    other = int(spec.get("value", 0))
+    op = spec.get("op", ">=")
+    if op == ">=":
+        return value >= other
+    if op == "<=":
+        return value <= other
+    if op == ">":
+        return value > other
+    if op == "<":
+        return value < other
+    if op in ("=", "=="):
+        return value == other
+    if op == "!=":
+        return value != other
+    raise ValueError(f"unknown comparison operator {op!r}")
 
 
 def has_any_counter(obj: GameObject) -> bool:
@@ -2054,6 +2122,8 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         out.update(static.get("from_types", ()))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
+        if static.get("from_colorless"):
+            out.add(PROTECTION_COLORLESS)
         if static.get("from_colors_outside_commander_identity"):
             # "Your commander" is the static's controller's -- the Plate's, not
             # the equipped creature's, and it follows the Equipment when it
@@ -2214,9 +2284,18 @@ def _matches_protection(
     # the same rule `selectors.matches` follows, so "protection from Wizards"
     # sees a creature that was *granted* the Wizard subtype.
     if source.on_battlefield:
-        have = set(c.types) | set(c.subtypes) | set(c.colors)
+        colors = set(c.colors)
+        have = set(c.types) | set(c.subtypes) | colors
     else:
-        have = set(card.types) | set(card.subtypes) | set(card.colors)
+        colors = set(card.colors)
+        have = set(card.types) | set(card.subtypes) | colors
+    # "Protection from colorless" (Giver of Runes). Colorless is not a colour
+    # (105.2c), so it is the one quality matched on what the source *lacks*:
+    # a source with no colours at all, read off the same derived-or-printed
+    # characteristics as everything else, so a permanent a `set_colors` static
+    # has made colourless is matched and one given a colour is not.
+    if PROTECTION_COLORLESS in qualities and not colors:
+        return True
     return bool(have & qualities)
 
 
@@ -2266,11 +2345,14 @@ from .player_statics import (  # noqa: F401
     attack_tax,
     block_alone_forbidden,
     block_forbidden,
+    block_tax,
+    cast_lock_min_x,
     commander_subtypes,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
     library_top_cast_permission,
+    life_gain_addend,
     life_gain_multiplier,
     life_loss_multiplier,
     mana_added_on_tap,

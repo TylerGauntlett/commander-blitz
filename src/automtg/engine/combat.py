@@ -115,23 +115,43 @@ def can_attack(state: GameState, oid: int) -> bool:
     return combat is None or oid not in combat.attackers
 
 
-def attack_tax_cost(state: GameState, oid: int, defender: int):
+def attack_tax_cost(state: GameState, oid: int, defender: int, *, planeswalker: bool = False):
     """The `Cost` to declare ``oid`` against ``defender``, or ``None`` if free.
 
     Propaganda. Built here rather than in `characteristics`, which cannot import
     `costs` -- `costs` imports it. The mana string comes from the statics; this
     turns it into the same `Cost` every other payment goes through, so the tax
     is solved, restricted-mana-checked and charged by exactly one code path.
+
+    ``planeswalker`` prices an attack on one of ``defender``'s planeswalkers,
+    which only an ``or_planeswalkers`` tax reaches (Archangel of Tithes).
     """
-    from .carddef import Cost
     from .characteristics import attack_tax
+
+    return _tax_cost(attack_tax(state, oid, defender, planeswalker=planeswalker))
+
+
+def block_tax_cost(state: GameState, oid: int):
+    """The `Cost` to declare ``oid`` as a blocker, or ``None`` if free.
+
+    Archangel of Tithes' "creatures can't block unless their controller pays
+    {1} for each of those creatures" -- `attack_tax_cost` at declare-blockers.
+    """
+    from .characteristics import block_tax
+
+    return _tax_cost(block_tax(state, oid))
+
+
+def _tax_cost(mana: str):
+    from .carddef import Cost
     from .mana import ManaCost
 
-    mana = attack_tax(state, oid, defender)
     return Cost(mana=ManaCost.parse(mana)) if mana else None
 
 
-def attack_tax_payable(state: GameState, oid: int, defender: int, cost=None) -> bool:
+def attack_tax_payable(
+    state: GameState, oid: int, defender: int, cost=None, *, planeswalker: bool = False
+) -> bool:
     """Can this attack be paid for? An unpayable tax is a prohibition (508.1g).
 
     "Creatures can't attack you **unless** their controller pays" -- so a
@@ -140,12 +160,21 @@ def attack_tax_payable(state: GameState, oid: int, defender: int, cost=None) -> 
     optional cost, and it keeps the declare-attackers action list honest: every
     ADD_ATTACKER on it is one the player can actually make.
     """
-    from .costs import can_pay
-
     # `cost` is passed in by `legality`, which is the hot path of the attack
     # mask and has already built it once for the label.
     if cost is None:
-        cost = attack_tax_cost(state, oid, defender)
+        cost = attack_tax_cost(state, oid, defender, planeswalker=planeswalker)
+    return combat_tax_payable(state, oid, cost)
+
+
+def combat_tax_payable(state: GameState, oid: int, cost) -> bool:
+    """Can ``oid``'s controller fund this attack or block tax right now?
+
+    Shared by both declarations, so an attack tax and a block tax are judged
+    affordable by the same `can_pay` -- 508.1g and 509.1e are one rule twice.
+    """
+    from .costs import can_pay
+
     if cost is None:
         return True
     obj = state.objects.get(oid)
@@ -155,6 +184,18 @@ def attack_tax_payable(state: GameState, oid: int, defender: int, cost=None) -> 
     # this, it is only the thing being priced -- passing it would let a `tap`
     # in the cost tap the attacker.
     return can_pay(state, obj.controller, cost, None)
+
+
+def block_taxed(state: GameState, oid: int) -> bool:
+    """Does declaring this creature as a blocker cost anything?
+
+    509.1c: "If a creature can't block unless a player pays a cost, that player
+    is not required to pay that cost, even if blocking with that creature would
+    increase the number of requirements being obeyed." So a provoked or lured
+    creature under Archangel of Tithes owes nothing -- it may block whatever it
+    likes, or nothing at all, and "Done blocking" is not withheld for it.
+    """
+    return bool(block_tax_cost(state, oid))
 
 
 def attack_required(state: GameState, oid: int) -> bool:
@@ -249,6 +290,9 @@ def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
         if combat.blockers.get(oid) == attacker:
             continue
         if not can_block(state, oid, attacker, defender, ignore_existing=True):
+            continue
+        # 509.1c: nobody is required to pay a block tax to obey a requirement.
+        if block_taxed(state, oid):
             continue
         unmet.append(oid)
     return unmet
@@ -745,6 +789,12 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
                 source=oid,
                 attacker=oid,
                 defender=combat.attackers[oid],
+                # The planeswalker or battle it attacks, when it attacks one
+                # rather than a seat. `defender` is that permanent's controller
+                # either way; the turn ledger needs to know the difference,
+                # because only a creature that attacked a *player* attacked
+                # that player (Angel of Destiny).
+                attacked_permanent=combat.attacking_permanent.get(oid),
             )
     combat.pending_blockers = [
         pid for pid in state.turn_order() if pid in set(combat.attackers.values())
@@ -1028,6 +1078,10 @@ def _required_block(state: GameState, blocker_oid: int, defender: int) -> int | 
         return None
     if not can_block(state, blocker_oid, attacker, defender, ignore_existing=True):
         # "…if able". It owes nothing, so it is free to block whatever it likes.
+        return None
+    if block_taxed(state, blocker_oid):
+        # 509.1c: a requirement never obliges a player to pay a block tax, so
+        # a taxed creature owes nothing either -- and is just as free.
         return None
     return attacker
 

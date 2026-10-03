@@ -1,0 +1,47 @@
+{
+  "_comment": "Cards that exist only for the mana-value cast prohibition test (tests/unit/test_cant_cast_mana_value.py). `t_mv_lock` is Brisela, Voice of Nightmares' last line alone on an enchantment, so the lock can be seen to lift when its source leaves. `t_mv3` and `t_mv4` are vanilla creatures either side of the threshold.",
+  "cards": [
+    {
+      "id": "t_mv_lock",
+      "name": "Test Mana Value Lock",
+      "oracle_text": "Your opponents can't cast spells with mana value 3 or less.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast spells with mana value 3 or less.",
+          "effect": "cant_cast_spells",
+          "affects_player": "opponent",
+          "affects_spells": {"mana_value": {"op": "<=", "value": 3}}
+        }
+      ]
+    },
+    {
+      "id": "t_mv3",
+      "name": "Test Three Drop",
+      "oracle_text": "",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    },
+    {
+      "id": "t_mv4",
+      "name": "Test Four Drop",
+      "oracle_text": "",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    }
+  ]
+}

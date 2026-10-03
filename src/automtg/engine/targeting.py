@@ -420,7 +420,7 @@ def _within_total(
         obj = state.objects.get(ref.id)
         if obj is None:
             continue
-        total += state.card_of(obj).mana_cost.mana_value()
+        total += state.card_of(obj).mana_value
     return total <= cap
 
 def _spec_options(

@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "farewell",
+    "name": "Farewell",
+    "oracle_text": "Choose one or more —\n• Exile all artifacts.\n• Exile all creatures.\n• Exile all enchantments.\n• Exile all graveyards.",
+    "mana_cost": "{4}{W}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "or_more": true,
+        "modes": [
+          {
+            "label": "Exile all artifacts.",
+            "effects": [
+              {"op": "exile", "objects": {"zone": "battlefield", "types": ["Artifact"], "count": "all"}}
+            ]
+          },
+          {
+            "label": "Exile all creatures.",
+            "effects": [
+              {"op": "exile", "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}}
+            ]
+          },
+          {
+            "label": "Exile all enchantments.",
+            "effects": [
+              {"op": "exile", "objects": {"zone": "battlefield", "types": ["Enchantment"], "count": "all"}}
+            ]
+          },
+          {
+            "label": "Exile all graveyards.",
+            "effects": [
+              {"op": "exile", "objects": {"zone": "graveyard", "controller": "any", "count": "all"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard", "battlefield_count": 30, "opponent_battlefield_count": 2, "graveyard_size": {"0": 1, "1": 0}}
+}

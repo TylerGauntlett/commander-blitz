@@ -436,9 +436,10 @@ export function describeEvent(
      * The `counter_placed` line beside it already says "Oath of Eorl gets 1
      * lore", and that is the bookkeeping rather than the event: what a player
      * needs to read is *which chapter is happening*, since the three do
-     * different things and only one of them is about to end the card. It is also
-     * the only line that appears at all when a Saga enters, because the counter
-     * it enters with is placed by a replacement and emits nothing.
+     * different things and only one of them is about to end the card. A Saga
+     * entering gets the same pair: the lore counter it enters with is "put on"
+     * it too (122.6), so the engine emits `counter_placed` for it after the
+     * enters event, and the chapter line follows.
      *
      * Numbered in Roman, as the card is. A Saga's chapters are printed "I", "II",
      * "III" and a log reading "chapter 2" would not match the card the player is
@@ -490,6 +491,26 @@ export function describeEvent(
       return `${who} ${v("discard", "discards")} ${card ?? "a card"}`;
     case "cycled":
       return `${who} ${v("cycle", "cycles")} ${card ?? "a card"}`;
+    /*
+     * A library search (701.19) -- a tutor, a fetchland, landcycling.
+     *
+     * Nothing else in the log says it: the shuffle that ends a search emits
+     * nothing, and a search that finds nothing moves no card. That silence is
+     * what Archivist of Oghma's controller would be staring at -- life and a
+     * card arriving with no line to say why -- so the search gets its own.
+     *
+     * `owner` is whose library it was. Every search the engine has is of the
+     * searcher's own, which is "their library"; another player's is named, so
+     * the line cannot claim the wrong library if one ever is.
+     */
+    case "library_searched": {
+      const owner = typeof event.data.owner === "number" ? event.data.owner : event.player;
+      if (owner === event.player) {
+        return `${who} ${v("search your", "searches their")} library`;
+      }
+      const theirs = owner === null ? "a" : `${names[owner] ?? `P${owner}`}'s`;
+      return `${who} ${v("search", "searches")} ${theirs} library`;
+    }
     case "damage_dealt":
       if (amount === null || amount <= 0) return null;
       return event.data.to === "player"

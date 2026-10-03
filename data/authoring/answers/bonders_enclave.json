@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "bonders_enclave",
+    "name": "Bonders' Enclave",
+    "oracle_text": "{T}: Add {C}.\n{3}, {T}: Draw a card. Activate only if you control a creature with power 4 or greater.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "cost": {"tap": true},
+        "is_mana_ability": true,
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: Draw a card. Activate only if you control a creature with power 4 or greater.",
+        "cost": {"mana": "{3}", "tap": true},
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "types": ["Creature"],
+            "zone": "battlefield",
+            "power": {"op": ">=", "value": {"const": 4}}
+          }
+        },
+        "effects": [{"op": "draw", "amount": {"const": 1}, "player": "you"}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

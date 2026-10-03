@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "grasp_of_fate",
+    "name": "Grasp of Fate",
+    "oracle_text": "When this enchantment enters, for each opponent, exile up to one target nonland permanent that player controls until this enchantment leaves the battlefield. (Those permanents return under their owners' control.)",
+    "mana_cost": "{1}{W}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, for each opponent, exile up to one target nonland permanent that player controls until this enchantment leaves the battlefield.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": "any",
+            "one_per_player": true,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "not_types": ["Land"]
+            }
+          }
+        ],
+        "effects": [
+          {"op": "exile", "objects": {"target": "t1"}, "until_leaves": true}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, for each opponent, exile up to one target nonland permanent that player controls until this enchantment leaves the battlefield.",
+        "trigger": {"event": "leaves_battlefield", "source": "self"},
+        "effects": [
+          {
+            "op": "put_onto_battlefield",
+            "objects": {"zone": "exile", "controller": "any", "exiled_with": "self"},
+            "controller": "owner"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5
+  }
+}

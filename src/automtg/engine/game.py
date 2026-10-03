@@ -162,6 +162,8 @@ class Game:
             raise IllegalActionError(f"{action.kind} is not a priority action")
 
     def _dispatch_attackers(self, action: Action, decision: PendingDecision) -> None:
+        from .combat import attack_tax_cost
+
         state = self.state
         if action.kind is ActionKind.ADD_ATTACKER:
             ref = action.targets[0]
@@ -176,7 +178,8 @@ class Game:
                 # other payment. A pure-mana cost never actually yields, since
                 # `pay_mana` solves and taps on its own, so the declaration is
                 # not interrupted.
-                if not self._pay_attack_tax(action.source, ref.id):
+                cost = attack_tax_cost(state, action.source, ref.id)
+                if not self._pay_combat_tax(action.source, cost):
                     return
                 add_attacker(state, action.source, ref.id)
             else:
@@ -185,6 +188,13 @@ class Game:
                 # existing read of it stays true.
                 walker = state.objects.get(ref.id)
                 if walker is not None:
+                    # Archangel of Tithes taxes an attack on "planeswalkers you
+                    # control" too, charged here exactly as the player branch.
+                    cost = attack_tax_cost(
+                        state, action.source, walker.controller, planeswalker=True
+                    )
+                    if not self._pay_combat_tax(action.source, cost):
+                        return
                     add_attacker(
                         state, action.source, walker.controller, permanent=ref.id
                     )
@@ -192,18 +202,17 @@ class Game:
         state.pending_decision = None
         self._run(finish_attackers(state))
 
-    def _pay_attack_tax(self, oid: int, defender: int) -> bool:
-        """Charge any attack tax for declaring ``oid`` against ``defender``.
+    def _pay_combat_tax(self, oid: int, cost) -> bool:
+        """Charge an attack or block tax for declaring ``oid``.
 
-        Returns whether the attack may proceed. Legality only offers an
-        ADD_ATTACKER it has already found payable, so a False here means the
-        board moved underneath the action -- the same contract `op_may` has
-        after its own `can_pay`.
+        Returns whether the declaration may proceed. Legality only offers an
+        ADD_ATTACKER or ADD_BLOCKER it has already found payable, so a False
+        here means the board moved underneath the action -- the same contract
+        `op_may` has after its own `can_pay`. The creature's controller pays:
+        "unless **their controller** pays", for both taxes.
         """
-        from .combat import attack_tax_cost
         from .costs import pay
 
-        cost = attack_tax_cost(self.state, oid, defender)
         if cost is None:
             return True
         obj = self.state.objects.get(oid)
@@ -228,6 +237,12 @@ class Game:
     def _dispatch_blockers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state
         if action.kind is ActionKind.ADD_BLOCKER:
+            # Archangel of Tithes' {1}, charged as the blocker is declared --
+            # the 509.1d twin of the attack tax above, with the same contract.
+            from .combat import block_tax_cost
+
+            if not self._pay_combat_tax(action.source, block_tax_cost(state, action.source)):
+                return
             # `subject`, not `player`: the block belongs to the defender even when
             # Odric's controller is the one declaring it, so `add_blocker` keeps
             # validating against the defender's creatures and requirements.
@@ -300,6 +315,8 @@ class Game:
         # with the choice. Last of the four, because the copy above decides
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
+        # Its own simultaneous event, as a resolving spell's arrival is.
+        state.event_batch += 1
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
@@ -373,7 +390,7 @@ class Game:
             # The sacrificed creature pays for part of the spell, so it is netted
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
-            extra -= state.card(action.emerge_oid).mana_cost.mana_value()
+            extra -= state.card(action.emerge_oid).mana_value
         elif action.flashback and card.flashback is not None:
             cost = card.flashback.mana
             # "…costs {X} less to cast **this way**". Netted into `extra` on this
@@ -532,7 +549,18 @@ class Game:
         # becomes a real number. The ceiling is computed with the same `extra`
         # the payment below will use, so the largest offered X is always one the
         # player can actually pay for.
-        x = yield from self._ask_x(pid, card.name, cost, extra, spell_purpose(card))
+        #
+        # Floored by a mana-value lock (Brisela), which this line escapes only
+        # by announcing enough X -- asked of the same face legality asked it of.
+        from .casting import _spell_as_cast
+        from .characteristics import cast_lock_min_x
+
+        min_x = cast_lock_min_x(
+            state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
+        )
+        x = yield from self._ask_x(
+            pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
+        )
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
@@ -1087,8 +1115,13 @@ class Game:
         exclude_oid: int | None = None,
         cost_node: Cost | None = None,
         cost_source: int | None = None,
+        min_x: int = 0,
     ) -> Generator[Any, list[int], int]:
         """How big is X, if this cost has one at all?
+
+        ``min_x`` is the floor a mana-value casting lock puts under it -- see
+        `player_statics.cast_lock_min_x`. Legality offered the cast only when
+        the ceiling reached it.
 
         The ceiling is recomputed here rather than taken from the action,
         because the board can have moved between legality offering the spell and
@@ -1131,7 +1164,12 @@ class Game:
         ctx = EffectContext(state=state, controller=pid, source_oid=None)
         return (
             yield from ask_x(
-                ctx, f"Choose X for {name}", ceiling, pid, per_point=cost.x_count
+                ctx,
+                f"Choose X for {name}",
+                ceiling,
+                pid,
+                per_point=cost.x_count,
+                min_x=min_x,
             )
         )
 

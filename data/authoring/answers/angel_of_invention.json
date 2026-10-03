@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "angel_of_invention",
+    "name": "Angel of Invention",
+    "oracle_text": "Flying, vigilance, lifelink\nFabricate 2 (When this creature enters, put two +1/+1 counters on it or create two 1/1 colorless Servo artifact creature tokens.)\nOther creatures you control get +1/+1.",
+    "mana_cost": "{3}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "power": 2,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying", "vigilance", "lifelink"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Fabricate 2 (When this creature enters, put two +1/+1 counters on it or create two 1/1 colorless Servo artifact creature tokens.)",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "Put two +1/+1 counters on it.",
+                "effects": [
+                  {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 2}, "objects": {"self_only": true}}
+                ]
+              },
+              {
+                "label": "Create two 1/1 colorless Servo artifact creature tokens.",
+                "effects": [
+                  {"op": "create_token", "token": "servo_1_1_c", "amount": {"const": 2}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Other creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {"controller": "you", "types": ["Creature"], "exclude_self": true},
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "+1/+1", "amount": 2}
+  }
+}

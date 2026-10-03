@@ -109,6 +109,33 @@ describe("describeEvent", () => {
     );
   });
 
+  it("says who searched a library, and whose", () => {
+    // The shuffle that ends a search emits nothing and an empty search moves no
+    // card, so without this line Archivist of Oghma's life and card arrive with
+    // nothing in the log to say why.
+    expect(
+      describeEvent(
+        event({ type: "library_searched", player: 1, data: { owner: 1 } }),
+        names,
+        0,
+      ),
+    ).toBe("AI 1 searches their library");
+    expect(
+      describeEvent(
+        event({ type: "library_searched", player: 0, data: { owner: 0 } }),
+        names,
+        0,
+      ),
+    ).toBe("You search your library");
+    expect(
+      describeEvent(
+        event({ type: "library_searched", player: 0, data: { owner: 1 } }),
+        names,
+        0,
+      ),
+    ).toBe("You search AI 1's library");
+  });
+
   it("says who got an emblem, and from which card", () => {
     // Nothing moves when an emblem is made, so without this line the player
     // sees a drain on every draw with nothing in the log to say why.

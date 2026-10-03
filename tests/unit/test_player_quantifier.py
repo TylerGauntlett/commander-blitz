@@ -133,6 +133,40 @@ class TestTheStaticLanguage:
         assert chars(game.state, oid).power == 1
 
 
+class TestItFollowsTheLifeTotal:
+    """A life total that moves in play refreshes the statics that read it.
+
+    `chars` is cached per `char_version`, and every test above sets the life
+    totals and bumps by hand. In play nobody bumps by hand: the life funnel
+    (`primitives._move_life`) has to, or a Vampire read at 40 stays a 1/1 after
+    the opponent is burned to 10 until something unrelated invalidates the cache.
+    """
+
+    def test_a_loss_switches_it_on(self, builder):
+        from automtg.engine.primitives import lose_life
+
+        game, oid = vampire(builder, [40, 11])
+        assert chars(game.state, oid).power == 1
+        lose_life(game.state, 1, 1)
+        assert chars(game.state, oid).power == 3
+
+    def test_damage_switches_it_on(self, builder):
+        from automtg.engine.primitives import damage_player
+
+        game, oid = vampire(builder, [40, 12])
+        assert chars(game.state, oid).power == 1
+        damage_player(game.state, 1, 2, None)
+        assert chars(game.state, oid).power == 3
+
+    def test_a_gain_switches_it_off(self, builder):
+        from automtg.engine.primitives import gain_life
+
+        game, oid = vampire(builder, [40, 10])
+        assert chars(game.state, oid).power == 3
+        gain_life(game.state, 1, 1)
+        assert chars(game.state, oid).power == 1
+
+
 class TestTheEffectLanguage:
     def test_it_drains_when_no_opponent_is_low(self, builder):
         assert lacerator_upkeep(builder, [40, 40]) == 1

@@ -236,6 +236,14 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "Whenever you cast a spell that shares a **creature type** with this
+        #: creature…" -- Folk Hero's grant. `"self"` (the object that has the
+        #: ability -- for a granted trigger, the recipient) or a binding name.
+        #: Creature types only (205.3m), where `shares_a_type_with` intersects
+        #: every subtype: a Background, Aura or Arcane is a subtype and not a
+        #: creature type. Honoured by trigger filters as well as here; a trigger
+        #: filter may only say `"self"`, since nothing is bound when it is asked.
+        "shares_a_creature_type_with",
         #: "…another permanent you control that **shares a permanent type**
         #: with it" -- Cloudstone Curio. The card-type twin of the clause
         #: above, reading `types` where that one reads `subtypes`. A separate
@@ -766,6 +774,16 @@ def matches(
         # permanent type (110.4a).
         if not (set(types) & set(theirs)):
             return False
+    if (name := selector.get("shares_a_creature_type_with")) is not None:
+        # The creature-types-only twin of `shares_a_type_with` (205.3m), which
+        # also reads `"self"` -- the ability's own source -- the way
+        # `shares_a_color_with` does. Shared with `triggers.matches_card_filter`
+        # through `creature_types_of`, so the two halves cannot disagree.
+        from ..characteristics import creature_types_of
+
+        other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
+        if not (creature_types_of(state, oid) & creature_types_of(state, other)):
+            return False
     if (who := selector.get("shares_a_type_with_commander")) is not None and not (
         subtypes & _commander_subtypes(ctx, str(who))
     ):
@@ -1269,7 +1287,7 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
+#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
 #: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
@@ -1382,6 +1400,15 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # reuses the mapping form it wraps rather than duplicating it.
             excluded = set(select_players(ctx, spec["not"]))
             return [pid for pid in state.alive() if pid not in excluded]
+        if "attacked_by" in spec:
+            # "…each player **this creature attacked this turn** loses the
+            # game" -- Angel of Destiny. Read off the turn ledger, because by the
+            # end step `state.combat` is gone and was the only thing that knew.
+            # Seat order, the living only, and nobody at all when the creature
+            # did not attack -- the safe direction for a card that ends games.
+            # "self" is the only subject (the loader refuses anything else).
+            seats = state.turn_ledger.players_attacked_by.get(ctx.source_oid, set())
+            return [pid for pid in state.alive() if pid in seats]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning

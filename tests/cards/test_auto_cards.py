@@ -40,14 +40,15 @@ PAYLOADS = _auto_payloads()
 #: The second entries of two-faced cards, by id -- both links. `back_face` is a
 #: transforming card's other side and `second_face` is a modal DFC's, a split
 #: half, an Adventure, or the spell half of a prepared creature; either way the
-#: entry is not a card in its own right. It
+#: entry is not a card in its own right. A meld result (`melds_into`) is the
+#: same: two permanents become it, and nobody owns a copy (701.37). It
 #: is never drawn or shuffled into a deck on its own, it has no expectation --
 #: there is no position to cast it in by itself -- and it is checked *through*
 #: its front, which names it as a companion below.
 BACK_FACE_IDS = frozenset(
     str(c[key])
     for c in PAYLOADS
-    for key in ("back_face", "second_face", "prepared_face")
+    for key in ("back_face", "second_face", "prepared_face", "melds_into")
     if c.get(key)
 )
 
@@ -79,10 +80,19 @@ class TestEveryAutoCardStillPasses:
         # pointing at a card that is not in the pool.
         companions = [
             by_id[str(payload[key])]
-            for key in ("back_face", "second_face", "prepared_face")
+            for key in ("back_face", "second_face", "prepared_face", "melds_into")
             if payload.get(key) and str(payload[key]) in by_id
         ]
-        verdict = V.verify(payload, expectation, hand_written, companions=companions)
+        # A meld half names its partner, which is a card of its own: verified
+        # through its own answer, and brought into the pool here only when it
+        # is machine-authored too -- exactly as `--collect` brings it in.
+        partner = payload.get("melds_with")
+        partners = (
+            [by_id[partner]] if partner and partner in by_id and partner not in hand_written else []
+        )
+        verdict = V.verify(
+            payload, expectation, hand_written, companions=companions, partners=partners
+        )
         assert verdict.ok, str(verdict)
 
     def test_every_card_has_an_expectation(self, by_id):

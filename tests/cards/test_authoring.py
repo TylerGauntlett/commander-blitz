@@ -777,6 +777,168 @@ class TestATransformingCardIsOneAnswer:
 
 
 
+class TestAMeldPairIsTwoAnswersAndAResult:
+    """Gisela, Bruna and Brisela: two cards anybody may own, and one nobody does.
+
+    The meld half (Gisela) names its partner in `melds_with` and the melded card
+    in `melds_into`, and `link_meld_results` refuses either id the pool lacks.
+    The **result** is the half's to carry -- a `back` companion, never cast,
+    drawn or decked. The **partner** is not: Bruna is a card of her own with her
+    own answer and expectation, so when she was machine-authored she sits in the
+    auto batch the gates deliberately leave out, and `verify`'s ``partners`` is
+    the one slot that hands her across -- joined to the pool, written nowhere.
+    """
+
+    def trio(self):
+        half = {
+            "id": "t_meld_probe_half",
+            "name": "Meld Probe Half",
+            "oracle_text": "Flying",
+            "mana_cost": "{2}{W}",
+            "types": ["Creature"],
+            "subtypes": ["Angel"],
+            "power": 2,
+            "toughness": 2,
+            "keywords": ["flying"],
+            "colors": ["W"],
+            "color_identity": ["W"],
+            "melds_with": "t_meld_probe_partner",
+            "melds_into": "t_meld_probe_result",
+        }
+        partner = {
+            "id": "t_meld_probe_partner",
+            "name": "Meld Probe Partner",
+            "oracle_text": "Vigilance",
+            "mana_cost": "{3}{W}",
+            "types": ["Creature"],
+            "subtypes": ["Angel"],
+            "power": 3,
+            "toughness": 3,
+            "keywords": ["vigilance"],
+            "colors": ["W"],
+            "color_identity": ["W"],
+        }
+        result = {
+            "id": "t_meld_probe_result",
+            "name": "Meld Probe Result",
+            "oracle_text": "Flying, vigilance",
+            "types": ["Creature"],
+            "subtypes": ["Angel"],
+            "power": 6,
+            "toughness": 6,
+            "keywords": ["flying", "vigilance"],
+            "colors": ["W"],
+            "color_identity": ["W"],
+        }
+        return half, partner, result
+
+    def test_the_half_with_its_result_and_partner_passes(self, real_registry):
+        half, partner, result = self.trio()
+        verdict = V.verify(
+            half, {"zone": "battlefield"}, real_registry,
+            companions=[result], partners=[partner],
+        )
+        assert verdict.ok, verdict.reason
+
+    def test_without_the_partner_it_is_refused(self, real_registry):
+        half, _, result = self.trio()
+        verdict = V.verify(half, {"zone": "battlefield"}, real_registry, companions=[result])
+        assert verdict.failed_gate == "registry"
+        assert "melds_with" in verdict.reason
+
+    def test_without_the_result_it_is_refused(self, real_registry):
+        half, partner, _ = self.trio()
+        verdict = V.verify(half, {"zone": "battlefield"}, real_registry, partners=[partner])
+        assert verdict.failed_gate == "registry"
+        assert "melds_into" in verdict.reason
+
+    def test_the_partner_slot_takes_only_the_named_partner(self, real_registry):
+        """No smuggling: anything but `melds_with`'s card is refused outright."""
+        half, partner, result = self.trio()
+        verdict = V.verify(
+            half, {"zone": "battlefield"}, real_registry,
+            companions=[result], partners=[{**partner, "id": "t_someone_else"}],
+        )
+        assert verdict.failed_gate == "registry"
+        assert "t_someone_else" in verdict.reason
+
+    def test_the_partner_slot_never_overwrites_the_pool(self, real_registry):
+        half, partner, result = self.trio()
+        half = {**half, "melds_with": "sol_ring"}
+        verdict = V.verify(
+            half, {"zone": "battlefield"}, real_registry,
+            companions=[result], partners=[{**partner, "id": "sol_ring"}],
+        )
+        assert verdict.failed_gate == "registry"
+
+    def test_the_collector_hands_across_only_an_authored_partner(self, real_registry):
+        from scripts.author_cards import _meld_partners
+
+        half, partner, _ = self.trio()
+        staged = {partner["id"]: partner}
+        assert _meld_partners(half, staged, real_registry) == [partner]
+        # Not staged: nothing to hand across, and the registry gate will say so.
+        assert _meld_partners(half, {}, real_registry) == []
+        # Hand-written: already in the pool.
+        assert _meld_partners({**half, "melds_with": "sol_ring"}, staged, real_registry) == []
+        # Not a meld half at all.
+        assert _meld_partners(partner, staged, real_registry) == []
+
+    def test_the_collector_finishes_the_results_own_queue_entry(self):
+        """A meld result has a catalog row of its own, so it has a queue entry of
+        its own -- left `pending`, `--tier agent` hands Brisela out as a card to
+        author after Gisela already shipped her."""
+        from scripts.author_cards import _finish_companion_entries
+
+        from automtg.cards.authoring.queue import Entry
+
+        half, _, result = self.trio()
+        front = Entry(name=half["name"], scryfall_id="id-half", status="done")
+        meld = Entry(name=result["name"], scryfall_id="id-result", gate="template", reason="no template")
+        bystander = Entry(name="Sol Ring", scryfall_id="id-sol")
+        by_name = {e.name: e for e in (front, meld, bystander)}
+
+        _finish_companion_entries([result], by_name, front)
+
+        assert (meld.status, meld.gate, meld.reason, meld.source) == ("done", None, "", "agent")
+        assert bystander.status == "pending"
+        # A face the queue never held is not invented.
+        _finish_companion_entries([{"name": "Nobody"}], by_name, front)
+        assert set(by_name) == {half["name"], result["name"], "Sol Ring"}
+
+    def test_the_collector_verifies_the_partner_first(self):
+        """Whatever the two ids sort as, the half that names a partner goes last."""
+        from scripts.author_cards import _meld_halves_last
+
+        answers = {
+            "a_half": {"card": {"melds_with": "z_partner"}},
+            "z_partner": {"card": {}},
+        }
+        assert [k for k, _ in _meld_halves_last(answers)] == ["z_partner", "a_half"]
+
+    def test_the_packet_carries_the_melded_card(self):
+        """The catalog links nothing, so the half's packet looks the result up by name."""
+        from automtg.cards.authoring.packet import meld_result_of
+        from automtg.cards.images import IndexEntry
+
+        half = IndexEntry(
+            name="Half",
+            scryfall_id="x",
+            oracle_text="…, exile them, then meld them into Melded Thing.",
+        )
+        melded = IndexEntry(
+            name="Melded Thing", scryfall_id="y", type_line="Creature", oracle_text="Flying"
+        )
+
+        class Index:
+            def lookup(self, name, token=False):
+                return melded if name == "Melded Thing" else None
+
+        assert meld_result_of(half, Index())["oracle_text"] == "Flying"
+        assert meld_result_of(melded, Index()) == {}
+        assert meld_result_of(half, None) == {}
+
+
 class TestTheQueueTracksWhatIsInYourDecks:
     """`wanted` is what puts an imported deck's cards at the head of the queue.
 

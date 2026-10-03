@@ -1,0 +1,29 @@
+{
+  "_comment": "Cards for tests/unit/test_starting_life_total.py. `t_valkyrie_anthem` is Righteous Valkyrie's third line on its own: a static anthem switched by `life >= starting_life + 7`, on an enchantment so the test's creature is not also the thing being buffed by its own printed body.",
+  "cards": [
+    {
+      "id": "t_valkyrie_anthem",
+      "name": "Test Valkyrie Anthem",
+      "oracle_text": "As long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": {"const": 2},
+          "toughness": {"const": 2},
+          "condition": {
+            "cmp": ">=",
+            "left": {"min_life_of": "you"},
+            "right": {"sum": [{"starting_life_of": "you"}, {"const": 7}]}
+          }
+        }
+      ]
+    }
+  ]
+}

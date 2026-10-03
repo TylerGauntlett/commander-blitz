@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "magus_of_the_moat",
+    "name": "Magus of the Moat",
+    "oracle_text": "Creatures without flying can't attack.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Wizard"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 0,
+    "toughness": 3,
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "cant_attack",
+        "affects": {
+          "controller": "any",
+          "types": ["Creature"],
+          "not_keywords": ["flying"]
+        },
+        "text": "Creatures without flying can't attack."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

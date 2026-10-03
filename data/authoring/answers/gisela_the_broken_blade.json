@@ -1,0 +1,79 @@
+{
+  "card": {
+    "id": "gisela_the_broken_blade",
+    "name": "Gisela, the Broken Blade",
+    "oracle_text": "Flying, first strike, lifelink\nAt the beginning of your end step, if you both own and control Gisela and a creature named Bruna, the Fading Light, exile them, then meld them into Brisela, Voice of Nightmares.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Angel", "Horror"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying", "first_strike", "lifelink"],
+    "melds_with": "bruna_the_fading_light",
+    "melds_into": "brisela_voice_of_nightmares",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, if you both own and control Gisela and a creature named Bruna, the Fading Light, exile them, then meld them into Brisela, Voice of Nightmares.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "you",
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "zone": "battlefield",
+                  "self_only": true,
+                  "owner": "you",
+                  "controller": "you"
+                }
+              },
+              {
+                "exists": {
+                  "zone": "battlefield",
+                  "types": ["Creature"],
+                  "name": "Bruna, the Fading Light",
+                  "owner": "you",
+                  "controller": "you"
+                }
+              }
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "meld"
+          }
+        ]
+      }
+    ]
+  },
+  "back": {
+    "id": "brisela_voice_of_nightmares",
+    "name": "Brisela, Voice of Nightmares",
+    "oracle_text": "Flying, first strike, vigilance, lifelink\nYour opponents can't cast spells with mana value 3 or less.",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Eldrazi", "Angel"],
+    "power": 9,
+    "toughness": 10,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying", "first_strike", "vigilance", "lifelink"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Your opponents can't cast spells with mana value 3 or less.",
+        "effect": "cant_cast_spells",
+        "affects_player": "opponent",
+        "affects_spells": {"mana_value": {"op": "<=", "value": 3}}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

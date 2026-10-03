@@ -21,10 +21,10 @@
         "text": "When The One Ring enters, if you cast it, you gain protection from everything until your next turn.",
         "trigger": {
           "event": "self_enters",
-          "source": "self"
-        },
-        "condition": {
-          "was_cast": true
+          "source": "self",
+          "condition": {
+            "was_cast": true
+          }
         },
         "effects": [
           {

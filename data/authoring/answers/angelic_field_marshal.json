@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "angelic_field_marshal",
+    "name": "Angelic Field Marshal",
+    "oracle_text": "Flying\nLieutenant — As long as you control your commander, this creature gets +2/+2 and creatures you control have vigilance.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Lieutenant — As long as you control your commander, this creature gets +2/+2 and creatures you control have vigilance.",
+        "effect": "buff",
+        "affects": {"self_only": true},
+        "power": {"const": 2},
+        "toughness": {"const": 2},
+        "condition": {
+          "exists": {"controller": "you", "owner": "you", "is_commander": true}
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Lieutenant — As long as you control your commander, this creature gets +2/+2 and creatures you control have vigilance.",
+        "effect": "grant_keyword",
+        "keywords": ["vigilance"],
+        "affects": {"controller": "you", "types": ["Creature"]},
+        "condition": {
+          "exists": {"controller": "you", "owner": "you", "is_commander": true}
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

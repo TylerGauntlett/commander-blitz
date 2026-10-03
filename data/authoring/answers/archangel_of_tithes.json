@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "archangel_of_tithes",
+    "name": "Archangel of Tithes",
+    "oracle_text": "Flying\nAs long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.\nAs long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+    "mana_cost": "{1}{W}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 3,
+    "toughness": 5,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as this creature is untapped, creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.",
+        "effect": "attack_tax",
+        "cost": {"mana": "{1}"},
+        "or_planeswalkers": true,
+        "affects": {"controller": "any", "types": ["Creature"]},
+        "condition": {"exists": {"self_only": true, "tapped": false}}
+      },
+      {
+        "kind": "static",
+        "text": "As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+        "effect": "block_tax",
+        "cost": {"mana": "{1}"},
+        "affects": {"controller": "any", "types": ["Creature"]},
+        "condition": {"exists": {"self_only": true, "attacking": true}}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

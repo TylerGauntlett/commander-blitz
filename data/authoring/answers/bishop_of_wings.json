@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "bishop_of_wings",
+    "name": "Bishop of Wings",
+    "oracle_text": "Whenever an Angel you control enters, you gain 4 life.\nWhenever an Angel you control dies, create a 1/1 white Spirit creature token with flying.",
+    "mana_cost": "{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Cleric"],
+    "power": 1,
+    "toughness": 4,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an Angel you control enters, you gain 4 life.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {"subtypes": ["Angel"]}
+        },
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"const": 4}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an Angel you control dies, create a 1/1 white Spirit creature token with flying.",
+        "trigger": {
+          "event": "creature_dies",
+          "controller": "you",
+          "filter": {"subtypes": ["Angel"]}
+        },
+        "effects": [
+          {"op": "create_token", "token": "spirit_1_1_w_flying", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40}
+  }
+}
