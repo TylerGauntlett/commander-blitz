@@ -86,6 +86,13 @@ html[data-input="mouse"] [data-cursor] {
   box-shadow: 0 0 0 2px var(--focus-glow), 0 0 18px 4px var(--focus-glow);
 }
 
+/* Landed on a stop its neighbours overlap (a hand card): the stop's own
+   outline takes over, because it layers under the neighbour and this cannot.
+   See `setRest` in `input/ring.ts`. */
+#ring.ring--on.ring--rest {
+  opacity: 0;
+}
+
 /* Opacity is written by the spring from its own speed, so the trail exists
    only while the ring is actually moving. */
 #ringtrail {
