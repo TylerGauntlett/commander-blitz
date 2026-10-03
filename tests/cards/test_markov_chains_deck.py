@@ -14,8 +14,9 @@ class is one card and asserts the printed sentence the gate could not reach.
 from __future__ import annotations
 
 from automtg.engine import zones
-from automtg.engine.enums import ActionKind, Step
-from tests.conftest import advance_to_step, only_oid
+from automtg.engine.characteristics import chars, has_keyword
+from automtg.engine.enums import ActionKind, DecisionKind, Step
+from tests.conftest import advance_to_step, count_on_battlefield, only_oid, pass_until
 
 BEAR = "grizzly_bears"  # a plain 2/2
 WALKER = "t_walker"  # a loyalty-4 planeswalker with no static of its own
@@ -133,3 +134,145 @@ class TestGhostlyPrison:
         offered = player_attacks(game, bear)
         assert 1 in offered
         assert "pay" not in offered[1]
+
+
+EDGAR = "edgar_ancient_bloodlord"
+#: "Destroy target creature or planeswalker." Not Hero's Downfall: the hand-written
+#: one in `edgar.cards.json` targets creatures only and could not kill the walker.
+REMOVAL = "fateful_absence"
+
+
+class TestEdgarAncientBloodlord:
+    """"Whenever another creature or planeswalker you control dies, you gain 1
+    life." / "{2}, Sacrifice another creature or planeswalker: Put a +1/+1
+    counter on Edgar. He gains menace until end of turn."
+
+    Gate 5 casts Edgar into a board where nothing dies and never activates the
+    ability, so both sentences reached the pool asserted only as "he is on the
+    battlefield". The near misses are each a word of the printed text: "another"
+    (his own death, and sacrificing himself), "you control" (an opponent's
+    creature dying), "or planeswalker" (a walker counts on both lines), and
+    "until end of turn" (the menace goes, the counter stays).
+    """
+
+    def position(self, builder, *, theirs: tuple[str, ...] = ()):
+        game = (
+            builder(players=2)
+            .battlefield(0, [EDGAR, BEAR, WALKER, "plains", "plains"])
+            .battlefield(0, ["plains"] * 2)
+            .hand(0, [REMOVAL])
+            .battlefield(1, list(theirs))
+            .build()
+        )
+        return game, only_oid(game, EDGAR, 0)
+
+    def kill(self, game, victim: int) -> None:
+        """A real removal spell, so the death goes through the game loop that
+        collects triggers -- `zones.destroy` called from a test does not, and the
+        "gains nothing" cases below would pass whatever the card said."""
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CAST
+                and game.state.objects[a.source].def_id == REMOVAL
+                and (not a.targets or a.targets[0].id == victim)
+            )
+        )
+        while (p := game.pending()) is not None and p.kind is DecisionKind.CHOOSE_OBJECTS:
+            game.apply(next(a for a in game.legal_actions() if a.targets[0].id == victim))
+        self.settle(game)
+        assert victim not in game.state.battlefield
+
+    def settle(self, game) -> None:
+        pass_until(
+            game,
+            lambda g: (
+                not g.state.stack
+                and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
+            ),
+        )
+
+    def life(self, game) -> int:
+        return game.state.players[0].life
+
+    def sacrifice_for(self, game, edgar: int, victim: int) -> None:
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ACTIVATE and a.source == edgar
+            )
+        )
+        assert game.pending().kind is DecisionKind.CHOOSE_OBJECTS
+        game.apply(next(a for a in game.legal_actions() if a.targets[0].id == victim))
+        self.settle(game)
+
+    def test_another_creature_dying_gains_one(self, builder):
+        game, _ = self.position(builder)
+        before = self.life(game)
+        self.kill(game, only_oid(game, BEAR, 0))
+        assert self.life(game) == before + 1
+
+    def test_a_planeswalker_dying_gains_one_too(self, builder):
+        """"Or planeswalker": a `creature_dies` trigger would miss this one."""
+        game, _ = self.position(builder)
+        before = self.life(game)
+        self.kill(game, only_oid(game, WALKER, 0))
+        assert self.life(game) == before + 1
+
+    def test_edgar_s_own_death_gains_nothing(self, builder):
+        game, edgar = self.position(builder)
+        before = self.life(game)
+        self.kill(game, edgar)
+        assert self.life(game) == before
+
+    def test_an_opponent_s_creature_dying_gains_nothing(self, builder):
+        game, _ = self.position(builder, theirs=(BEAR,))
+        before = self.life(game)
+        self.kill(game, only_oid(game, BEAR, 1))
+        assert self.life(game) == before
+
+    def test_the_sacrifice_offers_creatures_and_walkers_but_not_edgar(self, builder):
+        game, edgar = self.position(builder)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ACTIVATE and a.source == edgar
+            )
+        )
+        offered = {a.targets[0].id for a in game.legal_actions()}
+        assert offered == {only_oid(game, BEAR, 0), only_oid(game, WALKER, 0)}
+
+    def test_with_nothing_else_to_sacrifice_it_cannot_be_activated(self, builder):
+        game = builder(players=2).battlefield(0, [EDGAR, "plains", "plains"]).build()
+        edgar = only_oid(game, EDGAR, 0)
+        assert not any(
+            a.kind is ActionKind.ACTIVATE and a.source == edgar for a in game.legal_actions()
+        )
+
+    def test_sacrificing_grows_him_grants_menace_and_feeds_the_trigger(self, builder):
+        """The two lines meet: the sacrifice is a death, so it also gains 1."""
+        game, edgar = self.position(builder)
+        before = self.life(game)
+        self.sacrifice_for(game, edgar, only_oid(game, BEAR, 0))
+        assert count_on_battlefield(game, BEAR, 0) == 0
+        assert game.state.objects[edgar].counters.get("+1/+1") == 1
+        c = chars(game.state, edgar)
+        assert (c.power, c.toughness) == (3, 4)
+        assert has_keyword(game.state, edgar, "menace")
+        assert self.life(game) == before + 1
+
+    def test_sacrificing_a_planeswalker_works_the_same(self, builder):
+        game, edgar = self.position(builder)
+        self.sacrifice_for(game, edgar, only_oid(game, WALKER, 0))
+        assert count_on_battlefield(game, WALKER, 0) == 0
+        assert game.state.objects[edgar].counters.get("+1/+1") == 1
+
+    def test_the_menace_ends_with_the_turn_and_the_counter_stays(self, builder):
+        game, edgar = self.position(builder)
+        self.sacrifice_for(game, edgar, only_oid(game, BEAR, 0))
+        pass_until(game, lambda g: g.state.active_player == 1)
+        assert not has_keyword(game.state, edgar, "menace")
+        assert game.state.objects[edgar].counters.get("+1/+1") == 1
