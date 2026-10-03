@@ -79396,8 +79396,8 @@
       "name": "Edgar, Ancient Bloodlord",
       "reason": "",
       "scryfall_id": "7c619fed-2394-4efc-8cdc-6df5f51c1f57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Edgar, Charmed Groom // Edgar Markov's Coffin": {

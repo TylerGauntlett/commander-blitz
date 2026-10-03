@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "edgar_ancient_bloodlord",
+    "name": "Edgar, Ancient Bloodlord",
+    "oracle_text": "Whenever another creature or planeswalker you control dies, you gain 1 life.\n{2}, Sacrifice another creature or planeswalker: Put a +1/+1 counter on Edgar. He gains menace until end of turn. (He can't be blocked except by two or more creatures.)",
+    "mana_cost": "{W}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Noble"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another creature or planeswalker you control dies, you gain 1 life.",
+        "trigger": {
+          "event": "dies",
+          "controller": "you",
+          "filter": {
+            "any_types": ["Creature", "Planeswalker"],
+            "exclude_self": true
+          }
+        },
+        "effects": [
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {"const": 1}
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, Sacrifice another creature or planeswalker: Put a +1/+1 counter on Edgar. He gains menace until end of turn. (He can't be blocked except by two or more creatures.)",
+        "cost": {
+          "mana": "{2}",
+          "sacrifice": {
+            "any_types": ["Creature", "Planeswalker"],
+            "controller": "you",
+            "count": 1,
+            "exclude_self": true,
+            "zone": "battlefield"
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"self_only": true}
+          },
+          {
+            "op": "grant_keyword",
+            "keywords": ["menace"],
+            "duration": "until_end_of_turn",
+            "objects": {"self_only": true}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

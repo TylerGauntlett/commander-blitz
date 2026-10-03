@@ -2942,6 +2942,10 @@
   "eclipsed_steppe": {
     "zone": "battlefield"
   },
+  "edgar_ancient_bloodlord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "edgar_charmed_groom_edgar_markov_s_coffin": {
     "battlefield_count": 33,
     "zone": "battlefield"
