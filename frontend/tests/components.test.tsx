@@ -417,6 +417,78 @@ describe("ActionPanel", () => {
       expect(screen.getByTestId("choose-x-up").hasAttribute("disabled")).toBe(true);
     });
 
+    /*
+     * Brisela's "can't cast spells with mana value 3 or less" puts a floor under
+     * an opponent's X: the engine offers X = 3..max, and each action's `choice` is
+     * the option's index -- X less the floor -- not X itself.
+     */
+    describe("with a floor under X", () => {
+      const floored = (minX: number, maxX: number) =>
+        gameView({
+          pending: pending({
+            kind: "choose_x",
+            prompt: "Choose X for Fireball",
+            context: { purpose: "choose_x", min_x: minX, max_x: maxX, per_point: 1 },
+            options: Array.from({ length: maxX - minX + 1 }, (_, i) => ({
+              label: `X = ${minX + i}`,
+              ref: null,
+              value: minX + i,
+            })),
+          }),
+        });
+      const flooredActions = (minX: number, maxX: number) =>
+        Array.from({ length: maxX - minX + 1 }, (_, i) =>
+          action({
+            id: `a${minX + i}-choose`,
+            kind: "choose",
+            label: `X = ${minX + i}`,
+            choice: i,
+          }),
+        );
+
+      it("starts at the floor and points at its action", () => {
+        render(
+          <ActionPanel
+            state={floored(3, 6)}
+            actions={flooredActions(3, 6)}
+            onAct={noop}
+            {...base}
+          />,
+        );
+        expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("3");
+        expect(screen.getByTestId("commit").getAttribute("data-action-id")).toBe("a3-choose");
+        expect(screen.getByTestId("choose-x").textContent).toContain("3 to 6");
+      });
+
+      it("cannot be stepped below the floor", () => {
+        render(
+          <ActionPanel
+            state={floored(3, 6)}
+            actions={flooredActions(3, 6)}
+            onAct={noop}
+            {...base}
+          />,
+        );
+        expect(screen.getByTestId("choose-x-down").hasAttribute("disabled")).toBe(true);
+      });
+
+      it("submits the action for the X that is showing, not the index", () => {
+        const onAct = vi.fn();
+        render(
+          <ActionPanel
+            state={floored(3, 6)}
+            actions={flooredActions(3, 6)}
+            onAct={onAct}
+            {...base}
+          />,
+        );
+        fireEvent.click(screen.getByTestId("choose-x-up"));
+        expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("4");
+        fireEvent.click(screen.getByTestId("commit"));
+        expect(onAct).toHaveBeenCalledWith("a4-choose");
+      });
+    });
+
     it("still offers X = 0 when that is the only value", () => {
       // The engine skips a forced question, but the panel must not render a
       // dead dock if one ever arrives -- `full-game.spec.ts` fails on zero
