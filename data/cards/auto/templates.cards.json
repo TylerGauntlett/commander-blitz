@@ -32245,6 +32245,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature or planeswalker you control dies, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "any_types": [
+                "Creature",
+                "Planeswalker"
+              ],
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "any_types": [
+                "Creature",
+                "Planeswalker"
+              ],
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "menace"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice another creature or planeswalker: Put a +1/+1 counter on Edgar. He gains menace until end of turn. (He can't be blocked except by two or more creatures.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "edgar_ancient_bloodlord",
+      "mana_cost": "{W}{B}",
+      "name": "Edgar, Ancient Bloodlord",
+      "oracle_text": "Whenever another creature or planeswalker you control dies, you gain 1 life.\n{2}, Sacrifice another creature or planeswalker: Put a +1/+1 counter on Edgar. He gains menace until end of turn. (He can't be blocked except by two or more creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,
