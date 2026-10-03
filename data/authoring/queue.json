@@ -34802,12 +34802,12 @@
     },
     "Brisela, Voice of Nightmares": {
       "edhrec_rank": null,
-      "gate": "template",
+      "gate": null,
       "name": "Brisela, Voice of Nightmares",
-      "reason": "no template for: Your opponents can't cast spells with mana value 3 or less",
+      "reason": "",
       "scryfall_id": "7e926e19-553c-470a-afde-358541af5caa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bristlebane Battler": {
@@ -35612,12 +35612,12 @@
     },
     "Bruna, the Fading Light": {
       "edhrec_rank": 2437,
-      "gate": "template",
+      "gate": null,
       "name": "Bruna, the Fading Light",
-      "reason": "no template for: When you cast this spell, you may return target Angel or Human creature card from your gra",
+      "reason": "",
       "scryfall_id": "6fccdb60-5fce-4a6e-a709-b986f9a4b653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bruse Tarl, Boorish Herder": {
@@ -109782,12 +109782,12 @@
     },
     "Gisela, the Broken Blade": {
       "edhrec_rank": 2583,
-      "gate": "template",
+      "gate": null,
       "name": "Gisela, the Broken Blade",
-      "reason": "no template for: At the beginning of your end step, if you both own and control Gisela and a creature named",
+      "reason": "",
       "scryfall_id": "04506bad-3856-4184-8dda-941ded60f41a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gishath, Sun's Avatar": {

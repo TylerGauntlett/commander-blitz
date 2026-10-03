@@ -1442,6 +1442,12 @@
   "broodhunter_wurm": {
     "zone": "battlefield"
   },
+  "bruna_the_fading_light": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "brushland": {
     "zone": "battlefield"
   },
@@ -4201,6 +4207,9 @@
   },
   "gimli_of_the_glittering_caves": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gisela_the_broken_blade": {
     "zone": "battlefield"
   },
   "gitaxian_probe": {
