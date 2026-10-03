@@ -4,20 +4,46 @@
     "name": "Tiamat",
     "oracle_text": "Flying\nWhen Tiamat enters, if you cast it, search your library for up to five Dragon cards not named Tiamat that each have different names, reveal them, put them into your hand, then shuffle.",
     "mana_cost": "{2}{W}{U}{B}{R}{G}",
-    "supertypes": ["Legendary"],
-    "types": ["Creature"],
-    "subtypes": ["Dragon", "God"],
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Dragon",
+      "God"
+    ],
     "power": 7,
     "toughness": 7,
-    "colors": ["B", "G", "R", "U", "W"],
-    "color_identity": ["B", "G", "R", "U", "W"],
-    "keywords": ["flying"],
+    "colors": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ],
+    "color_identity": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ],
+    "keywords": [
+      "flying"
+    ],
     "abilities": [
       {
         "kind": "triggered",
         "text": "When Tiamat enters, if you cast it, search your library for up to five Dragon cards not named Tiamat that each have different names, reveal them, put them into your hand, then shuffle.",
-        "condition": {"was_cast": true},
-        "trigger": {"event": "self_enters", "source": "self"},
+        "trigger": {
+          "event": "self_enters",
+          "source": "self",
+          "condition": {
+            "was_cast": true
+          }
+        },
         "effects": [
           {
             "op": "search_library",
@@ -26,7 +52,12 @@
             "distinct_names": true,
             "reveal": true,
             "destination": "hand",
-            "selector": {"subtypes": ["Dragon"], "not_name": "Tiamat"}
+            "selector": {
+              "subtypes": [
+                "Dragon"
+              ],
+              "not_name": "Tiamat"
+            }
           }
         ]
       }
@@ -35,7 +66,11 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 1},
-    "library_size": {"0": 40}
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    }
   }
 }

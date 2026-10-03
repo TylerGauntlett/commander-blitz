@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "youthful_valkyrie",
+    "name": "Youthful Valkyrie",
+    "oracle_text": "Flying\nWhenever another Angel you control enters, put a +1/+1 counter on this creature.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Angel"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 1,
+    "toughness": 3,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another Angel you control enters, put a +1/+1 counter on this creature.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "exclude_self": true,
+            "subtypes": ["Angel"]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"self_only": true}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

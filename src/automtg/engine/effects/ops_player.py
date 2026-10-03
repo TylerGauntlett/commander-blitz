@@ -67,6 +67,23 @@ def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
 CASTABLE_ZONES = ("library", "hand", "battlefield", "graveyard", "exile", "stack", "command")
 
 
+def shut_cast_zones(zones: Any = None, except_zones: Any = None) -> list[str]:
+    """The zones a cast lock shuts, from either of its two spellings.
+
+    ``zones`` names the shut ones; ``except_zones`` names the open ones and is
+    subtracted from :data:`CASTABLE_ZONES`. Shared by the timed one-shot below
+    (Avatar's Wrath) and the loader's compile of the
+    `cant_cast_spells_from_zones` static (Drannith Magistrate), so "anywhere
+    other than their hands" is one list of zones whichever card printed it. The
+    loader requires exactly one of the two, so there is no branch here where
+    both are absent and everything locks by accident.
+    """
+    if zones is not None:
+        return [str(z) for z in zones]
+    opened = {str(z) for z in (except_zones or ())}
+    return [z for z in CASTABLE_ZONES if z not in opened]
+
+
 @register("cant_cast_spells_from_zones")
 def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Until your next turn, your opponents can't cast spells from anywhere
@@ -113,14 +130,7 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     duration = str(spec.get("duration", "until_your_next_turn"))
     if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_cast_spells_from_zones duration {duration!r}")
-    if (named := spec.get("zones")) is not None:
-        zones = [str(z) for z in named]
-    else:
-        # The inverse form. `except_zones` is required when `zones` is absent
-        # -- the loader says so -- so there is no third branch where this locks
-        # everything by accident.
-        opened = {str(z) for z in spec.get("except_zones", ())}
-        zones = [z for z in CASTABLE_ZONES if z not in opened]
+    zones = shut_cast_zones(spec.get("zones"), spec.get("except_zones"))
     lock_casting_zones(
         ctx.state,
         # The clock: whoever is resolving this. "Until **your** next turn."

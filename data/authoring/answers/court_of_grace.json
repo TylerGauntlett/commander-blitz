@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "court_of_grace",
+    "name": "Court of Grace",
+    "oracle_text": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, create a 1/1 white Spirit creature token with flying. If you're the monarch, create a 4/4 white Angel creature token with flying instead.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, you become the monarch.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [{"op": "become_monarch", "player": "you"}]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, create a 1/1 white Spirit creature token with flying. If you're the monarch, create a 4/4 white Angel creature token with flying instead.",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [
+          {
+            "op": "if",
+            "condition": {"is_monarch": "you"},
+            "then": [{"op": "create_token", "token": "angel_4_4_w_flying"}],
+            "else": [{"op": "create_token", "token": "spirit_1_1_w_flying"}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

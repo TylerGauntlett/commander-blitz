@@ -14,6 +14,7 @@ from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
+    life_gain_addend,
     life_gain_multiplier,
     life_loss_multiplier,
     player_cant_gain_life,
@@ -30,6 +31,7 @@ from .player_statics import (
     damage_multiplier,
     mill_multiplier,
     player_counter_replacements,
+    static_cast_locked_zones,
     untap_held,
 )
 from .state import new_object
@@ -300,14 +302,39 @@ def cast_locked_zones(state: GameState, pid: int) -> frozenset[str]:
     Returns strings rather than `Zone` members because `Zone` is a `str` enum
     and the rows come from JSON: comparing `costs.zone_of(...)` against this set
     works either way, and the loader is the thing that validated the spelling.
+
+    **And the static form.** Drannith Magistrate prints the same sentence with
+    no clock -- "as long as it is on the battlefield" is what a static *is* --
+    so its `cant_cast_spells_from_zones` static is unioned in here, from
+    `player_statics.static_cast_locked_zones`. Here rather than at each road,
+    so the three readers above cover it without a line of their own, and a
+    Magistrate and a Wrath on one table are simply two locks in one union.
     """
-    if not state.cast_locks:
-        return frozenset()
-    shut: set[str] = set()
+    shut: set[str] = static_cast_locked_zones(state, pid)
     for lock in state.cast_locks:
         if pid in lock.affects:
             shut.update(lock.zones)
     return frozenset(shut)
+
+
+def _move_life(state: GameState, pid: int, delta: int) -> None:
+    """Change a life total, and invalidate the characteristics that read it.
+
+    A life total is a pipeline *input* to the static `condition` language --
+    Angel of Vitality's "+2/+2 as long as you have 25 or more life", Guul Draz
+    Vampire's "as long as an opponent has 10 or less life" -- and `chars` caches
+    per `char_version`. A life total that moved without a bump left the cached
+    answer standing: an Angel read at 40 stayed a 4/4 at 10 until something
+    unrelated (a zone change, a resolution) happened to invalidate the cache.
+
+    The three writers of a life total in play -- `gain_life`, `lose_life` and
+    the damage branch of `damage_player` -- all come through here, so a fourth
+    has one obvious place to go.
+    """
+    if not delta:
+        return
+    state.players[pid].life += delta
+    state.bump_chars()
 
 
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
@@ -338,8 +365,14 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
         return 0
     # "You gain twice that much life instead" (614.1a). After the lock for the
     # reason `lose_life` reads its multiplier after it: twice nothing is nothing.
-    amount *= life_gain_multiplier(state, pid)
-    state.players[pid].life += amount
+    #
+    # "...that much life plus 1 instead" (Angel of Vitality) is added **first**:
+    # 616.1 gives the gaining player the order, (n+1)*2 is the larger gain and
+    # the one they pick, and this funnel cannot ask (see `life_gain_addend`).
+    # Below the `amount <= 0` return on purpose -- a gain of 0 is no life-gain
+    # event, so there is nothing for the Angel to add 1 to (its ruling).
+    amount = (amount + life_gain_addend(state, pid)) * life_gain_multiplier(state, pid)
+    _move_life(state, pid, amount)
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
     return amount
 
@@ -365,7 +398,7 @@ def lose_life(state: GameState, pid: int, amount: int, source: int | None = None
     if life_locked(state, pid):
         return 0
     amount *= life_loss_multiplier(state, pid)
-    state.players[pid].life -= amount
+    _move_life(state, pid, -amount)
     fire(state, EventType.LIFE_LOST, player=pid, source=source, amount=amount)
     return amount
 
@@ -513,7 +546,7 @@ def damage_player(
         # never left is the same failure the life-lock branch above avoids.
         if lost > 0 and (floor := life_floor(state, pid)) is not None:
             lost = max(0, min(lost, state.players[pid].life - floor))
-        state.players[pid].life -= lost
+        _move_life(state, pid, -lost)
         # "Whenever an opponent loses life… (Damage causes loss of life.)"
         # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires
         # the same event a `lose_life` does rather than a second one a card
@@ -1045,6 +1078,12 @@ def add_counters(
             oid=oid,
             counter=kind,
             amount=amount,
+            # Who put them (122.6a), for "whenever **you** put one or more
+            # +1/+1 counters on this creature" (Exemplar of Light). `player` is
+            # the recipient's controller and answers a different question: an
+            # opponent's spell putting a counter on my creature has `player`
+            # me and `put_by` them.
+            put_by=by,
         )
         if kind == sagas.LORE:
             # Here rather than at each caller, because every way a lore counter

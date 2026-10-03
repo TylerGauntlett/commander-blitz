@@ -148,10 +148,12 @@ def entered(state: GameState, obj: GameObject) -> None:
     """Chapter I, off the lore counter the Saga entered with (714.2b).
 
     Called by `zones._enter_battlefield` right after the ETB event, because the
-    counter was put on by a *replacement* and replacements fire nothing --
-    `obj.add_counter` is written to directly, so there is no `add_counters` call
-    and no COUNTER_PLACED for :func:`chapters_reached` to be reached through.
-    Counted from zero, which is what "enters with" means.
+    counter was put on by a *replacement* -- `obj.add_counter` is written to
+    directly, so there is no `add_counters` call for :func:`chapters_reached`
+    to be reached through. The arrival's COUNTER_PLACED for that counter
+    (122.6, `zones._fire_entered_with_counters`) reaches no chapter comparison,
+    so this is the only route to chapter I and it triggers once. Counted from
+    zero, which is what "enters with" means.
 
     After the ETB event rather than before it, so a Saga's own chapter I queues
     behind whatever else that permanent entering woke up -- the order the rules

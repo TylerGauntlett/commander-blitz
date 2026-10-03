@@ -7859,17 +7859,22 @@
           "text": "At the beginning of the end step, if you control three or more Elks, flip this.",
           "trigger": {
             "event": "end_step",
-            "controller": "you"
-          },
-          "condition": {
-            "count": {
-              "zone": "battlefield",
-              "controller": "you",
-              "subtypes": [
-                "Elk"
-              ]
-            },
-            "at_least": 3
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Elk"
+                  ]
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            }
           },
           "effects": [
             {
@@ -7924,17 +7929,22 @@
           "text": "At the beginning of your end step, meld them into Test Brisela.",
           "trigger": {
             "event": "end_step",
-            "controller": "you"
-          },
-          "condition": {
-            "count": {
-              "zone": "battlefield",
-              "controller": "you",
-              "subtypes": [
-                "Horror"
-              ]
-            },
-            "at_least": 1
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Horror"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            }
           },
           "effects": [
             {
@@ -13906,6 +13916,129 @@
           },
           "destination": "hand",
           "rest_to": "graveyard"
+        }
+      ]
+    },
+    {
+      "id": "t_search_watcher",
+      "name": "Test Search Watcher",
+      "oracle_text": "Whenever an opponent searches their library, you gain 1 life and draw a card.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent searches their library, you gain 1 life and draw a card.",
+          "trigger": {
+            "event": "searches_library",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_life_floor_emblem",
+      "name": "Test Life Floor Emblem",
+      "oracle_text": "You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "emblem",
+          "player": "you",
+          "emblem": 0
+        }
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "kind": "static",
+              "effect": "damage_life_floor",
+              "amount": 1,
+              "affects_player": "you",
+              "condition": {
+                "exists": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_worship",
+      "name": "Test Worship",
+      "oracle_text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "mana_cost": "{3}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "damage_life_floor",
+          "amount": 1,
+          "affects_player": "you",
+          "condition": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
         }
       ]
     }

@@ -8492,13 +8492,13 @@
     },
     "Angel of Destiny": {
       "edhrec_rank": 2900,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Destiny",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you and that player each ",
+      "reason": "",
       "scryfall_id": "74c6f0ea-689c-4fa7-a350-f5527b4ee2f5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Angel of Finality": {
       "edhrec_rank": 4278,
@@ -8562,13 +8562,13 @@
     },
     "Angel of Invention": {
       "edhrec_rank": 4199,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Invention",
-      "reason": "no template for: Fabricate 2",
+      "reason": "",
       "scryfall_id": "37229823-00ce-47db-83e4-cbea90e70534",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Angel of Jubilation": {
       "edhrec_rank": 5066,
@@ -8662,13 +8662,13 @@
     },
     "Angel of Vitality": {
       "edhrec_rank": 2076,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Vitality",
-      "reason": "no template for: If you would gain life, you gain that much life plus 1 instead",
+      "reason": "",
       "scryfall_id": "c279947e-168f-4af5-902b-aba724f52b8a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Angel of the Dawn": {
       "edhrec_rank": 16639,
@@ -8692,13 +8692,13 @@
     },
     "Angel of the Ruins": {
       "edhrec_rank": 1061,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of the Ruins",
-      "reason": "no template for: When this creature enters, exile up to two target artifacts and/or enchantments",
+      "reason": "",
       "scryfall_id": "4ad8d899-5901-4fc8-b4f0-adcc0d97fc6e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Angel's Feather": {
       "edhrec_rank": 10098,
@@ -8952,13 +8952,13 @@
     },
     "Angelic Field Marshal": {
       "edhrec_rank": 4447,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Field Marshal",
-      "reason": "no template for: Lieutenant — As long as you control your commander, this creature gets +2/+2 and creatures",
+      "reason": "",
       "scryfall_id": "a1996f78-6752-4c1c-b74f-ccd8e632a987",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Angelic Gift": {
       "edhrec_rank": 3570,
@@ -11832,13 +11832,13 @@
     },
     "Archangel of Tithes": {
       "edhrec_rank": 2209,
-      "gate": "template",
+      "gate": null,
       "name": "Archangel of Tithes",
-      "reason": "no template for: As long as this creature is untapped, creatures can't attack you or planeswalkers you cont",
+      "reason": "",
       "scryfall_id": "c853d04c-864b-491c-8c6f-72d2d4874d2f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Archangel of Wrath": {
       "edhrec_rank": 22041,
@@ -12152,13 +12152,13 @@
     },
     "Archivist of Oghma": {
       "edhrec_rank": 681,
-      "gate": "template",
+      "gate": null,
       "name": "Archivist of Oghma",
-      "reason": "no template for: Whenever an opponent searches their library, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "a5100d6c-ca6e-40e5-8c55-50e74237ced4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Archmage Ascension": {
       "edhrec_rank": 8441,
@@ -16972,13 +16972,13 @@
     },
     "Avacyn, Angel of Hope": {
       "edhrec_rank": 772,
-      "gate": "template",
+      "gate": null,
       "name": "Avacyn, Angel of Hope",
-      "reason": "no template for: Other permanents you control have indestructible",
+      "reason": "",
       "scryfall_id": "74e5dcec-ef1d-4461-bb23-61d98ff082dd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Avacyn, Angel of Horror": {
       "edhrec_rank": 23346,
@@ -25252,13 +25252,13 @@
     },
     "Bishop of Wings": {
       "edhrec_rank": 3809,
-      "gate": "template",
+      "gate": null,
       "name": "Bishop of Wings",
-      "reason": "no template for: Whenever an Angel you control enters, you gain 4 life",
+      "reason": "",
       "scryfall_id": "c369d381-b48e-43cf-a032-8bcb120f443e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bishop's Soldier": {
       "edhrec_rank": 17624,
@@ -30782,13 +30782,13 @@
     },
     "Bonders' Enclave": {
       "edhrec_rank": 553,
-      "gate": "template",
+      "gate": null,
       "name": "Bonders' Enclave",
-      "reason": "no template for: {3}, {T}: Draw a card. Activate only if you control a creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "02a16e1e-1ea8-49af-9cde-2166134f7bdc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bonds of Faith": {
       "edhrec_rank": 18112,
@@ -34802,12 +34802,12 @@
     },
     "Brisela, Voice of Nightmares": {
       "edhrec_rank": null,
-      "gate": "template",
+      "gate": null,
       "name": "Brisela, Voice of Nightmares",
-      "reason": "no template for: Your opponents can't cast spells with mana value 3 or less",
+      "reason": "",
       "scryfall_id": "7e926e19-553c-470a-afde-358541af5caa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bristlebane Battler": {
@@ -35612,12 +35612,12 @@
     },
     "Bruna, the Fading Light": {
       "edhrec_rank": 2437,
-      "gate": "template",
+      "gate": null,
       "name": "Bruna, the Fading Light",
-      "reason": "no template for: When you cast this spell, you may return target Angel or Human creature card from your gra",
+      "reason": "",
       "scryfall_id": "6fccdb60-5fce-4a6e-a709-b986f9a4b653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bruse Tarl, Boorish Herder": {
@@ -54622,13 +54622,13 @@
     },
     "Court of Grace": {
       "edhrec_rank": 1645,
-      "gate": "template",
+      "gate": null,
       "name": "Court of Grace",
-      "reason": "no template for: When this enchantment enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "98292e80-3e4d-4da6-8e97-13c003c635da",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Court of Ire": {
       "edhrec_rank": 3247,
@@ -62152,13 +62152,13 @@
     },
     "Dawn of Hope": {
       "edhrec_rank": 2408,
-      "gate": "template",
+      "gate": null,
       "name": "Dawn of Hope",
-      "reason": "no template for: Whenever you gain life, you may pay {2}. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "de36ecaa-62e0-4f1c-b07f-837a786dc897",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dawn of a New Age": {
       "edhrec_rank": 4177,
@@ -62652,13 +62652,13 @@
     },
     "Dazzling Angel": {
       "edhrec_rank": 3116,
-      "gate": "template",
+      "gate": null,
       "name": "Dazzling Angel",
-      "reason": "no template for: Whenever another creature you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "a0bdf4d1-576f-41b6-a077-8725be608331",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dazzling Beauty": {
       "edhrec_rank": 29214,
@@ -74212,13 +74212,13 @@
     },
     "Drannith Magistrate": {
       "edhrec_rank": 706,
-      "gate": "template",
+      "gate": null,
       "name": "Drannith Magistrate",
-      "reason": "no template for: Your opponents can't cast spells from anywhere other than their hands",
+      "reason": "",
       "scryfall_id": "d98bed02-600c-4cb3-bff5-960d362861fb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Drannith Ruins": {
       "edhrec_rank": 5240,
@@ -79398,7 +79398,7 @@
       "scryfall_id": "7c619fed-2394-4efc-8cdc-6df5f51c1f57",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Edgar, Charmed Groom // Edgar Markov's Coffin": {
       "edhrec_rank": 3522,
@@ -82862,23 +82862,23 @@
     },
     "Emeria's Call // Emeria, Shattered Skyclave": {
       "edhrec_rank": 2832,
-      "gate": "template",
+      "gate": null,
       "name": "Emeria's Call // Emeria, Shattered Skyclave",
-      "reason": "no template for: Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you co",
+      "reason": "",
       "scryfall_id": "c470539a-9cc7-4175-8f7c-c982b6072b6d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Emeria, the Sky Ruin": {
       "edhrec_rank": 1027,
-      "gate": "template",
+      "gate": null,
       "name": "Emeria, the Sky Ruin",
-      "reason": "no template for: At the beginning of your upkeep, if you control seven or more Plains, you may return targe",
+      "reason": "",
       "scryfall_id": "90f148e6-1a5e-46fc-9557-40c5c0038069",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Emeritus of Abundance // Regrowth": {
       "edhrec_rank": 7411,
@@ -87932,13 +87932,13 @@
     },
     "Exemplar of Light": {
       "edhrec_rank": 1279,
-      "gate": "template",
+      "gate": null,
       "name": "Exemplar of Light",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "b7393efb-da40-4b55-a6ff-ce774f0815f9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Exemplar of Strength": {
       "edhrec_rank": 24248,
@@ -91472,13 +91472,13 @@
     },
     "Farewell": {
       "edhrec_rank": 167,
-      "gate": "template",
+      "gate": null,
       "name": "Farewell",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "4d8b6418-da30-4c68-b87c-3936eb77620c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Farfinder": {
       "edhrec_rank": 15036,
@@ -99432,13 +99432,13 @@
     },
     "Folk Hero": {
       "edhrec_rank": 3974,
-      "gate": "template",
+      "gate": null,
       "name": "Folk Hero",
-      "reason": "no template for: Commander creatures you own have \"Whenever you cast a spell that shares a creature type wi",
+      "reason": "",
       "scryfall_id": "85bf7c95-4534-435b-bb25-f39340ecf9be",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Folk Medicine": {
       "edhrec_rank": 29021,
@@ -108322,13 +108322,13 @@
     },
     "Giada, Font of Hope": {
       "edhrec_rank": 1702,
-      "gate": "template",
+      "gate": null,
       "name": "Giada, Font of Hope",
-      "reason": "no template for: Each other Angel you control enters with an additional +1/+1 counter on it for each Angel ",
+      "reason": "",
       "scryfall_id": "89e2d714-2070-434a-9a81-276e72594e06",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Giant Adephage": {
       "edhrec_rank": 2499,
@@ -109782,13 +109782,13 @@
     },
     "Gisela, the Broken Blade": {
       "edhrec_rank": 2583,
-      "gate": "template",
+      "gate": null,
       "name": "Gisela, the Broken Blade",
-      "reason": "no template for: At the beginning of your end step, if you both own and control Gisela and a creature named",
+      "reason": "",
       "scryfall_id": "04506bad-3856-4184-8dda-941ded60f41a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gishath, Sun's Avatar": {
       "edhrec_rank": 2406,
@@ -109872,13 +109872,13 @@
     },
     "Giver of Runes": {
       "edhrec_rank": 1395,
-      "gate": "template",
+      "gate": null,
       "name": "Giver of Runes",
-      "reason": "no template for: {T}: Another target creature you control gains protection from colorless or from the color",
+      "reason": "",
       "scryfall_id": "5adb3391-06cc-4fd2-9e72-a3500940b450",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gix's Caress": {
       "edhrec_rank": 21644,
@@ -116152,13 +116152,13 @@
     },
     "Grasp of Fate": {
       "edhrec_rank": 1133,
-      "gate": "template",
+      "gate": null,
       "name": "Grasp of Fate",
-      "reason": "no template for: When this enchantment enters, for each opponent, exile up to one target nonland permanent ",
+      "reason": "",
       "scryfall_id": "1ad46a46-4221-4e0e-8b46-49f517c231c1",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Grasp of Phantoms": {
       "edhrec_rank": 26907,
@@ -137762,13 +137762,13 @@
     },
     "Inspiring Overseer": {
       "edhrec_rank": 1635,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Overseer",
-      "reason": "no template for: When this creature enters, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "79016cf3-6eea-4b21-9ff3-f187d606e19a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Inspiring Paladin": {
       "edhrec_rank": 11907,
@@ -163586,9 +163586,9 @@
       "name": "Lyra, Archangel of Dawn",
       "reason": "",
       "scryfall_id": "86a3866e-68a8-402c-baf0-1908e98e3995",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Lyra, Tolarian Archangel": {
       "edhrec_rank": 29116,
@@ -165212,13 +165212,13 @@
     },
     "Magus of the Moat": {
       "edhrec_rank": 7457,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Moat",
-      "reason": "no template for: Creatures without flying can't attack",
+      "reason": "",
       "scryfall_id": "59264c1f-38f1-408b-a6e9-b7c6dcb46103",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Magus of the Moon": {
       "edhrec_rank": 3221,
@@ -172262,13 +172262,13 @@
     },
     "Metastatic Evangel": {
       "edhrec_rank": 1504,
-      "gate": "template",
+      "gate": null,
       "name": "Metastatic Evangel",
-      "reason": "no template for: Whenever another nontoken creature you control enters, proliferate",
+      "reason": "",
       "scryfall_id": "774e115a-c0dc-4901-9a1f-87754304e378",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Metathran Aerostat": {
       "edhrec_rank": 31402,
@@ -188622,13 +188622,13 @@
     },
     "Norn's Choirmaster": {
       "edhrec_rank": 3319,
-      "gate": "template",
+      "gate": null,
       "name": "Norn's Choirmaster",
-      "reason": "no template for: Whenever a commander you control enters or attacks, proliferate",
+      "reason": "",
       "scryfall_id": "1da10c9f-4c9f-4eee-8480-665c453215d4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Norn's Decree": {
       "edhrec_rank": 4072,
@@ -190376,9 +190376,9 @@
       "name": "Ob Nixilis, the Ascended",
       "reason": "",
       "scryfall_id": "a022d35a-9d24-4818-9ff3-a522cfcb178e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ob Nixilis, the Fallen": {
       "edhrec_rank": 1957,
@@ -198402,13 +198402,13 @@
     },
     "Patchwork Banner": {
       "edhrec_rank": 204,
-      "gate": "template",
+      "gate": null,
       "name": "Patchwork Banner",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "537ea7e7-e8e8-4736-bdd9-1085f1a7c259",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Patchwork Beastie": {
       "edhrec_rank": 12155,
@@ -221442,13 +221442,13 @@
     },
     "Resplendent Angel": {
       "edhrec_rank": 2091,
-      "gate": "template",
+      "gate": null,
       "name": "Resplendent Angel",
-      "reason": "no template for: At the beginning of each end step, if you gained 5 or more life this turn, create a 4/4 wh",
+      "reason": "",
       "scryfall_id": "59adbd35-9959-4a0f-babf-46ea3c15f018",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Resplendent Griffin": {
       "edhrec_rank": 28374,
@@ -223882,13 +223882,13 @@
     },
     "Righteous Valkyrie": {
       "edhrec_rank": 2022,
-      "gate": "template",
+      "gate": null,
       "name": "Righteous Valkyrie",
-      "reason": "no template for: Whenever another Angel or Cleric you control enters, you gain life equal to that creature'",
+      "reason": "",
       "scryfall_id": "7e01a5ab-13ae-41a4-a196-d8bb2317d674",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Righteous War": {
       "edhrec_rank": 22357,
@@ -240362,13 +240362,13 @@
     },
     "Sephara, Sky's Blade": {
       "edhrec_rank": 1350,
-      "gate": "template",
+      "gate": null,
       "name": "Sephara, Sky's Blade",
-      "reason": "no template for: You may pay {W} and tap four untapped creatures you control with flying rather than pay th",
+      "reason": "",
       "scryfall_id": "f445f63a-73a9-4512-83ef-6be7409440bc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sephiroth's Intervention": {
       "edhrec_rank": 6738,
@@ -240492,13 +240492,13 @@
     },
     "Seraph Sanctuary": {
       "edhrec_rank": 2314,
-      "gate": "template",
+      "gate": null,
       "name": "Seraph Sanctuary",
-      "reason": "no template for: Whenever an Angel you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "8ff49618-4612-4a44-a0b7-9d710a7cd60b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Seraph of Dawn": {
       "edhrec_rank": 14323,
@@ -241012,13 +241012,13 @@
     },
     "Serra the Benevolent": {
       "edhrec_rank": 5859,
-      "gate": "template",
+      "gate": null,
       "name": "Serra the Benevolent",
-      "reason": "no template for: +2: Creatures you control with flying get +1/+1 until end of turn",
+      "reason": "",
       "scryfall_id": "8e3c139e-fcd5-4a23-bcac-b887c6e198e5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Serra the Benevolent Emblem": {
       "edhrec_rank": null,
@@ -262962,13 +262962,13 @@
     },
     "Starnheim Aspirant": {
       "edhrec_rank": 3138,
-      "gate": "template",
+      "gate": null,
       "name": "Starnheim Aspirant",
-      "reason": "no template for: Angel spells you cast cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "170914cc-3c3d-4929-a45d-836a5b8a4090",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Starnheim Courser": {
       "edhrec_rank": 2887,
@@ -282802,13 +282802,13 @@
     },
     "The Wandering Emperor": {
       "edhrec_rank": 5593,
-      "gate": "template",
+      "gate": null,
       "name": "The Wandering Emperor",
-      "reason": "no template for: As long as entered this turn, you may activate her loyalty abilities any time you could ca",
+      "reason": "",
       "scryfall_id": "22edc832-993b-432a-8435-8d8a72799122",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "The Wandering Minstrel": {
       "edhrec_rank": 6140,
@@ -284822,13 +284822,13 @@
     },
     "Thraben Watcher": {
       "edhrec_rank": 4824,
-      "gate": "template",
+      "gate": null,
       "name": "Thraben Watcher",
-      "reason": "no template for: Other nontoken creatures you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "9405c90b-4d6a-47d6-980b-de84aa93672d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Thrakkus the Butcher": {
       "edhrec_rank": 2621,
@@ -285272,13 +285272,13 @@
     },
     "Three Tree City": {
       "edhrec_rank": 176,
-      "gate": "template",
+      "gate": null,
       "name": "Three Tree City",
-      "reason": "no template for: As enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "06008bcb-ce6b-482c-9253-f5b9b5e0718e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Three Tree Mascot": {
       "edhrec_rank": 4106,
@@ -289022,13 +289022,13 @@
     },
     "Tome of Legends": {
       "edhrec_rank": 2303,
-      "gate": "template",
+      "gate": null,
       "name": "Tome of Legends",
-      "reason": "no template for: This artifact enters with a page counter on it",
+      "reason": "",
       "scryfall_id": "3a50a89f-aca9-409e-b6b5-dbe3a361b96f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tome of the Guildpact": {
       "edhrec_rank": 6662,
@@ -299712,13 +299712,13 @@
     },
     "Urza's Incubator": {
       "edhrec_rank": 313,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Incubator",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "c4589226-6072-409b-b598-ebd87f675a6a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Urza's Mine": {
       "edhrec_rank": 843,
@@ -300462,13 +300462,13 @@
     },
     "Valkyrie Harbinger": {
       "edhrec_rank": 2824,
-      "gate": "template",
+      "gate": null,
       "name": "Valkyrie Harbinger",
-      "reason": "no template for: At the beginning of each end step, if you gained 4 or more life this turn, create a 4/4 wh",
+      "reason": "",
       "scryfall_id": "e976523b-55cf-4cc0-b537-bb7c629004b4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Valkyrie's Call": {
       "edhrec_rank": 5194,
@@ -318002,13 +318002,13 @@
     },
     "Wojek Investigator": {
       "edhrec_rank": 4670,
-      "gate": "template",
+      "gate": null,
       "name": "Wojek Investigator",
-      "reason": "no template for: At the beginning of your upkeep, investigate once for each opponent who has more cards in ",
+      "reason": "",
       "scryfall_id": "296574c6-3933-4ab3-b591-72514b244da9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Wojek Siren": {
       "edhrec_rank": 28386,
@@ -321542,13 +321542,13 @@
     },
     "Youthful Valkyrie": {
       "edhrec_rank": 3108,
-      "gate": "template",
+      "gate": null,
       "name": "Youthful Valkyrie",
-      "reason": "no template for: Whenever another Angel you control enters, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "5aa62069-cb37-423a-a0d9-44f4bdebca45",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Yuan Shao's Infantry": {
       "edhrec_rank": 31386,

@@ -165,6 +165,21 @@ describe("beatsFor", () => {
     expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
   });
 
+  it("gives a library search its own beat and line", () => {
+    // `beatsFor` and `describeEvent` are parallel switches with parallel
+    // `default`s; a search left out of this one would be dropped from the
+    // queue even with a log line, and it is the one moment of a tutor that
+    // shows nothing on the board.
+    const [beat] = beatsFor(
+      [event("library_searched", { owner: 1 }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 260, sound: "shuffle" });
+    expect(beat.text).toBe("Edgar AI searches their library");
+  });
+
   it("banners an emblem, told from the viewer's side", () => {
     // Another table-level moment: the emblem sits in the command zone, which
     // is a pile, so there is nothing to flash. Neutral, because an emblem is as

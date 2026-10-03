@@ -210,7 +210,10 @@ export function ActionPanel({
   // file, where this is the one deliberate exception.
   const maxX = mode === "chooseX" ? Number(pending?.context?.max_x ?? 0) : 0;
   const perPoint = mode === "chooseX" ? Number(pending?.context?.per_point ?? 1) : 1;
-  // A fresh question starts at zero rather than at the last spell's answer.
+  // The floor a mana-value casting lock puts under X (Brisela). The options
+  // start there, so an action's `choice` is X less the floor.
+  const minX = mode === "chooseX" ? Number(pending?.context?.min_x ?? 0) : 0;
+  // A fresh question starts at its floor rather than at the last spell's answer.
   // Stored with the question it belongs to and reset during render rather than
   // in an effect -- React's own "adjusting state when a prop changes" pattern,
   // and it avoids a frame where the previous spell's X is on screen. Keyed on
@@ -219,10 +222,10 @@ export function ActionPanel({
   const [xAnswer, setXAnswer] = useState({ key: xKey, value: 0 });
   const chosenX = xAnswer.key === xKey ? xAnswer.value : 0;
   const setChosenX = (value: number) => setXAnswer({ key: xKey, value });
-  const clampedX = Math.min(Math.max(chosenX, 0), maxX);
+  const clampedX = Math.min(Math.max(chosenX, minX), maxX);
   const xAction =
     mode === "chooseX"
-      ? (actions.find((a) => a.kind === "choose" && a.choice === clampedX) ?? null)
+      ? (actions.find((a) => a.kind === "choose" && a.choice === clampedX - minX) ?? null)
       : null;
 
   /**
@@ -555,6 +558,7 @@ export function ActionPanel({
           {mode === "chooseX" && (
             <XStepper
               clampedX={clampedX}
+              minX={minX}
               maxX={maxX}
               perPoint={perPoint}
               disabled={disabled}

@@ -772,6 +772,18 @@ export function beatsFor(
         return;
 
       /*
+       * A library search. Its own beat rather than log-only, because it is the
+       * one moment of a tutor or a cracked fetchland that shows nothing on the
+       * board -- the card it finds arrives as a separate `zone_change` and a
+       * search that finds nothing moves no card at all -- and Archivist of
+       * Oghma's trigger goes on the stack right after it. The sound is the
+       * shuffle a search nearly always ends in (701.19c), which emits nothing.
+       */
+      case "library_searched":
+        push({ hold: 260, sound: "shuffle" });
+        return;
+
+      /*
        * Triggers get the same spotlight a cast gets.
        *
        * In Commander triggers are most of what happens, and a trigger going on

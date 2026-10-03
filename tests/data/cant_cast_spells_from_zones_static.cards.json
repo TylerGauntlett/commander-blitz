@@ -1,0 +1,97 @@
+{
+  "_comment": "Cards that exist only for the static cast-lock test (tests/unit/test_static_zone_cast_lock.py). Never part of a deck list. `t_hand_only_magistrate` is Drannith Magistrate's line on a vanilla body. `t_graveyard_warden` writes the positive `zones` spelling, shutting graveyards alone. `t_hand_only_curfew` is the same lock with an 'as long as' condition (during your turn), so the condition is shown to be honoured rather than dropped. The cast lines are measured with the cards from tests/data/cant_cast_spells_from_zones.cards.json (`t_ember_recall`, `t_ashen_warden`), tests/data/library_top_cast.cards.json (`t_citadel`) and tests/data/testing.cards.json (`t_cascader`, `t_foreteller`, `t_bear`).",
+  "cards": [
+    {
+      "id": "t_hand_only_magistrate",
+      "name": "Test Hand Only Magistrate",
+      "oracle_text": "Your opponents can't cast spells from anywhere other than their hands.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast spells from anywhere other than their hands.",
+          "effect": "cant_cast_spells_from_zones",
+          "affects_player": "opponent",
+          "except_zones": [
+            "hand"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_graveyard_warden",
+      "name": "Test Graveyard Warden",
+      "oracle_text": "Your opponents can't cast spells from graveyards.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast spells from graveyards.",
+          "effect": "cant_cast_spells_from_zones",
+          "affects_player": "opponent",
+          "zones": [
+            "graveyard"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_hand_only_curfew",
+      "name": "Test Hand Only Curfew",
+      "oracle_text": "During your turn, your opponents can't cast spells from anywhere other than their hands.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During your turn, your opponents can't cast spells from anywhere other than their hands.",
+          "effect": "cant_cast_spells_from_zones",
+          "affects_player": "opponent",
+          "except_zones": [
+            "hand"
+          ],
+          "condition": {
+            "is_your_turn": true
+          }
+        }
+      ]
+    }
+  ]
+}

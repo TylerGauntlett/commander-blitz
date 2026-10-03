@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "sephara_sky_s_blade",
+    "name": "Sephara, Sky's Blade",
+    "oracle_text": "You may pay {W} and tap four untapped creatures you control with flying rather than pay this spell's mana cost.\nFlying, lifelink\nOther creatures you control with flying have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+    "mana_cost": "{4}{W}{W}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Angel"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 7,
+    "toughness": 7,
+    "keywords": ["flying", "lifelink"],
+    "alternative_cost": {
+      "mana": "{W}",
+      "tap_permanents": {"types": ["Creature"], "keywords": ["flying"], "count": 4}
+    },
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other creatures you control with flying have indestructible.",
+        "effect": "grant_keyword",
+        "keywords": ["indestructible"],
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "keywords": ["flying"],
+          "exclude_self": true
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["flying", "lifelink"], "count": 1}
+  }
+}

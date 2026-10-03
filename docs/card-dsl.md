@@ -668,6 +668,7 @@ whatever attacked, which is different on every trigger.
 | | |
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
+| `shares_a_creature_type_with` | the **creature-types-only** clause (205.3m): `"self"` (the object that has the ability) or a binding name. A Background, Aura, Equipment or Arcane is a subtype and not a creature type, so it never counts; a Kindred spell's creature type does. The one spelling of this family a **trigger filter** honours — and there it must be `"self"`. Folk Hero: see [below](#that-shares-a-creature-type-with-this-creature) |
 | `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted. `"self"` names the ability's own source instead of a binding: Kasmina, Enigma Sage's "a card that shares a color with **this planeswalker**" |
 | `shares_a_name_with` | the same clause on names — Legions to Ashes' "all tokens that player controls **with the same name as that permanent**". `name` cannot stand in: it takes a literal string fixed when the card is written. Alone in the family in **tolerating a bound object that has already left the battlefield**, so a spell that exiles its target and its copies together works whichever order the two ops run in |
 | `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
@@ -1220,6 +1221,7 @@ Anywhere a number is expected:
 { "life_of": "you" }                            // SUMS over its player spec
 { "min_life_of": "each_opponent" }              // the lowest, one player at a time
 { "max_life_of": "each_opponent" }              // the highest
+{ "starting_life_of": "you" }                   // the life total ONE seat began with (103.4)
 { "max_count_of": { "player": "each_opponent",  // "an opponent controls more
                     "objects": { "zone": "battlefield",   //  lands than you"
                                  "types": ["Land"] } } }
@@ -1322,6 +1324,44 @@ Two Propagandas are `{4}`, summed rather than concatenated into an unpayable
 discard would have to ask a question inside the declare-attackers decision, and
 no printed pillowfort asks for one. A tax with no cost is refused for the reason
 ward {0} is — it is `cant_attack` wearing a costume.
+
+**`or_planeswalkers: true`** widens the tax to attacks on the static's
+controller's planeswalkers — "creatures can't attack you **or planeswalkers you
+control** unless ..." (Archangel of Tithes, Sphere of Safety). Off by default,
+because Propaganda's sentence names only the player and attacking a
+planeswalker is not attacking its controller (506.2). Priced, withheld and
+labelled on the walker's ADD_ATTACKER exactly as on the player's. Refused on any
+static but `attack_tax`.
+
+### Pricing a block rather than forbidding it
+
+```jsonc
+// Archangel of Tithes
+{ "kind": "static",
+  "text": "As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.",
+  "effect": "block_tax",
+  "cost": { "mana": "{1}" },
+  "affects": { "controller": "any", "types": ["Creature"] },
+  "condition": { "exists": { "self_only": true, "attacking": true } } }
+```
+
+`attack_tax`'s twin at declare-blockers (509.1d), read by
+`characteristics.block_tax`. Every blocking near miss is absolute: `cant_block`
+(static and op) forbids, and `block_restriction` refuses a blocker by what it is
+with no payment path, so an Archangel built on either is a lock on blocking
+rather than a toll. **No seat test**: the sentence names no player, only
+"creatures", so `affects` is the whole of who pays — the blocker's controller.
+Priced once per blocking creature as it is declared (a creature blocks one
+attacker here, so one block is one price), withheld when unpayable (509.1e),
+the price in the label, and taxes from several permanents summed. Mana only and
+a cost required, for `attack_tax`'s reasons. **509.1c**: a player is never
+required to pay to obey a block requirement, so a provoked or lured creature
+under a block tax owes nothing (`combat.block_taxed` exempts it from
+`unmet_block_requirements` and from `_required_block`'s narrowing).
+
+"As long as this creature is untapped / is attacking" needs nothing new: the
+static condition `exists` over `{"self_only": true, "tapped": false}` or
+`{"self_only": true, "attacking": true}` reads the source's own board state.
 
 ### A static magnitude that counts in twos
 
@@ -2395,8 +2435,13 @@ Read in `primitives.add_counters`, the single funnel every placement comes
 through — the `add_counters` op, `move_counters`, `proliferate`, the `counters`
 key on `put_onto_battlefield` — and the counters a permanent **enters with**
 (122.6: those are "put on" it too; a planeswalker's starting loyalty, riot's
-counter, every `self_enters_with_counters`) are replaced by the same statics in
-`zones._enter_with_counters`, which fires no `counter_placed`. So it applies once per
+counter, every `self_enters_with_counters`, `enters_with_additional_counters`)
+are gathered per kind and replaced by the same statics **once**, as one
+placement, in `zones._entering_counters` -- in the order 616.1 lets the
+controller choose, taken as the one leaving the most counters (Hardened Scales
+before Doubling Season; compleated wherever it costs least). Their
+`counter_placed` is fired once the permanent is on the battlefield, by
+`zones._fire_entered_with_counters`, with that total. So it applies once per
 batch, and *before* `counter_placed` fires or a Saga chapter comparison reads
 the new total. A replacement that fired the event with the pre-replacement
 number would be a card lying to every trigger watching it. Only on the way in:
@@ -3238,7 +3283,7 @@ kind off the **source**; the loader refuses a `counter` key here.
 `"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
-`{ "binding": "name" }` · `{ "not": { … } }`
+`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -3257,6 +3302,32 @@ one derived from the turn structure, from who is playing, or from where a
 permanent is attached. It resolves to **nobody** when no promise was made, which
 is what makes a gift's reward conditional with no `if` around it. See
 [Gift](#gift--a-promise-made-to-one-opponent-for-nothing).
+
+### `attacked_by` — the players *this creature* attacked this turn
+
+```jsonc
+// Angel of Destiny: "At the beginning of your end step, if you have at least 15
+// life more than your starting life total, each player this creature attacked
+// this turn loses the game."
+"trigger": { "event": "end_step", "controller": "you",
+             "condition": { "cmp": ">=", "left": { "life_of": "you" },
+                            "right": { "sum": [ { "starting_life_of": "you" },
+                                                { "const": 15 } ] } } },
+"effects": [ { "op": "lose_game", "player": { "attacked_by": "self" } } ]
+```
+
+Read off `TurnLedger.players_attacked_by` (attacker oid → seats), written from
+each creature's `attacks` event, because by the end step `state.combat` — the
+only other thing that knew — is gone. `creatures_attacked` is the near miss: it
+is keyed by the attacking *seat*, so on a split attack at a pod it cannot say
+which opponent this creature swung at, and "each opponent" would end the game
+for a player the Angel never touched.
+
+Two rules shape the record. A creature attacking a **planeswalker or battle**
+attacked that permanent, not its controller (506.2), so it records no player.
+And the record goes when the creature **leaves the battlefield**: the oid
+survives the zone change but the object does not (400.7), and a flickered Angel
+attacked nobody. `"self"` is the only subject; anything else is a load error.
 
 ### `not` — the player a card *excludes*
 
@@ -3406,6 +3477,7 @@ the ability's own controller, so that key can only ever ask about you. See
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
+    "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
     "to_zones": ["graveyard", "exile"] // `leaves_battlefield` only: where it went
@@ -3413,6 +3485,26 @@ the ability's own controller, so that key can only ever ask about you. See
   "effects": [ ... ]
 }
 ```
+
+**A trigger `filter` is a subset of the selector language.** It is matched
+against the event's subject by `triggers.matches_card_filter`, which answers
+`TRIGGER_FILTER_KEYS` (the packet's `trigger_filter_keys`) and nothing else, and
+the loader refuses any other selector key there -- `name`, `attacking`,
+`not_colors` and the rest used to load and be silently dropped, a trigger
+strictly wider than the printed line. `controller` and `owner` take `you`,
+`opponent` or `any` only; a player spec or `enchanted_player` is refused for the
+same reason. A `double_triggers` `cause_filter` is matched by the same function
+and held to the same list.
+
+`owner` is "**your commander**" -- Tome of Legends, "Whenever your commander
+enters or attacks": two triggers, `permanent_enters` and `attacks`, each with
+`controller: "any"` and `filter: {"is_commander": true, "owner": "you"}`. Rule
+903.3 makes "your commander" the one you own, wherever it is and whoever
+controls it, so it still counts attacking for the opponent who stole it, and an
+opponent's commander you have stolen does not. `controller: "you"` in the filter
+(Norn's Choirmaster's "a commander you control") reads both of those boards the
+other way. Not an intervening-if either: 603.4 re-checks a `condition` on
+resolution, and the printed card has no "if".
 
 `not_cause` is "…**if it wasn't put onto the battlefield with this ability**".
 Zone changes carry a `cause`, and `put_onto_battlefield` can set its own, so an
@@ -3458,6 +3550,24 @@ written fired on *every* kind — and the shipped pool places `charge` and
 creature" would also draw off Arixmethes waking up. The kind is also copied into
 `bindings` beside `amount`, so effects can read what fired them. Rejected on any
 other event, for the same reason as `defending`.
+
+`put_by: "you"` is "whenever **you** put one or more +1/+1 counters on this
+creature" -- Exemplar of Light. `controller` on `counter_placed` reads the
+*recipient's* controller, so an opponent's Graft on your creature passes it and
+would draw you a card. The event also carries `put_by`, the player who put the
+counters (122.6a: the controller of the placing spell or ability, or the
+permanent's own controller for a cost or a Saga tick -- the same `_putter` the
+`replace_counters` static's `put_by` reads), and this clause requires it to be
+the ability's controller. "One or more" needs nothing further: `add_counters`
+fires one event per placement, so three counters at once are one trigger. A
+failed match never queues, so an opponent's placement does not spend a
+`max_per_turn: 1` cap. `"you"` is the only value; rejected on any other event.
+
+```jsonc
+// Exemplar of Light
+{ "event": "counter_placed", "source": "self", "counter": "+1/+1",
+  "put_by": "you", "max_per_turn": 1 }
+```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
 on a `draw` or a `spell_cast` trigger. `draw_cards` puts the ordinal of each draw on the event —
@@ -3543,7 +3653,8 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated` · `damage_prevented` · `deals_damage_to_player`
+`ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
+`searches_library`
 
 ### Tiered, and reading back which price was paid
 
@@ -4027,6 +4138,23 @@ would still miss the other route in, where an opponent's own card crowns them wi
 no damage anywhere. Nothing fires when a player who is *already* the monarch
 becomes it again, because the event is the crown moving.
 
+**`searches_library`** fires once per library search (701.19) — every tutor,
+fetchland and landcycling ability, since `search_library` and `search_zones` both
+go through `ops_cards._search`, which fires it. Its subject is a **player**: the
+`controller` clause and `event_player` name the **searcher**, so Archivist of
+Oghma's "whenever an opponent searches their library" is
+`{"event": "searches_library", "controller": "opponent"}`, and an opponent
+searching because of *your* Path to Exile counts, as the printed ruling says. A
+search that finds nothing, or where "up to one" is declined, is still a search
+and fires; two searches in one resolution fire twice; a `search_zones` over
+library and graveyard fires once. A library `cant_search_library` refuses was
+never searched and fires nothing, even when the graveyard half of the same
+search goes ahead. `look_at_top` is not a search and does not fire it. The event
+carries `owner` (whose library); every search op today searches the searcher's
+own. `spell_cast` and `ability_activated` are the near misses and fire on the
+cause: they count a conditional tutor that never searched and miss a search a
+trigger performed.
+
 **`becomes_untapped`** is inspired, and it is nearly all untap step. The event
 had always existed — `untap_permanent` fires it — but `untap_all` emitted one
 aggregate carrying a `count` and no `oid`, through `emit` rather than `fire`, so
@@ -4211,7 +4339,8 @@ characteristics — the loader rejects anything else. See
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
-`block_restriction` · `prevent_damage` · [`prevent_all_but`](#prevent-all-but-n-of-that-damage) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
+`block_restriction` · `prevent_damage` · [`prevent_all_but`](#prevent-all-but-n-of-that-damage) ·
+[`damage_life_floor`](#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
@@ -4220,6 +4349,8 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
+[`attack_tax`](#pricing-an-attack-rather-than-forbidding-it) ·
+[`block_tax`](#pricing-a-block-rather-than-forbidding-it) ·
 `extra_land_drops`, plus the player-wide ones below.
 
 #### Granting another permanent's loyalty abilities
@@ -4276,6 +4407,8 @@ smaller than the effect-side `value_keys`:
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
+| `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
+| `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 
 `permanents_entered_this_turn` is the newest, and the one whose near miss is
 worst. Kinbinding reads "Creatures you control get +X/+X, where X is the number
@@ -4432,7 +4565,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -4456,7 +4589,12 @@ the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and
 the fixed order stays acyclic. A **life total** is safe for exactly that reason
 too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
-can change what a player's life is.
+can change what a player's life is. "As long as **you** have 25 or more life"
+(Angel of Vitality) is `{"max_life_of": "you"} >= 25` — one player, so the
+minimum and the maximum agree. Every life total that moves in play goes through
+`primitives._move_life`, which invalidates the characteristic cache, so the
+answer follows the life total as it moves rather than standing until something
+unrelated bumps `char_version`.
 
 `life_of` itself is deliberately *not*, and the difference is the whole point.
 
@@ -4528,6 +4666,35 @@ that reading is correct.
 Both work in the `if`-effect language and in a static's `condition`; the two are
 validated separately, so a leaf added to one and not the other would load in a
 card that then quietly read 0.
+
+#### "At least 7 life more than your starting life total"
+
+```jsonc
+// Righteous Valkyrie -- a static's condition
+{ "cmp": ">=", "left": { "min_life_of": "you" },
+  "right": { "sum": [ { "starting_life_of": "you" }, { "const": 7 } ] } }
+
+// Angel of Destiny -- a trigger's intervening-if
+{ "cmp": ">=", "left": { "life_of": "you" },
+  "right": { "sum": [ { "starting_life_of": "you" }, { "const": 15 } ] } }
+```
+
+Rule 103.4: every player begins the game with a starting life total — 40 in
+Commander (903.7). It is recorded on the seat as `PlayerState.starting_life`
+when the game is created and never written again. A `const` 47 is the near miss
+and is a format assumption written into the card: the printed sentence is
+relative, and it means 27 in a game that began at 20.
+
+One seat only. A starting life total is one player's, so the effect side refuses
+the plural specs (`opponent`, `each_opponent`, `each_player`, `all`) at load, and
+a static — whose source has a controller and nothing else to aim at — accepts
+only `"you"`. `sum` joined the static language with it, because every printed
+threshold on a starting life total is an offset from it; its terms are held to
+the static list exactly as `times`' factors are.
+
+A life change bumps the characteristics cache (`primitives._move_life`, which
+`gain_life`, `lose_life` and damage to a player all go through), so a static conditioned on a life total switches on and off the
+moment the life total crosses the line.
 
 #### Counting filters, and the `zone` key
 
@@ -4850,10 +5017,35 @@ doubled gain of 3, agreeing with the life total. It is not a `you_gain_life`
 trigger that gains again — that is a second gain on the stack, a second event
 every life-gain trigger pays out on, and a loop.
 
-`gain_multiplier` is required and must be **2 or more**: 1 replaces a gain with
+`gain_multiplier` must be **2 or more**: 1 replaces a gain with
 itself, and 0 is "you gain no life", which is a different sentence. Two doublers
 multiply (614.5). A locked life total (118.5) stays locked — twice nothing is
 nothing.
+
+### "…you gain that much life plus 1 instead"
+
+```jsonc
+// Angel of Vitality
+{ "kind": "static",
+  "text": "If you would gain life, you gain that much life plus 1 instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "you",
+  "gain_addend": 1 }
+```
+
+The other axis of the same static, as `counter_addend` is of `replace_counters`:
+"plus 1" is not a multiplier at any size. A static carries **exactly one** of
+`gain_multiplier` and `gain_addend` (both is a load error, and so is neither);
+`gain_addend` must be 1 or more. It is added once per life-gain **event**, not
+per point — a lifelink hit of 5 gains 6 — and a gain of 0 is no event, so nothing
+is added to it. Two Angels add 2 (614.5).
+
+**Against a doubler the order shows**, and 616.1 gives it to the player gaining
+the life: under an Angel and an Archive a gain of 3 is (3+1)×2 = 8 or 3×2+1 = 7.
+`gain_life` cannot ask — lifelink reaches it from inside combat damage — so it
+applies every addend before every multiplier, the larger gain and the order the
+gaining player picks, whichever permanent arrived first. A player who wanted the
+smaller gain cannot have it; that divergence is in `docs/rules-coverage.md`.
 
 ## "Your opponents can't gain life"
 
@@ -6191,7 +6383,7 @@ not. It is **not** interchangeable with a `not_types` complement —
 
 ## Player-wide statics
 
-Twenty-six static effects describe the *player* rather than a characteristic, so
+Thirty-eight static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -6219,13 +6411,16 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_addend": 1 }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
+{ "kind": "static", "effect": "cant_cast_spells_from_zones", "affects_player": "opponent", "except_zones": ["hand"] }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
+{ "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
 `replace_damage` is **not** on that list and still reads `affects_player`: it is
@@ -6364,7 +6559,9 @@ What it leaves alone, on purpose: `copy_spell` and storm-style copies (707.10 �
 never cast), playing lands and the special actions suspend and foretell (116.2),
 and activated abilities (Grand Abolisher's second sentence is a different
 static). `affects` or `amount` beside it is a load error rather than ignored.
-Drannith Magistrate and Deafening Silence remain gaps.
+Drannith Magistrate's zone-filtered form is the separate
+`cant_cast_spells_from_zones` static (see "Can't cast spells from anywhere other
+than their hands" below); Deafening Silence remains a gap.
 
 **A spell filter**, `affects_spells`, narrows it — Narset Transcendent's −9
 emblem, "Your opponents can't cast **noncreature** spells":
@@ -6386,6 +6583,30 @@ out of its offer). The face is the spell *as cast*: a bestowed creature is an Au
 spell (702.103b) and a face-down one is a nameless creature spell (708.2a). Asked
 about the seat alone — the early exit at the top of `_cast_actions` — only an
 unfiltered lock answers yes.
+
+**By mana value** — Brisela, Voice of Nightmares, "Your opponents can't cast spells
+with **mana value 3 or less**":
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast spells with mana value 3 or less.",
+  "effect": "cant_cast_spells",
+  "affects_player": "opponent",
+  "affects_spells": { "mana_value": { "op": "<=", "value": 3 } } }
+```
+
+`mana_value` is the selector language's comparison shape (or a bare number for
+"equal to") with a **literal** number, and this filter is the only spell filter
+that takes it (`CAST_LOCK_FILTER_KEYS`), because it is the only reader that knows
+the X a spell is cast for. 202.3e counts that X — the Brisela ruling says an
+opponent may cast an `{X}{R}` spell with X = 3 or more — so the lock is a *floor*
+on X rather than a yes or a no: `player_statics.cast_lock_min_x` finds the least X
+that lifts it, `_cast_variant` offers the line only when the board can pay that X,
+and `game._cast` passes it to `ask_x` as `min_x`, whose options then start there
+(the ordinal is X less the floor; `min_x` rides in the decision's `context` for
+the client's stepper). A price with no X to announce — a free cast, where 107.3b
+makes X 0 — keeps the locked mana value and is not offered. Pinned in
+`tests/unit/test_cant_cast_mana_value.py`.
 
 `cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
 activate abilities of artifacts, creatures, or enchantments", and the first line
@@ -7113,6 +7334,27 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
 
+**Protection from colorless** (Giver of Runes, 702.16 with 105.2c):
+
+```jsonc
+{"op": "grant_protection", "objects": {"target": "t1"}, "from_colorless": true}
+```
+
+Colorless is not a colour, so it is not a `from_colors` letter — `"C"` and
+`"colorless"` written there are load errors that name this flag. It is a boolean
+beside `from_everything` and stored the same way, as the sentinel quality
+`PROTECTION_COLORLESS` in the one flat set. It is the only quality matched on
+what the source **lacks**: `_matches_protection` stops a source with no colours
+at all (derived characteristics on the battlefield, printed ones elsewhere), and
+never one with any colour. Refused beside `from_everything`, which already
+covers it; `"colorless"` and `"everything"` are refused as `from_subtypes`
+entries, where the sentinel would otherwise load without its flag. The printed
+`protection` static takes the same `from_colorless: true`.
+
+"…protection from colorless or from the color of your choice" is a `choose_mode`
+of six `grant_protection` modes — `from_colorless`, then one per colour — the
+shape Brave the Elements' "Choose a color" already uses.
+
 ## "Exile <this card>." -- a spell that exiles itself
 
 ```jsonc
@@ -7207,6 +7449,28 @@ cast from (707.12).
 
 Pinned in `tests/unit/test_cant_cast_spells_from_zones.py`, where one flashback
 instant is a hand cast and a graveyard cast at once.
+
+**The static form** is Drannith Magistrate — the same sentence with no clock,
+because "for as long as it is on the battlefield" is what a static is:
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast spells from anywhere other than their hands.",
+  "effect": "cant_cast_spells_from_zones",
+  "affects_player": "opponent",
+  "except_zones": ["hand"] }
+```
+
+A player-wide static, so `affects_player` is required and an "as long as"
+`condition` is honoured. It takes the op's `zones` / `except_zones` (exactly one,
+validated by the op's own check) and the loader resolves either to the positive
+list once, with the op's own helper (`ops_player.shut_cast_zones`). It has **no
+reader of its own**: `primitives.cast_locked_zones` unions it in beside the
+`CastLock` rows, so the three roads above enforce it by the call they already
+make. A commander is cast from the command zone (903.8), so a Magistrate stops
+its opponents casting their commanders. `affects`, `amount` and `affects_spells`
+beside it are load errors, and `zones` / `except_zones` on any other static are
+refused. Pinned in `tests/unit/test_static_zone_cast_lock.py`.
 
 ## "Your life total can't change"
 
@@ -7441,6 +7705,33 @@ Applied in `primitives.damage_permanent` and `primitives.damage_player`
 the two and they would cap last, so a doubled hit still lands as 1. Read through
 `player_statics.damage_cap`, which walks `_battlefield_statics` — the command
 zone included, which is where an emblem lives.
+
+## Damage can't take you below 1
+
+```jsonc
+// Serra the Benevolent's emblem, and Worship: "If you control a creature,
+//   damage that would reduce your life total to less than 1 reduces it to 1
+//   instead."
+{ "kind": "static", "effect": "damage_life_floor", "amount": 1,
+  "affects_player": "you",
+  "condition": { "exists": { "controller": "you", "types": ["Creature"] } } }
+```
+
+The continuous form of the `damage_life_floor` op — Angel's Grace's "until end of
+turn" floor, which records a `LifeFloor` once and wears off at cleanup. The
+static lasts as long as its source (an emblem: the rest of the game), and its
+"if you control a creature" is an ordinary static `condition`, asked **at each
+damage event** by `_active_player_statics` — a floor whose last creature died
+between two hits no longer holds. `amount` is the floor, required and at least 1;
+`affects_player` names the protected seats; `affects` is refused.
+
+A **floor on the total, not a prevention**: the damage is dealt in full
+(`DAMAGE_DEALT`, lifelink and the commander tally all see it) and only the life
+loss stops at the floor, so `LIFE_LOST` carries what actually left. It floors
+**damage** only — the printed word — so paying life or a `lose_life` walks past
+it. Read in `primitives.damage_player` through `temp_effects.life_floor`, which
+takes the highest of the timed records and the statics; with several floors the
+highest bites.
 
 ## "…creatures that player controls attack Gideon Jura if able"
 
@@ -8401,9 +8692,9 @@ this enters".
 `counter_placed` with `{"counter": "lore"}` is the near miss and is wrong twice.
 It fires on the counter being *placed*, where 714.2c fires on the count
 **reaching** the number — so a proliferated Saga advances by the wrong pattern,
-and a placement of two counters at once fires one chapter instead of two. And it
-does not fire at all on the counter a Saga *enters* with, which is chapter I on
-every Saga ever printed.
+and a placement of two counters at once fires one chapter instead of two. The
+counter a Saga *enters* with does fire it (122.6), but chapter I is
+`sagas.entered`'s, which compares counts and reaches it once.
 
 **`final_chapter`** is optional and derived from the highest chapter written.
 Write it by hand in exactly one case, which is the case it exists for: a Saga
@@ -8612,8 +8903,28 @@ order 616.1 lets the controller choose and the one that keeps a walker
 compleated took to zero. Each matching static adds its own amount; the
 arriving permanent is never its own source. **Not** `replace_counters` with
 `counter_addend: 1`, which replaces every placement and would turn each +1
-loyalty cost into +2. `affects`, `counter` and a whole `amount` of 1 or more are
-all required.
+loyalty cost into +2. `affects`, `counter` and an `amount` are all required.
+
+**A counted amount** — Giada, Font of Hope: "Each other Angel you control enters
+with an additional +1/+1 counter on it for each Angel you already control."
+
+```jsonc
+{"kind": "static", "effect": "enters_with_additional_counters",
+ "affects": {"controller": "you", "subtypes": ["Angel"]},
+ "counter": "+1/+1",
+ "amount": {"count": {"controller": "you", "subtypes": ["Angel"]}}}
+```
+
+`amount` is a whole number of 1 or more, or `{"count": <battlefield filter>}` and
+nothing else (the filter is the static `count` filter, judged from the static's
+source). The count is taken as the permanent enters and **leaves out the
+entering group** — the arrival itself and everything that entered in the same
+simultaneous event (`state.event_batch`) — which is the word "already": two
+Angel tokens from one effect each count only the Angels that were there before.
+A source in the entering group applies nothing (614.12), so Giada returned
+together with an Angel gives it no counters. A count of 0 adds none. A resolving
+permanent spell and a land drop are each their own event, so a token made while
+the spell waited on the stack is counted.
 
 ## Battles
 
@@ -9707,6 +10018,39 @@ the command zone — so there is nothing to find and the clause is always false.
 `is_commander` is the other near-miss and asks the opposite question: it is a
 predicate on the object being tested, not a reference to compare a different
 object against, and it is a battlefield test.
+
+## "…that shares a creature type with this creature"
+
+```jsonc
+// Folk Hero — "Commander creatures you own have "Whenever you cast a spell that
+// shares a creature type with this creature, draw a card. This ability
+// triggers only once each turn.""
+"grantable_abilities": [
+  {"kind": "triggered", "text": "Whenever you cast a spell that shares …",
+   "trigger": {"event": "spell_cast", "controller": "you",
+               "filter": {"shares_a_creature_type_with": "self"},
+               "max_per_turn": 1},
+   "effects": [{"op": "draw", "player": "you"}]}
+],
+"abilities": [
+  {"kind": "static", "effect": "grant_ability", "ability": 0,
+   "affects": {"types": ["Creature"], "is_commander": true, "owner": "you"}}
+]
+```
+
+`"self"` is the object that **has** the ability. On a granted trigger that is the
+recipient — `abilities_of` hands the copy over sourced on the commander creature —
+so Folk Hero compares against each commander's types, never its own.
+`shares_a_type_with_commander` is the near miss and is a broader card: it unions
+every commander's subtypes, so a partner answers for this creature and a
+Background commander contributes "Background".
+
+Creature types only, on both sides, through `characteristics.creature_types_of`:
+derived subtypes filtered by `SUBTYPE_CLASS` with Creature as the default. A
+changeling counts (its subtypes are the creature-type list), a Kindred Instant —
+Elf has Elf, an ordinary instant has none. A trigger filter may only say `"self"`
+(nothing is bound when it is asked, and the loader refuses anything else);
+effect-side it also takes a binding name.
 
 **A literal `subtypes` list is the approximation to refuse.** Which creature
 type matters is a property of the deck the card is played in, not of the card —
@@ -11958,13 +12302,30 @@ phasing did nothing.
 ## Meld — mutate's merged permanent, with the pair fixed by the card
 
 ```jsonc
-{ "id": "bruna_the_fading_light",
-  "melds_with": "gisela_the_broken_blade",
+{ "id": "gisela_the_broken_blade",
+  "melds_with": "bruna_the_fading_light",
   "melds_into": "brisela_voice_of_nightmares",
-  "abilities": [ { "kind": "triggered", "trigger": { "event": "end_step" },
-                   "condition": { … },
+  "abilities": [ { "kind": "triggered",
+                   "trigger": { "event": "end_step", "controller": "you",
+                                "condition": { … } },
                    "effects": [ { "op": "meld" } ] } ] }
 ```
+
+Only the half that prints the meld trigger carries `melds_with` / `melds_into`;
+the partner (Bruna) is an ordinary card whose "(Melds with …)" line is reminder
+text.
+
+**Authoring a pair.** The melded card is the half's to carry: it goes in the
+answer's `back` (one or a list) exactly as a transforming back face does, and the
+half's packet has a `meld_result` block with its printed text, because the catalog
+keeps the result as a row of its own and links nothing. The partner is **not** a
+companion — it is cast, drawn and decked like any card, so it has its own answer
+and expectation. When it is machine-authored it lives in the auto batch that the
+gates deliberately verify without, so `verify(..., partners=[...])` joins it to the
+pool (only the id `melds_with` names, and never over an existing card) and
+`--collect` supplies it from the batch and from this run's accepted answers,
+verifying every half that names a partner after the rest.
+`tests/cards/test_auto_cards.py` re-verifies the half the same way.
 
 Meld was `refused` as needing "a card-wide designated state the engine has no
 place to keep". By the time mutate shipped, the place existed: a permanent whose
@@ -11991,6 +12352,15 @@ The melded card entry is not a card anybody owns a copy of, and it is kept out
 of decks by `parent_face` — the same derived back-link a back face and a second
 castable face use. Three fields answering "is this a card anybody owns?" would
 be three places to forget, so there is one.
+
+**Its mana value is the total of its front faces'** (the Brisela ruling:
+"Brisela's mana value is 11"). The melded card prints no mana cost, so the pool
+entry's mana value is 0; `op_meld` therefore writes a synthesised `CardDef` onto
+the permanent — the pool entry with `melded_mana_value` set to the two halves'
+sum — exactly as mutate synthesises its merged card. `CardDef.mana_value` reads
+that field first, and the engine's few direct `mana_cost.mana_value()` reads of a
+permanent were moved onto the property. The printed `mana_cost` stays empty, and
+the field is never authored.
 
 "If you both own and control" is **not** implemented in the op. It is the card's
 own intervening-if `condition`, checked twice by `triggers` as 603.4 requires; a
@@ -13205,6 +13575,10 @@ let you target your own protected creature.
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
 
+`"from_colorless": true` is protection from colorless — any source with no
+colours (105.2c: colorless is not a colour, so it is never a `from_colors`
+letter). See [Granting protection](#granting-protection).
+
 **Protection from the colours outside your commander's identity.** Commander's
 Plate — "Equipped creature gets +3/+3 and has protection from each color that's
 not in your commander's color identity" — names a colour set no printed list can,
@@ -13883,6 +14257,26 @@ Two guards, and the second is the one that moved:
   prices with nothing to choose between them. A node that charges something else
   is exempt: Force of Will's line is unconditional and printed, and what it takes
   instead of mana is the reason it is a fair card.
+
+**On a permanent** the node is unchanged — Sephara, Sky's Blade:
+
+```jsonc
+// "You may pay {W} and tap four untapped creatures you control with flying
+//  rather than pay this spell's mana cost."
+"alternative_cost": { "mana": "{W}",
+  "tap_permanents": { "types": ["Creature"], "keywords": ["flying"], "count": 4 } }
+```
+
+`tap_permanents` is read off the battlefield, so the spell (in hand while 601.2h
+pays) never taps itself, and summoning-sick fliers pay — 302.6 restricts a
+creature's own `{T}`, not a cost that taps other permanents. The printed line is
+claimed at gate 3 by **the field**, the way bestow's is: instants never needed a
+claimant because `spell_effects` claims every line of a spell, and a creature has
+none. The claimant is strict — the printed mana must parse to `mana`, "tap N
+untapped <noun> you control with <keyword>" must be the `tap_permanents` count,
+types and keywords, "pay N life" the `pay_life`, and sacrifice / return / exile
+from hand / discard must be printed exactly when declared. Any other field on the
+node fails closed. A card declaring `{U}` cannot claim a printed `{W}`.
 
 `mana_reduction` is refused here. "Costs {X} less to cast **this way**" is
 `graveyard_cost`'s rider and only `costs.variant_reduction` reads it, off the

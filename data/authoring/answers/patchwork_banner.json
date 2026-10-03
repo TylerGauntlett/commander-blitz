@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "patchwork_banner",
+    "name": "Patchwork Banner",
+    "oracle_text": "As this artifact enters, choose a creature type.\nCreatures you control of the chosen type get +1/+1.\n{T}: Add one mana of any color.",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this artifact enters, choose a creature type.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "choose_type", "prompt": "Choose a creature type"}
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Creatures you control of the chosen type get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "subtypes": [{"chosen_type_of": "self"}]
+        },
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "cost": {"tap": true},
+        "is_mana_ability": true,
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6
+  }
+}

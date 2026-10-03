@@ -368,6 +368,29 @@ def _validate_static_value(value: Any, where: str) -> None:
             )
         for i, factor in enumerate(factors):
             _validate_static_value(factor, f"{where}.times[{i}]")
+    if "sum" in value:
+        # "At least 7 life more than your starting life total" -- Righteous
+        # Valkyrie, as `life >= starting + 7`. Recursive for the reason `times`
+        # is: the terms are held to this same list, or an effect-side leaf
+        # inside a `sum` would slip past the outermost-keys check above.
+        terms = value["sum"]
+        if not isinstance(terms, list) or len(terms) < 2:
+            raise DslError(
+                f"{where}.sum: a list of at least two terms to add, "
+                f'e.g. [{{"starting_life_of": "you"}}, {{"const": 7}}]'
+            )
+        for i, term in enumerate(terms):
+            _validate_static_value(term, f"{where}.sum[{i}]")
+    if "starting_life_of" in value:
+        # Rule 103.4: one seat's starting life total. A static's source has a
+        # controller and nothing else to aim at, so the spec is "you" -- the
+        # plural words would sum a number no printed sentence means.
+        who = value["starting_life_of"]
+        if who != "you":
+            raise DslError(
+                f"{where}.starting_life_of: a static can only ask about 'you' "
+                f"(one seat's starting life total, rule 103.4), got {who!r}"
+            )
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of
         # creatures that entered the battlefield under your control this turn."

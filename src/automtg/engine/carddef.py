@@ -534,6 +534,10 @@ class TriggerSpec:
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.
     counter: str | None = None
+    #: ``counter_placed`` only: "whenever **you** put one or more +1/+1
+    #: counters on this creature" -- the event's ``put_by`` (the putter,
+    #: 122.6a) must be this ability's controller.  Exemplar of Light.
+    put_by: str | None = None
     #: ``ability_activated`` only: "…**if it isn't a mana ability**".  ``False``
     #: means only non-mana activations fire it, ``True`` only mana ones, and
     #: ``None`` is every activation.
@@ -1236,6 +1240,13 @@ class CardDef:
     #: back through ``parent_face`` so no deck may contain it.
     melds_with: str | None = None
     melds_into: str | None = None
+    #: A melded permanent's mana value: the total of its two front faces'
+    #: (the Brisela ruling -- "Brisela's mana value is 11"). The melded card
+    #: prints no mana cost, so ``mana_cost`` stays empty and this answers
+    #: `mana_value` instead. Never authored -- `op_meld` writes it onto the
+    #: `CardDef` it synthesises for the one permanent, the way mutate writes
+    #: its merged card, and the printed entry in the pool keeps ``None``.
+    melded_mana_value: int | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
     #: **Warp {1}{R}**: ``evoke``'s slot -- an alternative mana cost offered
@@ -1459,6 +1470,8 @@ class CardDef:
 
     @property
     def mana_value(self) -> int:
+        if self.melded_mana_value is not None:
+            return self.melded_mana_value
         return self.mana_cost.mana_value()
 
     def has_keyword(self, keyword: Keyword | str) -> bool:

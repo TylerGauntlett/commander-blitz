@@ -159,7 +159,8 @@ def life_gain_multiplier(state: GameState, pid: int) -> int:
     long as" clause beside it is asked; **multiplied**, not summed, because two
     Archives are two replacements of one event each applying once (614.5) and
     a gain doubled twice is quadrupled; and 616.1's ordering is not asked,
-    which for a product cannot show.
+    which for a product cannot show -- it shows against an addend, and
+    :func:`life_gain_addend` owns that.
 
     Asked by `primitives.gain_life` only, which is the one place a life total
     goes up -- lifelink reaches it too (702.15b), so a lifelinking creature
@@ -169,8 +170,38 @@ def life_gain_multiplier(state: GameState, pid: int) -> int:
     multiplier = 1
     for obj, static in _active_player_statics(state, "replace_life_gain"):
         if _reaches_player(obj, static, pid):
-            multiplier *= int(static.get("gain_multiplier", 1))
+            multiplier *= int(static.get("gain_multiplier") or 1)
     return multiplier
+
+
+def life_gain_addend(state: GameState, pid: int) -> int:
+    """What is added to a life gain by ``pid`` right now.  Usually 0.
+
+    Angel of Vitality: "If you would gain life, you gain that much life **plus
+    1** instead."  The additive axis of ``replace_life_gain``, read exactly as
+    :func:`life_gain_multiplier` is -- through `_active_player_statics`, so a
+    condition is asked and the static lifts when its source leaves -- and
+    **summed**, because two Angels are two replacements each applying once to
+    the event (614.5): plus 1, then plus 1 again.
+
+    A static carries one axis or the other (the loader refuses both), so an
+    addend static contributes 0 here and a multiplier static contributes 0 to
+    this sum while contributing its factor to the product.
+
+    **616.1 and the order against a doubler.**  The affected player -- the one
+    gaining the life -- chooses which replacement applies first, and here the
+    order shows: under an Angel and an Archive a gain of 3 is (3+1)*2 = 8 or
+    3*2+1 = 7.  `primitives.gain_life` is not a generator (lifelink reaches it
+    from inside combat damage), so it cannot ask; it applies every addend
+    **before** every multiplier, which is the larger gain and the order the
+    gaining player picks.  The divergence -- a player who wanted the smaller
+    gain cannot have it -- is recorded in ``docs/rules-coverage.md``.
+    """
+    addend = 0
+    for obj, static in _active_player_statics(state, "replace_life_gain"):
+        if _reaches_player(obj, static, pid):
+            addend += int(static.get("gain_addend") or 0)
+    return addend
 
 
 def player_cant_gain_life(state: GameState, pid: int) -> bool:
@@ -206,6 +237,31 @@ def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     return any(
         _reaches_player(obj, static, pid) for obj, static in _active_player_statics(state, effect)
     )
+
+
+def static_life_floor(state: GameState, pid: int) -> int | None:
+    """The highest life floor an active `damage_life_floor` static gives ``pid``.
+
+    Worship, and Serra the Benevolent's emblem: "If you control a creature,
+    damage that would reduce your life total to less than 1 reduces it to 1
+    instead." The continuous twin of the `damage_life_floor` op's timed
+    `LifeFloor`. Its "if you control a creature" is the static's ordinary
+    `condition`, which `_active_player_statics` asks **now** -- this is read at
+    each damage event, so a floor whose last creature died earlier in the same
+    combat damage step no longer holds, and one whose creature arrived a moment
+    ago does. That is why it cannot be a one-shot: Angel's Grace's op records a
+    floor once and never re-reads anything.
+
+    The highest of several, for `temp_effects.life_floor`'s reason: two floors
+    are two prohibitions and the stricter one bites.
+    """
+    floor: int | None = None
+    for obj, static in _active_player_statics(state, "damage_life_floor"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        value = _static_value(state, static.get("amount"), obj)
+        floor = value if floor is None else max(floor, value)
+    return floor
 
 
 def draw_cap(state: GameState, pid: int) -> int | None:
@@ -716,7 +772,9 @@ def any_defender_attack_prohibition(state: GameState) -> bool:
     )
 
 
-def attack_tax(state: GameState, oid: int, defender: int) -> str:
+def attack_tax(
+    state: GameState, oid: int, defender: int, *, planeswalker: bool = False
+) -> str:
     """The mana a creature's controller must pay to declare it against ``defender``.
 
     "Creatures can't attack you unless their controller pays {2} for each
@@ -738,27 +796,47 @@ def attack_tax(state: GameState, oid: int, defender: int) -> str:
     The per-creature scaling in the printed text falls out of *where* this is
     charged: the price is settled once per attacker as it is declared, so a
     three-creature attack pays {2} three times, exactly as 508.1g totals it.
+
+    ``planeswalker`` asks about an attack on one of ``defender``'s
+    planeswalkers rather than on the player. Only a static written with
+    ``or_planeswalkers`` taxes that -- Archangel of Tithes and Sphere of
+    Safety say "you **or planeswalkers you control**" out loud, Propaganda does
+    not, and attacking a planeswalker is not attacking its controller (506.2),
+    so the printed sentence decides it and nothing is inferred.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return ""
-    generic = 0
-    parts: list[str] = []
+    specs: list[Any] = []
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "attack_tax":
             continue
         # The tax protects the seat the permanent is under, which is the whole
-        # shape of the card: "creatures can't attack **you**".
+        # shape of the card: "creatures can't attack **you**". A planeswalker's
+        # controller is the defending player (506.2), so the same seat test
+        # covers "planeswalkers you control".
         if source_obj.controller != defender:
+            continue
+        if planeswalker and not static.get("or_planeswalkers"):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        # The same `cost` mapping ward stores, so the two go through one
-        # validator and there is one place for a price to be written.
-        spec = static.get("cost")
+        specs.append(static.get("cost"))
+    return _summed_mana(specs)
+
+
+def _summed_mana(specs: list[Any]) -> str:
+    """Several taxes' `cost` mappings as one mana string.
+
+    The same `cost` mapping ward stores, so every tax goes through one validator
+    and there is one place for a price to be written. Summed rather than
+    concatenated where they are plain generic, so two Propagandas read as {4}
+    instead of an unpayable "{2}{2}".
+    """
+    generic = 0
+    parts: list[str] = []
+    for spec in specs:
         inner = str((spec or {}).get("mana") or "").strip() if isinstance(spec, Mapping) else ""
-        # Summed rather than concatenated where they are plain generic, so two
-        # Propagandas read as {4} instead of an unpayable "{2}{2}".
         if inner.startswith("{") and inner.endswith("}") and inner[1:-1].isdigit():
             generic += int(inner[1:-1])
         elif inner:
@@ -766,6 +844,35 @@ def attack_tax(state: GameState, oid: int, defender: int) -> str:
     if generic:
         parts.insert(0, "{" + str(generic) + "}")
     return "".join(parts)
+
+
+def block_tax(state: GameState, oid: int) -> str:
+    """The mana a creature's controller must pay to declare it as a blocker.
+
+    "As long as this creature is attacking, creatures can't block unless their
+    controller pays {1} for each of those creatures" -- Archangel of Tithes.
+    `attack_tax`'s twin at declare-blockers (509.1d), and none of the blocking
+    near misses can say it: `cant_block` and the `cant_block` op are absolute,
+    and `block_restriction` refuses a blocker by what it *is* with no payment
+    path at all. Built on either, the Archangel would be a lock on blocking
+    rather than a toll on it.
+
+    No seat test, unlike `attack_tax`: the printed sentence names no player to
+    protect, only "creatures", and the `affects` filter is the whole of who
+    pays. Charged once per blocking creature, as it is declared -- a creature
+    blocks one attacker here, so one block is one creature and one price, which
+    is how 509.1d totals "for each of those creatures".
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ""
+    specs = [
+        static.get("cost")
+        for source_obj, static in _battlefield_statics(state)
+        if static.get("effect") == "block_tax"
+        and _matches(state, obj, source_obj, static.get("affects"))
+    ]
+    return _summed_mana(specs)
 
 
 def block_forbidden(state: GameState, oid: int) -> bool:
@@ -1321,7 +1428,9 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
-def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = None) -> bool:
+def player_cant_cast_spells(
+    state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
+) -> bool:
     """ "Your opponents can't cast spells during your turn." Voice of Victory.
 
     A prohibition on the *player*, read everywhere a spell can be cast rather
@@ -1363,9 +1472,65 @@ def player_cant_cast_spells(state: GameState, pid: int, card: CardDef | None = N
             return True
         if card is not None:
             resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
-            if _matches_printed(card, resolved):
+            if _matches_printed(card, resolved, x=x):
                 return True
     return False
+
+
+#: How far `cast_lock_min_x` looks for an X that lifts a mana-value lock. Every
+#: printed threshold is a single digit, so an X past this is never the answer.
+_MAX_LOCK_X = 32
+
+
+def cast_lock_min_x(state: GameState, pid: int, card: CardDef) -> int | None:
+    """The smallest X ``card`` may be cast for under the casting locks, or None.
+
+    "Your opponents can't cast spells with mana value 3 or less" -- Brisela,
+    Voice of Nightmares. 202.3e counts the X a spell is cast with, so the lock
+    is a question about the cast and not about the card in hand: a Fireball is
+    castable for X = 3 (mana value 4) and not for X = 2. 601.2b announces X
+    before 601.2f totals the cost, so the answer is a *floor* on the X the
+    caster may announce rather than a yes or a no.
+
+    0 when nothing locks the cast -- which is every cast but one under a
+    mana-value lock. None when no X lifts it: an unfiltered lock, a filter that
+    does not read mana value, or a card with no X to raise.
+    """
+    if not player_cant_cast_spells(state, pid, card):
+        return 0
+    if not card.mana_cost.x_count:
+        return None
+    return next(
+        (
+            x
+            for x in range(1, _MAX_LOCK_X + 1)
+            if not player_cant_cast_spells(state, pid, card, x=x)
+        ),
+        None,
+    )
+
+
+def static_cast_locked_zones(state: GameState, pid: int) -> set[str]:
+    """The zones a `cant_cast_spells_from_zones` **static** shuts for ``pid``.
+
+    "Your opponents can't cast spells from anywhere other than their hands."
+    -- Drannith Magistrate. The battlefield-bound twin of the timed
+    `structs.CastLock` row Avatar's Wrath leaves, and deliberately not a
+    reader of its own: `primitives.cast_locked_zones` unions this into the
+    table it already answers from, so every road that asks about a timed lock
+    -- `casting._cast_actions`, `suspend.cast_for_free`,
+    `replacements._offer_cast` -- asks about this one by the same call.
+
+    The zones were resolved at load time (``except_zones`` subtracted from
+    `ops_player.CASTABLE_ZONES`), so the static carries the positive list the
+    lock row does. Read through `_active_player_statics`, so the lock lifts the
+    instant Magistrate leaves and an "as long as" `condition` is honoured.
+    """
+    shut: set[str] = set()
+    for obj, static in _active_player_statics(state, "cant_cast_spells_from_zones"):
+        if _reaches_player(obj, static, pid):
+            shut.update(static.get("zones", ()))
+    return shut
 
 
 def player_casts_only_at_sorcery_speed(state: GameState, pid: int) -> bool:

@@ -1,0 +1,66 @@
+{
+  "card": {
+    "id": "ob_nixilis_the_ascended",
+    "name": "Ob Nixilis, the Ascended",
+    "oracle_text": "Flying\nWhen Ob Nixilis enters, destroy all tapped creatures your opponents control. You gain 1 life for each creature destroyed this way.\nAt the beginning of each end step, if you gained life this turn, create a 4/4 white Angel creature token with flying.",
+    "mana_cost": "{5}{W}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Angel"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 4,
+    "toughness": 4,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Ob Nixilis enters, destroy all tapped creatures your opponents control. You gain 1 life for each creature destroyed this way.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "for_each",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "types": ["Creature"],
+              "tapped": true
+            },
+            "effects": [
+              {"op": "destroy", "objects": {"binding": "each"}},
+              {
+                "op": "if",
+                "condition": {"not": {"exists": {"binding": "each", "zone": "battlefield"}}},
+                "then": [
+                  {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each end step, if you gained life this turn, create a 4/4 white Angel creature token with flying.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "any",
+          "condition": {
+            "cmp": ">",
+            "left": {"life_gained_this_turn": "you"},
+            "right": {"const": 0}
+          }
+        },
+        "effects": [
+          {"op": "create_token", "token": "angel_4_4_w_flying", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "life": {"0": 40}
+  }
+}

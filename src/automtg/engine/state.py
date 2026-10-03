@@ -740,6 +740,14 @@ class GameState:
                 # emitter remembering to list them.
                 attacked = ledger.creatures_attacked.setdefault(pid, set())
                 attacked.update(int(oid) for oid in data.get("attackers") or ())
+        elif event.type == EventType.ATTACKS:
+            # Angel of Destiny's "each player this creature attacked this turn".
+            # Only an attack on a seat: one aimed at a planeswalker or a battle
+            # names its controller as `defender` (that is who blocks), but the
+            # creature attacked the permanent, not the player (506.2).
+            attacker, defender = data.get("attacker"), data.get("defender")
+            if attacker is not None and defender is not None and not data.get("attacked_permanent"):
+                ledger.players_attacked_by.setdefault(int(attacker), set()).add(int(defender))
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -768,6 +776,7 @@ class GameState:
                         types=frozenset(c.types),
                         subtypes=frozenset(c.subtypes),
                         colors=frozenset(c.colors),
+                        batch=int(data.get("batch", -1)),
                     )
                 )
                 # The ledger is now a *static* magnitude too -- Kinbinding's
@@ -840,6 +849,11 @@ class GameState:
                 data["nth"] = ledger.spells_cast[pid]
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
+            # 400.7: the oid survives a zone change and the object does not. A
+            # creature that left the battlefield and came back attacked nobody
+            # this turn, so the record of whom it attacked goes with it.
+            if data.get("from") == Zone.BATTLEFIELD.value:
+                ledger.players_attacked_by.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than

@@ -30,18 +30,18 @@
         "kind": "triggered",
         "trigger": {
           "event": "end_step",
-          "controller": "you"
-        },
-        "text": "At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.",
-        "condition": {
-          "cmp": ">=",
-          "left": {
-            "creatures_died_this_turn": "all"
-          },
-          "right": {
-            "const": 2
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "creatures_died_this_turn": "all"
+            },
+            "right": {
+              "const": 2
+            }
           }
         },
+        "text": "At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.",
         "effects": [
           {
             "op": "become_prepared",

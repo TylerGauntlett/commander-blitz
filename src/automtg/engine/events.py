@@ -62,6 +62,25 @@ class EventType:
     #: emits: cycling is one specific activated ability, and a trigger reading
     #: the broader event would fire on hand-size discards too.
     CYCLED = "cycled"
+    #: A player searched a library (701.19) -- "Whenever an opponent searches
+    #: their library" (Archivist of Oghma). ``player`` is the **searcher** and
+    #: ``data["owner"]`` whose library it was; every search op the engine has
+    #: searches the searcher's own, so the two agree today, and the key is there
+    #: so the log and any later op that searches another player's library need
+    #: not guess.
+    #:
+    #: One event per search, fired by `ops_cards._search` -- the single place
+    #: `search_library` and `search_zones` (and so every tutor, fetchland and
+    #: landcycling ability) look through a library. A search that finds nothing
+    #: is still a search and fires; a library search refused by
+    #: `cant_search_library` never happened and does not.
+    #:
+    #: Its own type because nothing else in the log could say it: the shuffle
+    #: that ends a search emits nothing, and a search that finds nothing moves
+    #: no card. `spell_cast` and `ability_activated` are the near misses and fire
+    #: on the cause, so they would count a conditional tutor that never searched
+    #: and miss a search done by a trigger.
+    LIBRARY_SEARCHED = "library_searched"
     #: A player got the city's blessing. Once per player per game.
     CITY_S_BLESSING = "city_s_blessing"
     MILL = "mill"
@@ -140,8 +159,9 @@ class EventType:
     #: placements that reach nothing new the second time but re-trigger under
     #: 714.2c, which only a before/after comparison can tell. And a Saga
     #: **enters** with its first lore counter as part of entering (714.2b), where
-    #: `add_counters` is never called at all and no COUNTER_PLACED exists to
-    #: hang chapter I on.
+    #: `add_counters` is never called at all -- the arrival's COUNTER_PLACED
+    #: (122.6) is fired by `zones._fire_entered_with_counters`, which is a
+    #: report of the placement and compares nothing.
     #:
     #: One event per chapter number crossed, not per counter and not per
     #: ability: two abilities printed on the same chapter line both fire off the

@@ -554,6 +554,20 @@ class PermanentShield:
 #: is called "everything".
 PROTECTION_EVERYTHING = "everything"
 
+#: The quality "protection from **colorless**" (Giver of Runes, 702.16 with
+#: 105.2c).  Colorless is not a colour, so it cannot be a letter in
+#: ``from_colors``, and a colourless source has an empty colour set, so no
+#: quality built from what the source *has* could ever match it -- the match is
+#: on what it lacks.  A sentinel for :data:`PROTECTION_EVERYTHING`'s reason: one
+#: more string in the one flat set the four protection rules already read.  No
+#: card type, subtype or colour is called "colorless" either.
+PROTECTION_COLORLESS = "colorless"
+
+#: Qualities that are not read off the source's characteristics.  The loader
+#: refuses them as a written ``from_subtypes`` entry, where they would otherwise
+#: sneak in as the sentinel without the flag that means it.
+PROTECTION_SENTINELS = frozenset({PROTECTION_EVERYTHING, PROTECTION_COLORLESS})
+
 #: The durations a :class:`PlayerProtection` can carry.  Both printed sentences
 #: say "until your next turn"; ``this_turn`` is here because the cleanup step
 #: already sweeps every other timed table on that word and a protection that
@@ -1237,6 +1251,11 @@ class EnteredPermanent:
     types: frozenset[str] = frozenset()
     subtypes: frozenset[str] = frozenset()
     colors: frozenset[str] = frozenset()
+    #: The `state.event_batch` the arrival belonged to -- which permanents
+    #: entered **together**. Giada, Font of Hope counts "each Angel you
+    #: *already* control", and an Angel arriving in the same event is not one
+    #: of them (`zones._board_additional_counters`).
+    batch: int = -1
 
     def matches(
         self,
@@ -1331,6 +1350,21 @@ class TurnLedger:
     #: The two spellings of the question cannot disagree, because `attacked`
     #: below is derived rather than stored.
     creatures_attacked: dict[int, set[int]] = field(default_factory=dict)
+    #: Which **players** each creature attacked this turn: attacker oid -> the
+    #: seats it was declared against. "Each player **this creature** attacked
+    #: this turn loses the game" -- Angel of Destiny.
+    #:
+    #: The other direction from `creatures_attacked`, which is keyed by the
+    #: attacking *seat* and knows nothing of whom: on a split attack at a pod
+    #: it cannot say which opponent the Angel swung at, and by the end step
+    #: `state.combat` -- the only place that did know -- is `None`.
+    #:
+    #: Seats only. A creature attacking a planeswalker or a battle is attacking
+    #: that permanent and not its controller (506.2, 508.1b), so it records
+    #: nothing here. And it is forgotten when the creature leaves the
+    #: battlefield: an oid survives the zone change but the object does not
+    #: (400.7), and a flickered Angel back from exile attacked nobody.
+    players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -1541,6 +1575,7 @@ class TurnLedger:
     def clear(self) -> None:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
+        self.players_attacked_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()

@@ -1,0 +1,25 @@
+{
+  "_comment": "Cards for tests/unit/test_players_attacked_by.py. `t_destiny_angel` is Angel of Destiny's end-step line without its life-total condition, so the player spec can be watched on its own: a 2/2 whose end-step trigger makes each player it attacked this turn lose the game. The bears and the planeswalker come from other test files.",
+  "cards": [
+    {
+      "id": "t_destiny_angel",
+      "name": "Test Destiny Angel",
+      "oracle_text": "At the beginning of your end step, each player this creature attacked this turn loses the game.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each player this creature attacked this turn loses the game.",
+          "trigger": {"event": "end_step", "controller": "you"},
+          "effects": [{"op": "lose_game", "player": {"attacked_by": "self"}}]
+        }
+      ]
+    }
+  ]
+}

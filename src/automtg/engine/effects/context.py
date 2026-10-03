@@ -273,6 +273,7 @@ def ask_x(
     *,
     per_point: int = 1,
     loyalty_cost: bool = False,
+    min_x: int = 0,
 ) -> Generator[PendingDecision, list[int], int]:
     """Ask how big to make ``X`` before the cost is paid.
 
@@ -293,14 +294,22 @@ def ask_x(
     source's own loyalty and the ceiling is all of it, so the maximum is the
     one answer that always kills the planeswalker. Carried in ``context`` for
     the agents that would otherwise take the largest X on offer.
+
+    ``min_x`` is a floor under the question: Brisela's "can't cast spells with
+    mana value 3 or less" leaves a Fireball castable only for X = 3 or more
+    (202.3e). The options start there, so the ordinal is ``X - min_x``, and
+    ``min_x`` rides in ``context`` beside ``max_x`` for the client's stepper.
+    It is 0 for every question but that one, which keeps the ordinal X itself.
     """
-    if max_x <= 0:
-        return 0
+    if max_x <= min_x:
+        return min_x
     decision = PendingDecision(
         kind=DecisionKind.CHOOSE_X,
         player=chooser,
         prompt=prompt,
-        options=tuple(DecisionOption(label=f"X = {i}", value=i) for i in range(max_x + 1)),
+        options=tuple(
+            DecisionOption(label=f"X = {i}", value=i) for i in range(min_x, max_x + 1)
+        ),
         min_count=1,
         max_count=1,
         context={
@@ -310,10 +319,11 @@ def ask_x(
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
             **({"loyalty_cost": True} if loyalty_cost else {}),
+            **({"min_x": min_x} if min_x else {}),
         },
     )
     answer = yield decision
-    return int(answer[0]) if answer else 0
+    return min_x + (int(answer[0]) if answer else 0)
 
 
 def ask_player(

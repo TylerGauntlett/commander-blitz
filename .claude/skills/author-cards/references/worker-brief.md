@@ -69,6 +69,13 @@ something you **turn over to**, or a second spell you may **cast**?
   turns over. Pair it with `second_face_zone` (`"hand"`, or `"graveyard"` for
   Aftermath).
 
+**A meld half** — the card printing "exile them, then meld them into <name>" — is
+the same shape: its packet's `meld_result` block carries the melded card's printed
+text, and that card goes in `"back"` (it is never cast, drawn or decked). The front
+names it in `melds_into` and its partner in `melds_with`. The **partner** is not a
+`back` entry: it is a card of its own with its own answer, and `--collect` brings
+it into the pool when verifying the half that names it.
+
 Only the front face has a position the gates can cast, so there is one
 expectation, proven through the front. **Do not file a gap record for a second
 face** — seven cards in the shipped pool already use these fields.

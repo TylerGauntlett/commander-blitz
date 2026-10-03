@@ -23,6 +23,7 @@ asking for work that cannot be accepted.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -214,6 +215,12 @@ class Packet:
     #: thing a worker must never do is invent a line, and this is the field that
     #: keeps the other half from having to be invented.
     back_face: dict = field(default_factory=dict)
+    #: **Meld** (701.37): the card this half and its partner become, for the
+    #: half that prints "exile them, then meld them into <name>". The catalog
+    #: keeps the melded card as a row of its own and links nothing, so without
+    #: this a worker would have to invent the result's text. Same shape as
+    #: ``back_face``; empty for everything else.
+    meld_result: dict = field(default_factory=dict)
     #: Cards already in the pool with a similar shape, as worked examples.
     examples: list[dict] = field(default_factory=list)
     #: The vocabulary. Copied in rather than referenced, because the API worker
@@ -438,7 +445,7 @@ def reference() -> dict:
     from automtg.engine.effects.values import VALUE_KEYS
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.objects import PLAYABLE_DURATIONS
-    from automtg.engine.triggers import TRIGGER_EVENTS
+    from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
     from ..loader import (
         COST_REDUCTION_FILTER_KEYS,
@@ -531,6 +538,12 @@ def reference() -> dict:
         #: `static_filter_keys` above is the far smaller printed-only subset,
         #: and being shown only the subset reads as the whole language.
         "selector_keys": sorted(SELECTOR_KEYS),
+        # The part of `selector_keys` a trigger's `filter` may use. A trigger
+        # filter is matched against the event's subject by its own function,
+        # which answers fewer keys than the effect-side selector; the loader
+        # refuses the rest, so a worker shown only `selector_keys` would write
+        # a filter that does not load.
+        "trigger_filter_keys": sorted(TRIGGER_FILTER_KEYS),
         "condition_keys": sorted(CONDITION_KEYS),
         "value_keys": sorted(VALUE_KEYS),
         # What an activated ability may charge. Omitted entirely until
@@ -656,6 +669,17 @@ def reference() -> dict:
             " over. Either way the other half is an ordinary card entry in the"
             " same pool, and your packet's `back_face` block carries its printed"
             " text -- write it as a second entry, do not file a gap.",
+            "A **meld** half -- the one printing \"exile them, then meld them"
+            " into <name>\" -- carries `melds_with` (its partner's card id) and"
+            " `melds_into` (the result's id), and its end-step trigger is"
+            " `effects: [{\"op\": \"meld\"}]` with the \"if you both own and"
+            " control\" clause as `trigger.condition` (an `all` of two `exists`,"
+            " each with `owner: \"you\"`, `controller: \"you\"`, the partner"
+            " by `name`). The melded card goes in your answer's `back` -- your"
+            " packet's `meld_result` block carries its printed text -- and the"
+            " PARTNER does not: it is a card of its own with its own answer,"
+            " and `--collect` brings it into the pool. The partner's"
+            " \"(Melds with ...)\" line is reminder text and needs nothing.",
             "A `tap_permanents` cost may carry `as`, naming THE one permanent it"
             " tapped so the ability's effects can read it: Station (\"Tap another"
             " creature you control: Put charge counters equal to its power on"
@@ -682,8 +706,19 @@ def reference() -> dict:
             " noncreature spells\" is the same static with `affects_spells:"
             " {\"not_types\": [\"Creature\"]}` (a spell filter: types, any_types,"
             " not_types, subtypes, colors, name, ... -- no `controller`,"
-            " `affects_player` says whose). \"More than one spell each turn\""
-            " is still a gap.",
+            " `affects_player` says whose). \"Can't cast spells with mana value"
+            " 3 or less\" is `affects_spells: {\"mana_value\": {\"op\": \"<=\","
+            " \"value\": 3}}` -- this filter only, and the engine counts an X"
+            " spell's chosen X. \"More than one spell each turn\" is still a"
+            " gap.",
+            "\"Your opponents can't cast spells from anywhere other than their"
+            " hands\" on a permanent is the player-wide static"
+            " `cant_cast_spells_from_zones` with `affects_player: \"opponent\"`"
+            " and `except_zones: [\"hand\"]` (or `zones: [\"graveyard\"]` for"
+            " \"from graveyards\"; exactly one of the two). It lasts while the"
+            " permanent does and shuts every road out of those zones, the"
+            " command zone included. The timed \"until your next turn\" form on"
+            " a spell is the op of the same name.",
             "\"You may spend mana as though it were mana of any color\" is the"
             " player-wide static `spend_mana_as_any_color` with `affects_player:"
             " \"you\"`; \"...to cast planeswalker spells\" is the same static"
@@ -694,7 +729,10 @@ def reference() -> dict:
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
             " replacement read wherever life is gained, lifelink included, so"
-            " it is NOT a `you_gain_life` trigger that gains again.",
+            " it is NOT a `you_gain_life` trigger that gains again. \"You gain"
+            " that much life plus 1 instead\" is the same static with"
+            " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
+            " never both).",
             "\"If you gained life this turn\" is the value"
             " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
             " `{\"const\": 0}` -- on a trigger, as its `condition` (an"
@@ -1075,7 +1113,34 @@ def back_face_of(entry: IndexEntry) -> dict:
         "oracle_text": entry.back_oracle_text,
     }
 
-def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) -> Packet:
+_MELDS_INTO = re.compile(r"\bmeld them into ([^.]+)\.")
+
+
+def meld_result_of(entry: IndexEntry, index) -> dict:
+    """The melded card this half names, as a plain dict, or ``{}``.
+
+    Looked up by the name the printed sentence gives, because the catalog has no
+    other link between a meld half and its result.
+    """
+    found = _MELDS_INTO.search(entry.oracle_text or "")
+    if index is None or found is None:
+        return {}
+    result = index.lookup(found.group(1).strip(), token=False)
+    if result is None:
+        return {}
+    return {
+        "name": result.name,
+        "type_line": result.type_line,
+        "mana_cost": result.mana_cost,
+        "power": result.power,
+        "toughness": result.toughness,
+        "oracle_text": result.oracle_text,
+    }
+
+
+def build_packet(
+    entry: IndexEntry, registry: CardRegistry, template_said: str, index=None
+) -> Packet:
     facts = facts_from_index(entry)
     proxy = build_proxy(facts)
     starting_point: dict = {}
@@ -1098,6 +1163,7 @@ def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) 
         oracle_text=entry.oracle_text,
         starting_point=starting_point,
         back_face=back_face_of(entry),
+        meld_result=meld_result_of(entry, index),
         todo=todo or [entry.oracle_text],
         template_said=template_said,
         examples=examples_for(facts, registry),

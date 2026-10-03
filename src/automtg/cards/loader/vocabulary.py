@@ -373,6 +373,13 @@ STATIC_EFFECTS = frozenset(
         # absolute, so a card built on either is a lock rather than a tax --
         # strictly stronger than what is printed.
         "attack_tax",
+        # Archangel of Tithes: "creatures can't block unless their controller
+        # pays {1} for each of those creatures."  `attack_tax`'s twin at
+        # declare-blockers (509.1d), read by `characteristics.block_tax`.  The
+        # blocking near misses are all absolute -- `cant_block` forbids and
+        # `block_restriction` refuses by filter with no payment path -- so a card
+        # built on either would be a lock rather than a toll.
+        "block_tax",
         # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
         # control."  `attack_tax` with the price taken out, and read at the same
         # moment by `characteristics.attack_defender_forbidden` through
@@ -522,6 +529,16 @@ STATIC_EFFECTS = frozenset(
         # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
         "cant_lose_the_game",
         "cant_win_the_game",
+        # Worship; Serra the Benevolent's emblem.  "If you control a creature,
+        # damage that would reduce your life total to less than 1 reduces it to
+        # 1 instead."  The continuous form of the `damage_life_floor` op
+        # (Angel's Grace's until-end-of-turn shape), as `cant_lose_the_game`
+        # is of its op: `amount` is the floor, `affects_player` the protected
+        # seats, and the "if you control a creature" is an ordinary static
+        # `condition`, asked again at every damage event.  Read by
+        # `primitives.damage_player` through `temp_effects.life_floor`, beside
+        # the timed table -- damage only, so a `lose_life` walks past it.
+        "damage_life_floor",
         # Ashiok, Dream Render.  "Spells and abilities your opponents control
         # can't cause their controller to search their library."  A player-wide
         # prohibition on one precise search: the named player searching **their
@@ -587,6 +604,13 @@ STATIC_EFFECTS = frozenset(
         # Not `split_second`, which lives on the stack and binds every player,
         # and not `epic`, which is a card-level rider with no seat or duration.
         "cant_cast_spells",
+        # Drannith Magistrate.  "Your opponents can't cast spells from anywhere
+        # other than their hands."  The *zone-filtered* twin of the static above,
+        # which is total or filtered only by the printed spell and so cannot say
+        # "from".  The battlefield-bound form of the `cant_cast_spells_from_zones`
+        # op (Avatar's Wrath's timed lock), taking the op's `zones` /
+        # `except_zones` and read by the op's reader, `primitives.cast_locked_zones`.
+        "cant_cast_spells_from_zones",
         # Grand Abolisher; Myrel, Shield of Argive.  "…or activate abilities of
         # artifacts, creatures, or enchantments."  The *other half* of the
         # sentence above, and a separate static because it prohibits a different
@@ -675,6 +699,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_empty_draw",
         "replace_proliferate",
         "cant_cast_spells",
+        "cant_cast_spells_from_zones",
         "cant_activate_abilities",
         "untap_limit",
         "cast_as_though_flash",
@@ -685,6 +710,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "opponents_cant_force_discard_or_sacrifice",
         "cant_lose_the_game",
         "cant_win_the_game",
+        "damage_life_floor",
     }
 )
 
@@ -792,6 +818,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: is, because the command zone its eminence static is gathered from is the very
 #: zone it is cast out of.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+
+#: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
+#:
+#: `SPELL_FILTER_KEYS` without `controller` -- `affects_player` already names
+#: the caster -- and with ``mana_value``: "Your opponents can't cast spells with
+#: **mana value 3 or less**" (Brisela, Voice of Nightmares), written
+#: ``{"op": "<=", "value": 3}``. Only this filter takes it, because only this
+#: reader knows the X the spell is being cast for (202.3e) -- see
+#: `player_statics.cast_lock_min_x`. Every other spell filter matches a card
+#: face at a moment when X means something else or nothing.
+CAST_LOCK_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"mana_value"}
 
 #: `SPELL_FILTER_KEYS` plus the zone a free cast is offered from.
 #:
@@ -1196,9 +1233,25 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: alternative they look like, since a static carries no `effects` and so it
 #: would be two abilities claiming one printed line, which the residual gate
 #: exists to refuse. Same spelling and shape as the effect-side `times`.
+#: `starting_life_of` and `sum` arrived together, for Righteous Valkyrie: "as
+#: long as you have at least 7 life more than your starting life total" is
+#: ``life >= starting + 7``, a comparison against a *sum*, and every printed
+#: threshold on a starting life total has that shape. A starting life total is
+#: written once when the seat is created, so it is a pipeline input on stronger
+#: terms than a life total; `sum` adds leaves that are all inputs, so it is safe
+#: for the reason `times` is.
 STATIC_VALUE_KEYS = (
     frozenset(
-        {"const", "count", "times", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+        {
+            "const",
+            "count",
+            "times",
+            "sum",
+            "mana_symbols",
+            "counters_on",
+            "permanents_entered_this_turn",
+            "starting_life_of",
+        }
     )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS

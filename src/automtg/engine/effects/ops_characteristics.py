@@ -311,7 +311,7 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     from ..characteristics import resolve_chosen_color_list
     from ..primitives import grant_player_protection
-    from ..structs import PROTECTION_EVERYTHING
+    from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING
 
     # "…protection from the color of your choice" -- Brave the Elements, whose
     # colour is named by a `choose_color` earlier in the same effect list and
@@ -331,6 +331,10 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     # to be forgotten.
     if spec.get("from_everything"):
         qualities.append(PROTECTION_EVERYTHING)
+    # "…protection from **colorless**" (Giver of Runes) -- the same sentinel
+    # shape for the same reason: colorless is not a colour letter (105.2c).
+    if spec.get("from_colorless"):
+        qualities.append(PROTECTION_COLORLESS)
     if not qualities:
         return
     # "**You** gain protection from everything until your next turn." A seat

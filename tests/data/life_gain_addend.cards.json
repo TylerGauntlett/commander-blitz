@@ -1,0 +1,64 @@
+{
+  "_comment": "Cards that exist only for the life-gain addend test (tests/unit/test_life_gain_addend.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_vitality` is Angel of Vitality's replacement line on its own, on an artifact so nothing else about it can matter. `t_opponent_vitality` points the same replacement at the opponents, the half no printed card has and the only way to test `affects_player` here. `t_vitality_body` is the Angel's other line on its own -- a 2/2 that gets +2/+2 as long as its controller has 25 or more life -- so the test can pin that a static condition reads its controller's own life total and follows it as it moves. The doubler is `t_archive` from life_gain_replacement.cards.json, the lifelinker `t_lifelink_bear` from life_loss_replacement.cards.json, and the gain spell `t_gain_spell`.",
+  "cards": [
+    {
+      "id": "t_vitality",
+      "name": "Test Vitality",
+      "oracle_text": "If you would gain life, you gain that much life plus 1 instead.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would gain life, you gain that much life plus 1 instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "you",
+          "gain_addend": 1
+        }
+      ]
+    },
+    {
+      "id": "t_opponent_vitality",
+      "name": "Test Opponent Vitality",
+      "oracle_text": "If an opponent would gain life, they gain that much life plus 1 instead.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would gain life, they gain that much life plus 1 instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "opponent",
+          "gain_addend": 1
+        }
+      ]
+    },
+    {
+      "id": "t_vitality_body",
+      "name": "Test Vitality Body",
+      "oracle_text": "This creature gets +2/+2 as long as you have 25 or more life.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +2/+2 as long as you have 25 or more life.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 2},
+          "condition": {
+            "cmp": ">=",
+            "left": {"max_life_of": "you"},
+            "right": {"const": 25}
+          }
+        }
+      ]
+    }
+  ]
+}
