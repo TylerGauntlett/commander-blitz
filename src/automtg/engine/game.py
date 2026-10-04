@@ -49,6 +49,8 @@ if TYPE_CHECKING:  # pragma: no cover
 STARTING_HAND = 7
 #: Most mulligans a player may take before being forced to keep.
 MAX_MULLIGANS = 6
+#: Mulligans that cost nothing: the first one, as in multiplayer and Commander.
+FREE_MULLIGANS = 1
 #: Safety valve on the internal advance loop.
 MAX_ADVANCE_STEPS = 20_000
 #: Default turn cap, per player in the game.
@@ -1283,7 +1285,7 @@ class Game:
         if not spec:
             return ()
         from .effects.context import EffectContext, ask_mode
-        from .effects.ops_control import modal_bounds
+        from .effects.ops_control import modal_bounds, mode_labels
 
         modes = list(spec.get("modes") or [])
         if not modes:
@@ -1313,7 +1315,7 @@ class Game:
         # reaches a modal spell without going through that check, and hanging
         # the game would be the worse failure.
         floor = min(floor, len(offered))
-        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+        labels = mode_labels(modes)
         picked = yield from ask_mode(
             ctx, "Choose", [labels[i] for i in offered], pid, floor, up_to
         )
@@ -1768,7 +1770,9 @@ def _opening_sequence(state: GameState) -> Generator[Any, list[int]]:
             draw_cards(state, pid, STARTING_HAND)
 
         player.has_kept_hand = True
-        bottom = min(player.mulligans_taken, len(player.hand))
+        # The first mulligan is free (103.5c, the multiplayer and Commander
+        # rule): every seat redraws seven once without bottoming a card.
+        bottom = min(max(0, player.mulligans_taken - FREE_MULLIGANS), len(player.hand))
         if bottom > 0:
             from .effects.context import EffectContext, ask_objects
 

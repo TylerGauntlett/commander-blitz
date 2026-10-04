@@ -157,7 +157,7 @@ describe("PlayerMat attachments", () => {
 describe("the lanes variant", () => {
   /*
    * Two surfaces show somebody's BOARD somewhere other than their own seat --
-   * the seat swap and the `R2` hold -- and in both the facts about that player
+   * the seat swap, by a click or while `R2` is held -- and the facts about that player
    * are already on screen. What matters is not that the column is tidy but that
    * the document does not end up with two of anything: `FxLayer` resolves a
    * damage numeral with `document.querySelector`, so a second `data-player`

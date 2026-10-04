@@ -76,9 +76,10 @@ test.describe("the table renders and plays", () => {
   });
 
   /*
-   * The second question, which only exists once a mulligan has been taken.
+   * The second question, which only exists once a mulligan has cost a card --
+   * the first one is free, so it takes two.
    *
-   * `engine/game.py` bottoms `min(mulligans_taken, hand)` cards, and it is a
+   * `engine/game.py` bottoms `mulligans_taken - FREE_MULLIGANS` cards, and it is a
    * different decision KIND from the first half -- so this is the one path that
    * proves `mulliganPhase` tells a mulligan's `choose_objects` apart from every
    * other one by the engine's `purpose` tag rather than by its prompt.
@@ -93,6 +94,10 @@ test.describe("the table renders and plays", () => {
 
     // One lamp is spent, which is the count the engine had never sent before.
     await expect(stage.locator(".mull__lamp[data-spent]")).toHaveCount(1);
+
+    // The first was free; the second is the one that costs a card.
+    await page.locator('[data-action-kind="mulligan"]').first().click();
+    await expect(stage.locator(".mull__lamp[data-spent]")).toHaveCount(2);
 
     await page.locator('[data-action-kind="keep"]').first().click();
     await expect(stage).toHaveAttribute("data-phase", "bottom");

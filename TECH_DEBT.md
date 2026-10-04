@@ -64,7 +64,7 @@ arena's tables.
 | SD-02 | **RESOLVED** | `.dockerignore` no longer names `legacy-frontend`. |
 | LP-01 | already resolved | -- |
 | LP-02 | **RESOLVED** | `GroupDial.tsx`'s header describes the shipped control; six tests and a handheld story. |
-| LP-03 | **RESOLVED as a comment, OPEN as a design** | `OpponentBoard.tsx`'s header says what it is (the R2 reader) rather than "temporary"; the missing modal root is pinned as a known-failing test (`it.fails`, named LP-03). Making it a modal is a behaviour change and was not done. |
+| LP-03 | **RESOLVED** | `OpponentBoard` is gone. Holding R2 now stands you at the seat -- the same board swap a click on it makes -- so the cards take the pointer and the ring and show in the reader (`Table.stories.tsx`, `HandheldHoldingR2ViewsAnOpponent`). |
 | LS-01 | **RESOLVED** | The one biome warning carries the `biome-ignore` its comment already justified. 0 warnings. |
 | LS-02 | **RESOLVED** | `verify.py` no longer doubles pytest's `-q`. |
 | NF-01 | **RESOLVED** | `frontend/tests/setup.ts` stubs canvas, `ResizeObserver` and `requestAnimationFrame`; the unit run prints no stack traces and reports 0 unhandled errors. |

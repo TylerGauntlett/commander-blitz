@@ -412,10 +412,16 @@ export function ActionPanel({
     // "No target" would make the choice unreadable. The server says what
     // separates them when it is not a target.
     if (action.option_label) return action.option_label;
-    const [ref] = action.targets;
     // Declining an optional target. It is a real, separately legal action, and
     // before the optional-target fix in `targeting.py` it was unreachable.
-    if (ref === undefined) return "No target";
+    if (action.targets.length === 0) return "No target";
+    // Every target, not the first: "any number of target permanents" (Clever
+    // Concealment) is one action per subset, and naming each by its first
+    // member drew a column of identical chips.
+    return action.targets.map(targetName).join(" + ");
+  };
+
+  const targetName = (ref: LegalAction["targets"][number]): string => {
     if (ref.kind === "player") return state.players[ref.id]?.name ?? `p${ref.id}`;
     if (ref.kind === "stack") {
       return state.stack.find((item) => item.sid === ref.id)?.name ?? `#${ref.id}`;

@@ -1,5 +1,5 @@
 /**
- * Everything drawn over the board: the toasts, the two holds, the region
+ * Everything drawn over the board: the toasts, the card hold, the region
  * dial, the log overlay and the four modals.
  *
  * Lifted out of `Table.tsx`'s render as it was. The order is the stacking
@@ -18,7 +18,6 @@ import { EventTicker } from "./EventTicker";
 import { GameOverScreen } from "./GameOverScreen";
 import { GroupDial } from "./GroupDial";
 import { OpeningHand } from "./OpeningHand";
-import { OpponentBoard } from "./OpponentBoard";
 import { PromptDialog } from "./PromptDialog";
 import { ZonePeek } from "./ZonePeek";
 
@@ -30,8 +29,6 @@ interface Props {
   error: string | null;
   setError: (error: string | null) => void;
   stalled: boolean;
-  handheld: boolean;
-  reading: number | null;
   heldCard: number | null;
   dialOpen: boolean;
   setDialOpen: (open: boolean) => void;
@@ -54,8 +51,6 @@ export function TableOverlays({
   error,
   setError,
   stalled,
-  handheld,
-  reading,
   heldCard,
   dialOpen,
   setDialOpen,
@@ -90,12 +85,10 @@ export function TableOverlays({
         </div>
       )}
 
-      {handheld && <OpponentBoard state={state} pid={reading} />}
-
       {/*
-      The two holds.
+      The card hold.
 
-      `AnimatePresence` on neither: both are gone the instant you press
+      No `AnimatePresence`: it is gone the instant you press
       anything else, and an exit animation on a thing you dismissed by acting
       would still be fading while the action it was covering resolved.
     */}

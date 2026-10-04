@@ -9,7 +9,7 @@
  *
  * ## It is a hold, not a toggle
  *
- * The same argument `OpponentBoard` makes: a toggle needs a second press to put
+ * The same argument the `R2` opponent hold makes: a toggle needs a second press to put
  * away and leaves the screen covered if you forget, whereas letting go is not
  * something you can forget to do. On a keyboard it is `i` held, which is what
  * `input/buttons.ts` already maps to `Y`.

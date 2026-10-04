@@ -67,17 +67,15 @@ interface Props {
   /**
    * `"lanes"` draws the permanents and no side column at all.
    *
-   * Two surfaces want it, and both for the same reason: they are showing
-   * somebody's BOARD somewhere other than that somebody's seat. The seat swap
-   * puts an opponent's lanes in the viewer's area, and the `R2` hold draws them
-   * over it -- and in each case the facts about that player are already on
-   * screen, on their seat six pixels above.
+   * The seat swap wants it: it shows somebody's BOARD somewhere other than that
+   * somebody's seat, putting an opponent's lanes in the viewer's area (by a
+   * click on their seat, or while `R2` is held) -- and the facts about that
+   * player are already on screen, on their seat six pixels above.
    *
    * It is also what stops the document holding two `data-player="1"`s. `FxLayer`
    * resolves a damage numeral with `document.querySelector`, so a second one
-   * takes whichever comes first -- which `OpponentBoard` has been doing since it
-   * was written, drawing a whole second `PlayerOrb` with a duplicate
-   * `life-<pid>` beside it while held.
+   * takes whichever comes first -- which the old `R2` overlay did, drawing a
+   * whole second `PlayerOrb` with a duplicate `life-<pid>` beside it while held.
    *
    * `"side"` is the mirror: the panel and no permanents. Two things want it.
    * The seat whose board has been moved into the viewer's area must stop

@@ -1,9 +1,11 @@
 /**
  * Which opponent's board is being read while `R2` is held.
  *
- * The hold behind `OpponentBoard`, lifted out of `Table.tsx` as it was: an
- * analog trigger past 0.5 opens it on the seat the ring is on (or the first
- * opponent), and letting go closes it. Handheld only.
+ * Lifted out of `Table.tsx` as it was: an analog trigger past 0.5 names the
+ * seat the ring is on (or the first opponent), and letting go names nobody.
+ * `Table` stands you at that seat for as long as it is named -- the same board
+ * swap a click on the seat makes -- so its cards take the pointer and the ring
+ * and show in the reader. Handheld only.
  */
 
 import { useEffect, useRef, useState } from "react";

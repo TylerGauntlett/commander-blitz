@@ -132,6 +132,35 @@ class TestABigBoardIsNotEnumerated:
         assert offered[-1].targets == ()
 
 
+class TestASingleTargetIsNeverCapped:
+    """Generous Gift: "Destroy target permanent." The option limit is for
+    combinations; one target is one option per object, and cutting that list
+    left every permanent past the twelfth unreachable -- a Sphinx of Uthuun on
+    a busy board could not be chosen."""
+
+    def test_every_permanent_is_offered(self, builder):
+        from automtg.engine.enums import ActionKind, Step
+        from tests.conftest import only_oid
+
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains"] * 12)
+            .battlefield(1, ["sphinx_of_uthuun"])
+            .hand(0, ["generous_gift"])
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        sphinx = only_oid(game, "sphinx_of_uthuun", 1)
+        aims = [
+            a.targets[0].id
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and a.targets
+        ]
+        assert len(aims) == 13
+        assert sphinx in aims
+
+
 class TestItActuallyResolves:
     def test_all_three_go_back_to_hand(self, builder):
         game = board(builder, 3)

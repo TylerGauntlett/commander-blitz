@@ -82,7 +82,6 @@ export default defineConfig({
               "src/components/game/FxLayer.tsx": { statements: 70 },
               "src/components/game/GroupDial.tsx": { statements: 100 },
               "src/components/game/OpeningHand.tsx": { statements: 97 },
-              "src/components/game/OpponentBoard.tsx": { statements: 100 },
               "src/components/game/ParticleLayer.tsx": { statements: 94 },
               "src/components/game/StackPanel.tsx": { statements: 96 },
               "src/components/game/Table.tsx": { statements: 82 },
