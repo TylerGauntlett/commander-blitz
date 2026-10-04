@@ -645,6 +645,47 @@ export const HandheldViewingAnOpponent: Story = {
 };
 
 /**
+ * Holding `R2` (`V` on a keyboard) is the same seat swap, for as long as it is
+ * held.
+ *
+ * It used to draw a copy of their board in an overlay that could only be looked
+ * at -- no pointer, no ring, every `data-oid` doubled, and the reader covered.
+ * Borrowing the swap gives the hold everything a click on the seat already has.
+ */
+export const HandheldHoldingR2ViewsAnOpponent: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    // The key latch lives in `input/pad.ts`; see `HandheldRegionStepping`.
+    startPad();
+
+    // Dispatched by hand: `userEvent.keyboard` keeps held keys per call, so a
+    // `{/v}` in a second call releases nothing (see `HandheldRegionDial`).
+    const key = (type: "keydown" | "keyup") =>
+      window.dispatchEvent(new KeyboardEvent(type, { key: "v", bubbles: true }));
+    key("keydown");
+    await canvas.findByTestId("viewing-strip");
+    expect(canvasElement.querySelector(".play__mine[data-viewing]")).not.toBeNull();
+    const oids = [...canvasElement.querySelectorAll("[data-oid]")].map((el) =>
+      el.getAttribute("data-oid"),
+    );
+    expect(
+      oids.filter((id, i) => oids.indexOf(id) !== i),
+      "while held",
+    ).toEqual([]);
+
+    key("keyup");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
+    });
+  },
+};
+
+/**
  * Pressing a seat you are aiming at targets it, and does not wander off.
  *
  * The ordering is the whole rule: a press that could be either has to be the
