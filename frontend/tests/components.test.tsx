@@ -241,6 +241,41 @@ describe("ActionPanel", () => {
     expect(chips.map((n) => n.textContent)).toEqual(["Arixmethes", "No target"]);
   });
 
+  it("names every target of an any-number spell, so its subsets read apart", () => {
+    const state = gameView({
+      players: [
+        player({ hand: [card({ oid: 12, zone: "hand", name: "Clever Concealment" })] }),
+        player({ pid: 1, hand: null }),
+      ],
+      battlefield: [card({ oid: 1, name: "Giada" }), card({ oid: 2, name: "Thraben Watcher" })],
+    });
+    const shared = {
+      kind: "cast",
+      base_label: "Cast Clever Concealment",
+      source_oid: 12,
+    } as const;
+    const giada = { kind: "object", id: 1 } as const;
+    const watcher = { kind: "object", id: 2 } as const;
+    render(
+      <ActionPanel
+        state={state}
+        actions={[
+          action({ id: "a1-cast", ...shared, targets: [giada] }),
+          action({ id: "a2-cast", ...shared, targets: [giada, watcher] }),
+          action({ id: "a3-cast", ...shared, targets: [watcher] }),
+        ]}
+        onAct={noop}
+        {...base}
+      />,
+    );
+    const chips = [...document.querySelectorAll(".act__aims .aim")];
+    expect(chips.map((n) => n.textContent)).toEqual([
+      "Giada",
+      "Giada + Thraben Watcher",
+      "Thraben Watcher",
+    ]);
+  });
+
   it("clicking a chip submits that chip's action, not the row's first", () => {
     const onAct = vi.fn();
     const state = gameView({
