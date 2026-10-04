@@ -1283,7 +1283,7 @@ class Game:
         if not spec:
             return ()
         from .effects.context import EffectContext, ask_mode
-        from .effects.ops_control import modal_bounds
+        from .effects.ops_control import modal_bounds, mode_labels
 
         modes = list(spec.get("modes") or [])
         if not modes:
@@ -1313,7 +1313,7 @@ class Game:
         # reaches a modal spell without going through that check, and hanging
         # the game would be the worse failure.
         floor = min(floor, len(offered))
-        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+        labels = mode_labels(modes)
         picked = yield from ask_mode(
             ctx, "Choose", [labels[i] for i in offered], pid, floor, up_to
         )
