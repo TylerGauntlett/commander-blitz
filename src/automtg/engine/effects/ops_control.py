@@ -555,6 +555,42 @@ def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int 
     return max(1, count), up_to
 
 
+_COLOR_WORDS = {"W": "white", "U": "blue", "B": "black", "R": "red", "G": "green"}
+
+
+def mode_labels(modes: list[Mapping[str, Any]]) -> list[str]:
+    """What each mode is called on the button that offers it.
+
+    The printed ``label`` when the card has one. Without one, a mode whose whole
+    effect is a single sentence the engine can say back is named after that
+    sentence -- Giver of Runes shipped six unlabelled protection modes and
+    offered them as "Mode 1" to "Mode 6", a choice nobody could make. "Mode N"
+    is the last resort, not the default.
+
+    Shared by the three places that ask: `Game._ask_modes`, the trigger push in
+    `stack`, and the nested fallback in `op_choose_mode` below.
+    """
+    return [str(m.get("label") or _describe_mode(m) or f"Mode {i + 1}") for i, m in enumerate(modes)]
+
+
+def _describe_mode(mode: Mapping[str, Any]) -> str | None:
+    effects = list(mode.get("effects") or [])
+    if len(effects) != 1:
+        return None
+    effect = effects[0]
+    op = effect.get("op")
+    if op == "grant_protection":
+        qualities = ["colorless"] if effect.get("from_colorless") else []
+        qualities += [_COLOR_WORDS.get(c, str(c)) for c in effect.get("from_colors") or ()]
+        if effect.get("from_everything"):
+            qualities.append("everything")
+        if qualities and all(isinstance(q, str) for q in qualities):
+            return "Protection from " + " and ".join(qualities)
+    if op == "add_mana" and isinstance(effect.get("mana"), str):
+        return f"Add {effect['mana']}"
+    return None
+
+
 @register("choose_mode")
 def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     """A modal spell or ability: "choose one -- ...".
@@ -589,7 +625,7 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # `choose_mode`, which have no cast to be asked at.
     floor, up_to = modal_bounds(ctx, spec)
 
-    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+    labels = mode_labels(modes)
 
     # "Choose one **that hasn't been chosen** --" (Henrika Domnathi). The spent
     # modes are struck off the list rather than offered and then ignored: an

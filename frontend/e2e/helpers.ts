@@ -143,8 +143,9 @@ export async function browseDecks(page: Page): Promise<void> {
  * that goes through here keeps working whatever draws the screen next.
  *
  * IT ANSWERS BOTH HALVES. A London mulligan asks twice -- keep or mulligan, then
- * put N on the bottom -- and the second only appears once you have taken at
- * least one. `mulligans` is how many to take first, so a spec that wants to see
+ * put N on the bottom -- and the second only appears once a mulligan has cost
+ * a card, i.e. from the second on (the first is free). `mulligans` is how many
+ * to take first, so a spec that wants to see
  * the bottoming step can ask for it instead of engineering a seed that produces
  * one.
  */

@@ -73,6 +73,7 @@ import { StaticCard } from "./Card";
 
 /** `engine/game.py:44`. Six, and the seventh keep is not a choice. */
 const MAX_MULLIGANS = 6;
+const FREE_MULLIGANS = 1;
 
 /** What the stage measured, and what that makes the composition. */
 interface Fit {
@@ -445,7 +446,9 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
               <span className="mull__words">
                 <span className="mull__verb">Mulligan</span>
                 <span className="mull__sub">
-                  Shuffle back, draw seven, keep {Math.max(0, 7 - (taken + 1))}
+                  {/* The first mulligan is free (`FREE_MULLIGANS` in engine/game.py). */}
+                  Shuffle back, draw seven, keep{" "}
+                  {Math.max(0, 7 - Math.max(0, taken + 1 - FREE_MULLIGANS))}
                 </span>
               </span>
             </button>

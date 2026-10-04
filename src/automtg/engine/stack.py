@@ -450,7 +450,7 @@ def _choose_trigger_modes(
     stored refs that way.
     """
     from .effects.context import EffectContext, ask_mode
-    from .effects.ops_control import _mode_flag, modal_bounds
+    from .effects.ops_control import _mode_flag, modal_bounds, mode_labels
     from .targeting import enumerate_target_tuples
 
     spec = ability.cast_time_modes or {}
@@ -466,7 +466,7 @@ def _choose_trigger_modes(
         source_name=card.name if card else trig.description,
     )
     floor, up_to = modal_bounds(ctx, spec)
-    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+    labels = mode_labels(modes)
     # `targeting.selectable_modes` is the same question asked of a spell, and it
     # is deliberately not reused: it has no bindings to pass, and a trigger's
     # target line may name what the trigger *found* ("target creature other than

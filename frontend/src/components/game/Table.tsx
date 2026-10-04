@@ -503,6 +503,28 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // board up. The store outlives the component.
   useEffect(() => () => setViewing(null), [setViewing]);
 
+  /*
+   * Holding `R2` stands you at the seat, and letting go walks you back.
+   *
+   * The hold used to draw a copy of their board in an overlay of its own, which
+   * could only be looked at: it took no pointer, trapped no ring, repeated
+   * every `data-stop` of the mat underneath it, and covered the reader. This
+   * view already does all of that properly, so the hold borrows it. What was
+   * on screen before the press is what the release puts back.
+   */
+  const viewingBeforeHold = useRef<number | null | undefined>(undefined);
+  useEffect(() => {
+    if (reading !== null) {
+      if (viewingBeforeHold.current === undefined) {
+        viewingBeforeHold.current = useUiStore.getState().viewingPid;
+      }
+      setViewing(reading);
+    } else if (viewingBeforeHold.current !== undefined) {
+      setViewing(viewingBeforeHold.current);
+      viewingBeforeHold.current = undefined;
+    }
+  }, [reading, setViewing]);
+
   const onDeclare = useCallback(
     (kind: "attackers" | "blockers", pairs: [number, number][]) => {
       if (gateInput()) return;
@@ -1255,8 +1277,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         error={error}
         setError={setError}
         stalled={stalled}
-        handheld={handheld}
-        reading={reading}
         heldCard={heldCard}
         dialOpen={dialOpen}
         setDialOpen={setDialOpen}

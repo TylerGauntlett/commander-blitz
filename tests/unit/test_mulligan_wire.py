@@ -77,6 +77,8 @@ def test_the_bottoming_step_names_itself(opening):
     matching on that is one wording change away from drawing the generic dialog
     over the screen built for this.
     """
+    # Two mulligans: the first is free, so it is the second that asks.
+    answer(opening, ActionKind.MULLIGAN)
     answer(opening, ActionKind.MULLIGAN)
     answer(opening, ActionKind.KEEP)
 
@@ -86,26 +88,39 @@ def test_the_bottoming_step_names_itself(opening):
     assert decision.player == 0
     assert decision.context["purpose"] == "mulligan_bottom"
     assert decision.context["source_name"] == "Mulligan"
-    # One mulligan taken, so exactly one card goes back -- no more, no fewer.
+    # Two taken, one of them free, so exactly one card goes back.
     assert decision.min_count == decision.max_count == 1
     assert "bottom of your library" in decision.prompt
 
     # And it survives serialisation, which is the half a client actually sees.
     view = player_view(opening.state, 0)
     assert view["pending"]["context"]["purpose"] == "mulligan_bottom"
-    assert view["players"][0]["mulligans_taken"] == 1
+    assert view["players"][0]["mulligans_taken"] == 2
 
 
-def test_one_mulligan_costs_exactly_one_card(opening):
+def test_the_first_mulligan_is_free(opening):
+    """103.5c, the multiplayer and Commander rule: one mulligan costs nothing.
+    A fresh seven, kept whole, and no bottoming question at all -- the screen
+    prints "keep 7" under the first Mulligan button."""
+    answer(opening, ActionKind.MULLIGAN)
+    answer(opening, ActionKind.KEEP)
+
+    assert len(opening.state.players[0].hand) == 7
+    decision = opening.pending()
+    assert decision is None or decision.context.get("purpose") != "mulligan_bottom"
+
+
+def test_the_second_mulligan_costs_exactly_one_card(opening):
     """The price the screen prints, checked against what the engine charges.
 
-    `OpeningHand` puts "Shuffle back, draw seven, keep 6" under the Mulligan
+    `OpeningHand` puts "Shuffle back, draw seven, keep 6" under the second Mulligan
     button, and a subtitle that is one off is worse than no subtitle -- it is the
     game telling you the wrong price for an irreversible choice. So: seven dealt,
-    seven redrawn, one bottomed, six kept.
+    seven redrawn twice, one bottomed, six kept.
     """
     assert len(opening.state.players[0].hand) == 7
 
+    answer(opening, ActionKind.MULLIGAN)
     answer(opening, ActionKind.MULLIGAN)
     # A mulligan is a whole new seven; the bottoming has not happened yet.
     assert len(opening.state.players[0].hand) == 7
@@ -120,7 +135,7 @@ def test_one_mulligan_costs_exactly_one_card(opening):
 def test_keeping_on_the_first_ask_bottoms_nothing(opening):
     """The guard that keeps the tag honest.
 
-    ``bottom = min(mulligans_taken, len(hand))``, so a seat that keeps its first
+    ``bottom = min(mulligans_taken - FREE_MULLIGANS, len(hand))``, so a seat that keeps its first
     seven is never asked the second question at all -- which is the common case,
     and the reason the client cannot treat "a mulligan happened" as "a bottoming
     step is coming".

@@ -1300,59 +1300,6 @@ html[data-input="keyboard"] .hints {
 }
 
 /* ==========================================================================
-   Reading an opponent's board
-   ==========================================================================
-
-   Held on R2. Owns the screen while it is up, which is why it can afford a
-   generous card size and why it is outside the zoom solver entirely.
-   ========================================================================== */
-
-.oppboard {
-  position: fixed;
-  inset: 8px 8px 8px 8px;
-  z-index: var(--z-modal);
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--edge-hi);
-  border-radius: 14px;
-  background: rgb(11 10 22 / 0.97);
-  box-shadow: 0 24px 80px rgb(0 0 0 / 0.7);
-  overflow: auto;
-  scrollbar-gutter: stable;
-  /* A hold is not a control: it must never eat the press that ends it. */
-  pointer-events: none;
-}
-
-.oppboard__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 18px;
-}
-
-.oppboard__who {
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.oppboard__life {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--gold);
-}
-
-/* Inside the reader the mat is a plain board: no scroll box, no pinned lanes. */
-.oppboard .mat__lanes {
-  height: auto;
-  min-height: 0;
-}
-
-/* ==========================================================================
    FILL IS FOCUS
    ==========================================================================
 
