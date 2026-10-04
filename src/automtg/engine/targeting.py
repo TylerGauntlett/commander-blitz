@@ -10,6 +10,7 @@ UI and the RL action space.
 from __future__ import annotations
 
 import itertools
+import sys
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -26,6 +27,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 #: Most target combinations legality will enumerate for a single spell/ability.
 #: Only ever binding on very wide boards; documented in docs/rules-coverage.md.
+#: A lone single-target spec is exempt -- see `enumerate_target_tuples`.
 MAX_TARGET_OPTIONS = 12
 
 
@@ -525,12 +527,19 @@ def enumerate_target_tuples(
     source_oid: int | None,
     *,
     exclude_sid: int | None = None,
-    limit: int = MAX_TARGET_OPTIONS,
+    limit: int | None = None,
     bindings: Mapping[str, Any] | None = None,
     size_cap: int | None = None,
     x: int = 0,
 ) -> list[tuple[TargetRef, ...]]:
     """Every legal combination of targets, capped at ``limit``.
+
+    With no ``limit`` given, ``MAX_TARGET_OPTIONS`` -- except for one spec
+    asking for one target, which is uncapped. The cap is there for the
+    combinations, and one target has none: the list is one entry per legal
+    object, so cutting it only hides legal targets. Generous Gift's "target
+    permanent" offered the first twelve permanents on the battlefield, so a
+    Sphinx of Uthuun thirteenth in line could never be chosen.
 
     ``size_cap`` bounds how many refs a **variable-size** spec may take -- the
     most targets a strive spell can pay for. It has to bound the enumeration
@@ -568,6 +577,9 @@ def enumerate_target_tuples(
     """
     if not specs:
         return [()]
+    if limit is None:
+        single = len(specs) == 1 and target_count(state, controller, specs[0], source_oid) == 1
+        limit = sys.maxsize if single else MAX_TARGET_OPTIONS
 
     prior: set[str] = set()
     partials: list[
