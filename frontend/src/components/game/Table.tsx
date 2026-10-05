@@ -19,6 +19,7 @@ import { type SoundName, play } from "../../audio/sfx";
 import { drive } from "../../fx/actuators";
 import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
 import { getGroup, setGroup } from "../../input/groups";
+import { useStickScroll } from "../../input/stickScroll";
 import { sendableIn, stopId, stopRoot } from "../../input/stops";
 import { useGroupDial } from "../../input/useGroupDial";
 import { useOpponentReading } from "../../input/useOpponentReading";
@@ -90,6 +91,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * in a store is a hold that can get stuck.
    */
   const [dialOpen, setDialOpen] = useGroupDial();
+  // The right stick scrolls the reader, or the list the ring is in.
+  useStickScroll();
 
   /*
    * The card being read full screen, by oid.
