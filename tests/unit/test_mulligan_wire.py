@@ -24,7 +24,7 @@ from __future__ import annotations
 import pytest
 
 from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.game import create_game
+from automtg.engine.game import FREE_MULLIGANS, MAX_MULLIGANS, create_game
 from automtg.engine.serialize import player_view
 
 
@@ -53,6 +53,14 @@ def test_every_seat_reports_its_mulligan_count(opening):
     hand is not private at a real table."""
     view = player_view(opening.state, 0)
     assert [p["mulligans_taken"] for p in view["players"]] == [0, 0]
+
+
+def test_the_free_mulligan_rule_is_on_the_wire(opening):
+    """The client draws the free lamp and says "Free" from these, so they are the
+    engine's constants rather than a second copy that can drift from them."""
+    seat = player_view(opening.state, 0)["players"][0]
+    assert seat["mulligans_free"] == FREE_MULLIGANS
+    assert seat["mulligans_max"] == MAX_MULLIGANS
 
 
 def test_the_count_climbs_with_each_mulligan(opening):

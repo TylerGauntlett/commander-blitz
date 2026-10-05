@@ -115,6 +115,20 @@
   background: var(--danger);
 }
 
+/*
+ * A FREE MULLIGAN IS A DIFFERENT LAMP, and spending it is not a loss. Gold, the
+ * Keep verb's colour, rather than the red a card-costing mulligan leaves --
+ * and spent it dims instead of lighting up, because it cost nothing.
+ */
+.mull__lamp[data-free] {
+  border-color: var(--gold);
+}
+
+.mull__lamp[data-free][data-spent] {
+  border-color: rgb(255 212 121 / 0.45);
+  background: rgb(255 212 121 / 0.25);
+}
+
 /* ==========================================================================
    The arch
    ==========================================================================

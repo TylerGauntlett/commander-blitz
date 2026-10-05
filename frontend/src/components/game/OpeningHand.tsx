@@ -62,6 +62,7 @@ import {
   MULL_TUNE,
   type MulliganPhase,
   handRow,
+  mulliganCost,
   mulliganPhase,
   stageUnit,
   zFor,
@@ -70,10 +71,6 @@ import { parseStop } from "../../logic/verbs";
 import { ease } from "../../motion/springs";
 import { Glyph } from "../ui/Glyph";
 import { StaticCard } from "./Card";
-
-/** `engine/game.py:44`. Six, and the seventh keep is not a choice. */
-const MAX_MULLIGANS = 6;
-const FREE_MULLIGANS = 1;
 
 /** What the stage measured, and what that makes the composition. */
 interface Fit {
@@ -188,7 +185,12 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
   const mull = actions.find((action) => action.kind === "mulligan");
   const choices = useMemo(() => choiceByOid(state, actions), [state, actions]);
   const chosen = useMemo(() => new Set(pending?.selected ?? []), [pending?.selected]);
-  const taken = state.players[state.seat]?.mulligans_taken ?? 0;
+  const me = state.players[state.seat];
+  const taken = me?.mulligans_taken ?? 0;
+  /* The engine's rules, off the wire: six at most, the first one free. */
+  const free = me?.mulligans_free ?? 0;
+  const max = me?.mulligans_max ?? 6;
+  const cost = mulliganCost(taken, free);
   const bottoming = phase === "bottom";
   const wanted = Math.max(0, (pending?.min_count ?? 0) - chosen.size);
 
@@ -315,13 +317,22 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
       {/* How many mulligans are left, as lamps rather than as "(2 taken)" buried
           in a prompt string. The engine has written that number into its own
           prompt since London mulligans landed; `serialize._player` only started
-          sending it with this screen. */}
+          sending it with this screen. The free ones are a different lamp, and
+          spending one does not light it red: it cost nothing. */}
       <div className="mull__lamps">
         <span className="mull__lampsLabel">Mulligans</span>
-        <span className="mull__lampsRow" aria-label={`${taken} of ${MAX_MULLIGANS} taken`}>
-          {Array.from({ length: MAX_MULLIGANS }, (_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: six identical lamps with no identity of their own.
-            <span className="mull__lamp" key={i} data-spent={i < taken || undefined} />
+        <span
+          className="mull__lampsRow"
+          aria-label={`${taken} of ${max} taken${free > 0 ? `, first ${free === 1 ? "one" : free} free` : ""}`}
+        >
+          {Array.from({ length: max }, (_, i) => (
+            <span
+              className="mull__lamp"
+              // biome-ignore lint/suspicious/noArrayIndexKey: identical lamps with no identity of their own.
+              key={i}
+              data-free={i < free || undefined}
+              data-spent={i < taken || undefined}
+            />
           ))}
         </span>
       </div>
@@ -446,9 +457,10 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
               <span className="mull__words">
                 <span className="mull__verb">Mulligan</span>
                 <span className="mull__sub">
-                  {/* The first mulligan is free (`FREE_MULLIGANS` in engine/game.py). */}
-                  Shuffle back, draw seven, keep{" "}
-                  {Math.max(0, 7 - Math.max(0, taken + 1 - FREE_MULLIGANS))}
+                  {/* "Free" only while it is: the first mulligan bottoms nothing. */}
+                  {cost.nextIsFree
+                    ? "Free — shuffle back, draw seven"
+                    : `Shuffle back, draw seven, keep ${cost.keepAfterNext}`}
                 </span>
               </span>
             </button>
@@ -465,7 +477,9 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
               <span className="mull__words">
                 <span className="mull__verb">Keep</span>
                 <span className="mull__sub">
-                  {hand.length} card{hand.length === 1 ? "" : "s"}
+                  {cost.bottomIfKept > 0
+                    ? `Keep ${Math.max(0, hand.length - cost.bottomIfKept)}, bottom ${cost.bottomIfKept}`
+                    : `${hand.length} card${hand.length === 1 ? "" : "s"}`}
                 </span>
               </span>
             </button>

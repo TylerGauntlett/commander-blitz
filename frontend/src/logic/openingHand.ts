@@ -66,6 +66,34 @@ export function mulliganPhase(state: GameView): MulliganPhase | null {
   return null;
 }
 
+/** `STARTING_HAND` in `engine/game.py`: every mulligan draws seven. */
+const STARTING_HAND = 7;
+
+/** What the next mulligan, or a keep now, costs. */
+export interface MulliganCost {
+  /** The next mulligan is one of the free ones: seven back, nothing bottomed. */
+  nextIsFree: boolean;
+  /** Cards kept if you mulligan once more and then keep. */
+  keepAfterNext: number;
+  /** Cards that go to the bottom if you keep this hand. */
+  bottomIfKept: number;
+}
+
+/**
+ * The London mulligan's arithmetic with free mulligans taken off the top.
+ *
+ * `engine/game.py` bottoms `max(0, taken - free)` once you keep, and `free`
+ * comes off the wire (`mulligans_free`) so the two cannot disagree.
+ */
+export function mulliganCost(taken: number, free: number): MulliganCost {
+  const paid = (n: number) => Math.max(0, n - free);
+  return {
+    nextIsFree: taken < free,
+    keepAfterNext: Math.max(0, STARTING_HAND - paid(taken + 1)),
+    bottomIfKept: paid(taken),
+  };
+}
+
 /**
  * The tune, at the 1280x800 the mockup was measured on.
  *

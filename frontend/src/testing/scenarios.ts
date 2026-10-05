@@ -549,13 +549,13 @@ function openingSeven() {
  * grey rectangles. `OpeningHand` does not read the options at all; it draws
  * `players[seat].hand`, which the server sends in full to the seat being asked.
  */
-export function mulligan(): Scenario {
+export function mulligan(taken = 0): Scenario {
   const hand = openingSeven();
 
   const state = gameView({
     step: "UNTAP",
     phase: "beginning",
-    players: [you({ hand }), opponent(1, "AI 1")],
+    players: [{ ...you({ hand }), mulligans_taken: taken }, opponent(1, "AI 1")],
     pending: pending({ kind: "mulligan", prompt: "Keep this hand?" }),
   });
 
@@ -575,7 +575,8 @@ export function mulligan(): Scenario {
 }
 
 /**
- * The second half: one mulligan taken, so one card goes to the bottom.
+ * The second half: two mulligans taken, the first free, so one card goes to
+ * the bottom.
  *
  * A different decision KIND from the first half -- `choose_objects`, raised by
  * `ask_objects` -- and the only thing that tells it apart from every other
@@ -584,25 +585,26 @@ export function mulligan(): Scenario {
  * real payload here is the point of the fixture: these options DO carry refs and
  * faces, where the first half's carry neither.
  *
- * `taken` also drives the lamps, and it is `min_count` -- a London mulligan
- * bottoms exactly as many cards as you have taken. `selected` is what the engine
+ * `bottom` is `min_count`, and the lamps show one more than that taken: a
+ * London mulligan bottoms one card per mulligan, less the free one
+ * (`FREE_MULLIGANS` in `engine/game.py`). `selected` is what the engine
  * has already banked, which is the half of this decision a single pick cannot
  * show: on two, the screen has to say how many are still wanted.
  */
-export function mulliganBottom(taken = 1, selected: number[] = []): Scenario {
+export function mulliganBottom(bottom = 1, selected: number[] = []): Scenario {
   const hand = openingSeven();
   const state = gameView({
     step: "UNTAP",
     phase: "beginning",
     players: [
-      { ...you({ hand }), mulligans_taken: taken },
+      { ...you({ hand }), mulligans_taken: bottom + 1 },
       { ...opponent(1, "AI 1"), mulligans_taken: 0 },
     ],
     pending: pending({
       kind: "choose_objects",
-      prompt: `Put ${taken} card(s) on the bottom of your library`,
-      min_count: taken,
-      max_count: taken,
+      prompt: `Put ${bottom} card(s) on the bottom of your library`,
+      min_count: bottom,
+      max_count: bottom,
       options: hand.map((c) => ({
         label: c.name,
         ref: { kind: "object", id: c.oid },
