@@ -946,6 +946,8 @@ def advance(state: GameState) -> None:
     state.empty_all_mana_pools(
         None if state.step is Step.CLEANUP else state.turn
     )
+    # The after-resolution stop belongs to the step it happened in.
+    state.just_resolved = False
     state.emit(EventType.STEP_ENDED, step=state.step.name)
 
     nxt = next_step(state)

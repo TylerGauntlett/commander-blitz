@@ -326,6 +326,61 @@ class TestPriorityStops:
         assert decision.player == 0
         assert game.state.stack
 
+    @staticmethod
+    def _opponent_casts_a_bear(builder):
+        """Player 1's main phase; player 0 holds removal and the mana for it.
+
+        Player 1 casts a bear. While it is on the stack removal has nothing to
+        target, so that window is (correctly) skipped and the bear resolves.
+        """
+        game = (
+            builder()
+            .hand(0, ["t_removal"])
+            .battlefield(0, ["plains"])
+            .hand(1, ["t_bear"])
+            .battlefield(1, ["forest", "forest"])
+            .active(1)
+            .step(Step.PRECOMBAT_MAIN)
+            .build(advance=False)
+        )
+        game.state.players[0].auto_pass = True
+        game._advance()
+        game.apply(action_for_card(game, ActionKind.CAST, "t_bear"))
+        return game
+
+    def test_the_window_after_a_resolution_stops(self, builder):
+        """The playtest report: mana held up on an opponent's turn could answer
+        their spells but never the creatures those spells became, because the
+        stack was empty again by the time the creature was there to target."""
+        game = self._opponent_casts_a_bear(builder)
+        pass_until(game, lambda g: g.pending() and g.pending().player == 0)
+
+        bear = only_oid(game, "t_bear", 1)
+        assert game.state.active_player == 1
+        assert game.state.step is Step.PRECOMBAT_MAIN
+        assert not game.state.stack
+
+        game.apply(action_for_card(game, ActionKind.CAST, "t_removal"))
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[bear].zone is Zone.EXILE
+
+    def test_and_it_ends_with_the_step(self, builder):
+        """Passing it lets the turn move on: the opponent's later steps, with
+        nothing resolving in them, are skipped as before."""
+        game = self._opponent_casts_a_bear(builder)
+        pass_until(game, lambda g: g.pending() and g.pending().player == 0)
+        game.apply(find_action(game, ActionKind.PASS))
+
+        stops = []
+        for _ in range(200):
+            decision = game.pending()
+            if decision is None or game.state.active_player != 1:
+                break
+            if decision.kind is DecisionKind.PRIORITY and decision.player == 0:
+                stops.append(game.state.step)
+            game.apply(_default_answer(game, decision))
+        assert set(stops) <= {Step.DECLARE_BLOCKERS}
+
 
 class TestTurnStructure:
     def test_turn_walks_through_every_step(self, builder):
