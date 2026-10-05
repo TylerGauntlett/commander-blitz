@@ -453,6 +453,45 @@ export function crowdedBoard(): Scenario {
   return { state, actions: [pass], events: [] };
 }
 
+/**
+ * Four distinct artifacts and enchantments in a four-player pod.
+ *
+ * The Steam Deck playtest board: the global lane is a third of the front band,
+ * two cards wide at handheld size, so the third card used to start a second
+ * row and push the lands and the viewer's own seat off the screen. Distinct
+ * cards on purpose -- duplicates collapse into one counted pile and would not
+ * crowd the lane at all.
+ */
+export function fullGlobalLane(): Scenario {
+  const battlefield = [
+    pool.thragtusk({ oid: 1101, summoning_sick: false }),
+    pool.serraAngel({ oid: 1102, summoning_sick: false }),
+    pool.grizzlyBears({ oid: 1103, summoning_sick: false }),
+    pool.solRing({ oid: 1104 }),
+    pool.mindStone({ oid: 1105 }),
+    pool.mindStone({ oid: 1106, card_id: "arcane_signet", name: "Arcane Signet" }),
+    pool.rhysticStudy({ oid: 1107 }),
+    pool.plains({ oid: 1108 }),
+    pool.swamp({ oid: 1110, controller: 1, owner: 1 }),
+    pool.mountain({ oid: 1120, controller: 2, owner: 2 }),
+    pool.island({ oid: 1130, controller: 3, owner: 3 }),
+  ];
+
+  const state = gameView({
+    turn: 5,
+    round: 5,
+    players: [
+      you({ hand: [pool.cultivate({ oid: 1140, zone: "hand" })] }, battlefield),
+      opponent(1, "AI 1"),
+      opponent(2, "AI 2"),
+      opponent(3, "AI 3"),
+    ],
+    battlefield,
+  });
+
+  return { state, actions: [pass], events: [] };
+}
+
 /** A creature wearing an Aura and an Equipment: the tucked-attachment path. */
 export function withAttachments(): Scenario {
   const host = pool.serraAngel({ oid: 801, summoning_sick: false });
