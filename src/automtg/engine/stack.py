@@ -502,30 +502,38 @@ def _choose_trigger_modes(
     return tuple(sorted(offered[i] for i in picked))
 
 
-def _choose_any_number(
+def _choose_each_target(
     state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...] | None]:
-    """"…any number of target permanents" as a pick-then-done, or ``None``.
+    """"…any number of" / "…up to two" / "…two target permanents" as a
+    pick-then-done, or ``None``.
 
-    Deepglow Skate. `enumerate_target_tuples` offers whole subsets, largest
-    first, cut at `MAX_TARGET_OPTIONS` -- right for a fixed count, and for "any
-    number" it means a board of more than a handful of permanents offers only
-    "everything", "everything but one" and "none": the printed choice of *which*
-    permanents is gone. So a trigger whose one spec is an unconstrained ``any``
-    asks for its targets one at a time over every legal single target, from zero
-    up to all of them, through the same `ask_targets` shape a mode-owned target
-    uses. A spec with a cross-target rule (one per player, a total mana value)
-    keeps the subset enumeration, which is the only thing that can check it.
+    Deepglow Skate, Angel of the Ruins, Terastodon. `enumerate_target_tuples`
+    offers whole subsets as single buttons, cut at `MAX_TARGET_OPTIONS`. Right
+    for one target; for several it is a wall of "Ghostly Prison, Map" pairs in
+    no order, mixing both sides of the table, with no art -- and past the cap
+    the pair the player wanted is simply not offered. So a trigger whose one
+    spec asks for more than one target asks for them one at a time over every
+    legal single target, through the same `ask_targets` shape a mode-owned
+    target uses, and the client draws it as cards to toggle.
+
+    A spec with a cross-target rule (one per player, a total mana value) keeps
+    the subset enumeration, which is the only thing that can check it. So does
+    ``optional`` with a count above one -- "exactly N, or none" forbids the
+    sizes in between, and a min/max pick cannot say that.
     """
     from dataclasses import replace
 
     from .effects.context import EffectContext, ask_targets
-    from .targeting import describe_ref, enumerate_target_tuples
+    from .targeting import describe_ref, enumerate_target_tuples, target_count
 
     if len(specs) != 1:
         return None
     spec = specs[0]
-    if spec.count != "any" or spec.one_per_player or spec.total_mana_value is not None:
+    if spec.one_per_player or spec.total_mana_value is not None:
+        return None
+    count = target_count(state, trig.controller, spec, trig.source_oid)
+    if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
     single = replace(spec, count=1, optional=False, up_to=False)
     candidates = [
@@ -536,6 +544,16 @@ def _choose_any_number(
         )
         if combo
     ]
+    if count == "any":
+        floor, ceiling = 0, len(candidates)
+    elif spec.up_to:
+        floor, ceiling = 0, count
+    else:
+        # Exactly N: with fewer than N legal targets the ability cannot be put
+        # on the stack with all of them, and that is the enumeration's call.
+        if len(candidates) < count:
+            return None
+        floor, ceiling = count, count
     if not candidates:
         return ()
     ctx = EffectContext(
@@ -545,8 +563,8 @@ def _choose_any_number(
         ctx,
         f"Choose targets for {trig.description}" if trig.description else "Choose targets",
         [(describe_ref(state, ref), ref) for ref in candidates],
-        0,
-        len(candidates),
+        floor,
+        ceiling,
         trig.controller,
     )
     return tuple(chosen)
@@ -572,7 +590,7 @@ def _choose_trigger_targets(
     from .enums import DecisionKind
     from .targeting import describe_ref, enumerate_target_tuples
 
-    picked = yield from _choose_any_number(state, trig, specs)
+    picked = yield from _choose_each_target(state, trig, specs)
     if picked is not None:
         return picked
 

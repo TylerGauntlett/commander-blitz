@@ -350,6 +350,70 @@ class GameSession:
             self.drive_ai(ai_steps)
             return self.game.state.events[mark:]
 
+    def choose(
+        self,
+        seat: int,
+        choices: Sequence[int],
+        *,
+        ai_steps: int | None = None,
+    ) -> list:
+        """Answer a pick-several decision with the whole set at once.
+
+        The engine takes a multi-pick one `CHOOSE` at a time and closes it on
+        the last allowed pick, which is right for an agent and wrong for a
+        person: there is no way to change your mind, and with "up to two" the
+        second click is a commitment. The client toggles cards locally and
+        sends the set; this loops the increments, then `Done` if the set is
+        smaller than the ceiling. The same shape `declare` has for combat.
+
+        Every check is made before anything is applied, so a bad set never
+        half-applies.
+        """
+        from automtg.engine.enums import ActionKind
+
+        with self._lock:
+            decision = self.game.pending()
+            if decision is None or decision.player != seat:
+                raise IllegalActionError("it is not this seat's decision")
+            picks = [int(c) for c in choices]
+            if len(set(picks)) != len(picks):
+                raise IllegalActionError("an option was chosen more than once")
+            if any(c < 0 or c >= len(decision.options) for c in picks):
+                raise IllegalActionError("no such option")
+            if decision.selected:
+                raise IllegalActionError("this decision already has picks in it")
+            if not decision.min_count <= len(picks) <= decision.max_count:
+                raise IllegalActionError(
+                    f"choose between {decision.min_count} and {decision.max_count}"
+                )
+
+            mark = len(self.game.state.events)
+            for choice in picks:
+                match = next(
+                    (
+                        a
+                        for a in legal_actions(self.game.state)
+                        if a.kind is ActionKind.CHOOSE and a.choice == choice
+                    ),
+                    None,
+                )
+                if match is None:  # pragma: no cover - guarded above
+                    raise IllegalActionError(f"option {choice} cannot be chosen")
+                self.game.apply(match)
+                self.tape.append(self._entry(match, seat, human=True))
+            # The last allowed pick closes the decision by itself; anything
+            # short of it needs `Done`.
+            if self.game.pending() is decision:
+                finish = next(
+                    a
+                    for a in legal_actions(self.game.state)
+                    if a.kind is ActionKind.FINISH_DECLARATION
+                )
+                self.game.apply(finish)
+                self.tape.append(self._entry(finish, seat, human=True))
+            self.drive_ai(ai_steps)
+            return self.game.state.events[mark:]
+
     def undo(self) -> bool:
         """Rewind to before the last human action by replaying the tape.
 

@@ -704,6 +704,62 @@ export function chooseTarget(): Scenario {
   };
 }
 
+/**
+ * "Exile up to two target artifacts and/or enchantments" -- Angel of the Ruins.
+ *
+ * Both sides of the table, in the engine's order (an opponent's first), so the
+ * dialog has to put yours back in front. `Done` is legal because "up to"
+ * allows none.
+ */
+export function chooseSeveralTargets(): Scenario {
+  const battlefield = [
+    pool.rhysticStudy({ oid: 811, controller: 1, owner: 1 }),
+    pool.solRing({ oid: 801 }),
+    pool.solRing({ oid: 812, controller: 1, owner: 1 }),
+    pool.rhysticStudy({ oid: 802 }),
+  ];
+  const options = battlefield.map((c, i) =>
+    decisionOption({ label: c.name, ref: { kind: "object", id: c.oid }, value: i }),
+  );
+
+  const state = gameView({
+    players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
+    battlefield,
+    pending: pending({
+      kind: "choose_objects",
+      prompt:
+        "Choose targets for Angel of the Ruins: When this creature enters, exile up to two target artifacts and/or enchantments.",
+      options,
+      min_count: 0,
+      max_count: 2,
+      context: { purpose: "target", source_name: "Angel of the Ruins" },
+    }),
+  });
+
+  return {
+    state,
+    actions: [
+      ...battlefield.map((c, i) =>
+        action({
+          id: `a${i}-choose`,
+          kind: "choose",
+          label: c.name,
+          base_label: c.name,
+          choice: i,
+          targets: [{ kind: "object", id: c.oid }],
+        }),
+      ),
+      action({
+        id: "a4-finish_declaration",
+        kind: "finish_declaration",
+        label: "Done",
+        base_label: "Done",
+      }),
+    ],
+    events: [],
+  };
+}
+
 /** A modal spell: three modes, no targets yet. */
 export function chooseMode(): Scenario {
   const state = gameView({

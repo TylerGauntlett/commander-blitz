@@ -182,6 +182,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // callback below is rebuilt each render and the keyboard listener with it.
   const actMutate = game.act.mutate;
   const declareMutate = game.declare.mutate;
+  const chooseMutate = game.choose.mutate;
   const undoMutate = game.undo.mutate;
   const fullControlMutate = game.setFullControl.mutate;
   const manualManaMutate = game.setManualMana.mutate;
@@ -204,6 +205,16 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       actMutate(actionId);
     },
     [gateInput, endTargeting, actMutate, cue],
+  );
+
+  /** A pick-several decision, committed as one set. See `PromptDialog`. */
+  const choose = useCallback(
+    (choices: number[]) => {
+      if (gateInput()) return;
+      cue("drop");
+      chooseMutate(choices);
+    },
+    [gateInput, chooseMutate, cue],
   );
 
   // ---------------------------------------------------------------- derived
@@ -1287,6 +1298,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         logOverlay={logOverlay}
         toggleLogOverlay={toggleLogOverlay}
         act={act}
+        choose={choose}
         locked={locked}
         removals={removals}
         onRematch={onRematch}

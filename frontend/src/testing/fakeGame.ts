@@ -89,6 +89,7 @@ export function fakeGame(overrides: FakeGameInput = {}): FakeGame {
     cardName: () => undefined,
     act: idleMutation(),
     declare: idleMutation(),
+    choose: idleMutation(),
     undo: idleMutation(),
     setFullControl: idleMutation(),
     setManualMana: idleMutation(),

@@ -1053,6 +1053,49 @@
 }
 
 /*
+ * PICK SEVERAL: cards to toggle, committed by Confirm.
+ *
+ * "On" has to read at arm's length on a Deck, so it is three things at once --
+ * a thick border in the playable colour, a check badge in the corner, and the
+ * card held up -- and a card that cannot be added because the set is full
+ * dims rather than vanishing, so the board keeps its shape while you choose.
+ */
+.opt--toggle {
+  position: relative;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.opt--toggle[data-on] {
+  border: 3px solid var(--playable);
+  transform: translateY(-4px);
+}
+
+.opt--toggle:disabled:not([data-on]) {
+  opacity: 0.45;
+}
+
+.opt__check {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--playable);
+  color: #0d1a0d;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.prompt__commit {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 8px;
+}
+
+/*
  * A DECISION WITH HUNDREDS OF OPTIONS, as a combobox rather than a wall.
  *
  * `ChoiceCombo`. The list on the left, the Choose button on the right -- and

@@ -213,6 +213,17 @@ export const api = {
       body: JSON.stringify({ seat, kind, pairs }),
     }),
 
+  /**
+   * Answer a pick-several decision with the whole set at once. `choices` are
+   * ordinals into `pending.options`; the server loops the picks and adds Done,
+   * so the dialog can toggle cards freely and commit once.
+   */
+  choose: (gameId: string, seat: number, choices: number[], aiSteps?: number) =>
+    request<StateResponse>(`/games/${gameId}/choose${stepQuery(aiSteps)}`, {
+      method: "POST",
+      body: JSON.stringify({ seat, choices }),
+    }),
+
   /** Pump the opponents forward. With `aiSteps` set, one decision at a time. */
   advance: (gameId: string, seat: number, aiSteps?: number) =>
     request<StateResponse>(`/games/${gameId}/advance${stepQuery(aiSteps)}`, {

@@ -69,6 +69,16 @@ class DeclareRequest(BaseModel):
     pairs: list[list[int]] = Field(default_factory=list)
 
 
+class ChooseRequest(BaseModel):
+    """A pick-several decision answered with the whole set at once.
+
+    ``choices`` are ordinals into the pending decision's ``options``.
+    """
+
+    seat: int
+    choices: list[int] = Field(default_factory=list)
+
+
 class OptionsRequest(BaseModel):
     """Per-seat play settings that are preferences, not rules."""
 
