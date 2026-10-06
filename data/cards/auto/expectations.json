@@ -11371,6 +11371,10 @@
   "verdant_catacombs": {
     "zone": "battlefield"
   },
+  "verdant_kraken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "verdant_sun_s_avatar": {
     "battlefield_count": 33,
     "life": {

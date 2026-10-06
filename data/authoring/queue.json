@@ -303102,12 +303102,12 @@
     },
     "Verdant Kraken": {
       "edhrec_rank": 30738,
-      "gate": "template",
+      "gate": null,
       "name": "Verdant Kraken",
-      "reason": "no template for: At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land crea",
+      "reason": "",
       "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Verdant Mastery": {

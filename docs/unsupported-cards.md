@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**23 cards** blocked by **28** capabilities.
+**22 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-enters-with-counters](#look-at-top-enters-with-counters) | 1 | 2296 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
-| [missing-token](#missing-token) | 1 | 30738 | token |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -292,20 +291,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## missing-token
-
-Blocks **1** card.
-
-- **(token)** A token_ids entry for a 3/3 green Forest Tentacle land creature token (types Land Creature, subtypes Forest Tentacle) with the intrinsic Forest mana ability "{T}: Add {G}."
-  <br>Why the existing vocabulary won't do: The closest pool entries are forest_dryad_1_1_g_land (a 1/1 Forest Dryad land creature with {T}: Add {G}) and tentacle_1_1_u (a 1/1 blue Tentacle creature). Both have the wrong P/T and subtypes, and the Tentacle is the wrong color and not a land. The trigger half already works: event 'upkeep' with controller 'any' is used by existing cards.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verdant Kraken** (rank 30738) — `verdant_kraken`
-  - At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has "{T}: Add {G}." It's affected by summoning sickness until your next turn.)
 
 </details>
 
