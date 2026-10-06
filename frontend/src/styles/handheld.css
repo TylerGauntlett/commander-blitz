@@ -1121,6 +1121,34 @@ html[data-input="keyboard"] [data-cursor].card {
 }
 
 /*
+ * THE HOLD IS ONE SIZE OF CARD.
+ *
+ * `Y` draws the card over the whole board, and on a desktop the frame is as
+ * tall as the text so nothing is ever clipped (`groups.css:.hold__card`). On a
+ * handheld that made a vanilla 2/2 a short card and a wall of text a tall one,
+ * at the one moment the card is the only thing on the screen and could simply
+ * look like a card. So here the frame is a card's proportions, and the rules
+ * box inside it scrolls -- with the right stick (`stickScroll.ts`), and with
+ * a scrollbar rather than the fade `[data-handheld] .face__rules` uses on the
+ * board, because a fade on a box that scrolls reads as the text ending.
+ */
+[data-handheld] .hold__card {
+  width: min(330px, 90vw);
+  aspect-ratio: 5 / 7;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+[data-handheld] .hold--card .card--big {
+  height: 100%;
+}
+
+[data-handheld] .hold--card .face__rules {
+  overflow-y: auto;
+  mask-image: none;
+}
+
+/*
  * The hint bar sits above the modal layer.
  *
  * It lives in the foot, which is under every dialog's backdrop -- so the one

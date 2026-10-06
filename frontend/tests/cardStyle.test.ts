@@ -11,6 +11,7 @@ import {
   counterBadges,
   frameTone,
   isPlainLand,
+  isSummoningSick,
   isWounded,
   landSymbols,
   landTone,
@@ -388,5 +389,23 @@ describe("counterBadges", () => {
 
   it("says nothing of a level for a card the server sent none for", () => {
     expect(counterBadges(card({ zone: "battlefield", counters: {} }))).toEqual([]);
+  });
+});
+
+/**
+ * The hourglass means "cannot attack this turn", and haste means it can.
+ *
+ * The server sends the raw entered-this-turn flag; the engine's `can_attack`
+ * discounts haste on top of it, and so must the face.
+ */
+describe("isSummoningSick", () => {
+  it("is the raw flag on a creature without haste", () => {
+    expect(isSummoningSick(card({ summoning_sick: true, keywords: ["flying"] }))).toBe(true);
+    expect(isSummoningSick(card({ summoning_sick: false, keywords: [] }))).toBe(false);
+  });
+
+  it("is never true with haste, whatever the case of the keyword", () => {
+    expect(isSummoningSick(card({ summoning_sick: true, keywords: ["haste"] }))).toBe(false);
+    expect(isSummoningSick(card({ summoning_sick: true, keywords: ["Haste"] }))).toBe(false);
   });
 });

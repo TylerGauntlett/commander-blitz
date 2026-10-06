@@ -12,6 +12,7 @@
  */
 
 import type { CardView } from "../api/types";
+import { isSummoningSick } from "./cardStyle";
 
 export interface CardStackGroup {
   /** Stable identity for React and for `layoutId`. */
@@ -50,7 +51,9 @@ export function stackKey(card: CardView): string {
     card.card_id,
     card.controller,
     card.tapped ? "T" : "-",
-    card.summoning_sick ? "S" : "-",
+    // The drawn state, not the raw flag: a hasty creature shows no hourglass
+    // and may stack with its ready twin.
+    isSummoningSick(card) ? "S" : "-",
     card.damage ?? 0,
     counterSignature(card),
     card.attacking ? "A" : "-",

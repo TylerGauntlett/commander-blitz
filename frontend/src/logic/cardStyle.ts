@@ -285,6 +285,21 @@ export function isWounded(card: CardView): boolean {
 }
 
 /**
+ * Whether the hourglass belongs on this creature.
+ *
+ * The server sends the raw flag -- "entered this turn" -- and the engine's own
+ * `can_attack` discounts haste on top of it (`engine/combat.py`). The face used
+ * the raw flag, so a hasty creature wore the hourglass while it could attack,
+ * which is the icon saying the opposite of the rule. `keywords` is derived on
+ * the server, so haste granted by an effect counts too. Case-insensitive
+ * because the fixtures are not consistent about it and the cost is nothing.
+ */
+export function isSummoningSick(card: CardView): boolean {
+  if (!card.summoning_sick) return false;
+  return !card.keywords.some((keyword) => keyword.toLowerCase() === "haste");
+}
+
+/**
  * Counters rendered as short badges, e.g. ["+1/+1 x3"].
  *
  * A Class's level leads, as "Level 2". It is not a counter -- proliferate

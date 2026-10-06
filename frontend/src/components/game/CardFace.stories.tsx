@@ -170,6 +170,27 @@ export const EveryCardType: Story = {
 
 export const SummoningSick: Story = {
   args: { card: pool.thragtusk({ summoning_sick: true }) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Thragtusk");
+    expect(canvasElement.querySelector(".face__tag--sick")).not.toBeNull();
+  },
+};
+
+/**
+ * Haste is the exception the hourglass must know about.
+ *
+ * The flag the server sends is "entered this turn"; the engine's `can_attack`
+ * discounts haste, and a face that did not was an icon saying the opposite of
+ * the rule. Granted haste counts too: `keywords` is derived on the server.
+ */
+export const HasteIsNotSick: Story = {
+  args: { card: pool.thragtusk({ summoning_sick: true, keywords: ["haste"] }) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Thragtusk");
+    expect(canvasElement.querySelector(".face__tag--sick")).toBeNull();
+  },
 };
 
 /** Damage is subtracted from toughness on the battlefield, and only there. */

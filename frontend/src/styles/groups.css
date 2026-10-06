@@ -184,6 +184,9 @@
  * size, and the whole card is drawn at once. `auto` rather than `hidden` past
  * 92vh, so the one card longer than the screen still scrolls instead of being
  * cut -- the clipping this view exists to get away from.
+ *
+ * On a handheld the frame is a card's proportions instead, and the rules box
+ * scrolls: see `handheld.css`, which says why the two differ.
  */
 .hold__card {
   max-width: min(330px, 90vw);
