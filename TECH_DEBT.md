@@ -14,10 +14,10 @@ resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`
 
 ## Suggested order
 
-1. **Cheap hygiene, no risk:** CD-04, CD-05.
-2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), CD-02 (token path).
-3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
-4. **Defects:** FB-12, FB-13, FT-04, FT-07, one PR each.
+1. **Card defects:** CD-07 (one engine fix), CD-08 (one card at a time).
+2. **Structural:** CD-01 (one card layer), ST-01 (shims), OF-01.
+3. **Decision:** RS-01 (rewrite history or not).
+4. **UI defects:** FB-12, FB-13, FT-04, FT-07, one PR each.
 
 ---
 
@@ -74,78 +74,54 @@ expectations that were recorded against the old board.
 Keep `tokens.cards.json` hand-written (CD-02). `test_golden_pool` hashes the compiled
 cards sorted by id, so moving a card between files does not change the hash.
 
-### CD-02 · Tokens have no documented path — **S**
+### CD-07 · "This or another creature dies" misses its own death — **S**
 
-`tokens.cards.json` (87 tokens) is edited by hand under an `/extend-dsl` banner (for
-example `02138ed9`, the Forest Tentacle), and none of the three skills says so. A
-packet tells its worker to file a missing token as a gap record with `kind: "token"`
-(`authoring/packet.py:576-587`), but `"token"` is not in `scripts/report_gaps.py`'s
-`KINDS`. Three tokens are referenced by no card: `knight_2_2_w_vigilance`,
-`kraken_8_8_u` and `vampire_1_1_bw`.
+A trigger worded "whenever this creature or another creature you control dies" is
+written as `creature_dies` with a controller filter. The leave-the-battlefield
+look-back in `engine/triggers.py` (around `:906-931`) only collects `source: "self"`
+triggers from the object that just left, so the card never sees **its own** death.
+Confirmed with a probe on Zulaport Cutthroat; Blood Artist, Cruel Celebrant, Falkenrath
+Noble, Kalastria Highborn and Cordial Vampire have the same shape. Pinned by the strict
+xfail `tests/cards/test_zurgo_deck.py::TestZulaportCutthroat::test_its_own_death_drains`.
 
-**Fix:** write the token step into `.claude/skills/extend-dsl/SKILL.md`, add `token` to
-`KINDS`, and delete or justify the three unused tokens.
+**Fix:** let the look-back also collect the departed object's dies triggers whose
+filter it matches, then remove the xfail. Arena tables will move; that is the point.
 
-### CD-03 · `data/authoring/answers/` is a second source of truth — **S**
+### CD-08 · Hand-written cards that pass all six gates but are wrong — **S** each
 
-742 of the 743 answer files are for cards that are already collected. Every
-`--collect` re-verifies all of them and rewrites them into `templates.cards.json`
-(`author_cards.py:447,492`). A hand fix to a collected card in `templates.cards.json` is
-therefore reverted by the next collect, silently. The same applies to packets: 755 of
-836 (29 MB, committed) are for cards that are done.
+Found while writing the CD-06 deck tests. The gates check vocabulary and a zone-only
+expectation, so none of these fails one:
 
-**Fix:** delete, or move to an archive, the answer and packet for each card on a
-successful collect. Then `answers/` holds only work in progress.
+- **Sun Titan** (`isperia`): no "or attacks" trigger; the return is neither optional
+  nor targeted.
+- **Emeria Angel**: the Bird token is not optional.
+- **Retreat to Kazandu** (auto): the counter mode picks among your own creatures
+  instead of targeting any creature.
+- **Kalastria Highborn**: `exclude_self` set, no "you may pay {B}", and it drains each
+  opponent instead of a target player.
+- **Falkenrath Noble**: `exclude_self` set (see CD-07 for why it matters).
+- **Cruel Celebrant**: "or planeswalker" is missing.
+- **Zurgo Stormrender**: Mobilize's Warrior is never sacrificed at the next end step
+  (the test-only `t_mobilizer` has the same omission).
+- **Timely Hordemate**: Raid is ignored; it returns a card with no attack this turn.
+- **Secure the Wastes**: creates Soldiers; the card prints Warriors (read, not run).
 
-### CD-04 · Card docs that contradict the workflow — **S**
-
-- **"Promoting one to hand-written"** (`data/cards/auto/README.md`, last section, and
-  `docs/card-authoring.md:374-383`). This contradicts the author-cards rule "never
-  hand-edit `data/cards/`", and it breaks: the card's leftover answer is rejected by
-  gate 6 on the next collect (see CD-03).
-- **Present-tense claims that hand-written `oracle_text` is a paraphrase**
-  (`scripts/audit_cards.py:17-21`, `authoring/fidelity.py:10`). That is now enforced
-  false by `test_its_oracle_text_is_what_it_prints`.
-- **Stale counts:**
-  - `audit_cards.py:154` says 235 cards; `:284` says 179 of 213.
-  - `docs/deck-import.md:4` says 219 hand-written; there are 192.
-  - `docs/decks.md:114` says 60 tokens; there are 87.
-- **Prose describing the deficit baseline as live:** `docs/rules-coverage.md:348-372`
-  and `:586-589`, `docs/card-authoring.md:385-436`, `docs/card-dsl.md:53-65`.
-
-### CD-05 · Dead keys in `tests/cards/expectations.json` — **S**
-
-The file has 12 keys that are not hand-written cards:
-- **6 were superseded into `auto/`:** `adanto_vanguard`, `bloodline_keeper`,
-  `mulldrifter`, `reconnaissance_mission`, `savai_triome`, `simic_sky_swallower`. Each is
-  weaker than the auto expectation, and `test_every_card_works.py:320` still reads it.
-- **1 is now a back face:** `lord_of_lineage`.
-- **5 exist nowhere:** `aetherling_serpent`, `hydra_broodmaster`, `kiora_growth_surge`,
-  `kraken_hatchling_swarm`, `overrun_lite`.
-
-Unlike `test_auto_cards.py:109`, the hand-written side has no orphan check. **Fix:**
-delete the 12 and add the check, or fold this into CD-01.
-
-### CD-06 · Per-deck test gaps — **M**
-
-The per-deck `tests/cards/test_<deck>_deck.py` files are the layer that catches cards
-with the right vocabulary but the wrong shape (gate 5's expectations are often just
-`{"zone": "battlefield"}`). Three gaps:
-- `vivi` has no `_import.py`.
-- `lucy_maclean` has no `_deck.py`.
-- The four precons (`aesi`, `edgar`, `isperia`, `zurgo`) have neither.
+**Fix:** correct each card, and add the failing case to its deck test.
 
 ---
 
 ## Repository size and CI cost
 
-### RS-01 · About 400 MB of history, mostly regenerated data — **M**
+### RS-01 · About 395 MB of history — **decision**
 
-The pack is 393 MB. The old comment on `fetch-depth: 1` in
-`.github/workflows/deploy.yml` still says ~130 MB. The weight comes from:
+The working-tree causes are settled: packets left git (`.gitignore`) and collect now
+retires them; `queue.json` stays, because it records why each card failed and cannot
+be regenerated; `cards.sqlite` stays committed, because CI cannot rebuild it
+deterministically (its input is a dated, gitignored Scryfall dump) and Git LFS
+bandwidth on the Free plan would cost more than it saves. What is left is the
+history itself, and rewriting it is a separate, explicit decision.
 
-| File | Size | Versions in history |
-|---|---|---|
+---|---|---|
 | `data/authoring/queue.json` | 11 MB | 365 (touched by 242 of 673 commits) |
 | `data/catalog/cards.sqlite` | 15.7 MB, binary | 83 |
 | `data/cards/auto/templates.cards.json` | — | 364 |
