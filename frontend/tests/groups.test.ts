@@ -47,10 +47,11 @@ function boxed(el: Element, w = 100, h = 40): void {
 }
 
 /** A board with a stop in each named region. */
-function board(regions: string[] = ["hand", "acts", "seats", "orb", "board"]): void {
+function board(regions: string[] = ["hand", "acts", "stack", "seats", "orb", "board"]): void {
   const html: Record<string, string> = {
     hand: '<div class="hand"><button data-stop="card:1"></button></div>',
     acts: '<aside class="rail rail--right"><button data-stop="act:a1"></button></aside>',
+    stack: '<section class="stackpanel"><button data-stop="stack:7"></button></section>',
     seats: '<div class="play__opponents"><button data-stop="orb:1"></button></div>',
     orb: '<div class="play__mine"><div class="mat__side"><button data-stop="orb:0"></button></div></div>',
     board:

@@ -715,9 +715,34 @@
   align-content: start;
 }
 
+/*
+ * THE BANNER SITS OVER THEIR LANES, NOT OVER THE WHOLE ROW.
+ *
+ * It spanned both columns, so your own panel started a banner's height lower
+ * than it does on your own board -- and on a handheld `.mat__side` is sized
+ * to the container's full height (`handheld.css`, `100cqh`), which the banner
+ * row had quietly eaten: the last row of piles, graveyard and command zone,
+ * sat below the fold, and the panel jumped every time you looked at a seat.
+ * Column 2 only: your panel spans both rows and never moves; their lanes
+ * shift down under the strip, which is what a strip over a board should do.
+ */
 .play__mine[data-viewing] .viewing {
-  grid-column: 1 / -1;
+  grid-column: 2;
+  grid-row: 1;
   margin-bottom: 0;
+}
+
+.play__mine[data-viewing] > .mat--side {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  /* A side mat has no lanes; `.mat`'s second track was an empty column and a
+     10px gap inside a column already the width of the panel. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.play__mine[data-viewing] > .mat--lanes {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .viewing {

@@ -9,7 +9,13 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
 import { getCursor, moveCursor, setCursor } from "../../input/cursor";
-import { groupOf, groupRoot, landableStopsIn, setGroup } from "../../input/groups";
+import {
+  groupOf,
+  groupRoot,
+  groupsPresent,
+  landableStopsIn,
+  setGroup,
+} from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
@@ -522,5 +528,56 @@ export const HandheldTargetChipsWalk: Story = {
     moveCursor("up");
     moveCursor("up");
     expect(getCursor()).toBe("act:a-charm-991");
+  },
+};
+
+/**
+ * THE STACK IS A REGION, AND ITS PLIES ARE STOPS.
+ *
+ * Responding to the stack is the skill in this format, and the stack was the
+ * one thing on the board the ring could not stand on: its plies carried an
+ * arrow anchor and nothing else, so the card you were deciding whether to
+ * answer was the one card you could not read. Each ply is a stop now, the
+ * reader follows it, `Y` opens it in full, and `R1` cycles into the region
+ * while anything is on the stack.
+ */
+export const HandheldStackIsARegion: Story = {
+  args: board(scenarios.stackThreeDeep()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    expect(groupsPresent(), "the stack is a region while something is on it").toContain(
+      "stack",
+    );
+
+    setGroup(null);
+    // Top of the stack first: the thing that resolves next.
+    expect(setCursor("stack:3"), "the top ply is reachable").toBe(true);
+    const ply = document.querySelector("[data-cursor]") as HTMLElement;
+    expect(groupOf(ply)).toBe("stack");
+
+    moveCursor("down");
+    expect(getCursor()).toBe("stack:2");
+    moveCursor("down");
+    expect(getCursor()).toBe("stack:1");
+
+    // The reader is on the ply's card, so `Y` reads it in full.
+    const previewOid = document
+      .querySelector("[data-cursor]")
+      ?.getAttribute("data-preview-oid");
+    expect(previewOid).toBeTruthy();
+    await userEvent.keyboard("i");
+    const hold = await canvas.findByTestId("card-hold");
+    const name = scenarios.stackThreeDeep().state.stack.find((item) => item.sid === 1)
+      ?.card?.name;
+    expect(hold.getAttribute("aria-label")).toBe(name);
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
+    });
   },
 };

@@ -36,6 +36,7 @@ export type StopKind =
   | "commit"
   | "combo"
   | "menu"
+  | "stack"
   | "unknown";
 
 export interface StopRef {
@@ -60,6 +61,7 @@ export function parseStop(stop: string | null): StopRef {
   switch (head) {
     case "card":
     case "orb":
+    case "stack":
       return { kind: head, id: Number(tail), raw: stop };
     case "act":
     case "tool":
@@ -274,6 +276,25 @@ function contextVerbs(
     }
     if (staging.targeting) return { a: "Target", b: "Cancel" };
     return { a: "Look", y: "Read", b: "Back" };
+  }
+
+  /*
+   * A ply of the stack. It is a target when a spell on the way is pointed at
+   * it (a counterspell), and otherwise it is something to read: `A` opens the
+   * hold the way `Y` does, because the one reason to stand on the stack is to
+   * decide whether to answer what is on it.
+   */
+  if (ref.kind === "stack" && ref.id !== null) {
+    const sid = ref.id;
+    if (staging.targeting) {
+      const targetable = actions.some((action) =>
+        action.targets.some((target) => target.kind === "stack" && target.id === sid),
+      );
+      const name = state.stack.find((item) => item.sid === sid)?.name ?? "it";
+      if (targetable) return { a: `Target ${name}`, y: "Read", b: "Cancel" };
+      return { a: "Not a legal target", y: "Read", b: "Cancel" };
+    }
+    return { a: "Read", y: "Read", b: "Back" };
   }
 
   if (ref.kind !== "card" || ref.id === null) return { a: "Select", b: "Back" };

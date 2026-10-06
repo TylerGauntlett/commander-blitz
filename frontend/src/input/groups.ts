@@ -1,5 +1,5 @@
 /**
- * The board's five regions, and jumping between them.
+ * The board's six regions, and jumping between them.
  *
  * ## Why a group is a container and not a stop-id prefix
  *
@@ -28,7 +28,7 @@
  * underneath one. The second always wins -- see `activeRoot`.
  */
 
-export type GroupId = "hand" | "acts" | "seats" | "orb" | "board";
+export type GroupId = "hand" | "acts" | "stack" | "seats" | "orb" | "board";
 
 interface Group {
   id: GroupId;
@@ -46,6 +46,15 @@ interface Group {
 export const GROUPS: readonly Group[] = [
   { id: "hand", sel: ".hand", label: "Hand" },
   { id: "acts", sel: ".rail--right", label: "Actions" },
+  /*
+   * The stack, while there is one. Its plies are stops (`StackPanel`), so the
+   * region is present exactly when something is on the stack and absent the
+   * rest of the time -- `groupsPresent` asks for landable stops, not for the
+   * container. Before this the stack was the one thing on the board the ring
+   * could not stand on, and so the one card you could not read before
+   * deciding whether to answer it.
+   */
+  { id: "stack", sel: ".stackpanel", label: "Stack" },
   { id: "seats", sel: ".play__opponents", label: "Opponents" },
   { id: "orb", sel: ".play__mine .mat__side", label: "You" },
   { id: "board", sel: ".play__mine .mat__lanes", label: "Board" },

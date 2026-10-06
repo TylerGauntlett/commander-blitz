@@ -15,6 +15,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useLayoutEffect, useRef } from "react";
 import { expect, waitFor, within } from "storybook/test";
+import type { GameView } from "../../api/types";
 import type { ExitFx } from "../../logic/beats/types";
 import { reset as forgetRects, remember } from "../../logic/cardRects";
 import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
@@ -39,9 +40,17 @@ const state = scenarios.combatDeclareAttackers().state;
  * A layout effect in the parent runs after its children have mounted and before
  * any passive effect, so the registry is populated before `FxLayer` reads it.
  */
-function Stage({ beat, seed = [] }: { beat: LiveBeat | null; seed?: number[] }) {
+function Stage({
+  beat,
+  seed = [],
+  state: shown = state,
+}: {
+  beat: LiveBeat | null;
+  seed?: number[];
+  state?: GameView;
+}) {
   const boardRef = useRef<HTMLDivElement>(null);
-  const opponents = seatOrder(state).filter((pid) => pid !== state.seat);
+  const opponents = seatOrder(shown).filter((pid) => pid !== shown.seat);
 
   useLayoutEffect(() => {
     forgetRects();
@@ -57,8 +66,8 @@ function Stage({ beat, seed = [] }: { beat: LiveBeat | null; seed?: number[] }) 
         {opponents.map((pid) => (
           <PlayerMat
             key={pid}
-            state={state}
-            player={state.players[pid]}
+            state={shown}
+            player={shown.players[pid]}
             compact
             mirrored
             cardScale={opponentCardScale(opponents.length)}
@@ -67,12 +76,12 @@ function Stage({ beat, seed = [] }: { beat: LiveBeat | null; seed?: number[] }) 
         ))}
       </div>
       <PlayerMat
-        state={state}
-        player={state.players[state.seat]}
+        state={shown}
+        player={shown.players[shown.seat]}
         cardScale={CARD_SCALE.own}
         actionableOids={new Set()}
       />
-      <FxLayer beat={beat} speed="cinematic" boardRef={boardRef} state={state} />
+      <FxLayer beat={beat} speed="cinematic" boardRef={boardRef} state={shown} />
     </div>
   );
 }
@@ -322,5 +331,85 @@ export const Banner: Story = {
       const canvas = within(canvasElement);
       expect(canvas.getByText(/eliminated/)).toBeTruthy();
     });
+  },
+};
+
+/**
+ * A HIT FROM A BOARD YOU CANNOT SEE lands on the creature that took it.
+ *
+ * On a handheld the opponent's lanes are clipped; the blocker that hit your
+ * Grizzly Bears has a box the player cannot see. The "between" point used to
+ * land halfway to a phantom, which a Deck playtest read as the number
+ * happening twice for no reason. The receiver is visible, so the numeral goes
+ * on it, the way a burn spell's does.
+ */
+export const HandheldHitFromAHiddenBoard: Story = {
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  render: () => (
+    <Stage
+      state={scenarios.combatDeclareBlockers().state}
+      beat={beat({
+        fx: [
+          {
+            at: 0,
+            kind: "float",
+            at_point: {
+              kind: "between",
+              a: { kind: "object", oid: 411 },
+              b: { kind: "object", oid: 402 },
+            },
+            value: "-5",
+            tone: "damage",
+          },
+        ],
+      })}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const numeral = await waitFor(() => canvas.getByText("-5"));
+    const hit = numeral.getBoundingClientRect();
+    const bears = (
+      canvasElement.querySelector('[data-oid="402"]') as HTMLElement
+    ).getBoundingClientRect();
+    const x = hit.left + hit.width / 2;
+    expect(x, "the numeral is over the creature that took it").toBeGreaterThanOrEqual(
+      bears.left,
+    );
+    expect(x).toBeLessThanOrEqual(bears.right);
+    // It rises as it fades, so only the floor is pinned.
+    expect(hit.bottom).toBeLessThanOrEqual(bears.bottom + 1);
+  },
+};
+
+/** ...and a hit ON a creature you cannot see draws nothing at all. */
+export const HandheldHitOnAHiddenBoard: Story = {
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  render: () => (
+    <Stage
+      state={scenarios.combatDeclareBlockers().state}
+      beat={beat({
+        fx: [
+          {
+            at: 0,
+            kind: "float",
+            at_point: {
+              kind: "between",
+              a: { kind: "object", oid: 402 },
+              b: { kind: "object", oid: 411 },
+            },
+            value: "-2",
+            tone: "damage",
+          },
+        ],
+      })}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    await new Promise((done) => setTimeout(done, 250));
+    expect(within(canvasElement).queryByText("-2")).toBeNull();
   },
 };

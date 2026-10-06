@@ -15,7 +15,7 @@
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
 import { parseStop, type Staging, verbsFor } from "../src/logic/verbs";
-import { action, card, gameView, pending, player } from "../src/testing/fixtures";
+import { action, card, gameView, pending, player, stackItem } from "../src/testing/fixtures";
 import { mulligan, mulliganBottom } from "../src/testing/scenarios";
 
 const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
@@ -75,6 +75,27 @@ describe("parseStop", () => {
     expect(parseStop("combo:filter")).toMatchObject({ kind: "combo" });
     expect(parseStop("combo:opt:a12-choose")).toMatchObject({ kind: "combo" });
     expect(parseStop("menu:ability:1")).toMatchObject({ kind: "menu" });
+    expect(parseStop("stack:7")).toMatchObject({ kind: "stack", id: 7 });
+  });
+
+  it("reads a ply of the stack, and targets it when a spell is pointed that way", () => {
+    const state = gameView({
+      stack: [stackItem({ sid: 7, name: "Rhystic Study", controller: 1, card: null })],
+    });
+    expect(verbsFor(state, [], "stack:7")).toEqual({ a: "Read", y: "Read", b: "Back" });
+    const counter = action({
+      id: "a9-cast",
+      kind: "cast",
+      label: "Cast Counterspell -> Rhystic Study",
+      base_label: "Cast Counterspell",
+      targets: [{ kind: "stack", id: 7 }],
+    });
+    expect(verbsFor(state, [counter], "stack:7", staging({ targeting: true })).a).toBe(
+      "Target Rhystic Study",
+    );
+    expect(verbsFor(state, [counter], "stack:8", staging({ targeting: true })).a).toBe(
+      "Not a legal target",
+    );
   });
 
   it("says Choose over an ability menu item, which is what pressing it does", () => {

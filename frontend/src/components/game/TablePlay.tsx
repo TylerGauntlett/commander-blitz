@@ -7,7 +7,7 @@
  */
 
 import type { RefObject } from "react";
-import type { CardView, GameView, PlayerView } from "../../api/types";
+import type { CardView, GameView, PlayerView, StackItemView } from "../../api/types";
 import { stopId } from "../../input/stops";
 import type { useTableDerived } from "../../state/useTableDerived";
 import type { useZoomFit } from "../../state/useZoomFit";
@@ -32,6 +32,7 @@ interface Props {
   locked: boolean;
   hover: (oid: number | null) => void;
   onBoardCard: (card: CardView) => void;
+  onStackItem: (item: StackItemView) => void;
   onSelectPlayer: (pid: number) => void;
   playFromHand: (card: CardView) => void;
 }
@@ -52,6 +53,7 @@ export function TablePlay({
   locked,
   hover,
   onBoardCard,
+  onStackItem,
   onSelectPlayer,
   playFromHand,
 }: Props) {
@@ -81,7 +83,7 @@ export function TablePlay({
         positioned ancestor and without `.play__mine`'s own scrolling
         carrying it off the top.
       */}
-      {state.stack.length > 0 && <StackPanel state={state} />}
+      {state.stack.length > 0 && <StackPanel state={state} onPress={onStackItem} />}
 
       <div className="play__opponents" ref={podRef}>
         {opponents.map((pid) => (

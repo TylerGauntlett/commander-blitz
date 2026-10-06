@@ -8,7 +8,7 @@
  */
 
 import { useCallback } from "react";
-import type { CardView, GameView, LegalAction } from "../api/types";
+import type { CardView, GameView, LegalAction, StackItemView } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
 import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
@@ -33,6 +33,8 @@ interface Args {
   decisionKind: string | null;
   inCombatDecision: boolean;
   declareMutate: ReturnType<typeof useGame>["declare"]["mutate"];
+  /** Open the full-screen read on a card. `A` on a stack ply is a read. */
+  holdCard: (oid: number) => void;
 }
 
 export function useTableGestures({
@@ -48,6 +50,7 @@ export function useTableGestures({
   decisionKind,
   inCombatDecision,
   declareMutate,
+  holdCard,
 }: Args) {
   const selectedOid = useUiStore((s) => s.selectedOid);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
@@ -251,6 +254,39 @@ export function useTableGestures({
     ],
   );
 
+  /**
+   * A press on a ply of the stack.
+   *
+   * A target first, the way a board card is (step 1 of `onBoardCard`): a
+   * counterspell's legal targets are stack ids, and before this the only way
+   * to aim one was a chip in the panel. Otherwise a read -- the hold `Y`
+   * opens -- because the reason to stand on the stack is to decide whether to
+   * answer what is on it, and that needs the text.
+   */
+  const onStackItem = useCallback(
+    (item: StackItemView) => {
+      if (gateInput()) return;
+      if (targeting.length > 0) {
+        const matches = targeting.filter((a) =>
+          a.targets.some((ref) => ref.kind === "stack" && ref.id === item.sid),
+        );
+        if (matches.length === 1) {
+          act(matches[0].id);
+          return;
+        }
+        if (matches.length > 1) {
+          narrowTargeting(matches.map((a) => a.id));
+          followUp({ kind: "targeting", actionIds: matches.map((a) => a.id) });
+          return;
+        }
+        cue("deny");
+        return;
+      }
+      if (item.card) holdCard(item.card.oid);
+    },
+    [gateInput, targeting, act, narrowTargeting, followUp, cue, holdCard],
+  );
+
   const onSelectPlayer = useCallback(
     (pid: number) => {
       if (gateInput()) return;
@@ -388,5 +424,13 @@ export function useTableGestures({
     ],
   );
 
-  return { playFromHand, onDropOnZone, onBoardCard, onSelectPlayer, onDeclare, onBarAct };
+  return {
+    playFromHand,
+    onStackItem,
+    onDropOnZone,
+    onBoardCard,
+    onSelectPlayer,
+    onDeclare,
+    onBarAct,
+  };
 }

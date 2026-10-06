@@ -51,6 +51,12 @@ export const stopId = {
   orb: (pid: number) => `orb:${pid}`,
   tool: (name: string) => `tool:${name}`,
   pile: (pid: number, zone: string) => `pile:${pid}:${zone}`,
+  /*
+   * A ply of the stack, by stack id rather than by the card's oid: a trigger
+   * borrows its source permanent's face, and that permanent is on the
+   * battlefield already wearing `card:<oid>`.
+   */
+  stack: (sid: number) => `stack:${sid}`,
   lane: (pid: number, lane: string) => `lane:${pid}:${lane}`,
   /*
    * A combobox row, or its filter field.
@@ -313,6 +319,19 @@ function scrollable(a: Element, style: CSSStyleDeclaration): { x: boolean; y: bo
     x: CAN.has(style.overflowX) && a.clientWidth > 0 && a.scrollWidth > a.clientWidth,
     y: CAN.has(style.overflowY) && a.clientHeight > 0 && a.scrollHeight > a.clientHeight,
   };
+}
+
+/**
+ * The box of `el` if a player can see it, else `null`.
+ *
+ * `onScreen` is the ring's rule for whether a stop can be landed on, and it is
+ * the same question an arrow or a damage numeral has to ask: on a handheld an
+ * opponent's lanes are clipped to zero height and every card in them still
+ * reports its own non-zero box. `CombatArrows` and `FxLayer` anchor to this.
+ */
+export function visibleBox(el: Element): DOMRect | null {
+  const rect = el.getBoundingClientRect();
+  return onScreen(el, rect) ? rect : null;
 }
 
 function onScreen(el: Element, rect: DOMRect): boolean {
