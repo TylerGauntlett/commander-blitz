@@ -45,7 +45,7 @@ from automtg.engine.primitives import (
     lose_life,
 )
 from automtg.engine.zones import destroy, move_object
-from tests.conftest import only_oid
+from tests.conftest import only_oid, static_probe
 
 EMBLEM = "t_life_floor_emblem"  # sorcery carrying Serra the Benevolent's emblem
 WORSHIP = "t_worship"  # the same static printed on an enchantment
@@ -197,19 +197,8 @@ class TestWorshipOnTheBattlefield:
 
 
 class TestTheLoaderRefusesAGuess:
-    @staticmethod
-    def _card(static: dict) -> dict:
-        return {
-            "id": "probe",
-            "name": "Probe",
-            "oracle_text": "Probe.",
-            "mana_cost": "{W}",
-            "types": ["Enchantment"],
-            "abilities": [{"kind": "static", "text": "Probe.", **static}],
-        }
-
     def _compile(self, static: dict):
-        return compile_card(CardModel.model_validate(self._card(static)))
+        return compile_card(CardModel.model_validate(static_probe(static)))
 
     def test_worships_line_loads(self):
         self._compile(

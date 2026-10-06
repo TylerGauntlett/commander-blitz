@@ -24,7 +24,7 @@ from automtg.engine.enums import Zone
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import grant_ability
 from automtg.engine.zones import bounce, destroy, move_object
-from tests.conftest import count_on_battlefield, only_oid, pass_until
+from tests.conftest import count_on_battlefield, only_oid, settle
 
 SPIRIT = "spirit_1_1_w_flying"
 
@@ -35,10 +35,6 @@ def a_ghostformed_bear(builder):
     bear = only_oid(game, "t_bear")
     grant_ability(game.state, bear, 0, only_oid(game, "t_ghostform_source"), permanent=True)
     return game, bear
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 class TestItFires:

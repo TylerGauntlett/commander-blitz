@@ -41,7 +41,7 @@ from __future__ import annotations
 from automtg.engine.characteristics import mana_source_traits
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.mana import ManaCost, ManaOrigin, ManaPool
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, settle
 
 WORM = "t_hoard_worm"
 TREASURE = "treasure_token"
@@ -170,10 +170,6 @@ def cast_the_bear(game) -> int:
     )
     game.apply(action)
     return action.source
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def worm_triggers(game) -> list:

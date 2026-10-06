@@ -40,7 +40,15 @@ from automtg.engine import legality
 from automtg.engine.characteristics import chars
 from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import _default_answer, find_action, oids_of, only_oid, pass_until
+from tests.conftest import (
+    _default_answer,
+    find_action,
+    hand_ids,
+    library_ids,
+    oids_of,
+    only_oid,
+    pass_until,
+)
 
 PLAINS = "plains"
 ISLAND = "island"
@@ -213,14 +221,6 @@ def counters(game, oid: int) -> dict[str, int]:
 
 def poison(game, pid: int) -> int:
     return game.state.players[pid].poison
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
-
-
-def library_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 def tokens(game, def_id: str, pid: int = 0) -> list:

@@ -43,9 +43,15 @@ from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.selectors import resolve_pool
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.objects import PLUS_ONE
 from automtg.engine.structs import TargetRef
-from tests.conftest import action_for_card, find_action, oids_of, only_oid, pass_until
+from tests.conftest import (
+    action_for_card,
+    find_action,
+    oids_of,
+    only_oid,
+    pass_until,
+    plus_one_counters,
+)
 
 BEAR = "t_bear"
 FOREST = "forest"
@@ -54,10 +60,6 @@ PLAINS = "plains"
 WARRIOR = "t_warrior_token"
 GRAVEPICKER = "t_gravepicker"
 SMITH = "t_token_smith"
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counters.get(PLUS_ONE, 0)
 
 
 def run(game, spec, source=None, *, take: int | None = None) -> EffectContext:
@@ -294,18 +296,18 @@ class TestGreyHostReinforcementsOnACard:
         game = self.cast_it(builder, [BEAR, BEAR, FOREST])
 
         assert not game.state.players[0].graveyard, "the whole graveyard went"
-        assert counters(game, only_oid(game, GRAVEPICKER)) == 2, "two creature cards"
+        assert plus_one_counters(game, only_oid(game, GRAVEPICKER)) == 2, "two creature cards"
 
     def test_an_empty_graveyard_is_no_counters(self, builder):
         game = self.cast_it(builder, [])
 
-        assert counters(game, only_oid(game, GRAVEPICKER)) == 0
+        assert plus_one_counters(game, only_oid(game, GRAVEPICKER)) == 0
 
     def test_a_graveyard_of_lands_is_no_counters(self, builder):
         """The boundary the `types` clause exists for: exiled, but not creatures."""
         game = self.cast_it(builder, [FOREST, FOREST])
 
-        assert counters(game, only_oid(game, GRAVEPICKER)) == 0
+        assert plus_one_counters(game, only_oid(game, GRAVEPICKER)) == 0
         assert not game.state.players[0].graveyard
 
 

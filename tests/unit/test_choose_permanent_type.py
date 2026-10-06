@@ -39,7 +39,7 @@ from automtg.engine.effects.ops_control import PERMANENT_TYPE_CHOICES
 from automtg.engine.effects.selectors import validate_selector
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
-from tests.conftest import pass_until
+from tests.conftest import hand_ids, pass_until
 
 RENAISSANCE = "t_cpt_renaissance"  # choose a permanent type, return those cards
 CREATURE_CHOOSER = "t_cpt_creature_chooser"  # the other axis
@@ -94,10 +94,6 @@ def cast_choosing(game, card_id: str, label: str) -> None:
         and not g.state.pending_triggers
         and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
     )
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
 
 
 class TestTheOptionsAreTheSixPermanentTypes:

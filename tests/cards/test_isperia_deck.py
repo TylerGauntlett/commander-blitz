@@ -25,16 +25,17 @@ draw, the card that should *not* come back.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     _default_answer,
     action_for_card,
     advance_to_step,
     find_action,
+    keywords,
     oids_of,
     only_oid,
     pass_until,
+    pt,
 )
 
 ISPERIA = "isperia_supreme_judge"
@@ -111,15 +112,6 @@ def cast(game, card_id: str) -> int:
 
 def hand_size(game, pid: int) -> int:
     return len(game.state.players[pid].hand)
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return (c.power, c.toughness)
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 class TestIsperiaSupremeJudge:

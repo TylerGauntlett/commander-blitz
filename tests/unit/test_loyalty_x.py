@@ -36,7 +36,7 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, settle
 
 WALKER = "t_lx_walker"  # loyalty 4; "+1: gain 2 life", "-X: gain X life"
 AIMER = "t_lx_aimer"  # loyalty 4; "-X: destroy target artifact with mana value X"
@@ -74,10 +74,6 @@ def choose(game, x: int) -> None:
     game.apply(
         next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == x)
     )
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 class TestXIsAnnouncedAndPaidInLoyalty:

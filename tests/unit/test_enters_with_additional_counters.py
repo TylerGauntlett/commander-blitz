@@ -27,7 +27,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object
-from tests.conftest import action_for_card, only_oid, pass_until
+from tests.conftest import action_for_card, only_oid, pass_until, settle
 
 OATH = "t_oath"
 WALKER = "t_walker"  # {2}{B}, loyalty 4, "+1: gain 2 life"
@@ -45,10 +45,6 @@ def position(builder, *, oaths: int = 1, theirs=(), hand=(WALKER,)):
         .active(0)
         .build()
     )
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def cast_walker(game) -> int:

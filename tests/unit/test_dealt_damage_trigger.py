@@ -37,7 +37,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.primitives import damage_permanent, damage_player
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import move_object
-from tests.conftest import _default_answer, find_action, only_oid, pass_until
+from tests.conftest import _default_answer, find_action, only_oid, pass_until, plus_one_counters
 
 ENRAGER = "t_enrager"  # 3/4, "whenever dealt damage, put a +1/+1 counter on it"
 AVENGER = "t_avenger"  # 4/4, "whenever dealt damage, it deals that much to target player"
@@ -66,16 +66,12 @@ def settle(game, limit: int = 40) -> None:
     raise AssertionError("the trigger never resolved")
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
-
-
 class TestItFiresOnDamage:
     def test_damage_triggers_it(self, builder):
         game, oid = position(builder)
         damage_permanent(game.state, oid, 1, None)
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_no_damage_no_trigger(self, builder):
         """The boundary: `damage_permanent` returns early on a non-positive
@@ -83,7 +79,7 @@ class TestItFiresOnDamage:
         game, oid = position(builder)
         damage_permanent(game.state, oid, 0, None)
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_it_fires_once_per_source_not_once_per_point(self, builder):
         """Rule 120.3: damage is dealt in one event, however much of it there
@@ -91,7 +87,7 @@ class TestItFiresOnDamage:
         game, oid = position(builder)
         damage_permanent(game.state, oid, 3, None)
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_two_separate_sources_fire_twice(self, builder):
         game, oid = position(builder)
@@ -99,7 +95,7 @@ class TestItFiresOnDamage:
         settle(game)
         damage_permanent(game.state, oid, 1, None)
         settle(game)
-        assert counters(game, oid) == 2
+        assert plus_one_counters(game, oid) == 2
 
 
 class TestItDoesNotFireOnDamageThatIsNotItsOwn:
@@ -110,7 +106,7 @@ class TestItDoesNotFireOnDamageThatIsNotItsOwn:
         game, oid = position(builder)
         damage_player(game.state, 1, 3, None)
         settle(game)
-        assert counters(game, oid) == 0, (
+        assert plus_one_counters(game, oid) == 0, (
             "a bolt to the face is not damage dealt to this creature"
         )
 
@@ -118,7 +114,7 @@ class TestItDoesNotFireOnDamageThatIsNotItsOwn:
         game, oid = position(builder, opposing=[BEAR])
         damage_permanent(game.state, only_oid(game, BEAR, 1), 2, None)
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_dealing_damage_does_not_fire_it(self, builder):
         """`source: "self"` is about being hurt, not about hurting.
@@ -130,7 +126,7 @@ class TestItDoesNotFireOnDamageThatIsNotItsOwn:
         game, oid = position(builder, opposing=[BEAR])
         damage_permanent(game.state, only_oid(game, BEAR, 1), 2, oid)
         settle(game)
-        assert counters(game, oid) == 0, (
+        assert plus_one_counters(game, oid) == 0, (
             "the enrager dealt the damage; nothing was dealt to it"
         )
 
@@ -176,7 +172,7 @@ class TestCombatDamageFiresIt:
         )
         game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
         settle(game)
-        assert counters(game, enrager) == 1, "the 2/2 dealt it two damage and it survived"
+        assert plus_one_counters(game, enrager) == 1, "the 2/2 dealt it two damage and it survived"
         assert chars(game.state, enrager).toughness == 5
 
 

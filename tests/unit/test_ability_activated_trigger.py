@@ -50,7 +50,7 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind
 from automtg.engine.errors import DslError
-from tests.conftest import event_types, only_oid, pass_until
+from tests.conftest import event_types, only_oid, settle
 
 MENTOR = "harsh_mentor"
 
@@ -94,10 +94,6 @@ def position(builder, *, theirs=(), hand=(), players=2, them=1):
     if hand:
         game = game.hand(them, list(hand))
     return game.active(them).max_turns(4).build()
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def activate(game, card_id, *, pid=None, ability_index=None):

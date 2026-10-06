@@ -29,15 +29,11 @@ from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.zones import destroy, move_object
-from tests.conftest import oids_of, pass_until
+from tests.conftest import oids_of, settle
 
 ATTACKER_TRIGGER = "t_you_attack"  # "whenever you attack, you gain 1 life"
 GRANTER = "t_granter_permanent"  # grants a dies-trigger with no duration
 BEAR = "t_bear"
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 class TestWheneverYouAttack:

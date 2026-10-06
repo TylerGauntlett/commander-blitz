@@ -31,7 +31,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.enums import Step
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import damage_permanent, damage_player, give_emblem
-from tests.conftest import only_oid
+from tests.conftest import only_oid, static_probe
 
 EMBLEM = "t_all_but_emblem"  # sorcery carrying Ajani Steadfast's emblem
 WALKER = "elspeth_sun_s_champion"  # a planeswalker with 4 loyalty
@@ -172,21 +172,10 @@ class TestDoublingComesFirst:
 
 
 class TestTheLoaderRefusesAGuess:
-    @staticmethod
-    def _card(static: dict) -> dict:
-        return {
-            "id": "probe",
-            "name": "Probe",
-            "oracle_text": "Probe.",
-            "mana_cost": "{W}",
-            "types": ["Enchantment"],
-            "abilities": [{"kind": "static", "text": "Probe.", **static}],
-        }
-
     def test_the_emblem_line_loads(self):
         compile_card(
             CardModel.model_validate(
-                self._card(
+                static_probe(
                     {
                         "effect": "prevent_all_but",
                         "amount": 1,
@@ -201,7 +190,7 @@ class TestTheLoaderRefusesAGuess:
         with pytest.raises(DslError, match="needs an 'amount'"):
             compile_card(
                 CardModel.model_validate(
-                    self._card({"effect": "prevent_all_but", "affects_player": "you"})
+                    static_probe({"effect": "prevent_all_but", "affects_player": "you"})
                 )
             )
 
@@ -209,7 +198,7 @@ class TestTheLoaderRefusesAGuess:
         with pytest.raises(DslError, match="must be 1 or more"):
             compile_card(
                 CardModel.model_validate(
-                    self._card(
+                    static_probe(
                         {"effect": "prevent_all_but", "amount": 0, "affects_player": "you"}
                     )
                 )
@@ -218,5 +207,5 @@ class TestTheLoaderRefusesAGuess:
     def test_a_recipient_is_required(self):
         with pytest.raises(DslError, match="whose damage is capped"):
             compile_card(
-                CardModel.model_validate(self._card({"effect": "prevent_all_but", "amount": 1}))
+                CardModel.model_validate(static_probe({"effect": "prevent_all_but", "amount": 1}))
             )

@@ -32,6 +32,7 @@ from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
 from automtg.engine.errors import DslError
+from tests.conftest import library_ids
 
 FOREST = "forest"
 ISLAND = "island"
@@ -53,10 +54,6 @@ def run(game, spec, answer: list[int] | None = None):
 
 def zone_of(game, oid) -> Zone:
     return game.state.objects[oid].zone
-
-
-def library_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 def gate(**extra):

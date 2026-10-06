@@ -62,7 +62,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.targeting import enumerate_target_tuples, filter_legal
 from automtg.engine.zones import move_object
-from tests.conftest import pass_until
+from tests.conftest import pass_until, settle
 
 UP_TO = "t_up_to_x"  # multikicker {1}{W}; ETB returns up to X creature cards
 EXACTLY = "t_exactly_x"  # the same card without the "up to"
@@ -146,10 +146,6 @@ def choose(game, how_many: int) -> None:
         game.apply(
             next(a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION)
         )
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def creatures_back(game) -> int:

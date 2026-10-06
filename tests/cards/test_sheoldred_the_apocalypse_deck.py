@@ -33,9 +33,12 @@ from automtg.engine.structs import TargetRef
 from tests.conftest import (
     _default_answer,
     action_for_card,
+    activations,
     count_on_battlefield,
     only_oid,
     pass_until,
+    pt,
+    settle_to_priority,
 )
 
 # A castable instant, and it is load bearing rather than scenery. With no play
@@ -55,16 +58,6 @@ FILLER = 40  # the sandbox's library, when a test does not set one
 # ----------------------------------------------------------------------
 # helpers
 # ----------------------------------------------------------------------
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nobody is mid-resolution."""
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
 
 
 def wait_to_cast(game, card_id: str, pid: int) -> None:
@@ -89,7 +82,7 @@ def cast(game, card_id: str, pid: int = 0, **match) -> int:
     wait_to_cast(game, card_id, pid)
     action = cast_line(game, card_id, **match)
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
     return action.source
 
 
@@ -100,16 +93,6 @@ def castable(game, card_id: str) -> bool:
     )
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def activate(game, oid: int, index: int, **match) -> None:
     action = next(
         a
@@ -117,7 +100,7 @@ def activate(game, oid: int, index: int, **match) -> None:
         if all(getattr(a, k) == v for k, v in match.items())
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
 
 def decide(game, kind: DecisionKind, pick) -> None:
@@ -158,11 +141,6 @@ def hand(game, pid: int) -> int:
 
 def drawn_since(before: list[int], game) -> list[int]:
     return [b - a for b, a in zip(before, libraries(game), strict=True)]
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return (c.power, c.toughness)
 
 
 def anchored(b):
@@ -310,14 +288,14 @@ class TestBloodgiftDemon:
         game = between_turns(builder, boards={0: ["bloodgift_demon"]})
         before_libs = libraries(game)
         choose_target(game, TargetRef.player(1))
-        settle(game)
+        settle_to_priority(game)
         assert drawn_since(before_libs, game)[1] == 1
         assert lives(game) == [START, START - 1]
 
     def test_it_can_target_you(self, builder):
         game = between_turns(builder, boards={0: ["bloodgift_demon"]})
         choose_target(game, TargetRef.player(0))
-        settle(game)
+        settle_to_priority(game)
         assert lives(game) == [START - 1, START]
 
     def test_not_at_an_opponent_s_upkeep(self, builder):
@@ -362,7 +340,7 @@ class TestDamnablePact:
         wait_to_cast(game, "damnable_pact", 0)
         game.apply(cast_line(game, "damnable_pact", targets=(TargetRef.player(1),)))
         decide(game, DecisionKind.CHOOSE_X, lambda a: a.kind is ActionKind.CHOOSE and a.choice == 3)
-        settle(game)
+        settle_to_priority(game)
         assert drawn_since(before, game) == [0, 3]
         assert lives(game) == [START, START - 3]
 
@@ -515,7 +493,7 @@ class TestDreadPresence:
         before = libraries(game)
         self.play(game)
         choose_mode(game, 0)
-        settle(game)
+        settle_to_priority(game)
         assert drawn_since(before, game) == [1, 0]
         assert lives(game) == [START - 1, START]
 
@@ -525,7 +503,7 @@ class TestDreadPresence:
         self.play(game)
         choose_mode(game, 1)
         choose_target(game, TargetRef.player(1))
-        settle(game)
+        settle_to_priority(game)
         assert lives(game) == [START + 2, START - 2]
 
     def test_the_second_mode_kills_a_bear(self, builder):
@@ -534,7 +512,7 @@ class TestDreadPresence:
         self.play(game)
         choose_mode(game, 1)
         choose_target(game, TargetRef.obj(bear))
-        settle(game)
+        settle_to_priority(game)
         assert game.state.objects[bear].zone is Zone.GRAVEYARD
 
     def test_a_nonbasic_swamp_counts(self, builder):
@@ -558,7 +536,7 @@ class TestDreadPresence:
         before = libraries(game)
         self.play(game, "plains")
         assert game.pending().kind is not DecisionKind.CHOOSE_MODE
-        settle(game)
+        settle_to_priority(game)
         assert drawn_since(before, game) == [0, 0]
         assert lives(game) == [START, START]
 
@@ -719,7 +697,7 @@ class TestGeierReachSanitarium:
         ).build()
         before = libraries(game)
         game.apply(activations(game, only_oid(game, "geier_reach_sanitarium", 0), 1)[0])
-        settle(game)
+        settle_to_priority(game)
         assert drawn_since(before, game) == [1, 1]
         assert [hand(game, 0), hand(game, 1)] == [2, 1]
         assert [len(p.graveyard) for p in game.state.players] == [1, 1]
@@ -897,7 +875,7 @@ class TestJetMedallion:
         )
         assert castable(game, "defile")
         game.apply(cast_line(game, "defile"))
-        settle(game)
+        settle_to_priority(game)
         assert not castable(game, BEAR)
 
     def test_an_opponent_s_black_spell_is_not_discounted(self, builder):
@@ -1086,7 +1064,7 @@ class TestRankleMasterOfPranks:
             else:
                 game.apply(next(a for a in game.legal_actions() if a.kind is not ActionKind.CHOOSE))
         before = (libraries(game), lives(game), [hand(game, 0), hand(game, 1)])
-        settle(game)
+        settle_to_priority(game)
         return game, rankle, before
 
     def test_the_draw_mode_costs_everyone_one_and_draws_everyone_one(self, builder):
@@ -1597,7 +1575,7 @@ class TestElderBrain:
         )
         before = libraries(game)
         game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION))
-        settle(game)
+        settle_to_priority(game)
         return game, theirs, before
 
     def test_the_attack_exiles_their_hand_and_they_draw_that_many(self, builder):
@@ -1987,7 +1965,7 @@ class TestWellOfLostDreams:
         game.apply(
             next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == 1)
         )
-        settle(game)
+        settle_to_priority(game)
         assert FILLER - library(game, 0) == 1
         assert game.state.players[0].life == START + 1
         islands = [o for o in game.state.battlefield_objects(0) if o.def_id == "island"]
@@ -2026,7 +2004,7 @@ class TestWitchOfTheMoors:
         game, bear = self.position(builder)
         cast(game, ANCHOR)
         choose_target(game, TargetRef.obj(bear))
-        settle(game)
+        settle_to_priority(game)
         assert count_on_battlefield(game, BIG, 1) == 0
         assert bear in game.state.players[0].hand
         assert count_on_battlefield(game, "witch_of_the_moors", 0) == 1, "not me"

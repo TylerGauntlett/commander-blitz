@@ -40,7 +40,7 @@ from automtg.engine.carddef import CLOAK_WARD, ward_ability
 from automtg.engine.characteristics import chars, ward_abilities
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import DslError
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, settle
 
 LORD = "t_ward_lord"  # "Each other Human you control gets +1/+0 and has ward {1}."
 HUMAN = "t_human"  # a plain 2/2 Human Soldier
@@ -95,10 +95,6 @@ def ward_prompt(game) -> object | None:
 
 def answer(game, kind: ActionKind) -> None:
     game.apply(next(a for a in game.legal_actions() if a.kind is kind))
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 class TestTheKeywordCarriesACost:

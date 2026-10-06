@@ -36,6 +36,7 @@ from tests.conftest import (
     oids_of,
     only_oid,
     pass_until,
+    pt,
 )
 
 EDGAR = "edgar_markov"
@@ -128,11 +129,6 @@ def sacrifice_paying(game, outlet: int, victim: int) -> None:
 
 def life(game, pid: int) -> int:
     return game.state.players[pid].life
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return (c.power, c.toughness)
 
 
 class TestEdgarEminence:

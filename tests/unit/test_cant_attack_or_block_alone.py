@@ -42,7 +42,7 @@ from automtg.engine.player_statics import (
 )
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import destroy
-from tests.conftest import find_action, oids_of, only_oid, pass_until
+from tests.conftest import attack_with, find_action, oids_of, only_oid, pass_until
 
 #: Toby's Beast: 4/4 white, "This token can't attack or block alone."
 TOKEN = "beast_4_4_w_alone"
@@ -60,14 +60,6 @@ def add_actions(game, kind: ActionKind) -> list:
 def to_attackers(game) -> None:
     pass_until(
         game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_ATTACKERS
-    )
-
-
-def attack_with(game, oid: int, defender: int = 1) -> None:
-    game.apply(
-        find_action(
-            game, ActionKind.ADD_ATTACKER, source=oid, targets=(TargetRef.player(defender),)
-        )
     )
 
 

@@ -34,9 +34,9 @@ Two things this file learned the hard way and pins so the next card does not:
 from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.objects import PLUS_ONE
 from automtg.engine.primitives import damage_permanent
 from automtg.engine.triggers import matches_card_filter
+from tests.conftest import plus_one_counters
 
 SENGIR = "sengir_vampire"  # 4/4 flier
 FLIER = "t_flier"  # 2/2 flier -- can block Sengir, and dies to it
@@ -97,10 +97,6 @@ def fight(game, *, block: bool = True) -> None:
             return
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counters.get(PLUS_ONE, 0)
-
-
 class TestTheLedger:
     def test_damage_records_who_dealt_it(self, builder):
         game = board(builder)
@@ -141,13 +137,13 @@ class TestTheTrigger:
         assert not any(
             game.state.objects[o].def_id == FLIER for o in game.state.battlefield
         ), "the 2/2 blocked a 4/4 and died"
-        assert counters(game, sengir) == 1
+        assert plus_one_counters(game, sengir) == 1
 
     def test_a_combat_that_kills_nothing_does_not(self, builder):
         game = board(builder)
         sengir = only(game, SENGIR)
         fight(game, block=False)
-        assert counters(game, sengir) == 0, "nothing died, so nothing triggered"
+        assert plus_one_counters(game, sengir) == 0, "nothing died, so nothing triggered"
 
 
 class TestItIsOnlyItsOwnVictims:

@@ -35,18 +35,13 @@ from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.selectors import resolve_pool
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.objects import PLUS_ONE
-from tests.conftest import action_for_card, find_action, only_oid, pass_until
+from tests.conftest import action_for_card, find_action, only_oid, pass_until, plus_one_counters
 
 FOREST = "forest"
 MOUNTAIN = "mountain"
 BEAR = "t_bear"
 BEAST = "t_amplifier"
 DEVOURER = "t_devourer"
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counters.get(PLUS_ONE, 0)
 
 
 def answer_subset(game, take: int) -> None:
@@ -193,7 +188,7 @@ class TestAmplifyOnACard:
         answer_subset(game, 2)   # reveal both remaining Beasts in hand
         pass_until(game, lambda g: g.pending() is None or not g.state.stack)
 
-        assert counters(game, only_oid(game, BEAST)) == 4, "amplify 2, two revealed"
+        assert plus_one_counters(game, only_oid(game, BEAST)) == 4, "amplify 2, two revealed"
 
     def test_revealing_none_gives_none(self, builder):
         game = (
@@ -211,7 +206,7 @@ class TestAmplifyOnACard:
         answer_subset(game, 0)
         pass_until(game, lambda g: g.pending() is None or not g.state.stack)
 
-        assert counters(game, only_oid(game, BEAST)) == 0
+        assert plus_one_counters(game, only_oid(game, BEAST)) == 0
 
 
 class TestDevourOnACard:
@@ -233,7 +228,7 @@ class TestDevourOnACard:
         pass_until(game, lambda g: g.pending() is None or not g.state.stack)
 
         devourer = only_oid(game, DEVOURER)
-        assert counters(game, devourer) == 4
+        assert plus_one_counters(game, devourer) == 4
         assert not [o for o in game.state.battlefield_objects(0) if o.def_id == BEAR]
 
     def test_it_does_not_eat_itself(self, builder):
@@ -249,7 +244,7 @@ class TestDevourOnACard:
 
         devourer = only_oid(game, DEVOURER)
         assert game.state.objects[devourer].zone is Zone.BATTLEFIELD
-        assert counters(game, devourer) == 0
+        assert plus_one_counters(game, devourer) == 0
 
 
 class TestTheLoaderGuard:

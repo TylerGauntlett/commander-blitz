@@ -40,7 +40,7 @@ from automtg.engine.effects.values import evaluate_value
 from automtg.engine.enums import Zone
 from automtg.engine.stack import push_triggered_ability, resolve_top
 from automtg.engine.structs import TriggerInstance, TurnLedger
-from tests.conftest import only_oid
+from tests.conftest import only_oid, plus_one_counters
 
 CAT = "t_scythe"  # 1/1; landfall, doubling on the second resolution
 EVOLVER = "t_evolver"  # its intervening-if fails against a smaller creature
@@ -65,10 +65,6 @@ def fire(game, oid: int, ability_index: int = 0, **bindings) -> None:
             return
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
-
-
 def cat_board(builder, count: int = 1, **kw):
     return builder(players=2).battlefield(0, [CAT] * count, **kw).build(advance=False)
 
@@ -78,14 +74,14 @@ class TestTheCountThatMakesTheCard:
         game = cat_board(builder)
         cat = only_oid(game, CAT, 0)
         fire(game, cat)
-        assert counters(game, cat) == 1
+        assert plus_one_counters(game, cat) == 1
 
     def test_the_second_doubles_instead_of_adding(self, builder):
         game = cat_board(builder)
         cat = only_oid(game, CAT, 0)
         fire(game, cat)
         fire(game, cat)
-        assert counters(game, cat) == 2
+        assert plus_one_counters(game, cat) == 2
 
     def test_the_third_is_an_ordinary_add_again(self, builder):
         """"The second time" is exactly the second. This is the assertion a
@@ -94,7 +90,7 @@ class TestTheCountThatMakesTheCard:
         cat = only_oid(game, CAT, 0)
         for _ in range(3):
             fire(game, cat)
-        assert counters(game, cat) == 3
+        assert plus_one_counters(game, cat) == 3
 
     def test_the_doubling_reads_the_counters_actually_there(self, builder):
         """A Cat that started with three ends the second landfall on eight,
@@ -103,7 +99,7 @@ class TestTheCountThatMakesTheCard:
         cat = only_oid(game, CAT, 0)
         fire(game, cat)  # 3 -> 4
         fire(game, cat)  # 4 -> 8
-        assert counters(game, cat) == 8
+        assert plus_one_counters(game, cat) == 8
 
 
 class TestItIsPerAbilityAndPerTurn:
@@ -117,7 +113,7 @@ class TestItIsPerAbilityAndPerTurn:
             fire(game, oid)
         for oid in both:
             fire(game, oid)
-        assert [counters(game, o) for o in both] == [2, 2]
+        assert [plus_one_counters(game, o) for o in both] == [2, 2]
 
     def test_the_tally_clears_with_the_rest_of_the_ledger(self, builder):
         """Without the clear, every later turn's first landfall would double."""
@@ -128,7 +124,7 @@ class TestItIsPerAbilityAndPerTurn:
         game.state.turn_ledger.clear()
         assert game.state.turn_ledger.ability_resolutions == {}
         fire(game, cat)
-        assert counters(game, cat) == 2, "a fresh turn adds one, it does not double"
+        assert plus_one_counters(game, cat) == 2, "a fresh turn adds one, it does not double"
 
 
 class TestOnlyRealResolutionsCount:

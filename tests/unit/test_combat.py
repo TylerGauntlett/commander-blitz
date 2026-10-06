@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.structs import TargetRef, TempEffect
-from tests.conftest import _default_answer, find_action, oids_of, only_oid, pass_until
+from tests.conftest import _default_answer, attack_with, find_action, oids_of, only_oid, pass_until
 
 
 def to_attackers(game):
@@ -13,12 +13,6 @@ def to_attackers(game):
 
 def to_blockers(game):
     pass_until(game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_BLOCKERS)
-
-
-def attack_with(game, oid: int, defender: int = 1):
-    game.apply(
-        find_action(game, ActionKind.ADD_ATTACKER, source=oid, targets=(TargetRef.player(defender),))
-    )
 
 
 def block_with(game, blocker_oid: int, attacker_oid: int):

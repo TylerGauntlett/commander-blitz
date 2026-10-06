@@ -54,6 +54,7 @@ from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import DecisionKind, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
+from tests.conftest import library_ids
 
 FOREST = "forest"         # land, mana value 0
 BEAR = "t_bear"           # {1}{G}, mana value 2
@@ -105,10 +106,6 @@ def run(game, src, spec=None, *, want: str | None = BEAR, cast: bool = True):
         offered = [game.state.objects[option.value].def_id for option in decision.options]
         send = [] if want is None else [offered.index(want)]
     raise AssertionError("the op never finished")
-
-
-def library_ids(game, pid: int = 0):
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 def stack_ids(game):

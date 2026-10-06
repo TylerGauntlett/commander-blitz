@@ -53,7 +53,7 @@ from automtg.engine.enums import ActionKind, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.player_statics import spell_life_tax
 from automtg.engine.structs import LifeLock
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, settle
 
 DRAKE = "t_life_toll_drake"  # spells opponents cast that target it cost 3 life more
 COLLECTOR = "t_toll_collector"  # every spell opponents cast costs 2 life more
@@ -92,10 +92,6 @@ def offered(game, def_id: str = BOLT) -> list[str]:
 def cast_at(game, oid: int, def_id: str = BOLT) -> None:
     pass_until(game, lambda g: bool(casts(g, def_id)))
     game.apply(next(a for a in casts(game, def_id) if any(r.id == oid for r in a.targets)))
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def tax(game, targets, *, pid: int = 1, spell: str = BOLT) -> int:

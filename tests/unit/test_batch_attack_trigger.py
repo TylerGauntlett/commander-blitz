@@ -65,7 +65,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.turn import clear_until_eot
-from tests.conftest import _default_answer, oids_of, only_oid, pass_until
+from tests.conftest import _default_answer, oids_of, only_oid, settle
 
 BEAR = "t_bear"
 WALKER = "t_walker"
@@ -77,10 +77,6 @@ WARMONGER = "t_warmonger"
 WATCHER = "t_attacked_watcher"
 #: "Whenever you attack, you gain 1 life." The trigger that must not change.
 YOU_ATTACK = "t_you_attack"
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def position(builder, *, bears: int = 1, p0=(), p1=(), p2=()):

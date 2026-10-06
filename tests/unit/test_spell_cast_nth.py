@@ -45,7 +45,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.triggers import _spell_ordinal
-from tests.conftest import action_for_card, pass_until
+from tests.conftest import action_for_card, pass_until, settle
 
 SECOND = "t_nth_spell_opponent"  # Mangara, Trouble in Pairs: nth 2
 NONCREATURE = "t_nth_spell_noncreature"  # Esper Sentinel, The Queen of Dale
@@ -95,11 +95,6 @@ def cast(game, pid: int, card_id: str) -> None:
     """``pid`` casts ``card_id`` and keeps priority -- nothing resolves."""
     give_priority(game, pid)
     game.apply(action_for_card(game, ActionKind.CAST, card_id))
-
-
-def settle(game) -> None:
-    """Resolve the stack and every trigger it produces."""
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def cast_and_resolve(game, pid: int, card_id: str) -> None:

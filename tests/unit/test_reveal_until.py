@@ -39,6 +39,7 @@ from automtg.engine.effects import execute_one
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
 from automtg.engine.errors import DslError
+from tests.conftest import hand_ids, library_ids
 
 FOREST = "forest"
 BEAR = "t_bear"    # Creature — Bear
@@ -73,14 +74,6 @@ def run(game, spec, source: int, bindings: dict | None = None) -> EffectContext:
     for _ in execute_one(ctx, spec):  # pragma: no cover - the loop body is the failure
         raise AssertionError("reveal_until asked a decision; it takes none")
     return ctx
-
-
-def library_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
 
 
 class TestItStopsAtTheFirstMatch:

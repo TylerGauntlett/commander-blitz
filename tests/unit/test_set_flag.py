@@ -33,7 +33,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import move_object
-from tests.conftest import _default_answer, find_action, only_oid, pass_until
+from tests.conftest import _default_answer, find_action, only_oid, pass_until, plus_one_counters
 
 RENOWNED = "t_renowned"  # 2/2, renown 2
 
@@ -80,16 +80,12 @@ def swing(game, oid: int) -> None:
     settle(game)
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
-
-
 class TestRenown:
     def test_connecting_makes_it_renowned(self, builder):
         game = builder(players=2).battlefield(0, [RENOWNED]).build()
         oid = only_oid(game, RENOWNED, 0)
         swing(game, oid)
-        assert counters(game, oid) == 2
+        assert plus_one_counters(game, oid) == 2
         assert "renowned" in game.state.objects[oid].flags
 
     def test_it_only_happens_once(self, builder):
@@ -97,18 +93,18 @@ class TestRenown:
         game = builder(players=2).battlefield(0, [RENOWNED]).build()
         oid = only_oid(game, RENOWNED, 0)
         swing(game, oid)
-        assert counters(game, oid) == 2
+        assert plus_one_counters(game, oid) == 2
         # A second combat, several turns later.
         pass_until(game, lambda g: g.state.turn >= 3)
         swing(game, oid)
-        assert counters(game, oid) == 2, "already renowned, so nothing more"
+        assert plus_one_counters(game, oid) == 2, "already renowned, so nothing more"
 
     def test_not_connecting_does_not_renown_it(self, builder):
         game = builder(players=2).battlefield(0, [RENOWNED]).build()
         oid = only_oid(game, RENOWNED, 0)
         settle(game)
         assert "renowned" not in game.state.objects[oid].flags
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_leaving_and_returning_clears_it(self, builder):
         """Rule 400.7: it is a new object, and may be renowned again."""

@@ -1,4 +1,4 @@
-"""Crewing as though power were greater — a bonus that exists inside one sum.
+"""Crewing as though power were greater â€” a bonus that exists inside one sum.
 
     "Create a 1/1 colorless Pilot creature token with "This token crews Vehicles
     as though its power were 2 greater."" -- Shorikai, Genesis Engine
@@ -36,8 +36,8 @@ from automtg.engine.characteristics import chars, crew_power_bonus
 from automtg.engine.enums import ActionKind
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import create_token
-from tests.conftest import only_oid
-from tests.unit.test_combat import attack_with, done, resolve_combat, to_attackers
+from tests.conftest import attack_with, only_oid
+from tests.unit.test_combat import done, resolve_combat, to_attackers
 
 PILOT = "pilot_1_1_c_crew2"        # 1/1, crews as though its power were 2 greater
 CREW_8 = "t_crew8_vehicle"         # Shorikai's Crew 8

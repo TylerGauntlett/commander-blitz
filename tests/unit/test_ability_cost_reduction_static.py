@@ -43,7 +43,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.costs import ability_mana
 from automtg.engine.enums import ActionKind, Step
 from automtg.engine.errors import DslError
-from tests.conftest import only_oid
+from tests.conftest import only_oid, two_seat_board
 
 AURA = "t_acr_aura"  # equip abilities you activate cost {3} less
 BLADE = "t_acr_blade"  # equip {5}
@@ -51,16 +51,6 @@ RECONFIG = "t_acr_reconfig"  # reconfigure {5} -- an attach that is not equip
 AIMED = "t_acr_aimed"  # the same discount, only for equips aimed at what it is on
 BEAR = "t_acr_bear"
 OTHER = "t_acr_other_bear"
-
-
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .step(Step.PRECOMBAT_MAIN)
-        .build()
-    )
 
 
 def price(game, card_id: str, index: int = -1, pid: int = 0) -> int:
@@ -75,20 +65,20 @@ def price(game, card_id: str, index: int = -1, pid: int = 0) -> int:
 
 class TestThePriceFollowsTheBoard:
     def test_without_the_aura_it_is_the_printed_cost(self, builder):
-        game = board(builder, mine=[BLADE])
+        game = two_seat_board(builder, mine=[BLADE])
         assert price(game, BLADE) == 5
 
     def test_the_aura_takes_three_off(self, builder):
-        game = board(builder, mine=[AURA, BLADE])
+        game = two_seat_board(builder, mine=[AURA, BLADE])
         assert price(game, BLADE) == 2
 
     def test_two_auras_take_six_off(self, builder):
         """Each static is its own reduction, summed by `ability_mana`."""
-        game = board(builder, mine=[AURA, AURA, BLADE])
+        game = two_seat_board(builder, mine=[AURA, AURA, BLADE])
         assert price(game, BLADE) == 0
 
     def test_it_never_goes_below_zero(self, builder):
-        game = board(builder, mine=[AURA, AURA, AURA, BLADE])
+        game = two_seat_board(builder, mine=[AURA, AURA, AURA, BLADE])
         assert price(game, BLADE) == 0
 
 
@@ -97,17 +87,17 @@ class TestWhatItDoesNotDiscount:
         """The near miss `Ability.is_equip` exists to keep out: an activated,
         sorcery-speed ability whose whole effect is an attach, printing no such
         word."""
-        game = board(builder, mine=[AURA, RECONFIG])
+        game = two_seat_board(builder, mine=[AURA, RECONFIG])
         assert price(game, RECONFIG) == 5
 
     def test_an_opponents_aura_does_not_discount_your_equip(self, builder):
         """"abilities **you** activate" -- and the activating player is what is
         compared, not the permanent's controller."""
-        game = board(builder, mine=[BLADE], theirs=[AURA])
+        game = two_seat_board(builder, mine=[BLADE], theirs=[AURA])
         assert price(game, BLADE) == 5
 
     def test_your_aura_does_not_discount_an_opponents_activation(self, builder):
-        game = board(builder, mine=[AURA, BLADE])
+        game = two_seat_board(builder, mine=[AURA, BLADE])
         assert price(game, BLADE, pid=1) == 5
 
 

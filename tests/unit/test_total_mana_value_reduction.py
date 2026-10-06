@@ -29,9 +29,9 @@ from __future__ import annotations
 import pytest
 
 from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
 from automtg.engine.costs import cost_reduction
 from automtg.engine.errors import DslError
+from tests.conftest import cost_reduction_probe, two_seat_board
 
 SUM = "t_tmv_sum"  # total mana value of artifacts you control
 MAX = "t_tmv_max"  # the same card, greatest mana value
@@ -39,32 +39,23 @@ TWO = "t_tmv_two"  # mana value 2
 FIVE = "t_tmv_five"  # mana value 5
 
 
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .build()
-    )
-
-
 class TestItSums:
     def test_one_artifact(self, registry, builder):
-        game = board(builder, mine=[TWO])
+        game = two_seat_board(builder, mine=[TWO])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 2
 
     def test_two_artifacts_add_up(self, registry, builder):
-        game = board(builder, mine=[TWO, FIVE])
+        game = two_seat_board(builder, mine=[TWO, FIVE])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 7
 
     def test_copies_of_one_artifact_add_up(self, registry, builder):
         """A sum counts each permanent, where a maximum cannot tell one from
         three."""
-        game = board(builder, mine=[TWO, TWO, TWO])
+        game = two_seat_board(builder, mine=[TWO, TWO, TWO])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 6
 
     def test_an_empty_board_reduces_nothing(self, registry, builder):
-        game = board(builder)
+        game = two_seat_board(builder)
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 0
 
 
@@ -72,15 +63,15 @@ class TestItIsNotAMaximum:
     """The control, and the whole reason this is a separate key."""
 
     def test_the_same_board_read_as_a_maximum(self, registry, builder):
-        game = board(builder, mine=[TWO, FIVE])
+        game = two_seat_board(builder, mine=[TWO, FIVE])
         assert cost_reduction(game.state, 0, registry.get(MAX)) == 5
 
     def test_and_as_a_sum(self, registry, builder):
-        game = board(builder, mine=[TWO, FIVE])
+        game = two_seat_board(builder, mine=[TWO, FIVE])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 7
 
     def test_a_maximum_cannot_count_copies(self, registry, builder):
-        game = board(builder, mine=[TWO, TWO, TWO])
+        game = two_seat_board(builder, mine=[TWO, TWO, TWO])
         assert cost_reduction(game.state, 0, registry.get(MAX)) == 2
 
 
@@ -89,41 +80,28 @@ class TestTheFilterStillApplies:
         """"artifacts **you control**" -- the filter is the same one every
         other reduction shape reads, so this is checking the wiring rather than
         the filter."""
-        game = board(builder, mine=[TWO], theirs=[FIVE, FIVE])
+        game = two_seat_board(builder, mine=[TWO], theirs=[FIVE, FIVE])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 2
 
     def test_a_noncreature_nonartifact_does_not(self, registry, builder):
-        game = board(builder, mine=[TWO, "forest"])
+        game = two_seat_board(builder, mine=[TWO, "forest"])
         assert cost_reduction(game.state, 0, registry.get(SUM)) == 2
 
 
 class TestTheLoaderPlacesIt:
-    def _card(self, reduction):
-        return CardModel.model_validate(
-            {
-                "id": "x",
-                "name": "X",
-                "oracle_text": "This spell costs {X} less to cast.",
-                "mana_cost": "{9}",
-                "types": ["Sorcery"],
-                "cost_reduction": reduction,
-                "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
-            }
-        )
-
     def test_it_loads(self):
-        compile_card(self._card({"total_mana_value": {"controller": "you"}}))
+        compile_card(cost_reduction_probe({"total_mana_value": {"controller": "you"}}))
 
     def test_it_needs_a_filter(self):
         with pytest.raises(DslError, match="needs a filter"):
-            compile_card(self._card({"total_mana_value": 3}))
+            compile_card(cost_reduction_probe({"total_mana_value": 3}))
 
     def test_it_may_not_be_written_beside_another_shape(self):
         """Two would be paid at whichever the code read first, which is not
         something a printed line says."""
         with pytest.raises(DslError, match="exactly one"):
             compile_card(
-                self._card(
+                cost_reduction_probe(
                     {
                         "total_mana_value": {"controller": "you"},
                         "greatest_mana_value": {"controller": "you"},
@@ -134,5 +112,5 @@ class TestTheLoaderPlacesIt:
     def test_its_filter_may_only_read_printed_characteristics(self):
         with pytest.raises(DslError, match="unsupported filter keys"):
             compile_card(
-                self._card({"total_mana_value": {"controller": "you", "nonsense": 1}})
+                cost_reduction_probe({"total_mana_value": {"controller": "you", "nonsense": 1}})
             )

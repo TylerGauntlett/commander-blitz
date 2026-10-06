@@ -22,7 +22,7 @@ spell that reached the stack cannot have been paid for.
 from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from tests.conftest import pass_until
+from tests.conftest import pass_until, settle_to_priority
 
 DOMINANCE = "t_dominance"  # {R}; free cast of an instant/sorcery with MV <= 2
 UNBOUNDED = "t_dominance_any"  # {R}; free cast of any card in hand
@@ -92,14 +92,6 @@ def take_the_offer(game, card_id: str):
     game.apply(action)
 
 
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
-
-
 def zone_of(game, card_id: str) -> Zone | None:
     for obj in game.state.objects.values():
         if obj.def_id == card_id and obj.owner == 0:
@@ -123,7 +115,7 @@ class TestItOffersTheCast:
 
         cast(game, DOMINANCE)
         take_the_offer(game, DRAW)
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[0].library) == library_before - 1, "the draw happened"
         assert zone_of(game, DRAW) is Zone.GRAVEYARD
@@ -142,7 +134,7 @@ class TestItIsActuallyFree:
         assert len(untapped) <= 1, "not enough mana to hard-cast the ritual"
 
         take_the_offer(game, RITUAL)
-        settle(game)
+        settle_to_priority(game)
         assert zone_of(game, RITUAL) is Zone.GRAVEYARD, "it was cast anyway, so it was free"
 
 
@@ -172,7 +164,7 @@ class TestTheSelectorRestricts:
         game = position(builder, [UNBOUNDED, BEAR])
         cast(game, UNBOUNDED)
         take_the_offer(game, BEAR)
-        settle(game)
+        settle_to_priority(game)
 
         assert zone_of(game, BEAR) is Zone.BATTLEFIELD, "a creature is 'a spell'"
 
@@ -196,7 +188,7 @@ class TestALandIsNotASpell:
     def test_the_land_is_still_in_hand_afterwards(self, builder):
         game = position(builder, [UNBOUNDED, "forest"])
         cast(game, UNBOUNDED)
-        settle(game)
+        settle_to_priority(game)
 
         # By hand contents, not `zone_of`: the library is twenty Forests, and a
         # lookup by def_id would happily find one of those and pass.
@@ -213,7 +205,7 @@ class TestNothingToOffer:
         pending = game.pending()
         assert pending is None or pending.kind is DecisionKind.PRIORITY
 
-        settle(game)
+        settle_to_priority(game)
         assert zone_of(game, DOMINANCE) is Zone.GRAVEYARD
 
     def test_a_hand_of_only_non_matching_cards_asks_nothing(self, builder):

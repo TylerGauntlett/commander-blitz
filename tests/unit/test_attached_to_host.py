@@ -41,7 +41,7 @@ from automtg.engine.characteristics import chars
 from automtg.engine.enums import Keyword
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach
-from tests.conftest import oids_of
+from tests.conftest import oids_of, two_seat_board
 
 KNUCKLES = "t_knuckles"  # double strike while 2+ Equipment are attached
 BROAD = "t_broad_knuckles"  # the same, counting every attachment
@@ -51,29 +51,20 @@ CLOAK = "t_ah_cloak"  # an Aura, likewise
 BEAR = "t_ah_bear"  # 2/2
 
 
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .build(advance=False)
-    )
-
-
 def double_strike(game, oid: int) -> bool:
     return Keyword.DOUBLE_STRIKE.value in chars(game.state, oid).keywords
 
 
 class TestTheCountIsOfSiblings:
     def test_one_equipment_alone_is_not_two(self, builder):
-        game = board(builder, [KNUCKLES, BEAR])
+        game = two_seat_board(builder, [KNUCKLES, BEAR], advance=False)
         knuckles, bear = oids_of(game, KNUCKLES, 0)[0], oids_of(game, BEAR, 0)[0]
         attach(game.state, knuckles, bear)
         assert not double_strike(game, bear)
 
     def test_a_second_equipment_turns_it_on(self, builder):
         """And the Knuckles counts itself -- "two or more" is itself plus one."""
-        game = board(builder, [KNUCKLES, GEAR, BEAR])
+        game = two_seat_board(builder, [KNUCKLES, GEAR, BEAR], advance=False)
         knuckles = oids_of(game, KNUCKLES, 0)[0]
         gear = oids_of(game, GEAR, 0)[0]
         bear = oids_of(game, BEAR, 0)[0]
@@ -87,7 +78,7 @@ class TestTheCountIsOfSiblings:
         Written with a plain board count this would pass, which is the whole
         reason the key names a relationship instead.
         """
-        game = board(builder, [KNUCKLES, GEAR, BEAR, BEAR])
+        game = two_seat_board(builder, [KNUCKLES, GEAR, BEAR, BEAR], advance=False)
         knuckles = oids_of(game, KNUCKLES, 0)[0]
         gear = oids_of(game, GEAR, 0)[0]
         first, second = oids_of(game, BEAR, 0)
@@ -98,7 +89,7 @@ class TestTheCountIsOfSiblings:
     def test_an_unattached_equipment_counts_nothing(self, builder):
         """`source.attached_to` is None, so the filter matches nobody rather
         than matching every unattached permanent on the table."""
-        game = board(builder, [KNUCKLES, GEAR, BEAR])
+        game = two_seat_board(builder, [KNUCKLES, GEAR, BEAR], advance=False)
         bear = oids_of(game, BEAR, 0)[0]
         assert not double_strike(game, bear)
 
@@ -107,7 +98,7 @@ class TestTheRestOfTheFilterStillApplies:
     """The key must not short-circuit, or every card that prints it is wrong."""
 
     def test_an_aura_does_not_count_as_an_equipment(self, builder):
-        game = board(builder, [KNUCKLES, CLOAK, BEAR])
+        game = two_seat_board(builder, [KNUCKLES, CLOAK, BEAR], advance=False)
         knuckles = oids_of(game, KNUCKLES, 0)[0]
         cloak = oids_of(game, CLOAK, 0)[0]
         bear = oids_of(game, BEAR, 0)[0]
@@ -121,7 +112,7 @@ class TestTheRestOfTheFilterStillApplies:
         Kept live so the assertion above is measuring the conjunction and not a
         board that happened to be empty.
         """
-        game = board(builder, [BROAD, CLOAK, BEAR])
+        game = two_seat_board(builder, [BROAD, CLOAK, BEAR], advance=False)
         broad = oids_of(game, BROAD, 0)[0]
         cloak = oids_of(game, CLOAK, 0)[0]
         bear = oids_of(game, BEAR, 0)[0]
@@ -138,7 +129,7 @@ class TestItReachesAnOpponentsCreature:
         stop counting the moment it got there -- and the printed line asks what
         is attached to the creature, not who controls it.
         """
-        game = board(builder, [KNUCKLES, GEAR], [BEAR])
+        game = two_seat_board(builder, [KNUCKLES, GEAR], [BEAR], advance=False)
         knuckles = oids_of(game, KNUCKLES, 0)[0]
         gear = oids_of(game, GEAR, 0)[0]
         theirs = oids_of(game, BEAR, 1)[0]
@@ -150,7 +141,7 @@ class TestItReachesAnOpponentsCreature:
 class TestItScalesAMagnitude:
     def test_the_buff_counts_every_attachment(self, builder):
         """Strong Back's half: a number rather than a threshold."""
-        game = board(builder, [SCALER, GEAR, CLOAK, BEAR])
+        game = two_seat_board(builder, [SCALER, GEAR, CLOAK, BEAR], advance=False)
         scaler = oids_of(game, SCALER, 0)[0]
         gear = oids_of(game, GEAR, 0)[0]
         cloak = oids_of(game, CLOAK, 0)[0]
@@ -164,7 +155,7 @@ class TestItScalesAMagnitude:
 
     def test_it_falls_back_when_an_attachment_leaves(self, builder):
         """The wearing-off. A count read once and cached would not move."""
-        game = board(builder, [SCALER, GEAR, BEAR, BEAR])
+        game = two_seat_board(builder, [SCALER, GEAR, BEAR, BEAR], advance=False)
         scaler = oids_of(game, SCALER, 0)[0]
         gear = oids_of(game, GEAR, 0)[0]
         first, second = oids_of(game, BEAR, 0)

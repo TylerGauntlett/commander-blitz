@@ -35,7 +35,7 @@ from __future__ import annotations
 
 from automtg.engine.enums import Zone
 from automtg.engine.zones import move_object
-from tests.conftest import only_oid
+from tests.conftest import only_oid, plus_one_counters
 
 CELES = "t_celes"
 GREEDY = "t_greedy_celes"
@@ -73,16 +73,12 @@ def settle(game) -> None:
         game.apply(actions[0])
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
-
-
 class TestTheOriginZone:
     def test_arriving_from_a_graveyard_triggers(self, builder):
         game, oid = board(builder, CELES, count=1, origin="graveyard")
         arrive(game, "graveyard")
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_arriving_from_hand_does_not(self, builder):
         """The half `cause` could never tell apart: the same mechanism puts a
@@ -90,7 +86,7 @@ class TestTheOriginZone:
         game, oid = board(builder, CELES, count=1, origin="hand")
         arrive(game, "hand")
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
 
 class TestOneOrMore:
@@ -98,14 +94,14 @@ class TestOneOrMore:
         game, oid = board(builder, CELES, count=3, origin="graveyard")
         arrive(game, "graveyard")
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_without_batched_the_same_arrival_counts_three(self, builder):
         """The counterfactual, and the number the printed card does not say."""
         game, oid = board(builder, GREEDY, count=3, origin="graveyard")
         arrive(game, "graveyard")
         settle(game)
-        assert counters(game, oid) == 3
+        assert plus_one_counters(game, oid) == 3
 
     def test_two_separate_arrivals_trigger_twice(self, builder):
         """Not `max_per_turn: 1` -- Celes prints no cap.
@@ -125,4 +121,4 @@ class TestOneOrMore:
         move_object(state, second, Zone.BATTLEFIELD, to_player=0, cause="test")
         settle(game)
 
-        assert counters(game, oid) == 2
+        assert plus_one_counters(game, oid) == 2

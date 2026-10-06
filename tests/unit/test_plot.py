@@ -32,8 +32,8 @@ rider, so there is no state where the first happened and the second did not.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import pass_until
+from automtg.engine.enums import ActionKind, Step, Zone
+from tests.conftest import pass_until, settle_to_priority
 
 LILAH = "t_lilah"
 GOLD = "t_gold_bolt"  # {U}{R} instant -- multicoloured
@@ -57,14 +57,6 @@ def position(builder, hand, *, lilah: bool = True):
     )
 
 
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
-
-
 def cast_it(game, card_id: str) -> int:
     game._advance()
     action = next(
@@ -74,7 +66,7 @@ def cast_it(game, card_id: str) -> int:
     )
     oid = action.source
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
     return oid
 
 
@@ -183,7 +175,7 @@ class TestItCostsNothing:
         before = game.state.players[0].life
         action = next(a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.source == oid)
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.players[0].life == before + 2
 
@@ -226,7 +218,7 @@ class TestItDoesNotPlotItselfAgain:
         to_your_next_turn(game)
         action = next(a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.source == oid)
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.objects[oid].zone is Zone.GRAVEYARD
 

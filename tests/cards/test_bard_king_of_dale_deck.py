@@ -30,10 +30,12 @@ from automtg.engine.events import EventType
 from tests.conftest import (
     _default_answer,
     action_for_card,
+    activations,
     count_on_battlefield,
     oids_of,
     only_oid,
     pass_until,
+    settle_to_priority,
 )
 
 # A castable instant, and it is load bearing rather than scenery. With no play
@@ -47,15 +49,6 @@ BEAR = "t_bear"  # a vanilla 2/2
 # ----------------------------------------------------------------------
 # helpers
 # ----------------------------------------------------------------------
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nobody is mid-resolution."""
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
 
 
 def cast(game, card_id: str, pid: int = 0, **match) -> int:
@@ -77,18 +70,8 @@ def cast(game, card_id: str, pid: int = 0, **match) -> int:
         and all(getattr(a, k) == v for k, v in match.items())
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
     return action.source
-
-
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
 
 
 def activate(game, oid: int, index: int, **match) -> None:
@@ -98,7 +81,7 @@ def activate(game, oid: int, index: int, **match) -> None:
         if all(getattr(a, k) == v for k, v in match.items())
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
 
 def library(game, pid: int) -> int:
@@ -259,7 +242,7 @@ class TestTheTheoristJaceBeleren:
         assert sorted(t.id for t in widest.targets) == sorted([bear, ring])
         assert all(mine not in [t.id for t in a.targets] for a in lines), "an opponent's, not mine"
         game.apply(widest)
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.objects[bear].zone is Zone.HAND
         assert game.state.objects[ring].zone is Zone.HAND
@@ -338,7 +321,7 @@ class TestEsperSentinel:
         assert game.pending().player == 1, "that player decides whether to pay"
         want = ActionKind.YES if yes else ActionKind.NO
         game.apply(next(a for a in game.legal_actions() if a.kind is want))
-        settle(game)
+        settle_to_priority(game)
 
     def test_an_unpaid_tax_draws(self, builder):
         game = self.position(builder, [ANCHOR])
@@ -424,7 +407,7 @@ class TestMangaraTheDiplomat:
         game, (a, b) = opponent_swings(builder, "mangara_the_diplomat")
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0), b: ("player", 0)})
-        settle(game)
+        settle_to_priority(game)
         assert before - library(game, 0) == 1
 
     def test_one_at_you_and_one_at_your_planeswalker_draw(self, builder):
@@ -433,14 +416,14 @@ class TestMangaraTheDiplomat:
         walker = only_oid(game, "t_walker", 0)
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0), b: ("object", walker)})
-        settle(game)
+        settle_to_priority(game)
         assert before - library(game, 0) == 1
 
     def test_one_attacker_does_not_draw(self, builder):
         game, (a, _b) = opponent_swings(builder, "mangara_the_diplomat")
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0)})
-        settle(game)
+        settle_to_priority(game)
         assert library(game, 0) == before
 
     def test_a_split_attack_across_the_table_does_not_draw(self, builder):
@@ -449,7 +432,7 @@ class TestMangaraTheDiplomat:
         game, (a, b) = opponent_swings(builder, "mangara_the_diplomat", players=3)
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0), b: ("player", 2)})
-        settle(game)
+        settle_to_priority(game)
         assert library(game, 0) == before
 
     def test_the_opponent_s_second_spell_draws_and_the_first_does_not(self, builder):
@@ -576,7 +559,7 @@ class TestTheQueenOfDale:
                 and game.state.objects[a.targets[0].id].def_id == discard
             )
         )
-        settle(game)
+        settle_to_priority(game)
 
     def test_discarding_a_nonland_card_makes_a_soldier(self, builder):
         game = self.position(builder)
@@ -638,7 +621,7 @@ class TestTroubleInPairs:
         game, (a, b) = opponent_swings(builder, "trouble_in_pairs")
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0), b: ("player", 0)})
-        settle(game)
+        settle_to_priority(game)
         assert before - library(game, 0) == 1
 
     def test_one_at_you_and_one_at_your_planeswalker_does_not(self, builder):
@@ -648,7 +631,7 @@ class TestTroubleInPairs:
         walker = only_oid(game, "t_walker", 0)
         before = library(game, 0)
         declare_attack(game, {a: ("player", 0), b: ("object", walker)})
-        settle(game)
+        settle_to_priority(game)
         assert library(game, 0) == before
 
     def test_an_opponent_s_second_card_on_my_turn_draws(self, builder):
@@ -809,7 +792,7 @@ class TestChampionOfWits:
                 game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.YES))
             else:
                 game.apply(_default_answer(game, p))
-        settle(game)
+        settle_to_priority(game)
 
     def test_it_is_offered_from_the_graveyard(self, builder):
         game, card = self.position(builder)
@@ -949,7 +932,7 @@ class TestVoiceOfVictory:
         )
         voice = only_oid(game, "voice_of_victory", 0)
         declare_attack(game, {voice: ("player", 1)})
-        settle(game)
+        settle_to_priority(game)
 
         warriors = tokens(game, "warrior_1_1_r", 0)
         assert len(warriors) == 2
@@ -971,7 +954,7 @@ class TestVoiceOfVictory:
         assert len(tokens(game, "warrior_1_1_r", 0)) == 2, "still here after combat"
 
         to_step(game, Step.END_STEP, 0)
-        settle(game)
+        settle_to_priority(game)
         assert tokens(game, "warrior_1_1_r") == []
         assert game.state.objects[voice].zone is Zone.BATTLEFIELD, "only the tokens"
 
@@ -1045,7 +1028,7 @@ class TestShorikaiGenesisEngine:
         game.apply(activations(game, shorikai, 0)[0])
         while (p := game.pending()) is not None and p.kind is not DecisionKind.PRIORITY:
             game.apply(_default_answer(game, p))
-        settle(game)
+        settle_to_priority(game)
 
         assert before - library(game, 0) == 2
         assert len(game.state.players[0].hand) == 1
@@ -1103,7 +1086,7 @@ class TestAdagiaWindsweptBastion:
                     _default_answer(game, p),
                 )
             )
-        settle(game)
+        settle_to_priority(game)
         assert game.state.objects[adagia].counters.get("charge") == 5
         assert game.state.objects[five].tapped
         assert not game.state.objects[adagia].tapped, "it taps the creature, not itself"
@@ -1184,7 +1167,7 @@ class TestAdelineResplendentCathar:
         )
         adeline = only_oid(game, "adeline_resplendent_cathar", 0)
         declare_attack(game, {only_oid(game, BEAR, 0): ("player", 1)})
-        settle(game)
+        settle_to_priority(game)
 
         humans = tokens(game, "human_1_1_w", 0)
         assert len(humans) == 2
@@ -1213,7 +1196,7 @@ class TestUrzasSaga:
             .build()
         )
         game.apply(action_for_card(game, ActionKind.PLAY_LAND, "urza_s_saga"))
-        settle(game)
+        settle_to_priority(game)
         saga = only_oid(game, "urza_s_saga", 0)
         assert "{T}: Add {C}." in self.texts(game, saga)
         assert not any(t.startswith("{2}") for t in self.texts(game, saga)), "not chapter II yet"
@@ -1235,7 +1218,7 @@ class TestUrzasSaga:
         )
         saga = only_oid(game, "urza_s_saga", 0)
         to_step(game, Step.PRECOMBAT_MAIN, 0)
-        settle(game)
+        settle_to_priority(game)
         assert game.state.objects[saga].counters.get("lore") == 2
         construct_line = next(
             a.index for a in abilities_of(game.state, saga) if a.text.startswith("{2}, {T}")
@@ -1268,7 +1251,7 @@ class TestUrzasSaga:
         offered = {game.state.objects[o.value].def_id for o in game.pending().options}
         assert offered == {"sol_ring"}
         game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE))
-        settle(game)
+        settle_to_priority(game)
 
         assert count_on_battlefield(game, "sol_ring", 0) == 1
         assert saga not in game.state.battlefield, "sacrificed after III"
@@ -1308,14 +1291,14 @@ class TestCallTheCoppercoats:
             a for a in self.lines(game) if [t.id for t in a.targets] == [2]
         )
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
         assert len(tokens(game, "human_soldier_1_1_w", 0)) == 1
 
     def test_both_opponents_count_all_four(self, builder):
         game = self.position(builder, 5)
         action = next(a for a in self.lines(game) if len(a.targets) == 2)
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
         assert len(tokens(game, "human_soldier_1_1_w", 0)) == 4
 
 
@@ -1498,7 +1481,7 @@ class TestAustereCommand:
             game.apply(
                 next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == mode)
             )
-        settle(game)
+        settle_to_priority(game)
 
         assert norn not in game.state.battlefield, "mana value 7"
         assert crusade not in game.state.battlefield
@@ -1519,7 +1502,7 @@ class TestAustereCommand:
             game.apply(
                 next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == mode)
             )
-        settle(game)
+        settle_to_priority(game)
         assert count_on_battlefield(game, BEAR, 1) == 0
         assert count_on_battlefield(game, "moonshaker_cavalry", 1) == 1
 
@@ -1570,7 +1553,7 @@ class TestChivalricAlliance:
         pass_until(game, lambda g: g.state.step is Step.PRECOMBAT_MAIN)
         before = library(game, 0)
         declare_attack(game, {oid: ("player", 1) for oid in oids_of(game, BEAR, 0)})
-        settle(game)
+        settle_to_priority(game)
         return before - library(game, 0)
 
     def test_two_attackers_draw(self, builder):
@@ -1811,7 +1794,7 @@ class TestLoranOfTheThirdPath:
         assert sorted(a.targets[0].id for a in lines) == [1, 2], "an opponent, not me"
         at_two = next(a for a in lines if a.targets[0].id == 2)
         game.apply(at_two)
-        settle(game)
+        settle_to_priority(game)
         assert [before[p] - library(game, p) for p in range(3)] == [1, 0, 1], "only the target"
         assert game.state.objects[loran].tapped
 

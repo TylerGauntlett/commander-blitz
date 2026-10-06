@@ -25,20 +25,12 @@ strictly better card.
 from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import find_action, pass_until
+from tests.conftest import find_action, pass_until, settle_to_priority
 
 MASTERY = "t_mastery"  # exile a graveyard card, copy it, cast the copy free
 MASTERY_MAY = "t_mastery_may"  # the same, with the printed "you may"
 EPIC = "t_epic_exp"  # look at three, cast free, bin the rest
 BAIT = "t_demo_draw"  # {R} instant, draws a card
-
-
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
 
 
 def cast(game, card_id: str):
@@ -49,7 +41,7 @@ def cast(game, card_id: str):
         if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == card_id
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
 
 class TestCopyingAnExiledCard:
@@ -183,7 +175,7 @@ class TestTheOptionalCopyAsksFirst:
 
         self.cast_and_stop_at_the_question(game)
         game.apply(find_action(game, ActionKind.YES))
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[0].library) == before - 1
 
@@ -196,7 +188,7 @@ class TestTheOptionalCopyAsksFirst:
 
         self.cast_and_stop_at_the_question(game)
         game.apply(find_action(game, ActionKind.NO))
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[0].library) == before
         assert game.state.objects[bait].zone is Zone.EXILE

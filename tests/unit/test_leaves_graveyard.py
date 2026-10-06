@@ -37,7 +37,7 @@ from __future__ import annotations
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import Zone
 from automtg.engine.zones import move_object
-from tests.conftest import only_oid
+from tests.conftest import only_oid, plus_one_counters
 
 MASCOT = "t_mascot"
 GREEDY = "t_greedy_mascot"
@@ -53,10 +53,6 @@ def board(builder, mascot: str, *, buried: int = 1):
         .build(advance=False)
     )
     return game, only_oid(game, mascot)
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
 
 
 def settle(game) -> None:
@@ -81,10 +77,10 @@ def empty_my_graveyard(game, *, to=Zone.EXILE) -> None:
 class TestTheEventFiresAtAll:
     def test_a_card_leaving_your_graveyard_triggers(self, builder):
         game, oid = board(builder, MASCOT)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_a_card_arriving_does_not(self, builder):
         """The direction that every existing trigger already watched."""
@@ -95,7 +91,7 @@ class TestTheEventFiresAtAll:
             to_player=0, cause="test",
         )
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_an_opponents_graveyard_does_not(self, builder):
         """"**your** graveyard" -- keyed by the yard's owner, per 400.3."""
@@ -104,7 +100,7 @@ class TestTheEventFiresAtAll:
         for gy_oid in list(game.state.players[1].graveyard):
             move_object(game.state, gy_oid, Zone.EXILE, cause="test")
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_it_does_not_care_who_moved_the_card(self, builder):
         """An opponent's graveyard hate still fires your Mascot.
@@ -119,7 +115,7 @@ class TestTheEventFiresAtAll:
             cause="opponent_hate",
         )
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
 
 class TestOneOrMore:
@@ -129,7 +125,7 @@ class TestOneOrMore:
         game, oid = board(builder, MASCOT, buried=3)
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 1, (
+        assert plus_one_counters(game, oid) == 1, (
             "'one or more cards' must fire once for a simultaneous departure"
         )
 
@@ -138,7 +134,7 @@ class TestOneOrMore:
         game, oid = board(builder, GREEDY, buried=3)
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 3
+        assert plus_one_counters(game, oid) == 3
 
     def test_two_separate_departures_fire_twice(self, builder):
         """Not `max_per_turn: 1`, which is a different card.
@@ -157,7 +153,7 @@ class TestOneOrMore:
             game.state, game.state.players[0].graveyard[0], Zone.EXILE, cause="test"
         )
         settle(game)
-        assert counters(game, oid) == 2
+        assert plus_one_counters(game, oid) == 2
 
 
 class TestTheCounterIsReal:
@@ -188,7 +184,7 @@ class TestTheFilterAsksWhatLeft:
         game, oid = board(builder, self.PICKY, buried=3)
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 
     def test_lands_leaving_do_not(self, builder):
         game = (
@@ -200,7 +196,7 @@ class TestTheFilterAsksWhatLeft:
         oid = only_oid(game, self.PICKY)
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 0
+        assert plus_one_counters(game, oid) == 0
 
     def test_a_mixed_departure_fires_once(self, builder):
         """One creature among lands is still "one or more creature cards"."""
@@ -213,5 +209,5 @@ class TestTheFilterAsksWhatLeft:
         oid = only_oid(game, self.PICKY)
         empty_my_graveyard(game)
         settle(game)
-        assert counters(game, oid) == 1
+        assert plus_one_counters(game, oid) == 1
 

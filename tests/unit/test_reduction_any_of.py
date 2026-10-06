@@ -35,6 +35,7 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.costs import cost_reduction
 from automtg.engine.errors import DslError
+from tests.conftest import two_seat_board
 
 HISTORIC = "t_rao_historic"  # any_of: Artifact / Legendary / Saga
 ANDED = "t_rao_and"  # the same three, ANDed
@@ -45,48 +46,39 @@ BEAR = "t_rao_bear"  # mana value 5, none of the three
 ALL = "t_rao_all"  # mana value 6, all three at once
 
 
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .build()
-    )
-
-
 class TestEachBranchMatchesOnItsOwn:
     def test_the_artifact(self, registry, builder):
-        game = board(builder, mine=[ARTIFACT])
+        game = two_seat_board(builder, mine=[ARTIFACT])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 2
 
     def test_the_legendary_creature(self, registry, builder):
         """A supertype, which `any_types` could never have reached."""
-        game = board(builder, mine=[LEGEND])
+        game = two_seat_board(builder, mine=[LEGEND])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 3
 
     def test_the_saga(self, registry, builder):
         """A subtype, likewise."""
-        game = board(builder, mine=[SAGA])
+        game = two_seat_board(builder, mine=[SAGA])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 4
 
     def test_all_three_together(self, registry, builder):
-        game = board(builder, mine=[ARTIFACT, LEGEND, SAGA])
+        game = two_seat_board(builder, mine=[ARTIFACT, LEGEND, SAGA])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 9
 
 
 class TestWhatItDoesNotMatch:
     def test_a_permanent_that_is_none_of_them(self, registry, builder):
-        game = board(builder, mine=[BEAR])
+        game = two_seat_board(builder, mine=[BEAR])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 0
 
     def test_and_it_does_not_drag_in_the_rest_of_the_board(self, registry, builder):
-        game = board(builder, mine=[ARTIFACT, BEAR])
+        game = two_seat_board(builder, mine=[ARTIFACT, BEAR])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 2
 
     def test_the_other_keys_still_apply(self, registry, builder):
         """"historic permanents **you control**". `any_of` is one clause among
         the filter's others, not a replacement for them."""
-        game = board(builder, mine=[ARTIFACT], theirs=[SAGA, LEGEND])
+        game = two_seat_board(builder, mine=[ARTIFACT], theirs=[SAGA, LEGEND])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 2
 
     def test_a_permanent_is_counted_once_however_many_branches_it_matches(
@@ -94,7 +86,7 @@ class TestWhatItDoesNotMatch:
     ):
         """`any_of` is a disjunction, not a tally: a legendary artifact Saga is
         one permanent of mana value 6, not three of them."""
-        game = board(builder, mine=[ALL])
+        game = two_seat_board(builder, mine=[ALL])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 6
 
 
@@ -102,16 +94,16 @@ class TestTheAndedControl:
     """Why the disjunction had to exist."""
 
     def test_it_matches_only_a_permanent_that_is_all_three(self, registry, builder):
-        game = board(builder, mine=[ARTIFACT, LEGEND, SAGA])
+        game = two_seat_board(builder, mine=[ARTIFACT, LEGEND, SAGA])
         assert cost_reduction(game.state, 0, registry.get(ANDED)) == 0
 
     def test_where_the_disjunction_counts_all_three(self, registry, builder):
-        game = board(builder, mine=[ARTIFACT, LEGEND, SAGA])
+        game = two_seat_board(builder, mine=[ARTIFACT, LEGEND, SAGA])
         assert cost_reduction(game.state, 0, registry.get(HISTORIC)) == 9
 
     def test_it_does_match_the_one_permanent_that_is(self, registry, builder):
         """The ANDed filter is not broken, it is a different sentence."""
-        game = board(builder, mine=[ALL])
+        game = two_seat_board(builder, mine=[ALL])
         assert cost_reduction(game.state, 0, registry.get(ANDED)) == 6
 
 

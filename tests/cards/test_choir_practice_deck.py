@@ -40,15 +40,18 @@ castable instant in each seat's hand is a reason for priority to stop.
 from __future__ import annotations
 
 from automtg.engine import legality
-from automtg.engine.characteristics import chars
 from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.primitives import create_token
 from tests.conftest import (
     _default_answer,
+    activations,
     find_action,
+    keywords,
     only_oid,
     pass_until,
+    pt,
+    settle_completely,
 )
 
 PLAINS = "plains"
@@ -72,18 +75,6 @@ GIADA = "giada_font_of_hope"
 # ----------------------------------------------------------------------
 # helpers
 # ----------------------------------------------------------------------
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nothing is waiting to go on it."""
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack
-            and not g.state.pending_triggers
-            and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
 
 
 def answer(game, *, yes: bool = False, limit: int = 200) -> None:
@@ -143,27 +134,8 @@ def offers(game, pid: int, kind: ActionKind) -> set[str]:
     }
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def discount(game, card_id: str, pid: int = 0) -> int:
     return cost_reduction(game.state, pid, game.state.registry.get(card_id))
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return c.power, c.toughness
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 def plus(game, oid: int) -> int:
@@ -449,7 +421,7 @@ class TestPatchworkBanner:
         game = anchored(builder, [SMALL_ANGEL, BEAR, PLAINS, PLAINS], hand=["patchwork_banner"])
         cast_only(game, "patchwork_banner")
         answer_type(game, "Angel")
-        settle(game)
+        settle_completely(game)
 
         assert game.state.objects[only_oid(game, "patchwork_banner")].chosen_type == "Angel"
         assert pt(game, only_oid(game, SMALL_ANGEL, 0)) == (2, 2)
@@ -516,7 +488,7 @@ class TestThreeTreeCity:
             next(a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND)
         )
         answer_type(game, "Angel")
-        settle(game)
+        settle_completely(game)
 
         assert game.state.objects[only_oid(game, "three_tree_city")].chosen_type == "Angel"
 
@@ -564,7 +536,7 @@ class TestUrzasIncubator:
         game = anchored(builder, [PLAINS, PLAINS], hand=["urza_s_incubator"])
         cast_only(game, "urza_s_incubator")
         answer_type(game, "Angel")
-        settle(game)
+        settle_completely(game)
 
         incubator = only_oid(game, "urza_s_incubator")
         assert game.state.objects[incubator].chosen_type == "Angel"
@@ -614,7 +586,7 @@ class TestStarnheimAspirant:
 def to_my_main(game, pid: int = 0) -> None:
     """Run on to ``pid``'s precombat main, through its upkeep and draw."""
     pass_until(game, lambda g: g.state.step is Step.PRECOMBAT_MAIN and g.state.active_player == pid)
-    settle(game)
+    settle_completely(game)
 
 
 def before_my_turn(builder, mine=(), theirs=(), *, players: int = 2, hands=None):
@@ -653,7 +625,7 @@ def kill(game, oid: int) -> None:
 
     assert destroy(game.state, oid)
     game.state.bump_chars()
-    settle(game)
+    settle_completely(game)
 
 
 class TestCourtOfGrace:
@@ -802,7 +774,7 @@ class TestSeraphSanctuary:
         game = anchored(builder, [], hand=["seraph_sanctuary"])
         before = life(game)
         game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND))
-        settle(game)
+        settle_completely(game)
 
         assert life(game) == before + 1
 
@@ -861,7 +833,7 @@ class TestDazzlingAngel:
         game = anchored(builder, ["dazzling_angel"])
         before = life(game)
         create_token(game.state, ANGEL_TOKEN, 0)
-        settle(game)
+        settle_completely(game)
 
         assert life(game) == before + 1
 
@@ -1142,7 +1114,7 @@ def end_step_tokens(builder, card: str, gained: int, *, active: int = 0, token: 
     if gained:
         assert gain_life(game.state, 0, gained) == gained
     pass_until(game, lambda g: g.state.step is Step.END_STEP and g.state.active_player == active)
-    settle(game)
+    settle_completely(game)
     assert game.state.active_player == active, "measured in the same turn's end step"
     return len(tokens(game, token))
 
@@ -1200,7 +1172,7 @@ class TestObNixilisTheAscended:
         game, gained = self.arrive(builder, [BEAR])
         assert gained == 1
         pass_until(game, lambda g: g.state.step is Step.END_STEP)
-        settle(game)
+        settle_completely(game)
 
         assert len(tokens(game, ANGEL_TOKEN)) == 1
 
@@ -1243,7 +1215,7 @@ class TestResplendentAngel:
         game = anchored(builder, ["resplendent_angel"])
         gain_life(game.state, 0, 5)
         pass_until(game, lambda g: g.state.step is Step.END_STEP)
-        settle(game)
+        settle_completely(game)
         (token,) = tokens(game, VIGILANT_ANGEL_TOKEN)
 
         assert {"flying", "vigilance"} <= keywords(game, token.oid)
@@ -1254,7 +1226,7 @@ class TestResplendentAngel:
         angel = only_oid(game, "resplendent_angel")
         (pump,) = activations(game, angel)
         game.apply(pump)
-        settle(game)
+        settle_completely(game)
         return game, angel
 
     def test_the_activation_gives_plus_two_and_lifelink(self, builder):
@@ -1297,7 +1269,7 @@ class TestValkyrieHarbinger:
         game = anchored(builder, ["valkyrie_harbinger"])
         gain_life(game.state, 1, 10)
         pass_until(game, lambda g: g.state.step is Step.END_STEP)
-        settle(game)
+        settle_completely(game)
 
         assert tokens(game, VIGILANT_ANGEL_TOKEN) == []
 
@@ -1320,7 +1292,7 @@ class TestBondersEnclave:
         before = len(game.state.players[0].hand)
         (draw,) = activations(game, enclave, 1)
         game.apply(draw)
-        settle(game)
+        settle_completely(game)
 
         assert len(game.state.players[0].hand) == before + 1
         assert game.state.objects[enclave].tapped
@@ -1413,7 +1385,7 @@ class TestEmeriaTheSkyRuin:
     def test_it_enters_tapped(self, builder):
         game = anchored(builder, [], hand=["emeria_the_sky_ruin"])
         game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND))
-        settle(game)
+        settle_completely(game)
 
         assert game.state.objects[only_oid(game, "emeria_the_sky_ruin")].tapped
 
@@ -1469,7 +1441,7 @@ class TestGraspOfFate:
         game, _offered = self.cast(builder)
         destroy(game.state, only_oid(game, "grasp_of_fate"))
         game.state.bump_chars()
-        settle(game)
+        settle_completely(game)
 
         bear, ring = oid_of(game, BEAR), oid_of(game, "sol_ring")
         assert game.state.objects[bear].zone is Zone.BATTLEFIELD

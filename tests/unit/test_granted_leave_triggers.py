@@ -30,7 +30,7 @@ from __future__ import annotations
 
 from automtg.engine.enums import ActionKind, Zone
 from automtg.engine.zones import destroy
-from tests.conftest import oids_of, pass_until
+from tests.conftest import oids_of, settle
 
 REBIRTH = "t_rebirth"  # grants "when this dies, return it tapped"
 BEAR = "t_bear"
@@ -47,10 +47,6 @@ def board(builder):
         .max_turns(2)
         .build()
     )
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def cast_it(game) -> int:

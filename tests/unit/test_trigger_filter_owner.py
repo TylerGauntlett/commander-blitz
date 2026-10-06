@@ -55,16 +55,12 @@ from automtg.engine.errors import DslError
 from automtg.engine.primitives import change_control
 from automtg.engine.triggers import TRIGGER_FILTER_KEYS, matches_card_filter
 from automtg.engine.zones import move_object
-from tests.conftest import _default_answer, only_oid, pass_until
+from tests.conftest import _default_answer, only_oid, settle
 
 KEEPER = "t_page_keeper"  # Tome of Legends' two triggers, by ownership
 BY_CONTROL = "t_page_keeper_by_control"  # the near miss, by control
 COMMANDER = "t_commander_five"
 BEAR = "t_bear"
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def pages(game, oid: int) -> int:

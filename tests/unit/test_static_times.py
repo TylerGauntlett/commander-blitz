@@ -33,17 +33,13 @@ from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach
-from tests.conftest import oids_of
+from tests.conftest import oids_of, two_seat_board
 
 DOUBLER = "t_st_doubler"  # +2/+2 for each Equipment you control
 SINGLE = "t_st_single"  # +1/+1 for each, the spelling that already worked
 NESTED = "t_st_nested"  # count x count
 GEAR = "t_st_gear"  # a bare Equipment, there to be counted
 BEAR = "t_st_bear"  # 2/2
-
-
-def board(builder, mine=()):
-    return builder(players=2).battlefield(0, list(mine)).build(advance=False)
 
 
 def equipped_power(game, steel: str) -> int:
@@ -56,15 +52,15 @@ def equipped_power(game, steel: str) -> int:
 class TestItMultiplies:
     def test_one_equipment_gives_two(self, builder):
         """The Steel counts itself, so one Equipment is the Steel alone."""
-        game = board(builder, [DOUBLER, BEAR])
+        game = two_seat_board(builder, [DOUBLER, BEAR], advance=False)
         assert equipped_power(game, DOUBLER) == 2 + 2
 
     def test_two_equipment_give_four(self, builder):
-        game = board(builder, [DOUBLER, GEAR, BEAR])
+        game = two_seat_board(builder, [DOUBLER, GEAR, BEAR], advance=False)
         assert equipped_power(game, DOUBLER) == 2 + 4
 
     def test_three_equipment_give_six(self, builder):
-        game = board(builder, [DOUBLER, GEAR, GEAR, BEAR])
+        game = two_seat_board(builder, [DOUBLER, GEAR, GEAR, BEAR], advance=False)
         assert equipped_power(game, DOUBLER) == 2 + 6
 
 
@@ -73,11 +69,11 @@ class TestTheStepIsReallyTwo:
     measuring the multiplication and not the count."""
 
     def test_the_single_step_card_gives_half(self, builder):
-        game = board(builder, [SINGLE, GEAR, BEAR])
+        game = two_seat_board(builder, [SINGLE, GEAR, BEAR], advance=False)
         assert equipped_power(game, SINGLE) == 2 + 2
 
     def test_and_the_doubler_on_the_same_board_gives_twice_that(self, builder):
-        game = board(builder, [DOUBLER, GEAR, BEAR])
+        game = two_seat_board(builder, [DOUBLER, GEAR, BEAR], advance=False)
         assert equipped_power(game, DOUBLER) == 2 + 4
 
 
@@ -87,13 +83,13 @@ class TestItIsAListOfFactors:
 
         Three Equipment on the board, so 3 x 3.
         """
-        game = board(builder, [NESTED, GEAR, GEAR, BEAR])
+        game = two_seat_board(builder, [NESTED, GEAR, GEAR, BEAR], advance=False)
         assert equipped_power(game, NESTED) == 2 + 9
 
     def test_it_falls_to_zero_with_nothing_to_count(self, builder):
         """A factor of nought makes the whole product nought, rather than the
         multiplier leaking through as a flat bonus."""
-        game = board(builder, [BEAR])
+        game = two_seat_board(builder, [BEAR], advance=False)
         bear = oids_of(game, BEAR, 0)[0]
         assert chars(game.state, bear).power == 2
 

@@ -53,7 +53,7 @@ from automtg.engine import sagas
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.events import EventType
 from automtg.engine.zones import move_object
-from tests.conftest import action_for_card, only_oid, pass_until
+from tests.conftest import action_for_card, only_oid, settle
 
 GIADA = "giada_font_of_hope"  # the shipped card: "…an additional +1/+1 counter
 # on it for each Angel you already control"
@@ -116,10 +116,6 @@ def queued(game, card_id: str) -> int:
         1 for t in game.state.pending_triggers
         if game.state.objects[t.source_oid].def_id == card_id
     )
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 class TestTheWitness:

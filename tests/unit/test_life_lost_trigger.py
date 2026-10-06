@@ -25,7 +25,7 @@ inside the non-poison branch.
 from __future__ import annotations
 
 from automtg.engine.primitives import damage_player, gain_life, lose_life
-from tests.conftest import pass_until
+from tests.conftest import settle
 
 CONQUEROR = "t_conqueror"  # "whenever an opponent loses life, you gain that much"
 
@@ -37,10 +37,6 @@ def board(builder, extra=()):
         .library(0, ["swamp"] * 20)
         .build()
     )
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def gained(game, fn) -> int:

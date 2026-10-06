@@ -34,13 +34,14 @@ from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.objects import PLUS_ONE
 from tests.conftest import (
     action_for_card,
     count_on_battlefield,
     find_action,
+    library_ids,
     only_oid,
     pass_until,
+    plus_one_counters,
 )
 
 FOREST = "forest"
@@ -79,14 +80,6 @@ def run(game, spec, source=None, *, bin_it: bool = False):
             send = list(range(len(decision.options)))
 
 
-def library_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counters.get(PLUS_ONE, 0)
-
-
 SELF = {"op": "explore", "objects": {"zone": "battlefield", "self_only": True}}
 
 
@@ -104,7 +97,7 @@ class TestTheLandBranch:
         """The two halves are exclusive — 701.40a says "otherwise"."""
         game, bear = position(builder, [FOREST, BEAR])
         run(game, SELF, bear)
-        assert counters(game, bear) == 0
+        assert plus_one_counters(game, bear) == 0
 
     def test_a_land_asks_nothing(self, builder):
         """The choice belongs to the non-land branch only."""
@@ -116,7 +109,7 @@ class TestTheNonLandBranch:
     def test_a_nonland_places_one_counter(self, builder):
         game, bear = position(builder, [BEAR, FOREST])
         run(game, SELF, bear)
-        assert counters(game, bear) == 1
+        assert plus_one_counters(game, bear) == 1
 
     def test_declining_leaves_it_on_top_in_order(self, builder):
         game, bear = position(builder, [BEAR, FOREST, BEAR])
@@ -140,7 +133,7 @@ class TestTheNonLandBranch:
         """The counter is not what the graveyard is bought with."""
         game, bear = position(builder, [BEAR, FOREST])
         run(game, SELF, bear, bin_it=True)
-        assert counters(game, bear) == 1
+        assert plus_one_counters(game, bear) == 1
 
 
 class TestWhichPermanentExplores:
@@ -149,8 +142,8 @@ class TestWhichPermanentExplores:
 
         run(game, {"op": "explore", "objects": {"zone": "battlefield", "self_only": True}}, second)
 
-        assert counters(game, second) == 1
-        assert counters(game, first) == 0
+        assert plus_one_counters(game, second) == 1
+        assert plus_one_counters(game, first) == 0
 
     def test_two_permanents_reveal_two_cards(self, builder):
         """Each explores separately; they do not share one look."""
@@ -160,7 +153,7 @@ class TestWhichPermanentExplores:
         asked = run(game, spec, first, bin_it=True)
 
         assert len(asked) == 2, "one question each"
-        assert counters(game, first) == counters(game, second) == 1
+        assert plus_one_counters(game, first) == plus_one_counters(game, second) == 1
         assert library_ids(game) == [FOREST], "two cards left the library"
 
 
@@ -170,7 +163,7 @@ class TestTheEmptyLibraryBoundary:
         game, bear = position(builder, [])
 
         assert run(game, SELF, bear) == []
-        assert counters(game, bear) == 0, "the counter is conditional on a card"
+        assert plus_one_counters(game, bear) == 0, "the counter is conditional on a card"
 
 
 class TestThroughARealCard:
@@ -201,7 +194,7 @@ class TestThroughARealCard:
         )
         game.apply(find_action(game, ActionKind.NO))
 
-        assert counters(game, explorer) == 1
+        assert plus_one_counters(game, explorer) == 1
         assert library_ids(game) == [BEAR, FOREST, BEAR], "declined, so nothing moved"
 
     def test_a_sorcery_grows_the_creature_it_targeted(self, builder):
@@ -221,7 +214,7 @@ class TestThroughARealCard:
         )
         game.apply(find_action(game, ActionKind.YES))
 
-        assert counters(game, bear) == 1, "the target explored, not the sorcery"
+        assert plus_one_counters(game, bear) == 1, "the target explored, not the sorcery"
         assert library_ids(game) == [FOREST]
 
 

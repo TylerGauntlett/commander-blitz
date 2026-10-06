@@ -27,7 +27,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object
-from tests.conftest import _default_answer, find_action, only_oid
+from tests.conftest import _default_answer, find_action, only_oid, plus_one_counters
 
 MODULAR = "t_modular"  # 0/0 artifact creature, modular 3
 GRAFTER = "t_grafter"  # 0/0, graft 2
@@ -47,10 +47,6 @@ def settle(game, *, say_yes: bool = False, limit: int = 30) -> None:
             continue
         game.apply(_default_answer(game, decision))
     raise AssertionError("nothing resolved")
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
 
 
 class TestModular:
@@ -73,7 +69,7 @@ class TestModular:
         game, mod, heir = self.position(builder)
         move_object(game.state, mod, Zone.GRAVEYARD)
         settle(game)
-        assert counters(game, heir) == 4, "its own one, plus the three it inherited"
+        assert plus_one_counters(game, heir) == 4, "its own one, plus the three it inherited"
 
     def test_all_of_them_move_without_the_card_saying_how_many(self, builder):
         """Why this is one op: the number is not knowable when the card is
@@ -81,7 +77,7 @@ class TestModular:
         game, mod, heir = self.position(builder, start=7)
         move_object(game.state, mod, Zone.GRAVEYARD)
         settle(game)
-        assert counters(game, heir) == 8
+        assert plus_one_counters(game, heir) == 8
 
     def test_the_source_is_read_from_the_snapshot(self, builder):
         """`reset_permanent_state` empties the counters on the way to the
@@ -90,7 +86,7 @@ class TestModular:
         event's snapshot, and there is nothing left on the source to remove."""
         game, mod, _ = self.position(builder)
         move_object(game.state, mod, Zone.GRAVEYARD)
-        assert counters(game, mod) == 0, "wiped before the trigger sees anything"
+        assert plus_one_counters(game, mod) == 0, "wiped before the trigger sees anything"
         settle(game)
 
     def test_with_no_legal_target_nothing_happens(self, builder):
@@ -144,26 +140,26 @@ class TestMovingFromALiveSource:
     def test_one_counter_moves_across(self, builder):
         game, grafter, bear = self.position(builder)
         self.move(game, grafter, bear, amount={"const": 1})
-        assert counters(game, grafter) == 1
-        assert counters(game, bear) == 1
+        assert plus_one_counters(game, grafter) == 1
+        assert plus_one_counters(game, bear) == 1
 
     def test_the_default_moves_all_of_them(self, builder):
         game, grafter, bear = self.position(builder, start=4)
         self.move(game, grafter, bear)
-        assert counters(game, grafter) == 0
-        assert counters(game, bear) == 4
+        assert plus_one_counters(game, grafter) == 0
+        assert plus_one_counters(game, bear) == 4
 
     def test_the_amount_is_clamped_to_what_is_there(self, builder):
         """Moving counters that do not exist would create them."""
         game, grafter, bear = self.position(builder, start=1)
         self.move(game, grafter, bear, amount={"const": 3})
-        assert counters(game, grafter) == 0
-        assert counters(game, bear) == 1, "one, not the three the card asked for"
+        assert plus_one_counters(game, grafter) == 0
+        assert plus_one_counters(game, bear) == 1, "one, not the three the card asked for"
 
     def test_an_empty_source_moves_nothing(self, builder):
         game, grafter, bear = self.position(builder, start=0)
         self.move(game, grafter, bear, amount={"const": 1})
-        assert counters(game, bear) == 0
+        assert plus_one_counters(game, bear) == 0
 
     def test_the_graft_card_compiles(self, registry):
         card = registry.get(GRAFTER)

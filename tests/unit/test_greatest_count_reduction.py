@@ -31,9 +31,9 @@ from __future__ import annotations
 import pytest
 
 from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
 from automtg.engine.costs import cost_reduction
 from automtg.engine.errors import DslError
+from tests.conftest import cost_reduction_probe
 
 GREATEST = "t_gc_greatest"  # greatest number of artifacts AN OPPONENT controls
 SUM = "t_gc_sum"  # the same filter, read as a flat `count` -- the control
@@ -155,30 +155,17 @@ class TestItGroupsTheFiltersPoolAndNotTheTable:
 
 
 class TestTheLoaderPlacesIt:
-    def _card(self, reduction):
-        return CardModel.model_validate(
-            {
-                "id": "x",
-                "name": "X",
-                "oracle_text": "This spell costs {X} less to cast.",
-                "mana_cost": "{9}",
-                "types": ["Sorcery"],
-                "cost_reduction": reduction,
-                "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
-            }
-        )
-
     def test_it_loads(self):
-        compile_card(self._card({"greatest_count": {"controller": "opponent"}}))
+        compile_card(cost_reduction_probe({"greatest_count": {"controller": "opponent"}}))
 
     def test_it_needs_a_filter(self):
         with pytest.raises(DslError, match="needs a filter"):
-            compile_card(self._card({"greatest_count": 3}))
+            compile_card(cost_reduction_probe({"greatest_count": 3}))
 
     def test_it_may_not_be_written_beside_another_shape(self):
         with pytest.raises(DslError, match="exactly one"):
             compile_card(
-                self._card(
+                cost_reduction_probe(
                     {
                         "greatest_count": {"controller": "opponent"},
                         "count": {"controller": "opponent"},
@@ -189,7 +176,7 @@ class TestTheLoaderPlacesIt:
     def test_its_filter_may_only_read_printed_characteristics(self):
         with pytest.raises(DslError, match="unsupported filter keys"):
             compile_card(
-                self._card({"greatest_count": {"controller": "opponent", "nonsense": 1}})
+                cost_reduction_probe({"greatest_count": {"controller": "opponent", "nonsense": 1}})
             )
 
     def test_a_misspelled_type_is_a_load_error(self):
@@ -197,7 +184,7 @@ class TestTheLoaderPlacesIt:
         it prints, so the guard every reduction filter gets applies here too."""
         with pytest.raises(DslError):
             compile_card(
-                self._card(
+                cost_reduction_probe(
                     {"greatest_count": {"controller": "opponent", "types": ["Artefact"]}}
                 )
             )

@@ -29,7 +29,7 @@ from __future__ import annotations
 from automtg.engine.combat import blocks_valid, can_block
 from automtg.engine.enums import ActionKind, DecisionKind
 from automtg.engine.structs import TargetRef
-from tests.conftest import find_action, only_oid, pass_until
+from tests.conftest import attack_with, find_action, only_oid, pass_until
 
 
 def to_blockers(game):
@@ -41,14 +41,6 @@ def to_blockers(game):
 def to_attackers(game):
     pass_until(
         game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_ATTACKERS
-    )
-
-
-def attack_with(game, oid: int, defender: int = 1):
-    game.apply(
-        find_action(
-            game, ActionKind.ADD_ATTACKER, source=oid, targets=(TargetRef.player(defender),)
-        )
     )
 
 

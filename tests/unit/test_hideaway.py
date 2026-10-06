@@ -29,7 +29,7 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Zone
 from automtg.engine.errors import DslError
-from tests.conftest import _default_answer, action_for_card, only_oid, pass_until
+from tests.conftest import _default_answer, action_for_card, library_ids, only_oid, pass_until
 
 WASTE = "island"
 VAULT = "t_hideaway"
@@ -68,10 +68,6 @@ def play_the_vault(game):
                 game.apply(choose[0])
                 continue
         game.apply(_default_answer(game, decision))
-
-
-def library_ids(game, pid: int = 0):
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 class TestTheHideaway:

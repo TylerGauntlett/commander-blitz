@@ -37,26 +37,15 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.enums import Step
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import add_counters, remove_counters
-from tests.conftest import only_oid
+from tests.conftest import only_oid, two_seat_board
 
 SCALES = "t_rc_scales"  # +1/+1 only, "that many plus one", creatures you control
 SEASON = "t_rc_season"  # every kind, "twice that many", permanents you control
 CHARGE = "t_rc_charge"  # charge only, "twice that many"
 BEAR = "t_rc_bear"
 ROCK = "t_rc_rock"
-
-
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .step(Step.PRECOMBAT_MAIN)
-        .build()
-    )
 
 
 def put(game, oid: int, kind: str = "+1/+1", amount: int = 1) -> int:
@@ -70,7 +59,7 @@ def counters(game, oid: int, kind: str = "+1/+1") -> int:
 
 class TestTheAddend:
     def test_one_becomes_two(self, builder):
-        game = board(builder, mine=[SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 2
 
@@ -78,7 +67,7 @@ class TestTheAddend:
         """Once per *placement*, not once per counter. 614.1's "one or more …
         would be put" is one event however many counters it carries, which is
         what the printed "that many plus one" says."""
-        game = board(builder, mine=[SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, BEAR])
         put(game, only_oid(game, BEAR), amount=3)
         assert counters(game, only_oid(game, BEAR)) == 4
 
@@ -86,24 +75,24 @@ class TestTheAddend:
         """`add_counters` returns what arrived, and several callers use it to
         report or to count. Returning the number asked for would make every one
         of them disagree with the board."""
-        game = board(builder, mine=[SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, BEAR])
         assert put(game, only_oid(game, BEAR)) == 2
 
     def test_with_no_replacement_on_the_table(self, builder):
         """The control."""
-        game = board(builder, mine=[BEAR])
+        game = two_seat_board(builder, mine=[BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 1
 
 
 class TestTheMultiplier:
     def test_one_becomes_two(self, builder):
-        game = board(builder, mine=[SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SEASON, BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 2
 
     def test_three_becomes_six(self, builder):
-        game = board(builder, mine=[SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SEASON, BEAR])
         put(game, only_oid(game, BEAR), amount=3)
         assert counters(game, only_oid(game, BEAR)) == 6
 
@@ -111,26 +100,26 @@ class TestTheMultiplier:
 class TestTheFilters:
     def test_a_kind_it_does_not_name_is_untouched(self, builder):
         """Hardened Scales says +1/+1 and means it."""
-        game = board(builder, mine=[SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, BEAR])
         put(game, only_oid(game, BEAR), kind="charge", amount=2)
         assert counters(game, only_oid(game, BEAR), "charge") == 2
 
     def test_a_kindless_replacement_takes_every_kind(self, builder):
         """Doubling Season names none, so it doubles the charge counters too."""
-        game = board(builder, mine=[SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SEASON, BEAR])
         put(game, only_oid(game, BEAR), kind="charge", amount=2)
         assert counters(game, only_oid(game, BEAR), "charge") == 4
 
     def test_a_permanent_the_affects_filter_misses(self, builder):
         """"a **creature** you control". The artifact is yours and is not one."""
-        game = board(builder, mine=[SCALES, ROCK])
+        game = two_seat_board(builder, mine=[SCALES, ROCK])
         put(game, only_oid(game, ROCK), kind="charge", amount=1)
         assert counters(game, only_oid(game, ROCK), "charge") == 1
 
     def test_an_opponents_creature_is_untouched(self, builder):
         """"a creature **you control**" -- the half that makes this a card
         rather than a rule."""
-        game = board(builder, mine=[SCALES], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[SCALES], theirs=[BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 1
 
@@ -139,7 +128,7 @@ class TestOnlyOnTheWayIn:
     def test_removing_counters_is_untouched(self, builder):
         """"would be **put** on" says nothing about counters coming off, and a
         doubled removal would be a different and much worse card."""
-        game = board(builder, mine=[SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SEASON, BEAR])
         bear = only_oid(game, BEAR)
         put(game, bear, amount=4)  # 8 after doubling
         remove_counters(game.state, bear, "+1/+1", 2)
@@ -157,20 +146,20 @@ class TestSeveralCompound:
         here; `_replaced_counter_amount` owns it and `docs/rules-coverage.md`
         records it.
         """
-        game = board(builder, mine=[SCALES, SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, SEASON, BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 4
 
     def test_a_replacement_does_not_re_apply_to_its_own_output(self, builder):
         """The other half of 614.5, and not an optimisation: this is the
         difference between Doubling Season and an infinite loop."""
-        game = board(builder, mine=[SEASON, BEAR])
+        game = two_seat_board(builder, mine=[SEASON, BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 2
 
     def test_two_of_the_same_static_compound(self, builder):
         """Two Hardened Scales are two replacements of one event, not one."""
-        game = board(builder, mine=[SCALES, SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, SCALES, BEAR])
         put(game, only_oid(game, BEAR))
         assert counters(game, only_oid(game, BEAR)) == 3
 
@@ -180,7 +169,7 @@ class TestTheEventReportsWhatArrived:
         """A trigger watching "whenever one or more +1/+1 counters are put on"
         has to be told the number that really arrived. Firing with the number
         asked for would be the card lying to everything listening."""
-        game = board(builder, mine=[SCALES, BEAR])
+        game = two_seat_board(builder, mine=[SCALES, BEAR])
         mark = len(game.state.events)
         put(game, only_oid(game, BEAR), amount=2)
         placed = [

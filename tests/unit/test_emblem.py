@@ -42,7 +42,7 @@ from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import draw_cards, give_emblem
 from automtg.engine.serialize import card_view
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, settle
 
 WALKER = "t_emblem_walker"  # loyalty 3; +1 emblem to you, -3 emblem to target opponent
 BEAR = "t_bear"  # {1}{G}, kept in hand so player 0 always has a real decision
@@ -68,10 +68,6 @@ def board(builder, *, emblems_for=()):
     for pid in emblems_for:
         give_emblem(game.state, WALKER, 0, pid)
     return game, only_oid(game, WALKER, 0)
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def activate(game, walker: int, label: str):

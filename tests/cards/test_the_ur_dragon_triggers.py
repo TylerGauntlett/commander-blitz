@@ -34,6 +34,7 @@ from automtg.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     count_on_battlefield,
+    keywords,
     only_oid,
     pass_until,
 )
@@ -141,10 +142,6 @@ def connect(game, oid: int, amount: int, defender: int = 1) -> None:
     """
     damage_player(game.state, defender, amount, oid, is_combat=True)
     settle(game)
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 class TestOldGnawbone:

@@ -42,7 +42,7 @@ from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import destroy, exile
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, settle
 
 ROLE = "wicked_role"
 BEAR = "t_bear"  # vanilla 2/2, {1}{G}
@@ -68,10 +68,6 @@ def board(builder, *, hand=(), theirs=()):
         .build()
     )
     return game, only_oid(game, BEAR, 0)
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 def make_role(game, host: int, controller: int = 0) -> None:

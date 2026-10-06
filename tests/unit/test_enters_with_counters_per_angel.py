@@ -33,7 +33,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object
-from tests.conftest import action_for_card, oids_of, only_oid, pass_until
+from tests.conftest import action_for_card, oids_of, only_oid, pass_until, settle
 
 GIADA = "t_giada"
 ANGEL = "t_angel"  # {W} 1/1 Angel
@@ -55,10 +55,6 @@ def position(builder, *, mine=(GIADA,), theirs=(), hand=(ANGEL,), yard=(), plain
         .active(0)
         .build()
     )
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 def cast(game, card_id: str) -> None:

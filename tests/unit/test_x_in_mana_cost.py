@@ -40,7 +40,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.structs import TargetRef
 from automtg.engine.targeting import still_legal
-from tests.conftest import action_for_card, pass_until
+from tests.conftest import action_for_card, pass_until, settle
 
 #: "{X}{R}" instant, X damage to any target — the Fireball half of the pair.
 FIREBALL = "t_fireball"
@@ -111,10 +111,6 @@ def targets_offered(game, counter: str) -> list[str]:
 
 def cast_counter(game, counter: str) -> None:
     game.apply(action_for_card(game, ActionKind.CAST, counter))
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
 
 
 class TestTheKeyReadsThePrintedSymbol:

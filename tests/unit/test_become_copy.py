@@ -32,11 +32,10 @@ Two details the printed card turns on, and both are asserted:
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
 from automtg.engine.effects import execute_one
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.primitives import clear_until_eot
-from tests.conftest import only_oid
+from tests.conftest import only_oid, pt
 
 MIME = "t_mime"
 BEAR = "t_bear"
@@ -72,11 +71,6 @@ def become_copy(game, oid: int, **overrides):
 
 def face(game, oid: int) -> str:
     return game.state.card_of(game.state.objects[oid]).name
-
-
-def pt(game, oid: int):
-    c = chars(game.state, oid)
-    return c.power, c.toughness
 
 
 class TestItCopiesInPlace:

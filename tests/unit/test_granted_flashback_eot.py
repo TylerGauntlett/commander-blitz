@@ -18,8 +18,8 @@ difference: same grant, same cast, one flag apart.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import pass_until
+from automtg.engine.enums import ActionKind, Step, Zone
+from tests.conftest import settle_to_priority
 
 FLASHBACK = "t_will_flashback"  # grants flashback
 PLAIN = "t_will_no_exile"  # grants a bare permission
@@ -40,14 +40,6 @@ def position(builder, granter: str):
     )
 
 
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
-
-
 def grant_then_flash_back(game, granter: str) -> Zone:
     """Resolve the granter, cast the graveyard card, report where it ends."""
     game._advance()
@@ -57,13 +49,13 @@ def grant_then_flash_back(game, granter: str) -> Zone:
         if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == granter
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
     bait = next(o for o in game.state.objects.values() if o.def_id == BAIT and o.owner == 0)
     cast = next((a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.source == bait.oid), None)
     assert cast is not None, "the graveyard card is castable under the grant"
     game.apply(cast)
-    settle(game)
+    settle_to_priority(game)
     return bait.zone
 
 

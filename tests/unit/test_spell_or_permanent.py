@@ -28,8 +28,8 @@ kind further along.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import pass_until
+from automtg.engine.enums import ActionKind, Step, Zone
+from tests.conftest import pass_until, settle_to_priority
 
 SINK = "t_sink"
 BEAR = "t_bear"  # a nonland permanent for seat 1
@@ -59,14 +59,6 @@ def sink_targets(game):
         and game.state.objects[a.source].def_id == SINK
         and a.targets
     ]
-
-
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
 
 
 class TestEitherHalfAlone:
@@ -188,7 +180,7 @@ class TestItActuallyBouncesEitherOne:
             and a.targets[0].id == bear
         )
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.objects[bear].zone is Zone.HAND
         assert bear in game.state.players[1].hand, "its **owner's** hand"
@@ -224,6 +216,6 @@ class TestItActuallyBouncesEitherOne:
                 if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == SINK
             )
         )
-        settle(game)
+        settle_to_priority(game)
 
         assert bait_oid in game.state.players[1].hand

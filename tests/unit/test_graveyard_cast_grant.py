@@ -34,9 +34,9 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
-from tests.conftest import pass_until
+from tests.conftest import pass_until, settle_to_priority
 
 ANY_GY = "t_yawgmoth"  # any_graveyard: true
 OWN_GY = "t_own_graveyard_only"  # the same grant, own graveyard only
@@ -60,14 +60,6 @@ def position(builder, grant: str, *, mine=(), theirs=()):
     )
 
 
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
-
-
 def cast_the_grant(game, grant: str):
     game._advance()
     action = next(
@@ -76,7 +68,7 @@ def cast_the_grant(game, grant: str):
         if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == grant
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
 
 def castable(game, oid: int) -> bool:
@@ -196,7 +188,7 @@ class TestTheSpellExilesOnResolution:
         cast_the_grant(game, ANY_GY)
         action = next(a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.source == oid)
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.objects[oid].zone is Zone.EXILE
         assert game.state.players[0].life == 42, "it resolved on the way"

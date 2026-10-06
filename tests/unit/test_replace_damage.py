@@ -91,7 +91,7 @@ from automtg.engine.enums import ActionKind, Step
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach, damage_permanent, damage_player
 from automtg.engine.structs import TargetRef
-from tests.conftest import only_oid, pass_until
+from tests.conftest import only_oid, pass_until, two_seat_board
 
 FLAIL = "t_rd_flail"  # both filtered lines, combat only
 FURNACE = "t_rd_furnace"  # neither filter, any damage
@@ -102,16 +102,6 @@ TYRANT = "t_rd_tyrant"  # Twinflame Tyrant: a seat *or* a permanent, your source
 EMANCIPATION = "t_rd_emancipation"  # "a source you control", x3, no recipient named
 SCOURGE = "t_rd_scourge"  # "to an opponent" and nothing else
 SCORCH = "t_rd_scorch"  # {R} instant, 3 damage to target player
-
-
-def board(builder, mine=(), theirs=()):
-    return (
-        builder(players=2)
-        .battlefield(0, list(mine))
-        .battlefield(1, list(theirs))
-        .step(Step.PRECOMBAT_MAIN)
-        .build()
-    )
 
 
 def equip(game, equipment: str, creature: str) -> int:
@@ -130,7 +120,7 @@ class TestTheSourceFilter:
     """"If **equipped creature** would deal combat damage…"."""
 
     def test_the_equipped_creature_deals_double(self, builder):
-        game = board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
         bear = equip(game, FLAIL, BEAR)
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, bear, is_combat=True
@@ -140,7 +130,7 @@ class TestTheSourceFilter:
     def test_and_the_damage_really_is_marked(self, builder):
         """The return value and the board have to agree: several callers read
         one and the state-based actions read the other."""
-        game = board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
         bear = equip(game, FLAIL, BEAR)
         damage_permanent(game.state, only_oid(game, OGRE), 2, bear, is_combat=True)
         assert marked(game, only_oid(game, OGRE)) == 4
@@ -148,7 +138,7 @@ class TestTheSourceFilter:
     def test_an_unequipped_creature_does_not(self, builder):
         """The Flail is on the battlefield and attached to nothing, so its
         `{"attached": true}` filter finds nobody."""
-        game = board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=True
         )
@@ -159,7 +149,7 @@ class TestTheSourceFilter:
         first line. Measured against a recipient the *second* line cannot
         match either -- an opposing Bear rather than the equipped creature --
         so this is the source filter alone."""
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         equip(game, FLAIL, OGRE)
         dealt = damage_permanent(
             game.state, only_oid(game, BEAR), 3, only_oid(game, OGRE), is_combat=True
@@ -172,7 +162,7 @@ class TestTheRecipientFilter:
     creature**"."""
 
     def test_a_creature_hitting_the_equipped_creature_deals_double(self, builder):
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         ogre = equip(game, FLAIL, OGRE)
         dealt = damage_permanent(
             game.state, ogre, 2, only_oid(game, BEAR), is_combat=True
@@ -182,7 +172,7 @@ class TestTheRecipientFilter:
     def test_a_noncreature_source_does_not(self, builder):
         """"another **creature**". The Flail itself is a source with no
         creature type, and a burn spell would be another."""
-        game = board(builder, mine=[FLAIL, OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE])
         ogre = equip(game, FLAIL, OGRE)
         dealt = damage_permanent(
             game.state, ogre, 2, only_oid(game, FLAIL), is_combat=True
@@ -190,7 +180,7 @@ class TestTheRecipientFilter:
         assert dealt == 2
 
     def test_a_creature_hitting_something_else_does_not(self, builder):
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         equip(game, FLAIL, OGRE)
         dealt = damage_permanent(
             game.state, only_oid(game, BEAR), 3, only_oid(game, OGRE), is_combat=True
@@ -201,7 +191,7 @@ class TestTheRecipientFilter:
         """Both statics are separate replacements of different events, so the
         equipped creature's blow out and the blocker's blow back are each
         doubled once."""
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         ogre = equip(game, FLAIL, OGRE)
         out = damage_permanent(
             game.state, only_oid(game, BEAR), 3, ogre, is_combat=True
@@ -216,7 +206,7 @@ class TestCombatOnly:
     def test_noncombat_damage_is_untouched(self, builder):
         """The Flail says "combat damage" and means it: a burn spell the
         equipped creature's ability deals is not doubled."""
-        game = board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
         bear = equip(game, FLAIL, BEAR)
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, bear, is_combat=False
@@ -225,7 +215,7 @@ class TestCombatOnly:
 
     def test_a_static_without_the_clause_takes_both(self, builder):
         """Furnace of Rath does not say "combat", so it doubles a burn spell."""
-        game = board(builder, mine=[FURNACE], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FURNACE], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, None, is_combat=False
         )
@@ -235,7 +225,7 @@ class TestCombatOnly:
 class TestDamageToAPlayer:
     def test_an_unfiltered_replacement_reaches_a_player(self, builder):
         """"to a permanent **or player**" -- Furnace of Rath names neither end."""
-        game = board(builder, mine=[FURNACE])
+        game = two_seat_board(builder, mine=[FURNACE])
         life = game.state.players[1].life
         damage_player(game.state, 1, 3, None, is_combat=False)
         assert game.state.players[1].life == life - 6
@@ -243,7 +233,7 @@ class TestDamageToAPlayer:
     def test_the_equipped_creature_doubles_its_hit_on_a_player(self, builder):
         """The Flail's first line filters the *dealer* only, so it follows the
         equipped creature through to the face."""
-        game = board(builder, mine=[FLAIL, BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR])
         bear = equip(game, FLAIL, BEAR)
         life = game.state.players[1].life
         damage_player(game.state, 1, 2, bear, is_combat=True)
@@ -257,7 +247,7 @@ class TestDamageToAPlayer:
         Measured with a source the *first* line cannot match -- the Bear is
         unequipped -- so only the second line is in question.
         """
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         equip(game, FLAIL, OGRE)
         life = game.state.players[0].life
         damage_player(game.state, 0, 3, only_oid(game, BEAR), is_combat=True)
@@ -268,7 +258,7 @@ class TestEverythingDownstreamSeesTheDoubledNumber:
     def test_lifelink_gains_the_doubled_amount(self, builder):
         """702.15b: lifelink gains "that much life", and "that much" is what was
         actually dealt. A doubling applied after lifelink would gain half."""
-        game = board(builder, mine=[FLAIL, LINKER], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, LINKER], theirs=[OGRE])
         linker = equip(game, FLAIL, LINKER)
         life = game.state.players[0].life
         damage_permanent(game.state, only_oid(game, OGRE), 2, linker, is_combat=True)
@@ -277,7 +267,7 @@ class TestEverythingDownstreamSeesTheDoubledNumber:
     def test_damage_dealt_carries_the_doubled_amount(self, builder):
         """Enrage, Sengir and "damaged this turn" all read this event, so a
         replacement it did not know about would be a card lying to them."""
-        game = board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, BEAR], theirs=[OGRE])
         bear = equip(game, FLAIL, BEAR)
         mark = len(game.state.events)
         damage_permanent(game.state, only_oid(game, OGRE), 2, bear, is_combat=True)
@@ -289,7 +279,7 @@ class TestSeveralCompound:
     def test_two_replacements_multiply(self, builder):
         """614.5 applies each once. Multiplication commutes, so 616.1's unasked
         ordering cannot show between two of these."""
-        game = board(builder, mine=[FLAIL, FURNACE, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FLAIL, FURNACE, BEAR], theirs=[OGRE])
         bear = equip(game, FLAIL, BEAR)
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, bear, is_combat=True
@@ -297,7 +287,7 @@ class TestSeveralCompound:
         assert dealt == 8
 
     def test_a_replacement_does_not_re_apply_to_its_own_output(self, builder):
-        game = board(builder, mine=[FURNACE], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FURNACE], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 3, None, is_combat=True
         )
@@ -308,14 +298,14 @@ class TestWithNothingOnTheTable:
     """The control: damage is damage."""
 
     def test_a_permanent(self, builder):
-        game = board(builder, mine=[BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[BEAR], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=True
         )
         assert dealt == 2
 
     def test_a_player(self, builder):
-        game = board(builder, mine=[BEAR])
+        game = two_seat_board(builder, mine=[BEAR])
         life = game.state.players[1].life
         damage_player(game.state, 1, 2, only_oid(game, BEAR), is_combat=True)
         assert game.state.players[1].life == life - 2
@@ -356,7 +346,7 @@ class TestTheAsymmetryIsTheWholeCard:
 
     def test_damage_to_an_opponent_doubles(self, builder):
         """The `affects_player` half -- the one `affects` could never spell."""
-        game = board(builder, mine=[TYRANT, BEAR])
+        game = two_seat_board(builder, mine=[TYRANT, BEAR])
         life = game.state.players[1].life
         damage_player(game.state, 1, 3, only_oid(game, BEAR), is_combat=True)
         assert game.state.players[1].life == life - 6
@@ -364,14 +354,14 @@ class TestTheAsymmetryIsTheWholeCard:
     def test_damage_to_you_does_not(self, builder):
         """Your own City of Brass, your own Mana Crypt, your own Pyroclasm's
         half that hits you. "To an opponent" is not "to a player"."""
-        game = board(builder, mine=[TYRANT, BEAR])
+        game = two_seat_board(builder, mine=[TYRANT, BEAR])
         life = game.state.players[0].life
         damage_player(game.state, 0, 3, only_oid(game, BEAR), is_combat=False)
         assert game.state.players[0].life == life - 3
 
     def test_damage_to_an_opponents_permanent_doubles(self, builder):
         """The `affects` half, in the same static and the same event."""
-        game = board(builder, mine=[TYRANT, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[TYRANT, BEAR], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=True
         )
@@ -380,7 +370,7 @@ class TestTheAsymmetryIsTheWholeCard:
     def test_damage_to_your_own_permanent_does_not(self, builder):
         """Your sweeper, your fight spell, your own blocker taking its blow --
         none of them are "a permanent an opponent controls"."""
-        game = board(builder, mine=[TYRANT, BEAR, OGRE])
+        game = two_seat_board(builder, mine=[TYRANT, BEAR, OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=False
         )
@@ -390,7 +380,7 @@ class TestTheAsymmetryIsTheWholeCard:
         """"A source **you control**". Without the dealer filter this would be
         Furnace of Rath pointed one way, doubling the opponent's own burn back
         at them -- stronger than printed, and not what the card says."""
-        game = board(builder, mine=[TYRANT], theirs=[BEAR, OGRE])
+        game = two_seat_board(builder, mine=[TYRANT], theirs=[BEAR, OGRE])
         life = game.state.players[1].life
         damage_player(game.state, 1, 3, only_oid(game, BEAR), is_combat=True)
         assert game.state.players[1].life == life - 3
@@ -401,7 +391,7 @@ class TestTheAsymmetryIsTheWholeCard:
         Each cell measured on the same board, so no cell can pass by accident
         of a different position.
         """
-        game = board(builder, mine=[TYRANT, BEAR, OGRE], theirs=[BEAR, OGRE])
+        game = two_seat_board(builder, mine=[TYRANT, BEAR, OGRE], theirs=[BEAR, OGRE])
         mine = only_oid(game, BEAR, 0)
         their_ogre = only_oid(game, OGRE, 1)
         my_ogre = only_oid(game, OGRE, 0)
@@ -429,14 +419,14 @@ class TestTheRecipientFiltersAreAUnionNotAConjunction:
     def test_a_seat_only_filter_never_reaches_a_permanent(self, builder):
         """`t_rd_scourge` says "to an opponent" and stops there, so an
         opponent's creature is not a recipient it named."""
-        game = board(builder, mine=[SCOURGE, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[SCOURGE, BEAR], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=True
         )
         assert dealt == 2
 
     def test_a_seat_only_filter_reaches_the_seat(self, builder):
-        game = board(builder, mine=[SCOURGE, BEAR])
+        game = two_seat_board(builder, mine=[SCOURGE, BEAR])
         life = game.state.players[1].life
         damage_player(game.state, 1, 3, only_oid(game, BEAR), is_combat=True)
         assert game.state.players[1].life == life - 6
@@ -444,7 +434,7 @@ class TestTheRecipientFiltersAreAUnionNotAConjunction:
     def test_a_permanent_only_filter_still_never_reaches_a_seat(self, builder):
         """The pre-existing reading, unchanged: the Flail's second line has no
         `affects_player`, so a player is not among its recipients."""
-        game = board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
+        game = two_seat_board(builder, mine=[FLAIL, OGRE], theirs=[BEAR])
         equip(game, FLAIL, OGRE)
         life = game.state.players[0].life
         damage_player(game.state, 0, 3, only_oid(game, BEAR), is_combat=True)
@@ -452,7 +442,7 @@ class TestTheRecipientFiltersAreAUnionNotAConjunction:
 
     def test_naming_neither_still_reaches_both(self, builder):
         """Furnace of Rath, the control for the whole union."""
-        game = board(builder, mine=[FURNACE], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[FURNACE], theirs=[OGRE])
         life = game.state.players[1].life
         damage_player(game.state, 1, 3, None, is_combat=False)
         dealt = damage_permanent(game.state, only_oid(game, OGRE), 2, None, is_combat=False)
@@ -530,7 +520,7 @@ class TestASourceYouControlIsNotAPermanentYouControl:
     def test_it_still_follows_your_creatures(self, builder):
         """The widening adds spells; it does not drop the permanents the same
         filter always matched."""
-        game = board(builder, mine=[EMANCIPATION, BEAR], theirs=[OGRE])
+        game = two_seat_board(builder, mine=[EMANCIPATION, BEAR], theirs=[OGRE])
         dealt = damage_permanent(
             game.state, only_oid(game, OGRE), 2, only_oid(game, BEAR), is_combat=True
         )

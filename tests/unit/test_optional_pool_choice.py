@@ -47,6 +47,7 @@ from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.selectors import choose_objects, validate_selector
 from automtg.engine.enums import Zone
 from automtg.engine.errors import DslError
+from tests.conftest import library_ids
 
 BEAR = "t_bear"
 DORK = "t_dork"
@@ -100,10 +101,6 @@ def boromir(game, **extra):
 def finish(gen, indices: list[int]) -> None:
     with contextlib.suppress(StopIteration):
         gen.send(indices)
-
-
-def library_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 class TestTheRangeItAsksFor:

@@ -37,7 +37,7 @@ from __future__ import annotations
 
 from automtg.engine.primitives import create_token
 from automtg.engine.zones import destroy, sacrifice
-from tests.conftest import oids_of, pass_until
+from tests.conftest import oids_of, settle
 
 BATS = "t_bats"  # "whenever you create or sacrifice a token, each opponent loses 1"
 TOKEN = "vampire_1_1_b"
@@ -51,10 +51,6 @@ def board(builder, extra=()):
         .library(0, ["swamp"] * 20)
         .build()
     )
-
-
-def settle(game):
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 class TestCreatingAToken:

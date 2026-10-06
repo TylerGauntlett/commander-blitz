@@ -25,7 +25,7 @@ from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import DecisionKind, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.objects import PLUS_ONE
+from tests.conftest import hand_ids, plus_one_counters
 
 FOREST = "forest"
 BEAR = "t_bear"
@@ -68,14 +68,6 @@ def run(game, spec, source=None, *, pitch: str | None = None):
         send = (wanted + rest)[: decision.max_count]
 
 
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counters.get(PLUS_ONE, 0)
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
-
-
 class TestTheDrawAndTheDiscard:
     def test_hand_size_is_unchanged_and_the_library_shrinks(self, builder):
         game, bear = position(builder, [FOREST, BEAR], [BEAR] * 5)
@@ -114,13 +106,13 @@ class TestWhatTheCounterCounts:
     def test_a_nonland_discard_places_one_counter(self, builder):
         game, bear = position(builder, [FOREST, BEAR], [BEAR] * 5)
         run(game, SELF, bear, pitch=BEAR)
-        assert counters(game, bear) == 1
+        assert plus_one_counters(game, bear) == 1
 
     def test_a_land_discard_places_none(self, builder):
         """The drawback. Counting discards instead would delete it."""
         game, bear = position(builder, [FOREST, BEAR], [BEAR] * 5)
         run(game, SELF, bear, pitch=FOREST)
-        assert counters(game, bear) == 0
+        assert plus_one_counters(game, bear) == 0
 
     def test_a_mixed_discard_counts_only_the_nonlands(self, builder):
         """Connive 2 pitching one land and one spell is one counter, not two."""
@@ -143,7 +135,7 @@ class TestWhatTheCounterCounts:
             spell = next(i for i, name in by_id.items() if name == BEAR)
             send = [land, spell]
 
-        assert counters(game, bear) == 1
+        assert plus_one_counters(game, bear) == 1
 
 
 class TestWhichPermanentConnives:
@@ -156,7 +148,7 @@ class TestWhichPermanentConnives:
 
         run(game, spec, first, pitch=BEAR)
 
-        assert counters(game, first) == counters(game, second) == 1
+        assert plus_one_counters(game, first) == plus_one_counters(game, second) == 1
         assert len(game.state.players[0].library) == 4, "two draws, not one"
 
     def test_an_empty_pool_connives_nobody(self, builder):
@@ -176,7 +168,7 @@ class TestTheEmptyHandBoundary:
         run(game, SELF, bear)
 
         assert hand_ids(game) == [], "drew a Forest and pitched it"
-        assert counters(game, bear) == 0, "a land, so no counter"
+        assert plus_one_counters(game, bear) == 0, "a land, so no counter"
         assert game.state.objects[game.state.players[0].graveyard[0]].zone is Zone.GRAVEYARD
 
 

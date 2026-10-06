@@ -35,6 +35,7 @@ from __future__ import annotations
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
+from tests.conftest import library_ids
 
 FOREST = "forest"
 BEAR = "t_bear"           # {1}{G}, mana value 2
@@ -64,10 +65,6 @@ def run(game, op: str, spec, source: int, *, cast: bool = True):
         except StopIteration:
             return
         send = [0] if cast else [1]
-
-
-def library_ids(game, pid: int = 0):
-    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
 
 
 class TestCascade:

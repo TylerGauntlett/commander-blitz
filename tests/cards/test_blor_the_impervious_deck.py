@@ -44,7 +44,9 @@ from automtg.engine.player_statics import player_cant_cast_spells
 from automtg.engine.primitives import attach, damage_permanent, damage_player
 from tests.conftest import (
     _default_answer,
+    activations,
     count_on_battlefield,
+    hand_ids,
     oids_of,
     only_oid,
     pass_until,
@@ -167,17 +169,6 @@ def connect(game, dealer: str, amount: int = 3, defender: int = 1, *, accept: bo
     settle(game, accept=accept)
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    """The activations of ``oid`` currently legal, optionally one ability of it."""
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def tap_for_mana(game, card_id: str, pid: int = 0, index: int | None = None) -> list[int]:
     """Tap ``card_id`` for mana and return the pool it filled.
 
@@ -256,10 +247,6 @@ def settle_taking(game, def_id: str, *, limit: int = 400) -> None:
             return
         game.apply(_default_answer(game, decision))
     raise AssertionError("the stack did not empty")
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
 
 
 def library_size(game, pid: int = 0) -> int:

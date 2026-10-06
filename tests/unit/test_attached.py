@@ -34,7 +34,7 @@ from automtg.engine.enums import Zone
 from automtg.engine.objects import PLUS_ONE
 from automtg.engine.primitives import attach
 from automtg.engine.zones import destroy
-from tests.conftest import oids_of, pass_until
+from tests.conftest import oids_of, settle
 
 CLAMP = "t_clamp"  # +1/-1, "whenever equipped creature dies, draw two"
 BLADE = "t_blade"  # "whenever a creature dies, +1/+1 counter on equipped creature"
@@ -54,16 +54,6 @@ def board(builder, equipment: str, creatures=(BEAR,)):
 
 def only(game, def_id: str) -> int:
     return oids_of(game, def_id)[0]
-
-
-def settle(game):
-    """Let the death trigger reach the stack and resolve.
-
-    A `dies` trigger is *pending*, not on the stack, the moment `destroy`
-    returns -- it is promoted the next time a player would receive priority. So
-    the wait is on both lists being empty, not just the stack.
-    """
-    pass_until(game, lambda g: not g.state.pending_triggers and not g.state.stack)
 
 
 class TestTheEffectSideSelector:

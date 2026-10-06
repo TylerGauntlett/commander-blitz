@@ -43,7 +43,7 @@ from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.structs import TargetRef
-from tests.conftest import _default_answer, find_action, only_oid
+from tests.conftest import _default_answer, find_action, only_oid, plus_one_counters
 
 HERO = "t_hero"  # 2/2, heroic: a +1/+1 counter
 WARDED = "t_warded"  # 2/3, ward {2}
@@ -63,10 +63,6 @@ def settle(game, limit: int = 60) -> None:
             continue
         game.apply(_default_answer(game, decision))
     raise AssertionError("the stack never emptied")
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
 
 
 def cast_at(game, card_id: str, target_oid: int, caster: int = 0) -> None:
@@ -150,7 +146,7 @@ class TestHeroic:
         hero = only_oid(game, HERO, 0)
         cast_at(game, PUMP, hero)
         settle(game)
-        assert counters(game, hero) == 1
+        assert plus_one_counters(game, hero) == 1
 
     def test_an_opponents_spell_does_not(self, builder):
         """`controller: "you"` on the trigger, and the actor is the caster.
@@ -169,7 +165,7 @@ class TestHeroic:
         hero = only_oid(game, HERO, 0)
         cast_at(game, BOLT, hero, caster=1)
         settle(game)
-        assert counters(game, hero) == 0
+        assert plus_one_counters(game, hero) == 0
 
     def test_a_spell_targeting_something_else_does_not(self, builder):
         game = (
@@ -181,7 +177,7 @@ class TestHeroic:
         hero = only_oid(game, HERO, 0)
         cast_at(game, PUMP, only_oid(game, BEAR, 0))
         settle(game)
-        assert counters(game, hero) == 0
+        assert plus_one_counters(game, hero) == 0
 
 
 class TestWard:

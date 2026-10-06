@@ -72,7 +72,7 @@ from automtg.engine.primitives import (
     shielded,
 )
 from automtg.engine.zones import move_object
-from tests.conftest import _default_answer, advance_to_step, only_oid
+from tests.conftest import _default_answer, advance_to_step, only_oid, plus_one_counters
 
 SQUIRE = "selfless_squire"  # 1/1 flash; shield on ETB, counters on prevention
 BEAR = "t_bear"  # 2/2
@@ -102,10 +102,6 @@ def settle(game, limit: int = 60) -> None:
             continue
         game.apply(_default_answer(game, decision))
     raise AssertionError("the trigger never resolved")
-
-
-def counters(game, oid: int) -> int:
-    return game.state.objects[oid].counter("+1/+1")
 
 
 def events_of(game, kind: str, since: int = 0) -> list:
@@ -337,7 +333,7 @@ class TestTheTriggerFires:
         damage_player(game.state, 0, 4, None)
         settle(game)
 
-        assert counters(game, squire) == 4, "that many -- four, not one"
+        assert plus_one_counters(game, squire) == 4, "that many -- four, not one"
 
     def test_two_preventions_add_up(self, builder):
         game = position(builder, mine=[SQUIRE])
@@ -349,7 +345,7 @@ class TestTheTriggerFires:
         damage_player(game.state, 0, 3, None)
         settle(game)
 
-        assert counters(game, squire) == 5
+        assert plus_one_counters(game, squire) == 5
 
     def test_no_damage_means_no_counters(self, builder):
         game = position(builder, mine=[SQUIRE])
@@ -359,7 +355,7 @@ class TestTheTriggerFires:
         damage_player(game.state, 0, 0, None)
         settle(game)
 
-        assert counters(game, squire) == 0
+        assert plus_one_counters(game, squire) == 0
 
     def test_damage_that_was_not_prevented_gives_nothing(self, builder):
         """The inversion that makes `dealt_damage` the wrong trigger: with no
@@ -370,7 +366,7 @@ class TestTheTriggerFires:
         damage_player(game.state, 0, 4, None)
         settle(game)
 
-        assert counters(game, squire) == 0
+        assert plus_one_counters(game, squire) == 0
 
     def test_an_opponents_prevented_damage_gives_nothing(self, builder):
         """"…dealt to **you**." `controller: "you"` is compared against the
@@ -383,7 +379,7 @@ class TestTheTriggerFires:
         damage_player(game.state, 1, 4, None)
         settle(game)
 
-        assert counters(game, squire) == 0
+        assert plus_one_counters(game, squire) == 0
 
     def test_absorb_on_a_permanent_gives_nothing(self, builder):
         """One event, two shapes -- and the mirror of the `dealt_damage` guard.
@@ -399,7 +395,7 @@ class TestTheTriggerFires:
         damage_permanent(game.state, absorber, 2, None)
         settle(game)
 
-        assert counters(game, squire) == 0
+        assert plus_one_counters(game, squire) == 0
 
     def test_that_absorb_really_did_prevent_something(self, builder):
         """Guarding the test above: it would pass just as well if absorb had
@@ -462,7 +458,7 @@ class TestTheShippedCard:
         assert shielded(game.state, 0) is True
         assert damage_player(game.state, 0, 3, None) == 0
         settle(game)
-        assert counters(game, squire) == 3
+        assert plus_one_counters(game, squire) == 3
 
 
 class TestTheLoaderGuards:

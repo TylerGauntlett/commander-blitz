@@ -24,8 +24,8 @@ every existing copier uses and must not have moved.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from tests.conftest import event_types, pass_until
+from automtg.engine.enums import ActionKind
+from tests.conftest import event_types, settle_to_priority
 
 FORK = "t_fork"  # {U}{R}, copy target instant or sorcery spell
 DRAW = "t_demo_draw"  # {R} instant, draw a card
@@ -59,14 +59,6 @@ def cast_holding(game, card_id: str):
     game.apply(action)
 
 
-def settle(game):
-    pass_until(
-        game,
-        lambda g: not g.state.stack
-        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
-    )
-
-
 class TestCopyingATargetedSpell:
     def test_the_copy_is_made(self, builder):
         game = position(builder, [DRAW, FORK])
@@ -74,7 +66,7 @@ class TestCopyingATargetedSpell:
         mark = len(game.state.events)
 
         cast_holding(game, FORK)
-        settle(game)
+        settle_to_priority(game)
 
         assert "spell_copied" in event_types(game.state.events[mark:])
 
@@ -85,7 +77,7 @@ class TestCopyingATargetedSpell:
 
         cast_holding(game, DRAW)
         cast_holding(game, FORK)
-        settle(game)
+        settle_to_priority(game)
 
         drawn = library_before - len(game.state.players[0].library)
         assert drawn == 2, "the original draw and its copy"
@@ -141,7 +133,7 @@ class TestStormStillCopiesItself:
         )
         mark = len(game.state.events)
         cast_holding(game, BOLT)
-        settle(game)
+        settle_to_priority(game)
 
         kinds = event_types(game.state.events[mark:])
         assert kinds.count("spell_copied") == 1
