@@ -185,17 +185,27 @@ describe("the life seal", () => {
 });
 
 /*
- * FB-13 (TECH_DEBT): the plinth only reads "Ready" while the pointer is over it.
+ * FB-13 (TECH_DEBT): "the plinth only reads Ready while the pointer is over it".
  *
- * The render-time `castable` is right on every render, so `data-castable`
- * flips the moment `playableOids` changes. What does NOT follow is the
- * preview: the ring's path to the rail goes through a stop-driven hover, and a
- * re-render that makes the commander castable fires no hover -- so the rail
- * keeps whatever it had until the pointer moves. Pinned as a known failure
- * rather than fixed; it flips to a passing test when the recompute lands.
+ * NOT REPRODUCIBLE, and these are the tests that say so. The plinth's state is
+ * a pure function of its props: `castable` is `card.zone === "command" &&
+ * playableOids.has(card.oid)`, worked out on every render; `playableOids` is a
+ * `useMemo` over the action list in `useTableDerived`, with no hover in its
+ * inputs; nothing between `Table` and the plinth is memoised; and no style
+ * rule anywhere gates the word or the green rim on `:hover`, `:focus` or the
+ * ring. So `data-cmd-state` flips to `ready` the render the server offers the
+ * cast, wherever the pointer is.
+ *
+ * The defect was pinned with an `it.fails` that asserted something narrower --
+ * that the RAIL was re-told (`onHover` called again) when the commander became
+ * castable under the ring. That is not the plinth's job: the rail reads the
+ * card it is pointed at, the card did not change, and a component announcing a
+ * hover nobody made would fight `hoverFor`, which owns that channel. The rail
+ * draws the same card either way; it is the plinth that has to say "Ready",
+ * and it does.
  */
-describe("FB-13: the plinth's preview follows an actions change", () => {
-  it("re-announces the commander when it becomes castable under the ring", () => {
+describe("FB-13: the plinth reads Ready without the pointer", () => {
+  it("turns Ready under the ring when the actions change", () => {
     const { rerender, hovered } = renderZone([commander()], { playable: [] });
     const plinth = document.querySelector<HTMLElement>("[data-stop='card:99']");
     expect(plinth?.dataset.castable).toBe("false");
@@ -215,20 +225,36 @@ describe("FB-13: the plinth's preview follows an actions change", () => {
     expect(plinth?.dataset.cmdState).toBe("ready");
   });
 
-  it.fails("FB-13: the rail is told again without a pointer event", () => {
-    const { rerender, hovered } = renderZone([commander()], { playable: [] });
-    const plinth = document.querySelector<HTMLElement>("[data-stop='card:99']");
-    fireEvent.focus(plinth as HTMLElement);
-    hovered.length = 0;
-    rerender(
+  it("turns Ready while the pointer is somewhere else entirely, and back", () => {
+    // The pointer is over a different card, and has never been near the plinth.
+    useUiStore.setState({ hoveredOid: 7 });
+    const { rerender, hovered, getByTestId } = renderZone([commander()], { playable: [] });
+    const plinth = getByTestId("commander-99");
+    expect(plinth.dataset.cmdState).toBe("waiting");
+
+    const zoneWith = (playable: number[]) => (
       <CommandZone
         state={viewWith([commander()])}
         pid={0}
-        playableOids={new Set([99])}
+        playableOids={new Set(playable)}
         onHover={(oid) => hovered.push(oid)}
-      />,
+      />
     );
-    // What a fix would do: re-announce the card now that its state changed.
-    expect(hovered).toEqual([99]);
+
+    // The engine offers the cast: an actions change and nothing else.
+    rerender(zoneWith([99]));
+    expect(plinth.dataset.cmdState).toBe("ready");
+    expect(plinth.classList.contains("cmdslot--ready")).toBe(true);
+    expect(plinth.textContent).toContain("Ready");
+
+    // ...and withdraws it, the same way.
+    rerender(zoneWith([]));
+    expect(plinth.dataset.cmdState).toBe("waiting");
+    expect(plinth.textContent).not.toContain("Ready");
+
+    // No pointer event was involved at any point, and the pointer's card was
+    // left alone.
+    expect(hovered).toEqual([]);
+    expect(useUiStore.getState().hoveredOid).toBe(7);
   });
 });
