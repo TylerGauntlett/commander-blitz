@@ -138,22 +138,6 @@ already uses. **Before you start:** the golden pool pins only cards that load, s
 pin the error messages invalid cards get, or the move will change them without anyone
 noticing.
 
-### ST-01 · The September split's re-export shims are the only import path — **M**
-
-- **`engine/characteristics.py:2332-2379`** re-exports 44 names from
-  `player_statics`, imported at the bottom of the file "so every `from
-  automtg.engine.characteristics import ...` keeps working". At least ten engine
-  modules still import them through `characteristics`.
-- **`cards/loader/__init__.py:104`** re-exports private names (`_validate_effect`,
-  `_compile_target` and more). There are 365 `from automtg.cards.loader import` sites,
-  and none of them imports from a `loader.*` submodule.
-- **`tests/conftest.py`** re-exports `GameBuilder` the same way.
-
-These shims account for most of the growth in `# noqa`: 36 now, 22 of them `F401`, up
-from 22 in total a month ago. There are also 21 `biome-ignore`s in the frontend.
-
-**Fix:** point the callers at the real modules, mechanically, then delete the shims.
-
 ### ST-02 · 433 function-local imports — **M**
 
 56 of 95 modules import inside functions; the most are in `engine/game.py` (37),
@@ -163,18 +147,6 @@ for import cycles.
 
 **Fix:** map the cycle graph first. Most cycles probably break by moving shared types
 into `structs.py`, or helpers out of `game.py`.
-
-### ST-03 · Test helpers copied file by file — **M**
-
-- **221 test files define their own `board(`**, 24 of them with the identical
-  `board(builder)` signature. **120 define `_card(`.** `tests/conftest.py` has a
-  `builder` fixture and some action helpers, but nothing for building a board.
-- **`tests/unit/` is one flat directory of 537 files.**
-- **18 test files are over 800 lines**, the largest `test_bard_king_of_dale_deck.py`
-  at 2,376. The Myrel deck alone has four files over 1,400.
-
-**Fix:** a shared board helper in `conftest.py` or `automtg.engine.sandbox`, then
-subdirectories in `tests/unit/` by mechanic.
 
 ### ST-04 · Large frontend files — **M**
 
