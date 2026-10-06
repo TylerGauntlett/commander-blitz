@@ -14,8 +14,8 @@ from ..mana import (
     compile_restriction,
     parse_mana_production,
 )
-from . import register
 from .context import EffectContext, ask_mode
+from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 

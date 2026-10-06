@@ -12,8 +12,8 @@ from ..objects import PLUS_ONE, playable_duration_of
 from ..player_statics import forced_discard_or_sacrifice_barred, search_forbidden
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object, offer_enters_replacement, offer_riot_choice
-from . import register
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
+from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,

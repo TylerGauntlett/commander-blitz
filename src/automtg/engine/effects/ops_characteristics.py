@@ -18,8 +18,8 @@ from ..primitives import (
 )
 from ..structs import TempEffect
 from ..text_change import printed_type_instances
-from . import register
 from .context import EffectContext, ask_mode
+from .registry import register
 from .selectors import (
     choose_objects,
     select_players,

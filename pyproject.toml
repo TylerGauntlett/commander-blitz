@@ -56,6 +56,3 @@ ignore = [
 # Scripts prepend src/ to sys.path before importing the package, so their
 # imports cannot be at the top of the file.
 "scripts/**" = ["E402"]
-# The op modules are imported at the bottom on purpose: they call register(),
-# which must exist first.
-"src/automtg/engine/effects/__init__.py" = ["E402"]

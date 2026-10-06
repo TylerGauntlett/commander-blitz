@@ -26,8 +26,8 @@ from typing import Any
 
 from ..errors import DslError
 from ..primitives import become_monarch, give_emblem
-from . import register
 from .context import EffectContext
+from .registry import register
 from .selectors import select_players
 
 

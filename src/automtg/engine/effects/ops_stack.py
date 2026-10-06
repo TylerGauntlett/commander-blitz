@@ -8,8 +8,8 @@ from typing import Any
 from ..enums import Zone
 from ..events import EventType
 from ..zones import move_object
-from . import register
 from .context import EffectContext
+from .registry import register
 
 
 def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):

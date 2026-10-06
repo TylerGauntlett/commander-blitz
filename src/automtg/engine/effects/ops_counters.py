@@ -17,11 +17,11 @@ from ..primitives import (
     untap_permanent,
 )
 from ..zones import exile, move_object
-from . import register
 from .board_helpers import (
     _players,
 )
 from .context import EffectContext
+from .registry import register
 from .selectors import (
     choose_objects,
     pick_from_pool,

@@ -20,11 +20,11 @@ from ..primitives import (
     restrict_attack,
 )
 from ..structs import TargetRef
-from . import register
 from .board_helpers import (
     _players,
 )
 from .context import EffectContext, ask_targets
+from .registry import register
 from .selectors import (
     choose_objects,
     resolve_pool,

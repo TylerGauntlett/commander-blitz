@@ -18,9 +18,10 @@ from ..player_statics import forced_discard_or_sacrifice_barred
 # initialised module instead.
 from ..primitives import change_control
 from ..zones import snapshot as capture_snapshot
-from . import execute, register
+from . import execute
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
+from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 

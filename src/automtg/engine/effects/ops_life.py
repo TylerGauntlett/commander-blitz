@@ -16,8 +16,8 @@ from ..primitives import (
     shield_permanent,
     shield_player,
 )
-from . import register
 from .context import EffectContext
+from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 

@@ -25,7 +25,6 @@ from ..zones import (
     sacrifice,
 )
 from ..zones import snapshot as capture_snapshot
-from . import register
 from .board_helpers import (
     _aim_at_planeswalker,
     _attack_defender,
@@ -35,6 +34,7 @@ from .board_helpers import (
     _players,
 )
 from .context import EffectContext
+from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
