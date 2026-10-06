@@ -3,7 +3,7 @@
 Ghalta is printed at twelve mana and is meant to be cast for two, so a reduction
 that legality knows about but payment does not -- or the other way round -- is
 the difference between a card that is uncastable and one that is free. Both
-sides read the same `costs.cost_reduction`, and these tests are what pins them
+sides read the same `cost_reduction.cost_reduction`, and these tests are what pins them
 together.
 
 The reduction is read off the board every time it is asked for, never stored: a

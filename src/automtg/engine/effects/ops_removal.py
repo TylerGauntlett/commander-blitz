@@ -320,7 +320,7 @@ def op_airbend(ctx: EffectContext, spec: Mapping[str, Any]):
     `gain_control` goes back to the player who brought it.
 
     **A flat {2}, replacing the price.** `playable_alt_cost` rather than any of
-    the reduction machinery, because `costs.cost_reduction` clamps a reduction
+    the reduction machinery, because `cost_reduction.cost_reduction` clamps a reduction
     to the generic part of a cost and no subtraction is right for two creatures
     of different mana values anyway. {2} is {2} whether the card printed {G} or
     {7}{U}{U}, and a {G} creature "reduced" by anything still owes its green

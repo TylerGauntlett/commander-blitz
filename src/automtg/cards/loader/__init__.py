@@ -2991,7 +2991,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         # A surcharge written as a negative discount, in either of the two
         # spellings a card would use -- `-3` and `{"const": -3}`. It would load
-        # clean and tax nothing: `costs.cost_reduction` subtracts this total and
+        # clean and tax nothing: `cost_reduction.cost_reduction` subtracts this total and
         # clamps the result at zero, so -3 rounds away to "costs the printed
         # price" and the card prints a line it does not perform. Only a written
         # literal is checked, because that is the only one a load-time pass can
@@ -3731,7 +3731,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         priced = prune_cost(model.cost.model_dump())
         # Life **or** generic mana, one of them, and nothing else. Life is
         # Terror of the Peaks; generic mana is Kasmina, Enigmatic Mentor's
-        # "cost {2} more to cast", netted into `costs.cost_reduction` as a
+        # "cost {2} more to cast", netted into `cost_reduction.cost_reduction` as a
         # negative discount so the offer and the charge read one number (see
         # `player_statics.spell_mana_tax`). Coloured mana is refused: the
         # discount arithmetic is generic-only, and a coloured surcharge would

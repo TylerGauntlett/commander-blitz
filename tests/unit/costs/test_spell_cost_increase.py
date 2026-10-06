@@ -18,7 +18,7 @@ may be paid down to exactly 0, so a 3-life tax is payable at 3 life and not at
 `spell_cost_reduction` already had the two hard clauses — `affects_spells` says
 whose spells, and `targeting` reads the refs the cast actually chose (Strong
 Back's "Aura spells you cast that target enchanted creature"). It points the
-wrong way twice: `costs.cost_reduction` subtracts its total and clamps at zero,
+wrong way twice: `cost_reduction.cost_reduction` subtracts its total and clamps at zero,
 so a negative amount rounds away to "costs the printed price" — a card that
 loads clean and taxes nobody, which `TestTheLoader` now refuses by name — and it
 is mana arithmetic end to end, so it could never charge life.
@@ -37,7 +37,7 @@ caster cannot decline by simply not casting.
 
 The resource is the last design point. Life is checked beside the mana and
 touches none of the payment solver. Generic mana (Kasmina, Enigmatic Mentor) is
-the other currency the static takes. It is netted into `costs.cost_reduction` as
+the other currency the static takes. It is netted into `cost_reduction.cost_reduction` as
 a negative discount, so it reaches the solver through the one number the offer
 and the charge already share; `test_spell_cost_increase_mana.py` covers it. Both
 at once, coloured mana, or anything else is still a load error.
@@ -367,7 +367,7 @@ class TestTheLoader:
 class TestTheReductionCannotBeWrittenBackwards:
     """The silent-wrong-card this effect exists to make unnecessary.
 
-    `costs.cost_reduction` subtracts the reduction total and clamps it at zero,
+    `cost_reduction.cost_reduction` subtracts the reduction total and clamps it at zero,
     so `amount: -3` on a `spell_cost_reduction` would load clean, print "costs 3
     more" and charge the printed price. Refused by name, pointing at the effect
     that means it.

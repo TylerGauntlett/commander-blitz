@@ -20,7 +20,7 @@ brought it.
 `playable_free`, `playable_any_color` and `playable_any_type`, and
 `casting._cast_options` could pass `extra_generic` or `free` -- the printed
 price or no price, never "{2} instead". A reduction cannot stand in for it at
-any amount, because `costs.cost_reduction` clamps every reduction to the
+any amount, because `cost_reduction.cost_reduction` clamps every reduction to the
 *generic* part of a cost: a {G} creature "reduced" still owes its green pip,
 and a {4}{U}{U} one still owes two blue. {2} is {2} for both.
 

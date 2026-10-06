@@ -1283,7 +1283,7 @@ class CardDef:
     #: Offering: the creature type the sacrifice must be. ``None`` is emerge
     #: proper, which takes any creature.
     emerge_subtype: str | None = None
-    #: "This spell costs {X} less to cast."  See `costs.cost_reduction`, and
+    #: "This spell costs {X} less to cast."  See `cost_reduction.cost_reduction`, and
     #: `costs.reduction_amount` for the shapes -- it is **variant-blind** by
     #: design: Ghalta costs less however it is cast, so `_cast_variant` applies
     #: this to whichever price it picked. A discount that belongs to one cast

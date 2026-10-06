@@ -10,7 +10,7 @@ discount gets wrong, because a cost reduced to nothing still has an X to
 announce and this one does not.
 
 `spell_cost_reduction` is the nearest existing static and cannot be turned into
-this at any amount. `costs.cost_reduction` clamps every reduction to the
+this at any amount. `cost_reduction.cost_reduction` clamps every reduction to the
 *generic* part of a cost (the comment at `engine/casting.py` records why), so a
 reduction can never pay the ``{R}{R}`` of a Dragon, and on an ``{X}`` Dragon a
 reduction and this permission disagree about the one number the card is made

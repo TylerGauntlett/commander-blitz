@@ -7,7 +7,7 @@
 Three claims, and each is its own way to get the mechanic wrong.
 
 **It is an alternative cost, not a discount.** 601.2b replaces the printed
-price; `spell_cost_reduction` is clamped by `costs.cost_reduction` to the
+price; `spell_cost_reduction` is clamped by `cost_reduction.cost_reduction` to the
 *generic* part of a cost, so no reduction ever reaches a coloured pip and a
 "{2}{R} off" version would misprice every card it touched. The permanent that
 arrives is an ordinary one -- warp buys the cheap cast, not a smaller creature.

@@ -1826,7 +1826,7 @@ as an ordinary static filter resolved against this permanent, so
 `{"attached": true}` is the creature this Aura enchants.
 
 That makes the price a question about **which** permanent is being aimed at, and
-the plumbing follows from it: `costs.ability_mana` and `costs.cost_reduction`
+the plumbing follows from it: `costs.ability_mana` and `cost_reduction.cost_reduction`
 both take the chosen targets, `legality._ability_aims` prices each aim
 separately, and `casting._priced_tuples` — shared with strive, the other case
 where the targets change the price — solves each tuple on its own when such a
@@ -5413,7 +5413,7 @@ about the **price**: those two say where a spell may be cast from and leave the
 cost alone.
 
 **It is not a discount, at any amount.** `spell_cost_reduction` is the nearest
-static and cannot express this sentence: `costs.cost_reduction` clamps every
+static and cannot express this sentence: `cost_reduction.cost_reduction` clamps every
 reduction to the *generic* part of a cost, so no reduction ever reaches a
 coloured pip. And even an unclamped one would be the wrong card, because 601.2b
 does not reduce anything — it replaces the payment. The difference shows on an
@@ -7317,7 +7317,7 @@ say:
 |---|---|
 | `exile` + `playable` | writes `obj.playable_by = ctx.controller`, one seat: airbend sweeps the whole board, so most of what it exiles is somebody else's and the caster would get to cast it. Its only cost riders are `any_color` / `any_type`, which relax what may be *spent* rather than how much |
 | `grant_playable` | same permission at the **printed** price, and over a snapshot of what it could see |
-| `cost_reduction` / `mana_reduction` | `costs.cost_reduction` clamps every reduction to the **generic** part of a cost, so no subtraction reaches a coloured pip — and no single number is right for two creatures of different mana values. {2} is {2} whether the card printed {G} or {7}{U}{U} |
+| `cost_reduction` / `mana_reduction` | `cost_reduction.cost_reduction` clamps every reduction to the **generic** part of a cost, so no subtraction reaches a coloured pip — and no single number is right for two creatures of different mana values. {2} is {2} whether the card printed {G} or {7}{U}{U} |
 | `alternative_cost`, `evoke` | the right shape, but they live on the card being cast and are set by its own author. Airbend imposes the price on *other* cards from outside |
 
 The permission is written from each object (`obj.owner`, the one identity a card
@@ -9844,7 +9844,7 @@ by `characteristics.mana_source_traits` before the mana ability's own cost runs,
 and `pay_mana` puts what the payment consumed onto the spell as
 `GameObject.mana_spent_traits`.
 
-The legal keys inside it are `triggers.PAID_BY_SELECTOR_KEYS` and **not** the
+The legal keys inside it are `selectors.PAID_BY_SELECTOR_KEYS` and **not** the
 general `SELECTOR_KEYS`:
 
 | key | |
@@ -10859,7 +10859,7 @@ belongs on the variant's own cost node.
 
 Read off the board every time it is asked for, never stored — Ghalta is a
 twelve-drop or a two-drop depending on what is already in play. Legality and
-payment both call `costs.cost_reduction`, because a reduction one of them knows
+payment both call `cost_reduction.cost_reduction`, because a reduction one of them knows
 about and the other does not is the difference between an uncastable card and a
 free one.
 
@@ -10890,7 +10890,7 @@ Both halves are required. A `spell_cost_reduction` with no filter or no amount
 would load clean and discount either everything or nothing, and both look
 identical on a board.
 
-It is applied inside `costs.cost_reduction`, the same function the card-level
+It is applied inside `cost_reduction.cost_reduction`, the same function the card-level
 field goes through — so legality and payment cannot disagree about it, for the
 same reason and by the same route. A `spell_cast` trigger cannot substitute: it
 fires after the spell is paid for, so the best it could do is refund mana, which
@@ -10911,7 +10911,7 @@ The same two filters the reduction above takes — `affects_spells` for whose
 spells and which, `targeting` for what the cast is aimed at — pointing the other
 way, and charging a different resource.
 
-**It is not the reduction with a minus sign.** `costs.cost_reduction` subtracts
+**It is not the reduction with a minus sign.** `cost_reduction.cost_reduction` subtracts
 its total and clamps the result at zero, so `amount: -3` would load clean, print
 "costs 3 more" and charge the printed price, so the loader refuses a negative
 `amount` by name and points here. And the reduction is generic-mana arithmetic
@@ -10956,7 +10956,7 @@ somewhere else; the per-tuple pass then charges each aim exactly.
 ```
 
 The same static with generic mana as the price, read by
-`player_statics.spell_mana_tax`. It is netted into `costs.cost_reduction` as a
+`player_statics.spell_mana_tax`. It is netted into `cost_reduction.cost_reduction` as a
 **negative discount**, which is the number legality, `casting._priced_tuples` and
 `Game._cast` already share. So the offer and the charge price it identically,
 and 601.2f's order holds: increases are added, reductions subtracted, and the

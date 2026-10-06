@@ -138,16 +138,6 @@ already uses. **Before you start:** the golden pool pins only cards that load, s
 pin the error messages invalid cards get, or the move will change them without anyone
 noticing.
 
-### ST-02 · 433 function-local imports — **M**
-
-56 of 95 modules import inside functions; the most are in `engine/game.py` (37),
-`costs.py` (30), `triggers.py` (27) and `stack.py` (21). `pyproject.toml` also gives
-`effects/__init__.py` and `characteristics.py` E402 exemptions. Both are workarounds
-for import cycles.
-
-**Fix:** map the cycle graph first. Most cycles probably break by moving shared types
-into `structs.py`, or helpers out of `game.py`.
-
 ### ST-04 · Large frontend files — **M**
 
 | File | Lines |

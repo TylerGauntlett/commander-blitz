@@ -408,7 +408,7 @@ STATIC_EFFECTS = frozenset(
         # hands it to the *warded* permanent, so killing the granter in response
         # does not escape the tax.
         "ward",
-        # Warden of Evos Isle.  Read by `costs.cost_reduction`, not by the
+        # Warden of Evos Isle.  Read by `cost_reduction.cost_reduction`, not by the
         # characteristics pipeline: it prices a card that is still in hand, so
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
@@ -417,7 +417,7 @@ STATIC_EFFECTS = frozenset(
         # creature cost an additional 3 life to cast." An additional cost
         # (601.2f) imposed on somebody *else's* spell, and it is not the line
         # above pointing the other way: `spell_cost_reduction` is mana
-        # arithmetic, subtracted and clamped at zero by `costs.cost_reduction`,
+        # arithmetic, subtracted and clamped at zero by `cost_reduction.cost_reduction`,
         # so a negative `amount` there could only round away to "costs nothing
         # extra" -- which is why the loader now refuses one. This carries a
         # `cost` node instead, the way `ward` and `attack_tax` do, and the

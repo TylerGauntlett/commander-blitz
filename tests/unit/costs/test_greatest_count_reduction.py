@@ -126,7 +126,7 @@ class TestTheBoundaries:
     def test_the_seat_is_never_below_zero(self, registry, builder):
         """Nothing here can go negative, but `cost_reduction` clamps anyway and
         a discount larger than the printed generic cost is still just a
-        discount -- see `costs.cost_reduction`."""
+        discount -- see `cost_reduction.cost_reduction`."""
         game = pod(builder, [], [BAUBLE] * 20, [], [])
         assert cost_reduction(game.state, 0, registry.get(GREATEST)) == 20
 

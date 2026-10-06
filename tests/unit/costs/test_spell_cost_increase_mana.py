@@ -7,7 +7,7 @@ cost {2} more to cast." Kasmina, Enigmatic Mentor, the witness.
 loader refused mana because a surcharge in mana has to reach the payment solver,
 and every place the offer and the charge price a spell is a place they could
 disagree. They now agree by construction: the tax is netted into the one number
-both already share, `costs.cost_reduction`, as a negative discount. Legality
+both already share, `cost_reduction.cost_reduction`, as a negative discount. Legality
 prices the line with it, `_priced_tuples` re-prices each target tuple with it,
 and `Game._cast` charges it off the action's own targets.
 

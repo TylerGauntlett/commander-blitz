@@ -7,7 +7,7 @@ Two cost reductions already existed and neither could reach an activated
 ability. A card's own `cost_reduction` is Ghalta's "**this spell** costs {X}
 less", and the `spell_cost_reduction` static is Warden of Evos Isle discounting
 somebody else's spell — both read only from the cast path, through
-`costs.cost_reduction`. An activated ability's `cost.mana` was the literal string
+`cost_reduction.cost_reduction`. An activated ability's `cost.mana` was the literal string
 written on the card, at every board state.
 
 `Cost.mana_reduction` takes the same `{"count": {filter}}` shape the card-level

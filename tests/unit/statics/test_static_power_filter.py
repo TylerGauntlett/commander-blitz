@@ -93,7 +93,7 @@ def discount(game, card_id: str = BEAR, pid: int = 0) -> int:
 
     Priced against a *vanilla* card by default, so the number is the
     Battlecrier's static alone. `t_spf_discounter` carries a card-level
-    reduction of its own -- the other reader -- and `costs.cost_reduction` adds
+    reduction of its own -- the other reader -- and `cost_reduction.cost_reduction` adds
     the two, so pricing it here would measure both at once and neither.
     """
     return cost_reduction(game.state, pid, game.state.registry.get(card_id))

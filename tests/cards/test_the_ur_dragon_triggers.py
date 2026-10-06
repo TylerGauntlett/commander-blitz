@@ -496,7 +496,7 @@ class TestDracogenesis:
     Rule 601.2b's "without paying its mana cost" is a **replacement of the
     payment**, not a reduction of it, and `spell_cost_reduction` -- the nearest
     static, and the one The Ur-Dragon itself prints -- cannot stand in for it at
-    any amount: `costs.cost_reduction` clamps every reduction to the *generic*
+    any amount: `cost_reduction.cost_reduction` clamps every reduction to the *generic*
     part of a cost, so no discount ever pays a coloured pip. Rule 107.3b is the
     sharper half: a cost reduced to nothing still has an X to announce, and this
     one has X = 0.

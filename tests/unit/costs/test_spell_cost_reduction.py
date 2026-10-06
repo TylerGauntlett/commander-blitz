@@ -15,7 +15,7 @@ carries board state (`tapped`, `attacking`, `attached`); a spell being priced is
 still in hand and has none of that. `affects_spells` reads the printed face plus
 who is casting, which is exactly `characteristics._matches_printed`.
 
-**Where it is applied is the design.** `costs.cost_reduction` is the one
+**Where it is applied is the design.** `cost_reduction.cost_reduction` is the one
 function both `legality` (deciding what is castable, and what the client shows)
 and `game.cast` (actually charging) already call, so adding the term there means
 a spell offered at the reduced price is paid at the reduced price by
@@ -102,7 +102,7 @@ class TestWhoseSpells:
 
 
 class TestOfferedAndPaidAgree:
-    """The property the placement in `costs.cost_reduction` buys."""
+    """The property the placement in `cost_reduction.cost_reduction` buys."""
 
     def test_it_makes_an_unaffordable_spell_castable(self, builder):
         # {2}{U} is three mana; two Islands cannot pay it.

@@ -958,7 +958,7 @@ def spell_cost_reduction(
     still in hand while legality prices it, so there is no board state to read
     and no derived characteristics to recurse into.
 
-    Returns a total, clamped and applied by `costs.cost_reduction` -- the one
+    Returns a total, clamped and applied by `cost_reduction.cost_reduction` -- the one
     function both legality and payment already call, so a spell offered at the
     reduced price is also paid at it.
 
@@ -1041,7 +1041,7 @@ def spell_life_tax(
 
     Life, not mana, and that is why the size lives in a `cost` node instead of
     an `amount`. `spell_cost_reduction` is generic-mana arithmetic end to end --
-    subtracted and clamped at zero by `costs.cost_reduction` -- so it could
+    subtracted and clamped at zero by `cost_reduction.cost_reduction` -- so it could
     neither add nor charge a different resource. Keeping life out of the mana
     price also keeps the payment solver out of it: the tax never touches a pip,
     so it cannot make a spell unpayable for a reason the solver would have to
@@ -1798,7 +1798,7 @@ def free_cast_permission(
     and replaces the price entirely.
 
     **Not a discount.** `spell_cost_reduction` is the nearest static and cannot
-    stand in for this at any amount: `costs.cost_reduction` clamps every
+    stand in for this at any amount: `cost_reduction.cost_reduction` clamps every
     reduction to the *generic* part of a cost, so no reduction reaches a
     coloured pip -- and 601.2b's "without paying its mana cost" is not a
     reduction to zero in any case. The difference shows on an X spell, where a
