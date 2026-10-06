@@ -259,8 +259,33 @@ test.describe("a pod with two people in it", () => {
     await expect(guestPage).toHaveURL(/\/games\/[^/]+$/);
     await hostPage.goBack();
     await expect(hostPage.getByTestId("new-game")).toHaveCount(0);
+    /*
+     * ...and walking forward into the game again does not deal it again
+     * (TECH_DEBT FT-07). Its state is in the query cache, so the table is drawn
+     * from the first frame; "Dealing…" used to flash in between, fade out, and
+     * only then let the table fade in. Watched with an observer rather than
+     * asserted after the fact, because the deal was only ever on screen for a
+     * few hundred milliseconds.
+     */
+    await hostPage.evaluate(() => {
+      const seen = { dealt: 0 };
+      (window as unknown as { __dealSeen: typeof seen }).__dealSeen = seen;
+      new MutationObserver((records) => {
+        for (const record of records) {
+          for (const node of record.addedNodes) {
+            if (!(node instanceof Element)) continue;
+            if (node.matches('[data-testid="dealing"]')) seen.dealt += 1;
+            seen.dealt += node.querySelectorAll('[data-testid="dealing"]').length;
+          }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    });
     await hostPage.goForward();
     await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
+    const dealt = await hostPage.evaluate(
+      () => (window as unknown as { __dealSeen?: { dealt: number } }).__dealSeen?.dealt ?? -1,
+    );
+    expect(dealt, "coming back to the game dealt it again").toBe(0);
 
     /*
      * Each holds a hand, and neither can read the other's.
@@ -268,11 +293,12 @@ test.describe("a pod with two people in it", () => {
      * POLLED, AND READ IN THE SAME BREATH. A screen transition in this app is a
      * `mode="wait"` fade: the outgoing screen fades to nothing and only then
      * does the incoming one mount, so for a few hundred milliseconds there is
-     * genuinely no hand in the document. Coming back to a game crosses two of
-     * those -- the forward navigation, and then `table` → `dealing` → `table`
-     * as the route re-mounts and the seat it resolves changes the query key
-     * underneath it. Measured on this machine: the hand is absent from 53ms to
-     * 785ms after the back press.
+     * genuinely no hand in the document. Coming back to a game used to cross
+     * two of those -- the forward navigation, and then `table` → `dealing` →
+     * `table` as the route re-mounts and the seat it resolves changes the query
+     * key underneath it. Measured on this machine then: the hand was absent
+     * from 53ms to 785ms after the back press. The second is gone (FT-07,
+     * asserted above); the first is `App`'s, and stays.
      *
      * So `waitFor(table)` can return just before one of those swaps, and the
      * old shape here -- assert a card is visible, then read the names in a

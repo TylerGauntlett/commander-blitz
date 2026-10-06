@@ -214,6 +214,21 @@ export function useGame(session: GameSession | null) {
       return response;
     },
     enabled: session !== null,
+    /*
+     * THE SEAT MOVING IS NOT A NEW GAME, so the board does not blank for it.
+     *
+     * `GameRoute` asks with a null seat first and then with the seat the first
+     * response named, and each is its own key. Without this the second key
+     * started with no data at all: the table, already drawn from the first
+     * response, went back to "Dealing…" for a round trip. The previous
+     * response stands in until the new one lands.
+     *
+     * ONLY FOR THE SAME GAME. A rematch navigates `/games/a` to `/games/b`
+     * inside one mounted route, and the finished game's board must not be
+     * drawn as if it were the new one's -- nor its seat taken for this one's.
+     */
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === session?.gameId ? previous : undefined,
   });
 
   const lookup = useCallback((cardId: string) => names.current.get(cardId), []);

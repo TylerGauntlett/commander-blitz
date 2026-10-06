@@ -9,7 +9,7 @@
  * for free rather than as a second implementation.
  */
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { play } from "../audio/sfx";
 import { useUiStore } from "../state/uiStore";
 import { getCursor, moveCursor, setCursor } from "./cursor";
@@ -21,7 +21,21 @@ import { stopAtPoint, stopElement } from "./stops";
 /** Directions, and the sound each outcome makes. */
 const DIRECTIONS = ["up", "down", "left", "right"] as const;
 
-export function useCursorNav(): void {
+export function useCursorNav(active = true): void {
+  /*
+   * ONE SCREEN ANSWERS THE PAD, EVEN WHILE TWO ARE MOUNTED.
+   *
+   * `Screen` passes its presence. Behind `App`'s `mode="wait"` a leaving screen
+   * is alone and this changes nothing, but `GameRoute` cross-fades the deal
+   * into the table, and for that overlap both screens have this hook bound --
+   * so one `A` would have clicked the ring's element twice (a toggle that
+   * undoes itself) and one direction would have moved it two stops. A ref
+   * rather than a dependency, so the bindings are not torn down and re-made
+   * on the way out.
+   */
+  const live = useRef(active);
+  live.current = active;
+
   useEffect(() => {
     startInputMode();
     startPad();
@@ -45,6 +59,7 @@ export function useCursorNav(): void {
      * either, which meant it could not start a game.
      */
     const press = on("a", () => {
+      if (!live.current) return;
       const stop = getCursor();
       if (!stop) return;
       const el = stopElement(stop);
@@ -57,6 +72,7 @@ export function useCursorNav(): void {
 
     const unbind = DIRECTIONS.map((dir) =>
       on(dir, () => {
+        if (!live.current) return;
         const moved = moveCursor(dir);
         if (moved) {
           if (!muted()) play("move");
@@ -96,7 +112,7 @@ export function useCursorNav(): void {
    */
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
-      if (getInputMode() === "mouse") return;
+      if (!live.current || getInputMode() === "mouse") return;
       const stop = stopAtPoint(event.clientX, event.clientY);
       if (stop) setCursor(stop);
     };

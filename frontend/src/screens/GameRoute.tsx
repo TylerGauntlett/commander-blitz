@@ -11,6 +11,15 @@
  * The seat starts null -- "ask my token" -- and moves once. `useGame`'s query
  * key contains the seat, so that single change refetches exactly once, which is
  * the same number of requests the two-hook version made.
+ *
+ * COMING BACK TO A GAME DOES NOT DEAL IT AGAIN (TECH_DEBT FT-07). The held
+ * seat is null on every mount, and the table used to wait for it -- so a back
+ * press into a game whose state was sitting in the query cache still drew
+ * "Dealing…", faded it out, and only then faded the table in. The seat the
+ * table draws for is now `held ?? game.yourSeat`: a cached response already
+ * says whose seat this is, so it renders the table on the first frame, and
+ * `useGame` keeps that response as placeholder data across the key change
+ * the held seat then makes.
  */
 
 import { AnimatePresence } from "motion/react";
@@ -49,18 +58,30 @@ export function GameRoute() {
     seat: null,
   });
   if (held.gameId !== gameId) setHeld({ gameId, seat: null });
-  const seat = held.gameId === gameId ? held.seat : null;
+  const heldSeat = held.gameId === gameId ? held.seat : null;
   // Memoised: `useGame` keys its listener on this object, and a fresh literal
   // every render tore the long poll down and re-issued it on every re-render,
   // leaving a parked server thread behind each time.
-  const gameSession = useMemo(() => (gameId ? { gameId, seat } : null), [gameId, seat]);
+  const gameSession = useMemo(
+    () => (gameId ? { gameId, seat: heldSeat } : null),
+    [gameId, heldSeat],
+  );
   const game = useGame(gameSession);
 
+  /*
+   * The seat to DRAW for, which is not the same question as the seat to ASK
+   * for. The query key moves once, from null to the seat, and that is the
+   * effect below; the table does not have to wait for it. A response for this
+   * game -- including one already in the cache when the route mounts -- names
+   * the seat, and `useGame` only reports a response for the game in the key.
+   */
+  const seat = heldSeat ?? game.yourSeat;
+
   useEffect(() => {
-    if (seat === null && game.yourSeat !== null) {
+    if (heldSeat === null && game.yourSeat !== null) {
       setHeld({ gameId, seat: game.yourSeat });
     }
-  }, [seat, game.yourSeat, gameId]);
+  }, [heldSeat, game.yourSeat, gameId]);
 
   // Leaving the table is one-way: the game is still running on the server, but
   // this client has said it is done with it. `replace` so the back button does
@@ -129,8 +150,20 @@ export function GameRoute() {
   const failed = game.error;
   const status = failed instanceof ApiError ? failed.status : 0;
 
+  /*
+   * A CROSS-FADE, NOT A WAIT.
+   *
+   * `mode="wait"` is right for `App`'s boundary, for the history-gesture reason
+   * `Screen` gives, and it stays there. Here it only ever cost time: the deal
+   * had to fade "Dealing…" all the way out before the table could start
+   * fading in, two back-to-back fades for one change. `popLayout` lifts the
+   * leaving screen out of the flow so the arriving one takes its place at
+   * once, and the two fade across each other. `Screen` stands its controller
+   * and its ring down the moment it starts to leave, so the overlap never has
+   * two of either.
+   */
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="popLayout">
       {game.state && seat !== null ? (
         <Screen key="table" variant="zoom">
           <Table
