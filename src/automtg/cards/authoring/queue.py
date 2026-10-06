@@ -21,6 +21,7 @@ spend anything rediscovering it.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -205,7 +206,6 @@ def _priority(entry: Entry) -> tuple:
 def _summarise(reason: str) -> str:
     """Collapse a reason to its shape, so a hundred cards failing the same way
     group into one line rather than a hundred."""
-    import re
 
     text = re.sub(r"'[^']*'", "'X'", reason)
     text = re.sub(r"\b\d+\b", "N", text)

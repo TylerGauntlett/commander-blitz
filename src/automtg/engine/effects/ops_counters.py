@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Mapping
 from typing import Any
 
@@ -244,8 +245,6 @@ def op_meld(ctx: EffectContext, spec: Mapping[str, Any]):
     # Synthesised rather than the pool entry itself, for one field: a melded
     # permanent's mana value is the total of its front faces' (Brisela's is
     # 11), and the melded card prints no mana cost to carry it.
-    import dataclasses
-
     partner_card = state.registry.get(state.objects[partner].def_id)
     melded.merged_card = dataclasses.replace(
         state.registry.get(card.melds_into),

@@ -9,6 +9,7 @@ happen in exactly one place.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
@@ -1551,7 +1552,6 @@ def _release_delayed_subject(state: GameState, oid: int) -> None:
     """
     if not state.delayed_triggers:
         return
-    from dataclasses import replace
 
     kept = []
     for delayed in state.delayed_triggers:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
 from ..enums import Zone
@@ -565,7 +566,6 @@ def op_copy_ability(ctx: EffectContext, spec: Mapping[str, Any]):
     rarely targets at its own level -- so this asks `ability_of` for the specs the
     ability actually declared.
     """
-    from dataclasses import replace
 
     refs = ctx.targets.get(str(spec.get("target", "t1")), ())
     sids = [ref.id for ref in refs if getattr(ref, "kind", None) == "stack"]

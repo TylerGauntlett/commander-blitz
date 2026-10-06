@@ -14,6 +14,7 @@ Two views:
 
 from __future__ import annotations
 
+import hashlib
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import chars, top_of_library
@@ -374,7 +375,6 @@ def event_log_for(state: GameState, seat: int, since: int = 0) -> list[dict[str,
 
 def fingerprint(state: GameState) -> str:
     """A stable hash of the event log, for golden replay comparisons."""
-    import hashlib
 
     digest = hashlib.sha256()
     for event in state.events:

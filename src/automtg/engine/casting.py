@@ -6,6 +6,7 @@ read apart.
 
 from __future__ import annotations
 
+import dataclasses
 from itertools import combinations
 from typing import TYPE_CHECKING
 
@@ -389,8 +390,6 @@ def _second_face_actions(
     # card built from the two, so `_cast_variant` needs no notion of fusion: it
     # is pricing one spell, as it always is.
     if card.fuse and zone is Zone.HAND:
-        import dataclasses
-
         both = dataclasses.replace(
             card,
             name=f"{card.name} // {face.name}",
@@ -1261,7 +1260,6 @@ def _spell_as_cast(card: CardDef, face_down: bool, bestowed: bool) -> CardDef:
     not a creature spell (702.103b). A filter asking "noncreature" of the
     printed creature card would get both of them backwards.
     """
-    import dataclasses
 
     if face_down:
         return dataclasses.replace(

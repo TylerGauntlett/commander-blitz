@@ -14,6 +14,7 @@ Anything that fails raises :class:`~automtg.engine.errors.DslError` at load time
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from collections.abc import Iterable, Mapping
 from pathlib import Path
@@ -1720,7 +1721,6 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     ``level`` on anything else is checked here and stamped on the ability the
     ordinary compiler builds, so no branch below has to know Classes exist.
     """
-    import dataclasses
 
     where = f"{card_where}.abilities[{index}]"
     if model.kind == "level":
@@ -1764,7 +1764,6 @@ def _compile_level_line(
     Class in print would otherwise write the same three things, and any one of
     them could write one wrong.
     """
-    import dataclasses
 
     if model.level is None or model.level < 2:
         raise DslError(

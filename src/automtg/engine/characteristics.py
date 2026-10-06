@@ -78,6 +78,7 @@ bumps.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
@@ -826,7 +827,6 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
         return printed
-    import dataclasses
 
     return tuple(dataclasses.replace(ability, index=i) for i, ability in enumerate(out))
 

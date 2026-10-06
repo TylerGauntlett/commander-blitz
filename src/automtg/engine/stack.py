@@ -8,6 +8,7 @@ engine needing continuations or state snapshots.
 from __future__ import annotations
 
 from collections.abc import Generator, Sequence
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .actions import DecisionOption, PendingDecision
@@ -531,7 +532,6 @@ def _choose_each_target(
     ``optional`` with a count above one -- "exactly N, or none" forbids the
     sizes in between, and a min/max pick cannot say that.
     """
-    from dataclasses import replace
 
     if len(specs) != 1:
         return None

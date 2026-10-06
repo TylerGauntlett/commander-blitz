@@ -22,8 +22,12 @@ asking for work that cannot be accepted.
 
 from __future__ import annotations
 
+import ast
+import inspect
 import json
 import re
+import textwrap
+import typing
 from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -270,9 +274,6 @@ def _op_options() -> dict[str, list[str]]:
     which the note beside it says, because the failure this exists to prevent is
     a worker treating silence as a "no".
     """
-    import ast
-    import inspect
-    import textwrap
 
     def read_keys(fn, seen: set) -> set[str]:
         """Keys ``fn`` reads out of a mapping parameter, following it one hop.
@@ -445,7 +446,6 @@ def _literal_options(model, field: str) -> list[str]:
     `kind` is a closed vocabulary of five and the reference named none of them,
     so the only way to learn the spelling was to find a shipped card using it.
     """
-    import typing
 
     annotation = model.model_fields[field].annotation
     if typing.get_origin(annotation) is typing.Literal:

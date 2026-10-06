@@ -13,6 +13,7 @@ is exactly one code path for "a player did something".
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Generator, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -374,8 +375,6 @@ class Game:
         # Built here the same way legality built it to price the line, so the
         # two cannot disagree about what is being cast.
         elif action.fused and card.second_face is not None:
-            import dataclasses
-
             face = state.registry.get(card.second_face)
             card = dataclasses.replace(
                 card,

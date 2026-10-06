@@ -10,6 +10,7 @@ simplification -- real Magic lets the controller choose the order).
 from __future__ import annotations
 
 from collections.abc import Generator, Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CLOAK_WARD, Ability, TriggerSpec
@@ -575,7 +576,6 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
     """
     if not state.delayed_triggers:
         return
-    from dataclasses import replace
 
     spent: list[DelayedTrigger] = []
     for delayed in list(state.delayed_triggers):

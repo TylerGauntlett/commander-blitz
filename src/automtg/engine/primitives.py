@@ -7,6 +7,7 @@ that is the effect layer's job.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -1796,7 +1797,6 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     same place a card on the stack lives -- so nothing that walks the
     battlefield sees it twice.
     """
-    import dataclasses
 
     host = state.objects.get(host_oid)
     newcomer = state.objects.get(card_oid)
