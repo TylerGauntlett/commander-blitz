@@ -1,0 +1,47 @@
+{
+  "card": {
+    "color_identity": [
+      "G"
+    ],
+    "colors": [
+      "G"
+    ],
+    "id": "verdant_kraken",
+    "mana_cost": "{4}{G}{G}{G}",
+    "name": "Verdant Kraken",
+    "oracle_text": "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)",
+    "power": 6,
+    "subtypes": [
+      "Plant",
+      "Kraken"
+    ],
+    "toughness": 6,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "any"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "forest_tentacle_3_3_g_land",
+            "amount": {
+              "const": 1
+            },
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

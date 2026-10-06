@@ -1,0 +1,77 @@
+{
+  "card": {
+    "id": "carmen_cruel_skymarcher",
+    "name": "Carmen, Cruel Skymarcher",
+    "mana_cost": "{3}{W}{B}",
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "keywords": ["flying"],
+    "oracle_text": "Flying\nWhenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.\nWhenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.",
+        "trigger": {
+          "event": "sacrificed",
+          "controller": "any"
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"self_only": true}
+          },
+          {
+            "op": "gain_life",
+            "amount": {"const": 1},
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self",
+          "controller": "you"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "optional": true,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "not_types": ["Instant", "Sorcery"],
+              "mana_value": {
+                "op": "<=",
+                "value": {"power_of": {"self": true}}
+              }
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "controller": "you",
+            "destination": "battlefield",
+            "objects": {"target": "t1"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

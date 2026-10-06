@@ -15,8 +15,15 @@ from __future__ import annotations
 
 from automtg.engine import zones
 from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from tests.conftest import advance_to_step, count_on_battlefield, only_oid, pass_until
+from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from tests.conftest import (
+    _default_answer,
+    advance_to_step,
+    count_on_battlefield,
+    find_action,
+    only_oid,
+    pass_until,
+)
 
 BEAR = "grizzly_bears"  # a plain 2/2
 WALKER = "t_walker"  # a loyalty-4 planeswalker with no static of its own
@@ -276,3 +283,171 @@ class TestEdgarAncientBloodlord:
         pass_until(game, lambda g: g.state.active_player == 1)
         assert not has_keyword(game.state, edgar, "menace")
         assert game.state.objects[edgar].counters.get("+1/+1") == 1
+
+
+CARMEN = "carmen_cruel_skymarcher"
+SERRA = "serra_angel"  # {3}{W}{W}, mana value 5
+RITE = "village_rites"  # an instant card in the graveyard: not a permanent card
+ANCHOR = "t_plain_instant"  # a reason for priority to stop in each seat
+
+
+class TestCarmenCruelSkymarcher:
+    """"Whenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and
+    you gain 1 life." / "Whenever Carmen attacks, return up to one target
+    permanent card with mana value less than or equal to Carmen's power from your
+    graveyard to the battlefield."
+
+    Neither line is reachable by gate 5: nothing is sacrificed in its sandbox and
+    combat is declined. The near misses are each one word: **a player** (an
+    opponent's sacrifice counts), **sacrifices** (a destroyed creature does not),
+    **permanent card** (an instant does not come back), and **Carmen's power** --
+    her current power, counters included, not the printed 2.
+    """
+
+    def board(self, builder, *, graveyard=(), active: int = 0, counters: int = 0):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains"] * 3 + [BEAR])
+            .battlefield(0, [CARMEN], counters={"+1/+1": counters} if counters else None)
+            .battlefield(1, ["plains", BEAR])
+            .graveyard(0, list(graveyard))
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .library(0, ["plains"] * 20)
+            .library(1, ["plains"] * 20)
+            .active(active)
+            .step(Step.PRECOMBAT_MAIN)
+            .max_turns(3)
+            .build()
+        )
+        return game, only_oid(game, CARMEN, 0)
+
+    def settle(self, game, *, targets=(), limit: int = 300) -> list[set[int]]:
+        """Empty the stack, choosing ``targets`` wherever objects are chosen.
+        Returns the object ids each choice offered."""
+        offered: list[set[int]] = []
+        for _ in range(limit):
+            decision = game.pending()
+            if decision is None:
+                return offered
+            if decision.kind is DecisionKind.CHOOSE_OBJECTS:
+                if not decision.selected:
+                    offered.append(
+                        {o.ref.id for o in decision.options if getattr(o.ref, "kind", "") == "object"}
+                    )
+                choice = next(
+                    (
+                        a
+                        for a in game.legal_actions()
+                        if a.kind is ActionKind.CHOOSE
+                        and a.targets
+                        and a.targets[0].id in set(targets)
+                        and a.targets[0].id not in set(decision.selected or ())
+                    ),
+                    None,
+                )
+                if choice is None and not targets:
+                    # "Up to one": a trigger's target combinations include the
+                    # empty one, offered as its own choice rather than a finish.
+                    choice = next(
+                        (
+                            a
+                            for a in game.legal_actions()
+                            if a.kind is ActionKind.CHOOSE and not a.targets
+                        ),
+                        None,
+                    )
+                game.apply(choice or find_action(game, ActionKind.FINISH_DECLARATION))
+                continue
+            if (
+                decision.kind is DecisionKind.PRIORITY
+                and not game.state.stack
+                and not game.state.pending_triggers
+            ):
+                return offered
+            game.apply(_default_answer(game, decision))
+        raise AssertionError("the stack did not empty")
+
+    def life(self, game) -> int:
+        return game.state.players[0].life
+
+    def test_your_sacrifice_grows_her_and_gains_one(self, builder):
+        game, carmen = self.board(builder)
+        zones.sacrifice(game.state, only_oid(game, BEAR, 0))
+        self.settle(game)
+        assert game.state.objects[carmen].counters.get("+1/+1") == 1
+        assert self.life(game) == 41
+
+    def test_an_opponents_sacrifice_counts_too(self, builder):
+        """"Whenever **a player** sacrifices" -- not "you"."""
+        game, carmen = self.board(builder)
+        zones.sacrifice(game.state, only_oid(game, BEAR, 1))
+        self.settle(game)
+        assert game.state.objects[carmen].counters.get("+1/+1") == 1
+        assert self.life(game) == 41
+        assert game.state.players[1].life == 40, "**you** gain 1 life, not the sacrificer"
+
+    def test_a_land_is_a_permanent(self, builder):
+        game, carmen = self.board(builder)
+        zones.sacrifice(game.state, only_oid(game, "plains", 1))
+        self.settle(game)
+        assert game.state.objects[carmen].counters.get("+1/+1") == 1
+
+    def test_a_destroyed_creature_is_not_a_sacrifice(self, builder):
+        game, carmen = self.board(builder)
+        zones.destroy(game.state, only_oid(game, BEAR, 1))
+        self.settle(game)
+        assert game.state.objects[carmen].counters.get("+1/+1") is None
+        assert self.life(game) == 40
+
+    def test_each_sacrifice_is_its_own_trigger(self, builder):
+        game, carmen = self.board(builder)
+        zones.sacrifice(game.state, only_oid(game, BEAR, 0))
+        zones.sacrifice(game.state, only_oid(game, BEAR, 1))
+        self.settle(game)
+        assert game.state.objects[carmen].counters.get("+1/+1") == 2
+        assert self.life(game) == 42
+
+    def attack(self, game, carmen: int) -> None:
+        pass_until(
+            game,
+            lambda g: g.pending() is not None
+            and g.pending().kind is DecisionKind.DECLARE_ATTACKERS,
+        )
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER
+                and a.source == carmen
+                and a.targets[0].kind == "player"
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+
+    def test_attacking_returns_a_card_her_power_reaches(self, builder):
+        game, carmen = self.board(builder, graveyard=[BEAR, SERRA, RITE])
+        bear, serra, rite = list(game.state.players[0].graveyard)
+        self.attack(game, carmen)
+        offered = self.settle(game, targets=[bear])
+        assert offered and offered[0] == {bear}, "power 2: the 2-drop, not the 5 or the instant"
+        assert game.state.objects[bear].zone is Zone.BATTLEFIELD
+        assert game.state.objects[serra].zone is Zone.GRAVEYARD
+        assert game.state.objects[rite].zone is Zone.GRAVEYARD
+
+    def test_her_power_is_her_current_power(self, builder):
+        """Three counters make her a 5/5, and Serra Angel's 5 is now in reach."""
+        game, carmen = self.board(builder, graveyard=[BEAR, SERRA, RITE], counters=3)
+        bear, serra, rite = list(game.state.players[0].graveyard)
+        self.attack(game, carmen)
+        offered = self.settle(game, targets=[serra])
+        assert offered and offered[0] == {bear, serra}
+        assert game.state.objects[serra].zone is Zone.BATTLEFIELD
+        assert game.state.objects[rite].zone is Zone.GRAVEYARD
+
+    def test_up_to_one_may_return_nothing(self, builder):
+        game, carmen = self.board(builder, graveyard=[BEAR])
+        [bear] = list(game.state.players[0].graveyard)
+        self.attack(game, carmen)
+        self.settle(game, targets=[])
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD

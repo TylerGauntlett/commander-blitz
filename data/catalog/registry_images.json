@@ -1615,6 +1615,10 @@
     "artist": "Lindsey Look",
     "scryfall_id": "ad5ea98a-e36e-4ab9-b4da-cc572f3777db"
   },
+  "carmen_cruel_skymarcher": {
+    "artist": "Randy Vargas",
+    "scryfall_id": "a61a6ff1-146c-4e2c-83d4-6d9fd3830a18"
+  },
   "carnelian_orb_of_dragonkind": {
     "artist": "Lars Grant-West",
     "scryfall_id": "46027bce-64d4-4fbc-bdf7-643d2a65d9dc"
@@ -3747,6 +3751,10 @@
   "forest_dryad_1_1_g_land": {
     "artist": "Donato Giancola",
     "scryfall_id": "107be8ee-ee22-4d37-94f1-2a5b438fbe05"
+  },
+  "forest_tentacle_3_3_g_land": {
+    "artist": "Deruchenko Alexander",
+    "scryfall_id": "fc924972-5014-45d1-9676-6a76d862b205"
   },
   "forgotten_cave": {
     "artist": "Wayne Wu",
@@ -11158,6 +11166,14 @@
     "artist": "Nicholas Gregory",
     "scryfall_id": "b33b6922-2584-43e1-98d4-e722e7c9393c"
   },
+  "turntimber_serpentine_wood": {
+    "artist": "Randy Vargas",
+    "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6"
+  },
+  "turntimber_symbiosis_turntimber_serpentine_wood": {
+    "artist": "Randy Vargas",
+    "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6"
+  },
   "turtle_seals": {
     "artist": "Gemi",
     "scryfall_id": "3a144e7f-e0f7-4346-a4e8-f4a358c3b4a9"
@@ -11545,6 +11561,10 @@
   "verdant_catacombs": {
     "artist": "Vance Kovacs",
     "scryfall_id": "94c229ea-90da-4aa0-bfda-b162fb3b5b8b"
+  },
+  "verdant_kraken": {
+    "artist": "Wayne Reynolds",
+    "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0"
   },
   "verdant_sun_s_avatar": {
     "artist": "Izzy",

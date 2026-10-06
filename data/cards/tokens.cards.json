@@ -809,6 +809,44 @@
       ]
     },
     {
+      "id": "forest_tentacle_3_3_g_land",
+      "name": "Forest Tentacle Token",
+      "oracle_text": "3/3 green Forest Tentacle land creature token.\n{T}: Add {G}.",
+      "types": [
+        "Land",
+        "Creature"
+      ],
+      "subtypes": [
+        "Forest",
+        "Tentacle"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "fractal_0_0_gu",
       "name": "Fractal Token",
       "oracle_text": "0/0 green and blue Fractal creature token.",

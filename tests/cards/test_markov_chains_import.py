@@ -4,7 +4,9 @@ The deck was pinned by #22, #24 and #28 and then kept moving: the list gained
 Ghostly Prison, and a pasted link came back 90 of 91 distinct cards native,
 with the one pillowfort in it reading as inert text. It moved again -- Canyon
 Slough and Zulaport Cutthroat out, Clever Concealment and Edgar, Ancient
-Bloodlord in -- and came back 90 of 91 with Edgar partial. This file holds the list
+Bloodlord in -- and came back 90 of 91 with Edgar partial. Then once more --
+Vampire Nocturnus out, Carmen, Cruel Skymarcher in -- and 90 of 91 with Carmen
+partial, until #53 wrote her. This file holds the list
 as it now stands, imported through the same `importer.import_deck` a pasted
 link goes through, so a card dropping out of `data/cards/auto/` or an engine
 change invalidating one fails here rather than in a game.
@@ -45,6 +47,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Bloodthrone Vampire", 1),
     ("Bojuka Bog", 1),
     ("Captivating Vampire", 1),
+    ("Carmen, Cruel Skymarcher", 1),
     ("Carrion Feeder", 1),
     ("Caves of Koilos", 1),
     ("Charismatic Conqueror", 1),
@@ -107,7 +110,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Talisman of Hierarchy", 1),
     ("Talisman of Indulgence", 1),
     ("Teferi's Protection", 1),
-    ("Vampire Nocturnus", 1),
     ("Vampire of the Dire Moon", 1),
     ("Vault of the Archangel", 1),
     ("Vein Ripper", 1),

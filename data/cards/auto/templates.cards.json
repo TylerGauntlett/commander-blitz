@@ -17441,6 +17441,108 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "sacrificed"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "carmen_cruel_skymarcher",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{B}",
+      "name": "Carmen, Cruel Skymarcher",
+      "oracle_text": "Flying\nWhenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.\nWhenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -124014,6 +124116,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "turntimber_serpentine_wood",
+      "name": "Turntimber, Serpentine Wood",
+      "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 3
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "turntimber_symbiosis_turntimber_serpentine_wood",
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Turntimber Symbiosis // Turntimber, Serpentine Wood",
+      "oracle_text": "Look at the top seven cards of your library. You may put a creature card from among them onto the battlefield. If that card has mana value 3 or less, it enters with three additional +1/+1 counters on it. Put the rest on the bottom of your library in a random order.",
+      "second_face": "turntimber_serpentine_wood",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "counters": {
+            "+1/+1": 3
+          },
+          "counters_if": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            }
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -128067,6 +128253,48 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "forest_tentacle_3_3_g_land"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "verdant_kraken",
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Verdant Kraken",
+      "oracle_text": "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Kraken"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

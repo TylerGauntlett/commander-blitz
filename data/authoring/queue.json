@@ -39962,12 +39962,12 @@
     },
     "Carmen, Cruel Skymarcher": {
       "edhrec_rank": 2744,
-      "gate": "template",
+      "gate": null,
       "name": "Carmen, Cruel Skymarcher",
-      "reason": "no template for: Whenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 lif",
+      "reason": "",
       "scryfall_id": "a61a6ff1-146c-4e2c-83d4-6d9fd3830a18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carnage Altar": {
@@ -294482,13 +294482,13 @@
     },
     "Turntimber Symbiosis // Turntimber, Serpentine Wood": {
       "edhrec_rank": 2296,
-      "gate": "template",
+      "gate": null,
       "name": "Turntimber Symbiosis // Turntimber, Serpentine Wood",
-      "reason": "no template for: Look at the top seven cards of your library. You may put a creature card from among them o",
+      "reason": "",
       "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Turret Ogre": {
       "edhrec_rank": 23983,
@@ -303106,9 +303106,9 @@
       "name": "Verdant Kraken",
       "reason": "",
       "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Verdant Mastery": {
       "edhrec_rank": 11998,
