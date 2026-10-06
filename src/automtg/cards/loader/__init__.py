@@ -34,8 +34,7 @@ from automtg.engine.carddef import (
 )
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_player import shut_cast_zones
-from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
-from automtg.engine.effects.selectors import validate_selector
+from automtg.engine.effects.selectors import ZONE_NAMES, validate_selector
 from automtg.engine.effects.values import (
     validate_value,
 )
@@ -4152,7 +4151,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"nothing in the graveyard would ever qualify"
                 )
 
-            known = {z.lstrip("!") for z in zones} - set(_ZONES) - {"any"}
+            known = {z.lstrip("!") for z in zones} - set(ZONE_NAMES) - {"any"}
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
