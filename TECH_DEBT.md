@@ -14,8 +14,9 @@ others). Their write-ups are in the last version of the old report:
 
 ## Suggested order
 
-1. **Structural:** CD-01 (one card layer), OF-01.
-2. **Decision:** RS-01 (rewrite history or not).
+1. **Cheap:** UI-02 (one accessibility pass).
+2. **Structural:** CD-01 (one card layer), OF-01.
+3. **Decision:** RS-01 (rewrite history or not).
 
 ---
 
