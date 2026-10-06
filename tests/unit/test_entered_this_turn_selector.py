@@ -31,7 +31,7 @@ Three near misses, each of which would be a different card:
    one: that field is what `summoning_sick` reads, and it is not the arrival
    record 400.7 makes meaningful.
 
-Witness: Ocelot Pride (`data/authoring/answers/ocelot_pride.json`).
+Witness: Ocelot Pride (`ocelot_pride` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

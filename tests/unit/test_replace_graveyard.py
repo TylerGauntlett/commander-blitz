@@ -45,7 +45,7 @@ relation — Leyline of the Void says "an opponent's graveyard" — and 404.1 pu
 card in its owner's graveyard however control changed. Reading the controller
 would exile a stolen card that should go to its owner's pile untouched.
 
-Witness: Rest in Peace (`data/authoring/answers/rest_in_peace.json`).
+Witness: Rest in Peace (`rest_in_peace` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

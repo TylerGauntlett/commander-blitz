@@ -37,7 +37,7 @@ blue creature card through. `any_of` is the only spelling that says what is
 printed, and the blue creature below is how that is measured.
 
 Witness: Tannuk, Steadfast Second
-(`data/authoring/answers/tannuk_steadfast_second.json`), whose second line is
+(`tannuk_steadfast_second` in `data/cards/auto/`), whose second line is
 the whole of the grant.
 """
 

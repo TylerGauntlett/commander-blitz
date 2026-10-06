@@ -28,7 +28,7 @@ abilities too, turning a first-strike hoser into half a Humility.
 `TestItTakesOnlyWhatItNames` is that one.
 
 Witness: Archetype of Courage
-(`data/authoring/answers/archetype_of_courage.json`).
+(`archetype_of_courage` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

@@ -15,9 +15,9 @@ ability. Each half is covered on its own by `test_battles.py` and
 `test_batched_combat_damage.py`; nothing there casts one card that needs all of
 it at once.
 
-The card itself lives in `data/authoring/answers/zurgo_and_ojutai.json` and is
-verified through the six authoring gates, but it is not in the registry until
-the deck lane collects it -- and the behaviour gate cannot reach this anyway,
+The card itself is `zurgo_and_ojutai` in `data/cards/auto/`, verified through
+the six authoring gates. It was not yet in the registry when this was written,
+before the deck lane collected it -- and the behaviour gate cannot reach this anyway,
 because it casts a card and stops before combat (see the worker brief's trap 1
 and 5). So the shape is carried by a test-pool card with the same trigger and
 the same effects, `t_zao_lord`, and the gates cover the card file.

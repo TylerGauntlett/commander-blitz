@@ -1184,7 +1184,17 @@ def read_answers() -> dict[str, dict]:
     An answer is ``{"card": {...}, "expectation": {...}}``. Both halves are
     required -- see the module docstring.
     """
-    out: dict[str, dict] = {}
+    return {card_id: payload for card_id, (_, payload) in _answer_files().items()}
+
+
+def _answer_files() -> dict[str, tuple[Path, dict]]:
+    """Every readable answer, keyed by the card id it carries, with its path.
+
+    Keyed by ``card.id`` rather than by file name, as :func:`read_answers` always
+    was: the two normally agree, but `bloodline_keeper_lord_of_lineage.json`
+    carried `bloodline_keeper`, and retiring by file name would have left it.
+    """
+    out: dict[str, tuple[Path, dict]] = {}
     if not answers_dir().exists():
         return out
     for path in sorted(answers_dir().glob("*.json")):
@@ -1194,5 +1204,25 @@ def read_answers() -> dict[str, dict]:
             continue
         card = payload.get("card")
         if isinstance(card, dict) and card.get("id"):
-            out[card["id"]] = payload
+            out[card["id"]] = (path, payload)
     return out
+
+
+def retire(card_ids: set[str]) -> int:
+    """Delete the answer and the packet of every card id given; return how many files.
+
+    Called by ``author_cards.py --collect`` for each card it has just written
+    into ``data/cards/auto/``. From that moment the pool is the card's only
+    source of truth: an answer left on disk is re-verified and rewritten into
+    ``templates.cards.json`` on every later collect, which silently reverts any
+    fix made to the collected card. So ``answers/`` holds work in progress and
+    nothing else, and the packet -- regenerable by ``--tier agent`` -- goes with it.
+    """
+    removed = 0
+    paths = [path for card_id, (path, _) in _answer_files().items() if card_id in card_ids]
+    paths += [packets_dir() / f"{card_id}.json" for card_id in sorted(card_ids)]
+    for path in paths:
+        if path.exists():
+            path.unlink()
+            removed += 1
+    return removed

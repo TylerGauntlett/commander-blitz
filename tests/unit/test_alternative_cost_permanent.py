@@ -58,7 +58,13 @@ LINE = (
     "You may pay {W} and tap four untapped creatures you control with flying "
     "rather than pay this spell's mana cost."
 )
-ANSWERS = Path(__file__).resolve().parents[2] / "data" / "authoring" / "answers"
+POOL = Path(__file__).resolve().parents[2] / "data" / "cards" / "auto" / "templates.cards.json"
+
+
+def shipped(card_id: str) -> dict:
+    """The collected card as it ships -- not its answer, which collect retires."""
+    cards = json.loads(POOL.read_text(encoding="utf-8"))["cards"]
+    return next(c for c in cards if c["id"] == card_id)
 
 
 def position(builder, *, fliers: int = 4, plains: int = 1, **flier_kwargs):
@@ -346,12 +352,12 @@ class TestTheResidualGateClaimsTheLine:
         claims their lines -- but their printed costs are the corpus it has to
         read: return an Island, pitch a blue card, sacrifice a creature, pay
         life, and the conditional free cast."""
-        spec = json.loads((ANSWERS / f"{card_id}.json").read_text(encoding="utf-8"))["card"]
+        spec = shipped(card_id)
         card = compiled(spec)
         assert _covered(card, spec["oracle_text"].split("\n")[0])
 
     def test_a_shipped_line_with_the_wrong_life_does_not_read(self):
-        spec = json.loads((ANSWERS / "snuff_out.json").read_text(encoding="utf-8"))["card"]
+        spec = shipped("snuff_out")
         spec["alternative_cost"]["pay_life"] = 2
         card = compiled(spec)
         assert not _covered(card, spec["oracle_text"].split("\n")[0])

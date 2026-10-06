@@ -29,7 +29,7 @@ is a row in a timed table (`structs.CastLock`) beside the life lock, read back
 by `primitives.cast_locked_zones` on the three roads a cast can take that
 ask a zone at all.
 
-Witness: Avatar's Wrath (`data/authoring/answers/avatar_s_wrath.json`), whose
+Witness: Avatar's Wrath (`avatar_s_wrath` in `data/cards/auto/`), whose
 second line this is. Without it the card is either missing a sentence or
 carrying one three times as harsh.
 """

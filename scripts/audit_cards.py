@@ -438,7 +438,7 @@ def check_substitutions() -> None:
     """Which deck substitutions the engine has since outgrown.
 
     Aesi swaps Scute Swarm out because "copy effects are not implemented" -- and
-    ``data/authoring/answers/scute_swarm.json`` implements it with
+    ``scute_swarm`` in ``data/cards/auto/`` implements it with
     ``copy_permanent``. Reported, never undone: putting a card back changes the
     deck's composition and is somebody's decision, not a script's.
     """

@@ -28,7 +28,7 @@ The permission lasts "while each one is exiled" and so carries no clock: it
 dies with `reset_permanent_state` as the card leaves exile, which is both what
 the sentence says and what 400.7 would have said anyway.
 
-Witness: Avatar's Wrath (`data/authoring/answers/avatar_s_wrath.json`), whose
+Witness: Avatar's Wrath (`avatar_s_wrath` in `data/cards/auto/`), whose
 first line this is. Without it the card exiles the board and gives it to the
 wrong player at the wrong price.
 """

@@ -47,7 +47,7 @@ triggered" and so need no distinction; a card that needs it needs a field first,
 and is a gap record until it has one.
 
 Witness: Peter Parker's Camera
-(`data/authoring/answers/peter_parker_s_camera.json`).
+(`peter_parker_s_camera` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

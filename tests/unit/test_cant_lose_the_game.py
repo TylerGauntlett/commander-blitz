@@ -41,7 +41,7 @@ so a Phyrexian cost or a Bitterblossom still takes you below 1 under Angel's
 Grace. That is correct, and it is why the floor is read in `damage_player` and
 nowhere else — `TestItFloorsDamageAndNotEveryLoss` measures the difference.
 
-Witness: Angel's Grace (`data/authoring/answers/angel_s_grace.json`).
+Witness: Angel's Grace (`angel_s_grace` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

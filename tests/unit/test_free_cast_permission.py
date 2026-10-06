@@ -29,7 +29,7 @@ free line is therefore an extra action carrying `Action.cast_free`, and which
 line was taken is read off the *answer* rather than off the board, because the
 board offers both.
 
-Witness: Dracogenesis (`data/authoring/answers/dracogenesis.json`), whose only
+Witness: Dracogenesis (`dracogenesis` in `data/cards/auto/`), whose only
 line this is. Without it the card is a six-mana enchantment that does nothing.
 """
 

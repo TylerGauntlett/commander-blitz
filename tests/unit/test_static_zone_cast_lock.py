@@ -35,7 +35,7 @@ What it does **not** stop, on purpose: the opponents' hand casts, its own
 controller's casts, and the special action of foretelling (116.2c), which puts a
 card into exile but casts nothing.
 
-Witness: Drannith Magistrate (`data/authoring/answers/drannith_magistrate.json`).
+Witness: Drannith Magistrate (`drannith_magistrate` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

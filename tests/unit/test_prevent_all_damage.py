@@ -31,7 +31,7 @@ itself, and it shields nothing sitting at home. Both are pinned below, because a
 version that dropped either would look identical on a board where everything
 happens to be attacking.
 
-Witness: Rescue Retriever (`data/authoring/answers/rescue_retriever.json`).
+Witness: Rescue Retriever (`rescue_retriever` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

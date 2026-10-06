@@ -31,7 +31,7 @@ printed duration: it dies with `state.combat`, needs no clock of its own, and a
 second combat granted the same turn correctly begins free of it.
 
 Witness: Odric, Master Tactician
-(`data/authoring/answers/odric_master_tactician.json`).
+(`odric_master_tactician` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

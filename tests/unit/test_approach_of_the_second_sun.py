@@ -39,7 +39,7 @@ stated reason: a card tucked sixth when the card says seventh is drawn a turn
 early, which is the whole of what the depth buys.
 
 Witness: Approach of the Second Sun
-(`data/authoring/answers/approach_of_the_second_sun.json`).
+(`approach_of_the_second_sun` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

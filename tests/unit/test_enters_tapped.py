@@ -42,7 +42,7 @@ claim, and without it every symmetric card in the family would acquire the exact
 bug this static exists to fix.
 
 Witness: Authority of the Consuls
-(`data/authoring/answers/authority_of_the_consuls.json`).
+(`authority_of_the_consuls` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

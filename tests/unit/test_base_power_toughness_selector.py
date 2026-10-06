@@ -25,7 +25,7 @@ says so.
 where a creature's size begins cannot drift from the pipeline's.
 
 Witness: Angelic Aberration
-(`data/authoring/answers/angelic_aberration.json`).
+(`angelic_aberration` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

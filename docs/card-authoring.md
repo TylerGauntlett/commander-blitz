@@ -275,6 +275,14 @@ python scripts/author_cards.py --tier agent --card "Rhystic Study"   # or one by
 python scripts/author_cards.py --collect                 # verify, commit survivors
 ```
 
+`--collect` deletes the answer and the packet of every card it accepts, once the
+pool is written. The card then lives only in `data/cards/auto/`, so
+`data/authoring/answers/` holds work in progress and nothing else, and a later
+collect cannot rewrite a collected card from a stale answer. A collect starts
+from the `templates.cards.json` on disk and only adds or replaces entries, so a
+card whose answer is gone stays collected. Packets are not committed
+(`.gitignore`): `--tier agent` regenerates one whenever it is needed.
+
 A reader that *cannot* express a card must not approximate it. It writes a **gap
 record** to `data/authoring/gaps/<card_id>.json` instead — the missing capability,
 named, with the reason the existing vocabulary falls short. `scripts/report_gaps.py`

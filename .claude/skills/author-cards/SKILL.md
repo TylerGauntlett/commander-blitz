@@ -102,6 +102,15 @@ The one place the card pool changes. Re-verifies every answer on disk through al
 six gates and atomically rewrites `templates.cards.json`, `expectations.json` and
 `queue.json`. Prints `accept <id>` or `REJECT <id>: <gate> -- <reason>` per card.
 
+**An accepted card's answer and packet are deleted** once the pool is written.
+From then on `data/cards/auto/` is the card's only source of truth, and
+`answers/` holds nothing but work in progress. The collect starts from the
+`templates.cards.json` already on disk and only adds or replaces, so a card whose
+answer is gone stays collected. Rejected answers stay for step 6.
+
+Packets are gitignored: `--tier agent` regenerates one whenever it is needed, so
+a packet is never committed.
+
 ### 6 · Repair, once
 
 For each `REJECT`, `SendMessage` the gate and reason back to **the same worker**,
@@ -114,8 +123,8 @@ answer file must not stay on disk either way**:
 - wrong for some other reason → `rm data/authoring/answers/<card_id>.json`
 
 This matters more than it looks. `--collect` globs the whole answers directory
-every run, so an answer left behind is re-verified and re-rejected on every future
-run forever, re-marking its queue entry `failed` each time. Deleting it leaves the
+every run, so a rejected answer left behind is re-verified and re-rejected on every
+future run forever, re-marking its queue entry `failed` each time. Deleting it leaves the
 queue entry carrying its gate and reason, which is the signal `--report` aggregates.
 
 ### 7 · Normalize gaps, then report

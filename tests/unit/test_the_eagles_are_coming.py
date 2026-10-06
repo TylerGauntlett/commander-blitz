@@ -37,7 +37,7 @@ cannot — and that refusal's own docstring names `as` as the intended idiom.
 do.
 
 Witness: The Eagles Are Coming!
-(`data/authoring/answers/the_eagles_are_coming.json`).
+(`the_eagles_are_coming` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

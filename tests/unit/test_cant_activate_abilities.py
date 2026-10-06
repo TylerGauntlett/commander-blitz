@@ -35,7 +35,7 @@ leaves or the turn passes. A prohibition that outlived either would be a
 different card.
 
 Witness: Myrel, Shield of Argive
-(`data/authoring/answers/myrel_shield_of_argive.json`).
+(`myrel_shield_of_argive` in `data/cards/auto/`).
 """
 
 from __future__ import annotations

@@ -34,7 +34,7 @@ and it turns out to work. `TestTheSelfUntappedGate` is the proof, and it is the
 whole of how the card is beaten in play — you tap the Orb on the opponent's end
 step.
 
-Witness: Winter Orb (`data/authoring/answers/winter_orb.json`).
+Witness: Winter Orb (`winter_orb` in `data/cards/auto/`).
 """
 
 from __future__ import annotations
