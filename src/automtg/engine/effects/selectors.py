@@ -1153,6 +1153,7 @@ def has_printed_cost(state, oid: int, wanted) -> bool:
 
 
 def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
+    # Local: `values` imports `selectors`, and each evaluates the other.
     from .values import evaluate_value
 
     if isinstance(spec, int):
@@ -1229,6 +1230,7 @@ def pick_from_pool(
     if count_spec == "any":
         min_count, max_count = 0, len(pool)
     else:
+        # Local: `values` imports `selectors`, and each evaluates the other.
         from .values import evaluate_value
 
         count = evaluate_value(ctx, count_spec)

@@ -10,7 +10,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from .characteristics import _matches
-from .player_statics import static_life_floor
+from .player_statics import _battlefield_statics, static_life_floor
 from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -634,7 +634,6 @@ def _forbidden_by_a_static(state: GameState, oid: int) -> bool:
     docstring above gives: making the choice illegal is the rule (701.17b), and
     making the action silently fail would spin the state-based-action loop.
     """
-    from .player_statics import _battlefield_statics
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:

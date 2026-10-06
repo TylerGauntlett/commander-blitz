@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
-from .characteristics import chars
+from .characteristics import _battlefield_statics, chars
 from .cost_reduction import cost_reduction, variant_reduction
 from .costs import can_pay, commander_cost, life_cost, mana_sources, spell_purpose, zone_of
 from .effects.conditions import evaluate_condition
@@ -1502,7 +1502,6 @@ def _cast_variant(
             return cost_reduction(state, pid, card, aimed_at) + variant_less
 
         discount = _discount_for(None)
-        from .characteristics import _battlefield_statics
 
         targeted_discount = any(
             static.get("targeting") is not None

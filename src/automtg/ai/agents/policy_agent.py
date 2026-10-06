@@ -71,6 +71,7 @@ class PolicyAgent:
         if self.model is None or self.vocab is None:
             return self.fallback.act(game, seat, actions)
 
+        # torch is optional (the `train` extra), so it loads only when used.
         import torch
 
         table = action_space.build(game.state)

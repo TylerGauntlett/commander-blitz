@@ -14,8 +14,8 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CLOAK_WARD, Ability, TriggerSpec
-from .characteristics import _matches as _static_matches
 from .characteristics import (
+    _battlefield_statics,
     _matches_printed,
     abilities_of,
     chars,
@@ -25,6 +25,7 @@ from .characteristics import (
     granted_wards,
     resolve_chosen_subtypes,
 )
+from .characteristics import _matches as _static_matches
 from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
@@ -744,7 +745,6 @@ def _trigger_doublers(state: GameState, event: GameEvent):
     gate through `players_doubling_land_triggers`, which is the single place
     every player-wide static is gated.
     """
-    from .characteristics import _battlefield_statics
 
     out = []
     for source_obj, static in _battlefield_statics(state):
@@ -2046,6 +2046,7 @@ def drain_to_stack(state: GameState):
     """
     if not state.pending_triggers:
         return
+    # Local: `stack` imports `triggers` to fire as things are cast.
     from .stack import push_triggered_ability
 
     order = [

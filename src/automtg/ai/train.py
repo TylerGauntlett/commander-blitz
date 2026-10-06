@@ -60,6 +60,7 @@ class TrainConfig:
 
 
 def train(config: TrainConfig) -> Path:
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
     from torch import nn, optim
 

@@ -825,7 +825,7 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
         # count an opponent's board as well as yours.
         raise DslError(f"{where}: needs 'objects' -- an empty selector is every permanent")
     if validate_objects is None:
-        from .selectors import validate_selector as validate_objects
+        validate_objects = validate_selector
     validate_objects(spec["objects"], f"{where}.objects")
 
 
@@ -921,7 +921,7 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
             f'{{"self_only": true}}, it is every permanent the filter defaults to'
         )
     if validate_objects is None:
-        from .selectors import validate_selector as validate_objects
+        validate_objects = validate_selector
     validate_objects(spec["objects"], f"{where}.objects")
 
 
@@ -968,7 +968,7 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
             f"say who in {where}.player instead"
         )
     if validate_objects is None:
-        from .selectors import validate_selector as validate_objects
+        validate_objects = validate_selector
     validate_objects(objects, f"{where}.objects")
 
 

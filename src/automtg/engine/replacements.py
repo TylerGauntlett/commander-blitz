@@ -239,6 +239,7 @@ def _offer_cast(
     chosen now. Targets are the first legal tuple, which is the same
     simplification `suspend.cast_for_free` documents.
     """
+    # Local: `costs` imports `replacements` to discard.
     from .costs import can_pay, pay, zone_of
 
     obj = state.objects.get(oid)

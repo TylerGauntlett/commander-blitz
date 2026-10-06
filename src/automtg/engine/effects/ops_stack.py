@@ -6,6 +6,12 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import Any
 
+from ..characteristics import (
+    _battlefield_statics,
+    _matches_printed,
+    resolve_chosen_colors,
+    resolve_chosen_subtypes,
+)
 from ..enums import Zone
 from ..events import EventType
 from ..stack import StackItem, ability_of, announce_targets
@@ -289,12 +295,6 @@ def _shielded_by_a_static(state, item) -> bool:
     it is one card saying it about itself, and could never cover a spell the
     static's controller does not own.
     """
-    from ..characteristics import (
-        _battlefield_statics,
-        _matches_printed,
-        resolve_chosen_colors,
-        resolve_chosen_subtypes,
-    )
 
     card = state.registry.get(item.def_id)
     for source_obj, static in _battlefield_statics(state):

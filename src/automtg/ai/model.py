@@ -35,6 +35,7 @@ class ModelConfig:
 
 def build_model(config: ModelConfig):
     """Construct the actor-critic network.  Requires the ``train`` extra."""
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
     from torch import nn
 
@@ -89,6 +90,7 @@ def build_model(config: ModelConfig):
 
 def to_batch(observations: list[dict[str, np.ndarray]]):
     """Stack a list of observations into tensors."""
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
 
     scalar = torch.as_tensor(np.stack([o["scalar"] for o in observations]))
@@ -104,6 +106,7 @@ def save(model, path, config: ModelConfig, vocab_ids: list[str] | None = None) -
     :func:`load` does ``ModelConfig(**blob["config"])``, so a new key in there
     would raise on every checkpoint written before this existed.
     """
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
 
     blob = {"state_dict": model.state_dict(), "config": config.__dict__}
@@ -114,6 +117,7 @@ def save(model, path, config: ModelConfig, vocab_ids: list[str] | None = None) -
 
 def load(path):
     """Load a checkpoint, rebuilding the network from the config it was saved with."""
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
 
     blob = torch.load(path, map_location="cpu", weights_only=False)
@@ -131,6 +135,7 @@ def load_vocab_ids(path) -> list[str] | None:
     which card, and the registry it is used against may no longer be the one it
     was trained on.
     """
+    # torch is optional (the `train` extra), so it loads only when used.
     import torch
 
     blob = torch.load(path, map_location="cpu", weights_only=False)

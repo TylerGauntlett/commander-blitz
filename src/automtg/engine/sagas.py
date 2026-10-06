@@ -187,6 +187,7 @@ def turn_based_lore(state: GameState) -> None:
     counter is put on a permanent you control" sees a Saga ticking -- and so the
     chapter comparison happens in the one funnel instead of twice.
     """
+    # Local: `primitives` imports `sagas`.
     from .primitives import add_counters
 
     for oid in list(state.battlefield):
@@ -211,6 +212,7 @@ def chapter_on_stack(state: GameState, oid: int) -> bool:
     sacrifice every Saga at the instant its final chapter triggered and throw the
     chapter away with it.
     """
+    # Local: `stack` reaches `sagas` through `primitives`.
     from .stack import ability_of
 
     waiting = (*state.stack, *state.pending_triggers)

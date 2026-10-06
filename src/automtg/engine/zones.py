@@ -540,6 +540,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     not offer one: a player with no land in hand is not asked a question whose
     "yes" cannot be honoured, and the permanent goes to `instead_zone`.
     """
+    # Local: `costs` imports `zones` to sacrifice, exile and bounce.
     from .costs import can_pay, pay
 
     obj = state.objects.get(oid)
@@ -590,6 +591,7 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
     at 2 life is never shown a question whose yes would kill them and whose
     payment would fail anyway.
     """
+    # Local: `costs` imports `zones` to sacrifice, exile and bounce.
     from .costs import can_pay, pay
 
     obj = state.objects.get(oid)
@@ -778,6 +780,7 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
     same defect, reached from the other side, that `self_enters_tapped` gave ten
     of these cards.
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches
 
     for source_obj, static in _battlefield_statics(state):
@@ -824,6 +827,7 @@ def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[
     source in that group applies nothing: Giada entering alongside an Angel was
     not on the battlefield when the Angel's entry was decided (614.12).
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches, _matching_objects
 
     entering = {
@@ -909,6 +913,7 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
     printed card in this family does, so nothing sets it today and the default is
     the common case rather than a guess.
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches_printed
 
     for source_obj, static in _battlefield_statics(state):
@@ -1304,6 +1309,7 @@ def _enter_battlefield(
     granted = obj.mana_granted_keywords
     obj.mana_granted_keywords = set()
     if granted:
+        # Local: `primitives` imports `zones` for `move_object`.
         from .primitives import grant_keyword
 
         for keyword in sorted(granted):
