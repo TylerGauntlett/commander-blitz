@@ -272,7 +272,13 @@
   gap: 6px;
 }
 
-/* One commander. Still `.cmdslot`, because a pile of e2e selectors say so. */
+/* One commander. Still `.cmdslot`, because a pile of e2e selectors say so.
+
+   No box around the portrait. The picture has a ring of its own and the orb has
+   a border of its own; a third rectangle between them is a frame around a frame,
+   and padding this column cannot spend at any width. This is the handheld-board
+   round's plinth (`docs/design-record.md#handheld-board`), drawn the same at
+   every size rather than only on a Deck. */
 .cmdslot {
   /* Pips size themselves off `--card-w`, which nothing sets in this column;
      without a value here `.pip` falls back to a 104px card and the cost row
@@ -281,38 +287,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   width: 100%;
-  padding: 5px;
-  border: 1px solid rgb(216 166 60 / 0.3);
-  border-radius: 8px;
-  background: rgb(30 24 8 / 0.35);
+  padding: 0;
+  border: 0;
+  background: none;
   color: inherit;
   text-align: left;
   cursor: default;
 }
 
 /*
- * A banner rather than a card's 1.4 portrait, and the aspect is doing two jobs.
- *
- * The mat's first column is a hard 190px, so the portrait cannot grow sideways
- * whatever the viewport does -- which means the only way to make it *taller* is
- * to make it narrower, and a narrower plinth left "In command" truncating to
- * "IN COMM…" beside the cost pips. Full width at 2:1 gives the name and the
- * state strip the whole column and still costs about eighty pixels of height,
- * which is what this column has to spare: at 1600x950 the orb has 341px of row
- * to fit a portrait, a life dial, a mana row and five piles into, and the piles
- * are the first thing to fall below the fold.
- *
- * `object-fit: cover` on a 1.4 source crops the top and bottom rather than
- * squashing it, which on creature art keeps the creature.
- */
-/*
- * The banner's box, separately from the picture in it.
+ * The portrait's box, separately from the picture in it.
  *
  * It exists for two reasons. It is what the life seal is positioned against --
  * the art's bottom edge is the only anchor in this column that does not have to
- * guess at a width. And it reserves the 2:1 band whether or not there is an
+ * guess at a width. And it reserves the portrait whether or not there is an
  * image yet: the art element is still conditional (drawing the hatched "no art"
  * plate before `/images` resolves would flash it on every first paint), and a
  * box that appeared on fetch would drop the life dial into place a beat after
@@ -330,28 +320,48 @@
  * that now has height to spare, and it is the same trade the orb round's 03 'Plinth' (`docs/design-record.md#orb`)
  * already made with `.cmdwrap`'s bottom padding.
  */
+/*
+ * 1.16:1, and the crop mostly refunds itself.
+ *
+ * `art_crop` is 626x457, or 1.37:1. A 2:1 banner kept the width and threw most
+ * of the height away; 1.16:1 keeps roughly 84% of the width, and that is the
+ * difference between a portrait and a thumbnail.
+ *
+ * `max-height` is the short-viewport valve. The width is the column's, so on a
+ * 768px desktop the 1.16 portrait would eat the room the piles need; past the
+ * cap the box simply gets wider than its ratio and `cover` crops the art rather
+ * than squashing it. On a Deck the cap never binds -- 18vh of 800 is 144px,
+ * above the 128 the ratio asks for.
+ */
 .cmdplinth__frame {
   position: relative;
   display: block;
+  max-height: clamp(96px, 18vh, 220px);
   margin-bottom: calc(var(--seal-w) * 0.34);
-  aspect-ratio: 2;
+  aspect-ratio: 1.16;
 }
 
+/* An outline, not an inset box-shadow, for the ring: the `<img>` paints over an
+   inset shadow, and an outline paints over the content. */
 .cmdplinth__art {
   position: absolute;
   display: block;
   inset: 0;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 8px;
   background: #241f33;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.45);
+  outline: 1px solid var(--edge-hi);
+  outline-offset: -1px;
 }
 
+/* A LIFT, NOT A LOOK. `art_crop` is printed to be read through a card's text
+   box; on a dark panel at this size it comes out muddy without it. */
 .cmdplinth__art img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: saturate(1.18) contrast(1.04) brightness(1.14);
 }
 
 /* Not every card has a printing, and a lazily-fetched crop can fail. An honest
@@ -370,29 +380,12 @@
   letter-spacing: 0.06em;
 }
 
-/* What this portrait is. Pinned over the art's corner rather than given a row
-   of its own -- the same badge language `.face__tag--cmd` uses on a card, and
-   the same brass, so the two read as one idea. Costs no height at all, which
-   in this column is the whole point. */
+/* The "CMD" badge, dropped: the price strip sits across the corner it was
+   pinned to, and the strip's own state word says what this portrait is. */
 .cmdplinth__tag {
-  position: absolute;
-  z-index: 2;
-  top: 4px;
-  left: 4px;
-  padding: 0 4px;
-  border-radius: 3px;
-  background: var(--frame-commander);
-  color: #2a1e05;
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1.5;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+  display: none;
 }
 
-/* Two lines and then an ellipsis. The name is the thing the old card face could
-   not fit, so it gets the room here rather than the type line and the P/T --
-   both of which the preview rail already carries. */
 /* Two lines and then an ellipsis. The name is the thing the old card face could
    not fit, so it gets the room here rather than the type line and the P/T --
    both of which the preview rail already carries.
@@ -407,49 +400,76 @@
   line-clamp: 2;
   -webkit-box-orient: vertical;
   color: var(--text);
-  font-size: 10.5px;
+  font-size: clamp(11px, 7cqi, 14px);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.85);
 }
 
+/*
+ * The price strip, on the picture and at the TOP of it.
+ *
+ * Not at the bottom, because the dial hangs over the bottom-right corner and
+ * covered the tax and the state word. Opaque rather than a scrim, because a
+ * scrim over a painting is legible on some paintings.
+ *
+ * `.cmdslot` is `position: relative` with no padding, and the frame is its
+ * first child at zero offset, so this lands on the art without the strip moving
+ * in the DOM.
+ */
 .cmdplinth__strip {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  left: 0;
   display: flex;
+  flex-wrap: wrap;
+  align-content: center;
   align-items: center;
   gap: 4px;
   min-width: 0;
+  min-height: clamp(17px, 12cqi, 21px);
+  padding: 0 5px;
+  border-radius: 8px 8px 0 0;
+  background: rgb(9 8 20 / 0.82);
+  line-height: 1.3;
 }
 
 /* The shape channel. Small, but it is a different *outline* per state, which
    registers faster than reading the word beside it. */
 .cmdplinth__glyph {
   flex: 0 0 auto;
-  font-size: 9px;
+  font-size: clamp(9px, 6cqi, 12px);
   line-height: 1;
 }
 
-/* And the word channel. Truncates rather than wrapping: it is a label, and a
-   two-line label would push the dial down every time the commander died. */
+/*
+ * And the word channel, at the strip's right end.
+ *
+ * It wraps rather than ellipsising -- the strip is `flex-wrap`, the word is
+ * `nowrap`, so a word that does not fit takes a second line whole. "In comm..."
+ * beside a three-symbol cost is the shape of a bug this plinth has had before,
+ * and a clipped word costs the word in the state where it matters most.
+ */
 .cmdplinth__word {
-  overflow: hidden;
-  color: var(--text-faint);
-  font-size: 8.5px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
+  margin-left: auto;
+  overflow: visible;
+  color: var(--text-dim);
+  font-size: clamp(10px, 6.5cqi, 13px);
+  font-weight: 700;
   white-space: nowrap;
 }
 
-/* What you owe, pushed to the strip's right edge and so landing directly above
-   the mana row that pays it. That adjacency is the reason the commander moved
-   into this panel. */
+/* What you owe, first in the strip and so landing a glance above the mana that
+   pays it. It only exists in the command zone, so it and the word never compete
+   for the width. */
 .cmdplinth__cost {
   display: flex;
   flex: 0 0 auto;
+  order: -1;
   gap: 2px;
   align-items: center;
-  margin-left: auto;
 }
 
 /* The tax, beside the cost it modifies. */
@@ -466,13 +486,18 @@
 
 /* Ready ------------------------------------------------------------------
  *
- * Lit frame, lit portrait, `▶ READY`. The glow matches `.card--playable`'s
- * recipe in cards.css so the board says "you can play this" one way. */
+ * Lit ring, lit portrait, `▶ Ready`. The plinth has no box of its own any more,
+ * so the ring the portrait already wears is what lights. The glow matches
+ * `.card--playable`'s recipe in cards.css so the board says "you can play this"
+ * one way. */
 .cmdslot--ready {
-  border-color: var(--playable);
-  background: rgb(20 40 28 / 0.5);
-  box-shadow: 0 0 0 1px var(--playable), 0 0 16px rgb(92 224 138 / 0.35);
   cursor: pointer;
+}
+
+.cmdslot--ready .cmdplinth__art {
+  outline: 2px solid var(--playable);
+  outline-offset: -2px;
+  box-shadow: 0 0 16px rgb(92 224 138 / 0.35);
 }
 
 .cmdslot--ready .cmdplinth__word {
@@ -497,23 +522,14 @@
   opacity: 0.62;
 }
 
-/* Deployed: it is out there rather than in here. An empty socket -- inset
-   rather than raised -- with the portrait still lit, because the card is very
-   much alive and you want to find it on the board. */
-.cmdslot--deployed {
-  border-color: rgb(216 166 60 / 0.22);
-  background: rgb(12 10 22 / 0.55);
-  box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.5);
-}
+/* Deployed: it is out there rather than in here. The portrait stays lit,
+   because the card is very much alive and you want to find it on the board;
+   the strip's word says where it went. */
 
-/* Fallen: dead or exiled. Desaturated and dashed -- a broken frame reads as
+/* Fallen: dead or exiled. Desaturated and dashed -- a broken ring reads as
    "not here" at a glance, where a colour change would not. */
-.cmdslot--fallen {
-  border-style: dashed;
-  border-color: rgb(216 166 60 / 0.25);
-}
-
 .cmdslot--fallen .cmdplinth__art {
+  outline-style: dashed;
   filter: grayscale(0.85);
   opacity: 0.7;
 }
@@ -576,12 +592,21 @@
  * into the slack. `min-height: 0` with a flex item's default `min-height: auto`
  * floors it at its content, so a short viewport crops nothing.
  *
- * `--seal-w` is the single knob for the life dial at both column widths, which
- * is one fewer place `.orb--compact` is a second design wearing the first one's
- * class names -- README defect #3. */
+ * **One design, sized by its column.** This is the handheld-board round's
+ * plinth (`docs/design-record.md#handheld-board`) at every size. It used to be
+ * that only on a Deck, with a brass seal, leaf stacks and a 2:1 banner on
+ * desktop -- two designs off one DOM. Now the orb is an inline-size container
+ * and everything in it is sized in `cqi`, so the 190px desktop column and the
+ * Deck's 132-190px one draw the same panel at their own scale.
+ * `handheld.css` adds only the Deck's floors (16px type, 44px targets).
+ *
+ * `--seal-w` is the single knob for the life dial: the disc, its numeral, the
+ * overhang the portrait reserves for it and the offset it hangs at all derive
+ * from it. It is resolved where it is used, so its `cqi` reads this container. */
 
 .orb {
-  --seal-w: clamp(52px, 6.6vh, 76px);
+  --seal-w: clamp(52px, 42cqi, 64px);
+  container-type: inline-size;
   position: relative;
   display: flex;
   flex: 1 1 auto;
@@ -640,24 +665,31 @@
   );
 }
 
-/* Everything that is not the ground. `space-between` is where the extra column
-   height goes: the plinth stays at the top, the piles land on the bottom edge,
-   and the rows between them breathe rather than the panel ending early. */
+/* Everything that is not the ground. The plinth stays at the top and the foot
+   lands on the bottom edge (see `.orb__foot` below), so the panel never ends
+   early. */
 .orb__body {
   position: relative;
   z-index: 2;
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
   gap: 4px;
   min-height: 0;
-  padding: 8px 10px;
+  padding: 4px;
 }
 
+/* All of the column's slack goes in one place, above the foot. `space-between`
+   split it, which floated the portrait away from the name it belongs under. */
+.orb__foot {
+  margin-top: auto;
+}
+
+/* Whose turn it is, as a ring inset so it reads as the panel's own edge rather
+   than as a second border outside the one already there. */
 .orb--active {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 1px rgb(255 212 121 / 0.35), 0 0 22px rgb(255 212 121 / 0.14);
+  border-color: var(--edge);
+  box-shadow: inset 0 0 0 2px var(--astral-hi);
 }
 
 .orb--targetable {
@@ -681,6 +713,8 @@
    one row where a plate would box in the portrait underneath it. */
 .orb__name {
   overflow: hidden;
+  padding: 0 2px;
+  font-size: clamp(12px, 7.5cqi, 15px);
   font-weight: 700;
   text-overflow: ellipsis;
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
@@ -714,9 +748,13 @@
  * this narrow, and it puts the two things you hunt for -- who am I, how am I
  * doing -- in one glance instead of two.
  *
- * The brass is a radial gradient with its highlight at 34%/26% -- one light
- * source, consistently placed, which is what makes it read as a disc rather
- * than a circle with a gradient in it. `::after` is the engraved inner ring. */
+ * And a ring you can read the life total off. A conic gradient to `--fill`
+ * (set by `PlayerOrb`) turns "34" into "34 of the 40 you started with" without
+ * adding a character.
+ *
+ * `::before` is the ring and `::after` is the hole punched out of it, which is
+ * why the numeral has to claim a stacking context of its own -- an absolutely
+ * positioned pseudo-element paints over static content. */
 .dial {
   position: relative;
   display: grid;
@@ -724,41 +762,31 @@
   width: var(--seal-w);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 34% 26%,
-    #fbeec2 0%,
-    #d8b055 38%,
-    #8a6a22 72%,
-    #4d3a12 100%
+  box-shadow: 0 0 0 3px var(--void-0);
+}
+
+.dial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--gold) 0 var(--fill, 0%),
+    rgb(255 255 255 / 0.09) var(--fill, 0%) 100%
   );
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.6), inset 0 0 0 3px rgb(0 0 0 / 0.22), inset 0 -6px 14px
-    rgb(0 0 0 / 0.35);
 }
 
 .dial::after {
   content: "";
   position: absolute;
-  inset: 7px;
+  inset: calc(var(--seal-w) * 0.08);
   border-radius: 50%;
-  border: 1px solid rgb(60 38 8 / 0.5);
-}
-
-/* An opponent's dial is desaturated copper: still legible, but plainly
-   reference material rather than the number you are managing. */
-.dial--foe {
-  background: radial-gradient(
-    circle at 34% 26%,
-    #f0d6bd 0%,
-    #b98b6a 38%,
-    #6f4c33 72%,
-    #3a2418 100%
-  );
+  background: var(--void-1);
 }
 
 /* Whose turn it is, said on the object the eye is already on. */
 .dial--active {
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.6), inset 0 0 0 3px rgb(0 0 0 / 0.22), inset 0 -6px 14px
-    rgb(0 0 0 / 0.35), 0 0 34px rgb(255 206 120 / 0.42);
+  box-shadow: 0 0 0 3px var(--void-0), 0 0 24px rgb(255 206 120 / 0.42);
 }
 
 .dial--out {
@@ -775,23 +803,22 @@
  * `PlayerOrb` flashes the numeral green or red on a life change and returns it
  * to a resting colour -- and Framer writes that resting colour back as an
  * INLINE style, which beats every rule in this file from the first hit
- * onwards. So the component named the token directly, and on a handheld, where
- * the disc is not brass but a ring around a hole in `--void-1`, that stamped
- * near-black ink onto a dark purple well: the life total went unreadable after
- * the first point of damage, on the one layout the game is built for.
+ * onwards. When the component named the ink directly, the old brass seal's
+ * near-black was stamped onto the ring's dark well and the life total went
+ * unreadable after the first point of damage.
  *
- * One name, defined here and re-pointed by `handheld.css`, and the component
- * says `var(--dial-n)` without knowing which treatment it is on. It is the same
- * argument `--fill` already makes in `PlayerOrb`: the two dials differ in CSS
- * alone.
+ * So the component says `var(--dial-n)` and never knows what the disc looks
+ * like. The numeral sits in a hole punched out of `--void-1`, so the resting
+ * ink is the page's own text colour.
  */
 .dial__n {
-  --dial-n: var(--dial-ink);
+  --dial-n: var(--text);
+  position: relative;
+  z-index: 1;
   color: var(--dial-n);
-  font-size: calc(var(--seal-w) * 0.41);
+  font-size: calc(var(--seal-w) * 0.44);
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
 }
 
 /*
@@ -799,9 +826,8 @@
  *
  * Positioned against `.cmdplinth__frame`, which is the art's own box -- the only
  * anchor here that does not have to guess at the column's width. A third of the
- * disc hangs below the art and lands on the name's two clamped lines, which is
- * why the name reserves room on its right and the state strip below it does not
- * have to.
+ * disc hangs below the art, into the room `.cmdplinth__frame`'s margin
+ * reserves, so the name under it never has to indent around it.
  *
  * `pointer-events: none` is load-bearing: the portrait underneath is the cast
  * control, and a decorative disc must not eat the click that casts your
@@ -809,7 +835,7 @@
  */
 .cmdplinth__frame .dial {
   position: absolute;
-  right: 2px;
+  right: 0;
   bottom: calc(var(--seal-w) * -0.34);
   z-index: 3;
   pointer-events: none;
@@ -835,7 +861,7 @@
 .orb__foot {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 /*
@@ -857,24 +883,25 @@
   background: rgb(9 8 20 / 0.55);
 }
 
-/* A plate has room for the word, which used to live only in a `title` attribute
-   nobody hunts for. Full width so the chips below it centre as a row rather than
-   wrapping around the label. */
+/* "MANA" over a row of mana symbols -- a heading for a row of one kind of thing,
+   immediately above that thing. Dropped; the panel's `data-hint` still says it
+   in words. */
 .orb__lab {
-  flex: 0 0 100%;
-  color: var(--text-faint);
-  font-size: 7.5px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-align: center;
-  text-transform: uppercase;
+  display: none;
 }
 
 /* "You have no mana" -- a line that says something, where a vanishing plate
-   would have said it by moving everything else. */
+   would have said it by moving everything else. Spans the grid below. */
 .orb__none {
+  display: grid;
+  grid-column: 1 / -1;
+  place-items: center;
+  height: clamp(22px, 15cqi, 28px);
+  border-radius: 5px;
+  background: var(--pane-well);
+  box-shadow: inset 0 0 0 1px var(--edge);
   color: var(--text-faint);
-  font-size: 10px;
+  font-size: clamp(10px, 6.5cqi, 13px);
 }
 
 /* Mana panel ------------------------------------------------------------ */
@@ -887,24 +914,41 @@
  * symbol's width a pip per mana wrapped to three rows on a ten-land board, so the
  * count moved into the chip -- which is also how a player says it out loud.
  *
- * `--pip` is fixed here rather than derived from `--card-w`. Nothing in this
- * column is a card, and the panel's job is to stay one line high whatever the
- * board is doing.
+ * And the groups are a GRID of chips: four sources make tidy rows rather than a
+ * centred run that re-flows every time a land taps. `auto-fit` gives three to a
+ * row in a desktop column and two in a Deck's, by width rather than by a
+ * breakpoint.
+ *
+ * `--pip` follows the column rather than `--card-w`. Nothing in this column is
+ * a card.
  */
 .orb__mana {
-  --pip: 13px;
-  gap: 3px 7px;
+  --pip: clamp(13px, 9cqi, 16px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+  gap: 3px;
+  padding: 0;
+  background: none;
 }
 
 .mana-grp {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 2px;
+  height: clamp(22px, 15cqi, 28px);
+  border-radius: 5px;
+  background: var(--pane-well);
+  box-shadow: inset 0 0 0 1px var(--edge);
+}
+
+.mana-grp--spent {
+  box-shadow: inset 0 0 0 1px var(--staged);
 }
 
 .mana-grp__n {
   color: var(--text);
-  font-size: 10px;
+  font-size: clamp(11px, 7cqi, 14px);
   font-weight: 700;
 }
 
@@ -957,133 +1001,140 @@
   filter: grayscale(1);
 }
 
-/* Zone piles ------------------------------------------------------------
+/* Zone chips ------------------------------------------------------------
  *
- * `Lib 72 / GY 3 / Exile 1` gave three numbers to compare by reading. A pile
- * shows the *shape* of the game as well as the count -- a library drawn down to
- * nothing is visibly a short stack beside a graveyard that has grown.
+ * A chip per zone: the zone's own colour as the GROUND, one dark ink on all of
+ * them, a `SeatIcon` mark and the count -- the chip an opponent's seat already
+ * draws, so a zone is a shape and a colour and a number. These were leaf stacks
+ * with a word under them, and the word could go once the mark could say it
+ * (`docs/design-record.md#handheld-board`).
  *
- * Bottom-aligned so those heights read against each other, and still buttons:
- * these replaced the zone chips, and the chips were the only way into ZonePeek.
+ * Which of them you can press is drawn rather than learned: a lit top edge and a
+ * dropped bottom one on the four that open a peek, a recessed and desaturated
+ * face on the library, which is hidden information and never a control. Relief,
+ * not colour, so it survives greyscale.
+ *
+ * One row, equal shares: a zone row that wraps leaves a lone chip on a line
+ * of its own, which reads as a button rather than as the fifth of five. When
+ * exile makes it five, the mark stacks over the count so each chip still fits
+ * its fifth of a 190px column. `handheld.css` wraps them two to a row instead,
+ * because the Deck's 44px target floor does not fit five across at any width
+ * it has. A revealed library is the exception: it takes a row of its own, so
+ * the card's name has room to be read.
  */
 .piles {
   display: flex;
+  gap: 3px;
+}
+
+.piles:has(.pile--revealed) {
   flex-wrap: wrap;
-  /* Five piles have to fit the 190px side column in one row, or the command
-     zone wraps below the fold: 5 x 28 + 4 x 5 = 160px. */
-  gap: 6px 5px;
-  align-items: flex-end;
-  justify-content: center;
-  /* On a plate, for the same reason the two panels above it are: a leaf stack is
-     a low contrast graphic and the wash underneath it is a picture. */
-  padding: 5px 4px 4px;
-  border-radius: 8px;
-  background: rgb(9 8 20 / 0.55);
 }
 
 .pile {
   display: flex;
-  flex-direction: column;
+  flex: 1 1 0;
+  /* `row-reverse` rather than reordering the markup: the count is the stack's
+     last leaf, and the stack has to stay first. */
+  flex-direction: row-reverse;
   align-items: center;
-  gap: 4px;
-  padding: 0;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  height: clamp(30px, 21cqi, 44px);
+  padding: 0 3px;
   border: 0;
-  background: none;
+  border-radius: 6px;
+  background: var(--zone-gy);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.34), inset 0 -1px 0 rgb(0 0 0 / 0.34);
+  color: var(--chip-ink);
 }
 
-.pile__stack {
-  position: relative;
-  display: block;
-  width: 28px;
+.piles:has(> .pile:nth-child(5)) .pile {
+  flex-direction: column-reverse;
+  gap: 1px;
 }
 
-.pile__leaf {
-  display: block;
-  height: 3px;
-  margin-bottom: 1px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #2b1d3a, #4a3560 40%, #2b1d3a);
-  box-shadow: 0 1px 0 rgb(0 0 0 / 0.55);
+.pile:has(.pile__leaf--lib) {
+  background: var(--zone-lib);
 }
 
-/* The top leaf is a card back carrying the exact count, so capping the leaves
-   below costs resolution and never information. */
+.pile:has(.pile__leaf--hand) {
+  background: var(--zone-hand);
+}
+
+.pile:has(.pile__leaf--ex) {
+  background: var(--zone-ex);
+}
+
+.pile:has(.pile__leaf--cmd) {
+  background: var(--zone-cmd);
+}
+
+.pile--static {
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.6);
+  filter: saturate(0.55);
+}
+
+.pile:hover:not(.pile--static) {
+  filter: brightness(1.12);
+}
+
+.pile--empty {
+  opacity: 0.55;
+}
+
+/* One ink on all of them, because the chip's own colour is what says which zone
+   this is -- the mark is there to say it a second way. */
+.pile .ico {
+  width: 14px;
+  height: 14px;
+  color: var(--chip-ink);
+}
+
+/* The leaves under the count are gone: at chip size a zone is a mark and a
+   count, and the stack under it is height the column does not have.
+   `:not(.pile__leaf--top)`, because the top leaf is where the count is
+   printed. Nothing here drops a number. */
+.pile__leaf:not(.pile__leaf--top) {
+  display: none;
+}
+
 .pile__leaf--top {
-  display: grid;
-  place-items: center;
-  height: 21px;
-  border-radius: 3px;
-  border: 1px solid var(--edge-hi);
-  background: linear-gradient(150deg, #43305c, #241834);
-  color: var(--astral-hi);
-  font-size: 10px;
+  display: block;
+  color: var(--chip-ink);
+  font-size: clamp(12px, 8cqi, 16px);
   font-weight: 800;
+  line-height: 1;
 }
 
-/* Teal, and deliberately the furthest thing here from the library's purple:
-   these two sit next to each other and are the two counts most often compared. */
-.pile__leaf--hand {
-  background: linear-gradient(150deg, #1d4a46, #0f2523);
-}
-
-.pile__leaf--top.pile__leaf--hand {
-  border-color: rgb(90 200 190 / 0.45);
-}
-
-.pile__leaf--gy {
-  background: linear-gradient(150deg, #4a3323, #241a12);
-}
-
-.pile__leaf--ex {
-  background: linear-gradient(150deg, #3a3a48, #1d1d26);
-}
-
-.pile__leaf--cmd {
-  background: linear-gradient(150deg, #5a4a1e, #2c2410);
-}
-
-.pile__leaf--top.pile__leaf--cmd {
-  border-color: rgb(216 166 60 / 0.6);
-  color: var(--gold);
-}
-
+/* The word, said by the mark now. `aria-label` keeps the chip named. */
 .pile__label {
-  color: var(--text-faint);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.pile--empty .pile__leaf--top {
-  opacity: 0.4;
+  display: none;
 }
 
 /* "Play with the top card of your library revealed."
  *
- * The library pile is the one that is normally inert -- hidden information, no
+ * The library chip is the one that is normally inert -- hidden information, no
  * peek, no hover. When a card reveals the top it stops being hidden, and the
- * pile has to say so loudly enough to be believed: a gold rim, and the card's
- * name spelled out under the label. Hovering it fills the preview rail, which
- * is where the rules text and the colour actually get read. */
-.pile--revealed .pile__leaf--top {
-  border-color: rgb(216 166 60 / 0.7);
-  color: var(--gold);
+ * chip has to say so loudly enough to be believed: a gold rim, a row of its own,
+ * and the card's name spelled out. Hovering it fills the preview rail, which is
+ * where the rules text and the colour actually get read. */
+.pile--revealed {
+  flex-basis: 100%;
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+  filter: none;
 }
 
 .pile__revealed {
-  max-width: 64px;
+  min-width: 0;
   overflow: hidden;
-  color: var(--gold);
-  font-size: 8px;
-  line-height: 1.2;
-  text-align: center;
+  color: var(--chip-ink);
+  font-size: clamp(10px, 6.5cqi, 14px);
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.pile:hover .pile__leaf--top {
-  border-color: var(--astral-hi);
-  color: #fff;
 }
 
 /* Lanes ---------------------------------------------------------------- */

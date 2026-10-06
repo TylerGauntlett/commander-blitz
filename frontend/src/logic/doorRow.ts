@@ -32,6 +32,8 @@
  * still triggers it.
  */
 
+import { isPhoneSize } from "./breakpoints";
+
 export interface DoorTune {
   /** px between neighbouring cards at rest */
   STEP: number;
@@ -153,7 +155,17 @@ export function poseOf(i: number, s: number, tune: DoorTune, count = 3): DoorPos
  * follow it down: every size on this screen is `max(16px, ...)`, because the
  * 16px floor is a CI gate and a card that shrank its copy would clear the
  * layout by failing the thing the layout is for.
+ *
+ * ON A PHONE THE FLOOR IS 0.4. At 0.72 the stage is laid out at 576px tall or
+ * more, and a phone held sideways has 390-430 -- so the opening hand's Keep and
+ * Mulligan landed below the screen's bottom edge, inside a box that does not
+ * scroll. The phone's type floor is lower too (`--type-floor`), so the copy can
+ * follow the furniture further down. See `isPhoneSize`.
  */
+export const STAGE_FLOOR = 0.72;
+export const PHONE_STAGE_FLOOR = 0.4;
+
 export function stageScale(width: number, height: number): number {
-  return Math.max(0.72, Math.min(1.45, Math.min(width / 1280, height / 800)));
+  const floor = isPhoneSize(width, height) ? PHONE_STAGE_FLOOR : STAGE_FLOOR;
+  return Math.max(floor, Math.min(1.45, Math.min(width / 1280, height / 800)));
 }

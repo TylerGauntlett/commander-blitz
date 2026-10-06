@@ -12,33 +12,46 @@
  */
 
 import { useSyncExternalStore } from "react";
-import { HANDHELD_QUERY, isHandheld } from "../logic/breakpoints";
+import { HANDHELD_QUERY, PHONE_QUERY, isHandheld, isPhone } from "../logic/breakpoints";
 
-let query: MediaQueryList | null = null;
-let queried = false;
+const lists = new Map<string, MediaQueryList | null>();
 
-function media(): MediaQueryList | null {
-  if (queried) return query;
-  queried = true;
+function media(text: string): MediaQueryList | null {
+  if (lists.has(text)) return lists.get(text) ?? null;
+  let list: MediaQueryList | null = null;
   try {
-    query = window.matchMedia(HANDHELD_QUERY);
+    list = window.matchMedia(text);
   } catch {
     // jsdom without the shim, or a server render. Desktop is the safe default:
     // it is the layout every existing story and spec was written against.
-    query = null;
+    list = null;
   }
-  return query;
+  lists.set(text, list);
+  return list;
 }
 
-function subscribe(onChange: () => void): () => void {
-  const list = media();
-  if (!list) return () => undefined;
-  list.addEventListener("change", onChange);
-  return () => list.removeEventListener("change", onChange);
+function subscriber(text: string) {
+  return (onChange: () => void): (() => void) => {
+    const list = media(text);
+    if (!list) return () => undefined;
+    list.addEventListener("change", onChange);
+    return () => list.removeEventListener("change", onChange);
+  };
 }
+
+const subscribeHandheld = subscriber(HANDHELD_QUERY);
+const subscribePhone = subscriber(PHONE_QUERY);
 
 export function useHandheld(): boolean {
-  return useSyncExternalStore(subscribe, isHandheld, () => false);
+  return useSyncExternalStore(subscribeHandheld, isHandheld, () => false);
+}
+
+/**
+ * Whether the viewport is a phone -- a handheld whose floors are too big for it.
+ * See `logic/breakpoints.ts`. Always a subset of `useHandheld()`.
+ */
+export function usePhone(): boolean {
+  return useSyncExternalStore(subscribePhone, isPhone, () => false);
 }
 
 /**

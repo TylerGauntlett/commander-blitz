@@ -52,6 +52,7 @@
 import { motion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { GameView, PlayerView } from "../../api/types";
+import { getInputMode } from "../../input/inputMode";
 import { stopId } from "../../input/stops";
 import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
@@ -287,6 +288,47 @@ export function OpponentSeat({
       : `${arrows[0].label}; ${arrows[1].label}`
   }`;
 
+  /*
+   * FOCUSING THE SEAT READS THEIR COMMANDER, the way hovering its window does.
+   *
+   * The window's `mouseenter` below was the only route into the reader from a
+   * seat, and the ring never enters a child span: it stands on the seat's own
+   * button, because that is what `data-stop="orb:<pid>"` names. So on a Deck
+   * the most-asked question across the table -- what is that deck about --
+   * could be answered at full screen with `Y` and not at all in the rail, and
+   * the rail is the one that stays up while you decide.
+   *
+   * `data-preview-oid` is the half that matters, and it is the plinth's
+   * argument verbatim (`CommandZone.tsx`): `input/cursor.ts`'s `hoverFor` runs
+   * AFTER the ring has moved DOM focus, so whatever `onFocus` wrote is
+   * overwritten by what the stop declares -- a seat that declared nothing went
+   * blank the instant it was reached. The attribute makes the ring and the
+   * pointer one fact.
+   *
+   * `onFocus` is for focus that does not come from the ring, and it stands down
+   * in mouse mode. A click focuses the button too, and a pointer player who
+   * clicked the seat to read their board is pointing at the board next, not at
+   * this commander -- the rail pinned to a card nobody is on is open defect #4
+   * in `docs/design-record.md` again. The pointer already has the window.
+   *
+   * `onBlur` clears only what this seat wrote. Blur fires on the mousedown of
+   * the NEXT click, by which time the pointer has already put whatever it is
+   * over into the rail, and clearing blind would blank a preview that is right.
+   */
+  const reading = commander?.oid ?? null;
+  const focusReads =
+    reading === null
+      ? {}
+      : {
+          onFocus: () => {
+            if (getInputMode() !== "mouse") onHoverCard?.(reading);
+          },
+          onBlur: () => {
+            if (useUiStore.getState().hoveredOid === reading) onHoverCard?.(null);
+          },
+          "data-preview-oid": reading,
+        };
+
   const classes = [
     "seat",
     isActive ? "seat--active" : "",
@@ -307,6 +349,7 @@ export function OpponentSeat({
       data-seat={player.pid}
       disabled={locked}
       onClick={onSelect ? () => onSelect(player.pid) : undefined}
+      {...focusReads}
       layout
       transition={bouncy}
       whileHover={targetable ? { scale: 1.02 } : undefined}

@@ -30,6 +30,8 @@ interface Props {
   setError: (error: string | null) => void;
   stalled: boolean;
   heldCard: number | null;
+  /** Put the held card down -- the pointer's way out, which a pad never needed. */
+  closeHold: () => void;
   dialOpen: boolean;
   setDialOpen: (open: boolean) => void;
   enterGroup: (id: GroupId) => void;
@@ -54,6 +56,7 @@ export function TableOverlays({
   setError,
   stalled,
   heldCard,
+  closeHold,
   dialOpen,
   setDialOpen,
   enterGroup,
@@ -95,7 +98,10 @@ export function TableOverlays({
       anything else, and an exit animation on a thing you dismissed by acting
       would still be fading while the action it was covering resolved.
     */}
-      <CardHold card={heldCard === null ? null : findCard(state, heldCard)} />
+      <CardHold
+        card={heldCard === null ? null : findCard(state, heldCard)}
+        onClose={closeHold}
+      />
 
       {dialOpen && (
         <GroupDial

@@ -495,11 +495,11 @@ html[data-input="keyboard"] .glyph--key {
    ========================================================================== */
 
 [data-handheld] .face {
-  --fs-nm: clamp(16px, calc(var(--card-w) * 0.085), 19px);
-  --fs-tp: clamp(16px, calc(var(--card-w) * 0.062), 18px);
-  --fs-tx: clamp(16px, calc(var(--card-w) * 0.053), 18px);
-  --fs-pt: clamp(16px, calc(var(--card-w) * 0.092), 21px);
-  --fs-chip: clamp(16px, calc(var(--card-w) * 0.062), 18px);
+  --fs-nm: clamp(var(--type-floor), calc(var(--card-w) * 0.085), 19px);
+  --fs-tp: clamp(var(--type-floor), calc(var(--card-w) * 0.062), 18px);
+  --fs-tx: clamp(var(--type-floor), calc(var(--card-w) * 0.053), 18px);
+  --fs-pt: clamp(var(--type-floor), calc(var(--card-w) * 0.092), 21px);
+  --fs-chip: clamp(var(--type-floor), calc(var(--card-w) * 0.062), 18px);
 }
 
 /*
@@ -755,471 +755,67 @@ html[data-input="keyboard"] .hints {
 }
 
 /*
- * "In command", dropped -- the plinth's position already says it.
- *
- * Exactly the same judgement as `.cmdplinth__tag` in the drop list further
- * down, and it is here rather than there because of what it was costing: an
- * opponent's `.cmdplinth__frame { height: 46px }` cap below caps the BANNER,
- * and a commander still in the command zone renders a name (19px) and this
- * word (21px) beneath it in normal flow, which a capped banner does nothing
- * about. That is the trap the frame rule's own comment warns of, one level out,
- * and it is why the art column measured 107px against a 46px cap.
- *
- * THE WORD AND NOT THE STRIP. The strip also carries the commander's cost, and
- * on the viewer's own plinth the cost is the number that decides whether this
- * turn can recast them -- `CommandZone` already drops it for an opponent, where
- * it is not actionable. Hiding the container would have taken both, which on
- * the viewer's side reads as the same class of mistake `.pile__label` was.
+ * The plinth's state glyph, dropped: at the 16px floor the price strip has room
+ * for the cost and the state word, and the word says what the glyph does.
  */
-[data-handheld] .cmdplinth__word,
 [data-handheld] .cmdplinth__glyph {
   display: none;
 }
 
-/*
- * The leaf stack, trimmed to the three leaves that say "stack".
- *
- * A library of 91 draws 91/10 leaves at 4px each and came out **75px** -- the
- * tallest thing in the foot, taller than the 44px hit target it sits inside,
- * and taller than the whole seat is now allowed to be. The leaves are
- * decoration: `.pile__leaf--top` is a card back with the exact count printed on
- * it, so what is dropped here is resolution on a graphic and never a number.
- *
- * `:nth-last-child` and not `max-height`, because the top leaf is the LAST
- * child -- clipping the box would have hidden the one leaf carrying the count
- * and left the decoration behind, which is the wrong half of the trade.
- */
-/*
- * ...AND ON A HANDHELD, ALL OF THEM. The pile becomes a chip.
- *
- * The cap above already accepts that the leaves are decoration and the top one
- * is the number. the handheld-board round (`docs/design-record.md#handheld-board`) finishes the thought: at this size a
- * zone is a MARK AND A COUNT, and the stack under it is height the column does
- * not have. Measured at three seats, keeping the leaves put the viewer's mat
- * 43px past its row -- and `e2e/deckfit.spec.ts` is the gate that says the
- * whole board is on screen.
- *
- * `:not(.pile__leaf--top)` and not the whole stack, because the top leaf is
- * where the count is printed. Nothing here drops a number.
- */
-[data-handheld] .pile__leaf:not(.pile__leaf--top) {
-  display: none;
-}
-
-/*
- * Your own info column, compacted for the same reason theirs was.
- *
- * At 800px tall the viewer's orb wants 430px and its row has 331, so the piles
- * ran under the hand and the graveyard count was simply not on screen.
- *
- * The plinth is deliberately NOT capped here, unlike an opponent's. `--mat-side`
- * is already clamped to 132-190px, so its banner comes out around 68px on its
- * own -- and capping it anyway is what made the commander's name overlap the
- * mana panel, because the name sits below the banner in normal flow and a
- * capped box does not shorten it. What is left to save is the gaps, and the
- * column scrolls if a long loss line still overruns.
- */
-[data-handheld] .play__mine .orb__foot {
-  gap: 3px;
-}
-
 /* ==========================================================================
-   THE VIEWER'S ORB IS the handheld-board round's (`docs/design-record.md#handheld-board`) PLINTH
+   THE VIEWER'S ORB: THE DECK'S FLOORS, NOT A SECOND DESIGN
    ==========================================================================
 
-   the self round's 03 'Plinth' (`docs/design-record.md#self`) argued for this panel and `handheld-board/`
-   drew it beside the three seats it has to belong with: the commander's art as
-   the panel's ground, the portrait as the button that casts them, life as a
-   dial stamped over the portrait's corner, and the zones as chips the same
-   size an opponent's are.
-
-   What shipped was the same idea at desktop proportions -- a 2:1 banner about
-   68px tall, a 52px brass seal, and five leaf stacks -- and at 1280x800 that
-   is not the fourth seat at the table, it is a control panel with a thumbnail
-   on it. The rules below are the mockup's numbers, scoped to the viewer's own
-   column on a handheld and nowhere else: the desktop orb has 190px of width
-   and 518 of height to spend and its own reasons for spending them, and
-   `e2e/orb.spec.ts` still measures those.
-
-   Everything here is a SKIN. No markup moved to get it, which is deliberate:
-   the surface is covered by `tests/playerOrb.test.tsx`, `e2e/orb.spec.ts` and
-   `tests/commandZone.test.tsx`, and a layout round that also rewrites the DOM
-   cannot say which half a regression came out of. */
-
-/* Three pixels, like the mockup's `.orb`. Eight was a desktop panel's padding
-   and it is 16px of a 154px column. */
-[data-handheld] .play__mine .orb__body {
-  gap: 3px;
-  padding: 3px;
-}
+   The plinth (`docs/design-record.md#handheld-board`) is the orb's design at
+   every size now -- `board.css` draws it, sized off its own column in `cqi`.
+   It used to be drawn only here, as a skin over a desktop panel with a brass
+   seal and leaf stacks, which made the same seat look like two games. What is
+   left here is what is genuinely about a Deck: the 16px type floor and the 44px
+   target floor (in the floor lists below), and the few things a 132-190px
+   column has to give up to clear them. */
 
 /*
  * `display: contents`, so the head stops being a row.
  *
- * The name is already dropped further down -- the strip six pixels above names
- * you twice -- which leaves a flex row whose only child is absolutely
- * positioned: an empty line plus a gap, at the top of the tightest column on
- * the screen. Dissolving it also lets the priority tick position against
- * `.orb`, which is what it wants anyway; it hangs off the panel's top edge.
+ * The name is dropped further down -- the information strip six pixels above
+ * already names you -- which leaves a flex row whose only child is the priority
+ * tick: an empty line plus a gap, at the top of the tightest column on the
+ * screen.
  */
 [data-handheld] .play__mine .orb__head {
   display: contents;
 }
 
 /*
- * WHOSE TURN IT IS AND WHO HOLDS PRIORITY ARE TWO DIFFERENT FACTS -- AND ON
- * YOUR OWN SEAT THE SECOND ONE IS ALREADY SAID IN WORDS.
- *
- * This was a 36x4 violet tick hung off the panel's top edge, borrowed from
- * `.seat__pri` so that the pod would say one thing one way. On an opponent it
- * lands on their own bar; here `.orb__head` is `display: contents` and the
- * plinth starts 3px down, so it landed ON THE COMMANDER'S PORTRAIT -- a purple
- * line across the top of the painting, at the one seat where it is not needed:
- * the action panel opposite is already headed "You have priority" in full, and
- * the turn is the panel's own inset ring below.
- *
- * Hidden rather than removed from the DOM: it is the viewer's column that is
- * crowded, `tests/playerOrb.test.tsx` and `e2e/orb.spec.ts` still read the
- * element, and every other seat keeps its tick.
+ * And the tick goes with it. On your own seat the action panel opposite is
+ * already headed "You have priority" in full, and the turn is the orb's inset
+ * ring. Hidden rather than removed: `tests/playerOrb.test.tsx` and
+ * `e2e/orb.spec.ts` still read the element.
  */
 [data-handheld] .play__mine .orb__priority {
   display: none;
 }
 
-/* ...and the turn is the ring, inset so it reads as the panel's own edge
-   rather than as a second border outside the one already there. */
-[data-handheld] .play__mine .orb--active {
-  border-color: var(--edge);
-  box-shadow: inset 0 0 0 2px var(--astral-hi);
-}
-
-/* No box around the portrait. The picture has a ring of its own and the panel
-   has a border of its own; a third rectangle between them is a frame around a
-   frame, and it is padding this column cannot spend. */
-[data-handheld] .play__mine .cmdslot {
-  gap: 3px;
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-}
-
 /*
- * 1.16:1, and the crop mostly refunds itself.
- *
- * `art_crop` is 626x457, or 1.37:1. The desktop banner is 2:1, which keeps the
- * width and throws most of the height away; plinth's own 0.59:1 portrait keeps
- * the height and shows about 40% of the painting. 148x128 is 1.16:1, so
- * `cover` keeps roughly 84% of the width -- and 128px of picture rather than
- * 68 is the whole difference between a portrait and a thumbnail.
- *
- * The 22px is the dial's overhang, RESERVED rather than clipped: 34% of a 64px
- * disc, the same share the desktop seal hangs off its banner.
+ * TWO CHIPS TO A ROW. Three 44px targets with two gaps is 138px, and this
+ * column is 136px of content at 1280 and 126 at 1200 -- there is no arithmetic
+ * that fits three and clears the floor, so the floor wins and the row does not.
+ * `expectHandheldFloors` is the gate that refuses the trade the other way.
  */
-[data-handheld] .play__mine .cmdplinth__frame {
-  margin-bottom: 22px;
-  aspect-ratio: 1.16;
-}
-
-[data-handheld] .play__mine .cmdplinth__art {
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px var(--edge-hi);
-}
-
-/* A LIFT, NOT A LOOK. `art_crop` is printed to be read through a card's text
-   box; on a dark panel at this size it comes out muddy without it. */
-[data-handheld] .play__mine .cmdplinth__art img {
-  filter: saturate(1.18) contrast(1.04) brightness(1.14);
-}
-
-/*
- * The price strip, on the picture and at the TOP of it.
- *
- * The mockup records why it is not at the bottom: the dial hangs over the
- * bottom-right corner and covered the tax and the state word. Opaque rather
- * than a scrim, because a scrim over a painting is legible on some paintings.
- *
- * `.cmdslot` is `position: relative` already and the frame is its first child
- * at zero offset, so this lands on the art without the strip moving in the DOM.
- */
-[data-handheld] .play__mine .cmdplinth__strip {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  right: 0;
-  left: 0;
+[data-handheld] .play__mine .piles {
   flex-wrap: wrap;
-  align-content: center;
-  min-height: 21px;
-  padding: 0 4px;
-  border-radius: 8px 8px 0 0;
-  background: rgb(9 8 20 / 0.82);
-  line-height: 20px;
 }
 
-/*
- * It wraps rather than ellipsising, and that is the point of the `flex-wrap`
- * above.
- *
- * At the 16px floor the longest word this can carry is about 130px and the
- * strip is 136 -- so "In command" beside a three-symbol cost is nine pixels
- * over, every time a commander is sitting in the zone waiting to be cast.
- * `text-overflow` made that "In comm...", which is the shape of the bug
- * `board.css` records against the desktop plinth at 74px and is not worth
- * repeating here. A second 20px line costs 20px of a 117px picture in one
- * state; a clipped word costs the word in the state where it matters most.
- */
-[data-handheld] .play__mine .cmdplinth__word {
-  overflow: visible;
-  text-overflow: clip;
-}
-
-/*
- * ...AND THE STATE WORD COMES BACK, now that there is a strip to hold it.
- *
- * It is dropped further down on the grounds that the plinth's position says
- * it. That is true of an opponent's 46px banner and it is not true here: this
- * portrait is the button that casts your commander, and "In play" against
- * "Ready" against "Need 8" is the difference between a picture and a control.
- * The mockup calls it `.win__st` and gives it the strip's right end.
- */
-[data-handheld] .play__mine .cmdplinth__word {
-  display: block;
-  margin-left: auto;
-  color: var(--text-dim);
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-[data-handheld] .play__mine .cmdslot--ready .cmdplinth__word {
-  color: var(--playable);
-}
-
-/* A cost only exists in the command zone, so it and the word never compete for
-   the width -- and it lands directly above the mana groups that pay it, which
-   is the adjacency the commander moved into this panel for. */
-[data-handheld] .play__mine .cmdplinth__cost {
-  order: -1;
-  margin-left: 0;
-}
-
-/* Two lines and then an ellipsis, at the floor. Full width, because the dial's
-   overhang is reserved above this rather than indented around it. */
-[data-handheld] .play__mine .cmdplinth__name {
-  line-height: 18px;
-}
-
-/* ---- The dial: a ring you can read the life total off -------------------
- *
- * Desktop's brass disc is a seal -- an object, and deliberately not a meter.
- * At 64px on a 128px portrait the mockup spends the extra area on the one
- * thing the disc could not say: a conic gradient to `--fill` turns "34" into
- * "34 of the 40 you started with" without adding a character.
- *
- * `::before` is the ring and `::after` is the hole punched out of it, which is
- * why the numeral has to claim a stacking context of its own -- an absolutely
- * positioned pseudo-element paints over static content. */
-[data-handheld] .play__mine .dial {
-  --seal-w: 64px;
-  width: 64px;
-  background: none;
-  box-shadow: 0 0 0 3px var(--void-0);
-}
-
-[data-handheld] .play__mine .dial::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    var(--gold) 0 var(--fill, 0%),
-    rgb(255 255 255 / 0.09) var(--fill, 0%) 100%
-  );
-}
-
-[data-handheld] .play__mine .dial::after {
-  inset: 5px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--void-1);
-}
-
-/* The numeral sits in a hole punched out of `--void-1`, not on brass -- so the
-   resting ink is the page's own text colour. Through `--dial-n` rather than
-   `color` directly, because the life-change animation stamps the resting value
-   inline and would otherwise put desktop's near-black on this dark well. See
-   `.dial__n` in `board.css`. */
-[data-handheld] .play__mine .dial__n {
-  --dial-n: var(--text);
-  position: relative;
-  z-index: 1;
-  font-size: 28px;
-  text-shadow: none;
-}
-
-/* Flush with the portrait's right edge, hanging a third of itself below it --
-   the 22px `.cmdplinth__frame` reserves above. */
-[data-handheld] .play__mine .cmdplinth__frame .dial {
-  right: 0;
-  bottom: -22px;
-}
-
-/* ---- Mana: one mark per KIND, two to a row ------------------------------
- *
- * The panel already counts rather than repeating -- a symbol per mana wrapped
- * a ten-land board to three rows. What the mockup adds is that the groups are
- * a GRID: four sources make two tidy rows of two rather than a centred run
- * that re-flows every time a land taps. */
-[data-handheld] .play__mine .orb__mana {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
-  padding: 0;
-  background: none;
-}
-
-[data-handheld] .play__mine .mana-grp {
-  justify-content: center;
-  height: 26px;
-  border-radius: 5px;
-  background: var(--pane-well);
-  box-shadow: inset 0 0 0 1px var(--edge);
-}
-
-[data-handheld] .play__mine .mana-grp--spent {
-  box-shadow: inset 0 0 0 1px var(--staged);
-}
-
-/* One group and nothing to pair it with takes the row rather than half of one:
-   a lone chip in the left column reads as a missing right column. */
-[data-handheld] .play__mine .mana-grp:only-child,
-[data-handheld] .play__mine .orb__none {
-  grid-column: 1 / -1;
-  text-align: center;
-}
-
-/* ---- Zones: a chip per zone, three then two -----------------------------
- *
- * The five zones were leaf stacks, and the stack is already reduced to its top
- * leaf here because the leaves are height this column does not have. What was
- * left is a count in a card-back-coloured box, five of them, told apart by an
- * icon's hue -- which is one channel, and it is the one `e2e/greyscale.spec.ts`
- * takes away.
- *
- * The mockup's answer is the chip an opponent's seat already draws: the zone's
- * own colour as the GROUND with one dark ink on all five, so a chip is a
- * shape and a colour and a number. And which of them you can press is drawn
- * rather than learned -- a lit top edge and a dropped bottom one on the four
- * that open a peek, a recessed and desaturated face on the library, which is
- * hidden information and never a control.
- *
- * TWO TO A ROW, AND NOT THE MOCKUP'S THREE. The mockup splits its five 3 + 2
- * inside a 148px `.orb`; this column is 136px of content at 1280 and 126 at
- * 1200, and three 44px targets with two gaps between them is 138. There is no
- * arithmetic that fits three of them and clears the floor, so the floor wins
- * and the row does not -- which is the same trade `handheld.css` already made
- * when the piles started wrapping, and `expectHandheldFloors` is the gate that
- * refuses to let it be made the other way. */
-[data-handheld] .play__mine .piles {
-  gap: 3px;
-  padding: 0;
-  background: none;
-}
-
-[data-handheld] .play__mine .pile {
+/* `.piles` twice, to outrank the five-chip stacking rule in `board.css`: on two
+   to a row there is room for the mark beside the count again. */
+[data-handheld] .play__mine .piles .pile {
   flex: 1 1 calc(50% - 2px);
-  min-width: 0;
-  height: 44px;
-  border-radius: 6px;
-  background: var(--zone-gy);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.34), inset 0 -1px 0 rgb(0 0 0 / 0.34);
-  color: var(--chip-ink);
+  flex-direction: row-reverse;
+  gap: 3px;
 }
 
-[data-handheld] .play__mine .pile:has(.pile__leaf--lib) {
-  background: var(--zone-lib);
-}
-
-[data-handheld] .play__mine .pile:has(.pile__leaf--hand) {
-  background: var(--zone-hand);
-}
-
-[data-handheld] .play__mine .pile:has(.pile__leaf--gy) {
-  background: var(--zone-gy);
-}
-
-[data-handheld] .play__mine .pile:has(.pile__leaf--ex) {
-  background: var(--zone-ex);
-}
-
-[data-handheld] .play__mine .pile:has(.pile__leaf--cmd) {
-  background: var(--zone-cmd);
-}
-
-/* Hidden information, and so never a control: recessed and desaturated rather
-   than lit. Relief, not colour, so it survives greyscale. */
-[data-handheld] .play__mine .pile--static {
-  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.6);
-  filter: saturate(0.55);
-}
-
-/* The count, now that the chip under it is the card back. */
-[data-handheld] .play__mine .pile__leaf--top {
-  height: auto;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: var(--chip-ink);
-  font-size: 16px;
-  font-weight: 800;
-}
-
-/* One ink on all five, because the chip's own colour is what says which zone
-   this is now -- the mark is there to say it a second way. */
-[data-handheld] .play__mine .pile .ico {
-  width: 14px;
-  height: 14px;
-  color: var(--chip-ink);
-}
-
-[data-handheld] .play__mine .pile--empty {
-  opacity: 0.55;
-}
-
-[data-handheld] .play__mine .pile--empty .pile__leaf--top {
-  opacity: 1;
-}
-
-[data-handheld] .play__mine .pile:hover:not(.pile--static) {
-  filter: brightness(1.12);
-}
-
-[data-handheld] .play__mine .orb__body {
-  gap: 4px;
-}
-
-/*
- * The viewer's own plates and piles, tightened for the four-seat case.
- *
- * At four seats this column carries the most it ever will: commander damage
- * from three opponents, which wraps to two rows of chips, and FIVE piles once
- * anything is exiled, which wraps to two rows of 44px targets in a 144px
- * column. Measured in a turn-six pod, that put `.play__mine` 9-17px past its
- * row -- and `.play__mine`'s `overflow-y: auto` turned it into a scrollbar
- * rather than into a visible failure, which on a Deck means the graveyard count
- * is simply not on screen.
- *
- * The room comes from the gaps between plates rather than from any of the
- * plates, because every one of them is a number a player reads. Nothing here
- * touches the 44px targets themselves.
- */
-[data-handheld] .play__mine .piles {
-  gap: 2px;
-  padding: 2px;
-}
-
-[data-handheld] .play__mine .orb__panel {
-  padding: 1px 4px;
+[data-handheld] .play__mine .piles .pile--revealed {
+  flex-basis: 100%;
 }
 
 /*
@@ -1497,7 +1093,7 @@ html[data-input="keyboard"] [data-cursor].card {
 
 [data-handheld] .opt__caption {
   max-width: none;
-  font-size: 16px;
+  font-size: var(--type-floor);
 }
 
 /*
@@ -1672,7 +1268,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .ph__name,
 [data-handheld] .orb__name,
 [data-handheld] .orb__none,
-[data-handheld] .dial__n,
 [data-handheld] .cmdplinth__name,
 [data-handheld] .cmdplinth__word,
 [data-handheld] .mana-grp__n,
@@ -1729,22 +1324,15 @@ html[data-input="keyboard"] .hints {
   [data-handheld]
   .peek__hidden,
 [data-handheld] .btn--ghost {
-  font-size: 16px;
+  font-size: var(--type-floor);
 }
 
 /* --- dropped: labels whose subject is still on screen -------------------- */
 
-/*
- * "MANA", "CMD DMG" over their own rows -- a heading for a row of one kind of
- * thing, immediately above that thing.
- */
-[data-handheld] .orb__lab,
-/* The plinth's "IN COMMAND" strip, which the plinth's own position says. */
-  [data-handheld]
-  .cmdplinth__tag,
-/* The em dash standing in for an empty lane, next to the lane's own name. */
-  [data-handheld]
-  .lane__empty {
+/* The em dash standing in for an empty lane, next to the lane's own name.
+   (`.orb__lab` and `.cmdplinth__tag` were dropped here too; `board.css` drops
+   them at every size now.) */
+[data-handheld] .lane__empty {
   display: none;
 }
 
@@ -1771,25 +1359,15 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .track__step-label {
   display: revert;
-  font-size: 16px;
+  font-size: var(--type-floor);
 }
 
 /*
  * ...AND ONE OF THE TWO TAKEN BACK AGAIN, now that there is a mark to take it.
- *
- * `.pile__label` was raised above because dropping it left "82 4 5 1" and no
- * way to tell a library count from a graveyard count -- the order only helps
- * somebody who already knows it. That argument is about the WORD standing in
- * for an identity, and a shape carries an identity without being taught:
- * `SeatIcon` draws a headstone, a fan of three, a face-down card.
- *
- * the handheld-board round (`docs/design-record.md#handheld-board`) reaches the same conclusion from the other side and
- * calls it a legibility argument rather than a colour one. So the word goes and
- * the mark stays, which is what the first drop was trying to buy and could not.
+ * `.pile__label` is dropped at every size in `board.css`: `SeatIcon` draws a
+ * headstone, a fan of three, a face-down card, and a shape carries an identity
+ * without being taught.
  */
-[data-handheld] .pile__label {
-  display: none;
-}
 
 /*
  * Your own name, which the strip six pixels above already gives you twice.
@@ -1801,57 +1379,6 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .play__mine .orb__name {
   display: none;
-}
-
-/*
- * The mark takes the zone's own hue, so the row is five different shapes in
- * five different colours rather than five counts.
- */
-[data-handheld] .pile .ico {
-  width: 15px;
-  height: 15px;
-  color: var(--text-dim);
-}
-
-[data-handheld] .pile--lib .ico,
-[data-handheld] .pile:has(.pile__leaf--lib) .ico {
-  color: #9a86e8;
-}
-
-[data-handheld] .pile:has(.pile__leaf--hand) .ico {
-  color: #5ac8be;
-}
-
-[data-handheld] .pile:has(.pile__leaf--gy) .ico {
-  color: #b08a63;
-}
-
-[data-handheld] .pile:has(.pile__leaf--ex) .ico {
-  color: #8b8ba0;
-}
-
-[data-handheld] .pile:has(.pile__leaf--cmd) .ico {
-  color: var(--gold);
-}
-
-/* The piles wrap to two rows so five 44px targets and their names both fit. */
-/*
- * The mark beside the count, not under it.
- *
- * It was a column because the WORD went under the stack, and a word is a line
- * of its own. A mark is not: `[headstone] 5` reads as one chip and stacked it
- * reads as two things, in a column that is already the tightest on the screen.
- *
- * `row-reverse` rather than reordering the markup, because the stack has to
- * stay first for the same reason `.pile__leaf--top` is last inside it -- the
- * count is the last leaf, and moving either would be moving a number to suit a
- * layout.
- */
-[data-handheld] .pile {
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
 }
 
 /* ==========================================================================
@@ -1886,14 +1413,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .btn--ghost {
   min-width: 44px;
   min-height: 44px;
-}
-
-[data-handheld] .piles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  /* The scale-down from the strip block above would defeat the floor. */
-  transform: none;
 }
 
 [data-handheld] .tools {
@@ -1958,13 +1477,50 @@ html[data-input="keyboard"] .hints {
   gap: 4px;
 }
 
+/* A zero basis and an equal grow, so the steps share the pill the way
+   desktop's six equal columns do -- packed to the left, the live pill read as
+   a different control from the one on a desktop. The live step still refuses
+   to shrink below its word. */
 [data-handheld] .ph--now .track__step {
-  flex: 0 1 auto;
+  flex: 1 1 0;
   min-width: 0;
 }
 
 [data-handheld] .ph--now .track__step--now {
-  flex: 0 0 auto;
+  min-width: max-content;
+}
+
+/*
+ * THE SAME WEIGHTS AS DESKTOP LOOKS, NOT THE SAME NUMBERS.
+ *
+ * Desktop draws this ribbon at 10.5-11.5px, where 700 for a step and 800 with
+ * 0.08em tracking for a phase read as crisp small caps. Raised to the 16px floor
+ * the same numbers read as a headline: tracking scales with the size, and so
+ * does the stroke. So the Deck steps the weights and the tracking down a notch
+ * and lands on the look desktop has. The hierarchy is unchanged -- phase over
+ * step, live step heaviest of all.
+ */
+[data-handheld] .ph {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+[data-handheld] .ph__name {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+[data-handheld] .track__step--now {
+  font-weight: 800;
+}
+
+[data-handheld] .track__turn-n {
+  font-weight: 800;
+}
+
+[data-handheld] .track__who,
+[data-handheld] .track__pri {
+  font-weight: 600;
 }
 
 [data-handheld] .track__step--now .track__step-label {
@@ -2007,9 +1563,11 @@ html[data-input="keyboard"] .hints {
    the only way it is meant to shrink; adding to it is the other way to pass the
    gate, and it is the one that leaves the problem where it was.
 
-   Two selectors are deliberately absent: `.orb__lab` and `.cmdplinth__tag`
-   are DROPPED above rather than raised, and re-listing them here would undo
-   that decision.
+   Three selectors are deliberately absent. `.orb__lab` and `.cmdplinth__tag`
+   are DROPPED (by `board.css`, at every size) rather than raised, and
+   re-listing them here would undo that decision. `.dial__n` is sized off its
+   disc and never comes out under 22px, and a floor of 16px written at this
+   specificity would SHRINK it.
 
    16px is a floor, not a size. Everything already above it keeps its own
    value, so the type hierarchy survives -- it is compressed at the bottom,
@@ -2150,7 +1708,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .turned__l,
 [data-handheld] .verdict,
 [data-handheld] .xstep__hint {
-  font-size: 16px;
+  font-size: var(--type-floor);
 }
 
 /*
@@ -2228,7 +1786,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .dos button {
   min-width: 44px;
   min-height: 44px;
-  font-size: 16px;
+  font-size: var(--type-floor);
 }
 
 /*

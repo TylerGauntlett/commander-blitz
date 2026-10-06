@@ -654,6 +654,36 @@ function hoverFor(stop: string | null): void {
 }
 
 /**
+ * The card the reader is showing -- or, mid-sweep, is about to.
+ *
+ * What `Y` (and `i`, and a right-click) opens full screen, so that the deeper
+ * read is always a read of the card already in the rail. Two inputs write the
+ * rail and this is the one place that has to know which of them it is
+ * listening to:
+ *
+ * - **Not sweeping**, `hoveredOid` is the answer whoever wrote it. On a pad it
+ *   is the ring's card, because `hoverFor` put it there -- and that includes an
+ *   action row's or a seat's `data-preview-oid`, which reading `parseStop`
+ *   alone never could (TECH_DEBT FB-08). With a mouse it is the card under the
+ *   pointer, because the ring is invisible and `hoverFor` writes nothing; a
+ *   desktop player pressing `i` is asking about the card they are pointing at,
+ *   not about wherever an unseen cursor last came to rest.
+ * - **Sweeping**, `hoveredOid` is a card the ring has already left: `hoverFor`
+ *   defers the write by `RAIL_SETTLE` and the rail is showing the one before.
+ *   A `Y` pressed then means the card under the ring, so the ring is asked
+ *   directly through the same `previewOidFor` the deferred write will use.
+ */
+export function readingOid(): number | null {
+  const sweeping =
+    typeof document !== "undefined" && document.documentElement.hasAttribute("data-sweeping");
+  if (sweeping) {
+    const at = getCursor();
+    return at === null ? null : previewOidFor(at);
+  }
+  return useUiStore.getState().hoveredOid;
+}
+
+/**
  * Hand the rail back when the pointer takes over.
  *
  * `hoverFor` refuses to write `hoveredOid` in mouse mode, which is the right

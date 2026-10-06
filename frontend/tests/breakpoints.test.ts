@@ -19,7 +19,11 @@ import {
   HANDHELD_MAX_H,
   HANDHELD_MAX_W,
   HANDHELD_QUERY,
+  PHONE_MAX_H,
+  PHONE_MAX_W,
+  PHONE_QUERY,
   isHandheldSize,
+  isPhoneSize,
 } from "../src/logic/breakpoints";
 
 // `__dirname` rather than `import.meta.url`: under the jsdom project Vite
@@ -70,5 +74,49 @@ describe("isHandheldSize", () => {
     expect(isHandheldSize(HANDHELD_MAX_W + 1, 1080)).toBe(false);
     expect(isHandheldSize(1920, HANDHELD_MAX_H)).toBe(true);
     expect(isHandheldSize(1920, HANDHELD_MAX_H + 1)).toBe(false);
+  });
+});
+
+const phoneCss = readFileSync(join(__dirname, "..", "src", "styles", "phone.css"), "utf8");
+
+describe("PHONE_QUERY", () => {
+  it("appears verbatim in phone.css, so the two definitions cannot drift", () => {
+    expect(phoneCss).toContain(`@media ${PHONE_QUERY}`);
+  });
+
+  it("is the only size breakpoint phone.css keys on", () => {
+    // Orientation is a different question and is allowed; a second width or
+    // height query would be a third definition of "phone".
+    const sizeQueries = [...phoneCss.matchAll(/@media\s+([^{]+)\{/g)]
+      .map((match) => match[1].trim())
+      .filter((query) => /max-width|min-width|max-height|min-height/.test(query));
+    expect(sizeQueries).toEqual([PHONE_QUERY]);
+  });
+});
+
+describe("isPhoneSize", () => {
+  it("claims a phone held either way", () => {
+    expect(isPhoneSize(390, 844)).toBe(true);
+    expect(isPhoneSize(428, 926)).toBe(true);
+    expect(isPhoneSize(844, 390)).toBe(true);
+    expect(isPhoneSize(926, 428)).toBe(true);
+  });
+
+  it("leaves the Deck and every desktop alone", () => {
+    expect(isPhoneSize(1280, 800)).toBe(false);
+    expect(isPhoneSize(1200, 800)).toBe(false);
+    expect(isPhoneSize(1600, 950)).toBe(false);
+  });
+
+  it("is always a handheld too, because the tier is additive", () => {
+    for (const [w, h] of [
+      [390, 844],
+      [926, 428],
+      [PHONE_MAX_W, 2000],
+      [3000, PHONE_MAX_H],
+    ]) {
+      expect(isPhoneSize(w, h)).toBe(true);
+      expect(isHandheldSize(w, h)).toBe(true);
+    }
   });
 });

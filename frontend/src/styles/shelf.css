@@ -50,7 +50,7 @@
 .shelf__t {
   flex: none;
   color: var(--focus);
-  font-size: max(16px, calc(19px * var(--du)));
+  font-size: max(var(--type-floor), calc(19px * var(--du)));
 }
 
 /* The way out is the quietest control on the screen, not the loudest. It was
@@ -73,7 +73,7 @@
 }
 
 .shelf__n {
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--text-faint);
 }
 
@@ -97,7 +97,7 @@
 
 .shelf__glass {
   flex: none;
-  font-size: max(16px, calc(17px * var(--du)));
+  font-size: max(var(--type-floor), calc(17px * var(--du)));
   color: var(--text-faint);
 }
 
@@ -120,7 +120,7 @@
   background: none;
   color: var(--text);
   font: inherit;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
 }
 
 .shelf__findin::placeholder {
@@ -212,12 +212,12 @@
   background: rgb(8 7 18 / 0.5);
   color: var(--text-dim);
   font: inherit;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   cursor: pointer;
 }
 
 .shelf__note {
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--text-faint);
 }
 
@@ -243,7 +243,7 @@
   display: grid;
   place-items: center;
   height: 100%;
-  font-size: max(16px, calc(17px * var(--du)));
+  font-size: max(var(--type-floor), calc(17px * var(--du)));
   color: var(--text-faint);
 }
 
@@ -308,7 +308,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   font-weight: 700;
   color: var(--text);
 }
@@ -361,7 +361,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   border-radius: 999px;
   background: rgb(216 166 60 / 0.16);
   color: var(--gold);
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   white-space: nowrap;
 }
 
@@ -391,7 +391,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   border: 0;
   background: none;
   color: var(--text-faint);
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   font-weight: 700;
   font-style: normal;
   line-height: 1;
@@ -446,7 +446,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
 }
 
 .tile__q {
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--danger);
 }
 
@@ -505,18 +505,18 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   flex: 1;
   min-width: 0;
   min-height: 44px;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
 }
 
 .shelf__foot .import__label {
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   letter-spacing: 0.14em;
   color: var(--text-faint);
 }
 
 .shelf__foot .import__hint--inline {
   max-width: 34ch;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   line-height: 1.3;
 }
 

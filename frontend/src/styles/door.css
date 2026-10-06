@@ -234,7 +234,7 @@
 .door__name {
   justify-self: center;
   align-self: center;
-  font-size: max(16px, calc(20px * var(--du)));
+  font-size: max(var(--type-floor), calc(20px * var(--du)));
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -294,7 +294,7 @@
   left: calc(24px * var(--du));
   bottom: calc(22px * var(--du));
   margin: 0;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--text-faint);
 }
 
@@ -371,7 +371,7 @@
 
 .door__h {
   margin: 0;
-  font-size: max(16px, calc(20px * var(--du)));
+  font-size: max(var(--type-floor), calc(20px * var(--du)));
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;

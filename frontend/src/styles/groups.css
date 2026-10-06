@@ -158,8 +158,45 @@
   --card-w: 330px;
 }
 
+/*
+ * ...EXCEPT THE CARD HOLD, which a mouse can open now and so must be able to
+ * close.
+ *
+ * On a pad the hold goes down on any press, so a backdrop that let the click
+ * through cost nothing. A desktop player opens it with a right-click or `i`
+ * and has no "any press" -- and with the backdrop transparent to the pointer,
+ * the click they made to put it away landed on the board card underneath it
+ * and played it. `CardHold` takes that click and closes instead, and draws a
+ * Close button, so the click is a dismissal and never a play. The dial keeps
+ * `pointer-events: none`; it has its own buttons and nothing asked it to.
+ */
+.hold--card {
+  pointer-events: auto;
+  cursor: zoom-out;
+}
+
+/*
+ * As tall as the card is, and that is the point of the desktop route: the
+ * rail's `.preview` is a fixed frame, so `.card--big` there fills a box and its
+ * rules scroll; here it has no definite height above it, reverts to content
+ * size, and the whole card is drawn at once. `auto` rather than `hidden` past
+ * 92vh, so the one card longer than the screen still scrolls instead of being
+ * cut -- the clipping this view exists to get away from.
+ */
 .hold__card {
   max-width: min(330px, 90vw);
   max-height: 92vh;
-  overflow: hidden;
+  overflow: auto;
+  cursor: auto;
+}
+
+/* Top right, where every other overlay in the app keeps its way out. 44px
+   whatever the layout, so it clears the handheld hit floor without the
+   handheld sheet having to know it exists. */
+.hold__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  min-width: 44px;
+  min-height: 44px;
 }

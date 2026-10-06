@@ -210,19 +210,15 @@ export const NoSpineAnywhere: Story = {
  *
  * The numeral flashes green or red on a life change and then goes back to its
  * resting colour -- and Framer writes that resting colour back as an INLINE
- * style, which beats every rule in the stylesheet. The component named
- * `--dial-ink` for it, which is right on the desktop seal: the numeral sits on
- * brass, and returning it to the old off-white left it white-on-gold.
- *
- * The handheld dial is not brass. It is a gold ring around a hole punched out
- * of `--void-1`, and `handheld.css` colours the numeral `--text` for exactly
- * that reason -- so one point of damage stamped near-black ink onto a dark
- * purple well and the life total became unreadable. Only after the first hit,
- * on the one layout the game is built for.
+ * style, which beats every rule in the stylesheet. The component once named
+ * `--dial-ink` for it, which was right on the old brass seal -- and the dial is
+ * a gold ring around a hole punched out of `--void-1` now, so one point of
+ * damage stamped near-black ink onto a dark purple well and the life total
+ * became unreadable. Only after the first hit.
  *
  * `--dial-n` is the indirection that fixes it: the stylesheet owns the resting
- * ink at both sizes and the component says "put it back" without knowing which
- * disc it is on. This is the story that would notice it being named directly
+ * ink and the component says "put it back" without knowing what the disc looks
+ * like. This is the story that would notice it being named directly
  * again -- so it asserts CONTRAST rather than a colour, because what actually
  * broke was legibility and a token name is not the property.
  */

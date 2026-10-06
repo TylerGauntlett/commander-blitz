@@ -95,12 +95,10 @@ test.describe("the orb fills its column", () => {
     expect(escaped, "these escaped the orb").toEqual([]);
   });
 
-  test("the piles still share one baseline in the 190px column", async ({ page }) => {
-    // The arithmetic written into board.css: 5 x 28 + 4 x 5 = 160px, and adding
-    // the scrim plate's padding is exactly the kind of change that quietly
-    // breaks it. Measured on the *bottom* edge, not the top: the piles are
-    // deliberately bottom-aligned so their heights read against each other, so a
-    // drawn-down library and a grown graveyard have different tops by design.
+  test("the zone chips still share one row in the 190px column", async ({ page }) => {
+    // On a desktop the chips share one row in equal parts -- a chip wrapped onto
+    // a line of its own reads as a button rather than as one zone of five. Only
+    // the Deck wraps them, two to a row, for its 44px target floor.
     test.setTimeout(budget(180_000));
     await openPod(page, 1);
 

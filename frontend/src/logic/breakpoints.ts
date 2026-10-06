@@ -54,3 +54,37 @@ export function isHandheld(): boolean {
 export function isHandheldSize(width: number, height: number): boolean {
   return width <= HANDHELD_MAX_W || height <= HANDHELD_MAX_H;
 }
+
+/*
+ * ...AND WHERE IT STOPS BEING A HANDHELD AND BECOMES A PHONE.
+ *
+ * A phone is a handheld too -- it keeps `data-handheld` and everything the Deck
+ * layout already does for a small screen -- but the Deck's floors are written
+ * for 1280x800. A 96px card, a 224px rail and a 132px info column are fine on
+ * a Deck and leave an iPhone's battlefield 0px wide in portrait and 34px tall
+ * in landscape. So the phone tier is ADDITIVE: `data-phone` on `<html>`, and
+ * `styles/phone.css` relaxes the floors and restacks the table under it.
+ *
+ * THE NUMBERS. 600 wide catches every phone held upright (the widest common one
+ * is 430) and no tablet. 500 tall catches every phone held sideways (the
+ * tallest is 430) and no laptop window anybody plays in. As with the handheld
+ * query, either dimension is enough on its own.
+ */
+
+export const PHONE_MAX_W = 600;
+export const PHONE_MAX_H = 500;
+
+/** The phone query, as `styles/phone.css` and `matchMedia` both see it. */
+export const PHONE_QUERY = `(max-width: ${PHONE_MAX_W}px), (max-height: ${PHONE_MAX_H}px)`;
+
+export function isPhone(): boolean {
+  try {
+    return window.matchMedia(PHONE_QUERY).matches;
+  } catch {
+    return false;
+  }
+}
+
+export function isPhoneSize(width: number, height: number): boolean {
+  return width <= PHONE_MAX_W || height <= PHONE_MAX_H;
+}

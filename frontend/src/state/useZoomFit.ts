@@ -38,6 +38,8 @@ import {
   HANDHELD_MIN_CARD_W,
   MAX_CARD_W,
   MIN_CARD_W,
+  PHONE_MAX_CARD_W,
+  PHONE_MIN_CARD_W,
   opponentCardScale,
 } from "../logic/cardSize";
 import {
@@ -106,6 +108,30 @@ const FOOT_CHROME = 60;
  * for, and reading it here would be the loop.
  */
 const HANDHELD_FOOT_EXTRA = 50;
+
+/**
+ * The same three numbers on a phone, where every one of them is smaller.
+ *
+ * `styles/phone.css` cuts the hand's droop allowance from 44px to 16 (a fan of
+ * 56px cards barely droops) and the foot's padding with it, and the tool row is
+ * one 44px line with no hint bar beside it -- the hints name controller
+ * buttons, and a phone has none. With the Deck's numbers the hand's budget came
+ * out NEGATIVE on a phone held sideways, so the hand sat on its floor and the
+ * board got nothing.
+ */
+const PHONE_HAND_FRACTION = 0.3;
+const PHONE_FOOT_CHROME = 22;
+const PHONE_FOOT_EXTRA = 44;
+
+/**
+ * The rotation slack, again, and bigger on a phone.
+ *
+ * `FAN_INSET`'s 20px covers the turned outermost cards on a fan 1000px wide,
+ * where they are a small share of it. On a 360px foot an eight-card fan is all
+ * overlap, its end cards are turned the furthest they ever are, and measured at
+ * 390x844 each end card's box ran 25px past the foot.
+ */
+const PHONE_FAN_INSET_EXTRA = 50;
 
 /** `.play__opponents` gap between mats. */
 const POD_GAP = 10;
@@ -271,6 +297,8 @@ export function useZoomFit(args: {
   handCount: number;
   /** The compact layout: a 96px card floor, no pod solve, a taller foot. */
   handheld?: boolean;
+  /** A handheld too small for its floors: 56-96px cards and a shorter foot. */
+  phone?: boolean;
   tableRef: RefObject<HTMLElement>;
   mineRef: RefObject<HTMLElement>;
   podRef: RefObject<HTMLElement>;
@@ -283,6 +311,7 @@ export function useZoomFit(args: {
     opponents,
     handCount,
     handheld = false,
+    phone = false,
     tableRef,
     mineRef,
     podRef,
@@ -385,7 +414,7 @@ export function useZoomFit(args: {
      * `.play__mine` already scrolls, and a board you have to scroll is better
      * than a board you cannot read.
      */
-    const floor = handheld ? HANDHELD_MIN_CARD_W : MIN_CARD_W;
+    const floor = phone ? PHONE_MIN_CARD_W : handheld ? HANDHELD_MIN_CARD_W : MIN_CARD_W;
 
     /*
      * 1. The hand, first, because the foot's height is taken out of the board's row.
@@ -395,13 +424,18 @@ export function useZoomFit(args: {
      * because `--card-w-base` grew, which happens on a display with the room. What
      * this solve adds is the shrink: a fifteen-card fan, or a short viewport.
      */
-    const handCeiling = Math.min(MAX_CARD_W, base * CARD_SCALE.hand);
-    const fanW = Math.min(HAND_FAN_W, measured.footW - FAN_INSET);
-    const handW = solveHandCardWidth(handCount, fanW, {
-      heightPx:
-        measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
+    const handCeiling = Math.min(phone ? PHONE_MAX_CARD_W : MAX_CARD_W, base * CARD_SCALE.hand);
+    const fanW = Math.min(
+      HAND_FAN_W,
+      measured.footW - FAN_INSET - (phone ? PHONE_FAN_INSET_EXTRA : 0),
+    );
+    const handHeight = phone
+      ? measured.tableH * PHONE_HAND_FRACTION - PHONE_FOOT_CHROME - PHONE_FOOT_EXTRA
+      : measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
         FOOT_CHROME -
-        (handheld ? HANDHELD_FOOT_EXTRA : 0),
+        (handheld ? HANDHELD_FOOT_EXTRA : 0);
+    const handW = solveHandCardWidth(handCount, fanW, {
+      heightPx: handHeight,
       minCardW: floor,
       maxCardW: handCeiling,
     });
@@ -544,5 +578,5 @@ export function useZoomFit(args: {
       podLanesH,
       locked: false,
     };
-  }, [pinned, measured, base, state, actionableOids, opponents, handCount, handheld]);
+  }, [pinned, measured, base, state, actionableOids, opponents, handCount, handheld, phone]);
 }
