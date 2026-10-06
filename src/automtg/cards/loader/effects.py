@@ -1080,6 +1080,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(f"{here}: 'up_to' is a boolean")
             if "selector" in step:
                 validate_selector(step["selector"], f"{here}.selector")
+        # "…it enters with three additional +1/+1 counters on it" (Turntimber
+        # Symbiosis). Read only on a battlefield arrival, so beside any other
+        # destination -- or `cast_free`, which replaces the arrival with a cast
+        # -- the counters would load and never be put anywhere. A `counters_if`
+        # with no counters is a condition guarding nothing.
+        if "counters" in effect:
+            counters = effect["counters"]
+            if (
+                not isinstance(counters, Mapping)
+                or not counters
+                or not all(
+                    isinstance(n, int) and not isinstance(n, bool) and n > 0
+                    for n in counters.values()
+                )
+            ):
+                raise DslError(
+                    f"{where}: look_at_top 'counters' maps a counter kind to a "
+                    f"positive amount, e.g. {{'+1/+1': 3}}"
+                )
+            if destination != "battlefield" or effect.get("cast_free"):
+                raise DslError(
+                    f"{where}: look_at_top 'counters' are what a card enters the "
+                    f"battlefield with and need destination 'battlefield'; got "
+                    f"{'cast_free' if effect.get('cast_free') else repr(destination)}"
+                )
+        if "counters_if" in effect:
+            if "counters" not in effect:
+                raise DslError(f"{where}: look_at_top 'counters_if' guards nothing without 'counters'")
+            validate_selector(effect["counters_if"], f"{where}.counters_if")
         if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
             raise DslError(
                 f"{where}: look_at_top 'face_down' needs destination 'exile' "

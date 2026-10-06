@@ -1,3 +1,50 @@
+## "It enters with three additional +1/+1 counters" — counters on a looked-at arrival — 614.1c / 122.6
+
+### Overview
+
+Turntimber Symbiosis: *"Look at the top seven cards of your library. You may put a
+creature card from among them onto the battlefield. **If that card has mana value
+3 or less, it enters with three additional +1/+1 counters on it.**"*
+
+`look_at_top` could already find and place the creature, and `as` plus an
+`add_counters` could put three counters on it afterwards — which is a different
+card. "Enters with" is a replacement on the arrival (614.1c): the counters join
+the card's own printed ones in one placement (122.6), and the creature is never on
+the battlefield without them. Afterwards is a second placement: Hardened Scales
+adds two instead of one, and "whenever you put one or more +1/+1 counters on this
+creature" triggers twice.
+
+### Tier: A — an op option, plus one argument on `move_object`
+
+No new op, decision or event.
+
+### What was built
+
+- **`move_object(..., enters_with=)`**, passed through to `_enter_battlefield`
+  and added to its `entering` totals beside the printed "enters with", Giada's
+  and riot, so `_entering_counters` replaces the whole placement once and
+  `_fire_entered_with_counters` reports it as one event. Ignored when the arrival
+  is replaced away from the battlefield.
+- **`counters` / `counters_if` on `look_at_top`**, read by `_enters_with` in
+  `_move_found` for a battlefield arrival. `counters_if` is a selector asked of
+  the printed card while it is still in the library.
+- **Loader**: `look_at_top` joins `COUNTERS_ON_ARRIVAL_OPS`; `counters` must map
+  kinds to positive integers and needs `destination: "battlefield"` (not
+  `cast_free`); `counters_if` needs `counters` and is a validated selector.
+
+`put_onto_battlefield`'s and `return_from_graveyard`'s `counters` still place
+theirs just after the move, the trade their docstrings record; moving them onto
+`enters_with` is now a one-line change each, and is left for a card that needs it.
+
+### Tests
+
+`tests/unit/test_look_at_top_enters_with_counters.py` — the counters arrive with
+the card (one COUNTER_PLACED of three), one placement with a printed enters-with
+(five, Hardened Scales six not seven, the self-counter trigger once not twice, a
+0/0 survives), the condition reads the card put there (mana value three included,
+five excluded, the chosen card and not the passed-over one), declining and the
+rest to the bottom, wearing off on the next arrival, and the loader refusals.
+
 ## Token doubling — "twice that many of those tokens" — 614.1a / 614.5 / 616.1
 
 ### Overview

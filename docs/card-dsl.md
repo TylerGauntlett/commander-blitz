@@ -237,6 +237,29 @@ creatures. A creature land answers one step, never both. `rest_to` (or
 step could take. Unknown step keys, a non-boolean `up_to`, an unknown `to` and a
 malformed step `selector` are load errors.
 
+`counters` and `counters_if` are a card put onto the battlefield **with**
+counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
+enters with three additional +1/+1 counters on it":
+
+```jsonc
+{ "op": "look_at_top", "amount": { "const": 7 },
+  "objects": { "count": 1, "optional": true, "types": ["Creature"] },
+  "destination": "battlefield",
+  "counters": { "+1/+1": 3 },
+  "counters_if": { "mana_value": { "op": "<=", "value": { "const": 3 } } },
+  "rest_to_bottom": true }
+```
+
+`counters` maps a counter kind to a positive amount and rides `move_object`'s
+`enters_with` into the arrival itself (614.1c), joining whatever the card prints
+in one placement (122.6) — so Hardened Scales adds one, and "whenever you put one
+or more counters on this creature" triggers once. `counters_if` is a selector
+asked of the **printed** card while it is still in the library; without it every
+arrival gets the counters. The near miss is `as` plus a following `add_counters`,
+which is a second placement on a creature already on the battlefield at its
+printed size. Only with `destination: "battlefield"`, never with `cast_free`, and
+`counters_if` never alone — each is a load error.
+
 `as` and `face_down` are Necropotence's third line, which needs both:
 
 ```jsonc

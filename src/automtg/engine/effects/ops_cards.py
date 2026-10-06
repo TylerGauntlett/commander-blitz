@@ -540,6 +540,30 @@ def _destination_for(
     return default, default_tapped
 
 
+def _enters_with(
+    ctx: EffectContext, oid: int, spec: Mapping[str, Any]
+) -> dict[str, int] | None:
+    """The counters a found card enters the battlefield with, if any.
+
+    "**If that card has mana value 3 or less**, it enters with three additional
+    +1/+1 counters on it" -- Turntimber Symbiosis. ``counters_if`` is asked of
+    the printed card while it is still in the library, before the move, which
+    is the card the sentence is about; ``destination_if``'s branches ask theirs
+    the same way. The counters themselves are `move_object`'s ``enters_with``,
+    one placement with whatever the card prints (122.6).
+    """
+    counters = spec.get("counters")
+    if not counters:
+        return None
+    condition = spec.get("counters_if")
+    if condition:
+        from .selectors import matches
+
+        if not matches(ctx, oid, condition, default_zone=None):
+            return None
+    return {str(kind): int(amount) for kind, amount in counters.items()}
+
+
 def _move_found(
     ctx: EffectContext,
     picked: list[int],
@@ -581,6 +605,7 @@ def _move_found(
             to_top=destination is Zone.LIBRARY and _to_top(spec, destination),
             tapped=tapped,
             cause=cause,
+            enters_with=_enters_with(ctx, oid, spec) if destination is Zone.BATTLEFIELD else None,
         )
         # "Exile one of those cards … You may play the exiled card this turn."
         # Florian exiles from inside `look_at_top`, not from a separate `exile`
@@ -662,6 +687,12 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``face_down`` is exile without showing it to anybody, and only exile: see
     :func:`_move_found`.
+
+    ``counters`` and ``counters_if`` are a card put onto the battlefield *with*
+    counters -- Turntimber Symbiosis: "If that card has mana value 3 or less, it
+    enters with three additional +1/+1 counters on it." See :func:`_enters_with`.
+    An `as` and a following `add_counters` is the near miss: a second placement,
+    on a creature that was already on the battlefield at its printed size.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]

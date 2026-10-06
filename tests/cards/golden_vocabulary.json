@@ -68,6 +68,7 @@
    "graveyard"
   ],
   "COUNTERS_ON_ARRIVAL_OPS": [
+   "look_at_top",
    "put_onto_battlefield",
    "return_from_graveyard"
   ],

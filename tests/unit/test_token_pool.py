@@ -383,3 +383,41 @@ class TestTheWanderingEmperorsSamurai:
         other = pool.get("knight_2_2_w_vigilance")
         assert other is not None
         assert "Samurai" not in other.subtypes
+
+
+class TestVerdantKrakensTentacleIsALand:
+    """Verdant Kraken: *"you create a **3/3 green Forest Tentacle land creature**
+    token. (It has "{T}: Add {G}." ...)"*
+
+    Two near misses, each with half the card. `forest_dryad_1_1_g_land` is the
+    right shape -- a green Forest land creature that taps for {G} -- at a third
+    of the body. `tentacle_1_1_u` has the right creature type and is a blue
+    non-land 1/1 with no mana ability. The land type is the load-bearing part:
+    the Kraken makes one on *every* player's upkeep, and each is a land that
+    landfall, land-count and Forest-typal cards (Aesi's own deck is full of
+    them) are meant to see.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("forest_tentacle_3_3_g_land") is not None
+
+    def test_it_is_a_three_three_green_forest_tentacle_land_creature(self, pool):
+        token = pool.get("forest_tentacle_3_3_g_land")
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["G"]
+        assert set(token.types) == {"Land", "Creature"}
+        assert set(token.subtypes) == {"Forest", "Tentacle"}
+        assert not token.keywords
+        assert token.is_token
+
+    def test_it_taps_for_green(self, pool):
+        """The reminder text is the Forest's intrinsic ability (305.6), written
+        out as an ability the way the Dryad token carries it."""
+        mana = [a for a in pool.get("forest_tentacle_3_3_g_land").abilities if a.is_mana_ability]
+        assert len(mana) == 1
+
+    def test_the_dryad_and_the_blue_tentacle_are_still_separate_tokens(self, pool):
+        dryad = pool.get("forest_dryad_1_1_g_land")
+        assert dryad is not None and (dryad.power, dryad.toughness) == (1, 1)
+        tentacle = pool.get("tentacle_1_1_u")
+        assert tentacle is not None and "Land" not in tentacle.types
