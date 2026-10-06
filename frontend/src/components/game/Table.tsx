@@ -13,12 +13,21 @@
  */
 
 import { motion } from "motion/react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { type SoundName, play } from "../../audio/sfx";
 import { drive } from "../../fx/actuators";
 import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
 import { getGroup, setGroup } from "../../input/groups";
+import { oidAt, useLongPress } from "../../input/longPress";
 import { useStickScroll } from "../../input/stickScroll";
 import { sendableIn, stopId, stopRoot } from "../../input/stops";
 import { useGroupDial } from "../../input/useGroupDial";
@@ -37,10 +46,10 @@ import { type Gesture, followUpStops } from "../../logic/followUp";
 import { removalsByOid } from "../../logic/removals";
 import { parseStop } from "../../logic/verbs";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
-import { seatOrder } from "../../logic/zoneGrouping";
+import { findCard, seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
-import { useHandheldLayout } from "../../state/useHandheld";
+import { useHandheldLayout, usePhone } from "../../state/useHandheld";
 import { useNarrationSkip } from "../../state/useNarrationSkip";
 import { useTableDerived } from "../../state/useTableDerived";
 import { useZoomFit } from "../../state/useZoomFit";
@@ -103,6 +112,43 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * matching the board the moment anything happens to it.
    */
   const [heldCard, setHeldCard] = useState<number | null>(null);
+  const closeHold = useCallback(() => setHeldCard(null), []);
+
+  /*
+   * Right-click reads the card under the pointer, full screen.
+   *
+   * The desktop's way into the hold, which until now only `Y` could open --
+   * and `Y`'s keyboard stand-in `i` read the ring, which a mouse player cannot
+   * see. Right-click is what every digital card client uses for "show me this
+   * card bigger", and it needs no new state: whatever the pointer is over has
+   * already written `hoveredOid` (a card, a plinth, a panel row, a seat's
+   * commander window), so this asks the rail what it is showing and opens it.
+   *
+   * On the table and not on each card, so every surface that fills the rail
+   * gets it for free and none can drift. A right-click over nothing readable
+   * falls through to the browser's own menu, untouched.
+   */
+  const readHovered = useCallback(
+    (event: ReactMouseEvent) => {
+      // The card under the click first: on a touch screen a long-press arrives
+      // here as a `contextmenu` with no hover behind it. Then the rail's card.
+      const oid = oidAt(event.target) ?? useUiStore.getState().hoveredOid;
+      if (oid === null || findCard(state, oid) === null) return;
+      event.preventDefault();
+      setHeldCard(oid);
+    },
+    [state],
+  );
+
+  /** ...and a phone's way in, which has neither hover nor a right button. */
+  const longPress = useLongPress(
+    useCallback(
+      (oid: number) => {
+        if (findCard(state, oid) !== null) setHeldCard(oid);
+      },
+      [state],
+    ),
+  );
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
@@ -157,6 +203,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * independent -- see `input/inputMode.ts`.
    */
   const handheld = useHandheldLayout();
+  /** A handheld whose floors are too big for it. See `logic/breakpoints.ts`. */
+  const phone = usePhone();
 
   /** Which opponent is being read while `R2` is held. See `useOpponentReading`. */
   const reading = useOpponentReading(handheld, opponents, state.seat);
@@ -967,6 +1015,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     opponents,
     handCount: viewer.hand?.length ?? 0,
     handheld,
+    phone,
     tableRef,
     mineRef,
     footRef,
@@ -978,6 +1027,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       className="table"
       data-testid="table"
       ref={tableRef}
+      onContextMenu={readHovered}
+      {...longPress}
       // Read by e2e rather than making it parse a resolved `calc()` off a lane, and
       // handy for eyeballing the solve in devtools. Same spirit as
       // `data-stack-count` on a stack.
@@ -1292,6 +1343,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         setError={setError}
         stalled={stalled}
         heldCard={heldCard}
+        closeHold={closeHold}
         dialOpen={dialOpen}
         setDialOpen={setDialOpen}
         enterGroup={enterGroup}

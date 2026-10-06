@@ -296,3 +296,19 @@
  * player actually opened it for. So the hint comes back, where the pointer
  * already is and where the dimming it explains is.
  */
+
+/*
+ * The second line of the desktop rail's idle text: how to see the whole card.
+ *
+ * Here and not beside `.preview__idle` in `board.css`, because it is about
+ * reading a card and that is what this sheet owns. Not italic and a step
+ * fainter, so the first line still reads as THE instruction and this one as
+ * the footnote it is. The idle `<p>` is a grid, so it lands on its own row.
+ */
+.preview__more {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 11px;
+  opacity: 0.8;
+}

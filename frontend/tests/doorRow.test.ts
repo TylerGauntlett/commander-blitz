@@ -97,7 +97,16 @@ describe("the stage scale", () => {
 
   it("shrinks on a small window rather than clipping", () => {
     expect(stageScale(1024, 640)).toBeCloseTo(0.8);
-    expect(stageScale(400, 300)).toBe(0.72);
+    expect(stageScale(1024, 520)).toBe(0.72);
+  });
+
+  it("goes further down on a phone, whose screen is shorter than the 0.72 stage", () => {
+    // A phone held sideways: 0.72 laid the stage out 576px tall on a 428px
+    // screen, and the opening hand's Keep landed off the bottom edge.
+    expect(stageScale(926, 428)).toBeCloseTo(428 / 800);
+    expect(stageScale(580, 900)).toBeCloseTo(580 / 1280);
+    // ...and a narrow phone held upright reaches the phone floor.
+    expect(stageScale(390, 844)).toBe(0.4);
   });
 
   it("scales the five distances and neither of the two unitless terms", () => {

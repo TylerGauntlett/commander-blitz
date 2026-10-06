@@ -46,6 +46,19 @@ export const MIN_CARD_W = 52;
 export const HANDHELD_MIN_CARD_W = 96;
 
 /**
+ * ...and on a phone, where 96 is the CEILING and not the floor.
+ *
+ * A Deck can afford a 96px floor because its board scrolls a little at worst.
+ * A phone cannot: at 96 the hand alone took 232px of a 380px landscape table
+ * and the viewer's own battlefield came out 34px tall. So the phone tier solves
+ * like a desktop does -- down to what the room allows -- with a floor just above
+ * the 52px `e2e/legibility.spec.ts` has shown still reads, and the Deck's floor
+ * as its cap so a phone never draws a card bigger than a Deck would.
+ */
+export const PHONE_MIN_CARD_W = 56;
+export const PHONE_MAX_CARD_W = 96;
+
+/**
  * The widest, and the reason is a hierarchy rather than a limit.
  *
  * `.face--big` in `cards.css` pins the preview rail's card to 150px and says

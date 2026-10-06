@@ -25,6 +25,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   RAIL_SETTLE,
   getCursor,
+  readingOid,
   resetCursor,
   resolveCursor,
   setCursor,
@@ -447,5 +448,52 @@ describe("the preview rail follows the ring", () => {
     setCursor("act:a2-pass");
     await settle();
     expect(useUiStore.getState().hoveredOid).toBe(null);
+  });
+});
+
+/**
+ * What `Y` (and `i`, its keyboard stand-in) opens full screen.
+ *
+ * The card the rail is showing, whoever put it there -- with one exception: in
+ * the `RAIL_SETTLE` window after a step the rail is still showing the card the
+ * ring has already left, and the press means the one under the ring.
+ */
+describe("readingOid", () => {
+  afterEach(() => {
+    resetInputMode();
+    useUiStore.setState({ hoveredOid: null });
+    document.documentElement.removeAttribute("data-sweeping");
+  });
+
+  it("is the card under the pointer in mouse mode, not the invisible ring's", () => {
+    // The desktop case: the ring rests on card 7 where nobody can see it, and
+    // the pointer has put card 12 in the rail.
+    board(`<div data-stop="card:7"></div>`);
+    setCursor("card:7");
+    noteInput("mouse");
+    useUiStore.setState({ hoveredOid: 12 });
+    expect(readingOid()).toBe(12);
+  });
+
+  it("is what a panel row declares once the ring settles on it", async () => {
+    // TECH_DEBT FB-08: `Y` on an action row used to `deny`, because only the
+    // stop's own id was consulted.
+    noteInput("pad");
+    board(`<button data-stop="act:a1-attack" data-preview-oid="12"></button>`);
+    setCursor("act:a1-attack");
+    await new Promise((resolve) => setTimeout(resolve, RAIL_SETTLE + 20));
+    expect(readingOid()).toBe(12);
+  });
+
+  it("is the ring's card mid-sweep, not the one the rail still shows", () => {
+    board(`<div data-stop="card:7"></div><div data-stop="card:8"></div>`);
+    setCursor("card:8");
+    useUiStore.setState({ hoveredOid: 7 });
+    document.documentElement.setAttribute("data-sweeping", "");
+    expect(readingOid()).toBe(8);
+  });
+
+  it("is nothing when the rail is empty and nothing is sweeping", () => {
+    expect(readingOid()).toBe(null);
   });
 });

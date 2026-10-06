@@ -288,7 +288,7 @@
    appears once per app, on the door. */
 .room__word {
   margin: 0;
-  font-size: max(16px, calc(20px * var(--du)));
+  font-size: max(var(--type-floor), calc(20px * var(--du)));
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.22em;
@@ -328,7 +328,7 @@
   background: linear-gradient(180deg, rgb(58 46 82 / 0.9), rgb(32 25 48 / 0.9));
   color: var(--text);
   font: inherit;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -380,7 +380,7 @@
 .key--mark {
   min-width: 44px;
   padding: 0;
-  font-size: max(16px, calc(17px * var(--du)));
+  font-size: max(var(--type-floor), calc(17px * var(--du)));
 }
 
 /*
@@ -420,7 +420,7 @@
   align-items: center;
   gap: 20px;
   color: var(--text-dim);
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   z-index: 300;
 }
 
@@ -435,7 +435,7 @@ html[data-input="keyboard"] .room__hints {
 .room__err {
   margin: 0;
   text-align: center;
-  font-size: max(16px, calc(16px * var(--du)));
+  font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--danger);
 }
 

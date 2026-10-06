@@ -288,6 +288,14 @@
    */
   --card-w-base: clamp(68px, 9.2vh, 96px);
   --card-w: var(--card-w-base);
+
+  /*
+   * The type floor every `max(..., ...)` font-size and every handheld floor
+   * list writes. 16px is the CI gate's number for a Deck and a desktop; a phone
+   * lowers it (`styles/phone.css`), because a 16px floor on a 390px-wide screen
+   * is what pushed its buttons off the edge.
+   */
+  --type-floor: 16px;
   --card-r: calc(var(--card-w) * 0.055);
   --card-h: calc(var(--card-w) * 1.4);
 

@@ -42,6 +42,7 @@ import "../src/styles/door.css";
 import "../src/styles/pod.css";
 import "../src/styles/shelf.css";
 import "../src/styles/handheld.css";
+import "../src/styles/phone.css";
 
 import { setReducedMotionOverride } from "../src/fx/reducedMotion";
 import { resetCursor, setCursor } from "../src/input/cursor";
