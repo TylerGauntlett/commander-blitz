@@ -1,7 +1,7 @@
 # Importing a deck
 
 Paste a public Moxfield link on the setup screen and you get a playable deck.
-The engine plays about 880 cards — 219 hand-written, the rest authored by the
+The engine plays about 3,000 cards — 192 hand-written, the rest authored by the
 [card pipeline](card-authoring.md); a real Commander deck contains a
 hundred, most of which say something nobody has written rules for. So the deal
 this feature makes is:

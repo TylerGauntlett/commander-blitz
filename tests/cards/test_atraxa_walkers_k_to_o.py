@@ -36,9 +36,12 @@ from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.primitives import create_token
 from tests.conftest import (
     _default_answer,
+    activations,
     find_action,
+    hand_ids,
     only_oid,
     pass_until,
+    pt,
 )
 
 ANCHOR = "t_plain_instant"  # {W}, gain 1 life -- a reason for priority to stop
@@ -90,16 +93,6 @@ def answer(game, *, yes: bool = False, pick=None, limit: int = 200) -> None:
             return
         game.apply(_default_answer(game, decision))
     raise AssertionError("the stack did not empty")
-
-
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
 
 
 def activate(game, oid: int, index: int, targets=None, **kw) -> None:
@@ -167,17 +160,8 @@ def tokens(game, def_id: str, pid: int | None = None) -> list:
     return [o for o in game.state.battlefield_objects(pid) if o.def_id == def_id and o.is_token]
 
 
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return c.power, c.toughness
-
-
 def library(game, pid: int = 0) -> int:
     return len(game.state.players[pid].library)
-
-
-def hand_ids(game, pid: int = 0) -> list[str]:
-    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
 
 
 def to_step(game, step: Step, active: int) -> None:

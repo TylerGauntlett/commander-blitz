@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the entered-from / batched-enters test (tests/unit/test_entered_from.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_celes` is Celes's second line; `t_greedy_celes` is the same trigger without `batched`, and over-counts a mass reanimation.",
+  "_comment": "Cards that exist only for the entered-from / batched-enters test (tests/unit/ledger/test_entered_from.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_celes` is Celes's second line; `t_greedy_celes` is the same trigger without `batched`, and over-counts a mass reanimation.",
   "cards": [
     {
       "id": "t_celes",

@@ -10,7 +10,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { type Dir, RAMP, STICK, deadzone, pushOf, repeatMs, sector } from "../src/input/repeat";
+import { type Dir, deadzone, pushOf, RAMP, repeatMs, STICK, sector } from "../src/input/repeat";
 
 describe("pushOf", () => {
   it("puts a digital direction in the middle of the ramp, not at either end", () => {

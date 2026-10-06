@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the board-side enters-tapped test (tests/unit/test_enters_tapped.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_authority` is Authority of the Consuls' first line -- creatures your opponents control enter tapped. `t_kismet_like` widens it to artifacts, creatures and lands, the Kismet/Frozen Aether/Loxodon Gatekeeper wording. `t_orb` is Orb of Dreams' symmetric 'Permanents enter tapped', written with an explicit controller 'any', and it is the card that must NOT tap itself on arrival.",
+  "_comment": "Cards that exist only for the board-side enters-tapped test (tests/unit/replacement/test_enters_tapped.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_authority` is Authority of the Consuls' first line -- creatures your opponents control enter tapped. `t_kismet_like` widens it to artifacts, creatures and lands, the Kismet/Frozen Aether/Loxodon Gatekeeper wording. `t_orb` is Orb of Dreams' symmetric 'Permanents enter tapped', written with an explicit controller 'any', and it is the card that must NOT tap itself on arrival.",
   "cards": [
     {
       "id": "t_authority",

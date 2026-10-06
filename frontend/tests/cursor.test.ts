@@ -23,8 +23,8 @@
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  RAIL_SETTLE,
   getCursor,
+  RAIL_SETTLE,
   readingOid,
   resetCursor,
   resolveCursor,

@@ -20,9 +20,10 @@ from gymnasium import spaces
 from automtg.cards.registry import GameData, default_registry
 from automtg.engine.errors import RulesLoopError
 from automtg.engine.game import create_game
+from automtg.engine.sba import declare_draw
 
 from . import action_space, encoding
-from .agents.base import Agent
+from .agents.base import Agent, agent_by_name
 from .agents.random_agent import RandomAgent
 
 #: Per-step shaping coefficient, used only when ``reward_shaping`` is on.
@@ -130,7 +131,6 @@ class MtgEnv(gym.Env):
                 self.game.apply(chosen)
             except RulesLoopError as exc:
                 info["rules_loop"] = str(exc)
-                from automtg.engine.sba import declare_draw
 
                 declare_draw(self.game.state, "rules loop")
             self._advance_others()
@@ -166,13 +166,10 @@ class MtgEnv(gym.Env):
             try:
                 self.game.apply(agent.act(self.game, decision.player, actions))
             except RulesLoopError:
-                from automtg.engine.sba import declare_draw
-
                 declare_draw(self.game.state, "rules loop")
                 break
             guard += 1
             if guard > 50_000:  # pragma: no cover - safety valve
-                from automtg.engine.sba import declare_draw
 
                 declare_draw(self.game.state, "opponent loop")
                 break
@@ -234,7 +231,6 @@ def make_env(
     **kwargs,
 ) -> MtgEnv:
     """Convenience constructor used by the trainer and the tests."""
-    from .agents.base import agent_by_name
 
     opponents = [
         agent_by_name(opponent, seed=seed + pid)

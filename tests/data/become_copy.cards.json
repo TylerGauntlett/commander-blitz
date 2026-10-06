@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the become_copy test (tests/unit/test_become_copy.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mime` is Gogo's shape -- become a copy of another creature you control until end of turn, except the name. `t_token_mime` is the near miss the DSL could already write, using copy_permanent, which leaves the original untouched and adds a permanent the card never creates.",
+  "_comment": "Cards that exist only for the become_copy test (tests/unit/copies/test_become_copy.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mime` is Gogo's shape -- become a copy of another creature you control until end of turn, except the name. `t_token_mime` is the near miss the DSL could already write, using copy_permanent, which leaves the original untouched and adds a permanent the card never creates.",
   "cards": [
     {
       "id": "t_mime",

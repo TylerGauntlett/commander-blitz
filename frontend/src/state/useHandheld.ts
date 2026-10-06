@@ -12,7 +12,7 @@
  */
 
 import { useSyncExternalStore } from "react";
-import { HANDHELD_QUERY, PHONE_QUERY, isHandheld, isPhone } from "../logic/breakpoints";
+import { HANDHELD_QUERY, isHandheld, isPhone, PHONE_QUERY } from "../logic/breakpoints";
 
 const lists = new Map<string, MediaQueryList | null>();
 

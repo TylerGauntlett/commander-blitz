@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the graveyard-static test (tests/unit/test_graveyard_static.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_anger` is Anger's shape. `t_wrong_anger` is the card the DSL could write before this existed -- the same static with no `active_zones`, so it works from the battlefield and stops when the card dies, the exact inverse of the printed card.",
+  "_comment": "Cards that exist only for the graveyard-static test (tests/unit/statics/test_graveyard_static.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_anger` is Anger's shape. `t_wrong_anger` is the card the DSL could write before this existed -- the same static with no `active_zones`, so it works from the battlefield and stops when the card dies, the exact inverse of the printed card.",
   "cards": [
     {
       "id": "t_anger",

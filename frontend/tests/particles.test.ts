@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { CAP, ParticleField, opacityOf, sizeOf } from "../src/fx/particles";
+import { CAP, opacityOf, ParticleField, sizeOf } from "../src/fx/particles";
 import { explode, impact, shatter } from "../src/fx/presets";
 
 /** A fixed sequence, so a burst is the same burst every run. */

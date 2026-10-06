@@ -10,15 +10,17 @@
 
 ``data/cards/auto/`` is in the pool because it cleared six gates, and
 ``tests/cards/test_auto_cards.py`` re-runs all six on every test run.
-``data/cards/`` cleared none of them: those cards predate the pipeline. Two gates
-have simply never run over them -- residual (is every printed sentence
-implemented?) and behaviour (does the card demonstrably do it?).
+``data/cards/`` predates the pipeline, and for a long time two gates never ran
+over it -- residual (is every printed sentence implemented?) and behaviour (does
+the card demonstrably do it?).
 
-They could not run, for one reason. On a hand-written card ``oracle_text`` is a
-human paraphrase written *after* whatever was skipped, so the card's own record
-of its text already agrees with the shortcut. Krosan Tusker's oracle text is "A
-large boar." -- and against that text, a vanilla 6/5 is a faithful
+They could not run, for one reason. A hand-written card's ``oracle_text`` used to
+be a human paraphrase written *after* whatever was skipped, so the card's own
+record of its text already agreed with the shortcut. Krosan Tusker's oracle text
+was "A large boar." -- and against that text, a vanilla 6/5 is a faithful
 implementation. The question was begged, so there was nothing to catch.
+``--fix-oracle`` recorded the printed text, ``test_its_oracle_text_is_what_it_prints``
+keeps it, and ``tests/cards/test_hand_written_cards.py`` now runs all six gates.
 
 This script never repairs a card's *rules*. It records what is true, and hands
 the incomplete ones to ``/author-cards``, which routes each back through the same
@@ -150,7 +152,7 @@ def _rewrite(path: Path, edits: dict[str, list[tuple[str, str, str]]]) -> int:
 
     Edited as text rather than reserialized. ``data/cards/*.cards.json`` is
     hand-formatted -- ``"supertypes": ["Legendary"]`` sits on one line, arrays of
-    scalars stay inline -- and ``json.dumps`` would reflow all 235 cards, burying
+    scalars stay inline -- and ``json.dumps`` would reflow all 285 cards, burying
     a dozen real changes in a whole-file diff nobody can review.
     """
     raw = path.read_text(encoding="utf-8")
@@ -281,11 +283,12 @@ def fix_expectations(*, dry_run: bool) -> int:
     """Give every hand-written card the zone assertion the authored tier uses.
 
     Gate 5 refuses to pass a card with no expectation at all, so without this the
-    gate test cannot run over 179 of the 213 cards and the other five gates go
-    unchecked on them too. A zone assertion is the authored tier's own floor --
-    447 of its cards carry nothing more -- and it is a real check: it is the
-    difference between "resolved without raising" and "ended up where a card of
-    this kind belongs".
+    gate test could not run over most of the hand-written cards (179 of 213 when
+    it was written) and the other five gates went unchecked on them too. Today
+    148 of the 192 still carry only a zone assertion. That is the authored tier's
+    own floor -- 1,924 of its 2,832 expectations carry nothing more -- and it is a
+    real check: it is the difference between "resolved without raising" and
+    "ended up where a card of this kind belongs".
 
     It is deliberately *not* counted as asserting the card's behaviour: `audit`
     still reports a zone-only card as ``unasserted``, so writing these does not
@@ -438,7 +441,7 @@ def check_substitutions() -> None:
     """Which deck substitutions the engine has since outgrown.
 
     Aesi swaps Scute Swarm out because "copy effects are not implemented" -- and
-    ``data/authoring/answers/scute_swarm.json`` implements it with
+    ``scute_swarm`` in ``data/cards/auto/`` implements it with
     ``copy_permanent``. Reported, never undone: putting a card back changes the
     deck's composition and is somebody's decision, not a script's.
     """

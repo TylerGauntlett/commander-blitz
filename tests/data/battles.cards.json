@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_battles.py. t_battle_wall is a bare Siege with defense 3 and no text -- 310 supplies everything it does, which is the point. t_battle_big is the same card with more defense, so a swing that would finish the small one can be shown to leave counters on a bigger one. t_battle_hitter is a 2/2 with no abilities, kept here rather than reused from the shared pool so the test's arithmetic is written down beside the cards it is about.",
+  "_comment": "Shapes for tests/unit/combat/test_battles.py. t_battle_wall is a bare Siege with defense 3 and no text -- 310 supplies everything it does, which is the point. t_battle_big is the same card with more defense, so a swing that would finish the small one can be shown to leave counters on a bigger one. t_battle_hitter is a 2/2 with no abilities, kept here rather than reused from the shared pool so the test's arithmetic is written down beside the cards it is about.",
   "cards": [
     {
       "id": "t_battle_wall",

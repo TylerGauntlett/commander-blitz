@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the choose_mode chooser test (tests/unit/test_mode_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_donor_rock` is The Warring Triad's third line -- 'Target player adds one mana of any color', where the player ADDING picks the colour. `t_selfish_rock` is the same card without the chooser, the version the DSL could write before it existed, and is the counterfactual: its controller picks and its controller is paid.",
+  "_comment": "Cards that exist only for the choose_mode chooser test (tests/unit/modes/test_mode_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_donor_rock` is The Warring Triad's third line -- 'Target player adds one mana of any color', where the player ADDING picks the colour. `t_selfish_rock` is the same card without the chooser, the version the DSL could write before it existed, and is the counterfactual: its controller picks and its controller is paid.",
   "cards": [
     {
       "id": "t_donor_rock",

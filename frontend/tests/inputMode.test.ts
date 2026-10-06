@@ -14,7 +14,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { KEYS, KEY_LABEL } from "../src/input/buttons";
+import { KEY_LABEL, KEYS } from "../src/input/buttons";
 import {
   getInputMode,
   getScheme,
@@ -48,7 +48,6 @@ const pointer = (type: string) => new Event(type);
  */
 function viewport(handheld: boolean | null): void {
   if (handheld === null) {
-    // biome-ignore lint/performance/noDelete: restoring jsdom's own absence.
     delete (window as { matchMedia?: unknown }).matchMedia;
     return;
   }

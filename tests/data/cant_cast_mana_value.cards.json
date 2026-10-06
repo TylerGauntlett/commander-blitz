@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the mana-value cast prohibition test (tests/unit/test_cant_cast_mana_value.py). `t_mv_lock` is Brisela, Voice of Nightmares' last line alone on an enchantment, so the lock can be seen to lift when its source leaves. `t_mv3` and `t_mv4` are vanilla creatures either side of the threshold.",
+  "_comment": "Cards that exist only for the mana-value cast prohibition test (tests/unit/statics/test_cant_cast_mana_value.py). `t_mv_lock` is Brisela, Voice of Nightmares' last line alone on an enchantment, so the lock can be seen to lift when its source leaves. `t_mv3` and `t_mv4` are vanilla creatures either side of the threshold.",
   "cards": [
     {
       "id": "t_mv_lock",

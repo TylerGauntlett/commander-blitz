@@ -13,15 +13,13 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
-from .characteristics import (
-    abilities_of,
-    chars,
-    mana_added_on_tap,
-    mana_source_traits,
-    player_doubles_mana_from,
-)
+from .characteristics import abilities_of, chars, crew_power_bonus, mana_source_traits
+from .cost_reduction import reduction_amount
+from .effects import execute
+from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
-from .effects.selectors import resolve_pool
+from .effects.selectors import matches, resolve_pool
+from .effects.values import evaluate_value
 from .enums import COLORLESS, Keyword, Zone
 from .errors import DslError
 from .events import EventType
@@ -41,28 +39,33 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
+from .player_statics import (
+    ability_cost_reduction,
+    mana_added_on_tap,
+    player_cant_activate,
+    player_doubles_mana_from,
+    player_extra_land_drops,
+    player_pays_life_for_black,
+    player_spends_mana_as_any_color,
+    players_freezing_opponent_lands,
+)
 from .primitives import (
+    add_counters,
     life_locked,
     lose_life,
-    sacrifice_forbidden,
+    mill_cards,
+    remove_counters,
     tap_permanent,
     untap_permanent,
 )
+from .replacements import discard as discard_with_replacements
+from .temp_effects import sacrifice_forbidden
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-from .cost_reduction import (  # noqa: F401
-    REDUCTION_ZONES,
-    _filter_zones,
-    _reduction_matches,
-    _reduction_zone_oids,
-    cost_reduction,
-    reduction_amount,
-    variant_reduction,
-)
 
 
 def mana_sources(
@@ -329,8 +332,6 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     # prohibition is asked here for the same reason the object's own flag is,
     # one line above. Without it a locked permanent would still tap for mana,
     # which is most of what the lock is for.
-    from .player_statics import player_cant_activate
-
     if player_cant_activate(state, obj.controller, oid):
         return []
     card = state.card_of(obj)
@@ -386,8 +387,6 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
 
 def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) -> bool:
     """ "Activate only if …" on a mana ability, asked as legality asks it."""
-    from .effects.conditions import evaluate
-    from .effects.context import EffectContext
 
     ctx = EffectContext(state=state, controller=pid, source_oid=oid)
     return bool(evaluate(ctx, ability.activation_condition))
@@ -415,8 +414,6 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
         return 1
     if ability.mana_amount is None:
         return 1
-    from .effects.context import EffectContext
-    from .effects.values import evaluate_value
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -694,8 +691,6 @@ def _split_amount(state: GameState, oid: int, ability: Ability) -> int:
     """X for a split ability, read the way `mana_amount` reads every other one."""
     if ability.mana_amount is None:
         return 0
-    from .effects.context import EffectContext
-    from .effects.values import evaluate_value
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -949,7 +944,6 @@ def defined_x(state: GameState, pid: int, cost: Cost | None, source_oid: int | N
     """
     if cost is None or cost.x_value is None:
         return None
-    from .effects.values import evaluate_value
 
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     return max(0, int(evaluate_value(ctx, cost.x_value)))
@@ -999,8 +993,6 @@ def ability_mana(
     # a discount written on a *different* permanent. Added to the ability's own
     # `mana_reduction` rather than replacing it: two cards may both be talking
     # about the same activation, and the printed answer is that both apply.
-    from .player_statics import ability_cost_reduction
-
     less += ability_cost_reduction(state, pid, ability, source_oid, targets)
     if less:
         req = req.with_generic(req.generic - less)
@@ -1030,7 +1022,6 @@ def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) ->
     spec = cost.pay_life
     if isinstance(spec, int):
         return spec
-    from .effects.values import evaluate_value
 
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     return max(0, int(evaluate_value(ctx, spec)))
@@ -1044,7 +1035,6 @@ def payable_mana(state: GameState, pid: int, mana: ManaCost) -> ManaCost:
     identical conversion on the cast line, so a pip offered as buyable with life
     is a pip charged that way.
     """
-    from .player_statics import player_pays_life_for_black
 
     # Cheap test first: this is asked of every cost legality prices, and most
     # have no black in them at all -- the battlefield walk is for the rest.
@@ -1076,7 +1066,6 @@ def spendable_requirement(state: GameState, pid: int, req: Requirement) -> Requi
     # battlefield -- the board walk is for the rest.
     if not req.hybrid and not any(n for i, n in enumerate(req.colored) if i != colorless):
         return req
-    from .player_statics import player_spends_mana_as_any_color
 
     if player_spends_mana_as_any_color(state, pid):
         return req.as_any_color()
@@ -1166,7 +1155,6 @@ def most_life_for_mana(
     mana = payable_mana(state, pid, cost.mana)
     most = min(mana.phyrexian_count, _life_budget(state, pid, cost, source_oid) // 2)
     mana = mana.paying_phyrexian(most)[0]
-    from .player_statics import player_spends_mana_as_any_color
 
     if player_spends_mana_as_any_color(state, pid):
         return mana.as_any_color()
@@ -1381,7 +1369,6 @@ def _discard_pool(
     hand = [oid for oid in state.players[pid].hand if oid != source_oid]
     if cost.discard_selector is None:
         return hand
-    from .effects.selectors import matches
 
     spec = {**dict(cost.discard_selector), "zone": "hand"}
     ctx = EffectContext(state=state, controller=pid)
@@ -1407,7 +1394,6 @@ def _hand_exile_pool(
     not become fodder or leak into a pool the client can count.
     """
     hand = [oid for oid in state.players[pid].hand if oid != source_oid]
-    from .effects.selectors import matches
 
     spec = {**dict(cost.exile_from_hand or {}), "zone": "hand"}
     count = int(spec.pop("count", 1) or 1)
@@ -1434,7 +1420,6 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     Emerge and offering choose their fodder as part of the cast action instead
     of out of a `Cost`, so they are filtered in `legality._emerge_fodder`.
     """
-    from .effects.selectors import resolve_pool
 
     spec = dict(cost.sacrifice or {})
     spec.setdefault("controller", "you")
@@ -1453,7 +1438,6 @@ def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None)
     whole difference: Meloku and Trench Behemoth both replay the land they
     return, and a sacrifice would graveyard it.
     """
-    from .effects.selectors import resolve_pool
 
     spec = dict(cost.return_to_hand or {})
     spec.setdefault("controller", "you")
@@ -1477,7 +1461,6 @@ def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | Non
     that a Vampire which just arrived may be tapped for it, and the source
     itself counts among the five.
     """
-    from .effects.selectors import resolve_pool
 
     spec = dict(cost.tap_permanents or {})
     # `as` names what was tapped for the ability's effects; it says nothing
@@ -1534,7 +1517,6 @@ def _crew_power(state: GameState, oids: list[int]) -> int:
     combat and for every other reader of power, and `total_power` on
     `tap_permanents` is crew's by definition (the loader refuses it elsewhere).
     """
-    from .characteristics import chars, crew_power_bonus
 
     return sum(
         chars(state, oid).power + crew_power_bonus(state, oid)
@@ -1561,7 +1543,6 @@ def _untap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | N
     that reaches other permanents. A creature that arrived tapped this turn --
     off Halo Fountain's own Citizen line, or attacking -- pays it.
     """
-    from .effects.selectors import resolve_pool
 
     spec = dict(cost.untap_permanents or {})
     spec.setdefault("controller", "you")
@@ -1583,7 +1564,6 @@ def _counter_removal_pool(
     (``exclude_self`` for "other"), and only those that carry a counter are in
     the pool, since one without has nothing to give.
     """
-    from .effects.selectors import resolve_pool
 
     spec = dict(cost.remove_counters_from_among or {})
     spec.pop("count", None)
@@ -1605,8 +1585,6 @@ _HARMFUL_COUNTERS = ("-1/-1", "stun")
 
 
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
-    from .effects.selectors import resolve_pool
-
     spec = dict(cost.exile_from_graveyard or {})
     spec.setdefault("controller", "you")
     spec["zone"] = "graveyard"
@@ -1851,8 +1829,6 @@ def pay(
         # removal however they like (all three off one permanent, or one off
         # each), and asking per counter is the one question that can say every
         # split without a distribution decision the engine does not have.
-        from .primitives import remove_counters
-
         needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
         while needed > 0:
             pool = _counter_removal_pool(state, pid, cost, source_oid)
@@ -1885,8 +1861,6 @@ def pay(
             needed -= 1
 
     if cost.remove_counters is not None and source_oid is not None:
-        from .primitives import remove_counters
-
         remove_counters(
             state,
             source_oid,
@@ -1898,8 +1872,6 @@ def pay(
         # A **cost**, so it is paid as the ability goes on the stack and is not
         # refunded if the ability is countered or does nothing -- which is what
         # makes a planeswalker's loyalty spendable in response to removal.
-        from .primitives import add_counters, remove_counters
-
         if cost.loyalty_x:
             # "-X": the announced number, which `game._activate` bounded by
             # the loyalty on the permanent.
@@ -1916,8 +1888,6 @@ def pay(
         # No `ask_objects`: the cards come off the top of the library, so there
         # is nothing to choose. `mill_cards` already stops at an empty library,
         # which is 701.13b and the reason `can_pay` does not gate on this.
-        from .primitives import mill_cards
-
         mill_cards(state, pid, cost.mill)
 
     if cost.exile_from_graveyard is not None:
@@ -1941,7 +1911,6 @@ def _discard(state: GameState, pid: int, oids):
     the effect path does. Imported here rather than at module scope because
     `replacements` needs this module.
     """
-    from .replacements import discard as discard_with_replacements
 
     return (yield from discard_with_replacements(state, pid, oids))
 
@@ -2145,7 +2114,6 @@ def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:
     nowhere to suspend to: this is inside cost payment, with no stack and no
     priority window.
     """
-    from .effects import execute
 
     ctx = EffectContext(state=state, controller=pid, source_oid=oid)
     generator = execute(ctx, list(ability.mana_rider))
@@ -2166,7 +2134,6 @@ def _lands_tapped_for_mana(state: GameState, land: Any) -> None:
     its source is on the battlefield: these are different lifetimes and using
     either for the other would be wrong.
     """
-    from .characteristics import players_freezing_opponent_lands
 
     freezers = players_freezing_opponent_lands(state)
     if any(pid != land.controller for pid in freezers):
@@ -2175,7 +2142,6 @@ def _lands_tapped_for_mana(state: GameState, land: Any) -> None:
 
 def land_drops_available(state: GameState, pid: int) -> int:
     """How many more lands this player may play this turn."""
-    from .characteristics import player_extra_land_drops
 
     player = state.players[pid]
     return 1 + player.extra_land_drops + player_extra_land_drops(state, pid) - player.lands_played

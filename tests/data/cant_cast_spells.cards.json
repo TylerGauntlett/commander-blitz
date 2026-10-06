@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the cast prohibition test (tests/unit/test_cant_cast_spells.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_voice` is Voice of Victory's static without the Mobilize half -- opponents can't cast spells, but only during its controller's turn. `t_quiet_voice` drops the turn condition, so an opponent's own priority window can be locked and the per-zone and resolution-time casts tested without driving a turn. `t_flashback_shock` is a one-mana flashback instant, the graveyard cast the top-of-function gate has to reach.",
+  "_comment": "Cards that exist only for the cast prohibition test (tests/unit/statics/test_cant_cast_spells.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_voice` is Voice of Victory's static without the Mobilize half -- opponents can't cast spells, but only during its controller's turn. `t_quiet_voice` drops the turn condition, so an opponent's own priority window can be locked and the per-zone and resolution-time casts tested without driving a turn. `t_flashback_shock` is a one-mana flashback instant, the graveyard cast the top-of-function gate has to reach.",
   "cards": [
     {
       "id": "t_voice",

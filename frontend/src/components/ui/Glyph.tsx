@@ -21,10 +21,10 @@
  * says the same things in its own markup. Announcing "A" to a screen reader
  * would be describing hardware the listener may not have.
  *
- * Biome's `noAriaHiddenOnFocusable` fires on both, and is suppressed inline. A
- * `<b>` has no tabindex and no implicit role, so it is not focusable; the rule's
- * suggested fix -- remove `aria-hidden` -- would make a decorative letter part
- * of the accessible name of every control it decorates.
+ * Biome 1's `noAriaHiddenOnFocusable` fired on both and was suppressed inline;
+ * Biome 2 knows a `<b>` with no tabindex and no implicit role is not focusable.
+ * Its old suggested fix -- remove `aria-hidden` -- would have made a decorative
+ * letter part of the accessible name of every control it decorates.
  */
 
 import { KEY_LABEL, PAD_LABEL, type PadButton } from "../../input/buttons";
@@ -41,11 +41,9 @@ export function Glyph({ btn }: Props) {
   const key = btn === "dpad" ? DPAD.key : (KEY_LABEL[btn] ?? PAD_LABEL[btn]);
   return (
     <>
-      {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: a `<b>` is not focusable -- no tabindex, no implicit role -- and the rule's fix, dropping `aria-hidden`, is the opposite of what this needs. See the header. */}
       <b className={`glyph glyph--pad glyph--${btn}`} aria-hidden="true" data-glyph={btn}>
         {pad}
       </b>
-      {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: as above. */}
       <b className={`glyph glyph--key glyph--${btn}`} aria-hidden="true" data-glyph={btn}>
         {key}
       </b>

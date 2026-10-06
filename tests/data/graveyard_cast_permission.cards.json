@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the graveyard-cast-permission test (tests/unit/test_cast_from_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_machinist` is Edgar's shape: once per turn you may cast an artifact spell from your graveyard, and it enters tapped. `t_untapped_machinist` is the same permission without the rider.",
+  "_comment": "Cards that exist only for the graveyard-cast-permission test (tests/unit/casting/test_cast_from_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_machinist` is Edgar's shape: once per turn you may cast an artifact spell from your graveyard, and it enters tapped. `t_untapped_machinist` is the same permission without the rider.",
   "cards": [
     {
       "id": "t_machinist",

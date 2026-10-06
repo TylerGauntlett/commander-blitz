@@ -9,7 +9,7 @@ description: Add the engine and DSL support that unblocks cards the card pipelin
 records. This skill picks one of those capabilities and builds it, so the next
 `/author-cards` run harvests every card that was waiting on it.
 
-**One capability per run.** One mechanic, one `tests/unit/test_<mechanic>.py`, one
+**One capability per run.** One mechanic, one `tests/unit/<area>/test_<mechanic>.py`, one
 reviewable diff. Do not batch mechanics.
 
 ## Invocation
@@ -48,6 +48,40 @@ way to over-build here is reaching for a new `DecisionKind` when an existing
 > opponent, because `ask_objects` always took an arbitrary player. "Somebody else
 > decides" was free.
 
+### Tier 0 — a missing token (`kind: "token"`)
+
+The cheapest gap there is, and a data change, not engine work. `create_token`
+names a token by id, `validate_token_references` refuses an id the pool does not
+define, and a worker sees the defined ids as its packet's `token_ids`. When the
+printed token is not among them, the worker files a gap record with
+`kind: "token"` and the printed token in `what`.
+
+1. `data/cards/tokens.cards.json` — add one entry. **This is the one card file
+   outside `auto/` that is edited by hand**, under this skill: a token has no
+   catalog row to author from and is never cast, so there is no answer and no
+   gate to collect it through. Copy the shape of its nearest neighbour:
+   `is_token: true`, the printed words as `oracle_text` ("2/2 white Knight creature
+   token with vigilance."), `types`, `subtypes`, `power`, `toughness`, `colors`,
+   `color_identity`, `keywords`, and `abilities` if the token prints any. Name it
+   the way the file does, `<subtypes>_<p>_<t>_<colours>[_<keywords>]`.
+2. **Never reuse a near miss.** Rule 111.4: a token is exactly what its creating
+   effect says. A 2/2 Knight with vigilance is not a 2/2 Knight, and a card that
+   names the wrong one is a stronger or weaker card than the printed one.
+3. `tests/unit/tokens/test_token_pool.py` — pin the new token's characteristics next to
+   its nearest near miss, as the Forest Tentacle (`02138ed9`) and the Samurai do.
+   The packet's `token_ids` picks it up with no further change;
+   `tests/cards/test_authoring.py` fails if a defined token is missing from it.
+4. Harvest the cards that were waiting on it (§4) and retire their gap records.
+
+Art is not part of the step: `scripts/build_card_index.py` resolves every
+registry card, tokens included, into `data/catalog/registry_images.json` and
+fetches the image the next time it runs.
+
+A token in that file that no card creates is not automatically dead. Check
+`tests/` first: `knight_2_2_w_vigilance`, `kraken_8_8_u` and `vampire_1_1_bw` are
+created by no shipped card, but unit tests and test-pool cards use them as
+fixtures and near-miss contrasts.
+
 ### Tier A — a new op composing existing primitives
 
 The common case, and the whole job for most mechanics.
@@ -55,15 +89,24 @@ The common case, and the whole job for most mechanics.
 1. `src/automtg/engine/effects/ops_*.py` — the function, decorated
    `@register("name")`. Make it a **generator** if it needs a decision; `yield` from
    an `ask_*` helper in `effects/context.py`.
-2. `src/automtg/cards/loader.py::_validate_effect` — a guard for required sub-keys.
+2. `src/automtg/cards/loader/effects.py::_validate_effect` — a guard for required sub-keys.
    House style, alongside the existing guards for `create_token`, `add_mana`,
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.
-3. `tests/unit/test_<op>.py` — see §3.
-4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**
-   (currently stale: it says 46 and there are 47), and a narrative section for
-   anything non-trivial.
-5. `docs/rules-coverage.md` and `docs/completed-features.md`.
+3. `tests/unit/<area>/test_<op>.py` — see §3.
+4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**,
+   and a section for anything non-trivial. `card-dsl.md` is the **current
+   reference only**: say what the op, key, cost, trigger or condition *is* — its
+   parameters, defaults, constraints, load-time refusals, an example card, and the
+   near miss an author might reach for instead — once, in the present tense. When
+   you change something already documented, rewrite its entry to describe the new
+   behaviour; do not append "it used to…" or "is now…" beside the old text.
+5. History goes elsewhere. What a capability used to do, the bug you fixed, what
+   you renamed or removed, and which card motivated the work go under the matching
+   heading in `docs/dsl-changelog.md` (create the heading if it is new; it mirrors
+   `card-dsl.md`'s headings). The full write-up — tier, what was built, tests —
+   goes in `docs/completed-features.md`; what is and is not modelled goes in
+   `docs/rules-coverage.md`.
 6. **Server: nothing. Frontend: nothing.** Verified — see §5.
 
 ### Tier B — a new continuous effect
@@ -122,8 +165,13 @@ client echoes back.
 
 ## 3 · The test is not optional
 
-`tests/unit/test_<mechanic>.py`, in the house style — read
-`tests/unit/test_animate.py` and `tests/unit/test_two_piles.py` first.
+`tests/unit/<area>/test_<mechanic>.py`, in the house style — read
+`tests/unit/effects/test_animate.py` and `tests/unit/choices/test_two_piles.py` first.
+`<area>` is the mechanic's subdirectory of `tests/unit/` (`combat/`, `mana/`, `costs/`,
+`triggers/`, `keywords/`, ...) -- put the file beside its nearest neighbours; a new
+subdirectory needs an `__init__.py`. Shared helpers (`settle`, `two_seat_board`,
+`activations`, `pt`, ...) live in `tests/conftest.py`: import them rather than
+copying one in.
 
 For engine work there is no expectation-as-test safety net; an authored card gets
 re-verified through six gates on every test run, but a primitive gets exactly the

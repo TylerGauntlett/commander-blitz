@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_protection_from_colors_outside_commander_identity.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_plate_probe` is Commander's Plate's shape; the generals are commanders of known identity; the bolts are one-colour sources to aim at the equipped creature.",
+  "_comment": "Cards that exist only for tests/unit/protection/test_protection_from_colors_outside_commander_identity.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_plate_probe` is Commander's Plate's shape; the generals are commanders of known identity; the bolts are one-colour sources to aim at the equipped creature.",
   "cards": [
     {
       "id": "t_plate_probe",

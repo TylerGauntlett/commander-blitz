@@ -11,7 +11,8 @@ from pathlib import Path
 from automtg.engine.carddef import CardDef
 from automtg.engine.errors import DeckError, DslError
 
-from .loader import link_faces, load_card_file, load_deck_file, validate_token_references
+from .loader import load_card_file, load_deck_file
+from .loader.linking import link_faces, validate_token_references
 from .schema import DeckModel
 
 #: Repo-root ``data/`` directory, overridable for tests via ``AUTOMTG_DATA_DIR``.

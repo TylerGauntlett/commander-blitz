@@ -10,6 +10,8 @@ venv/
 .pytest_cache/
 .ruff_cache/
 .coverage
+# Parallel coverage runs leave one data file per process behind.
+.coverage.*
 htmlcov/
 
 # Training artifacts
@@ -22,6 +24,8 @@ node_modules/
 frontend/dist/
 bun.lockb
 .vite/
+# tsc's incremental cache, written by `tsc --noEmit` in the build script.
+frontend/tsconfig.tsbuildinfo
 
 # Storybook
 frontend/storybook-static/
@@ -51,6 +55,14 @@ frontend/test-results/
 .DS_Store
 Thumbs.db
 
+# Authoring work packets. `author_cards.py --tier agent` regenerates one from the
+# queue and the catalog whenever it is needed, a worker reads it in the same
+# session, and `--collect` deletes it once the card ships. Nothing in CI or the
+# tests reads a committed one, and they were 29 MB of the history (RS-01).
+data/authoring/packets/
+
 # Agent worktrees. Created by parallel capability lanes during a deck import;
 # a checkout of this same repo, so committing one would nest the tree in itself.
 .claude/worktrees/
+# Per-person permission allowlist; Claude Code writes it, nobody shares it.
+.claude/settings.local.json

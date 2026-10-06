@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_replace_counters.py. t_rc_scales is High Score's and Hardened Scales' addend; t_rc_season is Doubling Season's multiplier over every counter kind; t_rc_charge doubles charge counters only, so the kind filter can be shown to bite; t_rc_bear is a plain creature to put counters on and t_rc_rock a noncreature artifact that the 'creature you control' filter must miss.",
+  "_comment": "Shapes for tests/unit/counters/test_replace_counters.py. t_rc_scales is High Score's and Hardened Scales' addend; t_rc_season is Doubling Season's multiplier over every counter kind; t_rc_charge doubles charge counters only, so the kind filter can be shown to bite; t_rc_bear is a plain creature to put counters on and t_rc_rock a noncreature artifact that the 'creature you control' filter must miss.",
   "cards": [
     {
       "id": "t_rc_scales",

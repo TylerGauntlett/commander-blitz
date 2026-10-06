@@ -27,20 +27,20 @@ Four of these cards arrived with the capability that made them possible, and eac
 capability has its own unit test about the *mechanism*. This file is about the
 *card in a game position*:
 
-- `tests/unit/test_cant_lose_the_game.py` -- Angel's Grace: the outcome lock and
+- `tests/unit/players/test_cant_lose_the_game.py` -- Angel's Grace: the outcome lock and
   the damage life-floor, read off `sba` and the primitives directly.
-- `tests/unit/test_replace_graveyard.py` -- Rest in Peace: the graveyard
+- `tests/unit/replacement/test_replace_graveyard.py` -- Rest in Peace: the graveyard
   replacement from every zone, on a synthetic probe card.
-- `tests/unit/test_untap_limit.py` -- Winter Orb: `untap_caps` and `untap_all`,
+- `tests/unit/turn/test_untap_limit.py` -- Winter Orb: `untap_caps` and `untap_all`,
   neither of which runs an untap step.
-- `tests/unit/test_approach_of_the_second_sun.py` -- Approach: `cast_from_hand`,
+- `tests/unit/named_cards/test_approach_of_the_second_sun.py` -- Approach: `cast_from_hand`,
   the game-long cast ledger, the `> 1` boundary and the seventh-from-top tuck.
 
 The one printed clause in this group that no assertion here can reach is Angel's
 Grace's **split second**. The engine stops a response at the legality layer, and
 a seat with no legal action is never asked: by the time any `pending()` exists the
 spell has already resolved, so there is no game state in which to observe the
-prohibition. `tests/unit/test_split_second.py` measures it where it lives.
+prohibition. `tests/unit/casting/test_split_second.py` measures it where it lives.
 """
 
 from __future__ import annotations
@@ -57,8 +57,10 @@ from tests.conftest import (
     battlefield_ids,
     count_on_battlefield,
     find_action,
+    keywords,
     only_oid,
     pass_until,
+    settle_to_priority,
 )
 
 # A castable instant in the *opponent's* hand, and it is load bearing rather than
@@ -84,18 +86,6 @@ RING = "sol_ring"  # an artifact, for the half of Cathar Commando that is not a 
 PASSAGE = "rogue_s_passage"
 
 
-def settle(game) -> None:
-    """Let the stack empty. Not just ``not g.state.stack``: a spell leaves the
-    stack as it *begins* to resolve, so a card whose resolution asks something
-    would be abandoned mid-resolution with the decision pending."""
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
-
-
 def can_cast(game, card_id: str, pid: int) -> bool:
     decision = game.pending()
     return (
@@ -114,7 +104,7 @@ def cast(game, card_id: str, pid: int = 0) -> int:
     action = action_for_card(game, ActionKind.CAST, card_id)
     oid = action.source
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
     return oid
 
 
@@ -136,7 +126,7 @@ def cast_targeting(game, card_id: str, *target_oids: int, pid: int = 0) -> None:
         and tuple(t.id for t in a.targets) == wanted
     )
     game.apply(action)
-    settle(game)
+    settle_to_priority(game)
 
 
 def attack_with(game, *oids: int, defender: int = 1) -> None:
@@ -162,17 +152,13 @@ def tapped_lands(game, pid: int = 0, card_id: str = "plains") -> list[bool]:
     return [o.tapped for o in game.state.battlefield_objects(pid) if o.def_id == card_id]
 
 
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
-
-
 class TestWinterOrb:
     """ "As long as this artifact is untapped, players can't untap more than one
     land during their untap steps."
 
     The prohibition gate 5 is furthest from reaching: the sandbox never takes a
     second turn, so it never runs an untap step at all, and its expectation is
-    "the Orb is on the battlefield". `tests/unit/test_untap_limit.py` pins
+    "the Orb is on the battlefield". `tests/unit/turn/test_untap_limit.py` pins
     `untap_caps` and `untap_all`; what is untested until here is the cap biting in
     a real untap step -- the decision it puts to the untapping player, and the two
     lands that stay down afterwards.
@@ -411,7 +397,7 @@ class TestThaliaHereticCathar:
         action = action_for_card(game, ActionKind.PLAY_LAND, card_id)
         oid = action.source
         game.apply(action)
-        settle(game)
+        settle_to_priority(game)
         return oid
 
     def test_she_has_first_strike(self, builder):
@@ -471,7 +457,7 @@ class TestRestInPeace:
     sandbox goes to a graveyard to test, and the symmetry, which is the drawback
     the card is built around.
 
-    `tests/unit/test_replace_graveyard.py` walks every zone the replacement has to
+    `tests/unit/replacement/test_replace_graveyard.py` walks every zone the replacement has to
     reach on a probe card. This is the printed card doing it in a game, and the
     thing that kills the creatures is another card from the same deck.
     """
@@ -550,7 +536,7 @@ class TestAngelsGrace:
     shield, the total never moves, and a player at 40 ends the turn at 40.
 
     **Angel's Grace is not a Fog.** The damage lands, the total stops at 1, and
-    you keep playing at or below it. `tests/unit/test_cant_lose_the_game.py` pins
+    you keep playing at or below it. `tests/unit/players/test_cant_lose_the_game.py` pins
     that against the primitives; here it is real combat damage and a real turn
     boundary.
     """
@@ -636,8 +622,8 @@ class TestApproachOfTheSecondSun:
     Approach of the Second Sun this game, you win the game."
 
     Gate 5 saw the *other* branch -- `life {"0": 47}` and the card seventh from
-    the top -- because one cast is never two. `tests/unit/test_approach_of_the_
-    second_sun.py` pins the `> 1` boundary, the tuck depth and `cast_from_hand`.
+    the top -- because one cast is never two. `tests/unit/named_cards/
+    test_approach_of_the_second_sun.py` pins the `> 1` boundary, the tuck depth and `cast_from_hand`.
 
     What is left, and what belongs in a deck file rather than a unit file, is the
     pair this deck can make out of its own two cards: an **opponent's** Approach
@@ -828,7 +814,7 @@ class TestAkromasWill:
                 break
             asked += 1
             game.apply(choice)
-        settle(game)
+        settle_to_priority(game)
         return asked
 
     def test_without_a_commander_it_is_choose_one(self, builder):
@@ -1025,7 +1011,7 @@ class TestReprieve:
         game.apply(action)
         pass_until(game, lambda g: can_cast(g, "reprieve", 0))
         game.apply(action_for_card(game, ActionKind.CAST, "reprieve"))
-        settle(game)
+        settle_to_priority(game)
         return spell
 
     def test_the_spell_goes_to_its_owners_hand_and_not_a_graveyard(self, builder):
@@ -1114,7 +1100,7 @@ class TestKinbinding:
         game = self.position(builder)
         bear = only_oid(game, BEAR, 0)
         pass_until(game, lambda g: g.state.step is Step.BEGIN_COMBAT)
-        settle(game)
+        settle_to_priority(game)
 
         assert count_on_battlefield(game, "kithkin_1_1_gw", 0) == 1
         assert chars(game.state, bear).power == 3
@@ -1302,7 +1288,7 @@ class TestCatharCommando:
         commando = only_oid(game, "cathar_commando", 0)
         ring = only_oid(game, RING, 1)
         game.apply(next(a for a in self.activations(game, commando) if a.targets[0].id == ring))
-        settle(game)
+        settle_to_priority(game)
 
         assert game.state.objects[ring].zone is Zone.GRAVEYARD
         assert game.state.objects[commando].zone is Zone.GRAVEYARD
@@ -1352,7 +1338,7 @@ class TestFiremaneCommando:
         game = self.position(builder)
         before = len(game.state.players[0].library)
         attack_with(game, only_oid(game, "firemane_commando", 0), only_oid(game, BEAR, 0))
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[0].library) == before - 1
 
@@ -1362,7 +1348,7 @@ class TestFiremaneCommando:
         game = self.position(builder)
         before = len(game.state.players[0].library)
         attack_with(game, only_oid(game, "firemane_commando", 0))
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[0].library) == before
 
@@ -1386,7 +1372,7 @@ class TestFiremaneCommando:
         mine = len(game.state.players[0].library)
         theirs = len(game.state.players[1].library)
         attack_with(game, only_oid(game, BEAR, 1), only_oid(game, WARDEN, 1), defender=2)
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[1].library) == theirs - 1, "they drew"
         assert len(game.state.players[0].library) == mine, "and I did not"
@@ -1398,7 +1384,7 @@ class TestFiremaneCommando:
         game = self.three_player(builder)
         theirs = len(game.state.players[1].library)
         attack_with(game, only_oid(game, BEAR, 1), only_oid(game, WARDEN, 1), defender=0)
-        settle(game)
+        settle_to_priority(game)
 
         assert len(game.state.players[1].library) == theirs
 

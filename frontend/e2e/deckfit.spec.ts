@@ -21,7 +21,7 @@
  * graveyard count below the fold. Nothing was too small; nothing had collapsed.
  */
 
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { handheldAssert } from "./handheldAssert";
 import { clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
 

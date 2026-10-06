@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_spell_or_permanent.py and tests/unit/test_enters_unless_cost.py. t_sink is Sink into Stupor's front face -- one target spanning the stack and the battlefield. t_springs is the back face's clause, and t_plain_shockless is the same land with the offer removed, kept live because it is the card that would ship if the clause were dropped.",
+  "_comment": "Shapes for tests/unit/targets/test_spell_or_permanent.py and tests/unit/replacement/test_enters_unless_cost.py. t_sink is Sink into Stupor's front face -- one target spanning the stack and the battlefield. t_springs is the back face's clause, and t_plain_shockless is the same land with the offer removed, kept live because it is the card that would ship if the clause were dropped.",
   "cards": [
     {
       "id": "t_sink",

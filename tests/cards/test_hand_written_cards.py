@@ -17,10 +17,10 @@ large boar.", and against that text a vanilla 6/5 is faithful. Once
 `scripts/audit_cards.py --fix-oracle` made `oracle_text` the printed text, the
 question stopped being begged and the gates became answerable.
 
-So they run here. The cards that do not pass yet are listed in
-`precon_deficits.json` with the reason, and xfail; every other hand-written card
-must clear all six. Repair one with `/author-cards`, regenerate the baseline, and
-the list gets shorter. It cannot get longer without somebody choosing to.
+So they run here. A card that does not pass is listed in `precon_deficits.json`
+with the reason, and xfails; every other hand-written card must clear all six.
+The list has been worked down to empty, one repair and one regenerated baseline
+at a time. It cannot get longer without somebody choosing to.
 """
 
 from __future__ import annotations
@@ -185,6 +185,18 @@ class TestTheBaselineIsHonest:
     def test_it_names_real_cards(self):
         gone = sorted(set(DEFICITS) - set(CARD_IDS))
         assert not gone, f"listed but no longer in the pool: {gone}\nrun: {REGENERATE}"
+
+
+def test_no_orphan_expectations():
+    """Every key in `expectations.json` names a hand-written card.
+
+    The mirror of `test_auto_cards.py`'s check. Without it a card superseded
+    into `auto/`, turned into a back face or deleted leaves its expectation
+    behind, and `test_every_card_works.py` goes on asserting that weaker,
+    stale expectation against whatever now carries the id -- twelve did.
+    """
+    orphans = sorted(set(_expectations()) - set(CARD_IDS))
+    assert orphans == [], f"expectations for cards that are not hand-written: {orphans[:10]}"
 
 
 def test_the_hand_written_pool_is_measured_at_all():

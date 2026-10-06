@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_free_cast_from_hand.py. `t_hand_omniscience` is Tamiyo, Field Researcher's emblem text (Omniscience's) on a permanent.",
+  "_comment": "Cards that exist only for tests/unit/casting/test_free_cast_from_hand.py. `t_hand_omniscience` is Tamiyo, Field Researcher's emblem text (Omniscience's) on a permanent.",
   "cards": [
     {
       "id": "t_hand_omniscience",

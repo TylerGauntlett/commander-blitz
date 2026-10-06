@@ -458,7 +458,7 @@ been reversed**:
   `transform` op, both of which shipped for Bloodline Keeper, and every
   difference between a flip card and a transforming double-faced one is a
   difference about **cardboard** — which way you turn it. It is now `free`, with
-  `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
+  `tests/unit/faces/test_flip.py` as the witness, because a status nobody checked is a
   status nobody should trust.
 
 **Nothing is refused any more.** Banding was the last row, and its recorded

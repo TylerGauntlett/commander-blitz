@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_enters_as_copy.py. t_eac_masterwork is Masterwork of Ingenuity: a blank Equipment that may enter as a copy of any Equipment on the battlefield. t_eac_blade is an Equipment with a buff and an equip to be copied, t_eac_other a second one so the choice is a real choice, and t_eac_bear a creature to equip. t_eac_plain is the same Equipment with no copy clause, the control.",
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy.py. t_eac_masterwork is Masterwork of Ingenuity: a blank Equipment that may enter as a copy of any Equipment on the battlefield. t_eac_blade is an Equipment with a buff and an equip to be copied, t_eac_other a second one so the choice is a real choice, and t_eac_bear a creature to equip. t_eac_plain is the same Equipment with no copy clause, the control.",
   "cards": [
     {
       "id": "t_eac_masterwork",

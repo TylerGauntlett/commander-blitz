@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_mana_doesnt_empty.py. t_mde_keep adds {G}{G} that survives steps and phases until end of turn; t_mde_plain is the identical spell without the rider, the control that proves the assertions are about the rider and not about sorceries. Both cost {0} so a position needs no lands and the pool under test holds only what the spell put there.",
+  "_comment": "Shapes for tests/unit/mana/test_mana_doesnt_empty.py. t_mde_keep adds {G}{G} that survives steps and phases until end of turn; t_mde_plain is the identical spell without the rider, the control that proves the assertions are about the rider and not about sorceries. Both cost {0} so a position needs no lands and the pool under test holds only what the spell put there.",
   "cards": [
     {
       "id": "t_mde_keep",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_mana_restriction_activate_any.py. t_trilobite_mana is Cryptic Trilobite's second line: 'Add {C}{C}. Spend this mana only to activate abilities.' t_unrestricted_font is the spelling shipped before the wildcard existed -- the restriction simply omitted -- kept as a live card because it is the strictly better card the wildcard avoids, and the test says so. The three sinks have the same {2} ability and deliberately different type lines: no literal name a restriction group could require is shared by an Enchantment, a Land and a Creature, which is what makes 'any' unfakeable by enumeration.",
+  "_comment": "Shapes for tests/unit/mana/test_mana_restriction_activate_any.py. t_trilobite_mana is Cryptic Trilobite's second line: 'Add {C}{C}. Spend this mana only to activate abilities.' t_unrestricted_font is the spelling shipped before the wildcard existed -- the restriction simply omitted -- kept as a live card because it is the strictly better card the wildcard avoids, and the test says so. The three sinks have the same {2} ability and deliberately different type lines: no literal name a restriction group could require is shared by an Enchantment, a Land and a Creature, which is what makes 'any' unfakeable by enumeration.",
   "cards": [
     {
       "id": "t_trilobite_mana",

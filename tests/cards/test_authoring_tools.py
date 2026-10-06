@@ -193,7 +193,8 @@ class TestAuditCard:
 @pytest.mark.skipif(not catalog_path().exists(), reason="no card catalog")
 class TestAuditAgainstTheCatalog:
     @pytest.fixture(scope="class")
-    def index(self):
+    @classmethod
+    def index(cls):
         index = load_index()
         if index is None:
             pytest.skip("no card catalog")
@@ -395,6 +396,90 @@ class TestPacketFiles:
         (answers / "b.json").write_text("not json", "utf-8")
         (answers / "c.json").write_text(json.dumps({"card": {}}), "utf-8")
         assert list(P.read_answers()) == ["sol_ring"]
+
+    def test_retire_removes_the_answer_by_card_id_and_the_packet(self):
+        """The answer is found by the id it carries, not by its file name."""
+        (self.tmp / "answers").mkdir()
+        (self.tmp / "packets").mkdir()
+        (self.tmp / "answers" / "sol_ring_misnamed.json").write_text(
+            json.dumps({"card": {"id": "sol_ring"}, "expectation": {}}), "utf-8"
+        )
+        (self.tmp / "answers" / "mana_vault.json").write_text(
+            json.dumps({"card": {"id": "mana_vault"}, "expectation": {}}), "utf-8"
+        )
+        (self.tmp / "packets" / "sol_ring.json").write_text("{}", "utf-8")
+        (self.tmp / "packets" / "mana_vault.json").write_text("{}", "utf-8")
+
+        assert P.retire({"sol_ring"}) == 2
+        assert list(P.read_answers()) == ["mana_vault"]
+        assert [p.name for p in (self.tmp / "packets").iterdir()] == ["mana_vault.json"]
+        assert P.retire({"not_there"}) == 0
+
+
+class TestCollect:
+    """`--collect` is the one place the auto pool changes (TECH_DEBT CD-03).
+
+    The answers it reads are deleted once collected, which is safe only because
+    a collect starts from the `templates.cards.json` already on disk and adds to
+    it: a card whose answer is gone must stay collected.
+    """
+
+    KEPT = "mana_vault"
+    NEW = "howling_mine"
+
+    @pytest.fixture(autouse=True)
+    def sandbox(self, tmp_path: Path, monkeypatch):
+        import scripts.author_cards as A
+
+        real = Q.auto_cards_dir()
+        cards = {
+            c["id"]: c
+            for c in json.loads((real / "templates.cards.json").read_text("utf-8"))["cards"]
+        }
+        expectations = json.loads((real / "expectations.json").read_text("utf-8"))
+
+        auto = tmp_path / "auto"
+        auto.mkdir()
+        (auto / "templates.cards.json").write_text(
+            json.dumps({"cards": [cards[self.KEPT]]}), "utf-8"
+        )
+        (auto / "expectations.json").write_text(
+            json.dumps({self.KEPT: expectations[self.KEPT]}), "utf-8"
+        )
+        (tmp_path / "answers").mkdir()
+        (tmp_path / "packets").mkdir()
+        answer = {"card": cards[self.NEW], "expectation": expectations[self.NEW]}
+        (tmp_path / "answers" / f"{self.NEW}.json").write_text(json.dumps(answer), "utf-8")
+        (tmp_path / "packets" / f"{self.NEW}.json").write_text("{}", "utf-8")
+
+        monkeypatch.setattr(A, "auto_cards_dir", lambda: auto)
+        monkeypatch.setattr(P, "answers_dir", lambda: tmp_path / "answers")
+        monkeypatch.setattr(P, "packets_dir", lambda: tmp_path / "packets")
+        monkeypatch.setattr(Q, "queue_path", lambda: tmp_path / "queue.json")
+        self.A, self.auto, self.tmp = A, auto, tmp_path
+
+    def written(self) -> set[str]:
+        raw = json.loads((self.auto / "templates.cards.json").read_text("utf-8"))
+        return {c["id"] for c in raw["cards"]}
+
+    def test_a_collect_adds_keeps_and_retires(self):
+        tally = self.A.collect_answers(Q.Queue(), dry_run=False)
+        assert tally["accepted"] == 1
+        assert self.written() == {self.KEPT, self.NEW}, "the card with no answer stays"
+        assert not list((self.tmp / "answers").iterdir()), "a collected answer is retired"
+        assert not list((self.tmp / "packets").iterdir()), "and so is its packet"
+
+    def test_a_collect_with_no_answers_changes_nothing(self):
+        (self.tmp / "answers" / f"{self.NEW}.json").unlink()
+        before = (self.auto / "templates.cards.json").read_bytes()
+        tally = self.A.collect_answers(Q.Queue(), dry_run=False)
+        assert tally == {"accepted": 0, "rejected": 0, "superseded": 0}
+        assert (self.auto / "templates.cards.json").read_bytes() == before
+
+    def test_a_dry_run_retires_nothing(self):
+        self.A.collect_answers(Q.Queue(), dry_run=True)
+        assert (self.tmp / "answers" / f"{self.NEW}.json").exists()
+        assert self.written() == {self.KEPT}
 
     def test_build_packet_starts_from_the_proxy_and_lists_what_is_left(self, real_registry):
         entry = row(

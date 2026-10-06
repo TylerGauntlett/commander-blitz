@@ -10,12 +10,9 @@ from ..enums import Zone
 from ..errors import DslError
 from ..objects import playable_duration_of
 from ..player_statics import forced_discard_or_sacrifice_barred
-from ..primitives import (
-    add_counters,
-    attach,
-    create_token,
-    sacrifice_forbidden,
-)
+from ..primitives import add_counters, attach, create_token
+from ..temp_effects import sacrifice_forbidden
+from ..turn import phase_in, phase_out
 from ..zones import (
     destroy,
     exile,
@@ -25,7 +22,6 @@ from ..zones import (
     sacrifice,
 )
 from ..zones import snapshot as capture_snapshot
-from . import register
 from .board_helpers import (
     _aim_at_planeswalker,
     _attack_defender,
@@ -35,6 +31,7 @@ from .board_helpers import (
     _players,
 )
 from .context import EffectContext
+from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
@@ -183,7 +180,6 @@ def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
     battlefield, so it keeps its counters, its attachments and its continuous
     effects, and nothing that watches for a zone change sees anything.
     """
-    from ..turn import phase_out
 
     # `until_leaves` is the O-Ring name for the link and `link` is the neutral
     # one, exactly as on `exile`, and the same two halves: this op records the
@@ -217,7 +213,6 @@ def op_phase_in(ctx: EffectContext, spec: Mapping[str, Any]):
     `state.battlefield` entirely, so no ordinary battlefield selector reaches
     it.
     """
-    from ..turn import phase_in
 
     tapped = bool(spec.get("tapped"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Phase in", "phase_in")
@@ -325,7 +320,7 @@ def op_airbend(ctx: EffectContext, spec: Mapping[str, Any]):
     `gain_control` goes back to the player who brought it.
 
     **A flat {2}, replacing the price.** `playable_alt_cost` rather than any of
-    the reduction machinery, because `costs.cost_reduction` clamps a reduction
+    the reduction machinery, because `cost_reduction.cost_reduction` clamps a reduction
     to the generic part of a cost and no subtraction is right for two creatures
     of different mana values anyway. {2} is {2} whether the card printed {G} or
     {7}{U}{U}, and a {G} creature "reduced" by anything still owes its green

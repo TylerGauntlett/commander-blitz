@@ -21,13 +21,14 @@ spend anything rediscovering it.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Literal
 
 from ..images import CardIndex, load_index
-from ..registry import CardRegistry, data_dir
+from ..registry import CardRegistry, data_dir, default_registry
 
 #: ``pending``      never attempted
 #: ``done``         written to ``data/cards/auto/`` and passing every gate
@@ -205,7 +206,6 @@ def _priority(entry: Entry) -> tuple:
 def _summarise(reason: str) -> str:
     """Collapse a reason to its shape, so a hundred cards failing the same way
     group into one line rather than a hundred."""
-    import re
 
     text = re.sub(r"'[^']*'", "'X'", reason)
     text = re.sub(r"\b\d+\b", "N", text)
@@ -219,6 +219,7 @@ def wanted_names(registry: CardRegistry | None = None) -> set[str]:
     there is a card a real person put in a real deck and then watched do nothing,
     which is a far better signal than any global popularity number.
     """
+    # Looked up per call: tests patch `registry.generated_dir`.
     from ..registry import generated_dir
 
     pool = generated_dir() / "cards" / "pool.cards.json"
@@ -233,7 +234,6 @@ def wanted_names(registry: CardRegistry | None = None) -> set[str]:
 
 def build(limit: int | None = None) -> Queue:
     """The queue as it should be right now, loaded, refreshed and saved."""
-    from ..registry import default_registry
 
     index = load_index()
     if index is None:

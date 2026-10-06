@@ -36,7 +36,7 @@ The whole of `characteristics.py` is about 200 lines and is easy to reason about
 cache is a single integer comparison.
 
 **Bad.** A card whose anthem depends on another anthem's result cannot be expressed.
-`loader.py` rejects one rather than accepting it and computing something wrong — which
+The loader (`cards/loader/`) rejects one rather than accepting it and computing something wrong — which
 is the important part: the limitation is enforced, not merely documented.
 
 **Cost of reversing.** Moderate and contained. `chars()` is the only reader; replacing

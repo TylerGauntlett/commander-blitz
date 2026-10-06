@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the graveyard-replacement test (tests/unit/test_replace_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rip` is Rest in Peace's second line -- every card and token, every graveyard, from anywhere. `t_leyline_like` narrows it to one player's cards (Leyline of the Void), and `t_planar_void_like` narrows it by card type instead, so the two filters can be measured apart. `t_library_void` redirects to a library rather than exile, which is the Kozilek/Ulamog shape and the reason `destination` is a field.",
+  "_comment": "Cards that exist only for the graveyard-replacement test (tests/unit/replacement/test_replace_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rip` is Rest in Peace's second line -- every card and token, every graveyard, from anywhere. `t_leyline_like` narrows it to one player's cards (Leyline of the Void), and `t_planar_void_like` narrows it by card type instead, so the two filters can be measured apart. `t_library_void` redirects to a library rather than exile, which is the Kozilek/Ulamog shape and the reason `destination` is a field.",
   "cards": [
     {
       "id": "t_rip",

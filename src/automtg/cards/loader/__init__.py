@@ -14,6 +14,7 @@ Anything that fails raises :class:`~automtg.engine.errors.DslError` at load time
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from collections.abc import Iterable, Mapping
 from pathlib import Path
@@ -32,7 +33,8 @@ from automtg.engine.carddef import (
     top_level_mode_spec,
 )
 from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.selectors import validate_selector
+from automtg.engine.effects.ops_player import shut_cast_zones
+from automtg.engine.effects.selectors import ZONE_NAMES, validate_selector
 from automtg.engine.effects.values import (
     validate_value,
 )
@@ -44,7 +46,12 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
-from automtg.engine.mana import ManaCost, ManaRestriction, compile_restriction
+from automtg.engine.mana import (
+    ManaCost,
+    ManaRestriction,
+    compile_restriction,
+    parse_mana_production,
+)
 from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.triggers import (
     ORDINAL_FILTER_KEYS,
@@ -53,28 +60,16 @@ from automtg.engine.triggers import (
 )
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
-from .effects import (  # noqa: F401
+from .effects import (
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
-    _refuse_targets_inside_a_delay,
-    _validate_attacking,
     _validate_cast_lock_zones,
-    _validate_delayed_trigger,
     _validate_effect,
     _validate_enchanted_player,
-    _validate_player_spec,
     _validate_was_cast_placement,
 )
-from .linking import (  # noqa: F401
-    _derive_color_identity,
-    _walk_effects,
-    link_faces,
-    link_meld_results,
-    link_prepared_faces,
-    link_second_faces,
-    validate_token_references,
-)
-from .mana import (  # noqa: F401
+from .linking import _derive_color_identity
+from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
     _compile_cost,
@@ -82,29 +77,24 @@ from .mana import (  # noqa: F401
     _mana_grant,
     _mana_options,
     _split_mana_rider,
-    _sum_mana,
     _validate_mana_amount,
 )
-from .statics import (  # noqa: F401
-    _check_reduction_type_names,
-    _validate_cost_condition,
+from .statics import (
     _validate_cost_reduction,
-    _validate_reduction_zones,
     _validate_static_condition,
     _validate_static_count_filter,
     _validate_static_value,
 )
-from .targets import (  # noqa: F401
-    _check_mode_targets,
+from .targets import (
     _check_reflexive_wiring,
-    _compile_target,
     _compile_targets,
 )
 
-# Re-exported: this package is imported as one module -- `from
-# automtg.cards.loader import compile_card, STATIC_EFFECTS, _validate_effect`
-# -- by the registry, the proxy, the authoring packet and ~180 tests. The
-# split is a move, not a new API; every name keeps its old address.
+# The noqa is for the vocabulary constants this module does not read itself
+# (ATTACKING_OPS, the COST_REDUCTION_* keys, the STATIC_* condition, count, life
+# and value keys, ...). They are imported only to stay in this namespace:
+# tests/cards/test_golden_pool.py pins the DSL's vocabulary by scanning
+# `vars(automtg.cards.loader)`. Code should import them from `.vocabulary`.
 from .vocabulary import (  # noqa: F401
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,
@@ -151,10 +141,8 @@ from .vocabulary import (  # noqa: F401
     UNGRANTABLE_STATIC_EFFECTS,
     WARP_GRANT_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
-    normalize_keyword,
 )
-from .walk import (  # noqa: F401
-    _before,
+from .walk import (
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,
@@ -524,7 +512,6 @@ def _check_distribution_homes(model: CardModel, where: str) -> None:
     ceiling is larger than the total could be declared in a way no division
     satisfies; that is refused too.
     """
-    from .walk import _walk_effect_specs
 
     def refuse_in(tree: Any, at: str) -> None:
         for spec in _walk_effect_specs(tree):
@@ -1733,7 +1720,6 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     ``level`` on anything else is checked here and stamped on the ability the
     ordinary compiler builds, so no branch below has to know Classes exist.
     """
-    import dataclasses
 
     where = f"{card_where}.abilities[{index}]"
     if model.kind == "level":
@@ -1777,7 +1763,6 @@ def _compile_level_line(
     Class in print would otherwise write the same three things, and any one of
     them could write one wrong.
     """
-    import dataclasses
 
     if model.level is None or model.level < 2:
         raise DslError(
@@ -2619,7 +2604,6 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     `affects`/`amount` are refused rather than ignored: the permanent is named
     by `tapped_permanent` and the amount is printed in `add_mana`.
     """
-    from automtg.engine.mana import parse_mana_production
 
     if model.tapped_permanent is None or not model.add_mana:
         raise DslError(
@@ -2788,8 +2772,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "double_triggers":
         # The cause clause is the half a card may omit, and omitting it means
         # "any cause" -- so a typo in an event name must not read as one.
-        from automtg.engine.triggers import TRIGGER_EVENTS
-
         for name in model.cause_events or ():
             if name not in TRIGGER_EVENTS:
                 raise DslError(
@@ -3009,7 +2991,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         # A surcharge written as a negative discount, in either of the two
         # spellings a card would use -- `-3` and `{"const": -3}`. It would load
-        # clean and tax nothing: `costs.cost_reduction` subtracts this total and
+        # clean and tax nothing: `cost_reduction.cost_reduction` subtracts this total and
         # clamps the result at zero, so -3 rounds away to "costs the printed
         # price" and the card prints a line it does not perform. Only a written
         # literal is checked, because that is the only one a load-time pass can
@@ -3749,7 +3731,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         priced = prune_cost(model.cost.model_dump())
         # Life **or** generic mana, one of them, and nothing else. Life is
         # Terror of the Peaks; generic mana is Kasmina, Enigmatic Mentor's
-        # "cost {2} more to cast", netted into `costs.cost_reduction` as a
+        # "cost {2} more to cast", netted into `cost_reduction.cost_reduction` as a
         # negative discount so the offer and the charge read one number (see
         # `player_statics.spell_mana_tax`). Coloured mana is refused: the
         # discount arithmetic is generic-only, and a coloured surcharge would
@@ -4168,9 +4150,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: 'arrived_this_turn_from' names no zone at all, so "
                     f"nothing in the graveyard would ever qualify"
                 )
-            from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
 
-            known = {z.lstrip("!") for z in zones} - set(_ZONES) - {"any"}
+            known = {z.lstrip("!") for z in zones} - set(ZONE_NAMES) - {"any"}
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
@@ -4178,8 +4159,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Resolved to the positive list here, once, by the op's own helper, so
         # the static carries exactly what a `CastLock` row carries and the
         # reader needs no inversion -- see `primitives.cast_locked_zones`.
-        from automtg.engine.effects.ops_player import shut_cast_zones
-
         static["zones"] = shut_cast_zones(model.zones, model.except_zones)
     elif model.zones is not None or model.except_zones is not None:
         # Copied for one effect only. Left to load on any other static, the

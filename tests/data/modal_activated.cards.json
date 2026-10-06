@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the modal-activated-targets test (tests/unit/test_modal_activated.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_modal_down` is Phoenix Down's shape: an activated ability whose two bullets each own a target in a different zone, so which bullet is legal depends on the board.",
+  "_comment": "A card that exists only for the modal-activated-targets test (tests/unit/modes/test_modal_activated.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_modal_down` is Phoenix Down's shape: an activated ability whose two bullets each own a target in a different zone, so which bullet is legal depends on the board.",
   "cards": [
     {
       "id": "t_modal_down",

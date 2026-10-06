@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for The Eagles Are Coming! test (tests/unit/test_the_eagles_are_coming.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_eagles` is the printed card: kicker, a target count that switches to 'any' when kicked, an `as` binding on return_to_hand, and a delayed trigger counting what came back. `t_eagles_no_kicker` is the same spell without the kicker line, and exists only to be refused by the loader for carrying `count_if_kicked` with no kicker to announce.",
+  "_comment": "Cards that exist only for The Eagles Are Coming! test (tests/unit/named_cards/test_the_eagles_are_coming.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_eagles` is the printed card: kicker, a target count that switches to 'any' when kicked, an `as` binding on return_to_hand, and a delayed trigger counting what came back. `t_eagles_no_kicker` is the same spell without the kicker line, and exists only to be refused by the loader for carrying `count_if_kicked` with no kicker to announce.",
   "cards": [
     {
       "id": "t_eagles",

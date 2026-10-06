@@ -14,29 +14,27 @@ from collections.abc import Generator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import (
+from .carddef import Cost
+from .characteristics import block_restrictions, chars, matches_static, protected_from
+from .costs import can_pay
+from .effects.context import EffectContext, ask_objects
+from .enums import LANDWALK_SUBTYPE, Keyword
+from .events import EventType
+from .mana import ManaCost
+from .player_statics import (
     any_defender_attack_prohibition,
     attack_alone_forbidden,
     attack_compelled,
     attack_defender_forbidden,
     attack_forbidden,
+    attack_tax,
     block_alone_forbidden,
     block_forbidden,
-    block_restrictions,
-    chars,
-    matches_static,
-    protected_from,
+    block_tax,
 )
-from .enums import LANDWALK_SUBTYPE, Keyword
-from .events import EventType
-from .primitives import (
-    become_monarch,
-    clear_attack_restrictions,
-    damage_permanent,
-    damage_player,
-    tap_permanent,
-)
+from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
+from .temp_effects import clear_attack_restrictions
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -126,7 +124,6 @@ def attack_tax_cost(state: GameState, oid: int, defender: int, *, planeswalker: 
     ``planeswalker`` prices an attack on one of ``defender``'s planeswalkers,
     which only an ``or_planeswalkers`` tax reaches (Archangel of Tithes).
     """
-    from .characteristics import attack_tax
 
     return _tax_cost(attack_tax(state, oid, defender, planeswalker=planeswalker))
 
@@ -137,15 +134,11 @@ def block_tax_cost(state: GameState, oid: int):
     Archangel of Tithes' "creatures can't block unless their controller pays
     {1} for each of those creatures" -- `attack_tax_cost` at declare-blockers.
     """
-    from .characteristics import block_tax
 
     return _tax_cost(block_tax(state, oid))
 
 
 def _tax_cost(mana: str):
-    from .carddef import Cost
-    from .mana import ManaCost
-
     return Cost(mana=ManaCost.parse(mana)) if mana else None
 
 
@@ -173,7 +166,6 @@ def combat_tax_payable(state: GameState, oid: int, cost) -> bool:
     Shared by both declarations, so an attack tax and a block tax are judged
     affordable by the same `can_pay` -- 508.1g and 509.1e are one rule twice.
     """
-    from .costs import can_pay
 
     if cost is None:
         return True
@@ -593,7 +585,6 @@ def legal_permanent_defenders(state: GameState, oid: int | None = None) -> list[
     permanent your opponents can shoot down, not one you race -- narrower than
     the printed card, and visibly so, rather than silently mis-seated.
     """
-    from .characteristics import chars
 
     defenders = set(legal_defenders(state))
     return [
@@ -1594,7 +1585,6 @@ def _declare_bands(state: GameState) -> Generator[Any, list[int]]:
     Looped, because a player may declare more than one band. The loop ends when
     they stop picking, which is also how they decline to band at all.
     """
-    from .effects.context import EffectContext, ask_objects
 
     combat = state.combat
     if combat is None:
@@ -1673,7 +1663,6 @@ def _ask_order(
     what a damage assignment order is -- the engine has had the concept all
     along and has simply been sorting it by effective toughness.
     """
-    from .effects.context import EffectContext, ask_objects
 
     if len(options) < 2:
         return options

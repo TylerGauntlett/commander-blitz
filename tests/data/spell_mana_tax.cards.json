@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_spell_cost_increase_mana.py. t_mana_toll_mentor is Kasmina, Enigmatic Mentor's static on an enchantment: spells your opponents cast that target a creature or planeswalker you control cost {2} more. t_mana_toll_all taxes every spell an opponent casts by {1}, so the two can be seen to stack.",
+  "_comment": "Shapes for tests/unit/costs/test_spell_cost_increase_mana.py. t_mana_toll_mentor is Kasmina, Enigmatic Mentor's static on an enchantment: spells your opponents cast that target a creature or planeswalker you control cost {2} more. t_mana_toll_all taxes every spell an opponent casts by {1}, so the two can be seen to stack.",
   "cards": [
     {
       "id": "t_mana_toll_mentor",

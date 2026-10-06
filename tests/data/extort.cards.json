@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_extort.py. t_extortioner carries exactly the ability templates.extort_ability builds, and the test pins that the two agree.",
+  "_comment": "Shapes for tests/unit/keywords/test_extort.py. t_extortioner carries exactly the ability templates.extort_ability builds, and the test pins that the two agree.",
   "cards": [
     {
       "id": "t_extortioner",

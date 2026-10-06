@@ -9,14 +9,14 @@
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
 import {
-  type ImageMap,
-  type SeatImages,
+  artistFor,
+  artistOf,
   artState,
   artStateFor,
   artUrl,
   artUrlFor,
-  artistFor,
-  artistOf,
+  type ImageMap,
+  type SeatImages,
 } from "../src/logic/cardArt";
 
 const LOADED: ImageMap = {

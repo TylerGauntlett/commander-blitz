@@ -8,11 +8,20 @@ card that looks implemented but does nothing.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Strict = ConfigDict(extra="forbid")
+
+#: A printing's 36-char Scryfall uuid.  Lives here, the bottom of ``cards/``,
+#: rather than beside the one consumer that used to own it (``server/art.py``)
+#: because a deck file now carries printing ids too, and this module must not
+#: import from ``server/`` or, through ``registry``, from ``images``.  Anything
+#: that puts an id into a URL or a filename validates it against this first --
+#: it is the guard that keeps ".." and path separators unrepresentable.
+SCRYFALL_ID = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
 
 
 class CostModel(BaseModel):
@@ -1484,12 +1493,6 @@ class PrintingModel(BaseModel):
         # This id becomes a URL and a filename.  A hand-edited or corrupted deck
         # file must fail here, loudly, rather than somewhere downstream with a
         # path separator in it.
-        #
-        # Imported inside the function on purpose: ``images`` reaches this
-        # module through ``registry``, so importing it at the top would be a
-        # cycle.  One definition of the pattern is worth a deferred import.
-        from .images import SCRYFALL_ID
-
         if not SCRYFALL_ID.match(value):
             raise ValueError(f"{value!r} is not a Scryfall id")
         return value

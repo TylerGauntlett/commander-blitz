@@ -9,7 +9,7 @@
  */
 
 import { motion, usePresence } from "motion/react";
-import { type ReactNode, useEffect, useRef } from "react";
+import { forwardRef, type ReactNode, useEffect, useRef } from "react";
 import { useCursorNav } from "../../input/useCursorNav";
 import { SCREEN_VARIANTS, type ScreenVariant } from "../../motion/springs";
 import { FocusRing } from "../game/FocusRing";
@@ -29,7 +29,15 @@ interface Props {
   children: ReactNode;
 }
 
-export function Screen({ variant = "slide", center = false, testId, children }: Props) {
+/*
+ * `forwardRef` for `GameRoute`'s `AnimatePresence mode="popLayout"`, which
+ * measures the leaving screen through a ref to lift it out of the flow. Every
+ * other caller ignores it.
+ */
+export const Screen = forwardRef<HTMLDivElement, Props>(function Screen(
+  { variant = "slide", center = false, testId, children },
+  ref,
+) {
   /*
    * The controller lives here rather than on the board, and that is the whole
    * point of putting it here.
@@ -45,7 +53,8 @@ export function Screen({ variant = "slide", center = false, testId, children }: 
    * effects for components that re-render, and the board re-renders on every
    * engine push without this wrapper re-rendering -- see `FocusRing`.
    */
-  useCursorNav();
+  const [present, safeToRemove] = usePresence();
+  useCursorNav(present);
 
   /*
    * A SCREEN LEAVES ON A CLOCK, NOT ON AN ANIMATION.
@@ -66,7 +75,6 @@ export function Screen({ variant = "slide", center = false, testId, children }: 
    * alone, because `safeToRemove` is rebuilt on every render of the boundary.
    * A lost fade is a cut. It is never a blank screen.
    */
-  const [present, safeToRemove] = usePresence();
   const removeRef = useRef(safeToRemove);
   removeRef.current = safeToRemove;
   useEffect(() => {
@@ -78,6 +86,7 @@ export function Screen({ variant = "slide", center = false, testId, children }: 
 
   return (
     <motion.div
+      ref={ref}
       className={center ? "screen screen--center" : "screen"}
       data-testid={testId}
       data-closing={present ? undefined : true}
@@ -86,7 +95,14 @@ export function Screen({ variant = "slide", center = false, testId, children }: 
       {...rest}
     >
       {children}
-      <FocusRing context={testId ?? variant} />
+      {/*
+        Only while present. Where two screens overlap -- `GameRoute`'s
+        cross-fade -- a leaving screen's ring would be a second `#ring` in the
+        document, and its unmount would reset the arriving screen's ring in the
+        middle of placing it. A screen on its way out has nothing to point at:
+        every stop in it is already filtered out by `data-closing`.
+      */}
+      {present && <FocusRing context={testId ?? variant} />}
     </motion.div>
   );
-}
+});

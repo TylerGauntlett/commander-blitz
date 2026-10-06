@@ -59,9 +59,9 @@ import { getCursor, refollowCursor, setCursor } from "../../input/cursor";
 import { on as onPad } from "../../input/pad";
 import { actionAttrs, stopId } from "../../input/stops";
 import {
+  handRow,
   MULL_TUNE,
   type MulliganPhase,
-  handRow,
   mulliganCost,
   mulliganPhase,
   stageUnit,
@@ -321,6 +321,7 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
           spending one does not light it red: it cost nothing. */}
       <div className="mull__lamps">
         <span className="mull__lampsLabel">Mulligans</span>
+        {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade. */}
         <span
           className="mull__lampsRow"
           aria-label={`${taken} of ${max} taken${free > 0 ? `, first ${free === 1 ? "one" : free} free` : ""}`}

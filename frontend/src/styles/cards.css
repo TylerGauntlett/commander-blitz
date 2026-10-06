@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The card.
  *
@@ -140,7 +141,9 @@
   background: linear-gradient(160deg, var(--f-hi, #6f6a7d), var(--f-lo, #2f2c3a));
   color: #f4f2ec;
   line-height: 1.25;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.35);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 6px 14px rgb(0 0 0 / 0.35);
 
   /*
    * Type sizes, clamped at *both* ends.
@@ -218,8 +221,10 @@
 
 .face--commander {
   border-color: var(--frame-commander);
-  box-shadow: 0 0 0 1px rgb(216 166 60 / 0.55), 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 18px
-    rgb(0 0 0 / 0.4);
+  box-shadow:
+    0 0 0 1px rgb(216 166 60 / 0.55),
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 8px 18px rgb(0 0 0 / 0.4);
 }
 
 .face--token {
@@ -398,7 +403,9 @@
   color: #efeade;
   font-weight: 800;
   line-height: 1;
-  box-shadow: inset 0 -2px 4px rgb(0 0 0 / 0.27), 0 1px 0 rgb(255 255 255 / 0.19);
+  box-shadow:
+    inset 0 -2px 4px rgb(0 0 0 / 0.27),
+    0 1px 0 rgb(255 255 255 / 0.19);
 }
 
 /* A land's head scrim lifts: there is no cost row under the name, and the
@@ -925,18 +932,24 @@
   inset: -3px;
   border-radius: calc(var(--card-r) + 3px);
   pointer-events: none;
-  transition: box-shadow var(--t-fast) ease, opacity var(--t-fast) ease;
+  transition:
+    box-shadow var(--t-fast) ease,
+    opacity var(--t-fast) ease;
   opacity: 0;
 }
 
 .card--playable .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--playable), 0 0 16px rgb(92 224 138 / 0.45);
+  box-shadow:
+    0 0 0 2px var(--playable),
+    0 0 16px rgb(92 224 138 / 0.45);
 }
 
 .card--targetable .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--targetable), 0 0 18px rgb(88 182 255 / 0.5);
+  box-shadow:
+    0 0 0 2px var(--targetable),
+    0 0 18px rgb(88 182 255 / 0.5);
 }
 
 /*
@@ -953,7 +966,9 @@
  */
 .card--ability .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--ability), 0 0 18px rgb(195 155 255 / 0.5);
+  box-shadow:
+    0 0 0 2px var(--ability),
+    0 0 18px rgb(195 155 255 / 0.5);
 }
 
 /*
@@ -1051,22 +1066,30 @@
 
 .card--staged .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 3px var(--staged), 0 0 20px rgb(255 193 77 / 0.5);
+  box-shadow:
+    0 0 0 3px var(--staged),
+    0 0 20px rgb(255 193 77 / 0.5);
 }
 
 .card--selected .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 3px #fff, 0 0 22px rgb(255 255 255 / 0.4);
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 22px rgb(255 255 255 / 0.4);
 }
 
 .card--attacking .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--attacking), 0 0 18px rgb(255 107 94 / 0.5);
+  box-shadow:
+    0 0 0 2px var(--attacking),
+    0 0 18px rgb(255 107 94 / 0.5);
 }
 
 .card--blocking .card__actor::after {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--blocking), 0 0 18px rgb(107 168 255 / 0.5);
+  box-shadow:
+    0 0 0 2px var(--blocking),
+    0 0 18px rgb(107 168 255 / 0.5);
 }
 
 /* Dimming is a scrim over the frame, not a filter on the face.
@@ -1124,7 +1147,9 @@
 .cardstack {
   position: relative;
   flex: 0 0 auto;
-  transition: width var(--t-zoom) ease, height var(--t-zoom) ease;
+  transition:
+    width var(--t-zoom) ease,
+    height var(--t-zoom) ease;
 }
 
 .cardstack__slot {

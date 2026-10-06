@@ -190,6 +190,98 @@ class TestPlayingThroughHttp:
         assert client.post(f"/api/games/{game_id}/undo", json={"seat": 0}).status_code == 400
 
 
+class TestStaleActions:
+    """Action ids are positional, so a click is only meaningful against the
+    list it was read from.
+
+    The bug report was a double click: the first request played the land, the
+    second carried the same `a1-play_land` against the list that came after,
+    and the player got a 400 for an id they never typed. Worse, an id that
+    *does* exist in the new list names whatever sits at that index now -- a
+    second Pass passes the next window too. The client sends the version its
+    list came from; a version the actions have moved past is a 409 with a code
+    the client answers by refetching, not by showing an error.
+    """
+
+    def _post(self, client, game_id, action_id, version=None):
+        body = {"seat": 0, "action_id": action_id}
+        if version is not None:
+            body["version"] = version
+        return client.post(f"/api/games/{game_id}/actions", json=body)
+
+    def test_the_version_the_list_came_with_is_accepted(self, client):
+        body = new_game(client)
+        response = self._post(client, body["game_id"], body["actions"][0]["id"], body["version"])
+        assert response.status_code == 200, response.text
+
+    def test_an_id_from_a_replaced_list_is_a_409(self, client):
+        body = new_game(client)
+        game_id, first = body["game_id"], body["actions"][0]["id"]
+        assert self._post(client, game_id, first, body["version"]).status_code == 200
+
+        # The same click again, from the same (now replaced) list.
+        again = self._post(client, game_id, first, body["version"])
+        assert again.status_code == 409, again.text
+        detail = again.json()["detail"]
+        assert detail["code"] == "stale_action"
+        assert detail["version"] > body["version"]
+
+    def test_a_stale_id_that_still_resolves_is_refused_too(self, client):
+        """The dangerous half: the id exists in the new list, at the same
+        index, and would have applied something the player never clicked."""
+        body = new_game(client)
+        game_id = body["game_id"]
+        after = self._post(client, game_id, body["actions"][0]["id"], body["version"]).json()
+        assert after["actions"], "the test needs a decision after the first"
+        reused = after["actions"][0]["id"]
+        stale = self._post(client, game_id, reused, body["version"])
+        assert stale.status_code == 409, stale.text
+        # ...and with the version it actually came from, it is fine.
+        fresh = self._post(client, game_id, reused, after["version"])
+        assert fresh.status_code == 200, fresh.text
+
+    def test_a_version_compare_uses_the_version_the_client_saw(self, client):
+        """`_refresh_actions` runs before `_bump`, so a list must belong to the
+        version its *response* carried, not the one before it. If it belonged
+        to the earlier number, the response's own version would read as newer
+        than the list and nothing would be stale; if to a later one, every
+        click would be."""
+        body = new_game(client)
+        session = client.app.state.sessions.get(body["game_id"])
+        after = self._post(client, body["game_id"], body["actions"][0]["id"], body["version"])
+        assert session.actions_version == after.json()["version"] == session.version
+
+    def test_a_bump_that_leaves_the_list_alone_keeps_it_valid(self, client):
+        """Somebody else's settings change bumps the version without touching
+        this seat's list; the list on screen is still the right one."""
+        body = new_game(client)
+        session = client.app.state.sessions.get(body["game_id"])
+        session.set_full_control(1, True)
+        assert session.version > body["version"]
+        response = self._post(client, body["game_id"], body["actions"][0]["id"], body["version"])
+        assert response.status_code == 200, response.text
+
+    def test_a_garbage_id_is_still_a_400(self, client):
+        body = new_game(client)
+        game_id, version = body["game_id"], body["version"]
+        assert self._post(client, game_id, "nonsense", version).status_code == 400
+        # Shaped like a real id, but the version is current: genuinely invalid.
+        assert self._post(client, game_id, "a999-play_land", version).status_code == 400
+        # And without a version, a shape this server never mints is not stale.
+        assert self._post(client, game_id, "a999-bogus").status_code == 400
+
+    def test_an_old_client_without_a_version_gets_409_for_a_vanished_id(self, client):
+        body = new_game(client)
+        # Keep, not Mulligan: a mulligan offers the same `a0-mulligan` again.
+        game_id = body["game_id"]
+        first = next(a["id"] for a in body["actions"] if a["kind"] == "keep")
+        after = self._post(client, game_id, first).json()
+        assert all(a["id"] != first for a in after["actions"]), "the id did not vanish"
+        again = self._post(client, game_id, first)
+        assert again.status_code == 409, again.text
+        assert again.json()["detail"]["code"] == "stale_action"
+
+
 class TestPriorityStops:
     """The human seat skips priority windows with nothing to respond to.
 

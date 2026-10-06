@@ -22,7 +22,7 @@
  * reason. This is the cheaper half: it fails at the line somebody wrote.
  */
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 

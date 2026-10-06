@@ -38,6 +38,7 @@ import socket
 import subprocess
 import sys
 import time
+import tomllib
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -45,6 +46,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
 PY = sys.executable
+
+#: pyproject's `requires-python` floor, read rather than repeated so the two
+#: cannot disagree. Only a `>=X.Y` spec is understood, which is the only kind
+#: this project has ever had.
+REQUIRES_PYTHON = tuple(
+    int(part)
+    for part in tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"][
+        "requires-python"
+    ]
+    .removeprefix(">=")
+    .split(".")
+)
 
 #: Every stage's output is decoded as UTF-8 with replacement.
 #:
@@ -676,6 +689,20 @@ def main() -> int:
         "browser fails the job instead of passing it vacuously",
     )
     args = parser.parse_args()
+
+    # The gate's verdict is only worth having on the Python CI tests. A 3.11
+    # venv passed this script for weeks while pyproject required 3.13 (TECH_DEBT
+    # HY-04), and a pass on the wrong interpreter is a pass of something else.
+    if sys.version_info < REQUIRES_PYTHON:
+        need = ".".join(map(str, REQUIRES_PYTHON))
+        print(
+            f"verify.py needs Python >= {need} (pyproject's requires-python); "
+            f"this is {sys.version.split()[0]} at {PY}. Rebuild the venv: "
+            f'py -{need} -m venv .venv && .venv/Scripts/python -m pip install '
+            f'-c constraints.txt -e ".[dev]"',
+            file=sys.stderr,
+        )
+        return 2
 
     want = set(args.only.split(",")) if args.only else set(GROUPS)
     unknown = want - set(GROUPS)

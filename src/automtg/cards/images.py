@@ -21,7 +21,6 @@ Image *bytes* are not in the dump -- every record carries URLs on
 from __future__ import annotations
 
 import json
-import re
 import sqlite3
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -37,14 +36,6 @@ if TYPE_CHECKING:  # pragma: no cover
 #: Scryfall's image CDN.  Contacted by the fetch script and by the lazy fill in
 #: the ``/art`` route -- never by the client, and never during a game.
 IMAGE_HOST = "https://cards.scryfall.io"
-
-#: A printing's 36-char Scryfall uuid.  Lives here rather than beside the one
-#: consumer that used to own it (``server/art.py``) because a deck file now
-#: carries printing ids too, and ``cards/schema.py`` must not import from
-#: ``server/``.  Anything that puts an id into a URL or a filename validates it
-#: against this first -- it is the guard that keeps ".." and path separators
-#: unrepresentable.
-SCRYFALL_ID = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
 
 #: The sizes Scryfall serves.  ``art_crop`` is the bare art band, which is what a
 #: card frame wants; ``normal`` is the whole rendered card.

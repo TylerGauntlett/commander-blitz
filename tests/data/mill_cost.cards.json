@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the mill-as-a-cost test (tests/unit/test_mill_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mill_rock` is Millikin's shape -- a mana ability whose cost mills. `t_naive_mill_rock` is deliberately the WRONG card: the version the DSL could write before `mill` was a cost, with the mill moved into the ability's effects, and it is asserted against as the counterfactual.",
+  "_comment": "Cards that exist only for the mill-as-a-cost test (tests/unit/costs/test_mill_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mill_rock` is Millikin's shape -- a mana ability whose cost mills. `t_naive_mill_rock` is deliberately the WRONG card: the version the DSL could write before `mill` was a cost, with the mill moved into the ability's effects, and it is asserted against as the counterfactual.",
   "cards": [
     {
       "id": "t_mill_rock",

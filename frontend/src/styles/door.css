@@ -63,7 +63,9 @@
   height: calc(44px * var(--du));
   color: var(--lit, var(--gold));
   filter: drop-shadow(0 0 22px var(--lit-soft, rgb(255 212 121 / 0.3)));
-  transition: color var(--t-room) ease, filter var(--t-room) ease;
+  transition:
+    color var(--t-room) ease,
+    filter var(--t-room) ease;
 }
 
 .door__word {
@@ -347,7 +349,9 @@
   border: 1px solid var(--lit, var(--edge-hi));
   border-radius: 14px;
   background: linear-gradient(180deg, #1b1730 0%, #100d1c 100%);
-  box-shadow: 0 0 60px var(--lit-soft, rgb(255 224 138 / 0.18)), 0 30px 70px rgb(0 0 0 / 0.7);
+  box-shadow:
+    0 0 60px var(--lit-soft, rgb(255 224 138 / 0.18)),
+    0 30px 70px rgb(0 0 0 / 0.7);
   animation: door-hold-rise 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -412,7 +416,7 @@
 
 .door__codein {
   width: 100%;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 14px;
   border: 0;
   background: none;
@@ -442,7 +446,7 @@
 }
 
 .door__go {
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 22px;
   border-radius: 10px;
   border: 0;
@@ -478,7 +482,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 10px;
   border: 1px solid transparent;
   border-radius: 9px;
@@ -487,7 +491,9 @@
   font: inherit;
   font-size: 16px;
   cursor: pointer;
-  transition: color var(--t-fast) ease, border-color var(--t-fast) ease;
+  transition:
+    color var(--t-fast) ease,
+    border-color var(--t-fast) ease;
 }
 
 .door__back:hover,
@@ -569,7 +575,7 @@
 .scheme__opt {
   flex: 1 1 auto;
   min-width: 92px;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 10px 14px;
   border: 1px solid var(--edge);
   border-radius: 10px;
@@ -579,7 +585,10 @@
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: border-color 120ms, color 120ms, background 120ms;
+  transition:
+    border-color 120ms,
+    color 120ms,
+    background 120ms;
 }
 
 .scheme__opt:hover,

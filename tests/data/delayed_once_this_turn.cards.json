@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_delayed_once_this_turn.py. Three instants installing the same spell-cast subscription with the three durations, so the one under test can be read against both near misses on the same board. Life is the counter, because it records how many times a subscription fired and not merely whether it did. `t_once_cheap_watcher` carries the mana-value condition Sea Gate Stormcaller needs, spelled the way a delayed trigger has to spell a filter.",
+  "_comment": "Shapes for tests/unit/triggers/test_delayed_once_this_turn.py. Three instants installing the same spell-cast subscription with the three durations, so the one under test can be read against both near misses on the same board. Life is the counter, because it records how many times a subscription fired and not merely whether it did. `t_once_cheap_watcher` carries the mana-value condition Sea Gate Stormcaller needs, spelled the way a delayed trigger has to spell a filter.",
   "cards": [
     {
       "id": "t_once_gain",

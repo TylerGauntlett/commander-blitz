@@ -4538,7 +4538,7 @@
     {
       "id": "t_mobilizer",
       "name": "Test Mobilizer",
-      "oracle_text": "Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior token. (Mobilize 1.)",
+      "oracle_text": "Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior token. Sacrifice it at the beginning of the next end step. (Mobilize 1.)",
       "mana_cost": "{1}{R}",
       "types": [
         "Creature"
@@ -4566,7 +4566,22 @@
                 "const": 1
               },
               "tapped": true,
-              "attacking": true
+              "attacking": true,
+              "as": "mobilized"
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step.",
+              "effects": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "binding": "mobilized",
+                    "count": "all"
+                  }
+                }
+              ]
             }
           ]
         }

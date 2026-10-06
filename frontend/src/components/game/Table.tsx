@@ -13,45 +13,29 @@
  */
 
 import { motion } from "motion/react";
-import {
-  type MouseEvent as ReactMouseEvent,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import type { CardView, GameView, LegalAction } from "../../api/types";
-import { type SoundName, play } from "../../audio/sfx";
-import { drive } from "../../fx/actuators";
-import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
-import { getGroup, setGroup } from "../../input/groups";
-import { oidAt, useLongPress } from "../../input/longPress";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { GameView } from "../../api/types";
+import { play, type SoundName } from "../../audio/sfx";
+import { useAttackLean } from "../../fx/useAttackLean";
+import { setCursorContext } from "../../input/cursor";
 import { useStickScroll } from "../../input/stickScroll";
-import { sendableIn, stopId, stopRoot } from "../../input/stops";
+import { useCardHold } from "../../input/useCardHold";
+import { useFollowThrough, useFollowUp } from "../../input/useFollowUp";
 import { useGroupDial } from "../../input/useGroupDial";
 import { useOpponentReading } from "../../input/useOpponentReading";
+import { useTableGestures } from "../../input/useTableGestures";
 import { useKeyboardShortcuts, usePadBindings } from "../../input/useTableInput";
 import { useTableRegions } from "../../input/useTableRegions";
-import {
-  actionsForCard,
-  blockableBy,
-  canDropOnLane,
-  defendersFor,
-} from "../../logic/actionMatch";
+import { useTableVerbs } from "../../input/useTableVerbs";
 import { reset as forgetCardRects } from "../../logic/cardRects";
-import { COMMIT_TESTID, commitmentFor } from "../../logic/commit";
-import { type Gesture, followUpStops } from "../../logic/followUp";
 import { removalsByOid } from "../../logic/removals";
-import { parseStop } from "../../logic/verbs";
-import type { Lane as LaneName } from "../../logic/zoneGrouping";
-import { findCard, seatOrder } from "../../logic/zoneGrouping";
+import { seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
 import { useHandheldLayout, usePhone } from "../../state/useHandheld";
 import { useNarrationSkip } from "../../state/useNarrationSkip";
 import { useTableDerived } from "../../state/useTableDerived";
+import { useViewingSeat } from "../../state/useViewingSeat";
 import { useZoomFit } from "../../state/useZoomFit";
 import { Motes } from "../ui/Motes";
 import { ActionPanel } from "./ActionPanel";
@@ -61,11 +45,10 @@ import { useCursorResolve } from "./FocusRing";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { ParticleLayer } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
-import { PlayerMat } from "./PlayerMat";
 import { ownsDecision } from "./PromptDialog";
-import { StackPanel } from "./StackPanel";
 import { TableFoot } from "./TableFoot";
 import { TableOverlays } from "./TableOverlays";
+import { TablePlay } from "./TablePlay";
 
 /** Decisions where clicking your own creatures means "commit it to combat". */
 const COMBAT_DECISIONS = new Set(["declare_attackers", "declare_blockers"]);
@@ -103,69 +86,16 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // The right stick scrolls the reader, or the list the ring is in.
   useStickScroll();
 
-  /*
-   * The card being read full screen, by oid.
-   *
-   * By oid and not by object, for the reason the reader in the mockup round
-   * held a NAME rather than a node: the engine pushes a whole new state on
-   * every action, so a card object captured here would be a snapshot that stops
-   * matching the board the moment anything happens to it.
-   */
-  const [heldCard, setHeldCard] = useState<number | null>(null);
-  const closeHold = useCallback(() => setHeldCard(null), []);
-
-  /*
-   * Right-click reads the card under the pointer, full screen.
-   *
-   * The desktop's way into the hold, which until now only `Y` could open --
-   * and `Y`'s keyboard stand-in `i` read the ring, which a mouse player cannot
-   * see. Right-click is what every digital card client uses for "show me this
-   * card bigger", and it needs no new state: whatever the pointer is over has
-   * already written `hoveredOid` (a card, a plinth, a panel row, a seat's
-   * commander window), so this asks the rail what it is showing and opens it.
-   *
-   * On the table and not on each card, so every surface that fills the rail
-   * gets it for free and none can drift. A right-click over nothing readable
-   * falls through to the browser's own menu, untouched.
-   */
-  const readHovered = useCallback(
-    (event: ReactMouseEvent) => {
-      // The card under the click first: on a touch screen a long-press arrives
-      // here as a `contextmenu` with no hover behind it. Then the rail's card.
-      const oid = oidAt(event.target) ?? useUiStore.getState().hoveredOid;
-      if (oid === null || findCard(state, oid) === null) return;
-      event.preventDefault();
-      setHeldCard(oid);
-    },
-    [state],
-  );
-
-  /** ...and a phone's way in, which has neither hover nor a right button. */
-  const longPress = useLongPress(
-    useCallback(
-      (oid: number) => {
-        if (findCard(state, oid) !== null) setHeldCard(oid);
-      },
-      [state],
-    ),
-  );
+  const { heldCard, setHeldCard, closeHold, readHovered, longPress } = useCardHold(state);
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
   const targetingActionIds = useUiStore((s) => s.targetingActionIds);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
   const stagedBlocks = useUiStore((s) => s.stagedBlocks);
-  const beginTargeting = useUiStore((s) => s.beginTargeting);
-  const narrowTargeting = useUiStore((s) => s.narrowTargeting);
   const endTargeting = useUiStore((s) => s.endTargeting);
-  const select = useUiStore((s) => s.select);
-  const stageAttack = useUiStore((s) => s.stageAttack);
-  const unstageAttack = useUiStore((s) => s.unstageAttack);
-  const stageBlock = useUiStore((s) => s.stageBlock);
-  const unstageBlock = useUiStore((s) => s.unstageBlock);
   const setPeek = useUiStore((s) => s.setPeek);
   const logOverlay = useUiStore((s) => s.logOverlay);
-  const viewingPid = useUiStore((s) => s.viewingPid);
   const setViewing = useUiStore((s) => s.setViewing);
   const toggleLogOverlay = useUiStore((s) => s.toggleLogOverlay);
   const peek = useUiStore((s) => s.peek);
@@ -267,20 +197,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // ---------------------------------------------------------------- derived
 
-  const {
-    playableOids,
-    abilityOids,
-    abilityLabels,
-    actionableOids,
-    targeting,
-    targetableOids,
-    targetablePids,
-    targetChosen,
-    combatCandidates,
-    blockedAttackers,
-    spending,
-    activeLanes,
-  } = useTableDerived({
+  const derived = useTableDerived({
     state,
     actions,
     targetingActionIds,
@@ -290,595 +207,54 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     stagedBlocks,
     hoveredOid,
   });
+  const {
+    playableOids,
+    actionableOids,
+    targeting,
+    targetableOids,
+    targetChosen,
+    combatCandidates,
+  } = derived;
 
   // ------------------------------------------------------------ interaction
 
-  /**
-   * The gesture whose second half the ring has not been moved to yet.
-   *
-   * Declared here rather than beside its effect because the routing callbacks
-   * below close over `followUp` AND name it in their dependency arrays, and a
-   * dependency array is evaluated where it is written -- a `const` declared
-   * further down would be in its temporal dead zone at that moment. The effect
-   * that drains this sits after `useCursorResolve()`, which is the ordering
-   * that matters: a resolve running afterwards would put the ring back.
-   */
-  const [follow, setFollow] = useState<Gesture | null>(null);
-  const followAt = useRef<LegalAction[] | null>(null);
-  const followUp = useCallback((gesture: Gesture) => {
-    followAt.current = null;
-    setFollow(gesture);
-  }, []);
+  const { follow, setFollow, followAt, followUp } = useFollowUp();
 
-  /** Play a card from hand: straight through if unambiguous, else start targeting. */
-  const playFromHand = useCallback(
-    (card: CardView) => {
-      if (gateInput()) return;
-      const candidates = actionsForCard(actions, card.oid);
-      if (candidates.length === 0) return;
-      if (candidates.length === 1 && candidates[0].targets.length === 0) {
-        act(candidates[0].id);
-        // The card is leaving your hand, so the ring must not leave with it.
-        followUp({ kind: "played-from-hand", oid: card.oid });
-        return;
-      }
-      beginTargeting(
-        card.oid,
-        candidates.map((a) => a.id),
-      );
-      // The board has just lit up somewhere else; go and stand on it.
-      followUp({ kind: "targeting", actionIds: candidates.map((a) => a.id) });
-    },
-    [gateInput, actions, act, beginTargeting, followUp],
-  );
-
-  /**
-   * A drop, and the two ways it can fail.
-   *
-   * Both used to `return` in silence, which is the worst possible answer to a
-   * deliberate gesture: the card sprang back to the hand and nothing said
-   * whether the game had refused it or simply not noticed. `deny` is the
-   * difference between "you cannot do that" and "is this thing on".
-   */
-  const onDropOnZone = useCallback(
-    (card: CardView, zone: string) => {
-      if (gateInput()) return;
-      /*
-       * WHOSE lane, and it was being thrown away.
-       *
-       * `lane:<pid>:<lane>` names a seat and this read the lane and skipped the
-       * pid, so a drop onto an opponent's creature row was treated as a drop
-       * onto your own. It could not be reached while their lanes were the only
-       * other drop zones and nothing dragged there; standing at their seat puts
-       * their lanes under the viewer's own hand.
-       */
-      const [kind, pid, lane] = zone.split(":");
-      if (
-        kind !== "lane" ||
-        Number(pid) !== state.seat ||
-        !canDropOnLane(state, actions, card.oid, lane as LaneName)
-      ) {
-        cue("deny");
-        return;
-      }
-      playFromHand(card);
-    },
-    [gateInput, state, actions, playFromHand, cue],
-  );
-
-  /** Clicking a permanent: resolve a target, or stage it for combat. */
-  const onBoardCard = useCallback(
-    (card: CardView) => {
-      if (gateInput()) return;
-
-      // 1. Finishing a targeted spell.
-      //
-      //    All the matches, not the first one. A target is only *one* of the
-      //    questions a selection can be asking: Into the Roil aimed at a
-      //    creature is still two actions, kicked and not, and `legality`
-      //    emits unkicked first -- so `.find` here silently spent the player's
-      //    kicker decision for them and made the kicked cast unreachable by
-      //    any gesture. Narrowing hands the leftover choice to the panel.
-      if (targeting.length > 0 && targetableOids.has(card.oid)) {
-        const matches = targeting.filter((a) =>
-          a.targets.some((ref) => ref.kind === "object" && ref.id === card.oid),
-        );
-        if (matches.length === 1) {
-          act(matches[0].id);
-          return;
-        }
-        if (matches.length > 1) {
-          narrowTargeting(matches.map((a) => a.id));
-          // The leftover choice is the panel's, so send the ring to it -- the
-          // rows are the only surface that carries a kicked cast and an
-          // unkicked one as two separate things to press.
-          followUp({ kind: "targeting", actionIds: matches.map((a) => a.id) });
-          return;
-        }
-      }
-
-      // 2. Attacking: a plain toggle. Clicking an opponent re-points a staged
-      //    attacker, so cycling defenders here would just make cancelling cost
-      //    one click per opponent in a pod.
-      if (decisionKind === "declare_attackers" && combatCandidates.has(card.oid)) {
-        if (stagedAttacks[card.oid] !== undefined) {
-          unstageAttack(card.oid);
-          select(null);
-          return;
-        }
-        const [first] = defendersFor(actions, card.oid);
-        if (first !== undefined) {
-          stageAttack(card.oid, first);
-          select(card.oid);
-        }
-        return;
-      }
-
-      // 3. Blocking: pick your creature, then the attacker it stops. Every step
-      //    of that is reversible -- click your blocker again to release it, or
-      //    click the attacker to clear everything aimed at it.
-      if (decisionKind === "declare_blockers") {
-        if (stagedBlocks[card.oid] !== undefined) {
-          unstageBlock(card.oid);
-          return;
-        }
-        if (combatCandidates.has(card.oid)) {
-          const picked = selectedOid === card.oid ? null : card.oid;
-          select(picked);
-          // Picking a blocker is only half of a block. The other half is an
-          // attacker on somebody else's board, which on a handheld is not a
-          // stop at all -- see `logic/followUp.ts`.
-          if (picked !== null) followUp({ kind: "blocker-selected", blocker: picked });
-          return;
-        }
-        if (selectedOid !== null && blockableBy(actions, selectedOid).includes(card.oid)) {
-          stageBlock(selectedOid, card.oid);
-          select(null);
-          // ...and on to the next creature with a job, so a pod's worth of
-          // attackers is two presses each rather than two plus a walk back.
-          followUp({ kind: "block-staged", blocker: selectedOid });
-          return;
-        }
-        const aimedHere = Object.entries(stagedBlocks)
-          .filter(([, attacker]) => attacker === card.oid)
-          .map(([blocker]) => Number(blocker));
-        if (aimedHere.length > 0) {
-          for (const blocker of aimedHere) unstageBlock(blocker);
-          return;
-        }
-      }
-
-      // 4. Otherwise: an activated ability with no choice to make.
-      const own = actions.filter((a) => a.source_oid === card.oid && a.kind === "activate");
-      if (own.length === 1 && own[0].targets.length === 0) {
-        act(own[0].id);
-        return;
-      }
-      if (own.length > 0) {
-        // Several abilities, none of them targeted -- a Mind Stone offering
-        // "{T}: Add {C}" beside its sacrifice ability. There is nothing on the
-        // board to point at, so entering targeting mode would leave the player
-        // hunting for a target that does not exist. Select it instead and let
-        // the panel be the chooser: it lists every play action, not only the
-        // narrowed ones, so both rows are already there.
-        if (own.every((a) => a.targets.length === 0)) {
-          select(selectedOid === card.oid ? null : card.oid);
-          return;
-        }
-        beginTargeting(
-          card.oid,
-          own.map((a) => a.id),
-        );
-      }
-    },
-    [
+  const { playFromHand, onDropOnZone, onBoardCard, onSelectPlayer, onDeclare, onBarAct } =
+    useTableGestures({
+      state,
+      actions,
       gateInput,
+      act,
+      cue,
+      followUp,
       targeting,
       targetableOids,
-      act,
-      decisionKind,
       combatCandidates,
-      actions,
-      stagedAttacks,
-      stagedBlocks,
-      selectedOid,
-      stageAttack,
-      unstageAttack,
-      stageBlock,
-      unstageBlock,
-      select,
-      beginTargeting,
-      narrowTargeting,
-      followUp,
-    ],
-  );
-
-  const onSelectPlayer = useCallback(
-    (pid: number) => {
-      if (gateInput()) return;
-      // Re-point a staged attacker at whoever was clicked.
-      if (decisionKind === "declare_attackers" && selectedOid !== null) {
-        const legal = actions.some(
-          (a) =>
-            a.kind === "add_attacker" &&
-            a.source_oid === selectedOid &&
-            a.targets.some((ref) => ref.kind === "player" && ref.id === pid),
-        );
-        if (legal) {
-          stageAttack(selectedOid, pid);
-          return;
-        }
-      }
-      // Finish a spell that targets a player -- all the matches, for the
-      // reason `onBoardCard` step 1 gives.
-      const matches = targeting.filter((a) =>
-        a.targets.some((ref) => ref.kind === "player" && ref.id === pid),
-      );
-      if (matches.length === 1) act(matches[0].id);
-      else if (matches.length > 1) narrowTargeting(matches.map((a) => a.id));
-      /*
-       * Otherwise: go and look at their board.
-       *
-       * Last, and that ordering is the whole rule. Aiming at a seat is a move
-       * in the game and looking at one is not, so a press that could be either
-       * has to be the game move -- an attacker that silently opened a board
-       * viewer mid-combat would be the worst kind of surprise.
-       *
-       * Toggles, so the seat you are already reading takes you home. Never your
-       * own seat: `.play__mine` is already your board.
-       */ else if (matches.length === 0 && pid !== state.seat) {
-        setViewing(viewingPid === pid ? null : pid);
-      }
-    },
-    [
-      gateInput,
       decisionKind,
-      selectedOid,
-      actions,
-      stageAttack,
-      targeting,
-      act,
-      narrowTargeting,
-      state.seat,
-      viewingPid,
-      setViewing,
-    ],
-  );
-
-  /*
-   * Whose board is actually on screen, guarded.
-   *
-   * A seat can leave the game while you are standing at it, and a latched pid
-   * that no longer names a live player would draw an empty mat with no way back
-   * -- so the guard is here rather than at the press, where it would only have
-   * been true at the moment of pressing.
-   */
-  const viewing =
-    viewingPid !== null &&
-    viewingPid !== state.seat &&
-    state.players[viewingPid] &&
-    !state.players[viewingPid].has_lost
-      ? viewingPid
-      : null;
-
-  // A new game, or leaving the table, must not arrive with somebody else's
-  // board up. The store outlives the component.
-  useEffect(() => () => setViewing(null), [setViewing]);
-
-  /*
-   * Holding `R2` stands you at the seat, and letting go walks you back.
-   *
-   * The hold used to draw a copy of their board in an overlay of its own, which
-   * could only be looked at: it took no pointer, trapped no ring, repeated
-   * every `data-stop` of the mat underneath it, and covered the reader. This
-   * view already does all of that properly, so the hold borrows it. What was
-   * on screen before the press is what the release puts back.
-   */
-  const viewingBeforeHold = useRef<number | null | undefined>(undefined);
-  useEffect(() => {
-    if (reading !== null) {
-      if (viewingBeforeHold.current === undefined) {
-        viewingBeforeHold.current = useUiStore.getState().viewingPid;
-      }
-      setViewing(reading);
-    } else if (viewingBeforeHold.current !== undefined) {
-      setViewing(viewingBeforeHold.current);
-      viewingBeforeHold.current = undefined;
-    }
-  }, [reading, setViewing]);
-
-  const onDeclare = useCallback(
-    (kind: "attackers" | "blockers", pairs: [number, number][]) => {
-      if (gateInput()) return;
-      declareMutate({ kind, pairs });
-    },
-    [gateInput, declareMutate],
-  );
-
-  /**
-   * The action bar during a combat declaration.
-   *
-   * The bar lists every legal action, which for combat is one `add_attacker` or
-   * `add_blocker` per legal pair. Posting those straight to the server commits
-   * them one at a time and there is no inverse action -- only Undo -- and a
-   * single blocker committed onto a menace attacker can strand the declaration
-   * with no legal `finish_declaration` at all. So the buttons stage instead,
-   * exactly like clicking the card does, and the whole set goes up at once.
-   */
-  const onBarAct = useCallback(
-    (actionId: string) => {
-      if (gateInput()) return;
-      const action = actions.find((a) => a.id === actionId);
-      if (!action || !inCombatDecision) {
-        act(actionId);
-        return;
-      }
-
-      if (action.kind === "add_attacker" && action.source_oid !== null) {
-        const defender = action.targets.find((ref) => ref.kind === "player")?.id;
-        if (defender === undefined) return;
-        if (stagedAttacks[action.source_oid] === defender) {
-          unstageAttack(action.source_oid);
-        } else {
-          stageAttack(action.source_oid, defender);
-        }
-        return;
-      }
-
-      if (action.kind === "add_blocker" && action.source_oid !== null) {
-        const attacker = action.targets.find((ref) => ref.kind === "object")?.id;
-        if (attacker === undefined) return;
-        if (stagedBlocks[action.source_oid] === attacker) {
-          unstageBlock(action.source_oid);
-        } else {
-          stageBlock(action.source_oid, attacker);
-          // The row and the card are two ways to make one gesture, so they get
-          // the same follow-up. Only on staging: releasing a block is the
-          // player putting a decision back, not making the next one.
-          followUp({ kind: "block-staged", blocker: action.source_oid });
-        }
-        return;
-      }
-
-      if (action.kind === "finish_declaration") {
-        const kind = decisionKind === "declare_attackers" ? "attackers" : "blockers";
-        const staged = kind === "attackers" ? stagedAttacks : stagedBlocks;
-        const pairs = Object.entries(staged).map(
-          ([source, target]) => [Number(source), target] as [number, number],
-        );
-        // Nothing staged still means what it always meant: decline entirely.
-        if (pairs.length > 0) {
-          onDeclare(kind, pairs);
-          return;
-        }
-      }
-
-      act(actionId);
-    },
-    [
-      gateInput,
-      actions,
       inCombatDecision,
-      decisionKind,
-      stagedAttacks,
-      stagedBlocks,
-      stageAttack,
-      unstageAttack,
-      stageBlock,
-      unstageBlock,
-      onDeclare,
-      act,
-      followUp,
-    ],
-  );
+      declareMutate,
+    });
+
+  const viewing = useViewingSeat(state, reading);
 
   // ------------------------------------------------------------ controller
 
-  /**
-   * B: a strict unwind, and it never quits from the top.
-   *
-   * The order is the order things were put on top of each other, so pressing B
-   * repeatedly always ends at the board rather than at a dialog you cannot
-   * remember opening. Quitting is a deliberate act in the tool strip -- a back
-   * button that eventually leaves the game is how somebody loses a match.
-   */
-  const back = useCallback(() => {
-    /*
-     * One level per press, outermost first, and each level says so.
-     *
-     * The voice is not decoration: `B` at the bottom of the stack does nothing
-     * at all, and without a sound the player cannot tell "nothing was open"
-     * from "the button did not register" -- which on a controller is the
-     * difference between trusting the input and hammering it.
-     */
-    const unwind = () => {
-      // The two holds are outermost: both cover the board, and both are things
-      // you opened a moment ago and can put down without losing anything.
-      if (dialOpen) {
-        setDialOpen(false);
-        return true;
-      }
-      if (heldCard !== null) {
-        setHeldCard(null);
-        return true;
-      }
-      // The log overlay is the outermost thing that can be open, and it traps
-      // the ring while it is. A panel you can open with one button and cannot
-      // close with the button that means "back" is worse than no panel: the
-      // ring is inside it and every direction is a wall.
-      //
-      // Not gated on the layout any more: the log is an overlay at every size
-      // now that the left rail is retired, so `B` has to close it everywhere.
-      if (logOverlay) {
-        toggleLogOverlay();
-        return true;
-      }
-      if (peek) {
-        setPeek(null);
-        return true;
-      }
-      // Below the overlays and above targeting: standing at somebody else's
-      // seat is a place you are, not a thing that is open over you, so `B`
-      // brings you home only once nothing is covering the board.
-      if (viewing !== null) {
-        setViewing(null);
-        return true;
-      }
-      if (targetingActionIds.length > 0) {
-        endTargeting();
-        return true;
-      }
-      if (selectedOid !== null) {
-        select(null);
-        return true;
-      }
-      return false;
-    };
-    if (unwind()) cue("back");
-  }, [
+  const { back, secondary } = useTableVerbs({
+    state,
+    actions,
+    decisionKind,
     dialOpen,
     setDialOpen,
     heldCard,
-    logOverlay,
-    toggleLogOverlay,
-    peek,
-    setPeek,
+    setHeldCard,
     viewing,
-    setViewing,
-    targetingActionIds,
-    endTargeting,
-    selectedOid,
-    select,
-    cue,
-  ]);
-
-  /**
-   * X: the secondary verb, which is context's business rather than a fixed one.
-   *
-   * On a staged attacker it re-aims -- the pod case, where `defendersFor` has
-   * several seats and the mouse re-aims by clicking a different orb. On a card
-   * whose primary press casts it, it activates an ability instead.
-   *
-   * AND WHERE IT HAS NOTHING ELSE TO DO, IT COMMITS THE DECISION.
-   *
-   * Every decision this game asks ends at one control in the commit dock: Pass
-   * on a priority window, All attack then Attack on a declaration, All defend
-   * then Block. The dock is in the right rail and the ring is almost never near
-   * it -- you are in your hand, or out on your own board choosing what to swing
-   * -- so `L2` exists to jump there and `A` presses it. Two presses, every
-   * phase, thirteen phases a turn. `X` collapses that to one.
-   *
-   * `X` is empty on most stops, so it takes the job rather than a button being
-   * invented for it: no new glyph, and `HintBar` renders `verbs.x`
-   * conditionally already, so the one-line bar does not grow. Nothing is
-   * displaced -- a card with an ability keeps `Activate`, a staged attacker
-   * keeps `Re-aim`.
-   *
-   * WHICH control is `logic/commit.ts`, shared with `logic/verbs.ts` rather
-   * than restated in each. A bar that promises a verb the button does not have
-   * is the defect that file exists to prevent, and this is the branch where the
-   * two would have drifted first -- "All defend" is disabled on a board where
-   * every block is a chump, and only the ranking knows that.
-   *
-   * TWO OF THE FOUR ARE PRESSED RATHER THAN POSTED. "All attack" and the Attack
-   * slab write to `uiStore` and declare what is staged; they exist in no action
-   * list and have no id, so `X` clicks the control the panel already rendered.
-   * That is the same rule `useCursorNav` uses for `A` -- there is no second
-   * routing table, and no way for a pad to reach an action a pointer cannot.
-   */
-  const secondary = useCallback(() => {
-    const ref = parseStop(getCursor());
-    const oid = ref.kind === "card" ? ref.id : null;
-    if (oid !== null) {
-      if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {
-        const defenders = defendersFor(actions, oid);
-        if (defenders.length > 1) {
-          const next =
-            defenders[(defenders.indexOf(stagedAttacks[oid]) + 1) % defenders.length];
-          stageAttack(oid, next);
-          return;
-        }
-      }
-      const ability = actions.find((a) => a.source_oid === oid && a.kind === "activate");
-      if (ability) {
-        onBarAct(ability.id);
-        return;
-      }
-    }
-    /*
-     * Silent when there is nothing to do, rather than a deny.
-     *
-     * The bar is the contract: it renders `X` only when `verbsFor` gives it a
-     * verb, and `verbsFor` asks the same `commitmentFor` this does. A refusal
-     * noise for a button the player was never told about is a noise they cannot
-     * explain.
-     */
-    const commit = commitmentFor(state, actions, {
-      stagedAttacks,
-      stagedBlocks,
-      selectedOid,
-      targeting: targetingActionIds.length > 0,
-    });
-    if (!commit) return;
-    if (commit.actionId !== null) {
-      act(commit.actionId);
-      return;
-    }
-    /*
-     * `.click()` and not a re-implementation. The dock is inside the panel and
-     * the staging lives there; reaching in for the button is what keeps the
-     * escalation state, the ranking and the declare call in one place.
-     */
-    document
-      .querySelector<HTMLButtonElement>(
-        `[data-testid="${COMMIT_TESTID[commit.target]}"]:not([disabled])`,
-      )
-      ?.click();
-  }, [
-    decisionKind,
-    stagedAttacks,
-    stagedBlocks,
-    selectedOid,
-    targetingActionIds,
-    state,
-    actions,
-    stageAttack,
-    onBarAct,
     act,
-  ]);
+    onBarAct,
+    cue,
+  });
 
-  /*
-   * A staged attacker leans toward the seat it is aimed at, and holds.
-   *
-   * The amber rim says "selected"; the lean says "aimed at *them*", which in a
-   * pod is a different fact and the one that matters -- three creatures staged
-   * at three different players look identical under a rim alone.
-   *
-   * Driven from an effect rather than from the click handler because staging
-   * has four entry points (the card, the panel row, the defender chip, and
-   * undo), and one of them is the server sending a state where nothing is
-   * staged any more. Reconciling from the current staging covers all four.
-   */
-  useEffect(() => {
-    const staged = Object.entries(stagedAttacks);
-    if (staged.length === 0) return;
-    const board = boardRef.current?.getBoundingClientRect();
-    if (!board) return;
-    for (const [oid, defender] of staged) {
-      const seat = document.querySelector(`[data-player="${defender}"]`);
-      if (!seat) continue;
-      const box = seat.getBoundingClientRect();
-      drive(Number(oid))?.lean({
-        x: box.left + box.width / 2 - board.left,
-        y: box.top + box.height / 2 - board.top,
-      });
-    }
-    // Released on unstage, on commit, and on unmount -- `rest` is the same
-    // cancel path every transient uses, so the hold needs no special teardown.
-    return () => {
-      for (const [oid] of staged) drive(Number(oid))?.rest();
-    };
-  }, [stagedAttacks]);
+  useAttackLean(stagedAttacks, boardRef);
 
   /*
    * The cursor re-derives after every commit *this* component makes.
@@ -891,63 +267,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    */
   useCursorResolve();
 
-  /* --------------------------------------------------- following a decision
-   *
-   * HALF THE DECISIONS IN THIS GAME ARE TWO PRESSES, AND NOTHING MOVED BETWEEN
-   * THEM. Press an instant in your hand and the board lights up with legal
-   * targets while the ring is still on the card in your hand; press one of your
-   * creatures during a block declaration and the attacker it has to be pointed
-   * at is on an opponent's board, which at 1280x800 is a lane clipped to zero
-   * height and therefore not a stop at all. A pointer never pays either cost,
-   * because a pointer arrives at the second half of a decision by moving there.
-   *
-   * `logic/followUp.ts` answers WHERE, as an ordered list, and this is the
-   * whole of the DOM half. Two things it has to get right:
-   *
-   * - **The group is released before the cursor moves.** `setCursor` resolves
-   *   through `activeRoot()`, which is still the region being left, so a target
-   *   outside it is not findable and the ring silently does not move. Exactly
-   *   the bug `cursor.ts:moveCursor` records; the region is put back if nothing
-   *   in the list lands, and the cursor->group reconciler below sets the right
-   *   one when something does.
-   * - **A candidate has to be LANDABLE, not merely present.** `setCursor` asks
-   *   `stopElement`, which asks the DOM for the id and nothing else -- so it
-   *   accepts an opponent's attacker sitting in a lane clipped to zero height,
-   *   which is precisely the stop this whole module exists to route around. It
-   *   took the ring straight back to the dead end it was avoiding.
-   *
-   *   `sendableIn` and not `candidatesIn`, and the difference is the whole
-   *   fallback. Stepping does not scroll, so `onScreen` rightly refuses a row
-   *   past the fold of the action list; a JUMP does scroll, because `stamp`
-   *   calls `keepInView`. Filtering by the stepping rule rejected the panel row
-   *   for any blocker below the fold -- which is precisely the row the fallback
-   *   exists to reach -- and the ring stayed on the creature with nothing to do.
-   * - **A gesture that asks the server waits for its answer.** The three combat
-   *   gestures stage into `uiStore` and are true the moment they are made.
-   *   Playing a card is a mutation, and running against the pre-mutation action
-   *   list would send the ring to a card the land drop has just made
-   *   unplayable. So that one holds until `actions` is a different array.
-   */
-  useLayoutEffect(() => {
-    if (!follow) return;
-    if (follow.kind === "played-from-hand") {
-      if (followAt.current === null) {
-        followAt.current = actions;
-        return;
-      }
-      if (followAt.current === actions) return;
-    }
-    const candidates = followUpStops(state, actions, follow, stagedBlocks);
-    setFollow(null);
-    if (candidates.length === 0) return;
-    const was = getGroup();
-    setGroup(null);
-    const sendable = sendableIn(stopRoot());
-    for (const id of candidates) {
-      if (sendable.has(id) && setCursor(id)) return;
-    }
-    setGroup(was);
-  }, [follow, actions, state, stagedBlocks]);
+  // Following a decision: see `input/useFollowUp.ts`, and why it is two hooks.
+  useFollowThrough({ follow, setFollow, followAt, actions, state, stagedBlocks });
 
   /*
    * ...and the context, which decides whether the ring flies or teleports. A
@@ -1023,6 +344,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   });
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: the table root takes the context-menu and long-press gestures that open the card reader; it is the board, not a control, and the pad reaches the reader through the focus ring.
     <div
       className="table"
       data-testid="table"
@@ -1111,158 +433,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           most of what the foot costs by moving inside this column so the right
           rail can run to the bottom edge.
         */}
-        <main className="play">
-          {/*
-            Inside `.play` and not the body, so it floats over the VIEWER'S own
-            area rather than over the opponents.
-
-            Anchored to the body's top-left it covered an opponent's name and
-            life on a desktop, where their row is 250px tall -- and covering
-            somebody's vitals is a worse trade than covering your own commander.
-            It is placed into the same grid cell as `.play__mine`, which two
-            grid items are allowed to share, so it overlaps without needing a
-            positioned ancestor and without `.play__mine`'s own scrolling
-            carrying it off the top.
-          */}
-          {state.stack.length > 0 && <StackPanel state={state} />}
-
-          <div className="play__opponents" ref={podRef}>
-            {opponents.map((pid) => (
-              <PlayerMat
-                key={pid}
-                state={state}
-                player={state.players[pid]}
-                compact
-                // Their lands against their own edge of the screen, so the two
-                // creature bands meet across the middle of the table.
-                mirrored
-                cardScale={zoom.pod}
-                actionableOids={actionableOids}
-                hasAbility={(card) => abilityOids.has(card.oid)}
-                abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
-                isTargetable={(card) => targetableOids.has(card.oid)}
-                // stagedBlocks is keyed by blocker; an opponent's attacker is a
-                // value in that map, never a key.
-                isStaged={(card) => blockedAttackers.has(card.oid)}
-                isSelected={(card) => card.oid === selectedOid}
-                onActivate={onBoardCard}
-                playerTargetable={targetablePids.has(pid)}
-                onSelectPlayer={onSelectPlayer}
-                // An opponent's commander is reference, never a click target:
-                // `playableOids` only ever names the viewer's own cards.
-                playableOids={playableOids}
-                onHoverCard={hover}
-                locked={locked}
-                viewing={viewing === pid}
-                // Their board has moved into the viewer's area, so this mat
-                // stops drawing it. Clipped is not absent: a card in a
-                // zero-height lane still owns its `data-oid`.
-                variant={viewing === pid ? "side" : "full"}
-              />
-            ))}
-          </div>
-
-          <div className="play__mine" ref={mineRef} data-viewing={viewing ?? undefined}>
-            {/*
-              WHOSE BOARD IS THIS, when it is not yours.
-
-              A strip and not a toast: it has to be true for as long as you are
-              standing there, and it has to say the way back. It carries a
-              `data-stop` so the ring can reach it, and NO `data-action-id` --
-              coming home is not a move in the game, and `ActionPanel` owns
-              every id alone.
-            */}
-            {viewing !== null && (
-              <div className="viewing" data-testid="viewing-strip">
-                <span className="viewing__who">
-                  Viewing <b>{state.players[viewing]?.name ?? `Player ${viewing}`}</b>
-                </span>
-                <button
-                  type="button"
-                  className="btn btn--ghost"
-                  data-stop={stopId.tool("stop-viewing")}
-                  onClick={() => setViewing(null)}
-                >
-                  Back to your board
-                </button>
-              </div>
-            )}
-
-            {/*
-              THE NODE MOVES; IT IS NEVER COPIED.
-
-              Whichever mat is drawn here is the only place that player's cards
-              are laid out, because the seat swap renders `variant="lanes"` and
-              the mats in the row above draw no lanes on a handheld anyway. Two
-              boxes for one `data-oid` would give `FxLayer` and the ring a
-              choice they have no way to make correctly.
-
-              `variant="lanes"` also means no second `PlayerOrb`: the facts
-              about the seat you are standing at are on that seat, six pixels
-              above, and drawing them twice would put two `data-player`s in the
-              document.
-            */}
-            {/*
-              Your own panel stays, whosever board is beside it.
-
-              Life, open mana and commander damage are most of what you are
-              assessing a threat AGAINST, so leaving to look at somebody's board
-              must not take them off the screen. Rendered as its own mat rather
-              than as a half of theirs: a `PlayerMat` is one player's, and a
-              component that took two and decided which half belonged to which
-              would be a worse thing to have than a grid line.
-            */}
-            {viewing !== null && (
-              <PlayerMat
-                key={`mine-${state.seat}`}
-                variant="side"
-                state={state}
-                player={viewer}
-                cardScale={zoom.board}
-                actionableOids={actionableOids}
-                playerTargetable={targetablePids.has(state.seat)}
-                onSelectPlayer={onSelectPlayer}
-                playableOids={playableOids}
-                onHoverCard={hover}
-                spending={spending}
-                locked={locked}
-              />
-            )}
-
-            <PlayerMat
-              key={viewing ?? state.seat}
-              variant={viewing !== null ? "lanes" : "full"}
-              state={state}
-              player={viewing !== null ? state.players[viewing] : viewer}
-              cardScale={zoom.board}
-              actionableOids={actionableOids}
-              hasAbility={(card) => abilityOids.has(card.oid)}
-              abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
-              activeLanes={activeLanes}
-              isPlayable={(card) => combatCandidates.has(card.oid)}
-              isTargetable={(card) => targetableOids.has(card.oid)}
-              isStaged={(card) =>
-                stagedAttacks[card.oid] !== undefined || stagedBlocks[card.oid] !== undefined
-              }
-              isSelected={(card) => card.oid === selectedOid}
-              onActivate={onBoardCard}
-              playerTargetable={targetablePids.has(state.seat)}
-              onSelectPlayer={onSelectPlayer}
-              playableOids={playableOids}
-              // Casting your commander out of the plinth in the info panel.
-              // The same route a hand card takes, so targeting and the real
-              // action post identically.
-              onCastCommander={playFromHand}
-              onHoverCard={hover}
-              spending={spending}
-              // Standing at somebody else's seat is a reader, not a second way
-              // to act: every legal action against those permanents is already
-              // a row in the panel, and offering them here would put the same
-              // `data-action-id` in the document twice.
-              locked={locked || viewing !== null}
-            />
-          </div>
-        </main>
+        <TablePlay
+          state={state}
+          viewer={viewer}
+          opponents={opponents}
+          podRef={podRef}
+          mineRef={mineRef}
+          zoom={zoom}
+          derived={derived}
+          selectedOid={selectedOid}
+          stagedAttacks={stagedAttacks}
+          stagedBlocks={stagedBlocks}
+          viewing={viewing}
+          setViewing={setViewing}
+          locked={locked}
+          hover={hover}
+          onBoardCard={onBoardCard}
+          onSelectPlayer={onSelectPlayer}
+          playFromHand={playFromHand}
+        />
 
         {/*
           The right rail is three things: the card you are reading, the panel of

@@ -762,7 +762,7 @@ class GameObject:
     #:
     #: A *replacement*, not a discount, and that is the whole reason it is a
     #: field rather than a number folded into the existing reductions:
-    #: `costs.cost_reduction` clamps every reduction to the **generic** part of
+    #: `cost_reduction.cost_reduction` clamps every reduction to the **generic** part of
     #: a cost, so no subtraction reaches a coloured pip and no single number is
     #: right for two airbent creatures of different mana values. {2} is {2}
     #: whether the card printed {G} or {7}{U}{U}.

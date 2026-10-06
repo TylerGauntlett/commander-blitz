@@ -441,6 +441,7 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
 
     tally = {"accepted": 0, "rejected": 0, "superseded": 0}
     superseded: set[str] = set()
+    accepted: set[str] = set()
     # What a later answer in this run may lean on as a meld partner: the auto
     # batch plus everything accepted so far, written or not (`--dry-run`).
     staged = dict(cards)
@@ -522,6 +523,7 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
             entry.gate = None
             entry.reason = ""
         _finish_companion_entries(backs, by_name, entry)
+        accepted.add(card_id)
         tally["accepted"] += 1
 
     if not dry_run and tally["accepted"]:
@@ -529,6 +531,11 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
             _drop_hand_written(superseded)
         _write_batch(cards, expectations)
         queue.save()
+        # Only after the pool is written: a crash before this line leaves the
+        # answers on disk, and the next collect accepts them again unchanged.
+        # The batch above starts from the existing `templates.cards.json` and
+        # only adds or replaces, so a card whose answer is gone stays collected.
+        P.retire(accepted)
     return tally
 
 

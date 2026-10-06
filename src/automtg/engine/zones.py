@@ -9,17 +9,20 @@ happen in exactly one place.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
-from .carddef import CardDef
-from .characteristics import chars
+from .carddef import CardDef, Cost
+from .characteristics import chars, keyword_as_it_enters
 from .effects.conditions import evaluate_condition
-from .effects.context import EffectContext
+from .effects.context import EffectContext, ask_mode, ask_objects, ask_yes_no
+from .effects.selectors import resolve_pool
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
+from .player_statics import counter_placement_replacements
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -537,9 +540,8 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     not offer one: a player with no land in hand is not asked a question whose
     "yes" cannot be honoured, and the permanent goes to `instead_zone`.
     """
-    from .carddef import Cost
+    # Local: `costs` imports `zones` to sacrifice, exile and bounce.
     from .costs import can_pay, pay
-    from .effects.context import ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -589,9 +591,8 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
     at 2 life is never shown a question whose yes would kill them and whose
     payment would fail anyway.
     """
-    from .carddef import Cost
+    # Local: `costs` imports `zones` to sacrifice, exile and bounce.
     from .costs import can_pay, pay
-    from .effects.context import ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -645,7 +646,6 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
     deliberately does not clear and `_enter_battlefield` clears once it has
     turned it into `copying`.
     """
-    from .effects.context import EffectContext, ask_objects, ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -658,7 +658,6 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
         ctx = EffectContext(
             state=state, controller=controller, source_oid=oid, source_name=card.name
         )
-        from .effects.selectors import resolve_pool
 
         # `exclude_self` is implicit and structural rather than written: the
         # permanent is still on its way in and is not on the battlefield, so a
@@ -727,8 +726,6 @@ def offer_riot_choice(state: GameState, oid: int, controller: int):
     gets neither half, which is the printed card this unblocks anyway: Rhythm of
     the Wild says **nontoken**.
     """
-    from .characteristics import keyword_as_it_enters
-    from .effects.context import ask_mode
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -783,6 +780,7 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
     same defect, reached from the other side, that `self_enters_tapped` gave ten
     of these cards.
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches
 
     for source_obj, static in _battlefield_statics(state):
@@ -829,6 +827,7 @@ def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[
     source in that group applies nothing: Giada entering alongside an Angel was
     not on the battlefield when the Angel's entry was decided (614.12).
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches, _matching_objects
 
     entering = {
@@ -914,6 +913,7 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
     printed card in this family does, so nothing sets it today and the default is
     the common case rather than a guess.
     """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches_printed
 
     for source_obj, static in _battlefield_statics(state):
@@ -1020,7 +1020,6 @@ def _entering_counters(
     object by the caller before it is ever seen; the COUNTER_PLACED is
     `_fire_entered_with_counters`'s, once it has arrived.
     """
-    from .player_statics import counter_placement_replacements
 
     effects: list[_EnteringEffect] = [("add", n) for n in adds if n > 0]
     if not effects:
@@ -1310,6 +1309,7 @@ def _enter_battlefield(
     granted = obj.mana_granted_keywords
     obj.mana_granted_keywords = set()
     if granted:
+        # Local: `primitives` imports `zones` for `move_object`.
         from .primitives import grant_keyword
 
         for keyword in sorted(granted):
@@ -1558,7 +1558,6 @@ def _release_delayed_subject(state: GameState, oid: int) -> None:
     """
     if not state.delayed_triggers:
         return
-    from dataclasses import replace
 
     kept = []
     for delayed in state.delayed_triggers:

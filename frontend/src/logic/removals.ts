@@ -17,7 +17,7 @@
  */
 
 import type { GameEvent } from "../api/types";
-import { type NameLookup, exitPhrase, prettyCardName } from "./labels";
+import { exitPhrase, type NameLookup, prettyCardName } from "./labels";
 
 /**
  * oid -> the phrase describing how it left the battlefield.

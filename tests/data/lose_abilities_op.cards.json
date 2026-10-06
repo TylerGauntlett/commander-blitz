@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_lose_abilities_op.py. t_lao_crag strips its own abilities when a trigger resolves -- The Irencrag's clause without the rest of the transformation -- while keeping the mana ability it prints, so that losing it is something the test can watch happen. t_lao_gainer does the same and is granted an ability in the same breath, which is what 'loses all OTHER abilities and gains ...' asks for. t_lao_plain is the same card with no stripping, the control.",
+  "_comment": "Shapes for tests/unit/statics/test_lose_abilities_op.py. t_lao_crag strips its own abilities when a trigger resolves -- The Irencrag's clause without the rest of the transformation -- while keeping the mana ability it prints, so that losing it is something the test can watch happen. t_lao_gainer does the same and is granted an ability in the same breath, which is what 'loses all OTHER abilities and gains ...' asks for. t_lao_plain is the same card with no stripping, the control.",
   "cards": [
     {
       "id": "t_lao_crag",

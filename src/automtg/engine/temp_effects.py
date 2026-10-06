@@ -9,6 +9,31 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
+from .characteristics import _matches
+from .player_statics import _battlefield_statics, static_life_floor
+from .structs import (
+    ATTACK_RESTRICTION_DURATIONS,
+    BLOCK_PROHIBITION_DURATIONS,
+    CAST_LOCK_DURATIONS,
+    DAMAGE_SHIELD_DURATIONS,
+    PERMANENT_SHIELD_DIRECTIONS,
+    PERMANENT_SHIELD_DURATIONS,
+    SACRIFICE_RESTRICTION_DURATIONS,
+    UNBLOCKABLE_DURATIONS,
+    AttackRestriction,
+    BlockProhibition,
+    CastLock,
+    DamageShield,
+    FlashPermission,
+    LifeFloor,
+    LifeLock,
+    OutcomeLock,
+    PermanentShield,
+    PlayerProtection,
+    SacrificeRestriction,
+    Unblockable,
+)
+
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
@@ -45,7 +70,6 @@ def restrict_attack(
     entry swallow "creatures can't attack this combat". See
     :class:`structs.AttackRestriction`.
     """
-    from .structs import ATTACK_RESTRICTION_DURATIONS, AttackRestriction
 
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown attack restriction duration {duration!r}")
@@ -173,7 +197,6 @@ def forbid_block(
     entry never merges with one naming a set, and rightly so -- they expire the
     same way but mean different things while they live.
     """
-    from .structs import BLOCK_PROHIBITION_DURATIONS, BlockProhibition
 
     if duration not in BLOCK_PROHIBITION_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown block prohibition duration {duration!r}")
@@ -220,7 +243,6 @@ def grant_player_protection(
     can be observed. `protection_from` on the object side has the same property
     for free, being a set.
     """
-    from .structs import PlayerProtection
 
     added = False
     for quality in qualities:
@@ -246,7 +268,6 @@ def set_life_floor(
     Deduplicated on the whole entry, like every table beside it: two Angel's
     Graces in a turn are two identical records and the second changes nothing.
     """
-    from .structs import LifeFloor
 
     record = LifeFloor(player=pid, floor=floor, duration=duration, source=source)
     if record in state.life_floors:
@@ -269,7 +290,6 @@ def life_floor(state: GameState, pid: int) -> int | None:
     record an Angel's Grace leaves and the continuous floor a permanent or an
     emblem holds, the highest of all of them biting.
     """
-    from .player_statics import static_life_floor
 
     floors = [record.floor for record in state.life_floors if record.player == pid]
     static = static_life_floor(state, pid)
@@ -306,7 +326,6 @@ def lock_game_outcome(
     Graces in a turn are two identical records and the second changes nothing
     observable.
     """
-    from .structs import OutcomeLock
 
     lock = OutcomeLock(
         player=pid,
@@ -333,7 +352,6 @@ def lock_life_total(
     Teferi's Protections in a turn are two identical records and the second
     changes nothing observable.
     """
-    from .structs import LifeLock
 
     entry = LifeLock(player=pid, duration=duration, source=source)
     if entry in state.life_locks:
@@ -370,7 +388,6 @@ def lock_casting_zones(
     Deduplicated on the whole entry, the way `lock_life_total` is: two copies
     of one sentence say nothing a single one does not.
     """
-    from .structs import CAST_LOCK_DURATIONS, CastLock
 
     if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown cast lock duration {duration!r}")
@@ -419,7 +436,6 @@ def grant_flash_permission(
     source: int | None = None,
 ) -> None:
     """Let ``pid`` cast spells of ``types`` at instant speed for ``duration``."""
-    from .structs import FlashPermission
 
     state.flash_permissions.append(
         FlashPermission(player=pid, types=tuple(types), duration=duration, source=source)
@@ -490,7 +506,6 @@ def make_unblockable(
     Returns whether anything was recorded.  Deduplicated on the whole entry --
     two copies of "can't be blocked" say nothing a single one does not.
     """
-    from .structs import UNBLOCKABLE_DURATIONS, Unblockable
 
     if duration not in UNBLOCKABLE_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown unblockable duration {duration!r}")
@@ -551,7 +566,6 @@ def forbid_sacrifice(
     two copies of "can't be sacrificed" say nothing one does not, and a second
     row would only make the clear-up do the work twice.
     """
-    from .structs import SACRIFICE_RESTRICTION_DURATIONS, SacrificeRestriction
 
     if duration not in SACRIFICE_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown sacrifice restriction duration {duration!r}")
@@ -620,8 +634,6 @@ def _forbidden_by_a_static(state: GameState, oid: int) -> bool:
     docstring above gives: making the choice illegal is the rule (701.17b), and
     making the action silently fail would spin the state-based-action loop.
     """
-    from .characteristics import _matches
-    from .player_statics import _battlefield_statics
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -684,7 +696,6 @@ def shield_player(
     Returns whether anything was recorded, so the op can distinguish a shield it
     installed from one it dropped.
     """
-    from .structs import DAMAGE_SHIELD_DURATIONS, DamageShield
 
     if duration not in DAMAGE_SHIELD_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown damage shield duration {duration!r}")
@@ -728,11 +739,6 @@ def shield_permanent(
     that has left (its clock is never coming), and for an exact duplicate --
     a second copy of the same prevention changes nothing observable.
     """
-    from .structs import (
-        PERMANENT_SHIELD_DIRECTIONS,
-        PERMANENT_SHIELD_DURATIONS,
-        PermanentShield,
-    )
 
     if duration not in PERMANENT_SHIELD_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown permanent shield duration {duration!r}")

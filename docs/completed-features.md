@@ -38,7 +38,7 @@ theirs just after the move, the trade their docstrings record; moving them onto
 
 ### Tests
 
-`tests/unit/test_look_at_top_enters_with_counters.py` — the counters arrive with
+`tests/unit/zones/test_look_at_top_enters_with_counters.py` — the counters arrive with
 the card (one COUNTER_PLACED of three), one placement with a printed enters-with
 (five, Hardened Scales six not seven, the self-counter trigger once not twice, a
 0/0 survives), the condition reads the card put there (mana value three included,
@@ -102,7 +102,7 @@ No new op, decision or event. `AbilityModel.token_multiplier` and a branch in
 
 ### Tests
 
-`tests/unit/test_token_doubling.py` — six classes: twice that many (and the
+`tests/unit/tokens/test_token_doubling.py` — six classes: twice that many (and the
 `token_created` events for each), compounding (two, three, order-independence,
 no self-redoubling, beside a Visitation), whose tokens they are (opponent's
 creation untouched, opponent's doubler inert, an opponent's effect giving you a
@@ -538,7 +538,7 @@ capability their gap records already name: `counter_to_exile`,
 `choose_new_targets` (plus a "spell with a single target" restriction) and
 `divided_damage`. Their records keep only those needs.
 
-`tests/unit/test_exile_from_hand.py`: 26 tests.
+`tests/unit/costs/test_exile_from_hand.py`: 26 tests.
 ## "Your life total can't change" -- a two-way lock on a life total -- 118.5
 
 ### Overview
@@ -736,7 +736,7 @@ the source is attached to, its soulbond partner — and a reduction counts a boa
 in a `count` they ask how many permanents are *the* permanent. Refusing is the
 half of the fix that stops the silent drop returning under a different key.
 
-`tests/unit/test_reduction_filter_keys.py` is the witness, and it pins the
+`tests/unit/costs/test_reduction_filter_keys.py` is the witness, and it pins the
 regression directly: a lone non-legendary creature must take nothing off.
 
 ## `gift` — a cast-time promise that costs nothing and names a seat — 702.164a
@@ -837,7 +837,7 @@ none. It is checked at load time now, with the guards for `token` and
 
 ### Coverage
 
-`tests/unit/test_gift.py`, and `t_gift` / `t_gift_creature` in
+`tests/unit/keywords/test_gift.py`, and `t_gift` / `t_gift_creature` in
 `tests/data/testing.cards.json`. The boundaries it holds down are: both lines are
 offered and the unpromised one is first; the promised line costs exactly the
 printed cost; one line per opponent at a three-player pod and only the promised
@@ -945,7 +945,7 @@ payment every combat while the Aura never moves.
 
 ### What the test proves
 
-`tests/unit/test_enchant_player.py`, over three cards in
+`tests/unit/attachments/test_enchant_player.py`, over three cards in
 `tests/data/enchant_player.cards.json` — a minimal "Enchant player" Robe, the
 Overencumbered prototype, and `t_creature_aura`, deliberately the **wrong**
 card: the same `enchanted_player` clause on an Aura that enchants a creature:
@@ -1054,7 +1054,7 @@ planeswalker's controller **is** the defending player and
 `legal_planeswalker_defenders` passes it, one seat test covers both attack kinds.
 
 This half is only sayable because **attacking planeswalkers is implemented** —
-`tests/unit/test_planeswalkers.py` holds it. `docs/rules-coverage.md` still
+`tests/unit/planeswalkers/test_planeswalkers.py` holds it. `docs/rules-coverage.md` still
 listed it under *Not implemented → Combat*; that line was stale and is corrected
 in the same change, because the card's second clause rests on it. A vacuous
 reading — "no planeswalker can be attacked, so the clause is satisfied by
@@ -1062,7 +1062,7 @@ nothing" — was available and is not what shipped.
 
 ### What the test proves
 
-`tests/unit/test_attack_prohibition_by_subtype.py`, over three cards in
+`tests/unit/combat/test_attack_prohibition_by_subtype.py`, over three cards in
 `tests/data/cant_attack_you.cards.json` (an Inkling, the wall, and `t_ink_lock`,
 which is deliberately the **wrong** card — the `cant_attack` version of the same
 sentence, kept as the counterfactual the way `t_naive_foundry` is):
@@ -1183,7 +1183,7 @@ order is over effect **kinds**, and is untouched.
 
 ### What the test proves
 
-`tests/unit/test_granted_static_ability.py`, over an Inspiring Leader compiled in
+`tests/unit/statics/test_granted_static_ability.py`, over an Inspiring Leader compiled in
 the test rather than added to `data/cards/`:
 
 - nought, one and two commander creatures give the tokens +0, +2 and **+4** — the
@@ -1301,7 +1301,7 @@ back on the table.
 
 ### What the test proves
 
-`tests/unit/test_modal_triggered_targets.py`, over a test-only
+`tests/unit/modes/test_modal_triggered_targets.py`, over a test-only
 `t_matterweaver` in `tests/data/modal_trigger.cards.json`:
 
 - with **no** artifact token, the Gnome bullet is the only mode offered, is
@@ -1415,7 +1415,7 @@ behind.
 
 ### Test
 
-`tests/unit/test_was_cast_and_their_turn.py` — 20 cases. The two that carry the
+`tests/unit/ledger/test_was_cast_and_their_turn.py` — 20 cases. The two that carry the
 argument are `TestOnlyThisArrivalCounts`, which puts `was_cast` and the
 `cast_during` reduction to the *same object* after a reanimation and pins them
 apart, and `TestTheThirdPlayersTurn`, which is a three-player pod asserting that
@@ -1568,7 +1568,7 @@ card ends up*.
   `playable_this_turn` are refused: each is read only on the branch `cast_free`
   replaces, so written together one half is silently dropped — and
   `playable_this_turn` is the *opposite* card besides.
-- `tests/unit/test_free_cast_from_window.py` — 23 tests.
+- `tests/unit/casting/test_free_cast_from_window.py` — 23 tests.
 - `docs/card-dsl.md` — "Casting for free out of the window", a third column on
   the impulse-draw comparison table, and a pointer from the `look_at_top`
   paragraph. `docs/rules-coverage.md` — a row under Implemented.
@@ -1590,7 +1590,7 @@ into the rest rather than losing it.
 
 "In a random order" goes through the shared `_bottom_in_random_order`, which
 uses `state.rng.shuffled` and never `random`.
-`tests/unit/test_determinism_hygiene.py` scans the source for the latter;
+`tests/unit/engine/test_determinism_hygiene.py` scans the source for the latter;
 `TestTheOrderComesFromTheGameRng` pins the former from the outside, asserting
 that the game's own stream advanced and that a fixed seed reproduces the order.
 
@@ -1613,9 +1613,9 @@ test. Three claims carry it:
 
 ### Guarded by
 
-`tests/unit/test_free_cast_from_window.py`,
-`tests/unit/test_cascade_and_ripple.py` (the shared `_offer_free_cast` and
-`_bottom_in_random_order`), `tests/unit/test_determinism_hygiene.py`, and
+`tests/unit/casting/test_free_cast_from_window.py`,
+`tests/unit/keywords/test_cascade_and_ripple.py` (the shared `_offer_free_cast` and
+`_bottom_in_random_order`), `tests/unit/engine/test_determinism_hygiene.py`, and
 `tests/cards` re-running all six authoring gates over every machine-authored
 card.
 
@@ -1641,7 +1641,7 @@ missing. The land entered with an inert tally, died to the first removal spell i
 is printed to survive, and spent a tap moving a token of nothing onto a creature.
 
 So the unit test is the only thing that can prove the counter does anything, and
-that is what `tests/unit/test_shield_counter.py` is for.
+that is what `tests/unit/counters/test_shield_counter.py` is for.
 
 ### What was missing, exactly
 
@@ -1760,7 +1760,7 @@ the permanent still dies.
 - `src/automtg/engine/zones.py` — the destruction hook, second in the ladder
 - `src/automtg/engine/sba.py` — the state-based-action loop keeps going
 - `src/automtg/engine/effects/values.py` — the near-miss guard
-- `tests/unit/test_shield_counter.py` — 36 tests
+- `tests/unit/counters/test_shield_counter.py` — 36 tests
 
 Diamond City itself is not in `data/` — the prototype lives in the test file, as
 `TestDiamondCity`, because the point is the engine: that exact card definition
@@ -1872,7 +1872,7 @@ own copies.
 
 ### Tests
 
-`tests/unit/test_demonstrate.py`, with test-only cards in
+`tests/unit/keywords/test_demonstrate.py`, with test-only cards in
 `tests/data/testing.cards.json`: `t_demo_draw` (untargeted, so the draw itself
 proves whose copy resolved), `t_demo_pump` ("target creature you control", which
 is what makes the chooser's pool differ from mine) and `t_lecturer` (the granted
@@ -1901,7 +1901,7 @@ That version is not an approximation of the printed card, it is a strictly bette
 one — and it **passes all six authoring gates**, because the verifier's sandbox
 never activates an activated ability. The gap record
 (`data/authoring/gaps/soul_foundry.json`) exists because the gates cannot catch
-this class of error, and `tests/unit/test_defined_x_cost.py` is the only thing
+this class of error, and `tests/unit/costs/test_defined_x_cost.py` is the only thing
 that does.
 
 ### Tier: A — a new field on `Cost`, no new op
@@ -1963,7 +1963,7 @@ an empty pool sums to zero, which is what a table would say too.
 
 ### Tests
 
-`tests/unit/test_defined_x_cost.py`, with test-only cards in
+`tests/unit/costs/test_defined_x_cost.py`, with test-only cards in
 `tests/data/defined_x.cards.json`: `t_imprint_foundry` (Soul Foundry's shape),
 `t_free_thopter` (the X = 0 boundary), and `t_naive_foundry` — deliberately the
 *wrong* card, the `{"mana": "{X}"}` version, asserted against so the difference
@@ -2042,14 +2042,14 @@ off the stack, which is now recorded in `docs/rules-coverage.md` under
 The gap record's own observation: this failure is invisible to all six authoring
 gates. The card loads, the chapter resolves, the Equipment really is on the
 battlefield, and a zone expectation sees exactly what it expected. So
-`tests/unit/test_attach_another_permanent.py` asserts on `attached_to` and on
+`tests/unit/attachments/test_attach_another_permanent.py` asserts on `attached_to` and on
 `chars(state, oid).power` — the `+2/+0` that never appears is the only evidence
 there is. Run against the previous `op_attach`, ten of its eighteen tests fail;
 the Equip regression test passes under both, which is the point of it.
 
 ### Tests
 
-`tests/unit/test_attach_another_permanent.py`, with test-only cards in
+`tests/unit/attachments/test_attach_another_permanent.py`, with test-only cards in
 `tests/data/attach_another.cards.json` (a Saga in Vault 101's exact shape, two
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
@@ -2137,7 +2137,7 @@ error anywhere.
 
 ### Test
 
-`tests/unit/test_deals_damage_to_player.py`: 20 tests. The noncombat half through
+`tests/unit/damage/test_deals_damage_to_player.py`: 20 tests. The noncombat half through
 both the primitive and a real activated ability; combat damage firing it too;
 the combat-only trigger asserted *not* to fire on a ping, so the difference
 between the two events is measured rather than argued; infect (damage that costs
@@ -2283,7 +2283,7 @@ causes loss of life.)" precisely because the second one is not obvious.
 Wired into only one of them, the result is a card that works against Village
 Rites and does nothing against a Lightning Bolt — or the reverse — and neither
 half looks wrong on a board. That is the whole reason
-`tests/unit/test_life_loss_replacement.py` covers both routes twice: once
+`tests/unit/players/test_life_loss_replacement.py` covers both routes twice: once
 against the primitive directly and once through a real cast spell.
 
 ### Only the loss is multiplied, never the damage
@@ -2413,7 +2413,7 @@ enters-the-battlefield whitelist is still engine work.
 
 ### Tests
 
-`tests/unit/test_token_creation_replacement.py` — 29 tests in six classes, one
+`tests/unit/tokens/test_token_creation_replacement.py` — 29 tests in six classes, one
 per claim: what is created instead, 614.5's once-per-event (including both
 two-copy numbers), whose replacement it is, the Manufactor/Visitation
 interaction and its order-independence, what the creating effect still says, and
@@ -2501,7 +2501,7 @@ importer template was added, so the card is harvested by the next agent-tier
 
 ### Tests
 
-`tests/unit/test_return_spell_to_hand.py`. Every behavioural test asserts on
+`tests/unit/casting/test_return_spell_to_hand.py`. Every behavioural test asserts on
 where the **other** spell ended up rather than on Reprieve having resolved,
 because the failure being guarded against is one where Reprieve resolves
 perfectly and nothing happens. Verified by stubbing the op out to a no-op: the
@@ -2586,7 +2586,7 @@ all already there.
 
 ### Tests
 
-`tests/unit/test_untap_permanents_cost.py`. The boundary in both directions
+`tests/unit/costs/test_untap_permanents_cost.py`. The boundary in both directions
 (one short refuses, exactly the count pays), the pool's forced `tapped: True`
 (an untapped board does not pay, a half-tapped board counts only the tapped
 half), the selector and `controller` narrowing, summoning sickness, that the
@@ -2676,7 +2676,7 @@ make a token that is attacking" finite.
 
 ### Evidence
 
-`tests/unit/test_token_attacking_player.py` — 30 tests. Both printed sentences
+`tests/unit/tokens/test_token_attacking_player.py` — 30 tests. Both printed sentences
 run as real cards (`t_pod_marshal`, `t_ink_scribe`) through a four-player
 combat: one token per opponent, each at its own seat; the Marshal makes them
 while staying home; the Scribe points its token at a defender while attacking
@@ -2782,7 +2782,7 @@ line of JSON.
 
 ### Test
 
-`tests/unit/test_win_game.py`. The claim under test is not "the game ends" but
+`tests/unit/players/test_win_game.py`. The claim under test is not "the game ends" but
 *how* — that the result and the board still agree afterwards. Twenty-five cases
 across five claims: the win happens without a point of life moving; it goes
 through `check_game_over` (the `PLAYER_LOST`, the swept permanents, cleared
@@ -2921,7 +2921,7 @@ never was.
 
 ### Test
 
-`tests/unit/test_lose_all_abilities.py` — one claim per reader, both orderings,
+`tests/unit/statics/test_lose_all_abilities.py` — one claim per reader, both orderings,
 the loader refusals, and the catalog derivation of `SUBTYPE_CLASS`.
 
 The card's own expectation is the weak `{"zone": "battlefield"}` fallback on
@@ -3008,7 +3008,7 @@ different card rather than a smaller one.
 
 ### Test
 
-`tests/unit/test_cant_be_regenerated.py`, including the negative control (the
+`tests/unit/statics/test_cant_be_regenerated.py`, including the negative control (the
 same creature, the same shield, no flag, survives) and an assertion over the
 three shipped cards that print the clause — they are the witnesses, so they are
 what the test watches.
@@ -3158,7 +3158,7 @@ board, and a real hazard the moment a card carries four sibling specs.
 
 ### Test
 
-`tests/unit/test_modal_targets.py`, over two test-only cards: a four-bullet
+`tests/unit/modes/test_modal_targets.py`, over two test-only cards: a four-bullet
 "choose up to two" and a two-bullet "choose one" for the floor cases.
 
 ## `exile_until_event` — the other duration a delayed ability can have
@@ -3258,7 +3258,7 @@ It needed two capabilities: `monarch` shipped the designation, 721.3's two
 inherent abilities and the `becomes_monarch` event, and this is the duration that
 was the last blocker. Its expectation is a real observation —
 `opponent_battlefield_count: 5`, the opponent's board one creature lighter — and
-the rest of the coverage is `tests/unit/test_exile_until_event.py`, where the
+the rest of the coverage is `tests/unit/zones/test_exile_until_event.py`, where the
 Jailer dies and the creature stays exiled, and then comes back anyway.
 
 ## `variable_target_count` — a number of targets the game works out, and "up to"
@@ -3383,7 +3383,7 @@ permanents larger than the lands and props it started with.
 `marshal_s_anthem`, and no others — no other gap record names this capability.
 `--tier templates --retry` harvested nothing, which is correct: no template reads
 "Multikicker {1}{W}" or "up to X target …", so the card came through the agent
-tier. Coverage beyond the card is `tests/unit/test_variable_target_count.py`.
+tier. Coverage beyond the card is `tests/unit/targets/test_variable_target_count.py`.
 
 ---
 ## `counter_unless_pays` — billing a seat that only a target names
@@ -3477,7 +3477,7 @@ The behaviour gate legitimately asserts only `{"zone": "battlefield"}` for the
 Medic. The verifier **declines combat**, so battalion cannot fire, and it never
 activates activated abilities, so the counter line cannot fire either — the
 weak expectation is the honest one and no gate was weakened to get it.
-`tests/unit/test_counter_unless_pays.py` is where the real coverage lives, on
+`tests/unit/casting/test_counter_unless_pays.py` is where the real coverage lives, on
 the shipped card rather than a fixture: which seat is asked, paying countering
 nothing, declining countering the spell, a controller who cannot pay never being
 asked, and **the pod** — three seats, where "the spell's controller" and "an
@@ -3613,7 +3613,7 @@ deliberately weak about the line this run built: the verifier's expectation
 language has no key for *what a given player can see*, so the visibility is not
 assertable as a card expectation and the gate was not weakened to pretend
 otherwise. That coverage lives where it can be written honestly —
-`tests/unit/test_look_at_library_top.py` for the engine and
+`tests/unit/zones/test_look_at_library_top.py` for the engine and
 `tests/server/test_multiplayer_game.py::TestTopCardVisibility` for the wire.
 
 The two-humans server test is the one that matters, because it is the only place
@@ -3631,14 +3631,14 @@ something reads the gate.
 
 ### Guarded by
 
-`tests/unit/test_look_at_library_top.py` (21 cases), and its shape is the point:
+`tests/unit/zones/test_look_at_library_top.py` (21 cases), and its shape is the point:
 every claim is asserted **from both seats**, because a version that sent the card
 to everybody passes every controller-side assertion there is. The opponent class
 includes a four-player pod, since "not the opponent" and "not any of the three
 other seats" are different claims.
 
 Then `tests/server/test_multiplayer_game.py::TestTopCardVisibility` over HTTP,
-`tests/unit/test_conditional_player_static.py` for the ninth reader through the
+`tests/unit/statics/test_conditional_player_static.py` for the ninth reader through the
 gate, and `frontend/tests/playerOrb.test.tsx` for the wording — the pile must not
 call a private look "revealed".
 ## `delayed_triggered_ability` — 603.7's other half, and the batch it has to watch
@@ -3808,7 +3808,7 @@ for the rest of the turn.
 
 The verifier **declines combat**, so the delayed half cannot be demonstrated
 there — the expectation is honest about that and asserts the token half plus the
-graveyard. What proves the second line is `tests/unit/test_delayed_triggered_ability.py`,
+graveyard. What proves the second line is `tests/unit/triggers/test_delayed_triggered_ability.py`,
 which swings in a three-player position and checks the crown moves, that it moves
 once for three attackers, once for two defending seats, again in an extra combat,
 and not at all the next turn.
@@ -3825,7 +3825,7 @@ it is still open.
 
 So **no card was authored**, and that is the honest outcome rather than a
 shortfall. The Medic is one clause away and the clause is not this one.
-`tests/unit/test_x_in_mana_cost.py` is therefore the whole of this change's
+`tests/unit/costs/test_x_in_mana_cost.py` is therefore the whole of this change's
 coverage: there is no authored card being re-verified through six gates on every
 run, which is exactly the case §3 of the skill is written about.
 
@@ -4030,7 +4030,7 @@ permanent that left in response, or one that was already yours (which
 
 The authoring verifier never activates an activated ability and declines combat,
 so the prohibition itself cannot be demonstrated there — it is pinned in
-`tests/unit/test_cant_sacrifice.py` instead, on all three hooks. Call for Aid's
+`tests/unit/statics/test_cant_sacrifice.py` instead, on all three hooks. Call for Aid's
 own until-end-of-turn half is unobservable in that sandbox too, and for a reason
 worth writing down: the card's `cant_attack_player` clause empties
 `combat.legal_attackers`, so `turn._declare_attackers_step` finishes without a
@@ -4235,7 +4235,7 @@ second; `keyword_counters` shipped the half that makes a vigilance counter mean
 vigilance, and neither half is worth anything without the other. The verifier
 never activates an activated ability, so her expectation is the weak
 `{"zone": "battlefield"}` and the real coverage is
-`tests/unit/test_delayed_object_reference.py`.
+`tests/unit/triggers/test_delayed_object_reference.py`.
 ## `multikicker` — the payment already worked; the word was missing
 
 ### Overview
@@ -4327,7 +4327,7 @@ graveyard for {2}{W}{W}), and a literal `N` with `optional` means "exactly N or
 none", forbidding every size in between. That gap record's other `need` is left
 standing.
 
-So `tests/unit/test_multikicker.py` is the only coverage this change has, and it
+So `tests/unit/costs/test_multikicker.py` is the only coverage this change has, and it
 is written to be: zero, one and several payments; the count read back off a
 permanent that has entered; and the residual gate held to both halves of its job
 — accepting the multikicker line, and still rejecting a line nothing implements.
@@ -4431,7 +4431,7 @@ standing. The engine change ships on its unit test alone.
 
 ### Guarded by
 
-`tests/unit/test_conditional_player_static.py`, and the shape of it is the point:
+`tests/unit/statics/test_conditional_player_static.py`, and the shape of it is the point:
 every claim is asserted in **both** directions, because before the fix the
 "granted" half passed for the wrong reason and the "withheld" half was the only
 thing that could have caught it. Three test-only cards carry the conditions —
@@ -4535,7 +4535,7 @@ guard, and the comparison in `_matches`.
 
 ### Guarded by
 
-`tests/unit/test_draw_nth.py` — twenty-four tests over seven claims: only the
+`tests/unit/ledger/test_draw_nth.py` — twenty-four tests over seven claims: only the
 second card fires it, a draw-two spell fires it exactly once (the reader's
 failure), a permanent entering after two draws stays silent, both rejected
 encodings fail in the two opposite ways, all three polarities, the ordinal is an
@@ -4622,7 +4622,7 @@ Both halves are read **live**, and nothing spends them:
 `combat.attack_required` gained a third source beside `attack_compelled` (the
 static) and `obj.must_attack` (the op). `discharge_attack_requirements` touches
 `must_attack` and nothing else, which is exactly what makes the next combat
-compelled too — the property `tests/unit/test_goad.py` pins by granting an extra
+compelled too — the property `tests/unit/combat/test_goad.py` pins by granting an extra
 combat phase and watching the goaded creature stay compelled while a `must_attack`
 creature beside it goes free.
 
@@ -4698,7 +4698,7 @@ in a one-combat test and is wrong from the second combat onwards.
 
 ### Test
 
-`tests/unit/test_goad.py`, forty cases: the compulsion biting ("Done attacking"
+`tests/unit/combat/test_goad.py`, forty cases: the compulsion biting ("Done attacking"
 withheld), the mark surviving a declaration that spends a `must_attack` beside it,
 the next combat being compelled too, the defender restriction biting per pair, the
 planeswalker answer in both directions, both "if able" escapes, the clock ending in
@@ -4884,7 +4884,7 @@ was *never dealt*:
 - no `DAMAGE_DEALT`, so the turn ledger's `damage_taken` stays at zero.
 
 Each of those is a separate leak, and each would be a wrong *number* rather than
-an error. `tests/unit/test_damage_prevention.py` asserts all five separately.
+an error. `tests/unit/damage/test_damage_prevention.py` asserts all five separately.
 
 There is deliberately **no `amount`** on the op, and the loader refuses the key
 rather than reading it. Absorb-N over a player — "prevent the next 3 damage that
@@ -4949,7 +4949,7 @@ errors across the same 21 files as on a clean tree, none of them under
 The authoring verifier declines combat, so nothing in the fixed sandbox ever
 damages a player: the Squire's shield goes up on its ETB and is never tested, and
 the card honestly asserts the weak `{"zone": "battlefield"}`. No gate was
-weakened to get it there. `tests/unit/test_damage_prevention.py` is where the real
+weakened to get it there. `tests/unit/damage/test_damage_prevention.py` is where the real
 coverage lives — the shield actually preventing, the five things prevented damage
 must not do, the counters matching the prevented amount, the shield surviving its
 own source's death, the wearing-off at cleanup played through the real turn
@@ -5067,11 +5067,11 @@ a better reason: it is the control that says the two paths behave the same.
 
 ### Test
 
-`tests/unit/test_ward.py` — 28 tests. The scope of the filter and its wearing-off
+`tests/unit/protection/test_ward.py` — 28 tests. The scope of the filter and its wearing-off
 read through `characteristics.ward_abilities`; the tax, the refusal and the
 payment are played on a real stack; `TestTheGranterIsNotTheSource` casts a second
 removal spell at the Vanguard while the ward trigger is on the stack and asserts
-the tax is still collected afterwards. `tests/unit/test_cloak.py` is unchanged and
+the tax is still collected afterwards. `tests/unit/keywords/test_cloak.py` is unchanged and
 still passes, which is the check that re-expressing `CLOAK_WARD` changed nothing.
 
 ### Cards unblocked
@@ -5096,7 +5096,7 @@ Neither predicate consults the other, which is the whole of how they compose. A
 creature that is prohibited from blocking still cannot block an ordinary attacker;
 an unblockable attacker is still unblockable by creatures under no prohibition;
 and a creature that is both is refused by whichever early-out `can_block` reaches
-first, which is the same answer. `tests/unit/test_unblockable.py` pins all three,
+first, which is the same answer. `tests/unit/combat/test_unblockable.py` pins all three,
 including the lift-one-and-the-other-still-bites case that a merged implementation
 would fail.
 
@@ -5154,7 +5154,7 @@ is what catches a future merge of the two tables.
 0 written, 200 no template). Its interesting line is an *activated* ability, and
 the authoring verifier never activates one and never declares a combat, so the
 card honestly asserts the weak `{"zone": "battlefield"}` expectation and the real
-coverage is in `tests/unit/test_unblockable.py`: the ability is activated for
+coverage is in `tests/unit/combat/test_unblockable.py`: the ability is activated for
 {4} and its target is then offered no blockers at all, the source is recorded and
 is not the target, an opponent's creature is a legal target, and the grant is gone
 next turn.
@@ -5233,7 +5233,7 @@ play.
 The stamp is what makes that a *statement* instead of a coincidence. It is the
 difference between an exile timed to a combat and one timed to whichever end of
 combat step arrives next, and only the first stays right if anything ever ends a
-combat phase early. `TestTheStampIsAGuard` in `tests/unit/test_end_of_combat.py`
+combat phase early. `TestTheStampIsAGuard` in `tests/unit/combat/test_end_of_combat.py`
 is that invariant, asserted on `_delay_due` directly, because it is the half no
 card can demonstrate.
 
@@ -5258,7 +5258,7 @@ half-reads a sentence.
 The behaviour gate declines combat in its fixed sandbox, so the attack trigger
 never fires there and the card honestly asserts the weak `{"zone": "battlefield"}`
 fallback that Combat Celebrant and every other attack-triggered creature asserts.
-The real coverage is `tests/unit/test_end_of_combat.py`, which plays the card
+The real coverage is `tests/unit/combat/test_end_of_combat.py`, which plays the card
 through a turn with two combats and checks each copy against the end of the
 combat that made it.
 ## `ability_activated` — the event that was already being emitted at nobody
@@ -5375,7 +5375,7 @@ permanent, and the printed line says that triggers.
 
 ### Guarded by
 
-`tests/unit/test_ability_activated_trigger.py` — fourteen tests over four claims:
+`tests/unit/triggers/test_ability_activated_trigger.py` — fourteen tests over four claims:
 the event reaches the bus at all (including a land's ability, which is why
 `spell_cast` could never stand in), mana abilities are excluded while still
 firing the event, the `controller` clause reads the activating player, and the
@@ -5487,7 +5487,7 @@ expectation is what the card does on a plain hand cast (two creatures, two Human
 tokens, `battlefield_count` 34, `zone` `"graveyard"`). Not a weakened gate: the
 sandbox has no commander to be greatest, and asserting one would be asserting a
 position that does not exist. The pricing coverage lives in
-`tests/unit/test_commander_mana_value.py` instead — the command zone, the
+`tests/unit/commander/test_commander_mana_value.py` instead — the command zone, the
 battlefield, the maximum against the sum, ownership against control, the
 `is_commander` gate, and the offer-and-charge agreement across
 `legality._cast_variant` and `game._cast`.
@@ -5497,7 +5497,7 @@ battlefield, the maximum against the sum, ownership against control, the
 ### Overview
 
 Dash needed no engine work and still needs none. `docs/keywords.md` has called it
-*free* since the census and `tests/unit/test_dash.py` cashes that claim rather
+*free* since the census and `tests/unit/keywords/test_dash.py` cashes that claim rather
 than asserting it: `evoke` is not "the evoke keyword", it is the mechanism evoke,
 dash and blitz share — an alternative mana cost that replaces the printed one,
 offered from hand only, plus a flag the card reads back with `{"evoked": true}`.
@@ -5558,14 +5558,14 @@ the dash price), and `emerge` may not coexist with `evoke` and has no fixed pric
 
 ### Guarded by
 
-`tests/unit/test_dash.py`, which already held the mechanism down and now holds the
+`tests/unit/keywords/test_dash.py`, which already held the mechanism down and now holds the
 price too. `t_dear_dasher` in `tests/data/testing.cards.json` is Riders' shape at
 test scale — printed `{2}{R}`, dash `{3}{R}` — and the tests assert the dearer line
 is *offered*, costs four lands rather than three, and still reaches the same
 `evoked` flag the cheap one does, because loading is not the claim. Alongside it
 `TestThePriceGuardStillCatchesDeadWeight` pins both errors the guard must keep
 catching: a dearer evoke proper, with and without the label written out, and an
-equal price under either label. `tests/unit/test_evoke.py`'s existing
+equal price under either label. `tests/unit/keywords/test_evoke.py`'s existing
 `test_an_evoke_cost_that_is_not_cheaper_is_refused` is unchanged and still passes
 on the original message.
 
@@ -5639,7 +5639,7 @@ than academic:
    calls `add_counter` directly and fires nothing. The substitute would wake every
    `counter_placed` watcher on the board.
 
-`tests/unit/test_variable_enters_with_counters.py` carries `t_marshal_trigger` —
+`tests/unit/counters/test_variable_enters_with_counters.py` carries `t_marshal_trigger` —
 the substitute written out as a card — so claims 1 and 2 are observed rather than
 argued. `move_object` is driven directly there, because the game loop resolves
 straight through the moment the difference exists in.
@@ -5780,7 +5780,7 @@ permanent landing with **zero** charge counters: the verifier's sandbox casts th
 card under test and nothing else, so no spell of the chosen type is ever cast and
 the anthem is correctly +0/+0 there. Asserting a number that position cannot
 produce would have been asserting a fiction; the scaling itself is pinned in
-`tests/unit/test_counter_scaled_anthem.py`, which is where behaviour that needs a
+`tests/unit/counters/test_counter_scaled_anthem.py`, which is where behaviour that needs a
 board belongs.
 ## "You may reveal **a** … card from among them" — an optional pool choice
 
@@ -5878,7 +5878,7 @@ six go to the bottom. The expectation asserts exactly that — hand unchanged at
 zero, library unchanged at forty, the creature on the battlefield — which is what
 the printed card does in that position. Asserting a revealed card would be
 asserting something the board cannot show. The discriminating evidence is
-`tests/unit/test_optional_pool_choice.py`, which is where §3 of the skill puts it:
+`tests/unit/choices/test_optional_pool_choice.py`, which is where §3 of the skill puts it:
 engine work gets exactly the coverage its unit test writes.
 
 **No template.** The shape is high-frequency, but `templates.py` matches one
@@ -5894,7 +5894,7 @@ the sentence.
 
 ### Guarded by
 
-`tests/unit/test_optional_pool_choice.py` — the range it asks for (floor zero,
+`tests/unit/choices/test_optional_pool_choice.py` — the range it asks for (floor zero,
 ceiling N), the pool-of-one boundary where the old shortcut fired, both answers
 coming back, the three spellings it is *not*, Boromir's trigger end to end
 (including that declining still bottoms the rest, and that the question comes
@@ -5937,7 +5937,7 @@ to avoid.
 **It stops at the first hit, and there is no choice.** "Until you reveal" names
 the card it takes, so `reveal_until` asks nothing and is not even a generator.
 That is a structural claim rather than a stylistic one, and
-`tests/unit/test_reveal_until.py`'s runner asserts it: it fails the test if the
+`tests/unit/zones/test_reveal_until.py`'s runner asserts it: it fails the test if the
 op ever yields a decision.
 
 **Running the library out with no match is an outcome, not an error.** Every
@@ -6001,7 +6001,7 @@ The authoring gate proves the Equipment resolves onto the battlefield and no
 more: `drive()` returns at `PRIORITY` with a non-empty stack and never activates
 an activated ability, and nothing in the fixed position kills an equipped
 creature, so the card honestly asserts `{"zone": "battlefield"}` with a board
-count and nothing about the scan. `tests/unit/test_reveal_until.py` is where the
+count and nothing about the scan. `tests/unit/zones/test_reveal_until.py` is where the
 real coverage lives — the first-hit stop, the exhausted library, the match as the
 very last card, `shares_a_type_with` walking past creatures of the wrong type,
 and the randomness of the bottomed order asserted over seeds.
@@ -6246,7 +6246,7 @@ its **owner's** library (the sandbox's target is the opponent's artifact, so
 `opponent_battlefield_count` and the opponent's `library_size` both move, and a
 caster's-library tuck would fail on player 0's count). It cannot prove the
 *depth*: no expectation key reads a library's order. That is why
-`tests/unit/test_library_depth.py` carries the ordinal, the clamp and the
+`tests/unit/zones/test_library_depth.py` carries the ordinal, the clamp and the
 owner-vs-controller claim directly.
 
 ## "That player can't attack you" — the first prohibition with two sides
@@ -6521,7 +6521,7 @@ a `Cost`.
 to legendary creatures with `{"no_monarch": true}` as its intervening-if, and the
 equip whose cost carries `{"amount": 3, "condition": {"is_monarch": "you"}}`. Its
 equip cost cannot be observed in the authoring sandbox — the verifier never
-activates activated abilities — so `tests/unit/test_conditional_cost_reduction.py`
+activates activated abilities — so `tests/unit/costs/test_conditional_cost_reduction.py`
 is where that coverage lives, including both halves of the offer-and-charge
 agreement.
 
@@ -6802,7 +6802,7 @@ definitions — had all shipped ahead of it, so sagas were its last blocker.
 The authoring sandbox measures immediately after the cast, so it can only ever
 observe **chapter I**: one lore counter, two Soldiers, 35 permanents. Chapters II
 and III need later turns the fixed position never reaches, and they are covered in
-`tests/unit/test_saga.py` instead — including the turn-based tick, the
+`tests/unit/keywords/test_saga.py` instead — including the turn-based tick, the
 proliferate boundary, the re-trigger, and the sacrifice that waits for its own
 last chapter.
 
@@ -6900,7 +6900,7 @@ Neither witness can be authored, and neither is blocked on this any more:
   is no chapter ability for its printed lines to hang on.
 
 Both gap records were trimmed to their remaining needs rather than retired. So
-`tests/unit/test_keyword_counters.py` is the only thing holding this mechanic —
+`tests/unit/counters/test_keyword_counters.py` is the only thing holding this mechanic —
 no authored card is re-verified through the six gates on its behalf — and it is
 weighted accordingly: placement, parity with the printed keyword, three separate
 rules (combat declaration, `destroy`, `can_block`) reading it, outlasting both the
@@ -7014,7 +7014,7 @@ two.
 
 ### Guarded by
 
-`tests/unit/test_per_opponent_count.py`. The load-time guards, the two
+`tests/unit/values/test_per_opponent_count.py`. The load-time guards, the two
 aggregations and both empty-set biases, plus one position per call site: the
 Knight's trigger fetching when an opponent is ahead and doing nothing when it is
 level or when only the *pooled* total is ahead; the Wayfarer's ability offered and
@@ -7114,7 +7114,7 @@ driver (the verifier's `find_play`, the arena, the RL agent) took the first.
 Village Rites was a one-mana draw-two that sacrificed nothing.
 
 No shipped card was affected, because none carried a mandatory additional cost
-yet. `tests/unit/test_additional_cost.py::TestAMandatoryCost` had the right
+yet. `tests/unit/costs/test_additional_cost.py::TestAMandatoryCost` had the right
 docstring and tested only loading, so nothing said otherwise. Found by an
 authoring worker that refused to write the card and ran the gate to find out
 why -- the pipeline catching an engine bug rather than a card one.
@@ -7219,7 +7219,7 @@ real choice at the table.
 ### What it unblocked
 
 54 cards authored. The Markov Chains deck goes 34 → 28 simplified.
-Witness: `tests/unit/test_mana_rider.py`.
+Witness: `tests/unit/mana/test_mana_rider.py`.
 
 ## Conditional taplands — a replacement that stops to look at the board
 
@@ -7267,7 +7267,7 @@ more opponents" is still a note, not a wrong condition.
 ### What it unblocked
 
 37 cards authored on the next `--tier templates --retry`, including all seven in
-the deck that prompted it. Witness: `tests/unit/test_conditional_enters_tapped.py`.
+the deck that prompted it. Witness: `tests/unit/replacement/test_conditional_enters_tapped.py`.
 
 ### A pipeline bug found on the way
 
@@ -7946,7 +7946,7 @@ stops being reported without anything having to forget it.
 
 The suites split by what they can see, and that line decided the coverage.
 
-`tests/unit/test_zone_change_cause.py` pins the payload — the culprit named
+`tests/unit/zones/test_zone_change_cause.py` pins the payload — the culprit named
 through a real cast, a sacrifice cost naming what it paid for, the gang block
 declining, the commander landing `to=command, cause=destroyed`, and
 `last_damager` clearing at cleanup with the ledger it shadows.
@@ -8335,7 +8335,7 @@ are done.
 
 ### A note on the test
 
-`tests/unit/test_turn_ledger.py` could not use `pass_until` for any of its
+`tests/unit/ledger/test_turn_ledger.py` could not use `pass_until` for any of its
 "this lasts the whole turn" claims. It returns silently when no decision is
 pending, and with nothing to respond to the engine auto-passes from combat
 damage into the following turn — so a test waiting for the postcombat main
@@ -8407,7 +8407,7 @@ That is why `attackers_this_turn` is not spelled
 `{"count": {"attacked_this_turn": true}}`. A count is over the *board*, and three
 attackers one of which traded leaves the board count at 2 — Windbrisk Heights
 locked in the very turn it was supposed to open, in the most ordinary line of
-play the card has. `tests/unit/test_attacked_this_turn_objects.py` asserts both
+play the card has. `tests/unit/ledger/test_attacked_this_turn_objects.py` asserts both
 numbers in the same position, 3 against 2, so the divergence is pinned rather
 than described.
 
@@ -8432,7 +8432,7 @@ same untap clause and are now expressible with no further engine work.
 
 Exert needed no engine support and still does not. `docs/keywords.md` has called
 it *free* since the census — an `attacks` trigger with `source: "self"`, a `may`,
-and `skip_untap` for the price — and `tests/unit/test_exert.py` cashes that claim
+and `skip_untap` for the price — and `tests/unit/keywords/test_exert.py` cashes that claim
 rather than asserting it. Combat Celebrant is the one exert card that can attack
 twice in a turn, because it grants itself the second combat, so it is the one
 that prints a guard:
@@ -8521,7 +8521,7 @@ a template that half-read it would make a cheaper card than the printed one.
 The authoring verifier declines combat, so an `attacks` trigger cannot fire in
 its sandbox and the card legitimately asserts the weak `{"zone": "battlefield"}`
 expectation. The behaviour is covered where it can be driven:
-`tests/unit/test_turn_flags.py` attacks, exerts, takes the extra combat, attacks
+`tests/unit/ledger/test_turn_flags.py` attacks, exerts, takes the extra combat, attacks
 again, and asserts the second attack is offered nothing — then plays the greedy
 line to the end of the turn and asserts the turn contains exactly two combat
 phases rather than the twenty the cap would allow.
@@ -8624,7 +8624,7 @@ harvested nothing, as expected.
 The authoring verifier declines combat, so a `begin_combat` trigger cannot fire
 in its sandbox and the card legitimately asserts the weak
 `{"zone": "battlefield"}` expectation. The behaviour lives in
-`tests/unit/test_permanents_entered_this_turn.py`, which plays the two positions
+`tests/unit/ledger/test_permanents_entered_this_turn.py`, which plays the two positions
 `exists` gets wrong — a Human that has stood there since before the turn, and a
 Human that entered and died — and asserts the trigger stays silent for the first
 and fires for the second. It also pins the "Then" clause counting the tokens the
@@ -9843,7 +9843,7 @@ there and is a separate repair.
 This is the argument for §3 of the skill in one case: the behaviour gate could
 not have found it either, because nothing casts a spell after the card under
 test in the verification sandbox, so Bygone Bishop's trigger never fires there.
-`tests/unit/test_investigate.py` is the only coverage the Clue has, and the
+`tests/unit/tokens/test_investigate.py` is the only coverage the Clue has, and the
 claim that earned its keep was "it draws a card", not "the token appears".
 
 ## Evasion — the five questions `can_block` could not ask
@@ -9944,7 +9944,7 @@ sum. That is `player-quantifier`, which two cards now share.
 
 ### Guarded by
 
-`tests/unit/test_evasion_keywords.py`. One class per keyword, plus a class for
+`tests/unit/combat/test_evasion_keywords.py`. One class per keyword, plus a class for
 the claim they share. Every class carries its pair — a creature *without* the
 keyword being blocked normally — because a rule that refused every block would
 otherwise look identical from the refusals alone. The boundaries are tested in
@@ -10039,7 +10039,7 @@ the next run back here. `attack-requirement` is now the top entry.
 
 ### Guarded by
 
-`tests/unit/test_static_condition.py`. The claim that needed the most care is
+`tests/unit/statics/test_static_condition.py`. The claim that needed the most care is
 not that the bonus turns on but that it turns *off*: a trigger-plus-pump
 substitute passes every "it is a 3/3 at seven cards" test and fails the moment
 the graveyard shrinks, so the boundary is tested from both sides at six, seven
@@ -10112,7 +10112,7 @@ comparison and is a separate build.
 
 ### Guarded by
 
-`tests/unit/test_skulk.py`. Two claims, two classes. The refusal is tested
+`tests/unit/combat/test_skulk.py`. Two claims, two classes. The refusal is tested
 against its boundary rather than only its happy path: an equal-power creature
 must block, because an engine written with `>=` passes every test that only
 tries a bigger blocker. The derived-power half is tested from three directions —
@@ -10156,7 +10156,7 @@ Server and frontend: no change, keywords being rendered generically.
 
 ### Guarded by
 
-`tests/unit/test_shroud.py`, in pairs. Every claim about shroud is asserted
+`tests/unit/protection/test_shroud.py`, in pairs. Every claim about shroud is asserted
 beside the same claim about hexproof on the same board, so that a regression
 collapsing the two keywords into one fails rather than passes quietly. The
 "only the target rule" half is pinned by asserting `protected_from` stays False
@@ -10370,7 +10370,7 @@ nothing, because nothing was rolled.
 ### Determinism
 
 Every face comes from `state.rng.randint(1, sides)`, the engine's one seeded
-source. `tests/unit/test_determinism_hygiene.py` scans the source for direct
+source. `tests/unit/engine/test_determinism_hygiene.py` scans the source for direct
 `random` use and would fail otherwise; the test file asserts that the faces match
 a reference `Rng` advanced the same number of times, so the roll is pinned to the
 stream rather than merely to "some RNG".
@@ -10402,7 +10402,7 @@ roll and their own capability.
 
 ### Test
 
-`tests/unit/test_dice_rolling.py` — 39 tests. The claim classes are
+`tests/unit/effects/test_dice_rolling.py` — 39 tests. The claim classes are
 `TestOneRollReadTwoWays` (the evens and the sixes come off the same faces; a read
 draws no randomness; every face is counted exactly once),
 `TestTheBindingIsFacesNotObjects` (the trap above, asserted from both directions),
@@ -10610,7 +10610,7 @@ decks never wanted them:
   object is out of combat and there is nothing left to ask. That is Zurgo's
   second ability.
 
-All three have tests in `tests/unit/test_attack_triggers.py`, several of which
+All three have tests in `tests/unit/combat/test_attack_triggers.py`, several of which
 need a three-player pod to mean anything.
 
 **Three cards were dropped rather than shipped wrong**, and the reasons are worth
@@ -10888,7 +10888,7 @@ rebound.
 
 ### Tests
 
-`tests/unit/test_granted_rebound.py`, eleven of them. The load-bearing one is
+`tests/unit/casting/test_granted_rebound.py`, eleven of them. The load-bearing one is
 `TestPrintedReboundIsUnchanged`: without a control that a card printing rebound
 still rebounds with no granter on the board, every other assertion here is also
 consistent with the bait card having had rebound all along.
@@ -10928,7 +10928,7 @@ spellings already available are worse:
   names, finds its one-name group satisfied, and never learns that `creature` is
   in that same set. A strictly *better* card.
 
-Both are kept as live cards in `tests/unit/test_mana_restriction_not.py`. The
+Both are kept as live cards in `tests/unit/mana/test_mana_restriction_not.py`. The
 sharpest pair in the file is the same artifact creature spell against the two
 fonts: castable under the enumeration, not castable under the negation, same
 board, same spell.
@@ -11028,7 +11028,7 @@ about durations while the others did not.
 
 ### A test that was wrong before the engine was
 
-Three of the tests in `tests/unit/test_playable_duration.py` failed on first run,
+Three of the tests in `tests/unit/casting/test_playable_duration.py` failed on first run,
 and none of them was an engine bug. `pass_until` returns the moment it finds no
 pending decision, so on a game built with `advance=False` the "hand the turn to
 the opponent" helper did nothing at all — every "granted on an opponent's turn"
@@ -11161,7 +11161,7 @@ branch would have quietly changed what those mean.
 
 ### Tests
 
-`tests/unit/test_spells_cast_by_type.py`. The load-bearing pair casts three
+`tests/unit/ledger/test_spells_cast_by_type.py`. The load-bearing pair casts three
 creature spells and asserts the bare count reaches 3 while the filtered one stays
 0 — which is the second worker's argument, executable.
 
@@ -11234,7 +11234,7 @@ the *derived* colours (so a repainted permanent is matched on what it is), and t
 trigger filter and `_matches_printed` read the printed face, each for the reason
 already written beside their `colors` clause.
 
-`tests/unit/test_plot.py` keeps the mono-coloured instant as a live card, because
+`tests/unit/casting/test_plot.py` keeps the mono-coloured instant as a live card, because
 it is the card `colors` would have given.
 
 ## "Each of X targets" — an ordering rule, not a rewrite
@@ -11421,7 +11421,7 @@ says so, and says why `max_per_turn` is not "an opponent's first".
 
 ### Guarded by
 
-`tests/unit/test_spell_cast_nth.py`: the ordinal on the event per caster; only
+`tests/unit/ledger/test_spell_cast_nth.py`: the ordinal on the event per caster; only
 the second spell fires the unfiltered form, creature spells included; a third
 spell in response does not hide it, while the `condition` encoding
 (`t_nth_spell_condition`) resolves skipped; the noncreature run (a creature does
@@ -11490,7 +11490,7 @@ the scheduled stack is not serialized.
 
 ### Guarded by
 
-`tests/unit/test_extra_turn.py`: Time Warp's sequence and the control; a turn but
+`tests/unit/turn/test_extra_turn.py`: Time Warp's sequence and the control; a turn but
 not a round; `extra` only on extra turns; the recorded previous player; the gift
 promised, unpromised, and across a pod; newest first, a turn created during an
 extra turn, APNAP for "each player", an eliminated player's turn discarded; the
@@ -11552,7 +11552,7 @@ sub-keys, so it needs no change.
 
 ### Guarded by
 
-`tests/unit/test_copy_except.py`: the legendary token and the untouched
+`tests/unit/copies/test_copy_except.py`: the legendary token and the untouched
 original, the legend rule keeping one of two legendary copies (and neither
 without the clause), a legendary selector; the artifact copy that is still a
 2/2 creature and is found by an artifact selector (and is not without the
@@ -11608,7 +11608,7 @@ authoring packet needed nothing: `as` is not a per-op vocabulary list there.
 
 ### Guarded by
 
-`tests/unit/test_draw_tracking.py`: the seats recorded; an empty library not
+`tests/unit/ledger/test_draw_tracking.py`: the seats recorded; an empty library not
 recorded (and still flagged for the loss); a dredged draw not recorded and a
 declined dredge recorded; fewer cards than asked still recorded; the empty
 write; accumulation across a loop; the whole Cut a Deal effect list at two
@@ -11676,7 +11676,7 @@ derived from `STATIC_EFFECTS`, and a note now names the shape.
 
 ### Guarded by
 
-`tests/unit/test_cant_cast_spells.py`: the opponent locked on your turn and free
+`tests/unit/statics/test_cant_cast_spells.py`: the opponent locked on your turn and free
 on theirs; the turn passing and the source leaving both lift it; the controller
 is unaffected; the unconditional twin locks either turn; flashback from the
 graveyard is withheld; abilities, land drops and spell copies survive; an
@@ -11734,7 +11734,7 @@ gains the op name.
 
 ### Guarded by
 
-`tests/unit/test_no_maximum_hand_size.py`: a nine-card hand survives cleanup,
+`tests/unit/players/test_no_maximum_hand_size.py`: a nine-card hand survives cleanup,
 with the no-spell control discarding to seven; the opponent still discards; an
 `each_player` spec frees both; the spell is in the graveyard and the hand is
 still kept on the caster's next turn; the flag is on the serialized view; a
@@ -11811,7 +11811,7 @@ note names the shape.
 
 ### Guarded by
 
-`tests/unit/test_draw_doubling.py`: the plain doubler on a draw, on draw two, on
+`tests/unit/replacement/test_draw_doubling.py`: the plain doubler on a draw, on draw two, on
 the turn-based draw, and as two `DRAW` events; the bare primitive (the opening
 hand) is not replaced. Bard's first draw-step draw is not doubled, the second is,
 and "draw two" there is three; upkeep and main-phase draws are doubled; two cards
@@ -11878,7 +11878,7 @@ the key with no packet change.
 
 ### Guarded by
 
-`tests/unit/test_created_with_source.py`: the record written by `create_token`
+`tests/unit/tokens/test_created_with_source.py`: the record written by `create_token`
 and `copy_permanent`, the selector reading it and nothing written without a
 source; Faerie Artisans end to end (`tests/data/created_with.cards.json`) — the
 artifact copy, the earlier copy exiled on the next trigger, the just-made copy
@@ -11954,7 +11954,7 @@ the key with no packet change.
 
 ### Guarded by
 
-`tests/unit/test_attacking_player_selector.py`: one at you and one at your
+`tests/unit/combat/test_attacking_player_selector.py`: one at you and one at your
 planeswalker counts 1 and does not fire; two at you counts 2 and fires; both at
 the planeswalker counts 0; the Mangara reading of the same split still fires; at
 a three-player pod, attacks at another opponent are not attacking you, and
@@ -12001,7 +12001,7 @@ field, nothing under `frontend/`. The AI's action mask is
 
 ### Guarded by
 
-`tests/unit/test_crew_power_bonus.py`: a Pilot and a 5/5 crew 8 and a vanilla
+`tests/unit/keywords/test_crew_power_bonus.py`: a Pilot and a 5/5 crew 8 and a vanilla
 1/1 with the same 5/5 does not; a Pilot alone crews 3; the bonus belongs to the
 Pilot and not to its companions; Hotshot Mechanic's nontoken copy of the line;
 a tapped Pilot adds nothing; the bonus stacks with an anthem; paying taps both
@@ -12044,7 +12044,7 @@ clamps a negative amount to zero (107.1b).
 
 ### Guarded by
 
-`tests/unit/test_station.py`: offered with a creature and not without one, not
+`tests/unit/keywords/test_station.py`: offered with a creature and not without one, not
 with only tapped creatures, only at sorcery speed; the creature tapped before
 resolution; counters equal to the tapped creature's power and not another's; a
 second activation adding; a pump in response counting; a pumped creature
@@ -12096,7 +12096,7 @@ gated non-activated ability.
 
 ### Guarded by
 
-`tests/unit/test_station_threshold.py`: absent below 4 and present at exactly 4;
+`tests/unit/keywords/test_station_threshold.py`: absent below 4 and present at exactly 4;
 the 12+ mana ability absent at 11 and present at 12 at its printed index; Station
 still offered past the last number; no striations in hand; removing a counter
 taking the ability away; an ability on the stack resolving after its counters
@@ -12149,7 +12149,7 @@ loader refusal is lifted and two engine readers learn the op's grants.
 
 ### Guarded by
 
-`tests/unit/test_granted_activated_abilities.py`, on `t_granting_saga`
+`tests/unit/statics/test_granted_activated_abilities.py`, on `t_granting_saga`
 (`tests/data/granted_activated.cards.json`), which is Urza's Saga as the card
 will be written: played as a land it enters with its lore counter; chapter I's
 mana ability reaches the solver and survives cleanup; chapter II's ability is
@@ -12212,7 +12212,7 @@ a non-boolean value.
 
 ### Guarded by
 
-`tests/unit/test_token_attacking_planeswalker.py`: no planeswalker, another
+`tests/unit/tokens/test_token_attacking_planeswalker.py`: no planeswalker, another
 seat's planeswalker, or only your own means no question and the token attacks the
 player; with one, the token's controller (not the effect's) is offered exactly the
 seat and its walker; choosing the walker records it, choosing the player records
@@ -12267,7 +12267,7 @@ nothing under `frontend/`.
 
 ### Guarded by
 
-`tests/unit/test_mana_cost_selector.py`: {1} and {0} match; an artifact land, an
+`tests/unit/targets/test_mana_cost_selector.py`: {1} and {0} match; an artifact land, an
 {X}, a {2}, a {C}, a {W/P} and a {2/W} do not; a pip matches itself; spelling is
 normalised; an end-to-end search offers only the {1} from a library holding the
 land, the {X} and the {2}; the trigger and static readers agree; and the load
@@ -12338,7 +12338,7 @@ needs to charge the right amount.
 
 ### Guarded by
 
-`tests/unit/test_strive.py`: one target and zero targets tap three lands, two tap
+`tests/unit/costs/test_strive.py`: one target and zero targets tap three lands, two tap
 five, three tap seven; every chosen target is bound; seven lands offer counts
 0–3, six offer 0–2, three offer 0–1, two offer nothing; one Plains and four
 Islands offer no second target (the surcharge has a colour); the first line is
@@ -12401,7 +12401,7 @@ under `frontend/`.
 
 ### Guarded by
 
-`tests/unit/test_targeted_players.py`, at a four-seat table with two, three and
+`tests/unit/targets/test_targeted_players.py`, at a four-seat table with two, three and
 four creatures: one target counts that seat; two count both; the untargeted seat
 is never counted; all three count everyone; zero targets counts nobody; the
 `controller: "opponent"` counterfactual counts the whole table off one target;
@@ -12456,7 +12456,7 @@ Vitest in `tests/cardStyle.test.ts`.
 
 ### Guarded by
 
-`tests/unit/test_class_levels.py`: the ladder (offered at N-1 only, resolves on
+`tests/unit/keywords/test_class_levels.py`: the ladder (offered at N-1 only, resolves on
 the stack, sorcery speed, paid for, a departed source, set not increment); every
 reader of a gated ability (anthem, activated, triggered, player-wide static,
 lose-all-abilities); seats kept and `latent` stand-ins; the level is not a
@@ -12501,7 +12501,7 @@ Tier D: `describeEvent` reads "<card> becomes level N", and `beatsFor` floats
 
 ### Guarded by
 
-`tests/unit/test_becomes_level_trigger.py`: the event and its payload; no event
+`tests/unit/triggers/test_becomes_level_trigger.py`: the event and its payload; no event
 for a level that did not change; nothing while the level line is on the stack
 and nothing if the Class is destroyed in response; each rung fires once and only
 its own ability; another Class's level does not fire this one; Caretaker's
@@ -12539,7 +12539,7 @@ strictly better removal spell than the one printed.
 
 ### Guarded by
 
-`tests/unit/test_alternative_cost_paid.py`: both prices offered, two lands reach
+`tests/unit/costs/test_alternative_cost_paid.py`: both prices offered, two lands reach
 only the cheap one, the line's label, printed mana value; the opponent draws and
 the target is exiled on the cheap line and nobody draws on the printed one; at a
 three-player table the caster is asked, opponents only, and exactly the chosen
@@ -12575,7 +12575,7 @@ controls the Plate, which is a different list in every deck.
 
 ### Guarded by
 
-`tests/unit/test_protection_from_colors_outside_commander_identity.py`: mono-black
+`tests/unit/protection/test_protection_from_colors_outside_commander_identity.py`: mono-black
 leaves the other four, partners union, no commander and a colourless commander
 are all five, the +3/+3; nothing while unequipped; the commander's zone does not
 matter; the Plate's controller decides (handing it over changes the set, stealing
@@ -12635,7 +12635,7 @@ viewer lists them, without art.
 
 ### Guarded by
 
-`tests/unit/test_emblem.py`: the target opponent gets it in their command zone,
+`tests/unit/planeswalkers/test_emblem.py`: the target opponent gets it in their command zone,
 owned and controlled by them, even though the ultimate killed the walker; "you get
 an emblem" goes to its controller; it is not a permanent, a token or a commander
 and is never offered as a cast; its owner loses 2 on every card anyone draws,
@@ -12684,7 +12684,7 @@ None. An Aura token is an ordinary attached permanent to the serializer.
 
 ### Guarded by
 
-`tests/unit/test_wicked_role.py`: the token's types; created attached, +1/+1;
+`tests/unit/tokens/test_wicked_role.py`: the token's types; created attached, +1/+1;
 drains when destroyed and when it falls off a dead creature; nothing created (and
 nothing drained) when the host is gone; your Role on an opponent's creature; a
 second Role replaces the first and the replaced Wicked Role drains; different
@@ -12718,7 +12718,7 @@ reads the life the first one actually took, after replacements.
 
 ### Guarded by
 
-`tests/unit/test_life_lost_this_way.py`: the sum across two opponents, an int,
+`tests/unit/players/test_life_lost_this_way.py`: the sum across two opponents, an int,
 zero, no `as` writes nothing, overwrite rather than accumulate, a doubled loss
 gains the doubled amount, a locked opponent contributes nothing, and the loader.
 
@@ -12748,7 +12748,7 @@ extort needs no engine change and no `Keyword`.
 
 ### Guarded by
 
-`tests/unit/test_extort.py`, against `t_extortioner` (pinned equal to the
+`tests/unit/keywords/test_extort.py`, against `t_extortioner` (pinned equal to the
 template's output): paying drains and gains, two opponents gain two, white pays
 the hybrid pip, the mana is really taken, declining does nothing, a player who
 cannot pay is not asked, two instances trigger twice, an opponent's spell does
@@ -12786,7 +12786,7 @@ Bloom, Gauntlet of Might and Leyline of Abundance.
 
 ### Guarded by
 
-`tests/unit/test_add_mana_on_tap.py`: a Swamp makes two, a Forest one, no Ghast
+`tests/unit/mana/test_add_mana_on_tap.py`: a Swamp makes two, a Forest one, no Ghast
 one, two Ghasts three, the extra pip tagged with the Ghast, an opponent's Swamp
 unaffected by `you`, `any` paying the tapper, a land made a Swamp counting, the
 solver paying {B}{B}{B}{B} from two Swamps (and not without), legality offering
@@ -12830,7 +12830,7 @@ product cannot show.
 
 ### Guarded by
 
-`tests/unit/test_life_gain_replacement.py`: the multiplier (controller only,
+`tests/unit/players/test_life_gain_replacement.py`: the multiplier (controller only,
 `affects_player: "opponent"`, two doublers, the condition read), the gain and its
 return value, one event carrying 6, zero and a locked total, the Archive leaving,
 lifelink doubled without doubling the damage, a real cast spell, and the loader
@@ -12868,7 +12868,7 @@ gains double.
 
 ### Guarded by
 
-`tests/unit/test_cant_gain_life.py`: who it names, `affects_player` both ways,
+`tests/unit/players/test_cant_gain_life.py`: who it names, `affects_player` both ways,
 the op and lifelink stopped (lifelink's damage still dealt), no event and no
 trigger, the lift when the source leaves, the condition read, the composition
 with a doubler on either side, and the loader refusals. Erebos, God of the Dead
@@ -12906,7 +12906,7 @@ card does not print, and it misses a gain made before the Witch entered.
 
 ### Guarded by
 
-`tests/unit/test_life_gained_this_turn.py`: the fold, accumulation, lifelink, a
+`tests/unit/ledger/test_life_gained_this_turn.py`: the fold, accumulation, lifelink, a
 loss that is not a gain, gain-then-loss, per player, zero, a locked total and
 `cant_gain_life` not counting, the condition, the refusal of an unknown
 spelling, an end-step trigger against a real turn with and without a gain and
@@ -12936,7 +12936,7 @@ the library and the life total; only the halving was missing.
 
 ### Guarded by
 
-`tests/unit/test_half_rounded.py`: Peer end to end on odd and even libraries and
+`tests/unit/values/test_half_rounded.py`: Peer end to end on odd and even libraries and
 life totals, one life (lost entirely), an empty library (still costs life); both
 directions over 0, 1, 2, 7, 40 and a negative; composition inside and around
 `sum`; and every loader refusal.
@@ -12969,7 +12969,7 @@ library, never cards from a hand.
 
 ### Guarded by
 
-`tests/unit/test_put_on_bottom_any_order.py`: the same hand under in two orders,
+`tests/unit/zones/test_put_on_bottom_any_order.py`: the same hand under in two orders,
 the top of the library undisturbed, the top-of-library reading, one question per
 card but the last, the owner asked when the hand is an opponent's, one card and
 an empty hand asking nothing, and the loader refusals.
@@ -12997,7 +12997,7 @@ object, not a count; a per-card `for_each` interleaves the draws with the tucks.
 
 ### Guarded by
 
-`tests/unit/test_count_moved_cards.py`: a Puzzle Box test card on its owner's
+`tests/unit/values/test_count_moved_cards.py`: a Puzzle Box test card on its owner's
 first draw step (no draw, 103.8a) with three, one and no cards in hand — the hand
 comes back the same size, off the top, with the old hand underneath; the binding
 names what arrived; a second tuck of nothing leaves an empty binding rather than
@@ -13031,7 +13031,7 @@ draw interleaves payments with draws and has no ceiling.
 
 ### Guarded by
 
-`tests/unit/test_pay_x_on_resolution.py`: the ceiling is the life gained with
+`tests/unit/costs/test_pay_x_on_resolution.py`: the ceiling is the life gained with
 plenty of mana and the mana with plenty of life; nothing open charges {0} without
 asking; X paid is X drawn and X tapped; a smaller X than the gain; X = 0; declining
 asks no X; and the loader refusals.
@@ -13081,7 +13081,7 @@ No shipped card prints either. In `docs/rules-coverage.md`.
 
 ### Guarded by
 
-`tests/unit/test_black_mana_as_phyrexian.py`: the conversion (plain, hybrid,
+`tests/unit/mana/test_black_mana_as_phyrexian.py`: the conversion (plain, hybrid,
 `{2/B}`, already-Phyrexian, untouched generic and other colours, the buying
 order); the cast lines with and without black sources, without K'rrik, under an
 opponent's K'rrik, a hybrid spell, a spell with no black; the 118.4 boundary;
@@ -13117,7 +13117,7 @@ second main phase of the very combat that exiled them.
 
 ### Guarded by
 
-`tests/unit/test_playable_while_exiled.py`: live on the turn of the grant, on the
+`tests/unit/casting/test_playable_while_exiled.py`: live on the turn of the grant, on the
 next turn and the one after; untouched by every expiry hook; gone once the card
 leaves exile and comes back, and used up by playing it; an opponent's exiled land
 offered and entering under your control; the loader's accept and refuse cases;
@@ -13152,7 +13152,7 @@ the cost before the colours are waived.
 
 ### Guarded by
 
-`tests/unit/test_spend_mana_as_any_color.py`: the cost conversion (colours fold,
+`tests/unit/mana/test_spend_mana_as_any_color.py`: the cost conversion (colours fold,
 `{C}` stays, a hybrid pip is one, X and the printed cost survive); a stolen
 `{B}{B}` spell castable off Plains, paid and resolved into its owner's
 graveyard; the strict counterfactual; hybrid pips at one each; the caster's own
@@ -13196,7 +13196,7 @@ to be incomplete in, and a legal deck refused.
 
 ### Guarded by
 
-`tests/unit/test_deck_copy_limits.py`: twenty Petitioners legal and the same
+`tests/unit/engine/test_deck_copy_limits.py`: twenty Petitioners legal and the same
 deck with an ordinary card still singleton; the sentence matched against the
 card's own name; basic lands exempt by the rule with no sentence to read; and
 the claimant scoped to its own line. Persistent Petitioners is authored.
@@ -13248,7 +13248,7 @@ would sit on the stack, be respondable, and reinstall on every re-entry.
 
 ### Guarded by
 
-`tests/unit/test_skip_untap_step.py`: the self-lock and its counterfactual; an
+`tests/unit/turn/test_skip_untap_step.py`: the self-lock and its counterfactual; an
 explicit untap still working; the hold ending when the source leaves; an
 opponent's creature held on their own untap step, with the pair that makes it
 mean something; the `not_supertypes` clause, where a basic land must *not* be
@@ -13298,7 +13298,7 @@ short.
 
 ### Guarded by
 
-`tests/unit/test_replace_mill.py`: an opponent milling double with its
+`tests/unit/replacement/test_replace_mill.py`: an opponent milling double with its
 counterfactual; the controller **not** doubled (the near miss a player-agnostic
 implementation passes silently); `affects_player: "you"` for Fraying Sanity's
 half; two doublers compounding to 4×; a mill of zero not being an event;
@@ -13339,7 +13339,7 @@ writer of a game result and this is not a second one.
 
 ### Guarded by
 
-`tests/unit/test_replace_empty_draw.py`: the win, and the ordinary 104.3c loss
+`tests/unit/replacement/test_replace_empty_draw.py`: the win, and the ordinary 104.3c loss
 without the static; the "will lose" flag never being set; a non-empty library
 drawing as usual; the win landing on the draw that empties the library; an
 opponent decking being unaffected (the near miss a player-agnostic
@@ -13378,7 +13378,7 @@ just entered.
 
 ### Guarded by
 
-`tests/unit/test_shares_permanent_type.py`: a creature finding creatures and not
+`tests/unit/targets/test_shares_permanent_type.py`: a creature finding creatures and not
 lands; a land finding a land, which is exactly the case the subtype reading gets
 wrong; two creatures with no shared subtype still matching, with a fixture-sanity
 assertion so the test cannot go vacuous; an artifact creature reaching both pools
@@ -13419,7 +13419,7 @@ strictly better card ships quietly.
 
 ### Guarded by
 
-`tests/unit/test_mana_restriction_activate_any.py`: the empty group funding an
+`tests/unit/mana/test_mana_restriction_activate_any.py`: the empty group funding an
 Enchantment, a Land and a Creature sink with the same `{2}` ability — three type
 lines sharing no literal name, which is the argument that no enumeration could
 have stood in — and the empty name set, which no enumeration reaches at all; the
@@ -13469,7 +13469,7 @@ prints on one card, and the reason that card is the right witness.
 
 ### Guarded by
 
-`tests/unit/test_cast_as_though_flash.py`: the sorcery-speed baseline as a control
+`tests/unit/casting/test_cast_as_though_flash.py`: the sorcery-speed baseline as a control
 on both sides (a plain sorcery off-turn, an instant either way); the permission
 lifting the window for a sorcery and a creature spell, on the opponent's turn and
 in a non-main step; the wearing-off when the source leaves; `affects_player`
@@ -13522,7 +13522,7 @@ leaves the other shut, and neither leaks into the other.
 
 ### Guarded by
 
-`tests/unit/test_activate_loyalty_as_though_instant.py`: the sorcery-speed
+`tests/unit/planeswalkers/test_activate_loyalty_as_though_instant.py`: the sorcery-speed
 baseline on a walker without the line (off-turn and off-main-phase); the
 permission lifting both halves of the window, together and separately; the
 once-per-turn limit still biting, on your turn and theirs; a non-loyalty
@@ -13573,7 +13573,7 @@ copies every cheap spell for the rest of the turn.
 
 ### Guarded by
 
-`tests/unit/test_delayed_once_this_turn.py`: one firing and not a second; the
+`tests/unit/triggers/test_delayed_once_this_turn.py`: one firing and not a second; the
 subscription actually struck off the state rather than ignored afterwards; an
 unfired subscription gone by the next turn, and a later spell not firing it; both
 near misses kept as live cards and measured as controls (`this_turn` gaining twice,
@@ -13628,7 +13628,7 @@ artifacts do not continue the process.
 
 ### Guarded by
 
-`tests/unit/test_two_share_a_color.py`: two greens sharing; green against red and
+`tests/unit/targets/test_two_share_a_color.py`: two greens sharing; green against red and
 green against blue not sharing; both colourless cases; the `not_types` filter
 applied before the pairing, including the one-card-left case; the counting
 spelling kept as a live card and gaining on the exact board where the colour
@@ -13669,7 +13669,7 @@ pathological board must not hang a game.
 
 ### Guarded by
 
-`tests/unit/test_repeat_while.py`: the body running once when the condition is
+`tests/unit/effects/test_repeat_while.py`: the body running once when the condition is
 false immediately, and when the filter empties the pool; one, two and three passes
 on stacked libraries; the boundary, where a matching pass is followed by a
 non-matching one and the cards below are never reached; the unscoped card kept live
@@ -13718,7 +13718,7 @@ spells aimed at Orvar himself.
 
 ### Guarded by
 
-`tests/unit/test_spell_targets.py`: a spell targeting your creature making a copy,
+`tests/unit/targets/test_spell_targets.py`: a spell targeting your creature making a copy,
 and the copy being of the *right* permanent; an untargeted spell and a
 player-targeting spell doing nothing; the payload holding no player ids; both
 halves of "other permanents you control" — a spell aimed at Orvar himself and one
@@ -13759,7 +13759,7 @@ the ability declaring that it worked in the hand it was discarded from, so a
 
 ### Guarded by
 
-`tests/unit/test_forced_discard_trigger.py`: an opponent's Mind Rot firing it; your
+`tests/unit/triggers/test_forced_discard_trigger.py`: an opponent's Mind Rot firing it; your
 own rummaging not; the cause recorded on the event in both directions, read
 directly so clause and payload cannot drift; an uncaused discard recording `None`
 and not firing the trigger; the unclaused spelling kept live and firing on your own
@@ -13807,7 +13807,7 @@ about "up to nine" before this read it.
 
 ### Guarded by
 
-`tests/unit/test_deck_copy_limits.py`: nine Nazgûl legal and the tenth refused
+`tests/unit/engine/test_deck_copy_limits.py`: nine Nazgûl legal and the tenth refused
 with the limit named in the message; Seven Dwarves reading its own different
 number, so the word is genuinely parsed rather than one case special-cased;
 a card quoting Nazgûl's sentence still a singleton; an unreadable number falling
@@ -13877,7 +13877,7 @@ battlefield of 34 — 32 props, Ganax, and the token its own trigger made.
 
 ### Guarded by
 
-`tests/unit/test_choose_a_background.py`: the word loading as a keyword and
+`tests/unit/commander/test_choose_a_background.py`: the word loading as a keyword and
 `chars` reporting it; the printed line claimed reminder text and all, and *not*
 claimed by a card that only carries flying; partner failing to claim the
 Background line and the Background word failing to claim partner, so neither is
@@ -13929,7 +13929,7 @@ API field; no server or frontend change.
 
 ### Guarded by
 
-`tests/unit/test_nonlegendary_token_copy.py`: the supertype gone from the copy
+`tests/unit/copies/test_nonlegendary_token_copy.py`: the supertype gone from the copy
 and still on the original; a "legendary" selector skipping the token; and the
 claim that matters — the token and its original **both still on the battlefield
 after `sba.run`**, over repeated checks and for three tokens at once, against
@@ -14012,7 +14012,7 @@ command-zone half correctly.
 
 ### Guarded by
 
-`tests/unit/test_owner_selector.py`: a stolen commander still one you own and
+`tests/unit/targets/test_owner_selector.py`: a stolen commander still one you own and
 the `controller` spelling saying the opposite on the same board; the mirror, a
 commander you stole not being one you own; the two keys composing as a
 conjunction and the unstolen board failing that same conjunction; the number the
@@ -14119,7 +14119,7 @@ on the same card.
 
 ### Guarded by
 
-`tests/unit/test_chosen_type_grant.py`: nothing granted before a type is chosen;
+`tests/unit/choices/test_chosen_type_grant.py`: nothing granted before a type is chosen;
 the type added to the printed line rather than replacing it; no subtype that is
 not a name, which is the bug as a shape; choosing again moving the grant and
 taking it back leaving the printed line; a second permanent gaining the
@@ -14213,7 +14213,7 @@ expressible and are written as the gap record found them — `{3}, {T}` for a
 
 ### Guarded by
 
-`tests/unit/test_reflecting_any_type.py`. The colorless case is the test: a Pool
+`tests/unit/mana/test_reflecting_any_type.py`. The colorless case is the test: a Pool
 beside a Wastes offers `{C}`, and an Exotic Orchard beside the same Wastes still
 offers nothing. Beside that: `{C}{C}` off an Ancient Tomb counted as the type
 rather than the amount; colour and colorless together; a lone Forest offering
@@ -14325,7 +14325,7 @@ payoffs, and anything that asks a permanent whether it is new.
 
 ### Guarded by
 
-`tests/unit/test_entered_this_turn_filter.py`. The sharpest test is the one that
+`tests/unit/ledger/test_entered_this_turn_filter.py`. The sharpest test is the one that
 distinguishes the key from the value it is not: two Orc Dragons, neither of which
 entered this turn, and a third that does — the filtered Zurgo stays targetable
 and `t_ett_zurgo_ledger`, the same card written with
@@ -14412,7 +14412,7 @@ wait on the next `/author-cards`.
 
 ### Guarded by
 
-`tests/unit/test_becomes_target_of_spell.py`, over
+`tests/unit/triggers/test_becomes_target_of_spell.py`, over
 `tests/data/becomes_target_of_spell.cards.json`. Your spell and an opponent's
 both firing it; a spell aimed elsewhere not; a **copy** firing it a second time;
 your own activated ability not firing it, with the unclaused spelling kept live
@@ -14510,7 +14510,7 @@ static that makes that mana spendable on anything.
 
 ### Guarded by
 
-`tests/unit/test_spend_mana_as_any_color_static.py`, over
+`tests/unit/mana/test_spend_mana_as_any_color_static.py`, over
 `tests/data/spend_mana_as_any_color_static.cards.json` — named for the *static*,
 beside the granted form's own pair, which keeps the unsuffixed name. The cost
 reading (a pip becomes one generic, mana value and printed text unmoved, `{C}`
@@ -14584,7 +14584,7 @@ regular enough to read without inventing the two.
 
 ### Guarded by
 
-`tests/unit/test_enters_replacement.py`. The non-cast arrivals are the point:
+`tests/unit/replacement/test_enters_replacement.py`. The non-cast arrivals are the point:
 reanimation out of a graveyard and `put_onto_battlefield` from hand each offer
 the price and each honour a decline, beside the cast line. Also pinned: the land
 really leaves the hand; the arrival's own trigger and a watcher's both fire when
@@ -14604,7 +14604,7 @@ nonland card from your hand. {T}: Add one mana of any of the exiled card's
 colors."*
 
 The exile link had shipped long ago — Isochron Scepter and Soul Foundry both
-write it, and `tests/unit/test_imprint.py` is its test. What was missing is the
+write it, and `tests/unit/keywords/test_imprint.py` is its test. What was missing is the
 *question the mana ability asks*. `add_mana` knew four ways of naming which
 colours it offers — a literal `mana` string, `reflecting`, `in_commander_identity`
 and `split`, enforced by one guard in `cards/loader/effects.py` — and none of
@@ -14687,7 +14687,7 @@ now expressible, waiting on a battlefield selector and the next `/author-cards`.
 
 ### Guarded by
 
-`tests/unit/test_colors_of_mana.py`, over `tests/data/colors_of_mana.cards.json`.
+`tests/unit/mana/test_colors_of_mana.py`, over `tests/data/colors_of_mana.cards.json`.
 The unimprinted Mox is the test: it offers no colour, the solver can produce
 nothing from it, and tapping it raises rather than reaching for the superset —
 with the blue card it declined to exile still sitting in hand, so it is the
@@ -14822,7 +14822,7 @@ commander out and takes it back at a named moment.
 
 ### Guarded by
 
-`tests/unit/test_command_zone.py`. The two halves that matter are deliberately
+`tests/unit/commander/test_command_zone.py`. The two halves that matter are deliberately
 separate: a **commander** going home through the Courser's full printed line
 (the case 903.9a would also have covered, so it proves nothing on its own), and
 a **Bear that is nobody's commander** sent to the command zone by the op alone —
@@ -14908,7 +14908,7 @@ than a trigger, and the emblem statics above.
 
 ### Guarded by
 
-`tests/unit/test_command_zone_static.py`. The load-bearing test is
+`tests/unit/commander/test_command_zone_static.py`. The load-bearing test is
 `TestTheCounterfactualIsDeadWhereItMatters`: `t_battlefield_dragon` is
 byte-for-byte the same static with `active_zones` omitted, and the two are
 asserted to agree on the battlefield and with nothing on the table, and to
@@ -15034,7 +15034,7 @@ ferocious family is now expressible and waits on the next `/author-cards`.
 
 ### Guarded by
 
-`tests/unit/test_static_power_filter.py`, over
+`tests/unit/statics/test_static_power_filter.py`, over
 `tests/data/static_power_filter.cards.json`. The card itself counted on four
 boards, including the two failures the gap record predicted — a 2/2 and a 3/3
 not counting, where dropping the power clause would have discounted {3}, and the
@@ -15148,7 +15148,7 @@ only printed line this is.
 
 ### Guarded by
 
-`tests/unit/test_free_cast_permission.py`, over
+`tests/unit/casting/test_free_cast_permission.py`, over
 `tests/data/free_cast_permission.cards.json`. Two claims, one class each. That
 it is a **permission and not a discount**: a Dragon castable off an empty board,
 nothing tapped and no mana in the pool when it is cast off six Mountains, and
@@ -15262,7 +15262,7 @@ seat's permanents that way.
 
 ### Guarded by
 
-`tests/unit/test_greatest_count_reduction.py`, over
+`tests/unit/costs/test_greatest_count_reduction.py`, over
 `tests/data/greatest_count.cards.json`. **Every board in it is a pod of four**,
 which is the point of the file: at two players the sum and the maximum are the
 same number, so a two-player test would pass against the bug. `t_gc_sum` is the
@@ -15366,7 +15366,7 @@ control have X".
 
 ### Guarded by
 
-`tests/unit/test_riot.py`, over `tests/data/riot.cards.json`. Both branches
+`tests/unit/keywords/test_riot.py`, over `tests/data/riot.cards.json`. Both branches
 (the counter's size and its lack of haste; the haste's attack the turn it
 arrived, and its surviving cleanup); the 614.1c pair that no trigger passes — a
 printed 0/0 that lives on the counter and dies on the haste, and a watcher
@@ -15450,7 +15450,7 @@ name a player as the thing being hit.
 
 ### Guarded by
 
-`tests/unit/test_replace_damage.py`, over
+`tests/unit/damage/test_replace_damage.py`, over
 `tests/data/replace_damage.cards.json`, three new classes beside the Flail and
 Furnace ones. `TestTheAsymmetryIsTheWholeCard` is the important one and pins the
 four cells against each other on one board: damage to an opponent and to an
@@ -15547,7 +15547,7 @@ family — plus every "not named <this card>" line for `not_name` alone.
 
 ### Guarded by
 
-`tests/unit/test_search_distinct_names.py`, over
+`tests/unit/zones/test_search_distinct_names.py`, over
 `tests/data/distinct_names.cards.json`. The test library is stocked with
 **duplicates** on purpose: a library where every Dragon already has a unique
 name passes the distinctness claim while proving nothing about it. So it holds
@@ -15701,7 +15701,7 @@ work the loader currently refuses.
 
 ### Guarded by
 
-`tests/unit/test_spell_cost_increase.py`, over two new test-pool cards — a Drake
+`tests/unit/costs/test_spell_cost_increase.py`, over two new test-pool cards — a Drake
 with the printed targeting clause and a Collector that taxes every opponent spell
 unconditionally, so the conditional and unconditional gates are separate claims.
 The module covers what it taxes and what it does not (the same spell aimed
@@ -15803,7 +15803,7 @@ capability. It passes all six gates.
 
 ### Guarded by
 
-`tests/unit/test_mana_of_each_color.py`, over six new test-pool cards
+`tests/unit/mana/test_mana_of_each_color.py`, over six new test-pool cards
 (`t_vivid_tender`, the `colors_of` mirror, the `reflecting` mirror, a colourless
 Golem body and three painted permanents). The module covers the bundle on three-
 and five-colour boards, a gold permanent contributing two colours off one card, a
@@ -15885,7 +15885,7 @@ new (`look_at_top` with `not_subtypes: ["Human"]` and `rest_to_bottom`).
 
 ### Guarded by
 
-`tests/unit/test_double_nonland_mana.py`, over five new test-pool cards in
+`tests/unit/mana/test_double_nonland_mana.py`, over five new test-pool cards in
 `tests/data/double_nonland_mana.cards.json`. It pins the nonland half doubling a
 mana dork and a rock, a **land** under Kinnan staying single, the shipped
 `double_land_mana` still doubling its land and still leaving a dork alone (the
@@ -15911,7 +15911,7 @@ resolution for an effect to run in.
 
 `docs/keywords.md` had always routed exert as "free": an `attacks` trigger, a
 `may`, then `skip_untap` and whatever the card does — and
-`tests/unit/test_exert.py` cashes that claim on Combat Celebrant. It cannot be
+`tests/unit/keywords/test_exert.py` cashes that claim on Combat Celebrant. It cannot be
 reused here, twice over.
 
 - Exert is a **cost** on this card, paid as the ability is activated (601.2h),
@@ -15993,7 +15993,7 @@ capability.
 
 ### Guarded by
 
-`tests/unit/test_exert_cost.py` and `tests/unit/test_mana_granted_keyword.py`,
+`tests/unit/keywords/test_exert_cost.py` and `tests/unit/mana/test_mana_granted_keyword.py`,
 over three new test-pool cards — a two-ability Arena, so the plain line and the
 exerting line are measured against each other on one permanent, plus a vanilla
 creature and a vanilla artifact.
@@ -16103,7 +16103,7 @@ new — flying is a keyword, and the enters trigger is `create_token` of
 
 ### Guarded by
 
-`tests/unit/test_treasure_mana_spent.py`, over one new test-pool card
+`tests/unit/mana/test_treasure_mana_spent.py`, over one new test-pool card
 (`t_hoard_worm`). The pool half is pinned in isolation — a tagged pip reporting
 its traits, the oid still reported beside it, effect mana carrying nothing,
 generic pips carrying provenance (which is how a Treasure's mana is usually
@@ -16171,7 +16171,7 @@ The near miss is Tanuki Transplanter's shape: a `repeat` whose amount is a
 `persists_until_end_of_turn`. It spells the size and the persistence exactly and
 still fixes the colour on the card, so for anything that prints "any combination
 of colors" it is a strictly different — and for a two-colour Dragon, strictly
-worse — card. `tests/unit/test_triggered_split_mana.py` asserts the difference
+worse — card. `tests/unit/mana/test_triggered_split_mana.py` asserts the difference
 as a pool holding four colours at once.
 
 ### A restriction on mana an **effect** made
@@ -16254,7 +16254,7 @@ player's choice.
 
 ### Guarded by
 
-`tests/unit/test_triggered_split_mana.py`, over four new test-pool cards
+`tests/unit/mana/test_triggered_split_mana.py`, over four new test-pool cards
 (`t_tsm_wyrm`, the same trigger with no restriction as the control, a `{1}`
 activated ability the mana may not pay for and a `{1}` instant it may). The
 module covers X as a *total power* rather than a count, a second attacker adding
@@ -16377,7 +16377,7 @@ the next `/author-cards` run.
 
 ### Guarded by
 
-`tests/unit/test_spree.py`, over one new test-pool card whose three modes sit on
+`tests/unit/modes/test_spree.py`, over one new test-pool card whose three modes sit on
 three **independent** axes — your hand, your life, the opponent's life — so a
 cast that bought two modes and ran one is visible. Every behavioural claim in the
 module is made about *two or more* modes, because a single-mode implementation
@@ -16475,7 +16475,7 @@ was never in a zone to be cast from (707.12).
 
 ### Tests
 
-`tests/unit/test_airbend.py` over `tests/data/airbend.cards.json` — fifteen
+`tests/unit/keywords/test_airbend.py` over `tests/data/airbend.cards.json` — fifteen
 tests in three classes. The board has two seats owning one creature each,
 because a permission written to `ctx.controller` passes every test a one-sided
 board can ask; a `t_gale_scatter` written as plain `exile` + `playable` sits
@@ -16485,7 +16485,7 @@ discount), the {4}{U}{U} one off two lands, one land is not enough, casting
 spends exactly two, a stolen creature goes back to its owner, and the grant
 survives the turn it was made on and dies when the card leaves exile.
 
-`tests/unit/test_cant_cast_spells_from_zones.py` over
+`tests/unit/statics/test_cant_cast_spells_from_zones.py` over
 `tests/data/cant_cast_spells_from_zones.cards.json` — nine tests in two
 classes, built on one flashback instant that is a hand cast and a graveyard cast
 at once, so nothing about the card separates the two lines except where it is.
@@ -16624,7 +16624,7 @@ creatures you control have haste") is a plain `grant_keyword` static with
 
 ### Guarded by
 
-`tests/unit/test_warp.py`, over five new test-pool cards in
+`tests/unit/keywords/test_warp.py`, over five new test-pool cards in
 `tests/data/warp.cards.json`. It pins the three steps of the mechanic and the
 grant's scope: the warp price charged instead of the printed one (pips included,
 which a reduction could never reach), a printed `warp` field working with no
@@ -16763,14 +16763,14 @@ battles would go missing on a card that looked complete.
 
 ### Tests
 
-- `tests/unit/test_battles.py` — arrival with counters, damage onto them, the
+- `tests/unit/combat/test_battles.py` — arrival with counters, damage onto them, the
   boundary at zero, attacking one not being attacking its controller, the
   loader's two refusals, the RL action index, and the protector divergence.
-- `tests/unit/test_batched_combat_damage.py` — one firing for a multi-creature
+- `tests/unit/combat/test_batched_combat_damage.py` — one firing for a multi-creature
   swing with the per-connection near miss kept **live** beside it firing three
   times, the narrowed `damagers` binding, and `or_battle` against its unwidened
   control.
-- `tests/unit/test_zurgo_and_ojutai.py` — the three printed lines on one
+- `tests/unit/named_cards/test_zurgo_and_ojutai.py` — the three printed lines on one
   permanent, through a test-pool card with the card's own trigger and effects.
 ## "Add X mana of any one color", spendable only on two printed clauses
 
@@ -16874,7 +16874,7 @@ read.
 
 ### Tests
 
-- `tests/unit/test_any_one_color_mana.py` -- the five one-colour options and
+- `tests/unit/mana/test_any_one_color_mana.py` -- the five one-colour options and
   that no offer ever mixes two; X tracking the source's power as counters land,
   and zero power offering nothing; the restriction at each of its four corners
   (a 4-mana creature yes, a 3-mana creature no, an {X} creature yes, a 4-mana
@@ -16952,7 +16952,7 @@ mean no card yet measures its own warp half at gate 5.
 
 ### Tests
 
-- `tests/unit/test_warp.py::TestThePrintedWarpLineIsClaimed` — the printed line
+- `tests/unit/keywords/test_warp.py::TestThePrintedWarpLineIsClaimed` — the printed line
   claimed by the field; the line left residual when the field is absent (the
   claimant is the field, not the word); a cheaper declared cost failing to claim
   a dearer printed one; and a real printing's reminder text not having to match,
@@ -16993,7 +16993,7 @@ single remaining need each: `base_power_toughness`, `cant_activate_abilities`,
 
 ### Tests
 
-- `tests/unit/test_token_pool.py` — one class per token, each pinning the
+- `tests/unit/tokens/test_token_pool.py` — one class per token, each pinning the
   characteristic that makes its near miss wrong, and each asserting **the near
   miss still exists as a separate token**, so nobody later "consolidates" the
   pair the way the section in `card-dsl.md` warns about. The colourlessness of
@@ -17008,7 +17008,7 @@ single remaining need each: `base_power_toughness`, `cant_activate_abilities`,
 `cant_cast_spells` shipped with Voice of Victory and its docstring has said ever
 since that it deliberately stops only the casting half, listing "activating
 abilities" among what it leaves alone and closing with "Grand Abolisher's second
-half is a different static". `tests/unit/test_cant_cast_spells.py` repeats it in
+half is a different static". `tests/unit/statics/test_cant_cast_spells.py` repeats it in
 its own module docstring. Myrel, Shield of Argive is the card that finally needed
 the other half: its first line is that whole sentence, and writing it as
 `cant_cast_spells` alone would have dropped a printed clause.
@@ -17051,7 +17051,7 @@ a graveyard.
 
 ### Tests
 
-- `tests/unit/test_cant_activate_abilities.py` — the lock across all three named
+- `tests/unit/statics/test_cant_activate_abilities.py` — the lock across all three named
   card types and the control position without it; `affects_player` sparing its
   own controller; the `condition` sleeping on the opponent's turn, with the
   unconditional version pinning that the sleep is the condition's doing and not
@@ -17100,7 +17100,7 @@ survives the permanent having since been tapped, animated or moved.
 
 ### Tests
 
-- `tests/unit/test_entered_this_turn_selector.py` — the arrival gathered and the
+- `tests/unit/ledger/test_entered_this_turn_selector.py` — the arrival gathered and the
   permanent that was already standing excluded, with an unfiltered control
   proving the exclusion is the key's doing and not the position's; composition
   with `controller`, measured by an opponent's arrival on the same turn; `false`
@@ -17151,7 +17151,7 @@ quietly start returning 0 for a card in hand.
 
 ### Tests
 
-- `tests/unit/test_base_power_toughness_selector.py` — the 1/1 gathered and the
+- `tests/unit/targets/test_base_power_toughness_selector.py` — the 1/1 gathered and the
   2/2 not; either half of the printed "or" sufficing; **the 1/1 still gathered
   while wearing three +1/+1 counters**, with the live-key contrast on the same
   board showing it would have been dropped; the mirror, where a -1/-1 counter
@@ -17206,7 +17206,7 @@ static wearing a printed prohibition; an absent filter defaults to
 
 ### Tests
 
-- `tests/unit/test_lose_keyword.py` — the keyword taken from the opponents'
+- `tests/unit/statics/test_lose_keyword.py` — the keyword taken from the opponents'
   creature, with a no-static control; its own side untouched (the filter is the
   printed "your opponents"); the whole printed card doing both halves at once;
   **the prohibition beating a later grant** (the opponent's own anthem) and
@@ -17272,7 +17272,7 @@ rather than an omission.
 
 ### Tests
 
-- `tests/unit/test_enters_tapped.py` — the opponent's creature tapped with a
+- `tests/unit/replacement/test_enters_tapped.py` — the opponent's creature tapped with a
   no-static control; the controller's own creature untouched; **every arrival
   route** (a graveyard return and a token, not just a hand arrival); the narrow
   filter leaving an opponent's land alone where the Kismet-width one catches it;
@@ -17324,7 +17324,7 @@ ceiling rather than shipping one.
 
 ### Tests
 
-- `tests/unit/test_pay_x_on_resolution.py::TestAnUnboundedX` — X running up to
+- `tests/unit/costs/test_pay_x_on_resolution.py::TestAnUnboundedX` — X running up to
   affordability where the printed-ceiling Well stops at the life gained, **with
   the bounded contrast measured on the same board**, so relaxing the requirement
   is shown not to have relaxed the rule; the `as` binding still read by the "if
@@ -17378,7 +17378,7 @@ are pinned separately.
 
 ### Tests
 
-- `tests/unit/test_prevent_all_damage.py` — a large hit and a small one each
+- `tests/unit/damage/test_prevent_all_damage.py` — a large hit and a small one each
   prevented entirely, with a no-shield control and the permanent left with zero
   marked damage; **the absorb sum staying zero** so the two rules are shown not
   to be the same question; three separate sources each prevented in full, which
@@ -17437,7 +17437,7 @@ granted the same turn correctly begins free of it.
 
 ### Tests
 
-- `tests/unit/test_choose_blockers.py` — the attacker holding the prompt with
+- `tests/unit/combat/test_choose_blockers.py` — the attacker holding the prompt with
   `on_behalf_of` still naming the defender, and a control showing the defender is
   asked without the op; **the blocks offered being the defender's creatures and
   not the thief's**, which is the safety of the whole design; menace still
@@ -17521,7 +17521,7 @@ Worth recording because the codebase had warned about the second one in advance.
 
 ### Tests
 
-- `tests/unit/test_approach_of_the_second_sun.py` — `cast_from_hand` true and
+- `tests/unit/named_cards/test_approach_of_the_second_sun.py` — `cast_from_hand` true and
   false, and **an object cast from exile answering false to both keys**, which is
   the claim that makes it a separate word rather than a negation; the game-long
   tally counting a cast, **surviving a `TurnLedger.clear()`**, honouring a name
@@ -17591,7 +17591,7 @@ Worth recording, because each is a registry that a new key has to be taught:
 
 ### Tests
 
-- `tests/unit/test_the_eagles_are_coming.py` — the unkicked line taking exactly
+- `tests/unit/named_cards/test_the_eagles_are_coming.py` — the unkicked line taking exactly
   one target and **the kicked line offering more, measured on the same board**,
   which is the only way to show the switch rather than assert it; both lines
   offered at once, since 601.2b is a choice; `_kicked_targets` returning `None`
@@ -17661,7 +17661,7 @@ precisely so the next reader re-checks instead.
 
 ### Tests
 
-- `tests/unit/test_untap_limit.py` — the cap and its candidates reported, and
+- `tests/unit/turn/test_untap_limit.py` — the cap and its candidates reported, and
   nothing capped without the static; only the **named types** capped, so a
   creature is not a candidate; the opponent capped too, since the printed word is
   "players"; only the chosen land untapping, with a no-cap control; **a capped
@@ -17726,7 +17726,7 @@ and is a gap record until it has one.
 
 ### Tests
 
-- `tests/unit/test_copy_ability.py` — an ability on the stack offered as a target,
+- `tests/unit/copies/test_copy_ability.py` — an ability on the stack offered as a target,
   **a spell on the stack not enlarging the pool** (this is the complement of the
   `spell` kind, not a widening of it), and an opponent's ability excluded by the
   one honoured clause; the copy put on the stack, on top, with a fresh sid, and
@@ -17808,7 +17808,7 @@ below it.
 
 ### Tests
 
-- `tests/unit/test_cant_lose_the_game.py` (20) — the floor landing a 100-damage
+- `tests/unit/players/test_cant_lose_the_game.py` (20) — the floor landing a 100-damage
   hit on exactly 1, leaving small hits alone, protecting only the named seat, and
   **the stricter of two floors winning**; the floor ignored by a plain
   `lose_life` with damage on the same board still floored; a locked player sitting
@@ -17903,7 +17903,7 @@ Yixlid Jailer neighbourhood.
 
 ### Tests
 
-- `tests/unit/test_replace_graveyard.py` (20) — every "from anywhere" route walked
+- `tests/unit/replacement/test_replace_graveyard.py` (20) — every "from anywhere" route walked
   separately, because a battlefield-gated version passes a death test and lets
   every mill through: a permanent dying, a mill, a discard, a spell leaving the
   stack, a card put there from exile, and the graveyard observably **staying
@@ -17959,7 +17959,7 @@ keep their remaining needs, with `missing_token` removed.
 
 ### Tests
 
-- `tests/unit/test_atraxa_tokens.py` — size, colour, creature types and keywords
+- `tests/unit/tokens/test_atraxa_tokens.py` — size, colour, creature types and keywords
   of each creature token read off the characteristics layer; each near miss still
   a separate token; a bare Fractal put into the graveyard by 704.5f; the Illusion
   sacrificed to your spell and an opponent's, and **not** to an activated ability
@@ -18002,7 +18002,7 @@ damage dealt *to* what it matches. Nothing could stop damage a permanent *deals*
 
 ### Tests
 
-- `tests/unit/test_prevent_damage_permanent.py` — each direction and its
+- `tests/unit/damage/test_prevent_damage_permanent.py` — each direction and its
   non-reach (a `to` shield still deals damage, a `by` shield still takes it), to
   permanents and to players; the combat path through a pacified attacker; no
   `DAMAGE_DEALT` for prevented damage; both clocks, neither clearing the other,
@@ -18032,7 +18032,7 @@ read only for permanents, so it could protect neither the player nor cap an even
 
 ### Tests
 
-- `tests/unit/test_prevent_all_but.py` — a big hit capped to 1, a 1 untouched,
+- `tests/unit/damage/test_prevent_all_but.py` — a big hit capped to 1, a 1 untouched,
   each event capped separately; your planeswalker covered, your creature, the
   opponent and their planeswalker not; the surplus as a prevention event and the
   rest as ordinary damage; a doubler applied first (with its baseline); the
@@ -18065,7 +18065,7 @@ attack on one specific target, nor reach creatures arriving later in that turn.
 
 ### Tests
 
-- `tests/unit/test_must_attack_planeswalker.py` — compelled and walker-only
+- `tests/unit/combat/test_must_attack_planeswalker.py` — compelled and walker-only
   targets, the unmarked baseline, a creature arriving after the mark; "if able"
   (tapped, prohibited from the walker); pending does not bite, the untap step
   arms it, cleanup ends it, not on the controller's turn, elimination drops it;
@@ -18095,7 +18095,7 @@ the emblem could only be written as a lock on every spell.
 
 ### Tests
 
-- `tests/unit/test_cant_cast_spells_filter.py` — creatures offered and
+- `tests/unit/statics/test_cant_cast_spells_filter.py` — creatures offered and
   noncreatures withheld under the emblem; its owner unaffected; the seat-level
   question false; a bestow cast withheld while the creature cast stays; a
   flashback from the graveyard withheld; the free-cast floor refusing a bolt and
@@ -18123,7 +18123,7 @@ no sorcery-timing condition, and `cast_as_though_flash` widens.
 
 ### Tests
 
-- `tests/unit/test_cast_only_at_sorcery_speed.py` — an instant withheld off turn
+- `tests/unit/statics/test_cast_only_at_sorcery_speed.py` — an instant withheld off turn
   and in the opponent's own combat, both spells castable in their main phase, the
   control without the lock, its controller unaffected, Tidal Barracuda's
   permission overridden, a free cast refused for the locked seat and allowed for
@@ -18150,7 +18150,7 @@ hit.
 
 ### Tests
 
-- `tests/unit/test_lose_game.py` — the default seat loses; in a pod only the named
+- `tests/unit/players/test_lose_game.py` — the default seat loses; in a pod only the named
   seat leaves (one `PLAYER_LOST`) and its permanents go; a repeat is a no-op;
   everyone losing is a draw; the Assassin's combat hit eliminates only that player,
   noncombat damage does not, and in a duel the hit wins; a `condition` on the op
@@ -18188,7 +18188,7 @@ counter there is harmful, opponents' poison, never its own; then it finishes.
 
 ### Tests
 
-- `tests/unit/test_proliferate.py` — one of each kind already there, per
+- `tests/unit/counters/test_proliferate.py` — one of each kind already there, per
   permanent; nothing without a counter is offered and an empty board asks nothing;
   the decision is one any-number question to the controller; choosing nothing
   grows nothing and only the chosen grow; an opponent's permanent and a hexproof
@@ -18216,7 +18216,7 @@ Tekuthals are four proliferates (616.1); none applies twice (614.5).
 
 ### Tests
 
-- `tests/unit/test_replace_proliferate.py` — one doubler is two proliferates and
+- `tests/unit/counters/test_replace_proliferate.py` — one doubler is two proliferates and
   none is one; two compound to four; the second choice may decline what the first
   took, and sees what the first grew; an opponent's doubler does not double mine;
   a doubler that has left stops; the loader requires `affects_player` and refuses
@@ -18246,7 +18246,7 @@ planeswalker's last loyalty. `tests/cards/test_every_card_works.py` gained
 
 ### Tests
 
-- `tests/unit/test_remove_counters_from_among.py` — three on one permanent pay,
+- `tests/unit/counters/test_remove_counters_from_among.py` — three on one permanent pay,
   three split pay, two is one short and the ability is not offered; any kinds
   count; the source's own counters and an enchantment's do not; the counters come
   off and the ability resolves; the cost is asked before the ability is on the
@@ -18273,7 +18273,7 @@ replaced. Every post-opening-hand draw, the draw step included, passes there.
 
 ### Tests
 
-- `tests/unit/test_draw_limit.py` — one draw then none; draw three is one; the
+- `tests/unit/statics/test_draw_limit.py` — one draw then none; draw three is one; the
   controller is uncapped under "each opponent" and capped under "each player";
   a draw made before the static arrived counts; a new turn resets it; an upkeep
   draw uses up the draw step's card; a doubled draw yields one; dredge is not
@@ -18299,7 +18299,7 @@ search still happen.
 
 ### Tests
 
-- `tests/unit/test_cant_search_library.py` — an opponent's tutor finds nothing,
+- `tests/unit/statics/test_cant_search_library.py` — an opponent's tutor finds nothing,
   still shuffles and the rest of the spell resolves; the graveyard half of an
   "and/or" search is still searched; the static's controller searches freely; my
   spell making the opponent search is not stopped; it lifts when the source
@@ -18324,7 +18324,7 @@ when a static reaches `pid` and the cause is another seat. Read by `op_discard`
 
 ### Tests
 
-- `tests/unit/test_opponents_cant_force_discard_or_sacrifice.py` — an
+- `tests/unit/statics/test_opponents_cant_force_discard_or_sacrifice.py` — an
   opponent's discard spell and edict skip me while reaching them; an opponent's
   "unless you sacrifice" is not offered and the punishment lands; my own discard
   and edict still hit me; the opponent is not shielded; it lifts when the source
@@ -18349,7 +18349,7 @@ heuristic agent's `_choice` names the label its library holds most copies of.
 
 ### Tests
 
-- `tests/unit/test_choose_card_name.py` — one `CHOOSE_MODE` question tagged
+- `tests/unit/choices/test_choose_card_name.py` — one `CHOOSE_MODE` question tagged
   `choose_card_name`; the offered names are the chooser's own nonland names plus
   "Another card name", not an opponent's; every copy among the top four goes to
   hand and the rest to the graveyard, a card below the fourth stays; a name not
@@ -18381,7 +18381,7 @@ neighbour who already holds two boards.
 
 ### Tests
 
-- `tests/unit/test_rotate_control.py` — left and right each move every permanent
+- `tests/unit/effects/test_rotate_control.py` — left and right each move every permanent
   exactly one seat and never cascade; a fixed direction asks nobody; lands and the
   source stay put; an eliminated seat is skipped; the pod question and its context;
   a duel swaps boards without asking; moved creatures are summoning sick and the
@@ -18405,7 +18405,7 @@ zone and a count but no type and no way to decline.
 
 ### Tests
 
-- `tests/unit/test_look_at_top_typed_picks.py` — each step offers only its own
+- `tests/unit/zones/test_look_at_top_typed_picks.py` — each step offers only its own
   type, at most one, and may be declined; two lands are never both taken; a
   creature land answers one step either way; the rest (including cards no step
   could take) go to the graveyard and no deeper card moves; the sorcery resolves
@@ -18430,7 +18430,7 @@ stronger card.
 
 ### Tests
 
-- `tests/unit/test_spend_mana_as_any_color_spell_filter.py` — an off-colour
+- `tests/unit/mana/test_spend_mana_as_any_color_spell_filter.py` — an off-colour
   planeswalker is castable and paid with off-colour lands; not without the Oath,
   not off an opponent's, and not for less mana; a non-planeswalker spell and an
   activated ability are not loosened; the Orrery still reaches both; the loader
@@ -18461,7 +18461,7 @@ loader refuses an unknown `duration`, a non-boolean `exact` and
 
 ### Tests
 
-- `tests/unit/test_permanent_animate.py` — an Oko'd Sol Ring is only a green Elk
+- `tests/unit/effects/test_permanent_animate.py` — an Oko'd Sol Ring is only a green Elk
   creature 3/3 and taps for nothing; a Goblin stops being a Goblin and red; a
   legend stays legendary; a Forest stops being a land and a Forest; an anthem,
   counters and pumps add to the 3/3; the later of a timed and a permanent
@@ -18489,7 +18489,7 @@ requires both selectors, checks their targets are declared, and refuses a
 
 ### Tests
 
-- `tests/unit/test_exchange_control.py` — each side takes the other; ownership
+- `tests/unit/effects/test_exchange_control.py` — each side takes the other; ownership
   stays; it survives the turn; the arrival is summoning sick and dies to its
   owner; no part happens when either target is gone, when a target left after
   the check, or when one player controls both; the loader requires both halves,
@@ -18515,7 +18515,7 @@ graveyard and exile `self_only` branches.
 
 ### Tests
 
-- `tests/unit/test_dies_or_exiled_trigger.py` — a granted ghostform fires on a
+- `tests/unit/triggers/test_dies_or_exiled_trigger.py` — a granted ghostform fires on a
   death and on an exile, returning the card and making the Spirit; it does not
   fire on a bounce or a tuck; the card that came back is a new object and dies
   plainly; the loader takes the clause on `leaves_battlefield`, refuses it
@@ -18541,7 +18541,7 @@ an unknown zone and a repeat.
 
 ### Tests
 
-- `tests/unit/test_cast_free_from_zones.py` — the three zones form one pool; only
+- `tests/unit/casting/test_cast_free_from_zones.py` — the three zones form one pool; only
   legendary cards are offered; an opponent's card in exile is not; the default is
   still the hand; a legend is cast from the graveyard and from exile; declining
   casts nothing; the loader guards.
@@ -18568,13 +18568,13 @@ that is generic and {1} or more.
 
 ### Tests
 
-- `tests/unit/test_spell_cost_increase_mana.py` — a spell aimed at my creature
+- `tests/unit/costs/test_spell_cost_increase_mana.py` — a spell aimed at my creature
   costs {2} more; aimed at their own it does not; an untargeted tax reaches
   every spell and two stack; an aim the caster cannot afford is not offered
   while the same spell aimed elsewhere is; the surcharge is paid (three
   Mountains for a Bolt); the taxing player is not taxed; the loader takes
   generic mana and refuses coloured mana, {0}, and life with mana.
-- `tests/unit/test_spell_cost_increase.py` — the old "mana is refused" test is
+- `tests/unit/costs/test_spell_cost_increase.py` — the old "mana is refused" test is
   now "coloured mana is refused"; the sacrifice refusal names both currencies.
 
 ## "Loses all abilities" by timestamp — 613.7
@@ -18597,7 +18597,7 @@ Irencrag's "gains … and loses all other abilities", is kept.
 
 ### Tests
 
-- `tests/unit/test_permanent_animate.py::TestLosingAbilitiesGoesByTimestamp` — an
+- `tests/unit/effects/test_permanent_animate.py::TestLosingAbilitiesGoesByTimestamp` — an
   earlier until-end-of-turn keyword is lost and a later one kept; an earlier
   permanent keyword and an earlier granted triggered ability are lost; suspend's
   haste is lost. `test_lose_abilities_op.py` still holds the same-resolution
@@ -18637,7 +18637,7 @@ three. Fixed by the entering change and pinned.
 
 ### Tests
 
-- `tests/unit/test_counter_replacement_effects_only.py` — a +1 cost puts one
+- `tests/unit/counters/test_counter_replacement_effects_only.py` — a +1 cost puts one
   loyalty counter under `effects_only`, the same walker's effect is doubled, the
   un-flagged static still doubles the cost, a minus cost is untouched; a
   planeswalker enters with twice its loyalty, an opponent's does not, a
@@ -18666,7 +18666,7 @@ one names the putter, reaches an opponent's permanents, and reaches players.
 
 ### Tests
 
-- `tests/unit/test_counter_replacement_put_by.py` — my counter on my creature and on
+- `tests/unit/counters/test_counter_replacement_put_by.py` — my counter on my creature and on
   an opponent's is doubled, an opponent's on mine is not; the putter defaults to the
   source's controller; an arrival and a loyalty cost are doubled; the `add_poison`
   op and my infect damage are doubled, an opponent's infect is not; a
@@ -18684,7 +18684,7 @@ placement, so Doubling Season applies (2 → 6) and `counter_placed` fires.
 
 ### Tests
 
-- `tests/unit/test_double_counters.py` — every kind on one permanent, several targets
+- `tests/unit/counters/test_double_counters.py` — every kind on one permanent, several targets
   each by their own count, a permanent with none untouched; Doubling Season doubles
   the placement; `counter_placed` reports it; the loader refuses a missing `objects`.
 
@@ -18699,7 +18699,7 @@ effect-side selector. Admissible for `tapped`'s reason: no layer writes counters
 
 ### Tests
 
-- `tests/unit/test_has_counters_filter.py` — no counters, no ward; a +1/+1 or a
+- `tests/unit/counters/test_has_counters_filter.py` — no counters, no ward; a +1/+1 or a
   charge counter grants it; removing the last takes it away; an opponent's
   permanent is not warded; `false` matches only counterless permanents; the
   effect-side selector picks out permanents with counters.
@@ -18725,7 +18725,7 @@ takes one amount for every object, so the only near miss was one counter on each
 
 ### Tests
 
-- `tests/unit/test_distribute_counters.py` — one target takes all three and three
+- `tests/unit/counters/test_distribute_counters.py` — one target takes all three and three
   take one each with no question asked; two targets split 2/1 as chosen; the
   division is on the stack item before it resolves; vigilance is granted; an
   illegal target's share is lost, not redistributed; the heuristic agent favours
@@ -18762,7 +18762,7 @@ None`.
 
 ### Tests
 
-- `tests/unit/test_loyalty_x.py` — X asked for and bounded by the loyalty; X
+- `tests/unit/planeswalkers/test_loyalty_x.py` — X asked for and bounded by the loyalty; X
   counters come off and the effect reads X (two values); X = 0 legal and still
   the turn's loyalty ability; X = everything kills the walker and still
   resolves; 606.3 in both directions; sorcery timing and an opponent's turn;
@@ -18791,7 +18791,7 @@ reduced the starting loyalty, so a Tamiyo cast for 2 life arrived at the full 5.
 
 ### Tests
 
-- `tests/unit/test_compleated.py` — mana paid: full loyalty; life paid: two
+- `tests/unit/planeswalkers/test_compleated.py` — mana paid: full loyalty; life paid: two
   fewer and the life gone; the control card without the keyword; nothing
   queued (a replacement); two symbols, one or both paid; the floor at zero and
   the walker binned by 704.5i; a blinked walker and one put onto the
@@ -18818,7 +18818,7 @@ static about another permanent's arrival, and it carries no counters.
 
 ### Tests
 
-- `tests/unit/test_enters_with_additional_counters.py` — a cast walker enters
+- `tests/unit/counters/test_enters_with_additional_counters.py` — a cast walker enters
   with one more, the control without the Oath, an uncast arrival, two Oaths
   adding two, nothing queued; a +1 activation still +1, a creature and an
   opponent's walker untouched; compleated to zero then the Oath's counter
@@ -18859,7 +18859,7 @@ Liliana, the Last Hope; Sorin, Solemn Visitor; Nissa, Vital Force; Dovin Baan's 
 
 ### Tests
 
-- `tests/unit/test_until_your_next_turn.py` (19) -- the -2/-1 standing on the
+- `tests/unit/turn/test_until_your_next_turn.py` (19) -- the -2/-1 standing on the
   opponent's turn and gone at the controller's next; a three-seat pod where it
   survives both opponents' turns (the affected creature's controller is not the
   clock); an end-of-turn pump beside it still ending at cleanup; Dovin's lock
@@ -18902,7 +18902,7 @@ the damaged permanent and its token.
 
 ### Tests
 
-- `tests/unit/test_delayed_trigger_until_your_next_turn.py` (14) -- either of two
+- `tests/unit/triggers/test_delayed_trigger_until_your_next_turn.py` (14) -- either of two
   subjects fires it and a third creature does not; it fires every time; it is live
   on the opponent's turn and gone once the controller's next turn begins; a third
   seat's turn does not end it; a `this_turn` subscription beside it still ends at
@@ -18941,7 +18941,7 @@ Tamiyo, Field Researcher (with the delayed-trigger capability before it).
 
 ### Tests
 
-- `tests/unit/test_deals_combat_damage.py` (5), over
+- `tests/unit/combat/test_deals_combat_damage.py` (5), over
   `tests/data/deals_combat_damage.cards.json` -- an unblocked hit fires once; a
   blocked creature hitting only its blocker fires; a trampler hitting its blocker
   and the player fires once; a zero-power blocker fires nothing; and Tamiyo's
@@ -18974,7 +18974,7 @@ Vraska the Unseen's +1. The card still waits on its -7's Assassin token.
 
 ### Tests
 
-- `tests/unit/test_delayed_trigger_recipient.py` (8) -- a creature hitting Vraska
+- `tests/unit/triggers/test_delayed_trigger_recipient.py` (8) -- a creature hitting Vraska
   is destroyed and another is not; every hitter is; a hit on another planeswalker
   is not hers; noncombat damage does not fire it; the subscription leaves with
   her and does not follow a recast; and the loader takes the scope and refuses it
@@ -19005,7 +19005,7 @@ misses every activation made before the Veil entered.
 
 ### Guarded by
 
-`tests/unit/test_loyalty_activations_this_turn.py`: counted for its player, zero,
+`tests/unit/planeswalkers/test_loyalty_activations_this_turn.py`: counted for its player, zero,
 per player, a walker that minused itself to the graveyard still counting, a
 planeswalker's `{T}` ability not counting, the condition, an unknown spelling
 refused, the end-step trigger with and without an activation and only on its
@@ -19020,7 +19020,7 @@ right for Teferi only because it was wrong for every other walker. Now
 Persistent Petitioners' copy limit), `validate_deck` asks for a creature or that sentence,
 and `verify._covered` accepts the line on a card that carries it. No shipped deck had a
 non-creature commander. Witnesses: Teferi, Temporal Archmage; Aminatou, the Fateshifter.
-Test: `tests/unit/test_can_be_commander.py`.
+Test: `tests/unit/commander/test_can_be_commander.py`.
 
 ## `look_at_top` `link` — cards exiled off the top remember who exiled them — Ashiok, Nightmare Weaver
 
@@ -19029,7 +19029,7 @@ creature card … exiled with Ashiok" onto the battlefield. `_move_found` delibe
 writes no `exiled_by` (it would strand Florian's declined cards), so nothing could name
 those cards again. `link: true` on an exile destination now writes the record, exactly
 as the `exile` op's `link` does; the loader refuses it on any other destination.
-Test: `tests/unit/test_look_at_top_link.py`.
+Test: `tests/unit/zones/test_look_at_top_link.py`.
 
 ## `cant_lose_the_game` / `cant_win_the_game` statics — Gideon of the Trials' emblem — 104.3b
 
@@ -19039,7 +19039,7 @@ opponents can't win the game", each naming its seats with `affects_player` and b
 carrying the same `condition`. `player_statics.outcome_barred_by_static` answers for
 them, and `sba.player_cant_lose` / `player_cant_win` consult it beside the op's
 turn-scoped locks, so every loss reason the op holds off is held off here too.
-Test: `tests/unit/test_cant_lose_the_game_static.py`.
+Test: `tests/unit/players/test_cant_lose_the_game_static.py`.
 
 ## `extra_loyalty_activation` — The Chain Veil's "as though none of its loyalty abilities have been activated" — 606.3
 
@@ -19048,7 +19048,7 @@ representation. `TurnLedger.extra_loyalty_activations` (oid -> count, cleared wi
 ledger) holds the grant; legality now counts the activations made and allows one plus
 the grant. The op names the walkers there as it resolves, so a walker arriving later
 keeps its single activation, and a second Veil activation is a second extra.
-Test: `tests/unit/test_extra_loyalty_activation.py`.
+Test: `tests/unit/planeswalkers/test_extra_loyalty_activation.py`.
 
 ## `grant_flash_permission` — Teferi, Time Raveler's "until your next turn, you may cast sorcery spells as though they had flash"
 
@@ -19056,7 +19056,7 @@ Test: `tests/unit/test_extra_loyalty_activation.py`.
 and a loyalty ability leaves no permanent to carry one. The op writes a
 `structs.FlashPermission` (player, card types, duration) to `GameState.flash_permissions`;
 `casting._timing_ok` reads it; it wears off in the granter's untap step (or at cleanup
-for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flash_permission.py`.
+for `this_turn`) and when they leave the game. Test: `tests/unit/casting/test_grant_flash_permission.py`.
 
 ## `free_cast_permission` `from_zone` — Tamiyo, Field Researcher's "from your hand"
 
@@ -19064,7 +19064,7 @@ for `this_turn`) and when they leave the game. Test: `tests/unit/test_grant_flas
 "from your hand" could not be said without freeing commanders and graveyard casts as
 well. `affects_spells` now accepts `from_zone: "hand"` (the only printed value); the
 cast-line builder passes the zone the spell is cast from, and a caller that names no
-zone is refused rather than freed. Test: `tests/unit/test_free_cast_from_hand.py`.
+zone is refused rather than freed. Test: `tests/unit/casting/test_free_cast_from_hand.py`.
 
 ## `enters_with_additional_counters` counted amount — Giada, Font of Hope's "for each Angel you already control" — 614.1c / 614.12
 
@@ -19079,7 +19079,7 @@ every permanent the turn ledger records as entering in the current
 group applies nothing (614.12: Giada returned together with an Angel does not grow
 it). A resolving permanent spell and a land drop now bump `event_batch` as their own
 events, so a token made while a spell waited on the stack is not mistaken for a
-simultaneous arrival. Test: `tests/unit/test_enters_with_counters_per_angel.py`.
+simultaneous arrival. Test: `tests/unit/counters/test_enters_with_counters_per_angel.py`.
 
 ## A life total that moves refreshes the statics that read it — `primitives._move_life`
 
@@ -19091,7 +19091,7 @@ was burned to 10 until some unrelated zone change or resolution happened to inva
 the cache — every existing test set the life totals and bumped by hand. The three
 writers of a life total in play (`gain_life`, `lose_life`, the damage branch of
 `damage_player`) now go through `_move_life`, which bumps. Test:
-`tests/unit/test_player_quantifier.py::TestItFollowsTheLifeTotal`.
+`tests/unit/targets/test_player_quantifier.py::TestItFollowsTheLifeTotal`.
 
 ## `replace_life_gain` `gain_addend` — "you gain that much life plus 1 instead" — Angel of Vitality
 
@@ -19105,7 +19105,7 @@ no event and gets nothing. Two Angels add 2. Against a doubler 616.1 gives the o
 the gaining player and the order shows; `gain_life` cannot ask (it runs inside combat
 damage), so every addend applies before every multiplier — the larger gain, the order
 the gaining player picks — regardless of arrival order, and the divergence is recorded
-in rules-coverage.md. Test: `tests/unit/test_life_gain_addend.py`, which also pins the
+in rules-coverage.md. Test: `tests/unit/players/test_life_gain_addend.py`, which also pins the
 Angel's other line, a static condition on its controller's own life total
 (`max_life_of: "you"`), following the life total as it moves.
 
@@ -19122,7 +19122,7 @@ requirements (`combat.block_taxed`). The card's attack half needed
 `or_planeswalkers` on `attack_tax`, so the tax also prices an attack on the
 controller's planeswalkers; Propaganda leaves it off. Both halves are gated by the
 existing static condition `exists` over `self_only` with `tapped: false` /
-`attacking: true`. Test: `tests/unit/test_block_tax.py`.
+`attacking: true`. Test: `tests/unit/combat/test_block_tax.py`.
 
 ## `searches_library` trigger — Archivist of Oghma's "whenever an opponent searches their library" — 701.19
 
@@ -19136,7 +19136,7 @@ subject, and `_actor` reads the searcher, so `controller: "opponent"` means an
 opponent searched whoever's spell asked. Empty and declined searches fire; a
 library refused by `cant_search_library` does not. A new event, so the client
 narrates it: `describeEvent` ("AI 1 searches their library") and a `beatsFor`
-beat with the shuffle sound. Test: `tests/unit/test_library_searched.py`, plus
+beat with the shuffle sound. Test: `tests/unit/triggers/test_library_searched.py`, plus
 vitest cases in `frontend/tests/labels.test.ts` and `frontend/tests/events.test.ts`.
 
 ## `shares_a_creature_type_with` — "a spell that shares a creature type with this creature" — Folk Hero — 205.3m
@@ -19154,7 +19154,7 @@ Kindred instant has its creature type and Background/Aura/Arcane never count. Th
 loader refuses anything but `"self"` in a trigger filter. Folk Hero is a
 `grant_ability` static to `{types: [Creature], is_commander: true, owner: "you"}`
 handing over a `spell_cast` trigger with `max_per_turn: 1`. Test:
-`tests/unit/test_shares_creature_type_with_source.py` (the commander's types not
+`tests/unit/targets/test_shares_creature_type_with_source.py` (the commander's types not
 Folk Hero's, per-commander partners, once each turn, an opponent's commander gets
 nothing, a stolen commander you own keeps it for its thief, Folk Hero leaving).
 
@@ -19169,7 +19169,7 @@ static's condition (one seat only: the plural specs are refused at load, and a s
 accepts `"you"`). The static value language gained `sum`, because the printed threshold
 is an offset (`life >= starting + 7`). The life total it is compared against refreshes
 the static as it moves through `primitives._move_life`, so the anthem switches the
-moment the total crosses the line. Test: `tests/unit/test_starting_life_total.py`.
+moment the total crosses the line. Test: `tests/unit/players/test_starting_life_total.py`.
 
 ## `{"attacked_by": "self"}` — "each player this creature attacked this turn" — Angel of Destiny
 
@@ -19180,7 +19180,7 @@ creature's `ATTACKS` event, which carries a new `attacked_permanent` key so an a
 a planeswalker or battle records no player (506.2). The record is dropped when the
 creature leaves the battlefield (400.7) and cleared with the ledger. The player spec
 `{"attacked_by": "self"}` reads it for the ability's source; the loader refuses any
-other subject. Test: `tests/unit/test_players_attacked_by.py`.
+other subject. Test: `tests/unit/combat/test_players_attacked_by.py`.
 
 ## `counter_placed` keyed on the putter -- `put_by: "you"` on triggers
 
@@ -19196,7 +19196,7 @@ creature, draw a card. This ability triggers only once each turn."
   `"you"` is the only value, mirroring the static.
 - "One or more" is already one event per placement; a failed match never
   queues, so an opponent's placement does not spend the once-each-turn cap.
-- `tests/unit/test_counter_placed_put_by.py` (+ `tests/data/counter_placed_put_by.cards.json`)
+- `tests/unit/counters/test_counter_placed_put_by.py` (+ `tests/data/counter_placed_put_by.cards.json`)
   -- mine fires, an opponent's (explicit `by` or their source) does not, both
   players on the event, a spell end to end, three-at-once is one trigger, the
   cap and its reset, and the loader guards.
@@ -19213,7 +19213,7 @@ at load time by the op's own `ops_player.shut_cast_zones`) and has no reader of 
 so `casting._cast_actions`, `suspend.cast_for_free` and `replacements._offer_cast`
 enforce it by the call they already make — flashback, foretell, the Citadel top, cascade
 and the command zone (opponents cannot cast their commanders). It lifts the instant its
-source leaves and honours a `condition`. Test: `tests/unit/test_static_zone_cast_lock.py`.
+source leaves and honours a `condition`. Test: `tests/unit/statics/test_static_zone_cast_lock.py`.
 
 ## `grant_protection` `from_colorless` — Giver of Runes — 702.16, 105.2c
 
@@ -19227,7 +19227,7 @@ derived characteristics on the battlefield and printed ones elsewhere. All four 
 (damage, enchant/equip, block, target) see it unchanged. The loader refuses `"C"` or
 `"colorless"` as a colour letter, the flag beside `from_everything`, a non-boolean flag,
 and the sentinel words as `from_subtypes` entries. Test:
-`tests/unit/test_protection_from_colorless.py`.
+`tests/unit/protection/test_protection_from_colorless.py`.
 
 ## `damage_life_floor` static — "damage that would reduce your life total to less than 1 reduces it to 1 instead" — Serra the Benevolent's emblem, Worship — 614
 
@@ -19242,7 +19242,7 @@ included, and `temp_effects.life_floor` — the one reader `primitives.damage_pl
 asks — now takes the highest of the timed records and the statics. A floor on the
 loss, not a prevention: `DAMAGE_DEALT` carries the whole hit and `LIFE_LOST` only
 what left. Damage only, so `lose_life` and paid life walk past it. Test:
-`tests/unit/test_damage_life_floor_static.py` — lethal damage stops at 1 with a
+`tests/unit/damage/test_damage_life_floor_static.py` — lethal damage stops at 1 with a
 creature and kills without one, the condition read at the moment of damage both
 ways round, life loss as the near miss, the seat named, Worship on the battlefield
 lifting when it leaves, and the loader's refusals.
@@ -19265,7 +19265,7 @@ lifting when it leaves, and the loader's refusals.
   (122.6a) and `source` the permanent.
 - **Unchanged.** A Saga's chapter I is still `sagas.entered`'s alone: the lore
   COUNTER_PLACED reaches no chapter comparison, so chapter I triggers once.
-- `tests/unit/test_counters_as_it_enters.py` (+ `tests/data/counters_as_it_enters.cards.json`):
+- `tests/unit/counters/test_counters_as_it_enters.py` (+ `tests/data/counters_as_it_enters.cards.json`):
   the Giada + Exemplar witness (cast and moved), the event's order, amount and
   putter, once-each-turn, printed enters-with, Doubling Season's replaced amount,
   starting loyalty with Oath of Gideon, the Saga single chapter, and the near
@@ -19289,7 +19289,7 @@ count/types/keywords, "pay N life" is `pay_life`, sacrifice/return/exile-from-ha
 discard are printed exactly when declared, and any other field fails closed. A mismatch
 falls through to the ordinary ability claimants rather than claiming.
 
-- `tests/unit/test_alternative_cost_permanent.py` (+
+- `tests/unit/costs/test_alternative_cost_permanent.py` (+
   `tests/data/alternative_cost_permanent.cards.json`) — offered with four fliers and a
   Plains, not with three (the spell is not one of them), not with tapped fliers or
   non-fliers or without the {W}; sick fliers pay; it taps exactly four and one Plains;
@@ -19319,7 +19319,7 @@ implementing keys with no witness the loader now validates a trigger filter (and
 `double_triggers` `cause_filter`, matched by the same function) against
 `triggers.TRIGGER_FILTER_KEYS` — exactly the keys the matcher reads, held in step by a
 test — and refuses the rest. The packet reference names the list as
-`trigger_filter_keys`. Test: `tests/unit/test_trigger_filter_owner.py`.
+`trigger_filter_keys`. Test: `tests/unit/triggers/test_trigger_filter_owner.py`.
 
 ## Everything a permanent enters with is one counter placement -- 122.6 / 616.1 (fix)
 
@@ -19343,13 +19343,13 @@ test — and refuses the rest. The packet reference names the list as
   "apply as normal". Under 616.1f it becomes choosable once *any* "enters with"
   has applied, not necessarily the walker's own: with Oath of Gideon, Oath (1)
   -> compleated (to 0) -> printed loyalty is a legal order, and the engine
-  takes it. `tests/unit/test_enters_with_additional_counters.py`'s three-loyalty,
+  takes it. `tests/unit/counters/test_enters_with_additional_counters.py`'s three-loyalty,
   four-life walker under the Oath now enters with 3 (it was pinned at 1, printed
   -> compleated -> Oath). No ruling addresses the pair; this is the literal reading.
 - **Divergence kept.** A placement on the battlefield (`primitives.add_counters`)
   still applies counter statics in battlefield order; only an arrival's
   counters are ordered for the controller.
-- `tests/unit/test_counters_as_it_enters.py::TestOnePlacement`: Doubling Season +
+- `tests/unit/counters/test_counters_as_it_enters.py::TestOnePlacement`: Doubling Season +
   printed-two Angel under Giada = 6; Hardened Scales + Giada alone = 2; Scales
   once on printed + Giada = 4; Scales before Season = 6 regardless of arrival
   order; Scales alone on an arrival with none = 0; Oath + Season walker = 10;
@@ -19368,7 +19368,7 @@ only when `max_affordable_x` reaches it and refuses a price with no X (a free ca
 107.3b); `game._cast` passes it to `ask_x` as `min_x`, whose options start at the
 floor (ordinal = X - floor, `min_x` in the decision context). The client's X stepper
 reads `min_x` and the verifier's life guard adds it back. Test:
-`tests/unit/test_cant_cast_mana_value.py` (+ `tests/data/cant_cast_mana_value.cards.json`).
+`tests/unit/statics/test_cant_cast_mana_value.py` (+ `tests/data/cant_cast_mana_value.cards.json`).
 
 ## A melded permanent's mana value — Brisela, Voice of Nightmares — the meld rules
 
@@ -19381,7 +19381,7 @@ its merged card, so the pool entry and the printed empty `mana_cost` are untouch
 the halves read their own values again once apart. The engine's five direct
 `mana_cost.mana_value()` reads of an object (emerge, convoke ordering, the
 total-mana-value value, target totals) now go through the property. Test:
-`tests/unit/test_meld.py::TestItsManaValue`.
+`tests/unit/faces/test_meld.py::TestItsManaValue`.
 
 ## Authoring a meld pair — Gisela, the Broken Blade + Bruna, the Fading Light → Brisela — 701.37
 

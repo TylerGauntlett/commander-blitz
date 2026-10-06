@@ -3,13 +3,27 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
+from ..characteristics import (
+    _battlefield_statics,
+    _matches_printed,
+    resolve_chosen_colors,
+    resolve_chosen_subtypes,
+)
 from ..enums import Zone
 from ..events import EventType
+from ..stack import StackItem, ability_of, announce_targets
+from ..state import new_object
+from ..structs import TriggerInstance
+from ..targeting import describe_ref, enumerate_target_tuples
+from ..triggers import fire
 from ..zones import move_object
-from . import register
-from .context import EffectContext
+from .context import EffectContext, ask_mode
+from .registry import register
+from .selectors import select_players
+from .values import evaluate_value
 
 
 def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -32,7 +46,6 @@ def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):
     ability rather than a spell, so every caller can treat "no spell here" as
     one case.
     """
-    from .values import evaluate_value
 
     if "sid" in spec:
         sid = evaluate_value(ctx, spec["sid"])
@@ -100,8 +113,6 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     in both directions: it would let you point an opponent's copy and would
     stop them pointing it themselves.
     """
-    from .selectors import select_players
-    from .values import evaluate_value
 
     state = ctx.state
     original = _spell_named_by(ctx, spec)
@@ -149,8 +160,6 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
     chosen, which is what stops a redirected copy being pointed somewhere its
     own controller never could.
     """
-    from ..targeting import describe_ref, enumerate_target_tuples
-    from .context import ask_mode
 
     if chooser is None:
         chooser = ctx.controller
@@ -202,8 +211,6 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     it keeps the original's targets, and it announces them so ward and heroic
     see it -- and none of that is obvious enough to write twice.
     """
-    from ..stack import StackItem, announce_targets
-    from ..state import new_object
 
     card = state.registry.get(original.def_id)
     obj = new_object(
@@ -243,8 +250,6 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     # written into the log and heard by nobody. Every other trigger-bearing
     # event in the engine goes through `fire`; this one was emitted before
     # anything could listen and was never moved over.
-    from ..triggers import fire
-
     fire(
         state,
         EventType.SPELL_COPIED,
@@ -290,12 +295,6 @@ def _shielded_by_a_static(state, item) -> bool:
     it is one card saying it about itself, and could never cover a spell the
     static's controller does not own.
     """
-    from ..characteristics import (
-        _battlefield_statics,
-        _matches_printed,
-        resolve_chosen_colors,
-        resolve_chosen_subtypes,
-    )
 
     card = state.registry.get(item.def_id)
     for source_obj, static in _battlefield_statics(state):
@@ -413,8 +412,6 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     state = ctx.state
     target_id = str(spec.get("target", "t1"))
     if "sid" in spec:
-        from .values import evaluate_value
-
         sids = [evaluate_value(ctx, spec["sid"])]
     else:
         sids = list(ctx.target_sids(target_id))
@@ -504,7 +501,6 @@ def op_reflexive_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     The bindings are copied at this instant, so "…exiled **this way**" still
     names the cards the earlier op recorded once the ability is on the stack.
     """
-    from ..structs import TriggerInstance
 
     state = ctx.state
     source_oid = ctx.source_oid
@@ -570,9 +566,6 @@ def op_copy_ability(ctx: EffectContext, spec: Mapping[str, Any]):
     rarely targets at its own level -- so this asks `ability_of` for the specs the
     ability actually declared.
     """
-    from dataclasses import replace
-
-    from ..stack import ability_of, announce_targets
 
     refs = ctx.targets.get(str(spec.get("target", "t1")), ())
     sids = [ref.id for ref in refs if getattr(ref, "kind", None) == "stack"]
@@ -608,8 +601,6 @@ def _choose_new_targets_for(ctx: EffectContext, original, specs, chooser: int):
     granter's list. One caller each, and the two cannot drift into disagreeing
     about which specs a copy is offered.
     """
-    from ..targeting import describe_ref, enumerate_target_tuples
-    from .context import ask_mode
 
     options = enumerate_target_tuples(
         ctx.state,

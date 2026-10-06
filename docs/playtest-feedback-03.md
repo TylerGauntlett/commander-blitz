@@ -233,7 +233,7 @@ they agree today — but nothing pins that, and a future change to the greedy
 phase could make the row hollow one land and the engine tap another. The player
 would never notice; a test would.
 
-**Try:** assert in `tests/unit/test_action_payment.py` that applying the action
+**Try:** assert in `tests/unit/mana/test_action_payment.py` that applying the action
 taps exactly the permanents `pays` named. That is a stronger contract than the
 current "agrees with `solve_payment`" and it is what the UI actually promises.
 

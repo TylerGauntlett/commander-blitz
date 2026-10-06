@@ -33,7 +33,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 
-from .images import SCRYFALL_ID
+from .schema import SCRYFALL_ID
 
 MOXFIELD_API = "https://api2.moxfield.com/v3/decks/all/{public_id}"
 HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)", "Accept": "application/json"}

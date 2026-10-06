@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING, Any
 
 from .actions import PendingDecision
 from .carddef import CardDef
+from .characteristics import chars
 from .enums import STEP_PHASE, Phase, Step, Zone
-from .events import GameEvent
+from .events import EventType, GameEvent
 from .objects import GameObject
 from .player import PlayerState
 from .rng import Rng
@@ -638,8 +639,6 @@ class GameState:
         return out
 
     def creatures(self, controller: int | None = None) -> list[GameObject]:
-        from .characteristics import chars  # local import: avoids a cycle at module load
-
         return [
             o
             for o in self.battlefield_objects(controller)
@@ -715,7 +714,6 @@ class GameState:
         tokenhood of a card reaching a graveyard are both still askable here and
         neither needed adding to a payload.
         """
-        from .events import EventType
 
         ledger = self.turn_ledger
         data = event.data
@@ -768,8 +766,6 @@ class GameState:
             # `combat_damage_types` below.
             obj = self.objects.get(data.get("oid"))
             if obj is not None:
-                from .characteristics import chars
-
                 c = chars(self, obj.oid)
                 ledger.permanents_entered.append(
                     EnteredPermanent(
@@ -812,8 +808,6 @@ class GameState:
             # every other tally is, and read off *derived* subtypes while the
             # creature is still on the battlefield -- by the time a prowl spell
             # is cast the attacker may be dead, bounced, or no longer a Faerie.
-            from .characteristics import chars
-
             attacker = data.get("source") or event.source
             if attacker is not None and attacker in self.objects:
                 ledger.combat_damage_types.update(chars(self, attacker).subtypes)

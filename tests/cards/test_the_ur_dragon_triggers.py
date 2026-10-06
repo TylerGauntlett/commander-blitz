@@ -34,6 +34,7 @@ from automtg.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     count_on_battlefield,
+    keywords,
     only_oid,
     pass_until,
 )
@@ -134,17 +135,13 @@ def connect(game, oid: int, amount: int, defender: int = 1) -> None:
     """``oid`` deals ``amount`` combat damage to a player -- the saboteur event.
 
     `damage_player` rather than a real swing, for the reason
-    `tests/unit/test_combat_damage_to_planeswalker.py` gives: the event is what
+    `tests/unit/combat/test_combat_damage_to_planeswalker.py` gives: the event is what
     the card listens to, and driving it directly keeps the position down to the
     permanents the printed sentence is about, with no blockers, no second
     attacker and no first-strike sub-step to explain an off-by-one with.
     """
     damage_player(game.state, defender, amount, oid, is_combat=True)
     settle(game)
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 class TestOldGnawbone:
@@ -499,7 +496,7 @@ class TestDracogenesis:
     Rule 601.2b's "without paying its mana cost" is a **replacement of the
     payment**, not a reduction of it, and `spell_cost_reduction` -- the nearest
     static, and the one The Ur-Dragon itself prints -- cannot stand in for it at
-    any amount: `costs.cost_reduction` clamps every reduction to the *generic*
+    any amount: `cost_reduction.cost_reduction` clamps every reduction to the *generic*
     part of a cost, so no discount ever pays a coloured pip. Rule 107.3b is the
     sharper half: a cost reduced to nothing still has an X to announce, and this
     one has X = 0.
@@ -628,7 +625,7 @@ class TestHellkiteCourser:
     of that replacement, so no position built from *this card* separates the two
     ops. What separates them is a permanent that is nobody's commander being
     sent to the command zone, which 903.9a would never do -- and that is
-    `tests/unit/test_command_zone.py::TestTheOpNamesTheZoneItself`, which has to
+    `tests/unit/commander/test_command_zone.py::TestTheOpNamesTheZoneItself`, which has to
     invent a card to say it. The tests below therefore assert the printed
     outcome and the destinations it is *not*, which is what this layer can see.
     """

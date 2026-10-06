@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_starting_life_total.py. `t_valkyrie_anthem` is Righteous Valkyrie's third line on its own: a static anthem switched by `life >= starting_life + 7`, on an enchantment so the test's creature is not also the thing being buffed by its own printed body.",
+  "_comment": "Cards for tests/unit/players/test_starting_life_total.py. `t_valkyrie_anthem` is Righteous Valkyrie's third line on its own: a static anthem switched by `life >= starting_life + 7`, on an enchantment so the test's creature is not also the thing being buffed by its own printed body.",
   "cards": [
     {
       "id": "t_valkyrie_anthem",

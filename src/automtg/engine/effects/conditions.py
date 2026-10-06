@@ -18,9 +18,12 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
+from ..characteristics import chars
 from ..enums import STEP_PHASE, Phase
 from ..errors import DslError
 from .context import EffectContext
+from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
+from .values import evaluate_value, validate_value
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..state import GameState
@@ -144,8 +147,6 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
     if not isinstance(cond, Mapping):
         raise DslError(f"unparsable condition {cond!r}")
 
-    from .values import evaluate_value
-
     if "all" in cond:
         return all(evaluate(ctx, c) for c in cond["all"])
     if "any" in cond:
@@ -153,8 +154,6 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
     if "not" in cond:
         return not evaluate(ctx, cond["not"])
     if "exists" in cond:
-        from .selectors import resolve_pool
-
         return bool(resolve_pool(ctx, cond["exists"]))
     if "two_share_a_color" in cond:
         return _two_share_a_color(ctx, cond["two_share_a_color"])
@@ -290,13 +289,9 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
             ctx.source_oid, str(cond["has_turn_flag"])
         )
     if "has_city_s_blessing" in cond:
-        from .selectors import select_players
-
         pids = select_players(ctx, cond["has_city_s_blessing"])
         return any(ctx.state.players[p].has_city_s_blessing for p in pids)
     if "is_monarch" in cond:
-        from .selectors import select_players
-
         # `any`, matching `has_city_s_blessing` above -- and unlike the blessing
         # it can never be true of two of them, so "if an opponent is the monarch"
         # over `each_opponent` is exact rather than approximate.
@@ -305,8 +300,6 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
     if "no_monarch" in cond:
         return (ctx.state.monarch is None) == bool(cond["no_monarch"])
     if "is_active_player" in cond:
-        from .selectors import select_players
-
         # "…during **their** turn." A player spec rather than a fixed seat,
         # which is the whole of the difference from `is_your_turn`: that one
         # compares the active player to `ctx.controller`, and a trigger is
@@ -435,8 +428,6 @@ def validate_condition(cond: Any, where: str) -> None:
     unknown = set(cond) - CONDITION_KEYS
     if unknown:
         raise DslError(f"{where}: unknown condition keys {sorted(unknown)}")
-    from .selectors import validate_selector
-    from .values import validate_value
 
     for key in ("all", "any"):
         if key in cond:
@@ -462,8 +453,6 @@ def validate_condition(cond: Any, where: str) -> None:
     if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):
         raise DslError(f"{where}.no_monarch: must be true or false")
     if "is_monarch" in cond:
-        from .selectors import PLAYER_SPEC_NAMES
-
         who = cond["is_monarch"]
         if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
             raise DslError(
@@ -471,8 +460,6 @@ def validate_condition(cond: Any, where: str) -> None:
                 f"or a target/binding, got {who!r}"
             )
     if "is_active_player" in cond:
-        from .selectors import PLAYER_SPEC_NAMES
-
         who = cond["is_active_player"]
         # `true` is the tempting miss and the reason this is not defaulted:
         # `select_players` refuses a bool outright, so the card would raise at
@@ -563,7 +550,6 @@ def _two_share_a_color(ctx: EffectContext, selector: Mapping[str, Any]) -> bool:
     graveyard, so it is the printed face, which is what "cards ... milled this
     way" means.
     """
-    from .selectors import resolve_pool
 
     seen: list[frozenset[str]] = []
     for oid in resolve_pool(ctx, selector):
@@ -571,8 +557,6 @@ def _two_share_a_color(ctx: EffectContext, selector: Mapping[str, Any]) -> bool:
         if obj is None:
             continue
         if obj.on_battlefield:
-            from ..characteristics import chars
-
             colors = frozenset(chars(ctx.state, oid).colors)
         else:
             colors = frozenset(ctx.state.card_of(obj).colors)

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the filtered cast prohibition test (tests/unit/test_cant_cast_spells_filter.py). `t_noncreature_lock_walker` is Narset Transcendent's -9 alone: an emblem with \"Your opponents can't cast noncreature spells.\" -- `cant_cast_spells` narrowed by an `affects_spells` filter. `t_noncreature_lock` is the same line on a permanent, so the lock can be seen to lift when its source leaves.",
+  "_comment": "Cards that exist only for the filtered cast prohibition test (tests/unit/statics/test_cant_cast_spells_filter.py). `t_noncreature_lock_walker` is Narset Transcendent's -9 alone: an emblem with \"Your opponents can't cast noncreature spells.\" -- `cant_cast_spells` narrowed by an `affects_spells` filter. `t_noncreature_lock` is the same line on a permanent, so the lock can be seen to lift when its source leaves.",
   "cards": [
     {
       "id": "t_noncreature_lock_walker",

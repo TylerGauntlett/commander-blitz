@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_alternative_cost_permanent.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sky_blade` is Sephara, Sky's Blade's shape: a creature whose `alternative_cost` is {W} plus tapping four untapped creatures you control with flying. `t_sky_flier` is a vanilla white 1/1 flier to tap for it; `t_ground_bear` is a vanilla creature without flying that must not pay.",
+  "_comment": "Cards that exist only for tests/unit/costs/test_alternative_cost_permanent.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sky_blade` is Sephara, Sky's Blade's shape: a creature whose `alternative_cost` is {W} plus tapping four untapped creatures you control with flying. `t_sky_flier` is a vanilla white 1/1 flier to tap for it; `t_ground_bear` is a vanilla creature without flying that must not pay.",
   "cards": [
     {
       "id": "t_sky_blade",

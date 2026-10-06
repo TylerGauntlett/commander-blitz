@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from automtg.engine.characteristics import chars
+from automtg.engine.costs import can_pay_mana, land_drops_available
 from automtg.engine.enums import COLOR_ORDER, Keyword, Step
 from automtg.engine.player import COMMANDER_DAMAGE_THRESHOLD, STARTING_LIFE
 
@@ -118,8 +119,6 @@ def encode(state: GameState, seat: int, vocab: CardVocabulary) -> dict[str, np.n
 
 
 def _encode_global(state: GameState, seat: int, out: np.ndarray, cursor: int) -> int:
-    from automtg.engine.costs import land_drops_available
-
     out[cursor] = min(state.turn / 60.0, 1.0)
     cursor += 1
     out[cursor + int(state.step)] = 1.0
@@ -230,8 +229,6 @@ def _encode_hand(
     cursor: int,
     vocab: CardVocabulary,
 ) -> int:
-    from automtg.engine.costs import can_pay_mana
-
     hand = sorted(state.players[seat].hand, key=lambda oid: _hand_key(state, oid))[:HAND_CAP]
     for slot, oid in enumerate(hand):
         card = state.card(oid)

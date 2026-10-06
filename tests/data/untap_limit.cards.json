@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the untap-cap test (tests/unit/test_untap_limit.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_winter_orb` is Winter Orb as printed -- a cap of one land, gated on the Orb itself being untapped, which is how the card is beaten. `t_winter_orb_ungated` drops the self-untapped condition so the cap can be measured without also tapping the source, and `t_stasis_like` is the harsher card Winter Orb is NOT: a skip_untap_step version that holds every land down, kept here so the difference between a cap and a hold is asserted rather than described.",
+  "_comment": "Cards that exist only for the untap-cap test (tests/unit/turn/test_untap_limit.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_winter_orb` is Winter Orb as printed -- a cap of one land, gated on the Orb itself being untapped, which is how the card is beaten. `t_winter_orb_ungated` drops the self-untapped condition so the cap can be measured without also tapping the source, and `t_stasis_like` is the harsher card Winter Orb is NOT: a skip_untap_step version that holds every land down, kept here so the difference between a cap and a hold is asserted rather than described.",
   "cards": [
     {
       "id": "t_winter_orb",

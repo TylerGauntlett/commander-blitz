@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the prepared test (tests/unit/test_prepared.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_emeritus` is Emeritus of Woe // Demonic Tutor: it enters prepared, and while it is you may cast a copy of `t_tutor`. `t_unprepared` is the counterfactual -- the same creature without the entering clause. `t_tutor_two` exists only because a spell face belongs to exactly one card, the way a second face does.",
+  "_comment": "Cards that exist only for the prepared test (tests/unit/faces/test_prepared.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_emeritus` is Emeritus of Woe // Demonic Tutor: it enters prepared, and while it is you may cast a copy of `t_tutor`. `t_unprepared` is the counterfactual -- the same creature without the entering clause. `t_tutor_two` exists only because a spell face belongs to exactly one card, the way a second face does.",
   "cards": [
     {
       "id": "t_emeritus",

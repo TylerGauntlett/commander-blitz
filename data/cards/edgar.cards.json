@@ -941,24 +941,44 @@
             "filter": {
               "subtypes": [
                 "Vampire"
-              ],
-              "exclude_self": true
+              ]
             }
           },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              },
+              "count": 1
+            }
+          ],
           "effects": [
             {
-              "op": "lose_life",
-              "player": "each_opponent",
-              "amount": {
-                "const": 2
-              }
-            },
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 2
-              }
+              "op": "may",
+              "prompt": "Pay {B} to drain 2?",
+              "pay": {
+                "mana": "{B}"
+              },
+              "effects": [
+                {
+                  "op": "lose_life",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "amount": {
+                    "const": 2
+                  }
+                },
+                {
+                  "op": "gain_life",
+                  "player": "you",
+                  "amount": {
+                    "const": 2
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1027,8 +1047,9 @@
             "event": "dies",
             "controller": "you",
             "filter": {
-              "types": [
-                "Creature"
+              "any_types": [
+                "Creature",
+                "Planeswalker"
               ]
             }
           },
@@ -1199,13 +1220,20 @@
           "kind": "triggered",
           "text": "Whenever one or more nontoken Vampires you control attack, create a 1/1 white Vampire creature token with lifelink.",
           "trigger": {
-            "event": "attacks",
-            "source": "self"
+            "event": "you_attack",
+            "controller": "you",
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": ["Vampire"],
+                "is_token": false
+              }
+            }
           },
           "effects": [
             {
               "op": "create_token",
-              "token": "vampire_1_1_b_lifelink",
+              "token": "vampire_1_1_w_lifelink",
               "amount": {
                 "const": 1
               },
@@ -1242,8 +1270,7 @@
             "filter": {
               "types": [
                 "Creature"
-              ],
-              "exclude_self": true
+              ]
             }
           },
           "targets": [

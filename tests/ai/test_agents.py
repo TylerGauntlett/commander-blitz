@@ -75,7 +75,8 @@ class TestHeuristicBehaviour:
     def test_it_never_points_removal_at_its_own_creature(self):
         """A scoring bug here is invisible in win rates but obvious in play."""
         from automtg.cards.registry import CardRegistry
-        from tests.conftest import CARD_DIR, TEST_CARD_DIR, GameBuilder
+        from automtg.engine.sandbox import GameBuilder
+        from tests.conftest import CARD_DIR, TEST_CARD_DIR
 
         paths = sorted(CARD_DIR.glob("*.cards.json")) + sorted(
             TEST_CARD_DIR.glob("*.cards.json")
@@ -93,7 +94,8 @@ class TestHeuristicBehaviour:
 
     def test_it_blocks_when_blocking_is_free(self):
         from automtg.cards.registry import CardRegistry
-        from tests.conftest import CARD_DIR, TEST_CARD_DIR, GameBuilder
+        from automtg.engine.sandbox import GameBuilder
+        from tests.conftest import CARD_DIR, TEST_CARD_DIR
 
         paths = sorted(CARD_DIR.glob("*.cards.json")) + sorted(
             TEST_CARD_DIR.glob("*.cards.json")

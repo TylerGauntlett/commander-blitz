@@ -93036,18 +93036,12 @@
                       },
                       "counter": "+1/+1",
                       "objects": {
-                        "chooser": "controller",
-                        "controller": "you",
-                        "count": 1,
-                        "types": [
-                          "Creature"
-                        ],
-                        "zone": "battlefield"
+                        "target": "t1"
                       },
                       "op": "add_counters"
                     }
                   ],
-                  "label": "Put a +1/+1 counter on a creature"
+                  "label": "Put a +1/+1 counter on target creature."
                 },
                 {
                   "effects": [
@@ -93066,6 +93060,19 @@
             }
           ],
           "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
           "text": "Landfall — Whenever a land you control enters, choose one — • Put a +1/+1 counter on target creature. • You gain 2 life.",
           "trigger": {
             "controller": "you",

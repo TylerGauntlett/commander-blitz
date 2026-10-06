@@ -44,16 +44,20 @@ to stop, and it is load bearing rather than scenery.
 from __future__ import annotations
 
 from automtg.engine import legality
-from automtg.engine.characteristics import chars, player_cant_cast_spells
-from automtg.engine.costs import cost_reduction
+from automtg.engine.characteristics import chars
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.player_statics import player_cant_activate
+from automtg.engine.player_statics import player_cant_activate, player_cant_cast_spells
 from tests.conftest import (
     _default_answer,
+    activations,
     find_action,
+    keywords,
     oids_of,
     only_oid,
     pass_until,
+    pt,
+    settle_completely,
 )
 
 PLAINS = "plains"
@@ -89,24 +93,6 @@ MARKER = "secluded_steppe"  # a land that is nothing else, for spotting a reorde
 # ----------------------------------------------------------------------
 # helpers
 # ----------------------------------------------------------------------
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nothing is waiting to go on it.
-
-    `not state.stack` alone is not enough: a trigger that asks its question
-    before resolving leaves both the stack and the queue empty with its decision
-    still pending, and a test that stopped there would report that the card did
-    nothing.
-    """
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack
-            and not g.state.pending_triggers
-            and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
 
 
 def answer(game, *, yes: bool = False, pick: bool = False, limit: int = 200) -> None:
@@ -183,16 +169,6 @@ def offers(game, pid: int, kind: ActionKind) -> set[str]:
     }
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def attack_with(game, oids, defender: int = 1) -> None:
     """Swing ``oids`` at ``defender`` and close the declaration."""
     pass_until(
@@ -214,15 +190,6 @@ def attack_with(game, oids, defender: int = 1) -> None:
 
 def tokens(game, def_id: str, pid: int = 0) -> list:
     return [o for o in game.state.battlefield_objects(pid) if o.def_id == def_id and o.is_token]
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return c.power, c.toughness
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 def zone_ids(game, pid: int, zone: str) -> list[str]:
@@ -336,7 +303,7 @@ class TestMyrelShieldOfArgive:
         )
         myrel = only_oid(game, "myrel_shield_of_argive")
         attack_with(game, [myrel])
-        settle(game)
+        settle_completely(game)
         return game, myrel
 
     def test_it_counts_itself(self, builder):
@@ -705,7 +672,7 @@ class TestValiantVeteran:
         actions = activations(game, veteran)
         assert actions, "the graveyard ability was not offered"
         game.apply(actions[0])
-        settle(game)
+        settle_completely(game)
         return veteran
 
     def test_the_graveyard_ability_counters_every_soldier_you_control(self, builder):
@@ -1202,7 +1169,7 @@ class TestCourtStreetDenizen:
         )
         bear = only_oid(game, BEAR, 1)
         attack_with(game, [only_oid(game, "myrel_shield_of_argive")])
-        settle(game)
+        settle_completely(game)
 
         assert len(tokens(game, COLORLESS_TOKEN)) == 2, "the premise: two arrived"
         assert not game.state.objects[bear].tapped
@@ -1266,7 +1233,7 @@ class TestMemorialToGlory:
                 and game.state.objects[a.source].def_id == "memorial_to_glory"
             )
         )
-        settle(game)
+        settle_completely(game)
         memorial = only_oid(game, "memorial_to_glory")
 
         assert game.state.objects[memorial].tapped
@@ -1299,7 +1266,7 @@ class TestMemorialToGlory:
         actions = activations(game, memorial)
         assert len(actions) == 1, "the mana ability is the solver's, not the action list's"
         game.apply(actions[0])
-        settle(game)
+        settle_completely(game)
 
         assert len(tokens(game, WHITE_TOKEN)) == 2
         assert game.state.objects[memorial].zone is Zone.GRAVEYARD

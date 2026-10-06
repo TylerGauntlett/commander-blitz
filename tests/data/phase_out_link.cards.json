@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the linked-phase-out test (tests/unit/test_phase_out_until_leaves.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_oubliette` is Oubliette's shape -- phase out until this leaves, and tap on the way back. `t_loose_oubliette` writes the same card WITHOUT the link, which is the card the engine could already say and the one the untap step hands back after a turn; the pair is what pins that the link is doing the work. `t_untapped_oubliette` drops the `tapped` rider only.",
+  "_comment": "Cards that exist only for the linked-phase-out test (tests/unit/keywords/test_phase_out_until_leaves.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_oubliette` is Oubliette's shape -- phase out until this leaves, and tap on the way back. `t_loose_oubliette` writes the same card WITHOUT the link, which is the card the engine could already say and the one the untap step hands back after a turn; the pair is what pins that the link is doing the work. `t_untapped_oubliette` drops the `tapped` rider only.",
   "cards": [
     {
       "id": "t_oubliette",

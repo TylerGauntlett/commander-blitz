@@ -22,7 +22,9 @@ touches ``data/cards/`` or ``data/decks/``.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -112,8 +114,6 @@ def deck_id_for(public_id: str) -> str:
     re-import overwrites in place, which is the whole of the collision handling
     this needs.
     """
-    import hashlib
-    import re
 
     slug = public_id.lower()
     if not re.fullmatch(r"[a-z0-9_-]{1,32}", slug):

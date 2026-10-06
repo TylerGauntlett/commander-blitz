@@ -140,6 +140,18 @@ interface UiState {
    */
   logOverlay: boolean;
   /**
+   * The gear's menu in the tool strip is open.
+   *
+   * IN THE STORE AND NOT IN `SettingsMenu`, for the reason `viewingPid` is: the
+   * unwind on `B` has to know. The menu traps the ring while it is up (it is a
+   * `data-modal-root`), so a `B` that could not close it left a pad player
+   * inside a box whose every direction is a wall -- and the `B` went on down
+   * `Table`'s ladder instead, cancelling whatever was underneath the menu.
+   * `SettingsMenu` puts it back to `false` when it unmounts, so leaving a game
+   * with the menu open does not open it on the next one.
+   */
+  settingsOpen: boolean;
+  /**
    * Whose board is drawn in the viewer's lane area, or `null` for your own.
    *
    * At 1280x800 an opponent is a 96px seat and their cards are not drawn at
@@ -183,6 +195,7 @@ interface UiState {
   openStackGroup: (key: string | null) => void;
   toggleLog: () => void;
   toggleLogOverlay: () => void;
+  setSettingsOpen: (open: boolean) => void;
   /** Look at a seat's board, or `null` to come back to your own. */
   setViewing: (pid: number | null) => void;
   setPeek: (peek: PeekTarget | null) => void;
@@ -201,6 +214,7 @@ export const useUiStore = create<UiState>((set) => ({
   seatImages: null,
   logOpen: true,
   logOverlay: false,
+  settingsOpen: false,
   viewingPid: null,
   peek: null,
   error: null,
@@ -244,6 +258,7 @@ export const useUiStore = create<UiState>((set) => ({
   openStackGroup: (key) => set({ openStack: key }),
   toggleLog: () => set((s) => ({ logOpen: !s.logOpen })),
   toggleLogOverlay: () => set((s) => ({ logOverlay: !s.logOverlay })),
+  setSettingsOpen: (open) => set({ settingsOpen: open }),
   setViewing: (pid) => set({ viewingPid: pid }),
   setImages: (images, seatImages = null) => set({ images, seatImages }),
   setPeek: (peek) => set({ peek }),

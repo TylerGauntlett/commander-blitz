@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_cast_before_step.py. t_cbs_berserk carries cast_before_step 'combat_damage' on an instant -- Berserk's first line, with a bare draw as its payload so the tests measure the window and not the effect. t_cbs_free is the identical instant WITHOUT the restriction, kept live so every 'cannot be cast' assertion is measured against a card that can.",
+  "_comment": "Shapes for tests/unit/casting/test_cast_before_step.py. t_cbs_berserk carries cast_before_step 'combat_damage' on an instant -- Berserk's first line, with a bare draw as its payload so the tests measure the window and not the effect. t_cbs_free is the identical instant WITHOUT the restriction, kept live so every 'cannot be cast' assertion is measured against a card that can.",
   "cards": [
     {
       "id": "t_cbs_berserk",

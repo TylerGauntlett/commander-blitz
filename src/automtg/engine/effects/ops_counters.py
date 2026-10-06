@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Mapping
 from typing import Any
 
+from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
+from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
     attach,
@@ -16,12 +19,13 @@ from ..primitives import (
     transform,
     untap_permanent,
 )
+from ..structs import StackItem
 from ..zones import exile, move_object
-from . import register
 from .board_helpers import (
     _players,
 )
-from .context import EffectContext
+from .context import EffectContext, ask_yes_no
+from .registry import register
 from .selectors import (
     choose_objects,
     pick_from_pool,
@@ -241,8 +245,6 @@ def op_meld(ctx: EffectContext, spec: Mapping[str, Any]):
     # Synthesised rather than the pool entry itself, for one field: a melded
     # permanent's mana value is the total of its front faces' (Brisela's is
     # 11), and the melded card prints no mana cost to carry it.
-    import dataclasses
-
     partner_card = state.registry.get(state.objects[partner].def_id)
     melded.merged_card = dataclasses.replace(
         state.registry.get(card.melds_into),
@@ -616,11 +618,6 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     card. Cipher does not set it -- its own "may" is the reflexive trigger that
     got here -- so nothing gained a prompt.
     """
-    from ..effects.ops_stack import put_copy_on_stack
-    from ..player_statics import player_cant_cast_while_resolving
-    from ..structs import StackItem
-    from .context import ask_yes_no
-    from .selectors import resolve_pool
 
     if "objects" in spec:
         oids = resolve_pool(ctx, spec["objects"])

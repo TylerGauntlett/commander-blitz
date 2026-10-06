@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the play_exiled `as` test (tests/unit/test_cast_this_way.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_kefka_bolt` is Kefka's shape: exile from each opponent's graveyard, cast any number of them free, then make each owner lose life equal to what was cast. `t_kefka_exiled` is the near-miss the DSL could already write, reading `exiled_with: self` instead, and is asserted to be the WRONG set.",
+  "_comment": "Cards that exist only for the play_exiled `as` test (tests/unit/casting/test_cast_this_way.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_kefka_bolt` is Kefka's shape: exile from each opponent's graveyard, cast any number of them free, then make each owner lose life equal to what was cast. `t_kefka_exiled` is the near-miss the DSL could already write, reading `exiled_with: self` instead, and is asserted to be the WRONG set.",
   "cards": [
     {
       "id": "t_kefka_bolt",

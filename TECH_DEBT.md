@@ -1,24 +1,22 @@
 # Tech Debt
 
-**Measured at:** `adf05b8e` (2026-10-06).
+**Measured at:** the `tech-debt-sweep` branch (2026-10-06), after every S and M item
+from the `adf05b8e` list was cleared.
 
 This is a working list: every item here is **open**. When you fix one, delete its entry
 in the same PR. Each item says why it matters, where to look, and what fixing it looks
 like. Sizes: **S** is an afternoon, **M** a focused PR, **L** a multi-PR effort.
 
 **Retired IDs.** Code and tests still cite IDs from the 2026-09-04 audit that are now
-resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`, `NF-01`,
-`UV-*` and others). Their write-ups are in the last version of the old report:
-`git show ab86d46f:TECH_DEBT.md`. IDs that are still open keep their old names below
-(`FB-02`, `FB-12`, `FB-13`, `FT-04`, `FT-07`, `OF-01`, `SD-01`).
+resolved (`CG-01`–`CG-06`, `FT-03`–`FT-07`, `FB-*`, `DC-01`, `LP-*`, `NF-01`, `UV-*` and
+others). Their write-ups are in the last version of the old report:
+`git show ab86d46f:TECH_DEBT.md`. `OF-01` is the one old ID still open.
 
 ## Suggested order
 
-1. **Cheap hygiene, no risk:** HY-01, HY-02, HY-03, SD-01, SD-03, CD-04, CD-05.
-2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), RS-02 (CI minutes),
-   CD-02 (token path).
-3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
-4. **Defects:** FB-02, FB-12, FB-13, FT-04, FT-07, UI-01, one PR each.
+1. **Cheap:** UI-02 (one accessibility pass).
+2. **Structural:** CD-01 (one card layer), OF-01.
+3. **Decision:** RS-01 (rewrite history or not).
 
 ---
 
@@ -75,78 +73,20 @@ expectations that were recorded against the old board.
 Keep `tokens.cards.json` hand-written (CD-02). `test_golden_pool` hashes the compiled
 cards sorted by id, so moving a card between files does not change the hash.
 
-### CD-02 · Tokens have no documented path — **S**
-
-`tokens.cards.json` (87 tokens) is edited by hand under an `/extend-dsl` banner (for
-example `02138ed9`, the Forest Tentacle), and none of the three skills says so. A
-packet tells its worker to file a missing token as a gap record with `kind: "token"`
-(`authoring/packet.py:576-587`), but `"token"` is not in `scripts/report_gaps.py`'s
-`KINDS`. Three tokens are referenced by no card: `knight_2_2_w_vigilance`,
-`kraken_8_8_u` and `vampire_1_1_bw`.
-
-**Fix:** write the token step into `.claude/skills/extend-dsl/SKILL.md`, add `token` to
-`KINDS`, and delete or justify the three unused tokens.
-
-### CD-03 · `data/authoring/answers/` is a second source of truth — **S**
-
-742 of the 743 answer files are for cards that are already collected. Every
-`--collect` re-verifies all of them and rewrites them into `templates.cards.json`
-(`author_cards.py:447,492`). A hand fix to a collected card in `templates.cards.json` is
-therefore reverted by the next collect, silently. The same applies to packets: 755 of
-836 (29 MB, committed) are for cards that are done.
-
-**Fix:** delete, or move to an archive, the answer and packet for each card on a
-successful collect. Then `answers/` holds only work in progress.
-
-### CD-04 · Card docs that contradict the workflow — **S**
-
-- **"Promoting one to hand-written"** (`data/cards/auto/README.md`, last section, and
-  `docs/card-authoring.md:374-383`). This contradicts the author-cards rule "never
-  hand-edit `data/cards/`", and it breaks: the card's leftover answer is rejected by
-  gate 6 on the next collect (see CD-03).
-- **Present-tense claims that hand-written `oracle_text` is a paraphrase**
-  (`scripts/audit_cards.py:17-21`, `authoring/fidelity.py:10`). That is now enforced
-  false by `test_its_oracle_text_is_what_it_prints`.
-- **Stale counts:**
-  - `audit_cards.py:154` says 235 cards; `:284` says 179 of 213.
-  - `docs/deck-import.md:4` says 219 hand-written; there are 192.
-  - `docs/decks.md:114` says 60 tokens; there are 87.
-- **Prose describing the deficit baseline as live:** `docs/rules-coverage.md:348-372`
-  and `:586-589`, `docs/card-authoring.md:385-436`, `docs/card-dsl.md:53-65`.
-
-### CD-05 · Dead keys in `tests/cards/expectations.json` — **S**
-
-The file has 12 keys that are not hand-written cards:
-- **6 were superseded into `auto/`:** `adanto_vanguard`, `bloodline_keeper`,
-  `mulldrifter`, `reconnaissance_mission`, `savai_triome`, `simic_sky_swallower`. Each is
-  weaker than the auto expectation, and `test_every_card_works.py:320` still reads it.
-- **1 is now a back face:** `lord_of_lineage`.
-- **5 exist nowhere:** `aetherling_serpent`, `hydra_broodmaster`, `kiora_growth_surge`,
-  `kraken_hatchling_swarm`, `overrun_lite`.
-
-Unlike `test_auto_cards.py:109`, the hand-written side has no orphan check. **Fix:**
-delete the 12 and add the check, or fold this into CD-01.
-
-### CD-06 · Per-deck test gaps — **M**
-
-The per-deck `tests/cards/test_<deck>_deck.py` files are the layer that catches cards
-with the right vocabulary but the wrong shape (gate 5's expectations are often just
-`{"zone": "battlefield"}`). Three gaps:
-- `vivi` has no `_import.py`.
-- `lucy_maclean` has no `_deck.py`.
-- The four precons (`aesi`, `edgar`, `isperia`, `zurgo`) have neither.
-
 ---
 
 ## Repository size and CI cost
 
-### RS-01 · About 400 MB of history, mostly regenerated data — **M**
+### RS-01 · About 395 MB of history — **decision**
 
-The pack is 393 MB. The old comment on `fetch-depth: 1` in
-`.github/workflows/deploy.yml` still says ~130 MB. The weight comes from:
+The working-tree causes are settled: packets left git (`.gitignore`) and collect now
+retires them; `queue.json` stays, because it records why each card failed and cannot
+be regenerated; `cards.sqlite` stays committed, because CI cannot rebuild it
+deterministically (its input is a dated, gitignored Scryfall dump) and Git LFS
+bandwidth on the Free plan would cost more than it saves. What is left is the
+history itself, and rewriting it is a separate, explicit decision.
 
-| File | Size | Versions in history |
-|---|---|---|
+---|---|---|
 | `data/authoring/queue.json` | 11 MB | 365 (touched by 242 of 673 commits) |
 | `data/catalog/cards.sqlite` | 15.7 MB, binary | 83 |
 | `data/cards/auto/templates.cards.json` | — | 364 |
@@ -159,39 +99,24 @@ The pack is 393 MB. The old comment on `fetch-depth: 1` in
 
 Rewriting history is a separate, explicit decision.
 
-### RS-02 · CI spends minutes it does not need to — **M**
-
-The repo is on the Free plan, and Actions minutes are the binding limit. Today:
-- A PR starts 12 runners: lint, python, sim, frontend, 7 e2e legs and the gate. Each
-  one re-runs `pip install -e .[dev]`, and the frontend and e2e jobs also run `npm ci`
-  and install Chromium.
-- The push to `main` after a merge runs lint, python, sim and frontend again on code
-  the PR already proved.
-- There is no `paths:` filter, so a docs-only or `data/authoring`-only change runs
-  everything.
-
-**Fix:** add `paths-ignore` for docs and authoring artifacts, skip the main-branch
-re-test when the merge commit's tree matches the PR head's, and cache the venv and
-`node_modules`.
-
 ---
 
 ## Code structure
 
 ### OF-01 · Oversized modules and functions — **L**
 
-28 modules in `src/` are over 1,000 lines, and 8 are over 2,000:
+27 modules in `src/` are over 1,000 lines, and 8 are over 2,000:
 
 | Module | Lines |
 |---|---|
-| `cards/loader/__init__.py` | 4,235 |
-| `cards/loader/effects.py` | 2,750 |
-| `engine/characteristics.py` | 2,417 |
-| `engine/player_statics.py` | 2,239 |
-| `engine/costs.py` | 2,193 |
-| `engine/primitives.py` | 2,111 |
-| `engine/effects/ops_cards.py` | 2,109 |
-| `engine/triggers.py` | 2,092 |
+| `cards/loader/__init__.py` | 4,214 |
+| `cards/loader/effects.py` | 2,746 |
+| `engine/characteristics.py` | 2,390 |
+| `engine/player_statics.py` | 2,238 |
+| `engine/costs.py` | 2,159 |
+| `engine/primitives.py` | 2,039 |
+| `engine/effects/ops_cards.py` | 2,095 |
+| `engine/triggers.py` | 2,062 |
 
 The September splits brought every file under 2,000 lines. The DSL work since has
 pushed eight back over.
@@ -211,154 +136,30 @@ The functions matter more than the files:
 `_validate_effect`.
 
 **Fix:** a per-op validator registry, like the effect-op `register()` the engine
-already uses. **Before you start:** the golden pool pins only cards that load, so first
-pin the error messages invalid cards get, or the move will change them without anyone
-noticing.
-
-### ST-01 · The September split's re-export shims are the only import path — **M**
-
-- **`engine/characteristics.py:2332-2379`** re-exports 44 names from
-  `player_statics`, imported at the bottom of the file "so every `from
-  automtg.engine.characteristics import ...` keeps working". At least ten engine
-  modules still import them through `characteristics`.
-- **`cards/loader/__init__.py:104`** re-exports private names (`_validate_effect`,
-  `_compile_target` and more). There are 365 `from automtg.cards.loader import` sites,
-  and none of them imports from a `loader.*` submodule.
-- **`tests/conftest.py`** re-exports `GameBuilder` the same way.
-
-These shims account for most of the growth in `# noqa`: 36 now, 22 of them `F401`, up
-from 22 in total a month ago. There are also 21 `biome-ignore`s in the frontend.
-
-**Fix:** point the callers at the real modules, mechanically, then delete the shims.
-
-### ST-02 · 433 function-local imports — **M**
-
-56 of 95 modules import inside functions; the most are in `engine/game.py` (37),
-`costs.py` (30), `triggers.py` (27) and `stack.py` (21). `pyproject.toml` also gives
-`effects/__init__.py` and `characteristics.py` E402 exemptions. Both are workarounds
-for import cycles.
-
-**Fix:** map the cycle graph first. Most cycles probably break by moving shared types
-into `structs.py`, or helpers out of `game.py`.
-
-### ST-03 · Test helpers copied file by file — **M**
-
-- **221 test files define their own `board(`**, 24 of them with the identical
-  `board(builder)` signature. **120 define `_card(`.** `tests/conftest.py` has a
-  `builder` fixture and some action helpers, but nothing for building a board.
-- **`tests/unit/` is one flat directory of 537 files.**
-- **18 test files are over 800 lines**, the largest `test_bard_king_of_dale_deck.py`
-  at 2,376. The Myrel deck alone has four files over 1,400.
-
-**Fix:** a shared board helper in `conftest.py` or `automtg.engine.sandbox`, then
-subdirectories in `tests/unit/` by mechanic.
-
-### ST-04 · Large frontend files — **M**
-
-| File | Lines |
-|---|---|
-| `components/game/Table.tsx` | 1,361 |
-| `testing/scenarios.ts` | 1,105 |
-| `Table.stories.tsx` | 1,104 |
-| `input/pad.ts` | 983 |
-| `logic/events.ts` | 924 |
-
-Stylesheets: `board.css` 2,343, `handheld.css` 1,855, `lobby.css` 1,756 and `ui.css`
-1,693. `handheld.css` is mostly overrides of the other three, so a token or
-container-query approach would shrink both sides.
+already uses (now in `engine/effects/registry.py`). **Before you start:** the golden pool
+pins only cards that load. About 318 `raises(DslError, match=...)` tests pin many of the
+error messages invalid cards get; check that the ops you move are among them, or pin
+them first.
 
 ---
 
-## Open defects
+## Accessibility
 
-These are known bugs, left open by decision. Each one is pinned or documented at its
-code. Fix them in their own PRs.
+### UI-02 · Roles and ARIA that biome 2 flags, suppressed with reasons — **S**
 
-| ID | Defect | Where | Pinned by |
-|---|---|---|---|
-| FB-02 | Action ids are positional and unversioned (`a{index}-{kind}`), so a click against a stale action list reads as invalid (`400: unknown action id`) | `server/sessions.py:240-241` | — |
-| FB-12 | Settings popover is unreachable or escapable by the controller: there is no `data-modal-root` and no `B` binding | `components/game/SettingsMenu.tsx:4-9` | the comment there |
-| FB-13 | The commander shows "Ready" only while the pointer is over the orb | `components/game/CommandZone.tsx` | `frontend/tests/commandZone.test.tsx:218` (`it.fails`) |
-| FT-04 | The viewer's battlefield bands drift 9–41px as permanents enter, against a 6px budget | `frontend/e2e/layout.spec.ts:279` | conditional `test.fail` |
-| FT-07 | Screen changes fade out, then fade in (`AnimatePresence mode="wait"`), so returning to a game is slow. `82900ae7` removed the blank frame but not the wait | `App.tsx:113`, `screens/GameRoute.tsx:133` | — |
-| UI-01 | The GameOverScreen subtitle `.over__sub` renders at 14px on the compact layout, under the 16px floor | `styles/ui.css:1271`; missing from the floor list at `styles/handheld.css:1661-1662` | `GameOverScreen.stories.tsx:125-128` |
+The biome 2 upgrade surfaced real accessibility findings, each now carrying a
+`biome-ignore` that says why it was not fixed in a refactor:
 
----
+- **`useAriaPropsSupportedByRole`:** labelled readouts with no role (`CardFace`,
+  `CardPreview`, `CardStack`, `OpeningHand`, `ReadyTrack`, and file-wide in
+  `OpponentSeat`). The fix is a role (`img`, `group`, `status`...), which changes what
+  a screen reader announces.
+- **The settings menu's mute item** uses `aria-pressed`. The right shape is
+  `menuitemcheckbox` with `aria-checked`; `e2e/action-panel.spec.ts` reads
+  `aria-pressed` and changes with it.
+- **`noStaticElementInteractions`:** pointer-only hover affordances on `HandFan`,
+  `OpponentSeat`, `PlayerOrb`, `HomeScreen` and the `Table` root. They are not the
+  keyboard or pad path (the ring is), but they want a decision rather than a comment.
 
-## Docs, hygiene, environment
-
-### SD-01 · `docs/testing.md` counts are stale again — **S**
-
-Every row is wrong:
-
-| Suite | Doc says | Actual |
-|---|---|---|
-| `tests/unit/` | 4,630 | 8,055 |
-| `tests/cards/` | 10,858 | 14,330 |
-| `tests/server/` | 303 | 352 |
-| `frontend/tests/` | 1,381 | 1,522 |
-
-`scripts/test_counts.py --check` catches this, but `verify.py` prints its verdict as
-information only. Also, run with a Python that cannot import `automtg`, it reports 0
-Python tests instead of failing.
-
-**Fix:** run `--write`, make `--check` fail when the import fails, and consider making
-it a failing stage.
-
-### SD-03 · Docs and comments that point at deleted paths — **S**
-
-- `.claude/skills/extend-dsl/SKILL.md:58` points at `src/automtg/cards/loader.py`,
-  which is now the `loader/` package. This one matters, because an agent follows it.
-- `docs/frontend.md:17` cites `legacy-frontend/`, and `:50` cites `OpponentBoard`.
-- `loader.py` is still named in `engine/effects/ops_combat_flags.py:561`,
-  `engine/structs.py:451`, `tests/unit/test_damage_prevention.py:19`,
-  `docs/adr/0001-layers-lite.md:39` and `docs/unsupported-cards.md` (4 mentions).
-- `frontend/e2e/cycle3.spec.ts:578` names `NewGameScreen`.
-
-### SD-04 · Reference docs mixed with changelogs — **M**
-
-`docs/completed-features.md` (19,399 lines) and `docs/card-dsl.md` (15,345 lines) are
-almost append-only: 164 and 304 commits, with almost no deletions. `card-dsl.md` is
-also the DSL reference that agents load, so its history makes the reference slower to
-read and more expensive to load.
-
-**Fix:** keep `card-dsl.md` as the current reference only, and move the per-capability
-history into the changelog.
-
-### HY-01 · `.claude/settings.local.json` is committed, and stale — **S**
-
-It is a personal file that is normally gitignored. It allows commands for paths that
-no longer exist (`python mockups/fetch_art.py`, `Copy-Item ... legacy-frontend`) and
-names a session scratchpad.
-
-**Fix:** `git rm --cached` it and gitignore it.
-
-### HY-02 · `.gitignore` gaps — **S**
-
-`frontend/tsconfig.tsbuildinfo` is not ignored. `.coverage` is, but the
-`.coverage.<host>.pid*` files that parallel coverage runs leave behind are not. **Fix:**
-add both patterns.
-
-### HY-03 · Nine Python files start with a UTF-8 BOM — **S**
-
-They include `src/automtg/engine/turn.py`, `tests/unit/test_mana.py`,
-`tests/cards/test_every_card_works.py` and six package `__init__.py` files. A plain
-`ast.parse()` fails on `turn.py`, which breaks ad-hoc tooling.
-
-### HY-04 · The local venv is not the Python that CI tests — **S**
-
-`pyproject.toml` requires `>=3.13`, and CI and the `Dockerfile` use 3.13. The local
-`.venv` is 3.11.4, and `py -0` lists only 3.11. Nothing in setup or `verify.py` warns
-about this.
-
-**Fix:** install 3.13 and rebuild the venv, and have `verify.py` refuse to run on a
-Python older than `requires-python`.
-
-### DEP-01 · Dependencies — **S** each
-
-- Python dependencies have `>=` lower bounds and no lockfile, so CI installs whatever is
-  newest that day.
-- Starlette's TestClient warns that using it with httpx is deprecated. 9 test files are
-  affected.
-- Upgrade candidates, nothing broken: `vite ^5.4` and `@biomejs/biome ^1.8`. Storybook
-  10 already accepts vitest 4.
+**Fix:** one accessibility pass with a screen reader on, removing each suppression as
+its element gets the right role.

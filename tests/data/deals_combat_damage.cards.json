@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_deals_combat_damage.py. t_dcd_scout draws whenever it deals combat damage, to anything; t_dcd_trampler is the same trigger on a 5/5 trampler, the creature that hits two things in one step and must still trigger once; t_dcd_wall is a 0/3 blocker.",
+  "_comment": "Shapes for tests/unit/combat/test_deals_combat_damage.py. t_dcd_scout draws whenever it deals combat damage, to anything; t_dcd_trampler is the same trigger on a 5/5 trampler, the creature that hits two things in one step and must still trigger once; t_dcd_wall is a 0/3 blocker.",
   "cards": [
     {
       "id": "t_dcd_scout",

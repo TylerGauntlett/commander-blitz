@@ -1,16 +1,18 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "organizeImports": { "enabled": true },
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "files": {
-    "ignore": [
-      "dist",
-      "node_modules",
-      "coverage",
-      "e2e-report",
-      "e2e-shots",
-      "playwright-report",
-      "test-results",
-      "storybook-static"
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!**/coverage",
+      "!**/e2e-report",
+      "!**/e2e-shots",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/storybook-static",
+      "!**/*.svg"
     ]
   },
   "formatter": {
@@ -29,7 +31,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off"

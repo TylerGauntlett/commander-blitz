@@ -14,7 +14,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { LONG_HOP, type RingBox, SPRING, longHop, springStep } from "../src/input/ring";
+import { LONG_HOP, longHop, type RingBox, SPRING, springStep } from "../src/input/ring";
 
 const { w, z } = SPRING.full;
 

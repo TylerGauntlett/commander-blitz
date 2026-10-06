@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_x_targets.py. t_crackle is Crackle with Power: the number of targets is the X paid to cast it, which is the one computed target count a spell may carry.",
+  "_comment": "Shapes for tests/unit/targets/test_x_targets.py. t_crackle is Crackle with Power: the number of targets is the X paid to cast it, which is the one computed target count a spell may carry.",
   "cards": [
     {
       "id": "t_crackle",

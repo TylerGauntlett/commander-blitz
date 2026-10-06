@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_rename_permanent.py. t_rn_crag renames itself when it resolves -- The Irencrag's clause without the rest of its transformation. t_rn_lord counts creatures named 'Everflame' so the rename can be shown to reach a selector, and t_rn_plain is an ordinary permanent of that printed name so the lord is measured against something.",
+  "_comment": "Shapes for tests/unit/effects/test_rename_permanent.py. t_rn_crag renames itself when it resolves -- The Irencrag's clause without the rest of its transformation. t_rn_lord counts creatures named 'Everflame' so the rename can be shown to reach a selector, and t_rn_plain is an ordinary permanent of that printed name so the lord is measured against something.",
   "cards": [
     {
       "id": "t_rn_crag",

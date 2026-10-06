@@ -14,7 +14,7 @@
  * control dispatches no mouse events.
  */
 
-import { type Locator, type Page, expect, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 import { budget, keepOpeningHand, startGame } from "./helpers";
 
 interface Box {

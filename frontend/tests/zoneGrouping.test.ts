@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { counterBadges, manaPips, statLine } from "../src/logic/cardStyle";
 import {
-  LANES,
   attachmentsFor,
-  commandZoneCommanderCount,
   commandersOf,
+  commandZoneCommanderCount,
   findCard,
   findCardByDefId,
   groupBattlefield,
+  LANES,
   laneFor,
   seatOrder,
 } from "../src/logic/zoneGrouping";

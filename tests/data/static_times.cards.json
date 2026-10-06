@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_static_times.py. t_st_doubler is Swordsman's Steel -- '+2/+2 for each Equipment you control', a count with a step of two. t_st_single is the same card at +1/+1, the spelling that was already possible, kept live so the tests measure the multiplication rather than the count. t_st_nested multiplies two counts together, which is what makes `times` a list of factors rather than a count with a scale. t_st_gear is a bare Equipment to be counted and t_st_bear the host.",
+  "_comment": "Shapes for tests/unit/statics/test_static_times.py. t_st_doubler is Swordsman's Steel -- '+2/+2 for each Equipment you control', a count with a step of two. t_st_single is the same card at +1/+1, the spelling that was already possible, kept live so the tests measure the multiplication rather than the count. t_st_nested multiplies two counts together, which is what makes `times` a list of factors rather than a count with a scale. t_st_gear is a bare Equipment to be counted and t_st_bear the host.",
   "cards": [
     {
       "id": "t_st_doubler",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_cant_gain_life.py. Never part of a deck list. `t_erebos` is Erebos, God of the Dead's third line on its own. `t_self_erebos` points it at its controller, the half no printed card in the pool has and the only way to test `affects_player` here. `t_turn_erebos` adds a condition, to pin that it is asked. The doubler, the gain spell and the lifelink bear come from the life-gain and life-loss replacement files.",
+  "_comment": "Cards that exist only for tests/unit/players/test_cant_gain_life.py. Never part of a deck list. `t_erebos` is Erebos, God of the Dead's third line on its own. `t_self_erebos` points it at its controller, the half no printed card in the pool has and the only way to test `affects_player` here. `t_turn_erebos` adds a condition, to pin that it is asked. The doubler, the gain spell and the lifelink bear come from the life-gain and life-loss replacement files.",
   "cards": [
     {
       "id": "t_erebos",

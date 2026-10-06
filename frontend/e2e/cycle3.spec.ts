@@ -10,11 +10,11 @@
  * See docs/playtest-feedback-02.md for what each of these is answering.
  */
 
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import {
-  COMBAT_SEED,
   actionsOfKind,
   budget,
+  COMBAT_SEED,
   isOver,
   keepOpeningHand,
   reachDeclaration,
@@ -575,10 +575,10 @@ test.describe("a four-player pod fits", () => {
      * The deck pinning that used to be here is gone, because it had stopped
      * working and was quietly making this test measure something else.
      *
-     * It intercepted `/api/decks` on the reasoning that "`NewGameScreen` fills
+     * It intercepted `/api/decks` on the reasoning that "the new-game screen fills
      * opponent seats by cycling whatever `/api/decks` returns". That was true
      * when it was written and is not any more: the pod lobby replaced
-     * `NewGameScreen`, and a CPU seat is filled by `POST /pods/{code}/seat`
+     * that screen, and a CPU seat is filled by `POST /pods/{code}/seat`
      * with the *server* choosing the deck. The interception matched no request
      * the flow makes, so the pod filled with whatever the server picked --
      * which is how this ended up measuring a board full of Edgar Markov's

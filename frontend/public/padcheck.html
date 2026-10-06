@@ -41,10 +41,10 @@
   // Anything the browser ever admitted to, kept so a pad that vanishes on blur
   // still shows what it was.
   let everSeen = null;
-  let everPressed = new Set();
+  const everPressed = new Set();
   let gestureAt = null;
 
-  addEventListener("gamepadconnected", (e) => {
+  addEventListener("gamepadconnected", () => {
     if (!gestureAt) gestureAt = new Date().toLocaleTimeString();
   });
 
@@ -61,7 +61,7 @@
     if (supported) {
       try {
         pads = [...navigator.getGamepads()].filter(Boolean);
-      } catch (err) {
+      } catch {
         pads = [];
       }
     }

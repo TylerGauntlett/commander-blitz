@@ -32,7 +32,7 @@ import { linkGame, usePodSession } from "../state/usePodSession";
  * over. A reproducible shuffle is a debugging tool -- it is on the screen the
  * moment before a match starts, it asks a question nobody arriving to play has,
  * and every reader of the rail had to skip past it. It was also one of the two
- * text fields the focus ring could walk into and, before `pad.ts:fieldKeeps`,
+ * text fields the focus ring could walk into and, before `fieldKeys.ts:fieldKeeps`,
  * never walk out of.
  *
  * The specs still need determinism, so it is a window flag set by

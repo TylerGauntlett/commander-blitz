@@ -29,7 +29,7 @@
  * gets worse, which is the regression worth catching.
  */
 
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import {
   budget,
   isOver,

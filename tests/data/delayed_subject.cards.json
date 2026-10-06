@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_delayed_trigger_subject.py. t_dsub_insight is Hunter's Insight: choose target creature you control, then a delayed subscription scoped to THAT creature. t_dsub_any is the same spell with no subject, the control that shows what an unscoped subscription does -- it fires for every creature you control, which is Forth Eorlingas! and a different card. The two bears are interchangeable so the scope is the only thing separating them.",
+  "_comment": "Shapes for tests/unit/triggers/test_delayed_trigger_subject.py. t_dsub_insight is Hunter's Insight: choose target creature you control, then a delayed subscription scoped to THAT creature. t_dsub_any is the same spell with no subject, the control that shows what an unscoped subscription does -- it fires for every creature you control, which is Forth Eorlingas! and a different card. The two bears are interchangeable so the scope is the only thing separating them.",
   "cards": [
     {
       "id": "t_dsub_insight",

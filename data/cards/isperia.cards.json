@@ -903,11 +903,17 @@
           },
           "effects": [
             {
-              "op": "create_token",
-              "token": "bird_1_1_w_flying",
-              "amount": {
-                "const": 1
-              }
+              "op": "may",
+              "prompt": "Create a 1/1 white Bird creature token with flying?",
+              "effects": [
+                {
+                  "op": "create_token",
+                  "token": "bird_1_1_w_flying",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1024,10 +1030,13 @@
             "event": "self_enters",
             "source": "self"
           },
-          "effects": [
+          "targets": [
             {
-              "op": "put_onto_battlefield",
-              "objects": {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "optional": true,
+              "selector": {
                 "zone": "graveyard",
                 "controller": "you",
                 "mana_value": {
@@ -1037,10 +1046,60 @@
                   }
                 },
                 "not_types": [
-                  "Instant"
-                ],
-                "count": 1,
-                "chooser": "controller"
+                  "Instant",
+                  "Sorcery"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, you may return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "controller": "you"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "zone": "graveyard",
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
               }
             }
           ]

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the distinct-names search test (tests/unit/test_search_distinct_names.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_wyrm_ancestor` is Tiamat's sentence with the count dropped to three: the two name constraints on one search, one filtering each card alone (`not_name`) and one holding between the picks (`distinct_names`). `t_wyrm_caller` is the list spelling of `not_name`, which a single card naming two exclusions needs because two `not_name` keys cannot sit in one selector. The rest are library fodder, deliberately stocked with duplicate names.",
+  "_comment": "Cards that exist only for the distinct-names search test (tests/unit/zones/test_search_distinct_names.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_wyrm_ancestor` is Tiamat's sentence with the count dropped to three: the two name constraints on one search, one filtering each card alone (`not_name`) and one holding between the picks (`distinct_names`). `t_wyrm_caller` is the list spelling of `not_name`, which a single card naming two exclusions needs because two `not_name` keys cannot sit in one selector. The rest are library fodder, deliberately stocked with duplicate names.",
   "cards": [
     {
       "id": "t_wyrm_ancestor",

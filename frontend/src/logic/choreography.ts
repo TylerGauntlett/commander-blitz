@@ -43,7 +43,7 @@
  */
 
 import type { GameEvent } from "../api/types";
-import type { Beat, BeatAnchor, FxPoint, TimedFx } from "./events";
+import type { Beat, BeatAnchor, FxPoint, TimedFx } from "./beats/types";
 
 /** Events that make up the declaration half of a combat step. */
 const DECLARE = new Set([

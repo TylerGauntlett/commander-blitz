@@ -20,13 +20,13 @@ import { describe, expect, it } from "vitest";
 import { MAX_PLIES, PLY_X } from "../src/logic/cardStackGeometry";
 import {
   type BandFit,
-  type GroupFootprint,
-  LANE_CHROME,
-  type LaneFit,
   bandsFor,
   boardHeight,
+  type GroupFootprint,
   groupBox,
   handStep,
+  LANE_CHROME,
+  type LaneFit,
   laneHeight,
   solveBoardCardWidth,
   solveHandCardWidth,

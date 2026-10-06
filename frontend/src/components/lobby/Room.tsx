@@ -95,22 +95,22 @@ export function Room({ hue, className, testId, floorY, washY, children, onScale 
   useLayoutEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    const fit = () => {
+    const fitStage = () => {
       const du = stageScale(el.clientWidth, el.clientHeight);
       el.style.setProperty("--du", String(du));
       el.dataset.du = du.toFixed(3);
       scaleRef.current?.(du);
     };
-    fit();
+    fitStage();
     /* jsdom has no `ResizeObserver`, which is the same hole `useZoomFit.ts:365`
        guards. A window listener is the honest fallback rather than a no-op: the
        stage IS the window here, so the two only differ when something else on
        the page reflows, which on these screens is nothing. */
     if (typeof ResizeObserver === "undefined") {
-      window.addEventListener("resize", fit);
-      return () => window.removeEventListener("resize", fit);
+      window.addEventListener("resize", fitStage);
+      return () => window.removeEventListener("resize", fitStage);
     }
-    const observer = new ResizeObserver(fit);
+    const observer = new ResizeObserver(fitStage);
     observer.observe(el);
     return () => observer.disconnect();
   }, []);

@@ -31,7 +31,15 @@ from __future__ import annotations
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.primitives import add_counters, create_token
-from tests.conftest import _default_answer, find_action, oids_of, only_oid, pass_until
+from tests.conftest import (
+    _default_answer,
+    activations,
+    find_action,
+    keywords,
+    oids_of,
+    only_oid,
+    pass_until,
+)
 
 # A castable instant in a hand, and it is load bearing rather than scenery. With
 # no play available to anybody the engine's auto-pass runs from one spell
@@ -114,16 +122,6 @@ def cast(game, card_id: str, pid: int = 0) -> int:
     return action.source
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def activate(game, oid: int, index: int) -> None:
     game.apply(activations(game, oid, index)[0])
     settle(game)
@@ -145,10 +143,6 @@ def make_tokens(game, pid: int = 0, count: int = 1) -> list[int]:
 
 def tokens(game, def_id: str, pid: int | None = None) -> list:
     return [o for o in game.state.battlefield_objects(pid) if o.def_id == def_id and o.is_token]
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 def size(game, oid: int) -> tuple[int, int]:

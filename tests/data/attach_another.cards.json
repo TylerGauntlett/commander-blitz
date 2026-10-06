@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_attach_another_permanent.py -- the 'attachment' sub-key on the attach op. Test-only; never part of a deck list.",
+  "_comment": "Cards for tests/unit/attachments/test_attach_another_permanent.py -- the 'attachment' sub-key on the attach op. Test-only; never part of a deck list.",
   "cards": [
     {
       "id": "t_gear_shield",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the card-in-exile target test (tests/unit/test_card_in_exile_target.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_magicite` is the Espers to Magicite shape: exile every opponent's graveyard, then target one of the cards THIS spell put there. `t_wide_magicite` is the counterfactual -- the same target line without the binding, which reaches every creature card anyone has ever exiled. `t_magicite_token` and `t_plain_token` are the copy half: the same token with and without the card-type replacement.",
+  "_comment": "Cards that exist only for the card-in-exile target test (tests/unit/targets/test_card_in_exile_target.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_magicite` is the Espers to Magicite shape: exile every opponent's graveyard, then target one of the cards THIS spell put there. `t_wide_magicite` is the counterfactual -- the same target line without the binding, which reaches every creature card anyone has ever exiled. `t_magicite_token` and `t_plain_token` are the copy half: the same token with and without the card-type replacement.",
   "cards": [
     {
       "id": "t_magicite",

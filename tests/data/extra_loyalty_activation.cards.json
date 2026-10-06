@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_extra_loyalty_activation.py. `t_veil_tap` is The Chain Veil's second ability alone.",
+  "_comment": "Cards that exist only for tests/unit/planeswalkers/test_extra_loyalty_activation.py. `t_veil_tap` is The Chain Veil's second ability alone.",
   "cards": [
     {
       "id": "t_veil_tap",

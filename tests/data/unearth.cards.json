@@ -1,5 +1,5 @@
 {
-  "_comment": "The counterfactual for tests/unit/test_unearth.py: `t_unearther` with its leave-the-battlefield replacement written as `replace_deaths`, which catches a death and nothing else -- so the card survives a bounce and can be unearthed again. Identical in every other respect, so the tests measure that one op. Never part of a deck list.",
+  "_comment": "The counterfactual for tests/unit/keywords/test_unearth.py: `t_unearther` with its leave-the-battlefield replacement written as `replace_deaths`, which catches a death and nothing else -- so the card survives a bounce and can be unearthed again. Identical in every other respect, so the tests measure that one op. Never part of a deck list.",
   "cards": [
     {
       "id": "t_unearther_death_only",

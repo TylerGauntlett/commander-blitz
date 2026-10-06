@@ -9,9 +9,9 @@
 
 import { describe, expect, it } from "vitest";
 import {
-  EMPTY_FILTERS,
   canStart,
   cpuNumber,
+  EMPTY_FILTERS,
   filledSeats,
   firstEmpty,
   looksLikeCode,

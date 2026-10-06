@@ -1,4 +1,4 @@
-# Build context hygiene. The repo is large -- .git alone is ~130MB and the
+# Build context hygiene. The repo is large -- .git alone is ~395MB and the
 # Scryfall bulk dump is ~74MB -- and every byte here is uploaded to the builder
 # before the first instruction runs.
 

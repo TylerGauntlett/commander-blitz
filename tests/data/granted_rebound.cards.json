@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_granted_rebound.py. t_rebound_granter is the Ojer Pakpatiq shape -- it grants rebound to a spell that does not print it. t_printed_rebound is the control: the same mechanic reached the old way, so a passing test cannot be explained by the grant doing nothing and the card having rebound all along.",
+  "_comment": "Shapes for tests/unit/casting/test_granted_rebound.py. t_rebound_granter is the Ojer Pakpatiq shape -- it grants rebound to a spell that does not print it. t_printed_rebound is the control: the same mechanic reached the old way, so a passing test cannot be explained by the grant doing nothing and the card having rebound all along.",
   "cards": [
     {
       "id": "t_rebound_granter",

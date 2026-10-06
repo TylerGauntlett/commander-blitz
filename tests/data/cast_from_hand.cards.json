@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_cast_from_hand.py. t_dominance is the Electrodominance shape: an instant that offers a free cast out of your own hand.",
+  "_comment": "Shapes for tests/unit/casting/test_cast_from_hand.py. t_dominance is the Electrodominance shape: an instant that offers a free cast out of your own hand.",
   "cards": [
     {
       "id": "t_dominance",

@@ -1,0 +1,78 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_dies_look_back.py. Each gains its controller 1 life, so the life total counts how many times the ability fired.",
+  "cards": [
+    {
+      "id": "t_this_or_another_dies",
+      "name": "Test This Or Another Dies",
+      "oracle_text": "Whenever this creature or another creature you control dies, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control dies, you gain 1 life.",
+          "trigger": {"event": "creature_dies", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_another_dies",
+      "name": "Test Another Dies",
+      "oracle_text": "Whenever another creature you control dies, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature you control dies, you gain 1 life.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "you",
+            "filter": {"exclude_self": true}
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_this_dies",
+      "name": "Test This Dies",
+      "oracle_text": "When this creature dies, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, you gain 1 life.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dies_watcher_anywhere",
+      "name": "Test Dies Watcher Anywhere",
+      "oracle_text": "Whenever a creature you control dies, you gain 1 life. This ability functions while this card is on the battlefield or in your graveyard.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, you gain 1 life.",
+          "active_zones": ["battlefield", "graveyard"],
+          "trigger": {"event": "creature_dies", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

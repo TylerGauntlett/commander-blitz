@@ -310,7 +310,7 @@ class TestBloomTender:
         controls, so the board can never be colourless while she is on it to tap.
         The reachable half of the claim is this one -- a Sol Ring and a Wastes
         beside her add no sixth symbol and no sixth mana. The unreachable half
-        is pinned on a colourless body in `tests/unit/test_mana_of_each_color.py`.
+        is pinned on a colourless body in `tests/unit/mana/test_mana_of_each_color.py`.
         """
         game, tender = self.tender(builder, ["sol_ring", "wastes"])
         assert symbols_of(self.options(game, tender)[0]) == ["G"]

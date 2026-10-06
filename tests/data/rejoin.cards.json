@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the opponent-chooser test (tests/unit/test_opponent_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rejoin` is Rejoin the Fight: each opponent picks a creature card in YOUR graveyard that nobody has picked yet, and all the picks come back together.",
+  "_comment": "A card that exists only for the opponent-chooser test (tests/unit/choices/test_opponent_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rejoin` is Rejoin the Fight: each opponent picks a creature card in YOUR graveyard that nobody has picked yet, and all the picks come back together.",
   "cards": [
     {
       "id": "t_rejoin",

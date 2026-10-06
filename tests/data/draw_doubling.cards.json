@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the draw-doubling test (tests/unit/test_draw_doubling.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_draw_doubler` is Thought Reflection's shape -- every draw its controller makes becomes two. `t_bard_doubler` is Bard, King of Dale's and Alhammarret's Archive's -- the same, except the first card drawn in each of its controller's draw steps. Enchantments with no other text, so nothing but the replacement is on the board.",
+  "_comment": "Cards that exist only for the draw-doubling test (tests/unit/replacement/test_draw_doubling.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_draw_doubler` is Thought Reflection's shape -- every draw its controller makes becomes two. `t_bard_doubler` is Bard, King of Dale's and Alhammarret's Archive's -- the same, except the first card drawn in each of its controller's draw steps. Enchantments with no other text, so nothing but the replacement is on the board.",
   "cards": [
     {
       "id": "t_draw_doubler",

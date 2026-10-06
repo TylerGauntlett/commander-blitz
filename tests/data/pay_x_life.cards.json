@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the announced-X-life test (tests/unit/test_pay_x_life.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_toxic_deluge` is Toxic Deluge's shape. `t_fixed_deluge` is the card the DSL could write before this existed -- a fixed 3 life and a fixed -3/-3 -- and is the counterfactual that cannot be aimed.",
+  "_comment": "Cards that exist only for the announced-X-life test (tests/unit/costs/test_pay_x_life.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_toxic_deluge` is Toxic Deluge's shape. `t_fixed_deluge` is the card the DSL could write before this existed -- a fixed 3 life and a fixed -3/-3 -- and is the counterfactual that cannot be aimed.",
   "cards": [
     {
       "id": "t_toxic_deluge",
