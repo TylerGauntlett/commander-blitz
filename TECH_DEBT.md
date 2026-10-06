@@ -13,9 +13,8 @@ others). Their write-ups are in the last version of the old report:
 
 ## Suggested order
 
-1. **Card defects:** CD-07 (one engine fix), CD-08 (one card at a time).
-2. **Structural:** CD-01 (one card layer), ST-01 (shims), OF-01.
-3. **Decision:** RS-01 (rewrite history or not).
+1. **Structural:** CD-01 (one card layer), OF-01.
+2. **Decision:** RS-01 (rewrite history or not).
 
 ---
 
@@ -71,40 +70,6 @@ expectations that were recorded against the old board.
 
 Keep `tokens.cards.json` hand-written (CD-02). `test_golden_pool` hashes the compiled
 cards sorted by id, so moving a card between files does not change the hash.
-
-### CD-07 · "This or another creature dies" misses its own death — **S**
-
-A trigger worded "whenever this creature or another creature you control dies" is
-written as `creature_dies` with a controller filter. The leave-the-battlefield
-look-back in `engine/triggers.py` (around `:906-931`) only collects `source: "self"`
-triggers from the object that just left, so the card never sees **its own** death.
-Confirmed with a probe on Zulaport Cutthroat; Blood Artist, Cruel Celebrant, Falkenrath
-Noble, Kalastria Highborn and Cordial Vampire have the same shape. Pinned by the strict
-xfail `tests/cards/test_zurgo_deck.py::TestZulaportCutthroat::test_its_own_death_drains`.
-
-**Fix:** let the look-back also collect the departed object's dies triggers whose
-filter it matches, then remove the xfail. Arena tables will move; that is the point.
-
-### CD-08 · Hand-written cards that pass all six gates but are wrong — **S** each
-
-Found while writing the CD-06 deck tests. The gates check vocabulary and a zone-only
-expectation, so none of these fails one:
-
-- **Sun Titan** (`isperia`): no "or attacks" trigger; the return is neither optional
-  nor targeted.
-- **Emeria Angel**: the Bird token is not optional.
-- **Retreat to Kazandu** (auto): the counter mode picks among your own creatures
-  instead of targeting any creature.
-- **Kalastria Highborn**: `exclude_self` set, no "you may pay {B}", and it drains each
-  opponent instead of a target player.
-- **Falkenrath Noble**: `exclude_self` set (see CD-07 for why it matters).
-- **Cruel Celebrant**: "or planeswalker" is missing.
-- **Zurgo Stormrender**: Mobilize's Warrior is never sacrificed at the next end step
-  (the test-only `t_mobilizer` has the same omission).
-- **Timely Hordemate**: Raid is ignored; it returns a card with no attack this turn.
-- **Secure the Wastes**: creates Soldiers; the card prints Warriors (read, not run).
-
-**Fix:** correct each card, and add the failing case to its deck test.
 
 ---
 

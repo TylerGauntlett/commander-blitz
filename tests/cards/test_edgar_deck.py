@@ -562,3 +562,53 @@ class TestStromkirkNoble:
         game, noble = self.attack(builder, blocker="t_defensive_wall")
         assert life(game, 1) == 40
         assert game.state.objects[noble].counters == {}
+
+
+class TestMavrenFein:
+    """"Whenever one or more nontoken Vampires you control attack, create a 1/1
+    white Vampire creature token with lifelink."
+
+    Once per combat, not once per attacker, and Mavren need not be one of them.
+    It was written as Mavren's own attack trigger making a *black* Vampire.
+    """
+
+    MAVREN = "mavren_fein_dusk_apostle"
+    WHITE = "vampire_1_1_w_lifelink"
+
+    def attack(self, builder, attackers: list[str]):
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.MAVREN, CHILD, EDGAR, BEAR, "plains"])
+            .hand(0, [ANCHOR])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .build()
+        )
+        advance_to_step(game, Step.DECLARE_ATTACKERS)
+        for card_id in attackers:
+            oid = only_oid(game, card_id, 0)
+            game.apply(
+                next(
+                    a
+                    for a in game.legal_actions()
+                    if a.kind is ActionKind.ADD_ATTACKER
+                    and a.source == oid
+                    and a.targets[0].kind == "player"
+                )
+            )
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION))
+        settle(game)
+        return game
+
+    def test_another_vampire_attacking_alone_makes_one_white_token(self, builder):
+        game = self.attack(builder, [CHILD])
+        assert len(oids_of(game, self.WHITE, 0)) == 1
+        assert oids_of(game, "vampire_1_1_b_lifelink", 0) == []
+
+    def test_three_vampires_attacking_still_make_one(self, builder):
+        game = self.attack(builder, [self.MAVREN, CHILD, EDGAR])
+        assert len(oids_of(game, self.WHITE, 0)) == 1
+
+    def test_a_bear_attacking_alone_makes_none(self, builder):
+        game = self.attack(builder, [BEAR])
+        assert oids_of(game, self.WHITE, 0) == []
