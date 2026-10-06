@@ -26,8 +26,6 @@ card placed with `.battlefield` is an ordinary object, not a token, and every
 
 from __future__ import annotations
 
-import pytest
-
 from automtg.engine.characteristics import chars, has_keyword
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import _default_answer, action_for_card, oids_of, only_oid, pass_until
@@ -274,16 +272,12 @@ class TestZulaportCutthroat:
     """"Whenever this creature or another creature you control dies, each
     opponent loses 1 life and you gain 1 life."
 
-    The "this creature" half -- its own death -- is pinned as a strict xfail:
-    the engine's leave-the-battlefield look-back only collects `source: "self"`
-    triggers from the departed object, so this ability misses its own death
-    (TECH_DEBT CD-07). The xfail turns red the day that is fixed.
+    The "this creature" half -- its own death -- is heard through the engine's
+    leave-the-battlefield look-back (603.10a), which offers the departed
+    object's own dies triggers to their filter; see
+    `tests/unit/test_dies_look_back.py`.
     """
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="TECH_DEBT CD-07: a 'this or another creature dies' trigger misses its own death",
-    )
     def test_its_own_death_drains(self, builder):
         game = board(builder, [ZULAPORT, OUTLET])
         sacrifice(game, only_oid(game, ZULAPORT, 0))

@@ -3634,6 +3634,14 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
 `searches_library`
 
+**"Whenever this creature or another creature dies"** (Blood Artist, Zulaport
+Cutthroat, Falkenrath Noble) is a filtered `dies` / `creature_dies` with **no**
+`exclude_self`, not `source: "self"`. Leaves-the-battlefield abilities look back
+in time (603.10a), so the permanent that just died is offered its own leave
+triggers and the filter decides: without `exclude_self` it hears its own death,
+and with it ("whenever **another** creature dies") it does not. Writing
+`exclude_self` on an "X or another" wording silently drops the X half.
+
 ### Tiered, and reading back which price was paid
 
 Fire Magic and Ice Magic print "Tiered (Choose one additional cost)" with three

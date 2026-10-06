@@ -930,6 +930,27 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
                     yield obj, ability
                 elif (
+                    ability.trigger.event in LEAVE_TRIGGERS
+                    and Zone.BATTLEFIELD in ability.active_zones
+                    and obj.zone not in ability.active_zones
+                ):
+                    # "Whenever this creature **or another creature** you control
+                    # dies" -- Zulaport Cutthroat. Written as a filtered
+                    # `creature_dies` rather than `source: "self"`, so the arm
+                    # above never offered it, and the card missed its own death.
+                    # Leaves-the-battlefield abilities look back in time
+                    # (603.10a): the permanent that just left sees its own
+                    # departure. Yielded unconditionally here because `collect`
+                    # runs `_matches` on every candidate, and that is where the
+                    # filter decides -- an "another creature" wording carries
+                    # `exclude_self` and refuses its own death there.
+                    #
+                    # Only an ability that functioned on the battlefield, and
+                    # not one that also functions in the zone the object went
+                    # to: the zone walk above has already offered that one, and
+                    # offering it again would fire it twice.
+                    yield obj, ability
+                elif (
                     event.type is EventType.DISCARD
                     and ability.trigger.event == "discard"
                     and Zone.HAND in ability.active_zones
