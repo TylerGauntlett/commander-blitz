@@ -1292,8 +1292,13 @@ MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
 #: The ops that read a ``counters`` map -- "return it to the battlefield **with a
 #: -1/-1 counter on it**" (persist), "…**with a vigilance counter and a lifelink
 #: counter on it**" (Gilraen).  Both are clauses about a permanent *arriving*,
-#: which is why they belong to the two ops that put one there and to nothing else.
-COUNTERS_ON_ARRIVAL_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
+#: which is why they belong to the ops that put one there and to nothing else.
+#: `look_at_top` is the third -- "it enters with three additional +1/+1 counters
+#: on it" (Turntimber Symbiosis) -- and the only one whose counters are a true
+#: enters-with, put on inside the arrival; see `zones.move_object`.
+COUNTERS_ON_ARRIVAL_OPS = frozenset(
+    {"return_from_graveyard", "put_onto_battlefield", "look_at_top"}
+)
 
 
 #: Target kinds whose chosen ref can be a **player**, so ``{"target": "t1"}``

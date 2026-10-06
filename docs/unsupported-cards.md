@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **27** capabilities.
+**21 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [look-at-top-enters-with-counters](#look-at-top-enters-with-counters) | 1 | 2296 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -262,20 +261,6 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
-
-</details>
-
-## look-at-top-enters-with-counters
-
-Blocks **1** card.
-
-- **(op)** look_at_top putting a card onto the battlefield with counters it *enters with* (614.1c, one placement with the arrival, reported per 122.6), gated on a test of the card being put there (mana value 3 or less)
-  <br>Why the existing vocabulary won't do: look_at_top has no counters clause. A following add_counters on the `as` binding places them after the creature has entered -- the permanent is on the battlefield at its printed size first, which is the shape zones._enter_battlefield's enters-with path exists to avoid (Goldvein Hydra, Eomer). put_onto_battlefield's `counters` cannot read from a look-at-top window.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Turntimber Symbiosis // Turntimber, Serpentine Wood** (rank 2296) — `turntimber_symbiosis_turntimber_serpentine_wood`
-  - If that card has mana value 3 or less, it enters with three additional +1/+1 counters on it.
 
 </details>
 

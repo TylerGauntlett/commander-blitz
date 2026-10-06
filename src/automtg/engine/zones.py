@@ -41,6 +41,7 @@ def move_object(
     cause: str = "",
     by: int | None = None,
     as_face: str | None = None,
+    enters_with: Mapping[str, int] | None = None,
 ) -> GameObject:
     """Move an object to another zone, firing every consequent event.
 
@@ -72,6 +73,16 @@ def move_object(
     enters-replacement and enters-trigger must see -- a Saga's lore counter is a
     replacement on the back face, so a permanent that turned over one line later
     would already have entered as something else.
+
+    ``enters_with`` is counters the **effect moving it** says it enters with --
+    "If that card has mana value 3 or less, it enters with three additional
+    +1/+1 counters on it" (Turntimber Symbiosis). A parameter for `as_face`'s
+    reason: an "enters with" is a replacement on the arrival (614.1c), so it is
+    put on in `_enter_battlefield` with the card's own printed ones as one
+    placement (122.6), and a caller adding them after the move would have had
+    the permanent on the battlefield at its printed size first. Ignored unless
+    the object actually arrives -- an arrival replaced to a graveyard enters
+    with nothing.
     """
     obj = state.objects[oid]
     from_zone = obj.zone
@@ -393,7 +404,13 @@ def move_object(
 
     if to_zone is Zone.BATTLEFIELD:
         _enter_battlefield(
-            state, obj, card, forced_tapped=tapped, cause=cause, from_zone=from_zone
+            state,
+            obj,
+            card,
+            forced_tapped=tapped,
+            cause=cause,
+            from_zone=from_zone,
+            enters_with=enters_with,
         )
 
     return obj
@@ -1103,6 +1120,7 @@ def _enter_battlefield(
     forced_tapped: bool = False,
     cause: str = "",
     from_zone: Zone | None = None,
+    enters_with: Mapping[str, int] | None = None,
 ) -> None:
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
@@ -1237,6 +1255,12 @@ def _enter_battlefield(
                 entering.setdefault(str(replacement.get("counter", "+1/+1")), []).append(
                     evaluate_value(ctx, replacement.get("amount", 1))
                 )
+
+    # Turntimber Symbiosis: the "enters with" the moving effect itself names --
+    # see `move_object`'s ``enters_with``. The same placement, for Giada's
+    # reason below.
+    for kind, amount in (enters_with or {}).items():
+        entering.setdefault(str(kind), []).append(int(amount))
 
     # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same
     # placement, so the counter replacements below see them in the total.
