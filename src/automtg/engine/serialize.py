@@ -16,12 +16,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import (
-    chars,
-    player_looks_at_library_top,
-    player_reveals_library_top,
-    top_of_library,
-)
+from .characteristics import chars, top_of_library
 from .costs import (
     commander_cost,
     land_drops_available,
@@ -32,6 +27,7 @@ from .costs import (
 from .enums import Zone
 from .game import FREE_MULLIGANS, MAX_MULLIGANS
 from .legality import unplayable_reason
+from .player_statics import player_looks_at_library_top, player_reveals_library_top
 from .text_change import displayed as displayed_text
 
 if TYPE_CHECKING:  # pragma: no cover

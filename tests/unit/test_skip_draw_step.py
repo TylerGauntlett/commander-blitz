@@ -29,9 +29,9 @@ witness for the conditional case here is `t_conditional_skip`.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import player_skips_draw_step
 from automtg.engine.enums import Step, Zone
 from automtg.engine.events import EventType
+from automtg.engine.player_statics import player_skips_draw_step
 from automtg.engine.zones import move_object
 from tests.conftest import pass_until
 

@@ -14,7 +14,10 @@ from collections.abc import Generator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import (
+from .characteristics import block_restrictions, chars, matches_static, protected_from
+from .enums import LANDWALK_SUBTYPE, Keyword
+from .events import EventType
+from .player_statics import (
     any_defender_attack_prohibition,
     attack_alone_forbidden,
     attack_compelled,
@@ -22,13 +25,7 @@ from .characteristics import (
     attack_forbidden,
     block_alone_forbidden,
     block_forbidden,
-    block_restrictions,
-    chars,
-    matches_static,
-    protected_from,
 )
-from .enums import LANDWALK_SUBTYPE, Keyword
-from .events import EventType
 from .primitives import (
     become_monarch,
     clear_attack_restrictions,
@@ -126,7 +123,7 @@ def attack_tax_cost(state: GameState, oid: int, defender: int, *, planeswalker: 
     ``planeswalker`` prices an attack on one of ``defender``'s planeswalkers,
     which only an ``or_planeswalkers`` tax reaches (Archangel of Tithes).
     """
-    from .characteristics import attack_tax
+    from .player_statics import attack_tax
 
     return _tax_cost(attack_tax(state, oid, defender, planeswalker=planeswalker))
 
@@ -137,7 +134,7 @@ def block_tax_cost(state: GameState, oid: int):
     Archangel of Tithes' "creatures can't block unless their controller pays
     {1} for each of those creatures" -- `attack_tax_cost` at declare-blockers.
     """
-    from .characteristics import block_tax
+    from .player_statics import block_tax
 
     return _tax_cost(block_tax(state, oid))
 

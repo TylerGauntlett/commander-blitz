@@ -532,7 +532,7 @@ def _commander_subtypes(ctx: EffectContext, who: str) -> frozenset[str]:
     `triggers.matches_card_filter` so the two halves of the filter language
     cannot disagree about what a commander's types are.
     """
-    from ..characteristics import commander_subtypes
+    from ..player_statics import commander_subtypes
 
     out: set[str] = set()
     for pid in select_players(ctx, who):

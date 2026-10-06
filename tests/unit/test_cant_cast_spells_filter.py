@@ -30,11 +30,11 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine import legality
-from automtg.engine.characteristics import player_cant_cast_spells
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
+from automtg.engine.player_statics import player_cant_cast_spells
 from automtg.engine.primitives import give_emblem
 from automtg.engine.suspend import cast_for_free
 from automtg.engine.zones import move_object

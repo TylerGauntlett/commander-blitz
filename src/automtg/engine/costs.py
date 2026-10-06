@@ -13,13 +13,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
-from .characteristics import (
-    abilities_of,
-    chars,
-    mana_added_on_tap,
-    mana_source_traits,
-    player_doubles_mana_from,
-)
+from .characteristics import abilities_of, chars, mana_source_traits
 from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.selectors import resolve_pool
 from .enums import COLORLESS, Keyword, Zone
@@ -41,6 +35,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
+from .player_statics import mana_added_on_tap, player_doubles_mana_from
 from .primitives import (
     life_locked,
     lose_life,
@@ -2166,7 +2161,7 @@ def _lands_tapped_for_mana(state: GameState, land: Any) -> None:
     its source is on the battlefield: these are different lifetimes and using
     either for the other would be wrong.
     """
-    from .characteristics import players_freezing_opponent_lands
+    from .player_statics import players_freezing_opponent_lands
 
     freezers = players_freezing_opponent_lands(state)
     if any(pid != land.controller for pid in freezers):
@@ -2175,7 +2170,7 @@ def _lands_tapped_for_mana(state: GameState, land: Any) -> None:
 
 def land_drops_available(state: GameState, pid: int) -> int:
     """How many more lands this player may play this turn."""
-    from .characteristics import player_extra_land_drops
+    from .player_statics import player_extra_land_drops
 
     player = state.players[pid]
     return 1 + player.extra_land_drops + player_extra_land_drops(state, pid) - player.lands_played

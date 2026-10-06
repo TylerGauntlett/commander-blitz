@@ -33,10 +33,7 @@ import pytest
 
 from automtg.cards.loader import DslError, compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import (
-    player_looks_at_library_top,
-    player_reveals_library_top,
-)
+from automtg.engine.player_statics import player_looks_at_library_top, player_reveals_library_top
 from automtg.engine.serialize import player_view
 from tests.conftest import only_oid
 

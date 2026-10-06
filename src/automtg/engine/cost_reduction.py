@@ -8,12 +8,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import (
-    chars,
-    compare_pt,
-    spell_cost_reduction,
-    spell_mana_tax,
-)
+from .characteristics import chars, compare_pt
+from .player_statics import spell_cost_reduction, spell_mana_tax
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState

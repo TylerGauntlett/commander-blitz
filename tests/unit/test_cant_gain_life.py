@@ -26,9 +26,9 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import player_cant_gain_life
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
+from automtg.engine.player_statics import player_cant_gain_life
 from automtg.engine.primitives import damage_player, gain_life
 from automtg.engine.zones import move_object
 from tests.conftest import action_for_card, pass_until

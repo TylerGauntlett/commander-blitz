@@ -2329,56 +2329,6 @@ def player_protected_from(state: GameState, pid: int, source_oid: int | None) ->
     return _matches_protection(state, player_protection_from(state, pid), source_oid)
 
 
-# Imported at the bottom on purpose: the module below imports this one, and
-# both were one file until the split. The names are re-exported so every
-# `from automtg.engine.characteristics import ...` keeps working.
-from .player_statics import (  # noqa: F401
-    _active_player_statics,
-    _alone_forbidden,
-    _player_static,
-    _reaches_player,
-    any_defender_attack_prohibition,
-    attack_alone_forbidden,
-    attack_compelled,
-    attack_defender_forbidden,
-    attack_forbidden,
-    attack_tax,
-    block_alone_forbidden,
-    block_forbidden,
-    block_tax,
-    cast_lock_min_x,
-    commander_subtypes,
-    graveyard_cast_allows,
-    graveyard_cast_arrival_ok,
-    graveyard_cast_permissions,
-    library_top_cast_permission,
-    life_gain_addend,
-    life_gain_multiplier,
-    life_loss_multiplier,
-    mana_added_on_tap,
-    player_cant_cast_spells,
-    player_cant_gain_life,
-    player_doubles_land_mana,
-    player_doubles_mana_from,
-    player_extra_land_drops,
-    player_has_no_hand_limit,
-    player_looks_at_library_top,
-    player_plays_lands_from_graveyard,
-    player_plays_lands_from_library_top,
-    player_reveals_library_top,
-    player_skips_draw_step,
-    player_skips_extra_turn,
-    players_doubling_land_triggers,
-    players_freezing_opponent_lands,
-    printed_token_matches,
-    spell_cost_reduction,
-    spell_mana_tax,
-    spell_mana_tax_targeted,
-    token_creation_replacements,
-    untap_also,
-)
-
-
 def loyalty_activation_timing_waived(state: GameState, oid: int) -> bool:
     """May this permanent's loyalty abilities be activated at instant speed?
 

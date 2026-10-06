@@ -12,17 +12,17 @@ from typing import TYPE_CHECKING, Any
 from . import combat as combat_mod
 from . import replacements, sagas, suspend
 from .actions import PendingDecision
-from .characteristics import (
-    player_has_no_hand_limit,
-    player_skips_draw_step,
-    player_skips_extra_turn,
-    untap_also,
-)
 from .effects.context import EffectContext, ask_objects
 from .enums import DecisionKind, Keyword, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
-from .player_statics import untap_caps
+from .player_statics import (
+    player_has_no_hand_limit,
+    player_skips_draw_step,
+    player_skips_extra_turn,
+    untap_also,
+    untap_caps,
+)
 from .primitives import (
     arm_attack_requirements,
     clear_attack_requirements,

@@ -27,9 +27,9 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import block_forbidden
 from automtg.engine.enums import ActionKind, DecisionKind
 from automtg.engine.errors import DslError
+from automtg.engine.player_statics import block_forbidden
 from automtg.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 

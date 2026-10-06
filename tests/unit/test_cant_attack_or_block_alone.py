@@ -31,15 +31,15 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import (
+from automtg.engine.combat import attacks_valid, blocks_valid
+from automtg.engine.enums import ActionKind, DecisionKind, Step
+from automtg.engine.errors import DslError
+from automtg.engine.player_statics import (
     attack_alone_forbidden,
     attack_forbidden,
     block_alone_forbidden,
     block_forbidden,
 )
-from automtg.engine.combat import attacks_valid, blocks_valid
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import destroy
 from tests.conftest import find_action, oids_of, only_oid, pass_until

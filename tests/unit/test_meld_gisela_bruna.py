@@ -24,8 +24,9 @@ four-drop is not, and its controller's own three-drop is untouched.
 from __future__ import annotations
 
 from automtg.engine import legality
-from automtg.engine.characteristics import chars, player_cant_cast_spells
+from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Keyword, Step, Zone
+from automtg.engine.player_statics import player_cant_cast_spells
 from automtg.engine.primitives import change_control
 from automtg.engine.zones import destroy
 from tests.conftest import action_for_card, only_oid, pass_until

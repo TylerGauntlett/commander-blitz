@@ -12,16 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
-from .characteristics import (
-    chars,
-    life_gain_addend,
-    life_gain_multiplier,
-    life_loss_multiplier,
-    player_cant_gain_life,
-    player_protected_from,
-    printed_token_matches,
-    token_creation_replacements,
-)
+from .characteristics import chars, player_protected_from
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
@@ -29,9 +20,15 @@ from .player_statics import (
     counter_placement_replacements,
     damage_cap,
     damage_multiplier,
+    life_gain_addend,
+    life_gain_multiplier,
+    life_loss_multiplier,
     mill_multiplier,
+    player_cant_gain_life,
     player_counter_replacements,
+    printed_token_matches,
     static_cast_locked_zones,
+    token_creation_replacements,
     untap_held,
 )
 from .state import new_object

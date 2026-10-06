@@ -44,9 +44,10 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars, life_gain_addend, life_gain_multiplier
+from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
+from automtg.engine.player_statics import life_gain_addend, life_gain_multiplier
 from automtg.engine.primitives import damage_player, gain_life, lose_life
 from automtg.engine.structs import LifeLock
 from automtg.engine.zones import move_object

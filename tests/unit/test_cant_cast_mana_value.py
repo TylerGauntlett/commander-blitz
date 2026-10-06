@@ -29,9 +29,9 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine import legality
-from automtg.engine.characteristics import cast_lock_min_x, player_cant_cast_spells
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
+from automtg.engine.player_statics import cast_lock_min_x, player_cant_cast_spells
 from automtg.engine.zones import destroy
 from tests.conftest import oids_of, only_oid, pass_until
 

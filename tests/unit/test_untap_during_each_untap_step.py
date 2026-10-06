@@ -22,8 +22,8 @@ passes whether or not the static does anything at all.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import untap_also
 from automtg.engine.enums import ActionKind
+from automtg.engine.player_statics import untap_also
 from tests.conftest import only_oid
 
 

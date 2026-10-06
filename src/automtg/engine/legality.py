@@ -353,7 +353,7 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     ``card.id`` here made the second and third Forest unclickable and
     undraggable, which is a much worse trade than a slightly wider action list.
     """
-    from .characteristics import (
+    from .player_statics import (
         player_plays_lands_from_graveyard,
         player_plays_lands_from_library_top,
     )
@@ -977,9 +977,9 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     Doubling is applied, because a Vivid land under Vorinclex really does add
     two and the chip would otherwise promise one.
     """
-    from .characteristics import player_doubles_mana_from
     from .costs import mana_added_total, mana_amount, mana_options_of, mana_produced, plus_mana
     from .mana import format_symbols
+    from .player_statics import player_doubles_mana_from
 
     options = mana_options_of(state, oid, ability)
     if mana_option is None or len(options) <= 1:

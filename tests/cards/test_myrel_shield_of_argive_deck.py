@@ -44,10 +44,10 @@ to stop, and it is load bearing rather than scenery.
 from __future__ import annotations
 
 from automtg.engine import legality
-from automtg.engine.characteristics import chars, player_cant_cast_spells
+from automtg.engine.characteristics import chars
 from automtg.engine.costs import cost_reduction
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.player_statics import player_cant_activate
+from automtg.engine.player_statics import player_cant_activate, player_cant_cast_spells
 from tests.conftest import (
     _default_answer,
     find_action,

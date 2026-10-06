@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
-from .characteristics import cast_lock_min_x, chars, player_cant_cast_spells
+from .characteristics import chars
 from .costs import (
     can_pay,
     commander_cost,
@@ -21,8 +21,10 @@ from .costs import (
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
+    cast_lock_min_x,
     free_cast_permission,
     granted_warp_cost,
+    player_cant_cast_spells,
     player_casts_as_though_flash,
     player_casts_only_at_sorcery_speed,
     player_pays_life_for_black,
@@ -83,7 +85,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # card says and the only part of a library anybody is entitled to see.
     # Lands are the neighbouring `play_lands_from_library_top` permission and
     # are offered by `_land_actions`, so this covers only what that one cannot.
-    from .characteristics import library_top_cast_permission
+    from .player_statics import library_top_cast_permission
 
     top_permission = library_top_cast_permission(state, pid)
     if top_permission is not None and state.players[pid].library:
@@ -806,7 +808,7 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
     The first unspent one wins. Which of two identical Edgars is billed is not a
     choice any card asks the player to make, and they are interchangeable.
     """
-    from .characteristics import (
+    from .player_statics import (
         graveyard_cast_allows,
         graveyard_cast_arrival_ok,
         graveyard_cast_permissions,

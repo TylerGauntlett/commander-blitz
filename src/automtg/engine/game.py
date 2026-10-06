@@ -555,7 +555,7 @@ class Game:
         # Floored by a mana-value lock (Brisela), which this line escapes only
         # by announcing enough X -- asked of the same face legality asked it of.
         from .casting import _spell_as_cast
-        from .characteristics import cast_lock_min_x
+        from .player_statics import cast_lock_min_x
 
         min_x = cast_lock_min_x(
             state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
@@ -768,7 +768,7 @@ class Game:
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)
-                from .characteristics import graveyard_cast_permissions
+                from .player_statics import graveyard_cast_permissions
 
                 for source_obj, static in graveyard_cast_permissions(state, pid):
                     if source_obj.oid != granting.oid:

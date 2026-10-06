@@ -44,7 +44,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.characteristics import (
+from automtg.engine.enums import ActionKind
+from automtg.engine.player_statics import (
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,
@@ -55,7 +56,6 @@ from automtg.engine.characteristics import (
     players_doubling_land_triggers,
     players_freezing_opponent_lands,
 )
-from automtg.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 FOREST = "forest"

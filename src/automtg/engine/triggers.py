@@ -799,7 +799,7 @@ def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]
     # line of it triggers needs. `players_doubling_land_triggers` -- not a local
     # walk -- because it applies the static's "as long as…" gate, which every
     # player-wide static now goes through in exactly one place.
-    from .characteristics import players_doubling_land_triggers
+    from .player_statics import players_doubling_land_triggers
 
     return players_doubling_land_triggers(state)
 
@@ -1737,7 +1737,7 @@ def matches_card_filter(
 
     who = filt.get("shares_a_type_with_commander")
     if who is not None:
-        from .characteristics import commander_subtypes
+        from .player_statics import commander_subtypes
 
         seats = (
             [ability_source.controller]

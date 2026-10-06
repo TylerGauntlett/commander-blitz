@@ -34,8 +34,8 @@ command zone has only what is printed.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import commander_subtypes
 from automtg.engine.enums import ActionKind, Step
+from automtg.engine.player_statics import commander_subtypes
 from tests.conftest import pass_until
 
 WATCHER = "t_kindred_watcher"  # gains 1 life on a matching creature spell
