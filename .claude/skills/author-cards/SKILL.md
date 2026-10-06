@@ -138,6 +138,11 @@ the known backlog in `docs/card-authoring.md`: `cycling`, `crew`, `flashback`,
 This merging is the main agent's job precisely because it is the only vantage point
 that sees the whole wave.
 
+A record with `kind: "token"` is a token the packet's `token_ids` does not have
+(the packet tells workers to file exactly that rather than pick a near miss). It
+is the cheapest gap there is: one entry in `data/cards/tokens.cards.json`, added
+under `/extend-dsl` (its Tier 0), never by this skill — rule 2 still holds.
+
 ```bash
 python scripts/report_gaps.py
 ```

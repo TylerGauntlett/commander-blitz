@@ -48,6 +48,40 @@ way to over-build here is reaching for a new `DecisionKind` when an existing
 > opponent, because `ask_objects` always took an arbitrary player. "Somebody else
 > decides" was free.
 
+### Tier 0 — a missing token (`kind: "token"`)
+
+The cheapest gap there is, and a data change, not engine work. `create_token`
+names a token by id, `validate_token_references` refuses an id the pool does not
+define, and a worker sees the defined ids as its packet's `token_ids`. When the
+printed token is not among them, the worker files a gap record with
+`kind: "token"` and the printed token in `what`.
+
+1. `data/cards/tokens.cards.json` — add one entry. **This is the one card file
+   outside `auto/` that is edited by hand**, under this skill: a token has no
+   catalog row to author from and is never cast, so there is no answer and no
+   gate to collect it through. Copy the shape of its nearest neighbour:
+   `is_token: true`, the printed words as `oracle_text` ("2/2 white Knight creature
+   token with vigilance."), `types`, `subtypes`, `power`, `toughness`, `colors`,
+   `color_identity`, `keywords`, and `abilities` if the token prints any. Name it
+   the way the file does, `<subtypes>_<p>_<t>_<colours>[_<keywords>]`.
+2. **Never reuse a near miss.** Rule 111.4: a token is exactly what its creating
+   effect says. A 2/2 Knight with vigilance is not a 2/2 Knight, and a card that
+   names the wrong one is a stronger or weaker card than the printed one.
+3. `tests/unit/test_token_pool.py` — pin the new token's characteristics next to
+   its nearest near miss, as the Forest Tentacle (`02138ed9`) and the Samurai do.
+   The packet's `token_ids` picks it up with no further change;
+   `tests/cards/test_authoring.py` fails if a defined token is missing from it.
+4. Harvest the cards that were waiting on it (§4) and retire their gap records.
+
+Art is not part of the step: `scripts/build_card_index.py` resolves every
+registry card, tokens included, into `data/catalog/registry_images.json` and
+fetches the image the next time it runs.
+
+A token in that file that no card creates is not automatically dead. Check
+`tests/` first: `knight_2_2_w_vigilance`, `kraken_8_8_u` and `vampire_1_1_bw` are
+created by no shipped card, but unit tests and test-pool cards use them as
+fixtures and near-miss contrasts.
+
 ### Tier A — a new op composing existing primitives
 
 The common case, and the whole job for most mechanics.

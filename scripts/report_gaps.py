@@ -48,6 +48,7 @@ KINDS = (
     "replacement",  # a replacement effect
     "decision",  # a question no existing ask_* helper can pose
     "engine",  # a rules subsystem: planeswalkers, sagas, transform
+    "token",  # a token create_token cannot name: one entry in tokens.cards.json
 )
 
 

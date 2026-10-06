@@ -230,7 +230,10 @@ Write `data/authoring/gaps/<card_id>.json` and **no answer file**:
   grouping key across thousands of cards, so use the Magic keyword where one exists
   (`cycling`, `crew`, `flashback`, `convoke`, `ward`), not a description.
 - `kind` — one of `op`, `cost`, `trigger_event`, `keyword`, `static_effect`,
-  `selector`, `value`, `replacement`, `decision`, `engine`.
+  `selector`, `value`, `replacement`, `decision`, `engine`, `token`. Use `token`
+  when the only thing missing is the printed token itself — it is not in your
+  packet's `token_ids` — and put the printed token in `what` ("a 2/2 white Knight
+  creature token with vigilance").
 - `what` — **be specific.** "Needs a new op" is worthless. "Needs an activated
   ability playable from hand whose cost discards the source" is a work item
   somebody can build from.

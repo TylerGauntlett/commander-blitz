@@ -1,5 +1,5 @@
 {
-  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list.",
+  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py).",
   "cards": [
     {
       "id": "angel_4_4_w_flying",
