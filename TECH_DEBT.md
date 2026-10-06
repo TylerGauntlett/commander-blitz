@@ -15,8 +15,7 @@ resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`
 ## Suggested order
 
 1. **Cheap hygiene, no risk:** CD-04, CD-05.
-2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), RS-02 (CI minutes),
-   CD-02 (token path).
+2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), CD-02 (token path).
 3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
 4. **Defects:** FB-12, FB-13, FT-04, FT-07, one PR each.
 
@@ -158,21 +157,6 @@ The pack is 393 MB. The old comment on `fetch-depth: 1` in
 - update the stale comment.
 
 Rewriting history is a separate, explicit decision.
-
-### RS-02 · CI spends minutes it does not need to — **M**
-
-The repo is on the Free plan, and Actions minutes are the binding limit. Today:
-- A PR starts 12 runners: lint, python, sim, frontend, 7 e2e legs and the gate. Each
-  one re-runs `pip install -e .[dev]`, and the frontend and e2e jobs also run `npm ci`
-  and install Chromium.
-- The push to `main` after a merge runs lint, python, sim and frontend again on code
-  the PR already proved.
-- There is no `paths:` filter, so a docs-only or `data/authoring`-only change runs
-  everything.
-
-**Fix:** add `paths-ignore` for docs and authoring artifacts, skip the main-branch
-re-test when the merge commit's tree matches the PR head's, and cache the venv and
-`node_modules`.
 
 ---
 
