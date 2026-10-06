@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_counter_placed_put_by.py. t_cpp_watcher is Exemplar of Light's draw line without its once-each-turn cap; t_cpp_exemplar is the line as printed, with it.",
+  "_comment": "Shapes for tests/unit/counters/test_counter_placed_put_by.py. t_cpp_watcher is Exemplar of Light's draw line without its once-each-turn cap; t_cpp_exemplar is the line as printed, with it.",
   "cards": [
     {
       "id": "t_cpp_watcher",

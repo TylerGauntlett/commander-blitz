@@ -63,7 +63,7 @@ Search ops' `as`: The closest expressible card without it was "untap a tapped ba
 
 ### Selectors on a `kind: "spell"` target
 
-Spell-target selectors: This did not always work. The spell branch used to return every spell on the stack and never look at `spec.selector` at all, so Negate, Essence Scatter and Exclude were all Counterspell — the clause loaded, validated, and was simply never asked. `tests/unit/test_x_in_mana_cost.py` pins the repair on those two shipped cards as well as on the key it was built for.
+Spell-target selectors: This did not always work. The spell branch used to return every spell on the stack and never look at `spec.selector` at all, so Negate, Essence Scatter and Exclude were all Counterspell — the clause loaded, validated, and was simply never asked. `tests/unit/costs/test_x_in_mana_cost.py` pins the repair on those two shipped cards as well as on the key it was built for.
 
 ### Doing something to a spell that is not countering it
 
@@ -793,7 +793,7 @@ Token sacrifice costs: `stack.ability_of` looks the ability up through the sourc
 
 Near-miss tokens: Three pairs in the pool now differ by exactly one word:
 
-Near-miss tokens: The five below the Eldrazi Angel came with the Atraxa superfriends deck, beside five with no neighbour at all (`wizard_2_2_u`, `fractal_0_0_gu`, `kor_ally_1_1_w`, `pirate_2_2_b_menace`, `tamiyos_notebook`); all ten are pinned in `tests/unit/test_atraxa_tokens.py`.
+Near-miss tokens: The five below the Eldrazi Angel came with the Atraxa superfriends deck, beside five with no neighbour at all (`wizard_2_2_u`, `fractal_0_0_gu`, `kor_ally_1_1_w`, `pirate_2_2_b_menace`, `tamiyos_notebook`); all ten are pinned in `tests/unit/tokens/test_atraxa_tokens.py`.
 
 Near-miss tokens: The five above them arrived together, from one deck, and two of them show how the error compounds rather than staying cosmetic.
 

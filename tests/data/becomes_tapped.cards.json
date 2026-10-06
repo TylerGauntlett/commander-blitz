@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_becomes_tapped.py. t_bt_pinger is the Legolas's Quick Reflexes grant as a printed ability -- 'whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature' -- reduced to a bare draw so the test measures the trigger and not the damage. t_bt_land is City of Brass's shape -- a land whose own tap for mana is the trigger -- carrying the same bare draw as the pinger, since the class it serves is about the trigger surviving cost payment rather than about what the trigger does. t_bt_bear is a vanilla for the pinger to hit or be hit by.",
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_tapped.py. t_bt_pinger is the Legolas's Quick Reflexes grant as a printed ability -- 'whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature' -- reduced to a bare draw so the test measures the trigger and not the damage. t_bt_land is City of Brass's shape -- a land whose own tap for mana is the trigger -- carrying the same bare draw as the pinger, since the class it serves is about the trigger surviving cost payment rather than about what the trigger does. t_bt_bear is a vanilla for the pinger to hit or be hit by.",
   "cards": [
     {
       "id": "t_bt_pinger",

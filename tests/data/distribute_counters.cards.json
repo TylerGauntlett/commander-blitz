@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_distribute_counters.py. t_dc_walker carries Ajani, Sleeper Agent's minus line on a plain planeswalker; t_dc_bolt is a sorcery that kills a creature so a target can be made illegal in response.",
+  "_comment": "Shapes for tests/unit/counters/test_distribute_counters.py. t_dc_walker carries Ajani, Sleeper Agent's minus line on a plain planeswalker; t_dc_bolt is a sorcery that kills a creature so a target can be made illegal in response.",
   "cards": [
     {
       "id": "t_dc_walker",

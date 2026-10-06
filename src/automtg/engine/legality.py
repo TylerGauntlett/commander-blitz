@@ -440,7 +440,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     invariant worth stating out loud, because this function necessarily
     restates logic owned by the generators above: it is a diagnostic, never an
     authority, and :func:`legal_actions` remains the only source of truth.
-    ``tests/unit/test_legality_reasons.py`` pins the two together.
+    ``tests/unit/engine/test_legality_reasons.py`` pins the two together.
     """
     decision = state.pending_decision
     if (

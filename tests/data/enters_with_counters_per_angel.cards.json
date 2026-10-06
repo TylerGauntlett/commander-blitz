@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_enters_with_counters_per_angel.py. `t_giada` is Giada, Font of Hope whole. `t_angel` is a {W} Angel to cast, `t_squire` the same body without the type, `t_angel_pair` makes two Angel tokens in one op (one simultaneous event) at instant speed, and `t_mass_return` puts every creature card in your graveyard onto the battlefield at once.",
+  "_comment": "Cards for tests/unit/counters/test_enters_with_counters_per_angel.py. `t_giada` is Giada, Font of Hope whole. `t_angel` is a {W} Angel to cast, `t_squire` the same body without the type, `t_angel_pair` makes two Angel tokens in one op (one simultaneous event) at instant speed, and `t_mass_return` puts every creature card in your graveyard onto the battlefield at once.",
   "cards": [
     {
       "id": "t_giada",

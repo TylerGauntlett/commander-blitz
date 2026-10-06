@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the game-outcome prohibition test (tests/unit/test_cant_lose_the_game.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_grace` is Angel's Grace as printed -- split second, both halves of the 104.3b prohibition, and the damage floor. `t_grace_lose_only` and `t_grace_floor_only` split it so each half can be measured without the other, since most printed cards in this family carry only one. `t_persecutor_like` is the asymmetric case the two-flag design exists for: you can't win, said about yourself, with nothing about losing.",
+  "_comment": "Cards that exist only for the game-outcome prohibition test (tests/unit/players/test_cant_lose_the_game.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_grace` is Angel's Grace as printed -- split second, both halves of the 104.3b prohibition, and the damage floor. `t_grace_lose_only` and `t_grace_floor_only` split it so each half can be measured without the other, since most printed cards in this family carry only one. `t_persecutor_like` is the asymmetric case the two-flag design exists for: you can't win, said about yourself, with nothing about losing.",
   "cards": [
     {
       "id": "t_grace",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_repeat_while.py. `t_tutelage_spell` is Sphinx's Tutelage's whole sentence as a sorcery, so the loop and the colour condition can be driven together without a draw trigger in the way. `t_tutelage_unscoped` is the same card without the `reset`, kept live because it is the wrong card the accumulating `mill` binding makes: on its second pass the colour question is asked over every card milled so far. `t_forever_loop` has a condition that never goes false, and exists to pin the hundred-iteration guard.",
+  "_comment": "Shapes for tests/unit/effects/test_repeat_while.py. `t_tutelage_spell` is Sphinx's Tutelage's whole sentence as a sorcery, so the loop and the colour condition can be driven together without a draw trigger in the way. `t_tutelage_unscoped` is the same card without the `reset`, kept live because it is the wrong card the accumulating `mill` binding makes: on its second pass the colour question is asked over every card milled so far. `t_forever_loop` has a condition that never goes false, and exists to pin the hundred-iteration guard.",
   "cards": [
     {
       "id": "t_tutelage_spell",

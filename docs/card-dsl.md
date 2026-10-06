@@ -328,7 +328,7 @@ exile with extra steps. Three details are only ever visible when they are wrong:
   hands them the victim's card for good;
 - the **ordinal** — off by one is a card drawn a turn early, and no expectation
   key can read a library's order, so it is pinned in
-  `tests/unit/test_library_depth.py` rather than by the authoring gate.
+  `tests/unit/zones/test_library_depth.py` rather than by the authoring gate.
 
 `any_order: true` is "…puts the cards in their hand on the bottom of their
 library **in any order**" (Teferi's Puzzle Box). Rule 401.4 lets the **owner**
@@ -988,7 +988,7 @@ permanent and no static is applying to it. Both `targeting.candidates` and the
 608.2b `still_legal` re-check consult it, so a spell that stops matching between
 being targeted and resolving is dropped like any other target.
 
-`tests/unit/test_x_in_mana_cost.py` pins the spell-target selector, on shipped
+`tests/unit/costs/test_x_in_mana_cost.py` pins the spell-target selector, on shipped
 cards as well as on `x_in_mana_cost`.
 
 ### Doing something to a spell that is not countering it
@@ -1685,7 +1685,7 @@ where they run: a trigger filter (`matches_card_filter`) reads derived power
 keywords. So the same JSON clause counts an anthem-pumped creature in a
 card-level `cost_reduction` and does not count it in a static's `count`. That
 divergence is deliberate and is pinned by
-`tests/unit/test_static_power_filter.py`.
+`tests/unit/statics/test_static_power_filter.py`.
 
 Off the battlefield the key is refused at load time with the rest of the board
 state: a card in a graveyard has a printed P/T, but no printed line asks a
@@ -2064,7 +2064,7 @@ filter is their **sum**:
 the maximum of one number is that number. That is not a curiosity: the card
 authoring sandbox is a two-player game, so a Cavern-Hoard Dragon written with
 `count` prices itself correctly through all six gates and is wrong only at a
-pod. `tests/unit/test_greatest_count_reduction.py` is therefore written entirely
+pod. `tests/unit/costs/test_greatest_count_reduction.py` is therefore written entirely
 at four seats, with the `count` card beside it as a control.
 
 The filter is the ordinary reduction filter and every key still applies, applied
@@ -2922,7 +2922,7 @@ test and no attacking test, because the only printed exert cost is on a land.
 
 `Cost.is_tap_only` excludes it, which is what keeps the payment solver off it —
 a solver that paid an exert silently would keep a land down for a turn nobody
-agreed to. Cashed by `tests/unit/test_exert_cost.py`.
+agreed to. Cashed by `tests/unit/keywords/test_exert_cost.py`.
 
 ### `mill` — a cost, and never an effect
 
@@ -3039,7 +3039,7 @@ available, rather than being offered at its floor.
 That floor is the whole reason the field exists. Written as a bare
 `{"mana": "{X}"}` the line loads, passes every authoring gate — the verifier's
 sandbox never activates an activated ability — and lets the player announce X = 0
-and copy an imprinted Griselbrand for nothing. `tests/unit/test_defined_x_cost.py`
+and copy an imprinted Griselbrand for nothing. `tests/unit/costs/test_defined_x_cost.py`
 asserts both halves of that difference.
 
 Refused anywhere else, because nowhere else prices its mana through
@@ -3860,7 +3860,7 @@ would load clean and add no mana at all.
 The near miss is Tanuki Transplanter's shape — a `repeat` whose body is an
 `add_mana` of **one fixed colour**. It spells the size and the persistence
 exactly and still fixes the colour on the card, so for a card that prints "any
-combination of colors" it is strictly worse. `tests/unit/test_triggered_split_mana.py`
+combination of colors" it is strictly worse. `tests/unit/mana/test_triggered_split_mana.py`
 asserts the difference as a mixed pool.
 
 `in_commander_identity` looks like a shortcut for Vivi and is not: it reads the
@@ -3974,7 +3974,7 @@ it and it never existed in a zone. Storm, replicate, conspire, casualty,
 gravestorm and epic are every one of them a `spell_cast` trigger whose effect
 copies the spell that fired it, so a copy that counted as a cast would retrigger
 the ability that made it: a storm count of nine becoming an unbounded loop
-rather than nine copies. `tests/unit/test_magecraft.py::TestACopyIsNotACast`
+rather than nine copies. `tests/unit/triggers/test_magecraft.py::TestACopyIsNotACast`
 holds that line.
 
 The subject is the **original** spell, so a filter asks what was copied —
@@ -5328,7 +5328,7 @@ they pay is read as a `{B/P}`, so the Phyrexian machinery above does the rest --
 cast lines for a spell, the asked choice for everything else.
 
 The rulings fix the edges, and each is a test in
-`tests/unit/test_black_mana_as_phyrexian.py`: every cost the player pays counts
+`tests/unit/mana/test_black_mana_as_phyrexian.py`: every cost the player pays counts
 (spells, activations, special actions); a hybrid pip that *may* be paid with
 black (`{B/R}`, `{2/B}`) gains the life half too; generic mana never does; and the
 cost itself does not change -- mana value, colour and chroma read the same.
@@ -5374,7 +5374,7 @@ The waiver is applied **after** any discount, which is why it has a
 let the discount reach a pip that had become generic.
 
 Two things it must not swallow, both pinned in
-`tests/unit/test_spend_mana_as_any_color_static.py`. `{C}` in a cost is
+`tests/unit/mana/test_spend_mana_as_any_color_static.py`. `{C}` in a cost is
 untouched — colourless is not a colour, so a Mountain still cannot pay a Wastes'
 activation (that is the difference from `as_any_type`) — while colourless *mana*
 pays a loosened pip perfectly well, which is what makes the Orrery's own five
@@ -5457,7 +5457,7 @@ clean, print "Dragon spells" and hand over Omniscience. `controller` inside the
 filter is honoured beside `affects_player`; they are two spellings of "whose
 spells", and a key this reader walked past would be a silent over-grant.
 
-`tests/unit/test_free_cast_permission.py` pins both halves: that the cast takes
+`tests/unit/casting/test_free_cast_permission.py` pins both halves: that the cast takes
 no mana at all and reads X as 0, and that the permission is optional and scoped
 — a non-Dragon is untouched, an opponent's Dragon is untouched, and the printed
 line survives beside the free one.
@@ -5501,7 +5501,7 @@ artifact creature", and `any_types` is an or over *types* alone and would let a
 blue creature card through. `warp_cost` is required beside it, since a grant
 with no price is a free cast the card does not print.
 
-`tests/unit/test_warp.py` pins the grant's scope on exactly that measurement —
+`tests/unit/keywords/test_warp.py` pins the grant's scope on exactly that measurement —
 an artifact card has warp, a red creature card has warp, a blue creature card
 with the same body does not — along with the alternative cost, the exile at the
 next end step, and the cast from exile a turn later.
@@ -5566,7 +5566,7 @@ creature source of the chosen type**." Three things are load-bearing:
   that can never be spent. Enumerating the noncreature types over-permits every
   artifact creature, because `permits` sees `artifact` among the names and never
   learns `creature` is there too. Both live in
-  `tests/unit/test_mana_restriction_not.py` as cards, so the difference is
+  `tests/unit/mana/test_mana_restriction_not.py` as cards, so the difference is
   asserted rather than described.
 
   A negated `{"chosen_type_of": …}` is refused: no card prints it, and accepting
@@ -5764,7 +5764,7 @@ grant with no duration is riot's, which is `granted_keywords` and a different
 slot. Keyword and type names are checked at load time, because a rider matching
 nothing reads on the board as a land whose second ability is strictly worse than
 its first. Refused on an ability that is not a mana ability, where it would load
-and never be read. Cashed by `tests/unit/test_mana_granted_keyword.py`.
+and never be read. Cashed by `tests/unit/mana/test_mana_granted_keyword.py`.
 
 ### Counting the spells you cast, by type
 
@@ -6126,7 +6126,7 @@ and leaves the Equipment lying on the battlefield equipping nobody.
 resolves, the Equipment really is on the battlefield, and a zone expectation
 sees exactly what it expected. The only evidence is a `+2/+0` that never
 appears. Omitting `attachment` is therefore not a smaller card, it is a broken
-one, and `tests/unit/test_attach_another_permanent.py` is where the difference is
+one, and `tests/unit/attachments/test_attach_another_permanent.py` is where the difference is
 pinned.
 
 Write it as `{"binding": …}`, naming the `as` of the op that just put the card
@@ -6548,7 +6548,7 @@ and `game._cast` passes it to `ask_x` as `min_x`, whose options then start there
 (the ordinal is X less the floor; `min_x` rides in the decision's `context` for
 the client's stepper). A price with no X to announce — a free cast, where 107.3b
 makes X 0 — keeps the locked mana value and is not offered. Pinned in
-`tests/unit/test_cant_cast_mana_value.py`.
+`tests/unit/statics/test_cant_cast_mana_value.py`.
 
 `cant_activate_abilities` is that second sentence — Grand Abolisher's "…or
 activate abilities of artifacts, creatures, or enchantments", and the first line
@@ -7134,8 +7134,8 @@ and the `kicked` flag does not reach the object until resolution — so
 spell quietly picks one mode and the extra mana buys nothing.
 
 Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
-wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern and
-`tests/unit/test_cast_time_modes.py` pins the timing.
+wants a unit test per mode; `tests/unit/modes/test_modal_spells.py` is the pattern and
+`tests/unit/modes/test_cast_time_modes.py` pins the timing.
 
 ## A mana ability with a rider — the painland's drawback
 
@@ -7334,7 +7334,7 @@ Duration is not spellable: "while each one is exiled" is the
 every `playable_*` field as the card leaves exile, which is both what the
 sentence says and what 400.7 says anyway.
 
-Pinned in `tests/unit/test_airbend.py` over `tests/data/airbend.cards.json`,
+Pinned in `tests/unit/keywords/test_airbend.py` over `tests/data/airbend.cards.json`,
 which measures both halves against a plain `exile` + `playable` written on the
 same board.
 
@@ -7373,7 +7373,7 @@ list on `zone_of`, so every one of its eight walks is closed at once),
 is deliberately left open: a copy created on the stack was never in a zone to be
 cast from (707.12).
 
-Pinned in `tests/unit/test_cant_cast_spells_from_zones.py`, where one flashback
+Pinned in `tests/unit/statics/test_cant_cast_spells_from_zones.py`, where one flashback
 instant is a hand cast and a graveyard cast at once.
 
 **The static form** is Drannith Magistrate — the same sentence with no clock,
@@ -7396,7 +7396,7 @@ reader of its own**: `primitives.cast_locked_zones` unions it in beside the
 make. A commander is cast from the command zone (903.8), so a Magistrate stops
 its opponents casting their commanders. `affects`, `amount` and `affects_spells`
 beside it are load errors, and `zones` / `except_zones` on any other static are
-refused. Pinned in `tests/unit/test_static_zone_cast_lock.py`.
+refused. Pinned in `tests/unit/statics/test_static_zone_cast_lock.py`.
 
 ## "Your life total can't change"
 
@@ -8318,7 +8318,7 @@ the selector matched — the same shape as `reflecting`, and for the same reason
 asks each matched object's own mana *abilities* what they could produce, and the
 imprinted card is a nonartifact, nonland card lying in exile: it has no abilities
 at all. Written that way the Mox loads clean, reads its own imprint correctly,
-and taps for nothing for ever. `tests/unit/test_colors_of_mana.py` ships that
+and taps for nothing for ever. `tests/unit/mana/test_colors_of_mana.py` ships that
 card beside the real one so the difference is demonstrated rather than claimed.
 
 The other near miss is a `choose_mode` over five `add_mana`s, and it is the one
@@ -8347,7 +8347,7 @@ refusals.
 "Imprint — When this artifact enters, you may exile a nonartifact, nonland card
 from your hand" is a `self_enters` trigger wrapping `may` around an `exile` with
 `link: "self"`, the shape Isochron Scepter and Soul Foundry already ship — see
-`tests/unit/test_imprint.py` for the link itself.
+`tests/unit/keywords/test_imprint.py` for the link itself.
 
 ## Vivid mana — "for each color among permanents you control"
 
@@ -8372,7 +8372,7 @@ ask anything (605.1a).
 `colors_of` over the *identical selector* is the near miss and is a **different
 card**: "one mana of any color among permanents you control" is Mox Amber, and
 written that way a three-colour board taps Bloom Tender for one mana.
-`tests/unit/test_mana_of_each_color.py` ships that mirror beside the real card so
+`tests/unit/mana/test_mana_of_each_color.py` ships that mirror beside the real card so
 the difference is demonstrated rather than claimed — same selector, same board,
 three single-symbol options against one option worth three.
 
@@ -9484,7 +9484,7 @@ stack" looks like from the board.
 
 An *activated* ability is refused: `legality` enumerates one activation per legal
 target tuple, so its targets are fixed before `Game._activate` asks which mode.
-`tests/unit/test_modal_triggered_targets.py` is the witness.
+`tests/unit/modes/test_modal_triggered_targets.py` is the witness.
 
 ### What the loader refuses
 
@@ -9750,7 +9750,7 @@ else, the list grows every set, and the default has to fail safe. An unknown
 subtype read as a creature type is dropped when Creature is, which is right for
 every new creature type and wrong only for a new artifact or enchantment type on
 a permanent that stopped being a creature it never was. The derivation is
-reproduced in `tests/unit/test_lose_all_abilities.py`, so a catalog refresh that
+reproduced in `tests/unit/statics/test_lose_all_abilities.py`, so a catalog refresh that
 adds a type says so.
 
 ### The one divergence
@@ -10313,7 +10313,7 @@ different card, in three ways that a board can see:
   and fires nothing. The substitute additionally wakes every `counter_placed`
   watcher on the board.
 
-`tests/unit/test_variable_enters_with_counters.py` runs all three claims against
+`tests/unit/counters/test_variable_enters_with_counters.py` runs all three claims against
 `t_marshal_trigger`, which is the substitute written out as a card.
 
 ## Creature-lands
@@ -11937,8 +11937,8 @@ Three rules details, none of them optional:
   rather than losing it.
 
 `rest_to_bottom` routes through `state.rng` like cascade's and ripple's, never
-`random`; `tests/unit/test_determinism_hygiene.py` scans for the latter and
-`tests/unit/test_free_cast_from_window.py` pins the former from the outside.
+`random`; `tests/unit/engine/test_determinism_hygiene.py` scans for the latter and
+`tests/unit/casting/test_free_cast_from_window.py` pins the former from the outside.
 
 ## Aura swap — an exchange, not two moves
 
@@ -12575,7 +12575,7 @@ pairs in the pool are near misses of each other:
 
 `wizard_2_2_u`, `fractal_0_0_gu`, `kor_ally_1_1_w`, `pirate_2_2_b_menace` and
 `tamiyos_notebook` have no neighbour at all; they and the five pairs below the
-Eldrazi Angel are pinned in `tests/unit/test_atraxa_tokens.py`.
+Eldrazi Angel are pinned in `tests/unit/tokens/test_atraxa_tokens.py`.
 
 Two of the five pairs above the Eldrazi Angel show how the
 error compounds rather than staying cosmetic. Myrel, Shield of Argive makes
@@ -12587,8 +12587,8 @@ turn*, so the near miss is not made once, it is made and then doubled.
 Two consequences. The packet's `token_ids` carries each id's **printed
 description** rather than the bare id, so matching a printed token against the
 list is a lookup rather than a guess. And a token added to the pool gets its
-assertion written by hand — `tests/unit/test_token_pool.py`,
-`tests/unit/test_deck_tokens.py` and `tests/unit/test_artifact_tokens.py` are
+assertion written by hand — `tests/unit/tokens/test_token_pool.py`,
+`tests/unit/tokens/test_deck_tokens.py` and `tests/unit/tokens/test_artifact_tokens.py` are
 where that lives, and they are the only coverage a token definition ever has.
 
 A token's *size* need not be a number. Urza's Saga's Construct is a printed 0/0
@@ -13573,7 +13573,7 @@ A chapter resolves once and what it grants outlives it, until the Saga leaves
   tell 704.5s a chapter is still on the stack and keep the Saga from being
   sacrificed after III.
 
-See `tests/unit/test_granted_activated_abilities.py`.
+See `tests/unit/statics/test_granted_activated_abilities.py`.
 
 ## Two piles
 

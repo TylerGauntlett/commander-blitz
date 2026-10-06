@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_uncounterable_mana.py. t_cavern is Cavern of Souls' two mana abilities: index 0 is the plain {C} with no rider, index 1 adds one mana of any colour with mana_uncounterable. Two abilities on ONE permanent is the whole point -- it is why the rider has to travel on the pip rather than on the permanent. t_plain_rock makes the same any-colour mana with no rider, the control. t_uc_spell is a {G} creature to cast and t_counterspell counters target spell.",
+  "_comment": "Shapes for tests/unit/mana/test_uncounterable_mana.py. t_cavern is Cavern of Souls' two mana abilities: index 0 is the plain {C} with no rider, index 1 adds one mana of any colour with mana_uncounterable. Two abilities on ONE permanent is the whole point -- it is why the rider has to travel on the pip rather than on the permanent. t_plain_rock makes the same any-colour mana with no rider, the control. t_uc_spell is a {G} creature to cast and t_counterspell counters target spell.",
   "cards": [
     {
       "id": "t_cavern",

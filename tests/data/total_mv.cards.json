@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the total-mana-value test (tests/unit/test_total_mana_value.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flames_of_rebirth` is Phoenix, Warden of Fire's third chapter: a cap on the picks TOGETHER. `t_each_six` is the counterfactual -- the same line read as a cap on each of them, which is what a selector clause can say and is a much wider card.",
+  "_comment": "Cards that exist only for the total-mana-value test (tests/unit/targets/test_total_mana_value.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flames_of_rebirth` is Phoenix, Warden of Fire's third chapter: a cap on the picks TOGETHER. `t_each_six` is the counterfactual -- the same line read as a cap on each of them, which is what a selector clause can say and is a much wider card.",
   "cards": [
     {
       "id": "t_flames_of_rebirth",

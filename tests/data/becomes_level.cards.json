@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the becomes-level trigger tests (tests/unit/test_becomes_level_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_caretakers_talent` is Caretaker's Talent line for line, under a test id so authoring the real card later is not blocked by it. `t_level_watcher` prints a level-2 and a level-3 'becomes' trigger, so a test can see each fire exactly once and on its own rung.",
+  "_comment": "Cards that exist only for the becomes-level trigger tests (tests/unit/triggers/test_becomes_level_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_caretakers_talent` is Caretaker's Talent line for line, under a test id so authoring the real card later is not blocked by it. `t_level_watcher` prints a level-2 and a level-3 'becomes' trigger, so a test can see each fire exactly once and on its own rung.",
   "cards": [
     {
       "id": "t_caretakers_talent",

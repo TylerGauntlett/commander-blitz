@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the extra-turn test (tests/unit/test_extra_turn.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_time_warp` is Time Warp. `t_gift_turn` is Perch Protection's gift reward on its own, with one card of draw so the unpromised line still does something. `t_turns_for_all` names every player at once, which is the case 500.7's APNAP sentence is about. `t_turn_skipper` is Trouble in Pairs' first line on its own.",
+  "_comment": "Cards that exist only for the extra-turn test (tests/unit/turn/test_extra_turn.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_time_warp` is Time Warp. `t_gift_turn` is Perch Protection's gift reward on its own, with one card of draw so the unpromised line still does something. `t_turns_for_all` names every player at once, which is the case 500.7's APNAP sentence is about. `t_turn_skipper` is Trouble in Pairs' first line on its own.",
   "cards": [
     {
       "id": "t_time_warp",

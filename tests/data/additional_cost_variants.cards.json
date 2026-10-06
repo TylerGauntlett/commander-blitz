@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the 601.2f additional-cost test (tests/unit/test_additional_cost_every_cast.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mad_laughter` is Laughing Mad's shape -- a mandatory additional cost plus flashback -- and `t_plain_laughter` is the same card with no additional cost, as the counterfactual.",
+  "_comment": "Cards that exist only for the 601.2f additional-cost test (tests/unit/costs/test_additional_cost_every_cast.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mad_laughter` is Laughing Mad's shape -- a mandatory additional cost plus flashback -- and `t_plain_laughter` is the same card with no additional cost, as the counterfactual.",
   "cards": [
     {
       "id": "t_mad_laughter",

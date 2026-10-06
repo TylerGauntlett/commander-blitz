@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_combat_damage_to_planeswalker.py. t_cdpw_saboteur prints both halves of \"deals combat damage to a player or planeswalker\" as two triggered abilities claiming one line; t_cdpw_player_only prints the player half alone, which is the control that proves a planeswalker hit does not quietly fire every saboteur in the pool. t_cdpw_bystander carries the planeswalker trigger too so `source: self` can be shown to scope it to the creature that connected.",
+  "_comment": "Shapes for tests/unit/combat/test_combat_damage_to_planeswalker.py. t_cdpw_saboteur prints both halves of \"deals combat damage to a player or planeswalker\" as two triggered abilities claiming one line; t_cdpw_player_only prints the player half alone, which is the control that proves a planeswalker hit does not quietly fire every saboteur in the pool. t_cdpw_bystander carries the planeswalker trigger too so `source: self` can be shown to scope it to the creature that connected.",
   "cards": [
     {
       "id": "t_cdpw_saboteur",

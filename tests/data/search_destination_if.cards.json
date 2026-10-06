@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_search_destination_if.py. t_sdi_charm is Archdruid's Charm's first mode -- search for a creature or land, the land onto the battlefield tapped and anything else to hand. t_sdi_plain is the same search WITHOUT destination_if, kept live so the tests measure the branch rather than the search: it sends a land to hand like everything else. t_sdi_bear and t_sdi_wood are the two cards a library is stocked with.",
+  "_comment": "Shapes for tests/unit/zones/test_search_destination_if.py. t_sdi_charm is Archdruid's Charm's first mode -- search for a creature or land, the land onto the battlefield tapped and anything else to hand. t_sdi_plain is the same search WITHOUT destination_if, kept live so the tests measure the branch rather than the search: it sends a land to hand like everything else. t_sdi_bear and t_sdi_wood are the two cards a library is stocked with.",
   "cards": [
     {
       "id": "t_sdi_charm",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the spend-mana-as-any-type test (tests/unit/test_spend_mana_as_any_type.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hoarder` is the Valigarmanda shape: exile an instant or sorcery from every graveyard at the table, keeping the link, then later offer one of them back at its printed price with the colours waived. `t_strict_hoarder` is the same card with the waiver removed, which is what the assertions are measured against.",
+  "_comment": "Cards that exist only for the spend-mana-as-any-type test (tests/unit/mana/test_spend_mana_as_any_type.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hoarder` is the Valigarmanda shape: exile an instant or sorcery from every graveyard at the table, keeping the link, then later offer one of them back at its printed price with the colours waived. `t_strict_hoarder` is the same card with the waiver removed, which is what the assertions are measured against.",
   "cards": [
     {
       "id": "t_hoarder",

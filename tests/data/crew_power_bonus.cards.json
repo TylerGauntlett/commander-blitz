@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the crew-power-bonus test (tests/unit/test_crew_power_bonus.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_crew8_vehicle` is Shorikai's Crew 8 without the draw ability; `t_hotshot_mechanic` is Hotshot Mechanic's printed line on a nontoken creature, the witness that the static is not a token-only rider.",
+  "_comment": "Cards that exist only for the crew-power-bonus test (tests/unit/keywords/test_crew_power_bonus.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_crew8_vehicle` is Shorikai's Crew 8 without the draw ability; `t_hotshot_mechanic` is Hotshot Mechanic's printed line on a nontoken creature, the witness that the static is not a token-only rider.",
   "cards": [
     {
       "id": "t_crew8_vehicle",

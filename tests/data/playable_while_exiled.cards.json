@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for tests/unit/test_playable_while_exiled.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_brain_impulse` is Elder Brain's permission clock on an impulse draw: play the exiled card for as long as it remains exiled.",
+  "_comment": "A card that exists only for tests/unit/casting/test_playable_while_exiled.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_brain_impulse` is Elder Brain's permission clock on an impulse draw: play the exiled card for as long as it remains exiled.",
   "cards": [
     {
       "id": "t_brain_impulse",

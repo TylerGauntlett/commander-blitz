@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_graveyard_cast_grant.py. t_yawgmoth is Urabrask's third chapter as a sorcery that exiles itself -- the exile is the point, since the whole difference from a static is that the permission outlives its source. t_own_graveyard is the same grant without `any_graveyard`, kept live because it is the narrower card the widening must not hand out for free.",
+  "_comment": "Shapes for tests/unit/casting/test_graveyard_cast_grant.py. t_yawgmoth is Urabrask's third chapter as a sorcery that exiles itself -- the exile is the point, since the whole difference from a static is that the permission outlives its source. t_own_graveyard is the same grant without `any_graveyard`, kept live because it is the narrower card the widening must not hand out for free.",
   "cards": [
     {
       "id": "t_yawgmoth",

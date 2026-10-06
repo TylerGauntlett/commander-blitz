@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_playable_duration.py. t_haste_magic is the Haste Magic clock ('until your next end step'), t_light_up is Light Up the Stage's ('until the end of your next turn'), and t_impulse is the this-turn permission both are compared against -- the one the engine had, and the one that is a strictly worse card for either of them.",
+  "_comment": "Shapes for tests/unit/casting/test_playable_duration.py. t_haste_magic is the Haste Magic clock ('until your next end step'), t_light_up is Light Up the Stage's ('until the end of your next turn'), and t_impulse is the this-turn permission both are compared against -- the one the engine had, and the one that is a strictly worse card for either of them.",
   "cards": [
     {
       "id": "t_impulse",

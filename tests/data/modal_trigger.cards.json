@@ -1,5 +1,5 @@
 {
-  "_comment": "Test-only cards for tests/unit/test_modal_triggered_targets.py -- a triggered ability whose modes are chosen as it goes on the stack (603.3d), one of which owns a target. Shaped on Oltec Matterweaver.",
+  "_comment": "Test-only cards for tests/unit/modes/test_modal_triggered_targets.py -- a triggered ability whose modes are chosen as it goes on the stack (603.3d), one of which owns a target. Shaped on Oltec Matterweaver.",
   "cards": [
     {
       "id": "t_matterweaver",

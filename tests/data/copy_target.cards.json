@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_copy_target_spell.py. t_fork copies a spell it TARGETS, which is the thing copy_spell could not do: every shipped user of the op copies the spell that fired it.",
+  "_comment": "Shapes for tests/unit/copies/test_copy_target_spell.py. t_fork copies a spell it TARGETS, which is the thing copy_spell could not do: every shipped user of the op copies the spell that fired it.",
   "cards": [
     {
       "id": "t_fork",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_attached_to_host.py. t_knuckles is Brass Knuckles' second line -- double strike on the equipped creature while two or more Equipment are attached to it -- and t_broad_knuckles is the same card written WITHOUT the subtype narrowing, kept live to show why attached_to_host must not short-circuit the rest of the filter: it counts the Aura too. t_scaler is Strong Back's magnitude, +1/+1 for each Aura and Equipment attached to the enchanted creature. t_plain_gear is an ordinary Equipment with no abilities, there to be counted, and t_cloak is an Aura for the same purpose.",
+  "_comment": "Shapes for tests/unit/attachments/test_attached_to_host.py. t_knuckles is Brass Knuckles' second line -- double strike on the equipped creature while two or more Equipment are attached to it -- and t_broad_knuckles is the same card written WITHOUT the subtype narrowing, kept live to show why attached_to_host must not short-circuit the rest of the filter: it counts the Aura too. t_scaler is Strong Back's magnitude, +1/+1 for each Aura and Equipment attached to the enchanted creature. t_plain_gear is an ordinary Equipment with no abilities, there to be counted, and t_cloak is an Aura for the same purpose.",
   "cards": [
     {
       "id": "t_knuckles",

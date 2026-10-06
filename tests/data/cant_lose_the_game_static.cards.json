@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_cant_lose_the_game_static.py. `t_gideon_emblem_holder` carries Gideon of the Trials' emblem text as two statics on a permanent, so the test can make it enter and leave; `t_test_gideon` is a Gideon planeswalker for its condition to see.",
+  "_comment": "Cards that exist only for tests/unit/players/test_cant_lose_the_game_static.py. `t_gideon_emblem_holder` carries Gideon of the Trials' emblem text as two statics on a permanent, so the test can make it enter and leave; `t_test_gideon` is a Gideon planeswalker for its condition to see.",
   "cards": [
     {
       "id": "t_gideon_emblem_holder",

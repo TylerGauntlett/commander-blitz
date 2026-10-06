@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the Approach of the Second Sun test (tests/unit/test_approach_of_the_second_sun.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_approach` is the printed card: the cast-from-hand condition, the game-long name count compared `> 1` because the spell has already recorded itself, and the `tucks_itself: 7` rider on the Otherwise branch. `t_approach_tuck_only` drops the win half so the tuck depth can be measured on its own, and `t_plain_gain` is an unrelated spell used to show the game-long counter only counts matching names.",
+  "_comment": "Cards that exist only for the Approach of the Second Sun test (tests/unit/named_cards/test_approach_of_the_second_sun.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_approach` is the printed card: the cast-from-hand condition, the game-long name count compared `> 1` because the spell has already recorded itself, and the `tucks_itself: 7` rider on the Otherwise branch. `t_approach_tuck_only` drops the win half so the tuck depth can be measured on its own, and `t_plain_gain` is an unrelated spell used to show the game-long counter only counts matching names.",
   "cards": [
     {
       "id": "t_approach",

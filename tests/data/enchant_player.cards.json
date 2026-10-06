@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the enchant-a-player test (tests/unit/test_enchant_player.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_seat_robe` is the minimal 'Enchant player' Aura; `t_encumber` is the Overencumbered prototype, whose three sentences are the whole reason the capability exists; `t_creature_aura` is the counterfactual -- the same abilities on an Aura that enchants a *creature*, where `enchanted_player` names nobody.",
+  "_comment": "Cards that exist only for the enchant-a-player test (tests/unit/attachments/test_enchant_player.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_seat_robe` is the minimal 'Enchant player' Aura; `t_encumber` is the Overencumbered prototype, whose three sentences are the whole reason the capability exists; `t_creature_aura` is the counterfactual -- the same abilities on an Aura that enchants a *creature*, where `enchanted_player` names nobody.",
   "cards": [
     {
       "id": "t_seat_robe",

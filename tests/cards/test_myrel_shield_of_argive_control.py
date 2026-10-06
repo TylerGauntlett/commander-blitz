@@ -27,20 +27,20 @@ Four of these cards arrived with the capability that made them possible, and eac
 capability has its own unit test about the *mechanism*. This file is about the
 *card in a game position*:
 
-- `tests/unit/test_cant_lose_the_game.py` -- Angel's Grace: the outcome lock and
+- `tests/unit/players/test_cant_lose_the_game.py` -- Angel's Grace: the outcome lock and
   the damage life-floor, read off `sba` and the primitives directly.
-- `tests/unit/test_replace_graveyard.py` -- Rest in Peace: the graveyard
+- `tests/unit/replacement/test_replace_graveyard.py` -- Rest in Peace: the graveyard
   replacement from every zone, on a synthetic probe card.
-- `tests/unit/test_untap_limit.py` -- Winter Orb: `untap_caps` and `untap_all`,
+- `tests/unit/turn/test_untap_limit.py` -- Winter Orb: `untap_caps` and `untap_all`,
   neither of which runs an untap step.
-- `tests/unit/test_approach_of_the_second_sun.py` -- Approach: `cast_from_hand`,
+- `tests/unit/named_cards/test_approach_of_the_second_sun.py` -- Approach: `cast_from_hand`,
   the game-long cast ledger, the `> 1` boundary and the seventh-from-top tuck.
 
 The one printed clause in this group that no assertion here can reach is Angel's
 Grace's **split second**. The engine stops a response at the legality layer, and
 a seat with no legal action is never asked: by the time any `pending()` exists the
 spell has already resolved, so there is no game state in which to observe the
-prohibition. `tests/unit/test_split_second.py` measures it where it lives.
+prohibition. `tests/unit/casting/test_split_second.py` measures it where it lives.
 """
 
 from __future__ import annotations
@@ -158,7 +158,7 @@ class TestWinterOrb:
 
     The prohibition gate 5 is furthest from reaching: the sandbox never takes a
     second turn, so it never runs an untap step at all, and its expectation is
-    "the Orb is on the battlefield". `tests/unit/test_untap_limit.py` pins
+    "the Orb is on the battlefield". `tests/unit/turn/test_untap_limit.py` pins
     `untap_caps` and `untap_all`; what is untested until here is the cap biting in
     a real untap step -- the decision it puts to the untapping player, and the two
     lands that stay down afterwards.
@@ -457,7 +457,7 @@ class TestRestInPeace:
     sandbox goes to a graveyard to test, and the symmetry, which is the drawback
     the card is built around.
 
-    `tests/unit/test_replace_graveyard.py` walks every zone the replacement has to
+    `tests/unit/replacement/test_replace_graveyard.py` walks every zone the replacement has to
     reach on a probe card. This is the printed card doing it in a game, and the
     thing that kills the creatures is another card from the same deck.
     """
@@ -536,7 +536,7 @@ class TestAngelsGrace:
     shield, the total never moves, and a player at 40 ends the turn at 40.
 
     **Angel's Grace is not a Fog.** The damage lands, the total stops at 1, and
-    you keep playing at or below it. `tests/unit/test_cant_lose_the_game.py` pins
+    you keep playing at or below it. `tests/unit/players/test_cant_lose_the_game.py` pins
     that against the primitives; here it is real combat damage and a real turn
     boundary.
     """
@@ -622,8 +622,8 @@ class TestApproachOfTheSecondSun:
     Approach of the Second Sun this game, you win the game."
 
     Gate 5 saw the *other* branch -- `life {"0": 47}` and the card seventh from
-    the top -- because one cast is never two. `tests/unit/test_approach_of_the_
-    second_sun.py` pins the `> 1` boundary, the tuck depth and `cast_from_hand`.
+    the top -- because one cast is never two. `tests/unit/named_cards/
+    test_approach_of_the_second_sun.py` pins the `> 1` boundary, the tuck depth and `cast_from_hand`.
 
     What is left, and what belongs in a deck file rather than a unit file, is the
     pair this deck can make out of its own two cards: an **opponent's** Approach

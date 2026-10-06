@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for the TestTheMutatesTrigger class in tests/unit/test_mutate.py. t_mutate_watcher is t_mutator with 702.140e's trigger printed on it -- the newcomer, because that is where the printed line lives on Gemrazer and it is the half that has to be heard after the merge. A bystander copy, t_mutate_bystander, sits on the battlefield with the same trigger so `source: self` can be shown to scope it to the permanent that mutated.",
+  "_comment": "Shapes for the TestTheMutatesTrigger class in tests/unit/keywords/test_mutate.py. t_mutate_watcher is t_mutator with 702.140e's trigger printed on it -- the newcomer, because that is where the printed line lives on Gemrazer and it is the half that has to be heard after the merge. A bystander copy, t_mutate_bystander, sits on the battlefield with the same trigger so `source: self` can be shown to scope it to the permanent that mutated.",
   "cards": [
     {
       "id": "t_mutate_watcher",

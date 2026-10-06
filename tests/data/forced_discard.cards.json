@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_forced_discard_trigger.py. `t_forced_orvar` is Orvar, the All-Form's third line alone -- it lives in hand, matches only itself, and fires only when an opponent's spell or ability made you discard it. `t_loose_orvar` drops the `cause_controller` clause, which is the strictly better card the gap record refused to write: it also fires on your own rummaging, on a cost you paid with this very card, and on the cleanup-step discard. `t_mind_rot` is an opponent's forced discard; `t_rummage` is your own.",
+  "_comment": "Shapes for tests/unit/triggers/test_forced_discard_trigger.py. `t_forced_orvar` is Orvar, the All-Form's third line alone -- it lives in hand, matches only itself, and fires only when an opponent's spell or ability made you discard it. `t_loose_orvar` drops the `cause_controller` clause, which is the strictly better card the gap record refused to write: it also fires on your own rummaging, on a cost you paid with this very card, and on the cleanup-step discard. `t_mind_rot` is an opponent's forced discard; `t_rummage` is your own.",
   "cards": [
     {
       "id": "t_forced_orvar",

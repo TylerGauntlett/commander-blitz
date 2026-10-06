@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_fight.py. t_fighter is Ulvenwald Tracker's ability alone -- 'Target creature you control fights another target creature' -- written as a sorcery so the test can cast it rather than activate it. t_self_fighter points both halves of the op at ONE binding, which is how 701.12d is reachable from a card file: targeting already refuses the same permanent for two separate target slots. The creatures are vanillas of the sizes the exchange turns on, plus a lifelinker and a deathtoucher, since dealing the damage BY the creature rather than by the spell is what makes those two work.",
+  "_comment": "Shapes for tests/unit/effects/test_fight.py. t_fighter is Ulvenwald Tracker's ability alone -- 'Target creature you control fights another target creature' -- written as a sorcery so the test can cast it rather than activate it. t_self_fighter points both halves of the op at ONE binding, which is how 701.12d is reachable from a card file: targeting already refuses the same permanent for two separate target slots. The creatures are vanillas of the sizes the exchange turns on, plus a lifelinker and a deathtoucher, since dealing the damage BY the creature rather than by the spell is what makes those two work.",
   "cards": [
     {
       "id": "t_f_2_2",

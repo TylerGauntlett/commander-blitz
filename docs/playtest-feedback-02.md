@@ -33,7 +33,7 @@ Ordered as the cycle-1 doc ranked them.
    "Needs {2}{G} — you have {G}" or "Sorcery speed — your main phase only".
 
    The function necessarily restates logic the generators own, so
-   `tests/unit/test_legality_reasons.py` pins the invariant that matters: a reason
+   `tests/unit/engine/test_legality_reasons.py` pins the invariant that matters: a reason
    appears *exactly* when no action names the card. That test is what fails if the
    two ever drift.
 
@@ -45,7 +45,7 @@ Ordered as the cycle-1 doc ranked them.
    The payload is deliberately *not* a colour histogram. "{T}: Add {G} or {U}"
    and "{T}: Add {G}{U}" produce the same symbol union but differ by a whole
    mana, so each source keeps its own `options` list and an ambiguous one renders
-   as a single split pip. `tests/unit/test_mana_availability.py` and
+   as a single split pip. `tests/unit/mana/test_mana_availability.py` and
    `frontend/tests/mana.test.ts` both assert the pip count can never exceed what
    the board can actually produce.
 

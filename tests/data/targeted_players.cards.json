@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the targeted-players test (tests/unit/test_targeted_players.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_coppercoats` is Call the Coppercoats: any number of target opponents, and X counts the creatures THOSE opponents control. `t_loose_coppercoats` is the counterfactual spelled with `controller: \"opponent\"`, which counts every opponent's creatures whoever was targeted.",
+  "_comment": "Cards that exist only for the targeted-players test (tests/unit/targets/test_targeted_players.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_coppercoats` is Call the Coppercoats: any number of target opponents, and X counts the creatures THOSE opponents control. `t_loose_coppercoats` is the counterfactual spelled with `controller: \"opponent\"`, which counts every opponent's creatures whoever was targeted.",
   "cards": [
     {
       "id": "t_coppercoats",

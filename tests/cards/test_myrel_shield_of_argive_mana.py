@@ -868,7 +868,7 @@ class TestPathOfAncestry:
 class TestRoguesPassage:
     """ "{T}: Add {C}." / "{4}, {T}: Target creature can't be blocked this turn."
 
-    The expectation is `{"zone": "battlefield"}`. `tests/unit/test_unblockable.py`
+    The expectation is `{"zone": "battlefield"}`. `tests/unit/combat/test_unblockable.py`
     pins the capability on a test-only land called `t_passage`; the shipped card's
     price, its targeting and its colourless mana are new here.
     """
@@ -1561,7 +1561,7 @@ class TestPeterParkersCamera:
     The entry counters are the one thing gate 5 did pin
     (`{"counters": {"amount": 3, "kind": "film"}}`), so they are not re-asserted.
     Everything past them needs an ability already on the stack, which the gate
-    never puts there. `tests/unit/test_copy_ability.py` pins the capability on a
+    never puts there. `tests/unit/copies/test_copy_ability.py` pins the capability on a
     test-only card called `t_camera`.
     """
 
@@ -1744,7 +1744,7 @@ class TestRescueRetriever:
     Gate 5's expectation is `{"battlefield_count": 33, "hand_size": {"0": 1},
     "zone": "battlefield"}` -- no counters recorded, because its sandbox has no
     other Soldier for them to go on, and no combat for the prevention to reach.
-    `tests/unit/test_prevent_all_damage.py` pins the capability on a test-only
+    `tests/unit/damage/test_prevent_all_damage.py` pins the capability on a test-only
     card called `t_retriever`; this is the shipped card, in a declared combat.
     """
 

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the choose_permanents test (tests/unit/test_choose_permanents.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tragic` is Tragic Arrogance's shape -- four per-type marks into one binding, then a mass sacrifice that spares them. `t_flat_tragic` is the near-miss the DSL could already write: one choice of four over a merged pool, which happily keeps four creatures.",
+  "_comment": "Cards that exist only for the choose_permanents test (tests/unit/choices/test_choose_permanents.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tragic` is Tragic Arrogance's shape -- four per-type marks into one binding, then a mass sacrifice that spares them. `t_flat_tragic` is the near-miss the DSL could already write: one choice of four over a merged pool, which happily keeps four creatures.",
   "cards": [
     {
       "id": "t_tragic",

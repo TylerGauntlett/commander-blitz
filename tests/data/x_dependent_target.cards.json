@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_x_dependent_target.py. t_xdt_gardens is The Mycosynth Gardens' third line: {X}, {T}: this land becomes a copy of target nontoken artifact you control with mana value X. t_xdt_one, t_xdt_two and t_xdt_three are artifacts of mana value 1, 2 and 3 to aim at. t_xdt_plain is the same ability with no X in its target filter, the control that shows the enumeration only changes shape for a card that asks.",
+  "_comment": "Shapes for tests/unit/targets/test_x_dependent_target.py. t_xdt_gardens is The Mycosynth Gardens' third line: {X}, {T}: this land becomes a copy of target nontoken artifact you control with mana value X. t_xdt_one, t_xdt_two and t_xdt_three are artifacts of mana value 1, 2 and 3 to aim at. t_xdt_plain is the same ability with no X in its target filter, the control that shows the enumeration only changes shape for a card that asks.",
   "cards": [
     {
       "id": "t_xdt_gardens",

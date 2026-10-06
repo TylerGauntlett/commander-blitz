@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the total-shield test (tests/unit/test_prevent_all_damage.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_retriever` is Rescue Retriever's third line -- prevent all damage to OTHER attacking Soldiers you control -- and `exclude_self` plus `attacking` are the two clauses that make it not a blanket shield. `t_soldier` is a plain Soldier for it to protect, and `t_absorber_two` is an absorb 2 creature used to pin that the two rules are different rather than two sizes of one.",
+  "_comment": "Cards that exist only for the total-shield test (tests/unit/damage/test_prevent_all_damage.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_retriever` is Rescue Retriever's third line -- prevent all damage to OTHER attacking Soldiers you control -- and `exclude_self` plus `attacking` are the two clauses that make it not a blanket shield. `t_soldier` is a plain Soldier for it to protect, and `t_absorber_two` is an absorb 2 creature used to pin that the two rules are different rather than two sizes of one.",
   "cards": [
     {
       "id": "t_retriever",

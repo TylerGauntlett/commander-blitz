@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_any_types_static_filter.py. t_runes is the Archmage of Runes shape: one static reducing BOTH instants and sorceries, which `types` cannot say because no spell is both at once.",
+  "_comment": "Shapes for tests/unit/targets/test_any_types_static_filter.py. t_runes is the Archmage of Runes shape: one static reducing BOTH instants and sorceries, which `types` cannot say because no spell is both at once.",
   "cards": [
     {
       "id": "t_runes",

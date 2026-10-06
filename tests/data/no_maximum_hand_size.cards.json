@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the no-maximum-hand-size test (tests/unit/test_no_maximum_hand_size.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sea_gate` is Sea Gate Restoration's second sentence on its own, on a one-mana sorcery so the test can cast it from a single Island. `t_hand_freedom_for_all` names every player, which is the spec's other end.",
+  "_comment": "Cards that exist only for the no-maximum-hand-size test (tests/unit/players/test_no_maximum_hand_size.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sea_gate` is Sea Gate Restoration's second sentence on its own, on a one-mana sorcery so the test can cast it from a single Island. `t_hand_freedom_for_all` names every player, which is the spec's other end.",
   "cards": [
     {
       "id": "t_sea_gate",

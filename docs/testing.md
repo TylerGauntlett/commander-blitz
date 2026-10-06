@@ -23,6 +23,16 @@ a few thousand skip on a per-card condition. It is written by
 the check's verdict as a line rather than a stage, because a stale number is a
 documentation bug, not a build break.
 
+`tests/unit/` is split by mechanic, one package per area: `attachments/`,
+`casting/`, `choices/`, `combat/`, `commander/`, `copies/`, `costs/`, `counters/`,
+`damage/`, `effects/`, `engine/`, `faces/`, `keywords/`, `ledger/` (what happened
+this turn), `mana/`, `modes/`, `named_cards/`, `planeswalkers/`, `players/`,
+`protection/`, `replacement/`, `statics/`, `targets/`, `tokens/`, `triggers/`,
+`turn/`, `values/` and `zones/`. A new test goes beside its nearest neighbours.
+Helpers more than one file needs -- `settle`, `two_seat_board`, `activations`,
+`pt`, `pass_until`, `find_action` and the rest -- live in `tests/conftest.py`;
+import them rather than copying one in.
+
 `scripts/verify.py` runs up to 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
 120-game arena (60 duels and 60 four-player pods), **a real uvicorn process playing full games at 2 players, 4 players and
@@ -468,6 +478,7 @@ regression would break first.
 
 ```bash
 pytest tests/unit -q                      # fast: the rules
+pytest tests/unit/combat -q               # one mechanic's slice of them
 pytest tests/cards -q                     # the every-card gate
 pytest -m "not slow" -q                   # skip the training runs
 python scripts/validate_decks.py

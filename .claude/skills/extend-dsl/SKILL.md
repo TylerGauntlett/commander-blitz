@@ -9,7 +9,7 @@ description: Add the engine and DSL support that unblocks cards the card pipelin
 records. This skill picks one of those capabilities and builds it, so the next
 `/author-cards` run harvests every card that was waiting on it.
 
-**One capability per run.** One mechanic, one `tests/unit/test_<mechanic>.py`, one
+**One capability per run.** One mechanic, one `tests/unit/<area>/test_<mechanic>.py`, one
 reviewable diff. Do not batch mechanics.
 
 ## Invocation
@@ -67,7 +67,7 @@ printed token is not among them, the worker files a gap record with
 2. **Never reuse a near miss.** Rule 111.4: a token is exactly what its creating
    effect says. A 2/2 Knight with vigilance is not a 2/2 Knight, and a card that
    names the wrong one is a stronger or weaker card than the printed one.
-3. `tests/unit/test_token_pool.py` — pin the new token's characteristics next to
+3. `tests/unit/tokens/test_token_pool.py` — pin the new token's characteristics next to
    its nearest near miss, as the Forest Tentacle (`02138ed9`) and the Samurai do.
    The packet's `token_ids` picks it up with no further change;
    `tests/cards/test_authoring.py` fails if a defined token is missing from it.
@@ -93,7 +93,7 @@ The common case, and the whole job for most mechanics.
    House style, alongside the existing guards for `create_token`, `add_mana`,
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.
-3. `tests/unit/test_<op>.py` — see §3.
+3. `tests/unit/<area>/test_<op>.py` — see §3.
 4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**,
    and a section for anything non-trivial. `card-dsl.md` is the **current
    reference only**: say what the op, key, cost, trigger or condition *is* — its
@@ -165,8 +165,13 @@ client echoes back.
 
 ## 3 · The test is not optional
 
-`tests/unit/test_<mechanic>.py`, in the house style — read
-`tests/unit/test_animate.py` and `tests/unit/test_two_piles.py` first.
+`tests/unit/<area>/test_<mechanic>.py`, in the house style — read
+`tests/unit/effects/test_animate.py` and `tests/unit/choices/test_two_piles.py` first.
+`<area>` is the mechanic's subdirectory of `tests/unit/` (`combat/`, `mana/`, `costs/`,
+`triggers/`, `keywords/`, ...) -- put the file beside its nearest neighbours; a new
+subdirectory needs an `__init__.py`. Shared helpers (`settle`, `two_seat_board`,
+`activations`, `pt`, ...) live in `tests/conftest.py`: import them rather than
+copying one in.
 
 For engine work there is no expectation-as-test safety net; an authored card gets
 re-verified through six gates on every test run, but a primitive gets exactly the

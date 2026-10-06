@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the spree test (tests/unit/test_spree.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_spree_caper` is Smuggler's Surprise's shape -- three priced modes of which a non-empty SUBSET is bought as the spell is cast. Its three effects are deliberately on three independent axes (hand, your life, the opponent's life) so a cast that bought two modes and ran one is visible: the tiered card in tests/data/tiered.cards.json is the same cost machinery where exactly one price is paid and the axes may safely overlap.",
+  "_comment": "Cards that exist only for the spree test (tests/unit/modes/test_spree.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_spree_caper` is Smuggler's Surprise's shape -- three priced modes of which a non-empty SUBSET is bought as the spell is cast. Its three effects are deliberately on three independent axes (hand, your life, the opponent's life) so a cast that bought two modes and ran one is visible: the tiered card in tests/data/tiered.cards.json is the same cost machinery where exactly one price is paid and the axes may safely overlap.",
   "cards": [
     {
       "id": "t_spree_caper",

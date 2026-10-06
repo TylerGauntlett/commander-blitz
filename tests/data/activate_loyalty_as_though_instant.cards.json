@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_activate_loyalty_as_though_instant.py. `t_instant_walker` is Teferi, Master of Time's timing line on an otherwise ordinary two-ability walker -- the static names its own loyalty abilities with `self_only`, which is the printed 'of Teferi'. `t_patient_walker` is the same walker without the line: the control, and the proof that the window is what moves. `t_orrery_walker` points the same static at *other* permanents, so the filter can be shown to be read rather than assumed to mean 'self'. `t_plain_walker` is its subject.",
+  "_comment": "Cards for tests/unit/planeswalkers/test_activate_loyalty_as_though_instant.py. `t_instant_walker` is Teferi, Master of Time's timing line on an otherwise ordinary two-ability walker -- the static names its own loyalty abilities with `self_only`, which is the printed 'of Teferi'. `t_patient_walker` is the same walker without the line: the control, and the proof that the window is what moves. `t_orrery_walker` points the same static at *other* permanents, so the filter can be shown to be read rather than assumed to mean 'self'. `t_plain_walker` is its subject.",
   "cards": [
     {
       "id": "t_instant_walker",

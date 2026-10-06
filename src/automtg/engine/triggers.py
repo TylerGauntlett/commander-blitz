@@ -1511,7 +1511,7 @@ def _actor(
 #: with no gate able to see it. `zone`, `tapped`, `not_supertypes` and `owner`
 #: were each found that way, one card at a time; this closes the class. A key
 #: belongs here only once the function below answers it, and
-#: `tests/unit/test_trigger_filter_owner.py` holds the two in step.
+#: `tests/unit/triggers/test_trigger_filter_owner.py` holds the two in step.
 TRIGGER_FILTER_KEYS = frozenset(
     {
         "exclude_self",

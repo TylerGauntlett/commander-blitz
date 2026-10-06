@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_spell_targets.py. `t_orvar` is Orvar, the All-Form's second line alone -- no Changeling, no discard trigger -- so the binding can be read on its own. `t_orvar_unconditional` is the near miss the gap record refused to write: the same trigger with no intervening-if and a copy over every permanent you control, which fires on targetless spells and copies something the spell never chose. `t_pump_other` and `t_pump_player` are the spells that do and do not satisfy the clause.",
+  "_comment": "Shapes for tests/unit/targets/test_spell_targets.py. `t_orvar` is Orvar, the All-Form's second line alone -- no Changeling, no discard trigger -- so the binding can be read on its own. `t_orvar_unconditional` is the near miss the gap record refused to write: the same trigger with no intervening-if and a copy over every permanent you control, which fires on targetless spells and copies something the spell never chose. `t_pump_other` and `t_pump_player` are the spells that do and do not satisfy the clause.",
   "cards": [
     {
       "id": "t_orvar",

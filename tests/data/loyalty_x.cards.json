@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_loyalty_x.py. `t_lx_walker` is a two-ability walker whose minus is a variable loyalty cost -- Sorin, Grim Nemesis's -X reduced to 'you gain X life', so the X the effect reads is visible on a life total. `t_lx_aimer` is Tamiyo, Compleated Sage's shape: a -X whose target filter reads X ('with mana value X'), so the announcement has to come before the targets.",
+  "_comment": "Cards for tests/unit/planeswalkers/test_loyalty_x.py. `t_lx_walker` is a two-ability walker whose minus is a variable loyalty cost -- Sorin, Grim Nemesis's -X reduced to 'you gain X life', so the X the effect reads is visible on a life total. `t_lx_aimer` is Tamiyo, Compleated Sage's shape: a -X whose target filter reads X ('with mana value X'), so the announcement has to come before the targets.",
   "cards": [
     {
       "id": "t_lx_walker",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the union-selector test (tests/unit/test_union_selector.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_union_grab` is the Cloak and Dagger shape: one choice offered across two zones at once. `t_hand_grab` is the counterfactual -- the same line narrowed to the one zone a selector could name before.",
+  "_comment": "Cards that exist only for the union-selector test (tests/unit/targets/test_union_selector.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_union_grab` is the Cloak and Dagger shape: one choice offered across two zones at once. `t_hand_grab` is the counterfactual -- the same line narrowed to the one zone a selector could name before.",
   "cards": [
     {
       "id": "t_union_grab",

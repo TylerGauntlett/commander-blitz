@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the mill-binding and grant-playable test (tests/unit/test_grant_playable.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_locke` is Locke's Mug ability as an ETB rather than an attack trigger, so the sandbox can reach it.",
+  "_comment": "A card that exists only for the mill-binding and grant-playable test (tests/unit/casting/test_grant_playable.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_locke` is Locke's Mug ability as an ETB rather than an attack trigger, so the sandbox can reach it.",
   "cards": [
     {
       "id": "t_locke",
