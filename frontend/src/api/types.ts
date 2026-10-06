@@ -128,6 +128,10 @@ export interface PlayerView {
    * have to parse.
    */
   mulligans_taken: number;
+  /** Mulligans that cost no card (`FREE_MULLIGANS` in `engine/game.py`). */
+  mulligans_free: number;
+  /** Most mulligans before the keep is forced (`MAX_MULLIGANS`). */
+  mulligans_max: number;
   library_count: number;
   /**
    * The top card of this player's library, if this seat may see it at all.

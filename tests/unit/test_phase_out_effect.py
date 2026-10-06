@@ -26,8 +26,10 @@ back out.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
-from tests.conftest import only_oid, pass_until
+from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.structs import TargetRef
+from automtg.engine.zones import move_object
+from tests.conftest import find_action, only_oid, pass_until
 
 SPELL = "t_phase_out"  # "Target creature phases out."
 BEAR = "t_bear"
@@ -150,3 +152,93 @@ class TestWhatItTakesWithIt:
         cast_it(game)
         assert game.state.objects[equipment].phased_out
         assert game.state.objects[equipment].phased_out_indirectly
+
+
+def combat_trick(builder):
+    """The caster's commander attacks, a 4/4 blocks it, and it phases out in
+    response -- Clever Concealment's whole job in a real game.
+
+    A commander rather than a bear because that is how it was found: the
+    damage it was dealt while phased out killed it the moment it phased back
+    in, and the commander replacement sent it to the command zone, so the
+    symptom was "my commander went home for no reason".
+    """
+    game = (
+        builder(players=2)
+        .battlefield(0, ["island"] * 5)
+        .battlefield(1, ["t_commander"])
+        .hand(0, [SPELL])
+        .commander(0, ["t_commander"])
+        .library(0, ["island"] * 20)
+        .library(1, ["island"] * 20)
+        .build()
+    )
+    commander = game.state.players[0].commanders[0]
+    move_object(game.state, commander, Zone.BATTLEFIELD)
+    game.state.objects[commander].entered_turn = -1
+    blocker = only_oid(game, "t_commander", 1)
+
+    pass_until(game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_ATTACKERS)
+    game.apply(
+        find_action(game, ActionKind.ADD_ATTACKER, source=commander, targets=(TargetRef.player(1),))
+    )
+    game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+    pass_until(game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_BLOCKERS)
+    game.apply(
+        find_action(game, ActionKind.ADD_BLOCKER, source=blocker, targets=(TargetRef.obj(commander),))
+    )
+    game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+    pass_until(
+        game,
+        lambda g: any(
+            a.kind is ActionKind.CAST and g.state.objects[a.source].def_id == SPELL
+            for a in g.legal_actions()
+        ),
+    )
+    cast_it(game)
+    return game, commander, blocker
+
+
+class TestItLeavesCombat:
+    """506.4: a permanent that phases out is removed from combat."""
+
+    def test_it_is_dealt_no_combat_damage(self, builder):
+        game, commander, _ = combat_trick(builder)
+        assert game.state.objects[commander].damage == 0
+        assert not any(
+            e.type == "damage_dealt" and e.data.get("oid") == commander for e in game.state.events
+        )
+
+    def test_and_deals_none(self, builder):
+        game, _, blocker = combat_trick(builder)
+        assert blocker in game.state.battlefield
+
+    def test_the_commander_comes_back_and_stays(self, builder):
+        game, commander, _ = combat_trick(builder)
+        pass_until(game, lambda g: g.state.turn >= 4)
+        obj = game.state.objects[commander]
+        assert obj.zone is Zone.BATTLEFIELD and not obj.phased_out
+        assert game.state.battlefield.count(commander) == 1
+        assert game.state.players[0].command == []
+
+
+class TestTheCleanupStepStillSeesIt:
+    def test_damage_marked_before_it_phased_out_is_removed(self, builder):
+        """514.2: damage is removed from permanents "including phased-out
+        permanents". Left on it, the damage killed it as it phased back in."""
+        game = board(builder)
+        bear = only_oid(game, BEAR, 0)
+        game.state.objects[bear].damage = 1
+        cast_it(game)
+        pass_until(game, lambda g: g.state.turn >= 2)
+        assert game.state.objects[bear].damage == 0
+
+
+class TestLeavingWhilePhasedOut:
+    def test_a_zone_change_clears_the_flag(self, builder):
+        """400.7: whatever it becomes next is a new object, not a phased-out one."""
+        game = board(builder)
+        bear = only_oid(game, BEAR, 0)
+        cast_it(game)
+        move_object(game.state, bear, Zone.GRAVEYARD)
+        assert not game.state.objects[bear].phased_out

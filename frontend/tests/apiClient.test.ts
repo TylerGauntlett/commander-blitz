@@ -149,6 +149,18 @@ describe("the endpoints", () => {
     expect(sent[7].body).toEqual({ seat: 0, full_control: true, manual_mana: true });
   });
 
+  it("choose: a pick-several decision goes as one set", async () => {
+    await api.choose("g1", 0, [3, 0], 1);
+    await api.choose("g1", 1, []);
+    expect(sent.map((s) => `${s.method} ${s.url}`)).toEqual([
+      "POST /api/games/g1/choose?ai_steps=1",
+      "POST /api/games/g1/choose",
+    ]);
+    expect(sent[0].body).toEqual({ seat: 0, choices: [3, 0] });
+    // Choosing none is an answer, not an absent body.
+    expect(sent[1].body).toEqual({ seat: 1, choices: [] });
+  });
+
   it("pods: create, join, poll, seat, admin, start, leave", async () => {
     await api.createPod();
     await api.createPod("Ada", "edgar", 3);

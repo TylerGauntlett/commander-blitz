@@ -551,6 +551,7 @@ describe("PromptDialog", () => {
   it("stays shut for a mulligan, which has a screen of its own", () => {
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown("mulligan")}
         actions={[
           action({ id: "a0-mulligan", kind: "mulligan", label: "Mulligan" }),
@@ -569,6 +570,7 @@ describe("PromptDialog", () => {
     });
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={bottoming}
         actions={[action({ id: "a0-bottom", kind: "choose", label: "Forest", choice: 0 })]}
         onAct={noop}
@@ -580,6 +582,7 @@ describe("PromptDialog", () => {
 
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown("choose_objects", { context: { purpose: "sacrifice" } })}
         actions={[action({ id: "a0-sac", kind: "choose", label: "Forest", choice: 0 })]}
         onAct={noop}
@@ -600,6 +603,7 @@ describe("PromptDialog", () => {
     const answered = gameView({ pending: null });
     const { rerender } = render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown("choose_objects", { context: { purpose: "sacrifice" } })}
         actions={[action({ id: "a0-sac", kind: "choose", label: "Forest", choice: 0 })]}
         onAct={noop}
@@ -608,7 +612,15 @@ describe("PromptDialog", () => {
     );
     expect(screen.getByTestId("prompt-dialog").hasAttribute("data-closing")).toBe(false);
 
-    rerender(<PromptDialog state={answered} actions={[]} onAct={noop} disabled={false} />);
+    rerender(
+      <PromptDialog
+        onChoose={() => undefined}
+        state={answered}
+        actions={[]}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
     const leaving = screen.getByTestId("prompt-dialog");
     expect(leaving.hasAttribute("data-modal-root")).toBe(true);
     expect(leaving.hasAttribute("data-closing")).toBe(true);
@@ -624,6 +636,7 @@ describe("PromptDialog", () => {
   ])("handles the %s decision", (kind) => {
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown(kind)}
         actions={[action({ id: "a0-choose", kind: "choose", label: "Option A" })]}
         onAct={noop}
@@ -637,7 +650,13 @@ describe("PromptDialog", () => {
   it("stays shut for priority and combat, which have their own surfaces", () => {
     for (const kind of ["priority", "declare_attackers", "declare_blockers"]) {
       const { unmount } = render(
-        <PromptDialog state={shown(kind)} actions={[action()]} onAct={noop} disabled={false} />,
+        <PromptDialog
+          onChoose={() => undefined}
+          state={shown(kind)}
+          actions={[action()]}
+          onAct={noop}
+          disabled={false}
+        />,
       );
       expect(screen.queryByTestId("prompt-dialog")).toBeNull();
       unmount();
@@ -647,6 +666,7 @@ describe("PromptDialog", () => {
   it("stays shut when the decision belongs to somebody else", () => {
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown("choose_objects", { player: 1 })}
         actions={[action()]}
         onAct={noop}
@@ -663,6 +683,7 @@ describe("PromptDialog", () => {
     });
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={state}
         actions={[
           action({
@@ -682,6 +703,7 @@ describe("PromptDialog", () => {
   it("shows the range when several things must be chosen", () => {
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={shown("choose_objects", { min_count: 1, max_count: 3 })}
         actions={[action({ kind: "choose", label: "A" })]}
         onAct={noop}
@@ -705,7 +727,13 @@ describe("PromptDialog with a wall of options", () => {
     const { state, actions } = chooseType();
     const onAct = vi.fn();
     const view = render(
-      <PromptDialog state={state} actions={actions} onAct={onAct} disabled={disabled} />,
+      <PromptDialog
+        onChoose={() => undefined}
+        state={state}
+        actions={actions}
+        onAct={onAct}
+        disabled={disabled}
+      />,
     );
     return { ...view, onAct, actions };
   };
@@ -717,6 +745,7 @@ describe("PromptDialog with a wall of options", () => {
   it("leaves a short decision exactly as it was", () => {
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={gameView({ pending: pending({ kind: "choose_mode", prompt: "Choose one" }) })}
         actions={[0, 1, 2].map((i) =>
           action({ id: `a${i}-choose`, kind: "choose", label: `Mode ${i}` }),
@@ -737,6 +766,7 @@ describe("PromptDialog with a wall of options", () => {
     );
     render(
       <PromptDialog
+        onChoose={() => undefined}
         state={gameView({
           pending: pending({ kind: "choose_objects", prompt: "Sacrifice one" }),
           battlefield,

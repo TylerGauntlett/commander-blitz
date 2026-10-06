@@ -1907,7 +1907,12 @@ def clear_until_eot(state: GameState) -> None:
     handed back below.
     """
     handbacks: list[tuple[int, TempEffect]] = []
-    for oid in state.battlefield:
+    # 514.2 names them: damage is removed from permanents "including phased-out
+    # permanents", and their until-end-of-turn effects end on the same clock
+    # (702.26d). Walking only the battlefield list left a phased-out creature
+    # carrying the turn's damage until it phased back in -- and died to it.
+    phased_out = [oid for oid, obj in state.objects.items() if obj.phased_out]
+    for oid in [*state.battlefield, *phased_out]:
         obj = state.objects.get(oid)
         if obj is None:
             continue

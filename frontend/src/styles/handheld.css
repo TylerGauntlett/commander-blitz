@@ -640,6 +640,41 @@ html[data-input="keyboard"] .glyph--key {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/*
+ * A FULL LANE OVERLAPS ITS CARDS; IT NEVER WRAPS.
+ *
+ * The global lane is a third of the front band -- two cards at handheld size --
+ * so a third artifact started a second row, the whole front band grew a card
+ * taller, and the lands and the viewer's own seat were pushed off the bottom of
+ * the screen. On a 7-inch panel the board cannot afford a row it did not plan
+ * for, so a lane that runs out of width fans its cards the way the hand does.
+ *
+ * Pure flex: a `.cardstack` is a fixed-width box whose cards are absolutely
+ * positioned, so letting the BOX shrink (`flex: 0 1 auto`) leaves each card
+ * drawn at full size and lying over its right-hand neighbour's slot. The last
+ * stack does not shrink, so the row ends exactly at the lane's edge, and the
+ * `min-width` keeps a readable slice of every card -- `OVERLAP_MIN_VISIBLE` in
+ * `logic/zoomFit.ts`, which is what tells the solver a lane is one row.
+ */
+[data-handheld] .play__mine .lane__cards {
+  flex-wrap: nowrap;
+}
+
+[data-handheld] .play__mine .lane__cards > .cardstack {
+  flex: 0 1 auto;
+  min-width: calc(var(--card-w) * 0.22);
+}
+
+[data-handheld] .play__mine .lane__cards > .cardstack:last-of-type {
+  flex-shrink: 0;
+}
+
+/* The card being read comes to the front of the fan, as a hand card does. */
+[data-handheld] .play__mine .lane__cards > .cardstack:has([data-cursor]),
+[data-handheld] .play__mine .lane__cards > .cardstack:hover {
+  z-index: 2;
+}
+
 /* ==========================================================================
    The hint bar
    ==========================================================================
@@ -1236,6 +1271,32 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .play__mine .mat {
   min-height: 100%;
+}
+
+/*
+ * THE VIEWER'S SEAT NEVER SCROLLS AWAY.
+ *
+ * The side column is a grid item, so it stretches to the mat's height -- and
+ * its piles and counters sit at its foot. When the lanes outgrew the screen the
+ * mat grew with them and carried that foot below the fold: life, library and
+ * graveyard gone from a board that only had one extra row of artifacts on it.
+ *
+ * Sticky, and exactly as tall as the visible part of `.play__mine` less the
+ * mat's own 16px padding and 2px border (`VIEWER_MAT` in `logic/zoomFit.ts`).
+ * With nothing overflowing that is the height it always had, so the common case
+ * does not move a pixel; with the lanes overflowing, the lanes scroll and the
+ * seat stays put. `cqh` reads `.play__mine`'s own height, which the grid fixes
+ * and nothing inside it can change, so size containment there is free.
+ */
+[data-handheld] .play__mine {
+  container-type: size;
+}
+
+[data-handheld] .play__mine .mat__side {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: calc(100cqh - 18px);
 }
 
 /*

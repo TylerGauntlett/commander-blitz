@@ -69,7 +69,20 @@ export interface LaneFit {
    * a column of width.
    */
   labelAbove: boolean;
+  /**
+   * The lane overlaps its cards instead of wrapping them (the handheld board;
+   * see `OVERLAP_MIN_VISIBLE`). One row whenever the overlapped row fits.
+   */
+  overlap?: boolean;
 }
+
+/**
+ * How much of each card an overlapped lane leaves showing, as a share of the
+ * card's width. Mirrors the `min-width` on `.lane__cards > .cardstack` in
+ * `handheld.css`, and is the hand's readability floor (`HAND_MIN_VISIBLE_RATIO`)
+ * with a little to spare -- a board card is read at a glance, not fanned.
+ */
+export const OVERLAP_MIN_VISIBLE = 0.22;
 
 /** One horizontal strip of a mat. Its height is the tallest lane in it. */
 export interface BandFit {
@@ -252,6 +265,27 @@ export function wrapRowHeights(
   const rows: number[] = [];
   let used = 0;
   let tallest = 0;
+
+  /*
+   * AN OVERLAPPING LANE IS ONE ROW, as long as the overlap leaves every card
+   * readable: each slot but the last squeezed to `OVERLAP_MIN_VISIBLE` of a card
+   * plus the gap, and the last at full width. Past that the browser would run
+   * the row out of the lane, so this falls through to the wrapped count -- not
+   * because the lane wraps, but so the solver sees a board that does not fit
+   * and shrinks the cards until it does.
+   */
+  if (lane.overlap && lane.groups.length > 0) {
+    const boxes = lane.groups.map((footprint) => groupBox(footprint, cardW, chrome));
+    const last = boxes[boxes.length - 1];
+    const squeezed =
+      boxes
+        .slice(0, -1)
+        .reduce(
+          (sum, box) => sum + Math.min(box.w, cardW * OVERLAP_MIN_VISIBLE) + chrome.gapX,
+          0,
+        ) + last.w;
+    if (squeezed <= lane.widthPx) return [Math.max(...boxes.map((box) => box.h))];
+  }
 
   for (const footprint of lane.groups) {
     const box = groupBox(footprint, cardW, chrome);
@@ -559,9 +593,15 @@ export function footprintOf(group: CardStackGroup): GroupFootprint {
 export function bandsFor(
   footprints: Record<LaneName, GroupFootprint[]>,
   lanesWidthPx: number,
-  options: { hideEmpty?: boolean; labels?: boolean; chrome?: LaneChrome } = {},
+  options: {
+    hideEmpty?: boolean;
+    labels?: boolean;
+    overlap?: boolean;
+    chrome?: LaneChrome;
+  } = {},
 ): BandFit[] {
   const chrome = options.chrome ?? LANE_CHROME;
+  const overlap = options.overlap ?? false;
   const hideEmpty = options.hideEmpty ?? false;
   const labels = options.labels ?? true;
   const [a, b] = chrome.frontSplit;
@@ -586,6 +626,7 @@ export function bandsFor(
         // costs nothing there.
         widthPx: share(lane),
         labelAbove: labels,
+        overlap,
       })),
     });
   }
@@ -599,6 +640,7 @@ export function bandsFor(
           // rather than a line -- so it comes out of the width, not the height.
           widthPx: labels ? lanesWidthPx - chrome.labelBesideW - chrome.gapX : lanesWidthPx,
           labelAbove: false,
+          overlap,
         },
       ],
     });

@@ -125,9 +125,27 @@ def the_choice(game):
     return decision
 
 
-def sizes_offered(game) -> list[int]:
-    """How many targets each offered option takes, in the order offered."""
-    return [len(o.label.split(", ")) if o.label != "no targets" else 0 for o in the_choice(game).options]
+def bounds(game) -> tuple[int, int]:
+    """The (fewest, most) targets the trigger asks for.
+
+    A trigger with more than one target asks for them one at a time (see
+    `stack._choose_each_target`): every option is ONE card, and the size is
+    the decision's min and max rather than a list of subsets to pick from.
+    """
+    decision = the_choice(game)
+    assert all(o.ref is not None for o in decision.options), "an option named a subset"
+    return decision.min_count, decision.max_count
+
+
+def choose(game, how_many: int) -> None:
+    """Pick the first ``how_many`` cards offered, then Done if any room is left."""
+    decision = the_choice(game)
+    for _ in range(how_many):
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE))
+    if game.pending() is decision:
+        game.apply(
+            next(a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION)
+        )
 
 
 def settle(game):
@@ -163,6 +181,7 @@ class TestTheCountIsTheKickerCount:
     def test_two_kicks_return_two(self, builder):
         game = board(builder)
         cast_paying(game, 2)
+        choose(game, 2)
         settle(game)
         assert creatures_back(game) == 2
         assert in_graveyard(game) == 0
@@ -186,34 +205,36 @@ class TestUpToIsZeroThroughX:
         forbid the middle one."""
         game = board(builder, graves=3)
         cast_paying(game, 2)
-        assert sizes_offered(game) == [2, 2, 2, 1, 1, 1, 0]
+        assert bounds(game) == (0, 2)
+        assert len(the_choice(game).options) == 3
 
     def test_the_ceiling_is_the_value_not_the_graveyard(self, builder):
         """One kick with three cards in the yard is one card, not three."""
         game = board(builder, graves=3)
         cast_paying(game, 1)
-        assert max(sizes_offered(game)) == 1
+        # Up to ONE is the single-target list (each card, or none), never a pair.
+        assert all("," not in o.label for o in the_choice(game).options)
 
     def test_the_ceiling_is_the_graveyard_when_that_is_smaller(self, builder):
         """601.2c: choose as many as you can. Three kicks over one card is one."""
         game = board(builder, graves=1)
         cast_paying(game, 3)
-        assert sizes_offered(game) == [1, 0]
+        assert bounds(game) == (0, 1)
 
-    def test_the_largest_comes_first_and_declining_last(self, builder):
-        """Whatever takes a tuple without asking takes the first, so an anthem
-        that defaulted to returning nothing would be a different card."""
+    def test_declining_is_done_before_any_pick(self, builder):
+        """Declining is its own answer -- `Done` with nothing chosen -- rather
+        than an empty subset sitting at the end of a list."""
         game = board(builder, graves=2)
         cast_paying(game, 2)
-        offered = sizes_offered(game)
-        assert offered[0] == 2 and offered[-1] == 0
+        the_choice(game)
+        assert any(a.kind is ActionKind.FINISH_DECLARATION for a in game.legal_actions())
 
     def test_declining_needs_no_optional_flag(self, builder):
         """"Up to X" includes zero by its own wording, exactly as "any number"
         does — the spec carries no `optional`."""
         game = board(builder, graves=2)
         cast_paying(game, 2)
-        assert 0 in sizes_offered(game)
+        assert bounds(game)[0] == 0
 
     def test_returning_fewer_than_x_is_a_legal_answer(self, builder):
         game = board(builder, graves=3)
@@ -283,12 +304,13 @@ class TestExactlyXWithoutUpTo:
     def test_it_forces_the_whole_number(self, builder):
         game = board(builder, card=EXACTLY, graves=3)
         cast_paying(game, 2, card=EXACTLY)
-        assert set(sizes_offered(game)) == {2}
+        assert bounds(game) == (2, 2)
 
     def test_and_offers_no_way_to_decline(self, builder):
         game = board(builder, card=EXACTLY, graves=3)
         cast_paying(game, 2, card=EXACTLY)
-        assert 0 not in sizes_offered(game)
+        the_choice(game)
+        assert not any(a.kind is ActionKind.FINISH_DECLARATION for a in game.legal_actions())
 
     def test_zero_still_resolves(self, builder):
         """An exact count of zero asks for no targets, which is a trigger that

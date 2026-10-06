@@ -88,6 +88,11 @@ class GameState:
 
     priority_idx: int | None = None
     passes_in_row: int = 0
+    #: Something resolved in this step and the table has not yet passed in
+    #: succession on the empty stack since. The window auto-pass must not skip:
+    #: a creature spell cannot be Swords'd while it is on the stack, only once
+    #: it has resolved -- and by then the stack is empty again.
+    just_resolved: bool = False
 
     combat: CombatState | None = None
     #: How many combat phases have *begun* in this game, ever.  The identity of

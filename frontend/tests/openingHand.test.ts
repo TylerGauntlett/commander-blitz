@@ -21,6 +21,7 @@ import {
   MULLIGAN_BOTTOM,
   MULL_TUNE,
   handRow,
+  mulliganCost,
   mulliganPhase,
   rowExtent,
   rowRatio,
@@ -205,5 +206,36 @@ describe("which half of a mulligan it is", () => {
     ).toBeNull();
     expect(mulliganPhase(gameView({ ...mine, game_over: true }))).toBeNull();
     expect(mulliganPhase(gameView({ ...mine, pending: null }))).toBeNull();
+  });
+});
+
+describe("what a mulligan costs, with the first one free", () => {
+  it("costs nothing while the free one is unspent", () => {
+    expect(mulliganCost(0, 1)).toEqual({ nextIsFree: true, keepAfterNext: 7, bottomIfKept: 0 });
+  });
+
+  it("starts costing a card once the free one is spent, and keeping still costs none", () => {
+    expect(mulliganCost(1, 1)).toEqual({
+      nextIsFree: false,
+      keepAfterNext: 6,
+      bottomIfKept: 0,
+    });
+  });
+
+  it("bottoms only the paid ones", () => {
+    expect(mulliganCost(2, 1)).toEqual({
+      nextIsFree: false,
+      keepAfterNext: 5,
+      bottomIfKept: 1,
+    });
+    expect(mulliganCost(6, 1).bottomIfKept).toBe(5);
+  });
+
+  it("is the plain London mulligan with no free one", () => {
+    expect(mulliganCost(0, 0)).toEqual({
+      nextIsFree: false,
+      keepAfterNext: 6,
+      bottomIfKept: 0,
+    });
   });
 });

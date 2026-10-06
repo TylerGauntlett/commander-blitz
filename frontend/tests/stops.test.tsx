@@ -110,6 +110,7 @@ describe("rendered surfaces", () => {
     const state = gameView({ pending: decision, players: [player({ pid: 0 })] });
     const { container } = render(
       <PromptDialog
+        onChoose={() => undefined}
         state={state}
         actions={[action({ id: "p1", kind: "choose", choice: 0 })]}
         onAct={noop}
@@ -134,7 +135,13 @@ describe("rendered surfaces", () => {
      */
     const { state, actions } = chooseType();
     const { container } = render(
-      <PromptDialog state={state} actions={actions} onAct={noop} disabled={false} />,
+      <PromptDialog
+        onChoose={() => undefined}
+        state={state}
+        actions={actions}
+        onAct={noop}
+        disabled={false}
+      />,
     );
     const { ids, stops } = stopsAndIds(container);
 

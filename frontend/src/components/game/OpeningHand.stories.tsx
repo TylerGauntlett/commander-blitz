@@ -37,9 +37,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const keep = () => scenarios.mulligan();
-const bottom = (taken = 1, selected: number[] = []) =>
-  scenarios.mulliganBottom(taken, selected);
+const keep = (taken = 0) => scenarios.mulligan(taken);
+const bottom = (count = 1, selected: number[] = []) =>
+  scenarios.mulliganBottom(count, selected);
 
 /** The first question, at whatever size the canvas happens to be. */
 export const Keep: Story = {
@@ -56,8 +56,49 @@ export const Keep: Story = {
 
     // Two answers, one of each, and no third copy anywhere.
     expectUniqueActionIds(canvasElement);
+
+    /* The first mulligan is free, and the screen says so: the button, and a
+       lamp of its own that nothing has spent yet. */
+    expect(await canvas.findByText(/^Free/)).toBeTruthy();
+    expect(stage.querySelectorAll(".mull__lamp[data-free]").length).toBe(1);
+    expect(stage.querySelectorAll(".mull__lamp[data-spent]").length).toBe(0);
+
     await userEvent.click(await canvas.findByText("Keep"));
     expect(args.onAct).toHaveBeenCalledWith("a0-keep");
+  },
+};
+
+/**
+ * THE FREE ONE SPENT. It leaves its own dim gold lamp rather than the red a
+ * card-costing mulligan leaves, "Free" is gone from the button because the next
+ * one is not, and keeping still bottoms nothing.
+ */
+export const KeepAfterFreeMulligan: Story = {
+  args: { state: keep(1).state, actions: keep(1).actions },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stage = await canvas.findByTestId("opening-hand");
+
+    expect(canvas.queryByText(/^Free/)).toBeNull();
+    expect(await canvas.findByText("Shuffle back, draw seven, keep 6")).toBeTruthy();
+    expect(await canvas.findByText("7 cards")).toBeTruthy();
+
+    const spent = stage.querySelectorAll<HTMLElement>(".mull__lamp[data-spent]");
+    expect(spent.length).toBe(1);
+    expect(spent[0]?.dataset.free).toBe("true");
+  },
+};
+
+/** Two taken, so keeping now costs a card, and the Keep button says which. */
+export const KeepAfterPaidMulligan: Story = {
+  args: { state: keep(2).state, actions: keep(2).actions },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stage = await canvas.findByTestId("opening-hand");
+
+    expect(await canvas.findByText("Keep 6, bottom 1")).toBeTruthy();
+    expect(await canvas.findByText("Shuffle back, draw seven, keep 5")).toBeTruthy();
+    expect(stage.querySelectorAll(".mull__lamp[data-spent]:not([data-free])").length).toBe(1);
   },
 };
 
@@ -234,7 +275,7 @@ export const Bottom: Story = {
   },
 };
 
-/** Two taken, two to bottom, and one of them already chosen. */
+/** Two to bottom (three taken, the first free), one of them already chosen. */
 export const BottomPartlyChosen: Story = {
   args: { state: bottom(2, [5]).state, actions: bottom(2, [5]).actions },
   play: async ({ canvasElement }) => {
