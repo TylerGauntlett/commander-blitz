@@ -45,10 +45,11 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object
 from tests.conftest import action_for_card, only_oid, pass_until
 

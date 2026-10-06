@@ -44,7 +44,7 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars, has_keyword
 from automtg.engine.combat import can_block
@@ -52,6 +52,7 @@ from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.values import evaluate_value
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import add_counters, grant_keyword, remove_counters
 from automtg.engine.structs import TargetRef
 from automtg.engine.zones import destroy, move_object

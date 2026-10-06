@@ -866,7 +866,7 @@ def verify(
                 )
                 return verdict
             pool[extra_card.id] = extra_card
-        from ..loader import link_faces, validate_token_references
+        from ..loader.linking import link_faces, validate_token_references
 
         link_faces(pool)
         merged = CardRegistry(pool)

@@ -55,12 +55,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.characteristics import has_keyword
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.selectors import resolve_pool
 from automtg.engine.enums import ActionKind, Keyword, Step, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.structs import DelayedTrigger, TargetRef
 from automtg.engine.turn import _run_delayed
 from automtg.engine.zones import move_object

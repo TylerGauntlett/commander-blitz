@@ -266,7 +266,8 @@ class TestTheLoaderChecksTheLink:
         return CardModel.model_validate(body)
 
     def test_an_unknown_face_is_refused(self, registry):
-        from automtg.cards.loader import compile_card, link_prepared_faces
+        from automtg.cards.loader import compile_card
+        from automtg.cards.loader.linking import link_prepared_faces
         from automtg.engine.errors import DslError
 
         pool = {c.id: c for c in registry}
@@ -278,7 +279,8 @@ class TestTheLoaderChecksTheLink:
     def test_a_permanent_face_is_refused(self, registry):
         """"a copy of its **spell**" -- a creature put on the stack this way
         would be a spell that never leaves it."""
-        from automtg.cards.loader import compile_card, link_prepared_faces
+        from automtg.cards.loader import compile_card
+        from automtg.cards.loader.linking import link_prepared_faces
         from automtg.engine.errors import DslError
 
         pool = {c.id: c for c in registry}

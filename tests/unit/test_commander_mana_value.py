@@ -45,10 +45,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.costs import cost_reduction, variant_reduction
 from automtg.engine.enums import ActionKind, Step, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object
 
 SPELL = "t_commander_flashback"   # {4}{W}; flashback {8}{W}, less the greatest mv

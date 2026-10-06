@@ -45,11 +45,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
 from automtg.engine.costs import ability_mana, can_pay, variant_reduction
 from automtg.engine.enums import ActionKind, Step
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import become_monarch
 from tests.conftest import only_oid, pass_until
 

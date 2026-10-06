@@ -33,10 +33,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import CardModel, DslError, compile_card
+from automtg.cards.loader import compile_card
+from automtg.cards.schema import CardModel
 from automtg.engine.effects import execute_one
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
+from automtg.engine.errors import DslError
 
 FOREST = "forest"
 BEAR = "t_bear"    # Creature — Bear

@@ -24,9 +24,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import RECORDING_OPS, execute
 from automtg.engine.effects.context import EffectContext
+from automtg.engine.errors import DslError
 from automtg.engine.structs import LifeLock
 
 DOUBLER = "t_always_bloodletter"  # an opponent's life loss is doubled

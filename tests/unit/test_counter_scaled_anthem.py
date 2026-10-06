@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import _validate_static_value
+from automtg.cards.loader.statics import _validate_static_value
 from automtg.engine.characteristics import chars
 from automtg.engine.effects.values import validate_value
 from automtg.engine.errors import DslError

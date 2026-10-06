@@ -196,7 +196,7 @@ class TestTheLoaderGuards:
         language is a whitelist, so it already refuses it; this pins that it
         stays refused.
         """
-        from automtg.cards.loader import _validate_static_value
+        from automtg.cards.loader.statics import _validate_static_value
 
         with pytest.raises(DslError, match="static values may only use"):
             _validate_static_value(coven(), "test")

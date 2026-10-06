@@ -25,11 +25,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect, _validate_static_condition
+from automtg.cards.loader.effects import _validate_effect
+from automtg.cards.loader.statics import _validate_static_condition
 from automtg.engine.characteristics import chars
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 
 BLADE = "t_reconfigurer"
 BEAR = "t_bear"

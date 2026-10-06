@@ -45,10 +45,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import abilities_of, chars
 from automtg.engine.enums import Zone
+from automtg.engine.errors import DslError
 from automtg.engine.serialize import card_view
 from automtg.engine.text_change import displayed, printed_type_instances, substitute
 from automtg.engine.zones import move_object

@@ -40,7 +40,7 @@ from typing import Literal
 from automtg.engine.enums import CardType
 
 from .images import IndexEntry
-from .loader import KNOWN_KEYWORDS, KNOWN_SUPERTYPES, KNOWN_TYPES, normalize_keyword
+from .loader.vocabulary import KNOWN_KEYWORDS, KNOWN_SUPERTYPES, KNOWN_TYPES, normalize_keyword
 from .schema import CardModel
 
 #: Coverage of a generated card.  ``full`` means the printed text is *entirely*
@@ -669,7 +669,7 @@ def _for_each_selector(what: str) -> dict | None:
     card you've drawn this turn" is not a board count at all, and there is
     nothing here to count it with.
     """
-    from .loader import KNOWN_KEYWORDS, KNOWN_TYPES
+    from .loader.vocabulary import KNOWN_KEYWORDS, KNOWN_TYPES
 
     text = " ".join(what.split()).rstrip(".")
     selector: dict = {}

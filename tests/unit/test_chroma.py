@@ -27,10 +27,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_static_value
+from automtg.cards.loader.statics import _validate_static_value
 from automtg.engine.characteristics import chars
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.values import evaluate_value, validate_value
+from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost
 
 FOREST = "forest"

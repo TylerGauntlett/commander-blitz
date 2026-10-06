@@ -33,7 +33,7 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import STATIC_EFFECTS
+from automtg.cards.loader.vocabulary import STATIC_EFFECTS
 from automtg.cards.schema import CardModel
 from automtg.engine.effects import known_ops
 from automtg.engine.enums import Keyword

@@ -25,9 +25,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.enums import ActionKind, Step
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import damage_player
 from tests.conftest import _default_answer, only_oid, pass_until
 

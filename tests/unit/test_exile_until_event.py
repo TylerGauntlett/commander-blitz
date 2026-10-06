@@ -58,10 +58,11 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, Step, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.primitives import become_monarch
 from automtg.engine.structs import TargetRef

@@ -38,11 +38,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
 from automtg.engine.effects.ops_characteristics import op_add_subtype
 from automtg.engine.enums import ActionKind, DecisionKind
+from automtg.engine.errors import DslError
 
 THRONE = "t_chosen_throne"  # "This creature is the chosen type…", self_only
 XENOGRAFT = "t_chosen_xenograft"  # "…each creature you control is…"

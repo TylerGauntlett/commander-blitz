@@ -31,7 +31,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card, link_second_faces
+from automtg.cards.loader import compile_card
+from automtg.cards.loader.linking import link_second_faces
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Zone
 from automtg.engine.errors import DslError

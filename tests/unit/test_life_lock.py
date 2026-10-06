@@ -35,10 +35,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.costs import can_pay
 from automtg.engine.enums import ActionKind
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import damage_player, gain_life, life_locked, lose_life
 from automtg.engine.structs import LifeLock
 from tests.conftest import _default_answer, action_for_card, oids_of

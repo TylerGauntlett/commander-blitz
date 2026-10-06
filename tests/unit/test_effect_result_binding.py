@@ -37,11 +37,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import execute_one
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.selectors import resolve_pool
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.objects import PLUS_ONE
 from automtg.engine.structs import TargetRef
 from tests.conftest import action_for_card, find_action, oids_of, only_oid, pass_until

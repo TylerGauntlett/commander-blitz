@@ -42,10 +42,11 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone
+from automtg.engine.errors import DslError
 from automtg.engine.objects import MINUS_ONE
 from automtg.engine.primitives import add_counters, attach
 from automtg.engine.zones import destroy, sacrifice

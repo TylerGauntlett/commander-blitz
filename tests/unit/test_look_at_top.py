@@ -27,7 +27,7 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Zone

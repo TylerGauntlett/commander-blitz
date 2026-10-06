@@ -45,9 +45,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError
 from automtg.cards.schema import AbilityModel, CardModel
 from automtg.engine.enums import ActionKind, Step, Zone
+from automtg.engine.errors import DslError
 from tests.conftest import pass_until
 
 MARSHAL = "t_warp_marshal"  # grants warp {2}{R} to artifact cards and red creature cards

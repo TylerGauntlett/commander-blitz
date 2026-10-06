@@ -26,10 +26,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import DecisionKind
+from automtg.engine.errors import DslError
 
 ISLAND = "island"
 SPELL = "t_join_forces"

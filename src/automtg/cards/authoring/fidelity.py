@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..images import CardIndex, IndexEntry
-from ..loader import KNOWN_KEYWORDS
+from ..loader.vocabulary import KNOWN_KEYWORDS
 from ..proxy import _strip_reminders
 from .verify import EXPECTATION_KEYS, claimed_lines, fold_self_reference
 

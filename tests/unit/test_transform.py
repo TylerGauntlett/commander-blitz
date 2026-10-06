@@ -29,10 +29,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, link_faces
+from automtg.cards.loader.linking import link_faces
 from automtg.cards.registry import validate_deck
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.primitives import transform
 from automtg.engine.zones import destroy, move_object

@@ -29,11 +29,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError
 from automtg.cards.schema import CardModel
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Step
+from automtg.engine.errors import DslError
 from automtg.engine.structs import DelayedTrigger
 from tests.conftest import pass_until
 

@@ -24,9 +24,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Step
+from automtg.engine.errors import DslError
 from tests.conftest import advance_to_step, only_oid
 
 BEAR = "grizzly_bears"  # a plain 2/2

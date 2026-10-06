@@ -47,11 +47,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import DecisionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 
 FOREST = "forest"         # land, mana value 0

@@ -268,7 +268,7 @@ class TestTheLoader:
         )
         cards = {c.id: c for c in registry}
         cards[card.id] = card
-        from automtg.cards.loader import validate_token_references
+        from automtg.cards.loader.linking import validate_token_references
 
         with pytest.raises(DslError, match="needs an Aura token"):
             validate_token_references(cards)
@@ -291,7 +291,7 @@ class TestTheLoader:
         )
         cards = {c.id: c for c in registry}
         cards["t_y"] = compile_card(model)
-        from automtg.cards.loader import validate_token_references
+        from automtg.cards.loader.linking import validate_token_references
 
         with pytest.raises(DslError, match="no_such_token"):
             validate_token_references(cards)

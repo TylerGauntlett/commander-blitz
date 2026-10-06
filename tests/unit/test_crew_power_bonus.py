@@ -30,10 +30,11 @@ from __future__ import annotations
 import pytest
 
 from automtg.cards.authoring.packet import _token_ids
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars, crew_power_bonus
 from automtg.engine.enums import ActionKind
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import create_token
 from tests.conftest import only_oid
 from tests.unit.test_combat import attack_with, done, resolve_combat, to_attackers

@@ -925,7 +925,7 @@ def _keywords_in(text: str) -> list[str] | None:
     produce a card that *says* it has protection and does not, which is the
     failure mode this whole pipeline is built to refuse.
     """
-    from ..loader import KNOWN_KEYWORDS
+    from ..loader.vocabulary import KNOWN_KEYWORDS
 
     parts = [p.strip() for p in re.split(r",|\band\b", text) if p.strip()]
     out: list[str] = []

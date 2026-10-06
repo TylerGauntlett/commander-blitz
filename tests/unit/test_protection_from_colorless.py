@@ -27,13 +27,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.registry import CardRegistry
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import protected_from, protection_from
 from automtg.engine.combat import can_block
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach, damage_permanent
 from automtg.engine.sandbox import GameBuilder
 from automtg.engine.structs import PROTECTION_COLORLESS, CombatState, TargetRef

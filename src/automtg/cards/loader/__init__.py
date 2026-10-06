@@ -53,28 +53,16 @@ from automtg.engine.triggers import (
 )
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
-from .effects import (  # noqa: F401
+from .effects import (
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
-    _refuse_targets_inside_a_delay,
-    _validate_attacking,
     _validate_cast_lock_zones,
-    _validate_delayed_trigger,
     _validate_effect,
     _validate_enchanted_player,
-    _validate_player_spec,
     _validate_was_cast_placement,
 )
-from .linking import (  # noqa: F401
-    _derive_color_identity,
-    _walk_effects,
-    link_faces,
-    link_meld_results,
-    link_prepared_faces,
-    link_second_faces,
-    validate_token_references,
-)
-from .mana import (  # noqa: F401
+from .linking import _derive_color_identity
+from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
     _compile_cost,
@@ -82,29 +70,24 @@ from .mana import (  # noqa: F401
     _mana_grant,
     _mana_options,
     _split_mana_rider,
-    _sum_mana,
     _validate_mana_amount,
 )
-from .statics import (  # noqa: F401
-    _check_reduction_type_names,
-    _validate_cost_condition,
+from .statics import (
     _validate_cost_reduction,
-    _validate_reduction_zones,
     _validate_static_condition,
     _validate_static_count_filter,
     _validate_static_value,
 )
-from .targets import (  # noqa: F401
-    _check_mode_targets,
+from .targets import (
     _check_reflexive_wiring,
-    _compile_target,
     _compile_targets,
 )
 
-# Re-exported: this package is imported as one module -- `from
-# automtg.cards.loader import compile_card, STATIC_EFFECTS, _validate_effect`
-# -- by the registry, the proxy, the authoring packet and ~180 tests. The
-# split is a move, not a new API; every name keeps its old address.
+# The noqa is for the vocabulary constants this module does not read itself
+# (ATTACKING_OPS, the COST_REDUCTION_* keys, the STATIC_* condition, count, life
+# and value keys, ...). They are imported only to stay in this namespace:
+# tests/cards/test_golden_pool.py pins the DSL's vocabulary by scanning
+# `vars(automtg.cards.loader)`. Code should import them from `.vocabulary`.
 from .vocabulary import (  # noqa: F401
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,
@@ -151,10 +134,8 @@ from .vocabulary import (  # noqa: F401
     UNGRANTABLE_STATIC_EFFECTS,
     WARP_GRANT_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
-    normalize_keyword,
 )
-from .walk import (  # noqa: F401
-    _before,
+from .walk import (
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,

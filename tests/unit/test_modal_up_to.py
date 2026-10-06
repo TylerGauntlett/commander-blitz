@@ -24,9 +24,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, DecisionKind
+from automtg.engine.errors import DslError
 from tests.conftest import _default_answer, action_for_card
 
 SPELL = "t_choose_up_to_two"  # gain 3 life / draw a card / lose 1 life

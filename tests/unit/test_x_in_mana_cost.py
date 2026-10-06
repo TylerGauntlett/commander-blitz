@@ -33,7 +33,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import STATIC_FILTER_KEYS
+from automtg.cards.loader.vocabulary import STATIC_FILTER_KEYS
 from automtg.engine.carddef import TargetSpec
 from automtg.engine.effects.selectors import SELECTOR_KEYS, validate_selector
 from automtg.engine.enums import ActionKind, DecisionKind, Zone

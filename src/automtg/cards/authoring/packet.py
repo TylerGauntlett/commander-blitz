@@ -447,7 +447,7 @@ def reference() -> dict:
     from automtg.engine.objects import PLAYABLE_DURATIONS
     from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
-    from ..loader import (
+    from ..loader.vocabulary import (
         COST_REDUCTION_FILTER_KEYS,
         COST_REDUCTION_KEYS,
         COST_REDUCTION_REFUSED_FILTER_KEYS,

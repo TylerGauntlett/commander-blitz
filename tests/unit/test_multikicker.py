@@ -35,9 +35,10 @@ from __future__ import annotations
 import pytest
 
 from automtg.cards.authoring.verify import residual_text
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 
 PLAINS = "plains"
 ANTHEM = "t_multikicker"  # {1}{W} enchantment, multikicker {1}{W}, draws per kick

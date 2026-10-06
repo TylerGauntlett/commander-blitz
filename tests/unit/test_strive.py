@@ -38,10 +38,11 @@ import pytest
 
 from automtg.cards.authoring.fidelity import unimplemented_mechanics
 from automtg.cards.authoring.verify import _covered
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine import suspend
 from automtg.engine.enums import ActionKind
+from automtg.engine.errors import DslError
 
 PLAINS = "plains"
 ISLAND = "island"

@@ -34,10 +34,11 @@ import pytest
 
 from automtg.cards.authoring.packet import CARD_LEVEL_COST_KEYS
 from automtg.cards.authoring.verify import residual_text
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 

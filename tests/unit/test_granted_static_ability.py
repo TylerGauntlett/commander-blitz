@@ -42,11 +42,11 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import (
+from automtg.cards.loader import compile_card
+from automtg.cards.loader.vocabulary import (
     GRANTABLE_STATIC_EFFECTS,
     STATIC_EFFECTS,
     UNGRANTABLE_STATIC_EFFECTS,
-    compile_card,
 )
 from automtg.cards.registry import CardRegistry, authored_card_paths
 from automtg.cards.schema import CardModel

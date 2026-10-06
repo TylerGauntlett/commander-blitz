@@ -41,7 +41,8 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card, validate_token_references
+from automtg.cards.loader import compile_card
+from automtg.cards.loader.linking import validate_token_references
 from automtg.cards.registry import CardRegistry, authored_card_paths
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars

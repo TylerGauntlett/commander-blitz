@@ -30,7 +30,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import SPELL_FILTER_KEYS, STATIC_FILTER_KEYS, compile_card
+from automtg.cards.loader import compile_card
+from automtg.cards.loader.vocabulary import SPELL_FILTER_KEYS, STATIC_FILTER_KEYS
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import _matches_printed
 from automtg.engine.effects.context import EffectContext

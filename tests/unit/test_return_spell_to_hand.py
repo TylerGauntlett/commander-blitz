@@ -33,13 +33,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.registry import CardRegistry
 from automtg.cards.schema import CardModel
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.effects.ops_stack import put_copy_on_stack
 from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.events import EventType
 from automtg.engine.sandbox import GameBuilder
 from automtg.engine.stack import pull_spell_off_stack, push_spell

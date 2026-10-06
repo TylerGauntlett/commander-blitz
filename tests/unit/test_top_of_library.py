@@ -29,10 +29,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars, top_of_library
 from automtg.engine.enums import Keyword
+from automtg.engine.errors import DslError
 from automtg.engine.player_statics import player_reveals_library_top
 from automtg.engine.serialize import player_view
 

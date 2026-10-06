@@ -36,10 +36,11 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_effect
+from automtg.cards.loader.effects import _validate_effect
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import Keyword, Zone
+from automtg.engine.errors import DslError
 from automtg.engine.primitives import attach
 from automtg.engine.zones import destroy
 from tests.conftest import only_oid

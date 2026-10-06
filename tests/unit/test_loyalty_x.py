@@ -32,9 +32,10 @@ from __future__ import annotations
 import pytest
 
 from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.cards.loader import DslError, compile_card
+from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.errors import DslError
 from tests.conftest import only_oid, pass_until
 
 WALKER = "t_lx_walker"  # loyalty 4; "+1: gain 2 life", "-X: gain X life"
