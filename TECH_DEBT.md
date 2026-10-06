@@ -7,17 +7,15 @@ in the same PR. Each item says why it matters, where to look, and what fixing it
 like. Sizes: **S** is an afternoon, **M** a focused PR, **L** a multi-PR effort.
 
 **Retired IDs.** Code and tests still cite IDs from the 2026-09-04 audit that are now
-resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`, `NF-01`,
-`UV-*` and others). Their write-ups are in the last version of the old report:
-`git show ab86d46f:TECH_DEBT.md`. IDs that are still open keep their old names below
-(`FB-02`, `FB-12`, `FB-13`, `FT-04`, `FT-07`, `OF-01`).
+resolved (`CG-01`–`CG-06`, `FT-03`–`FT-07`, `FB-*`, `DC-01`, `LP-*`, `NF-01`, `UV-*` and
+others). Their write-ups are in the last version of the old report:
+`git show ab86d46f:TECH_DEBT.md`. `OF-01` is the one old ID still open.
 
 ## Suggested order
 
 1. **Card defects:** CD-07 (one engine fix), CD-08 (one card at a time).
 2. **Structural:** CD-01 (one card layer), ST-01 (shims), OF-01.
 3. **Decision:** RS-01 (rewrite history or not).
-4. **UI defects:** FB-12, FB-13, FT-04, FT-07, one PR each.
 
 ---
 
@@ -229,17 +227,7 @@ container-query approach would shrink both sides.
 
 ---
 
-## Open defects
-
-These are known bugs, left open by decision. Each one is pinned or documented at its
-code. Fix them in their own PRs.
-
-| ID | Defect | Where | Pinned by |
-|---|---|---|---|
-| FB-12 | Settings popover is unreachable or escapable by the controller: there is no `data-modal-root` and no `B` binding | `components/game/SettingsMenu.tsx:4-9` | the comment there |
-| FB-13 | The commander shows "Ready" only while the pointer is over the orb | `components/game/CommandZone.tsx` | `frontend/tests/commandZone.test.tsx:218` (`it.fails`) |
-| FT-04 | The viewer's battlefield bands drift 9–41px as permanents enter, against a 6px budget | `frontend/e2e/layout.spec.ts:279` | conditional `test.fail` |
-| FT-07 | Screen changes fade out, then fade in (`AnimatePresence mode="wait"`), so returning to a game is slow. `82900ae7` removed the blank frame but not the wait | `App.tsx:113`, `screens/GameRoute.tsx:133` | — |
+--|---|---|
 
 ---
 
