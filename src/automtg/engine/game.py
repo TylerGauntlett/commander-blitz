@@ -25,18 +25,17 @@ from .carddef import Cost
 from .casting import _spell_as_cast, strive_surcharge
 from .characteristics import abilities_of, chars, mana_source_traits
 from .combat import add_attacker, add_blocker, attack_tax_cost, block_tax_cost, finish_attackers
+from .cost_reduction import cost_reduction, variant_reduction
 from .costs import (
     ability_purpose,
     activate_mana_ability,
     can_pay,
     commander_cost,
-    cost_reduction,
     defined_x,
     mana_sources,
     most_life_for_mana,
     pay,
     spell_purpose,
-    variant_reduction,
 )
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import modal_bounds, mode_labels

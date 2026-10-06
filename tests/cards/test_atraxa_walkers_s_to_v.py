@@ -38,7 +38,7 @@ import contextlib
 
 from automtg.cards.registry import DeckList, validate_deck
 from automtg.engine import legality
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone

@@ -32,12 +32,8 @@ from automtg.engine.characteristics import (
     protection_from,
     ward_abilities,
 )
-from automtg.engine.costs import (
-    ability_mana,
-    activate_mana_ability,
-    available_mana,
-    cost_reduction,
-)
+from automtg.engine.cost_reduction import cost_reduction
+from automtg.engine.costs import ability_mana, activate_mana_ability, available_mana
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.mana import SYMBOL_INDEX
 from automtg.engine.player_statics import player_cant_cast_spells

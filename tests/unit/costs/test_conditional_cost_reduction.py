@@ -48,7 +48,8 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
-from automtg.engine.costs import ability_mana, can_pay, variant_reduction
+from automtg.engine.cost_reduction import variant_reduction
+from automtg.engine.costs import ability_mana, can_pay
 from automtg.engine.enums import ActionKind, Step
 from automtg.engine.errors import DslError
 from automtg.engine.primitives import become_monarch
@@ -345,7 +346,7 @@ class TestTheReductionIsScopedToTheCastVariant:
         `cost_reduction` is variant-blind, so the same spec written there
         discounts the hand cast that the printed line never mentions."""
         game, oid = hand_spell(builder, SCALER, lands=5, creatures=4)
-        from automtg.engine.costs import cost_reduction
+        from automtg.engine.cost_reduction import cost_reduction
 
         card = game.state.card(oid)
         assert cost_reduction(game.state, 0, card) == 0, "nothing card-level here"

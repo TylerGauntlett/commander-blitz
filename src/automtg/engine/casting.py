@@ -14,16 +14,8 @@ from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
 from .characteristics import chars
-from .costs import (
-    can_pay,
-    commander_cost,
-    cost_reduction,
-    life_cost,
-    mana_sources,
-    spell_purpose,
-    variant_reduction,
-    zone_of,
-)
+from .cost_reduction import cost_reduction, variant_reduction
+from .costs import can_pay, commander_cost, life_cost, mana_sources, spell_purpose, zone_of
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
 from .effects.selectors import resolve_pool

@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
 from .characteristics import abilities_of, chars, crew_power_bonus, mana_source_traits
+from .cost_reduction import reduction_amount
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
@@ -65,15 +66,6 @@ from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-from .cost_reduction import (  # noqa: F401
-    REDUCTION_ZONES,
-    _filter_zones,
-    _reduction_matches,
-    _reduction_zone_oids,
-    cost_reduction,
-    reduction_amount,
-    variant_reduction,
-)
 
 
 def mana_sources(

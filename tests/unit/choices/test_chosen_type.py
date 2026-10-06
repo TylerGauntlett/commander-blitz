@@ -237,7 +237,7 @@ class TestTheChoiceReachesTheOtherTwoReaders:
 
     def cost_of(self, game, def_id: str) -> int:
         """What legality is actually charging for this card right now."""
-        from automtg.engine.costs import cost_reduction
+        from automtg.engine.cost_reduction import cost_reduction
 
         card = game.state.card_of(
             next(

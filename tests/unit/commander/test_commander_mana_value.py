@@ -47,7 +47,7 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.costs import cost_reduction, variant_reduction
+from automtg.engine.cost_reduction import cost_reduction, variant_reduction
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.zones import move_object

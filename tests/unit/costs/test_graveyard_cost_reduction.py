@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind
 
 CYAN = "t_cyan"

@@ -50,7 +50,7 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.player_statics import player_extra_land_drops

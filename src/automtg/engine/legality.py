@@ -19,11 +19,11 @@ from .characteristics import (
     loyalty_activation_timing_waived,
     threshold_met,
 )
+from .cost_reduction import cost_reduction
 from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
-    cost_reduction,
     land_drops_available,
     mana_added_total,
     mana_amount,

@@ -39,7 +39,7 @@ instead of measuring a land.
 from __future__ import annotations
 
 from automtg.engine.characteristics import chars
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.player_statics import spell_life_tax
 from automtg.engine.primitives import create_token

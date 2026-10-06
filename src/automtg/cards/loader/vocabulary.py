@@ -8,7 +8,7 @@ accepts) and pinned by ``tests/cards/test_golden_pool.py``.
 from __future__ import annotations
 
 from automtg.engine.characteristics import ABILITY_STATICS
-from automtg.engine.costs import REDUCTION_ZONES
+from automtg.engine.cost_reduction import REDUCTION_ZONES
 from automtg.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
 )

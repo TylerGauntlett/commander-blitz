@@ -54,7 +54,7 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import _base_pt, chars
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.errors import DslError
 from automtg.engine.objects import PLUS_ONE
 from automtg.engine.primitives import add_counters
