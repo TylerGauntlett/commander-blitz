@@ -294488,7 +294488,7 @@
       "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Turret Ogre": {
       "edhrec_rank": 23983,
@@ -303102,13 +303102,13 @@
     },
     "Verdant Kraken": {
       "edhrec_rank": 30738,
-      "gate": null,
+      "gate": "template",
       "name": "Verdant Kraken",
-      "reason": "",
+      "reason": "no template for: At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land crea",
       "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Verdant Mastery": {
       "edhrec_rank": 11998,

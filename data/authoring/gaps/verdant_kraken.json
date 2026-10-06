@@ -1,0 +1,22 @@
+{
+  "card_id": "verdant_kraken",
+  "name": "Verdant Kraken",
+  "oracle_text": "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)",
+  "blocked_sentences": [
+    "At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has \"{T}: Add {G}.\" It's affected by summoning sickness until your next turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "missing-token",
+      "kind": "token",
+      "what": "A token_ids entry for a 3/3 green Forest Tentacle land creature token (types Land Creature, subtypes Forest Tentacle) with the intrinsic Forest mana ability \"{T}: Add {G}.\"",
+      "why_existing_wont_do": "The closest pool entries are forest_dryad_1_1_g_land (a 1/1 Forest Dryad land creature with {T}: Add {G}) and tentacle_1_1_u (a 1/1 blue Tentacle creature). Both have the wrong P/T and subtypes, and the Tentacle is the wrong color and not a land. The trigger half already works: event 'upkeep' with controller 'any' is used by existing cards."
+    }
+  ],
+  "closest_existing": [
+    "forest_dryad_1_1_g_land",
+    "tentacle_1_1_u",
+    "trigger event upkeep with controller any + create_token"
+  ],
+  "confidence": "high"
+}

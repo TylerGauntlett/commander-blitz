@@ -10,77 +10,38 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **41** capabilities.
+**23 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [missing-token](#missing-token) | 4 | 2408 | token |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [starting-life-total](#starting-life-total) | 2 | 2022 | value |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [alternative-cost](#alternative-cost) | 1 | 1350 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [block-tax](#block-tax) | 1 | 2209 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-cast-spells-from-zones](#cant-cast-spells-from-zones) | 1 | 706 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [counter-placed-putter](#counter-placed-putter) | 1 | 1279 | trigger_event |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [damage-life-floor-static](#damage-life-floor-static) | 1 | 5859 | static_effect |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [enters-with-additional-counters-dynamic-amount](#enters-with-additional-counters-dynamic-amount) | 1 | 1702 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [library-searched](#library-searched) | 1 | 681 | trigger_event |
-| [life-gain-addend](#life-gain-addend) | 1 | 2076 | replacement |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [look-at-top-enters-with-counters](#look-at-top-enters-with-counters) | 1 | 2296 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
-| [meld](#meld) | 1 | 2583 | engine |
+| [missing-token](#missing-token) | 1 | 30738 | token |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [players-attacked-by-source](#players-attacked-by-source) | 1 | 2900 | selector |
-| [protection-from-colorless](#protection-from-colorless) | 1 | 1395 | value |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [shares-creature-type-with-source](#shares-creature-type-with-source) | 1 | 3974 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
-| [trigger-filter-owner](#trigger-filter-owner) | 1 | 2303 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## missing-token
-
-Blocks **4** cards.
-
-- **(token)** a token id for a 1/1 colorless Servo artifact creature token (e.g. servo_1_1_c), types Artifact Creature, subtype Servo, no abilities
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Servo. The nearest entries are gnome_1_1_c and soldier_1_1_c (1/1 colorless artifact creatures with the wrong creature type) and thopter_1_1_c_flying (has flying), and none of them is a Servo. Everything else on the card is already expressible: Fabricate 2 is a self_enters trigger with a choose_mode between add_counters (+1/+1, amount 2, self_only) and create_token (amount 2), and the anthem is a buff static with affects {controller: you, types: [Creature], exclude_self: true}
-- **(token)** a token definition for a 1/1 white Soldier creature token with lifelink (suggested id soldier_1_1_w_lifelink), so create_token can name it
-  <br>Why the existing vocabulary won't do: token_ids is a closed list: soldier_1_1_w is the right body but lacks lifelink, and the lifelink 1/1 white tokens (vampire_1_1_w_lifelink, moogle_1_2_w_lifelink) have the wrong creature type or size. Substituting either would change the card. The other line is expressible: a you_gain_life trigger with a may op carrying pay {2} and then draw 1.
-- **(token)** a token definition for a 4/4 white Angel Warrior creature token with flying (subtypes Angel and Warrior), e.g. id angel_warrior_4_4_w_flying
-  <br>Why the existing vocabulary won't do: token_ids is a closed list; the nearest entries are angel_4_4_w_flying (Angel only, no Warrior subtype) and angel_4_4_w_flying_vigilance (extra vigilance). Substituting angel_4_4_w_flying would drop the Warrior creature type, which matters for Warrior tribal effects.
-- **(token)** a token definition samurai_2_2_w_vigilance: 2/2 white Samurai creature token with vigilance
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Samurai token; the nearest are knight_2_2_w_vigilance (2/2 white Knight with vigilance) and warrior_1_1_w_vigilance, which have the wrong creature type or size. Creature type matters (Samurai/Warrior tribal payoffs, changeling-type checks), so substituting is not allowed. The rest of the card is expressible: activate_loyalty_as_though_instant static with an entered_this_turn self condition, add_counters + grant_keyword for the +1, exile on a tapped creature target + gain_life for the -2.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dawn of Hope** (rank 2408) — `dawn_of_hope`
-  - {3}{W}: Create a 1/1 white Soldier creature token with lifelink.
-- **Emeria's Call // Emeria, Shattered Skyclave** (rank 2832) — `emeria_s_call_emeria_shattered_skyclave`
-  - Create two 4/4 white Angel Warrior creature tokens with flying.
-- **Angel of Invention** (rank 4199) — `angel_of_invention`
-  - Fabricate 2 (When this creature enters, put two +1/+1 counters on it or create two 1/1 colorless Servo artifact creature tokens.)
-- **The Wandering Emperor** (rank 5593) — `the_wandering_emperor`
-  - −1: Create a 2/2 white Samurai creature token with vigilance.
-
-</details>
 
 ## cast-as-though-flash
 
@@ -118,24 +79,6 @@ Blocks **2** cards.
 
 </details>
 
-## starting-life-total
-
-Blocks **2** cards.
-
-- **(value)** a value reading a player's starting life total (rule 103.4; 40 in Commander), so a condition can compare life_of(you) >= starting_life(you) + 15
-  <br>Why the existing vocabulary won't do: value_keys has life_of, max_life_of and min_life_of but nothing for the starting life total; hard-coding const 55 would silently assume the format's starting life and break for any non-40 start
-- **(value)** a static value (in static_value_keys, usable in a static's condition cmp) reading a player's starting life total (rule 103.4; 40 in Commander), so a buff static can be conditioned on life_of(you) >= starting_life(you) + 7; the same value is needed in value_keys for Angel of Destiny
-  <br>Why the existing vocabulary won't do: static_value_keys has min_life_of and max_life_of (current life) and const, but nothing for the starting life total; hard-coding const 47 would silently assume a 40-life format and be wrong for any other start (the engine itself only has a module constant STARTING_LIFE in player.py, not a per-player recorded value)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Righteous Valkyrie** (rank 2022) — `righteous_valkyrie`
-  - As long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.
-- **Angel of Destiny** (rank 2900) — `angel_of_destiny`
-  - At the beginning of your end step, if you have at least 15 life more than your starting life total, each player this creature attacked this turn loses the game.
-
-</details>
-
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -147,20 +90,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## alternative-cost
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant in `verify._covered` for a card-level `alternative_cost` printed line ("... rather than pay this spell's mana cost" / "... you may cast this spell without paying its mana cost") on a PERMANENT. The mechanic itself already loads and works: `alternative_cost: {"mana": "{W}", "tap_permanents": {"types": ["Creature"], "keywords": ["flying"], "count": 4}}` compiles cleanly via `compile_card`, and the static `grant_keyword` indestructible line and the flying/lifelink keywords are expressible. Only the bookkeeping is missing: a claimant like evoke's/bestow's, gated on `card.alternative_cost is not None` and the sentence containing "rather than pay this spell's mana cost" or "without paying its mana cost" (ideally strict: the printed mana symbols matching `alternative_cost.mana`).
-  <br>Why the existing vocabulary won't do: `verify._covered` has claimants for kicker, multikicker, strive, emerge, evoke, bestow, mutate, warp, additional_cost, cost_reduction, but none for `alternative_cost`. Every shipped `alternative_cost` card (Daze, Force of Will, Snuff Out, Flare of Denial, Fierce Guardianship, Flawless Maneuver, Submerge) is an instant whose line is blanket-claimed by `spell_effects`, so a creature carrying one has never been hit. No ability can honestly carry the line: a cost is not activated, triggered or static, and inventing an effectless static with that `text` would be a fake claim. `--collect` rejected the answer with `residual -- printed text not represented`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sephara, Sky's Blade** (rank 1350) — `sephara_sky_s_blade`
-  - You may pay {W} and tap four untapped creatures you control with flying rather than pay this spell's mana cost.
 
 </details>
 
@@ -178,20 +107,6 @@ Blocks **1** card.
 
 </details>
 
-## block-tax
-
-Blocks **1** card.
-
-- **(static_effect)** A static effect, the blocking twin of attack_tax: at declare-blockers each creature its `affects` filter matches can be declared as a blocker only if its controller pays a mana `cost` per blocking creature (here {1}, affects: all creatures, controller any). Must be gateable by a static condition reading the source's own combat status ('as long as this creature is attacking'), so the static condition language also needs a self-is-attacking test (an `exists` over {self_only, attacking} would do if `exists` honours `attacking`).
-  <br>Why the existing vocabulary won't do: attack_tax prices only declaring attackers (read in legality/game._pay_attack_tax at declare-attackers). block_restriction refuses blockers by a printed-characteristic filter or require_all, with no cost/payment path. The cant_block static and op are absolute prohibitions, not payable ones. Nothing in static_effects charges mana at declare-blockers.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Archangel of Tithes** (rank 2209) — `archangel_of_tithes`
-  - As long as this creature is attacking, creatures can't block unless their controller pays {1} for each of those creatures.
-
-</details>
-
 ## cant-be-countered
 
 Blocks **1** card.
@@ -203,20 +118,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cant-cast-spells-from-zones
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static casting prohibition filtered by the zone the spell is cast FROM, lasting while the source is on the battlefield: affects_player "opponent" plus zones/except_zones (here except_zones: ["hand"]), read at every cast road (casting._cast_variant and the resolution-time casts: suspend.cast_for_free, replacements._offer_cast, cast_copy) exactly as the CastLock table is today
-  <br>Why the existing vocabulary won't do: The `cant_cast_spells` static is total or filtered only by printed spell characteristics (affects_spells via _matches_printed) and has no zone-of-origin key, so written bare it would also forbid the opponents' hand casts -- a far harsher card. The `cant_cast_spells_from_zones` op does carry except_zones, but it is a one-shot that installs a timed CastLock whose durations are only this_turn / until_your_next_turn (CAST_LOCK_DURATIONS); there is no 'as long as the source is on the battlefield' duration and no static_effect form, so a self_enters trigger using it would expire while Magistrate is still out.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Drannith Magistrate** (rank 706) — `drannith_magistrate`
-  - Your opponents can't cast spells from anywhere other than their hands.
 
 </details>
 
@@ -235,20 +136,6 @@ Blocks **1** card.
 
 </details>
 
-## counter-placed-putter
-
-Blocks **1** card.
-
-- **(trigger_event)** a `counter_placed` trigger clause that filters on WHO put the counters ("whenever YOU put one or more +1/+1 counters on this creature"): the COUNTER_PLACED event must carry the putting player (the `by` that `primitives.add_counters` already computes via `_putter` for replace_counters' `put_by`), and the trigger needs a key such as `put_by: "you"` (or `cause_controller` extended to counter_placed) compared against it
-  <br>Why the existing vocabulary won't do: `counter_placed` with `counter: "+1/+1"`, `source: "self"` and `max_per_turn: 1` covers everything except the putter. The event is fired with `player=obj.controller` and no putter field, so the trigger's `controller` clause reads the creature's controller, not who placed the counters -- an opponent's effect putting a +1/+1 counter on this creature (e.g. their targeted counter spell or their proliferate) would wrongly draw you a card. `cause_controller` is refused by the loader on any event but `discard`, and `put_by` exists only on the `replace_counters` static, not on triggers
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exemplar of Light** (rank 1279) — `exemplar_of_light`
-  - Whenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn.
-
-</details>
-
 ## counter-to-exile
 
 Blocks **1** card.
@@ -260,20 +147,6 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
-## damage-life-floor-static
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (usable on an emblem or a permanent, e.g. Worship) that floors damage to a player's life total at N -- 'damage that would reduce your life total to less than 1 reduces it to 1 instead' -- with affects_player and an optional static condition such as 'if you control a creature' (exists {controller: you, types: [Creature]}), read continuously by primitives.damage_player alongside the existing state.life_floors table
-  <br>Why the existing vocabulary won't do: The damage_life_floor op installs a timed LifeFloor record whose only legal duration is 'this_turn' (LIFE_FLOOR_DURATIONS), so it cannot express a permanent emblem, and as a one-shot it cannot re-check 'if you control a creature' at each damage event. No entry in static_effects floors a life total: replace_damage multiplies damage, prevent_all_but caps each damage event, replace_life_loss multiplies loss, and cant_lose_the_game is a different effect.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra the Benevolent** (rank 5859) — `serra_the_benevolent`
-  - −6: You get an emblem with "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
 
 </details>
 
@@ -316,20 +189,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## enters-with-additional-counters-dynamic-amount
-
-Blocks **1** card.
-
-- **(static_effect)** the enters_with_additional_counters static with a computed amount: a static_value_keys `count` evaluated as the permanent enters, over a selector (controller you, subtypes Angel) that excludes the arriving permanent itself ("Angels you ALREADY control"), e.g. amount {"count": {"controller": "you", "subtypes": ["Angel"]}} with the entrant excluded
-  <br>Why the existing vocabulary won't do: enters_with_additional_counters exists (Oath of Gideon) but _apply_board_additional_counters in src/automtg/engine/zones.py reads `int(static.get("amount", 1))` -- a fixed integer only, so a value spec cannot be given. It also runs after the entrant is already in state.battlefield, so a naive count would include the arriving Angel. A permanent_enters trigger with add_counters would be a triggered ability rather than a replacement (counters arrive late, the creature enters as its base size, and it is respondable), which is an approximation the brief forbids. replace_counters only modifies counter placements, not the entering itself.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Giada, Font of Hope** (rank 1702) — `giada_font_of_hope`
-  - Each other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control.
 
 </details>
 
@@ -393,34 +252,6 @@ Blocks **1** card.
 
 </details>
 
-## library-searched
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired each time a player searches their library (701.23), carrying the searching player so a trigger can filter on `controller: opponent`; it must fire once per search instruction (search_library / search_zones including a library, fetchland and tutor costs alike), including searches that find nothing or are stopped by cant_search_library-style effects only if the search still occurs
-  <br>Why the existing vocabulary won't do: trigger_events has no search event: `ability_activated` and `spell_cast` fire on the cause rather than the search and would miss or over-count (a spell that searches conditionally, a land's fetch ability, a resolved tutor); `shuffle` is not an event either, and a shuffle is not a search. The static `cant_search_library` shows the engine knows when a search happens, but nothing exposes it to triggers
-
-<details><summary>Cards waiting on this</summary>
-
-- **Archivist of Oghma** (rank 681) — `archivist_of_oghma`
-  - Whenever an opponent searches their library, you gain 1 life and draw a card.
-
-</details>
-
-## life-gain-addend
-
-Blocks **1** card.
-
-- **(replacement)** an additive life-gain replacement: the player-wide static replace_life_gain with an addend (e.g. gain_addend: 1) so each life-gain event for the affected player becomes that amount plus N, applied wherever life is gained (lifelink included), ordered with any gain_multiplier per 616.1 controller choice
-  <br>Why the existing vocabulary won't do: replace_life_gain only carries gain_multiplier, which the loader requires to be 2 or more, and engine/player_statics.life_gain_multiplier only multiplies; there is no addend key (counter_addend exists only for replace_counters). A you_gain_life trigger that gains 1 more is a different card (it uses the stack, and would itself trigger/repeat).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angel of Vitality** (rank 2076) — `angel_of_vitality`
-  - If you would gain life, you gain that much life plus 1 instead.
-
-</details>
-
 ## look-at-random-card-in-hand
 
 Blocks **1** card.
@@ -432,6 +263,20 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## look-at-top-enters-with-counters
+
+Blocks **1** card.
+
+- **(op)** look_at_top putting a card onto the battlefield with counters it *enters with* (614.1c, one placement with the arrival, reported per 122.6), gated on a test of the card being put there (mana value 3 or less)
+  <br>Why the existing vocabulary won't do: look_at_top has no counters clause. A following add_counters on the `as` binding places them after the creature has entered -- the permanent is on the battlefield at its printed size first, which is the shape zones._enter_battlefield's enters-with path exists to avoid (Goldvein Hydra, Eomer). put_onto_battlefield's `counters` cannot read from a look-at-top window.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Turntimber Symbiosis // Turntimber, Serpentine Wood** (rank 2296) — `turntimber_symbiosis_turntimber_serpentine_wood`
+  - If that card has mana value 3 or less, it enters with three additional +1/+1 counters on it.
 
 </details>
 
@@ -450,17 +295,17 @@ Blocks **1** card.
 
 </details>
 
-## meld
+## missing-token
 
 Blocks **1** card.
 
-- **(engine)** The meld partner card bruna_the_fading_light and the meld result card brisela_voice_of_nightmares must exist in the card pool (or an answer must be able to carry the meld result, and the partner, as companion entries) before this half can name them in melds_with / melds_into. The engine mechanism itself is present: the `meld` op, the `melds_with`/`melds_into` card riders, and an end_step trigger whose intervening-if condition checks a battlefield creature named "Bruna, the Fading Light" that you own and control.
-  <br>Why the existing vocabulary won't do: `link_meld_results` (src/automtg/cards/loader/linking.py) raises 'melds_with references unknown card' / 'melds_into references unknown card' at the registry gate when either id is absent, and the loader refuses melds_with without melds_into. Neither Bruna, the Fading Light nor Brisela, Voice of Nightmares is in data/cards (both are pending in queue.json; Brisela's own line "Your opponents can't cast spells with mana value 3 or less" is untemplated). The answer format's only companion slot is `back`, which is for one transforming back face, so it cannot bring in both the partner and the melded result. Writing the trigger without melds_with/melds_into would make `op_meld` raise DslError the first time it fires, and dropping the line would leave the printed sentence unimplemented.
+- **(token)** A token_ids entry for a 3/3 green Forest Tentacle land creature token (types Land Creature, subtypes Forest Tentacle) with the intrinsic Forest mana ability "{T}: Add {G}."
+  <br>Why the existing vocabulary won't do: The closest pool entries are forest_dryad_1_1_g_land (a 1/1 Forest Dryad land creature with {T}: Add {G}) and tentacle_1_1_u (a 1/1 blue Tentacle creature). Both have the wrong P/T and subtypes, and the Tentacle is the wrong color and not a land. The trigger half already works: event 'upkeep' with controller 'any' is used by existing cards.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Gisela, the Broken Blade** (rank 2583) — `gisela_the_broken_blade`
-  - At the beginning of your end step, if you both own and control Gisela and a creature named Bruna, the Fading Light, exile them, then meld them into Brisela, Voice of Nightmares.
+- **Verdant Kraken** (rank 30738) — `verdant_kraken`
+  - At the beginning of each player's upkeep, you create a 3/3 green Forest Tentacle land creature token. (It has "{T}: Add {G}." It's affected by summoning sickness until your next turn.)
 
 </details>
 
@@ -527,34 +372,6 @@ Blocks **1** card.
 
 </details>
 
-## players-attacked-by-source
-
-Blocks **1** card.
-
-- **(selector)** a player set (for for_each_player / lose_game's player) of every player the source creature attacked this turn, recorded per attacking object in the turn ledger
-  <br>Why the existing vocabulary won't do: selector key attacked_this_turn filters objects that attacked, and the value attacked_this_turn counts per player whether they attacked; nothing records which defending players a given creature attacked, and for_each_player's players spec has no such option
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angel of Destiny** (rank 2900) — `angel_of_destiny`
-  - At the beginning of your end step, if you have at least 15 life more than your starting life total, each player this creature attacked this turn loses the game.
-
-</details>
-
-## protection-from-colorless
-
-Blocks **1** card.
-
-- **(value)** a protection quality meaning "colorless" (702.16, 105.2c) that grant_protection's from_colors (and the protection static) can carry, matching any source with no colors -- e.g. from_colors: ["colorless"] -- so the ability can be a choose_mode of six grant_protection modes: colorless, W, U, B, R, G, each on objects {target: t1} where t1 is another creature you control
-  <br>Why the existing vocabulary won't do: grant_protection's from_colors takes colour letters and _matches_protection in characteristics.py tests set(types)|set(subtypes)|set(colors) of the source against the qualities; a colorless source has an empty colour set, so no quality string can ever match it. choose_color only offers the five colours (COLOR_CHOICES), and from_everything is far broader than colorless. The coloured half alone (choose_mode over five grant_protection from_colors modes) is expressible, but dropping the colorless option would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Giver of Runes** (rank 1395) — `giver_of_runes`
-  - {T}: Another target creature you control gains protection from colorless or from the color of your choice until end of turn.
-
-</details>
-
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -582,20 +399,6 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## shares-creature-type-with-source
-
-Blocks **1** card.
-
-- **(selector)** a spell_cast trigger filter key meaning 'the cast spell shares a creature type with this ability's source object' -- e.g. shares_a_type_with: "self" honoured by triggers.matches_card_filter, intersecting the spell's creature subtypes with the current creature subtypes of the permanent that has the (granted) triggered ability
-  <br>Why the existing vocabulary won't do: The rest is expressible: a grant_ability static with affects {types: [Creature], is_commander: true, owner: you} handing over a grantable spell_cast trigger with max_per_turn: 1 and a draw effect. But the trigger filter has no way to name the source. selectors.matches' shares_a_type_with reads a binding (no 'self' spelling) and is effect-side only; triggers.matches_card_filter supports only shares_a_type_with_commander, which unions the subtypes of ALL your commanders via commander_subtypes -- including the partner of a partner pair and non-creature subtypes such as Background (Folk Hero itself is usually a commander, so casting another Background would wrongly draw). That is a different, broader card, not 'this creature'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Folk Hero** (rank 3974) — `folk_hero`
-  - Commander creatures you own have "Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn."
 
 </details>
 
@@ -639,20 +442,6 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
-
-</details>
-
-## trigger-filter-owner
-
-Blocks **1** card.
-
-- **(selector)** honour the `owner` key ("you" / "opponent") in a trigger `filter`, i.e. in triggers.matches_card_filter, compared against the subject object's GameObject.owner relative to the ability source's controller -- so "whenever your commander enters or attacks" is two triggers (permanent_enters, attacks) with controller "any" and filter {is_commander: true, owner: "you"}. The rest of the card is already expressible: a card-level replacements entry {event: self_enters_with_counters, counter: page, amount: 1} (Diamond City shape) and an activated ability with cost {mana: {1}, tap: true, remove_counters: {amount: 1, counter: page}} drawing one card.
-  <br>Why the existing vocabulary won't do: 903.3 makes "your commander" a matter of ownership. Norn's Choirmaster's shape (trigger controller "you" + filter is_commander) means "a commander you control": it misses your own commander while an opponent controls it and fires on an opponent's commander you have stolen -- selectors.py's own `owner` docstring calls that a genuinely different set now that gain_control exists. `owner` is in selector_keys and is read by selectors.matches and characteristics' static filter, but triggers.matches_card_filter never reads it, so writing it in a trigger filter would load and be silently ignored. The workaround of an intervening-if condition {exists: {binding: subject, is_commander: true, owner: you}} is also wrong: trigger conditions are re-checked on resolution (603.4), so removing the commander in response would cancel the page counter, which the printed card (no intervening if) does not allow.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tome of Legends** (rank 2303) — `tome_of_legends`
-  - Whenever your commander enters or attacks, put a page counter on this artifact.
 
 </details>
 
