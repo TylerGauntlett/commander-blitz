@@ -1,4 +1,4 @@
-﻿"""The "every card actually works" gate.
+"""The "every card actually works" gate.
 
 For every card in ``data/cards`` this exercises the real code path: put it in a
 hand with enough mana and a board rich enough to satisfy its targets, take the

@@ -33,9 +33,9 @@ WORKDIR /app
 # duplicated into a requirements.txt: one source of truth for the dep list.
 # Written to a file instead of inlined because the specifiers contain `>`, which
 # a shell would read as a redirect.
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md constraints.txt ./
 RUN python -c "import tomllib; print('\n'.join(tomllib.load(open('pyproject.toml','rb'))['project']['dependencies']))" > /tmp/requirements.txt \
-    && pip install --no-cache-dir -r /tmp/requirements.txt
+    && pip install --no-cache-dir -c constraints.txt -r /tmp/requirements.txt
 
 # `--no-deps`: everything is already installed above, and this keeps the layer
 # cheap. No `[dev]` and no `[train]` -- torch is ~800MB and nothing serving a

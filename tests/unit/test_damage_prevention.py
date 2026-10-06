@@ -16,7 +16,7 @@ never fires.
 `characteristics.prevented_damage(state, oid)` is keyed to an **object** and
 matches each static's `affects` filter against a permanent, so there is no
 player-facing form and `static_filter_keys` cannot name a seat; it is per source
-and per instance by design rather than "all damage this turn"; and `loader.py`
+and per instance by design rather than "all damage this turn"; and the loader
 refuses it without an `amount`, so "all" cannot even be spelled. Worst of all it
 is a *static*, continuous while its source stands on the battlefield — a Squire
 carrying one would fog its controller on every future turn, which is a Worship.

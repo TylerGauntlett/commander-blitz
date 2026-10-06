@@ -14,9 +14,6 @@ with the engine running alongside:
 uvicorn automtg.server.app:get_app --factory --reload
 ```
 
-The previous text-tile playtest client is archived verbatim at `legacy-frontend/` for
-comparison. Nothing builds or imports it.
-
 The board is themed against the board-themes round's 05 'Planar Art' (`docs/design-record.md#board-themes`). Where the two still differ
 — and which of those differences are defects rather than decisions — is tracked in
 [design-record.md](design-record.md#open-fidelity-findings).
@@ -47,7 +44,7 @@ frontend/src/
 └── components/
     ├── game/    Table (+ TableFoot, TableOverlays), PlayerMat, Lane, CardStack,
     │            Card, CardFace, CardGhost, CardHold, CardPreview, HandFan,
-    │            PlayerOrb, CommandZone, OpponentSeat, OpponentBoard, PhaseTrack,
+    │            PlayerOrb, CommandZone, OpponentSeat, PhaseTrack,
     │            ActionPanel (+ AttackRows, BlockGroups, PlayRows, XStepper,
     │            CommitDock, ToolStrip, SettingsMenu), ChoiceCombo,
     │            PromptDialog, OpeningHand, StackPanel, EventTicker, ZonePeek,

@@ -55,7 +55,7 @@ The common case, and the whole job for most mechanics.
 1. `src/automtg/engine/effects/ops_*.py` — the function, decorated
    `@register("name")`. Make it a **generator** if it needs a decision; `yield` from
    an `ask_*` helper in `effects/context.py`.
-2. `src/automtg/cards/loader.py::_validate_effect` — a guard for required sub-keys.
+2. `src/automtg/cards/loader/effects.py::_validate_effect` — a guard for required sub-keys.
    House style, alongside the existing guards for `create_token`, `add_mana`,
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.

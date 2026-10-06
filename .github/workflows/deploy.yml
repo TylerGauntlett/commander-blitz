@@ -52,6 +52,10 @@ jobs:
       # the 3.13 bump bought) makes the floors nearly free, so a push to main
       # holds them too. `--jobs 2` is the runner's core count.
       - run: python scripts/verify.py --only pytest --coverage --jobs 2 --strict --verbose
+      # Informational, as in verify.py: a stale count in docs/testing.md is a doc
+      # bug, not a build break -- but no `--only` slice ever ran it (SD-01).
+      - run: python scripts/test_counts.py --check --no-frontend
+        continue-on-error: true
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

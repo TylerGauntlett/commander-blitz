@@ -22,9 +22,13 @@ runs:
       with:
         python-version: "3.13"
         cache: pip
-        cache-dependency-path: pyproject.toml
+        cache-dependency-path: |
+          pyproject.toml
+          constraints.txt
 
-    - run: pip install -e ".[dev]"
+    # Pinned by constraints.txt (scripts/lock_deps.py), so a release that lands
+    # overnight cannot change what a re-run tests.
+    - run: pip install -c constraints.txt -e ".[dev]"
       shell: bash
 
     - if: inputs.node == 'true'

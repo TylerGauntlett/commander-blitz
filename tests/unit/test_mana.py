@@ -1,4 +1,4 @@
-﻿"""Mana cost parsing, pools, and the automatic payment solver."""
+"""Mana cost parsing, pools, and the automatic payment solver."""
 
 from __future__ import annotations
 

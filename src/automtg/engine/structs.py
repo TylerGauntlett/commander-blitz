@@ -448,7 +448,7 @@ class DamageShield:
     would be dealt to any target this turn" -- Healing Salve) is a different
     effect with a pool that drains and a target that may be a creature instead.
     Writing it as a shield with a number would be that card's shape and not its
-    behaviour, so `loader.py` refuses an ``amount`` on this op outright rather
+    behaviour, so the loader refuses an ``amount`` on this op outright rather
     than reading one and preventing everything anyway -- which loads clean and
     plays a strictly better card.  See `docs/rules-coverage.md`.
 

@@ -33,13 +33,8 @@ shows mana appearing will not catch:
   tapped. Library size is asserted beside the battlefield, or a fetch that
   conjures a land from nowhere passes.
 
-Two things are **not** asserted here and are called out where they sit:
+One thing is **not** asserted here:
 
-- `TestArcaneSignet` and `TestCommandersSphere` are `xfail`. Both cards print
-  "Add one mana of any color **in your commander's color identity**" and both are
-  written in `data/cards/core.cards.json` as five fixed modes, so in this
-  mono-white deck they tap for blue, black, red and green. See those classes for
-  the one-line fix and for what blocks it.
 - Archaeomancer's Map's second sentence (the land-drop catch-up) is already
   pinned in `tests/cards/test_bard_king_of_dale_deck.py::TestArchaeomancersMap`,
   so only its enters-trigger is here.
@@ -826,9 +821,8 @@ class TestPathOfAncestry:
 
     def test_it_taps_for_the_commanders_colour_only(self, builder):
         """Myrel is mono-white, so this land makes {W} and nothing else. Five
-        fixed modes -- the obvious spelling, and the one two of this deck's rocks
-        actually use -- is a strictly better card: it pays for spells the printed
-        land cannot."""
+        fixed modes -- the obvious spelling -- is a strictly better card: it pays
+        for spells the printed land cannot."""
         game, path = self.position(builder, [])
         assert offered_symbols(game, path) == {"W"}
 
@@ -1016,8 +1010,8 @@ class TestCommandersSphere:
     """ "{T}: Add one mana of any color in your commander's color identity." /
     "Sacrifice this artifact: Draw a card."
 
-    The mana half is the same defect as Arcane Signet's and is `xfail`ed below
-    with the same reason. The sacrifice half works and is pinned.
+    The mana half is pinned to the commander's identity, as Arcane Signet's is,
+    and the sacrifice half beside it.
     """
 
     def board(self, builder, *, lands=()):

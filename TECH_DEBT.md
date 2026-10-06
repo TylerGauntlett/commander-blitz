@@ -10,15 +10,15 @@ like. Sizes: **S** is an afternoon, **M** a focused PR, **L** a multi-PR effort.
 resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`, `NF-01`,
 `UV-*` and others). Their write-ups are in the last version of the old report:
 `git show ab86d46f:TECH_DEBT.md`. IDs that are still open keep their old names below
-(`FB-02`, `FB-12`, `FB-13`, `FT-04`, `FT-07`, `OF-01`, `SD-01`).
+(`FB-02`, `FB-12`, `FB-13`, `FT-04`, `FT-07`, `OF-01`).
 
 ## Suggested order
 
-1. **Cheap hygiene, no risk:** HY-01, HY-02, HY-03, SD-01, SD-03, CD-04, CD-05.
+1. **Cheap hygiene, no risk:** HY-04, CD-04, CD-05.
 2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), RS-02 (CI minutes),
    CD-02 (token path).
 3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
-4. **Defects:** FB-02, FB-12, FB-13, FT-04, FT-07, UI-01, one PR each.
+4. **Defects:** FB-02, FB-12, FB-13, FT-04, FT-07, one PR each.
 
 ---
 
@@ -281,39 +281,10 @@ code. Fix them in their own PRs.
 | FB-13 | The commander shows "Ready" only while the pointer is over the orb | `components/game/CommandZone.tsx` | `frontend/tests/commandZone.test.tsx:218` (`it.fails`) |
 | FT-04 | The viewer's battlefield bands drift 9–41px as permanents enter, against a 6px budget | `frontend/e2e/layout.spec.ts:279` | conditional `test.fail` |
 | FT-07 | Screen changes fade out, then fade in (`AnimatePresence mode="wait"`), so returning to a game is slow. `82900ae7` removed the blank frame but not the wait | `App.tsx:113`, `screens/GameRoute.tsx:133` | — |
-| UI-01 | The GameOverScreen subtitle `.over__sub` renders at 14px on the compact layout, under the 16px floor | `styles/ui.css:1271`; missing from the floor list at `styles/handheld.css:1661-1662` | `GameOverScreen.stories.tsx:125-128` |
 
 ---
 
 ## Docs, hygiene, environment
-
-### SD-01 · `docs/testing.md` counts are stale again — **S**
-
-Every row is wrong:
-
-| Suite | Doc says | Actual |
-|---|---|---|
-| `tests/unit/` | 4,630 | 8,055 |
-| `tests/cards/` | 10,858 | 14,330 |
-| `tests/server/` | 303 | 352 |
-| `frontend/tests/` | 1,381 | 1,522 |
-
-`scripts/test_counts.py --check` catches this, but `verify.py` prints its verdict as
-information only. Also, run with a Python that cannot import `automtg`, it reports 0
-Python tests instead of failing.
-
-**Fix:** run `--write`, make `--check` fail when the import fails, and consider making
-it a failing stage.
-
-### SD-03 · Docs and comments that point at deleted paths — **S**
-
-- `.claude/skills/extend-dsl/SKILL.md:58` points at `src/automtg/cards/loader.py`,
-  which is now the `loader/` package. This one matters, because an agent follows it.
-- `docs/frontend.md:17` cites `legacy-frontend/`, and `:50` cites `OpponentBoard`.
-- `loader.py` is still named in `engine/effects/ops_combat_flags.py:561`,
-  `engine/structs.py:451`, `tests/unit/test_damage_prevention.py:19`,
-  `docs/adr/0001-layers-lite.md:39` and `docs/unsupported-cards.md` (4 mentions).
-- `frontend/e2e/cycle3.spec.ts:578` names `NewGameScreen`.
 
 ### SD-04 · Reference docs mixed with changelogs — **M**
 
@@ -325,26 +296,6 @@ read and more expensive to load.
 **Fix:** keep `card-dsl.md` as the current reference only, and move the per-capability
 history into the changelog.
 
-### HY-01 · `.claude/settings.local.json` is committed, and stale — **S**
-
-It is a personal file that is normally gitignored. It allows commands for paths that
-no longer exist (`python mockups/fetch_art.py`, `Copy-Item ... legacy-frontend`) and
-names a session scratchpad.
-
-**Fix:** `git rm --cached` it and gitignore it.
-
-### HY-02 · `.gitignore` gaps — **S**
-
-`frontend/tsconfig.tsbuildinfo` is not ignored. `.coverage` is, but the
-`.coverage.<host>.pid*` files that parallel coverage runs leave behind are not. **Fix:**
-add both patterns.
-
-### HY-03 · Nine Python files start with a UTF-8 BOM — **S**
-
-They include `src/automtg/engine/turn.py`, `tests/unit/test_mana.py`,
-`tests/cards/test_every_card_works.py` and six package `__init__.py` files. A plain
-`ast.parse()` fails on `turn.py`, which breaks ad-hoc tooling.
-
 ### HY-04 · The local venv is not the Python that CI tests — **S**
 
 `pyproject.toml` requires `>=3.13`, and CI and the `Dockerfile` use 3.13. The local
@@ -354,11 +305,7 @@ about this.
 **Fix:** install 3.13 and rebuild the venv, and have `verify.py` refuse to run on a
 Python older than `requires-python`.
 
-### DEP-01 · Dependencies — **S** each
+### DEP-01 · Dependency upgrades — **S**
 
-- Python dependencies have `>=` lower bounds and no lockfile, so CI installs whatever is
-  newest that day.
-- Starlette's TestClient warns that using it with httpx is deprecated. 9 test files are
-  affected.
 - Upgrade candidates, nothing broken: `vite ^5.4` and `@biomejs/biome ^1.8`. Storybook
   10 already accepts vitest 4.

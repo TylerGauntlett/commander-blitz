@@ -1,4 +1,4 @@
-﻿"""The turn structure: step transitions and turn-based actions.
+"""The turn structure: step transitions and turn-based actions.
 
 ``begin_step`` is a generator because a couple of turn-based actions need a
 decision (discarding to hand size).  Everything else runs straight through.

@@ -558,7 +558,7 @@ def op_cant_block(ctx: EffectContext, spec: Mapping[str, Any]):
     trigger targeted, not "this turn", not "until your next turn".  This op is
     that sentence with the source and the clock swapped round, which is why it
     is an op and not a fourth filter key.  (`grant_ability` could not carry it
-    either: `loader.py` refuses any grantable ability that is not triggered.)
+    either: the loader refuses any grantable ability that is not triggered.)
 
     Two shapes, and both printed cards need both of them:
 

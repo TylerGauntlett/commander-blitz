@@ -33,11 +33,20 @@ def run(command: list[str], cwd: Path) -> str:
 
 
 def pytest_count(suite: str) -> int:
+    """The suite's collected count -- or exit, never a quiet 0.
+
+    A Python that cannot import ``automtg`` collects nothing and prints errors,
+    and reading that as "0 tests" made the table look stale in the wrong way.
+    """
     out = run([PY, "-m", "pytest", suite, "--collect-only", "-q", "-o", "addopts="], ROOT)
     match = re.search(r"(\d+) tests? collected", out) or re.search(
         r"(\d+)/\d+ tests collected", out
     )
-    return int(match.group(1)) if match else 0
+    errors = re.search(r"(\d+) errors?", out)
+    if not match or errors:
+        tail = "\n".join(out.strip().splitlines()[-15:])
+        raise SystemExit(f"could not count {suite}: collection failed under {PY}\n{tail}")
+    return int(match.group(1))
 
 
 def npx() -> str | None:

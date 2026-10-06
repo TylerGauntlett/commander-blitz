@@ -1659,6 +1659,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .orb__loss,
 [data-handheld] .orb__none,
 [data-handheld] .over__player,
+[data-handheld] .over__sub,
 [data-handheld] .over__why,
 [data-handheld] .peek__count,
 [data-handheld] .peek__note,

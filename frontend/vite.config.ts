@@ -29,6 +29,22 @@ export default defineConfig({
     },
   },
   /*
+   * The vendor libraries ship as their own chunks. One bundle of everything
+   * crossed Rollup's 500 kB warning (596 kB), and the libraries change far less
+   * often than the app, so splitting them also lets a deploy keep them cached.
+   */
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router"],
+          motion: ["motion"],
+          query: ["@tanstack/react-query", "zustand"],
+        },
+      },
+    },
+  },
+  /*
    * Two suites, split by what they can see.
    *
    * `unit` is the config this file has always had, nested one level: jsdom, no
