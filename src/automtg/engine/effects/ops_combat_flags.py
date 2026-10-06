@@ -9,23 +9,21 @@ from typing import Any
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
-from ..primitives import (
-    add_counters,
-    add_poison,
-    forbid_block,
-    forbid_sacrifice,
-    goad_creature,
-    make_unblockable,
-    remove_counters,
-    require_attack_on,
-    restrict_attack,
-)
+from ..primitives import add_counters, add_poison, remove_counters
 from ..structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
     TargetRef,
+)
+from ..temp_effects import (
+    forbid_block,
+    forbid_sacrifice,
+    goad_creature,
+    make_unblockable,
+    require_attack_on,
+    restrict_attack,
 )
 from .board_helpers import (
     _players,

@@ -15,11 +15,11 @@ from ..primitives import (
     animate,
     grant_ability,
     grant_keyword,
-    grant_player_protection,
     lock_abilities,
     pump,
 )
 from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
+from ..temp_effects import grant_player_protection
 from ..text_change import printed_type_instances
 from ..triggers import fire
 from .context import EffectContext, ask_mode

@@ -54,7 +54,7 @@ from automtg.engine import combat as combat_mod
 from automtg.engine import sba
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import forbid_block
+from automtg.engine.temp_effects import forbid_block
 from tests.conftest import _default_answer, only_oid, pass_until
 
 BEAR = "t_bear"

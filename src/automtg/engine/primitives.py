@@ -41,49 +41,12 @@ from .player_statics import (
 )
 from .state import new_object
 from .structs import CONTROL_DURATIONS, TempEffect
+from .temp_effects import life_floor, permanent_shielded, shielded
 from .triggers import fire
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-    from .structs import TempEffect
-from .temp_effects import (  # noqa: F401
-    _expired,
-    arm_attack_requirements,
-    clear_attack_requirements,
-    clear_attack_restrictions,
-    clear_block_prohibitions,
-    clear_cast_locks,
-    clear_damage_shields,
-    clear_flash_permissions,
-    clear_goad,
-    clear_life_floors,
-    clear_life_locks,
-    clear_outcome_locks,
-    clear_permanent_shields,
-    clear_player_protections,
-    clear_sacrifice_restrictions,
-    clear_unblockables,
-    drop_attack_requirements,
-    forbid_block,
-    forbid_sacrifice,
-    goad_creature,
-    grant_flash_permission,
-    grant_player_protection,
-    life_floor,
-    lock_casting_zones,
-    lock_game_outcome,
-    lock_life_total,
-    make_unblockable,
-    permanent_shielded,
-    require_attack_on,
-    restrict_attack,
-    sacrifice_forbidden,
-    set_life_floor,
-    shield_permanent,
-    shield_player,
-    shielded,
-)
 
 # ----------------------------------------------------------------------
 # cards

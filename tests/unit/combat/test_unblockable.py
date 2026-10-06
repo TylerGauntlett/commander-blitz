@@ -57,7 +57,7 @@ from automtg.engine import combat as combat_mod
 from automtg.engine import sba
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import forbid_block, make_unblockable
+from automtg.engine.temp_effects import forbid_block, make_unblockable
 from automtg.engine.zones import destroy
 from tests.conftest import _default_answer, oids_of, only_oid, pass_until
 

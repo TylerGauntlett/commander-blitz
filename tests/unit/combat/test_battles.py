@@ -55,7 +55,8 @@ from automtg.engine import sba
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent, restrict_attack
+from automtg.engine.primitives import damage_permanent
+from automtg.engine.temp_effects import restrict_attack
 from tests.conftest import only_oid, pass_until
 
 BATTLE = "t_battle_wall"  # Siege, defense 3, no text

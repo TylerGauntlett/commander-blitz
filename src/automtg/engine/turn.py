@@ -27,6 +27,16 @@ from .player_statics import (
     untap_caps,
 )
 from .primitives import (
+    clear_until_eot,
+    clear_until_next_turn,
+    transform,
+    untap_all,
+    untap_permanent,
+)
+from .sba import declare_draw
+from .state import MAX_EXTRA_PHASES_PER_TURN
+from .structs import StackItem
+from .temp_effects import (
     arm_attack_requirements,
     clear_attack_requirements,
     clear_attack_restrictions,
@@ -42,15 +52,7 @@ from .primitives import (
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
-    clear_until_eot,
-    clear_until_next_turn,
-    transform,
-    untap_all,
-    untap_permanent,
 )
-from .sba import declare_draw
-from .state import MAX_EXTRA_PHASES_PER_TURN
-from .structs import StackItem
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover

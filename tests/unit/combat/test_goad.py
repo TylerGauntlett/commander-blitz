@@ -62,13 +62,9 @@ from automtg.engine import combat as combat_mod
 from automtg.engine import sba
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import (
-    clear_goad,
-    goad_creature,
-    restrict_attack,
-    untap_permanent,
-)
+from automtg.engine.primitives import untap_permanent
 from automtg.engine.state import new_object
+from automtg.engine.temp_effects import clear_goad, goad_creature, restrict_attack
 from automtg.engine.turn import grant_extra_phases
 from automtg.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until

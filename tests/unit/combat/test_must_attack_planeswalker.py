@@ -34,8 +34,12 @@ from automtg.engine import combat as combat_mod
 from automtg.engine import sba
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import goad_creature, require_attack_on, restrict_attack
-from automtg.engine.temp_effects import ATTACK_REQUIREMENT_PENDING
+from automtg.engine.temp_effects import (
+    ATTACK_REQUIREMENT_PENDING,
+    goad_creature,
+    require_attack_on,
+    restrict_attack,
+)
 from automtg.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 

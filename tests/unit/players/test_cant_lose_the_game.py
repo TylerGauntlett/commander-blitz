@@ -47,16 +47,14 @@ Witness: Angel's Grace (`angel_s_grace` in `data/cards/auto/`).
 from __future__ import annotations
 
 from automtg.engine import sba
-from automtg.engine.primitives import (
+from automtg.engine.primitives import damage_player, life_floor, lose_life
+from automtg.engine.sba import player_cant_lose, player_cant_win
+from automtg.engine.temp_effects import (
     clear_life_floors,
     clear_outcome_locks,
-    damage_player,
-    life_floor,
     lock_game_outcome,
-    lose_life,
     set_life_floor,
 )
-from automtg.engine.sba import player_cant_lose, player_cant_win
 
 PLAINS = "plains"
 

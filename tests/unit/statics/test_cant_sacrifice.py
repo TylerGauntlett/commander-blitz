@@ -63,7 +63,7 @@ from automtg.engine.casting import _emerge_fodder
 from automtg.engine.costs import can_pay
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import (
+from automtg.engine.temp_effects import (
     clear_sacrifice_restrictions,
     forbid_sacrifice,
     sacrifice_forbidden,

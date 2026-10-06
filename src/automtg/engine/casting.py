@@ -38,9 +38,10 @@ from .player_statics import (
     spell_life_tax_on_board,
     spell_mana_tax_targeted,
 )
-from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
+from .primitives import cast_locked_zones, life_locked
 from .stack import modal_cast_ok
 from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
+from .temp_effects import sacrifice_forbidden
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState

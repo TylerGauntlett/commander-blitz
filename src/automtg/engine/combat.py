@@ -32,14 +32,9 @@ from .player_statics import (
     block_forbidden,
     block_tax,
 )
-from .primitives import (
-    become_monarch,
-    clear_attack_restrictions,
-    damage_permanent,
-    damage_player,
-    tap_permanent,
-)
+from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
+from .temp_effects import clear_attack_restrictions
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover

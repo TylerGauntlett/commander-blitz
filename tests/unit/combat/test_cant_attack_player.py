@@ -52,8 +52,8 @@ from automtg.cards.schema import CardModel
 from automtg.engine import combat as combat_mod
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import restrict_attack
 from automtg.engine.structs import TargetRef
+from automtg.engine.temp_effects import restrict_attack
 from automtg.engine.turn import grant_extra_phases
 from tests.conftest import _default_answer, only_oid, pass_until
 

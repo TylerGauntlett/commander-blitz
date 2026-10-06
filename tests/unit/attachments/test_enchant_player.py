@@ -69,7 +69,8 @@ from automtg.engine import sba
 from automtg.engine.characteristics import _condition_met
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach, attach_to_player, restrict_attack
+from automtg.engine.primitives import attach, attach_to_player
+from automtg.engine.temp_effects import restrict_attack
 from tests.conftest import _default_answer, oids_of, only_oid
 
 AURA = "t_encumber"  # the Overencumbered prototype -- all three sentences

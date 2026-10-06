@@ -10,12 +10,8 @@ from ..enums import Zone
 from ..errors import DslError
 from ..objects import playable_duration_of
 from ..player_statics import forced_discard_or_sacrifice_barred
-from ..primitives import (
-    add_counters,
-    attach,
-    create_token,
-    sacrifice_forbidden,
-)
+from ..primitives import add_counters, attach, create_token
+from ..temp_effects import sacrifice_forbidden
 from ..turn import phase_in, phase_out
 from ..zones import (
     destroy,

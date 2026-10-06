@@ -55,11 +55,11 @@ from .primitives import (
     lose_life,
     mill_cards,
     remove_counters,
-    sacrifice_forbidden,
     tap_permanent,
     untap_permanent,
 )
 from .replacements import discard as discard_with_replacements
+from .temp_effects import sacrifice_forbidden
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object

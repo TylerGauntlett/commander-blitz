@@ -16,14 +16,13 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .player_statics import outcome_barred_by_static
-from .primitives import (
-    become_monarch,
+from .primitives import become_monarch, clear_until_next_turn
+from .temp_effects import (
+    clear_flash_permissions,
     clear_goad,
     clear_permanent_shields,
-    clear_until_next_turn,
     drop_attack_requirements,
 )
-from .temp_effects import clear_flash_permissions
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover

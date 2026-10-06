@@ -40,12 +40,8 @@ from automtg.cards.schema import CardModel
 from automtg.engine import sba
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import (
-    damage_permanent,
-    damage_player,
-    permanent_shielded,
-    shield_permanent,
-)
+from automtg.engine.primitives import damage_permanent, damage_player, permanent_shielded
+from automtg.engine.temp_effects import shield_permanent
 from automtg.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 

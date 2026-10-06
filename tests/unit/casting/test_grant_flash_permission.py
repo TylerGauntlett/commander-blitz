@@ -30,7 +30,7 @@ from automtg.engine.casting import _timing_ok
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import clear_flash_permissions
+from automtg.engine.temp_effects import clear_flash_permissions
 
 GRANT = {"op": "grant_flash_permission", "types": ["Sorcery"], "duration": "until_your_next_turn"}
 

@@ -25,9 +25,10 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..errors import DslError
-from ..primitives import become_monarch, give_emblem, grant_flash_permission, lock_casting_zones
+from ..primitives import become_monarch, give_emblem
 from ..sba import declare_loss, declare_win
 from ..structs import CAST_LOCK_DURATIONS
+from ..temp_effects import grant_flash_permission, lock_casting_zones
 from .context import EffectContext
 from .registry import register
 from .selectors import resolve_pool, select_players

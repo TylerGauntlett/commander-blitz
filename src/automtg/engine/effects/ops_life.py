@@ -8,18 +8,7 @@ from typing import Any
 from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
-from ..primitives import (
-    add_poison,
-    damage_permanent,
-    damage_player,
-    gain_life,
-    lock_game_outcome,
-    lock_life_total,
-    lose_life,
-    set_life_floor,
-    shield_permanent,
-    shield_player,
-)
+from ..primitives import add_poison, damage_permanent, damage_player, gain_life, lose_life
 from ..structs import (
     DAMAGE_SHIELD_DURATIONS,
     LIFE_FLOOR_DURATIONS,
@@ -27,6 +16,13 @@ from ..structs import (
     OUTCOME_LOCK_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
+)
+from ..temp_effects import (
+    lock_game_outcome,
+    lock_life_total,
+    set_life_floor,
+    shield_permanent,
+    shield_player,
 )
 from .context import EffectContext
 from .registry import register
