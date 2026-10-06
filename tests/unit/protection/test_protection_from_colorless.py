@@ -281,7 +281,7 @@ class TestTheModesAreNamed:
     mode is named after the one sentence it does."""
 
     def test_giver_of_runes_offers_each_quality_by_name(self, registry):
-        from automtg.engine.effects.ops_control import mode_labels
+        from automtg.engine.effects.modes import mode_labels
 
         (choose,) = registry.get("giver_of_runes").abilities[0].effects
         assert mode_labels(choose["modes"]) == [
@@ -294,12 +294,12 @@ class TestTheModesAreNamed:
         ]
 
     def test_a_printed_label_still_wins(self):
-        from automtg.engine.effects.ops_control import mode_labels
+        from automtg.engine.effects.modes import mode_labels
 
         mode = {"label": "Red", "effects": [{"op": "add_mana", "mana": "{R}"}]}
         assert mode_labels([mode]) == ["Red"]
 
     def test_an_effect_it_cannot_say_falls_back_to_the_index(self):
-        from automtg.engine.effects.ops_control import mode_labels
+        from automtg.engine.effects.modes import mode_labels
 
         assert mode_labels([{"effects": [{"op": "draw", "count": 1}]}]) == ["Mode 1"]

@@ -38,7 +38,7 @@ from .costs import (
     variant_reduction,
 )
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
-from .effects.ops_control import modal_bounds, mode_labels
+from .effects.modes import modal_bounds, mode_labels
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent

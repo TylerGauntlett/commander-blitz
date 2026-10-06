@@ -23,6 +23,7 @@ from .characteristics import abilities_of, granted_ability_origin, printed_abili
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
+from .effects.modes import _mode_flag, modal_bounds, mode_labels
 from .enums import DecisionKind, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents
@@ -461,8 +462,6 @@ def _choose_trigger_modes(
     700.2e executes them that way and `Ability.specs_for_modes` splits the
     stored refs that way.
     """
-    from .effects.ops_control import _mode_flag, modal_bounds, mode_labels
-
     spec = ability.cast_time_modes or {}
     modes = list(spec.get("modes") or [])
     if not modes:
@@ -645,8 +644,6 @@ def modal_cast_ok(state: GameState, pid: int, card, oid: int) -> bool:
     """
     if not getattr(card, "mode_targets", None):
         return True
-    from .effects.ops_control import modal_bounds
-
     spec = card.cast_time_modes
     if not spec:  # pragma: no cover - the loader refuses `mode` without one
         return True
@@ -675,8 +672,6 @@ def free_cast_modes(
     targets, whose modes are answered by `op_choose_mode` on resolution as they
     always were.
     """
-    from .effects.ops_control import modal_bounds
-
     if not getattr(card, "mode_targets", None):
         return (), ()
     spec = card.cast_time_modes
