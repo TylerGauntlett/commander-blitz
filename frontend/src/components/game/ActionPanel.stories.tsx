@@ -525,3 +525,36 @@ export const PlayModeHandheld: Story = {
     expectHandheldFloors(canvasElement);
   },
 };
+
+/**
+ * TWO ABILITIES ON ONE CARD READ AS TWO DIFFERENT THINGS.
+ *
+ * The engine labels each "Mind Stone: <text>", and in a 230px row the name was
+ * the only part to survive the ellipsis -- so both rows read "Mind Stone: {T}…"
+ * and the player picked the sacrifice by its position. The name is one faint
+ * line now and the ability wraps under it.
+ */
+export const AbilityRowsHandheld: Story = {
+  args: from(scenarios.twoAbilityPermanent()),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+
+    const rows = [...canvasElement.querySelectorAll<HTMLElement>(".acts__list .act--ability")];
+    expect(rows).toHaveLength(2);
+    const names = rows.map((row) => row.querySelector(".act__name")?.textContent ?? "");
+    expect(names[0]).not.toBe(names[1]);
+    for (const [i, row] of rows.entries()) {
+      expect(row.querySelector(".act__src")?.textContent).toBe("Mind Stone");
+      expect(names[i].startsWith("Mind Stone")).toBe(false);
+      // The ability's text is visible, not hidden behind the row's edge.
+      const name = row.querySelector<HTMLElement>(".act__name") as HTMLElement;
+      expect(name.scrollWidth, "the ability text fits its box").toBeLessThanOrEqual(
+        name.clientWidth + 1,
+      );
+    }
+    expectUniqueActionIds(canvasElement);
+  },
+};

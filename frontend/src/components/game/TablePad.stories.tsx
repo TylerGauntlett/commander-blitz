@@ -436,3 +436,88 @@ export const HandheldSettingsMenu: Story = {
     await waitFor(() => expect(getCursor()).toBe("tool:settings"));
   },
 };
+
+/**
+ * `A` ON A PERMANENT WITH TWO ABILITIES ASKS WHICH.
+ *
+ * The press used to select the card and leave the answer to the panel, where
+ * on this layout both rows read "Mind Stone: {T}…" and one of them sacrifices
+ * it. `AbilityMenu` is a modal like every other decision: the ring lands on
+ * its first item, every direction stays inside, `B` puts it away and the ring
+ * comes back to the card the question was about.
+ */
+export const HandheldAbilityMenu: Story = {
+  args: board(scenarios.twoAbilityPermanent()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    setGroup(null);
+    expect(setCursor("card:401"), "the artifact is reachable").toBe(true);
+    // `A` is a click on the ring's element (`useCursorNav`).
+    await userEvent.click(canvas.getByTestId("card-401"));
+    const menu = await canvas.findByTestId("ability-menu");
+    expect(menu.hasAttribute("data-modal-root")).toBe(true);
+    await waitFor(() => expect(getCursor()).toBe("menu:ability:0"));
+
+    moveCursor("down");
+    expect(getCursor()).toBe("menu:ability:1");
+    moveCursor("down");
+    expect(getCursor(), "the ring stays inside the menu").toBe("menu:ability:1");
+    moveCursor("up");
+    expect(getCursor()).toBe("menu:ability:0");
+
+    // The reader stays on the card, so `Y` can read it over the menu.
+    expect(menu.querySelector("[data-cursor]")?.getAttribute("data-preview-oid")).toBe("401");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="ability-menu"]')).toBeNull();
+    });
+    await waitFor(() => expect(getCursor()).toBe("card:401"));
+  },
+};
+
+/**
+ * A HELD DOWN-PRESS WALKS EVERY TARGET CHIP, IN ORDER.
+ *
+ * On a desktop the chips wrap as pills sized to their names, and from a pill on
+ * a wrapped line "down" preferred the next full-width row over the pill
+ * diagonally below it (`nav.ts:pickStop`'s row rule), so the ring skipped
+ * targets or zigzagged between columns. On a handheld they are one per line.
+ */
+export const HandheldTargetChipsWalk: Story = {
+  args: board(scenarios.targetVariants()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    const chips = [...canvasElement.querySelectorAll<HTMLElement>(".act__aims .aim")];
+    expect(chips).toHaveLength(3);
+    // One per line: each chip starts where the one above it ends.
+    for (let i = 1; i < chips.length; i += 1) {
+      const above = chips[i - 1].getBoundingClientRect();
+      const here = chips[i].getBoundingClientRect();
+      expect(here.top, `chip ${i} is on its own line`).toBeGreaterThanOrEqual(above.bottom - 1);
+      expect(Math.abs(here.left - above.left), `chip ${i} is in the same column`).toBeLessThan(
+        2,
+      );
+    }
+
+    setGroup(null);
+    expect(setCursor("act:a-charm-991")).toBe(true);
+    moveCursor("down");
+    expect(getCursor()).toBe("act:a-charm-992");
+    moveCursor("down");
+    expect(getCursor()).toBe("act:a-charm-993");
+    moveCursor("up");
+    moveCursor("up");
+    expect(getCursor()).toBe("act:a-charm-991");
+  },
+};

@@ -74,6 +74,11 @@ describe("parseStop", () => {
     expect(parseStop("pile:0:graveyard")).toMatchObject({ kind: "pile" });
     expect(parseStop("combo:filter")).toMatchObject({ kind: "combo" });
     expect(parseStop("combo:opt:a12-choose")).toMatchObject({ kind: "combo" });
+    expect(parseStop("menu:ability:1")).toMatchObject({ kind: "menu" });
+  });
+
+  it("says Choose over an ability menu item, which is what pressing it does", () => {
+    expect(verbsFor(gameView(), [], "menu:ability:0")).toEqual({ a: "Choose", b: "Back" });
   });
 
   it("survives an action id containing a colon, which they do", () => {

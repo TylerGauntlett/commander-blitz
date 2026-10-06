@@ -10,7 +10,7 @@
 
 import type { CardView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
-import type { groupPlayActions } from "../../logic/actionMatch";
+import { abilityText, type groupPlayActions } from "../../logic/actionMatch";
 import { manaPips, statLine } from "../../logic/cardStyle";
 import { ManaSymbol } from "./ManaSymbol";
 import type { Previewing } from "./previewing";
@@ -79,9 +79,24 @@ export function PlayRows({
               // Grouped, the row names the ability and the chips name the
               // targets, so the `-> Bear` suffix would be one arbitrary
               // target repeated on every row of the same permanent.
-              <span className="act__name">
-                <SymbolText text={single ? head.label : head.base_label} />
-              </span>
+              //
+              // THE CARD'S NAME ON ITS OWN LINE, AND THE ABILITY UNDER IT.
+              // The engine's label is "Mind Stone: {T}: Add {C}", and in a
+              // handheld rail the name was the only part to survive the
+              // ellipsis -- so a card's two abilities were two rows reading
+              // "Mind Stone: {T}…" and the player picked one by its position.
+              // `abilityText` takes the name off; `.act--ability` wraps.
+              <>
+                {source && <span className="act__src">{source.name}</span>}
+                <span className="act__name">
+                  <SymbolText
+                    text={abilityText(
+                      single ? head.label : head.base_label,
+                      source?.name ?? null,
+                    )}
+                  />
+                </span>
+              </>
             )}
           </>
         );

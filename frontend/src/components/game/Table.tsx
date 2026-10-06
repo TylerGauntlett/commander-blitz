@@ -539,6 +539,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         logOverlay={logOverlay}
         toggleLogOverlay={toggleLogOverlay}
         act={act}
+        followUp={followUp}
         choose={choose}
         locked={locked}
         removals={removals}

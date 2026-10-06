@@ -1186,6 +1186,35 @@ html[data-input="keyboard"] .hints {
   min-height: 132px;
 }
 
+/*
+ * ONE CHIP PER LINE, so a held down-press walks them.
+ *
+ * On a desktop the chips wrap as pills sized to their names, and the mouse does
+ * not care. The ring does: `nav.ts:pickStop` lets any candidate that overlaps
+ * the current one horizontally beat every diagonal, so from a pill on a wrapped
+ * line "down" preferred the next full-width ROW -- which overlaps everything --
+ * over the pill diagonally below, and skipped it, or zigzagged between columns
+ * as the ring's x moved with each landing. A planeswalker's loyalty abilities,
+ * which are full-width rows, walked fine, and that is the shape this borrows:
+ * a column, every chip the rail's width, the next one straight below.
+ */
+[data-handheld] .act__aims {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+[data-handheld] .aim {
+  text-align: left;
+}
+
+/*
+ * No number badges on a pad. The hand's 1-9 key is a keyboard shortcut and a
+ * Deck has no keyboard; 19px of badge in a 230px row is a fifth of the name.
+ */
+html[data-input="pad"] .act__key {
+  display: none;
+}
+
 [data-handheld] .acts__list {
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -1576,6 +1605,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .act--nested,
 [data-handheld] .act__aim,
 [data-handheld] .act__key,
+[data-handheld] .act__src,
 [data-handheld] .act__type,
 [data-handheld] .actgroup__head,
 [data-handheld] .actgroup__kw,

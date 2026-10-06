@@ -35,6 +35,7 @@ export type StopKind =
   | "lane"
   | "commit"
   | "combo"
+  | "menu"
   | "unknown";
 
 export interface StopRef {
@@ -65,6 +66,7 @@ export function parseStop(stop: string | null): StopRef {
     case "pile":
     case "lane":
     case "combo":
+    case "menu":
       return { kind: head, id: null, raw: stop };
     case "commit":
       return { kind: "commit", id: null, raw: stop };
@@ -257,6 +259,9 @@ function contextVerbs(
   if (ref.kind === "combo") {
     return ref.raw === "combo:filter" ? { a: "Type", b: "Back" } : { a: "Select", b: "Back" };
   }
+  // An item in the ability menu: pressing it is the choice, and `B` is the
+  // way out of the question.
+  if (ref.kind === "menu") return { a: "Choose", b: "Back" };
   if (ref.kind === "pile") return { a: "Look", b: "Back" };
   if (ref.kind === "lane") return { a: "Play here", b: "Back" };
 

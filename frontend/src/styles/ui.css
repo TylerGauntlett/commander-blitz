@@ -345,6 +345,41 @@
 }
 
 /*
+ * AN ABILITY ROW IS TWO LINES: the card's name, then what the ability does.
+ *
+ * The engine labels every ability "<Card>: <text>", and in a single nowrap
+ * line the name is what survives the ellipsis -- so a card with two abilities
+ * drew two rows that read identically and the player picked by position. The
+ * name goes on its own faint line (`PlayRows` draws it once, from the card)
+ * and the ability text wraps to two lines under it. Scoped to `.act--ability`
+ * only: a cast row's `.act__name` is still one line, and
+ * `e2e/action-panel.spec.ts` reads it as such.
+ */
+.act--ability {
+  flex-wrap: wrap;
+  row-gap: 1px;
+}
+
+.act__src {
+  flex: 1 0 100%;
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: 10.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.act--ability .act__name {
+  display: -webkit-box;
+  flex: 1 1 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+/*
  * The pips here are the board's size, not a card's, and there is nothing to do
  * about it from this rule.
  *
@@ -397,6 +432,26 @@
 .aim:hover:not(:disabled) {
   border-color: var(--edge-hi);
   color: var(--text);
+}
+
+/*
+ * The ability menu's items: the panel's own ability rows, stacked in a dialog.
+ *
+ * Same classes as a row (`act act--ability`) so the two surfaces cannot drift
+ * in how an ability reads; the dialog only decides the width and the gap.
+ */
+.prompt--menu {
+  width: min(420px, 92vw);
+}
+
+.menu__items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu__items .act {
+  width: 100%;
 }
 
 .aim--on {

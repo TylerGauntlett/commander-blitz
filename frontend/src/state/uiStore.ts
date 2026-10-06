@@ -166,6 +166,16 @@ interface UiState {
    * and a hold kept in a store is a hold that can get stuck.
    */
   viewingPid: number | null;
+  /**
+   * The permanent whose abilities are being chosen between, or `null`.
+   *
+   * A press on a card with two or more activated abilities cannot answer
+   * "which one" by itself, and the panel -- where the answer used to be left
+   * -- is the surface a handheld can least afford to read. `AbilityMenu`
+   * draws the choice as a modal over the board. In the store for the reason
+   * `settingsOpen` is: the unwind on `B` has to be able to close it.
+   */
+  abilityMenuOid: number | null;
   peek: PeekTarget | null;
   error: string | null;
   speed: Speed;
@@ -198,6 +208,8 @@ interface UiState {
   setSettingsOpen: (open: boolean) => void;
   /** Look at a seat's board, or `null` to come back to your own. */
   setViewing: (pid: number | null) => void;
+  /** Ask which of a permanent's abilities to activate, or `null` to stop asking. */
+  setAbilityMenu: (oid: number | null) => void;
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
   toggleMuted: () => void;
@@ -216,6 +228,7 @@ export const useUiStore = create<UiState>((set) => ({
   logOverlay: false,
   settingsOpen: false,
   viewingPid: null,
+  abilityMenuOid: null,
   peek: null,
   error: null,
   speed: storedSpeed(),
@@ -253,6 +266,7 @@ export const useUiStore = create<UiState>((set) => ({
       selectedOid: null,
       targetingActionIds: [],
       openStack: null,
+      abilityMenuOid: null,
     }),
 
   openStackGroup: (key) => set({ openStack: key }),
@@ -260,6 +274,7 @@ export const useUiStore = create<UiState>((set) => ({
   toggleLogOverlay: () => set((s) => ({ logOverlay: !s.logOverlay })),
   setSettingsOpen: (open) => set({ settingsOpen: open }),
   setViewing: (pid) => set({ viewingPid: pid }),
+  setAbilityMenu: (oid) => set({ abilityMenuOid: oid }),
   setImages: (images, seatImages = null) => set({ images, seatImages }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),

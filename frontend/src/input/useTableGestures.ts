@@ -10,6 +10,7 @@
 import { useCallback } from "react";
 import type { CardView, GameView, LegalAction } from "../api/types";
 import type { SoundName } from "../audio/sfx";
+import { abilityRoute } from "../logic/abilities";
 import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
 import type { Gesture } from "../logic/followUp";
 import type { Lane as LaneName } from "../logic/zoneGrouping";
@@ -60,6 +61,7 @@ export function useTableGestures({
   const unstageBlock = useUiStore((s) => s.unstageBlock);
   const viewingPid = useUiStore((s) => s.viewingPid);
   const setViewing = useUiStore((s) => s.setViewing);
+  const setAbilityMenu = useUiStore((s) => s.setAbilityMenu);
 
   /** Play a card from hand: straight through if unambiguous, else start targeting. */
   const playFromHand = useCallback(
@@ -199,27 +201,31 @@ export function useTableGestures({
         }
       }
 
-      // 4. Otherwise: an activated ability with no choice to make.
-      const own = actions.filter((a) => a.source_oid === card.oid && a.kind === "activate");
-      if (own.length === 1 && own[0].targets.length === 0) {
-        act(own[0].id);
-        return;
-      }
-      if (own.length > 0) {
-        // Several abilities, none of them targeted -- a Mind Stone offering
-        // "{T}: Add {C}" beside its sacrifice ability. There is nothing on the
-        // board to point at, so entering targeting mode would leave the player
-        // hunting for a target that does not exist. Select it instead and let
-        // the panel be the chooser: it lists every play action, not only the
-        // narrowed ones, so both rows are already there.
-        if (own.every((a) => a.targets.length === 0)) {
-          select(selectedOid === card.oid ? null : card.oid);
+      // 4. Otherwise: an activated ability. `logic/abilities.ts` decides which
+      //    of the three things a press means, and `X` asks it the same thing.
+      const route = abilityRoute(actions, card.oid);
+      switch (route.kind) {
+        case "act":
+          act(route.id);
           return;
-        }
-        beginTargeting(
-          card.oid,
-          own.map((a) => a.id),
-        );
+        case "target":
+          // One ability, still a choice: a target on the board, or a variant
+          // the panel's chips draw. Entering targeting on exactly its ids is
+          // what lights the targets up; the follow-up is what sends the ring
+          // to stand on one, or to the panel row when nothing on the board
+          // is a target. `playFromHand` does both; this used to do neither.
+          beginTargeting(card.oid, route.ids);
+          followUp({ kind: "targeting", actionIds: route.ids });
+          return;
+        case "menu":
+          // Several abilities. This used to select the card and leave the
+          // choice to the panel, where on a handheld both rows read as the
+          // card's name and an ellipsis; a sacrifice ability chosen by
+          // guessing is a card lost. `AbilityMenu` asks instead.
+          setAbilityMenu(card.oid);
+          return;
+        case "none":
+          return;
       }
     },
     [
@@ -241,6 +247,7 @@ export function useTableGestures({
       beginTargeting,
       narrowTargeting,
       followUp,
+      setAbilityMenu,
     ],
   );
 

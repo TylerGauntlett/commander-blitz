@@ -63,6 +63,13 @@ export const stopId = {
    */
   combo: (what: string) => `combo:${what}`,
   /*
+   * An item in the ability menu. Not `act:` for the combobox's reason: the
+   * panel row carries the ability's action ids, and the menu item only decides
+   * which ability to go and do -- `AbilityMenu` posts through the same `act`
+   * the row would, or enters targeting on the row's ids.
+   */
+  menu: (what: string) => `menu:${what}`,
+  /*
    * THE COMBAT BAR IS THREE CONTROLS AND ONLY ONE OF THEM IS AN ACTION.
    *
    * "No attacks" is a legal action the server offered, so it gets `act:` from
