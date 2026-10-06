@@ -889,6 +889,32 @@ def _has_op_grants(obj: GameObject) -> bool:
     )
 
 
+def granted_abilities(state: GameState, oid: int):
+    """Every ability currently granted to this object, as ``(source, ability)``.
+
+    The *granted-to* object is what triggers and legality treat as the source,
+    which is what makes "whenever **this creature** deals combat damage" mean
+    the creature that was granted the ability rather than the thing that granted
+    it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    # `left_with` is the departure snapshot: an object that has just left the
+    # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
+    # its own leave-the-battlefield triggers have not fired yet. Empty for
+    # everything else, so this reads as plain `until_eot` in every other case.
+    for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
+        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        source = state.objects.get(temp.source)
+        if source is None:
+            continue
+        card = state.card_of(source)
+        if temp.ability_index < len(card.grantable_abilities):
+            yield source, card.grantable_abilities[temp.ability_index]
+
+
 def _op_granted_abilities(
     state: GameState, obj: GameObject
 ) -> list[tuple[Ability, tuple[int, int]]]:
@@ -900,7 +926,7 @@ def _op_granted_abilities(
     grant_ability`), not a static recomputed from a granter's "as long as".
 
     Until this, that record was read by exactly one reader -- `triggers`, through
-    `primitives.granted_abilities` -- so an op-granted *activated* ability was
+    `granted_abilities` -- so an op-granted *activated* ability was
     held and never offered: legality, the payment solver and `game._activate`
     all read `abilities_of`, and `abilities_of` only knew the static grants.
     Appended here with the same provenance a static grant carries, so an
@@ -947,7 +973,7 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     ``(granter oid, index into that granter's ``grantable_abilities``)``, or
     ``None`` when the position holds an ordinary printed ability.
 
-    The continuous counterpart of `primitives.granted_abilities`, which answers
+    The continuous counterpart of `granted_abilities`, which answers
     the same question for the one-shot `grant_ability` **op** and cannot answer
     it here: that one reads `TempEffect`s off the recipient, and a static grant
     leaves nothing on the recipient to read -- it is recomputed from the

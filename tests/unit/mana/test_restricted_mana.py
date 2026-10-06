@@ -133,7 +133,7 @@ class TestGrantedAbilities:
         assert "trample" in chars(game.state, beast).keywords
 
     def test_the_ability_half_is_recorded_against_the_creature(self, builder):
-        from automtg.engine.primitives import granted_abilities
+        from automtg.engine.characteristics import granted_abilities
 
         game = self.board(builder)
         beast = self.grant(game)
@@ -168,7 +168,7 @@ class TestGrantedAbilities:
         assert len(game.state.players[0].hand) == before + 1
 
     def test_it_wears_off_at_end_of_turn(self, builder):
-        from automtg.engine.primitives import granted_abilities
+        from automtg.engine.characteristics import granted_abilities
 
         game = self.board(builder)
         beast = self.grant(game)

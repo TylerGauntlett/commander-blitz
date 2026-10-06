@@ -32,7 +32,7 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import abilities_of, chars
+from automtg.engine.characteristics import abilities_of, chars, granted_abilities
 from automtg.engine.costs import mana_sources
 from automtg.engine.effects import OPS
 from automtg.engine.effects.context import EffectContext
@@ -43,7 +43,6 @@ from automtg.engine.primitives import (
     animate,
     grant_ability,
     grant_keyword,
-    granted_abilities,
     pump,
 )
 from automtg.engine.structs import TargetRef

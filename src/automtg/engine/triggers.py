@@ -19,6 +19,7 @@ from .characteristics import (
     abilities_of,
     chars,
     creature_types_of,
+    granted_abilities,
     granted_ability_origin,
     granted_wards,
     resolve_chosen_subtypes,
@@ -859,8 +860,6 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
-        from .primitives import granted_abilities
-
         for _granter, ability in granted_abilities(state, oid):
             if ability.is_triggered and ability.trigger is not None:
                 yield obj, ability
@@ -912,8 +911,6 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             # The walk is over *derived* abilities for `emit_from`'s reason, and
             # here it reads the board as the permanent left it -- which is what
             # a leave-the-battlefield trigger is asking about (603.6c).
-            from .primitives import granted_abilities
-
             granted = [a for _granter, a in granted_abilities(state, subject)]
             for ability in (*abilities_of(state, subject), *granted):
                 if not ability.is_triggered or ability.trigger is None:
@@ -1941,7 +1938,7 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[in
     Identity, not equality, for the **op**-granted half: two grants of the same
     ability are the same object here, and that is fine -- resolution only needs
     somewhere to look the definition up. Their index needs no translation
-    either, because `primitives.granted_abilities` yields straight out of the
+    either, because `characteristics.granted_abilities` yields straight out of the
     granter's pool and `Ability.index` is that pool position.
 
     The **statically** granted half is the one that needs both halves of the
@@ -1953,8 +1950,6 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[in
     there resolves a different ability or, more often, none: the trigger goes on
     the stack, resolves, and does nothing, with no error anywhere.
     """
-    from .primitives import granted_abilities
-
     for granter, granted in granted_abilities(state, obj.oid):
         if granted is ability:
             return granter.oid, ability.index

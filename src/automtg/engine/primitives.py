@@ -1842,32 +1842,6 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     )
 
 
-def granted_abilities(state: GameState, oid: int):
-    """Every ability currently granted to this object, as ``(source, ability)``.
-
-    The *granted-to* object is what triggers and legality treat as the source,
-    which is what makes "whenever **this creature** deals combat damage" mean
-    the creature that was granted the ability rather than the thing that granted
-    it.
-    """
-    obj = state.objects.get(oid)
-    if obj is None:
-        return
-    # `left_with` is the departure snapshot: an object that has just left the
-    # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
-    # its own leave-the-battlefield triggers have not fired yet. Empty for
-    # everything else, so this reads as plain `until_eot` in every other case.
-    for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
-        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
-            continue
-        source = state.objects.get(temp.source)
-        if source is None:
-            continue
-        card = state.card_of(source)
-        if temp.ability_index < len(card.grantable_abilities):
-            yield source, card.grantable_abilities[temp.ability_index]
-
-
 def lock_abilities(
     state: GameState,
     oid: int,
