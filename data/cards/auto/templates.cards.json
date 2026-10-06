@@ -17441,6 +17441,108 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "sacrificed"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "carmen_cruel_skymarcher",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{B}",
+      "name": "Carmen, Cruel Skymarcher",
+      "oracle_text": "Flying\nWhenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.\nWhenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

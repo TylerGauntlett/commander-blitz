@@ -1629,6 +1629,10 @@
     },
     "zone": "battlefield"
   },
+  "carmen_cruel_skymarcher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "carnelian_orb_of_dragonkind": {
     "zone": "battlefield"
   },
