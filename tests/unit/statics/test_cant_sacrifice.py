@@ -59,10 +59,10 @@ from automtg.cards.schema import CardModel
 from automtg.engine import combat as combat_mod
 from automtg.engine import sagas, sba
 from automtg.engine.carddef import Cost
+from automtg.engine.casting import _emerge_fodder
 from automtg.engine.costs import can_pay
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.legality import _emerge_fodder
 from automtg.engine.primitives import (
     clear_sacrifice_restrictions,
     forbid_sacrifice,

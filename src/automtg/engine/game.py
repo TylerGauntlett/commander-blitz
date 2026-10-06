@@ -22,7 +22,14 @@ from automtg.cards.registry import default_registry
 from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
-from .casting import _spell_as_cast, strive_surcharge
+from .casting import (
+    GRAVEYARD_CAST_SLOT,
+    MORPH_COST,
+    _graveyard_cast_permission,
+    _spell_as_cast,
+    chosen_additional,
+    strive_surcharge,
+)
 from .characteristics import abilities_of, chars, mana_source_traits
 from .combat import add_attacker, add_blocker, attack_tax_cost, block_tax_cost, finish_attackers
 from .cost_reduction import cost_reduction, variant_reduction
@@ -42,7 +49,7 @@ from .effects.modes import modal_bounds, mode_labels
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
-from .legality import MORPH_COST, _targets_read_x, chosen_additional
+from .legality import _targets_read_x
 from .mana import ManaCost, max_affordable_x
 from .objects import PLUS_ONE
 from .player import PlayerState
@@ -756,15 +763,15 @@ class Game:
             # permanent that granted the permission, through the same ledger
             # slot a `cast_from_graveyard` permission uses, so legality's cap
             # and this agree about what has been spent.
-            state.turn_ledger.activated(obj.playable_group, legality.GRAVEYARD_CAST_SLOT)
+            state.turn_ledger.activated(obj.playable_group, GRAVEYARD_CAST_SLOT)
 
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
-            granting = legality._graveyard_cast_permission(state, pid, card, oid)
+            granting = _graveyard_cast_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
-                state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)
+                state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
 
                 for source_obj, static in graveyard_cast_permissions(state, pid):
                     if source_obj.oid != granting.oid:

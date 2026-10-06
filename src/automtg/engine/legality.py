@@ -14,6 +14,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
+from .casting import _cast_actions, _timing_ok
 from .characteristics import (
     abilities_of,
     loyalty_activation_timing_waived,
@@ -50,26 +51,6 @@ from .targeting import describe_ref, enumerate_target_tuples
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-from .casting import (  # noqa: F401
-    GRAVEYARD_CAST_SLOT,
-    MAX_ADDITIONAL_TIMES,
-    MAX_PAY_GENERIC,
-    MORPH_COST,
-    SECOND_FACE_ZONES,
-    _additional_ceiling,
-    _cast_actions,
-    _cast_options,
-    _cast_variant,
-    _charge_additional_cost,
-    _emerge_fodder,
-    _graveyard_cast_permission,
-    _pay_generic_ceiling,
-    _prepared_actions,
-    _repeatable_payments,
-    _second_face_actions,
-    _timing_ok,
-    chosen_additional,
-)
 
 
 def legal_actions(state: GameState) -> list[Action]:
