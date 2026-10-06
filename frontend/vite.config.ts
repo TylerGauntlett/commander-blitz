@@ -127,7 +127,11 @@ export default defineConfig({
               "src/components/game/FxLayer.tsx": { statements: 60 },
               "src/components/game/GroupDial.tsx": { statements: 100 },
               "src/components/game/OpeningHand.tsx": { statements: 89 },
-              "src/components/game/ParticleLayer.tsx": { statements: 92 },
+              // 85 of 92 locally, 84 on a CI runner: one statement runs only if
+              // the canvas gets enough animation frames, and the runner draws
+              // ~11 fps. One statement is 1.09 points, so the floor sits two
+              // under the local measurement rather than at it.
+              "src/components/game/ParticleLayer.tsx": { statements: 90 },
               "src/components/game/StackPanel.tsx": { statements: 99 },
               // `Table.tsx` was split (TECH_DEBT ST-04): its gesture routing and
               // controller verbs moved into hooks, and the uncovered branches went
