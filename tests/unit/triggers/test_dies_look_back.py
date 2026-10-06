@@ -18,11 +18,7 @@ Each test card gains 1 life per firing, so the life gained counts firings.
 from __future__ import annotations
 
 from automtg.engine.zones import destroy
-from tests.conftest import only_oid, pass_until
-
-
-def settle(game) -> None:
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+from tests.conftest import only_oid, settle
 
 
 def life(game) -> int:

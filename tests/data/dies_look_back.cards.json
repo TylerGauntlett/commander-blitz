@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_dies_look_back.py. Each gains its controller 1 life, so the life total counts how many times the ability fired.",
+  "_comment": "Shapes for tests/unit/triggers/test_dies_look_back.py. Each gains its controller 1 life, so the life total counts how many times the ability fired.",
   "cards": [
     {
       "id": "t_this_or_another_dies",

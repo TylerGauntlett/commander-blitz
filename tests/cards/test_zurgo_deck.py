@@ -341,7 +341,7 @@ class TestZulaportCutthroat:
     The "this creature" half -- its own death -- is heard through the engine's
     leave-the-battlefield look-back (603.10a), which offers the departed
     object's own dies triggers to their filter; see
-    `tests/unit/test_dies_look_back.py`.
+    `tests/unit/triggers/test_dies_look_back.py`.
     """
 
     def test_its_own_death_drains(self, builder):
