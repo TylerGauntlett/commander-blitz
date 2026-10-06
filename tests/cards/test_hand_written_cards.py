@@ -17,10 +17,10 @@ large boar.", and against that text a vanilla 6/5 is faithful. Once
 `scripts/audit_cards.py --fix-oracle` made `oracle_text` the printed text, the
 question stopped being begged and the gates became answerable.
 
-So they run here. The cards that do not pass yet are listed in
-`precon_deficits.json` with the reason, and xfail; every other hand-written card
-must clear all six. Repair one with `/author-cards`, regenerate the baseline, and
-the list gets shorter. It cannot get longer without somebody choosing to.
+So they run here. A card that does not pass is listed in `precon_deficits.json`
+with the reason, and xfails; every other hand-written card must clear all six.
+The list has been worked down to empty, one repair and one regenerated baseline
+at a time. It cannot get longer without somebody choosing to.
 """
 
 from __future__ import annotations

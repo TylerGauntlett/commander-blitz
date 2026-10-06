@@ -379,26 +379,32 @@ Without that the server stops booting the first time the pipeline implements a
 card sitting in an imported deck, which is exactly what happened on
 `simic_guildgate` the moment 280 cards landed.
 
-## Promoting one to hand-written
+## There is no promoting one to hand-written
 
-Move the object into a file in `data/cards/`, delete it from `auto/`, delete its
-expectation. Do that when a card needs nuance the pipeline cannot express but a
-person can.
+A card does not move from `auto/` into `data/cards/`. `/author-cards` never
+hand-edits `data/cards/`, and the hand-written pool only shrinks: it is the
+precons and staples that predate the pipeline. A card that needs nuance the
+pipeline cannot express is a gap in the DSL. File it, build the capability with
+`/extend-dsl`, and fix the card in `auto/`. Since `--collect` retires a collected
+card's answer, `auto/` is the card's only source of truth, and nothing reverts
+the fix. `tests/cards/test_auto_cards.py` re-runs all six gates over it.
 
-A promoted card joins a pool that is now audited, so it has to record the printed
-text verbatim and give each ability the printed line it implements — see
-`docs/card-dsl.md`. `tests/cards/test_hand_written_cards.py` will run all six
-gates over it like any other.
+The one hand-edited card file is `data/cards/tokens.cards.json`. A missing token
+is a gap record with `kind: "token"`, closed under `/extend-dsl`.
 
 ## Repairing a hand-written card
 
-The reverse direction, and the one the audit exists for.
+The reverse direction, and the one the audit was built for. **It is finished:**
+`tests/cards/precon_deficits.json` is empty, and every hand-written card clears
+all six gates in `tests/cards/test_hand_written_cards.py`. What follows is how
+that was done, and what to use if a deficit ever comes back.
 
 `data/cards/` predates this pipeline. Those cards never cleared a gate, and two
 of the six could not even be asked: while `oracle_text` was a human summary
 written *after* whatever was skipped, the residual gate compared a card to a
 description of itself. Krosan Tusker recorded `"A large boar."` and shipped with
-no cycling; Anticipate is implemented as Preordain.
+no cycling; Anticipate was implemented as Preordain. `oracle_text` is now the
+printed text, and `test_its_oracle_text_is_what_it_prints` keeps it so.
 
 ```bash
 python scripts/audit_cards.py                     # what falls short, and how
@@ -429,13 +435,14 @@ python scripts/audit_cards.py --update-baseline   # the list only shrinks
 ```
 
 `--supersede` is needed exactly once per card, for the handover: afterwards the
-card lives in `auto/` and an ordinary `--collect` re-verifies it like any other.
-It stays behind a flag so a routine run can never rewrite `data/cards/`.
+card lives in `auto/`, its answer is retired like any collected card's, and
+`test_auto_cards.py` re-verifies it. It stays behind a flag so a routine run can
+never rewrite `data/cards/`.
 
-Most of what the audit finds is not a card-authoring job at all. The precon
-shortcuts cluster on mechanics the engine does not have — cycling, flashback,
+Most of what the audit found was not a card-authoring job at all. The precon
+shortcuts clustered on mechanics the engine did not have — cycling, flashback,
 evolve, threshold, ascend, investigate, skulk, intimidate — so a worker
-will correctly refuse them and write a gap record, and they surface through
+correctly refused them and wrote a gap record, and they surfaced through
 `scripts/report_gaps.py` as `/extend-dsl` work.
 
 `--open-deficits` also **closes** entries whose deficit is gone, which matters

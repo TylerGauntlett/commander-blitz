@@ -347,28 +347,27 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 
 ### Simplifications *inside* a hand-written card
 
-Everything above is a deliberate, engine-wide trade. There is a second kind that
-was never decided and never written down: individual precon cards that implement
-less than they print.
+Everything above is a deliberate, engine-wide trade. There used to be a second
+kind that was never decided and never written down: individual precon cards that
+implemented less than they printed. **There are none left.**
 
 `data/decks/*.deck.json` records `substitutions` — Scute Swarm swapped for
 Tireless Provisioner because copy effects did not exist. That mechanism only ever
-covered swapping one card for another. It has nothing to say about Tireless
+covered swapping one card for another. It had nothing to say about Tireless
 Provisioner itself dropping the Food-or-Treasure choice, Krosan Tusker shipping
 as a vanilla 6/5 with no cycling, or Anticipate being implemented as Preordain.
 
-Those cards predate the authoring pipeline and never cleared its gates. The
-current count is in `tests/cards/precon_deficits.json`, which is generated, and
-the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
-they are the cost of building the precons before the gates existed, measured for
-the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on are `/extend-dsl` jobs, and as of this sequence there are none left
-in the report except Kydele's per-turn draw tally. Cycling was
-one of them and now ships in full, trigger included, so Krosan Tusker is off
-this list. Evolve went with it, on Gyre Sage. Skulk and threshold have both shipped since, and
-Nimble Mongoose is off this list. So are intimidate (with the rest of the
-evasion family) and investigate — the latter needed no vocabulary at all, only a
-Clue in the token pool, and Bygone Bishop is off this list with it.
+Those cards predated the authoring pipeline and never cleared its gates. They
+were measured by `python scripts/audit_cards.py`, listed in the generated
+`tests/cards/precon_deficits.json`, and repaired one at a time — through
+`/author-cards <name>`, or by the `/extend-dsl` work their mechanics waited on:
+cycling (Krosan Tusker, trigger included), evolve (Gyre Sage), skulk and
+threshold (Nimble Mongoose), intimidate with the rest of the evasion family, and
+investigate, which needed only a Clue in the token pool (Bygone Bishop). Kydele's
+per-turn draw tally shipped too, and Sangromancer's discard trigger was the last
+(`tests/unit/test_discard_trigger.py`). The baseline is now empty: every hand-written
+card clears all six gates in `tests/cards/test_hand_written_cards.py`, and a card
+that stops clearing them fails that test unless somebody lists it there.
 
 ## Imported cards, which are simplified further
 
@@ -585,8 +584,8 @@ None of the above is a promise in prose — it is checked:
 - `tests/cards/test_hand_written_cards.py` runs all six authoring gates over every
   hand-written card, and separately checks that each card's `oracle_text` is what the
   catalog says it prints — the check that stops a card from being verified against a
-  summary of itself. Cards that do not pass yet are listed, with reasons, in the
-  generated `tests/cards/precon_deficits.json`; that list can only shrink.
+  summary of itself. The generated `tests/cards/precon_deficits.json` lists cards
+  that do not pass, with reasons; it is empty, and it can only shrink.
 - `tests/cards/test_auto_cards.py` does the same for every machine-authored card.
 - Deck legality, colour identity and singleton rules are tested per deck.
 

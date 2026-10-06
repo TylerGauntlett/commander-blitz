@@ -59,8 +59,9 @@ shortcut agrees with the shortcut. Two checks keep it honest, both in
 `tests/cards/test_hand_written_cards.py`: one compares every card's `oracle_text`
 to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
-`python scripts/audit_cards.py` reports where the pool still falls short;
-`--fix-oracle` and `--fix-text` record the printing and re-point ability text.
+`python scripts/audit_cards.py` reports where the pool falls short, which today is
+nowhere: `tests/cards/precon_deficits.json` is empty. `--fix-oracle` and
+`--fix-text` record the printing and re-point ability text.
 
 ## Effect ops
 
