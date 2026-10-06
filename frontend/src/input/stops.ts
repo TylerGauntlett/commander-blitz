@@ -56,10 +56,10 @@ export const stopId = {
    * A combobox row, or its filter field.
    *
    * Deliberately NOT `act:`. Walking the ring onto a row of `ChoiceCombo`
-   * highlights it; only the Choose button commits, and that button is the one
-   * control in the dialog carrying `data-action-id`. Giving the rows an action
-   * namespace would make four hundred of them look like four hundred legal
-   * actions to everything that counts them.
+   * highlights it, and pressing it presses the Choose button -- the one
+   * control in the dialog carrying `data-action-id`, which is what commits.
+   * Giving the rows an action namespace would make four hundred of them look
+   * like four hundred legal actions to everything that counts them.
    */
   combo: (what: string) => `combo:${what}`,
   /*

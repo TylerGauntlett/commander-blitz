@@ -251,13 +251,15 @@ function contextVerbs(
   /*
    * The combobox a long decision opens with, and the two things in it.
    *
-   * A row is a HIGHLIGHT, not a commitment: only the Choose button beside the
-   * list submits, and it is an `act:` stop that answers with the action's own
-   * label. Saying "Choose" over a row would promise a press that does not
-   * happen, which is the one failure this whole file exists to prevent.
+   * `A` on a row CHOOSES it: the ring's landing highlighted it, and the row's
+   * click presses the Choose button, which is the one `act:` stop in the
+   * dialog. `X` presses that button from anywhere in the dialog -- the one
+   * place it earns a verb is the filter field, where `A` means typing.
    */
   if (ref.kind === "combo") {
-    return ref.raw === "combo:filter" ? { a: "Type", b: "Back" } : { a: "Select", b: "Back" };
+    return ref.raw === "combo:filter"
+      ? { a: "Type", x: "Choose", b: "Back" }
+      : { a: "Choose", b: "Back" };
   }
   // An item in the ability menu: pressing it is the choice, and `B` is the
   // way out of the question.

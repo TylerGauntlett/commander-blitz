@@ -426,7 +426,10 @@ export const HandheldSettingsMenu: Story = {
       ).not.toBeNull();
       visited.add(at as string);
     }
-    expect([...visited].some((id) => id.startsWith("tool:scheme-"))).toBe(true);
+    expect(
+      [...visited].some((id) => id.startsWith("tool:scheme-")),
+      [...visited].join(" > "),
+    ).toBe(true);
 
     // `B` (Escape on a keyboard) closes it, and the ring is back on the gear.
     await userEvent.keyboard("{Escape}");

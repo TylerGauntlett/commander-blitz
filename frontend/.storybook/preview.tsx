@@ -287,6 +287,9 @@ const withInputMode: Decorator = (Story, context) => {
   const root = document.documentElement;
   const handheld = context.globals.handheld === "on";
   root.setAttribute("data-input", String(context.globals.input ?? "mouse"));
+  // The hint bar is a setting, off by default in the app; stories review it
+  // on, because several read it to know what the ring is standing on.
+  root.setAttribute("data-hints", String(context.globals.hints ?? "on"));
   root.toggleAttribute("data-handheld", handheld);
   root.toggleAttribute("data-desktop", !handheld);
   return <Story />;
@@ -402,6 +405,18 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    hints: {
+      description: "The hint bar under the hand",
+      toolbar: {
+        title: "Hints",
+        icon: "info",
+        items: [
+          { value: "on", title: "Hints shown" },
+          { value: "off", title: "Hints hidden (the default)" },
+        ],
+        dynamicTitle: true,
+      },
+    },
     art: {
       description: "Where card art comes from",
       toolbar: {
@@ -417,7 +432,7 @@ const preview: Preview = {
     },
   },
 
-  initialGlobals: { art: "stub", input: "mouse", handheld: "off" },
+  initialGlobals: { art: "stub", input: "mouse", handheld: "off", hints: "on" },
 
   tags: ["autodocs"],
 };

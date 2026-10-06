@@ -41,16 +41,16 @@ const staging = (overrides: Partial<Staging> = {}): Staging => ({
 /**
  * The combobox a long decision opens with.
  *
- * A row is a HIGHLIGHT and the Choose button beside the list is the only thing
- * that acts, so the two stops say different things -- and neither says
- * "Toggle", which is what a `tool:` stop would have made the bar promise over a
- * text field.
+ * A row chooses when pressed -- through the Choose button, which is the one
+ * thing carrying an action id -- and the field types; `X` is the button from
+ * the field. Neither says "Toggle", which is what a `tool:` stop would have
+ * made the bar promise over a text field.
  */
 describe("a combobox's stops", () => {
-  it("offers typing at the field and selecting at a row", () => {
+  it("offers typing at the field and choosing at a row", () => {
     const state = gameView({ pending: pending({ kind: "choose_mode" }) });
-    expect(verbsFor(state, [], "combo:filter").a).toBe("Type");
-    expect(verbsFor(state, [], "combo:opt:a3-choose").a).toBe("Select");
+    expect(verbsFor(state, [], "combo:filter")).toEqual({ a: "Type", x: "Choose", b: "Back" });
+    expect(verbsFor(state, [], "combo:opt:a3-choose")).toEqual({ a: "Choose", b: "Back" });
   });
 
   it("names the action itself at the Choose button, as any act stop does", () => {

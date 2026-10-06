@@ -418,3 +418,44 @@ export const PassInOnePress: Story = {
     expect(run.cost).toBe(1);
   },
 };
+
+/**
+ * A CREATURE TYPE IN A LIST OF HUNDREDS, WITHOUT A KEYBOARD.
+ *
+ * The ring opens on the filter field, where `A` means typing and a Deck has
+ * nothing to type with. `down` is the first row; `right` pages ten rows on and
+ * `left` ten back (`useCursorNav` hands the horizontal axis to the list as a
+ * `padnav` event); `A` on a row chooses it, through the one Choose button.
+ * Four hundred rows is forty presses end to end, and a held direction ramps.
+ */
+export const ChooseATypeByPaging: Story = {
+  args: board(scenarios.chooseType(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    const { actions } = scenarios.chooseType();
+    const options = actions.filter((a) => a.kind !== "pass");
+    const run = journey();
+
+    await waitFor(() => expect(run.at()).toBe("combo:filter"));
+    await run.press("down");
+    expect(run.at()).toBe(`combo:opt:${options[0].id}`);
+
+    await run.press("right");
+    expect(run.at(), run.trail.join("\n")).toBe(`combo:opt:${options[10].id}`);
+    await run.press("right");
+    expect(run.at()).toBe(`combo:opt:${options[20].id}`);
+    await run.press("left");
+    expect(run.at()).toBe(`combo:opt:${options[10].id}`);
+
+    // The dialog did not change size under the ring.
+    const dialog = canvas.getByTestId("prompt-dialog");
+    const width = dialog.getBoundingClientRect().width;
+    await run.press("down");
+    expect(dialog.getBoundingClientRect().width).toBe(width);
+
+    await run.press("a");
+    expect(args.game.act.mutate).toHaveBeenCalledWith(options[11].id);
+    expect(run.cost).toBeLessThanOrEqual(6);
+  },
+};

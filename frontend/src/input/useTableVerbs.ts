@@ -195,6 +195,19 @@ export function useTableVerbs({
    */
   const secondary = useCallback(() => {
     const ref = parseStop(getCursor());
+    /*
+     * Inside a combobox, `X` is the Choose button. The button sits under the
+     * list, where every other dialog keeps its commit, and from the filter
+     * field -- the dialog's first stop, where `A` types -- it is the press
+     * that answers the prompt. `.click()` for the reason the dock is clicked
+     * below: the button carries the highlighted row's id and this does not.
+     */
+    if (ref.kind === "combo") {
+      document
+        .querySelector<HTMLButtonElement>('[data-testid="combo-go"]:not([disabled])')
+        ?.click();
+      return;
+    }
     const oid = ref.kind === "card" ? ref.id : null;
     if (oid !== null) {
       if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {

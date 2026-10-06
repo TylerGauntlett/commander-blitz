@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { AnimatePresence } from "motion/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PendingDecision } from "../src/api/types";
@@ -832,6 +832,33 @@ describe("PromptDialog with a wall of options", () => {
     fireEvent.keyDown(field(), { key: "ArrowUp" });
     fireEvent.keyDown(field(), { key: "Enter" });
     expect(onAct).toHaveBeenCalledWith(actions[1].id);
+  });
+
+  it("chooses a row that is pressed while highlighted, through the Choose button", () => {
+    // A first click on a row only highlights it (a mouse's mousedown has
+    // usually done that already); pressed again, it presses Choose, so the
+    // one control carrying the action id is still the one that posts.
+    const { onAct, actions } = mount();
+    fireEvent.click(rows()[3]);
+    expect(rows()[3].getAttribute("aria-selected")).toBe("true");
+    expect(onAct).not.toHaveBeenCalled();
+    fireEvent.click(rows()[3]);
+    expect(onAct).toHaveBeenCalledWith(actions[3].id);
+  });
+
+  it("pages by ten on a padnav event, and sends the ring to the new row", () => {
+    const { actions } = mount();
+    const list = screen.getByTestId("combo-list");
+    const page = (dir: "left" | "right") =>
+      act(() => {
+        list.dispatchEvent(new CustomEvent("padnav", { detail: dir, bubbles: true }));
+      });
+    page("right");
+    expect(rows()[10].getAttribute("aria-selected")).toBe("true");
+    expect(go().getAttribute("data-action-id")).toBe(actions[10].id);
+    page("left");
+    page("left");
+    expect(rows()[0].getAttribute("aria-selected")).toBe("true");
   });
 
   it("follows the ring: focusing a row is what highlights it", () => {

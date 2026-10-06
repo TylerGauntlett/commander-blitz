@@ -1170,12 +1170,27 @@
  * the geometry is the navigation: a right press from any row reaches the
  * button, which under the list would be four hundred rows away.
  */
+/*
+ * A column: the filter, the list, and the commit row under it.
+ *
+ * The Choose button used to sit in a rail to the RIGHT of the list, so that a
+ * right press reached it from any row. Two things were wrong with that on a
+ * Steam Deck. Its label names the highlighted row, and as the only thing
+ * deciding the dialog's width it made the whole panel breathe as the ring
+ * walked the list; and it was the one dialog whose commit was not bottom
+ * right, where `.prompt__commit` keeps every other one. A row chooses itself
+ * now (`ChoiceCombo`), so the pad never walks to the button, and the dialog
+ * holds one width while it has a combo in it.
+ */
 .combo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   min-height: 0;
+}
+
+.prompt:has(.combo) {
+  width: min(640px, 92vw);
 }
 
 .combo__pick {
@@ -1251,21 +1266,26 @@
 
 .combo__rail {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
-  max-width: 240px;
+  min-width: 0;
 }
 
 .combo__n {
+  margin-right: auto;
   color: var(--text-dim);
   font-size: 12.5px;
-  text-align: center;
 }
 
-/* The label carries the highlighted option's name, so it wraps rather than
-   stretching the dialog to the width of the longest creature type. */
+/* The label carries the highlighted option's name. One line, clipped, at a
+   width that does not move: the dialog must not resize under the ring. */
 .combo__go {
-  white-space: normal;
+  min-width: 200px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .peek__slot {
@@ -1733,6 +1753,27 @@ fieldset.speed {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
+}
+
+/*
+ * The buttons that never change meaning, as a legend under the hints toggle.
+ *
+ * Rendered from `NAVIGATION_HINTS`, the same list the bar draws, so the two
+ * cannot drift; `tests/hintsBound.test.ts` keeps every button in it bound.
+ */
+.settings__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 0 2px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.settings__legend .hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .settings__scheme .scheme__row {

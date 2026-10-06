@@ -713,8 +713,14 @@ html[data-input="keyboard"] .glyph--key {
   user-select: none;
 }
 
-html[data-input="pad"] .hints,
-html[data-input="keyboard"] .hints {
+/*
+ * ...and only when asked for. `data-hints` is the settings menu's "Button
+ * hints" toggle (`state/uiStore.ts:storedHints`), off by default: the bar is
+ * a strip of an 800px screen for the whole game, saying what the thumbs learn
+ * in a few turns. A mouse player never sees it whatever the toggle says.
+ */
+html[data-hints="on"][data-input="pad"] .hints,
+html[data-hints="on"][data-input="keyboard"] .hints {
   display: flex;
 }
 
@@ -1429,6 +1435,7 @@ html[data-input="pad"] .act__key {
 /* The settings menu's rows. They are one press away from quitting the game, so
    they are the last controls that may be hard to land on. */
 [data-handheld] .settings__item,
+[data-handheld] .settings__legend,
 /* The commit bar's "all" and "none" marks. They are decisions with
    consequences, not affordances, so a finger has to be able to land on them as
    reliably as on the slab between them. */

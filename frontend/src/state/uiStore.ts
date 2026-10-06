@@ -50,6 +50,7 @@ export const SPEED_MULTIPLIER: Record<Speed, number> = {
  */
 const SPEED_KEY = "automtg.speed";
 const MUTED_KEY = "automtg.muted";
+const HINTS_KEY = "automtg.hints";
 
 function storedSpeed(): Speed {
   try {
@@ -91,6 +92,42 @@ function rememberMuted(muted: boolean): void {
   } catch {
     // As above.
   }
+}
+
+/**
+ * The hint bar starts HIDDEN.
+ *
+ * It is the row under the hand that says what `A`, `X`, `Y` and `B` do on
+ * the stop the ring is on. On a Steam Deck that row costs a strip of a
+ * 800px-tall screen for the whole game, and after a few turns it says nothing
+ * the thumbs do not already know. So it is a setting, off by default, in the
+ * settings menu's Controls block beside the scheme picker -- findable when it
+ * is wanted, and otherwise not there. The e2e and story harnesses turn it on,
+ * because several of them read the bar to know what the ring is on.
+ */
+function storedHints(): boolean {
+  try {
+    return localStorage.getItem(HINTS_KEY) === "on";
+  } catch {
+    return false;
+  }
+}
+
+function rememberHints(on: boolean): void {
+  try {
+    localStorage.setItem(HINTS_KEY, on ? "on" : "off");
+  } catch {
+    // As above.
+  }
+}
+
+/**
+ * The stylesheet reads `html[data-hints]`, the way it reads `data-input`:
+ * nothing subscribes to the flag, so the one place that owns it stamps it.
+ */
+export function stampHints(on: boolean): void {
+  if (typeof document === "undefined") return;
+  document.documentElement.setAttribute("data-hints", on ? "on" : "off");
 }
 
 export interface PeekTarget {
@@ -180,6 +217,8 @@ interface UiState {
   error: string | null;
   speed: Speed;
   muted: boolean;
+  /** The hint bar is shown. See `storedHints`. */
+  hints: boolean;
 
   select: (oid: number | null) => void;
   hover: (oid: number | null) => void;
@@ -213,6 +252,7 @@ interface UiState {
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
   toggleMuted: () => void;
+  toggleHints: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -233,6 +273,7 @@ export const useUiStore = create<UiState>((set) => ({
   error: null,
   speed: storedSpeed(),
   muted: storedMuted(),
+  hints: storedHints(),
 
   select: (oid) => set({ selectedOid: oid }),
   hover: (oid) => set({ hoveredOid: oid }),
@@ -283,4 +324,13 @@ export const useUiStore = create<UiState>((set) => ({
       rememberMuted(!s.muted);
       return { muted: !s.muted };
     }),
+  toggleHints: () =>
+    set((s) => {
+      rememberHints(!s.hints);
+      stampHints(!s.hints);
+      return { hints: !s.hints };
+    }),
 }));
+
+// The stylesheet's copy of the flag, from the first paint.
+stampHints(useUiStore.getState().hints);
