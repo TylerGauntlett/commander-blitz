@@ -26,8 +26,8 @@ something" and no way for the UI and the AI to disagree about the rules.
 ## Quickstart
 
 ```bash
-python -m venv .venv
-.venv/Scripts/pip install -e ".[dev]"       # add ",train" for the PPO trainer
+py -3.13 -m venv .venv                      # 3.13: what CI and the image run
+.venv/Scripts/pip install -c constraints.txt -e ".[dev]"   # add ",train" for the PPO trainer
 
 python scripts/validate_decks.py            # card files and deck legality
 pytest                                      # the full suite

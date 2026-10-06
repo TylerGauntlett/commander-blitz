@@ -14,7 +14,7 @@ resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`
 
 ## Suggested order
 
-1. **Cheap hygiene, no risk:** HY-04, CD-04, CD-05.
+1. **Cheap hygiene, no risk:** CD-04, CD-05.
 2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), RS-02 (CI minutes),
    CD-02 (token path).
 3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
@@ -295,15 +295,6 @@ read and more expensive to load.
 
 **Fix:** keep `card-dsl.md` as the current reference only, and move the per-capability
 history into the changelog.
-
-### HY-04 · The local venv is not the Python that CI tests — **S**
-
-`pyproject.toml` requires `>=3.13`, and CI and the `Dockerfile` use 3.13. The local
-`.venv` is 3.11.4, and `py -0` lists only 3.11. Nothing in setup or `verify.py` warns
-about this.
-
-**Fix:** install 3.13 and rebuild the venv, and have `verify.py` refuse to run on a
-Python older than `requires-python`.
 
 ### DEP-01 · Dependency upgrades — **S**
 
