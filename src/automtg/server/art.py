@@ -36,7 +36,6 @@ from pathlib import Path
 
 from automtg.cards.images import (
     ART_CROP,
-    SCRYFALL_ID,
     CardArt,
     CardIndex,
     art_cache_dir,
@@ -46,6 +45,7 @@ from automtg.cards.images import (
     image_url,
     read_registry_images,
 )
+from automtg.cards.schema import SCRYFALL_ID
 
 #: Card ids are generated from card names by the loader, so this is a tight
 #: whitelist rather than a guess.  It is also the path-traversal guard: the id
