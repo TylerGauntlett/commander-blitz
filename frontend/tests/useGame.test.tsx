@@ -28,7 +28,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { GameEvent, StateResponse } from "../src/api/types";
 import { beatsFor } from "../src/logic/events";
 import { useUiStore } from "../src/state/uiStore";
-import { type GameSession, freshEvents, useGame, waitingOnFrom } from "../src/state/useGame";
+import { freshEvents, type GameSession, useGame, waitingOnFrom } from "../src/state/useGame";
 import { action, gameEvent, gameView, pending, player, stateResponse } from "./fixtures";
 
 interface Parked {

@@ -18,9 +18,13 @@
   *,
   *::before,
   *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: this has to beat every component's own animation, whatever its specificity -- that is the whole job. */
     animation-duration: 0.001ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: as above. */
     animation-delay: 0ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: as above, for transitions. */
     transition-duration: 0.001ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: as above. */
     transition-delay: 0ms !important;
   }
 </style>

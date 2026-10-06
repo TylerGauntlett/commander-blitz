@@ -18,8 +18,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect, useRef } from "react";
 import { expect, waitFor } from "storybook/test";
 import type { PresetName } from "../../fx/presets";
-import { particleCount } from "./ParticleLayer";
-import { ParticleLayer, burst, clearParticles } from "./ParticleLayer";
+import { burst, clearParticles, ParticleLayer, particleCount } from "./ParticleLayer";
 
 /**
  * A board-shaped box with the layer over it, firing on an interval.

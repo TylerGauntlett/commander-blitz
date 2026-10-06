@@ -10,11 +10,11 @@
  * See docs/playtest-feedback-02.md for what each of these is answering.
  */
 
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import {
-  COMBAT_SEED,
   actionsOfKind,
   budget,
+  COMBAT_SEED,
   isOver,
   keepOpeningHand,
   reachDeclaration,

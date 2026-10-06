@@ -165,6 +165,7 @@ export function SettingsMenu({ busy, onUndo, onQuit }: Props) {
           the thing you most often want after flipping it is to flip it
           back. The other two end what you were doing.
         */}
+          {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: the right shape is `menuitemcheckbox` with `aria-checked`, but e2e/action-panel.spec.ts reads `aria-pressed` off this item, so the change is a behaviour change and waits for an a11y pass. */}
           <button
             type="button"
             role="menuitem"

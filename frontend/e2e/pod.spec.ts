@@ -15,7 +15,7 @@
  *   3. Each seat sees **only its own hand** once they are there.
  */
 
-import { type BrowserContext, type Page, expect, test } from "@playwright/test";
+import { type BrowserContext, expect, type Page, test } from "@playwright/test";
 import {
   actionsOfKind,
   budget,

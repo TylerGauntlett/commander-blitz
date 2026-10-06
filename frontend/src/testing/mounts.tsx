@@ -315,8 +315,7 @@ export function Mounted({ mount, children }: { mount: MountId; children: ReactNo
   }
   return found.layers.reduceRight<ReactNode>(
     (inner, layer, depth) => (
-      // Keyed by depth: the chain is fixed for a given mount, so the index is
-      // the identity here rather than a stand-in for one.
+      // biome-ignore lint/suspicious/noArrayIndexKey: keyed by depth -- the chain is fixed for a given mount, so the index is the identity here rather than a stand-in for one.
       <div key={`${depth}-${layer.className}`} className={layer.className} style={layer.style}>
         {layer.fill ? <div className={layer.fill} aria-hidden="true" /> : null}
         {inner}

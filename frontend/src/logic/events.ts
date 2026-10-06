@@ -20,7 +20,7 @@ import type { GameEvent } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import type { PresetName } from "../fx/presets";
 import { planCombat } from "./choreography";
-import { type NameLookup, describeEvent, exitPhrase, prettyCardName } from "./labels";
+import { describeEvent, exitPhrase, type NameLookup, prettyCardName } from "./labels";
 
 export type { NameLookup };
 

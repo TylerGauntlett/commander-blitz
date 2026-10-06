@@ -10,11 +10,11 @@
 import { describe, expect, it } from "vitest";
 import {
   CARD_SCALE,
+  cardWidthPx,
+  cardWidthVar,
   FALLBACK_BASE,
   MAX_CARD_W,
   MIN_CARD_W,
-  cardWidthPx,
-  cardWidthVar,
   opponentCardScale,
 } from "../src/logic/cardSize";
 

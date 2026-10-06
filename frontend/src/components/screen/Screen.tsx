@@ -9,7 +9,7 @@
  */
 
 import { motion, usePresence } from "motion/react";
-import { type ReactNode, forwardRef, useEffect, useRef } from "react";
+import { forwardRef, type ReactNode, useEffect, useRef } from "react";
 import { useCursorNav } from "../../input/useCursorNav";
 import { SCREEN_VARIANTS, type ScreenVariant } from "../../motion/springs";
 import { FocusRing } from "../game/FocusRing";

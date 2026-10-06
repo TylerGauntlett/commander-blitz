@@ -29,6 +29,7 @@ function Harness({ onHold, onClick }: { onHold: (oid: number) => void; onClick: 
   const press = useLongPress(onHold);
   return (
     <div {...press}>
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: a stand-in for a card on the board, which takes a click without being a control; the hook under test is what matters here. */}
       <div data-oid="42" data-testid="card" onClick={onClick}>
         <span data-testid="inside">art</span>
       </div>

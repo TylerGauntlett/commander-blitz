@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { GameEvent, GameView } from "../../api/types";
-import { type NameLookup, describeEvent, playerNames } from "../../logic/labels";
+import { describeEvent, type NameLookup, playerNames } from "../../logic/labels";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 

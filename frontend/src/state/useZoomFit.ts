@@ -38,21 +38,21 @@ import {
   HANDHELD_MIN_CARD_W,
   MAX_CARD_W,
   MIN_CARD_W,
+  opponentCardScale,
   PHONE_MAX_CARD_W,
   PHONE_MIN_CARD_W,
-  opponentCardScale,
 } from "../logic/cardSize";
 import {
-  COMPACT_MAT,
-  HAND_FAN_W,
-  VIEWER_MAT,
   bandsFor,
+  COMPACT_MAT,
   footprintsFor,
+  HAND_FAN_W,
   lanesHeightIn,
   lanesWidthIn,
   solveBoardCardWidth,
   solveHandCardWidth,
   solvePodLanesHeight,
+  VIEWER_MAT,
 } from "../logic/zoomFit";
 import { useCardBase } from "./useCardBase";
 

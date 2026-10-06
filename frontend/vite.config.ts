@@ -1,5 +1,6 @@
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
 
 /**
@@ -32,14 +33,32 @@ export default defineConfig({
    * The vendor libraries ship as their own chunks. One bundle of everything
    * crossed Rollup's 500 kB warning (596 kB), and the libraries change far less
    * often than the app, so splitting them also lets a deploy keep them cached.
+   *
+   * Rolldown (Vite 8) has no object form of `manualChunks`, which pulled each
+   * named package's own dependencies in with it. `codeSplitting.groups` matches
+   * module paths instead, so each group names those dependencies itself:
+   * `scheduler` for react-dom, react-router's `cookie` and `set-cookie-parser`,
+   * motion's `framer-motion`/`motion-dom`/`motion-utils`, and zustand's
+   * `use-sync-external-store`.
    */
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom", "react-router"],
-          motion: ["motion"],
-          query: ["@tanstack/react-query", "zustand"],
+        codeSplitting: {
+          groups: [
+            {
+              name: "react",
+              test: /node_modules[\\/](react|react-dom|react-router|scheduler|cookie|set-cookie-parser)[\\/]/,
+            },
+            {
+              name: "motion",
+              test: /node_modules[\\/](motion|framer-motion|motion-dom|motion-utils)[\\/]/,
+            },
+            {
+              name: "query",
+              test: /node_modules[\\/](@tanstack[\\/][^\\/]+|zustand|use-sync-external-store)[\\/]/,
+            },
+          ],
         },
       },
     },
@@ -85,29 +104,39 @@ export default defineConfig({
           : {
               // Measured on 2026-09-05 with every project in one process. Global
               // first; then the files TECH_DEBT CG-02 named, each at what it has.
-              statements: 88,
-              branches: 89,
-              functions: 82,
+              //
+              // RE-PINNED FOR VITEST 4, NOT LOWERED. coverage-v8 4 maps V8's
+              // ranges onto the AST, so a statement is a statement rather than a
+              // line: `src/` went from 15,144 "statements" to 6,608 over the
+              // same 1,989 passing tests. The uncovered lines barely moved
+              // (Table.tsx: 122 under v3, 132 under v4, mostly the same ones);
+              // the denominator lost every line v3 counted as run just because
+              // its function was entered -- the JSX prop lines, chiefly. Each
+              // floor keeps the margin it had below its v3 measurement, applied
+              // to the v4 one.
+              statements: 86,
+              branches: 80,
+              functions: 84,
               "src/api/client.ts": { statements: 100 },
-              "src/audio/sfx.ts": { statements: 98 },
-              "src/components/game/CardGhost.tsx": { statements: 97 },
+              "src/audio/sfx.ts": { statements: 97 },
+              "src/components/game/CardGhost.tsx": { statements: 94 },
               "src/components/game/CardHold.tsx": { statements: 100 },
-              "src/components/game/CombatArrows.tsx": { statements: 98 },
-              "src/components/game/CommandZone.tsx": { statements: 98 },
+              "src/components/game/CombatArrows.tsx": { statements: 95 },
+              "src/components/game/CommandZone.tsx": { statements: 91 },
               "src/components/game/EventTicker.tsx": { statements: 100 },
-              "src/components/game/FxLayer.tsx": { statements: 70 },
+              "src/components/game/FxLayer.tsx": { statements: 60 },
               "src/components/game/GroupDial.tsx": { statements: 100 },
-              "src/components/game/OpeningHand.tsx": { statements: 97 },
-              "src/components/game/ParticleLayer.tsx": { statements: 94 },
-              "src/components/game/StackPanel.tsx": { statements: 96 },
-              "src/components/game/Table.tsx": { statements: 82 },
-              "src/components/game/ActionPanel.tsx": { statements: 91 },
-              "src/components/lobby/InviteDialog.tsx": { statements: 100 },
+              "src/components/game/OpeningHand.tsx": { statements: 89 },
+              "src/components/game/ParticleLayer.tsx": { statements: 92 },
+              "src/components/game/StackPanel.tsx": { statements: 99 },
+              "src/components/game/Table.tsx": { statements: 67 },
+              "src/components/game/ActionPanel.tsx": { statements: 87 },
+              "src/components/lobby/InviteDialog.tsx": { statements: 91 },
               "src/components/ui/ControllerPanel.tsx": { statements: 100 },
-              "src/fx/actuators.ts": { statements: 100 },
+              "src/fx/actuators.ts": { statements: 97 },
               "src/fx/scheduler.ts": { statements: 100 },
-              "src/screens/HomeRoute.tsx": { statements: 76 },
-              "src/screens/PodRoute.tsx": { statements: 84 },
+              "src/screens/HomeRoute.tsx": { statements: 75 },
+              "src/screens/PodRoute.tsx": { statements: 69 },
             },
     },
     projects: [
@@ -134,7 +163,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: "playwright",
+            provider: playwright(),
             instances: [{ browser: "chromium" }],
             /*
              * DECLARED, AND NOT WHAT THE STORIES ACTUALLY GET. Worth knowing.
@@ -192,7 +221,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: "playwright",
+            provider: playwright(),
             instances: [{ browser: "chromium" }],
             // See the note above: declared, and the toolbar is what actually
             // decides the layout. These stories carry `handheld: "on"`.

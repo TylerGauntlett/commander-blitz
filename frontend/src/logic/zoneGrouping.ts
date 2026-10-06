@@ -178,7 +178,7 @@ export function commandersOf(state: GameView, pid: number): CardView[] {
   const seen = new Set(found.map((card) => card.oid));
 
   const consider = (card: CardView | null) => {
-    if (!card || !card.is_commander || card.owner !== pid || seen.has(card.oid)) return;
+    if (!card?.is_commander || card.owner !== pid || seen.has(card.oid)) return;
     seen.add(card.oid);
     found.push(card);
   };

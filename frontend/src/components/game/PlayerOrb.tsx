@@ -47,13 +47,13 @@ import { stopId } from "../../input/stops";
 import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import {
-  type ManaGroupView,
   formatManaRow,
+  type ManaGroupView,
   manaGroups,
   manaRow,
   markSpent,
 } from "../../logic/mana";
-import { commandZoneCommanderCount, commandersOf } from "../../logic/zoneGrouping";
+import { commandersOf, commandZoneCommanderCount } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -214,6 +214,7 @@ function ZonePile({
   if (zone === null) {
     if (!topCard) return <div {...shared}>{body}</div>;
     return (
+      // biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason.
       <div {...shared} onMouseEnter={() => hover(topCard.oid)} onMouseLeave={() => hover(null)}>
         {body}
       </div>

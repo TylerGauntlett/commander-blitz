@@ -7,8 +7,7 @@
  * block means reading both without finding either on the board.
  */
 
-import type { LegalAction } from "../../api/types";
-import type { CardView } from "../../api/types";
+import type { CardView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
 import { blockableBy } from "../../logic/actionMatch";
 import { type BlockTier, blockTier } from "../../logic/autoBlock";

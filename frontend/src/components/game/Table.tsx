@@ -23,7 +23,7 @@ import {
   useState,
 } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
-import { type SoundName, play } from "../../audio/sfx";
+import { play, type SoundName } from "../../audio/sfx";
 import { drive } from "../../fx/actuators";
 import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
 import { getGroup, setGroup } from "../../input/groups";
@@ -42,7 +42,7 @@ import {
 } from "../../logic/actionMatch";
 import { reset as forgetCardRects } from "../../logic/cardRects";
 import { COMMIT_TESTID, commitmentFor } from "../../logic/commit";
-import { type Gesture, followUpStops } from "../../logic/followUp";
+import { followUpStops, type Gesture } from "../../logic/followUp";
 import { removalsByOid } from "../../logic/removals";
 import { parseStop } from "../../logic/verbs";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
@@ -1035,6 +1035,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   });
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: the table root takes the context-menu and long-press gestures that open the card reader; it is the board, not a control, and the pad reaches the reader through the focus ring.
     <div
       className="table"
       data-testid="table"

@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The deck catalogue, standing in the same room.
  *
@@ -162,7 +163,9 @@
   border-radius: calc(9px * var(--du));
   background: rgb(8 7 18 / 0.5);
   cursor: pointer;
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+  transition:
+    border-color var(--t-fast) ease,
+    background var(--t-fast) ease;
 }
 
 /*

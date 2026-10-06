@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The handheld layout, the focus ring, and the controller hints.
  *
@@ -43,7 +44,9 @@
 [data-cursor] {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
-  box-shadow: 0 0 0 6px var(--focus-glow), 0 8px 24px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 0 6px var(--focus-glow),
+    0 8px 24px rgba(0, 0, 0, 0.6);
   /* The ring must never be clipped by the scroll container it sits in. */
   z-index: 2;
 }
@@ -83,7 +86,9 @@ html[data-input="mouse"] [data-cursor] {
 
 #ring.ring--on {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--focus-glow), 0 0 18px 4px var(--focus-glow);
+  box-shadow:
+    0 0 0 2px var(--focus-glow),
+    0 0 18px 4px var(--focus-glow);
 }
 
 /* Landed on a stop its neighbours overlap (a hand card): the stop's own
@@ -933,7 +938,9 @@ html[data-input="keyboard"] .hints {
   border: 1px solid var(--rail-line);
   border-radius: 12px;
   background: var(--void-1);
-  box-shadow: var(--pane-shadow), 0 18px 60px rgb(0 0 0 / 0.6);
+  box-shadow:
+    var(--pane-shadow),
+    0 18px 60px rgb(0 0 0 / 0.6);
 }
 
 .logover__head {
@@ -1290,39 +1297,33 @@ html[data-input="keyboard"] .hints {
 /* The lane's own name -- "Creatures", "Lands". Kept rather than dropped: the
    bands are in a fixed order but an empty one has nothing else to say what it
    is, and an empty lane is exactly when you need to know. */
-  [data-handheld]
-  .lane__label,
+[data-handheld] .lane__label,
 /* The commit bar's two marks, and the line that carries the count the slab's
    label used to. These are decisions. */
-  [data-handheld]
-  .commit-note,
+[data-handheld] .commit-note,
 [data-handheld] .commit-dock button,
 /*
  * The action panel's own rows, found by the CI gate rather than by looking --
  * a card's type line inside a play row was 10.5px, and "CPU 3 - main 1" (which
  * is the only thing on screen saying why nothing is happening) was 11px.
  */
-  [data-handheld]
-  .act__type,
+[data-handheld] .act__type,
 [data-handheld] .acts__thinking,
 [data-handheld] .acts__none,
 /* Modal choices. "Mulligan" and "Keep" were 14px -- the two most consequential
    words in the opening of every game. */
-  [data-handheld]
-  .opt__label,
+[data-handheld] .opt__label,
 [data-handheld] .opt__caption,
 /* The lobby, which had no floor at all until `data-handheld` moved to <html>.
    Six of these went with the old front door -- `.hero__line`, `.or`,
    `.join__go`, `.join__in` and `.door__cap` were its pitch, its separator, its
    Join button, its code field and its footer. The door is written at the floor
    now (`styles/door.css`) and has nothing for this list to reach. */
-  [data-handheld]
-  .brand__mark,
+[data-handheld] .brand__mark,
 [data-handheld] .brand__sub,
 [data-handheld] .link,
 /* The zone viewer's own chrome: its Close button and its empty-state line. */
-  [data-handheld]
-  .peek__hidden,
+[data-handheld] .peek__hidden,
 [data-handheld] .btn--ghost {
   font-size: var(--type-floor);
 }
@@ -1398,16 +1399,13 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .tool,
 /* The settings menu's rows. They are one press away from quitting the game, so
    they are the last controls that may be hard to land on. */
-  [data-handheld]
-  .settings__item,
+[data-handheld] .settings__item,
 /* The commit bar's "all" and "none" marks. They are decisions with
    consequences, not affordances, so a finger has to be able to land on them as
    reliably as on the slab between them. */
-  [data-handheld]
-  .commit-mark,
+[data-handheld] .commit-mark,
 /* Modal options and action rows: the two controls a turn is actually spent on. */
-  [data-handheld]
-  .opt,
+[data-handheld] .opt,
 [data-handheld] .act,
 [data-handheld] .link,
 [data-handheld] .btn--ghost {

@@ -1033,6 +1033,12 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
 native `<dialog>` element, which needs an imperative `showModal()` and cannot be driven by
 `AnimatePresence` exit animations.
 
+Biome 2 also checks HTML and SVG files. `biome.json` excludes `**/*.svg`: the mana symbols
+and the favicon are image assets drawn through `<img>`, which carries the name, so
+`noSvgWithoutTitle` has nothing to say about them. The stylesheets carry a file-level
+`noDescendingSpecificity` suppression. Their source order is the cascade, and reordering
+rules to satisfy the lint would change which declaration wins.
+
 ## Playing with a controller
 
 The client is playable end to end on a gamepad, at a Steam Deck's 1280x800. Two

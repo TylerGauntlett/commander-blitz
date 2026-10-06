@@ -68,8 +68,8 @@ import { DOOR_TUNE, type DoorTune, poseOf, scaleTune } from "../../logic/doorRow
 import { looksLikeCode, normaliseCode } from "../../logic/lobby";
 import { ControllerPanel } from "../ui/ControllerPanel";
 import { Glyph } from "../ui/Glyph";
-import { type Hue, Room } from "./Room";
 import { DoorCardArt, DoorCardFrame } from "./doorArt";
+import { type Hue, Room } from "./Room";
 
 /**
  * The longest code the server can issue: `BRAMBLE-123456` -- a seven-letter
@@ -480,6 +480,7 @@ export function HomeScreen({
 
       <div className="door__row">
         {DOOR_CARDS.map((card, i) => (
+          // biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason.
           <div
             key={card.id}
             className={i === sel ? "door__slot door__slot--on" : "door__slot"}

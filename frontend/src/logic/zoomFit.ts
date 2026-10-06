@@ -31,7 +31,7 @@
 import type { CardView, GameView } from "../api/types";
 import { ATTACH_X_RATIO, ATTACH_Y_RATIO, MAX_PLIES, PLY_X } from "./cardStackGeometry";
 import { type CardStackGroup, splitActionable, stackCards } from "./stacking";
-import { type Lane as LaneName, attachmentsFor, groupBattlefield } from "./zoneGrouping";
+import { attachmentsFor, groupBattlefield, type Lane as LaneName } from "./zoneGrouping";
 
 /**
  * One wrappable item, as `flex-wrap` sees it.

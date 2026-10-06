@@ -451,7 +451,8 @@ body {
      teal one at the foot, so the table reads as lit rather than painted. Both
      are far below the luminance of any card, which is what keeps cards the
      brightest objects on screen. */
-  background: radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
     radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
     linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
   color: var(--text);

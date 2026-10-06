@@ -228,6 +228,7 @@ export function CardFace({ card, variant = "board" }: Props) {
               costs no space that was not already the name's.
             */}
             {card.is_commander && (
+              // biome-ignore lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade.
               <span className="crown" data-hint="Commander" aria-label="Commander">
                 &#9819;
               </span>

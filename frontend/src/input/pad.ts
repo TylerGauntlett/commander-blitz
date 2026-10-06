@@ -81,7 +81,7 @@
 
 import { BTN, KEYS, type PadButton, REPEATS, SWALLOW } from "./buttons";
 import { noteInput, notePadConnected } from "./inputMode";
-import { type Dir, STICK, deadzone, pushOf, repeatMs, sector } from "./repeat";
+import { type Dir, deadzone, pushOf, repeatMs, STICK, sector } from "./repeat";
 
 export interface PadFrame {
   lstick: { x: number; y: number };
@@ -563,7 +563,7 @@ function isSelect(target: EventTarget | null): boolean {
 /** Anything with a caret in it, which is the only thing `fieldKeeps` bargains with. */
 function isField(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
-  if (!el || !el.tagName) return false;
+  if (!el?.tagName) return false;
   return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable === true;
 }
 
@@ -622,7 +622,7 @@ const SELECT_KEEPS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Ent
 
 function fieldKeeps(target: EventTarget | null, key: string): boolean {
   const el = target as HTMLElement | null;
-  if (!el || !el.tagName) return false;
+  if (!el?.tagName) return false;
   if (el.tagName === "SELECT") return SELECT_KEEPS.has(key);
   const typed = el.tagName === "INPUT" || el.tagName === "TEXTAREA";
   if (!typed && el.isContentEditable !== true) return false;

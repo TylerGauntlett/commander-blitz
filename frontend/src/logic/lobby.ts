@@ -100,7 +100,7 @@ export function canStart(pod: PodView): boolean {
   if (pod.status !== "open") return false;
   if (!pod.you_are_host) return false;
   const you = yourSeat(pod);
-  if (!you || !you.locked) return false;
+  if (!you?.locked) return false;
   // Open chairs fill with CPUs, so they count towards the two-player minimum.
   if (podSize(pod) + openSeats(pod) < 2) return false;
   return allReady(pod);

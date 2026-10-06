@@ -29,9 +29,9 @@
 
 import { useSyncExternalStore } from "react";
 import {
-  type SchemePref,
   getInputMode,
   getScheme,
+  type SchemePref,
   setScheme,
   subscribeInputMode,
 } from "../../input/inputMode";

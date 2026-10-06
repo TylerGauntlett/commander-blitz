@@ -42,7 +42,7 @@ export type SeatImages = Record<string, Record<string, ImageRef>> | null;
 export function artUrl(images: ImageMap, cardId: string): string | null | undefined {
   if (images === null) return undefined;
   const ref = images[cardId];
-  if (!ref || !ref.art) return null;
+  if (!ref?.art) return null;
   return ref.art;
 }
 
@@ -100,7 +100,7 @@ export function artUrlFor(
 ): string | null | undefined {
   if (images === null) return undefined;
   const ref = refFor(images, seats, card.card_id, seatOf(card));
-  if (!ref || !ref.art) return null;
+  if (!ref?.art) return null;
   return ref.art;
 }
 

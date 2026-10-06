@@ -8,14 +8,13 @@
  * than to nothing.
  */
 
-import type { LegalAction } from "../../api/types";
-import type { CardView } from "../../api/types";
+import type { CardView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
 import type { groupPlayActions } from "../../logic/actionMatch";
 import { manaPips, statLine } from "../../logic/cardStyle";
 import { ManaSymbol } from "./ManaSymbol";
-import { SymbolText } from "./SymbolText";
 import type { Previewing } from "./previewing";
+import { SymbolText } from "./SymbolText";
 
 interface Props {
   playGroups: ReturnType<typeof groupPlayActions>;

@@ -18,7 +18,7 @@
  * confusing, far-away way rather than at the site of the mistake.
  */
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
@@ -28,8 +28,8 @@ import { SchemePicker } from "../src/components/ui/SchemePicker";
 import { getCursor, setCursor } from "../src/input/cursor";
 import { actionAttrs, candidatesIn, stopId, stopRoot, stopsIn } from "../src/input/stops";
 import { useUiStore } from "../src/state/uiStore";
-import { chooseType } from "../src/testing/scenarios";
 import * as scenarios from "../src/testing/scenarios";
+import { chooseType } from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);

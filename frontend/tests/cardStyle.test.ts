@@ -8,7 +8,6 @@
 
 import { describe, expect, it } from "vitest";
 import {
-  type TypeTone,
   counterBadges,
   frameTone,
   isPlainLand,
@@ -17,6 +16,7 @@ import {
   landTone,
   shortType,
   symbolTokens,
+  type TypeTone,
   typeGlyph,
   typeLabel,
   typeTone,

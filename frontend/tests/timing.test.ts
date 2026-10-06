@@ -18,7 +18,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
-import { type NameLookup, beatsFor, queueDuration } from "../src/logic/events";
+import { beatsFor, type NameLookup, queueDuration } from "../src/logic/events";
 import { SPEED_MULTIPLIER } from "../src/state/uiStore";
 
 const NAMES = ["You", "Edgar AI"];

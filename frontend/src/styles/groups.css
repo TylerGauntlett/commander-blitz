@@ -87,7 +87,9 @@
   border: 1px solid var(--edge-hi);
   border-radius: 16px;
   background: var(--void-1);
-  box-shadow: var(--pane-shadow), 0 24px 80px rgb(0 0 0 / 0.7);
+  box-shadow:
+    var(--pane-shadow),
+    0 24px 80px rgb(0 0 0 / 0.7);
 }
 
 /*

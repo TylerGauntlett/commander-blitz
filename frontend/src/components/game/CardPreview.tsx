@@ -31,11 +31,11 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
 import {
-  type ImageMap,
-  type SeatImages,
+  artistFor,
   artStateFor,
   artUrlFor,
-  artistFor,
+  type ImageMap,
+  type SeatImages,
 } from "../../logic/cardArt";
 import { counterBadges, isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
@@ -154,6 +154,7 @@ function CompressedBody({
       <div className="reader__body">
         <div className="reader__nm">
           {card.is_commander && (
+            // biome-ignore lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade.
             <span className="crown" aria-label="Commander">
               &#9819;
             </span>
