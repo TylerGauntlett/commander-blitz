@@ -5606,6 +5606,12 @@
     "file": "forest_dryad_1_1_g_land.jpg",
     "scryfall_id": "107be8ee-ee22-4d37-94f1-2a5b438fbe05"
   },
+  "forest_tentacle_3_3_g_land": {
+    "artist": "Deruchenko Alexander",
+    "bytes": 130209,
+    "file": "forest_tentacle_3_3_g_land.jpg",
+    "scryfall_id": "fc924972-5014-45d1-9676-6a76d862b205"
+  },
   "forgotten_cave": {
     "artist": "Wayne Wu",
     "bytes": 38195,
@@ -16732,6 +16738,18 @@
     "file": "turntimber_ascetic.jpg",
     "scryfall_id": "b33b6922-2584-43e1-98d4-e722e7c9393c"
   },
+  "turntimber_serpentine_wood": {
+    "artist": "Randy Vargas",
+    "bytes": 89174,
+    "file": "turntimber_serpentine_wood.jpg",
+    "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6"
+  },
+  "turntimber_symbiosis_turntimber_serpentine_wood": {
+    "artist": "Randy Vargas",
+    "bytes": 89174,
+    "file": "turntimber_symbiosis_turntimber_serpentine_wood.jpg",
+    "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6"
+  },
   "turtle_seals": {
     "artist": "Gemi",
     "bytes": 65882,
@@ -17322,6 +17340,12 @@
     "bytes": 89332,
     "file": "verdant_catacombs.jpg",
     "scryfall_id": "94c229ea-90da-4aa0-bfda-b162fb3b5b8b"
+  },
+  "verdant_kraken": {
+    "artist": "Wayne Reynolds",
+    "bytes": 97694,
+    "file": "verdant_kraken.jpg",
+    "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0"
   },
   "verdant_sun_s_avatar": {
     "artist": "Izzy",
