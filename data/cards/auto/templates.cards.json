@@ -124014,6 +124014,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "turntimber_serpentine_wood",
+      "name": "Turntimber, Serpentine Wood",
+      "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 3
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "turntimber_symbiosis_turntimber_serpentine_wood",
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Turntimber Symbiosis // Turntimber, Serpentine Wood",
+      "oracle_text": "Look at the top seven cards of your library. You may put a creature card from among them onto the battlefield. If that card has mana value 3 or less, it enters with three additional +1/+1 counters on it. Put the rest on the bottom of your library in a random order.",
+      "second_face": "turntimber_serpentine_wood",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "counters": {
+            "+1/+1": 3
+          },
+          "counters_if": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            }
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

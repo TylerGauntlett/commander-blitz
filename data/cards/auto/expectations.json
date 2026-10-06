@@ -11017,6 +11017,19 @@
       "0": 43
     }
   },
+  "turntimber_symbiosis_turntimber_serpentine_wood": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "turtle_seals": {
     "zone": "battlefield"
   },
