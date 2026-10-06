@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Beat } from "../logic/events";
+import type { Beat } from "../logic/beats/types";
 import { SPEED_MULTIPLIER, type Speed } from "./uiStore";
 
 export interface LiveBeat extends Beat {

@@ -416,7 +416,7 @@
 
 .door__codein {
   width: 100%;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 14px;
   border: 0;
   background: none;
@@ -446,7 +446,7 @@
 }
 
 .door__go {
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 22px;
   border-radius: 10px;
   border: 0;
@@ -482,7 +482,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 10px;
   border: 1px solid transparent;
   border-radius: 9px;
@@ -575,7 +575,7 @@
 .scheme__opt {
   flex: 1 1 auto;
   min-width: 92px;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 10px 14px;
   border: 1px solid var(--edge);
   border-radius: 10px;

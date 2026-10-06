@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
-import { type Beat, beatsFor, queueDuration } from "../src/logic/events";
+import type { Beat } from "../src/logic/beats/types";
+import { beatsFor, queueDuration } from "../src/logic/events";
 import { describeEvent } from "../src/logic/labels";
 
 const NAMES = ["You", "Edgar AI"];

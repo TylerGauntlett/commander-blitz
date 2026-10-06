@@ -39,7 +39,8 @@
  */
 
 import { type RefObject, useEffect } from "react";
-import { on, padTakesKey, startPad } from "./pad";
+import { padTakesKey } from "./fieldKeys";
+import { on, startPad } from "./pad";
 import { stopRoot } from "./stops";
 
 /**

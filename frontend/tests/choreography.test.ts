@@ -8,8 +8,8 @@
 
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
+import type { Beat, TimedFx } from "../src/logic/beats/types";
 import { planCombat } from "../src/logic/choreography";
-import type { Beat, TimedFx } from "../src/logic/events";
 
 const SILENT = (type: string) =>
   [

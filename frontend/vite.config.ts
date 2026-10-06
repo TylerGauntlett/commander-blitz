@@ -129,7 +129,16 @@ export default defineConfig({
               "src/components/game/OpeningHand.tsx": { statements: 89 },
               "src/components/game/ParticleLayer.tsx": { statements: 92 },
               "src/components/game/StackPanel.tsx": { statements: 99 },
-              "src/components/game/Table.tsx": { statements: 67 },
+              // `Table.tsx` was split (TECH_DEBT ST-04): its gesture routing and
+              // controller verbs moved into hooks, and the uncovered branches went
+              // with them. The floor follows the code, each at its measured value
+              // less the same 2-3 point margin.
+              "src/components/game/Table.tsx": { statements: 89 },
+              "src/components/game/TablePlay.tsx": { statements: 97 },
+              "src/input/useTableGestures.ts": { statements: 56 },
+              "src/input/useTableVerbs.ts": { statements: 64 },
+              "src/input/useFollowUp.ts": { statements: 71 },
+              "src/input/useCardHold.ts": { statements: 82 },
               "src/components/game/ActionPanel.tsx": { statements: 87 },
               "src/components/lobby/InviteDialog.tsx": { statements: 91 },
               "src/components/ui/ControllerPanel.tsx": { statements: 100 },

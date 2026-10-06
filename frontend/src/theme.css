@@ -296,6 +296,13 @@
    * is what pushed its buttons off the edge.
    */
   --type-floor: 16px;
+
+  /*
+   * The hit floor: the smallest box a Deck's thumb can be asked to land on, and
+   * the 44px every `min-height` / `min-width` on a control writes. One number,
+   * named once, rather than a literal repeated through every stylesheet.
+   */
+  --hit-floor: 44px;
   --card-r: calc(var(--card-w) * 0.055);
   --card-h: calc(var(--card-w) * 1.4);
 

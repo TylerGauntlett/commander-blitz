@@ -138,7 +138,7 @@ export const KEYS: Record<string, PadButton> = {
  * ring, cannot rumble, and does not exist at all for the board's cards, which
  * are divs.
  *
- * Not swallowed while somebody is typing -- `pad.ts:fieldKeeps` returns before
+ * Not swallowed while somebody is typing -- `fieldKeys.ts:fieldKeeps` returns before
  * this is consulted, so Enter still commits a name and still submits a code.
  * Every other key in the map is allowed to bubble, because suppressing keys
  * nobody asked us to suppress is how a text field stops working.

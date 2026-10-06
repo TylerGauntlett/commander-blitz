@@ -26,23 +26,28 @@ frontend/src/
 ├── state/       uiStore.ts (zustand), useGame.ts (react-query), usePod.ts,
 │                usePodSession.ts, narration.ts, useImages.ts, useCardBase.ts,
 │                useZoomFit.ts, useHandheld.ts, useHandLift.ts, library.ts,
-│                useTableDerived.ts, useNarrationSkip.ts   - what Table derives
-├── input/       pad.ts, cursor.ts, stops.ts, groups.ts, nav.ts, ring.ts,
-│                buttons.ts, repeat.ts, inputMode.ts       - the controller layer
+│                useTableDerived.ts, useNarrationSkip.ts,
+│                useViewingSeat.ts                         - what Table derives
+├── input/       pad.ts, padRead.ts, fieldKeys.ts, cursor.ts, stops.ts, groups.ts,
+│                nav.ts, ring.ts, buttons.ts, repeat.ts,
+│                inputMode.ts                              - the controller layer
 │                useCursorNav.ts, useDismiss.ts, useTableInput.ts,
-│                useTableRegions.ts, useGroupDial.ts, useOpponentReading.ts
-├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events,
-│                cardArt, cardSize, cardStackGeometry, zoomFit, zones, routes,
+│                useTableRegions.ts, useGroupDial.ts, useOpponentReading.ts,
+│                useTableGestures.ts, useTableVerbs.ts, useCardHold.ts,
+│                useFollowUp.ts
+├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events
+│                (+ beats/), cardArt, cardSize, cardStackGeometry, zoomFit, zones, routes,
 │                autoAttack, autoBlock, choreography, commit, focusGroup,
 │                followUp, mana, removals, verbs, threat, openingHand, ...
-├── fx/          scheduler.ts, actuators.ts, particles.ts, presets.ts
+├── fx/          scheduler.ts, actuators.ts, particles.ts, presets.ts,
+│                useAttackLean.ts
 ├── audio/       sfx.ts                     - the synthesised palette
 ├── motion/      springs.ts                 - every transition in the app
 ├── screens/     HomeRoute, PodRoute, GameRoute, DecksRoute, DeckDossierRoute,
 │                NotFound                   - one per address; App.tsx is the table
 ├── styles/      cards.css, board.css, ui.css, handheld.css, ...  (+ theme.css)
 └── components/
-    ├── game/    Table (+ TableFoot, TableOverlays), PlayerMat, Lane, CardStack,
+    ├── game/    Table (+ TablePlay, TableFoot, TableOverlays), PlayerMat, Lane, CardStack,
     │            Card, CardFace, CardGhost, CardHold, CardPreview, HandFan,
     │            PlayerOrb, CommandZone, OpponentSeat, PhaseTrack,
     │            ActionPanel (+ AttackRows, BlockGroups, PlayRows, XStepper,
@@ -1003,7 +1008,7 @@ The rest of `parameters.automtg`: `ui` seeds the store, `query` pre-loads react-
 lobby story paints its loaded state immediately, `art` picks the card art, `zoomLock` opts
 out of the pinned zoom for the two stories that exercise the solver. Fixtures are in
 `src/testing/` — `fixtures.ts` for the DTOs, `cards.ts` for a real card pool,
-`scenarios.ts` for whole positions, `pods.ts` for lobby states, and `asserts.ts` for
+`scenarios/` for whole positions, `pods.ts` for lobby states, and `asserts.ts` for
 `expectUniqueActionIds`, which is the invariant most worth sharing.
 
 Card art defaults to a deterministic offline stub keyed off the card id. Switch the
@@ -1128,7 +1133,7 @@ reconnects comes back at a higher index.
 Read that way the held pad is never looked at, every button comes back neutral,
 the mode never leaves `mouse`, and **nothing at all happens** — which is
 indistinguishable from the polling loop being dead, and sends the next person to
-debug the loop. So `input/pad.ts` reads *every* connected pad, OR-ing the buttons
+debug the loop. So `input/padRead.ts` reads *every* connected pad, OR-ing the buttons
 and letting the stick pushed hardest win. An idle second device costs nothing and
 cannot shadow the real one.
 
@@ -1139,7 +1144,7 @@ Two more things a real pad does that a synthetic one does not:
   Xbox pad over Bluetooth that XInput did not claim, most third-party pads — it
   hands over the raw HID report order instead, where the d-pad is a **hat axis**
   rather than buttons 12–15 and the face buttons sit at 0/1/3/4 with gaps. `HID`
-  in `pad.ts` is that fallback; without it such a pad has no working directions
+  in `padRead.ts` is that fallback; without it such a pad has no working directions
   at all.
 - **A rAF handle is not proof the loop is alive.** No browser runs rAF for a
   hidden, minimised or occluded window, so a handle taken just before the window

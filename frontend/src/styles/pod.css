@@ -80,7 +80,7 @@
   align-items: center;
   gap: calc(10px * var(--du));
   padding: 0 calc(6px * var(--du)) 0 calc(14px * var(--du));
-  min-height: 44px;
+  min-height: var(--hit-floor);
   border: 1px solid rgb(216 166 60 / 0.3);
   border-radius: calc(9px * var(--du));
   background: rgb(10 8 20 / 0.55);
@@ -343,7 +343,7 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
    a control that looks like a form field on a menu screen is the widget the eye
    goes to, and it is not the thing you came here to do. */
 .chair__field {
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(8px * var(--du));
   border: 1px solid transparent;
   border-radius: calc(7px * var(--du));

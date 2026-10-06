@@ -380,7 +380,7 @@
   gap: calc(14px * var(--mu));
   /* 44px, and it is the box rather than the mark -- the padding is what gets it
      there on a small `--mu`, not the type. */
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: calc(12px * var(--mu)) calc(8px * var(--mu));
   border: 0;
   border-radius: calc(12px * var(--mu));
@@ -446,7 +446,7 @@
 .mull__ask {
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   margin: 0;
   color: var(--text);
   font-size: max(var(--type-floor), calc(20px * var(--mu)));

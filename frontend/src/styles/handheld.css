@@ -1409,8 +1409,8 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .act,
 [data-handheld] .link,
 [data-handheld] .btn--ghost {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--hit-floor);
+  min-height: var(--hit-floor);
 }
 
 [data-handheld] .tools {
@@ -1727,7 +1727,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .sel,
 [data-handheld] .search__i,
 [data-handheld] .field__input {
-  min-height: 44px;
+  min-height: var(--hit-floor);
 }
 
 /*
@@ -1769,8 +1769,8 @@ html[data-input="keyboard"] .hints {
      beside it grew too -- but nothing like the box it is centred in. */
   --ibtn-dot: 22px;
 
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--hit-floor);
+  min-height: var(--hit-floor);
 }
 
 /*
@@ -1783,8 +1783,8 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .peek button,
 [data-handheld] .cat button,
 [data-handheld] .dos button {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--hit-floor);
+  min-height: var(--hit-floor);
   font-size: var(--type-floor);
 }
 
@@ -1807,7 +1807,7 @@ html[data-input="keyboard"] .hints {
  * The last one the gate found, on a surface that only exists in this layout.
  */
 [data-handheld] .rail__title--button {
-  min-height: 44px;
+  min-height: var(--hit-floor);
 }
 
 /*
@@ -1823,7 +1823,7 @@ html[data-input="keyboard"] .hints {
   display: none;
   align-items: center;
   gap: 6px;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 6px 12px;
   border: 1px solid var(--edge);
   border-radius: 9px;

@@ -310,7 +310,7 @@ were wrong in the first draft:
 - **`useCursorNav` is mounted by `Screen`, not by the board.** A story rendering
   `Table` alone presses `A` at nothing at all, and every direction with it. The
   journey stories mount the hook the way the app does, which is also why
-  `Table.stories.tsx` says `A` and the directions are `e2e/pad.spec.ts`'s to own.
+  `TablePad.stories.tsx` says `A` and the directions are `e2e/pad.spec.ts`'s to own.
 
 ## Card art has its own gates
 

@@ -195,7 +195,7 @@ export const ViewerHandheld: Story = {
     await canvas.findAllByText("Forest");
     // Type and targets only. The card width here is the fixture's fixed
     // `cardScale`, not the zoom solver's answer; the 96px card floor is
-    // asserted where the solver runs, in `Table.stories.tsx`.
+    // asserted where the solver runs, in `TableHandheld.stories.tsx`.
     expectFontFloor(canvasElement);
     expectHitFloor(canvasElement);
   },

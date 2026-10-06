@@ -329,7 +329,7 @@
   align-items: center;
   justify-content: center;
   gap: calc(8px * var(--du));
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(16px * var(--du));
   border: 1px solid var(--edge-hi, rgb(255 224 138 / 0.22));
   border-radius: calc(9px * var(--du));
@@ -388,7 +388,7 @@
 /* A control that is a mark rather than a word -- copy, close, remove. Square,
    at the hit floor, so a row of them reads as one strip of chrome. */
 .key--mark {
-  min-width: 44px;
+  min-width: var(--hit-floor);
   padding: 0;
   font-size: max(var(--type-floor), calc(17px * var(--du)));
 }
