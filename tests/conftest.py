@@ -1,10 +1,9 @@
 """Shared test fixtures.
 
 :class:`GameBuilder` -- the exact-position builder most rules tests start from --
-now lives in ``automtg.engine.sandbox`` and is re-exported here, because the
-card-authoring verifier needs it too and production code must not import from
-the test suite. Every test that does ``from tests.conftest import GameBuilder``
-keeps working.
+lives in ``automtg.engine.sandbox``, because the card-authoring verifier needs
+it too and production code must not import from the test suite. Import it from
+there; this module uses it only for the ``builder`` fixture.
 """
 
 from __future__ import annotations

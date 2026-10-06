@@ -26,9 +26,9 @@ from automtg.engine.events import EventType
 from automtg.engine.game import Game
 from automtg.engine.objects import PLUS_ONE
 from automtg.engine.primitives import add_counters, lose_life
+from automtg.engine.sandbox import GameBuilder
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
-from tests.conftest import GameBuilder
 
 EXPECTATIONS_PATH = Path(__file__).resolve().parent / "expectations.json"
 
