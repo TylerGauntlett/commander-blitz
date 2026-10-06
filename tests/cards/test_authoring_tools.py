@@ -193,7 +193,8 @@ class TestAuditCard:
 @pytest.mark.skipif(not catalog_path().exists(), reason="no card catalog")
 class TestAuditAgainstTheCatalog:
     @pytest.fixture(scope="class")
-    def index(self):
+    @classmethod
+    def index(cls):
         index = load_index()
         if index is None:
             pytest.skip("no card catalog")
