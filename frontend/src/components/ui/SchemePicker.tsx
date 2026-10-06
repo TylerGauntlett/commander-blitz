@@ -9,10 +9,18 @@
  * Enter and Esc. The heuristic catches the common shape of that; a preference
  * catches the rest, and is the only thing that cannot be wrong.
  *
- * Native `<button>`s, so `input/stops.ts` picks them up as stops with no
- * registration and the picker is reachable by the very controller it is there to
- * fix. That is not a detail: a control-scheme setting you can only reach with a
- * working control scheme is furniture.
+ * Native `<button>`s, so on the front door `input/stops.ts` picks them up as
+ * stops with no registration and the picker is reachable by the very controller
+ * it is there to fix. That is not a detail: a control-scheme setting you can
+ * only reach with a working control scheme is furniture.
+ *
+ * BUT ONLY ON A SURFACE THAT DECLARES NOTHING. `stopsIn` takes a surface that
+ * declares even one `data-stop` at its word and gives it no fallback, and the
+ * board's settings menu is one -- so there the four buttons were unreachable
+ * (TECH_DEBT FB-12) while this comment said otherwise. `stops` gives them
+ * declared ids for that host. It is a prop rather than always-on because the
+ * opposite holds on the door: one declared stop there would switch the
+ * fallback off for every other control on the screen.
  *
  * It subscribes, because unlike a `Glyph` this is one small component that has
  * to redraw when the mode resolves differently -- including when the heuristic
@@ -27,6 +35,7 @@ import {
   setScheme,
   subscribeInputMode,
 } from "../../input/inputMode";
+import { stopId } from "../../input/stops";
 
 /**
  * The four, in the order a confused player reads them.
@@ -43,7 +52,12 @@ const OPTIONS: { id: SchemePref; label: string; hint: string }[] = [
   { id: "mouse", label: "Mouse", hint: "No button hints at all" },
 ];
 
-export function SchemePicker() {
+interface Props {
+  /** Declare `tool:scheme-<id>` stops, for a host that declares its own. */
+  stops?: boolean;
+}
+
+export function SchemePicker({ stops = false }: Props = {}) {
   // Both are module state; this is the supported way to read a value React does
   // not own without tearing during a concurrent render.
   const scheme = useSyncExternalStore(
@@ -64,6 +78,7 @@ export function SchemePicker() {
             aria-checked={scheme === option.id}
             className={scheme === option.id ? "scheme__opt scheme__opt--on" : "scheme__opt"}
             onClick={() => setScheme(option.id)}
+            data-stop={stops ? stopId.tool(`scheme-${option.id}`) : undefined}
             data-testid={`scheme-${option.id}`}
             data-hint={option.hint}
           >

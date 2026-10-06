@@ -610,6 +610,51 @@ test.describe("the tools footer", () => {
       .catch(() => {});
     await expect(page.getByTestId("settings-menu")).toHaveCount(0);
 
+    /*
+     * 23. And the controller can use it (TECH_DEBT FB-12). The open menu is a
+     *     modal to the ring: opening it puts the ring on its first item, no
+     *     direction leaves it -- the scheme picker included, which used to have
+     *     no stops at all -- and `B` (Escape is `B`) closes it and puts the
+     *     ring back on the gear. Opened with the mouse here, because which
+     *     direction reaches the gear from wherever the ring starts depends on
+     *     the board; everything after the click is the keyboard's.
+     */
+    const ringAt = () =>
+      page.evaluate(
+        () => document.querySelector("[data-cursor]")?.getAttribute("data-stop") ?? null,
+      );
+    await page.getByTestId("settings").click();
+    await expect(page.getByTestId("settings-menu")).toBeVisible();
+    await expect.poll(ringAt).toBe("tool:mute");
+    const walked = new Set<string>();
+    for (const key of [
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+    ]) {
+      await page.keyboard.press(key);
+      // The pad loop reads the key on its next frame; a wall changes nothing,
+      // so there is no change to poll for -- wait the frames out instead.
+      await page.evaluate(
+        () => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))),
+      );
+      const at = await ringAt();
+      expect(at, `${key} took the ring out of the menu`).not.toBeNull();
+      const inside = await page.evaluate(
+        (stop) => document.querySelector(`.settings__menu [data-stop="${stop}"]`) !== null,
+        at,
+      );
+      expect(inside, `${key} took the ring to ${at}, outside the menu`).toBe(true);
+      walked.add(at as string);
+    }
+    expect([...walked].some((stop) => stop.startsWith("tool:scheme-"))).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("settings-menu")).toHaveCount(0);
+    await expect.poll(ringAt).toBe("tool:settings");
+
     // The speed selector used to be checked here too. It is gone: it took a
     // third of the strip's width, which is what pushed quit off the end, and a
     // per-player animation speed is a confusing thing to offer in a game other

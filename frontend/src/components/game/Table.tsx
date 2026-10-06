@@ -168,6 +168,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const viewingPid = useUiStore((s) => s.viewingPid);
   const setViewing = useUiStore((s) => s.setViewing);
   const toggleLogOverlay = useUiStore((s) => s.toggleLogOverlay);
+  const settingsOpen = useUiStore((s) => s.settingsOpen);
+  const setSettingsOpen = useUiStore((s) => s.setSettingsOpen);
   const peek = useUiStore((s) => s.peek);
   const hover = useUiStore((s) => s.hover);
   const hoveredOid = useUiStore((s) => s.hoveredOid);
@@ -702,6 +704,14 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         setHeldCard(null);
         return true;
       }
+      // The settings menu, next: a popover the player opened from the tool
+      // strip a moment ago, and a `data-modal-root` while it is up, so the
+      // ring is inside it with nowhere else to go. `SettingsMenu` puts the
+      // ring back on the gear once it has gone.
+      if (settingsOpen) {
+        setSettingsOpen(false);
+        return true;
+      }
       // The log overlay is the outermost thing that can be open, and it traps
       // the ring while it is. A panel you can open with one button and cannot
       // close with the button that means "back" is worse than no panel: the
@@ -739,6 +749,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     dialOpen,
     setDialOpen,
     heldCard,
+    settingsOpen,
+    setSettingsOpen,
     logOverlay,
     toggleLogOverlay,
     peek,

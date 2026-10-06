@@ -11,7 +11,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
-import { getCursor, setCursor } from "../../input/cursor";
+import { getCursor, moveCursor, setCursor } from "../../input/cursor";
 import { groupOf, groupRoot, landableStopsIn, setGroup } from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
@@ -1100,5 +1100,71 @@ export const HandheldRegionDial: Story = {
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="group-dial"]')).toBeNull();
     });
+  },
+};
+
+/**
+ * The settings menu is a modal to the ring, and `B` is its way out.
+ *
+ * TECH_DEBT FB-12. On a handheld the tool strip is portaled into the foot,
+ * which belongs to none of the regions, and the open menu used to be no modal
+ * either -- so every direction pressed inside it was free to leave across the
+ * board, `B` went down the unwind ladder and cancelled something else, and the
+ * control-scheme picker (the setting that exists to rescue a controller) had
+ * no stops at all.
+ *
+ * Directions through `moveCursor` rather than the arrow keys, for the reason
+ * the stories above give: `useCursorNav` binds those and is mounted by
+ * `Screen`. `B` IS the board's, and is pressed for real.
+ */
+export const HandheldSettingsMenu: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    setGroup(null);
+    expect(setCursor("tool:settings"), "the gear is reachable").toBe(true);
+    await userEvent.click(canvas.getByTestId("settings"));
+    const menu = await canvas.findByTestId("settings-menu");
+    expect(menu.hasAttribute("data-modal-root")).toBe(true);
+
+    // Opening it put the ring on its first item.
+    await waitFor(() => expect(getCursor()).toBe("tool:mute"));
+
+    // Every direction stays inside, however many times it is pressed, and the
+    // walk passes through the scheme picker on the way.
+    const visited = new Set<string>();
+    for (const dir of [
+      "down",
+      "down",
+      "down",
+      "down",
+      "right",
+      "up",
+      "up",
+      "up",
+      "up",
+    ] as const) {
+      moveCursor(dir);
+      const at = getCursor();
+      expect(at, "the ring went out").not.toBeNull();
+      expect(
+        menu.querySelector(`[data-stop="${at}"]`),
+        `${at} is outside the open menu`,
+      ).not.toBeNull();
+      visited.add(at as string);
+    }
+    expect([...visited].some((id) => id.startsWith("tool:scheme-"))).toBe(true);
+
+    // `B` (Escape on a keyboard) closes it, and the ring is back on the gear.
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="settings-menu"]')).toBeNull();
+    });
+    await waitFor(() => expect(getCursor()).toBe("tool:settings"));
   },
 };
