@@ -118258,13 +118258,13 @@
               "count": 3,
               "id": "t1",
               "kind": "permanent",
-              "optional": true,
               "selector": {
                 "not_types": [
                   "Creature"
                 ],
                 "zone": "battlefield"
-              }
+              },
+              "up_to": true
             }
           ],
           "text": "When this creature enters, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller creates a 3/3 green Elephant creature token.",

@@ -36,6 +36,8 @@ interface Props {
   logOverlay: boolean;
   toggleLogOverlay: () => void;
   act: (actionId: string) => void;
+  /** Commit a pick-several decision as one set of option ordinals. */
+  choose: (choices: number[]) => void;
   locked: boolean;
   /** How each card in a graveyard or exile pile got there, by oid. */
   removals: Map<number, string>;
@@ -58,6 +60,7 @@ export function TableOverlays({
   logOverlay,
   toggleLogOverlay,
   act,
+  choose,
   locked,
   removals,
   onRematch,
@@ -121,7 +124,13 @@ export function TableOverlays({
         </div>
       )}
 
-      <PromptDialog state={state} actions={actions} onAct={act} disabled={locked} />
+      <PromptDialog
+        state={state}
+        actions={actions}
+        onAct={act}
+        onChoose={choose}
+        disabled={locked}
+      />
       <OpeningHand state={state} actions={actions} onAct={act} disabled={locked} />
       <ZonePeek state={state} reasons={removals} />
       <GameOverScreen state={state} onRematch={onRematch} onQuit={onQuit} />

@@ -30,6 +30,7 @@ from .costs import (
     sources_by_controller,
 )
 from .enums import Zone
+from .game import FREE_MULLIGANS, MAX_MULLIGANS
 from .legality import unplayable_reason
 from .text_change import displayed as displayed_text
 
@@ -239,6 +240,10 @@ def _player(
         # went back for a new hand is public at a real table, and it is the
         # first thing a pod knows about each other.
         "mulligans_taken": player.mulligans_taken,
+        # The rules the lamps are drawn against, sent rather than copied so the
+        # screen cannot say "keep 6" for a mulligan the engine gives away free.
+        "mulligans_free": FREE_MULLIGANS,
+        "mulligans_max": MAX_MULLIGANS,
         # Hidden zones are counts for everyone; only the viewer sees their own hand.
         "library_count": len(player.library),
         # The top card, if this seat may see it at all -- `None` otherwise, so

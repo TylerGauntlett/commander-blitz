@@ -589,6 +589,12 @@ def phase_out(
     if obj is None or oid not in state.battlefield:
         return
     state.battlefield.remove(oid)
+    # 506.4: a permanent that phases out is removed from combat. Without this a
+    # creature phased out after blocks (Clever Concealment as a combat trick)
+    # still dealt and was dealt combat damage -- and the damage, marked on a
+    # permanent nothing could see, killed it the moment it phased back in.
+    if state.combat is not None:
+        state.combat.remove(oid)
     obj.phased_out = True
     obj.phased_out_indirectly = indirect
     obj.phased_out_by = by
@@ -940,6 +946,8 @@ def advance(state: GameState) -> None:
     state.empty_all_mana_pools(
         None if state.step is Step.CLEANUP else state.turn
     )
+    # The after-resolution stop belongs to the step it happened in.
+    state.just_resolved = False
     state.emit(EventType.STEP_ENDED, step=state.step.name)
 
     nxt = next_step(state)

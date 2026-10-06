@@ -89,11 +89,16 @@ test.describe("the table renders and plays", () => {
     await waitForOurTurn(page);
 
     const stage = page.getByTestId("opening-hand");
-    await page.locator('[data-action-kind="mulligan"]').first().click();
+    const mullButton = page.locator('[data-action-kind="mulligan"]').first();
+    await expect(mullButton).toContainText("Free");
+    await mullButton.click();
     await expect(stage).toBeVisible();
 
-    // One lamp is spent, which is the count the engine had never sent before.
+    // One lamp is spent, which is the count the engine had never sent before --
+    // and it is the free lamp, so the button no longer offers a free one.
     await expect(stage.locator(".mull__lamp[data-spent]")).toHaveCount(1);
+    await expect(stage.locator(".mull__lamp[data-spent][data-free]")).toHaveCount(1);
+    await expect(mullButton).not.toContainText("Free");
 
     // The first was free; the second is the one that costs a card.
     await page.locator('[data-action-kind="mulligan"]').first().click();

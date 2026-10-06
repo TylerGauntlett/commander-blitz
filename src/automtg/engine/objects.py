@@ -1081,6 +1081,12 @@ class GameObject:
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
+        # A phased-out permanent that changes zones anyway (a player leaving the
+        # game takes it along) is a new object, and must not arrive on its next
+        # battlefield still flagged -- the untap walk would "phase in" a recast
+        # commander a second time and list it on the battlefield twice.
+        self.phased_out = False
+        self.phased_out_indirectly = False
         self.phased_out_by = None
         self.chosen_type = None
         self.chosen_card_type = None

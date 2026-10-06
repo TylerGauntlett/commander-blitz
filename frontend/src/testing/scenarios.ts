@@ -453,6 +453,45 @@ export function crowdedBoard(): Scenario {
   return { state, actions: [pass], events: [] };
 }
 
+/**
+ * Four distinct artifacts and enchantments in a four-player pod.
+ *
+ * The Steam Deck playtest board: the global lane is a third of the front band,
+ * two cards wide at handheld size, so the third card used to start a second
+ * row and push the lands and the viewer's own seat off the screen. Distinct
+ * cards on purpose -- duplicates collapse into one counted pile and would not
+ * crowd the lane at all.
+ */
+export function fullGlobalLane(): Scenario {
+  const battlefield = [
+    pool.thragtusk({ oid: 1101, summoning_sick: false }),
+    pool.serraAngel({ oid: 1102, summoning_sick: false }),
+    pool.grizzlyBears({ oid: 1103, summoning_sick: false }),
+    pool.solRing({ oid: 1104 }),
+    pool.mindStone({ oid: 1105 }),
+    pool.mindStone({ oid: 1106, card_id: "arcane_signet", name: "Arcane Signet" }),
+    pool.rhysticStudy({ oid: 1107 }),
+    pool.plains({ oid: 1108 }),
+    pool.swamp({ oid: 1110, controller: 1, owner: 1 }),
+    pool.mountain({ oid: 1120, controller: 2, owner: 2 }),
+    pool.island({ oid: 1130, controller: 3, owner: 3 }),
+  ];
+
+  const state = gameView({
+    turn: 5,
+    round: 5,
+    players: [
+      you({ hand: [pool.cultivate({ oid: 1140, zone: "hand" })] }, battlefield),
+      opponent(1, "AI 1"),
+      opponent(2, "AI 2"),
+      opponent(3, "AI 3"),
+    ],
+    battlefield,
+  });
+
+  return { state, actions: [pass], events: [] };
+}
+
 /** A creature wearing an Aura and an Equipment: the tucked-attachment path. */
 export function withAttachments(): Scenario {
   const host = pool.serraAngel({ oid: 801, summoning_sick: false });
@@ -549,13 +588,13 @@ function openingSeven() {
  * grey rectangles. `OpeningHand` does not read the options at all; it draws
  * `players[seat].hand`, which the server sends in full to the seat being asked.
  */
-export function mulligan(): Scenario {
+export function mulligan(taken = 0): Scenario {
   const hand = openingSeven();
 
   const state = gameView({
     step: "UNTAP",
     phase: "beginning",
-    players: [you({ hand }), opponent(1, "AI 1")],
+    players: [{ ...you({ hand }), mulligans_taken: taken }, opponent(1, "AI 1")],
     pending: pending({ kind: "mulligan", prompt: "Keep this hand?" }),
   });
 
@@ -575,7 +614,8 @@ export function mulligan(): Scenario {
 }
 
 /**
- * The second half: one mulligan taken, so one card goes to the bottom.
+ * The second half: two mulligans taken, the first free, so one card goes to
+ * the bottom.
  *
  * A different decision KIND from the first half -- `choose_objects`, raised by
  * `ask_objects` -- and the only thing that tells it apart from every other
@@ -584,25 +624,26 @@ export function mulligan(): Scenario {
  * real payload here is the point of the fixture: these options DO carry refs and
  * faces, where the first half's carry neither.
  *
- * `taken` also drives the lamps, and it is `min_count` -- a London mulligan
- * bottoms exactly as many cards as you have taken. `selected` is what the engine
+ * `bottom` is `min_count`, and the lamps show one more than that taken: a
+ * London mulligan bottoms one card per mulligan, less the free one
+ * (`FREE_MULLIGANS` in `engine/game.py`). `selected` is what the engine
  * has already banked, which is the half of this decision a single pick cannot
  * show: on two, the screen has to say how many are still wanted.
  */
-export function mulliganBottom(taken = 1, selected: number[] = []): Scenario {
+export function mulliganBottom(bottom = 1, selected: number[] = []): Scenario {
   const hand = openingSeven();
   const state = gameView({
     step: "UNTAP",
     phase: "beginning",
     players: [
-      { ...you({ hand }), mulligans_taken: taken },
+      { ...you({ hand }), mulligans_taken: bottom + 1 },
       { ...opponent(1, "AI 1"), mulligans_taken: 0 },
     ],
     pending: pending({
       kind: "choose_objects",
-      prompt: `Put ${taken} card(s) on the bottom of your library`,
-      min_count: taken,
-      max_count: taken,
+      prompt: `Put ${bottom} card(s) on the bottom of your library`,
+      min_count: bottom,
+      max_count: bottom,
       options: hand.map((c) => ({
         label: c.name,
         ref: { kind: "object", id: c.oid },
@@ -698,6 +739,62 @@ export function chooseTarget(): Scenario {
         targets: [{ kind: "object", id: c.oid }],
       }),
     ),
+    events: [],
+  };
+}
+
+/**
+ * "Exile up to two target artifacts and/or enchantments" -- Angel of the Ruins.
+ *
+ * Both sides of the table, in the engine's order (an opponent's first), so the
+ * dialog has to put yours back in front. `Done` is legal because "up to"
+ * allows none.
+ */
+export function chooseSeveralTargets(): Scenario {
+  const battlefield = [
+    pool.rhysticStudy({ oid: 811, controller: 1, owner: 1 }),
+    pool.solRing({ oid: 801 }),
+    pool.solRing({ oid: 812, controller: 1, owner: 1 }),
+    pool.rhysticStudy({ oid: 802 }),
+  ];
+  const options = battlefield.map((c, i) =>
+    decisionOption({ label: c.name, ref: { kind: "object", id: c.oid }, value: i }),
+  );
+
+  const state = gameView({
+    players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
+    battlefield,
+    pending: pending({
+      kind: "choose_objects",
+      prompt:
+        "Choose targets for Angel of the Ruins: When this creature enters, exile up to two target artifacts and/or enchantments.",
+      options,
+      min_count: 0,
+      max_count: 2,
+      context: { purpose: "target", source_name: "Angel of the Ruins" },
+    }),
+  });
+
+  return {
+    state,
+    actions: [
+      ...battlefield.map((c, i) =>
+        action({
+          id: `a${i}-choose`,
+          kind: "choose",
+          label: c.name,
+          base_label: c.name,
+          choice: i,
+          targets: [{ kind: "object", id: c.oid }],
+        }),
+      ),
+      action({
+        id: "a4-finish_declaration",
+        kind: "finish_declaration",
+        label: "Done",
+        base_label: "Done",
+      }),
+    ],
     events: [],
   };
 }

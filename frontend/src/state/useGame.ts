@@ -279,6 +279,15 @@ export function useGame(session: GameSession | null) {
     onError: (error: Error) => setError(error.message),
   });
 
+  const choose = useMutation({
+    mutationFn: async (choices: number[]) => {
+      if (!session) throw new Error("no game");
+      return api.choose(session.gameId, seatOf(session), choices, 1);
+    },
+    onSuccess: humanAbsorb,
+    onError: (error: Error) => setError(error.message),
+  });
+
   const undo = useMutation({
     mutationFn: async () => {
       if (!session) throw new Error("no game");
@@ -411,7 +420,8 @@ export function useGame(session: GameSession | null) {
     if (!aiThinking) setTakeover(false);
   }, [aiThinking]);
 
-  const busy = act.isPending || declare.isPending || undo.isPending || pump.isPending;
+  const busy =
+    act.isPending || declare.isPending || choose.isPending || undo.isPending || pump.isPending;
 
   // The pump. Deliberately waits for the narration queue so the animation of
   // the last decision finishes before the next one is requested.
@@ -537,6 +547,7 @@ export function useGame(session: GameSession | null) {
     cardName: lookup,
     act,
     declare,
+    choose,
     undo,
     setFullControl,
     setManualMana,

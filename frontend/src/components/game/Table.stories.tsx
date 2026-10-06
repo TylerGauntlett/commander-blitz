@@ -563,6 +563,45 @@ export const HandheldModalDecision: Story = {
 };
 
 /**
+ * Four artifacts and enchantments on a Steam Deck: the lane fans, it does not wrap.
+ *
+ * The playtest board. The global lane is a third of the front band, and the
+ * third card in it used to start a second row -- the front band grew a card
+ * taller and pushed the lands and the viewer's own seat off the bottom of the
+ * screen. Now the lane overlaps its cards on one row, so the board fits and
+ * nothing in the viewer's seat has scrolled away.
+ */
+export const HandheldFullGlobalLane: Story = {
+  args: board(scenarios.fullGlobalLane()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    const global = await canvas.findByTestId("lane-0-Artifacts-Enchantments");
+    await waitFor(() => {
+      const tops = [...global.querySelectorAll<HTMLElement>(".cardstack")].map(
+        (el) => el.getBoundingClientRect().top,
+      );
+      expect(tops).toHaveLength(4);
+      // One row: every stack starts at the same height.
+      expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(1);
+    });
+    const mine = canvasElement.querySelector<HTMLElement>(".play__mine");
+    const side = canvasElement.querySelector<HTMLElement>(".play__mine .mat__side");
+    expect(mine && side).toBeTruthy();
+    if (!mine || !side) return;
+    // The seat's foot -- life, library, graveyard -- is inside the visible board.
+    expect(side.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      mine.getBoundingClientRect().bottom + 1,
+    );
+    expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
+  },
+};
+
+/**
  * A board with more permanents than the screen can hold, so the mat scrolls.
  *
  * `.play__mine` is exempted from the fit check here, and it is the one place

@@ -421,3 +421,54 @@ class TestSeeding:
     def test_an_explicit_seed_still_reproduces(self, client):
         """The fix must not cost reproducibility -- golden replays need it."""
         assert self._hand(client, {"seed": 4242}) == self._hand(client, {"seed": 4242})
+
+
+class TestChooseSeveral:
+    """A pick-several decision answered with the whole set at once.
+
+    The London mulligan's "put N on the bottom" is the multi-pick a fresh game
+    reaches without luck: three mulligans (the first is free) bottoms two.
+    """
+
+    @staticmethod
+    def _to_bottoming(client) -> tuple[str, dict]:
+        body = new_game(client)
+        game_id, state, actions = body["game_id"], body["state"], body["actions"]
+        for _ in range(10):
+            pending = state.get("pending") or {}
+            if pending.get("kind") == "choose_objects":
+                return game_id, pending
+            mulligans = [a for a in actions if a["kind"] == "mulligan"]
+            taken = state["players"][0].get("mulligans_taken", 0)
+            want = mulligans if mulligans and taken < 3 else [a for a in actions if a["kind"] == "keep"]
+            payload = client.post(
+                f"/api/games/{game_id}/actions", json={"seat": 0, "action_id": want[0]["id"]}
+            ).json()
+            state, actions = payload["state"], payload["actions"]
+        raise AssertionError("never reached the bottoming decision")
+
+    def test_the_whole_set_is_applied(self, client):
+        game_id, pending = self._to_bottoming(client)
+        assert pending["min_count"] == pending["max_count"] == 2
+        response = client.post(
+            f"/api/games/{game_id}/choose", json={"seat": 0, "choices": [3, 0]}
+        )
+        assert response.status_code == 200, response.text
+        after = response.json()["state"].get("pending") or {}
+        assert after.get("kind") != "choose_objects"
+
+    def test_a_repeated_option_is_a_400(self, client):
+        game_id, _ = self._to_bottoming(client)
+        response = client.post(
+            f"/api/games/{game_id}/choose", json={"seat": 0, "choices": [1, 1]}
+        )
+        assert response.status_code == 400
+        assert "more than once" in response.json()["detail"]
+
+    def test_the_wrong_number_is_a_400_and_applies_nothing(self, client):
+        game_id, _ = self._to_bottoming(client)
+        response = client.post(f"/api/games/{game_id}/choose", json={"seat": 0, "choices": [1]})
+        assert response.status_code == 400
+        state = client.get(f"/api/games/{game_id}/state", params={"seat": 0, "timeout": 0}).json()["state"]
+        assert state["pending"]["kind"] == "choose_objects"
+        assert state["pending"]["selected"] == []

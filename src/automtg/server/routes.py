@@ -26,6 +26,7 @@ from .schemas import (
     CardResponse,
     CatalogCardDTO,
     CatalogResponse,
+    ChooseRequest,
     DeckDetail,
     DeckImportResponse,
     DeckSummary,
@@ -599,6 +600,24 @@ def declare(
         since = len(session.game.state.events)
         try:
             session.declare(body.seat, body.kind, body.pairs, ai_steps=ai_steps)
+        except IllegalActionError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+        return _state_response(session, body.seat, since)
+
+
+@router.post("/games/{game_id}/choose", response_model=StateResponse)
+def choose(
+    request: Request,
+    game_id: str,
+    body: ChooseRequest,
+    ai_steps: int | None = _AI_STEPS,
+) -> StateResponse:
+    session = _session(request, game_id)
+    _authorise(request, session, body.seat)
+    with session._lock:
+        since = len(session.game.state.events)
+        try:
+            session.choose(body.seat, body.choices, ai_steps=ai_steps)
         except IllegalActionError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from None
         return _state_response(session, body.seat, since)

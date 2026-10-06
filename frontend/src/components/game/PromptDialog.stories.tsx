@@ -22,7 +22,7 @@ const meta = {
   title: "Game/PromptDialog",
   component: PromptDialog,
   parameters: { automtg: { mount: "screen" } },
-  args: { onAct: fn(), disabled: false },
+  args: { onAct: fn(), onChoose: fn(), disabled: false },
 } satisfies Meta<typeof PromptDialog>;
 
 export default meta;
@@ -106,6 +106,23 @@ export const DiscardToHandSize: Story = {
   },
 };
 
+/** "Up to two target artifacts and/or enchantments": cards to toggle, then Confirm. */
+export const ChooseSeveralTargets: Story = {
+  args: {
+    state: scenarios.chooseSeveralTargets().state,
+    actions: scenarios.chooseSeveralTargets().actions,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const grid = await canvas.findByTestId("pick-several");
+    const toggles = within(grid).getAllByRole("button");
+    await userEvent.click(toggles[0]);
+    await userEvent.click(toggles[3]);
+    await userEvent.click(canvas.getByTestId("pick-confirm"));
+    expect(args.onChoose).toHaveBeenCalledTimes(1);
+  },
+};
+
 export const ChooseTarget: Story = {
   args: { state: scenarios.chooseTarget().state, actions: scenarios.chooseTarget().actions },
   play: async ({ canvasElement, args }) => {
@@ -113,8 +130,8 @@ export const ChooseTarget: Story = {
     await canvas.findByTestId("prompt-dialog");
     // An option that names a permanent draws as a real card, not a bare label.
     expect(canvasElement.querySelector('[data-card-name="Serra Angel"]')).not.toBeNull();
-    // Clicked by id: the option renders the name twice, once on the card face
-    // and once as the caption under it, so the text is not a unique handle.
+    // Clicked by id: the name is on the card face, and the face is not the
+    // only text in the dialog, so the text is not a unique handle.
     await userEvent.click(
       canvasElement.querySelector('[data-action-id="a1-choose"]') as HTMLElement,
     );

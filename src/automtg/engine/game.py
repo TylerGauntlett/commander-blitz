@@ -1528,6 +1528,7 @@ class Game:
         state.passes_in_row = 0
         if state.stack:
             state.priority_idx = state.active_idx
+            state.just_resolved = True
             self._run(stack.resolve_top(state))
         else:
             state.priority_idx = None
@@ -1725,6 +1726,13 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     if not player.auto_pass or player.full_control:
         return False
     if state.stack:
+        return False
+    # The window right after a resolution. The stop above shows the creature
+    # spell while it is on the stack, where removal cannot target it; this is
+    # the one where it can, before the step moves on. Without it mana held up
+    # on an opponent's turn could only ever answer their spells, never the
+    # permanents those spells became.
+    if state.just_resolved:
         return False
     if state.step in ALWAYS_STOP_STEPS:
         return False

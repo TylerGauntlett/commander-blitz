@@ -444,6 +444,9 @@ export function useZoomFit(args: {
       bandsFor(footprintsFor(state, state.seat, actionableOids), viewerLanesW, {
         hideEmpty: false,
         labels: viewerMat.labels,
+        // A handheld board overlaps a full lane rather than wrapping it, so a
+        // fourth artifact does not add a row (`handheld.css`, `.lane__cards`).
+        overlap: handheld,
       }),
       {
         heightPx: lanesHeightIn(measured.mineH, viewerMat),
