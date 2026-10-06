@@ -18,7 +18,7 @@ resolved (`CG-01`–`CG-06`, `FT-03`, `FT-05`, `FT-06`, `FB-08`, `DC-01`, `LP-*`
 2. **Stop the bleeding:** CD-03 (answers re-applied on every collect), RS-02 (CI minutes),
    CD-02 (token path).
 3. **Structural:** CD-01 (one card layer), ST-01 (shims), RS-01 (repo size), OF-01.
-4. **Defects:** FB-02, FB-12, FB-13, FT-04, FT-07, one PR each.
+4. **Defects:** FB-12, FB-13, FT-04, FT-07, one PR each.
 
 ---
 
@@ -276,7 +276,6 @@ code. Fix them in their own PRs.
 
 | ID | Defect | Where | Pinned by |
 |---|---|---|---|
-| FB-02 | Action ids are positional and unversioned (`a{index}-{kind}`), so a click against a stale action list reads as invalid (`400: unknown action id`) | `server/sessions.py:240-241` | — |
 | FB-12 | Settings popover is unreachable or escapable by the controller: there is no `data-modal-root` and no `B` binding | `components/game/SettingsMenu.tsx:4-9` | the comment there |
 | FB-13 | The commander shows "Ready" only while the pointer is over the orb | `components/game/CommandZone.tsx` | `frontend/tests/commandZone.test.tsx:218` (`it.fails`) |
 | FT-04 | The viewer's battlefield bands drift 9–41px as permanents enter, against a 6px budget | `frontend/e2e/layout.spec.ts:279` | conditional `test.fail` |

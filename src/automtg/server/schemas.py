@@ -55,6 +55,12 @@ class LegalActionDTO(BaseModel):
 class ApplyActionRequest(BaseModel):
     seat: int
     action_id: str
+    #: The ``version`` of the state response ``action_id`` was read from.
+    #: Action ids are positional, so they only mean something against the list
+    #: they came from; with this the server can tell a click on a list it has
+    #: since replaced (409 ``stale_action``) from a bad id (400).  Optional so a
+    #: script or an older client keeps working.
+    version: int | None = None
 
 
 class DeclareRequest(BaseModel):

@@ -40,7 +40,7 @@ from .schemas import (
     OptionsRequest,
     StateResponse,
 )
-from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry
+from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry, StaleActionError
 
 router = APIRouter(prefix="/api")
 
@@ -581,7 +581,22 @@ def apply_action(
     with session._lock:
         since = len(session.game.state.events)
         try:
-            session.apply_action_id(body.seat, body.action_id, ai_steps=ai_steps)
+            session.apply_action_id(
+                body.seat, body.action_id, version=body.version, ai_steps=ai_steps
+            )
+        except StaleActionError as exc:
+            # Not the player's mistake: they clicked a list the game had already
+            # moved past (a double click, a click racing its own response).  A
+            # 409 with a code, so the client can quietly fetch the current list
+            # instead of toasting an error about an id nobody chose to type.
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "stale_action",
+                    "detail": str(exc),
+                    "version": session.version,
+                },
+            ) from None
         except IllegalActionError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from None
         return _state_response(session, body.seat, since)

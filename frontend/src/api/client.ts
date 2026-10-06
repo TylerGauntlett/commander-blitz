@@ -190,10 +190,27 @@ export const api = {
     return request<StateResponse>(`/games/${gameId}/state?${params}`, { signal });
   },
 
-  applyAction: (gameId: string, seat: number, actionId: string, aiSteps?: number) =>
+  /**
+   * Take one of the offered actions.
+   *
+   * `version` is the `version` of the response the action list came from.
+   * Action ids are positional (`a1-play_land` is "the second thing offered"),
+   * so they only mean something against that list; with it, the server can
+   * answer a click on a list it has since replaced -- a double click, a drop
+   * followed by its own click -- with a 409 `stale_action` instead of applying
+   * whatever now sits at that index. Omitted, the server falls back to a
+   * guess from the id's shape.
+   */
+  applyAction: (
+    gameId: string,
+    seat: number,
+    actionId: string,
+    aiSteps?: number,
+    version?: number,
+  ) =>
     request<StateResponse>(`/games/${gameId}/actions${stepQuery(aiSteps)}`, {
       method: "POST",
-      body: JSON.stringify({ seat, action_id: actionId }),
+      body: JSON.stringify({ seat, action_id: actionId, version }),
     }),
 
   /**
