@@ -1,6 +1,7 @@
 # Tech Debt
 
-**Measured at:** `adf05b8e` (2026-10-06).
+**Measured at:** the `tech-debt-sweep` branch (2026-10-06), after every S and M item
+from the `adf05b8e` list was cleared.
 
 This is a working list: every item here is **open**. When you fix one, delete its entry
 in the same PR. Each item says why it matters, where to look, and what fixing it looks
@@ -103,18 +104,18 @@ Rewriting history is a separate, explicit decision.
 
 ### OF-01 · Oversized modules and functions — **L**
 
-28 modules in `src/` are over 1,000 lines, and 8 are over 2,000:
+27 modules in `src/` are over 1,000 lines, and 8 are over 2,000:
 
 | Module | Lines |
 |---|---|
-| `cards/loader/__init__.py` | 4,235 |
-| `cards/loader/effects.py` | 2,750 |
-| `engine/characteristics.py` | 2,417 |
-| `engine/player_statics.py` | 2,239 |
-| `engine/costs.py` | 2,193 |
-| `engine/primitives.py` | 2,111 |
-| `engine/effects/ops_cards.py` | 2,109 |
-| `engine/triggers.py` | 2,092 |
+| `cards/loader/__init__.py` | 4,214 |
+| `cards/loader/effects.py` | 2,746 |
+| `engine/characteristics.py` | 2,390 |
+| `engine/player_statics.py` | 2,238 |
+| `engine/costs.py` | 2,159 |
+| `engine/primitives.py` | 2,039 |
+| `engine/effects/ops_cards.py` | 2,095 |
+| `engine/triggers.py` | 2,062 |
 
 The September splits brought every file under 2,000 lines. The DSL work since has
 pushed eight back over.
@@ -134,33 +135,30 @@ The functions matter more than the files:
 `_validate_effect`.
 
 **Fix:** a per-op validator registry, like the effect-op `register()` the engine
-already uses. **Before you start:** the golden pool pins only cards that load, so first
-pin the error messages invalid cards get, or the move will change them without anyone
-noticing.
-
-### ST-04 · Large frontend files — **M**
-
-| File | Lines |
-|---|---|
-| `components/game/Table.tsx` | 1,361 |
-| `testing/scenarios.ts` | 1,105 |
-| `Table.stories.tsx` | 1,104 |
-| `input/pad.ts` | 983 |
-| `logic/events.ts` | 924 |
-
-Stylesheets: `board.css` 2,343, `handheld.css` 1,855, `lobby.css` 1,756 and `ui.css`
-1,693. `handheld.css` is mostly overrides of the other three, so a token or
-container-query approach would shrink both sides.
+already uses (now in `engine/effects/registry.py`). **Before you start:** the golden pool
+pins only cards that load. About 318 `raises(DslError, match=...)` tests pin many of the
+error messages invalid cards get; check that the ops you move are among them, or pin
+them first.
 
 ---
 
---|---|---|
+## Accessibility
 
----
+### UI-02 · Roles and ARIA that biome 2 flags, suppressed with reasons — **S**
 
-## Docs, hygiene, environment
+The biome 2 upgrade surfaced real accessibility findings, each now carrying a
+`biome-ignore` that says why it was not fixed in a refactor:
 
-### DEP-01 · Dependency upgrades — **S**
+- **`useAriaPropsSupportedByRole`:** labelled readouts with no role (`CardFace`,
+  `CardPreview`, `CardStack`, `OpeningHand`, `ReadyTrack`, and file-wide in
+  `OpponentSeat`). The fix is a role (`img`, `group`, `status`...), which changes what
+  a screen reader announces.
+- **The settings menu's mute item** uses `aria-pressed`. The right shape is
+  `menuitemcheckbox` with `aria-checked`; `e2e/action-panel.spec.ts` reads
+  `aria-pressed` and changes with it.
+- **`noStaticElementInteractions`:** pointer-only hover affordances on `HandFan`,
+  `OpponentSeat`, `PlayerOrb`, `HomeScreen` and the `Table` root. They are not the
+  keyboard or pad path (the ring is), but they want a decision rather than a comment.
 
-- Upgrade candidates, nothing broken: `vite ^5.4` and `@biomejs/biome ^1.8`. Storybook
-  10 already accepts vitest 4.
+**Fix:** one accessibility pass with a screen reader on, removing each suppression as
+its element gets the right role.
