@@ -196,7 +196,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1 # .git is ~130MB; no stage reads history.
+          fetch-depth: 1 # full history packs to ~395MB (git count-objects -vH); no stage reads it.
       - uses: ./.github/actions/setup
       - run: python scripts/verify.py --only lint --strict --verbose
 
