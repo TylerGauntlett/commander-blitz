@@ -503,6 +503,10 @@
     "zone": "battlefield"
   },
   "secure_the_wastes": {
+    "tokens": {
+      "count": 20,
+      "id": "warrior_1_1_w"
+    },
     "zone": "graveyard"
   },
   "sengir_vampire": {

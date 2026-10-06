@@ -20,6 +20,7 @@ import pytest
 
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.errors import DslError
+from automtg.engine.events import EventType
 from automtg.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
@@ -270,3 +271,29 @@ class TestATokenCreatedAttacking:
             if game.state.objects[oid].def_id == "t_warrior_token"
         ]
         assert len(tokens) == 1
+
+    def test_it_is_sacrificed_at_the_next_end_step(self, builder):
+        """Mobilize's second sentence: "Sacrifice it at the beginning of the next
+        end step." Unblocked, the token survives combat and deals its damage;
+        nothing else removes it, so its absence once the turn is over is the
+        sacrifice."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["t_mobilizer"])
+            .life(1, 20)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        turn = game.state.turn
+        to_attackers(game)
+        attack_with(game, only_oid(game, "t_mobilizer", 0), defender=1)
+        done(game)
+        token = only_oid(game, "t_warrior_token", 0)
+
+        pass_until(game, lambda g: g.state.turn != turn or g.over)
+        assert game.state.players[1].life == 17, "the token connected first"
+        assert token not in game.state.battlefield
+        sacrificed = [
+            e for e in game.state.events if e.type is EventType.SACRIFICED and e.data.get("oid") == token
+        ]
+        assert sacrificed

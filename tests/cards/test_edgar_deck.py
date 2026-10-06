@@ -29,6 +29,7 @@ from __future__ import annotations
 
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.zones import destroy
 from tests.conftest import (
     _default_answer,
     advance_to_step,
@@ -44,7 +45,10 @@ BEAR = "t_bear"  # {1}{G} 2/2 Bear: a creature spell that is not a Vampire
 ARISTOCRAT = "vampire_aristocrat"
 INDULGENT = "indulgent_aristocrat"
 BLOOD_ARTIST = "blood_artist"
+FALKENRATH = "falkenrath_noble"
+KALASTRIA = "kalastria_highborn"
 CELEBRANT = "cruel_celebrant"
+WALKER = "t_walker"  # a test planeswalker, for Cruel Celebrant's "or planeswalker"
 BOND = "sanguine_bond"
 EPICURE = "epicure_of_blood"
 ARENA = "phyrexian_arena"
@@ -106,6 +110,20 @@ def sacrifice(game, outlet: int, victim: int) -> None:
     assert game.pending().kind is DecisionKind.CHOOSE_OBJECTS
     game.apply(next(a for a in game.legal_actions() if a.targets and a.targets[0].id == victim))
     settle(game)
+
+
+def sacrifice_paying(game, outlet: int, victim: int) -> None:
+    """`sacrifice`, saying yes to every `MAY` -- Kalastria Highborn's "you may
+    pay {B}"."""
+    game.apply(
+        next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE and a.source == outlet
+        )
+    )
+    game.apply(next(a for a in game.legal_actions() if a.targets and a.targets[0].id == victim))
+    settle(game, yes=True)
 
 
 def life(game, pid: int) -> int:
@@ -275,6 +293,72 @@ class TestBloodArtist:
         assert game.state.objects[theirs].zone is Zone.GRAVEYARD
         assert (life(game, 0), life(game, 1)) == (41, 39)
 
+    def test_its_own_death_drains_one(self, builder):
+        """"This creature or another": its own death is heard (603.10a)."""
+        game = self.position(builder)
+        sacrifice(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, BLOOD_ARTIST, 0))
+        assert (life(game, 0), life(game, 1)) == (41, 39)
+
+
+class TestFalkenrathNoble:
+    """"Flying. Whenever this creature or another creature dies, target player
+    loses 1 life and you gain 1 life." -- the same trigger as Blood Artist's."""
+
+    def position(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, [FALKENRATH, ARISTOCRAT, BEAR])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .build()
+        )
+
+    def test_another_creature_dying_drains_one(self, builder):
+        game = self.position(builder)
+        sacrifice(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, BEAR, 0))
+        assert (life(game, 0), life(game, 1)) == (41, 39)
+
+    def test_its_own_death_drains_one(self, builder):
+        """It used to carry `exclude_self`, which is "another creature" only."""
+        game = self.position(builder)
+        sacrifice(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, FALKENRATH, 0))
+        assert (life(game, 0), life(game, 1)) == (41, 39)
+
+
+class TestKalastriaHighborn:
+    """"Whenever this creature or another Vampire you control dies, you may pay
+    {B}. If you do, target player loses 2 life and you gain 2 life." """
+
+    def position(self, builder, *, players: int = 2):
+        b = builder(players=players).battlefield(0, [KALASTRIA, ARISTOCRAT, CHILD, BEAR, "swamp"])
+        for pid in range(1, players):
+            b.battlefield(pid, ["plains"]).hand(pid, [ANCHOR])
+        return b.build()
+
+    def test_paying_drains_one_player_two(self, builder):
+        """Three players: "target player" is one of them, not each opponent."""
+        game = self.position(builder, players=3)
+        sacrifice_paying(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, CHILD, 0))
+        assert life(game, 0) == 42
+        assert sorted([life(game, 1), life(game, 2)]) == [38, 40]
+        assert game.state.objects[only_oid(game, "swamp", 0)].tapped, "the {B} was paid"
+
+    def test_its_own_death_counts(self, builder):
+        game = self.position(builder)
+        sacrifice_paying(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, KALASTRIA, 0))
+        assert (life(game, 0), life(game, 1)) == (42, 38)
+
+    def test_declining_to_pay_does_nothing(self, builder):
+        game = self.position(builder)
+        sacrifice(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, CHILD, 0))
+        assert (life(game, 0), life(game, 1)) == (40, 40)
+        assert not game.state.objects[only_oid(game, "swamp", 0)].tapped
+
+    def test_a_non_vampire_dying_does_not_trigger_it(self, builder):
+        game = self.position(builder)
+        sacrifice_paying(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, BEAR, 0))
+        assert (life(game, 0), life(game, 1)) == (40, 40)
+
 
 class TestCruelCelebrant:
     """"Whenever this creature or another creature or planeswalker you control
@@ -304,6 +388,26 @@ class TestCruelCelebrant:
         cast(game, BOLT, target=theirs)
         assert game.state.objects[theirs].zone is Zone.GRAVEYARD
         assert [life(game, p) for p in range(3)] == [40, 40, 40]
+
+    def test_its_own_death_drains_each_opponent(self, builder):
+        game = self.position(builder)
+        sacrifice(game, only_oid(game, ARISTOCRAT, 0), only_oid(game, CELEBRANT, 0))
+        assert [life(game, p) for p in range(3)] == [41, 39, 39]
+
+    def test_your_planeswalker_dying_drains_each_opponent(self, builder):
+        """"…or planeswalker you control" -- the half the card used to drop."""
+        game = (
+            builder(players=3)
+            .battlefield(0, [CELEBRANT, WALKER])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .battlefield(2, ["plains"])
+            .hand(2, [ANCHOR])
+            .build()
+        )
+        destroy(game.state, only_oid(game, WALKER, 0))
+        settle(game)
+        assert [life(game, p) for p in range(3)] == [41, 39, 39]
 
 
 class TestSanguineBond:

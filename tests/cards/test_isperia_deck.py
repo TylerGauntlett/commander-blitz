@@ -450,6 +450,21 @@ class TestEmeriaAngel:
         answer(game)
         assert oids_of(game, BIRD) == []
 
+    def test_the_bird_is_a_may(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [EMERIA])
+            .battlefield(1, ["plains"])
+            .hand(0, ["plains"])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        game.apply(action_for_card(game, ActionKind.PLAY_LAND, "plains"))
+        answer(game, yes=False)
+        assert oids_of(game, BIRD) == []
+
 
 class TestSunblastAngel:
     """"Flying. When this creature enters, destroy all tapped creatures." """
@@ -480,7 +495,7 @@ class TestSunblastAngel:
 class TestSunTitan:
     """"Vigilance. Whenever this creature enters or attacks, you may return
     target permanent card with mana value 3 or less from your graveyard to the
-    battlefield." -- the enters half."""
+    battlefield." Both halves, and the return is targeted and optional."""
 
     def test_entering_returns_a_small_permanent_card(self, builder):
         game = (
@@ -516,3 +531,62 @@ class TestSunTitan:
         cast(game, TITAN)
         assert game.state.objects[theirs].zone is Zone.GRAVEYARD
         assert oids_of(game, BEAR) == []
+
+    def test_a_sorcery_is_not_a_permanent_card_either(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains"] * 6)
+            .graveyard(0, ["t_edict"])  # {B} sorcery
+            .hand(0, [TITAN])
+            .hand(1, [ANCHOR])
+            .battlefield(1, ["plains"])
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        [edict] = game.state.players[0].graveyard
+        cast(game, TITAN)
+        assert game.state.objects[edict].zone is Zone.GRAVEYARD
+
+    def test_the_return_is_a_may(self, builder):
+        """The target is declared as the trigger goes on the stack, and "no
+        targets" is on offer: declining leaves the card where it is."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains"] * 6)
+            .graveyard(0, [BEAR])
+            .hand(0, [TITAN])
+            .hand(1, [ANCHOR])
+            .battlefield(1, ["plains"])
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        [bear] = game.state.players[0].graveyard
+        game.apply(action_for_card(game, ActionKind.CAST, TITAN))
+        pass_until(
+            game,
+            lambda g: g.pending() is not None and g.pending().kind is DecisionKind.CHOOSE_OBJECTS,
+        )
+        game.apply(next(a for a in game.legal_actions() if a.targets == ()))
+        answer(game)
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD
+
+    def test_attacking_returns_one_too(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains", TITAN])
+            .graveyard(0, [BEAR])
+            .battlefield(1, ["plains"])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        [bear] = game.state.players[0].graveyard
+        titan = only_oid(game, TITAN, 0)
+        declare(game, 0, [titan], defender=1)
+        answer(game)
+        assert game.state.objects[bear].zone is Zone.BATTLEFIELD
+        assert not game.state.objects[titan].tapped, "vigilance"

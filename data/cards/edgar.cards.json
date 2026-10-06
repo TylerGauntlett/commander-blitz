@@ -941,24 +941,44 @@
             "filter": {
               "subtypes": [
                 "Vampire"
-              ],
-              "exclude_self": true
+              ]
             }
           },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              },
+              "count": 1
+            }
+          ],
           "effects": [
             {
-              "op": "lose_life",
-              "player": "each_opponent",
-              "amount": {
-                "const": 2
-              }
-            },
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 2
-              }
+              "op": "may",
+              "prompt": "Pay {B} to drain 2?",
+              "pay": {
+                "mana": "{B}"
+              },
+              "effects": [
+                {
+                  "op": "lose_life",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "amount": {
+                    "const": 2
+                  }
+                },
+                {
+                  "op": "gain_life",
+                  "player": "you",
+                  "amount": {
+                    "const": 2
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1027,8 +1047,9 @@
             "event": "dies",
             "controller": "you",
             "filter": {
-              "types": [
-                "Creature"
+              "any_types": [
+                "Creature",
+                "Planeswalker"
               ]
             }
           },
@@ -1242,8 +1263,7 @@
             "filter": {
               "types": [
                 "Creature"
-              ],
-              "exclude_self": true
+              ]
             }
           },
           "targets": [

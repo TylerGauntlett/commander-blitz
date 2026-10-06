@@ -249,6 +249,40 @@ class TestRetreatToKazandu:
         assert game.state.players[0].life == 42
         assert game.state.objects[bear].counters == {}
 
+    def test_the_counter_targets_any_creature(self, builder):
+        """"Target creature", not "a creature you control": an opponent's
+        creature is on offer, and choosing it grows it."""
+        game = position(builder, [KAZANDU, BEAR, "plains"], theirs=("plains", BEAR))
+        mine, theirs = only_oid(game, BEAR, 0), only_oid(game, BEAR, 1)
+        game.apply(action_for_card(game, ActionKind.PLAY_LAND, "forest"))
+        pass_until(
+            game,
+            lambda g: g.pending() is not None and g.pending().kind is DecisionKind.CHOOSE_MODE,
+        )
+        game.apply(
+            next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == 0)
+        )
+        offered = {
+            a.targets[0].id for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.targets
+        }
+        assert offered == {mine, theirs}
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CHOOSE and a.targets and a.targets[0].id == theirs
+            )
+        )
+        resolve(game)
+        assert game.state.objects[theirs].counters == {"+1/+1": 1}
+        assert game.state.objects[mine].counters == {}
+
+    def test_with_no_creature_only_the_life_mode_is_left(self, builder):
+        """601.2b via 603.3d: a mode with no legal target is not offered."""
+        game = position(builder, [KAZANDU, "plains"])
+        play_land(game)
+        assert game.state.players[0].life == 42
+
 
 class TestFathomMage:
     """"Evolve (Whenever a creature you control enters, if that creature has

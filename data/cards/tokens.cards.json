@@ -2201,6 +2201,26 @@
       "is_token": true
     },
     {
+      "id": "warrior_1_1_w",
+      "name": "Warrior Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warrior"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "warrior_1_1_w_vigilance",
       "name": "Warrior Token",
       "oracle_text": "",

@@ -27,7 +27,7 @@ card placed with `.battlefield` is an ordinary object, not a token, and every
 from __future__ import annotations
 
 from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import _default_answer, action_for_card, oids_of, only_oid, pass_until
 
 ZURGO = "zurgo_stormrender"
@@ -47,6 +47,9 @@ BEAR = "t_bear"  # a plain nontoken 2/2
 OUTLET = "t_sac_outlet"  # "Sacrifice a creature: You gain 1 life."
 REMOVAL = "t_removal"  # {W} instant: exile target creature
 EDICT = "t_edict"  # {B} sorcery: each opponent sacrifices a creature
+HORDEMATE = "timely_hordemate"
+SECURE = "secure_the_wastes"
+WHITE_WARRIOR = "warrior_1_1_w"  # Secure the Wastes' token
 # A castable instant in each seat's hand: with no play available to anybody the
 # engine's auto-pass runs whole turns inside one `apply` and overshoots the step
 # under test.
@@ -163,10 +166,6 @@ class TestZurgoStormrender:
     1/1 red Warrior creature token. Sacrifice it at the beginning of the next end
     step.) Whenever a creature token you control leaves the battlefield, draw a
     card if it was attacking. Otherwise, each opponent loses 1 life."
-
-    The reminder text's end-step sacrifice is not asserted: the card's
-    `create_token` schedules none, and the Warrior stays on the battlefield
-    into the next turn.
     """
 
     def test_attacking_makes_a_tapped_attacking_one_one_red_warrior_token(self, builder):
@@ -208,6 +207,73 @@ class TestZurgoStormrender:
         sacrifice(game, only_oid(game, BEAR, 0))
         assert life(game, 1) == 40
         assert library(game, 0) == 20
+
+    def test_the_warrior_is_sacrificed_at_the_end_step_and_drains(self, builder):
+        """Mobilize's "Sacrifice it at the beginning of the next end step". By
+        then combat is over, so the Warrior leaves *not* attacking: Zurgo's
+        second ability drains rather than draws. 3 + 1 in combat, 1 at the end."""
+        game = board(builder, [ZURGO])
+        turn = game.state.turn
+        attack_with(game, only_oid(game, ZURGO, 0))
+        [token] = oids_of(game, WARRIOR, 0)
+        pass_until(game, lambda g: token not in g.state.battlefield or g.state.turn != turn)
+        settle(game)
+        assert token not in game.state.battlefield
+        assert game.state.turn == turn, "gone in the same turn's end step"
+        assert life(game, 1) == 40 - 3 - 1 - 1
+        assert library(game, 0) == 20, "not attacking any more, so no draw"
+
+
+class TestTimelyHordemate:
+    """"Raid -- When this creature enters, if you attacked this turn, return
+    target creature card with mana value 2 or less from your graveyard to the
+    battlefield." """
+
+    def position(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, ["plains", "plains", "swamp", "mountain", "mountain", HATEBLADE])
+            .graveyard(0, [BEAR])
+            .battlefield(1, ["plains"])
+            .hand(0, [ANCHOR, HORDEMATE])
+            .hand(1, [ANCHOR])
+            .library(0, ["plains"] * 20)
+            .library(1, ["plains"] * 20)
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .max_turns(4)
+            .build()
+        )
+
+    def test_without_an_attack_nothing_returns(self, builder):
+        game = self.position(builder)
+        [bear] = game.state.players[0].graveyard
+        cast(game, HORDEMATE)
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD
+
+    def test_after_an_attack_it_returns_a_small_creature_card(self, builder):
+        game = self.position(builder)
+        [bear] = game.state.players[0].graveyard
+        attack_with(game, only_oid(game, HATEBLADE, 0))
+        pass_until(game, lambda g: g.state.step is Step.POSTCOMBAT_MAIN)
+        cast(game, HORDEMATE)
+        assert game.state.objects[bear].zone is Zone.BATTLEFIELD
+
+
+class TestSecureTheWastes:
+    """"Create X 1/1 white Warrior creature tokens." """
+
+    def test_it_makes_white_warriors(self, builder):
+        game = board(builder, [], hand=[SECURE])
+        cast(game, SECURE)
+        tokens = oids_of(game, WHITE_WARRIOR, 0)
+        assert tokens, "X is the most the lands pay for"
+        assert oids_of(game, "soldier_1_1_w") == []
+        for token in tokens:
+            c = chars(game.state, token)
+            assert (c.power, c.toughness) == (1, 1)
+            assert "Warrior" in c.subtypes and "W" in c.colors
+            assert not has_keyword(game.state, token, "vigilance")
 
 
 class TestImpactTremors:
