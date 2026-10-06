@@ -28,7 +28,8 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.loader.statics import _validate_cost_reduction
 from automtg.cards.schema import CardModel
-from automtg.engine.costs import ability_mana, reduction_amount
+from automtg.engine.cost_reduction import reduction_amount
+from automtg.engine.costs import ability_mana
 from automtg.engine.errors import DslError
 from tests.conftest import oids_of
 

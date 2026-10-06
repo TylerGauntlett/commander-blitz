@@ -41,9 +41,9 @@ from automtg.engine.primitives import (
     create_token,
     damage_player,
     give_emblem,
-    life_floor,
     lose_life,
 )
+from automtg.engine.temp_effects import life_floor
 from automtg.engine.zones import destroy, move_object
 from tests.conftest import only_oid, static_probe
 

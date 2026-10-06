@@ -64,8 +64,8 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent, damage_player, shielded
-from automtg.engine.temp_effects import clear_damage_shields, shield_player
+from automtg.engine.primitives import damage_permanent, damage_player
+from automtg.engine.temp_effects import clear_damage_shields, shield_player, shielded
 from automtg.engine.zones import move_object
 from tests.conftest import _default_answer, advance_to_step, only_oid, plus_one_counters
 

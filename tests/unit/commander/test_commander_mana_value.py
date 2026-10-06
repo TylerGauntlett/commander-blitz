@@ -386,6 +386,6 @@ class TestTheGateStillHoldsForEveryoneElse:
             .battlefield(1, ["t_bear", "t_bear"])
             .build()
         )
-        from automtg.engine.costs import reduction_amount
+        from automtg.engine.cost_reduction import reduction_amount
 
         assert reduction_amount(game.state, 0, card.flashback.mana_reduction) == 1
