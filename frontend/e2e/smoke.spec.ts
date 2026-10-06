@@ -164,6 +164,12 @@ test.describe("the table renders and plays", () => {
     if (await keep.count()) await keep.click();
     await waitForOurTurn(page);
 
+    // Park the pointer first. It is still where Keep was, and the hand deals in
+    // underneath that spot -- so a card arriving under a still pointer gets a
+    // real hover and fills the rail before this test has hovered anything. On
+    // CI's slow runner that is what happened, twice, with the preview cycling
+    // Forest -> Vivid Creek as the fan settled.
+    await page.getByTestId("table").hover({ position: { x: 2, y: 2 } });
     await expect(page.getByTestId("card-preview")).toContainText("Hover a card");
     await page.locator(".hand .card").first().hover();
     await expect(page.getByTestId("card-preview")).not.toContainText("Hover a card");
