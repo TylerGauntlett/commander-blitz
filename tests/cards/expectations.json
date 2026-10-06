@@ -8,14 +8,8 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
-  "adanto_vanguard": {
-    "zone": "battlefield"
-  },
   "aesi_tyrant_of_gyre_strait": {
     "battlefield_count": 33,
-    "zone": "battlefield"
-  },
-  "aetherling_serpent": {
     "zone": "battlefield"
   },
   "air_elemental": {
@@ -94,10 +88,6 @@
     "life": {
       "0": 41
     }
-  },
-  "bloodline_keeper": {
-    "battlefield_count": 33,
-    "zone": "battlefield"
   },
   "bloodline_necromancer": {
     "zone": "battlefield"
@@ -323,12 +313,6 @@
   "horn_of_greed": {
     "zone": "battlefield"
   },
-  "hydra_broodmaster": {
-    "tokens": {
-      "count": 1,
-      "id": "kraken_8_8_u"
-    }
-  },
   "impact_tremors": {
     "zone": "battlefield"
   },
@@ -357,17 +341,11 @@
   "kalastria_highborn": {
     "zone": "battlefield"
   },
-  "kiora_growth_surge": {
-    "zone": "graveyard"
-  },
   "kodamas_reach": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 2
     }
-  },
-  "kraken_hatchling_swarm": {
-    "zone": "graveyard"
   },
   "krenkos_command": {
     "zone": "graveyard"
@@ -385,10 +363,6 @@
     "zone": "graveyard"
   },
   "llanowar_elves": {
-    "zone": "battlefield"
-  },
-  "lord_of_lineage": {
-    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lyra_dawnbringer": {
@@ -424,11 +398,6 @@
   "mountain": {
     "zone": "battlefield"
   },
-  "mulldrifter": {
-    "hand_size": {
-      "0": 3
-    }
-  },
   "naturalize": {
     "zone": "graveyard"
   },
@@ -459,9 +428,6 @@
     "zone": "battlefield"
   },
   "opt": {
-    "zone": "graveyard"
-  },
-  "overrun_lite": {
     "zone": "graveyard"
   },
   "path_to_exile": {
@@ -513,9 +479,6 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
-  "reconnaissance_mission": {
-    "zone": "battlefield"
-  },
   "roiling_regrowth": {
     "zone": "graveyard"
   },
@@ -529,9 +492,6 @@
     "zone": "battlefield"
   },
   "sanguine_bond": {
-    "zone": "battlefield"
-  },
-  "savai_triome": {
     "zone": "battlefield"
   },
   "scoured_barrens": {
@@ -556,9 +516,6 @@
     "hand_size": {
       "0": 2
     },
-    "zone": "battlefield"
-  },
-  "simic_sky_swallower": {
     "zone": "battlefield"
   },
   "skyknight_vanguard": {

@@ -187,6 +187,18 @@ class TestTheBaselineIsHonest:
         assert not gone, f"listed but no longer in the pool: {gone}\nrun: {REGENERATE}"
 
 
+def test_no_orphan_expectations():
+    """Every key in `expectations.json` names a hand-written card.
+
+    The mirror of `test_auto_cards.py`'s check. Without it a card superseded
+    into `auto/`, turned into a back face or deleted leaves its expectation
+    behind, and `test_every_card_works.py` goes on asserting that weaker,
+    stale expectation against whatever now carries the id -- twelve did.
+    """
+    orphans = sorted(set(_expectations()) - set(CARD_IDS))
+    assert orphans == [], f"expectations for cards that are not hand-written: {orphans[:10]}"
+
+
 def test_the_hand_written_pool_is_measured_at_all():
     """A guard on the guard.
 
