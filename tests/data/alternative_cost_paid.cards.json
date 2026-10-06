@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_alternative_cost_paid.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_baleful_probe` is Baleful Mastery's shape: an instant with an unconditional cheaper alternative mana cost (the `evoke` slot, relabelled) whose payment is read by an `if` inside `spell_effects`.",
+  "_comment": "Cards that exist only for tests/unit/costs/test_alternative_cost_paid.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_baleful_probe` is Baleful Mastery's shape: an instant with an unconditional cheaper alternative mana cost (the `evoke` slot, relabelled) whose payment is read by an `if` inside `spell_effects`.",
   "cards": [
     {
       "id": "t_baleful_probe",

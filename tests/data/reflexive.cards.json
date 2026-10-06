@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the reflexive-trigger test (tests/unit/test_reflexive_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_reflex` is the Espers to Magicite shape: an instruction, and then a 'when you do' half that goes on the stack by itself and picks its target there. `t_inline` is the counterfactual -- the same two sentences run as one resolution.",
+  "_comment": "Cards that exist only for the reflexive-trigger test (tests/unit/triggers/test_reflexive_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_reflex` is the Espers to Magicite shape: an instruction, and then a 'when you do' half that goes on the stack by itself and picks its target there. `t_inline` is the counterfactual -- the same two sentences run as one resolution.",
   "cards": [
     {
       "id": "t_reflex",

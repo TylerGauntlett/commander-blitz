@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_counter_replacement_effects_only.py. t_ceo_season is Doubling Season's counter line, effects_only; t_ceo_walker is a planeswalker with a +1 and a +0 whose effect puts a loyalty counter on it, so a cost and an effect can be told apart on one permanent; t_ceo_hydra enters with two +1/+1 counters, one route a counter is given as a permanent arrives (riot, borrowed from riot.cards.json, is the other).",
+  "_comment": "Shapes for tests/unit/counters/test_counter_replacement_effects_only.py. t_ceo_season is Doubling Season's counter line, effects_only; t_ceo_walker is a planeswalker with a +1 and a +0 whose effect puts a loyalty counter on it, so a cost and an effect can be told apart on one permanent; t_ceo_hydra enters with two +1/+1 counters, one route a counter is given as a permanent arrives (riot, borrowed from riot.cards.json, is the other).",
   "cards": [
     {
       "id": "t_ceo_season",

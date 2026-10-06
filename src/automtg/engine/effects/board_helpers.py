@@ -6,9 +6,11 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
 from ..enums import Step
 from ..errors import DslError
-from .context import EffectContext
+from ..structs import TargetRef
+from .context import EffectContext, ask_targets
 from .selectors import (
     select_players,
 )
@@ -92,9 +94,6 @@ def _aim_at_planeswalker(ctx: EffectContext, spec: Mapping[str, Any], oids, defe
     combat = ctx.state.combat
     if not spec.get("or_planeswalker") or defender is None or combat is None:
         return
-    from ..characteristics import chars
-    from ..structs import TargetRef
-    from .context import ask_targets
 
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -192,6 +191,4 @@ def _attack_target(ctx: EffectContext) -> int | None:
 
 
 def _players(ctx: EffectContext, spec: Any) -> list[int]:
-    from .selectors import select_players
-
     return select_players(ctx, spec)

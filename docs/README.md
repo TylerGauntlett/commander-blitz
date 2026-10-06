@@ -6,6 +6,7 @@
 | [engine-rules.md](engine-rules.md) | Turn structure, priority, the stack, combat, state-based actions |
 | [rules-coverage.md](rules-coverage.md) | **What is implemented, simplified, and absent** |
 | [card-dsl.md](card-dsl.md) | How to write or read a card definition |
+| [dsl-changelog.md](dsl-changelog.md) | How the card DSL got to where it is: what changed, what was fixed, and why |
 | [keywords.md](keywords.md) | Every Magic keyword, which mechanism carries it, and what is still missing |
 | [decks.md](decks.md) | The two decks and every substitution made |
 | [ai-training.md](ai-training.md) | The environment, action space, agents, self-play |

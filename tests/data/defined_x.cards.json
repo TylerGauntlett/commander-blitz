@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the defined-X cost test (tests/unit/test_defined_x_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_naive_foundry` is deliberately the WRONG card -- the version of Soul Foundry the DSL could write before `x_value` existed -- and is asserted against as the counterfactual.",
+  "_comment": "Cards that exist only for the defined-X cost test (tests/unit/costs/test_defined_x_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_naive_foundry` is deliberately the WRONG card -- the version of Soul Foundry the DSL could write before `x_value` existed -- and is asserted against as the counterfactual.",
   "cards": [
     {
       "id": "t_imprint_foundry",

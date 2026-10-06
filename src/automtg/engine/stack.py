@@ -8,8 +8,10 @@ engine needing continuations or state snapshots.
 from __future__ import annotations
 
 from collections.abc import Generator, Sequence
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
+from .actions import DecisionOption, PendingDecision
 from .carddef import (
     BESTOW_TARGET,
     MUTATE_TARGET,
@@ -18,16 +20,31 @@ from .carddef import (
     TargetSpec,
     rules_ability,
 )
-from .characteristics import printed_abilities
+from .characteristics import abilities_of, granted_ability_origin, printed_abilities
 from .effects import execute
 from .effects.conditions import evaluate
-from .effects.context import EffectContext
-from .enums import Zone
+from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
+from .effects.modes import _mode_flag, modal_bounds, mode_labels
+from .enums import DecisionKind, Zone
 from .events import EventType
-from .primitives import attach, attach_to_player
-from .structs import StackItem, TargetRef, TriggerInstance
-from .targeting import filter_legal, kicked_targets
-from .zones import move_object
+from .primitives import attach, attach_to_player, merge_permanents
+from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
+from .targeting import (
+    describe_ref,
+    enumerate_target_tuples,
+    filter_legal,
+    kicked_targets,
+    selectable_modes,
+    target_count,
+)
+from .triggers import fire
+from .zones import (
+    move_object,
+    offer_enters_copy,
+    offer_enters_costs,
+    offer_enters_replacement,
+    offer_riot_choice,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -157,7 +174,6 @@ def announce_targets(state: GameState, item: StackItem) -> None:
     targets can miss it. `push_triggered_ability` chooses its targets after
     building the item, so it calls this itself once they are set.
     """
-    from .triggers import fire
 
     source = item.oid if item.is_spell else item.source_oid
     for ref in item.targets:
@@ -261,8 +277,6 @@ def push_activated_ability(
     modes_answered: bool = False,
     bindings: dict[str, Any] | None = None,
 ) -> StackItem:
-    from .characteristics import abilities_of, granted_ability_origin
-
     card = state.card(source_oid)
     # The **derived** list, which is the one legality offered from and
     # `game._activate` paid off. The printed list is shorter than it whenever the
@@ -449,10 +463,6 @@ def _choose_trigger_modes(
     700.2e executes them that way and `Ability.specs_for_modes` splits the
     stored refs that way.
     """
-    from .effects.context import EffectContext, ask_mode
-    from .effects.ops_control import _mode_flag, modal_bounds, mode_labels
-    from .targeting import enumerate_target_tuples
-
     spec = ability.cast_time_modes or {}
     modes = list(spec.get("modes") or [])
     if not modes:
@@ -522,10 +532,6 @@ def _choose_each_target(
     ``optional`` with a count above one -- "exactly N, or none" forbids the
     sizes in between, and a min/max pick cannot say that.
     """
-    from dataclasses import replace
-
-    from .effects.context import EffectContext, ask_targets
-    from .targeting import describe_ref, enumerate_target_tuples, target_count
 
     if len(specs) != 1:
         return None
@@ -586,9 +592,6 @@ def _choose_trigger_targets(
     "when this dies, it deals damage to *its controller*" has one legal tuple
     and asking would be a decision with a single button.
     """
-    from .actions import DecisionOption, PendingDecision
-    from .enums import DecisionKind
-    from .targeting import describe_ref, enumerate_target_tuples
 
     picked = yield from _choose_each_target(state, trig, specs)
     if picked is not None:
@@ -641,10 +644,6 @@ def modal_cast_ok(state: GameState, pid: int, card, oid: int) -> bool:
     """
     if not getattr(card, "mode_targets", None):
         return True
-    from .effects.context import EffectContext
-    from .effects.ops_control import modal_bounds
-    from .targeting import selectable_modes
-
     spec = card.cast_time_modes
     if not spec:  # pragma: no cover - the loader refuses `mode` without one
         return True
@@ -673,10 +672,6 @@ def free_cast_modes(
     targets, whose modes are answered by `op_choose_mode` on resolution as they
     always were.
     """
-    from .effects.context import EffectContext
-    from .effects.ops_control import modal_bounds
-    from .targeting import enumerate_target_tuples, selectable_modes
-
     if not getattr(card, "mode_targets", None):
         return (), ()
     spec = card.cast_time_modes
@@ -888,8 +883,6 @@ def _merge_mutation(
     `filter_legal` has already run above, so a spell whose creature is gone has
     fizzled and never reaches here.
     """
-    from .effects.context import EffectContext, ask_yes_no
-    from .primitives import merge_permanents
 
     host_oid = next(
         (
@@ -1036,13 +1029,6 @@ def _place_after_resolution(
         # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
-        from .zones import (
-            offer_enters_copy,
-            offer_enters_costs,
-            offer_enters_replacement,
-            offer_riot_choice,
-        )
-
         # "If this artifact would enter, you may discard a land card instead."
         # First, because it decides whether there is an arrival left to decorate
         # -- see `zones.offer_enters_replacement`.
@@ -1134,8 +1120,6 @@ def _place_after_resolution(
         # `later_turns` is plot's duration and its "a turn after the one it was
         # granted on" is exactly warp's "on a later turn"; the price is the
         # printed one, so `playable_free` is deliberately not set.
-        from .structs import DelayedTrigger
-
         state.delayed_triggers.append(
             DelayedTrigger(
                 step="end_step",

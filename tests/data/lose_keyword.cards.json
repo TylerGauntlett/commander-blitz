@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the keyword-removal test (tests/unit/test_lose_keyword.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_archetype` is Archetype of Courage -- the grant half and the lose half, one card, the way it is printed. `t_archetype_lose_only` is the lose half alone, so the removal can be measured without its own grant also being on the board. `t_first_strike_anthem` is an opponent-side grant the prohibition has to beat, and `t_striker` is a creature with first strike printed on it.",
+  "_comment": "Cards that exist only for the keyword-removal test (tests/unit/statics/test_lose_keyword.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_archetype` is Archetype of Courage -- the grant half and the lose half, one card, the way it is printed. `t_archetype_lose_only` is the lose half alone, so the removal can be measured without its own grant also being on the board. `t_first_strike_anthem` is an opponent-side grant the prohibition has to beat, and `t_striker` is a creature with first strike printed on it.",
   "cards": [
     {
       "id": "t_archetype",

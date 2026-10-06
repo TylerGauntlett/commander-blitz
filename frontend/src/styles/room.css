@@ -156,11 +156,13 @@
 .room__wash {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       40% 30% at 50% var(--wash-y, 73%),
       var(--lit-soft, transparent) 0%,
       transparent 72%
-    ), radial-gradient(88% 40% at 50% 106%, var(--lit2-soft, transparent) 0%, transparent 66%);
+    ),
+    radial-gradient(88% 40% at 50% 106%, var(--lit2-soft, transparent) 0%, transparent 66%);
   transition: background var(--t-room) ease;
   pointer-events: none;
 }
@@ -196,9 +198,13 @@
   border-radius: calc(11px * var(--du));
   border: 2px solid rgb(216 166 60 / 0.34);
   background: #241b32;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 30px rgb(0 0 0 / 0.55);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 12px 30px rgb(0 0 0 / 0.55);
   text-align: center;
-  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+  transition:
+    border-color var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
 }
 
 .plank__frame {
@@ -225,8 +231,10 @@
 .plank--on,
 .plank[data-cursor] {
   border-color: var(--lit, var(--focus));
-  box-shadow: 0 0 0 3px rgb(255 224 138 / 0.16), 0 0 44px
-    var(--lit-soft, rgb(255 224 138 / 0.24)), 0 18px 46px rgb(0 0 0 / 0.6);
+  box-shadow:
+    0 0 0 3px rgb(255 224 138 / 0.16),
+    0 0 44px var(--lit-soft, rgb(255 224 138 / 0.24)),
+    0 18px 46px rgb(0 0 0 / 0.6);
 }
 
 /*
@@ -321,7 +329,7 @@
   align-items: center;
   justify-content: center;
   gap: calc(8px * var(--du));
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(16px * var(--du));
   border: 1px solid var(--edge-hi, rgb(255 224 138 / 0.22));
   border-radius: calc(9px * var(--du));
@@ -332,7 +340,9 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+  transition:
+    border-color var(--t-fast) ease,
+    background var(--t-fast) ease;
 }
 
 .key:hover:not(:disabled) {
@@ -378,7 +388,7 @@
 /* A control that is a mark rather than a word -- copy, close, remove. Square,
    at the hit floor, so a row of them reads as one strip of chrome. */
 .key--mark {
-  min-width: 44px;
+  min-width: var(--hit-floor);
   padding: 0;
   font-size: max(var(--type-floor), calc(17px * var(--du)));
 }

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the face-down-exile test (tests/unit/test_exile_top_face_down.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_necro_impulse` is Necropotence's third line, which is the whole capability in one ability: exile the top card face down, name it with `as`, and let a `your_turn` delay hand back exactly that card. `t_open_impulse` is the same ability without `face_down`, so the test can tell the privacy apart from the move.",
+  "_comment": "Cards that exist only for the face-down-exile test (tests/unit/zones/test_exile_top_face_down.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_necro_impulse` is Necropotence's third line, which is the whole capability in one ability: exile the top card face down, name it with `as`, and let a `your_turn` delay hand back exactly that card. `t_open_impulse` is the same ability without `face_down`, so the test can tell the privacy apart from the move.",
   "cards": [
     {
       "id": "t_necro_impulse",

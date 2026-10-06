@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`.",
+  "_comment": "Shapes for tests/unit/casting/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`.",
   "cards": [
     {
       "id": "t_lilah",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_choose_permanent_type.py. t_cpt_renaissance is Creeping Renaissance's second line -- choose a permanent type, then return all cards of that type from your graveyard to your hand. t_cpt_creature_chooser is the same spell asking for a CREATURE type instead, kept live so the tests show the two axes write different slots and neither reads the other's. The rest are graveyard fodder of three different card types.",
+  "_comment": "Shapes for tests/unit/choices/test_choose_permanent_type.py. t_cpt_renaissance is Creeping Renaissance's second line -- choose a permanent type, then return all cards of that type from your graveyard to your hand. t_cpt_creature_chooser is the same spell asking for a CREATURE type instead, kept live so the tests show the two axes write different slots and neither reads the other's. The rest are graveyard fodder of three different card types.",
   "cards": [
     {
       "id": "t_cpt_renaissance",

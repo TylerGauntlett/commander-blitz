@@ -28,12 +28,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { GameEvent, StateResponse } from "../src/api/types";
 import { beatsFor } from "../src/logic/events";
 import { useUiStore } from "../src/state/uiStore";
-import { type GameSession, freshEvents, useGame, waitingOnFrom } from "../src/state/useGame";
+import { freshEvents, type GameSession, useGame, waitingOnFrom } from "../src/state/useGame";
 import { action, gameEvent, gameView, pending, player, stateResponse } from "./fixtures";
 
 interface Parked {
   url: string;
   method: string;
+  body: unknown;
   signal: AbortSignal | null | undefined;
   answer: (body: unknown, status?: number) => void;
   fail: (error: Error) => void;
@@ -55,6 +56,7 @@ beforeEach(() => {
         parked.push({
           url: String(url),
           method: init.method ?? "GET",
+          body: typeof init.body === "string" ? JSON.parse(init.body) : undefined,
           signal: init.signal,
           answer: (body, status = 200) =>
             resolve(
@@ -326,6 +328,79 @@ describe("with an AI on the clock", () => {
     expect(parked.map((request) => `${request.method} ${request.url}`)).toEqual([
       "POST /api/games/g1/advance?ai_steps=1",
     ]);
+  });
+});
+
+describe("a click on a list the game has replaced", () => {
+  /** Seat 0, on the clock, single player: the list the board is drawing. */
+  function ours(overrides: Partial<StateResponse> = {}): StateResponse {
+    return stateResponse({
+      state: gameView({ seat: 0, players: [HOST, GUEST], pending: pending({ player: 0 }) }),
+      your_seat: 0,
+      human_seats: [0],
+      version: 3,
+      event_cursor: 12,
+      events: HISTORY,
+      actions: [action(), action({ id: "a1-play_land", kind: "play_land" })],
+      ...overrides,
+    });
+  }
+
+  async function atTable() {
+    mount({ gameId: "g1", seat: 0 });
+    await settle();
+    next().answer(ours());
+    await settle();
+  }
+
+  it("sends the version the list came from", async () => {
+    await atTable();
+    act(() => latest.act.mutate("a1-play_land"));
+    await settle();
+
+    const post = next();
+    expect(`${post.method} ${post.url}`).toBe("POST /api/games/g1/actions?ai_steps=1");
+    expect(post.body).toEqual({ seat: 0, action_id: "a1-play_land", version: 3 });
+  });
+
+  it("answers a 409 stale_action by refetching, not by showing an error", async () => {
+    await atTable();
+    act(() => latest.act.mutate("a1-play_land"));
+    await settle();
+
+    next().answer(
+      {
+        detail: {
+          code: "stale_action",
+          detail: "action 'a1-play_land' is from version 3",
+          version: 4,
+        },
+      },
+      409,
+    );
+    await settle();
+
+    // From the cursor already held, so nothing is narrated twice.
+    const refetch = next();
+    expect(`${refetch.method} ${refetch.url}`).toBe("GET /api/games/g1/state?since=12&seat=0");
+    refetch.answer(ours({ version: 4, actions: [action()] }));
+    await settle();
+
+    expect(useUiStore.getState().error).toBeNull();
+    expect(latest.actions.map((a) => a.id)).toEqual(["a0-pass"]);
+    expect(parked).toHaveLength(0);
+  });
+
+  it("still shows a genuinely illegal action", async () => {
+    await atTable();
+    act(() => latest.act.mutate("nonsense"));
+    await settle();
+
+    next().answer({ detail: "unknown action id 'nonsense'" }, 400);
+    await settle();
+
+    expect(useUiStore.getState().error).toBe("400: unknown action id 'nonsense'");
+    expect(parked).toHaveLength(0);
   });
 });
 

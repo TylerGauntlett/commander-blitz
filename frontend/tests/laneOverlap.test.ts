@@ -12,12 +12,12 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  bandsFor,
+  boardHeight,
   type GroupFootprint,
   LANE_CHROME,
   type LaneFit,
   OVERLAP_MIN_VISIBLE,
-  bandsFor,
-  boardHeight,
   solveBoardCardWidth,
   wrapRows,
 } from "../src/logic/zoomFit";

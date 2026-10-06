@@ -47,7 +47,9 @@
   border-radius: 50%;
   background: var(--lit, rgb(255 224 138 / 0.75));
   box-shadow: 0 0 8px var(--lit, rgb(255 224 138 / 0.55));
-  transition: background var(--t-room, 320ms) ease, box-shadow var(--t-room, 320ms) ease;
+  transition:
+    background var(--t-room, 320ms) ease,
+    box-shadow var(--t-room, 320ms) ease;
   animation: ambient-mote linear infinite;
 }
 
@@ -118,7 +120,8 @@
 .table__wash {
   position: absolute;
   inset: -18%;
-  background: radial-gradient(50% 38% at 34% 22%, rgb(143 127 232 / 0.2) 0%, transparent 66%),
+  background:
+    radial-gradient(50% 38% at 34% 22%, rgb(143 127 232 / 0.2) 0%, transparent 66%),
     radial-gradient(46% 34% at 72% 84%, rgb(90 190 220 / 0.13) 0%, transparent 64%);
   /* Promoted, and it is the ONLY layer here that is. See `.table__vig`. */
   will-change: transform;

@@ -12,6 +12,7 @@ from __future__ import annotations
 import itertools
 import sys
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import TargetSpec
@@ -847,7 +848,6 @@ def kicked_targets(specs):
     CardDef and are shared by every cast line and every future cast of every copy
     of the card.
     """
-    from dataclasses import replace
 
     if not any(spec.count_if_kicked is not None for spec in specs):
         return None

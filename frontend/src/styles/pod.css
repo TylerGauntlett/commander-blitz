@@ -80,7 +80,7 @@
   align-items: center;
   gap: calc(10px * var(--du));
   padding: 0 calc(6px * var(--du)) 0 calc(14px * var(--du));
-  min-height: 44px;
+  min-height: var(--hit-floor);
   border: 1px solid rgb(216 166 60 / 0.3);
   border-radius: calc(9px * var(--du));
   background: rgb(10 8 20 / 0.55);
@@ -197,7 +197,9 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
   line-height: 1;
   opacity: 0;
   cursor: pointer;
-  transition: opacity var(--t-fast) ease, color var(--t-fast) ease;
+  transition:
+    opacity var(--t-fast) ease,
+    color var(--t-fast) ease;
 }
 
 .chair:hover .chair__x,
@@ -219,7 +221,9 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
   width: var(--card-w);
   height: var(--card-h);
   border-radius: var(--card-r);
-  transition: transform var(--t-fast) ease, box-shadow var(--t-fast) ease;
+  transition:
+    transform var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
 }
 
 .chair__card[data-act] {
@@ -248,7 +252,9 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
 .room .back {
   border-color: rgb(216 166 60 / 0.3);
   background: linear-gradient(160deg, #332747 0%, #241b32 55%, #171021 100%);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 24px rgb(0 0 0 / 0.45);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 10px 24px rgb(0 0 0 / 0.45);
 }
 
 .room .back::after {
@@ -337,7 +343,7 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
    a control that looks like a form field on a menu screen is the widget the eye
    goes to, and it is not the thing you came here to do. */
 .chair__field {
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(8px * var(--du));
   border: 1px solid transparent;
   border-radius: calc(7px * var(--du));
@@ -347,7 +353,9 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
   font-size: max(var(--type-floor), calc(17px * var(--du)));
   font-weight: 750;
   text-align: center;
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+  transition:
+    border-color var(--t-fast) ease,
+    background var(--t-fast) ease;
 }
 
 .chair__field:hover:not(:disabled),
@@ -511,7 +519,9 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
   height: calc(5px * var(--du));
   border-radius: 999px;
   background: rgb(255 255 255 / 0.12);
-  transition: background var(--t-fast) ease, box-shadow var(--t-fast) ease;
+  transition:
+    background var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
 }
 
 .pips__s--wait {

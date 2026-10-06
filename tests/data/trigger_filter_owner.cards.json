@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_trigger_filter_owner.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_page_keeper` is Tome of Legends' trigger pair, written as the card writes it; `t_page_keeper_by_control` is the near miss -- the same triggers with `controller: \"you\"` in the filter instead of `owner: \"you\"` -- so the difference between the two readings is visible on one board.",
+  "_comment": "Cards that exist only for tests/unit/triggers/test_trigger_filter_owner.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_page_keeper` is Tome of Legends' trigger pair, written as the card writes it; `t_page_keeper_by_control` is the near miss -- the same triggers with `controller: \"you\"` in the filter instead of `owner: \"you\"` -- so the difference between the two readings is visible on one board.",
   "cards": [
     {
       "id": "t_page_keeper",

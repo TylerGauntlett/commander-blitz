@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the ability-copying test (tests/unit/test_copy_ability.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_camera` is Peter Parker's Camera -- film counters on arrival and an activated ability that copies a targeted ability you control. `t_gainer` has a plain activated ability with no target, so a copy's effect can be counted; `t_camera_pinger` has one that targets a player, so the new-targets path has something to re-point.",
+  "_comment": "Cards that exist only for the ability-copying test (tests/unit/copies/test_copy_ability.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_camera` is Peter Parker's Camera -- film counters on arrival and an activated ability that copies a targeted ability you control. `t_gainer` has a plain activated ability with no target, so a copy's effect can be counted; `t_camera_pinger` has one that targets a player, so the new-targets path has something to re-point.",
   "cards": [
     {
       "id": "t_camera",

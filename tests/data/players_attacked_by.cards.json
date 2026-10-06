@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_players_attacked_by.py. `t_destiny_angel` is Angel of Destiny's end-step line without its life-total condition, so the player spec can be watched on its own: a 2/2 whose end-step trigger makes each player it attacked this turn lose the game. The bears and the planeswalker come from other test files.",
+  "_comment": "Cards for tests/unit/combat/test_players_attacked_by.py. `t_destiny_angel` is Angel of Destiny's end-step line without its life-total condition, so the player spec can be watched on its own: a 2/2 whose end-step trigger makes each player it attacked this turn lose the game. The bears and the planeswalker come from other test files.",
   "cards": [
     {
       "id": "t_destiny_angel",

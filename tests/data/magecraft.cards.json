@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_magecraft.py. t_magecraft is the Archmage Emeritus shape -- one printed line, two abilities, because a copy is not cast. t_copy_watcher isolates the copy half so a passing test cannot be explained by the cast half.",
+  "_comment": "Shapes for tests/unit/triggers/test_magecraft.py. t_magecraft is the Archmage Emeritus shape -- one printed line, two abilities, because a copy is not cast. t_copy_watcher isolates the copy half so a passing test cannot be explained by the cast half.",
   "cards": [
     {
       "id": "t_magecraft",

@@ -38,16 +38,19 @@ import contextlib
 
 from automtg.cards.registry import DeckList, validate_deck
 from automtg.engine import legality
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import cost_reduction
+from automtg.engine.cost_reduction import cost_reduction
 from automtg.engine.effects import execute
 from automtg.engine.effects.context import EffectContext
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
+    activations,
     find_action,
+    keywords,
     oids_of,
     only_oid,
     pass_until,
+    pt,
+    settle_completely,
 )
 
 PLAINS = "plains"
@@ -103,28 +106,6 @@ def table(
         b = b.life(pid, amount)
     game = b.step(Step.PRECOMBAT_MAIN).active(0).max_turns(12).build()
     return game, only_oid(game, walker, 0)
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nothing is waiting to go on it."""
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack
-            and not g.state.pending_triggers
-            and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
-
-
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
 
 
 def activate(game, oid: int, index: int, *, targets=None, x: int | None = None):
@@ -211,15 +192,6 @@ def through_combat(game) -> None:
     pass_until(game, lambda g: g.state.step is Step.POSTCOMBAT_MAIN)
 
 
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return c.power, c.toughness
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
-
-
 def tokens(game, def_id: str, pid: int = 0) -> list:
     return [o for o in game.state.battlefield_objects(pid) if o.def_id == def_id and o.is_token]
 
@@ -262,7 +234,7 @@ class TestSorinGrimNemesis:
         game, sorin = table(builder, "sorin_grim_nemesis", library0=[BEAR, *[PLAINS] * 10],
                             players=3)
         activate(game, sorin, 0)
-        settle(game)
+        settle_completely(game)
 
         assert loyalty(game, sorin) == 7
         assert BEAR in zone_ids(game, 0, "hand")
@@ -272,7 +244,7 @@ class TestSorinGrimNemesis:
         """Mana value 0 is 0 life -- the card still goes to hand."""
         game, sorin = table(builder, "sorin_grim_nemesis", library0=[FOREST, *[PLAINS] * 10])
         activate(game, sorin, 0)
-        settle(game)
+        settle_completely(game)
 
         assert FOREST in zone_ids(game, 0, "hand")
         assert lives(game) == [40, 40]
@@ -289,7 +261,7 @@ class TestSorinGrimNemesis:
         bear = only_oid(game, BEAR, 1)
         activate(game, sorin, 1, targets=[bear])
         choose_x(game, 2)
-        settle(game)
+        settle_completely(game)
 
         assert loyalty(game, sorin) == 4
         assert game.state.objects[bear].zone is Zone.GRAVEYARD
@@ -301,7 +273,7 @@ class TestSorinGrimNemesis:
         bear = only_oid(game, BEAR, 1)
         activate(game, sorin, 1, targets=[bear])
         choose_x(game, 1)
-        settle(game)
+        settle_completely(game)
 
         assert loyalty(game, sorin) == 5
         assert game.state.objects[bear].zone is Zone.BATTLEFIELD
@@ -311,7 +283,7 @@ class TestSorinGrimNemesis:
         """You at 12, the opponent at 15: fifteen Knights, not twelve."""
         game, sorin = table(builder, "sorin_grim_nemesis", loyalty=9, life={0: 12, 1: 15})
         activate(game, sorin, 2)
-        settle(game)
+        settle_completely(game)
         made = tokens(game, "vampire_knight_1_1_b_lifelink")
 
         assert len(made) == 15
@@ -329,7 +301,7 @@ class TestSorinSolemnVisitor:
     def anthem(self, builder):
         game, sorin = table(builder, "sorin_solemn_visitor", mine=[BEAR], theirs=[BEAR])
         activate(game, sorin, 0)
-        settle(game)
+        settle_completely(game)
         return game, sorin, only_oid(game, BEAR, 0), only_oid(game, BEAR, 1)
 
     def test_plus_one_pumps_and_grants_lifelink_to_your_creatures(self, builder):
@@ -349,7 +321,7 @@ class TestSorinSolemnVisitor:
         """The keyword doing its job: a 3-power attacker gains you 3."""
         game, sorin = table(builder, "sorin_solemn_visitor", mine=[BEAR])
         activate(game, sorin, 0)
-        settle(game)
+        settle_completely(game)
         attack_with(game, {only_oid(game, BEAR, 0): 1})
         through_combat(game)
 
@@ -373,7 +345,7 @@ class TestSorinSolemnVisitor:
     def test_minus_two_makes_a_flying_vampire(self, builder):
         game, sorin = table(builder, "sorin_solemn_visitor")
         activate(game, sorin, 1)
-        settle(game)
+        settle_completely(game)
         (vampire,) = tokens(game, "vampire_2_2_b_flying")
 
         assert loyalty(game, sorin) == 2
@@ -385,7 +357,7 @@ class TestSorinSolemnVisitor:
             builder, "sorin_solemn_visitor", loyalty=6, mine=[BEAR], theirs=[BEAR, BEAR]
         )
         activate(game, sorin, 2)
-        settle(game)
+        settle_completely(game)
         return game, sorin
 
     def test_minus_six_gives_you_the_emblem(self, builder):
@@ -475,7 +447,7 @@ class TestTamiyoCollectorOfTales:
         game.apply(
             next(a for a in game.legal_actions() if a.label and name in a.label)
         )
-        settle(game)
+        settle_completely(game)
         return game, tamiyo
 
     def test_plus_one_takes_every_named_card_among_the_top_four(self, builder):
@@ -501,7 +473,7 @@ class TestTamiyoCollectorOfTales:
 
         assert theirs not in offered, "'your graveyard'"
         activate(game, tamiyo, 2, targets=[bolt])
-        settle(game)
+        settle_completely(game)
         assert loyalty(game, tamiyo) == 2
         assert BOLT in zone_ids(game, 0, "hand")
 
@@ -533,7 +505,7 @@ class TestTamiyoCompleatedSage:
             and a.phyrexian == phyrexian
         )
         game.apply(action)
-        settle(game)
+        settle_completely(game)
         return game, action.source
 
     def test_paid_with_mana_she_enters_with_five(self, builder):
@@ -552,7 +524,7 @@ class TestTamiyoCompleatedSage:
         game, tamiyo = table(builder, "tamiyo_compleated_sage", theirs=[BEAR])
         bear = only_oid(game, BEAR, 1)
         activate(game, tamiyo, 0, targets=[bear])
-        settle(game)
+        settle_completely(game)
         return game, tamiyo, bear
 
     def test_plus_one_taps_the_target(self, builder):
@@ -593,7 +565,7 @@ class TestTamiyoCompleatedSage:
         game, tamiyo = table(builder, "tamiyo_compleated_sage", graveyard0=[BEAR, THREE_DROP])
         bear = game.state.players[0].graveyard[0]
         activate(game, tamiyo, 1, targets=[bear], x=2)
-        settle(game)
+        settle_completely(game)
         copies = [o for o in game.state.battlefield_objects(0) if o.is_token]
 
         assert loyalty(game, tamiyo) == 3
@@ -606,7 +578,7 @@ class TestTamiyoCompleatedSage:
         """Spells you cast cost {2} less -- and your opponent's do not."""
         game, tamiyo = table(builder, "tamiyo_compleated_sage", loyalty=7)
         activate(game, tamiyo, 2)
-        settle(game)
+        settle_completely(game)
         divination = game.state.registry.get(SORCERY)
 
         assert len(tokens(game, "tamiyos_notebook")) == 1
@@ -628,7 +600,7 @@ class TestTamiyoFieldResearcher:
         game, tamiyo = table(builder, "tamiyo_field_researcher", mine=[BEAR, BEAR])
         watched, unwatched = oids_of(game, BEAR, 0)
         activate(game, tamiyo, 0, targets=[watched])
-        settle(game)
+        settle_completely(game)
         return game, tamiyo, watched, unwatched
 
     def test_plus_one_draws_when_the_chosen_creature_connects(self, builder):
@@ -668,7 +640,7 @@ class TestTamiyoFieldResearcher:
         assert land not in offered, "'nonland'"
 
         activate(game, tamiyo, 1, targets=[bear, trinket])
-        settle(game)
+        settle_completely(game)
         assert loyalty(game, tamiyo) == 2
         later(game, 1, Step.UPKEEP)
         assert game.state.objects[bear].tapped and game.state.objects[trinket].tapped
@@ -688,7 +660,7 @@ class TestTamiyoFieldResearcher:
         )
         tamiyo = only_oid(game, "tamiyo_field_researcher", 0)
         activate(game, tamiyo, 2)
-        settle(game)
+        settle_completely(game)
         return game, tamiyo
 
     def test_minus_seven_draws_three_and_gives_the_emblem(self, builder):
@@ -738,7 +710,7 @@ class TestTeferiTemporalArchmage:
             builder, "teferi_temporal_archmage", library0=[BEAR, BOLT, *[PLAINS] * 10]
         )
         activate(game, teferi, 0)
-        settle(game)
+        settle_completely(game)
         hand = zone_ids(game, 0, "hand")
         library = zone_ids(game, 0, "library")
 
@@ -759,7 +731,7 @@ class TestTeferiTemporalArchmage:
         action = next(a for a in offers_ if len(a.targets) == 4)
         aimed = {t.id for t in action.targets}
         game.apply(action)
-        settle(game)
+        settle_completely(game)
 
         assert loyalty(game, teferi) == 4
         assert all(not game.state.objects[o].tapped for o in lands if o in aimed)
@@ -769,7 +741,7 @@ class TestTeferiTemporalArchmage:
     def test_minus_ten_lets_you_activate_on_an_opponents_turn(self, builder):
         game, teferi = table(builder, "teferi_temporal_archmage", loyalty=11)
         activate(game, teferi, 2)
-        settle(game)
+        settle_completely(game)
         assert loyalty(game, teferi) == 1
         assert len(game.state.players[0].command) == 1
 
@@ -853,7 +825,7 @@ class TestTeferiTimeRaveler:
             hand0=[SORCERY, BEAR],
         )
         activate(game, teferi, 1)
-        settle(game)
+        settle_completely(game)
         return game, teferi
 
     def test_plus_one_lets_you_cast_a_sorcery_on_their_turn(self, builder):
@@ -881,7 +853,7 @@ class TestTeferiTimeRaveler:
         bear = only_oid(game, BEAR, 1)
         library = len(game.state.players[0].library)
         activate(game, teferi, 2, targets=[bear])
-        settle(game)
+        settle_completely(game)
 
         assert loyalty(game, teferi) == 1
         assert game.state.objects[bear].zone is Zone.HAND
@@ -893,7 +865,7 @@ class TestTeferiTimeRaveler:
         game, teferi = table(builder, "teferi_time_raveler")
         library = len(game.state.players[0].library)
         activate(game, teferi, 2, targets=[])
-        settle(game)
+        settle_completely(game)
 
         assert len(game.state.players[0].library) == library - 1
 
@@ -913,7 +885,7 @@ class TestVraskaTheUnseen:
     def guarded(self, builder):
         game, vraska = table(builder, "vraska_the_unseen", theirs=[BEAR, BEAR])
         activate(game, vraska, 0)
-        settle(game)
+        settle_completely(game)
         return game, vraska
 
     def test_plus_one_destroys_a_creature_that_hits_her_on_their_turn(self, builder):
@@ -948,7 +920,7 @@ class TestVraskaTheUnseen:
         assert land not in offered, "'nonland'"
 
         activate(game, vraska, 1, targets=[trinket])
-        settle(game)
+        settle_completely(game)
         assert loyalty(game, vraska) == 2
         assert game.state.objects[trinket].zone is Zone.GRAVEYARD
 
@@ -956,7 +928,7 @@ class TestVraskaTheUnseen:
         """Three seats: the player hit loses, the other plays on."""
         game, vraska = table(builder, "vraska_the_unseen", loyalty=7, players=3)
         activate(game, vraska, 2)
-        settle(game)
+        settle_completely(game)
         assassins = tokens(game, "assassin_1_1_b_lose_game")
         assert len(assassins) == 3
         assert game.state.objects[vraska].zone is Zone.GRAVEYARD
@@ -979,7 +951,7 @@ class TestVraskaRelicSeeker:
     def test_plus_two_makes_a_menace_pirate(self, builder):
         game, vraska = table(builder, "vraska_relic_seeker")
         activate(game, vraska, 0)
-        settle(game)
+        settle_completely(game)
         (pirate,) = tokens(game, "pirate_2_2_b_menace")
 
         assert loyalty(game, vraska) == 8
@@ -994,7 +966,7 @@ class TestVraskaRelicSeeker:
         assert land not in offered, "artifact, creature or enchantment -- not land"
 
         activate(game, vraska, 1, targets=[trinket])
-        settle(game)
+        settle_completely(game)
         assert loyalty(game, vraska) == 3
         assert game.state.objects[trinket].zone is Zone.GRAVEYARD
         assert len(tokens(game, "treasure_token", 0)) == 1
@@ -1006,7 +978,7 @@ class TestVraskaRelicSeeker:
             builder, "vraska_relic_seeker", loyalty=10, players=3, life={1: 35}
         )
         activate(game, vraska, 2, targets=[1])
-        settle(game)
+        settle_completely(game)
 
         assert lives(game) == [40, 1, 40]
         assert game.state.objects[vraska].zone is Zone.GRAVEYARD

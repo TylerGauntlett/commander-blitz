@@ -34,7 +34,22 @@
                 "const": 1
               },
               "tapped": true,
-              "attacking": true
+              "attacking": true,
+              "as": "mobilized"
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step.",
+              "effects": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "binding": "mobilized",
+                    "count": "all"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -283,7 +298,7 @@
       "spell_effects": [
         {
           "op": "create_token",
-          "token": "soldier_1_1_w",
+          "token": "warrior_1_1_w",
           "amount": {
             "x": true
           }
@@ -311,12 +326,23 @@
           "text": "Raid — When this creature enters, if you attacked this turn, return target creature card with mana value 2 or less from your graveyard to the battlefield.",
           "trigger": {
             "event": "self_enters",
-            "source": "self"
+            "source": "self",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attacked_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            }
           },
-          "effects": [
+          "targets": [
             {
-              "op": "put_onto_battlefield",
-              "objects": {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
                 "zone": "graveyard",
                 "controller": "you",
                 "types": [
@@ -327,9 +353,17 @@
                   "value": {
                     "const": 2
                   }
-                },
-                "count": 1,
-                "chooser": "controller"
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
               }
             }
           ]

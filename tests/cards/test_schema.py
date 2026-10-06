@@ -225,7 +225,7 @@ class TestVocabularyIsChecked:
         `STATIC_FILTER_KEYS`, under a restriction rather than as an exception --
         what a static filter reads is `characteristics._base_pt`, the size
         before any layer, so it still cannot see another static's output. The
-        restriction is measured in `tests/unit/test_static_power_filter.py`.
+        restriction is measured in `tests/unit/statics/test_static_power_filter.py`.
 
         `modified` takes its place, and it is a key the effect-side selector
         language has and the static one deliberately does not: the cards that

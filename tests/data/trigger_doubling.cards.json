@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_trigger_doubling.py. t_prodigy scopes by the SUBTYPE of the permanent whose ability fired (Harmonic Prodigy); t_veyran scopes by the CAUSE being a spell you cast or copied (Veyran, Voice of Duality). Two axes, one static effect. t_upkeep_wizard GAINS LIFE rather than drawing: the upkeep window is one step away from the turn's own draw, and a life total cannot be confused with it.",
+  "_comment": "Shapes for tests/unit/triggers/test_trigger_doubling.py. t_prodigy scopes by the SUBTYPE of the permanent whose ability fired (Harmonic Prodigy); t_veyran scopes by the CAUSE being a spell you cast or copied (Veyran, Voice of Duality). Two axes, one static effect. t_upkeep_wizard GAINS LIFE rather than drawing: the upkeep window is one step away from the turn's own draw, and a life total cannot be confused with it.",
   "cards": [
     {
       "id": "t_prodigy",

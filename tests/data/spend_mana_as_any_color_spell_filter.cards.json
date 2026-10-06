@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the filtered any-colour test (tests/unit/test_spend_mana_as_any_color_spell_filter.py). `t_oath_static` is Oath of Nissa's second line alone; `t_azure_walker` is a {1}{U} planeswalker for it to reach. The off-colour sorcery and the {W}{W} activation it must not reach are `t_azure_bolt` and `t_chroma_font` from spend_mana_as_any_color_static.cards.json.",
+  "_comment": "Cards that exist only for the filtered any-colour test (tests/unit/mana/test_spend_mana_as_any_color_spell_filter.py). `t_oath_static` is Oath of Nissa's second line alone; `t_azure_walker` is a {1}{U} planeswalker for it to reach. The off-colour sorcery and the {W}{W} activation it must not reach are `t_azure_bolt` and `t_chroma_font` from spend_mana_as_any_color_static.cards.json.",
   "cards": [
     {
       "id": "t_oath_static",

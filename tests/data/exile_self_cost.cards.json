@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the exile-self cost test (tests/unit/test_exile_self_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_phoenix_down` pays by exiling itself; `t_sac_down` is the near miss that sacrifices instead, leaving the artifact in the graveyard where the card is meant to be gone for good.",
+  "_comment": "Cards that exist only for the exile-self cost test (tests/unit/costs/test_exile_self_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_phoenix_down` pays by exiling itself; `t_sac_down` is the near miss that sacrifices instead, leaving the artifact in the graveyard where the card is meant to be gone for good.",
   "cards": [
     {
       "id": "t_phoenix_down",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the linked-target test (tests/unit/test_linked_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_dagger` is the Cloak and Dagger shape: target an opponent, and then up to one target creature THEY control. `t_loose_dagger` is the counterfactual -- the same two targets with no link between them, which is a different and wider card.",
+  "_comment": "Cards that exist only for the linked-target test (tests/unit/targets/test_linked_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_dagger` is the Cloak and Dagger shape: target an opponent, and then up to one target creature THEY control. `t_loose_dagger` is the counterfactual -- the same two targets with no link between them, which is a different and wider card.",
   "cards": [
     {
       "id": "t_dagger",

@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The lobby -- ported from the flow round's 02 'Face Up' (`docs/design-record.md#flow`).
  *
@@ -28,11 +29,13 @@
   overflow: hidden;
   border-radius: var(--card-r, calc(var(--card-w) * 0.055));
   border: 2px solid rgb(120 110 90 / 0.5);
-  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.24) 0 8px, transparent 8px 16px),
-    #443e34;
+  background:
+    repeating-linear-gradient(135deg, rgb(0 0 0 / 0.24) 0 8px, transparent 8px 16px), #443e34;
   display: grid;
   place-items: center;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.35);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 6px 14px rgb(0 0 0 / 0.35);
 }
 
 .back::after {
@@ -59,8 +62,8 @@
 .back--open {
   border-style: dashed;
   border-color: var(--edge-hi);
-  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.24) 0 8px, transparent 8px 16px),
-    #2a2740;
+  background:
+    repeating-linear-gradient(135deg, rgb(0 0 0 / 0.24) 0 8px, transparent 8px 16px), #2a2740;
 }
 
 .back--empty {
@@ -470,7 +473,9 @@
   font-size: 9px;
   line-height: 1;
   opacity: 0.4;
-  transition: opacity 0.12s ease, color 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    color 0.12s ease;
 }
 
 .slot:hover .slot__x,
@@ -562,7 +567,9 @@
   font-weight: 800;
   text-align: center;
   text-overflow: ellipsis;
-  transition: border-color 0.12s ease, background 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
 }
 
 .plate__name:hover:not(:disabled) {
@@ -773,12 +780,16 @@
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.04em;
-  box-shadow: 0 4px 0 #7d5310, 0 0 26px rgb(224 166 63 / 0.28);
+  box-shadow:
+    0 4px 0 #7d5310,
+    0 0 26px rgb(224 166 63 / 0.28);
 }
 
 .deal:active:not(:disabled) {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #7d5310, 0 0 26px rgb(224 166 63 / 0.28);
+  box-shadow:
+    0 2px 0 #7d5310,
+    0 0 26px rgb(224 166 63 / 0.28);
 }
 
 .deal:disabled {
@@ -943,7 +954,9 @@
 .cbtn .pip {
   pointer-events: none;
   opacity: 0.42;
-  transition: opacity 0.12s ease, filter 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    filter 0.12s ease;
 }
 
 .cbtn:hover .pip {
@@ -1078,7 +1091,9 @@
   inset: 0;
   border-radius: calc(var(--card-w) * 0.055);
   border: 2px solid var(--gold);
-  box-shadow: 0 0 0 4px rgb(255 212 121 / 0.18), 0 0 24px rgb(255 212 121 / 0.3);
+  box-shadow:
+    0 0 0 4px rgb(255 212 121 / 0.18),
+    0 0 24px rgb(255 212 121 / 0.3);
   pointer-events: none;
 }
 
@@ -1380,8 +1395,8 @@
 
 .sig__art--none {
   display: block;
-  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px),
-    #6b6152;
+  background:
+    repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px), #6b6152;
 }
 
 .sig__n {

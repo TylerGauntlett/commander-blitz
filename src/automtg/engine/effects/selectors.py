@@ -16,9 +16,11 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import _base_pt, chars
+from ..characteristics import _base_pt, chars, creature_types_of, resolve_chosen_subtypes
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
+from ..mana import printed_cost_is, validate_printed_cost_list
+from ..player_statics import commander_subtypes
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -284,7 +286,7 @@ SELECTOR_KEYS = frozenset(
         #: named object. That half matches what each source *was*, snapshotted
         #: onto the pip, because the Treasure is sacrificed to make its mana and
         #: its oid resolves to nothing by the time the spell is on the stack.
-        #: Its legal keys are `triggers.PAID_BY_SELECTOR_KEYS`, not these.
+        #: Its legal keys are `PAID_BY_SELECTOR_KEYS`, not these.
         "paid_by",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
@@ -370,6 +372,20 @@ SELECTOR_KEYS = frozenset(
         "encoded_by",
     }
 )
+
+#: The only keys a selector-valued `paid_by` may use -- everything
+#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
+#:
+#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
+#: filtered is a *memory* of a permanent and not a permanent: "tapped",
+#: "attacking", a P/T comparison or a zone have no answer about an object that
+#: was sacrificed three cost-payments ago. Read through the general selector
+#: machinery they would all be silently false, which is the failure mode this
+#: capability exists to fix, so they are refused at load time instead.
+PAID_BY_SELECTOR_KEYS = frozenset(
+    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
+)
+
 
 ZONE_NAMES = {z.value: z for z in Zone}
 
@@ -532,7 +548,6 @@ def _commander_subtypes(ctx: EffectContext, who: str) -> frozenset[str]:
     `triggers.matches_card_filter` so the two halves of the filter language
     cannot disagree about what a commander's types are.
     """
-    from ..characteristics import commander_subtypes
 
     out: set[str] = set()
     for pid in select_players(ctx, who):
@@ -690,8 +705,6 @@ def matches(
     # the effect side too. Resolved against the ability's own source, which is
     # the permanent that made the choice.
     if selector.get("subtypes"):
-        from ..characteristics import resolve_chosen_subtypes
-
         selector = resolve_chosen_subtypes(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
@@ -779,8 +792,6 @@ def matches(
         # also reads `"self"` -- the ability's own source -- the way
         # `shares_a_color_with` does. Shared with `triggers.matches_card_filter`
         # through `creature_types_of`, so the two halves cannot disagree.
-        from ..characteristics import creature_types_of
-
         other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
         if not (creature_types_of(state, oid) & creature_types_of(state, other)):
             return False
@@ -1132,7 +1143,6 @@ def has_printed_cost(state, oid: int, wanted) -> bool:
     none, whatever the card it copies prints -- the same override `mana_value_of`
     honours.
     """
-    from ..mana import printed_cost_is
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -1143,6 +1153,7 @@ def has_printed_cost(state, oid: int, wanted) -> bool:
 
 
 def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
+    # Local: `values` imports `selectors`, and each evaluates the other.
     from .values import evaluate_value
 
     if isinstance(spec, int):
@@ -1219,6 +1230,7 @@ def pick_from_pool(
     if count_spec == "any":
         min_count, max_count = 0, len(pool)
     else:
+        # Local: `values` imports `selectors`, and each evaluates the other.
         from .values import evaluate_value
 
         count = evaluate_value(ctx, count_spec)
@@ -1499,8 +1511,6 @@ def validate_selector(selector: Any, where: str) -> None:
     # one of them would load and then be silently false.
     paid_by = selector.get("paid_by")
     if isinstance(paid_by, Mapping):
-        from ..triggers import PAID_BY_SELECTOR_KEYS
-
         unknown_paid_by = set(paid_by) - PAID_BY_SELECTOR_KEYS
         if unknown_paid_by:
             raise DslError(
@@ -1576,8 +1586,6 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
         )
     if "mana_cost" in selector:
-        from ..mana import validate_printed_cost_list
-
         validate_printed_cost_list(selector["mana_cost"], where)
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):

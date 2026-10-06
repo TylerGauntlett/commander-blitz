@@ -18,9 +18,9 @@
 import { describe, expect, it } from "vitest";
 import { stageScale } from "../src/logic/doorRow";
 import {
-  MULLIGAN_BOTTOM,
-  MULL_TUNE,
   handRow,
+  MULL_TUNE,
+  MULLIGAN_BOTTOM,
   mulliganCost,
   mulliganPhase,
   rowExtent,

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the created-with-source test (tests/unit/test_created_with_source.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_faerie_artisans` is Faerie Artisans exactly as the DSL writes it. `t_loose_artisans` is the same card with `is_token` standing in for `created_with` -- the reachable approximation, kept so the pair pins that the link is what does the work.",
+  "_comment": "Cards that exist only for the created-with-source test (tests/unit/tokens/test_created_with_source.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_faerie_artisans` is Faerie Artisans exactly as the DSL writes it. `t_loose_artisans` is the same card with `is_token` standing in for `created_with` -- the reachable approximation, kept so the pair pins that the link is what does the work.",
   "cards": [
     {
       "id": "t_faerie_artisans",

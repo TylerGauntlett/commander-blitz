@@ -7,6 +7,7 @@ that is the effect layer's job.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -14,14 +15,12 @@ from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
-    life_gain_addend,
-    life_gain_multiplier,
-    life_loss_multiplier,
-    player_cant_gain_life,
     player_protected_from,
-    printed_token_matches,
-    token_creation_replacements,
+    prevented_damage,
+    prevents_all_damage,
+    protected_from,
 )
+from .characteristics import chars as _chars
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
@@ -29,55 +28,25 @@ from .player_statics import (
     counter_placement_replacements,
     damage_cap,
     damage_multiplier,
+    life_gain_addend,
+    life_gain_multiplier,
+    life_loss_multiplier,
     mill_multiplier,
+    player_cant_gain_life,
     player_counter_replacements,
+    printed_token_matches,
     static_cast_locked_zones,
+    token_creation_replacements,
     untap_held,
 )
 from .state import new_object
+from .structs import CONTROL_DURATIONS, TempEffect
+from .temp_effects import life_floor, permanent_shielded, shielded
 from .triggers import fire
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-    from .structs import TempEffect
-from .temp_effects import (  # noqa: F401
-    _expired,
-    arm_attack_requirements,
-    clear_attack_requirements,
-    clear_attack_restrictions,
-    clear_block_prohibitions,
-    clear_cast_locks,
-    clear_damage_shields,
-    clear_flash_permissions,
-    clear_goad,
-    clear_life_floors,
-    clear_life_locks,
-    clear_outcome_locks,
-    clear_permanent_shields,
-    clear_player_protections,
-    clear_sacrifice_restrictions,
-    clear_unblockables,
-    drop_attack_requirements,
-    forbid_block,
-    forbid_sacrifice,
-    goad_creature,
-    grant_flash_permission,
-    grant_player_protection,
-    life_floor,
-    lock_casting_zones,
-    lock_game_outcome,
-    lock_life_total,
-    make_unblockable,
-    permanent_shielded,
-    require_attack_on,
-    restrict_attack,
-    sacrifice_forbidden,
-    set_life_floor,
-    shield_permanent,
-    shield_player,
-    shielded,
-)
 
 # ----------------------------------------------------------------------
 # cards
@@ -653,8 +622,6 @@ def damage_permanent(
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is
     # why this returns before all three rather than zeroing `amount` later.
-    from .characteristics import prevented_damage, prevents_all_damage, protected_from
-
     if protected_from(state, oid, source_oid):
         # `fire`, not `emit`, and `to="permanent"`: see the player-side site in
         # `damage_player`. This one has always been a log line with nothing
@@ -804,8 +771,6 @@ def damage_permanent(
     # `obj.damage` on a planeswalker instead would be invisible -- nothing
     # compares a planeswalker's damage to anything, so it would take no damage
     # at all and never die.
-    from .characteristics import chars as _chars
-
     if "Planeswalker" in _chars(state, oid).types:
         remove_counters(state, oid, "loyalty", amount)
         if is_combat and source_oid is not None:
@@ -1323,8 +1288,6 @@ def create_token(
 
 
 def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
-    from .characteristics import protected_from
-
     aura = state.objects.get(aura_oid)
     target = state.objects.get(target_oid)
     if aura is None or target is None or not target.on_battlefield:
@@ -1507,7 +1470,6 @@ def change_control(
     together and put both back -- "as it was" -- which hands somebody a creature
     that is not newly under their control, and loses the cache drop outright.
     """
-    from .structs import CONTROL_DURATIONS
 
     if duration not in CONTROL_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown control duration {duration!r}")
@@ -1523,8 +1485,6 @@ def change_control(
     if state.combat is not None:
         state.combat.remove(oid)
     if duration == "until_end_of_turn":
-        from .structs import TempEffect
-
         obj.until_eot.append(
             TempEffect(
                 kind="control",
@@ -1596,7 +1556,6 @@ def pump(
     """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
     **until your next turn**" (Liliana, the Last Hope). See
     `TempEffect.until_player` for where the longer one wears off."""
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1650,7 +1609,6 @@ def animate(
     granted for as long as the permanent lasts. A your-turn-only keyword has no
     permanent form and is refused rather than silently timed.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1721,7 +1679,6 @@ def grant_keyword(
     following turn. The two durations are stored in different places because
     only one of them is swept by `clear_until_eot`.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1764,7 +1721,6 @@ def grant_ability(
     strictly weaker card that looks identical on the turn it was made. The two
     durations live in different lists because only one of them is swept.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1804,7 +1760,6 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     same place a card on the stack lives -- so nothing that walks the
     battlefield sees it twice.
     """
-    import dataclasses
 
     host = state.objects.get(host_oid)
     newcomer = state.objects.get(card_oid)
@@ -1850,32 +1805,6 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     )
 
 
-def granted_abilities(state: GameState, oid: int):
-    """Every ability currently granted to this object, as ``(source, ability)``.
-
-    The *granted-to* object is what triggers and legality treat as the source,
-    which is what makes "whenever **this creature** deals combat damage" mean
-    the creature that was granted the ability rather than the thing that granted
-    it.
-    """
-    obj = state.objects.get(oid)
-    if obj is None:
-        return
-    # `left_with` is the departure snapshot: an object that has just left the
-    # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
-    # its own leave-the-battlefield triggers have not fired yet. Empty for
-    # everything else, so this reads as plain `until_eot` in every other case.
-    for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
-        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
-            continue
-        source = state.objects.get(temp.source)
-        if source is None:
-            continue
-        card = state.card_of(source)
-        if temp.ability_index < len(card.grantable_abilities):
-            yield source, card.grantable_abilities[temp.ability_index]
-
-
 def lock_abilities(
     state: GameState,
     oid: int,
@@ -1890,7 +1819,6 @@ def lock_abilities(
     ``until_player``, Dovin Baan's "…until your next turn", on the pump's longer
     clock for the same reason.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:

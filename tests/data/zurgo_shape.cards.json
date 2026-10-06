@@ -1,5 +1,5 @@
 {
-  "_comment": "The whole of Zurgo and Ojutai's printed third line, as a test-pool card, for tests/unit/test_zurgo_and_ojutai.py. The real card lives in data/authoring/answers/zurgo_and_ojutai.json and is not in the registry until the deck lane collects it, so this is the shape standing in for it: identical trigger and effects, its own id and name. t_zao_plain is a Dragon with no text, so a swing can be shown to carry a second Dragon into the damagers binding; t_zao_ogre is the non-Dragon the filter has to leave out.",
+  "_comment": "The whole of Zurgo and Ojutai's printed third line, as a test-pool card, for tests/unit/named_cards/test_zurgo_and_ojutai.py. The real card is zurgo_and_ojutai in data/cards/auto/; it was not in the registry when this was written, and the behaviour gate stops before combat, so this is the shape standing in for it: identical trigger and effects, its own id and name. t_zao_plain is a Dragon with no text, so a swing can be shown to carry a second Dragon into the damagers binding; t_zao_ogre is the non-Dragon the filter has to leave out.",
   "cards": [
     {
       "id": "t_zao_lord",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_mana_restriction_not.py. t_emperor_mana is The Emperor of Palamecia's mana ability: 'Spend this mana only to cast a noncreature spell.' The other two are the spellings that were available before the negation, kept as live cards because each is a different wrong card and the test says which.",
+  "_comment": "Shapes for tests/unit/mana/test_mana_restriction_not.py. t_emperor_mana is The Emperor of Palamecia's mana ability: 'Spend this mana only to cast a noncreature spell.' The other two are the spellings that were available before the negation, kept as live cards because each is a different wrong card and the test says which.",
   "cards": [
     {
       "id": "t_emperor_mana",

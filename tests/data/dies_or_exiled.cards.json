@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_dies_or_exiled_trigger.py. t_ghostform_source holds Kaya the Inexorable's quoted ability for grant_ability to hand to a creature; it has no abilities of its own.",
+  "_comment": "Shapes for tests/unit/triggers/test_dies_or_exiled_trigger.py. t_ghostform_source holds Kaya the Inexorable's quoted ability for grant_ability to hand to a creature; it has no abilities of its own.",
   "cards": [
     {
       "id": "t_ghostform_source",

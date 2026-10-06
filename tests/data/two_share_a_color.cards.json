@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_two_share_a_color.py. `t_color_miller` is Sphinx's Tutelage's clause with a life gain where the repeat will go, so the condition can be read on its own before the loop op exists. `t_any_two_miller` is the near miss the gap record names -- `exists` with a count, which drops the colour clause entirely -- kept as a live card so the difference is measured rather than argued.",
+  "_comment": "Shapes for tests/unit/targets/test_two_share_a_color.py. `t_color_miller` is Sphinx's Tutelage's clause with a life gain where the repeat will go, so the condition can be read on its own before the loop op exists. `t_any_two_miller` is the near miss the gap record names -- `exists` with a count, which drops the colour clause entirely -- kept as a live card so the difference is measured rather than argued.",
   "cards": [
     {
       "id": "t_color_miller",

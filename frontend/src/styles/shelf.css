@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The deck catalogue, standing in the same room.
  *
@@ -83,7 +84,7 @@
   gap: calc(8px * var(--du));
   flex: none;
   width: min(300px, 26vw);
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(12px * var(--du));
   border: 1px solid var(--edge);
   border-radius: calc(9px * var(--du));
@@ -115,7 +116,7 @@
   width: 100%;
   min-width: 0;
   align-self: stretch;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   border: 0;
   background: none;
   color: var(--text);
@@ -162,7 +163,9 @@
   border-radius: calc(9px * var(--du));
   background: rgb(8 7 18 / 0.5);
   cursor: pointer;
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+  transition:
+    border-color var(--t-fast) ease,
+    background var(--t-fast) ease;
 }
 
 /*
@@ -205,7 +208,7 @@
 }
 
 .shelf__sort {
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: 0 calc(12px * var(--du));
   border: 1px solid var(--edge);
   border-radius: calc(9px * var(--du));
@@ -337,7 +340,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   justify-content: center;
   gap: calc(2px * var(--du));
   width: 100%;
-  min-height: 44px;
+  min-height: var(--hit-floor);
 }
 
 .tile__pips {
@@ -385,7 +388,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
 .tile__yes {
   position: relative;
   width: 44px;
-  min-width: 44px;
+  min-width: var(--hit-floor);
   height: 44px;
   padding: 0;
   border: 0;
@@ -504,7 +507,7 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
 .shelf__foot .import__input {
   flex: 1;
   min-width: 0;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   font-size: max(var(--type-floor), calc(16px * var(--du)));
 }
 

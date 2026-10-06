@@ -28,10 +28,16 @@ from __future__ import annotations
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Any
 
+from . import stack, triggers
 from .carddef import Cost
+from .costs import pay, zone_of
 from .enums import Zone
 from .events import EventType
 from .mana import ManaCost
+from .player_statics import player_cant_cast_while_resolving
+from .primitives import cast_locked_zones
+from .targeting import enumerate_target_tuples
+from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -43,7 +49,6 @@ TIME_COUNTER = "time"
 
 def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
     """Pay the suspend cost and exile the card with its time counters."""
-    from .costs import pay
 
     obj = state.objects[oid]
     card = state.card_of(obj)
@@ -54,8 +59,6 @@ def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[in
     ok = yield from pay(state, pid, Cost(mana=cost), None)
     if not ok:  # pragma: no cover - legality already proved payability
         return False
-
-    from .zones import move_object
 
     move_object(state, oid, Zone.EXILE, cause="suspended")
     obj.add_counter(TIME_COUNTER, counters)
@@ -84,7 +87,6 @@ def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[i
     it is a much smaller claim than a face-down **permanent**, which is a
     characteristics problem and remains unimplemented.
     """
-    from .costs import pay
 
     obj = state.objects[oid]
     card = state.card_of(obj)
@@ -94,8 +96,6 @@ def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[i
     ok = yield from pay(state, pid, Cost(mana=ManaCost.parse(FORETELL_COST)), None)
     if not ok:  # pragma: no cover - legality already proved payability
         return False
-
-    from .zones import move_object
 
     move_object(state, oid, Zone.EXILE, cause="foretold")
     obj.foretold_by = pid
@@ -189,11 +189,6 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     owns a spell **you cast this way**" (Kefka) has to name the cards that were
     really cast and not the ones that were merely offered.
     """
-    from . import stack, triggers
-    from .costs import zone_of
-    from .player_statics import player_cant_cast_while_resolving
-    from .primitives import cast_locked_zones
-    from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:

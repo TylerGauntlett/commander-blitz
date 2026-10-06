@@ -214,6 +214,21 @@ export function useGame(session: GameSession | null) {
       return response;
     },
     enabled: session !== null,
+    /*
+     * THE SEAT MOVING IS NOT A NEW GAME, so the board does not blank for it.
+     *
+     * `GameRoute` asks with a null seat first and then with the seat the first
+     * response named, and each is its own key. Without this the second key
+     * started with no data at all: the table, already drawn from the first
+     * response, went back to "Dealing…" for a round trip. The previous
+     * response stands in until the new one lands.
+     *
+     * ONLY FOR THE SAME GAME. A rematch navigates `/games/a` to `/games/b`
+     * inside one mounted route, and the finished game's board must not be
+     * drawn as if it were the new one's -- nor its seat taken for this one's.
+     */
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === session?.gameId ? previous : undefined,
   });
 
   const lookup = useCallback((cardId: string) => names.current.get(cardId), []);
@@ -258,13 +273,47 @@ export function useGame(session: GameSession | null) {
     [absorb],
   );
 
+  /**
+   * Fetch the current position without ceremony, and absorb it like any other.
+   *
+   * The answer to a stale click. From the cursor we already hold, so anything
+   * that landed in the meantime is logged and narrated once, exactly as a poll
+   * would have done it -- not the full reload invalidating the query would be,
+   * which re-seeds the log from the whole game.
+   */
+  const refresh = useCallback(async () => {
+    if (!session) return;
+    try {
+      absorb(await api.state(session.gameId, session.seat, cursorRef.current));
+    } catch (caught) {
+      setError((caught as Error).message);
+    }
+  }, [session, absorb, setError]);
+
   const act = useMutation({
     mutationFn: async (actionId: string) => {
       if (!session) throw new Error("no game");
-      return api.applyAction(session.gameId, seatOf(session), actionId, 1);
+      // The version of the list the id was read from, which is the cached
+      // response the board is drawing -- not `versionRef`, which a poll can
+      // move ahead of what has been rendered.
+      const shown = queryClient.getQueryData<StateResponse>(key)?.version;
+      return api.applyAction(session.gameId, seatOf(session), actionId, 1, shown);
     },
     onSuccess: humanAbsorb,
-    onError: (error: Error) => setError(error.message),
+    onError: (error: Error) => {
+      /*
+       * The click was read off a list the game has already replaced -- most
+       * often the second half of a double click, whose first half has just
+       * played the card. Nothing the player did wrong and nothing to tell
+       * them: fetch the list that is current and let them choose again. An
+       * error toast here read "unknown action id 'a1-play_land'".
+       */
+      if (error instanceof ApiError && error.status === 409 && error.code === "stale_action") {
+        void refresh();
+        return;
+      }
+      setError(error.message);
+    },
   });
 
   const declare = useMutation({

@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the discard-binding test (tests/unit/test_discard_binding.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. Between them they cover the three shipped cards that needed this: t_pitch_and_draw is Joshua ('discard up to two cards, then draw that many'), t_pitch_plus_one is Celes ('discard any number, draw that many plus one'), t_pitch_each is Mog ('each player may discard a card ... if a creature card was discarded this way'), and t_exact_pitch is the counterfactual with no up_to.",
+  "_comment": "Cards that exist only for the discard-binding test (tests/unit/effects/test_discard_binding.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. Between them they cover the three shipped cards that needed this: t_pitch_and_draw is Joshua ('discard up to two cards, then draw that many'), t_pitch_plus_one is Celes ('discard any number, draw that many plus one'), t_pitch_each is Mog ('each player may discard a card ... if a creature card was discarded this way'), and t_exact_pitch is the counterfactual with no up_to.",
   "cards": [
     {
       "id": "t_pitch_and_draw",

@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from automtg.engine import legality
 from automtg.engine.actions import Action
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Zone
@@ -95,7 +96,6 @@ class ActionTable:
 
 def build(state: GameState) -> ActionTable:
     """Build the action table (and therefore the mask) for the current decision."""
-    from automtg.engine import legality
 
     mask = np.zeros(ACTION_SPACE_SIZE, dtype=np.int8)
     table = ActionTable(mask=mask)

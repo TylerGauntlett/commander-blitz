@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the cast-off-the-top test (tests/unit/test_cast_from_library_top.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana.",
+  "_comment": "A card that exists only for the cast-off-the-top test (tests/unit/casting/test_cast_from_library_top.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana.",
   "cards": [
     {
       "id": "t_citadel",

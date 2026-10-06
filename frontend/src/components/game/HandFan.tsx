@@ -215,6 +215,7 @@ export function HandFan({
      * Leaving the hand outright cannot be ambiguous, so it is the honest place
      * to reset both halves.
      */
+    // biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason.
     <div
       className="hand"
       style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
@@ -248,6 +249,7 @@ export function HandFan({
                * a fixed rectangle now, extended upward by the lift so the pointer
                * stays inside it for the whole rise; only `.hand__lift` transforms.
                */
+              // biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason.
               <div
                 className="hand__slot"
                 key={card.oid}

@@ -47,7 +47,7 @@
  * were reading as it moves from hand to stack to battlefield.
  */
 
-import { type Transition, motion, useMotionValue } from "motion/react";
+import { motion, type Transition, useMotionValue } from "motion/react";
 import { type CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import type { CardView } from "../../api/types";
 import { register } from "../../fx/actuators";

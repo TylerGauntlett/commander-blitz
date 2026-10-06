@@ -12,41 +12,128 @@ inputs:
     description: "the browser the stories and the e2e suite need"
     default: "false"
 
+# The three caches below (TECH_DEBT RS-02) are each a restore, an install on a
+# miss, and a save straight after the install -- not `actions/cache`, whose save
+# waits for the end of the job. Two reasons. A save at the end captures whatever
+# the job wrote into the cached tree on the way (vite's and storybook's caches
+# live in node_modules/.vite and node_modules/.cache), and the next run would
+# restore that instead of what the install produced. And it skips the save when
+# the job fails, so a red e2e leg would throw away a good install.
+#
+# No restore-keys anywhere: every key is everything its install reads, and a
+# near miss would be a tree that install never produced. Concurrent legs that
+# all miss race to save one key; the losers log a warning and carry on.
 runs:
   using: composite
   steps:
     # Unconditional. Every job runs scripts/verify.py, and the e2e jobs need the
     # package importable besides: playwright.config.ts boots uvicorn with the
     # interpreter verify.py hands it as PYTHON.
-    - uses: actions/setup-python@v5
+    #
+    # No `cache: pip`: that caches the downloads, which saves the fetch and not
+    # the install, and it would restore on every job only to go unused on a
+    # venv hit. A miss downloads from PyPI, and misses are rare.
+    - id: python
+      uses: actions/setup-python@v5
       with:
         python-version: "3.13"
-        cache: pip
-        cache-dependency-path: pyproject.toml
 
-    - run: pip install -e ".[dev]"
+    # The runner image's OS (`ubuntu24`), for the cache keys below: a venv or a
+    # node_modules built against one image's system libraries is not promised
+    # to run on the next. `ImageOS` is a runner environment variable, which the
+    # `env` expression context does not see, hence a step.
+    - id: image
+      run: echo "os=${ImageOS:-unknown}" >> "$GITHUB_OUTPUT"
       shell: bash
 
-    - if: inputs.node == 'true'
+    # The whole environment rather than pip's download cache: up to twelve jobs
+    # per pull request each re-installed the same pinned set. A venv outside
+    # the checkout, so nothing under the workspace changes and no ruff or
+    # pytest path can wander into it. The key: the exact interpreter (the venv
+    # links to it by path, and a patch bump on the runner moves that path), the
+    # image, pyproject.toml (dependencies, and the package list the editable
+    # .pth is built from) and constraints.txt (the pins).
+    - id: venv
+      uses: actions/cache/restore@v4
+      with:
+        path: ~/.automtg-venv
+        key: venv-${{ runner.os }}-${{ steps.image.outputs.os }}-py${{ steps.python.outputs.python-version }}-${{ hashFiles('pyproject.toml', 'constraints.txt') }}
+
+    # Pinned by constraints.txt (scripts/lock_deps.py), so a release that lands
+    # overnight cannot change what a re-run tests. Skipped on a hit: the
+    # install is editable, so the .pth in the cached venv already points at
+    # this checkout's src/ (the workspace path is the same on every runner),
+    # and everything else it would do is fixed by the key.
+    - if: steps.venv.outputs.cache-hit != 'true'
+      run: |
+        python -m venv ~/.automtg-venv
+        ~/.automtg-venv/bin/python -m pip install -c constraints.txt -e ".[dev]"
+      shell: bash
+
+    - if: steps.venv.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ~/.automtg-venv
+        key: ${{ steps.venv.outputs.cache-primary-key }}
+
+    # Every later step's `python` is the venv's, so verify.py's sys.executable
+    # -- and the PYTHON it hands playwright.config.ts -- is too.
+    - run: |
+        echo "VIRTUAL_ENV=$HOME/.automtg-venv" >> "$GITHUB_ENV"
+        echo "$HOME/.automtg-venv/bin" >> "$GITHUB_PATH"
+      shell: bash
+
+    # No `cache: npm`, for the same reason as pip: node_modules itself is
+    # cached below, and on a miss `npm ci` fetches from the registry.
+    - id: node
+      if: inputs.node == 'true'
       uses: actions/setup-node@v4
       with:
         node-version: 22
-        cache: npm
-        cache-dependency-path: frontend/package-lock.json
 
-    - if: inputs.node == 'true'
+    # node_modules itself rather than ~/.npm. Safe because the key is exactly
+    # what `npm ci` builds from -- the lockfile, the exact Node (native addons
+    # are built against its ABI) and the image -- and the save happens before
+    # anything else runs, so a hit is the tree `npm ci` produced: it deletes
+    # node_modules and installs the lockfile, nothing else. What a restored tree
+    # skips is lifecycle scripts, and package.json defines no install or
+    # prepare script; dependencies' own (esbuild fetching its binary) write
+    # inside node_modules, which is what is cached.
+    - id: node-modules
+      if: inputs.node == 'true'
+      uses: actions/cache/restore@v4
+      with:
+        path: frontend/node_modules
+        key: node-modules-${{ runner.os }}-${{ steps.image.outputs.os }}-node${{ steps.node.outputs.node-version }}-${{ hashFiles('frontend/package-lock.json') }}
+
+    - if: inputs.node == 'true' && steps.node-modules.outputs.cache-hit != 'true'
       run: npm ci
       shell: bash
       working-directory: frontend
 
+    - if: inputs.node == 'true' && steps.node-modules.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: frontend/node_modules
+        key: ${{ steps.node-modules.outputs.cache-primary-key }}
+
     # ~120MB, identical on every leg, and downloaded seven times per pull
-    # request without this. Keyed on the lockfile so a Playwright version bump
-    # misses the cache rather than running the new client against the old binary.
-    - if: inputs.chromium == 'true'
-      uses: actions/cache@v4
+    # request without this. The browser build is fixed by playwright-core's
+    # version, so that is the key -- not the lockfile, whose every unrelated
+    # bump threw away a download that was still correct. Read from the
+    # lockfile, which is what `npm ci` installs.
+    - id: playwright-version
+      if: inputs.chromium == 'true'
+      run: echo "version=$(jq -r '.packages["node_modules/playwright-core"].version' package-lock.json)" >> "$GITHUB_OUTPUT"
+      shell: bash
+      working-directory: frontend
+
+    - id: playwright
+      if: inputs.chromium == 'true'
+      uses: actions/cache/restore@v4
       with:
         path: ~/.cache/ms-playwright
-        key: ms-playwright-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+        key: ms-playwright-${{ runner.os }}-${{ steps.image.outputs.os }}-${{ steps.playwright-version.outputs.version }}
 
     # Still run on a cache hit: it is a no-op for the binary itself, and the apt
     # dependencies `--with-deps` installs live in the image, not in the cache.
@@ -54,3 +141,9 @@ runs:
       run: npx playwright install --with-deps chromium
       shell: bash
       working-directory: frontend
+
+    - if: inputs.chromium == 'true' && steps.playwright.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ steps.playwright.outputs.cache-primary-key }}

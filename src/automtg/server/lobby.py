@@ -132,7 +132,7 @@ def make_code(taken: set[str] | None = None) -> str:
     """``WORD-NNNN``, e.g. ``GYRE-8412``.
 
     Drawn from ``secrets`` rather than the engine's seeded RNG: a pod code is
-    not part of a reproducible game, and ``tests/unit/test_determinism_hygiene``
+    not part of a reproducible game, and ``tests/unit/engine/test_determinism_hygiene``
     polices ``random`` inside the engine for exactly that reason.
 
     ~128 x 9000 = 1.15M codes.  Collisions only matter against *live* pods, of

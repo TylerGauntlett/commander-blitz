@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_grant_static_op.py. t_gso_crag grants itself a static anthem when it enters -- The Irencrag's \"it gains 'Equipped creature gets +3/+3'\" reduced to the part under test. The anthem pumps creatures you control rather than an attached one so the effect is visible without an attachment. t_gso_bear is what it pumps, and t_gso_plain is the same card that grants nothing.",
+  "_comment": "Shapes for tests/unit/statics/test_grant_static_op.py. t_gso_crag grants itself a static anthem when it enters -- The Irencrag's \"it gains 'Equipped creature gets +3/+3'\" reduced to the part under test. The anthem pumps creatures you control rather than an attached one so the effect is visible without an attachment. t_gso_bear is what it pumps, and t_gso_plain is the same card that grants nothing.",
   "cards": [
     {
       "id": "t_gso_crag",

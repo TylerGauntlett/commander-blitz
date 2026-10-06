@@ -13,6 +13,7 @@ from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
     validate_counters_on,
+    validate_entered_filter,
     validate_mana_symbols,
     validate_per_player_count,
 )
@@ -409,8 +410,6 @@ def _validate_static_value(value: Any, where: str) -> None:
         # Validated by the *same* filter check the effect side uses, so
         # `controller` stays required -- an omitted clause would silently count
         # the opponents' arrivals too.
-        from automtg.engine.effects.values import validate_entered_filter
-
         validate_entered_filter(
             value["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
         )

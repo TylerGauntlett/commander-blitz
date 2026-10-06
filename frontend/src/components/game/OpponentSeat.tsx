@@ -1,3 +1,4 @@
+// biome-ignore-all lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade.
 /**
  * An opponent, as five numbers you can check against their board.
  *
@@ -57,7 +58,7 @@ import { stopId } from "../../input/stops";
 import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import { type Muster, musterOf } from "../../logic/threat";
-import { commandZoneCommanderCount, commandersOf } from "../../logic/zoneGrouping";
+import { commandersOf, commandZoneCommanderCount } from "../../logic/zoneGrouping";
 import type { PileKind } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -394,6 +395,7 @@ export function OpponentSeat({
         button carries the accessible name, and a decorative image inside it
         should not announce itself twice.
       */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason. */}
       <span
         className="seat__win"
         onMouseEnter={commander ? () => onHoverCard?.(commander.oid) : undefined}

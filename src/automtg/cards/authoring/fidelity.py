@@ -1,19 +1,20 @@
 """What a hand-written card *claims* to do, against what it actually prints.
 
 `data/cards/auto/` is only in the pool because it cleared six gates. `data/cards/`
-never cleared any of them -- those cards predate the pipeline, and two of the
-gates have simply never run over them:
+predates the pipeline, and for a long time two of the gates never ran over it:
 
 * **gate 3 (residual)** asks whether every printed sentence is accounted for.
 * **gate 5 (behaviour)** asks whether the card demonstrably does what it says.
 
-Neither could run, for one reason: on a hand-written card ``oracle_text`` is a
-human paraphrase, written *after* whatever was skipped, so the card's own record
-of its text already agrees with the shortcut. Krosan Tusker's oracle text is "A
-large boar." -- and against that text, a vanilla 6/5 is a faithful implementation.
-There is nothing for a gate to catch, because the question was begged.
+Neither could run, for one reason: a hand-written card's ``oracle_text`` used to
+be a human paraphrase, written *after* whatever was skipped, so the card's own
+record of its text already agreed with the shortcut. Krosan Tusker's oracle text
+was "A large boar." -- and against that text, a vanilla 6/5 is a faithful
+implementation. There was nothing for a gate to catch, because the question was
+begged. ``oracle_text`` is the printed text now, and
+``test_its_oracle_text_is_what_it_prints`` keeps it that way.
 
-So the authority here is never the card file. It is the catalog row in
+Even so, the authority here is never the card file. It is the catalog row in
 ``data/catalog/cards.sqlite``, which is Scryfall's printed text and knows nothing
 about what the engine can express. The difference between the two is the deficit.
 
@@ -30,7 +31,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..images import CardIndex, IndexEntry
-from ..loader import KNOWN_KEYWORDS
+from ..loader.vocabulary import KNOWN_KEYWORDS
 from ..proxy import _strip_reminders
 from .verify import EXPECTATION_KEYS, claimed_lines, fold_self_reference
 

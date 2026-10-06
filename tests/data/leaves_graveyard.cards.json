@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the leaves-graveyard trigger test (tests/unit/test_leaves_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mascot` is Spirit Mascot's shape, with the 'one or more' batching; `t_greedy_mascot` is the same trigger WITHOUT `batched`, and is the counterfactual that over-counts.",
+  "_comment": "Cards that exist only for the leaves-graveyard trigger test (tests/unit/triggers/test_leaves_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mascot` is Spirit Mascot's shape, with the 'one or more' batching; `t_greedy_mascot` is the same trigger WITHOUT `batched`, and is the counterfactual that over-counts.",
   "cards": [
     {
       "id": "t_mascot",

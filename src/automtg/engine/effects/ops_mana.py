@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import mana_source_traits, resolve_chosen_color_list
 from ..events import EventType
 from ..mana import (
     N_SYMBOLS,
@@ -14,8 +15,8 @@ from ..mana import (
     compile_restriction,
     parse_mana_production,
 )
-from . import register
 from .context import EffectContext, ask_mode
+from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -41,7 +42,6 @@ def mana_string(ctx: EffectContext, spec: Mapping[str, Any]) -> str:
     mana = spec.get("mana", "")
     if not isinstance(mana, Mapping):
         return str(mana)
-    from ..characteristics import resolve_chosen_color_list
 
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     return "".join(f"{{{c}}}" for c in resolve_chosen_color_list([mana], source))
@@ -77,10 +77,6 @@ def _restriction_of(spec: Mapping[str, Any]) -> ManaRestriction | None:
 
 def _give_mana(ctx: EffectContext, spec: Mapping[str, Any], pid: int, produced) -> None:
     """Put one bundle of mana in one player's pool and say so."""
-    # Imported here rather than at module scope: `characteristics` is reached
-    # through `primitives` -> `zones` -> `effects`, so a top-level import turns
-    # that existing chain into a cycle.
-    from ..characteristics import mana_source_traits
 
     ctx.state.players[pid].mana_pool.add_tuple(
         produced,
@@ -201,7 +197,6 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
 
     e.g. "Add {G} for each Forest you control".
     """
-    from ..characteristics import mana_source_traits
 
     unit = parse_mana_production(str(spec.get("mana", "")))
     count = len(resolve_pool(ctx, spec.get("per")))

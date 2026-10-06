@@ -78,13 +78,14 @@ bumps.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
-from .mana import ManaOrigin
+from .mana import ManaOrigin, printed_cost_is
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
@@ -826,7 +827,6 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
         return printed
-    import dataclasses
 
     return tuple(dataclasses.replace(ability, index=i) for i, ability in enumerate(out))
 
@@ -889,6 +889,32 @@ def _has_op_grants(obj: GameObject) -> bool:
     )
 
 
+def granted_abilities(state: GameState, oid: int):
+    """Every ability currently granted to this object, as ``(source, ability)``.
+
+    The *granted-to* object is what triggers and legality treat as the source,
+    which is what makes "whenever **this creature** deals combat damage" mean
+    the creature that was granted the ability rather than the thing that granted
+    it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    # `left_with` is the departure snapshot: an object that has just left the
+    # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
+    # its own leave-the-battlefield triggers have not fired yet. Empty for
+    # everything else, so this reads as plain `until_eot` in every other case.
+    for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
+        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        source = state.objects.get(temp.source)
+        if source is None:
+            continue
+        card = state.card_of(source)
+        if temp.ability_index < len(card.grantable_abilities):
+            yield source, card.grantable_abilities[temp.ability_index]
+
+
 def _op_granted_abilities(
     state: GameState, obj: GameObject
 ) -> list[tuple[Ability, tuple[int, int]]]:
@@ -900,7 +926,7 @@ def _op_granted_abilities(
     grant_ability`), not a static recomputed from a granter's "as long as".
 
     Until this, that record was read by exactly one reader -- `triggers`, through
-    `primitives.granted_abilities` -- so an op-granted *activated* ability was
+    `granted_abilities` -- so an op-granted *activated* ability was
     held and never offered: legality, the payment solver and `game._activate`
     all read `abilities_of`, and `abilities_of` only knew the static grants.
     Appended here with the same provenance a static grant carries, so an
@@ -947,7 +973,7 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     ``(granter oid, index into that granter's ``grantable_abilities``)``, or
     ``None`` when the position holds an ordinary printed ability.
 
-    The continuous counterpart of `primitives.granted_abilities`, which answers
+    The continuous counterpart of `granted_abilities`, which answers
     the same question for the one-shot `grant_ability` **op** and cannot answer
     it here: that one reads `TempEffect`s off the recipient, and a static grant
     leaves nothing on the recipient to read -- it is recomputed from the
@@ -1695,11 +1721,8 @@ def _matches_printed(
     # "…with mana cost {0} or {1}." The printed cost, symbol for symbol -- see
     # `mana.printed_cost_is`. As printed as a name, so no layer can move it.
     wanted_cost = selector.get("mana_cost")
-    if wanted_cost is not None:
-        from .mana import printed_cost_is
-
-        if not printed_cost_is(card.mana_cost, wanted_cost):
-            return False
+    if wanted_cost is not None and not printed_cost_is(card.mana_cost, wanted_cost):
+        return False
     # "Your opponents can't cast spells with **mana value 3 or less**" --
     # Brisela, Voice of Nightmares. The selector language's comparison shape,
     # `{"op": "<=", "value": 3}`, with a literal number, because a printed face
@@ -2327,56 +2350,6 @@ def player_protected_from(state: GameState, pid: int, source_oid: int | None) ->
     a hexproof-shaped implementation would silently get wrong.
     """
     return _matches_protection(state, player_protection_from(state, pid), source_oid)
-
-
-# Imported at the bottom on purpose: the module below imports this one, and
-# both were one file until the split. The names are re-exported so every
-# `from automtg.engine.characteristics import ...` keeps working.
-from .player_statics import (  # noqa: F401
-    _active_player_statics,
-    _alone_forbidden,
-    _player_static,
-    _reaches_player,
-    any_defender_attack_prohibition,
-    attack_alone_forbidden,
-    attack_compelled,
-    attack_defender_forbidden,
-    attack_forbidden,
-    attack_tax,
-    block_alone_forbidden,
-    block_forbidden,
-    block_tax,
-    cast_lock_min_x,
-    commander_subtypes,
-    graveyard_cast_allows,
-    graveyard_cast_arrival_ok,
-    graveyard_cast_permissions,
-    library_top_cast_permission,
-    life_gain_addend,
-    life_gain_multiplier,
-    life_loss_multiplier,
-    mana_added_on_tap,
-    player_cant_cast_spells,
-    player_cant_gain_life,
-    player_doubles_land_mana,
-    player_doubles_mana_from,
-    player_extra_land_drops,
-    player_has_no_hand_limit,
-    player_looks_at_library_top,
-    player_plays_lands_from_graveyard,
-    player_plays_lands_from_library_top,
-    player_reveals_library_top,
-    player_skips_draw_step,
-    player_skips_extra_turn,
-    players_doubling_land_triggers,
-    players_freezing_opponent_lands,
-    printed_token_matches,
-    spell_cost_reduction,
-    spell_mana_tax,
-    spell_mana_tax_targeted,
-    token_creation_replacements,
-    untap_also,
-)
 
 
 def loyalty_activation_timing_waived(state: GameState, oid: int) -> bool:

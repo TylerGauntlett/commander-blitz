@@ -21,8 +21,8 @@
  */
 
 import { useEffect, useRef } from "react";
-import { ParticleField, opacityOf, sizeOf } from "../../fx/particles";
-import { PRESETS, type PresetName, impact } from "../../fx/presets";
+import { opacityOf, ParticleField, sizeOf } from "../../fx/particles";
+import { impact, PRESETS, type PresetName } from "../../fx/presets";
 import { prefersReducedMotion } from "../../fx/reducedMotion";
 import { onFrame } from "../../fx/scheduler";
 

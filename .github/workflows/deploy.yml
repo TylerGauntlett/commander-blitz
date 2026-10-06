@@ -1,7 +1,9 @@
 name: verify and deploy
 
 # Every push to main that passes the full gate is deployed. Pull requests run
-# the same gate and stop there.
+# the same gate and stop there. "Passes" includes having nothing to re-prove --
+# a prose-only change, or a squash merge whose tree its pull request already
+# tested -- which the `changes` job decides and `gate` still reports.
 on:
   push:
     branches: [main]
@@ -23,18 +25,178 @@ env:
 # makes a stage that skips itself fail instead, and `gate` below is the one
 # check that says whether all of it passed.
 jobs:
+  # Whether this run has anything to test (TECH_DEBT RS-02). Actions minutes are
+  # the binding limit on the Free plan, and two kinds of run used to spend them
+  # on nothing: a pull request that touched only prose (#52, a TECH_DEBT.md
+  # rewrite, billed 101 minutes to re-prove unchanged code), and the push to
+  # main after a squash merge, which re-ran ~41 minutes of lint, python, sim
+  # and frontend over the very tree the pull request had just passed.
+  #
+  # A job and not `paths-ignore`, because `verify gate` is the required check: a
+  # workflow that `paths-ignore` stops from starting never reports it, and the
+  # pull request waits on it forever. Here the run always starts, `gate` always
+  # judges, and the only thing that changes is whether there was work to judge.
+  #
+  # Every doubt resolves to "test": an API error, a list of files too long to
+  # see whole, a merged tree no pull request run tested as it stands. A
+  # wasted half hour is the cost of being wrong in that direction; shipping an
+  # untested tree is the cost of being wrong in the other.
+  #
+  # No checkout: everything it needs is in the event and the REST API, and .git
+  # is ~130MB.
+  changes:
+    name: what changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read # compare, commits, trees
+      pull-requests: read # a pull request's files
+      actions: read # earlier runs and their tested-tree artifacts
+    outputs:
+      test: ${{ steps.decide.outputs.test }}
+      tree: ${{ steps.decide.outputs.tree }}
+    steps:
+      - id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          BEFORE: ${{ github.event.before }}
+          PR: ${{ github.event.pull_request.number }}
+          PR_FILES: ${{ github.event.pull_request.changed_files }}
+        run: |
+          set -uo pipefail # not -e: a failed lookup must fall through to "test"
+
+          # Paths the gate cannot see, so a change to nothing else has nothing
+          # to prove. Every entry was checked against what the gate reads:
+          # - docs/keywords.md is NOT here: tests/cards/test_keyword_census.py
+          #   holds the engine to it. docs/testing.md is only the informational
+          #   `test_counts.py --check`, which is `continue-on-error` anyway.
+          # - data/authoring/answers is NOT here: test_alternative_cost_permanent
+          #   loads card specs from it. packets, gaps and the queue are written
+          #   by /author-cards and read by no test (the tests that touch them
+          #   point them at tmp_path).
+          # - .claude/ is the agent skills; terraform/ is applied by hand. Neither
+          #   is linted, tested, or in the image.
+          # Anything not listed -- .github/ included -- runs the gate.
+          inert() {
+            case "$1" in
+              docs/keywords.md) return 1 ;;
+              docs/* | .claude/* | terraform/*) return 0 ;;
+              data/authoring/packets/* | data/authoring/gaps/* | data/authoring/queue.json) return 0 ;;
+              data/*/README.md) return 0 ;; # `*` crosses `/` in a case pattern: any depth
+            esac
+            # Top-level prose: README.md, TECH_DEBT.md.
+            [[ "$1" != */* && "$1" == *.md ]]
+          }
+
+          # Reads paths, one per line, on stdin. A rename lists both names, so
+          # moving code *into* docs/ still counts as touching code.
+          all_inert() {
+            local f seen=0
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              seen=1
+              inert "$f" || { echo "touches $f"; return 1; }
+            done
+            [ "$seen" = 1 ] # an empty list is a lookup that failed, not "nothing changed"
+          }
+
+          # The tree this run checks out. On a pull request that is the merge
+          # ref's (`github.sha` is the test merge, not the head), which is the
+          # tree a squash merge lands on main if main has not moved since.
+          tree=$(gh api "repos/$REPO/git/commits/$SHA" --jq .tree.sha) || tree=""
+          echo "tree=$tree" >> "$GITHUB_OUTPUT"
+
+          # Proof that this exact tree already passed the full gate, e2e
+          # included: `gate` leaves a `tested-tree-<sha>` artifact behind when
+          # a pull request run tested and passed. Keyed on the tree, not on a
+          # commit or a pull request, because tree equality is the claim that
+          # matters -- and the obvious proxy is wrong: #53's squash differed
+          # from its head's tree (main had moved), yet its last pull request
+          # run had tested exactly the merged tree. The pull request head is
+          # not what was tested; the merge ref is.
+          tree_tested() {
+            local n
+            [ -n "$tree" ] || return 1
+            n=$(gh api "repos/$REPO/actions/artifacts?name=tested-tree-$tree&per_page=100" \
+              --jq '[.artifacts[] | select(.expired | not)] | length') || return 1
+            [ "${n:-0}" -gt 0 ] || { echo "no pull request run tested tree $tree"; return 1; }
+            echo "tree $tree passed a pull request run"
+          }
+
+          # A prose-only push inherits its verdict from the commit before it,
+          # so that commit's own push run must have passed. Without this a
+          # README edit on top of a red main would go green and deploy the
+          # code that failed. A run still in flight does not count: it was
+          # cancelled by this one (`cancel-in-progress`), so nothing vouches.
+          green_on_main() {
+            local runs
+            runs=$(gh api "repos/$REPO/actions/workflows/deploy.yml/runs?event=push&branch=main&status=success&head_sha=$1&per_page=1" \
+              --jq .total_count) || return 1
+            [ "${runs:-0}" -gt 0 ] || { echo "the run on $1 did not pass; nothing to inherit"; return 1; }
+          }
+
+          # One file per line as "name<TAB>previous name"; both names are fed
+          # to all_inert, and the line count is how many files were listed.
+          names() { tr '\t' '\n'; }
+
+          test=true
+          case "$EVENT" in
+            pull_request)
+              # The files endpoint stops at 3,000: a list shorter than the
+              # count the event reports is a list that cannot be trusted.
+              if rows=$(gh api --paginate "repos/$REPO/pulls/$PR/files?per_page=100" \
+                   --jq '.[] | [.filename, (.previous_filename // "")] | @tsv'); then
+                listed=$(grep -c . <<<"$rows")
+                if [ "$listed" -ge "${PR_FILES:-0}" ] && names <<<"$rows" | all_inert; then
+                  test=false
+                fi
+              fi
+              ;;
+            push)
+              # Prose-only first: it needs no pull request to stand behind it,
+              # so it covers a direct push as well as a merge. `ahead` rules out
+              # a force push, where the three-dot diff starts from a merge base
+              # that `before`'s verdict says nothing about. The compare endpoint
+              # lists at most 300 files, so at 300 the list may be cut short.
+              if [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+                && [ "$(gh api "repos/$REPO/compare/$BEFORE...$SHA?per_page=1" --jq .status)" = ahead ] \
+                && rows=$(gh api "repos/$REPO/compare/$BEFORE...$SHA" \
+                     --jq '.files[] | [.filename, (.previous_filename // "")] | @tsv') \
+                && [ "$(grep -c . <<<"$rows")" -lt 300 ] \
+                && names <<<"$rows" | all_inert \
+                && green_on_main "$BEFORE"; then
+                test=false
+              elif tree_tested; then
+                test=false
+              fi
+              ;;
+            # workflow_dispatch, and anything added later: someone asked for a
+            # run, so run it.
+          esac
+          echo "event=$EVENT test=$test"
+          echo "test=$test" >> "$GITHUB_OUTPUT"
+
   # The front door, and deliberately cheap. `cancel-in-progress` means a
   # superseded pull request pays for whatever was running: before this split
   # that was one job, and nine concurrent runners would have been ~9x the bill
   # for a push that was already obsolete. ~2 minutes buys that back.
+  #
+  # The one job that reads `changes`: everything else `needs: lint`, and a job
+  # whose `if` has no status function skips when a job it needs was skipped.
+  # So "nothing to test" turns the whole gate off from here, in one place.
   lint:
     name: lint and card data
+    needs: changes
+    if: needs.changes.outputs.test == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1 # .git is ~130MB; no stage reads history.
+          fetch-depth: 1 # full history packs to ~395MB (git count-objects -vH); no stage reads it.
       - uses: ./.github/actions/setup
       - run: python scripts/verify.py --only lint --strict --verbose
 
@@ -52,6 +214,10 @@ jobs:
       # the 3.13 bump bought) makes the floors nearly free, so a push to main
       # holds them too. `--jobs 2` is the runner's core count.
       - run: python scripts/verify.py --only pytest --coverage --jobs 2 --strict --verbose
+      # Informational, as in verify.py: a stale count in docs/testing.md is a doc
+      # bug, not a build break -- but no `--only` slice ever ran it (SD-01).
+      - run: python scripts/test_counts.py --check --no-frontend
+        continue-on-error: true
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -164,12 +330,14 @@ jobs:
     # protection, so this must run and judge even when an upstream job was
     # cancelled -- otherwise a cancelled run is indistinguishable from a green one.
     if: always()
-    needs: [lint, python, sim, frontend, e2e]
+    needs: [changes, lint, python, sim, frontend, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Every required job is green
         env:
+          CHANGES: ${{ needs.changes.result }}
+          TEST: ${{ needs.changes.outputs.test }}
           LINT: ${{ needs.lint.result }}
           PY: ${{ needs.python.result }}
           SIM: ${{ needs.sim.result }}
@@ -178,8 +346,20 @@ jobs:
           EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          echo "lint=$LINT python=$PY sim=$SIM frontend=$FE e2e=$E2E event=$EVENT"
+          echo "changes=$CHANGES test=$TEST lint=$LINT python=$PY sim=$SIM frontend=$FE e2e=$E2E event=$EVENT"
+          # `changes` decides whether a skip below is correct, so its own
+          # failure is red: with no verdict there is no telling a deliberate
+          # skip from a job that never got to run.
+          [ "$CHANGES" = success ] || { echo "changes reported $CHANGES"; exit 1; }
           fail=0
+          if [ "$TEST" != true ]; then
+            # Nothing to test (see `changes`): every job must have stood down,
+            # and anything else -- a job that ran anyway -- is a wiring fault.
+            for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE" "e2e:$E2E"; do
+              [ "${pair#*:}" = skipped ] || { echo "${pair%%:*} reported ${pair#*:} with nothing to test"; fail=1; }
+            done
+            exit $fail
+          fi
           # Compared against the literal "success", so cancelled, failure and an
           # unexpected skip are all red. `needs.e2e.result` is already the
           # aggregate over the matrix: one bad shard fails it.
@@ -193,6 +373,33 @@ jobs:
             echo "e2e should not have run on $EVENT (reported $E2E)"; fail=1
           fi
           exit $fail
+
+      # The receipt `changes` looks for on the push after a merge: this tree
+      # passed everything, e2e included. Pull requests only, since a push
+      # never runs e2e, and only when the gate really ran -- a prose-only pass
+      # tested nothing and must not vouch for anything. The file's content is
+      # for a human; the name is what is searched. Tiny, and 14 days covers a
+      # pull request that sits green for a while before merging; one that sits
+      # longer just re-tests on main. `continue-on-error` because a missing
+      # receipt costs one re-test, which is no reason to fail the gate.
+      - if: >-
+          github.event_name == 'pull_request'
+          && needs.changes.outputs.test == 'true'
+          && needs.changes.outputs.tree != ''
+        continue-on-error: true
+        run: echo "$GITHUB_SHA passed run $GITHUB_RUN_ID" > tested-tree.txt
+      - if: >-
+          github.event_name == 'pull_request'
+          && needs.changes.outputs.test == 'true'
+          && needs.changes.outputs.tree != ''
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: tested-tree-${{ needs.changes.outputs.tree }}
+          path: tested-tree.txt
+          retention-days: 14
+          # A re-run of a passed gate on the same tree uploads the same name.
+          overwrite: true
 
   build:
     name: build and push image

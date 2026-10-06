@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_command_zone.py. t_cz_courser is Hellkite Courser's printed line, whole -- the may, the put onto the battlefield out of the command zone, the haste, and the delayed return that is what `return_to_command_zone` exists for. t_cz_general is the legendary creature the position makes a commander, kept vanilla so the assertions are about where it is rather than what it does. t_cz_bear is a plain creature that is nobody's commander: it is how the op is shown to name the zone itself, since rule 903.9a would never send it there.",
+  "_comment": "Shapes for tests/unit/commander/test_command_zone.py. t_cz_courser is Hellkite Courser's printed line, whole -- the may, the put onto the battlefield out of the command zone, the haste, and the delayed return that is what `return_to_command_zone` exists for. t_cz_general is the legendary creature the position makes a commander, kept vanilla so the assertions are about where it is rather than what it does. t_cz_bear is a plain creature that is nobody's commander: it is how the op is shown to name the zone itself, since rule 903.9a would never send it there.",
   "cards": [
     {
       "id": "t_cz_courser",

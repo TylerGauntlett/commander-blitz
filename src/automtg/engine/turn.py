@@ -1,4 +1,4 @@
-﻿"""The turn structure: step transitions and turn-based actions.
+"""The turn structure: step transitions and turn-based actions.
 
 ``begin_step`` is a generator because a couple of turn-based actions need a
 decision (discarding to hand size).  Everything else runs straight through.
@@ -12,18 +12,31 @@ from typing import TYPE_CHECKING, Any
 from . import combat as combat_mod
 from . import replacements, sagas, suspend
 from .actions import PendingDecision
-from .characteristics import (
+from .characteristics import chars
+from .effects import execute
+from .effects.context import EffectContext, ask_objects
+from .effects.ops_stack import put_copy_on_stack
+from .enums import DecisionKind, Keyword, Step
+from .events import EventType
+from .player import MAX_HAND_SIZE
+from .player_statics import (
     player_has_no_hand_limit,
     player_skips_draw_step,
     player_skips_extra_turn,
     untap_also,
+    untap_caps,
 )
-from .effects.context import EffectContext, ask_objects
-from .enums import DecisionKind, Keyword, Step
-from .events import EventType
-from .player import MAX_HAND_SIZE
-from .player_statics import untap_caps
 from .primitives import (
+    clear_until_eot,
+    clear_until_next_turn,
+    transform,
+    untap_all,
+    untap_permanent,
+)
+from .sba import declare_draw
+from .state import MAX_EXTRA_PHASES_PER_TURN
+from .structs import StackItem
+from .temp_effects import (
     arm_attack_requirements,
     clear_attack_requirements,
     clear_attack_restrictions,
@@ -39,13 +52,7 @@ from .primitives import (
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
-    clear_until_eot,
-    clear_until_next_turn,
-    untap_all,
-    untap_permanent,
 )
-from .sba import declare_draw
-from .state import MAX_EXTRA_PHASES_PER_TURN
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -220,8 +227,6 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int]]:
     With one qualifier, because one of the steps is not once a turn -- see
     :func:`_delay_due`.
     """
-    from .effects import execute
-    from .effects.context import EffectContext
 
     if not state.delayed_triggers:
         return
@@ -466,7 +471,6 @@ def _day_night(state: GameState, pid: int) -> None:
     and every nightbound one becomes its daybound front, together, as the
     designation changes.
     """
-    from .characteristics import chars
 
     daybound = [
         oid
@@ -502,9 +506,6 @@ def _day_night(state: GameState, pid: int) -> None:
 
 
 def _become(state: GameState, designation: str, pid: int) -> None:
-    from .characteristics import chars
-    from .primitives import transform
-
     state.day_night = designation
     to_back = designation == "night"
     want = Keyword.DAYBOUND.value if to_back else Keyword.NIGHTBOUND.value
@@ -544,7 +545,6 @@ def _phase(state: GameState, pid: int) -> None:
     would send a permanent out and straight back in, or the reverse, and the
     board would look exactly the same afterwards as if phasing did nothing.
     """
-    from .characteristics import chars
 
     going_in = [
         oid
@@ -646,8 +646,6 @@ def _epic_copy(state: GameState, pid: int) -> None:
     keeping the original's would point every copy at a creature that died on the
     turn it was cast.
     """
-    from .effects.ops_stack import put_copy_on_stack
-    from .structs import StackItem
 
     oid = state.players[pid].epic_source
     if oid is None:

@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /*
  * The opening hand, at every size.
  *
@@ -45,7 +46,8 @@
    * board yet, it is turn zero -- so this is nearly opaque and carries the
    * app's own lit-table wash rather than a scrim over one.
    */
-  background: radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
     radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
     linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
 }
@@ -206,8 +208,10 @@
    which is `handheld.css:33-38`'s note, and the reason the Keep plate below is
    the other one. */
 .mull__slot[data-on] .card {
-  box-shadow: 0 0 0 3px var(--focus), 0 0 calc(44px * var(--mu)) var(--focus-glow), 0
-    calc(20px * var(--mu)) calc(50px * var(--mu)) rgb(0 0 0 / 0.8);
+  box-shadow:
+    0 0 0 3px var(--focus),
+    0 0 calc(44px * var(--mu)) var(--focus-glow),
+    0 calc(20px * var(--mu)) calc(50px * var(--mu)) rgb(0 0 0 / 0.8);
   border-radius: var(--card-r);
 }
 
@@ -376,7 +380,7 @@
   gap: calc(14px * var(--mu));
   /* 44px, and it is the box rather than the mark -- the padding is what gets it
      there on a small `--mu`, not the type. */
-  min-height: 44px;
+  min-height: var(--hit-floor);
   padding: calc(12px * var(--mu)) calc(8px * var(--mu));
   border: 0;
   border-radius: calc(12px * var(--mu));
@@ -442,7 +446,7 @@
 .mull__ask {
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--hit-floor);
   margin: 0;
   color: var(--text);
   font-size: max(var(--type-floor), calc(20px * var(--mu)));

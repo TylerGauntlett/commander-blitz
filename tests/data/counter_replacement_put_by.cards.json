@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_counter_replacement_put_by.py. t_pb_talent is Innkeeper's Talent's level-3 line as a plain enchantment: keyed on who puts the counters, every permanent and every player. t_pb_venom is a sorcery giving target opponent two poison counters; t_pb_graft puts a +1/+1 counter on any target creature.",
+  "_comment": "Shapes for tests/unit/counters/test_counter_replacement_put_by.py. t_pb_talent is Innkeeper's Talent's level-3 line as a plain enchantment: keyed on who puts the counters, every permanent and every player. t_pb_venom is a sorcery giving target opponent two poison counters; t_pb_graft puts a +1/+1 counter on any target creature.",
   "cards": [
     {
       "id": "t_pb_talent",

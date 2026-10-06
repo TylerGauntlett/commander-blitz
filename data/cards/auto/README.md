@@ -23,7 +23,6 @@ gates in `authoring/verify.py`:
 | playable | it can be cast in a sandbox and resolves to the right zone |
 | behaviour | a **non-empty** expectation that actually holds |
 | registry | the whole pool still loads, and it does not shadow a hand-written card unless `--collect --supersede` says it is replacing one |
-
 Gate 5 is the one that matters. `compile_card` validates *vocabulary*, not
 *meaning* — a card can say "draw two cards" and gain life instead, and it will
 compile, cast and resolve without ever raising. So every card here is paired with
@@ -48,8 +47,14 @@ Runs every gate again over everything committed here. A card that stops passing
 is a card that must come out — the whole value of this directory is that its
 contents are known to work, not assumed to.
 
-## Promoting one to hand-written
+## There is no promoting one to hand-written
 
-Move the object into a file in `data/cards/`, delete it here, delete its
-expectation. It is then an ordinary hand-written card. Do that when a card needs
-nuance the pipeline cannot express but a person can.
+A card does not leave this directory for `data/cards/`. `/author-cards` never
+hand-edits `data/cards/`, and the hand-written pool is moving the other way: the
+precons and staples there are the cards that predate the pipeline. A card that
+needs nuance the pipeline cannot express is a gap in the DSL. File it, build the
+capability with `/extend-dsl`, and fix the card where it is.
+
+`--collect` deletes a card's answer once it is collected, so this directory is
+the card's only source of truth. A fix made here is not reverted by the next
+collect, and `test_auto_cards.py` re-runs all six gates over it.

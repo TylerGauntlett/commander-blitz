@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_reduction_any_of.py. t_rao_historic reduces by the total mana value of historic permanents you control, spelled as an any_of over Artifact / Legendary / Saga -- the three-way disjunction that is the whole point. t_rao_and is the same card written as one ANDed filter, the control that shows why the disjunction had to exist: nothing is all three at once. The permanents are one of each kind, plus t_rao_bear which is none of them and t_rao_all which is all three.",
+  "_comment": "Shapes for tests/unit/costs/test_reduction_any_of.py. t_rao_historic reduces by the total mana value of historic permanents you control, spelled as an any_of over Artifact / Legendary / Saga -- the three-way disjunction that is the whole point. t_rao_and is the same card written as one ANDed filter, the control that shows why the disjunction had to exist: nothing is all three at once. The permanents are one of each kind, plus t_rao_bear which is none of them and t_rao_all which is all three.",
   "cards": [
     {
       "id": "t_rao_historic",

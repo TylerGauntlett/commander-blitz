@@ -33,7 +33,10 @@ function submits(kind: string, label: string, id: string) {
   return async ({
     canvasElement,
     args,
-  }: { canvasElement: HTMLElement; args: { onAct: unknown } }) => {
+  }: {
+    canvasElement: HTMLElement;
+    args: { onAct: unknown };
+  }) => {
     const canvas = within(canvasElement);
     const dialog = await canvas.findByTestId("prompt-dialog");
     expect(dialog.dataset.decisionKind).toBe(kind);

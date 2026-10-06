@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: this sheet is ordered by source on purpose -- base rule, then state, then layout override -- and reordering rules to satisfy the lint would change which declaration wins. Biome 2 added the rule; the cascade predates it. */
 /* The table: layout, mats, lanes, hand, arrows, effects. */
 
 .screen {
@@ -33,8 +34,8 @@
    * `.table__air` adds on top of it drifts, and a drifting layer needs
    * something that does not to drift against. See `styles/ambience.css`.
    */
-  background: radial-gradient(120% 80% at 50% 0%, var(--felt-1) 0%, var(--felt-0) 70%),
-    var(--felt-0);
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--felt-1) 0%, var(--felt-0) 70%), var(--felt-0);
   /*
    * `position` so `.table__air` has something to pin to, and `isolation` so its
    * `z-index: 0` is scoped to this box. Without the isolation the ambient layer
@@ -369,8 +370,8 @@
 .cmdplinth__art--none {
   display: grid;
   place-items: center;
-  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px),
-    #6b6152;
+  background:
+    repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px), #6b6152;
 }
 
 .cmdplinth__art--none span {
@@ -565,8 +566,7 @@
   scrollbar-gutter: stable;
   background:
     linear-gradient(rgb(13 12 28 / 0) 30%, rgb(13 12 28 / 0)) top / 100% 24px no-repeat local,
-    linear-gradient(rgb(13 12 28 / 0), rgb(13 12 28 / 0) 70%) bottom / 100% 24px no-repeat
-    local,
+    linear-gradient(rgb(13 12 28 / 0), rgb(13 12 28 / 0) 70%) bottom / 100% 24px no-repeat local,
     radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0)) top / 100% 12px
     no-repeat scroll,
     radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0)) bottom / 100%
@@ -695,7 +695,9 @@
 .orb--targetable {
   cursor: pointer;
   border-color: var(--targetable);
-  box-shadow: 0 0 0 2px var(--targetable), 0 0 22px rgb(88 182 255 / 0.35);
+  box-shadow:
+    0 0 0 2px var(--targetable),
+    0 0 22px rgb(88 182 255 / 0.35);
 }
 
 .orb--out {
@@ -786,7 +788,9 @@
 
 /* Whose turn it is, said on the object the eye is already on. */
 .dial--active {
-  box-shadow: 0 0 0 3px var(--void-0), 0 0 24px rgb(255 206 120 / 0.42);
+  box-shadow:
+    0 0 0 3px var(--void-0),
+    0 0 24px rgb(255 206 120 / 0.42);
 }
 
 .dial--out {
@@ -1046,7 +1050,9 @@
   border: 0;
   border-radius: 6px;
   background: var(--zone-gy);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.34), inset 0 -1px 0 rgb(0 0 0 / 0.34);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.34),
+    inset 0 -1px 0 rgb(0 0 0 / 0.34);
   color: var(--chip-ink);
 }
 
@@ -1159,8 +1165,10 @@
   padding: 4px 6px;
   border: 1px dashed transparent;
   border-radius: 8px;
-  transition: background var(--t-base) ease, border-color var(--t-base) ease, --card-w
-    var(--t-zoom) ease;
+  transition:
+    background var(--t-base) ease,
+    border-color var(--t-base) ease,
+    --card-w var(--t-zoom) ease;
 }
 
 /*
@@ -1461,7 +1469,9 @@
 }
 
 .stackpile__ply--next .card {
-  box-shadow: 0 0 0 2px var(--gold), 0 8px 22px rgb(0 0 0 / 0.55);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    0 8px 22px rgb(0 0 0 / 0.55);
   border-radius: var(--card-r);
 }
 
@@ -2140,7 +2150,9 @@
   border-color: var(--targetable);
   color: var(--targetable);
   font-size: 19px;
-  box-shadow: 0 12px 40px rgb(0 0 0 / 0.7), 0 0 26px rgb(88 182 255 / 0.28);
+  box-shadow:
+    0 12px 40px rgb(0 0 0 / 0.7),
+    0 0 26px rgb(88 182 255 / 0.28);
 }
 
 .fx-spotlight__kind {

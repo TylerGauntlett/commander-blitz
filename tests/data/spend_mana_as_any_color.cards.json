@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for tests/unit/test_spend_mana_as_any_color.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mind_theft` is Elder Brain's exile, permission and colour waiver as a free sorcery; `t_strict_theft` is the same without the waiver, the counterfactual. The three draw spells are a {B}{B}, a {C} and a {2/W}{2/W} cost, one per edge of the waiver.",
+  "_comment": "Cards that exist only for tests/unit/mana/test_spend_mana_as_any_color.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mind_theft` is Elder Brain's exile, permission and colour waiver as a free sorcery; `t_strict_theft` is the same without the waiver, the counterfactual. The three draw spells are a {B}{B}, a {C} and a {2/W}{2/W} cost, one per edge of the waiver.",
   "cards": [
     {
       "id": "t_mind_theft",

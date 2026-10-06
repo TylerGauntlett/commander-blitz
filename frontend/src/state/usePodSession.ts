@@ -19,7 +19,7 @@
 
 import { useCallback, useState } from "react";
 import { setPlayerToken } from "../api/client";
-import { type PodSession, forgetPod, storedToken } from "./usePod";
+import { forgetPod, type PodSession, storedToken } from "./usePod";
 
 const GAME_PREFIX = "automtg.game.";
 

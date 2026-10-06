@@ -1,10 +1,9 @@
 """Shared test fixtures.
 
 :class:`GameBuilder` -- the exact-position builder most rules tests start from --
-now lives in ``automtg.engine.sandbox`` and is re-exported here, because the
-card-authoring verifier needs it too and production code must not import from
-the test suite. Every test that does ``from tests.conftest import GameBuilder``
-keeps working.
+lives in ``automtg.engine.sandbox``, because the card-authoring verifier needs
+it too and production code must not import from the test suite. Import it from
+there; this module uses it only for the ``builder`` fixture.
 """
 
 from __future__ import annotations
@@ -15,10 +14,14 @@ from pathlib import Path
 import pytest
 
 from automtg.cards.registry import CardRegistry, GameData, authored_card_paths, load_decks
+from automtg.cards.schema import CardModel
 from automtg.engine.actions import Action, PendingDecision
+from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.game import Game
+from automtg.engine.objects import PLUS_ONE
 from automtg.engine.sandbox import GameBuilder
+from automtg.engine.structs import TargetRef
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CARD_DIR = REPO_ROOT / "data" / "cards"
@@ -151,3 +154,125 @@ def only_oid(game: Game, card_id: str, pid: int | None = None) -> int:
 
 def event_types(events: Iterable) -> list[str]:
     return [e.type for e in events]
+
+
+# ----------------------------------------------------------------------
+# positions, and the reads and moves many files used to copy
+# ----------------------------------------------------------------------
+
+
+def two_seat_board(builder, mine=(), theirs=(), *, advance: bool = True) -> Game:
+    """Player 0's ``mine`` facing player 1's ``theirs``, at the builder's defaults.
+
+    Nothing else: no lands, hands or libraries beyond the builder's filler, in
+    the precombat main phase the builder starts in. ``advance=False`` freezes it
+    there; otherwise `build()` runs the engine's auto-pass first.
+    """
+    return (
+        builder(players=2)
+        .battlefield(0, list(mine))
+        .battlefield(1, list(theirs))
+        .build(advance=advance)
+    )
+
+
+def settle(game: Game) -> None:
+    """Pass until the stack is empty and no trigger is waiting to go on it.
+
+    A trigger is *pending*, not on the stack, the moment its event happens -- it
+    is promoted the next time a player would receive priority. So the wait is on
+    both lists being empty, not just the stack.
+    """
+    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+
+
+def settle_to_priority(game: Game) -> None:
+    """Pass until the stack is empty and nobody is mid-resolution."""
+    pass_until(
+        game,
+        lambda g: not g.state.stack
+        and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY),
+    )
+
+
+def settle_completely(game: Game) -> None:
+    """Pass until the stack is empty, nothing is waiting to go on it, and the
+    decision in front of the table is priority."""
+    pass_until(
+        game,
+        lambda g: (
+            not g.state.stack
+            and not g.state.pending_triggers
+            and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
+        ),
+    )
+
+
+def activations(game: Game, oid: int, index: int | None = None) -> list:
+    """The legal activations of ``oid``, optionally of one ability index only."""
+    return [
+        a
+        for a in game.legal_actions()
+        if a.kind is ActionKind.ACTIVATE
+        and a.source == oid
+        and (index is None or a.ability_index == index)
+    ]
+
+
+def attack_with(game: Game, oid: int, defender: int = 1) -> None:
+    game.apply(
+        find_action(game, ActionKind.ADD_ATTACKER, source=oid, targets=(TargetRef.player(defender),))
+    )
+
+
+def pt(game: Game, oid: int) -> tuple[int, int]:
+    c = chars(game.state, oid)
+    return c.power, c.toughness
+
+
+def keywords(game: Game, oid: int) -> set[str]:
+    return {str(k) for k in chars(game.state, oid).keywords}
+
+
+def plus_one_counters(game: Game, oid: int) -> int:
+    return game.state.objects[oid].counter(PLUS_ONE)
+
+
+def hand_ids(game: Game, pid: int = 0) -> list[str]:
+    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
+
+
+def library_ids(game: Game, pid: int = 0) -> list[str]:
+    return [game.state.objects[o].def_id for o in game.state.players[pid].library]
+
+
+# ----------------------------------------------------------------------
+# probe cards for the loader's refusals
+# ----------------------------------------------------------------------
+
+
+def static_probe(static: dict) -> dict:
+    """An enchantment whose one ability is the static ``static`` -- raw, unvalidated."""
+    return {
+        "id": "probe",
+        "name": "Probe",
+        "oracle_text": "Probe.",
+        "mana_cost": "{W}",
+        "types": ["Enchantment"],
+        "abilities": [{"kind": "static", "text": "Probe.", **static}],
+    }
+
+
+def cost_reduction_probe(reduction) -> CardModel:
+    """A {9} draw-a-card sorcery that costs ``reduction`` less to cast."""
+    return CardModel.model_validate(
+        {
+            "id": "x",
+            "name": "X",
+            "oracle_text": "This spell costs {X} less to cast.",
+            "mana_cost": "{9}",
+            "types": ["Sorcery"],
+            "cost_reduction": reduction,
+            "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
+        }
+    )

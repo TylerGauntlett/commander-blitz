@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the K'rrik payment test (tests/unit/test_black_mana_as_phyrexian.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_krrik` is K'rrik, Son of Yawgmoth's payment line alone. `t_night_bargain` is a {1}{B}{B} spell, `t_black_hybrid` a {B/R} one, `t_blood_font` an ability whose cost is {B}{B}, and `t_x_font` an {X}{B} ability, so the cast line, a hybrid pip, an activation's asked choice, an X ceiling and a printed Phyrexian activation (`t_phyrexian_font`) are each measured.",
+  "_comment": "Cards that exist only for the K'rrik payment test (tests/unit/mana/test_black_mana_as_phyrexian.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_krrik` is K'rrik, Son of Yawgmoth's payment line alone. `t_night_bargain` is a {1}{B}{B} spell, `t_black_hybrid` a {B/R} one, `t_blood_font` an ability whose cost is {B}{B}, and `t_x_font` an {X}{B} ability, so the cast line, a hybrid pip, an activation's asked choice, an X ceiling and a printed Phyrexian activation (`t_phyrexian_font`) are each measured.",
   "cards": [
     {
       "id": "t_krrik",

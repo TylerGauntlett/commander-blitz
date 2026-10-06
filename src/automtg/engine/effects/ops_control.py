@@ -6,21 +6,19 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from ..carddef import Cost
+from ..carddef import Cost, TriggerSpec
+from ..costs import can_pay, mana_sources, pay
+from ..mana import max_affordable_x
 from ..player_statics import forced_discard_or_sacrifice_barred
-
-# `can_pay` and `pay` are imported inside the two ops that charge a cost rather
-# than here, the way `combat`, `game`, `legality` and `replacements` already
-# import them. `costs` imports `effects.context`, so a module-level import here
-# closes a cycle: `costs` could then only ever be imported *after* `effects`, and
-# anything that reached for it first -- the card loader, wanting the reduction
-# filter's vocabulary from the function that reads it -- got a partially
-# initialised module instead.
 from ..primitives import change_control
+from ..structs import DelayedTrigger
+from ..turn import grant_extra_phases
 from ..zones import snapshot as capture_snapshot
-from . import execute, register
+from . import execute
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
+from .modes import _mode_flag, modal_bounds, mode_labels
+from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -75,7 +73,6 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     same question a spell's X is, so no new decision kind -- and exactly that
     much is charged. See :func:`_announce_x`.
     """
-    from ..costs import can_pay, pay
 
     players = select_players(ctx, spec.get("player", "you"))
     chooser = players[0] if players else ctx.controller
@@ -176,8 +173,6 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     activated in between are exactly what change the second number. A ceiling
     of 0 asks nothing (`ask_x`'s own short-circuit) and charges {0}.
     """
-    from ..costs import mana_sources
-    from ..mana import max_affordable_x
 
     printed = x_spec.get("max")
     pool = ctx.state.players[chooser].mana_pool.spendable()
@@ -510,87 +505,6 @@ def _creature_types(ctx: EffectContext) -> frozenset[str]:
     return ctx.state.registry.creature_types()
 
 
-def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int | None]:
-    """How many modes this ``choose_mode`` asks for: ``(floor, ceiling)``.
-
-    Four clauses, and each one is a different printed sentence:
-
-    * ``count`` -- "choose two", the plain number, and the floor when nothing
-      widens it.
-    * ``all_if`` -- **entwine**: "choose both if you pay the entwine cost". A
-      floor raised to every mode, because the price has already been paid.
-    * ``up_to_if`` -- "if you control a commander as you cast this spell, you
-      **may** choose both instead". A ceiling, not a floor: the difference is
-      the word "may", and it is the whole card whenever taking one mode is the
-      better line.
-    * ``up_to`` -- "choose up to two", an unconditional ceiling with **no
-      floor**. Taking none is a real line: Call Damage Control with an empty
-      graveyard is cast for its other half, and a floor of one would force a
-      mode that does nothing.
-    * ``or_more`` -- "choose one **or more**". The floor `count` gives, with the
-      ceiling opened to every mode. The fifth spelling because the other four
-      cannot say it between them: `count` is exact, `all_if` forces the lot,
-      `up_to` drops the floor to nothing, and `up_to_if` has the shape but
-      demands a `condition` -- and "one or more" is not conditional on anything.
-
-    ``None`` for the ceiling means "exactly the floor".  Lives here, beside the
-    op, because three callers need the same answer -- this op for a triggered or
-    nested modal, `Game._ask_modes` for the ordinary cast (601.2b), and
-    `stack.free_cast_modes` for a spell cast with nobody to ask.
-    """
-    count = evaluate_value(ctx, spec.get("count", 1))
-    modes = list(spec.get("modes") or [])
-    if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
-        count = len(modes)
-    up_to = None
-    if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
-        up_to = evaluate_value(ctx, more.get("count", len(modes)))
-    # "Choose one or more --". Every mode is on offer and `count` is the floor,
-    # so a wider `up_to_if` still wins if a card ever prints both.
-    if spec.get("or_more"):
-        up_to = len(modes) if up_to is None else max(up_to, len(modes))
-    if spec.get("up_to"):
-        up_to = count if up_to is None else max(up_to, count)
-        return 0, up_to
-    return max(1, count), up_to
-
-
-_COLOR_WORDS = {"W": "white", "U": "blue", "B": "black", "R": "red", "G": "green"}
-
-
-def mode_labels(modes: list[Mapping[str, Any]]) -> list[str]:
-    """What each mode is called on the button that offers it.
-
-    The printed ``label`` when the card has one. Without one, a mode whose whole
-    effect is a single sentence the engine can say back is named after that
-    sentence -- Giver of Runes shipped six unlabelled protection modes and
-    offered them as "Mode 1" to "Mode 6", a choice nobody could make. "Mode N"
-    is the last resort, not the default.
-
-    Shared by the three places that ask: `Game._ask_modes`, the trigger push in
-    `stack`, and the nested fallback in `op_choose_mode` below.
-    """
-    return [str(m.get("label") or _describe_mode(m) or f"Mode {i + 1}") for i, m in enumerate(modes)]
-
-
-def _describe_mode(mode: Mapping[str, Any]) -> str | None:
-    effects = list(mode.get("effects") or [])
-    if len(effects) != 1:
-        return None
-    effect = effects[0]
-    op = effect.get("op")
-    if op == "grant_protection":
-        qualities = ["colorless"] if effect.get("from_colorless") else []
-        qualities += [_COLOR_WORDS.get(c, str(c)) for c in effect.get("from_colors") or ()]
-        if effect.get("from_everything"):
-            qualities.append("everything")
-        if qualities and all(isinstance(q, str) for q in qualities):
-            return "Protection from " + " and ".join(qualities)
-    if op == "add_mana" and isinstance(effect.get("mana"), str):
-        return f"Add {effect['mana']}"
-    return None
-
-
 @register("choose_mode")
 def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     """A modal spell or ability: "choose one -- ...".
@@ -753,15 +667,6 @@ def _choose_within_budget(ctx: EffectContext, spec, modes, labels, chooser: int)
         yield from execute(ctx, modes[index].get("effects") or [])
 
 
-def _mode_flag(label: str) -> str:
-    """The flag marking one mode as already taken.
-
-    Keyed by the printed label rather than the index, so a card whose modes are
-    reordered does not silently re-open a spent one.
-    """
-    return f"mode_chosen:{label}"
-
-
 #: Guard on the "pay again?" loop, matching `may`'s and `repeat`'s. One
 #: pathological seat must not hang a game.
 MAX_JOIN_FORCES = 100
@@ -789,7 +694,6 @@ def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
     ``as`` names the binding the total lands in; the card reads it back with
     ``{"binding": …}``, the way clash reads `clash_won`.
     """
-    from ..costs import can_pay, pay
 
     unit = cost_from_spec(spec.get("pay") or {"mana": "{1}"})
     prompt = str(spec.get("prompt") or "Pay one more into the pool?")
@@ -973,7 +877,6 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
     is created on somebody else's turn -- which is the ordinary line of play for
     an instant-speed ability, and the reason the word is printed at all.
     """
-    from ..structs import DelayedTrigger
 
     state = ctx.state
     step = str(spec.get("step", "end_step"))
@@ -1023,8 +926,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     :data:`~automtg.engine.structs.DELAYED_DURATIONS`; the two values are read at
     exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
     """
-    from ..carddef import TriggerSpec
-    from ..structs import DelayedTrigger
 
     trigger = spec.get("trigger") or {}
     state = ctx.state
@@ -1036,8 +937,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # only reads which.
     subject_oids = None
     if (subject := trigger.get("subject")) is not None:
-        from .selectors import resolve_pool
-
         chosen = resolve_pool(ctx, subject)
         if not chosen:
             # The target is gone by resolution (608.2b took it), so there is no
@@ -1053,8 +952,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # same way and resolved at the same moment, for the same reason.
     recipient_oids = None
     if (recipient := trigger.get("recipient")) is not None:
-        from .selectors import resolve_pool
-
         hit = resolve_pool(ctx, recipient)
         if not hit:
             return
@@ -1125,7 +1022,6 @@ def op_extra_combat(ctx: EffectContext, spec: Mapping[str, Any]):
     of a queue read by the turn. `loader` refuses a `player` here rather than
     accepting one and ignoring it.
     """
-    from ..turn import grant_extra_phases
 
     times = max(0, min(evaluate_value(ctx, spec.get("amount", 1)), 10))
     kinds: list[str] = []

@@ -22,8 +22,8 @@ import {
   groupRoot,
   landableStopsIn,
   nextGroup,
-  rememberStop,
   rememberedStop,
+  rememberStop,
   resetGroups,
   setGroup,
 } from "./groups";

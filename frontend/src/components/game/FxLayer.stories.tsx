@@ -15,9 +15,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useLayoutEffect, useRef } from "react";
 import { expect, waitFor, within } from "storybook/test";
+import type { ExitFx } from "../../logic/beats/types";
 import { reset as forgetRects, remember } from "../../logic/cardRects";
 import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
-import type { ExitFx } from "../../logic/events";
 import { seatOrder } from "../../logic/zoneGrouping";
 import type { LiveBeat } from "../../state/narration";
 import { settled } from "../../testing/asserts";

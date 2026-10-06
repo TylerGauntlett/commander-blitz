@@ -14,135 +14,17 @@ the engine needing continuations or state cloning.
 from __future__ import annotations
 
 import inspect
-from collections.abc import Callable, Generator, Iterable, Mapping
+from collections.abc import Generator, Iterable, Mapping
 from typing import Any
 
 from ..errors import DslError
-
-#: op name -> implementation.  Populated by the ``@register`` decorator.
-OPS: dict[str, Callable[..., Any]] = {}
-
-#: The ops that write ``ctx.bindings`` when given an ``as`` name -- "the cards
-#: revealed this way", "the number of creature cards exiled this way", "exile
-#: **the token**".  Every other op ignores an ``as`` entirely, and an `as` that
-#: nothing writes reads back as 0 rather than as an error, so the loader refuses
-#: it (see `loader.effects._validate_effect`).  Listed here, beside `OPS`, so the guard
-#: and the implementations cannot drift apart.
-RECORDING_OPS = frozenset(
-    {
-        #: The one recorder whose binding is a **player**: `choose_player`
-        #: writes the seat that was chosen, read back by the `{"binding": …}`
-        #: player spec rather than as a pool of objects. It is also the only
-        #: one for which `as` is *required* -- the answer is unreachable
-        #: otherwise. See `ops_control.op_choose_player`.
-        #: Airbend's pool, recorded for `exile`'s reason and with `exile`'s
-        #: accumulating semantics -- "airbend all other creatures" is one pool
-        #: a later line may need to name.
-        "airbend",
-        #: The one recorder whose binding is a **card name** -- a string, read
-        #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
-        #: Collector of Tales. See `ops_control.op_choose_card_name`.
-        "choose_card_name",
-        "choose_player",
-        #: The one recorder that does **nothing** to what it picked. Tragic
-        #: Arrogance marks the survivors before the mass sacrifice; every other
-        #: recorder acts on its pick, and marking-without-acting had no
-        #: spelling. Accumulates, so four per-type choices share one name and a
-        #: single `exclude_binding` spares them all.
-        "choose_permanents",
-        "copy_permanent",
-        "create_token",
-        #: "…then draw that many cards" -- Joshua; "draw that many cards **plus
-        #: one**" -- Celes; "if a **creature card** was discarded this way" --
-        #: Mog. The binding **accumulates** across the players a single discard
-        #: touches, because Mog asks one card of each player in one resolution
-        #: and then asks what was discarded at all, not what the last player
-        #: pitched. See `ops_cards.op_discard`.
-        "discard",
-        #: The second recorder whose binding is a **set of seats**, beside
-        #: `may`: the players who actually drew at least one card. Cut a Deal's
-        #: "each opponent who drew a card this way" -- an opponent with an empty
-        #: library, or whose draw dredge replaced, drew nothing and is not one.
-        #: Read with the `{"binding": …}` player spec; the loader refuses it as
-        #: a pool of objects. See `ops_cards.op_draw`.
-        "draw",
-        "exile",
-        "gain_control",
-        "join_forces",
-        #: The cards a bounded look off the top actually **took** -- "exile the
-        #: top card of your library face down. Put **that card** into your hand
-        #: at the beginning of your next end step" (Necropotence). Nothing else
-        #: can name that card afterwards: `_move_found` deliberately writes no
-        #: `exiled_by`, so `exiled_with: "self"` matches nothing, and even with
-        #: the link written it would be source-wide where the printed "that
-        #: card" is per-activation. Accumulates across seats like `discard` and
-        #: `mill`, so a `player: "each_player"` look binds every seat's cards
-        #: rather than the last one's. See `ops_cards.op_look_at_top`.
-        "look_at_top",
-        #: The one recorder whose binding is a plain **int**: the life actually
-        #: lost, after replacements, summed over every player the op hit --
-        #: "you gain life equal to the life lost this way" (Gray Merchant of
-        #: Asphodel) and extort's "that much life". See `ops_life.op_lose_life`.
-        "lose_life",
-        #: The only recorder whose binding is a **set of seats**: `may` writes
-        #: the players who said yes, read back with the `{"binding": …}` player
-        #: spec. Snort's "each opponent who discarded their hand this way" is
-        #: the acceptance and not anything the effects moved -- a player with an
-        #: empty hand who takes the free draw-five has discarded their hand, of
-        #: nothing, and is still burned.
-        "may",
-        #: The cards actually milled, across every player one op touched --
-        #: Locke, Treasure Hunter's "if a land card was milled **this way**".
-        #: An `exists` over a graveyard is a different card: it matches a land
-        #: that was already lying there.
-        "mill",
-        #: The cards actually **cast**, which is neither the cards offered nor
-        #: the cards exiled -- one with no legal target is never cast at all.
-        #: Kefka turns on that distinction: "each player who owns a spell you
-        #: cast this way loses life equal to its mana value".
-        "play_exiled",
-        #: The cards actually put into a library -- Teferi's Puzzle Box, "puts
-        #: the cards in their hand on the bottom of their library in any order,
-        #: then draws **that many** cards". Read after the tuck, the hand is
-        #: empty; the binding is the only place the number survives. What
-        #: arrived, not what was chosen: a commander redirected to the command
-        #: zone was not put there. See `ops_cards.op_put_on_top`.
-        "put_on_top",
-        #: "…for each creature returned to your hand **this way**" -- The Eagles
-        #: Are Coming!. Beside `exile` and `sacrifice`, whose bindings it copies
-        #: in both shape and accumulating semantics, and it matters here for a
-        #: reason the other two rarely meet: the sentence that counts the return
-        #: lives inside a `delay`, and a `{"target": …}` there is refused by name
-        #: because `_run_delayed` rebuilds its context with no targets. A binding
-        #: is carried forward where a target is not.
-        "return_to_hand",
-        "reveal",
-        #: The one recorder whose binding is not a set of objects: `roll_dice`
-        #: writes the faces it threw, read back by `{"rolled": …}` rather than
-        #: by `{"count": {"binding": …}}`. See `ops_cards.op_roll_dice`.
-        "roll_dice",
-        "sacrifice",
-        "search_library",
-        "search_zones",
-        "snapshot",
-    }
-)
-
-
-def register(name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Register an effect op under ``name``."""
-
-    def decorate(fn: Callable[..., Any]) -> Callable[..., Any]:
-        if name in OPS:
-            raise DslError(f"duplicate effect op {name!r}")
-        OPS[name] = fn
-        return fn
-
-    return decorate
+from . import registry
+from .registry import RECORDING_OPS, register
 
 
 def known_ops() -> frozenset[str]:
-    return frozenset(OPS)
+    load_ops()
+    return frozenset(registry.OPS)
 
 
 def execute(ctx, effects: Iterable[Mapping[str, Any]]) -> Generator[Any, Any]:
@@ -156,8 +38,9 @@ def execute(ctx, effects: Iterable[Mapping[str, Any]]) -> Generator[Any, Any]:
 
 
 def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any]:
+    load_ops()
     op_name = spec.get("op")
-    fn = OPS.get(op_name)
+    fn = registry.OPS.get(op_name)
     if fn is None:
         raise DslError(f"unknown effect op {op_name!r}")
     # One op is one "simultaneous" group: an `exile` over a whole graveyard
@@ -170,19 +53,54 @@ def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any]:
         yield from result
 
 
-# Importing the op modules populates OPS.  Kept at the bottom so ``register`` and
-# ``OPS`` exist before the modules that use them are imported.
-from . import (
-    ops_cards,  # noqa: F401
-    ops_characteristics,  # noqa: F401
-    ops_combat_flags,  # noqa: F401
-    ops_control,  # noqa: F401
-    ops_counters,  # noqa: F401
-    ops_life,  # noqa: F401
-    ops_mana,  # noqa: F401
-    ops_player,  # noqa: F401
-    ops_removal,  # noqa: F401
-    ops_stack,  # noqa: F401
-)
+def __getattr__(name: str) -> Any:
+    """``OPS``, served after `load_ops` has filled it."""
+    if name == "OPS":
+        load_ops()
+        return registry.OPS
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-__all__ = ["OPS", "RECORDING_OPS", "execute", "execute_one", "known_ops", "register"]
+
+_ops_loaded = False
+
+
+def load_ops() -> None:
+    """Import every op module, which populates ``OPS``.
+
+    Run on first use -- `known_ops`, `execute_one`, or reading ``OPS`` off this
+    package -- rather than at package import. The op modules import the engine
+    core (`primitives`, `zones`, `costs`, ...), and the core imports
+    `effects.values`, `selectors` and `conditions`, which runs this package
+    first: importing the ops at the top here made the core unimportable on its
+    own.
+    """
+    global _ops_loaded
+    if _ops_loaded:
+        return
+    # Lazy by design: this is the registry's import of its own plug-ins, which
+    # import the engine core that imports this package.
+    from . import (
+        ops_cards,  # noqa: F401
+        ops_characteristics,  # noqa: F401
+        ops_combat_flags,  # noqa: F401
+        ops_control,  # noqa: F401
+        ops_counters,  # noqa: F401
+        ops_life,  # noqa: F401
+        ops_mana,  # noqa: F401
+        ops_player,  # noqa: F401
+        ops_removal,  # noqa: F401
+        ops_stack,  # noqa: F401
+    )
+
+    _ops_loaded = True
+
+
+__all__ = [
+    "OPS",
+    "RECORDING_OPS",
+    "execute",
+    "execute_one",
+    "known_ops",
+    "load_ops",
+    "register",
+]

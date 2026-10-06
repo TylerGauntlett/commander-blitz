@@ -10,13 +10,31 @@ simplification -- real Magic lets the controller choose the order).
 from __future__ import annotations
 
 from collections.abc import Generator, Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import Ability, TriggerSpec
+from .carddef import CLOAK_WARD, Ability, TriggerSpec
+from .characteristics import (
+    _battlefield_statics,
+    _matches_printed,
+    abilities_of,
+    chars,
+    creature_types_of,
+    granted_abilities,
+    granted_ability_origin,
+    granted_wards,
+    resolve_chosen_subtypes,
+)
+from .characteristics import _matches as _static_matches
+from .effects import execute
+from .effects.conditions import evaluate_condition
+from .effects.context import EffectContext
+from .effects.selectors import ZONE_NAMES, attacking_player_matches, has_printed_cost
 from .enums import Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
+from .player_statics import commander_subtypes, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
 from .structs import DelayedTrigger, TriggerInstance
 
@@ -559,7 +577,6 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
     """
     if not state.delayed_triggers:
         return
-    from dataclasses import replace
 
     spent: list[DelayedTrigger] = []
     for delayed in list(state.delayed_triggers):
@@ -637,8 +654,6 @@ def _delayed_matches(
             return False
 
     if spec.condition is not None:
-        from .effects.conditions import evaluate_condition
-
         return evaluate_condition(
             state,
             spec.condition,
@@ -692,8 +707,6 @@ def run_armed_delays(state: GameState) -> Generator[Any, list[int]]:
     so an ability that arms another one during its own resolution is picked up
     on the next pass instead of being lost or run twice.
     """
-    from .effects import execute
-    from .effects.context import EffectContext
 
     while state.armed_delays:
         delayed = state.armed_delays.pop(0)
@@ -732,7 +745,6 @@ def _trigger_doublers(state: GameState, event: GameEvent):
     gate through `players_doubling_land_triggers`, which is the single place
     every player-wide static is gated.
     """
-    from .characteristics import _battlefield_statics
 
     out = []
     for source_obj, static in _battlefield_statics(state):
@@ -773,15 +785,6 @@ def _cause_matches(
     return True
 
 
-def _static_matches(
-    state: GameState, obj: GameObject, source_obj: GameObject, affects: Any
-) -> bool:
-    """`characteristics._matches`, imported late for the reason the rest are."""
-    from .characteristics import _matches
-
-    return _matches(state, obj, source_obj, affects)
-
-
 def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]:
     """Players whose triggers this event should fire twice for.
 
@@ -794,13 +797,9 @@ def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]
     if entered is None or "Land" not in state.card_of(entered).types:
         return frozenset()
 
-    # Imported here rather than at module scope for the reason `costs` does the
-    # same: `characteristics` is the wide end of the engine and this is the one
-    # line of it triggers needs. `players_doubling_land_triggers` -- not a local
-    # walk -- because it applies the static's "as long as…" gate, which every
-    # player-wide static now goes through in exactly one place.
-    from .characteristics import players_doubling_land_triggers
-
+    # `players_doubling_land_triggers` -- not a local walk -- because it applies
+    # the static's "as long as…" gate, which every player-wide static now goes
+    # through in exactly one place.
     return players_doubling_land_triggers(state)
 
 
@@ -827,16 +826,12 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             # card is usually not even a creature. So it is supplied here, in
             # the same breath as the sentence that says everything else is gone.
             if obj.cloaked:
-                from .carddef import CLOAK_WARD
-
                 yield obj, CLOAK_WARD
             return
         # Derived rather than printed: a permanent that has lost its
         # abilities has lost its triggered ones too, and this is the only place
         # that would otherwise go on listening -- an imprisoned Bloodghast
         # still seeing landfall.
-        from .characteristics import abilities_of
-
         for ability in abilities_of(state, obj.oid):
             if not ability.is_triggered or ability.trigger is None:
                 continue
@@ -848,8 +843,6 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     # product is a *triggered ability*, so this is where it is read -- once for
     # the whole battlefield, because `granted_wards` is asked on every event and
     # an ordinary board has no ward static at all.
-    from .characteristics import granted_wards
-
     wards = granted_wards(state)
 
     for oid in list(state.battlefield):
@@ -867,8 +860,6 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
-        from .primitives import granted_abilities
-
         for _granter, ability in granted_abilities(state, oid):
             if ability.is_triggered and ability.trigger is not None:
                 yield obj, ability
@@ -920,14 +911,32 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             # The walk is over *derived* abilities for `emit_from`'s reason, and
             # here it reads the board as the permanent left it -- which is what
             # a leave-the-battlefield trigger is asking about (603.6c).
-            from .characteristics import abilities_of
-            from .primitives import granted_abilities
-
             granted = [a for _granter, a in granted_abilities(state, subject)]
             for ability in (*abilities_of(state, subject), *granted):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
+                    yield obj, ability
+                elif (
+                    ability.trigger.event in LEAVE_TRIGGERS
+                    and Zone.BATTLEFIELD in ability.active_zones
+                    and obj.zone not in ability.active_zones
+                ):
+                    # "Whenever this creature **or another creature** you control
+                    # dies" -- Zulaport Cutthroat. Written as a filtered
+                    # `creature_dies` rather than `source: "self"`, so the arm
+                    # above never offered it, and the card missed its own death.
+                    # Leaves-the-battlefield abilities look back in time
+                    # (603.10a): the permanent that just left sees its own
+                    # departure. Yielded unconditionally here because `collect`
+                    # runs `_matches` on every candidate, and that is where the
+                    # filter decides -- an "another creature" wording carries
+                    # `exclude_self` and refuses its own death there.
+                    #
+                    # Only an ability that functioned on the battlefield, and
+                    # not one that also functions in the zone the object went
+                    # to: the zone walk above has already offered that one, and
+                    # offering it again would fire it twice.
                     yield obj, ability
                 elif (
                     event.type is EventType.DISCARD
@@ -1139,17 +1148,14 @@ def _matches(
         if not matches_card_filter(state, subject_oid, spec.filter, obj):
             return False
 
-    if spec.condition is not None:
-        from .effects.conditions import evaluate_condition
-
-        if not evaluate_condition(
-            state,
-            spec.condition,
-            controller=obj.controller,
-            source=obj.oid,
-            bindings=event_bindings(state, obj, spec, event),
-        ):
-            return False
+    if spec.condition is not None and not evaluate_condition(
+        state,
+        spec.condition,
+        controller=obj.controller,
+        source=obj.oid,
+        bindings=event_bindings(state, obj, spec, event),
+    ):
+        return False
 
     return True
 
@@ -1207,7 +1213,6 @@ def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, n
     `filter` is checked against it anyway, and a spell that fails it never
     fires the ability whatever this returns.
     """
-    from .characteristics import _matches_printed
 
     registry = state.registry
     ids = state.turn_ledger.spells_cast_ids.get(pid, []) if pid is not None else []
@@ -1490,7 +1495,7 @@ def _actor(
 #: with no gate able to see it. `zone`, `tapped`, `not_supertypes` and `owner`
 #: were each found that way, one card at a time; this closes the class. A key
 #: belongs here only once the function below answers it, and
-#: `tests/unit/test_trigger_filter_owner.py` holds the two in step.
+#: `tests/unit/triggers/test_trigger_filter_owner.py` holds the two in step.
 TRIGGER_FILTER_KEYS = frozenset(
     {
         "exclude_self",
@@ -1579,8 +1584,6 @@ def matches_card_filter(
 
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.
-    from .characteristics import resolve_chosen_subtypes
-
     filt = resolve_chosen_subtypes(filt, ability_source)
 
     if filt.get("exclude_self") and oid == ability_source.oid:
@@ -1664,11 +1667,8 @@ def matches_card_filter(
     # without it Harsh Mentor fires when an opponent *cycles* a creature card,
     # which is an activated ability of a creature card in a hand.
     zone = filt.get("zone")
-    if zone is not None:
-        from .effects.selectors import ZONE_NAMES
-
-        if obj.zone is not ZONE_NAMES.get(zone):
-            return False
+    if zone is not None and obj.zone is not ZONE_NAMES.get(zone):
+        return False
 
     types = filt.get("types")
     if types and not set(types).issubset(card.types):
@@ -1737,8 +1737,6 @@ def matches_card_filter(
 
     who = filt.get("shares_a_type_with_commander")
     if who is not None:
-        from .characteristics import commander_subtypes
-
         seats = (
             [ability_source.controller]
             if who in ("you", "controller")
@@ -1760,13 +1758,10 @@ def matches_card_filter(
     # Creature types on both sides (205.3m) and derived on both sides, so a
     # changeling spell shares with anything and a noncreature, non-Kindred
     # spell shares with nothing.
-    if filt.get("shares_a_creature_type_with") is not None:
-        from .characteristics import creature_types_of
-
-        if not (
-            creature_types_of(state, oid) & creature_types_of(state, ability_source.oid)
-        ):
-            return False
+    if filt.get("shares_a_creature_type_with") is not None and not (
+        creature_types_of(state, oid) & creature_types_of(state, ability_source.oid)
+    ):
+        return False
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):
         return False
@@ -1826,13 +1821,10 @@ def matches_card_filter(
     # then ignored would be silently wider -- a creature attacking your
     # planeswalker would count as one attacking you.
     who = filt.get("attacking_player")
-    if who is not None:
-        from .effects.selectors import attacking_player_matches
-
-        if not attacking_player_matches(
-            state.combat, oid, str(who), ability_source.controller
-        ):
-            return False
+    if who is not None and not attacking_player_matches(
+        state.combat, oid, str(who), ability_source.controller
+    ):
+        return False
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False
@@ -1841,11 +1833,8 @@ def matches_card_filter(
     # `SELECTOR_KEYS`, so a key this function did not read would load and
     # trigger on every cost.
     wanted_cost = filt.get("mana_cost")
-    if wanted_cost is not None:
-        from .effects.selectors import has_printed_cost
-
-        if not has_printed_cost(state, oid, wanted_cost):
-            return False
+    if wanted_cost is not None and not has_printed_cost(state, oid, wanted_cost):
+        return False
     # Power and toughness are read off the board when the subject is still on
     # it, and off the printed face otherwise. Everything above this line is a
     # characteristic no layer can change, which is why the rest of this function
@@ -1855,8 +1844,6 @@ def matches_card_filter(
     # Welcoming Vampire is the witness: "creatures you control with power 2 or
     # less enter". A printed 2/2 entering under an anthem is a 3/3 and must not
     # trigger it, and reading `card.power` says it does.
-    from .characteristics import chars
-
     live = chars(state, oid) if obj.on_battlefield else None
     power = filt.get("power")
     if power is not None and not _compare(
@@ -1868,20 +1855,6 @@ def matches_card_filter(
         toughness is not None
         and not _compare((live.toughness if live else card.toughness) or 0, toughness)
     )
-
-
-#: The only keys a selector-valued `paid_by` may use -- everything
-#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
-#:
-#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
-#: filtered is a *memory* of a permanent and not a permanent: "tapped",
-#: "attacking", a P/T comparison or a zone have no answer about an object that
-#: was sacrificed three cost-payments ago. Read through the general selector
-#: machinery they would all be silently false, which is the failure mode this
-#: capability exists to fix, so they are refused at load time instead.
-PAID_BY_SELECTOR_KEYS = frozenset(
-    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
-)
 
 
 def _origin_matches(
@@ -1951,7 +1924,7 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[in
     Identity, not equality, for the **op**-granted half: two grants of the same
     ability are the same object here, and that is fine -- resolution only needs
     somewhere to look the definition up. Their index needs no translation
-    either, because `primitives.granted_abilities` yields straight out of the
+    either, because `characteristics.granted_abilities` yields straight out of the
     granter's pool and `Ability.index` is that pool position.
 
     The **statically** granted half is the one that needs both halves of the
@@ -1963,13 +1936,9 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[in
     there resolves a different ability or, more often, none: the trigger goes on
     the stack, resolves, and does nothing, with no error anywhere.
     """
-    from .primitives import granted_abilities
-
     for granter, granted in granted_abilities(state, obj.oid):
         if granted is ability:
             return granter.oid, ability.index
-
-    from .characteristics import granted_ability_origin
 
     origin = granted_ability_origin(state, obj.oid, ability.index)
     if origin is not None:
@@ -2077,6 +2046,7 @@ def drain_to_stack(state: GameState):
     """
     if not state.pending_triggers:
         return
+    # Local: `stack` imports `triggers` to fire as things are cast.
     from .stack import push_triggered_ability
 
     order = [

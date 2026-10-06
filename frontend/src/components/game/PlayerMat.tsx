@@ -14,9 +14,9 @@
 
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import {
-  type Lane as LaneName,
   attachmentsFor,
   groupBattlefield,
+  type Lane as LaneName,
 } from "../../logic/zoneGrouping";
 import { Lane } from "./Lane";
 import { OpponentSeat } from "./OpponentSeat";

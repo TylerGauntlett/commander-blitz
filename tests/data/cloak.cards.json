@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the return-to-origin test (tests/unit/test_return_to_origin.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_cloak` is Cloak and Dagger, Entwined: one exile that can take a card out of a hand or a permanent off the battlefield, and one return that has to undo whichever happened.",
+  "_comment": "A card that exists only for the return-to-origin test (tests/unit/zones/test_return_to_origin.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_cloak` is Cloak and Dagger, Entwined: one exile that can take a card out of a hand or a permanent off the battlefield, and one return that has to undo whichever happened.",
   "cards": [
     {
       "id": "t_cloak",

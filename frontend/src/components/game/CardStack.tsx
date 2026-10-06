@@ -215,6 +215,7 @@ export function CardStack({
       })}
 
       {group.count > 1 && !open && (
+        // biome-ignore lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade.
         <span className="cardstack__count" aria-label={`${group.count} copies`}>
           &times;{group.count}
         </span>

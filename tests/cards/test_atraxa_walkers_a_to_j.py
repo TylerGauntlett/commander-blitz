@@ -40,9 +40,13 @@ from automtg.engine.sba import player_cant_lose, player_cant_win
 from automtg.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
+    activations,
     find_action,
+    keywords,
     only_oid,
     pass_until,
+    pt,
+    settle_completely,
 )
 
 PLAINS = "plains"
@@ -63,18 +67,6 @@ ILLUSION = "illusion_2_2_u_sac_when_targeted"
 # ----------------------------------------------------------------------
 # helpers
 # ----------------------------------------------------------------------
-
-
-def settle(game) -> None:
-    """Pass until the stack is empty and nothing is waiting to go on it."""
-    pass_until(
-        game,
-        lambda g: (
-            not g.state.stack
-            and not g.state.pending_triggers
-            and (g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
-        ),
-    )
 
 
 def board(
@@ -122,16 +114,6 @@ def board(
     return game, oid
 
 
-def activations(game, oid: int, index: int | None = None) -> list:
-    return [
-        a
-        for a in game.legal_actions()
-        if a.kind is ActionKind.ACTIVATE
-        and a.source == oid
-        and (index is None or a.ability_index == index)
-    ]
-
-
 def activate(game, oid: int, index: int, *, targets=None, x: int | None = None, finish=True):
     """Activate ability ``index`` of ``oid``, at ``targets`` (ids) if given."""
     lines = activations(game, oid, index)
@@ -145,7 +127,7 @@ def activate(game, oid: int, index: int, *, targets=None, x: int | None = None, 
     if x is not None and game.pending() is not None and game.pending().kind is DecisionKind.CHOOSE_X:
         game.apply(find_action(game, ActionKind.CHOOSE, choice=x))
     if finish:
-        settle(game)
+        settle_completely(game)
 
 
 def answer(game, *, yes: bool = False, pick: bool = False, limit: int = 200) -> None:
@@ -199,21 +181,12 @@ def cast(
     if pick:
         answer(game, pick=True)
     else:
-        settle(game)
+        settle_completely(game)
     return action.source
 
 
 def loyalty(game, oid: int) -> int:
     return game.state.objects[oid].counter("loyalty")
-
-
-def pt(game, oid: int) -> tuple[int, int]:
-    c = chars(game.state, oid)
-    return c.power, c.toughness
-
-
-def keywords(game, oid: int) -> set[str]:
-    return {str(k) for k in chars(game.state, oid).keywords}
 
 
 def tokens(game, def_id: str, pid: int | None = 0) -> list:
@@ -567,7 +540,7 @@ class TestAminatouTheFateshifter:
                 if a.kind is ActionKind.CHOOSE and [t.id for t in a.targets] == [bear]
             )
         )
-        settle(game)
+        settle_completely(game)
 
         assert sorted(zone_ids(game, 0, "hand")) == sorted([ANCHOR, GIANT])
         assert zone_ids(game, 0, "library")[0] == BEAR
@@ -690,7 +663,7 @@ class TestAshiokNightmareWeaver:
         activate(game, ashiok, 0, targets=[1])
         to_step(game, Step.UPKEEP, 1)
         to_step(game, Step.PRECOMBAT_MAIN, 0)
-        settle(game)
+        settle_completely(game)
         assert game.state.active_player == 0 and loyalty(game, ashiok) == 5
         return game, ashiok
 

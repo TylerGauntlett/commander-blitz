@@ -19,11 +19,11 @@ import {
   HANDHELD_MAX_H,
   HANDHELD_MAX_W,
   HANDHELD_QUERY,
+  isHandheldSize,
+  isPhoneSize,
   PHONE_MAX_H,
   PHONE_MAX_W,
   PHONE_QUERY,
-  isHandheldSize,
-  isPhoneSize,
 } from "../src/logic/breakpoints";
 
 // `__dirname` rather than `import.meta.url`: under the jsdom project Vite

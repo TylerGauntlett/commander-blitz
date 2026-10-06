@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards for tests/unit/test_loyalty_activations_this_turn.py. Never part of a deck list. `t_veil_keeper` is The Chain Veil's end-step line alone -- your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life -- on an artifact with nothing else, so the life total says whether it fired.",
+  "_comment": "Cards for tests/unit/planeswalkers/test_loyalty_activations_this_turn.py. Never part of a deck list. `t_veil_keeper` is The Chain Veil's end-step line alone -- your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life -- on an artifact with nothing else, so the life total says whether it fired.",
   "cards": [
     {
       "id": "t_veil_keeper",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_total_mana_value_reduction.py. t_tmv_sum reduces by the TOTAL mana value of the artifacts you control; t_tmv_max is the identical card written with greatest_mana_value, the control that makes the sum-versus-maximum distinction measurable rather than argued. t_tmv_two and t_tmv_five are artifacts of mana value 2 and 5.",
+  "_comment": "Shapes for tests/unit/costs/test_total_mana_value_reduction.py. t_tmv_sum reduces by the TOTAL mana value of the artifacts you control; t_tmv_max is the identical card written with greatest_mana_value, the control that makes the sum-versus-maximum distinction measurable rather than argued. t_tmv_two and t_tmv_five are artifacts of mana value 2 and 5.",
   "cards": [
     {
       "id": "t_tmv_sum",

@@ -18,15 +18,18 @@
  * confusing, far-away way rather than at the site of the mistake.
  */
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { PromptDialog } from "../src/components/game/PromptDialog";
-import { actionAttrs, candidatesIn, stopId } from "../src/input/stops";
-import { chooseType } from "../src/testing/scenarios";
+import { SchemePicker } from "../src/components/ui/SchemePicker";
+import { getCursor, setCursor } from "../src/input/cursor";
+import { actionAttrs, candidatesIn, stopId, stopRoot, stopsIn } from "../src/input/stops";
+import { useUiStore } from "../src/state/uiStore";
 import * as scenarios from "../src/testing/scenarios";
+import { chooseType } from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
@@ -273,6 +276,79 @@ describe("rendered surfaces", () => {
     const opened = stopsAndIds(container).stops;
     for (const tool of ["mute", "undo", "quit"]) {
       expect(opened).toContain(`tool:${tool}`);
+    }
+  });
+
+  /*
+   * TECH_DEBT FB-12: the open menu is a modal, for the ring as for the mouse.
+   *
+   * Each assertion is one of the four ways it used to fail a pad player: the
+   * ring could walk out of it, opening it left the ring on the gear, the
+   * control-scheme picker inside it had no stops, and closing it from `B`
+   * (which is `Table`'s, so here it is the store flag `Table.back` clears)
+   * left the ring on a node that no longer existed.
+   */
+  it("traps the ring in the open settings menu and gives it back on close", () => {
+    useUiStore.setState({ settingsOpen: false });
+    setCursor(null);
+    const { container } = render(
+      <ActionPanel
+        state={gameView()}
+        actions={actions}
+        onAct={noop}
+        onStage={noop}
+        onDeclare={noop}
+        onUndo={noop}
+        onQuit={noop}
+        onToggleFullControl={noop}
+        onToggleManualMana={noop}
+        narrating={false}
+        onSkipNarration={noop}
+        busy={false}
+        aiThinking={false}
+        standDown={false}
+      />,
+    );
+    expect(setCursor(stopId.tool("settings"))).toBe(true);
+    fireEvent.click(screen.getByTestId("settings"));
+
+    const menu = screen.getByTestId("settings-menu");
+    // The trap: whatever is on top owns the ring, and the menu is on top.
+    expect(menu.hasAttribute("data-modal-root")).toBe(true);
+    expect(stopRoot()).toBe(menu);
+    // ...so the board's stops are not stops while it is up, and the strip's
+    // other two tools are not either.
+    const inside = stopsIn(stopRoot()).map((el) => el.dataset.stop);
+    expect(inside).not.toContain(stopId.tool("full-control"));
+    expect(inside).not.toContain(stopId.tool("settings"));
+    // The scheme picker is reachable now, and in the menu's own namespace.
+    for (const scheme of ["auto", "pad", "keyboard", "mouse"]) {
+      expect(inside).toContain(stopId.tool(`scheme-${scheme}`));
+    }
+    // Opening it moved the ring in.
+    expect(getCursor()).toBe(stopId.tool("mute"));
+
+    // `B` is `Table.back`, which clears the store flag. The ring comes home.
+    act(() => useUiStore.getState().setSettingsOpen(false));
+    expect(container.querySelector('[data-testid="settings-menu"]')).toBeNull();
+    expect(getCursor()).toBe(stopId.tool("settings"));
+
+    // A press elsewhere closes it too -- but that is a mouse player going
+    // somewhere, and the ring is not dragged back to the gear behind them.
+    fireEvent.click(screen.getByTestId("settings"));
+    expect(getCursor()).toBe(stopId.tool("mute"));
+    setCursor(stopId.tool("undo"));
+    fireEvent.pointerDown(document.body);
+    expect(container.querySelector('[data-testid="settings-menu"]')).toBeNull();
+    expect(getCursor()).not.toBe(stopId.tool("settings"));
+  });
+
+  it("leaves the front door's scheme picker on the focusable fallback", () => {
+    // One declared stop on a surface switches the fallback off for every other
+    // control on it, so the picker only declares when its host asks.
+    render(<SchemePicker />);
+    for (const scheme of ["auto", "pad", "keyboard", "mouse"]) {
+      expect(screen.getByTestId(`scheme-${scheme}`).hasAttribute("data-stop")).toBe(false);
     }
   });
 });

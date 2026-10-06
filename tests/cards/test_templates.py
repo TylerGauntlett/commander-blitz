@@ -87,7 +87,7 @@ class TestTemplatesProduceCardsTheEngineAgreesWith:
 
 class TestExtort:
     """A bare "Extort" line becomes `templates.extort_ability`, behaviour pinned
-    in tests/unit/test_extort.py; here, that real printed cards translate and
+    in tests/unit/keywords/test_extort.py; here, that real printed cards translate and
     pass all six gates."""
 
     @pytest.mark.parametrize("card", ["Syndic of Tithes", "Basilica Guards", "Kingpin's Pet"])

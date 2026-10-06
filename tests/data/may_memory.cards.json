@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the may-acceptance test (tests/unit/test_may_memory.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_snort` is Snort's shape: each player MAY wheel, then each opponent who accepted takes 5. `t_snort_by_cards` is the near-miss that derives the set from the cards discarded, and so spares an opponent who accepted with an empty hand -- the very player a wheel is aimed at.",
+  "_comment": "Cards that exist only for the may-acceptance test (tests/unit/choices/test_may_memory.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_snort` is Snort's shape: each player MAY wheel, then each opponent who accepted takes 5. `t_snort_by_cards` is the near-miss that derives the set from the cards discarded, and so spares an opponent who accepted with an empty hand -- the very player a wheel is aimed at.",
   "cards": [
     {
       "id": "t_snort",

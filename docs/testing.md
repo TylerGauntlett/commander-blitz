@@ -8,13 +8,13 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 4630 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 10858 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
-| `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 303 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1381 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 399 + 50 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
-| `frontend/e2e/` | 156 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
+| `tests/unit/` | 8065 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 14509 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/ai/` | 80 | Action-space correctness, the environment, agents, the arena, the model and trainer |
+| `tests/server/` | 359 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 1534 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 406 + 53 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `frontend/e2e/` | 159 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
 The Count column is what the runner *collects* -- parametrised cases included, so
 `tests/cards/` counts every card the every-card gate is parametrised over, of which
@@ -22,6 +22,16 @@ a few thousand skip on a per-card condition. It is written by
 `python scripts/test_counts.py --write` and checked by `--check`; `verify.py` prints
 the check's verdict as a line rather than a stage, because a stale number is a
 documentation bug, not a build break.
+
+`tests/unit/` is split by mechanic, one package per area: `attachments/`,
+`casting/`, `choices/`, `combat/`, `commander/`, `copies/`, `costs/`, `counters/`,
+`damage/`, `effects/`, `engine/`, `faces/`, `keywords/`, `ledger/` (what happened
+this turn), `mana/`, `modes/`, `named_cards/`, `planeswalkers/`, `players/`,
+`protection/`, `replacement/`, `statics/`, `targets/`, `tokens/`, `triggers/`,
+`turn/`, `values/` and `zones/`. A new test goes beside its nearest neighbours.
+Helpers more than one file needs -- `settle`, `two_seat_board`, `activations`,
+`pt`, `pass_until`, `find_action` and the rest -- live in `tests/conftest.py`;
+import them rather than copying one in.
 
 `scripts/verify.py` runs up to 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
@@ -300,7 +310,7 @@ were wrong in the first draft:
 - **`useCursorNav` is mounted by `Screen`, not by the board.** A story rendering
   `Table` alone presses `A` at nothing at all, and every direction with it. The
   journey stories mount the hook the way the app does, which is also why
-  `Table.stories.tsx` says `A` and the directions are `e2e/pad.spec.ts`'s to own.
+  `TablePad.stories.tsx` says `A` and the directions are `e2e/pad.spec.ts`'s to own.
 
 ## Card art has its own gates
 
@@ -468,6 +478,7 @@ regression would break first.
 
 ```bash
 pytest tests/unit -q                      # fast: the rules
+pytest tests/unit/combat -q               # one mechanic's slice of them
 pytest tests/cards -q                     # the every-card gate
 pytest -m "not slow" -q                   # skip the training runs
 python scripts/validate_decks.py

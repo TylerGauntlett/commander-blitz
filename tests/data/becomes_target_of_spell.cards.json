@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_becomes_target_of_spell.py. `t_spell_dragon` is Goldspan Dragon's blocked line alone -- `targeted_by: \"spell\"`. `t_ability_dragon` is the other arm of the same clause, and `t_wide_dragon` is the unclaused spelling ward prints, kept live as the control that fires off an activated ability. `t_orvar_dragon` is the near miss the gap record refused to write: a `spell_cast` trigger with an intervening-if on `spell_targets`, which misses a copy and is re-asked on resolution.",
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_target_of_spell.py. `t_spell_dragon` is Goldspan Dragon's blocked line alone -- `targeted_by: \"spell\"`. `t_ability_dragon` is the other arm of the same clause, and `t_wide_dragon` is the unclaused spelling ward prints, kept live as the control that fires off an activated ability. `t_orvar_dragon` is the near miss the gap record refused to write: a `spell_cast` trigger with an intervening-if on `spell_targets`, which misses a copy and is re-asked on resolution.",
   "cards": [
     {
       "id": "t_spell_dragon",

@@ -7,6 +7,7 @@ far (which is how undo works: replay from the seed minus the last human action).
 
 from __future__ import annotations
 
+import re
 import secrets
 import threading
 import time
@@ -17,9 +18,11 @@ from dataclasses import dataclass, field
 from automtg.ai.agents.base import Agent, agent_by_name
 from automtg.cards.registry import GameData, default_registry
 from automtg.engine.actions import Action
+from automtg.engine.enums import ActionKind
 from automtg.engine.errors import IllegalActionError
 from automtg.engine.game import create_game
 from automtg.engine.legality import legal_actions
+from automtg.engine.structs import TargetRef
 
 from .schemas import LegalActionDTO, SeatConfig
 
@@ -30,6 +33,32 @@ MAX_AI_STEPS = 20_000
 #: browsers treat as a dead connection, so a poll that finds nothing still
 #: returns a real response rather than being cut.
 MAX_POLL_SECONDS = 25.0
+
+#: The shape :meth:`GameSession._action_id` mints.  An id of this shape that is
+#: not in the current list was almost certainly *a* real id once -- read off a
+#: list the game has since moved past -- rather than a typo.  Only consulted
+#: when the client sent no version: see :meth:`GameSession.apply_action_id`.
+_ACTION_ID_SHAPE = re.compile(
+    r"a\d+-(?:{})".format("|".join(re.escape(kind.value) for kind in ActionKind))
+)
+
+
+class StaleActionError(IllegalActionError):
+    """The action was chosen from a list the game has since replaced.
+
+    Action ids are positional (``a{index}-{kind}``), so they only mean anything
+    against the list they were read from.  A double click, a drop followed by
+    its own click, or a keypress that lands while the previous request is still
+    in flight all send an id from the list *before* the move that just landed.
+    Against the new list that id is either missing -- a baffling
+    ``unknown action id`` -- or, worse, present and naming something else: a
+    second ``a0-pass`` passes the *next* window too, which is how a
+    double-tapped Pass skips the rest of a main phase.
+
+    A subclass, not a sibling, so every caller that already treats an illegal
+    action as a refusal keeps doing so; only the HTTP layer tells them apart,
+    because a stale click wants a quiet refresh rather than an error toast.
+    """
 
 
 @dataclass(frozen=True)
@@ -79,6 +108,19 @@ class GameSession:
     tokens: dict[str, int] = field(default_factory=dict)
     #: Bumped by every mutation.  Clients long-poll on ``?since_version=``.
     version: int = 1
+    #: The first ``version`` whose state response carried the current
+    #: ``_action_ids``.  A client that read its actions at any version from
+    #: here on read *these* ids; one that read them earlier read a list that
+    #: has been replaced, and its click is stale.  Compared against this rather
+    #: than ``version`` itself so that a bump that leaves the list alone -- the
+    #: other seat flipping its own stops -- does not void a list still on screen.
+    actions_version: int = 1
+    #: What ``_action_ids`` meant when it was last minted; see
+    #: :meth:`_refresh_actions`.
+    _actions_fingerprint: object = None
+    #: Set by a ``_refresh_actions`` that minted a new list, consumed by the
+    #: ``_bump`` that always follows it.
+    _actions_dirty: bool = False
     #: ``time.monotonic()`` of the last mutation or authenticated read.  Only
     #: read by :meth:`SessionRegistry.sweep`.
     last_seen: float = field(default_factory=time.monotonic)
@@ -118,6 +160,12 @@ class GameSession:
     def _bump(self) -> None:
         """Announce a change.  Callers hold ``_lock``."""
         self.version += 1
+        # `_refresh_actions` runs *before* this, under the old number, but the
+        # first response to carry the new list is the one built after it -- so
+        # the list belongs to the version being minted here, not the old one.
+        if self._actions_dirty:
+            self.actions_version = self.version
+            self._actions_dirty = False
         self.last_seen = time.monotonic()
         self._changed.notify_all()
 
@@ -231,10 +279,20 @@ class GameSession:
 
     def _refresh_actions(self) -> None:
         self._action_ids = {}
-        if self.game.over or self.game.pending() is None:
-            return
-        for index, action in enumerate(legal_actions(self.game.state)):
-            self._action_ids[self._action_id(index, action)] = action
+        if not (self.game.over or self.game.pending() is None):
+            for index, action in enumerate(legal_actions(self.game.state)):
+                self._action_ids[self._action_id(index, action)] = action
+        # Whether this is a *new* list, which is not the same as a different
+        # one.  Identical ids with something applied in between are new: Pass
+        # in precombat main and Pass at beginning of combat are the same
+        # `a0-pass`, and a double-tapped Pass that matched the second would
+        # walk the player out of their main phase.  So the tape length (and the
+        # game object, which undo replaces) is part of the fingerprint, and only
+        # a refresh that applied nothing *and* changed nothing keeps the list.
+        fingerprint = (id(self.game), len(self.tape), self._action_ids)
+        if fingerprint != self._actions_fingerprint:
+            self._actions_fingerprint = fingerprint
+            self._actions_dirty = True
 
     @staticmethod
     def _action_id(index: int, action: Action) -> str:
@@ -263,8 +321,32 @@ class GameSession:
                 for action_id, action in self._action_ids.items()
             ]
 
-    def apply_action_id(self, seat: int, action_id: str, *, ai_steps: int | None = None) -> list:
+    def apply_action_id(
+        self,
+        seat: int,
+        action_id: str,
+        *,
+        version: int | None = None,
+        ai_steps: int | None = None,
+    ) -> list:
+        """Apply the action the client knows as ``action_id``.
+
+        ``version`` is the session version of the state response the id was read
+        from.  Checked *first*, before the id is even looked up: a stale id that
+        happens to exist in the new list names whatever now sits at that index,
+        so "it resolved" is no evidence that it means what the player clicked.
+
+        A client that sends no version (an older build, a script) still gets
+        the stale answer when the id is one this session would have minted and
+        is not in the current list -- the best guess available without one.
+        A truly malformed id stays a plain :class:`IllegalActionError`.
+        """
         with self._lock:
+            if version is not None and version < self.actions_version:
+                raise StaleActionError(
+                    f"action {action_id!r} is from version {version}; "
+                    f"the actions have changed since (now version {self.version})"
+                )
             decision = self.game.pending()
             if decision is None:
                 raise IllegalActionError("the game is not waiting on a decision")
@@ -274,6 +356,10 @@ class GameSession:
                 )
             action = self._action_ids.get(action_id)
             if action is None:
+                if version is None and _ACTION_ID_SHAPE.fullmatch(action_id):
+                    raise StaleActionError(
+                        f"unknown action id {action_id!r}; the actions have changed"
+                    )
                 raise IllegalActionError(f"unknown action id {action_id!r}")
 
             mark = len(self.game.state.events)
@@ -300,8 +386,6 @@ class GameSession:
         mid-loop; the declaration decision stays open in that case, so the client
         can simply submit a corrected set.
         """
-        from automtg.engine.enums import ActionKind
-        from automtg.engine.structs import TargetRef
 
         sources = [int(pair[0]) for pair in pairs]
         duplicates = {oid for oid in sources if sources.count(oid) > 1}
@@ -369,7 +453,6 @@ class GameSession:
         Every check is made before anything is applied, so a bad set never
         half-applies.
         """
-        from automtg.engine.enums import ActionKind
 
         with self._lock:
             decision = self.game.pending()

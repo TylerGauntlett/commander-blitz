@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_mana_restriction_supertype.py. t_halfling_mana is Delighted Halfling's second mana ability alone -- one mana of any colour, spendable only on a legendary spell. t_legend_spell and t_plain_spell are the same creature with and without the Legendary supertype, and both cost {G}, so the only thing that can separate them is the restriction. t_legend_artifact is legendary without being a creature, since 'legendary spell' names the supertype and nothing else.",
+  "_comment": "Shapes for tests/unit/mana/test_mana_restriction_supertype.py. t_halfling_mana is Delighted Halfling's second mana ability alone -- one mana of any colour, spendable only on a legendary spell. t_legend_spell and t_plain_spell are the same creature with and without the Legendary supertype, and both cost {G}, so the only thing that can separate them is the restriction. t_legend_artifact is legendary without being a creature, since 'legendary spell' names the supertype and nothing else.",
   "cards": [
     {
       "id": "t_halfling_mana",

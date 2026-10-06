@@ -21,6 +21,7 @@ export function ReadyTrack({ pod }: { pod: PodView }) {
   const total = podSize(pod);
 
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: a labelled readout on a generic element, written before Biome 2 had this rule. The fix is a role, which changes what a screen reader announces -- a behaviour change, so it waits for an a11y pass rather than riding a dependency upgrade.
     <div
       className="pips"
       data-testid="ready-track"

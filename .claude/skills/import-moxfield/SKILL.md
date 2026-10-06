@@ -105,7 +105,7 @@ python scripts/report_gaps.py --top 20
 Rank the capabilities by **how many of this deck's cards they block**, then by the
 catalog count `report_gaps.py` shows. For each, in that order:
 
-1. `/extend-dsl <slug>` — one capability, its `tests/unit/test_<mechanic>.py`, its
+1. `/extend-dsl <slug>` — one capability, its `tests/unit/<area>/test_<mechanic>.py`, its
    doc rows, its commit (`extend-dsl: <what it says, in words>`).
 2. `/author-cards "<card>" "<card>"` for the cards that were waiting on it. Often a
    card waits on two capabilities; it comes back as a fresh gap naming the second

@@ -14,7 +14,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
-import { type Staging, parseStop, verbsFor } from "../src/logic/verbs";
+import { parseStop, type Staging, verbsFor } from "../src/logic/verbs";
 import { action, card, gameView, pending, player } from "../src/testing/fixtures";
 import { mulligan, mulliganBottom } from "../src/testing/scenarios";
 

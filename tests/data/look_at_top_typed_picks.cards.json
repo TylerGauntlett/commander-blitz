@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the typed-picks test (tests/unit/test_look_at_top_typed_picks.py). `t_depths_dig` is Kiora, Master of the Depths' -2 as a sorcery.",
+  "_comment": "Cards that exist only for the typed-picks test (tests/unit/zones/test_look_at_top_typed_picks.py). `t_depths_dig` is Kiora, Master of the Depths' -2 as a sorcery.",
   "cards": [
     {
       "id": "t_depths_dig",

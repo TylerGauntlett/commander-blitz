@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the exile-and-return test (tests/unit/test_exile_and_return.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flipper` is the Joshua shape: exile it and give it back transformed, under its owner's control. `t_turner` is the counterfactual -- the same line written with `transform`, which turns it over in place.",
+  "_comment": "Cards that exist only for the exile-and-return test (tests/unit/zones/test_exile_and_return.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flipper` is the Joshua shape: exile it and give it back transformed, under its owner's control. `t_turner` is the counterfactual -- the same line written with `transform`, which turns it over in place.",
   "cards": [
     {
       "id": "t_dominant",

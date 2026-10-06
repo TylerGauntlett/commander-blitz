@@ -36,6 +36,9 @@ from typing import Any
 
 from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef, Cost
+from automtg.engine.characteristics import chars
+from automtg.engine.effects.context import EffectContext
+from automtg.engine.effects.selectors import matches
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.errors import AutoMtgError, DslError
 from automtg.engine.game import Game
@@ -45,6 +48,9 @@ from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
 
 from ..loader import compile_card
+from ..loader.linking import link_faces, validate_token_references
+from ..proxy import CardFacts, lift_keywords
+from ..proxy import _residual as proxy_residual
 from ..registry import CardRegistry
 from ..schema import CardModel
 
@@ -451,8 +457,6 @@ def _has_unmatched_spell_spec(game: Game, card: CardDef) -> bool:
     ``default_zone``, so "the harness thinks a dummy fits" and "legality offers
     it as a target" cannot come apart.
     """
-    from automtg.engine.effects.context import EffectContext
-    from automtg.engine.effects.selectors import matches
 
     ctx = EffectContext(state=game.state, controller=0, source_oid=None)
     on_stack = [item.oid for item in game.state.stack if item.oid is not None]
@@ -715,8 +719,6 @@ def check_expectation(
         if target_oid is None or target_pt_before is None:
             problems.append("target_pt_delta was asserted but the spell targeted nothing")
         else:
-            from automtg.engine.characteristics import chars
-
             now = chars(state, target_oid)
             compare("target power delta", now.power - target_pt_before[0], wanted.get("power", 0))
             compare(
@@ -730,8 +732,6 @@ def check_expectation(
         # Without this, a card whose whole job is granting a keyword had nothing
         # countable to assert and fell back to "it resolved" -- a gate that
         # passes whatever the card actually did.
-        from automtg.engine.characteristics import chars
-
         wanted = set(expectation["granted"].get("keywords", []))
         how_many = expectation["granted"].get("count", 1)
         got = sum(
@@ -866,7 +866,6 @@ def verify(
                 )
                 return verdict
             pool[extra_card.id] = extra_card
-        from ..loader import link_faces, validate_token_references
 
         link_faces(pool)
         merged = CardRegistry(pool)
@@ -1082,8 +1081,6 @@ def _cast(
     target_oid = next((ref.id for ref in action.targets if ref.kind == "object"), None)
     before: tuple[int, int] | None = None
     if target_oid is not None and target_oid in game.state.objects:
-        from automtg.engine.characteristics import chars
-
         was = chars(game.state, target_oid)
         before = (was.power, was.toughness)
 
@@ -1103,8 +1100,6 @@ def residual_text(card: CardDef, oracle_text: str) -> str:
     Reuses ``proxy``'s reader so "what is left over" means the same thing whether
     a proxy, a template or an agent produced the card -- one definition of done.
     """
-    from ..proxy import CardFacts
-    from ..proxy import _residual as proxy_residual
 
     facts = CardFacts(name=card.name, scryfall_id="", oracle_text=oracle_text)
     return proxy_residual(facts, claimed_lines(card, oracle_text))
@@ -1117,7 +1112,6 @@ def claimed_lines(card: CardDef, oracle_text: str) -> set[str]:
     complementary question -- *which* lines are unclaimed -- without keeping a
     second, drifting copy of the same bookkeeping.
     """
-    from ..proxy import lift_keywords
 
     consumed: set[str] = set()
     # ``strict``: the line counts as claimed only if this card really has those

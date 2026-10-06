@@ -14,7 +14,14 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { budget, isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
+import {
+  budget,
+  isOver,
+  keepOpeningHand,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 /** The two shapes the board is actually played at. */
 const VIEWPORTS = [
@@ -182,30 +189,32 @@ test("lands sit nearest the player who controls them, on both sides of the table
  */
 test("the viewer's bands do not move as permanents enter and leave play", async ({ page }) => {
   /*
-   * KNOWN TO FAIL, AND KEPT FAILING ON PURPOSE (TECH_DEBT FT-04).
+   * NO LONGER PINNED AS A KNOWN FAILURE (TECH_DEBT FT-04).
    *
-   * The creatures band drifts across the twenty actions. This is a relationship
-   * assertion, so it must not be re-baselined; and the fix is a layout change,
-   * which the refactor that added this annotation was not allowed to make. The
-   * likeliest cause is `.lane__cards` (`board.css`): `flex-wrap: wrap` with a
-   * one-card `min-height`, so a lane that wraps to a second row grows the band
-   * under it. The `test.fail()` below keeps the case in the run and reports it
-   * as expected rather than as a bug.
+   * This carried a conditional `test.fail()` for a creatures band measured
+   * drifting 9-41px across repeats. Re-measured, the drift does not reproduce:
+   * zero, in five repeats under `E2E_SLOW=2 CI=1` and in instrumented runs that
+   * sampled every band every 25ms after each action -- including with the CPU
+   * throttled six times. The suspected mechanism was Motion's `layout` on
+   * `Lane`, whose JS-driven transform `document.getAnimations()` cannot see;
+   * no lane ever reported a computed transform other than `none` in any of
+   * those samples, but `settled()` below now waits for one anyway, so a
+   * measurement can no longer land mid-flight whatever the cause.
    *
-   * IT IS DECLARED AFTER THE MEASUREMENT, AND THAT IS THE POINT. It used to sit
-   * here, saying "this always fails" -- which is not true. The drift depends on
-   * which twenty actions the game offers, and measures anywhere from 9px to
-   * 41px across repeats of this one spec. The first CI run that ever executed
-   * this suite for real drew a game that came in UNDER the 6px budget, so the
-   * case passed, and Playwright failed the whole run with "Expected to fail,
-   * but passed" -- a red build for a lucky deal. Declared against the number
-   * actually measured, both outcomes are honest: still drifting is an expected
-   * failure, and inside budget is a pass. Nothing is re-baselined either way,
-   * and the day the layout is fixed every run passes and this retires itself.
+   * AND THE SPEC HAD STOPPED EXERCISING ANYTHING, which is half of why it looked
+   * stable. `takeAction` presses the first enabled button when none of the
+   * preferred kinds is offered, and on the opening hand that is "Mulligan" --
+   * so the twenty actions were six mulligans, a bottoming down to one card, and
+   * a game in which one land entered play. A board that never changes cannot
+   * drift. The hand is kept now, and the twenty actions play lands and spells.
+   *
+   * If it drifts again it fails, as a relationship assertion should: the
+   * budget is not re-baselined, and a moving band is the bug.
    */
   test.setTimeout(budget(180_000));
   await page.setViewportSize({ width: 1600, height: 950 });
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7, zoomLock: true });
+  await keepOpeningHand(page);
   await waitForOurTurn(page);
 
   /*
@@ -221,6 +230,13 @@ test("the viewer's bands do not move as permanents enter and leave play", async 
    * Infinite animations are excluded because they never finish by definition --
    * the focus ring's sheen and the commit slab's waiting pulse both loop, and
    * waiting on those waits forever.
+   *
+   * AND THE TRANSFORMS, because `getAnimations()` only sees CSS and Web
+   * Animations. Motion's `layout` correction is driven from JavaScript, frame
+   * by frame, through the element's inline `transform` -- invisible to that
+   * list, and exactly what moves a `getBoundingClientRect` while it runs. The
+   * mat and its bands are the boxes measured, so they are the ones that have
+   * to be at rest.
    */
   const settled = async () => {
     await page.waitForFunction(
@@ -228,7 +244,10 @@ test("the viewer's bands do not move as permanents enter and leave play", async 
         document
           .getAnimations()
           .filter((a) => Number.isFinite(a.effect?.getTiming().iterations ?? 1))
-          .every((a) => a.playState !== "running"),
+          .every((a) => a.playState !== "running") &&
+        [...document.querySelectorAll(".play__mine .mat, .play__mine .lane")].every(
+          (el) => getComputedStyle(el).transform === "none",
+        ),
       undefined,
       { timeout: 5_000 },
     );
@@ -273,13 +292,6 @@ test("the viewer's bands do not move as permanents enter and leave play", async 
     const seen = samples.map((s) => s[key]).filter((n) => !Number.isNaN(n));
     return { key, drift: Math.max(...seen) - Math.min(...seen) };
   });
-
-  // FT-04, against the number this run actually measured. The header says why
-  // it is declared here rather than at the top of the test.
-  test.fail(
-    drifts.some(({ drift }) => drift >= BUDGET),
-    "FT-04: the creatures band still drifts; see TECH_DEBT.md",
-  );
 
   for (const { key, drift } of drifts) {
     expect(

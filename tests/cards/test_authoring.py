@@ -476,7 +476,7 @@ class TestThePacketCarriesTheWholeVocabulary:
 
     def test_it_lists_every_vocabulary_the_loader_validates_against(self):
         from automtg.cards.authoring.packet import reference
-        from automtg.cards.loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
+        from automtg.cards.loader.vocabulary import STATIC_EFFECTS, STATIC_FILTER_KEYS
         from automtg.engine.effects import known_ops
         from automtg.engine.effects.conditions import CONDITION_KEYS
         from automtg.engine.effects.selectors import SELECTOR_KEYS
@@ -563,7 +563,7 @@ class TestThePacketCarriesTheWholeVocabulary:
         its place: a worker who cannot see that a static may be conditional
         files a gap for "as long as" clauses that already work."""
         from automtg.cards.authoring.packet import reference
-        from automtg.cards.loader import STATIC_CONDITION_HEADS
+        from automtg.cards.loader.vocabulary import STATIC_CONDITION_HEADS
 
         assert set(reference()["static_condition_keys"]) == set(STATIC_CONDITION_HEADS)
 

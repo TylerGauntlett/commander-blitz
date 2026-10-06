@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_has_counters_filter.py. t_hc_warden is Innkeeper's Talent's level-2 line as a plain enchantment: permanents you control with counters on them have ward {1}.",
+  "_comment": "Shapes for tests/unit/counters/test_has_counters_filter.py. t_hc_warden is Innkeeper's Talent's level-2 line as a plain enchantment: permanents you control with counters on them have ward {1}.",
   "cards": [
     {
       "id": "t_hc_warden",
