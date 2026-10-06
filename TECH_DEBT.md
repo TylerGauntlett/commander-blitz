@@ -286,16 +286,6 @@ code. Fix them in their own PRs.
 
 ## Docs, hygiene, environment
 
-### SD-04 · Reference docs mixed with changelogs — **M**
-
-`docs/completed-features.md` (19,399 lines) and `docs/card-dsl.md` (15,345 lines) are
-almost append-only: 164 and 304 commits, with almost no deletions. `card-dsl.md` is
-also the DSL reference that agents load, so its history makes the reference slower to
-read and more expensive to load.
-
-**Fix:** keep `card-dsl.md` as the current reference only, and move the per-capability
-history into the changelog.
-
 ### DEP-01 · Dependency upgrades — **S**
 
 - Upgrade candidates, nothing broken: `vite ^5.4` and `@biomejs/biome ^1.8`. Storybook

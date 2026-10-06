@@ -60,10 +60,19 @@ The common case, and the whole job for most mechanics.
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.
 3. `tests/unit/test_<op>.py` — see §3.
-4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**
-   (currently stale: it says 46 and there are 47), and a narrative section for
-   anything non-trivial.
-5. `docs/rules-coverage.md` and `docs/completed-features.md`.
+4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**,
+   and a section for anything non-trivial. `card-dsl.md` is the **current
+   reference only**: say what the op, key, cost, trigger or condition *is* — its
+   parameters, defaults, constraints, load-time refusals, an example card, and the
+   near miss an author might reach for instead — once, in the present tense. When
+   you change something already documented, rewrite its entry to describe the new
+   behaviour; do not append "it used to…" or "is now…" beside the old text.
+5. History goes elsewhere. What a capability used to do, the bug you fixed, what
+   you renamed or removed, and which card motivated the work go under the matching
+   heading in `docs/dsl-changelog.md` (create the heading if it is new; it mirrors
+   `card-dsl.md`'s headings). The full write-up — tier, what was built, tests —
+   goes in `docs/completed-features.md`; what is and is not modelled goes in
+   `docs/rules-coverage.md`.
 6. **Server: nothing. Frontend: nothing.** Verified — see §5.
 
 ### Tier B — a new continuous effect
