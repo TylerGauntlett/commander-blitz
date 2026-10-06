@@ -286,7 +286,7 @@ SELECTOR_KEYS = frozenset(
         #: named object. That half matches what each source *was*, snapshotted
         #: onto the pip, because the Treasure is sacrificed to make its mana and
         #: its oid resolves to nothing by the time the spell is on the stack.
-        #: Its legal keys are `triggers.PAID_BY_SELECTOR_KEYS`, not these.
+        #: Its legal keys are `PAID_BY_SELECTOR_KEYS`, not these.
         "paid_by",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
@@ -372,6 +372,20 @@ SELECTOR_KEYS = frozenset(
         "encoded_by",
     }
 )
+
+#: The only keys a selector-valued `paid_by` may use -- everything
+#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
+#:
+#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
+#: filtered is a *memory* of a permanent and not a permanent: "tapped",
+#: "attacking", a P/T comparison or a zone have no answer about an object that
+#: was sacrificed three cost-payments ago. Read through the general selector
+#: machinery they would all be silently false, which is the failure mode this
+#: capability exists to fix, so they are refused at load time instead.
+PAID_BY_SELECTOR_KEYS = frozenset(
+    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
+)
+
 
 ZONE_NAMES = {z.value: z for z in Zone}
 
@@ -1495,8 +1509,6 @@ def validate_selector(selector: Any, where: str) -> None:
     # one of them would load and then be silently false.
     paid_by = selector.get("paid_by")
     if isinstance(paid_by, Mapping):
-        from ..triggers import PAID_BY_SELECTOR_KEYS
-
         unknown_paid_by = set(paid_by) - PAID_BY_SELECTOR_KEYS
         if unknown_paid_by:
             raise DslError(

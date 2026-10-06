@@ -1857,20 +1857,6 @@ def matches_card_filter(
     )
 
 
-#: The only keys a selector-valued `paid_by` may use -- everything
-#: :class:`mana.ManaOrigin` actually snapshots, and nothing else.
-#:
-#: A closed list rather than the full `SELECTOR_KEYS`, because what is being
-#: filtered is a *memory* of a permanent and not a permanent: "tapped",
-#: "attacking", a P/T comparison or a zone have no answer about an object that
-#: was sacrificed three cost-payments ago. Read through the general selector
-#: machinery they would all be silently false, which is the failure mode this
-#: capability exists to fix, so they are refused at load time instead.
-PAID_BY_SELECTOR_KEYS = frozenset(
-    {"name", "types", "any_types", "not_types", "subtypes", "supertypes", "controller"}
-)
-
-
 def _origin_matches(
     origin: Any, filt: Mapping[str, Any], ability_source: GameObject
 ) -> bool:
