@@ -305,7 +305,23 @@ export function CardPreview({ state }: Props) {
             exit={{ opacity: 0 }}
             transition={ease}
           >
-            {compressed ? "Point at a card to read it." : "Hover a card to read it."}
+            {/*
+              The desktop's whole-card view, said where somebody looking for
+              it would look. The rail is a fixed frame and long rules scroll
+              inside it; right-click (or `i`) opens the same card unclipped in
+              `CardHold`. Not said on the compressed body: on a Deck the hint
+              bar already advertises `Y Read` on every card.
+            */}
+            {compressed ? (
+              "Point at a card to read it."
+            ) : (
+              <>
+                Hover a card to read it.
+                <span className="preview__more" data-testid="preview-more">
+                  Right-click it, or press I, to see the whole card.
+                </span>
+              </>
+            )}
           </motion.p>
         )}
       </AnimatePresence>

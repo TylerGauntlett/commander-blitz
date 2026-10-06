@@ -24,10 +24,30 @@ test.describe("a whole game can be played through the UI", () => {
 
     const kindsSeen = new Set<string>();
     let steps = 0;
+    let vanished = 0;
 
     for (; steps < 3000; steps += 1) {
       await waitForOurTurn(page);
       if (await isOver(page)) break;
+
+      /*
+       * A decision can come and go between two reads.
+       *
+       * With a stack resolving, the client is handed priority, draws its rows,
+       * and moves on as the next item resolves -- and on CI's slow runner the
+       * whole life of that decision fit between `waitForOurTurn` seeing two
+       * enabled rows and the count below seeing none (traced: 2, then 0, 250ms
+       * apart, with the rows back on screen in the failure screenshot). That is
+       * not a decision with no surface; it is one that was already answered.
+       * So an empty read goes back to waiting. A decision that genuinely
+       * renders nothing still fails: `waitForOurTurn` times out waiting for an
+       * enabled row, and a run of empty reads trips the assertion below.
+       */
+      if ((await actionButtons(page).count()) === 0 && vanished < 20) {
+        vanished += 1;
+        continue;
+      }
+      vanished = 0;
 
       // Record which decision kinds we actually exercised.
       //

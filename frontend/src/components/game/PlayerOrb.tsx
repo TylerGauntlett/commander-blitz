@@ -300,20 +300,17 @@ export function PlayerOrb({
        * Rests on `--dial-n`, which is WHATEVER THE STYLESHEET SAYS the numeral
        * is -- and that indirection is the fix rather than a tidy.
        *
-       * It rested on `--dial-ink` directly, which is right for the desktop
-       * seal: the numeral sits on brass, and returning it to the old off-white
-       * left it white-on-gold from the first life change onwards. The handheld
-       * dial is not brass. It is a gold ring around a hole punched out of
-       * `--void-1`, and `handheld.css` colours the numeral `--text` for exactly
-       * that reason -- but Framer writes the resting colour back as an inline
+       * It rested on `--dial-ink` directly, which was right for the old brass
+       * seal. The dial is a gold ring around a hole punched out of `--void-1`
+       * now, and the stylesheet colours the numeral `--text` for exactly that
+       * reason -- but Framer writes the resting colour back as an inline
        * style, which beats a stylesheet. So one point of damage stamped
        * near-black ink onto a dark purple well and the life total became
-       * unreadable, on the one layout this game is built for, and only after
-       * the first hit -- which is precisely when nobody is looking at the CSS.
+       * unreadable, and only after the first hit -- which is precisely when
+       * nobody is looking at the CSS.
        *
-       * `--dial-n` is defined on `.dial__n` in `board.css` and re-pointed in
-       * `handheld.css`, so this says "put it back" without knowing which disc
-       * it is on.
+       * `--dial-n` is defined on `.dial__n` in `board.css`, so this says "put
+       * it back" without knowing what the disc looks like.
        */
       color: ["var(--dial-n)", grew ? "var(--gain)" : "var(--danger)", "var(--dial-n)"],
       transition: { duration: 0.5, times: [0, 0.25, 1] },
@@ -349,10 +346,8 @@ export function PlayerOrb({
   const dial = (
     <span
       /*
-        The fraction of a starting life total, for the handheld dial's ring.
-        Desktop's brass disc ignores it -- it is a seal, not a meter -- but the
-        value is cheap and being on the element means the two treatments differ
-        in CSS alone rather than in what the component emits.
+        The fraction of a starting life total, for the dial's ring: "34" reads
+        as "34 of the 40 you started with" without adding a character.
       */
       style={
         {

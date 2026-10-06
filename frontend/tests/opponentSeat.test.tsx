@@ -21,6 +21,8 @@ import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CardView, GameView, PlayerView } from "../src/api/types";
 import { OpponentSeat } from "../src/components/game/OpponentSeat";
+import { RAIL_SETTLE, resetCursor, setCursor } from "../src/input/cursor";
+import { noteInput, resetInputMode } from "../src/input/inputMode";
 import { musterOf } from "../src/logic/threat";
 import { useUiStore } from "../src/state/uiStore";
 import { card, gameView, player } from "./fixtures";
@@ -380,5 +382,99 @@ describe("pressing it", () => {
     const other = renderSeat(view([]), { isActive: false, hasPriority: true }).container;
     expect(other.querySelector(".seat--active")).toBeNull();
     expect(other.querySelector(".seat__pri")).not.toBeNull();
+  });
+});
+
+/**
+ * Focusing the seat reads their commander, the way hovering its window does.
+ *
+ * The window's `mouseenter` was the only route into the rail from a seat, and
+ * the ring stands on the seat's button rather than inside it -- so on a Deck an
+ * opposing commander could be read full screen with `Y` and never in the rail.
+ * `data-preview-oid` is what `cursor.ts:hoverFor` reads after it moves focus;
+ * the focus handlers are for focus that does not come from the ring.
+ */
+describe("reading their commander from the seat", () => {
+  const withCommander = () =>
+    view([], {
+      command: [card({ oid: 11, name: "Edgar Markov", is_commander: true, zone: "command" })],
+    });
+
+  afterEach(() => {
+    resetCursor();
+    resetInputMode();
+  });
+
+  it("declares the commander for the ring to read", () => {
+    const { getByTestId } = renderSeat(withCommander());
+    expect(getByTestId("player-1").getAttribute("data-preview-oid")).toBe("11");
+  });
+
+  it("declares nothing when there is no commander to read", () => {
+    // A missing attribute and not `"undefined"`, which `previewOidFor` would
+    // turn into NaN and a stray `0` would turn into a hover on object zero.
+    const { getByTestId } = renderSeat(view([]));
+    expect(getByTestId("player-1").hasAttribute("data-preview-oid")).toBe(false);
+  });
+
+  it("fills the rail when the ring lands on it", async () => {
+    noteInput("pad");
+    const state = withCommander();
+    render(
+      <div className="table">
+        <OpponentSeat
+          state={state}
+          player={state.players[1]}
+          isActive={false}
+          hasPriority={false}
+          targetable={false}
+        />
+      </div>,
+    );
+    expect(setCursor("orb:1")).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, RAIL_SETTLE + 20));
+    expect(useUiStore.getState().hoveredOid).toBe(11);
+  });
+
+  it("fills the rail on keyboard focus, and clears it on the way out", () => {
+    noteInput("keyboard");
+    const onHoverCard = vi.fn();
+    const { getByTestId } = renderSeat(withCommander(), { onHoverCard });
+    fireEvent.focus(getByTestId("player-1"));
+    expect(onHoverCard).toHaveBeenLastCalledWith(11);
+
+    useUiStore.setState({ hoveredOid: 11 });
+    fireEvent.blur(getByTestId("player-1"));
+    expect(onHoverCard).toHaveBeenLastCalledWith(null);
+  });
+
+  it("does not pin the rail when a click is what focused it", () => {
+    // A pointer player clicks a seat to read their BOARD; the pointer is on
+    // its way to that board, and the window already has its own hover.
+    noteInput("mouse");
+    const onHoverCard = vi.fn();
+    const { getByTestId } = renderSeat(withCommander(), { onHoverCard });
+    fireEvent.focus(getByTestId("player-1"));
+    expect(onHoverCard).not.toHaveBeenCalled();
+  });
+
+  it("leaves a card the pointer has since put in the rail alone on blur", () => {
+    // Blur fires on the mousedown of the next click, after that card's own
+    // `mouseenter` has written it -- clearing blind would blank it.
+    const onHoverCard = vi.fn();
+    const { getByTestId } = renderSeat(withCommander(), { onHoverCard });
+    useUiStore.setState({ hoveredOid: 42 });
+    fireEvent.blur(getByTestId("player-1"));
+    expect(onHoverCard).not.toHaveBeenCalled();
+  });
+
+  it("still fills the rail from the window on hover", () => {
+    const onHoverCard = vi.fn();
+    const { container } = renderSeat(withCommander(), { onHoverCard });
+    const win = container.querySelector(".seat__win") as HTMLElement;
+    fireEvent.mouseEnter(win);
+    expect(onHoverCard).toHaveBeenLastCalledWith(11);
+    fireEvent.mouseLeave(win);
+    expect(onHoverCard).toHaveBeenLastCalledWith(null);
   });
 });

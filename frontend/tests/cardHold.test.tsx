@@ -10,8 +10,8 @@
  * CG-02, FB-08 lives in `Table`'s `Y` binding, not here).
  */
 
-import { cleanup, render } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { CardHold } from "../src/components/game/CardHold";
 import * as pool from "../src/testing/cards";
 
@@ -50,5 +50,63 @@ describe("CardHold", () => {
     expect(document.querySelector("[data-testid='card-hold']")?.textContent).toContain("Aesi");
     rerender(<CardHold card={null} />);
     expect(document.querySelector("[data-testid='card-hold']")).toBeNull();
+  });
+});
+
+/**
+ * The pointer's way out.
+ *
+ * A pad puts the hold down with any press; a mouse opens it now (right-click,
+ * or `i` over a card) and has no "any press", so the hold has to take a click
+ * itself -- and the click must never fall through to the board card under it.
+ */
+describe("CardHold, from a mouse", () => {
+  it("is a dialog named for its card", () => {
+    render(<CardHold card={pool.aesi({ oid: 900 })} onClose={() => undefined} />);
+    const hold = document.querySelector<HTMLElement>("[data-testid='card-hold']");
+    expect(hold?.getAttribute("role")).toBe("dialog");
+    expect(hold?.getAttribute("aria-modal")).toBe("true");
+    expect(hold?.getAttribute("aria-label")).toMatch(/Aesi/);
+  });
+
+  it("closes on a click outside the card", () => {
+    const onClose = vi.fn();
+    render(<CardHold card={pool.aesi({ oid: 900 })} onClose={onClose} />);
+    fireEvent.click(document.querySelector("[data-testid='card-hold']") as HTMLElement);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays open on a click on the card itself", () => {
+    // The card may scroll on a very long one; grabbing its scrollbar is not
+    // asking to close it.
+    const onClose = vi.fn();
+    render(<CardHold card={pool.aesi({ oid: 900 })} onClose={onClose} />);
+    fireEvent.click(document.querySelector(".hold__card .card") as HTMLElement);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("closes from its Close button, once", () => {
+    const onClose = vi.fn();
+    const { getByTestId } = render(
+      <CardHold card={pool.aesi({ oid: 900 })} onClose={onClose} />,
+    );
+    fireEvent.click(getByTestId("card-hold-close"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes on a right-click, and keeps the browser's menu off the card", () => {
+    const onClose = vi.fn();
+    render(<CardHold card={pool.aesi({ oid: 900 })} onClose={onClose} />);
+    const event = new MouseEvent("contextmenu", { bubbles: true, cancelable: true });
+    (document.querySelector("[data-testid='card-hold']") as HTMLElement).dispatchEvent(event);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it("gives the ring nothing to land on, Close button included", () => {
+    // On a pad any press is still the way out; a stop in here would pull the
+    // ring off the board for a surface it has no business on.
+    render(<CardHold card={pool.aesi({ oid: 900 })} onClose={() => undefined} />);
+    expect(document.querySelectorAll("[data-stop]").length).toBe(0);
   });
 });

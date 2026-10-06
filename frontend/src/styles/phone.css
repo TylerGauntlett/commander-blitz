@@ -1,0 +1,287 @@
+/*
+ * The phone tier: a handheld whose floors are too big for it.
+ *
+ * A phone gets `data-handheld` like a Deck does, and everything `handheld.css`
+ * says still applies -- the compact seats, the overlaid log, the 44px touch
+ * targets. What does not survive the trip from 1280x800 to 926x428 or 390x844 is
+ * the Deck's FLOORS: a 16px type floor, a 96px card floor and a 224px rail are
+ * fine on a 7-inch panel and, measured on an iPhone-sized viewport, left the
+ * viewer's own battlefield 0-34px tall and the Pass and Keep buttons below the
+ * bottom of the screen.
+ *
+ * So this file is additive in the same way `handheld.css` is: it loads last,
+ * says nothing at all unless `<html>` carries `data-phone` (or the query
+ * matches, for the tokens), and lowers floors and restacks the table rather
+ * than redesigning anything. The goal is playable, not perfect -- every control
+ * reachable by a thumb, every number legible -- at the cost of smaller type and
+ * smaller cards than a Deck draws.
+ *
+ * THE QUERY IS STATED HERE AND IN `logic/breakpoints.ts`, and
+ * `tests/breakpoints.test.ts` asserts the two match, for the reason
+ * `handheld.css` gives for its own.
+ */
+
+/* ==========================================================================
+   Tokens
+   ========================================================================== */
+
+@media (max-width: 600px), (max-height: 500px) {
+  :root:not([data-desktop]) {
+    /* The handheld floor lists, the lobby's `max(..., ...)` sizes and the card
+       faces' clamps all write this. 12px is the smallest the reader still reads
+       at a phone's pixel density; it is a floor, so anything authored larger
+       keeps its own size. */
+    --type-floor: 12px;
+    /* Narrower than the Deck's 224px minimum, which was a third of a phone held
+       sideways and all of one held upright. Portrait does not use it at all --
+       the rail moves under the board there. */
+    --rail-r: clamp(200px, 26vw, 260px);
+    /* The viewer's info column. 116px still holds the dial and two 44px zone
+       chips side by side. */
+    --mat-side: 116px;
+    --hand-lift: 12px;
+  }
+}
+
+/* ==========================================================================
+   Both orientations
+   ========================================================================== */
+
+/*
+ * The reader goes; the full card view replaces it.
+ *
+ * It was 296px of a 334-384px rail spent on "Point at a card to read it" -- an
+ * instruction a touch screen cannot follow, because it has no hover. Reading a
+ * card on a phone is a long-press, which opens the full card view (`CardHold`),
+ * the same surface the Deck's Y button and the desktop's right-click open.
+ */
+[data-phone] .rail--right .preview {
+  display: none;
+}
+
+/*
+ * The rail scrolls, and the commit slab rides along at its bottom.
+ *
+ * `board.css` forbids the rail scrolling so the slab cannot slide away
+ * mid-turn. Sticky gives the same guarantee and lets a list that does not fit
+ * a phone still be reached in full.
+ */
+[data-phone] .rail--right {
+  overflow-y: auto;
+}
+
+[data-phone] .rail--right .acts {
+  min-height: 0;
+}
+
+[data-phone] .rail--right .commit-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding-top: 4px;
+  background: var(--felt-0);
+}
+
+[data-phone] .table__body {
+  gap: 4px;
+  padding: 2px;
+}
+
+/* A long-press reads a card (`input/longPress.ts`). iOS answers the same press
+   with its own image callout and text selection unless told not to. */
+[data-phone] .table {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* The hand's droop allowance, cut from 44px to 16: a fan of 56-96px cards
+   barely droops. `PHONE_FOOT_CHROME` in `state/useZoomFit.ts` is this number
+   plus the foot's padding, and the two must move together. */
+[data-phone] .hand {
+  min-height: calc(var(--card-w) * 1.4 + 16px);
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+[data-phone] .table__foot {
+  padding: 2px 6px;
+}
+
+/* The hint bar names controller buttons. A phone has none, and the row it sat
+   on is the 44px `PHONE_FOOT_EXTRA` budgets for the tools alone. */
+[data-phone] .hints {
+  display: none;
+}
+
+/* The phase ribbon, tightened: its gutters were sized for a 1280px bar. */
+[data-phone] .track {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 3px 6px;
+}
+
+[data-phone] .ph {
+  gap: 4px;
+  padding: 2px 6px;
+}
+
+[data-phone] .track__step {
+  padding: 1px 4px;
+}
+
+[data-phone] .track__who {
+  max-width: 14ch;
+  padding: 3px 8px;
+}
+
+/* ==========================================================================
+   The deck catalogue
+   ==========================================================================
+
+   Its bar and filter strip are flex rows that never wrap, and the stage grid's
+   only column was implicit -- so the widest row set everyone's width, and on a
+   390px phone the close button sat at x=598. A `minmax(0, 1fr)` column and two
+   wrapping rows put every control back on screen; the grid of decks was
+   already `auto-fill` and needs nothing. */
+
+[data-phone] .shelf {
+  --card-w: clamp(96px, 30vw, 150px);
+}
+
+[data-phone] .shelf__stage {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 6px 8px;
+}
+
+[data-phone] .shelf__bar,
+[data-phone] .shelf__filters,
+[data-phone] .shelf__group,
+[data-phone] .shelf__foot,
+[data-phone] .shelf__foot .import {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+/* The search field takes a line of its own rather than a quarter of one. */
+[data-phone] .shelf__find {
+  flex: 1 1 100%;
+  order: 1;
+  width: auto;
+}
+
+/* The controller legend this padding stepped around is not drawn on a phone. */
+[data-phone] .shelf__foot {
+  padding-right: 0;
+}
+
+[data-phone] .shelf__foot .import__label {
+  white-space: normal;
+}
+
+/* ==========================================================================
+   Dialogs
+   ==========================================================================
+
+   Sized for a 1280x800 Deck, a prompt kept a 16vh bottom margin and asked
+   for 140px option cards -- about 290px of usable height on a phone held
+   sideways. Edge to edge instead, and scrolling inside when it still does not
+   fit. */
+
+[data-phone] .prompt,
+[data-phone] .peek,
+[data-phone] .over {
+  max-width: calc(100vw - 12px);
+  max-height: calc(100dvh - 12px);
+  margin-bottom: 0;
+  overflow-y: auto;
+}
+
+[data-phone] .opt--card {
+  --card-w: clamp(96px, 28vw, 140px);
+}
+
+/* ==========================================================================
+   Landscape: a shorter orb
+   ==========================================================================
+
+   Held sideways a phone gives your own board 100-150px of height, and the orb
+   is built for 330 or more. The life total is the one number that must never
+   scroll away, so the portrait gives up its height to keep it on screen: a
+   strip of the art with the dial hanging off it, the name dropped (the strip's
+   own art and the preview both say who it is), and the zone chips one scroll of
+   the column below -- `.mat__side` already scrolls on a handheld. */
+
+@media (orientation: landscape) {
+  [data-phone] .play__mine .cmdplinth__frame {
+    max-height: 40px;
+  }
+
+  /* The strip keeps the cost (on its left) and drops the state word, and the
+     dial is drawn over it: on a 40px strip of art the two cannot both have the
+     right-hand end, and the life total is the one that has to win. */
+  [data-phone] .play__mine .cmdplinth__name,
+  [data-phone] .play__mine .cmdplinth__word {
+    display: none;
+  }
+
+  [data-phone] .play__mine .cmdplinth__frame .dial {
+    z-index: 4;
+  }
+}
+
+/* ==========================================================================
+   Portrait: one column
+   ==========================================================================
+
+   Held upright a phone is 390-430px wide, and the two-column table left the
+   board 150-188px of it -- the viewer's lanes came out 0-20px wide beside a
+   132px info column. So the rail moves UNDER the board: track, opponents, your
+   board, your hand, then the actions and the commit slab, top to bottom. */
+
+@media (orientation: portrait) {
+  [data-phone] .table__body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+  }
+
+  [data-phone] .table__body > .rail--right {
+    grid-column: 1;
+    grid-row: 3;
+    max-height: 36dvh;
+  }
+
+  /* Opponents become a strip you swipe along, one seat most of the screen wide,
+     rather than three seats squeezed to 60px each with their counters cut. */
+  [data-phone] .play__opponents {
+    justify-content: start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  [data-phone] .play__opponents > .mat--compact {
+    flex: 0 0 min(320px, 88%);
+    scroll-snap-align: start;
+  }
+
+  [data-phone] .play__opponents > .mat--compact:only-child {
+    flex-basis: 100%;
+  }
+
+  /*
+   * The ribbon says where you are, not the whole turn.
+   *
+   * Thirteen steps in 160px overprinted into "BEGMACOMBEN". The live phase and
+   * its live step are the answer to "where am I"; the rest are hidden rather
+   * than unmounted, because `e2e/smoke.spec.ts` counts every label and the
+   * marker's `layoutId` animation runs across them.
+   */
+  [data-phone] .ph:not(.ph--now),
+  [data-phone] .ph--now .track__step:not(.track__step--now) {
+    display: none;
+  }
+
+  [data-phone] .ph--now .ph__steps {
+    display: flex;
+  }
+}

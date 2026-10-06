@@ -27,6 +27,9 @@ import "./styles/door.css";
 import "./styles/pod.css";
 import "./styles/shelf.css";
 import "./styles/handheld.css";
+// After handheld.css: a phone is a handheld with lower floors, so its rules
+// have to win the ties.
+import "./styles/phone.css";
 
 // The engine is authoritative and every mutation returns fresh state, so there
 // is nothing to refetch in the background.

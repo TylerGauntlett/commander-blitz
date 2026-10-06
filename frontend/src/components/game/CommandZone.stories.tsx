@@ -92,10 +92,10 @@ export const Playable: Story = {
 /**
  * The plinth is a cropped portrait, so the art is most of it.
  *
- * `.cmdplinth__frame` is `aspect-ratio: 2` and the art fills it absolutely, which
- * is why this only reads correctly inside the orb: given the whole canvas the
- * frame becomes a banner two screens wide and one deep, and the commander stops
- * looking like a hero and starts looking like a masthead.
+ * `.cmdplinth__frame` is `aspect-ratio: 1.16` and the art fills it absolutely,
+ * which is why this only reads correctly inside the orb: given the whole canvas
+ * the frame becomes a picture a screen wide, and the commander stops looking
+ * like a hero and starts looking like a masthead.
  */
 export const WithArt: Story = {
   args: { state: withCommanders() },

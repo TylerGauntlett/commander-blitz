@@ -16,10 +16,10 @@ import { useEffect } from "react";
 import type { CardView, GameView, LegalAction } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import { parseStop } from "../logic/verbs";
-import { commandersOf } from "../logic/zoneGrouping";
+import { commandersOf, findCard } from "../logic/zoneGrouping";
 import type { PeekTarget } from "../state/uiStore";
 import type { useGame } from "../state/useGame";
-import { getCursor, setCursor } from "./cursor";
+import { getCursor, readingOid, setCursor } from "./cursor";
 import { onAny as onAnyPad, on as onPad } from "./pad";
 import { stopId } from "./stops";
 
@@ -74,14 +74,17 @@ export function usePadBindings({
       onPad("l1", () => stepGroup(-1)),
       onPad("r1", () => stepGroup(1)),
       /*
-       * `Y` reads the card the ring is on, full screen.
+       * `Y` reads the card in the rail, full screen.
        *
-       * OPEN (TECH_DEBT FB-08): this reads `parseStop(getCursor())` and answers
-       * only a `card:` or `orb:` stop. A panel row or a stack entry names its
-       * card through `data-preview-oid` -- which `cursor.ts:previewOidFor`
-       * already resolves for the rail -- and gets `deny` here instead. Left as
-       * it is on the refactor branch; the fix is to resolve through the same
-       * helper the rail uses.
+       * THE RAIL FIRST, AND THEN THE RING. `cursor.ts:readingOid` is the card
+       * the reader is showing, which on a pad is the ring's card -- including a
+       * panel row's or a seat's `data-preview-oid`, the case this binding used
+       * to `deny` (TECH_DEBT FB-08) -- and with a mouse is the card under the
+       * pointer. That second half is the desktop's way in: `i` is this button,
+       * and a desktop player has no visible ring, so before this a mouse user
+       * pressing `i` over a card got whatever the invisible cursor last rested
+       * on. The two branches below stay as the fallback for a rail that is
+       * empty while the ring stands on something readable.
        *
        * `logic/verbs.ts` has returned `Y Read` on every card stop since it was
        * written and nothing was ever bound to it. An advertised button that
@@ -89,6 +92,11 @@ export function usePadBindings({
        * that the hint bar is not to be trusted.
        */
       onPad("y", () => {
+        const shown = readingOid();
+        if (shown !== null && findCard(state, shown) !== null) {
+          setHeldCard(shown);
+          return;
+        }
         const ref = parseStop(getCursor());
         if (ref.kind === "card" && ref.id !== null) {
           setHeldCard(ref.id);

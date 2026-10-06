@@ -34,7 +34,7 @@ import { GameRoute } from "./screens/GameRoute";
 import { HomeRoute } from "./screens/HomeRoute";
 import { NotFound } from "./screens/NotFound";
 import { PodRoute } from "./screens/PodRoute";
-import { useHandheld } from "./state/useHandheld";
+import { useHandheld, usePhone } from "./state/useHandheld";
 import { useImages } from "./state/useImages";
 
 export function App() {
@@ -83,6 +83,13 @@ export function App() {
   useEffect(() => {
     document.documentElement.toggleAttribute("data-handheld", handheld);
   }, [handheld]);
+
+  // A phone is a handheld with floors too big for it; `styles/phone.css` keys
+  // on this. Additive, so everything `data-handheld` does still applies.
+  const phone = usePhone();
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-phone", phone);
+  }, [phone]);
 
   // `location` is passed explicitly so the *exiting* screen keeps matching
   // against the address it was rendered for. Without it the outgoing route

@@ -141,8 +141,11 @@ describe("the row stays on the stage", () => {
   it("never draws type it would have to shrink, so the unit is the only thing that gives", () => {
     // The clamp's floor. Below this the composition would keep shrinking while
     // the 16px floor did not, which is the trade `stageScale` documents.
-    expect(stageUnit(1280, 400, HAND)).toBeGreaterThanOrEqual(0.72);
+    expect(stageUnit(1280, 560, HAND)).toBeGreaterThanOrEqual(0.72);
     expect(stageUnit(4000, 4000, HAND)).toBeLessThanOrEqual(1.45);
+    // A phone's floor is lower, and so is its type floor (`--type-floor`).
+    expect(stageUnit(926, 428, HAND)).toBeLessThan(0.72);
+    expect(stageUnit(926, 428, HAND)).toBeGreaterThanOrEqual(0.4);
   });
 
   it("takes the smaller of what the height wants and what the width can hold", () => {
