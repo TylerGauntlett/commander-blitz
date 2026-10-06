@@ -15,12 +15,15 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
+from .player_statics import outcome_barred_by_static
 from .primitives import (
+    become_monarch,
     clear_goad,
     clear_permanent_shields,
     clear_until_next_turn,
     drop_attack_requirements,
 )
+from .temp_effects import clear_flash_permissions
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -158,7 +161,6 @@ def player_cant_lose(state: GameState, pid: int) -> bool:
     """
     if any(lock.player == pid and lock.cant_lose for lock in state.outcome_locks):
         return True
-    from .player_statics import outcome_barred_by_static
 
     return outcome_barred_by_static(state, pid, "cant_lose_the_game")
 
@@ -172,7 +174,6 @@ def player_cant_win(state: GameState, pid: int) -> bool:
     """
     if any(lock.player == pid and lock.cant_win for lock in state.outcome_locks):
         return True
-    from .player_statics import outcome_barred_by_static
 
     return outcome_barred_by_static(state, pid, "cant_win_the_game")
 
@@ -267,8 +268,6 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # your next turn" keyed to a seat that has left would stand for good.
     clear_until_next_turn(state, pid)
     # And a timed flash permission keyed to a seat that has left.
-    from .temp_effects import clear_flash_permissions
-
     clear_flash_permissions(state, "until_your_next_turn", pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
@@ -292,9 +291,6 @@ def _monarch_left(state: GameState, pid: int) -> None:
     Unreachable in a two-player game -- the monarch losing ends it -- so this is
     for the pod.
     """
-    # Local, for `_become`'s reason in `turn.py`: `primitives` reaches the effect
-    # ops through `zones`, and those ops import `primitives` back.
-    from .primitives import become_monarch
 
     if state.monarch != pid:
         return

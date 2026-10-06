@@ -84,7 +84,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
-from .mana import ManaOrigin
+from .mana import ManaOrigin, printed_cost_is
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
@@ -1695,11 +1695,8 @@ def _matches_printed(
     # "…with mana cost {0} or {1}." The printed cost, symbol for symbol -- see
     # `mana.printed_cost_is`. As printed as a name, so no layer can move it.
     wanted_cost = selector.get("mana_cost")
-    if wanted_cost is not None:
-        from .mana import printed_cost_is
-
-        if not printed_cost_is(card.mana_cost, wanted_cost):
-            return False
+    if wanted_cost is not None and not printed_cost_is(card.mana_cost, wanted_cost):
+        return False
     # "Your opponents can't cast spells with **mana value 3 or less**" --
     # Brisela, Voice of Nightmares. The selector language's comparison shape,
     # `{"op": "<=", "value": 3}`, with a literal number, because a printed face

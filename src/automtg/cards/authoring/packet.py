@@ -28,9 +28,28 @@ from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
+from automtg.engine.effects import OPS, known_ops
+from automtg.engine.effects.conditions import CONDITION_KEYS
+from automtg.engine.effects.selectors import SELECTOR_KEYS
+from automtg.engine.effects.values import VALUE_KEYS
+from automtg.engine.enums import CardType, Keyword, Supertype
+from automtg.engine.objects import PLAYABLE_DURATIONS
+from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
+
 from ..images import IndexEntry
+from ..loader.vocabulary import (
+    COST_REDUCTION_FILTER_KEYS,
+    COST_REDUCTION_KEYS,
+    COST_REDUCTION_REFUSED_FILTER_KEYS,
+    MANA_RIDER_OPS,
+    STATIC_CONDITION_HEADS,
+    STATIC_EFFECTS,
+    STATIC_FILTER_KEYS,
+    STATIC_VALUE_KEYS,
+)
 from ..proxy import CardFacts, build_proxy, facts_from_index
 from ..registry import CardRegistry, authored_card_paths, data_dir
+from ..schema import AbilityModel, CardModel, CostModel, TargetModel, TriggerModel
 from .verify import EXPECTATION_KEYS
 
 #: The card-level alternative and additional costs, which live on the *card*
@@ -255,8 +274,6 @@ def _op_options() -> dict[str, list[str]]:
     import inspect
     import textwrap
 
-    from automtg.engine.effects import OPS
-
     def read_keys(fn, seen: set) -> set[str]:
         """Keys ``fn`` reads out of a mapping parameter, following it one hop.
 
@@ -409,7 +426,6 @@ def _required_keys() -> dict:
     and Arcane Bombardment's triggered ability with no `kind` -- every one of
     them a worker that had the right key list and no way to see the asterisk.
     """
-    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
 
     models = {
         "ability": AbilityModel,
@@ -439,25 +455,6 @@ def _literal_options(model, field: str) -> list[str]:
 
 def reference() -> dict:
     """The DSL, small enough to travel with every packet."""
-    from automtg.engine.effects import known_ops
-    from automtg.engine.effects.conditions import CONDITION_KEYS
-    from automtg.engine.effects.selectors import SELECTOR_KEYS
-    from automtg.engine.effects.values import VALUE_KEYS
-    from automtg.engine.enums import CardType, Keyword, Supertype
-    from automtg.engine.objects import PLAYABLE_DURATIONS
-    from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
-
-    from ..loader.vocabulary import (
-        COST_REDUCTION_FILTER_KEYS,
-        COST_REDUCTION_KEYS,
-        COST_REDUCTION_REFUSED_FILTER_KEYS,
-        MANA_RIDER_OPS,
-        STATIC_CONDITION_HEADS,
-        STATIC_EFFECTS,
-        STATIC_FILTER_KEYS,
-        STATIC_VALUE_KEYS,
-    )
-    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
 
     return {
         "ops": sorted(known_ops()),
@@ -1029,7 +1026,6 @@ def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> lis
     hand-written files alone showed a planeswalker three creatures and never
     the signed `cost.loyalty` its every ability is written with.
     """
-    from ..schema import CardModel
 
     wanted_types = set(card.type_line.replace("—", " ").split())
     scored: list[tuple[int, dict]] = []

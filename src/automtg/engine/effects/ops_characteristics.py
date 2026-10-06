@@ -6,6 +6,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars, resolve_chosen_color_list
+from ..events import EventType
 from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
@@ -13,11 +15,13 @@ from ..primitives import (
     animate,
     grant_ability,
     grant_keyword,
+    grant_player_protection,
     lock_abilities,
     pump,
 )
-from ..structs import TempEffect
+from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
 from ..text_change import printed_type_instances
+from ..triggers import fire
 from .context import EffectContext, ask_mode
 from .registry import register
 from .selectors import (
@@ -309,9 +313,6 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     second place for "protection from black" to mean something, and the two
     would drift the first time a quality was added.
     """
-    from ..characteristics import resolve_chosen_color_list
-    from ..primitives import grant_player_protection
-    from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING
 
     # "…protection from the color of your choice" -- Brave the Elements, whose
     # colour is named by a `choose_color` earlier in the same effect list and
@@ -440,8 +441,6 @@ def op_monstrosity(ctx: EffectContext, spec: Mapping[str, Any]):
     the "when this becomes monstrous" trigger that usually accompanies it would
     fire every time rather than once.
     """
-    from ..events import EventType
-    from ..triggers import fire
 
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oid = ctx.source_oid
@@ -491,8 +490,6 @@ def op_become_level(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.state.bump_chars()
     # After the write, so what triggers off it is collected from a Class that
     # already has the new level's abilities (716.4).
-    from ..events import EventType
-    from ..triggers import fire
 
     fire(
         ctx.state,
@@ -590,7 +587,6 @@ def op_set_pt(ctx: EffectContext, spec: Mapping[str, Any]):
     under this engine's fixed-order characteristic pipeline for the cards in the
     curated decks (none of them combine ``set_pt`` with counters).
     """
-    from ..characteristics import chars
 
     power = evaluate_value(ctx, spec.get("power", 0))
     toughness = evaluate_value(ctx, spec.get("toughness", 0))

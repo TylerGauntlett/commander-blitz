@@ -19,10 +19,12 @@ from .characteristics import (
     _static_active,
     _static_value,
     chars,
+    resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
 )
 from .enums import Step, Zone
+from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -539,8 +541,6 @@ def _mana_added(source: Any, add_mana: Any) -> tuple[int, ...]:
     default the chosen colour has everywhere else, and the only safe answer here,
     since this runs inside cost payment where nothing may stop to ask (605.1a).
     """
-    from .characteristics import resolve_chosen_color_list
-    from .mana import parse_mana_production
 
     if isinstance(add_mana, Mapping):
         colors = resolve_chosen_color_list([add_mana], source)
@@ -1122,7 +1122,6 @@ def spell_mana_tax(
     (increases, then reductions, generic never below zero) is the clamp the
     solver already applies.
     """
-    from .mana import ManaCost
 
     total = 0
     for source_obj, static in _battlefield_statics(state):

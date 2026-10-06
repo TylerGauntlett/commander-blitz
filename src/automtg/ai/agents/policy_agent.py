@@ -13,9 +13,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from automtg.cards.registry import default_registry
 from automtg.engine.actions import Action
 
 from .. import action_space, encoding
+from ..model import load, load_vocab_ids
 from .heuristic_agent import HeuristicAgent
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -38,12 +40,8 @@ class PolicyAgent:
         self.model = None
         self.vocab = vocab
         if checkpoint:
-            from ..model import load, load_vocab_ids
-
             self.model, config = load(checkpoint)
             if self.vocab is None:
-                from automtg.cards.registry import default_registry
-
                 registry = default_registry().registry
                 saved = load_vocab_ids(checkpoint)
                 if saved is not None:

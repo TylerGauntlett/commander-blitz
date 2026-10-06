@@ -20,13 +20,31 @@ from .characteristics import (
     threshold_met,
 )
 from .costs import (
+    ability_purpose,
     can_pay,
     can_pay_mana,
+    cost_reduction,
     land_drops_available,
+    mana_added_total,
+    mana_amount,
+    mana_options_of,
+    mana_produced,
+    mana_sources,
+    most_life_for_mana,
     offerable_mana_ability,
+    plus_mana,
+    spell_purpose,
 )
+from .effects.conditions import evaluate
+from .effects.context import EffectContext
 from .enums import ActionKind, DecisionKind, Step, Zone
-from .mana import ManaCost, max_affordable_x
+from .mana import ManaCost, format_symbols, max_affordable_x
+from .player_statics import (
+    player_cant_activate,
+    player_doubles_mana_from,
+    player_plays_lands_from_graveyard,
+    player_plays_lands_from_library_top,
+)
 from .structs import TargetRef
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -294,7 +312,6 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
     stack, so it is offered under the same timing the card itself would need
     (rule 702.62a) but produces its own `ActionKind`.
     """
-    from .costs import can_pay_mana
 
     out: list[Action] = []
     for oid in state.players[pid].hand:
@@ -353,10 +370,6 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     ``card.id`` here made the second and third Forest unclickable and
     undraggable, which is a much worse trade than a slightly wider action list.
     """
-    from .player_statics import (
-        player_plays_lands_from_graveyard,
-        player_plays_lands_from_library_top,
-    )
 
     zones = [state.players[pid].hand]
     if player_plays_lands_from_graveyard(state, pid):
@@ -465,27 +478,23 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
-    from .costs import cost_reduction, spell_purpose
-
     discount = cost_reduction(state, pid, card)
     purpose = spell_purpose(card)
     x = 0
-    if card.mana_cost.x_count:
-        from .costs import mana_sources
-
-        # The same gate `_cast_variant` applies, and it must stay X = 0
-        # afterwards for the same reason: this diagnostic has to agree with the
-        # action list, and that list now offers the spell at its floor.
-        if (
-            max_affordable_x(
-                card.mana_cost,
-                state.players[pid].mana_pool.spendable(purpose),
-                mana_sources(state, pid, purpose=purpose),
-                extra_generic=-discount,
-            )
-            < 0
-        ):
-            return "mana"
+    # The same gate `_cast_variant` applies, and it must stay X = 0
+    # afterwards for the same reason: this diagnostic has to agree with the
+    # action list, and that list now offers the spell at its floor.
+    if (
+        card.mana_cost.x_count
+        and max_affordable_x(
+            card.mana_cost,
+            state.players[pid].mana_pool.spendable(purpose),
+            mana_sources(state, pid, purpose=purpose),
+            extra_generic=-discount,
+        )
+        < 0
+    ):
+        return "mana"
     if not can_pay_mana(state, pid, card.mana_cost, x=x, extra_generic=-discount, purpose=purpose):
         return "mana"
 
@@ -516,10 +525,6 @@ def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
 
 
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
-    # Local, the way `costs.py` imports this module's neighbours: `player_statics`
-    # reads `characteristics`, which reaches back here.
-    from .player_statics import player_cant_activate
-
     out: list[Action] = []
     manual_mana = state.players[pid].manual_mana
     offer_all = state.players[pid].offer_all_abilities
@@ -640,7 +645,6 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
     without asking anything when they cost only mana -- and modelling it as its
     own `ActionKind` would change the RL action space for one row.
     """
-    from .costs import can_pay
 
     card = state.card_of(obj)
     if card.morph is not None:
@@ -763,8 +767,6 @@ def _ability_aims(
     # offered on the cast path. Computed once and used by both mana questions
     # below: an X ceiling measured without restricted mana and a cost then found
     # payable with it would offer an X this ability cannot pay.
-    from .costs import ability_purpose
-
     purpose = ability_purpose(state, oid)
     if (
         ability.cost is not None
@@ -776,18 +778,14 @@ def _ability_aims(
         # a Griselbrand imprinted disappears from the list until eight mana is
         # available, instead of being offered at X = 0 and copying it for free.
         and ability.cost.x_value is None
+        and max_affordable_x(
+            most_life_for_mana(state, pid, ability.cost, oid),
+            state.players[pid].mana_pool.spendable(purpose),
+            mana_sources(state, pid, purpose=purpose),
+        )
+        < 0
     ):
-        from .costs import mana_sources, most_life_for_mana
-
-        if (
-            max_affordable_x(
-                most_life_for_mana(state, pid, ability.cost, oid),
-                state.players[pid].mana_pool.spendable(purpose),
-                mana_sources(state, pid, purpose=purpose),
-            )
-            < 0
-        ):
-            return None
+        return None
     # ``x=0`` is the floor for an announced X and is ignored outright for a
     # defined one -- `costs.ability_mana` is the single place either is priced,
     # so the number legality tests is the number `costs.pay` charges.
@@ -805,8 +803,6 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            from .costs import mana_sources, most_life_for_mana
-
             if ability.cost.loyalty_x:
                 # The ceiling of a -X is the loyalty there is to remove (606.4).
                 source_obj = state.objects.get(oid)
@@ -925,8 +921,6 @@ def _activation_allowed(state: GameState, pid: int, oid: int, ability) -> bool:
     activated still resolves if the board changes while it is on the stack, so
     this is asked here and nowhere else.
     """
-    from .effects.conditions import evaluate
-    from .effects.context import EffectContext
 
     ctx = EffectContext(state=state, controller=pid, source_oid=oid)
     return bool(evaluate(ctx, ability.activation_condition))
@@ -961,7 +955,6 @@ def _mana_option_indices(state: GameState, oid: int, ability) -> list[int | None
     """
     if not ability.is_mana_ability:
         return [None]
-    from .costs import mana_options_of
 
     return list(range(len(mana_options_of(state, oid, ability))))
 
@@ -977,9 +970,6 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     Doubling is applied, because a Vivid land under Vorinclex really does add
     two and the chip would otherwise promise one.
     """
-    from .costs import mana_added_total, mana_amount, mana_options_of, mana_produced, plus_mana
-    from .mana import format_symbols
-    from .player_statics import player_doubles_mana_from
 
     options = mana_options_of(state, oid, ability)
     if mana_option is None or len(options) <= 1:

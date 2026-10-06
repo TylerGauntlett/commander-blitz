@@ -17,9 +17,16 @@ from ..primitives import (
     goad_creature,
     make_unblockable,
     remove_counters,
+    require_attack_on,
     restrict_attack,
 )
-from ..structs import TargetRef
+from ..structs import (
+    ATTACK_RESTRICTION_DURATIONS,
+    BLOCK_PROHIBITION_DURATIONS,
+    SACRIFICE_RESTRICTION_DURATIONS,
+    UNBLOCKABLE_DURATIONS,
+    TargetRef,
+)
 from .board_helpers import (
     _players,
 )
@@ -463,7 +470,6 @@ def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
     that player's next untap step and ends in that turn's cleanup; it ends early
     if the planeswalker leaves (400.7).
     """
-    from ..primitives import require_attack_on
 
     walkers = [
         oid
@@ -523,7 +529,6 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
     """
-    from ..structs import ATTACK_RESTRICTION_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
@@ -585,7 +590,6 @@ def op_cant_block(ctx: EffectContext, spec: Mapping[str, Any]):
     activating abilities, and Taunt from the Rampart's other half *demands* the
     attack it would forbid.
     """
-    from ..structs import BLOCK_PROHIBITION_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in BLOCK_PROHIBITION_DURATIONS:  # pragma: no cover - loader guards
@@ -637,7 +641,6 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     ``this_turn`` ends at cleanup, ``until_your_next_turn`` in the granting
     player's own untap step.
     """
-    from ..structs import UNBLOCKABLE_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in UNBLOCKABLE_DURATIONS:  # pragma: no cover - loader guards
@@ -706,7 +709,6 @@ def op_cant_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     mean it comes back sacrificeable -- a distinction the printed card does not
     draw. See `primitives.forbid_sacrifice`.
     """
-    from ..structs import SACRIFICE_RESTRICTION_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in SACRIFICE_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards

@@ -12,6 +12,10 @@ from typing import TYPE_CHECKING, Protocol
 
 from automtg.engine.actions import Action
 
+from .heuristic_agent import HeuristicAgent
+from .policy_agent import PolicyAgent
+from .random_agent import RandomAgent
+
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.engine.game import Game
 
@@ -45,15 +49,11 @@ def play(game: Game, agents: dict[int, Agent], *, max_steps: int = 20_000) -> Ga
 
 def agent_by_name(name: str, *, seed: int = 0, **kwargs):
     """Build an agent from its short name, for CLI flags and the HTTP API."""
-    from .heuristic_agent import HeuristicAgent
-    from .random_agent import RandomAgent
 
     if name == "random":
         return RandomAgent(seed=seed)
     if name == "heuristic":
         return HeuristicAgent(seed=seed)
     if name == "policy":
-        from .policy_agent import PolicyAgent
-
         return PolicyAgent(seed=seed, **kwargs)
     raise ValueError(f"unknown agent {name!r} (known: random, heuristic, policy)")

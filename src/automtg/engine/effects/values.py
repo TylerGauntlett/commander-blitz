@@ -28,11 +28,12 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import chars, min_count, min_life
+from ..characteristics import _matches_printed, chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
 from ..objects import PLUS_ONE, SHIELD
 from .context import EffectContext
+from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
 
 #: Every key that may appear at the top level of a value expression.
 VALUE_KEYS = frozenset(
@@ -302,8 +303,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "rolled" in expr:
         return _rolled(ctx, expr["rolled"])
     if "count" in expr:
-        from .selectors import resolve_pool
-
         return len(resolve_pool(ctx, expr["count"]))
     if "max_count_of" in expr:
         # "…if an opponent controls more lands than you." The existential, so 0
@@ -320,7 +319,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # quantity the value language could not previously reach.
         spec = expr["counters_on"]
         kind = str(spec.get("counter", PLUS_ONE))
-        from .selectors import resolve_pool
 
         pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
@@ -341,7 +339,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # and also what makes it safe inside a static: a mana cost is a pipeline
         # input, and no layer can change one.
         spec = expr["mana_symbols"]
-        from .selectors import resolve_pool
 
         color = str(spec.get("of", ""))
         return sum(
@@ -361,7 +358,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # the static condition language -- a static reading it would depend on
         # another static's output, which is the one thing layers-lite forbids.
         spec = expr["distinct"]
-        from .selectors import resolve_pool
 
         pool = resolve_pool(ctx, spec.get("objects") or {})
         of = str(spec.get("of", "power"))
@@ -538,8 +534,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # `_matches_printed` is the same matcher `graveyard_cast_allows` uses,
         # and for its reason: a spell that has finished resolving has a printed
         # face and no board state left to ask about.
-        from ..characteristics import _matches_printed
-
         registry = ctx.state.registry
         total = 0
         for p in pids:
@@ -574,7 +568,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         cast = ctx.state.spells_cast_this_game
         if filt is None:
             return sum(len(cast.get(p, ())) for p in pids)
-        from ..characteristics import _matches_printed
 
         registry = ctx.state.registry
         total = 0
@@ -599,8 +592,6 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # Composing the two therefore reads 2X when two artifacts tie for
         # greatest and 3X when three do -- a silent overcount on an ordinary
         # board, and a bigger Edgar than the card prints.
-        from .selectors import resolve_pool
-
         spec = expr["extreme_value"]
         which = str(spec.get("of", "mana_value"))
         pick = str(spec.get("pick", "greatest"))
@@ -689,8 +680,6 @@ def _rolled(ctx: EffectContext, spec: Any) -> int:
 
 
 def _players(ctx: EffectContext, spec: Any) -> list[int]:
-    from .selectors import select_players
-
     return select_players(ctx, spec)
 
 
@@ -715,8 +704,6 @@ def _counts_per_player(ctx: EffectContext, spec: Any) -> list[int]:
     objects = spec.get("objects") or {}
     zone = str(objects.get("zone", "battlefield"))
     shared_zone = zone in ("battlefield", "stack")
-
-    from .selectors import resolve_pool
 
     previous = ctx.bindings.get(COUNTED_PLAYER)
     counts: list[int] = []
@@ -769,8 +756,6 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
         # so the only way it can name a card is to go and find it. Summed over
         # the pool, exactly as the `target` form is, so a selector that matches
         # nothing reads 0 rather than raising.
-        from .selectors import resolve_pool
-
         return sum(_from_oid(ctx, oid, which) for oid in resolve_pool(ctx, ref["objects"]))
     if isinstance(ref, int):
         return _from_oid(ctx, ref, which)
@@ -1061,7 +1046,6 @@ def validate_entered_filter(spec: Any, where: str) -> None:
     unknown = set(spec) - ENTERED_FILTER_KEYS
     if unknown:
         raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
-    from .selectors import PLAYER_SPEC_NAMES
 
     who = spec.get("controller")
     if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
@@ -1150,8 +1134,6 @@ def validate_value(expr: Any, where: str) -> None:
     if "starting_life_of" in expr:
         validate_starting_life_of(expr["starting_life_of"], f"{where}.starting_life_of")
     if "count" in expr:
-        from .selectors import validate_selector
-
         validate_selector(expr["count"], f"{where}.count")
     if "rolled" in expr:
         validate_rolled(expr["rolled"], f"{where}.rolled")
@@ -1169,8 +1151,6 @@ def validate_value(expr: Any, where: str) -> None:
         # error: unmatched, it would count zero for ever and turn the condition
         # permanently off -- the quiet direction, but still a card that does not
         # do what it says.
-        from .selectors import validate_selector
-
         if unknown := set(spells) - {"player", "filter"}:
             raise DslError(
                 f"{where}.spells_cast_this_turn: unknown keys {sorted(unknown)} "
@@ -1180,8 +1160,6 @@ def validate_value(expr: Any, where: str) -> None:
     for key in PER_PLAYER_COUNT_KEYS & set(expr):
         validate_per_player_count(expr[key], f"{where}.{key}")
     if "distinct" in expr:
-        from .selectors import validate_selector
-
         spec = expr["distinct"]
         if not isinstance(spec, Mapping):
             raise DslError(f"{where}.distinct: must be an object")

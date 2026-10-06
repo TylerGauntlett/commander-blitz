@@ -41,7 +41,10 @@ from automtg.cards.images import (
     CardIndex,
     art_cache_dir,
     art_dir,
+    build_registry_images,
+    generated_images_path,
     image_url,
+    read_registry_images,
 )
 
 #: Card ids are generated from card names by the loader, so this is a tight
@@ -279,11 +282,6 @@ def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
     deployment that had imported her deck before the pin went on serving the
     Secret Lair printing out of the overlay, with the pin merged and live.
     """
-    from automtg.cards.images import (
-        build_registry_images,
-        generated_images_path,
-        read_registry_images,
-    )
 
     images = read_registry_images()
     if not images and index is not None:

@@ -16,6 +16,7 @@ from ..primitives import (
     create_token,
     sacrifice_forbidden,
 )
+from ..turn import phase_in, phase_out
 from ..zones import (
     destroy,
     exile,
@@ -183,7 +184,6 @@ def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
     battlefield, so it keeps its counters, its attachments and its continuous
     effects, and nothing that watches for a zone change sees anything.
     """
-    from ..turn import phase_out
 
     # `until_leaves` is the O-Ring name for the link and `link` is the neutral
     # one, exactly as on `exile`, and the same two halves: this op records the
@@ -217,7 +217,6 @@ def op_phase_in(ctx: EffectContext, spec: Mapping[str, Any]):
     `state.battlefield` entirely, so no ordinary battlefield selector reaches
     it.
     """
-    from ..turn import phase_in
 
     tapped = bool(spec.get("tapped"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Phase in", "phase_in")

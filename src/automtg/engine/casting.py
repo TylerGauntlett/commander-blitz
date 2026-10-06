@@ -16,14 +16,26 @@ from .characteristics import chars
 from .costs import (
     can_pay,
     commander_cost,
+    cost_reduction,
+    life_cost,
+    mana_sources,
+    spell_purpose,
+    variant_reduction,
     zone_of,
 )
+from .effects.conditions import evaluate_condition
+from .effects.context import EffectContext
+from .effects.selectors import resolve_pool
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
     granted_warp_cost,
+    graveyard_cast_allows,
+    graveyard_cast_arrival_ok,
+    graveyard_cast_permissions,
+    library_top_cast_permission,
     player_cant_cast_spells,
     player_casts_as_though_flash,
     player_casts_only_at_sorcery_speed,
@@ -34,6 +46,7 @@ from .player_statics import (
     spell_mana_tax_targeted,
 )
 from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
+from .stack import modal_cast_ok
 from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -85,8 +98,6 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # card says and the only part of a library anybody is entitled to see.
     # Lands are the neighbouring `play_lands_from_library_top` permission and
     # are offered by `_land_actions`, so this covers only what that one cannot.
-    from .player_statics import library_top_cast_permission
-
     top_permission = library_top_cast_permission(state, pid)
     if top_permission is not None and state.players[pid].library:
         oid = state.players[pid].library[0]
@@ -217,8 +228,6 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
 
     # Retrace: the graveyard is a third place a card can be cast from, widened
     # here the same way `_land_actions` widens where a land may be played from.
-    from .costs import can_pay
-
     for oid in _castable_graveyards(state, pid):
         card = state.card(oid)
         # Aftermath (702.127a): "cast this half only from your graveyard". The
@@ -650,8 +659,6 @@ def _cast_options(
     # condition is *permission to cast this way at all* -- offering the line and
     # then refusing it would show a price the player can never pay.
     if card.alternative_cost is not None and state.objects[oid].zone is Zone.HAND:
-        from .effects.conditions import evaluate_condition
-
         # The non-mana half -- Force of Will's "pay 1 life and exile a blue
         # card from your hand" -- is priced here alongside the condition, and
         # for the same reason: a pitch spell held with no other blue card is
@@ -792,8 +799,6 @@ def _castable_graveyards(state: GameState, pid: int) -> list[int]:
 
 
 def _permissions_for(state: GameState, pid: int):
-    from .player_statics import graveyard_cast_permissions
-
     return graveyard_cast_permissions(state, pid)
 
 
@@ -808,11 +813,6 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
     The first unspent one wins. Which of two identical Edgars is billed is not a
     choice any card asks the player to make, and they are interchangeable.
     """
-    from .player_statics import (
-        graveyard_cast_allows,
-        graveyard_cast_arrival_ok,
-        graveyard_cast_permissions,
-    )
 
     subject = state.objects.get(oid) if oid is not None else None
     for source_obj, static in graveyard_cast_permissions(state, pid):
@@ -971,7 +971,6 @@ def _additional_ceiling(
     Payability of the *non-mana* half is left to `can_pay`, which the caller
     already runs; this only bounds how many lines are worth building.
     """
-    from .costs import can_pay
 
     # The non-mana half has to be *payable*, and legality is where that is
     # decided: a casualty line offered with no creature big enough to sacrifice
@@ -1003,9 +1002,6 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
     half allows. A clause with no pool to count leaves the ceiling alone, since
     the mana price still bounds those.
     """
-    from .costs import life_cost
-    from .effects.context import EffectContext
-    from .effects.selectors import resolve_pool
 
     cost = card.additional_cost
     if cost is None:
@@ -1321,9 +1317,6 @@ def _cast_variant(
     pay_generic: int = 0,
     alt_cost: str | None = None,
 ) -> list[Action]:
-    from .costs import cost_reduction, mana_sources, spell_purpose, variant_reduction
-    from .stack import modal_cast_ok
-
     # 601.2b: a spell that cannot choose the modes it is required to choose
     # cannot be cast. Asked on every variant rather than in `_cast_options`
     # because flashback, foretell and the second face all reach a card without

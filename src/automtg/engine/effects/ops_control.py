@@ -6,17 +6,13 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from ..carddef import Cost
+from ..carddef import Cost, TriggerSpec
+from ..costs import can_pay, mana_sources, pay
+from ..mana import max_affordable_x
 from ..player_statics import forced_discard_or_sacrifice_barred
-
-# `can_pay` and `pay` are imported inside the two ops that charge a cost rather
-# than here, the way `combat`, `game`, `legality` and `replacements` already
-# import them. `costs` imports `effects.context`, so a module-level import here
-# closes a cycle: `costs` could then only ever be imported *after* `effects`, and
-# anything that reached for it first -- the card loader, wanting the reduction
-# filter's vocabulary from the function that reads it -- got a partially
-# initialised module instead.
 from ..primitives import change_control
+from ..structs import DelayedTrigger
+from ..turn import grant_extra_phases
 from ..zones import snapshot as capture_snapshot
 from . import execute
 from .conditions import evaluate
@@ -76,7 +72,6 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     same question a spell's X is, so no new decision kind -- and exactly that
     much is charged. See :func:`_announce_x`.
     """
-    from ..costs import can_pay, pay
 
     players = select_players(ctx, spec.get("player", "you"))
     chooser = players[0] if players else ctx.controller
@@ -177,8 +172,6 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     activated in between are exactly what change the second number. A ceiling
     of 0 asks nothing (`ask_x`'s own short-circuit) and charges {0}.
     """
-    from ..costs import mana_sources
-    from ..mana import max_affordable_x
 
     printed = x_spec.get("max")
     pool = ctx.state.players[chooser].mana_pool.spendable()
@@ -790,7 +783,6 @@ def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
     ``as`` names the binding the total lands in; the card reads it back with
     ``{"binding": …}``, the way clash reads `clash_won`.
     """
-    from ..costs import can_pay, pay
 
     unit = cost_from_spec(spec.get("pay") or {"mana": "{1}"})
     prompt = str(spec.get("prompt") or "Pay one more into the pool?")
@@ -974,7 +966,6 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
     is created on somebody else's turn -- which is the ordinary line of play for
     an instant-speed ability, and the reason the word is printed at all.
     """
-    from ..structs import DelayedTrigger
 
     state = ctx.state
     step = str(spec.get("step", "end_step"))
@@ -1024,8 +1015,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     :data:`~automtg.engine.structs.DELAYED_DURATIONS`; the two values are read at
     exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
     """
-    from ..carddef import TriggerSpec
-    from ..structs import DelayedTrigger
 
     trigger = spec.get("trigger") or {}
     state = ctx.state
@@ -1037,8 +1026,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # only reads which.
     subject_oids = None
     if (subject := trigger.get("subject")) is not None:
-        from .selectors import resolve_pool
-
         chosen = resolve_pool(ctx, subject)
         if not chosen:
             # The target is gone by resolution (608.2b took it), so there is no
@@ -1054,8 +1041,6 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     # same way and resolved at the same moment, for the same reason.
     recipient_oids = None
     if (recipient := trigger.get("recipient")) is not None:
-        from .selectors import resolve_pool
-
         hit = resolve_pool(ctx, recipient)
         if not hit:
             return
@@ -1126,7 +1111,6 @@ def op_extra_combat(ctx: EffectContext, spec: Mapping[str, Any]):
     of a queue read by the turn. `loader` refuses a `player` here rather than
     accepting one and ignoring it.
     """
-    from ..turn import grant_extra_phases
 
     times = max(0, min(evaluate_value(ctx, spec.get("amount", 1)), 10))
     kinds: list[str] = []

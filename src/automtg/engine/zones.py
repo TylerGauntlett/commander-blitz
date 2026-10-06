@@ -12,14 +12,16 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
-from .carddef import CardDef
-from .characteristics import chars
+from .carddef import CardDef, Cost
+from .characteristics import chars, keyword_as_it_enters
 from .effects.conditions import evaluate_condition
-from .effects.context import EffectContext
+from .effects.context import EffectContext, ask_mode, ask_objects, ask_yes_no
+from .effects.selectors import resolve_pool
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
+from .player_statics import counter_placement_replacements
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -537,9 +539,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     not offer one: a player with no land in hand is not asked a question whose
     "yes" cannot be honoured, and the permanent goes to `instead_zone`.
     """
-    from .carddef import Cost
     from .costs import can_pay, pay
-    from .effects.context import ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -589,9 +589,7 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
     at 2 life is never shown a question whose yes would kill them and whose
     payment would fail anyway.
     """
-    from .carddef import Cost
     from .costs import can_pay, pay
-    from .effects.context import ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -645,7 +643,6 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
     deliberately does not clear and `_enter_battlefield` clears once it has
     turned it into `copying`.
     """
-    from .effects.context import EffectContext, ask_objects, ask_yes_no
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -658,7 +655,6 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
         ctx = EffectContext(
             state=state, controller=controller, source_oid=oid, source_name=card.name
         )
-        from .effects.selectors import resolve_pool
 
         # `exclude_self` is implicit and structural rather than written: the
         # permanent is still on its way in and is not on the battlefield, so a
@@ -727,8 +723,6 @@ def offer_riot_choice(state: GameState, oid: int, controller: int):
     gets neither half, which is the printed card this unblocks anyway: Rhythm of
     the Wild says **nontoken**.
     """
-    from .characteristics import keyword_as_it_enters
-    from .effects.context import ask_mode
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -1020,7 +1014,6 @@ def _entering_counters(
     object by the caller before it is ever seen; the COUNTER_PLACED is
     `_fire_entered_with_counters`'s, once it has arrived.
     """
-    from .player_statics import counter_placement_replacements
 
     effects: list[_EnteringEffect] = [("add", n) for n in adds if n > 0]
     if not effects:

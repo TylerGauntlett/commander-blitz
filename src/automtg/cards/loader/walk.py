@@ -14,6 +14,7 @@ from automtg.engine.effects.values import (
     validate_counter_kind,
 )
 from automtg.engine.errors import DslError
+from automtg.engine.mana import validate_printed_cost_list
 
 from ..schema import CardModel
 from .vocabulary import (
@@ -45,8 +46,6 @@ def _check_mana_cost_key(filt: Any, where: str) -> None:
     and be iterated as three characters, matching nothing.
     """
     if isinstance(filt, Mapping) and "mana_cost" in filt:
-        from automtg.engine.mana import validate_printed_cost_list
-
         validate_printed_cost_list(filt["mana_cost"], where)
 
 

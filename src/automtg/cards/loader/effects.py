@@ -29,6 +29,7 @@ from automtg.engine.structs import (
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
+    FLASH_PERMISSION_DURATIONS,
     LIFE_LOCK_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
@@ -37,7 +38,7 @@ from automtg.engine.structs import (
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
-from automtg.engine.triggers import TRIGGER_EVENTS
+from automtg.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 
 from ..schema import CardModel, CostModel
@@ -515,7 +516,6 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
                 f"already has -- a {{'target': ...}} or a {{'binding': ...}}"
             )
         validate_selector(subject, f"{where}.trigger.subject")
-        from automtg.engine.triggers import OBJECT_SUBJECT_TRIGGERS
 
         if event not in OBJECT_SUBJECT_TRIGGERS:
             # Scoped to an object against an event that has none, the clause is
@@ -532,8 +532,6 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
         # Only on an event whose recipient is a permanent the event names apart
         # from its subject; anywhere else it would be compared with nothing and
         # the subscription would never fire.
-        from automtg.engine.triggers import RECIPIENT_KEYS
-
         if not isinstance(recipient, Mapping) or not (
             set(recipient) & {"target", "binding", "self_only"}
         ):
@@ -1832,8 +1830,6 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     if op == "grant_flash_permission":
         # Without a duration the permission would have no clock to end on, and a
         # misspelt type would narrow it to nothing -- the +1 doing nothing.
-        from automtg.engine.structs import FLASH_PERMISSION_DURATIONS
-
         if effect.get("duration") not in FLASH_PERMISSION_DURATIONS:
             raise DslError(
                 f"{where}: grant_flash_permission needs a 'duration' in "

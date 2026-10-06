@@ -30,6 +30,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
+from ...engine.mana import ManaCost
+from ..loader.vocabulary import KNOWN_KEYWORDS
 from ..proxy import CardFacts, ProxyResult, build_proxy
 from ..schema import CardModel
 
@@ -515,8 +517,6 @@ def _translate_line(line: str, *, is_spell: bool):
         )
 
     if cycling := _CYCLING.match(bare):
-        from ...engine.mana import ManaCost
-
         mana = cycling.group("cost")
         try:
             ManaCost.parse(mana)
@@ -801,7 +801,6 @@ def _activation_cost(text: str) -> dict | None:
     all for exactly that reason.  Only self-sacrifice is accepted -- "sacrifice
     another creature" is a choice, and guessing which one is not this tier's job.
     """
-    from ...engine.mana import ManaCost
 
     cost: dict = {}
     for raw in text.split(","):
@@ -925,7 +924,6 @@ def _keywords_in(text: str) -> list[str] | None:
     produce a card that *says* it has protection and does not, which is the
     failure mode this whole pipeline is built to refuse.
     """
-    from ..loader.vocabulary import KNOWN_KEYWORDS
 
     parts = [p.strip() for p in re.split(r",|\band\b", text) if p.strip()]
     out: list[str] = []

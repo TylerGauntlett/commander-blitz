@@ -16,22 +16,48 @@ from __future__ import annotations
 from collections.abc import Generator, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from . import legality, sba, stack, triggers, turn
+from automtg.cards.registry import default_registry
+
+from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
+from .casting import _spell_as_cast, strive_surcharge
 from .characteristics import abilities_of, chars, mana_source_traits
-from .combat import add_attacker, add_blocker, finish_attackers
-from .costs import ability_purpose, pay
+from .combat import add_attacker, add_blocker, attack_tax_cost, block_tax_cost, finish_attackers
+from .costs import (
+    ability_purpose,
+    activate_mana_ability,
+    can_pay,
+    commander_cost,
+    cost_reduction,
+    defined_x,
+    mana_sources,
+    most_life_for_mana,
+    pay,
+    spell_purpose,
+    variant_reduction,
+)
+from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
+from .effects.ops_control import modal_bounds, mode_labels
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
-from .mana import ManaCost
+from .legality import MORPH_COST, _targets_read_x, chosen_additional
+from .mana import ManaCost, max_affordable_x
+from .objects import PLUS_ONE
 from .player import PlayerState
-from .primitives import draw_cards
+from .player_statics import (
+    cast_lock_min_x,
+    graveyard_cast_permissions,
+    player_pays_life_for_black,
+    player_spends_mana_as_any_color,
+    spell_life_tax,
+)
+from .primitives import add_counters, draw_cards
 from .rng import Rng
 from .state import GameState, new_object
 from .structs import TargetRef
-from .targeting import selectable_modes
+from .targeting import candidates, declared_by_spec, describe_ref, selectable_modes, target_count
 from .turn import _next_blocker_decision
 from .zones import (
     move_object,
@@ -134,8 +160,6 @@ class Game:
         elif action.kind is ActionKind.CAST:
             self._run(self._cast(pid, action))
         elif action.kind is ActionKind.SUSPEND:
-            from . import suspend
-
             # One action kind, two mechanics: both exile a card from hand to
             # be cast later and neither uses the stack. Which one is decided by
             # the card, since no printing has both.
@@ -164,8 +188,6 @@ class Game:
             raise IllegalActionError(f"{action.kind} is not a priority action")
 
     def _dispatch_attackers(self, action: Action, decision: PendingDecision) -> None:
-        from .combat import attack_tax_cost
-
         state = self.state
         if action.kind is ActionKind.ADD_ATTACKER:
             ref = action.targets[0]
@@ -213,7 +235,6 @@ class Game:
         `op_may` has after its own `can_pay`. The creature's controller pays:
         "unless **their controller** pays", for both taxes.
         """
-        from .costs import pay
 
         if cost is None:
             return True
@@ -241,8 +262,6 @@ class Game:
         if action.kind is ActionKind.ADD_BLOCKER:
             # Archangel of Tithes' {1}, charged as the blocker is declared --
             # the 509.1d twin of the attack tax above, with the same contract.
-            from .combat import block_tax_cost
-
             if not self._pay_combat_tax(action.source, block_tax_cost(state, action.source)):
                 return
             # `subject`, not `player`: the block belongs to the defender even when
@@ -365,12 +384,6 @@ class Game:
                 targets=tuple(card.targets) + tuple(face.targets),
             )
         from_command = obj.zone is Zone.COMMAND
-        from .costs import (
-            commander_cost,
-            cost_reduction,
-            spell_purpose,
-            variant_reduction,
-        )
 
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
@@ -424,8 +437,6 @@ class Game:
             # charged below, after the mana, the way flashback's rider is.
             cost = card.alternative_cost.mana
         elif action.face_down:
-            from .legality import MORPH_COST
-
             cost = MORPH_COST
         elif action.foretold and card.foretell is not None:
             cost = card.foretell
@@ -491,12 +502,6 @@ class Game:
         # increase applies to every way of casting the spell, and sized by the
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
-        from .casting import strive_surcharge
-        from .player_statics import (
-            player_pays_life_for_black,
-            player_spends_mana_as_any_color,
-            spell_life_tax,
-        )
 
         # Compleated (702.150a) counts **Phyrexian mana symbols** life was paid
         # for, and K'rrik's widened {B} is not one. Counted before the widening
@@ -554,8 +559,6 @@ class Game:
         #
         # Floored by a mana-value lock (Brisela), which this line escapes only
         # by announcing enough X -- asked of the same face legality asked it of.
-        from .casting import _spell_as_cast
-        from .player_statics import cast_lock_min_x
 
         min_x = cast_lock_min_x(
             state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
@@ -699,8 +702,6 @@ class Game:
         # cost -- "discard a card **or** pay 3 life" -- charges the branch the
         # player was offered. Legality prices the line through the same helper,
         # so the price shown and the price taken cannot disagree.
-        from .legality import chosen_additional
-
         additional = chosen_additional(card, action.additional_choice)
         if additional is not None and additional.pay_life_x:
             # "As an additional cost to cast this spell, pay X life" -- Toxic
@@ -708,8 +709,6 @@ class Game:
             # costs, and 118.4 lets a player pay life down to exactly 0, so the
             # ceiling is the whole life total. `x` is then carried on the stack
             # item, which is how the sweep reads `{"x": true}` on resolution.
-            from .effects.context import EffectContext, ask_x
-
             ctx = EffectContext(state=state, controller=pid, source_oid=oid)
             # Reassigns `x`, which is 0 for these cards: `_ask_x` above returns
             # early unless the *mana* cost has an {X}, and Toxic Deluge's is
@@ -768,7 +767,6 @@ class Game:
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)
-                from .player_statics import graveyard_cast_permissions
 
                 for source_obj, static in graveyard_cast_permissions(state, pid):
                     if source_obj.oid != granting.oid:
@@ -904,7 +902,6 @@ class Game:
         purpose = ability_purpose(state, oid)
 
         x = 0
-        from .legality import _targets_read_x
 
         if _targets_read_x(ability):
             # The number was announced when the activation was chosen -- legality
@@ -919,8 +916,6 @@ class Game:
             # bounded by the loyalty there is to remove -- `costs.pay` takes
             # exactly this many counters and the stack item carries it to the
             # effects that read X.
-            from .effects.context import EffectContext, ask_x
-
             source_obj = state.objects.get(oid)
             ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
             x = yield from ask_x(
@@ -934,8 +929,6 @@ class Game:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
             # `costs.pay` make.
-            from .costs import most_life_for_mana
-
             x = yield from self._ask_x(
                 pid,
                 card.name,
@@ -1068,8 +1061,6 @@ class Game:
         Returns ``{target_id: [[oid, n], ...]}``, JSON-shaped because it rides
         on the stack item's bindings.
         """
-        from .effects.context import EffectContext, ask_objects
-        from .targeting import declared_by_spec
 
         wanted = [
             e
@@ -1137,7 +1128,6 @@ class Game:
         """
         if not cost.x_count:
             return 0
-        from .costs import defined_x
 
         # "X is the mana value of that card." An ability that defines X does not
         # ask for one: 601.2b's announcement is the *player's* choice, and this
@@ -1149,9 +1139,6 @@ class Game:
         defined = defined_x(self.state, pid, cost_node, cost_source)
         if defined is not None:
             return defined
-        from .costs import mana_sources
-        from .effects.context import EffectContext, ask_x
-        from .mana import max_affordable_x
 
         state = self.state
         sources = mana_sources(state, pid, purpose=purpose)
@@ -1184,9 +1171,6 @@ class Game:
         permanent changes at once -- it stops being a 2/2 with no abilities and
         becomes whatever the card says.
         """
-        from .costs import pay
-        from .objects import PLUS_ONE
-        from .primitives import add_counters
 
         state = self.state
         card = state.card_of(obj)
@@ -1220,8 +1204,6 @@ class Game:
         whole economy of the mechanic and the thing a naive implementation
         loses by discarding them.
         """
-        from .costs import can_pay, pay
-        from .effects.context import EffectContext, ask_yes_no
 
         state = self.state
         chosen: list[str] = []
@@ -1284,8 +1266,6 @@ class Game:
         """
         if not spec:
             return ()
-        from .effects.context import EffectContext, ask_mode
-        from .effects.ops_control import modal_bounds, mode_labels
 
         modes = list(spec.get("modes") or [])
         if not modes:
@@ -1344,8 +1324,6 @@ class Game:
         """
         if not card.mode_targets:
             return ()
-        from .effects.context import EffectContext, ask_targets
-        from .targeting import candidates, describe_ref, target_count
 
         state = self.state
         ctx = EffectContext(
@@ -1400,8 +1378,6 @@ class Game:
         specs = [spec for spec in (card.targets or ()) if spec.x_sized]
         if not specs:
             return ()
-        from .effects.context import EffectContext, ask_targets
-        from .targeting import candidates, describe_ref
 
         state = self.state
         ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
@@ -1505,8 +1481,6 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
-
-        from .costs import activate_mana_ability
 
         activate_mana_ability(
             state,
@@ -1782,8 +1756,6 @@ def _opening_sequence(state: GameState) -> Generator[Any, list[int]]:
         # rule): every seat redraws seven once without bottoming a card.
         bottom = min(max(0, player.mulligans_taken - FREE_MULLIGANS), len(player.hand))
         if bottom > 0:
-            from .effects.context import EffectContext, ask_objects
-
             ctx = EffectContext(state=state, controller=pid, source_name="Mulligan")
             picked = yield from ask_objects(
                 ctx,
@@ -1832,7 +1804,6 @@ def create_game(
     """
     if max_turns is None:
         max_turns = TURNS_PER_PLAYER * len(deck_ids)
-    from automtg.cards.registry import default_registry
 
     game_data = data if data is not None else default_registry()
     rng = Rng(seed)

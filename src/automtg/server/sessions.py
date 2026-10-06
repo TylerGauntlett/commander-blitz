@@ -22,6 +22,7 @@ from automtg.engine.enums import ActionKind
 from automtg.engine.errors import IllegalActionError
 from automtg.engine.game import create_game
 from automtg.engine.legality import legal_actions
+from automtg.engine.structs import TargetRef
 
 from .schemas import LegalActionDTO, SeatConfig
 
@@ -385,8 +386,6 @@ class GameSession:
         mid-loop; the declaration decision stays open in that case, so the client
         can simply submit a corrected set.
         """
-        from automtg.engine.enums import ActionKind
-        from automtg.engine.structs import TargetRef
 
         sources = [int(pair[0]) for pair in pairs]
         duplicates = {oid for oid in sources if sources.count(oid) > 1}
@@ -454,7 +453,6 @@ class GameSession:
         Every check is made before anything is applied, so a bad set never
         half-applies.
         """
-        from automtg.engine.enums import ActionKind
 
         with self._lock:
             decision = self.game.pending()

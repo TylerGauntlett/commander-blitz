@@ -25,10 +25,12 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..errors import DslError
-from ..primitives import become_monarch, give_emblem
+from ..primitives import become_monarch, give_emblem, grant_flash_permission, lock_casting_zones
+from ..sba import declare_loss, declare_win
+from ..structs import CAST_LOCK_DURATIONS
 from .context import EffectContext
 from .registry import register
-from .selectors import select_players
+from .selectors import resolve_pool, select_players
 
 
 @register("become_monarch")
@@ -124,8 +126,6 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
     would otherwise be six zones typed out by hand, which is six chances to
     leave one off. The loader refuses both on one effect, and refuses neither.
     """
-    from ..primitives import lock_casting_zones
-    from ..structs import CAST_LOCK_DURATIONS
 
     duration = str(spec.get("duration", "until_your_next_turn"))
     if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
@@ -153,7 +153,6 @@ def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
     the player's timed table and read by `casting._timing_ok`. ``types`` narrows
     it to spells of those card types; ``duration`` is required.
     """
-    from ..primitives import grant_flash_permission
 
     types = tuple(str(t) for t in spec.get("types") or ())
     duration = str(spec["duration"])
@@ -177,7 +176,6 @@ def op_extra_loyalty_activation(ctx: EffectContext, spec: Mapping[str, Any]):
     ruling, and a second Veil activation is a second extra. The timing half of
     606.3 is untouched -- still your main phase with an empty stack.
     """
-    from .selectors import resolve_pool
 
     selector = dict(spec.get("objects") or {"controller": "you", "types": ["Planeswalker"]})
     extra = ctx.state.turn_ledger.extra_loyalty_activations
@@ -229,11 +227,6 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     over, so nothing it does is offered to anybody. Both cards put the win last,
     which is where every printed "you win the game" puts it.
     """
-    # Local, for `sba._monarch_left`'s reason: `sba` reaches the effect layer
-    # through `zones`, and this module is imported from `effects/__init__`, so a
-    # module-level import binds a half-initialised `sba` when the engine happens
-    # to be imported from that end first.
-    from ..sba import declare_win
 
     for pid in select_players(ctx, spec.get("player", "you")):
         declare_win(ctx.state, pid)
@@ -253,7 +246,6 @@ def op_lose_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     all before it asks whether the game is over, so "each player loses the
     game" is a draw (104.4a).
     """
-    from ..sba import declare_loss
 
     declare_loss(ctx.state, select_players(ctx, spec.get("player", "you")))
 

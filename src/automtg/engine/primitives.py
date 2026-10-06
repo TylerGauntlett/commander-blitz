@@ -12,7 +12,14 @@ from typing import TYPE_CHECKING, Any
 
 from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
-from .characteristics import chars, player_protected_from
+from .characteristics import (
+    chars,
+    player_protected_from,
+    prevented_damage,
+    prevents_all_damage,
+    protected_from,
+)
+from .characteristics import chars as _chars
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
@@ -32,6 +39,7 @@ from .player_statics import (
     untap_held,
 )
 from .state import new_object
+from .structs import CONTROL_DURATIONS, TempEffect
 from .triggers import fire
 from .zones import move_object
 
@@ -650,8 +658,6 @@ def damage_permanent(
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is
     # why this returns before all three rather than zeroing `amount` later.
-    from .characteristics import prevented_damage, prevents_all_damage, protected_from
-
     if protected_from(state, oid, source_oid):
         # `fire`, not `emit`, and `to="permanent"`: see the player-side site in
         # `damage_player`. This one has always been a log line with nothing
@@ -801,8 +807,6 @@ def damage_permanent(
     # `obj.damage` on a planeswalker instead would be invisible -- nothing
     # compares a planeswalker's damage to anything, so it would take no damage
     # at all and never die.
-    from .characteristics import chars as _chars
-
     if "Planeswalker" in _chars(state, oid).types:
         remove_counters(state, oid, "loyalty", amount)
         if is_combat and source_oid is not None:
@@ -1320,8 +1324,6 @@ def create_token(
 
 
 def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
-    from .characteristics import protected_from
-
     aura = state.objects.get(aura_oid)
     target = state.objects.get(target_oid)
     if aura is None or target is None or not target.on_battlefield:
@@ -1504,7 +1506,6 @@ def change_control(
     together and put both back -- "as it was" -- which hands somebody a creature
     that is not newly under their control, and loses the cache drop outright.
     """
-    from .structs import CONTROL_DURATIONS
 
     if duration not in CONTROL_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown control duration {duration!r}")
@@ -1520,8 +1521,6 @@ def change_control(
     if state.combat is not None:
         state.combat.remove(oid)
     if duration == "until_end_of_turn":
-        from .structs import TempEffect
-
         obj.until_eot.append(
             TempEffect(
                 kind="control",
@@ -1593,7 +1592,6 @@ def pump(
     """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
     **until your next turn**" (Liliana, the Last Hope). See
     `TempEffect.until_player` for where the longer one wears off."""
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1647,7 +1645,6 @@ def animate(
     granted for as long as the permanent lasts. A your-turn-only keyword has no
     permanent form and is refused rather than silently timed.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1718,7 +1715,6 @@ def grant_keyword(
     following turn. The two durations are stored in different places because
     only one of them is swept by `clear_until_eot`.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1761,7 +1757,6 @@ def grant_ability(
     strictly weaker card that looks identical on the turn it was made. The two
     durations live in different lists because only one of them is swept.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1887,7 +1882,6 @@ def lock_abilities(
     ``until_player``, Dovin Baan's "…until your next turn", on the pump's longer
     clock for the same reason.
     """
-    from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:

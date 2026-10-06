@@ -669,7 +669,6 @@ def _for_each_selector(what: str) -> dict | None:
     card you've drawn this turn" is not a board count at all, and there is
     nothing here to count it with.
     """
-    from .loader.vocabulary import KNOWN_KEYWORDS, KNOWN_TYPES
 
     text = " ".join(what.split()).rstrip(".")
     selector: dict = {}

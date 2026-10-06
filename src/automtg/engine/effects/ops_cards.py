@@ -5,18 +5,29 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from .. import replacements
 from ..characteristics import chars
 from ..enums import Zone
+from ..enums import Zone as _Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
-from ..player_statics import forced_discard_or_sacrifice_barred, search_forbidden
+from ..player_statics import (
+    forced_discard_or_sacrifice_barred,
+    player_cant_cast_while_resolving,
+    search_forbidden,
+)
 from ..primitives import add_counters, mill_cards, shuffle_library
+from ..stack import pull_spell_off_stack
+from ..structs import GraveyardCastGrant
+from ..suspend import cast_for_free
+from ..triggers import fire
 from ..zones import move_object, offer_enters_replacement, offer_riot_choice
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
+    matches,
     pick_from_pool,
     resolve_pool,
     select_players,
@@ -50,13 +61,6 @@ LOOK_STEP_KEYS = frozenset(
 )
 
 
-def _replacements():
-    """Imported lazily: `replacements` needs `costs`, which needs this package."""
-    from .. import replacements
-
-    return replacements
-
-
 @register("draw")
 def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
     """Draw cards.
@@ -83,7 +87,7 @@ def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
     `for_each_player` loop the way `may`'s does, so "each player draws a card"
     written one seat at a time still names every seat that drew.
     """
-    draw_with_replacements = _replacements().draw
+    draw_with_replacements = replacements.draw
 
     amount = evaluate_value(ctx, spec.get("amount", 1))
     name = spec.get("as")
@@ -170,7 +174,7 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
         # an opponent controls causes you to discard" is about. The cleanup step
         # and a discard paid as a cost do not come through here, and stay
         # uncaused.
-        yield from _replacements().discard(ctx.state, pid, picked, caused_by=ctx.controller)
+        yield from replacements.discard(ctx.state, pid, picked, caused_by=ctx.controller)
     if name:
         ctx.bindings[str(name)] = taken
 
@@ -265,7 +269,6 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
     into a graveyard, exile it instead" is what a graveyard cast already does,
     through `graveyard_cast_exiles` on the resolving spell.
     """
-    from ..structs import GraveyardCastGrant
 
     if ctx.source_oid is None:
         # The rate limit is counted against the granting object and the filter
@@ -328,10 +331,6 @@ def op_search_zones(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...]):
-    # Local, as in `ops_stack` and `ops_characteristics`: `triggers` imports
-    # the effect layer, so a module-level import here would be circular.
-    from ..triggers import fire
-
     count =evaluate_value(ctx, spec.get("count", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
@@ -528,7 +527,6 @@ def _destination_for(
     branches = spec.get("destination_if")
     if not branches:
         return default, default_tapped
-    from .selectors import matches
 
     for branch in branches:
         selector = branch.get("selector") or {}
@@ -556,11 +554,8 @@ def _enters_with(
     if not counters:
         return None
     condition = spec.get("counters_if")
-    if condition:
-        from .selectors import matches
-
-        if not matches(ctx, oid, condition, default_zone=None):
-            return None
+    if condition and not matches(ctx, oid, condition, default_zone=None):
+        return None
     return {str(kind): int(amount) for kind, amount in counters.items()}
 
 
@@ -911,7 +906,6 @@ def _matches_in_zone(
     each half against the zone that half actually came from, or a graveyard
     creature would be judged as though it were in a library.
     """
-    from .selectors import matches
 
     probe = dict(selector)
     probe["zone"] = zone
@@ -1052,7 +1046,6 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
     origin has nowhere to be returned to, and the alternative -- guessing the
     battlefield -- would put a card in a hand onto the board.
     """
-    from ..enums import Zone as _Zone
 
     zones = {z.value: z for z in _Zone}
     oids = yield from choose_objects(ctx, spec.get("objects"), "Return")
@@ -1111,7 +1104,6 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     or an opponent's spell goes home. `pull_spell_off_stack` does that, and the
     706.10 case where the "spell" is a copy and there is no card at all.
     """
-    from ..stack import pull_spell_off_stack
 
     target_id = str(spec.get("target", "t1"))
     for sid in ctx.target_sids(target_id):
@@ -1389,7 +1381,7 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None:
             continue
         pid = obj.controller
-        yield from _replacements().draw(ctx.state, pid, amount)
+        yield from replacements.draw(ctx.state, pid, amount)
         hand = list(ctx.state.players[pid].hand)
         take = min(amount, len(hand))
         if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):
@@ -1410,7 +1402,7 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         # an opponent controls causes you to discard" is about. The cleanup step
         # and a discard paid as a cost do not come through here, and stay
         # uncaused.
-        yield from _replacements().discard(ctx.state, pid, picked, caused_by=ctx.controller)
+        yield from replacements.discard(ctx.state, pid, picked, caused_by=ctx.controller)
         add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
         ctx.state.emit(
             "connive",
@@ -1607,8 +1599,6 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     belongs to suspend, and a cascaded creature that could attack immediately
     would be a strictly better card.
     """
-    from ..player_statics import player_cant_cast_while_resolving
-    from ..suspend import cast_for_free
 
     obj = ctx.state.objects.get(oid)
     if obj is None:
@@ -1649,9 +1639,6 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     may", so no `may` wrapper is needed and declining costs no second question.
     A player with nothing matching is not asked at all.
     """
-    from ..player_statics import player_cant_cast_while_resolving
-    from ..suspend import cast_for_free
-    from .selectors import select_players
 
     selector = spec.get("selector") or {}
     prompt = "Cast a spell without paying its mana cost"
@@ -1748,7 +1735,6 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     is why the binding is built from `cast_for_free`'s answer rather than from
     the chosen list.
     """
-    from ..suspend import cast_for_free
 
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "exile")

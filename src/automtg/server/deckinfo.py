@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 
+from automtg.cards.importer import coverage_path
 from automtg.cards.registry import DeckList, GameData
 
 from .art import ArtStore
@@ -125,7 +126,6 @@ def coverage_map() -> dict[str, str]:
     would report the deck somebody just imported as fully playable.  The file is
     a few KB and absent entirely on a machine that has never imported.
     """
-    from automtg.cards.importer import coverage_path
 
     path = coverage_path()
     if not path.exists():

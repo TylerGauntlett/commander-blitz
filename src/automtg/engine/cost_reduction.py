@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
 from .characteristics import chars, compare_pt
+from .effects.conditions import evaluate_condition
+from .effects.selectors import has_printed_cost
 from .player_statics import spell_cost_reduction, spell_mana_tax
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -110,11 +112,10 @@ def reduction_amount(
     # The gate first, so a false condition costs one condition evaluation rather
     # than a walk of the battlefield.
     cond = spec.get("condition")
-    if cond is not None:
-        from .effects.conditions import evaluate_condition
-
-        if not evaluate_condition(state, cond, controller=pid, source=source_oid):
-            return 0
+    if cond is not None and not evaluate_condition(
+        state, cond, controller=pid, source=source_oid
+    ):
+        return 0
     if "amount" in spec:
         return max(0, int(spec["amount"]))
     if "count" in spec:
@@ -317,11 +318,8 @@ def _object_matches(
         return False
     if (want := filt.get("not_keywords")) and set(want) & set(keywords):
         return False
-    if (want := filt.get("mana_cost")) is not None:
-        from .effects.selectors import has_printed_cost
-
-        if not has_printed_cost(state, oid, want):
-            return False
+    if (want := filt.get("mana_cost")) is not None and not has_printed_cost(state, oid, want):
+        return False
     # "…costs {1} less for each creature you control with power 4 or greater."
     # Honoured here because a reduction filter is validated against
     # `STATIC_FILTER_KEYS`, and a key the loader accepts and this function does

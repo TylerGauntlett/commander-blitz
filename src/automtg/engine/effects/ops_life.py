@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
 from ..primitives import (
@@ -12,9 +13,20 @@ from ..primitives import (
     damage_permanent,
     damage_player,
     gain_life,
+    lock_game_outcome,
+    lock_life_total,
     lose_life,
+    set_life_floor,
     shield_permanent,
     shield_player,
+)
+from ..structs import (
+    DAMAGE_SHIELD_DURATIONS,
+    LIFE_FLOOR_DURATIONS,
+    LIFE_LOCK_DURATIONS,
+    OUTCOME_LOCK_DURATIONS,
+    PERMANENT_SHIELD_DIRECTIONS,
+    PERMANENT_SHIELD_DURATIONS,
 )
 from .context import EffectContext
 from .registry import register
@@ -112,7 +124,6 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     over a player is a different effect with a pool that drains, and the loader
     refuses the key rather than reading it and preventing everything anyway.
     """
-    from ..structs import DAMAGE_SHIELD_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in DAMAGE_SHIELD_DURATIONS:  # pragma: no cover - loader guards
@@ -151,7 +162,6 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     Installs a `structs.PermanentShield` on each object and modifies nothing
     else; `primitives.damage_permanent` and `primitives.damage_player` read it.
     """
-    from ..structs import PERMANENT_SHIELD_DIRECTIONS, PERMANENT_SHIELD_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in PERMANENT_SHIELD_DURATIONS:  # pragma: no cover - loader guards
@@ -193,8 +203,6 @@ def op_lock_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
     and the cleanup word is implemented so that this table is not the one
     exception among the timed tables.
     """
-    from ..primitives import lock_life_total
-    from ..structs import LIFE_LOCK_DURATIONS
 
     duration = str(spec.get("duration", "until_your_next_turn"))
     if duration not in LIFE_LOCK_DURATIONS:  # pragma: no cover - loader guards
@@ -277,7 +285,6 @@ def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
     non-positive amount -- but a 0/1 fighting a 3/3 must still *take* its three,
     so the guard is per-blow and never abandons the exchange.
     """
-    from ..characteristics import chars
 
     state = ctx.state
     left = resolve_pool(ctx, spec.get("objects"))
@@ -319,7 +326,6 @@ def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: st
     `trample` is the near miss and is combat-only, so it could not be reused;
     this is the noncombat spelling of the same idea.
     """
-    from ..characteristics import chars
 
     state = ctx.state
     obj = state.objects.get(oid)
@@ -372,8 +378,6 @@ def op_cant_lose_the_game(ctx: EffectContext, spec: Mapping[str, Any]):
     total never moves, so you end the turn at 40 rather than at 1, and 104.3b's
     point is that you survive *at* 1 or less.
     """
-    from ..primitives import lock_game_outcome
-    from ..structs import OUTCOME_LOCK_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in OUTCOME_LOCK_DURATIONS:  # pragma: no cover - loader guards
@@ -411,8 +415,6 @@ def op_damage_life_floor(ctx: EffectContext, spec: Mapping[str, Any]):
     Grace. That is correct, and it is why the floor is read in `damage_player` and
     nowhere else.
     """
-    from ..primitives import set_life_floor
-    from ..structs import LIFE_FLOOR_DURATIONS
 
     duration = str(spec.get("duration", "this_turn"))
     if duration not in LIFE_FLOOR_DURATIONS:  # pragma: no cover - loader guards

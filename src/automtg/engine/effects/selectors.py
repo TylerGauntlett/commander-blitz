@@ -16,9 +16,11 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import _base_pt, chars
+from ..characteristics import _base_pt, chars, creature_types_of, resolve_chosen_subtypes
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
+from ..mana import printed_cost_is, validate_printed_cost_list
+from ..player_statics import commander_subtypes
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -532,7 +534,6 @@ def _commander_subtypes(ctx: EffectContext, who: str) -> frozenset[str]:
     `triggers.matches_card_filter` so the two halves of the filter language
     cannot disagree about what a commander's types are.
     """
-    from ..player_statics import commander_subtypes
 
     out: set[str] = set()
     for pid in select_players(ctx, who):
@@ -690,8 +691,6 @@ def matches(
     # the effect side too. Resolved against the ability's own source, which is
     # the permanent that made the choice.
     if selector.get("subtypes"):
-        from ..characteristics import resolve_chosen_subtypes
-
         selector = resolve_chosen_subtypes(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
@@ -779,8 +778,6 @@ def matches(
         # also reads `"self"` -- the ability's own source -- the way
         # `shares_a_color_with` does. Shared with `triggers.matches_card_filter`
         # through `creature_types_of`, so the two halves cannot disagree.
-        from ..characteristics import creature_types_of
-
         other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
         if not (creature_types_of(state, oid) & creature_types_of(state, other)):
             return False
@@ -1132,7 +1129,6 @@ def has_printed_cost(state, oid: int, wanted) -> bool:
     none, whatever the card it copies prints -- the same override `mana_value_of`
     honours.
     """
-    from ..mana import printed_cost_is
 
     obj = state.objects.get(oid)
     if obj is None:
@@ -1576,8 +1572,6 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
         )
     if "mana_cost" in selector:
-        from ..mana import validate_printed_cost_list
-
         validate_printed_cost_list(selector["mana_cost"], where)
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):

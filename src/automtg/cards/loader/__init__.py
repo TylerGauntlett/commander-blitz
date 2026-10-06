@@ -32,6 +32,8 @@ from automtg.engine.carddef import (
     top_level_mode_spec,
 )
 from automtg.engine.effects.conditions import validate_condition
+from automtg.engine.effects.ops_player import shut_cast_zones
+from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
 from automtg.engine.effects.selectors import validate_selector
 from automtg.engine.effects.values import (
     validate_value,
@@ -44,7 +46,12 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
-from automtg.engine.mana import ManaCost, ManaRestriction, compile_restriction
+from automtg.engine.mana import (
+    ManaCost,
+    ManaRestriction,
+    compile_restriction,
+    parse_mana_production,
+)
 from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.triggers import (
     ORDINAL_FILTER_KEYS,
@@ -505,7 +512,6 @@ def _check_distribution_homes(model: CardModel, where: str) -> None:
     ceiling is larger than the total could be declared in a way no division
     satisfies; that is refused too.
     """
-    from .walk import _walk_effect_specs
 
     def refuse_in(tree: Any, at: str) -> None:
         for spec in _walk_effect_specs(tree):
@@ -2600,7 +2606,6 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     `affects`/`amount` are refused rather than ignored: the permanent is named
     by `tapped_permanent` and the amount is printed in `add_mana`.
     """
-    from automtg.engine.mana import parse_mana_production
 
     if model.tapped_permanent is None or not model.add_mana:
         raise DslError(
@@ -2769,8 +2774,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "double_triggers":
         # The cause clause is the half a card may omit, and omitting it means
         # "any cause" -- so a typo in an event name must not read as one.
-        from automtg.engine.triggers import TRIGGER_EVENTS
-
         for name in model.cause_events or ():
             if name not in TRIGGER_EVENTS:
                 raise DslError(
@@ -4149,7 +4152,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: 'arrived_this_turn_from' names no zone at all, so "
                     f"nothing in the graveyard would ever qualify"
                 )
-            from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
 
             known = {z.lstrip("!") for z in zones} - set(_ZONES) - {"any"}
             if known:
@@ -4159,8 +4161,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Resolved to the positive list here, once, by the op's own helper, so
         # the static carries exactly what a `CastLock` row carries and the
         # reader needs no inversion -- see `primitives.cast_locked_zones`.
-        from automtg.engine.effects.ops_player import shut_cast_zones
-
         static["zones"] = shut_cast_zones(model.zones, model.except_zones)
     elif model.zones is not None or model.except_zones is not None:
         # Copied for one effect only. Left to load on any other static, the

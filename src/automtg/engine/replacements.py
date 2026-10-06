@@ -35,11 +35,21 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
+from . import stack, triggers
 from .carddef import Cost
+from .effects.context import EffectContext, ask_objects, ask_yes_no
 from .enums import Zone
 from .events import EventType
-from .player_statics import draw_cap, draw_replacements, wins_on_empty_draw
-from .primitives import discard_cards, draw_cards, mill_cards
+from .player_statics import (
+    draw_cap,
+    draw_replacements,
+    player_cant_cast_while_resolving,
+    wins_on_empty_draw,
+)
+from .primitives import cast_locked_zones, discard_cards, draw_cards, mill_cards
+from .sba import declare_win
+from .targeting import enumerate_target_tuples
+from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -108,10 +118,6 @@ def _draw_one(
     # checks the flag at the next opportunity, which is before anything a
     # trigger could do.
     if not state.players[pid].library and wins_on_empty_draw(state, pid):
-        # Deferred like `_dredge`'s imports below: `sba` imports `primitives`,
-        # which this module also imports, so the edge only closes at call time.
-        from .sba import declare_win
-
         declare_win(state, pid)
         return []
     for source, multiplier in draw_replacements(state, pid):
@@ -159,7 +165,6 @@ def discard(
 
 def _dredge(state: GameState, pid: int) -> Generator[Any, list[int], bool]:
     """Offer to replace this draw by dredging. Returns whether it was replaced."""
-    from .effects.context import EffectContext, ask_objects
 
     player = state.players[pid]
     options = [
@@ -184,7 +189,6 @@ def _dredge(state: GameState, pid: int) -> Generator[Any, list[int], bool]:
     # that many was never offered the option -- which is the `len(library) >=`
     # test above, and is rule 702.51a rather than a convenience.
     mill_cards(state, pid, card.dredge)
-    from .zones import move_object
 
     move_object(state, oid, Zone.HAND, to_player=pid, cause="dredge")
     state.emit("dredge", player=pid, source=oid, card=card.id, milled=card.dredge)
@@ -214,7 +218,6 @@ def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     it. Written the other way round, every madness card would be a free
     graveyard-filler.
     """
-    from .zones import move_object
 
     obj = state.objects[oid]
     card = state.card_of(obj)
@@ -236,12 +239,7 @@ def _offer_cast(
     chosen now. Targets are the first legal tuple, which is the same
     simplification `suspend.cast_for_free` documents.
     """
-    from . import stack, triggers
     from .costs import can_pay, pay, zone_of
-    from .effects.context import EffectContext, ask_yes_no
-    from .player_statics import player_cant_cast_while_resolving
-    from .primitives import cast_locked_zones
-    from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
