@@ -608,7 +608,17 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
         ctx = EffectContext(
             state=state, controller=controller, source_oid=oid, source_name=card.name
         )
-        if not (yield from ask_yes_no(ctx, f"Pay {card.name}'s cost as it enters?", controller)):
+        # Name the price and what it buys when both are this simple -- the shock
+        # lands, "pay 2 life or it enters tapped" -- because "Pay Blood Crypt's
+        # cost?" asks the player to remember the card's text mid-land-drop.
+        prompt = f"Pay {card.name}'s cost as it enters?"
+        if (
+            replacement.get("event") == "self_enters_tapped"
+            and cost.pay_life
+            and cost == Cost(pay_life=cost.pay_life)
+        ):
+            prompt = f"Pay {cost.pay_life} life so {card.name} enters untapped?"
+        if not (yield from ask_yes_no(ctx, prompt, controller)):
             continue
         if (yield from pay(state, controller, cost, oid)):
             obj.enters_cost_paid = True

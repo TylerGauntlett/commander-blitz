@@ -11844,7 +11844,10 @@
       "oracle_text": "({T}: Add {B} or {R}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -14899,7 +14902,10 @@
       "oracle_text": "({T}: Add {G} or {U}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -46960,7 +46966,10 @@
       "oracle_text": "({T}: Add {W} or {B}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -50423,7 +50432,10 @@
       "oracle_text": "({T}: Add {W} or {U}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -76682,7 +76694,10 @@
       "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 3
+          }
         }
       ],
       "source": "auto",
@@ -83918,7 +83933,10 @@
       "oracle_text": "({T}: Add {B} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -96162,7 +96180,10 @@
       "oracle_text": "({T}: Add {R} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -109892,7 +109913,10 @@
       "oracle_text": "({T}: Add {U} or {R}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -110360,7 +110384,10 @@
       "oracle_text": "({T}: Add {R} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -117495,7 +117522,10 @@
       "oracle_text": "({T}: Add {G} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
@@ -132454,7 +132484,10 @@
       "oracle_text": "({T}: Add {U} or {B}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
       "replacements": [
         {
-          "event": "self_enters_tapped"
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 2
+          }
         }
       ],
       "source": "auto",
