@@ -63,6 +63,13 @@ export function scrollTargetFor(
   stop: string | null,
   doc: Document = document,
 ): HTMLElement | null {
+  /*
+   * A held card first. The hold declares no stops, so while it is up the ring
+   * is wherever it was -- and the one box on the screen is the card's rules,
+   * which on a handheld are a fixed frame that scrolls (`handheld.css`).
+   */
+  const held = doc.querySelector<HTMLElement>('[data-testid="card-hold"] .face__rules');
+  if (held && scrollsY(held)) return held;
   if (stop === null) return null;
   if (stop.startsWith("card:")) return readerScroller(doc);
   const el = stopElement(stop);

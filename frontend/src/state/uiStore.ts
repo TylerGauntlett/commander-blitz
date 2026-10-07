@@ -50,6 +50,7 @@ export const SPEED_MULTIPLIER: Record<Speed, number> = {
  */
 const SPEED_KEY = "automtg.speed";
 const MUTED_KEY = "automtg.muted";
+const HINTS_KEY = "automtg.hints";
 
 function storedSpeed(): Speed {
   try {
@@ -91,6 +92,42 @@ function rememberMuted(muted: boolean): void {
   } catch {
     // As above.
   }
+}
+
+/**
+ * The hint bar starts HIDDEN.
+ *
+ * It is the row under the hand that says what `A`, `X`, `Y` and `B` do on
+ * the stop the ring is on. On a Steam Deck that row costs a strip of a
+ * 800px-tall screen for the whole game, and after a few turns it says nothing
+ * the thumbs do not already know. So it is a setting, off by default, in the
+ * settings menu's Controls block beside the scheme picker -- findable when it
+ * is wanted, and otherwise not there. The e2e and story harnesses turn it on,
+ * because several of them read the bar to know what the ring is on.
+ */
+function storedHints(): boolean {
+  try {
+    return localStorage.getItem(HINTS_KEY) === "on";
+  } catch {
+    return false;
+  }
+}
+
+function rememberHints(on: boolean): void {
+  try {
+    localStorage.setItem(HINTS_KEY, on ? "on" : "off");
+  } catch {
+    // As above.
+  }
+}
+
+/**
+ * The stylesheet reads `html[data-hints]`, the way it reads `data-input`:
+ * nothing subscribes to the flag, so the one place that owns it stamps it.
+ */
+export function stampHints(on: boolean): void {
+  if (typeof document === "undefined") return;
+  document.documentElement.setAttribute("data-hints", on ? "on" : "off");
 }
 
 export interface PeekTarget {
@@ -166,10 +203,22 @@ interface UiState {
    * and a hold kept in a store is a hold that can get stuck.
    */
   viewingPid: number | null;
+  /**
+   * The permanent whose abilities are being chosen between, or `null`.
+   *
+   * A press on a card with two or more activated abilities cannot answer
+   * "which one" by itself, and the panel -- where the answer used to be left
+   * -- is the surface a handheld can least afford to read. `AbilityMenu`
+   * draws the choice as a modal over the board. In the store for the reason
+   * `settingsOpen` is: the unwind on `B` has to be able to close it.
+   */
+  abilityMenuOid: number | null;
   peek: PeekTarget | null;
   error: string | null;
   speed: Speed;
   muted: boolean;
+  /** The hint bar is shown. See `storedHints`. */
+  hints: boolean;
 
   select: (oid: number | null) => void;
   hover: (oid: number | null) => void;
@@ -198,9 +247,12 @@ interface UiState {
   setSettingsOpen: (open: boolean) => void;
   /** Look at a seat's board, or `null` to come back to your own. */
   setViewing: (pid: number | null) => void;
+  /** Ask which of a permanent's abilities to activate, or `null` to stop asking. */
+  setAbilityMenu: (oid: number | null) => void;
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
   toggleMuted: () => void;
+  toggleHints: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -216,10 +268,12 @@ export const useUiStore = create<UiState>((set) => ({
   logOverlay: false,
   settingsOpen: false,
   viewingPid: null,
+  abilityMenuOid: null,
   peek: null,
   error: null,
   speed: storedSpeed(),
   muted: storedMuted(),
+  hints: storedHints(),
 
   select: (oid) => set({ selectedOid: oid }),
   hover: (oid) => set({ hoveredOid: oid }),
@@ -253,6 +307,7 @@ export const useUiStore = create<UiState>((set) => ({
       selectedOid: null,
       targetingActionIds: [],
       openStack: null,
+      abilityMenuOid: null,
     }),
 
   openStackGroup: (key) => set({ openStack: key }),
@@ -260,6 +315,7 @@ export const useUiStore = create<UiState>((set) => ({
   toggleLogOverlay: () => set((s) => ({ logOverlay: !s.logOverlay })),
   setSettingsOpen: (open) => set({ settingsOpen: open }),
   setViewing: (pid) => set({ viewingPid: pid }),
+  setAbilityMenu: (oid) => set({ abilityMenuOid: oid }),
   setImages: (images, seatImages = null) => set({ images, seatImages }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),
@@ -268,4 +324,13 @@ export const useUiStore = create<UiState>((set) => ({
       rememberMuted(!s.muted);
       return { muted: !s.muted };
     }),
+  toggleHints: () =>
+    set((s) => {
+      rememberHints(!s.hints);
+      stampHints(!s.hints);
+      return { hints: !s.hints };
+    }),
 }));
+
+// The stylesheet's copy of the flag, from the first paint.
+stampHints(useUiStore.getState().hints);

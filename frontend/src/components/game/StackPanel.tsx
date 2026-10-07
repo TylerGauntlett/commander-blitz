@@ -13,7 +13,8 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import type { GameView } from "../../api/types";
+import type { GameView, StackItemView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy } from "../../motion/springs";
@@ -25,9 +26,14 @@ const PLY_Y = 26;
 
 interface Props {
   state: GameView;
+  /**
+   * A press on a ply: a target, when a spell is waiting for one on the stack,
+   * and otherwise a read. See `useTableGestures.onStackItem`.
+   */
+  onPress?: (item: StackItemView) => void;
 }
 
-export function StackPanel({ state }: Props) {
+export function StackPanel({ state, onPress }: Props) {
   const items = [...state.stack].reverse();
   // The pile is absolutely positioned, so its container height has to be
   // computed rather than declared -- which means a number, not a `calc()`.
@@ -83,6 +89,28 @@ export function StackPanel({ state }: Props) {
                   ) : (
                     <div className="stackpile__ghost">{item.name}</div>
                   )}
+
+                  {/*
+                    THE PLY IS SOMEWHERE THE RING CAN STAND.
+
+                    A stop over the whole ply, so walking the stack reads each
+                    card in the rail (`data-preview-oid`) and `Y` opens it in
+                    full -- the stack is what you answer, and it was the one
+                    thing on the board you could not read before deciding to.
+                    `stack:<sid>` and not `card:<oid>`: a trigger borrows its
+                    source's face, and that permanent already wears the oid on
+                    the battlefield. No `data-action-id`: a counterspell's
+                    target chips live in the panel, and a press here resolves
+                    to one of them the way a board card does.
+                  */}
+                  <button
+                    type="button"
+                    className="stackpile__hit"
+                    aria-label={item.name}
+                    data-stop={stopId.stack(item.sid)}
+                    data-preview-oid={item.card?.oid}
+                    onClick={() => onPress?.(item)}
+                  />
 
                   <div className="stackpile__tag">
                     {index === 0 && <span className="stackpile__next">next</span>}

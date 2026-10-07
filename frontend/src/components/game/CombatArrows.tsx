@@ -25,8 +25,10 @@
  * costs nothing.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GameView } from "../../api/types";
+import { visibleBox } from "../../input/stops";
+import { findCard } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 
 /**
@@ -51,15 +53,47 @@ interface Point {
   y: number;
 }
 
+/** An arrow's end: where it is, and which element it turned out to be. */
+interface End {
+  point: Point;
+  /** The selector that resolved, after any fallback. The dedupe key. */
+  at: string;
+}
+
 function centreOf(selector: string, origin: DOMRect): Point | null {
   const element = document.querySelector(selector);
   if (!element) return null;
-  const box = element.getBoundingClientRect();
-  if (box.width === 0 && box.height === 0) return null;
+  const box = visibleBox(element);
+  if (!box) return null;
   return {
     x: box.left + box.width / 2 - origin.left,
     y: box.top + box.height / 2 - origin.top,
   };
+}
+
+/**
+ * A card you cannot see is its owner's seat.
+ *
+ * On a handheld only one board is drawn: an opponent's cards are in the
+ * document, clipped to a zero-height lane, and still report their own box --
+ * so an arrow to one pointed at a spot under their seat strip, and an arrow
+ * FROM one started from nowhere. `visibleBox` asks the ring's own question,
+ * and a hidden card's end becomes the `[data-player]` of whoever controls it:
+ * their attack is drawn seat to orb, your blocks seat-ward, a spell aimed at
+ * their hidden creature at their seat. `at` is what the dedupe keys on, so
+ * five attackers from one hidden board are one arrow, not five on top of
+ * each other.
+ */
+function endOf(selector: string, origin: DOMRect, state: GameView): End | null {
+  const direct = centreOf(selector, origin);
+  if (direct) return { point: direct, at: selector };
+  const oid = /^\[data-oid="(\d+)"\]$/.exec(selector)?.[1];
+  if (oid === undefined) return null;
+  const controller = findCard(state, Number(oid))?.controller;
+  if (controller === undefined) return null;
+  const seat = `[data-player="${controller}"]`;
+  const point = centreOf(seat, origin);
+  return point ? { point, at: seat } : null;
 }
 
 /** Have any arrows moved? Sub-pixel jitter is not movement. */
@@ -98,6 +132,10 @@ export function CombatArrows({ state, boardRef }: Props) {
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
   const stagedBlocks = useUiStore((s) => s.stagedBlocks);
   const [arrows, setArrows] = useState<Arrow[]>([]);
+  // Read through a ref: the fallback needs who controls a hidden card, and
+  // listing `state` as a dependency of `measure` would re-burst on every poll.
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   const combat = state.combat;
   const hasStaging =
@@ -125,12 +163,26 @@ export function CombatArrows({ state, boardRef }: Props) {
     const origin = board.getBoundingClientRect();
     const next: Arrow[] = [];
 
+    const drawn = new Set<string>();
     const link = (fromSel: string, toSel: string, key: string, kind: Arrow["kind"]) => {
-      const from = centreOf(fromSel, origin);
-      const to = centreOf(toSel, origin);
-      if (from && to) {
-        next.push({ key, x1: from.x, y1: from.y, x2: to.x, y2: to.y, kind });
-      }
+      const from = endOf(fromSel, origin, stateRef.current);
+      const to = endOf(toSel, origin, stateRef.current);
+      if (!from || !to) return;
+      // Both ends fell back to the same seat (a hidden attacker blocked by a
+      // hidden blocker): nothing to draw. Two links that resolved to the same
+      // pair of elements are one arrow.
+      if (from.at === to.at) return;
+      const pair = `${kind}|${from.at}>${to.at}`;
+      if (drawn.has(pair)) return;
+      drawn.add(pair);
+      next.push({
+        key,
+        x1: from.point.x,
+        y1: from.point.y,
+        x2: to.point.x,
+        y2: to.point.y,
+        kind,
+      });
     };
 
     for (const [attacker, defender] of Object.entries(combat?.attackers ?? {})) {

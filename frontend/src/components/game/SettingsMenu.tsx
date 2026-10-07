@@ -34,7 +34,9 @@
 import { useEffect, useRef } from "react";
 import { setCursor } from "../../input/cursor";
 import { stopId } from "../../input/stops";
+import { NAVIGATION_HINTS } from "../../logic/verbs";
 import { useUiStore } from "../../state/uiStore";
+import { Glyph } from "../ui/Glyph";
 import { SchemePicker } from "../ui/SchemePicker";
 
 interface Props {
@@ -46,6 +48,8 @@ interface Props {
 export function SettingsMenu({ busy, onUndo, onQuit }: Props) {
   const muted = useUiStore((s) => s.muted);
   const toggleMuted = useUiStore((s) => s.toggleMuted);
+  const hints = useUiStore((s) => s.hints);
+  const toggleHints = useUiStore((s) => s.toggleHints);
 
   /*
    * The settings menu, and why three controls went into it.
@@ -181,6 +185,32 @@ export function SettingsMenu({ busy, onUndo, onQuit }: Props) {
             </span>
             {muted ? "Sound off" : "Sound on"}
           </button>
+          {/*
+            THE HINT BAR LIVES HERE NOW. It is off by default -- a strip of an
+            800px screen for the whole game, saying what the thumbs learn in a
+            few turns -- and this is where to find it when it is wanted. A
+            toggle, like sound: it leaves the menu open. Beside Sound rather
+            than in the Controls block below: a full-width row under the
+            scheme picker's two-column grid is what `nav.ts`'s row rule steps
+            to from above, over the picker, and the picker became unreachable
+            by walking.
+          */}
+          {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: a toggle in a menu; the same shape as the sound item above. */}
+          <button
+            type="button"
+            role="menuitem"
+            className="settings__item"
+            onClick={toggleHints}
+            aria-pressed={hints}
+            data-stop={stopId.tool("hints")}
+            data-testid="hints-toggle"
+            data-hint={hints ? "Button hints shown" : "Button hints hidden"}
+          >
+            <span className="settings__glyph" aria-hidden="true">
+              {hints ? "▣" : "▢"}
+            </span>
+            {hints ? "Button hints on" : "Button hints off"}
+          </button>
           <button
             type="button"
             role="menuitem"
@@ -221,6 +251,19 @@ export function SettingsMenu({ busy, onUndo, onQuit }: Props) {
           <div className="settings__scheme" data-testid="settings-scheme">
             <span className="settings__label">Controls</span>
             <SchemePicker stops />
+            {/*
+              The half of the hint bar that never changes, from the same list
+              the bar draws (`NAVIGATION_HINTS`), so a player who keeps the
+              bar off can still look the shoulders up.
+            */}
+            <div className="settings__legend" data-testid="settings-legend">
+              {NAVIGATION_HINTS.map((nav) => (
+                <span className="hint" key={nav.btn}>
+                  <Glyph btn={nav.btn} />
+                  <span className="hint__verb">{nav.label}</span>
+                </span>
+              ))}
+            </div>
           </div>
           <button
             type="button"

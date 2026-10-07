@@ -2,7 +2,7 @@
    Regions: the trap, the dial, and the card hold
    ==========================================================================
 
-   `L1`/`R1` step between the board's five regions and trap the ring inside the
+   `L1`/`R1` step between the board's six regions and trap the ring inside the
    one it is in, because directional navigation crosses a 96px seat strip, three
    lanes, a fanned hand and a 243px rail one card at a time.
    `docs/handheld-playtest.md` Loop 1 records walking the board as "a bad way to
@@ -32,11 +32,13 @@
 [data-group] .play__mine .mat__side,
 [data-group] .play__mine .mat__lanes,
 [data-group] .rail--right,
+[data-group] .stackpanel,
 [data-group] .hand {
   transition: opacity var(--t-fast, 110ms) ease;
   opacity: 0.72;
 }
 
+[data-group="stack"] .stackpanel,
 [data-group="seats"] .play__opponents,
 [data-group="orb"] .play__mine .mat__side,
 [data-group="board"] .play__mine .mat__lanes,
@@ -52,6 +54,7 @@
   [data-group] .play__mine .mat__side,
   [data-group] .play__mine .mat__lanes,
   [data-group] .rail--right,
+  [data-group] .stackpanel,
   [data-group] .hand {
     opacity: 1;
   }
@@ -184,6 +187,9 @@
  * size, and the whole card is drawn at once. `auto` rather than `hidden` past
  * 92vh, so the one card longer than the screen still scrolls instead of being
  * cut -- the clipping this view exists to get away from.
+ *
+ * On a handheld the frame is a card's proportions instead, and the rules box
+ * scrolls: see `handheld.css`, which says why the two differ.
  */
 .hold__card {
   max-width: min(330px, 90vw);

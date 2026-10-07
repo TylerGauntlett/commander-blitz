@@ -187,6 +187,25 @@ export function groupPlayActions(actions: LegalAction[]): ActionGroup[] {
   }));
 }
 
+/**
+ * An activated ability's own text, with the card's name taken off the front.
+ *
+ * `legality._activate_actions` labels every ability `"<Card name>: <text>"`,
+ * which is the right label in a log and the wrong one in a 230px rail: the
+ * name is the part that survives the ellipsis and the ability is the part
+ * that does not, so a Mind Stone's two rows both read "Mind Stone: {T}…". The
+ * panel row and the ability menu draw the card's name once, separately, and
+ * this for the rest. Only a prefix that IS the source's name is stripped --
+ * an ability whose text happens to contain a colon keeps it.
+ */
+export function abilityText(baseLabel: string, sourceName: string | null): string {
+  if (sourceName) {
+    const prefix = `${sourceName}: `;
+    if (baseLabel.startsWith(prefix)) return baseLabel.slice(prefix.length);
+  }
+  return baseLabel;
+}
+
 export function findByKind(actions: LegalAction[], kind: string): LegalAction | null {
   return actions.find((action) => action.kind === kind) ?? null;
 }

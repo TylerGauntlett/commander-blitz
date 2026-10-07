@@ -198,12 +198,13 @@ export const PlayingALand: Story = {
 };
 
 /**
- * A gesture that must *not* reach the server.
+ * A gesture that must *not* reach the server by itself.
  *
  * The other half of `PlayingALand`. Mind Stone offers two abilities and one of
- * them sacrifices it, so the click that means "what can this do?" has to hand
- * the choice to the panel instead of resolving it. Before the engine offered
- * both, the artifact had a single action and this click deleted it.
+ * them sacrifices it, so the click that means "what can this do?" has to ASK
+ * instead of resolving. It used to select the card and leave the choice to the
+ * panel; on a handheld both panel rows read "Mind Stone: {T}…", so the board
+ * now asks in `AbilityMenu` and the chosen item does what the row would.
  */
 export const ChoosingBetweenTwoAbilities: Story = {
   args: board(scenarios.twoAbilityPermanent(), { act: idleMutation(fn()) }),
@@ -214,9 +215,15 @@ export const ChoosingBetweenTwoAbilities: Story = {
     const stone = await canvas.findByTestId("card-401");
     await userEvent.click(stone);
     expect(args.game.act.mutate, "clicking the artifact spent it").not.toHaveBeenCalled();
-    expect(stone.className).toContain("card--selected");
 
-    // Both abilities are reachable, on their own controls.
+    const menu = await canvas.findByTestId("ability-menu");
+    expect(menu.hasAttribute("data-modal-root"), "the menu traps the ring").toBe(true);
+    const items = menu.querySelectorAll("[data-stop^='menu:ability:']");
+    expect(items, "one item per ability").toHaveLength(2);
+    expect(items[0].textContent).not.toContain("Mind Stone");
+    expect(items[1].textContent).toContain("Sacrifice");
+    // The items decide; the panel's rows still carry the ids, exactly once.
+    expect(menu.querySelector("[data-action-id]")).toBeNull();
     for (const id of ["a1-activate", "a2-activate"]) {
       expect(
         canvasElement.querySelector(`[data-action-id="${id}"]`),
@@ -225,10 +232,9 @@ export const ChoosingBetweenTwoAbilities: Story = {
     }
     expectUniqueActionIds(canvasElement);
 
-    // And the click is reversible. Neither ability targets anything, so this is
-    // a selection rather than a target hunt -- entering targeting mode here
-    // would leave the player with nothing to click and no way back out.
-    await userEvent.click(stone);
-    expect(stone.className).not.toContain("card--selected");
+    // Choosing the second item posts the second ability and puts the menu away.
+    await userEvent.click(canvas.getByTestId("ability-1"));
+    expect(args.game.act.mutate).toHaveBeenCalledWith("a2-activate");
+    expect(canvasElement.querySelector('[data-testid="ability-menu"]')).toBeNull();
   },
 };

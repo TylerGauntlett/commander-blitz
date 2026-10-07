@@ -1437,6 +1437,17 @@
   pointer-events: auto;
 }
 
+/* The ring's and the pointer's way onto a ply: the whole card, nothing drawn. */
+.stackpile__hit {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+
 .stackpanel,
 .ticker,
 .preview {

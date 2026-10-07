@@ -256,6 +256,14 @@
   flex: 1 1 auto;
   min-height: 0;
   margin-top: 3px;
+  /*
+   * The engine's rules text puts the keyword line first and a newline after
+   * it ("Flying", newline, "When this enters..."), which is how every card
+   * face draws it (`.face__rules` is `pre-wrap`). Without this the newline
+   * collapsed to a space and the reader -- the one surface whose job is
+   * reading -- was the one place keywords ran into the first ability.
+   */
+  white-space: pre-wrap;
   overflow-y: auto;
   scrollbar-gutter: stable;
   scrollbar-width: thin;

@@ -6,14 +6,23 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
 import { getCursor, moveCursor, setCursor } from "../../input/cursor";
-import { groupOf, groupRoot, landableStopsIn, setGroup } from "../../input/groups";
+import {
+  groupOf,
+  groupRoot,
+  groupsPresent,
+  landableStopsIn,
+  setGroup,
+} from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
+import { useUiStore } from "../../state/uiStore";
 import { board } from "../../testing/board";
+import { idleMutation } from "../../testing/fakeGame";
+import { action } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { Table } from "./Table";
 
@@ -426,7 +435,10 @@ export const HandheldSettingsMenu: Story = {
       ).not.toBeNull();
       visited.add(at as string);
     }
-    expect([...visited].some((id) => id.startsWith("tool:scheme-"))).toBe(true);
+    expect(
+      [...visited].some((id) => id.startsWith("tool:scheme-")),
+      [...visited].join(" > "),
+    ).toBe(true);
 
     // `B` (Escape on a keyboard) closes it, and the ring is back on the gear.
     await userEvent.keyboard("{Escape}");
@@ -434,5 +446,207 @@ export const HandheldSettingsMenu: Story = {
       expect(canvasElement.querySelector('[data-testid="settings-menu"]')).toBeNull();
     });
     await waitFor(() => expect(getCursor()).toBe("tool:settings"));
+  },
+};
+
+/**
+ * `A` ON A PERMANENT WITH TWO ABILITIES ASKS WHICH.
+ *
+ * The press used to select the card and leave the answer to the panel, where
+ * on this layout both rows read "Mind Stone: {T}…" and one of them sacrifices
+ * it. `AbilityMenu` is a modal like every other decision: the ring lands on
+ * its first item, every direction stays inside, `B` puts it away and the ring
+ * comes back to the card the question was about.
+ */
+export const HandheldAbilityMenu: Story = {
+  args: board(scenarios.twoAbilityPermanent()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    setGroup(null);
+    expect(setCursor("card:401"), "the artifact is reachable").toBe(true);
+    // `A` is a click on the ring's element (`useCursorNav`).
+    await userEvent.click(canvas.getByTestId("card-401"));
+    const menu = await canvas.findByTestId("ability-menu");
+    expect(menu.hasAttribute("data-modal-root")).toBe(true);
+    await waitFor(() => expect(getCursor()).toBe("menu:ability:0"));
+
+    moveCursor("down");
+    expect(getCursor()).toBe("menu:ability:1");
+    moveCursor("down");
+    expect(getCursor(), "the ring stays inside the menu").toBe("menu:ability:1");
+    moveCursor("up");
+    expect(getCursor()).toBe("menu:ability:0");
+
+    // The reader stays on the card, so `Y` can read it over the menu.
+    expect(menu.querySelector("[data-cursor]")?.getAttribute("data-preview-oid")).toBe("401");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="ability-menu"]')).toBeNull();
+    });
+    await waitFor(() => expect(getCursor()).toBe("card:401"));
+  },
+};
+
+/**
+ * A HELD DOWN-PRESS WALKS EVERY TARGET CHIP, IN ORDER.
+ *
+ * On a desktop the chips wrap as pills sized to their names, and from a pill on
+ * a wrapped line "down" preferred the next full-width row over the pill
+ * diagonally below it (`nav.ts:pickStop`'s row rule), so the ring skipped
+ * targets or zigzagged between columns. On a handheld they are one per line.
+ */
+export const HandheldTargetChipsWalk: Story = {
+  args: board(scenarios.targetVariants()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    const chips = [...canvasElement.querySelectorAll<HTMLElement>(".act__aims .aim")];
+    expect(chips).toHaveLength(3);
+    // One per line: each chip starts where the one above it ends.
+    for (let i = 1; i < chips.length; i += 1) {
+      const above = chips[i - 1].getBoundingClientRect();
+      const here = chips[i].getBoundingClientRect();
+      expect(here.top, `chip ${i} is on its own line`).toBeGreaterThanOrEqual(above.bottom - 1);
+      expect(Math.abs(here.left - above.left), `chip ${i} is in the same column`).toBeLessThan(
+        2,
+      );
+    }
+
+    setGroup(null);
+    expect(setCursor("act:a-charm-991")).toBe(true);
+    moveCursor("down");
+    expect(getCursor()).toBe("act:a-charm-992");
+    moveCursor("down");
+    expect(getCursor()).toBe("act:a-charm-993");
+    moveCursor("up");
+    moveCursor("up");
+    expect(getCursor()).toBe("act:a-charm-991");
+  },
+};
+
+/**
+ * THE STACK IS A REGION, AND ITS PLIES ARE STOPS.
+ *
+ * Responding to the stack is the skill in this format, and the stack was the
+ * one thing on the board the ring could not stand on: its plies carried an
+ * arrow anchor and nothing else, so the card you were deciding whether to
+ * answer was the one card you could not read. Each ply is a stop now, the
+ * reader follows it, `Y` opens it in full, and `R1` cycles into the region
+ * while anything is on the stack.
+ */
+export const HandheldStackIsARegion: Story = {
+  args: board(scenarios.stackThreeDeep()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    expect(groupsPresent(), "the stack is a region while something is on it").toContain(
+      "stack",
+    );
+
+    setGroup(null);
+    // Top of the stack first: the thing that resolves next.
+    expect(setCursor("stack:3"), "the top ply is reachable").toBe(true);
+    const ply = document.querySelector("[data-cursor]") as HTMLElement;
+    expect(groupOf(ply)).toBe("stack");
+
+    moveCursor("down");
+    expect(getCursor()).toBe("stack:2");
+    moveCursor("down");
+    expect(getCursor()).toBe("stack:1");
+
+    // The reader is on the ply's card, so `Y` reads it in full.
+    const previewOid = document
+      .querySelector("[data-cursor]")
+      ?.getAttribute("data-preview-oid");
+    expect(previewOid).toBeTruthy();
+    await userEvent.keyboard("i");
+    const hold = await canvas.findByTestId("card-hold");
+    const name = scenarios.stackThreeDeep().state.stack.find((item) => item.sid === 1)
+      ?.card?.name;
+    expect(hold.getAttribute("aria-label")).toBe(name);
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
+    });
+  },
+};
+
+/**
+ * A PRESS ON A PLY IS A TARGET WHEN A SPELL IS WAITING FOR ONE, AND A READ
+ * OTHERWISE.
+ *
+ * The four answers `useTableGestures.onStackItem` can give, in one walk: no
+ * spell waiting reads the ply (the hold `Y` opens); one spell aimed at the ply
+ * posts it; two variants aimed at it narrow the selection and leave the rest to
+ * the panel, as a board card does; and a ply nothing is aimed at posts nothing.
+ */
+export const HandheldStackPlyIsATarget: Story = {
+  args: (() => {
+    const scenario = scenarios.stackThreeDeep();
+    const counter = (id: string, sid: number) =>
+      action({
+        id,
+        kind: "cast",
+        label: `Cast Counterspell -> #${sid}`,
+        base_label: "Cast Counterspell",
+        source_oid: 530,
+        targets: [{ kind: "stack", id: sid }],
+      });
+    const actions = [
+      ...scenario.actions,
+      counter("c1", 1),
+      { ...counter("c2", 1), base_label: "Cast Counterspell (kicked)" },
+      counter("c3", 2),
+    ];
+    return board({ ...scenario, actions }, { act: idleMutation(fn()) });
+  })(),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+    const ply = (sid: number) =>
+      canvasElement.querySelector(`[data-stop="stack:${sid}"]`) as HTMLElement;
+
+    // Nothing waiting: the press reads the ply.
+    await userEvent.click(ply(1));
+    await canvas.findByTestId("card-hold");
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
+    });
+    expect(args.game.act.mutate).not.toHaveBeenCalled();
+
+    // One spell aimed at this ply: the press is the target.
+    useUiStore.getState().beginTargeting(530, ["c1", "c2", "c3"]);
+    await userEvent.click(ply(2));
+    expect(args.game.act.mutate).toHaveBeenCalledWith("c3");
+
+    // Two variants aimed at it: the press narrows, and the panel asks which.
+    useUiStore.getState().beginTargeting(530, ["c1", "c2", "c3"]);
+    await userEvent.click(ply(1));
+    await waitFor(() => expect(useUiStore.getState().targetingActionIds).toEqual(["c1", "c2"]));
+
+    // Not a legal target: nothing posted, and the selection is untouched.
+    useUiStore.getState().beginTargeting(530, ["c3"]);
+    await userEvent.click(ply(3));
+    expect(args.game.act.mutate).toHaveBeenCalledTimes(1);
+    expect(useUiStore.getState().targetingActionIds).toEqual(["c3"]);
+    useUiStore.getState().endTargeting();
   },
 };

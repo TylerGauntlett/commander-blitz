@@ -37,7 +37,13 @@ import {
   type ImageMap,
   type SeatImages,
 } from "../../logic/cardArt";
-import { counterBadges, isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
+import {
+  counterBadges,
+  isSummoningSick,
+  isWounded,
+  keywordLabel,
+  manaPips,
+} from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -57,7 +63,7 @@ function cardStatus(card: CardView): string {
   if (card.zone !== "battlefield") return `In ${card.zone}`;
   const notes: string[] = [];
   if (card.tapped) notes.push("tapped");
-  if (card.summoning_sick && card.types.includes("Creature")) notes.push("summoning sick");
+  if (isSummoningSick(card) && card.types.includes("Creature")) notes.push("summoning sick");
   return notes.length > 0 ? `On the battlefield, ${notes.join(", ")}` : "On the battlefield";
 }
 

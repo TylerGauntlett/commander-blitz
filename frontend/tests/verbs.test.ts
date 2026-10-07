@@ -15,7 +15,7 @@
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
 import { parseStop, type Staging, verbsFor } from "../src/logic/verbs";
-import { action, card, gameView, pending, player } from "../src/testing/fixtures";
+import { action, card, gameView, pending, player, stackItem } from "../src/testing/fixtures";
 import { mulligan, mulliganBottom } from "../src/testing/scenarios";
 
 const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
@@ -41,16 +41,16 @@ const staging = (overrides: Partial<Staging> = {}): Staging => ({
 /**
  * The combobox a long decision opens with.
  *
- * A row is a HIGHLIGHT and the Choose button beside the list is the only thing
- * that acts, so the two stops say different things -- and neither says
- * "Toggle", which is what a `tool:` stop would have made the bar promise over a
- * text field.
+ * A row chooses when pressed -- through the Choose button, which is the one
+ * thing carrying an action id -- and the field types; `X` is the button from
+ * the field. Neither says "Toggle", which is what a `tool:` stop would have
+ * made the bar promise over a text field.
  */
 describe("a combobox's stops", () => {
-  it("offers typing at the field and selecting at a row", () => {
+  it("offers typing at the field and choosing at a row", () => {
     const state = gameView({ pending: pending({ kind: "choose_mode" }) });
-    expect(verbsFor(state, [], "combo:filter").a).toBe("Type");
-    expect(verbsFor(state, [], "combo:opt:a3-choose").a).toBe("Select");
+    expect(verbsFor(state, [], "combo:filter")).toEqual({ a: "Type", x: "Choose", b: "Back" });
+    expect(verbsFor(state, [], "combo:opt:a3-choose")).toEqual({ a: "Choose", b: "Back" });
   });
 
   it("names the action itself at the Choose button, as any act stop does", () => {
@@ -74,6 +74,32 @@ describe("parseStop", () => {
     expect(parseStop("pile:0:graveyard")).toMatchObject({ kind: "pile" });
     expect(parseStop("combo:filter")).toMatchObject({ kind: "combo" });
     expect(parseStop("combo:opt:a12-choose")).toMatchObject({ kind: "combo" });
+    expect(parseStop("menu:ability:1")).toMatchObject({ kind: "menu" });
+    expect(parseStop("stack:7")).toMatchObject({ kind: "stack", id: 7 });
+  });
+
+  it("reads a ply of the stack, and targets it when a spell is pointed that way", () => {
+    const state = gameView({
+      stack: [stackItem({ sid: 7, name: "Rhystic Study", controller: 1, card: null })],
+    });
+    expect(verbsFor(state, [], "stack:7")).toEqual({ a: "Read", y: "Read", b: "Back" });
+    const counter = action({
+      id: "a9-cast",
+      kind: "cast",
+      label: "Cast Counterspell -> Rhystic Study",
+      base_label: "Cast Counterspell",
+      targets: [{ kind: "stack", id: 7 }],
+    });
+    expect(verbsFor(state, [counter], "stack:7", staging({ targeting: true })).a).toBe(
+      "Target Rhystic Study",
+    );
+    expect(verbsFor(state, [counter], "stack:8", staging({ targeting: true })).a).toBe(
+      "Not a legal target",
+    );
+  });
+
+  it("says Choose over an ability menu item, which is what pressing it does", () => {
+    expect(verbsFor(gameView(), [], "menu:ability:0")).toEqual({ a: "Choose", b: "Back" });
   });
 
   it("survives an action id containing a colon, which they do", () => {

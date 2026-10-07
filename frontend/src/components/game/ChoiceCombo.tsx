@@ -18,9 +18,17 @@
  *   1. `onFocus` on a row sets the highlight. `cursor.stamp` focuses the stop
  *      the ring lands on, so walking the ring down the list moves the highlight
  *      and relabels the Choose button, with nothing here listening to the pad.
- *   2. The Choose button sits to the RIGHT of the list, so a right press
- *      reaches it from any row. Under the list it would be four hundred rows
- *      away.
+ *   2. `A` on the highlighted row chooses it. The row's click presses the
+ *      Choose button, so the one control carrying the action id is still the
+ *      one that posts. The button itself sits UNDER the list, bottom right,
+ *      where every other dialog keeps its commit -- it is where a mouse goes
+ *      and what the filter's Enter is bound to, and a pad never needs to walk
+ *      to it: a row chooses, and `X` presses it from the filter field.
+ *   4. Left and Right PAGE the list by ten rows. `useCursorNav` hands the two
+ *      horizontal directions to any `[data-nav-x]` container the ring is in
+ *      as a `padnav` event rather than moving the ring, so a four-hundred-row
+ *      list is forty presses end to end instead of four hundred -- and a held
+ *      direction, which `repeat.ts` ramps, is faster than that.
  *   3. The list scrolls under the ring: the active row is scrolled into view on
  *      every move, and `styles/ui.css` leaves a whole neighbour row showing past
  *      the fold, so the row below the one you are on is still on screen and
@@ -30,11 +38,27 @@
  * ONE ACTION ID, NOT FOUR HUNDRED. Rows carry `combo:` stops and no
  * `data-action-id`; the Choose button carries the highlighted row's. The
  * panel's invariant -- every legal action is a button, exactly once in the
- * document -- is about buttons that ACT, and here exactly one of them does.
+ * document -- is about buttons that ACT, and here exactly one of them does:
+ * a row that is pressed while highlighted presses THAT button.
+ *
+ * THE DIALOG IS ONE SIZE. The Choose button names the highlighted row, and it
+ * used to be the only thing deciding the dialog's width -- so the whole panel
+ * breathed as the ring walked from "Advisor" to "Phyrexian Germ". `styles/
+ * ui.css` fixes the prompt's width while it holds a combo and clips the label.
  */
 
-import { type KeyboardEvent, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { setCursor } from "../../input/cursor";
 import { getInputMode } from "../../input/inputMode";
+import type { Dir } from "../../input/nav";
 import { actionAttrs, stopId } from "../../input/stops";
 import { narrow } from "../../logic/promptFilter";
 
@@ -62,10 +86,23 @@ interface Props {
   disabled: boolean;
 }
 
+/** Rows a Left or Right press moves the highlight by. */
+export const PAGE = 10;
+
 export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
+  const goRef = useRef<HTMLButtonElement>(null);
+  /*
+   * Whether the next highlight change should carry the ring with it.
+   *
+   * Walking the ring sets the highlight (mechanism 1), so normally the ring is
+   * already on the row. A page is the other way round: the highlight moves
+   * first, and the ring has to be sent after it -- after the row has scrolled
+   * into view, because `candidatesIn` drops a row the list has clipped.
+   */
+  const ringTo = useRef(false);
   const listId = useId();
 
   const shown = useMemo(() => narrow(choices, query), [choices, query]);
@@ -91,6 +128,11 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
   useLayoutEffect(() => {
     const row = listRef.current?.children[at] as HTMLElement | undefined;
     row?.scrollIntoView?.({ block: "nearest" });
+    if (ringTo.current) {
+      ringTo.current = false;
+      const stop = row?.dataset.stop;
+      if (stop) setCursor(stop);
+    }
   }, [at]);
 
   const type = (next: string) => {
@@ -105,6 +147,29 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
     if (shown.length === 0) return;
     setActive(Math.min(Math.max(at + delta, 0), shown.length - 1));
   };
+
+  /*
+   * Paging, from the pad.
+   *
+   * `useCursorNav` dispatches `padnav` on the `[data-nav-x]` container the ring
+   * is standing in instead of moving the ring sideways. A ref to the latest
+   * `step`, so one listener outlives every render without closing over a stale
+   * highlight.
+   */
+  const stepRef = useRef(step);
+  stepRef.current = step;
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const onPage = (event: Event) => {
+      const dir = (event as CustomEvent<Dir>).detail;
+      if (dir !== "left" && dir !== "right") return;
+      ringTo.current = true;
+      stepRef.current(dir === "right" ? PAGE : -PAGE);
+    };
+    list.addEventListener("padnav", onPage);
+    return () => list.removeEventListener("padnav", onPage);
+  }, []);
 
   /*
    * The keys, and why focus stays in the field.
@@ -198,6 +263,8 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
           aria-label="Choices"
           ref={listRef}
           data-testid="combo-list"
+          // Left and Right are this list's: they page it. See `useCursorNav`.
+          data-nav-x
         >
           {shown.map((choice, index) => (
             <button
@@ -211,7 +278,14 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
               data-stop={stopId.combo(`opt:${choice.id}`)}
               disabled={disabled}
               onFocus={() => setActive(index)}
-              onClick={() => setActive(index)}
+              /*
+               * Pressed while highlighted, a row chooses -- through the
+               * Choose button, so the control carrying the id is the one
+               * that posts. On a pad the ring's landing has already
+               * highlighted it, so `A` is one press; with a mouse the
+               * mousedown focused it, so a click is one click.
+               */
+              onClick={() => (index === at ? goRef.current?.click() : setActive(index))}
             >
               {choice.label}
             </button>
@@ -242,6 +316,7 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
           type="button"
           className="btn btn--primary combo__go"
           data-testid="combo-go"
+          ref={goRef}
           /*
            * The action id only exists when a row is highlighted, and one always
            * is -- but an empty query that matched nothing has no row to bind to,

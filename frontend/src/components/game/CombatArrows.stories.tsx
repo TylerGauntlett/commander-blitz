@@ -130,3 +130,42 @@ export const FourPlayerCross: Story = {
   },
   render: () => <Board state={scenarios.fourPlayerPod().state} />,
 };
+
+/**
+ * ONE BOARD ON SCREEN: an attack from a board you cannot see is drawn from
+ * their seat.
+ *
+ * On a handheld an opponent's lanes are clipped to zero height and every card
+ * in them still reports a box, so four attackers drew four arrows from four
+ * phantom points under the seat strip. A hidden card's end is its controller's
+ * `[data-player]` now, and four links to the same pair of elements are one
+ * arrow: seat to orb.
+ */
+export const HandheldHiddenAttackers: Story = {
+  args: { state: scenarios.combatDeclareBlockers().state, boardRef: { current: null } },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  render: () => <Board state={scenarios.combatDeclareBlockers().state} />,
+  play: async ({ canvasElement }) => {
+    await waitFor(
+      () => {
+        const arrows = [...canvasElement.querySelectorAll<SVGPathElement>("path.arrow")];
+        expect(arrows, "four hidden attackers are one arrow").toHaveLength(1);
+        const start = /^M ([\d.]+) ([\d.]+)/.exec(arrows[0].getAttribute("d") ?? "");
+        expect(start).not.toBeNull();
+        if (!start) return;
+        const board = canvasElement.querySelector(".play") as HTMLElement;
+        const origin = board.getBoundingClientRect();
+        const seat = canvasElement.querySelector('[data-player="1"]') as HTMLElement;
+        const box = seat.getBoundingClientRect();
+        const x = Number(start[1]) + origin.left;
+        const y = Number(start[2]) + origin.top;
+        expect(x, "the arrow starts inside their seat").toBeGreaterThanOrEqual(box.left);
+        expect(x).toBeLessThanOrEqual(box.right);
+        expect(y).toBeGreaterThanOrEqual(box.top);
+        expect(y).toBeLessThanOrEqual(box.bottom);
+      },
+      { timeout: 3000 },
+    );
+  },
+};

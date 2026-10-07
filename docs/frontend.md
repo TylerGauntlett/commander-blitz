@@ -319,6 +319,15 @@ gradient the art sits on, which on the ~4% of cards with no printing is the whol
 card. A land's frame narrows to the colour it taps for and its produced-mana
 symbols go large and centre-frame, so a lane of lands reads without reading a name.
 
+**The rules text keeps its lines.** The engine puts the keyword line first and a
+newline after it; every card face is `pre-wrap`, and so is the handheld reader's
+rules box. **The hourglass discounts haste** (`isSummoningSick`): the server sends
+the raw entered-this-turn flag and the engine's `can_attack` subtracts haste on
+top of it, so the face, the reader's status and the stack key do the same. **The
+`Y` hold is a card's shape on a handheld** — a 5:7 frame with the rules scrolling
+inside it, by the right stick — where the desktop hold is as tall as its text on
+purpose.
+
 **Mana symbols are the real ones.** Scryfall publishes every card symbol as SVG
 from an open endpoint; `frontend/scripts/fetch-symbols.py` pulls them and they are
 vendored into `frontend/public/symbols/`, under the same architecture as the card
@@ -484,23 +493,32 @@ past the fold of the scroller was unreachable rather than merely awkward.
 
 Above `COMBO_MIN` (12) options, and only when no option carries a card face,
 `ChoiceCombo` takes over: a filter field over one vertical A–Z list, with a Choose button
-in a rail beside it. A card-bearing prompt keeps its grid of faces however long it is —
-choosing what to sacrifice should look like looking at your board, and a face is not a
-combobox row.
+in a commit row under it, bottom right like every other dialog. A card-bearing prompt
+keeps its grid of faces however long it is — choosing what to sacrifice should look like
+looking at your board, and a face is not a combobox row.
 
 Three things about it are load-bearing:
 
-- **The rows select; only the Choose button acts.** It is the one control in the dialog
+- **Only the Choose button carries an action.** It is the one control in the dialog
   carrying `data-action-id`, bound to whatever row is highlighted, so the panel's
   invariant reads 1 action rather than 199 — and `full-game.spec.ts`, which drives a whole
   game by clicking legal actions, answers the prompt with the first type rather than
   stalling on a decision with no clickable surface. The first visible row starts
-  highlighted for exactly that reason.
+  highlighted for exactly that reason. A row pressed *while highlighted* chooses, by
+  pressing that button: on a pad the ring's landing has already highlighted it, so `A` is
+  one press, and with a mouse the mousedown focused it, so a click is one click. `X`
+  presses the button from the filter field, where `A` means typing.
 - **`onFocus` on a row is what highlights it.** `cursor.stamp` focuses the stop the ring
   lands on, so walking the ring down the list moves the highlight and relabels the button
-  — no second pad listener to keep in step with `useCursorNav`. The rail sits to the
-  *right* of the list so a right press reaches Choose from any row; underneath, it would
-  be four hundred rows away.
+  — no second pad listener to keep in step with `useCursorNav`.
+- **Left and Right page the list by ten.** `useCursorNav` hands the horizontal axis to
+  any `[data-nav-x]` container the ring is standing in as a `padnav` DOM event rather
+  than moving the ring — the same reasoning that makes `A` a click — and the combo moves
+  its highlight and sends the ring after it, once the row has scrolled into view. The
+  commit row used to sit to the *right* of the list so a right press reached it; it was
+  the one dialog whose commit was not bottom right, and since its label names the
+  highlighted row it was the only thing deciding the dialog's width, which made the whole
+  panel breathe as the ring walked. The dialog holds one width while it has a combo in it.
 - **The fold always cuts a row in half.** `.combo__list` is sized at eight and a half rows
   of *pitch* (row + gap, plus its padding), because a whole number of rows leaves the next
   one clipped to nothing — and a stop clipped to nothing is a wall the ring cannot cross
@@ -658,6 +676,16 @@ is what made playing it feel like it needed spamming. Only a genuine in-flight r
 gates input now. Skip empties the queue *and* puts the board back at rest, because the
 physical effects below run on their own clocks past the end of the beat that started
 them.
+
+**A card you cannot see is its owner's seat.** On a handheld only one board is
+drawn: an opponent's cards are in the document, clipped to a zero-height lane,
+and still report a box. `stops.ts:visibleBox` asks the ring's own on-screen
+question, and both `CombatArrows` and `FxLayer` anchor through it. An arrow's
+hidden end becomes the controller's `[data-player]` — deduped, so five attackers
+from a hidden board are one seat-to-orb arrow. A combat hit whose source is
+hidden lands on the visible receiver, as a burn spell's does; one whose receiver
+is hidden draws nothing. The viewer's own panel never moves while viewing a
+seat: the "Viewing" strip sits over the viewed lanes only (`seat.css`).
 
 ### Effects are concurrent, not queued
 
@@ -1334,8 +1362,13 @@ walking the board as "a bad way to ask can you reach everything": reachable and
 reachable-in-under-a-second are different properties, and only the second is
 playable.
 
-`L1`/`R1` step between five regions — hand, actions, opponents, you, board — and
-trap the ring inside the one it is in. **A region is a container, not a stop-id
+`L1`/`R1` step between six regions — hand, actions, the stack, opponents, you,
+board — and trap the ring inside the one it is in. The stack is a region exactly
+while something is on it: its plies are `stack:<sid>` stops (`StackPanel`), the
+reader follows them, `A` and `Y` read them, and a counterspell's target resolves
+on a ply the way it does on a board card. Before that the stack was the one
+thing on the board the ring could not stand on, and so the one card you could
+not read before deciding whether to answer it. **A region is a container, not a stop-id
 prefix**, because `card:<oid>` is a hand card AND a board card AND a stack item
 AND a prompt option: the namespace says what a stop *is* rather than where it
 lives, which is the whole reason the ring survives a permanent changing zone.
@@ -1386,6 +1419,17 @@ seat's commander — in Commander the deck is the commander.
 > bar can say against `pad.boundButtons()`.
 
 ### How many presses a decision costs
+
+**Which ability is asked on the board** (`logic/abilities.ts`). A press on a
+permanent with one untargeted ability activates it; with one that needs a target
+it enters targeting on exactly that ability's ids and follows up to the target;
+with two or more it opens `AbilityMenu`, a decision dialog like any other, whose
+items decide and whose ids stay on the panel rows. `X` asks the same router,
+where it used to post the first `activate` action it found. The panel rows draw
+the card's name on one faint line and the ability text under it (`abilityText`
+takes the `"<Card>: "` prefix off the engine's label), and on a handheld the
+target chips stack one per line so a held down-press walks them — the same shape
+as a planeswalker's loyalty rows, which already did.
 
 Reaching a control and reaching it in two presses are different properties, and
 for eight loops only the first had a gate. Every check asked "is this a stop",

@@ -241,6 +241,7 @@ export const HandheldViewingAnOpponent: Story = {
 
     expect(counts().duplicateOids, "before").toEqual([]);
     expect(counts().duplicatePlayers, "before").toEqual([]);
+    const orbTopBefore = canvasElement.querySelector(".orb")?.getBoundingClientRect().top;
 
     await userEvent.click(await canvas.findByTestId("player-1"));
 
@@ -252,6 +253,26 @@ export const HandheldViewingAnOpponent: Story = {
 
     expect(counts().duplicateOids, "while viewing").toEqual([]);
     expect(counts().duplicatePlayers, "while viewing").toEqual([]);
+
+    /*
+     * YOUR PANEL DOES NOT MOVE, AND NONE OF IT LEAVES THE SCREEN.
+     *
+     * The strip used to take a full-width row above both mats, which pushed
+     * the orb down by its height -- and on a handheld the side column is sized
+     * to the container, so the last row of piles (graveyard, command zone)
+     * went below the fold. The strip sits over their lanes only now.
+     */
+    const orb = canvasElement.querySelector(".orb") as HTMLElement;
+    expect(orb.getBoundingClientRect().top, "the orb did not jump").toBe(orbTopBefore);
+    const mine = canvasElement.querySelector(".play__mine") as HTMLElement;
+    const piles = [...orb.querySelectorAll<HTMLElement>(".pile")];
+    expect(piles.length).toBeGreaterThan(0);
+    for (const pile of piles) {
+      expect(
+        pile.getBoundingClientRect().bottom,
+        `${pile.textContent} is below the fold`,
+      ).toBeLessThanOrEqual(mine.getBoundingClientRect().bottom + 1);
+    }
 
     // The strip carries the way back, and it is not an action id: coming home
     // is not a move in the game.
