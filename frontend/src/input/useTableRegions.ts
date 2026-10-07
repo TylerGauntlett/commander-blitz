@@ -166,8 +166,12 @@ export function useTableRegions({
     const dock = document.querySelector<HTMLElement>(".commit-dock");
     if (!dock) return;
     const stops = landableStopsIn(dock);
+    // Combat lands on its "all" mark (above); anything else on the slab, which
+    // is the button that ends the decision -- a pick-several dock has a mark
+    // to its left too, and that one is a convenience, not the answer.
     const all = stops.find((el) => el.dataset.stop === stopId.commitMark("all"));
-    const slab = (all ?? stops[0])?.dataset.stop;
+    const commit = stops.find((el) => el.classList.contains("commit"));
+    const slab = (all ?? commit ?? stops[0])?.dataset.stop;
     if (slab) setCursor(slab);
   }, [enterGroup, cue]);
 

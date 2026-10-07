@@ -82,6 +82,7 @@ describe("rendered surfaces", () => {
         actions={actions}
         onAct={noop}
         onStage={noop}
+        onChoose={noop}
         onDeclare={noop}
         onUndo={noop}
         onQuit={noop}
@@ -113,7 +114,6 @@ describe("rendered surfaces", () => {
     const state = gameView({ pending: decision, players: [player({ pid: 0 })] });
     const { container } = render(
       <PromptDialog
-        onChoose={() => undefined}
         state={state}
         actions={[action({ id: "p1", kind: "choose", choice: 0 })]}
         onAct={noop}
@@ -138,13 +138,7 @@ describe("rendered surfaces", () => {
      */
     const { state, actions } = chooseType();
     const { container } = render(
-      <PromptDialog
-        onChoose={() => undefined}
-        state={state}
-        actions={actions}
-        onAct={noop}
-        disabled={false}
-      />,
+      <PromptDialog state={state} actions={actions} onAct={noop} disabled={false} />,
     );
     const { ids, stops } = stopsAndIds(container);
 
@@ -163,6 +157,7 @@ describe("rendered surfaces", () => {
         actions={actions}
         onAct={noop}
         onStage={noop}
+        onChoose={noop}
         onDeclare={noop}
         onUndo={noop}
         onQuit={noop}
@@ -201,6 +196,7 @@ describe("rendered surfaces", () => {
         actions={actions}
         onAct={noop}
         onStage={noop}
+        onChoose={noop}
         onDeclare={noop}
         onUndo={noop}
         onQuit={noop}
@@ -243,6 +239,7 @@ describe("rendered surfaces", () => {
         actions={actions}
         onAct={noop}
         onStage={noop}
+        onChoose={noop}
         onDeclare={noop}
         onUndo={noop}
         onQuit={noop}
@@ -297,6 +294,7 @@ describe("rendered surfaces", () => {
         actions={actions}
         onAct={noop}
         onStage={noop}
+        onChoose={noop}
         onDeclare={noop}
         onUndo={noop}
         onQuit={noop}

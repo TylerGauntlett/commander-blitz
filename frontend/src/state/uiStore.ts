@@ -146,6 +146,13 @@ interface UiState {
   stagedAttacks: Record<number, number>;
   /** blocker oid -> attacker oid, staged before "Confirm blocks". */
   stagedBlocks: Record<number, number>;
+  /**
+   * The set being built for a pick-several decision, as option ordinals, and
+   * the decision it belongs to (`logic/pickSeveral.pickKey`). Here rather
+   * than in the panel so the board's cards can toggle it, the way they stage
+   * an attacker.
+   */
+  picked: { key: string; choices: number[] };
   /** Stack group currently fanned open, keyed by `stackKey`. */
   openStack: string | null;
 
@@ -239,6 +246,9 @@ interface UiState {
   stageBlock: (blocker: number, attacker: number) => void;
   unstageBlock: (blocker: number) => void;
   clearStaging: () => void;
+  /** Put an option in the set, or take it out; a full set takes nothing more. */
+  togglePick: (key: string, choice: number, max: number) => void;
+  setPicked: (key: string, choices: number[]) => void;
 
   setImages: (images: ImageMap, seatImages?: SeatImages) => void;
   openStackGroup: (key: string | null) => void;
@@ -261,6 +271,7 @@ export const useUiStore = create<UiState>((set) => ({
   targetingActionIds: [],
   stagedAttacks: {},
   stagedBlocks: {},
+  picked: { key: "", choices: [] },
   openStack: null,
   images: null,
   seatImages: null,
@@ -300,10 +311,21 @@ export const useUiStore = create<UiState>((set) => ({
       return { stagedBlocks: next };
     }),
 
+  togglePick: (key, choice, max) =>
+    set((s) => {
+      const now = s.picked.key === key ? s.picked.choices : [];
+      if (now.includes(choice))
+        return { picked: { key, choices: now.filter((c) => c !== choice) } };
+      if (now.length >= max) return {};
+      return { picked: { key, choices: [...now, choice] } };
+    }),
+  setPicked: (key, choices) => set({ picked: { key, choices } }),
+
   clearStaging: () =>
     set({
       stagedAttacks: {},
       stagedBlocks: {},
+      picked: { key: "", choices: [] },
       selectedOid: null,
       targetingActionIds: [],
       openStack: null,

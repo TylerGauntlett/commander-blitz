@@ -16,7 +16,20 @@ import { actionAttrs, stopId } from "../../input/stops";
 import { bouncy } from "../../motion/springs";
 import { ActionIcon } from "../ui/ActionIcon";
 
-type Mode = "attack" | "block" | "play" | "chooseX";
+type Mode = "attack" | "block" | "play" | "chooseX" | "pick";
+
+/** A pick-several set in progress. See `logic/pickSeveral.ts`. */
+export interface PickDock {
+  count: number;
+  max: number;
+  full: boolean;
+  /** Enough is in the set to send: a floor of zero for "any number". */
+  ready: boolean;
+  /** The action the slab carries, so it is a real `data-action-id` control. */
+  carrier: LegalAction | null;
+  onAll: () => void;
+  onConfirm: () => void;
+}
 
 interface Props {
   mode: Mode;
@@ -36,6 +49,7 @@ interface Props {
   commit: LegalAction | null;
   xAction: LegalAction | null;
   clampedX: number;
+  pick: PickDock | null;
   onAct: (actionId: string) => void;
   onDeclare: (kind: "attackers" | "blockers", pairs: [number, number][]) => void;
 }
@@ -58,6 +72,7 @@ export function CommitDock({
   commit,
   xAction,
   clampedX,
+  pick,
   onAct,
   onDeclare,
 }: Props) {
@@ -123,15 +138,58 @@ export function CommitDock({
           ? `${attackPairs.length} attacking`
           : mode === "block"
             ? `${blockPairs.length} blocked of ${Object.keys(state.combat?.attackers ?? {}).length}`
-            : // Empty, and the row is held open by `.commit-note`'s
-              // `min-height: 1lh` rather than by a non-breaking space. A
-              // NBSP works and formats down to an invisible character in
-              // this file, which is a thing the next person deletes by
-              // accident; one mechanism in the stylesheet is better than
-              // two, one of which cannot be seen.
-              ""}
+            : mode === "pick" && pick
+              ? `${pick.count} chosen of up to ${pick.max}`
+              : // Empty, and the row is held open by `.commit-note`'s
+                // `min-height: 1lh` rather than by a non-breaking space. A
+                // NBSP works and formats down to an invisible character in
+                // this file, which is a thing the next person deletes by
+                // accident; one mechanism in the stylesheet is better than
+                // two, one of which cannot be seen.
+                ""}
       </p>
-      {mode === "chooseX" ? (
+      {mode === "pick" && pick ? (
+        /*
+          THE ATTACK DOCK'S SHAPE: the "all" mark, then the slab that sends
+          the set. No third mark -- "none" is the slab itself pressed with
+          nothing in the set, which says "Choose none" so it is not a guess.
+
+          The slab carries the decision's one `data-action-id` (`Done`, or
+          any choose action), so `L2` -- `jumpToCommit` -- finds it, and lands
+          on it rather than on the mark: here the mark is a convenience and
+          the slab is the decision.
+        */
+        <div className="bar">
+          <button
+            type="button"
+            className="commit-mark"
+            data-stop={stopId.commitMark("pick-all")}
+            data-testid="pick-all"
+            disabled={disabled || pick.max === 0}
+            onClick={pick.onAll}
+            aria-label={pick.full ? "Clear" : `All (${pick.max})`}
+            data-hint={pick.full ? "Take everything back out" : "Choose everything you can"}
+          >
+            <ActionIcon name={pick.full ? "skip" : "all"} />
+          </button>
+          <motion.button
+            type="button"
+            className="commit"
+            {...(pick.carrier ? actionAttrs(pick.carrier.id) : { "data-stop": stopId.commit })}
+            data-action-kind={pick.carrier?.kind}
+            disabled={disabled || !pick.ready}
+            onClick={pick.onConfirm}
+            whileHover={disabled ? undefined : { y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            transition={bouncy}
+            data-testid="pick-confirm"
+          >
+            <span className="commit__main">
+              {pick.count === 0 ? "Choose none" : `Confirm ${pick.count}`}
+            </span>
+          </motion.button>
+        </div>
+      ) : mode === "chooseX" ? (
         // The only control in the document carrying an id for this decision.
         // The other twenty values are reachable through the stepper, which
         // changes which id this slab points at rather than adding more.

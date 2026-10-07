@@ -36,6 +36,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind
 from automtg.engine.errors import DslError
 from automtg.engine.structs import PROTECTION_EVERYTHING, PlayerProtection
+from tests.conftest import declare_targets
 
 COPPERCOATS = "t_coppercoats"
 LOOSE = "t_loose_coppercoats"
@@ -62,14 +63,20 @@ def table(builder, card: str = COPPERCOATS):
 
 
 def cast_at(game, seats: set[int], card: str = COPPERCOATS):
-    action = next(
+    lines = [
         a
         for a in game.legal_actions()
-        if a.kind is ActionKind.CAST
-        and game.state.objects[a.source].def_id == card
-        and {r.id for r in a.targets} == seats
-    )
-    game.apply(action)
+        if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == card
+    ]
+    exact = next((a for a in lines if {r.id for r in a.targets} == seats), None)
+    if exact is not None:
+        game.apply(exact)
+        return
+    # "Any number of target opponents" with no per-player cap is declared as
+    # the cast happens (`casting.deferred_target_spec`): one line, then the set.
+    (line,) = lines
+    game.apply(line)
+    declare_targets(game, *seats)
 
 
 def respond(game, protect: set[int] = frozenset()):

@@ -532,8 +532,16 @@ def enumerate_target_tuples(
     bindings: Mapping[str, Any] | None = None,
     size_cap: int | None = None,
     x: int = 0,
+    defer: TargetSpec | None = None,
 ) -> list[tuple[TargetRef, ...]]:
     """Every legal combination of targets, capped at ``limit``.
+
+    ``defer`` is a spec this enumeration leaves **empty**, because the cast
+    asks for it instead -- `casting.deferred_target_spec` says which, and
+    `Game._ask_deferred_targets` asks. "Any number of target nonland
+    permanents you control" is every subset of a board, and with the cap below
+    a six-permanent Clever Concealment offered eleven of its sixty-three: the
+    set the player wanted was usually not on the list at all.
 
     With no ``limit`` given, ``MAX_TARGET_OPTIONS`` -- except for one spec
     asking for one target, which is uncapped. The cap is there for the
@@ -589,7 +597,9 @@ def enumerate_target_tuples(
     for spec in specs:
         linked = bool(prior) and _names_a_sibling(spec.selector, prior)
         shared = (
-            None
+            [()]
+            if spec is defer
+            else None
             if linked
             else _spec_options(
                 state,

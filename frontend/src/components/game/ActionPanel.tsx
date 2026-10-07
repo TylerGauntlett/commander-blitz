@@ -39,9 +39,11 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction } from "../../api/types";
+import { setCursor } from "../../input/cursor";
+import { actionAttrs } from "../../input/stops";
 import {
   availableAttackers,
   availableBlockers,
@@ -52,6 +54,13 @@ import { sensibleAttacks } from "../../logic/autoAttack";
 import { autoBlocks } from "../../logic/autoBlock";
 import { statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
+import {
+  isPickSeveral,
+  type PickOption,
+  pickCarrier,
+  pickKey,
+  pickOptions,
+} from "../../logic/pickSeveral";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -59,6 +68,7 @@ import { useHandheldLayout } from "../../state/useHandheld";
 import { AttackRows } from "./AttackRows";
 import { BlockGroups } from "./BlockGroups";
 import { CommitDock } from "./CommitDock";
+import { PickRows, pickStop } from "./PickRows";
 import { PlayRows } from "./PlayRows";
 import { ToolStrip } from "./ToolStrip";
 import { XStepper } from "./XStepper";
@@ -72,7 +82,7 @@ import { XStepper } from "./XStepper";
  */
 const COMMIT_KINDS = ["keep", "yes", "pass"];
 
-type Mode = "attack" | "block" | "play" | "chooseX";
+type Mode = "attack" | "block" | "play" | "chooseX" | "pick";
 
 interface Props {
   state: GameView;
@@ -82,6 +92,8 @@ interface Props {
   /** Stage or unstage one combat pair, locally. */
   onStage: (actionId: string) => void;
   onDeclare: (kind: "attackers" | "blockers", pairs: [number, number][]) => void;
+  /** Commit a pick-several set, as option ordinals. See `logic/pickSeveral.ts`. */
+  onChoose: (choices: number[]) => void;
   onUndo: () => void;
   onQuit: () => void;
   onToggleFullControl: (value: boolean) => void;
@@ -110,6 +122,7 @@ export function ActionPanel({
   onAct,
   onStage,
   onDeclare,
+  onChoose,
   onUndo,
   onQuit,
   onToggleFullControl,
@@ -194,7 +207,9 @@ export function ActionPanel({
         ? "block"
         : mine && pending.kind === "choose_x"
           ? "chooseX"
-          : "play";
+          : isPickSeveral(state)
+            ? "pick"
+            : "play";
   const isCombat = mode === "attack" || mode === "block";
 
   const card = (oid: number): CardView | null => findCard(state, oid);
@@ -360,6 +375,71 @@ export function ActionPanel({
     for (const { blocker, attacker } of newBlocks) stageBlock(blocker, attacker);
   };
 
+  // -------------------------------------------------------------------- pick
+  //
+  // "Any number of target permanents" as a set, built here the way an attack
+  // is: a row per candidate, the board's cards toggling the same set, and one
+  // slab that sends it. See `logic/pickSeveral.ts`.
+
+  const picked = useUiStore((s) => s.picked);
+  const togglePick = useUiStore((s) => s.togglePick);
+  const setPicked = useUiStore((s) => s.setPicked);
+  const pickOpts = mode === "pick" ? pickOptions(state, actions) : [];
+  const pickId = mode === "pick" ? pickKey(state) : "";
+  const chosen = mode === "pick" && picked.key === pickId ? picked.choices : [];
+  const pickMax = mode === "pick" ? Math.min(pending?.max_count ?? 0, pickOpts.length) : 0;
+  const pickMin = mode === "pick" ? (pending?.min_count ?? 0) : 0;
+  const pickFull = chosen.length >= pickMax;
+  const carrier = mode === "pick" ? pickCarrier(actions) : null;
+
+  /*
+   * A PICK STEPS THE RING ON, so choosing several is A, A, A rather than
+   * A-right-A-right. Only on a pick, never an un-pick: taking one back is a
+   * correction, and the ring should stay on what was corrected. Forward to the
+   * next row still open -- wrapping, since the rows are in table order and not
+   * in any order the player chose in -- and to the slab once the set is full,
+   * because that is the only press left.
+   *
+   * Not for a mouse: `detail` is the click count, and 0 is a click nobody's
+   * pointer made -- the ring's `A` (`useCursorNav`) or a key.
+   */
+  const toggleOption = (option: PickOption, index: number, event: MouseEvent) => {
+    const on = chosen.includes(option.choice);
+    togglePick(pickId, option.choice, pickMax);
+    if (on || event.detail !== 0) return;
+    const taken = new Set([...chosen, option.choice]);
+    const next =
+      taken.size >= pickMax
+        ? undefined
+        : [...pickOpts.slice(index + 1), ...pickOpts.slice(0, index)].find(
+            (o) => !taken.has(o.choice),
+          );
+    if (next) setCursor(pickStop(next));
+    else if (carrier) setCursor(actionAttrs(carrier.id)["data-stop"]);
+  };
+
+  /*
+   * THE "ALL" MARK, the attack dock's, and a second press empties it.
+   *
+   * Fills the set in row order -- yours first -- up to the ceiling, keeping
+   * whatever is already in it. Clever Concealment's "all" is every permanent
+   * you control, which is the spell's whole purpose on a wrath; "up to two"
+   * takes the first two. Full already, the same press clears, so the mark is
+   * never dead.
+   */
+  const pickAll = () => {
+    if (pickFull) {
+      setPicked(pickId, []);
+      return;
+    }
+    const filled = [...chosen];
+    for (const option of pickOpts) {
+      if (filled.length >= pickMax) break;
+      if (!filled.includes(option.choice)) filled.push(option.choice);
+    }
+    setPicked(pickId, filled);
+  };
+
   /** Total power aimed at this seat, so the stakes are a number rather than a count. */
   const incomingPower = Object.entries(state.combat?.attackers ?? {})
     .filter(([, defender]) => defender === state.seat)
@@ -462,7 +542,11 @@ export function ActionPanel({
       ? "Click a creature to send it. Click again to call it back."
       : mode === "block"
         ? "Click the attacker you want each creature to block."
-        : null;
+        : mode === "pick"
+          ? pickMin === pickMax
+            ? `Choose ${pickMax}. Click one again to take it back.`
+            : `Choose up to ${pickMax}. Click one again to take it back.`
+          : null;
 
   /*
    * The dock, in whichever parent it belongs to this session.
@@ -561,6 +645,19 @@ export function ActionPanel({
             />
           )}
 
+          {mode === "pick" && (
+            <PickRows
+              state={state}
+              options={pickOpts}
+              chosen={chosen}
+              full={pickFull}
+              disabled={disabled}
+              onToggle={toggleOption}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
+
           {mode === "chooseX" && (
             <XStepper
               clampedX={clampedX}
@@ -641,6 +738,19 @@ export function ActionPanel({
           commit={commit}
           xAction={xAction}
           clampedX={clampedX}
+          pick={
+            mode === "pick"
+              ? {
+                  count: chosen.length,
+                  max: pickMax,
+                  full: pickFull,
+                  ready: chosen.length >= pickMin,
+                  carrier,
+                  onAll: pickAll,
+                  onConfirm: () => onChoose(chosen),
+                }
+              : null
+          }
           onAct={onAct}
           onDeclare={onDeclare}
         />,

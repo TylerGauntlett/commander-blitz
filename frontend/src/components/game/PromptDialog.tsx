@@ -24,11 +24,11 @@
  */
 
 import { AnimatePresence, motion, usePresence } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
-import { setCursor } from "../../input/cursor";
-import { actionAttrs, stopId } from "../../input/stops";
+import { actionAttrs } from "../../input/stops";
 import { mulliganPhase } from "../../logic/openingHand";
+import { isPickSeveral } from "../../logic/pickSeveral";
 import { COMBO_MIN } from "../../logic/promptFilter";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
@@ -67,7 +67,11 @@ export function isModalDecision(state: GameView): boolean {
     pending.player === state.seat &&
     !state.game_over &&
     !HANDLED_ELSEWHERE.has(pending.kind) &&
-    mulliganPhase(state) === null
+    mulliganPhase(state) === null &&
+    // A set to build is the action panel's, the way an attack is -- a
+    // `choose_objects` like any other, so it cannot be named in the
+    // denylist above. See `logic/pickSeveral.ts`.
+    !isPickSeveral(state)
   );
 }
 
@@ -91,8 +95,6 @@ interface Props {
   state: GameView;
   actions: LegalAction[];
   onAct: (actionId: string) => void;
-  /** Commit a pick-several decision as one set of option ordinals. */
-  onChoose: (choices: number[]) => void;
   disabled: boolean;
 }
 
@@ -143,37 +145,6 @@ function isWall(rows: Row[]): boolean {
   return rows.length > COMBO_MIN && rows.every((row) => row.card === null);
 }
 
-/**
- * The engine purposes that are a free choice of several things on the table.
- *
- * `target` is `ask_targets`' default -- "exile up to two target artifacts",
- * "any number of target creatures" -- and `proliferate` is the same shape with
- * players in it. Discarding to hand size and the mulligan's bottoming are
- * multi-picks too, and deliberately not here: they keep answering one press at
- * a time, which is what every e2e helper that clears a board of prompts does.
- */
-const PICK_SEVERAL = new Set(["target", "proliferate"]);
-
-/**
- * Whether this decision is drawn as cards to toggle, committed by Confirm.
- *
- * The engine takes several picks one `choose` at a time and closes the
- * decision on the last allowed one -- fine for an agent, and no way to change
- * your mind for a person. So the dialog keeps the set itself and sends it whole
- * through `onChoose`. Only before the first pick: a decision already part
- * answered some other way is finished the way it was started.
- */
-function isPickSeveral(pending: NonNullable<GameView["pending"]>, rows: Row[]): boolean {
-  const purpose = pending.context?.purpose;
-  return (
-    pending.max_count > 1 &&
-    pending.selected.length === 0 &&
-    typeof purpose === "string" &&
-    PICK_SEVERAL.has(purpose) &&
-    rows.some((row) => row.action.choice !== null)
-  );
-}
-
 function choiceOf({ action, optionLabel }: Row): Choice {
   return {
     id: action.id,
@@ -199,7 +170,7 @@ function partition(rows: Row[]): { options: Row[]; extras: Row[] } {
   };
 }
 
-export function PromptDialog({ state, actions, onAct, onChoose, disabled }: Props) {
+export function PromptDialog({ state, actions, onAct, disabled }: Props) {
   const pending = state.pending;
   const open = isModalDecision(state) && actions.length > 0;
   // Only while it is up: `findCard` walks the zones per action, and `Table`
@@ -211,13 +182,7 @@ export function PromptDialog({ state, actions, onAct, onChoose, disabled }: Prop
   return (
     <AnimatePresence>
       {open && pending && (
-        <PromptSurface
-          pending={pending}
-          rows={rows}
-          onAct={onAct}
-          onChoose={onChoose}
-          disabled={disabled}
-        />
+        <PromptSurface pending={pending} rows={rows} onAct={onAct} disabled={disabled} />
       )}
     </AnimatePresence>
   );
@@ -227,7 +192,6 @@ interface SurfaceProps {
   pending: NonNullable<GameView["pending"]>;
   rows: Row[];
   onAct: (actionId: string) => void;
-  onChoose: (choices: number[]) => void;
   disabled: boolean;
 }
 
@@ -263,7 +227,7 @@ const EXIT_MS = 320;
  * nobody's completion, and `safeToRemove` runs on a timer. A lost fade means
  * a cut, never a dialog left over the board.
  */
-function PromptSurface({ pending, rows, onAct, onChoose, disabled }: SurfaceProps) {
+function PromptSurface({ pending, rows, onAct, disabled }: SurfaceProps) {
   const [present, safeToRemove] = usePresence();
   // Through a ref, and keyed on `present` ALONE: `safeToRemove` is rebuilt on
   // every render of the presence boundary, and a timer restarted on each state
@@ -299,7 +263,7 @@ function PromptSurface({ pending, rows, onAct, onChoose, disabled }: SurfaceProp
       >
         <header className="prompt__head">
           <h2 className="prompt__title">{pending.prompt || pending.kind}</h2>
-          {pending.max_count > 1 && !isPickSeveral(pending, rows) && (
+          {pending.max_count > 1 && (
             <p className="prompt__hint">
               Choose{" "}
               {pending.min_count === pending.max_count
@@ -310,17 +274,7 @@ function PromptSurface({ pending, rows, onAct, onChoose, disabled }: SurfaceProp
           )}
         </header>
 
-        {isPickSeveral(pending, rows) ? (
-          /* Keyed by the decision, so a new question starts with nothing on. */
-          <PickSeveral
-            key={`${pending.kind}:${pending.prompt}`}
-            pending={pending}
-            options={options}
-            extras={extras}
-            onChoose={onChoose}
-            disabled={disabled}
-          />
-        ) : isWall(options) ? (
+        {isWall(options) ? (
           /*
            * Keyed by the decision, so a new question arrives with an empty
            * field and the first row highlighted. Without it the query typed
@@ -370,141 +324,4 @@ function PromptSurface({ pending, rows, onAct, onChoose, disabled }: SurfaceProp
       </motion.div>
     </motion.div>
   );
-}
-
-interface PickProps {
-  pending: NonNullable<GameView["pending"]>;
-  options: Row[];
-  extras: Row[];
-  onChoose: (choices: number[]) => void;
-  disabled: boolean;
-}
-
-/**
- * "Choose up to two": every candidate once, as a card to toggle.
- *
- * What it replaced was the subset enumeration drawn as buttons -- "Ghostly
- * Prison, Map", "Ghostly Prison, Bident of Thassa" -- both sides of the table
- * mixed in no order, no art, and past the option cap the pair you wanted was
- * not on the list at all.
- *
- * Yours first, then each opponent's, so the cards read the way the table does.
- * The toggles are stops (`card:` for a permanent, so the reader follows the
- * ring onto it; `combo:` for a player) and NOT actions: Confirm is the one
- * control carrying `data-action-id`, the same split `ChoiceCombo` makes. It
- * wears the id of `Done` when there is one, which is what committing nothing
- * means.
- */
-function PickSeveral({ pending, options, extras, onChoose, disabled }: PickProps) {
-  const [chosen, setChosen] = useState<number[]>([]);
-  const { min_count: min, max_count: max } = pending;
-  const full = chosen.length >= max;
-  const ready = chosen.length >= min && chosen.length <= max;
-  const done = extras.find((row) => row.action.kind === "finish_declaration") ?? null;
-  // Something the server offered has to carry the id; any choose action will
-  // do when there is no Done, because the click sends the set, not the id.
-  const carrier = done?.action ?? options[0]?.action;
-
-  const ordered = [...options].sort(
-    (a, b) => ownerRank(a, pending.player) - ownerRank(b, pending.player),
-  );
-
-  const toggle = (choice: number) =>
-    setChosen((now) =>
-      now.includes(choice) ? now.filter((c) => c !== choice) : full ? now : [...now, choice],
-    );
-
-  const stopFor = ({ action, card }: Row) =>
-    card ? stopId.card(card.oid) : stopId.combo(`pick:${action.choice as number}`);
-
-  /*
-   * A PICK STEPS THE RING ON, so choosing several is A, A, A rather than
-   * A-right-A-right. Only on a pick, never an un-pick: taking one back is a
-   * correction, and the ring should stay on what was corrected. Forward to the
-   * next card still open to choose -- wrapping, since the list is in table
-   * order and not in any order the player chose in -- and to Confirm once the
-   * pick is full or nothing is left, because that is the only press left.
-   *
-   * Not for a mouse: `detail` is the click count, and 0 is a click nobody's
-   * pointer made -- the ring's `A` (`useCursorNav`) or a key. A mouse player
-   * has no visible ring, and moving it would move the reader under them.
-   */
-  const advance = (index: number) => {
-    const taken = new Set([...chosen, ordered[index].action.choice as number]);
-    const nowFull = taken.size >= max;
-    const next = nowFull
-      ? undefined
-      : [...ordered.slice(index + 1), ...ordered.slice(0, index)].find(
-          (row) => !taken.has(row.action.choice as number),
-        );
-    if (next) setCursor(stopFor(next));
-    else if (carrier) setCursor(actionAttrs(carrier.id)["data-stop"]);
-  };
-
-  return (
-    <>
-      <p className="prompt__hint" data-testid="pick-count">
-        {min === max
-          ? `Choose ${max}`
-          : min === 0
-            ? `Choose up to ${max}`
-            : `Choose ${min}\u2013${max}`}
-        {` \u00b7 ${chosen.length} chosen`}
-      </p>
-      <div className="prompt__options" data-testid="pick-several">
-        {ordered.map((row, index) => {
-          const { action, card, playerName } = row;
-          const choice = action.choice as number;
-          const on = chosen.includes(choice);
-          return (
-            <button
-              type="button"
-              key={action.id}
-              className={card ? "opt opt--card opt--toggle" : "opt opt--toggle"}
-              data-stop={stopFor(row)}
-              aria-pressed={on}
-              data-on={on || undefined}
-              disabled={disabled || (full && !on)}
-              onClick={(event) => {
-                toggle(choice);
-                if (!on && event.detail === 0) advance(index);
-              }}
-            >
-              {card ? (
-                <StaticCard card={card} variant="detail" onSurface />
-              ) : (
-                <span className="opt__label">
-                  {playerName ? `${action.label} (${playerName})` : action.label}
-                </span>
-              )}
-              {on && (
-                <span className="opt__check" aria-hidden="true">
-                  {"\u2713"}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-      <div className="prompt__commit">
-        <button
-          type="button"
-          className="btn btn--primary"
-          data-testid="pick-confirm"
-          {...(carrier ? actionAttrs(carrier.id) : {})}
-          data-action-kind={carrier?.kind}
-          disabled={disabled || !ready}
-          onClick={() => onChoose(chosen)}
-        >
-          {chosen.length === 0 ? "Choose none" : `Confirm ${chosen.length}`}
-        </button>
-      </div>
-    </>
-  );
-}
-
-/** Yours, then everybody else's, then players: the order the table reads in. */
-function ownerRank(row: Row, seat: number): number {
-  if (row.card === null) return 2;
-  return row.card.controller === seat ? 0 : 1;
 }

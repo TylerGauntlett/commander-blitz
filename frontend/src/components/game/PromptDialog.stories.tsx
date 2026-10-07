@@ -11,7 +11,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, userEvent, within } from "storybook/test";
 import { noteInput, resetInputMode } from "../../input/inputMode";
 import { expectHandheldFloors, expectUniqueActionIds, settled } from "../../testing/asserts";
 import { action, gameView, pending } from "../../testing/fixtures";
@@ -22,7 +22,7 @@ const meta = {
   title: "Game/PromptDialog",
   component: PromptDialog,
   parameters: { automtg: { mount: "screen" } },
-  args: { onAct: fn(), onChoose: fn(), disabled: false },
+  args: { onAct: fn(), disabled: false },
 } satisfies Meta<typeof PromptDialog>;
 
 export default meta;
@@ -106,55 +106,6 @@ export const DiscardToHandSize: Story = {
     // Two of nine: the range has to be stated, or "choose" is ambiguous.
     expect(dialog.textContent).toMatch(/2/);
     expectUniqueActionIds(canvasElement);
-  },
-};
-
-/** "Up to two target artifacts and/or enchantments": cards to toggle, then Confirm. */
-export const ChooseSeveralTargets: Story = {
-  args: {
-    state: scenarios.chooseSeveralTargets().state,
-    actions: scenarios.chooseSeveralTargets().actions,
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const grid = await canvas.findByTestId("pick-several");
-    const toggles = within(grid).getAllByRole("button");
-    await userEvent.click(toggles[0]);
-    await userEvent.click(toggles[3]);
-    await userEvent.click(canvas.getByTestId("pick-confirm"));
-    expect(args.onChoose).toHaveBeenCalledTimes(1);
-  },
-};
-
-/**
- * A pick steps the ring on: choosing several is A, A, then Confirm.
- *
- * `.click()` is the ring's `A` (`useCursorNav`), a click with no pointer
- * behind it. The first pick moves to the next card, the one that fills the
- * set moves to Confirm, and an un-pick stays where it is.
- */
-export const ChooseSeveralStepsTheRing: Story = {
-  args: {
-    state: scenarios.chooseSeveralTargets().state,
-    actions: scenarios.chooseSeveralTargets().actions,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const grid = await canvas.findByTestId("pick-several");
-    const toggles = within(grid).getAllByRole("button");
-    const ringOn = () => canvasElement.querySelector<HTMLElement>("[data-cursor]");
-
-    toggles[0].click();
-    await waitFor(() => expect(ringOn()).toBe(toggles[1]));
-
-    toggles[0].click();
-    await waitFor(() => expect(toggles[0].getAttribute("aria-pressed")).toBe("false"));
-    expect(ringOn(), "an un-pick does not move the ring").toBe(toggles[1]);
-
-    toggles[1].click();
-    await waitFor(() => expect(ringOn()).toBe(toggles[2]));
-    toggles[2].click();
-    await waitFor(() => expect(ringOn()?.getAttribute("data-testid")).toBe("pick-confirm"));
   },
 };
 

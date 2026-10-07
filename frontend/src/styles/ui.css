@@ -306,6 +306,28 @@
   margin-left: 12px;
   width: auto;
   font-size: 12px;
+  /* So `.act__also` can take a line of its own under the verdict. */
+  flex-wrap: wrap;
+}
+
+/* Whose permanent a pick-several row is ("You", "AI 1"). Not `.act__type`,
+   which the handheld rail hides to buy width: here it is the only thing that
+   tells your Rhystic Study from theirs. */
+.act__owner {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* "Blocked by Llanowar Elves": another of your creatures is already on this
+   attacker. Its own line, in the staged colour, so a second blocker sees the
+   first before committing to a double block. */
+.act__also {
+  flex-basis: 100%;
+  color: var(--playable);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .act__key {
@@ -418,11 +440,13 @@
   width: 100%;
 }
 
-/* One defender, one id. Only ever rendered in a pod. */
+/* One defender, or one target, one id. A rectangle like the row it sits in:
+   on a handheld these stack into a column of full-width options, and a stack
+   of ovals under a square-cornered row read as a different kind of control. */
 .aim {
   padding: 3px 9px;
   border: 1px solid var(--edge);
-  border-radius: 999px;
+  border-radius: 5px;
   background: transparent;
   color: var(--text-dim);
   font-size: 11px;

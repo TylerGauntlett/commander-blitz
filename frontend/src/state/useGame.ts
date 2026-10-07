@@ -44,6 +44,7 @@ import { ApiError, api } from "../api/client";
 import type { GameEvent, GameView, SeatConfig, StateResponse } from "../api/types";
 import { beatsFor } from "../logic/events";
 import { playerNames } from "../logic/labels";
+import { isPickSeveral } from "../logic/pickSeveral";
 import { useNarration } from "./narration";
 import { useUiStore } from "./uiStore";
 
@@ -249,10 +250,14 @@ export function useGame(session: GameSession | null) {
       // declaration itself -- the AI pump lands here too, and wiping the staged
       // set mid-choice loses work the player has not committed yet.
       const pending = response.state.pending;
+      // A pick-several set is the same kind of half-built answer, kept for the
+      // same reason; `pickKey` drops it when the next decision is a new one.
       const stillDeclaring =
         pending !== null &&
         pending.player === response.your_seat &&
-        (pending.kind === "declare_attackers" || pending.kind === "declare_blockers");
+        (pending.kind === "declare_attackers" ||
+          pending.kind === "declare_blockers" ||
+          isPickSeveral(response.state));
       if (!stillDeclaring) clearStaging();
       setError(null);
     },
