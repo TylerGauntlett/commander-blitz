@@ -45,6 +45,12 @@ describe("stackKey", () => {
     expect(stackKey(card({ oid: 1, attacking: true }))).not.toBe(stackKey(card({ oid: 2 })));
   });
 
+  it("stacks a hasty newcomer with its ready twin: neither wears the hourglass", () => {
+    expect(stackKey(card({ oid: 1, summoning_sick: true, keywords: ["haste"] }))).toBe(
+      stackKey(card({ oid: 2, summoning_sick: false, keywords: ["haste"] })),
+    );
+  });
+
   it("separates summoning-sick from ready", () => {
     expect(stackKey(card({ oid: 1, summoning_sick: true }))).not.toBe(
       stackKey(card({ oid: 2, summoning_sick: false })),

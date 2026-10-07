@@ -11,8 +11,10 @@ import { motion } from "motion/react";
 import type { GameEvent, GameView, LegalAction } from "../../api/types";
 import { type GroupId, getGroup } from "../../input/groups";
 import { stopId } from "../../input/stops";
+import type { Gesture } from "../../logic/followUp";
 import type { NameLookup } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
+import { AbilityMenu } from "./AbilityMenu";
 import { CardHold } from "./CardHold";
 import { EventTicker } from "./EventTicker";
 import { GameOverScreen } from "./GameOverScreen";
@@ -38,6 +40,8 @@ interface Props {
   logOverlay: boolean;
   toggleLogOverlay: () => void;
   act: (actionId: string) => void;
+  /** Where the ring goes after a gesture that moved the decision elsewhere. */
+  followUp: (gesture: Gesture) => void;
   /** Commit a pick-several decision as one set of option ordinals. */
   choose: (choices: number[]) => void;
   locked: boolean;
@@ -63,6 +67,7 @@ export function TableOverlays({
   logOverlay,
   toggleLogOverlay,
   act,
+  followUp,
   choose,
   locked,
   removals,
@@ -101,6 +106,18 @@ export function TableOverlays({
       <CardHold
         card={heldCard === null ? null : findCard(state, heldCard)}
         onClose={closeHold}
+      />
+
+      {/*
+      Which ability, when a press on a permanent could mean two. Under the
+      hold, so `Y` can read the card the question is about over it.
+    */}
+      <AbilityMenu
+        state={state}
+        actions={actions}
+        act={act}
+        followUp={followUp}
+        disabled={locked}
       />
 
       {dialOpen && (

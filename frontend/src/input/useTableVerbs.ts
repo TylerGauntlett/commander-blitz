@@ -8,6 +8,7 @@
 import { useCallback } from "react";
 import type { GameView, LegalAction } from "../api/types";
 import type { SoundName } from "../audio/sfx";
+import { abilityRoute } from "../logic/abilities";
 import { defendersFor } from "../logic/actionMatch";
 import { COMMIT_TESTID, commitmentFor } from "../logic/commit";
 import { parseStop } from "../logic/verbs";
@@ -55,6 +56,9 @@ export function useTableVerbs({
   const toggleLogOverlay = useUiStore((s) => s.toggleLogOverlay);
   const settingsOpen = useUiStore((s) => s.settingsOpen);
   const setSettingsOpen = useUiStore((s) => s.setSettingsOpen);
+  const abilityMenuOid = useUiStore((s) => s.abilityMenuOid);
+  const setAbilityMenu = useUiStore((s) => s.setAbilityMenu);
+  const beginTargeting = useUiStore((s) => s.beginTargeting);
   const peek = useUiStore((s) => s.peek);
 
   /**
@@ -83,6 +87,13 @@ export function useTableVerbs({
       }
       if (heldCard !== null) {
         setHeldCard(null);
+        return true;
+      }
+      // The ability menu: a question the board press asked a moment ago, and
+      // a `data-modal-root` while it is up. Below the hold, because `Y` can
+      // open the hold over it to read the card the question is about.
+      if (abilityMenuOid !== null) {
+        setAbilityMenu(null);
         return true;
       }
       // The settings menu, next: a popover the player opened from the tool
@@ -131,6 +142,8 @@ export function useTableVerbs({
     setDialOpen,
     heldCard,
     setHeldCard,
+    abilityMenuOid,
+    setAbilityMenu,
     settingsOpen,
     setSettingsOpen,
     logOverlay,
@@ -182,6 +195,19 @@ export function useTableVerbs({
    */
   const secondary = useCallback(() => {
     const ref = parseStop(getCursor());
+    /*
+     * Inside a combobox, `X` is the Choose button. The button sits under the
+     * list, where every other dialog keeps its commit, and from the filter
+     * field -- the dialog's first stop, where `A` types -- it is the press
+     * that answers the prompt. `.click()` for the reason the dock is clicked
+     * below: the button carries the highlighted row's id and this does not.
+     */
+    if (ref.kind === "combo") {
+      document
+        .querySelector<HTMLButtonElement>('[data-testid="combo-go"]:not([disabled])')
+        ?.click();
+      return;
+    }
     const oid = ref.kind === "card" ? ref.id : null;
     if (oid !== null) {
       if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {
@@ -193,9 +219,23 @@ export function useTableVerbs({
           return;
         }
       }
-      const ability = actions.find((a) => a.source_oid === oid && a.kind === "activate");
-      if (ability) {
-        onBarAct(ability.id);
+      /*
+       * The same router the board press uses (`logic/abilities.ts`). This
+       * posted the first activate action the engine listed, which for a Mind
+       * Stone is "{T}: Add {C}" and for a targeted ability is whichever
+       * target sorted first -- a decision spent without being asked.
+       */
+      const route = abilityRoute(actions, oid);
+      if (route.kind === "act") {
+        onBarAct(route.id);
+        return;
+      }
+      if (route.kind === "target") {
+        beginTargeting(oid, route.ids);
+        return;
+      }
+      if (route.kind === "menu") {
+        setAbilityMenu(oid);
         return;
       }
     }
@@ -237,6 +277,8 @@ export function useTableVerbs({
     state,
     actions,
     stageAttack,
+    beginTargeting,
+    setAbilityMenu,
     onBarAct,
     act,
   ]);

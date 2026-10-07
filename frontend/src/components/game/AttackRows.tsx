@@ -39,16 +39,19 @@ export function AttackRows({
 }: Props) {
   return (
     <>
-      {attackers.map((attacker, index) => {
+      {attackers.map((attacker) => {
         const defenders = defendersFor(actions, attacker);
         const chosen = stagedAttacks[attacker];
         const on = chosen !== undefined;
         const single = defenders.length === 1;
         const action = single ? attackActionFor(attacker, defenders[0]) : null;
         const rowClass = ["act", "act--staged", on ? "act--on" : ""].filter(Boolean).join(" ");
+        // No `act__key` here. The rows used to number themselves 1, 2, 3 --
+        // the attacker's position in a list nothing else refers to, in the
+        // slot `PlayRows` uses for a hand card's real 1-9 key. On a handheld
+        // rail that was 19px of badge per row saying nothing.
         const body = (
           <>
-            <span className="act__key">{index + 1}</span>
             <span className="act__name">{nameOf(attacker)}</span>
             {on && <span className="act__aim">→ {state.players[chosen]?.name ?? chosen}</span>}
             {ptOf(attacker) && <span className="act__pt tabular">{ptOf(attacker)}</span>}

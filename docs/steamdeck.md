@@ -8,7 +8,8 @@ keyboard rather than a gamepad**.
 ## The symptom
 
 Only the D-pad and A do anything. The sticks are dead, the shoulder buttons do
-nothing, and the hint bar says `Enter` and `Esc` instead of `A` and `B`.
+nothing, and the hint bar (if you have turned it on) says `Enter` and `Esc`
+instead of `A` and `B`.
 
 That is Steam Input working as designed. Steam applies a controller layout to
 every non-Steam shortcut, and it recognises browsers and picks a *keyboard and
@@ -73,6 +74,14 @@ Two things make that bearable:
   handheld the game usually works this out by itself.
 - The **Regions** button in the footer opens the region dial, which `L2` would
   otherwise be the only way to reach.
+
+### The hint bar is off by default
+
+The row under the hand that says what `A`, `X`, `Y` and `B` do on the thing
+the ring is standing on is a setting, and it starts hidden: it costs a strip
+of an 800px screen for the whole game. Open the in-game **Settings** (the gear,
+or the `Menu` button) and flip **Button hints** under *Controls*. The buttons
+that never change -- move, region, decide -- are listed there too.
 
 ### The keys, if you would rather bind them yourself
 

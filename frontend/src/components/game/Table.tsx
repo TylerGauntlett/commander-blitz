@@ -220,21 +220,29 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   const { follow, setFollow, followAt, followUp } = useFollowUp();
 
-  const { playFromHand, onDropOnZone, onBoardCard, onSelectPlayer, onDeclare, onBarAct } =
-    useTableGestures({
-      state,
-      actions,
-      gateInput,
-      act,
-      cue,
-      followUp,
-      targeting,
-      targetableOids,
-      combatCandidates,
-      decisionKind,
-      inCombatDecision,
-      declareMutate,
-    });
+  const {
+    playFromHand,
+    onStackItem,
+    onDropOnZone,
+    onBoardCard,
+    onSelectPlayer,
+    onDeclare,
+    onBarAct,
+  } = useTableGestures({
+    holdCard: setHeldCard,
+    state,
+    actions,
+    gateInput,
+    act,
+    cue,
+    followUp,
+    targeting,
+    targetableOids,
+    combatCandidates,
+    decisionKind,
+    inCombatDecision,
+    declareMutate,
+  });
 
   const viewing = useViewingSeat(state, reading);
 
@@ -449,6 +457,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           locked={locked}
           hover={hover}
           onBoardCard={onBoardCard}
+          onStackItem={onStackItem}
           onSelectPlayer={onSelectPlayer}
           playFromHand={playFromHand}
         />
@@ -539,6 +548,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         logOverlay={logOverlay}
         toggleLogOverlay={toggleLogOverlay}
         act={act}
+        followUp={followUp}
         choose={choose}
         locked={locked}
         removals={removals}

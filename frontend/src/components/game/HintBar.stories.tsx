@@ -174,3 +174,18 @@ export const PlayingHandheld: Story = {
     expectHandheldFloors(canvasElement);
   },
 };
+
+/**
+ * HIDDEN UNTIL ASKED FOR. The bar is a setting now, off by default: a strip of
+ * an 800px screen for the whole game, saying what the thumbs learn in a few
+ * turns. `html[data-hints="off"]` is what a fresh install looks like.
+ */
+export const HiddenByDefault: Story = {
+  args: Playing.args,
+  globals: { input: "pad", hints: "off" },
+  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByTestId("hint-bar").getBoundingClientRect().height).toBe(0);
+  },
+};

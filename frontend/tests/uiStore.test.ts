@@ -91,3 +91,30 @@ describe("narrowTargeting", () => {
     expect(useUiStore.getState().targetingActionIds).toEqual([]);
   });
 });
+
+/**
+ * The hint bar is a setting, and it starts off.
+ *
+ * The flag is what `html[data-hints]` reads, so toggling it has to stamp the
+ * document as well as remember itself -- nothing subscribes to the attribute.
+ */
+describe("hints", () => {
+  beforeEach(() => {
+    localStorage.removeItem("automtg.hints");
+    useUiStore.setState({ hints: false });
+  });
+
+  it("starts hidden, and the document says so", () => {
+    expect(useUiStore.getState().hints).toBe(false);
+    useUiStore.getState().toggleHints();
+    useUiStore.getState().toggleHints();
+    expect(document.documentElement.getAttribute("data-hints")).toBe("off");
+  });
+
+  it("toggles on, remembers it, and stamps the document", () => {
+    useUiStore.getState().toggleHints();
+    expect(useUiStore.getState().hints).toBe(true);
+    expect(localStorage.getItem("automtg.hints")).toBe("on");
+    expect(document.documentElement.getAttribute("data-hints")).toBe("on");
+  });
+});

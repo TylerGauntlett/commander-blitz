@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  abilityText,
   actionsForCard,
   availableAttackers,
   blockableBy,
@@ -275,5 +276,23 @@ describe("isOurDecision", () => {
     });
     expect(isOurDecision(theirs)).toBe(false);
     expect(isOurDecision(gameView({ pending: null }))).toBe(false);
+  });
+});
+
+describe("abilityText", () => {
+  it("takes the card's name off the front of the engine's label", () => {
+    expect(abilityText("Mind Stone: {T}: Add {C}", "Mind Stone")).toBe("{T}: Add {C}");
+  });
+
+  it("leaves a label alone when the prefix is not the card's name", () => {
+    // The ability's own text may contain a colon; only the name comes off.
+    expect(abilityText("Mind Stone: {T}: Add {C}", "Sol Ring")).toBe(
+      "Mind Stone: {T}: Add {C}",
+    );
+    expect(abilityText("{T}: Add {C}", "Mind Stone")).toBe("{T}: Add {C}");
+  });
+
+  it("leaves a label alone when there is no card to name", () => {
+    expect(abilityText("Mind Stone: {T}: Add {C}", null)).toBe("Mind Stone: {T}: Add {C}");
   });
 });

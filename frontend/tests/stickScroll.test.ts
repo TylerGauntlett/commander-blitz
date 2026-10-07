@@ -55,6 +55,18 @@ afterEach(() => {
 });
 
 describe("which box it scrolls", () => {
+  it("scrolls a held card's rules first, wherever the ring is", () => {
+    board();
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<div data-testid="card-hold"><div class="face__rules">Long text</div></div>',
+    );
+    const held = overflowing(el('[data-testid="card-hold"] .face__rules'));
+    expect(scrollTargetFor("card:14")).toBe(held);
+    expect(scrollTargetFor("act:7")).toBe(held);
+    expect(scrollTargetFor(null)).toBe(held);
+  });
+
   it("scrolls the reader when the ring is on a card", () => {
     const { rules } = board();
     expect(scrollTargetFor("card:14")).toBe(rules);

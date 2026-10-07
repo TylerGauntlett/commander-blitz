@@ -1364,3 +1364,148 @@ board, and they were all asking the same *kind* of question. Nine gates asked
 whether a thing could be reached and none asked how far away it was — and 9.1 is
 what that blind spot costs, because a ring parked on a region with nothing in it
 satisfies every one of them.
+
+## Loop 10 — The Deck in hand
+
+**Angle.** Loops 1–9 were played against a 1280×800 window. This one is a
+list of thirteen things a Steam Deck in the hand turned up, and every one of
+them is a place where the compact layout was *correct* and still wrong: the
+rule was right, the geometry was right, and the player could not act on it.
+Four groups: activated abilities, the chrome around the board, reading a card,
+and the one-board-at-a-time layout.
+
+_Reported from a Deck in gaming mode, then reproduced in Storybook at
+`handheld: on`, `input: pad` and fixed there._
+
+### Findings
+
+#### 10.1 A permanent with two abilities could not be asked which — **fixed**
+
+A press on a card with one untargeted ability activated it. A press on a
+card with two — a Mind Stone, with its sacrifice ability one index from its
+mana ability — *selected* it and left the choice to the panel, where (10.2)
+both rows read "Mind Stone: {T}…". `X` was worse: it posted whichever
+`activate` action the engine listed first, silently. And a single ability that
+needed a target entered targeting on every ability's ids without the follow-up
+`playFromHand` already does, so the ring stayed on the card.
+
+`logic/abilities.ts` is one router for the press and for `X`, and its answer is a
+value a test can table: `act`, `target`, or `menu`. `menu` is `AbilityMenu`,
+the same `.prompt` shell as every decision, trapped like one and closed by `B`;
+an item carries `data-preview-oid` so `Y` reads the card over the menu, and no
+`data-action-id`, because the panel rows still carry every id exactly once.
+
+#### 10.2 Two ability rows that read as the same row — **fixed**
+
+The engine labels an ability `"<Card>: <text>"`, and in a 230px row with
+`nowrap` the name is what survives the ellipsis. `abilityText` takes the name
+off, `PlayRows` draws it once as a faint line, and `.act--ability` lets the
+ability wrap to two lines. Scoped to ability rows: `e2e/action-panel.spec.ts`
+reads a cast row's `.act__name` as one line and still does.
+
+#### 10.3 A held down-press through the target chips jumped and stuck — **fixed**
+
+The chips wrap as pills sized to their names, and `nav.ts:pickStop`'s row rule
+— an aligned candidate beats any diagonal — meant that from a pill on a wrapped
+line, "down" preferred the next full-width *row* (which overlaps everything)
+over the pill diagonally below it. The ring skipped chips, or zigzagged between
+columns as its x moved with each landing. A planeswalker's loyalty abilities,
+being full-width rows, walked fine, and that is the shape borrowed:
+`[data-handheld] .act__aims` is a column. `HandheldTargetChipsWalk` walks three
+chips down and back up and asserts the order.
+
+#### 10.4 Number badges in the rail — **fixed**
+
+`AttackRows` numbered its rows 1, 2, 3 (the attacker's position in a list
+nothing refers to), and `PlayRows` shows a hand card's 1–9 keyboard key. The
+first is gone; the second hides under `html[data-input="pad"]`.
+
+#### 10.5 Four hundred creature types, no keyboard — **fixed**
+
+`ChoiceCombo` had its Choose button in a rail to the right of the list so a
+right press reached it from any row; the label names the highlighted row, and
+as the only thing deciding the dialog's width it made the whole panel breathe
+as the ring walked. Three changes. The commit row sits *under* the list, bottom
+right like every other dialog, at a fixed dialog width. A row pressed while
+highlighted chooses — through the Choose button, so the one control carrying
+the action id is still the one that posts — which on a pad is one `A`. And
+Left/Right page the list by ten: `useCursorNav` hands the horizontal axis to
+any `[data-nav-x]` container the ring stands in as a `padnav` event rather than
+moving the ring, the same reasoning that makes `A` a click. `X` presses Choose
+from the filter field, where `A` means typing. `ChooseATypeByPaging` walks it
+against the real board in six presses.
+
+#### 10.6 The reader ran keywords into the first ability — **fixed**
+
+`.reader__rules` had no `white-space`, so the newline the engine puts after the
+keyword line collapsed. `pre-wrap`, like `.face__rules`.
+
+#### 10.7 The hint bar — **moved into Settings**
+
+A strip of an 800px screen for the whole game, saying what the thumbs learn in
+a few turns. It is a setting now (`automtg.hints`, off by default), toggled in
+the settings menu beside Sound, with the fixed legend (`NAVIGATION_HINTS`)
+listed under the scheme picker. The toggle sits beside Sound and not in the
+Controls block: a full-width row under the scheme picker's two-column grid is
+what the row rule steps to from above, over the picker, and the picker became
+unreachable by walking — `HandheldSettingsMenu` caught it.
+
+#### 10.8 The held card was as tall as its text — **fixed, handheld only**
+
+The desktop hold is content-sized on purpose (it exists to get away from the
+rail's clipping). On a handheld the hold is the only thing on the screen, so
+`.hold__card` is a 5:7 frame and the rules scroll inside it — with the right
+stick, which `scrollTargetFor` now sends to a held card first.
+
+#### 10.9 Haste wore the hourglass — **fixed**
+
+The server sends the raw entered-this-turn flag and `can_attack` discounts
+haste on top of it; the face, the reader's status line and the stack key used
+the raw flag. `isSummoningSick` is the drawn state, in one place.
+
+#### 10.10 Viewing a seat pushed the orb's last piles below the fold — **fixed**
+
+The "Viewing" strip took a full-width row above both mats, and the handheld
+side column is sized to the container (`100cqh`) without knowing the strip was
+there, so the graveyard and command zone piles left the screen and the panel
+jumped. The strip is in column 2 only; the viewer's mat spans both rows and
+does not move a pixel. `HandheldViewingAnOpponent` pins the orb's top and every
+pile's bottom.
+
+#### 10.11 The stack could be aimed at and not stood on — **fixed**
+
+Its plies carried an arrow anchor and nothing else. Each ply is a
+`stack:<sid>` stop now in a sixth region, present exactly while something is
+on the stack; the reader follows the ply, `A` and `Y` open the hold, and a
+counterspell's target resolves on a ply the way a board card does.
+
+#### 10.12 Arrows from nowhere — **fixed**
+
+An opponent's cards are clipped to zero height and still report a box, so an
+attack from a hidden board was drawn from four phantom points under the seat
+strip. `visibleBox` asks the ring's own question, and a hidden card's end is
+its controller's seat — deduped, so four attackers are one seat-to-orb arrow.
+
+#### 10.13 A hit shown twice for no reason — **fixed**
+
+The combat "between" point was measured against a hidden card's phantom box.
+A hit from a hidden board lands on the visible receiver, the way a burn
+spell's does; a hit on a hidden creature draws nothing.
+
+### Deliberately not done
+
+**A letter jump in the combo.** Paging by ten makes the end of a 400-row list
+forty presses away and a held direction ramps; a face button that jumps A→B→C
+would be faster still and is one more thing to learn. Left on the list.
+
+**The stack region while holding `R2`.** The seat swap draws their lanes;
+the stack floats over your own area and is reachable the same way either way.
+
+### What this loop says about the nine before it
+
+Every one of the thirteen passed every gate: the floors, the reachability
+graph, the press budgets. The gates ask whether the layout is *correct*, and a
+Deck in the hand asks whether it can be *acted on* — a row that is legible and
+says the wrong half of its label, a chip that is reachable and not by holding
+down, a card that can be targeted and not read. The stories this loop adds ask
+the second kind of question, and that is the instrument worth keeping.

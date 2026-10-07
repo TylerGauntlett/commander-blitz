@@ -713,8 +713,14 @@ html[data-input="keyboard"] .glyph--key {
   user-select: none;
 }
 
-html[data-input="pad"] .hints,
-html[data-input="keyboard"] .hints {
+/*
+ * ...and only when asked for. `data-hints` is the settings menu's "Button
+ * hints" toggle (`state/uiStore.ts:storedHints`), off by default: the bar is
+ * a strip of an 800px screen for the whole game, saying what the thumbs learn
+ * in a few turns. A mouse player never sees it whatever the toggle says.
+ */
+html[data-hints="on"][data-input="pad"] .hints,
+html[data-hints="on"][data-input="keyboard"] .hints {
   display: flex;
 }
 
@@ -1115,6 +1121,34 @@ html[data-input="keyboard"] [data-cursor].card {
 }
 
 /*
+ * THE HOLD IS ONE SIZE OF CARD.
+ *
+ * `Y` draws the card over the whole board, and on a desktop the frame is as
+ * tall as the text so nothing is ever clipped (`groups.css:.hold__card`). On a
+ * handheld that made a vanilla 2/2 a short card and a wall of text a tall one,
+ * at the one moment the card is the only thing on the screen and could simply
+ * look like a card. So here the frame is a card's proportions, and the rules
+ * box inside it scrolls -- with the right stick (`stickScroll.ts`), and with
+ * a scrollbar rather than the fade `[data-handheld] .face__rules` uses on the
+ * board, because a fade on a box that scrolls reads as the text ending.
+ */
+[data-handheld] .hold__card {
+  width: min(330px, 90vw);
+  aspect-ratio: 5 / 7;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+[data-handheld] .hold--card .card--big {
+  height: 100%;
+}
+
+[data-handheld] .hold--card .face__rules {
+  overflow-y: auto;
+  mask-image: none;
+}
+
+/*
  * The hint bar sits above the modal layer.
  *
  * It lives in the foot, which is under every dialog's backdrop -- so the one
@@ -1184,6 +1218,35 @@ html[data-input="keyboard"] .hints {
      and its first two choices. */
   flex: 1 1 auto;
   min-height: 132px;
+}
+
+/*
+ * ONE CHIP PER LINE, so a held down-press walks them.
+ *
+ * On a desktop the chips wrap as pills sized to their names, and the mouse does
+ * not care. The ring does: `nav.ts:pickStop` lets any candidate that overlaps
+ * the current one horizontally beat every diagonal, so from a pill on a wrapped
+ * line "down" preferred the next full-width ROW -- which overlaps everything --
+ * over the pill diagonally below, and skipped it, or zigzagged between columns
+ * as the ring's x moved with each landing. A planeswalker's loyalty abilities,
+ * which are full-width rows, walked fine, and that is the shape this borrows:
+ * a column, every chip the rail's width, the next one straight below.
+ */
+[data-handheld] .act__aims {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+[data-handheld] .aim {
+  text-align: left;
+}
+
+/*
+ * No number badges on a pad. The hand's 1-9 key is a keyboard shortcut and a
+ * Deck has no keyboard; 19px of badge in a 230px row is a fifth of the name.
+ */
+html[data-input="pad"] .act__key {
+  display: none;
 }
 
 [data-handheld] .acts__list {
@@ -1400,6 +1463,7 @@ html[data-input="keyboard"] .hints {
 /* The settings menu's rows. They are one press away from quitting the game, so
    they are the last controls that may be hard to land on. */
 [data-handheld] .settings__item,
+[data-handheld] .settings__legend,
 /* The commit bar's "all" and "none" marks. They are decisions with
    consequences, not affordances, so a finger has to be able to land on them as
    reliably as on the slab between them. */
@@ -1576,6 +1640,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .act--nested,
 [data-handheld] .act__aim,
 [data-handheld] .act__key,
+[data-handheld] .act__src,
 [data-handheld] .act__type,
 [data-handheld] .actgroup__head,
 [data-handheld] .actgroup__kw,

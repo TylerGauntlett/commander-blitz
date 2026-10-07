@@ -35,6 +35,8 @@ export type StopKind =
   | "lane"
   | "commit"
   | "combo"
+  | "menu"
+  | "stack"
   | "unknown";
 
 export interface StopRef {
@@ -59,12 +61,14 @@ export function parseStop(stop: string | null): StopRef {
   switch (head) {
     case "card":
     case "orb":
+    case "stack":
       return { kind: head, id: Number(tail), raw: stop };
     case "act":
     case "tool":
     case "pile":
     case "lane":
     case "combo":
+    case "menu":
       return { kind: head, id: null, raw: stop };
     case "commit":
       return { kind: "commit", id: null, raw: stop };
@@ -249,14 +253,19 @@ function contextVerbs(
   /*
    * The combobox a long decision opens with, and the two things in it.
    *
-   * A row is a HIGHLIGHT, not a commitment: only the Choose button beside the
-   * list submits, and it is an `act:` stop that answers with the action's own
-   * label. Saying "Choose" over a row would promise a press that does not
-   * happen, which is the one failure this whole file exists to prevent.
+   * `A` on a row CHOOSES it: the ring's landing highlighted it, and the row's
+   * click presses the Choose button, which is the one `act:` stop in the
+   * dialog. `X` presses that button from anywhere in the dialog -- the one
+   * place it earns a verb is the filter field, where `A` means typing.
    */
   if (ref.kind === "combo") {
-    return ref.raw === "combo:filter" ? { a: "Type", b: "Back" } : { a: "Select", b: "Back" };
+    return ref.raw === "combo:filter"
+      ? { a: "Type", x: "Choose", b: "Back" }
+      : { a: "Choose", b: "Back" };
   }
+  // An item in the ability menu: pressing it is the choice, and `B` is the
+  // way out of the question.
+  if (ref.kind === "menu") return { a: "Choose", b: "Back" };
   if (ref.kind === "pile") return { a: "Look", b: "Back" };
   if (ref.kind === "lane") return { a: "Play here", b: "Back" };
 
@@ -267,6 +276,25 @@ function contextVerbs(
     }
     if (staging.targeting) return { a: "Target", b: "Cancel" };
     return { a: "Look", y: "Read", b: "Back" };
+  }
+
+  /*
+   * A ply of the stack. It is a target when a spell on the way is pointed at
+   * it (a counterspell), and otherwise it is something to read: `A` opens the
+   * hold the way `Y` does, because the one reason to stand on the stack is to
+   * decide whether to answer what is on it.
+   */
+  if (ref.kind === "stack" && ref.id !== null) {
+    const sid = ref.id;
+    if (staging.targeting) {
+      const targetable = actions.some((action) =>
+        action.targets.some((target) => target.kind === "stack" && target.id === sid),
+      );
+      const name = state.stack.find((item) => item.sid === sid)?.name ?? "it";
+      if (targetable) return { a: `Target ${name}`, y: "Read", b: "Cancel" };
+      return { a: "Not a legal target", y: "Read", b: "Cancel" };
+    }
+    return { a: "Read", y: "Read", b: "Back" };
   }
 
   if (ref.kind !== "card" || ref.id === null) return { a: "Select", b: "Back" };

@@ -13,9 +13,9 @@
 
 import { useMemo } from "react";
 import type { GameView, LegalAction } from "../api/types";
-import { availableAttackers, canDropOnLane } from "../logic/actionMatch";
+import { abilityText, availableAttackers, canDropOnLane } from "../logic/actionMatch";
 import { sourcesSpentBy } from "../logic/mana";
-import { LANES } from "../logic/zoneGrouping";
+import { findCard, LANES } from "../logic/zoneGrouping";
 
 export interface TableDerivedInput {
   state: GameView;
@@ -83,7 +83,11 @@ export function useTableDerived({
     for (const action of actions) {
       if (action.kind !== "activate" || action.source_oid === null) continue;
       const seen = byOid.get(action.source_oid) ?? new Set<string>();
-      seen.add(action.base_label);
+      // The ability's text alone: the popover sits on the card, which is
+      // already saying its own name. Same helper the panel row uses.
+      seen.add(
+        abilityText(action.base_label, findCard(state, action.source_oid)?.name ?? null),
+      );
       byOid.set(action.source_oid, seen);
     }
     // Naming the first of several was a promise the popover could not keep
@@ -95,7 +99,7 @@ export function useTableDerived({
         labels.size === 1 ? [...labels][0] : `${labels.size} abilities`,
       ]),
     );
-  }, [actions]);
+  }, [actions, state]);
 
   /** Every oid named by any legal action: never hide these inside a stack. */
   const actionableOids = useMemo(() => {

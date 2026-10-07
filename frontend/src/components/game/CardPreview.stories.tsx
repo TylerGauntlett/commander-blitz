@@ -17,6 +17,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
+import * as pool from "../../testing/cards";
+import { gameView } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { CardPreview } from "./CardPreview";
 
@@ -272,5 +274,59 @@ export const ReaderUnplayable: Story = {
       mount: "railRight",
       ui: { hoveredOid: scenarios.openingHand().state.players[0].hand?.[0]?.oid ?? null },
     },
+  },
+};
+
+/**
+ * KEYWORDS ON THEIR OWN LINE, as every card face draws them.
+ *
+ * The engine's rules text is "Flying, vigilance", a newline, "When ...", and
+ * the reader was the one surface that collapsed the newline -- so on the
+ * surface whose job is reading, the keywords ran into the first ability.
+ * `pre-wrap`, like `.face__rules`.
+ */
+export const ReaderKeywordLine: Story = {
+  args: {
+    state: gameView({
+      battlefield: [
+        pool.serraAngel({
+          oid: 7,
+          oracle_text: "Flying, vigilance\nWhen this creature enters, you gain 4 life.",
+        }),
+      ],
+    }),
+  },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 7 } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Serra Angel");
+    const rules = canvasElement.querySelector<HTMLElement>(".reader__rules");
+    expect(rules && getComputedStyle(rules).whiteSpace).toBe("pre-wrap");
+    // `SymbolText` keeps plain prose in one node, so the two lines are measured
+    // as ranges over the text rather than as elements.
+    const walker = document.createTreeWalker(rules as Node, NodeFilter.SHOW_TEXT);
+    let text: Text | null = null;
+    while (walker.nextNode()) {
+      const node = walker.currentNode as Text;
+      if (node.data.includes("When this")) {
+        text = node;
+        break;
+      }
+    }
+    expect(text, "the ability text is in the reader").not.toBeNull();
+    if (!text) return;
+    const box = (needle: string) => {
+      const range = document.createRange();
+      const at = text.data.indexOf(needle);
+      range.setStart(text, at);
+      range.setEnd(text, at + needle.length);
+      return range.getBoundingClientRect();
+    };
+    expect(
+      box("When this").top,
+      "the ability starts under the keyword line",
+    ).toBeGreaterThanOrEqual(box("vigilance").bottom - 1);
   },
 };

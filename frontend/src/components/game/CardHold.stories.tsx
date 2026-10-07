@@ -38,7 +38,22 @@ export const HeldOpen: Story = {
   },
 };
 
-/** The same, on a Deck: the card is still at least the floor, and the text is legible. */
+/** A card's proportions, whatever the text: the frame is 5:7 of its width. */
+const expectCardShaped = (canvasElement: HTMLElement) => {
+  const frame = canvasElement.querySelector<HTMLElement>(".hold__card");
+  const box = frame?.getBoundingClientRect();
+  expect(box).toBeTruthy();
+  if (!box) return;
+  expect(box.width).toBeGreaterThanOrEqual(300);
+  expect(Math.abs(box.height - box.width * 1.4), "the hold is card-shaped").toBeLessThan(2);
+};
+
+/**
+ * The same, on a Deck: the card is still at least the floor, the text is
+ * legible, and THE FRAME IS A CARD'S SHAPE. On a desktop the hold is as tall
+ * as its text; here it is the only thing on the screen and every card is the
+ * same size, with the rules scrolling inside it.
+ */
 export const HeldOpenHandheld: Story = {
   args: { card: pool.aesi({ oid: 900 }) },
   globals: { handheld: "on" },
@@ -47,6 +62,22 @@ export const HeldOpenHandheld: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText(/Aesi/);
     expectHandheldFloors(canvasElement);
+    expectCardShaped(canvasElement);
+    // Six lines of rules at the 16px floor do not fit a 5:7 frame; they scroll.
+    const rules = canvasElement.querySelector<HTMLElement>(".hold__card .face__rules");
+    expect(rules && getComputedStyle(rules).overflowY).toBe("auto");
+  },
+};
+
+/** ...and a card with one line of text is exactly the same size. */
+export const HeldOpenHandheldShortText: Story = {
+  args: { card: pool.grizzlyBears({ oid: 901 }) },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Grizzly Bears/);
+    expectCardShaped(canvasElement);
   },
 };
 

@@ -32,6 +32,7 @@ import {
   counterBadges,
   frameTone,
   isPlainLand,
+  isSummoningSick,
   isWounded,
   keywordLabel,
   landSymbols,
@@ -314,7 +315,7 @@ export function CardFace({ card, variant = "board" }: Props) {
       </div>
 
       {/* The commander mark is the crown in the name above; see the note there. */}
-      {card.summoning_sick && card.types.includes("Creature") && (
+      {isSummoningSick(card) && card.types.includes("Creature") && (
         <span className="face__tag face__tag--sick" data-hint="Summoning sick">
           &#9203;
         </span>

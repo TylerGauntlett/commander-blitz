@@ -33,6 +33,9 @@ export async function setInstant(page: Page): Promise<void> {
     // for every click and every beat across sixteen specs. Explicit here rather
     // than relying on the default, which is exactly what changed underneath it.
     window.localStorage.setItem("automtg.muted", "on");
+    // The hint bar is off by default (a settings toggle); several specs read
+    // it to know what the ring is standing on.
+    window.localStorage.setItem("automtg.hints", "on");
   });
 }
 

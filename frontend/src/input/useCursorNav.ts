@@ -73,6 +73,29 @@ export function useCursorNav(active = true): void {
     const unbind = DIRECTIONS.map((dir) =>
       on(dir, () => {
         if (!live.current) return;
+        /*
+         * A CONTAINER MAY OWN AN AXIS.
+         *
+         * `pad.ts:on` lets every listener for a button fire and gives none of
+         * them a way to say "handled" -- so a component that wanted Left and
+         * Right for itself (a long list that pages on them) would get them AND
+         * the ring would move, or be denied, for the same press. The same
+         * reasoning that makes `A` a click makes this a DOM event: the element
+         * under the ring says `data-nav-x`, and the press becomes a `padnav`
+         * event on it that the component handles as it would a click. The
+         * ring is not moved and nothing is denied; the component says what
+         * happened. Only the horizontal axis so far, because that is the one
+         * a vertical list has nothing else to do with.
+         */
+        if (dir === "left" || dir === "right") {
+          const stop = getCursor();
+          const owner = stop ? stopElement(stop)?.closest<HTMLElement>("[data-nav-x]") : null;
+          if (owner) {
+            owner.dispatchEvent(new CustomEvent("padnav", { detail: dir, bubbles: true }));
+            if (!muted()) play("move");
+            return;
+          }
+        }
         const moved = moveCursor(dir);
         if (moved) {
           if (!muted()) play("move");

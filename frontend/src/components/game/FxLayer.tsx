@@ -38,6 +38,7 @@ import { play } from "../../audio/sfx";
 import { drive } from "../../fx/actuators";
 import { prefersReducedMotion } from "../../fx/reducedMotion";
 import { onFrame, overTime } from "../../fx/scheduler";
+import { visibleBox } from "../../input/stops";
 import type { Beat, BeatAnchor, ExitFx, FxPoint, TimedFx, Tone } from "../../logic/beats/types";
 import { recall } from "../../logic/cardRects";
 import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
@@ -107,12 +108,22 @@ type Overlay =
       delay: number;
     };
 
+/**
+ * Where an anchor is -- if a player can see it.
+ *
+ * `visibleBox` is the ring's own test, and it is the one this needed: on a
+ * handheld an opponent's cards are clipped to a zero-height lane and still
+ * report a box, so a numeral anchored to one landed at a phantom point under
+ * their seat strip, and a combat "between" put two numerals at the same
+ * nowhere. A hidden card is `null` here, and `resolve` says what that means.
+ */
 function anchorPoint(anchor: BeatAnchor, origin: DOMRect): Point | null {
   const selector =
     anchor.kind === "player" ? `[data-player="${anchor.pid}"]` : `[data-oid="${anchor.oid}"]`;
   const element = document.querySelector(selector);
   if (!element) return null;
-  const box = element.getBoundingClientRect();
+  const box = visibleBox(element);
+  if (!box) return null;
   return {
     x: box.left + box.width / 2 - origin.left,
     y: box.top + box.height / 2 - origin.top,
@@ -122,15 +133,20 @@ function anchorPoint(anchor: BeatAnchor, origin: DOMRect): Point | null {
 /**
  * Resolve an effect's position, including the point two cards meet at.
  *
- * `between` returns null unless *both* ends are on screen. Falling back to
- * whichever end resolved would put a collision on top of one of the
- * combatants, which is precisely the reading it exists to avoid.
+ * `between` is the point both combatants are on screen at. When only the
+ * RECEIVER is -- your creature, hit by a blocker on a board that is not drawn
+ * -- the hit lands on the receiver, the way a burn spell's does: what the
+ * player can see is what it took. When the receiver is the one hidden there
+ * is nothing to draw it on, and nothing is drawn; a numeral at the midpoint
+ * between a card and a seat strip was the "value shown twice for no reason"
+ * a Deck playtest reported.
  */
 function resolve(point: FxPoint, origin: DOMRect): Point | null {
   if (point.kind !== "between") return anchorPoint(point, origin);
-  const a = anchorPoint(point.a, origin);
   const b = anchorPoint(point.b, origin);
-  if (!a || !b) return null;
+  if (!b) return null;
+  const a = anchorPoint(point.a, origin);
+  if (!a) return b;
   const t = point.t ?? 0.5;
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
 }
