@@ -245,21 +245,27 @@ export function searchLibrary(): Scenario {
 
   return {
     state,
-    actions: found.map((c, i) =>
-      action({
-        id: `a${i}-choose`,
-        kind: "choose",
-        label: c.name,
-        base_label: c.name,
-        // `choice` is the index into `pending.options`, and it is what makes the
-        // attached face reachable: the dialog looks the option up by it, then
-        // falls back to `findCard`, which cannot resolve a library card because
-        // the player view sends libraries as a count. Without this the prompt
-        // renders exactly the row of bare names `option.card` was added to fix.
-        choice: i,
-        targets: [{ kind: "object", id: c.oid }],
-      }),
-    ),
+    actions: found
+      .map((c, i) =>
+        action({
+          id: `a${i}-choose`,
+          kind: "choose",
+          label: c.name,
+          base_label: c.name,
+          // `choice` is the index into `pending.options`, and it is what makes the
+          // attached face reachable: the dialog looks the option up by it, then
+          // falls back to `findCard`, which cannot resolve a library card because
+          // the player view sends libraries as a count. Without this the prompt
+          // renders exactly the row of bare names `option.card` was added to fix.
+          choice: i,
+          targets: [{ kind: "object", id: c.oid }],
+        }),
+      )
+      .concat(
+        // "Search for up to one": finding nothing is a legal answer, and it is
+        // the button that used to be drawn as a card-height grid cell.
+        action({ id: "a3-finish_declaration", kind: "finish_declaration", label: "Done" }),
+      ),
     events: [],
   };
 }

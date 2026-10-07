@@ -1184,9 +1184,13 @@
   font-weight: 900;
 }
 
+/* Every selection dialog ends here: its answer bottom-right, standard size, in
+   the primary colour, with any alternative (a ghost button) to its left. */
 .prompt__commit {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
   padding: 0 8px;
 }
 

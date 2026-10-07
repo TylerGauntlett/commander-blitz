@@ -173,6 +173,20 @@ export const SearchLibrary: Story = {
       canvasElement.querySelectorAll("[data-card-name]").length,
       "library cards rendered as labels rather than faces",
     ).toBeGreaterThan(0);
+    /*
+     * "Done" is the dialog's answer, not one more card: a primary button in
+     * the footer at its own height. As a grid cell it was stretched to the
+     * height of the faces beside it.
+     */
+    const done = canvasElement.querySelector<HTMLElement>(
+      '[data-action-kind="finish_declaration"]',
+    );
+    if (done) {
+      expect(done.closest(".prompt__options"), "Done is not a grid cell").toBeNull();
+      expect(done.closest(".prompt__commit")).not.toBeNull();
+      expect(done.classList.contains("btn--primary")).toBe(true);
+      expect(done.getBoundingClientRect().height).toBeLessThan(64);
+    }
   },
 };
 

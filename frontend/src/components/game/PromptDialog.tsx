@@ -288,40 +288,87 @@ function PromptSurface({ pending, rows, onAct, disabled }: SurfaceProps) {
             disabled={disabled}
           />
         ) : (
-          <div className="prompt__options">
-            {rows.map(({ action, card, playerName }) => (
-              <motion.button
-                type="button"
-                key={action.id}
-                className={card ? "opt opt--card" : "opt"}
-                {...actionAttrs(action.id)}
-                data-action-kind={action.kind}
-                disabled={disabled}
-                onClick={() => onAct(action.id)}
-                whileHover={disabled ? undefined : { y: -4, scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={bouncy}
-              >
-                {card ? (
-                  <>
-                    {/* `onSurface`: the backdrop fades as one thing; see `StaticCard`. */}
-                    <StaticCard card={card} variant="detail" onSurface />
-                    {/* Only when it says something the face does not: a caption
-                        repeating the card's name reads as a second button. */}
-                    {action.label !== card.name && (
-                      <span className="opt__caption">{action.label}</span>
-                    )}
-                  </>
-                ) : (
-                  <span className="opt__label">
-                    {playerName ? `${action.label} (${playerName})` : action.label}
-                  </span>
-                )}
-              </motion.button>
-            ))}
-          </div>
+          <>
+            {/*
+              THE OPTIONS IN THE GRID, AND "DONE" UNDER IT.
+
+              `Done` used to be one more grid cell, so a search through your
+              library drew it beside a row of card faces at their height: a
+              tall grey slab that read as a card with no art. Every selection
+              dialog now ends the way the proliferate one did -- the answer's
+              button bottom-right, standard size, in the primary colour --
+              and the grid holds only things to choose.
+
+              Only when there ARE enumerated options: a decision made entirely
+              of named actions (a mode, yes or no) is its own list of answers,
+              and pulling all of them into a footer would leave an empty grid.
+            */}
+            <div className="prompt__options">
+              {(options.length > 0 ? options : rows).map(optionButton)}
+            </div>
+            {options.length > 0 && extras.length > 0 && (
+              <div className="prompt__commit">
+                {[...extras]
+                  // The finish last, so it is the one in the corner.
+                  .sort(
+                    (a, b) =>
+                      Number(a.action.kind === "finish_declaration") -
+                      Number(b.action.kind === "finish_declaration"),
+                  )
+                  .map(({ action }) => (
+                    <button
+                      type="button"
+                      key={action.id}
+                      className={
+                        action.kind === "finish_declaration"
+                          ? "btn btn--primary"
+                          : "btn btn--ghost"
+                      }
+                      {...actionAttrs(action.id)}
+                      data-action-kind={action.kind}
+                      data-testid="prompt-commit"
+                      disabled={disabled}
+                      onClick={() => onAct(action.id)}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+              </div>
+            )}
+          </>
         )}
       </motion.div>
     </motion.div>
   );
+
+  function optionButton({ action, card, playerName }: Row) {
+    return (
+      <motion.button
+        type="button"
+        key={action.id}
+        className={card ? "opt opt--card" : "opt"}
+        {...actionAttrs(action.id)}
+        data-action-kind={action.kind}
+        disabled={disabled}
+        onClick={() => onAct(action.id)}
+        whileHover={disabled ? undefined : { y: -4, scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={bouncy}
+      >
+        {card ? (
+          <>
+            {/* `onSurface`: the backdrop fades as one thing; see `StaticCard`. */}
+            <StaticCard card={card} variant="detail" onSurface />
+            {/* Only when it says something the face does not: a caption
+                        repeating the card's name reads as a second button. */}
+            {action.label !== card.name && <span className="opt__caption">{action.label}</span>}
+          </>
+        ) : (
+          <span className="opt__label">
+            {playerName ? `${action.label} (${playerName})` : action.label}
+          </span>
+        )}
+      </motion.button>
+    );
+  }
 }
