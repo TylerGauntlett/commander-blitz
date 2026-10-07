@@ -709,7 +709,15 @@
  */
 .play__mine[data-viewing] {
   display: grid;
-  grid-template-columns: var(--mat-side) minmax(0, 1fr);
+  /*
+   * THE SIDE MAT IS ITS PANEL PLUS ITS OWN CHROME, so your panel keeps its
+   * width. On your own board `--mat-side` is the panel's track INSIDE one mat;
+   * here the panel is a mat of its own, and a column of `--mat-side` gave it
+   * that minus 16px of padding and 2px of border -- the panel narrowed by 18px
+   * every time you looked at a seat. The lanes beside it are somebody else's
+   * and give the 18px up instead.
+   */
+  grid-template-columns: calc(var(--mat-side) + 18px) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: 10px;
   align-content: start;

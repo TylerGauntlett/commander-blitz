@@ -95,11 +95,18 @@ class TestTheKickedLineTargetsAnyNumber:
         assert counts == {1}, counts
 
     def test_the_kicked_line_takes_any_number(self, builder):
-        """Three creatures on the board, so the kicked line should offer sizes
-        above one -- which is the whole switch."""
+        """Three creatures on the board, so the kicked cast should ask for a
+        set larger than one -- which is the whole switch. Asked as the cast
+        happens (`casting.deferred_target_spec`), so the line itself is one."""
+        from automtg.engine.enums import DecisionKind
+
         game = position(builder)
-        counts = target_counts(cast_lines(game, kicked=True))
-        assert max(counts) > 1, counts
+        lines = cast_lines(game, kicked=True)
+        assert target_counts(lines) == {0}, "the set is declared mid-cast"
+        game.apply(lines[0])
+        decision = game.pending()
+        assert decision.kind is DecisionKind.CHOOSE_OBJECTS
+        assert decision.max_count > 1, decision
 
     def test_both_lines_are_offered_at_once(self, builder):
         """601.2b is a choice, so the printed cheap line survives beside it."""
@@ -263,12 +270,12 @@ class TestTheResolutionAgreesWithTheDeclaration:
     def test_a_kicked_cast_returns_every_chosen_creature(self, builder):
         """End to end, which is the claim that actually matters: cast it kicked
         with two creatures out and both come back."""
-        from tests.conftest import _default_answer
+        from tests.conftest import _default_answer, declare_targets
 
         game = position(builder, creatures=2, lands=12)
-        line = max(cast_lines(game, kicked=True), key=lambda a: len(a.targets))
-        assert len([t for t in line.targets if t.kind == "object"]) == 2
+        (line,) = cast_lines(game, kicked=True)
         game.apply(line)
+        declare_targets(game, *oids_of(game, BEAR, 0))
         for _ in range(60):
             decision = game.pending()
             if decision is None:

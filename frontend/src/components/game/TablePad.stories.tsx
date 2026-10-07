@@ -331,6 +331,62 @@ export const HandheldJumpToTheDecision: Story = {
   },
 };
 
+/**
+ * ...and over a prompt, `L2` is the prompt's primary button.
+ *
+ * The slab is behind the modal trap while a dialog is up, so the jump above
+ * landed nowhere. "Go to the thing that ends this" means the dialog's own
+ * primary there -- the same press, answered by the surface on top. And the
+ * hold must not open the region dial over the prompt: the board it maps is
+ * the one the trap has put out of reach.
+ */
+export const HandheldJumpToThePromptsPrimary: Story = {
+  args: board(scenarios.chooseType()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    startPad();
+
+    const first = landableStopsIn(dialog)[0]?.dataset.stop;
+    expect(setCursor(first as string)).toBe(true);
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "z", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "z", bubbles: true }));
+
+    await waitFor(() => {
+      expect(ringed(canvasElement)?.getAttribute("data-testid")).toBe("combo-go");
+    });
+    expect(canvasElement.querySelector(".wheelwrap"), "no dial over the prompt").toBeNull();
+  },
+};
+
+/**
+ * A pick-several set is the panel's, and `L2` lands on its Confirm.
+ *
+ * Not on the "all" mark to its left: in combat the mark IS the answer (it
+ * stages the attack), here it is a convenience and the slab is the decision.
+ */
+export const HandheldJumpToThePickConfirm: Story = {
+  args: board(scenarios.chooseSeveralTargets()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const [first] = await canvas.findAllByTestId("pick-option");
+    startPad();
+    expect(setCursor(first.dataset.stop as string)).toBe(true);
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "z", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "z", bubbles: true }));
+
+    await waitFor(() => {
+      expect(ringed(canvasElement)?.getAttribute("data-testid")).toBe("pick-confirm");
+    });
+  },
+};
+
 export const HandheldRegionDial: Story = {
   args: board(scenarios.earlyBoard()),
   globals: { handheld: "on", input: "pad" },

@@ -403,13 +403,37 @@ test.describe("playing cards from the panel", () => {
     //     -> battlefield, and the intermediate frames of either are a race. The
     //     action id disappearing from the legal list is the unambiguous signal
     //     that the click reached the engine.
+    //
+    //     BY THE CARD, NOT BY THE ACTION ID. Ids are positional (`a1-play_land`
+    //     is "the second legal action", whatever it is), and with nothing left
+    //     to cast the engine auto-passes through the opponent's turn and back
+    //     to ours in one response -- where the NEXT land drop is `a1-play_land`
+    //     again. On CI's slow runner the poll never saw the gap between the two
+    //     and timed out on an id that had been answered and re-issued. The
+    //     row's card (`data-preview-oid`) is stable: the land that was played
+    //     is on the battlefield, and no row for it comes back.
     const played = await playRow.getAttribute("data-action-id");
     expect(played).not.toBeNull();
+    // A grouped row (a shock land's two drops) carries the card on the row
+    // and the action kind on its chips, so the card is read off the nearest
+    // element that names one, and both shapes are counted.
+    const card = await playRow.evaluate(
+      (el) => el.closest("[data-preview-oid]")?.getAttribute("data-preview-oid") ?? null,
+    );
+    const kind = await playRow.getAttribute("data-action-kind");
+    expect(card, "a play row names the card it plays").not.toBeNull();
     await playRow.click();
+    const rowFor = `.acts__list [data-preview-oid="${card}"]`;
     await expect
-      .poll(async () => page.locator(`[data-action-id="${played}"]`).count(), {
-        timeout: 15_000,
-      })
+      .poll(
+        async () =>
+          page
+            .locator(
+              `${rowFor}[data-action-kind="${kind}"], ${rowFor} [data-action-kind="${kind}"]`,
+            )
+            .count(),
+        { timeout: 15_000 },
+      )
       .toBe(0);
   });
 });

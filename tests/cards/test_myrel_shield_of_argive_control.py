@@ -56,6 +56,7 @@ from tests.conftest import (
     action_for_card,
     battlefield_ids,
     count_on_battlefield,
+    declare_targets,
     find_action,
     keywords,
     only_oid,
@@ -118,14 +119,23 @@ def cast_targeting(game, card_id: str, *target_oids: int, pid: int = 0) -> None:
     """
     pass_until(game, lambda g: can_cast(g, card_id, pid))
     wanted = tuple(target_oids)
-    action = next(
+    lines = [
         a
         for a in game.legal_actions()
-        if a.kind is ActionKind.CAST
-        and game.state.objects[a.source].def_id == card_id
-        and tuple(t.id for t in a.targets) == wanted
-    )
-    game.apply(action)
+        if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == card_id
+    ]
+    action = next((a for a in lines if tuple(t.id for t in a.targets) == wanted), None)
+    if action is not None:
+        game.apply(action)
+    else:
+        # A set of two or more is declared as the cast happens rather than on
+        # the line (`casting.deferred_target_spec`) -- for The Eagles Are
+        # Coming!, only the kicked line asks for one.
+        deferred = sorted(
+            (a for a in lines if not a.targets), key=lambda a: not a.kicked
+        )
+        game.apply(deferred[0])
+        declare_targets(game, *wanted)
     settle_to_priority(game)
 
 

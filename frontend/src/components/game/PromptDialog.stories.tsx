@@ -22,7 +22,7 @@ const meta = {
   title: "Game/PromptDialog",
   component: PromptDialog,
   parameters: { automtg: { mount: "screen" } },
-  args: { onAct: fn(), onChoose: fn(), disabled: false },
+  args: { onAct: fn(), disabled: false },
 } satisfies Meta<typeof PromptDialog>;
 
 export default meta;
@@ -109,23 +109,6 @@ export const DiscardToHandSize: Story = {
   },
 };
 
-/** "Up to two target artifacts and/or enchantments": cards to toggle, then Confirm. */
-export const ChooseSeveralTargets: Story = {
-  args: {
-    state: scenarios.chooseSeveralTargets().state,
-    actions: scenarios.chooseSeveralTargets().actions,
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const grid = await canvas.findByTestId("pick-several");
-    const toggles = within(grid).getAllByRole("button");
-    await userEvent.click(toggles[0]);
-    await userEvent.click(toggles[3]);
-    await userEvent.click(canvas.getByTestId("pick-confirm"));
-    expect(args.onChoose).toHaveBeenCalledTimes(1);
-  },
-};
-
 export const ChooseTarget: Story = {
   args: { state: scenarios.chooseTarget().state, actions: scenarios.chooseTarget().actions },
   play: async ({ canvasElement, args }) => {
@@ -190,6 +173,20 @@ export const SearchLibrary: Story = {
       canvasElement.querySelectorAll("[data-card-name]").length,
       "library cards rendered as labels rather than faces",
     ).toBeGreaterThan(0);
+    /*
+     * "Done" is the dialog's answer, not one more card: a primary button in
+     * the footer at its own height. As a grid cell it was stretched to the
+     * height of the faces beside it.
+     */
+    const done = canvasElement.querySelector<HTMLElement>(
+      '[data-action-kind="finish_declaration"]',
+    );
+    if (done) {
+      expect(done.closest(".prompt__options"), "Done is not a grid cell").toBeNull();
+      expect(done.closest(".prompt__commit")).not.toBeNull();
+      expect(done.classList.contains("btn--primary")).toBe(true);
+      expect(done.getBoundingClientRect().height).toBeLessThan(64);
+    }
   },
 };
 

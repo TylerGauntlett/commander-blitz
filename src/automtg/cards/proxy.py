@@ -841,6 +841,14 @@ _PERMANENT_TYPE_NAMES = frozenset(
 #: The "unless ..." half of a conditional tapland, if there is one.
 _ENTERS_TAPPED_UNLESS = re.compile(r"\benters?\b[^.]*\btapped\b\s+unless\s+(?P<clause>[^.]+)", re.I)
 
+#: "As this land enters, you may pay 2 life. If you don't, it enters tapped."
+#: The shock lands, and the 3-life cycle. A price the player chooses to pay as
+#: the land arrives, which is `unless_cost` on the replacement -- the engine
+#: asks it (`zones.offer_enters_costs`) and the land enters untapped on a yes.
+_PAY_LIFE_OR_TAPPED = re.compile(
+    r"\benters, you may pay (?P<n>\d+) life\. if you don't, it enters tapped\b", re.I
+)
+
 _BASIC_LAND_SUBTYPES = ("Plains", "Island", "Swamp", "Mountain", "Forest")
 
 _NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
@@ -985,6 +993,12 @@ def _enters_tapped(facts: CardFacts, types: list[str]) -> tuple[list[dict], list
 
     replacement: dict = {"event": "self_enters_tapped"}
     joined = " ".join(lines)
+    # Before "unless": a shock land's sentence has no "unless" in it, so it used
+    # to fall all the way through to the unconditional tapland below -- ten
+    # duals that could never enter untapped, with nothing noting it.
+    if pay := _PAY_LIFE_OR_TAPPED.search(joined):
+        replacement["unless_cost"] = {"pay_life": int(pay.group("n"))}
+        return [replacement], [], set(lines)
     if match := _ENTERS_TAPPED_UNLESS.search(joined):
         condition = _unless_condition(match.group("clause"))
         if condition is None:

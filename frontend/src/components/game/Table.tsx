@@ -185,7 +185,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     [gateInput, endTargeting, actMutate, cue],
   );
 
-  /** A pick-several decision, committed as one set. See `PromptDialog`. */
+  /** A pick-several decision, committed as one set. See `logic/pickSeveral.ts`. */
   const choose = useCallback(
     (choices: number[]) => {
       if (gateInput()) return;
@@ -481,6 +481,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             onAct={act}
             onStage={onBarAct}
             onDeclare={onDeclare}
+            onChoose={choose}
             onUndo={() => undoMutate()}
             onQuit={onQuit}
             onToggleFullControl={(value) => fullControlMutate(value)}
@@ -549,7 +550,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         toggleLogOverlay={toggleLogOverlay}
         act={act}
         followUp={followUp}
-        choose={choose}
         locked={locked}
         removals={removals}
         onRematch={onRematch}

@@ -69,7 +69,7 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
    * same. The return address puts it back on the card afterwards.
    */
   useEffect(() => {
-    if (first) setCursor(stopId.menu(`ability:${first.index}`));
+    if (first) setCursor(stopId.menu(`ability:${first.key ?? first.index}`));
   }, [first]);
 
   if (oid === null || abilities === null || card === null) return null;
@@ -106,7 +106,11 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
       >
         <header className="prompt__head">
           <h2 className="prompt__title">{card.name}</h2>
-          <p className="prompt__hint">Which ability?</p>
+          <p className="prompt__hint">
+            {abilities.every((a) => a.key?.startsWith("land-"))
+              ? "How does it enter?"
+              : "Which ability?"}
+          </p>
         </header>
         <div className="menu__items">
           {abilities.map((ability) => (
@@ -114,9 +118,9 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
               type="button"
               key={ability.index === -1 ? ability.text : ability.index}
               className="menu__item act act--ability"
-              data-stop={stopId.menu(`ability:${ability.index}`)}
+              data-stop={stopId.menu(`ability:${ability.key ?? ability.index}`)}
               data-preview-oid={oid}
-              data-testid={`ability-${ability.index}`}
+              data-testid={`ability-${ability.key ?? ability.index}`}
               disabled={disabled}
               onClick={() => pick(ability)}
             >

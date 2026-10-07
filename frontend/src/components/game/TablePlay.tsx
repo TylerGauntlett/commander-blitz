@@ -9,6 +9,8 @@
 import type { RefObject } from "react";
 import type { CardView, GameView, PlayerView, StackItemView } from "../../api/types";
 import { stopId } from "../../input/stops";
+import { isPickSeveral, pickKey } from "../../logic/pickSeveral";
+import { useUiStore } from "../../state/uiStore";
 import type { useTableDerived } from "../../state/useTableDerived";
 import type { useZoomFit } from "../../state/useZoomFit";
 import { PlayerMat } from "./PlayerMat";
@@ -57,6 +59,20 @@ export function TablePlay({
   onSelectPlayer,
   playFromHand,
 }: Props) {
+  /*
+   * What is in a pick-several set right now, as oids, so the board shows it the
+   * way it shows a staged attacker. Read off the decision's own options --
+   * `choices` are ordinals into them -- and only while the set is this
+   * decision's (`pickKey`).
+   */
+  const picked = useUiStore((s) => s.picked);
+  const pickedOids = new Set<number>();
+  if (isPickSeveral(state) && picked.key === pickKey(state)) {
+    for (const choice of picked.choices) {
+      const ref = state.pending?.options[choice]?.ref;
+      if (ref?.kind === "object") pickedOids.add(ref.id);
+    }
+  }
   const {
     playableOids,
     abilityOids,
@@ -201,7 +217,9 @@ export function TablePlay({
           isPlayable={(card) => combatCandidates.has(card.oid)}
           isTargetable={(card) => targetableOids.has(card.oid)}
           isStaged={(card) =>
-            stagedAttacks[card.oid] !== undefined || stagedBlocks[card.oid] !== undefined
+            stagedAttacks[card.oid] !== undefined ||
+            stagedBlocks[card.oid] !== undefined ||
+            pickedOids.has(card.oid)
           }
           isSelected={(card) => card.oid === selectedOid}
           onActivate={onBoardCard}

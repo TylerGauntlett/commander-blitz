@@ -81,7 +81,15 @@ The row under the hand that says what `A`, `X`, `Y` and `B` do on the thing
 the ring is standing on is a setting, and it starts hidden: it costs a strip
 of an 800px screen for the whole game. Open the in-game **Settings** (the gear,
 or the `Menu` button) and flip **Button hints** under *Controls*. The buttons
-that never change -- move, region, decide -- are listed there too.
+that never change -- move, region, decide -- are listed there too. The
+**`L2` Regions** button beside the bar goes with it: hidden by default, shown
+when the hints are on. Holding `L2` still opens the region dial either way.
+
+`L2` pressed is *decide*, everywhere: on the board it jumps the ring to the
+button that ends the decision, and over a prompt (a proliferate pick, a
+target choice) it jumps to the prompt's primary button. In a pick-several
+prompt, `A` on a card picks it and steps the ring to the next one, so
+choosing three is `A A A`, then Confirm.
 
 ### The keys, if you would rather bind them yourself
 
