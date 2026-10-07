@@ -251,16 +251,16 @@ class TestTurntimberSerpentineWood:
 
     def play(self, builder, *, pay: bool):
         game = builder(players=2).hand(0, [SYMBIOSIS]).build()
+        # Two land drops for the back face: paying is part of which drop you
+        # make (`Action.enters_paid`), not a question asked during it.
         [line] = [
-            a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND and a.second_face
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.PLAY_LAND and a.second_face and a.enters_paid is pay
         ]
         card = line.source
         game.apply(line)
         while (p := game.pending()) is not None and p.kind is not DecisionKind.PRIORITY:
-            if p.kind is DecisionKind.MAY:
-                want = ActionKind.YES if pay else ActionKind.NO
-                game.apply(next(a for a in game.legal_actions() if a.kind is want))
-                continue
             game.apply(_default_answer(game, p))
         return game, game.state.objects[card]
 

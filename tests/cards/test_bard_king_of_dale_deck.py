@@ -998,14 +998,18 @@ class TestSeaGateRestoration:
             .hand(0, ["sea_gate_restoration_sea_gate_reborn"])
             .build()
         )
+        # Two drops for the back face, paying 3 life and not: the choice is
+        # which land drop to make (`Action.enters_paid`). Take the declining one.
         lines = [
-            a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND and a.second_face
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.PLAY_LAND and a.second_face and a.enters_paid is False
         ]
         assert lines
         card = lines[0].source
         game.apply(lines[0])
         while (p := game.pending()) is not None and p.kind is not DecisionKind.PRIORITY:
-            game.apply(_default_answer(game, p))  # decline the 3 life
+            game.apply(_default_answer(game, p))
         obj = game.state.objects[card]
         assert obj.zone is Zone.BATTLEFIELD
         assert game.state.card_of(obj).id == "sea_gate_reborn"

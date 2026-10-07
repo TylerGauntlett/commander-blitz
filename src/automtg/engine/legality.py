@@ -48,6 +48,7 @@ from .player_statics import (
 )
 from .structs import TargetRef
 from .targeting import describe_ref, enumerate_target_tuples
+from .zones import enters_cost_offer, enters_cost_options
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -386,7 +387,7 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         for oid in zone:
             card = state.card(oid)
             if card.is_land:
-                out.append(Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}"))
+                out.extend(_land_drops(state, pid, oid, card))
             # A **modal** double-faced card whose other half is a land -- Malakir
             # Rebirth // Malakir Mire. The front is cast and the back is
             # *played*, which is the whole difference from every other second
@@ -398,15 +399,43 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
             # a graveyard.
             face = _second_face_land(state, card)
             if face is not None and zone is state.players[pid].hand:
-                out.append(
-                    Action(
-                        kind=ActionKind.PLAY_LAND,
-                        source=oid,
-                        second_face=True,
-                        label=f"Play {face.name}",
-                    )
-                )
+                out.extend(_land_drops(state, pid, oid, face, second_face=True))
     return out
+
+
+def _land_drops(
+    state: GameState, pid: int, oid: int, card: CardDef, *, second_face: bool = False
+) -> list[Action]:
+    """One land drop -- or two, for a land with a price to pay as it enters.
+
+    "As this land enters, you may pay 2 life. If you don't, it enters tapped."
+    The shock lands' choice is part of WHICH land drop you make, so it is
+    offered as two actions (`Action.enters_paid`) rather than asked mid-drop:
+    every seat answers it by picking an action -- an agent, the heuristic AI, a
+    game run headless on the server -- and the client draws the pair as one row
+    with two chips. Unaffordable, there is one drop and it enters tapped, the
+    way `zones.offer_enters_costs` has always declined to ask.
+    """
+    label = f"Play {card.name}"
+    offer = enters_cost_offer(state, oid, pid, card)
+    if offer is None:
+        return [
+            Action(kind=ActionKind.PLAY_LAND, source=oid, second_face=second_face, label=label)
+        ]
+    replacement, cost = offer
+    paying, declining = enters_cost_options(replacement, cost)
+    return [
+        Action(
+            kind=ActionKind.PLAY_LAND,
+            source=oid,
+            second_face=second_face,
+            enters_paid=paid,
+            label=f"{label} ({chip})",
+            base_label=label,
+            option_label=chip,
+        )
+        for paid, chip in ((True, paying), (False, declining))
+    ]
 
 
 def _second_face_land(state: GameState, card: CardDef) -> CardDef | None:

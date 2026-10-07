@@ -74,6 +74,13 @@ export function useTableGestures({
       if (gateInput()) return;
       const candidates = actionsForCard(actions, card.oid);
       if (candidates.length === 0) return;
+      // A shock land: two land drops, paying and tapped. The ability menu asks
+      // which, the way it asks a planeswalker which loyalty ability -- the
+      // same router (`logic/abilities.ts`) and the same dialog.
+      if (abilityRoute(actions, card.oid).kind === "menu") {
+        setAbilityMenu(card.oid);
+        return;
+      }
       if (candidates.length === 1 && candidates[0].targets.length === 0) {
         act(candidates[0].id);
         // The card is leaving your hand, so the ring must not leave with it.
@@ -87,7 +94,7 @@ export function useTableGestures({
       // The board has just lit up somewhere else; go and stand on it.
       followUp({ kind: "targeting", actionIds: candidates.map((a) => a.id) });
     },
-    [gateInput, actions, act, beginTargeting, followUp],
+    [gateInput, actions, act, beginTargeting, followUp, setAbilityMenu],
   );
 
   /**

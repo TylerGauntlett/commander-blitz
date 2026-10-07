@@ -38,6 +38,11 @@ export interface AbilityChoice {
   ids: string[];
   /** Whether choosing it still leaves a target or variant to pick. */
   targeted: boolean;
+  /**
+   * What the menu's stop and test id are named by, when `index` cannot say:
+   * a shock land's two land drops are not abilities and have no index.
+   */
+  key?: string;
 }
 
 export type AbilityRoute =
@@ -54,6 +59,25 @@ export function abilitiesOf(
 ): AbilityChoice[] {
   const byKey = new Map<string, AbilityChoice>();
   for (const action of actions) {
+    /*
+     * A LAND DROP WITH A CHOICE IN IT is the same question: "As this land
+     * enters, you may pay 2 life. If you don't, it enters tapped." The engine
+     * offers the two answers as two land drops, each saying what it does in
+     * `option_label` ("Pay 2 life, untapped", "Tapped"), and the menu is where
+     * a card with two things to do asks which. A plain land drop carries no
+     * option label and stays a single press.
+     */
+    if (action.kind === "play_land" && action.source_oid === oid && action.option_label) {
+      const key = `land:${action.option_label}`;
+      byKey.set(key, {
+        index: -1,
+        text: action.option_label,
+        ids: [action.id],
+        targeted: false,
+        key: `land-${byKey.size}`,
+      });
+      continue;
+    }
     if (action.kind !== "activate" || action.source_oid !== oid) continue;
     const key =
       action.ability_index === null ? action.base_label : String(action.ability_index);

@@ -344,7 +344,9 @@ class Game:
         # a copy of, is a wasted question when the arrival itself is about to be
         # replaced.
         yield from offer_enters_replacement(state, oid, pid)
-        yield from offer_enters_costs(state, oid, pid)
+        # A shock land's answer rides on the drop itself (`Action.enters_paid`,
+        # offered as two land drops by legality), so this asks nothing then.
+        yield from offer_enters_costs(state, oid, pid, decided=action.enters_paid)
         yield from offer_enters_copy(state, oid, pid)
         # Riot, on a land drop: Dryad Arbor is a land *creature*, so a land put
         # onto the battlefield under a Rhythm of the Wild really does arrive
