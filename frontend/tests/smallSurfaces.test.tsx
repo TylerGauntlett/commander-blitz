@@ -67,6 +67,29 @@ describe("StackPanel", () => {
     }
   });
 
+  it("gives every ply a stop the ring can stand on, and a press reaches the caller", () => {
+    const { state } = stackThreeDeep();
+    const onPress = vi.fn();
+    render(<StackPanel state={state} onPress={onPress} />);
+    for (const item of state.stack) {
+      const hit = document.querySelector<HTMLElement>(`[data-stop="stack:${item.sid}"]`);
+      expect(hit, `ply ${item.sid} has a stop`).not.toBeNull();
+      // The reader follows the ply's card; a trigger with no card previews nothing.
+      expect(hit?.dataset.previewOid).toBe(item.card ? String(item.card.oid) : undefined);
+      expect(hit?.hasAttribute("data-action-id")).toBe(false);
+      fireEvent.click(hit as HTMLElement);
+      expect(onPress).toHaveBeenLastCalledWith(item);
+    }
+    expect(onPress).toHaveBeenCalledTimes(state.stack.length);
+  });
+
+  it("is still pressable with nobody listening", () => {
+    const { state } = stackThreeDeep();
+    render(<StackPanel state={state} />);
+    const hit = document.querySelector<HTMLElement>('[data-stop="stack:1"]');
+    expect(() => fireEvent.click(hit as HTMLElement)).not.toThrow();
+  });
+
   it("draws a plate rather than a face for an item with no card", () => {
     const { state } = stackThreeDeep();
     const bare = { ...state, stack: [{ ...state.stack[0], card: null, name: "A trigger" }] };

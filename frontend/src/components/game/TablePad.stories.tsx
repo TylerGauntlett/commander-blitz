@@ -6,7 +6,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
 import { getCursor, moveCursor, setCursor } from "../../input/cursor";
 import {
@@ -19,7 +19,10 @@ import {
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
+import { useUiStore } from "../../state/uiStore";
 import { board } from "../../testing/board";
+import { idleMutation } from "../../testing/fakeGame";
+import { action } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { Table } from "./Table";
 
@@ -579,5 +582,71 @@ export const HandheldStackIsARegion: Story = {
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
     });
+  },
+};
+
+/**
+ * A PRESS ON A PLY IS A TARGET WHEN A SPELL IS WAITING FOR ONE, AND A READ
+ * OTHERWISE.
+ *
+ * The four answers `useTableGestures.onStackItem` can give, in one walk: no
+ * spell waiting reads the ply (the hold `Y` opens); one spell aimed at the ply
+ * posts it; two variants aimed at it narrow the selection and leave the rest to
+ * the panel, as a board card does; and a ply nothing is aimed at posts nothing.
+ */
+export const HandheldStackPlyIsATarget: Story = {
+  args: (() => {
+    const scenario = scenarios.stackThreeDeep();
+    const counter = (id: string, sid: number) =>
+      action({
+        id,
+        kind: "cast",
+        label: `Cast Counterspell -> #${sid}`,
+        base_label: "Cast Counterspell",
+        source_oid: 530,
+        targets: [{ kind: "stack", id: sid }],
+      });
+    const actions = [
+      ...scenario.actions,
+      counter("c1", 1),
+      { ...counter("c2", 1), base_label: "Cast Counterspell (kicked)" },
+      counter("c3", 2),
+    ];
+    return board({ ...scenario, actions }, { act: idleMutation(fn()) });
+  })(),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+    const ply = (sid: number) =>
+      canvasElement.querySelector(`[data-stop="stack:${sid}"]`) as HTMLElement;
+
+    // Nothing waiting: the press reads the ply.
+    await userEvent.click(ply(1));
+    await canvas.findByTestId("card-hold");
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
+    });
+    expect(args.game.act.mutate).not.toHaveBeenCalled();
+
+    // One spell aimed at this ply: the press is the target.
+    useUiStore.getState().beginTargeting(530, ["c1", "c2", "c3"]);
+    await userEvent.click(ply(2));
+    expect(args.game.act.mutate).toHaveBeenCalledWith("c3");
+
+    // Two variants aimed at it: the press narrows, and the panel asks which.
+    useUiStore.getState().beginTargeting(530, ["c1", "c2", "c3"]);
+    await userEvent.click(ply(1));
+    await waitFor(() => expect(useUiStore.getState().targetingActionIds).toEqual(["c1", "c2"]));
+
+    // Not a legal target: nothing posted, and the selection is untouched.
+    useUiStore.getState().beginTargeting(530, ["c3"]);
+    await userEvent.click(ply(3));
+    expect(args.game.act.mutate).toHaveBeenCalledTimes(1);
+    expect(useUiStore.getState().targetingActionIds).toEqual(["c3"]);
+    useUiStore.getState().endTargeting();
   },
 };
