@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { onFrame as onPadFrame } from "./pad";
+import { stopRoot } from "./stops";
 
 export function useGroupDial(): [boolean, (open: boolean) => void] {
   const [dialOpen, setDialOpen] = useState(false);
@@ -68,7 +69,11 @@ export function useGroupDial(): [boolean, (open: boolean) => void] {
         clearTimeout(timer);
         timer = null;
       }
-      if (held) timer = setTimeout(() => setDialOpen(true), HOLD);
+      // Not over a prompt: the dial is a map of the board, and the board is
+      // behind the modal trap. `L2` there is the jump to the primary button.
+      if (held && !stopRoot().hasAttribute("data-modal-root")) {
+        timer = setTimeout(() => setDialOpen(true), HOLD);
+      }
       // The release closes it whether or not it ever opened, so a hold that is
       // let go of never leaves the dial up.
       else setDialOpen(false);

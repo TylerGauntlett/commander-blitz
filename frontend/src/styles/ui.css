@@ -683,7 +683,10 @@
   padding: 4px;
   border: 1px solid var(--edge-hi);
   border-radius: 9px;
-  background: var(--pane-bg);
+  /* OPAQUE, not `--pane-bg`: at 60% the board's cards showed through and the
+     item labels were read against them. A thing that floats over content has to
+     stop the content -- the stack panel's rule (`board.css`), for the same reason. */
+  background: var(--void-1);
   box-shadow: 0 -10px 28px rgb(0 0 0 / 0.55);
 }
 

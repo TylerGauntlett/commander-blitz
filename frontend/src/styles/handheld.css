@@ -1901,8 +1901,11 @@ html[data-input="pad"] .act__key {
   cursor: pointer;
 }
 
-html[data-input="pad"] .foot__regions,
-html[data-input="keyboard"] .foot__regions {
+/* ...and, like the hints, only when the "Button hints" toggle asks for it. It is
+   a labelled glyph for `L2`, which is a hint in button form: off by default, the
+   shoulder and the walk-out-at-the-edge still reach every region without it. */
+html[data-hints="on"][data-input="pad"] .foot__regions,
+html[data-hints="on"][data-input="keyboard"] .foot__regions {
   display: inline-flex;
 }
 

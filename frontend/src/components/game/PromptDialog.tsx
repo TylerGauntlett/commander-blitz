@@ -26,6 +26,7 @@
 import { AnimatePresence, motion, usePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
+import { setCursor } from "../../input/cursor";
 import { actionAttrs, stopId } from "../../input/stops";
 import { mulliganPhase } from "../../logic/openingHand";
 import { COMBO_MIN } from "../../logic/promptFilter";
@@ -413,6 +414,33 @@ function PickSeveral({ pending, options, extras, onChoose, disabled }: PickProps
       now.includes(choice) ? now.filter((c) => c !== choice) : full ? now : [...now, choice],
     );
 
+  const stopFor = ({ action, card }: Row) =>
+    card ? stopId.card(card.oid) : stopId.combo(`pick:${action.choice as number}`);
+
+  /*
+   * A PICK STEPS THE RING ON, so choosing several is A, A, A rather than
+   * A-right-A-right. Only on a pick, never an un-pick: taking one back is a
+   * correction, and the ring should stay on what was corrected. Forward to the
+   * next card still open to choose -- wrapping, since the list is in table
+   * order and not in any order the player chose in -- and to Confirm once the
+   * pick is full or nothing is left, because that is the only press left.
+   *
+   * Not for a mouse: `detail` is the click count, and 0 is a click nobody's
+   * pointer made -- the ring's `A` (`useCursorNav`) or a key. A mouse player
+   * has no visible ring, and moving it would move the reader under them.
+   */
+  const advance = (index: number) => {
+    const taken = new Set([...chosen, ordered[index].action.choice as number]);
+    const nowFull = taken.size >= max;
+    const next = nowFull
+      ? undefined
+      : [...ordered.slice(index + 1), ...ordered.slice(0, index)].find(
+          (row) => !taken.has(row.action.choice as number),
+        );
+    if (next) setCursor(stopFor(next));
+    else if (carrier) setCursor(actionAttrs(carrier.id)["data-stop"]);
+  };
+
   return (
     <>
       <p className="prompt__hint" data-testid="pick-count">
@@ -424,7 +452,8 @@ function PickSeveral({ pending, options, extras, onChoose, disabled }: PickProps
         {` \u00b7 ${chosen.length} chosen`}
       </p>
       <div className="prompt__options" data-testid="pick-several">
-        {ordered.map(({ action, card, playerName }) => {
+        {ordered.map((row, index) => {
+          const { action, card, playerName } = row;
           const choice = action.choice as number;
           const on = chosen.includes(choice);
           return (
@@ -432,11 +461,14 @@ function PickSeveral({ pending, options, extras, onChoose, disabled }: PickProps
               type="button"
               key={action.id}
               className={card ? "opt opt--card opt--toggle" : "opt opt--toggle"}
-              data-stop={card ? stopId.card(card.oid) : stopId.combo(`pick:${choice}`)}
+              data-stop={stopFor(row)}
               aria-pressed={on}
               data-on={on || undefined}
               disabled={disabled || (full && !on)}
-              onClick={() => toggle(choice)}
+              onClick={(event) => {
+                toggle(choice);
+                if (!on && event.detail === 0) advance(index);
+              }}
             >
               {card ? (
                 <StaticCard card={card} variant="detail" onSurface />
