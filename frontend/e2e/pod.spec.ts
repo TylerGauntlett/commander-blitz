@@ -819,7 +819,20 @@ test.describe("a turn changes hands", () => {
       handedOver = await up(waiting);
       if (handedOver) break;
       if (await up(active)) {
-        await takeAction(active, ["play_land", "pass"]);
+        /*
+         * NOT `takeAction`, which waits up to a minute for THIS page to have
+         * a decision. The hand-over this loop is looking for happens inside a
+         * response: a land drop with nothing left to cast auto-passes the
+         * turn, so `up(active)` can read true off the buttons still rendered
+         * from before, and `takeAction` then waited out its whole budget on a
+         * seat whose turn had already gone -- with the other seat ready the
+         * entire time. The CI failure, and the one this spec has had on main.
+         * A short, forgiving click instead, and the loop asks both pages again.
+         */
+        const next = actionsOfKind(active, "play_land")
+          .or(actionsOfKind(active, "pass"))
+          .first();
+        if (await next.count()) await next.click({ timeout: 5_000 }).catch(() => undefined);
       } else {
         await active.waitForTimeout(250);
       }
