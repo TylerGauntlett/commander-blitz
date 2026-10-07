@@ -15,7 +15,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
 import { APP_VAR } from "../../testing/appGeometry";
 import {
@@ -38,6 +38,7 @@ const meta = {
     onAct: fn(),
     onStage: fn(),
     onDeclare: fn(),
+    onChoose: fn(),
     onUndo: fn(),
     onQuit: fn(),
     onToggleFullControl: fn(),
@@ -411,6 +412,63 @@ export const BlockMode: Story = {
  * tools stay in the document regardless: quitting and the stops setting are
  * wanted exactly when a dialog is up.
  */
+/* ------------------------------------------------------------------ */
+/* Pick several                                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * "Up to two target artifacts and/or enchantments": rows to toggle, then
+ * Confirm -- the attack declaration's shape, in the rail rather than a dialog.
+ * See `logic/pickSeveral.ts`.
+ */
+export const PickSeveral: Story = {
+  args: from(scenarios.chooseSeveralTargets()),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const panel = await canvas.findByTestId("action-panel");
+    expect(panel.getAttribute("data-mode")).toBe("pick");
+    const rows = canvas.getAllByTestId("pick-option");
+    expect(rows).toHaveLength(4);
+    expectStableDock(canvasElement.querySelector(".commit-dock") as HTMLElement);
+
+    await userEvent.click(rows[0]);
+    await userEvent.click(rows[3]);
+    expect(args.onChoose, "picking must not reach the server").not.toHaveBeenCalled();
+    await userEvent.click(canvas.getByTestId("pick-confirm"));
+    expect(args.onChoose).toHaveBeenCalledTimes(1);
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * A pick steps the ring on: choosing several is A, A, then Confirm.
+ *
+ * `.click()` is the ring's `A` (`useCursorNav`), a click with no pointer
+ * behind it. The first pick moves to the next row, the one that fills the set
+ * moves to Confirm, and an un-pick stays where it is.
+ */
+export const PickSeveralStepsTheRing: Story = {
+  args: from(scenarios.chooseSeveralTargets()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("action-panel");
+    const rows = () => canvas.getAllByTestId("pick-option");
+    const ringOn = () => canvasElement.querySelector<HTMLElement>("[data-cursor]");
+
+    rows()[0].click();
+    await waitFor(() => expect(ringOn()).toBe(rows()[1]));
+
+    rows()[0].click();
+    await waitFor(() => expect(rows()[0].getAttribute("aria-pressed")).toBe("false"));
+    expect(ringOn(), "an un-pick does not move the ring").toBe(rows()[1]);
+
+    rows()[1].click();
+    await waitFor(() => expect(ringOn()).toBe(rows()[2]));
+    rows()[2].click();
+    await waitFor(() => expect(ringOn()?.getAttribute("data-testid")).toBe("pick-confirm"));
+  },
+};
+
 export const StandDown: Story = {
   args: { ...from(scenarios.mulligan()), standDown: true },
   play: async ({ canvasElement }) => {

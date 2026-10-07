@@ -54,17 +54,21 @@ def position(builder, land: str, *, life: int | None = None):
 
 
 def play_the_land(game, land: str, *, pay: bool):
+    """Make the land drop that pays, or the one that does not.
+
+    Paying is part of WHICH land drop is made (`Action.enters_paid`), so the
+    answer is picked here rather than given to a question during the drop. A
+    land with no affordable price offers one drop, with `enters_paid` unset.
+    """
     action = next(
         a
         for a in game.legal_actions()
-        if a.kind is ActionKind.PLAY_LAND and game.state.objects[a.source].def_id == land
+        if a.kind is ActionKind.PLAY_LAND
+        and game.state.objects[a.source].def_id == land
+        and a.enters_paid in (pay, None)
     )
     oid = action.source
     game.apply(action)
-    pending = game.pending()
-    if pending is not None and pending.kind is DecisionKind.MAY:
-        want = ActionKind.YES if pay else ActionKind.NO
-        game.apply(next(a for a in game.legal_actions() if a.kind is want))
     return oid
 
 
@@ -103,16 +107,19 @@ class TestDecliningIt:
 
 class TestTheQuestionIsAsked:
     def test_playing_it_offers_the_choice(self, builder):
+        """As two land drops -- paying and not -- so a seat with no UI answers
+        it by picking one, and the drop itself asks nothing."""
         game = position(builder, SPRINGS)
-        action = next(
+        drops = [
             a
             for a in game.legal_actions()
             if a.kind is ActionKind.PLAY_LAND
             and game.state.objects[a.source].def_id == SPRINGS
-        )
-        game.apply(action)
+        ]
+        assert sorted(a.enters_paid for a in drops) == [False, True]
 
-        assert offered_a_choice(game)
+        game.apply(next(a for a in drops if a.enters_paid))
+        assert not offered_a_choice(game)
 
     def test_a_land_with_the_clause_dropped_asks_nothing(self, builder):
         """The card that ships today, kept live: strictly worse and silent."""

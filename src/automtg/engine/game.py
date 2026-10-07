@@ -28,6 +28,7 @@ from .casting import (
     _graveyard_cast_permission,
     _spell_as_cast,
     chosen_additional,
+    deferred_target_spec,
     strive_surcharge,
 )
 from .characteristics import abilities_of, chars, mana_source_traits
@@ -64,7 +65,14 @@ from .primitives import add_counters, draw_cards
 from .rng import Rng
 from .state import GameState, new_object
 from .structs import TargetRef
-from .targeting import candidates, declared_by_spec, describe_ref, selectable_modes, target_count
+from .targeting import (
+    candidates,
+    declared_by_spec,
+    describe_ref,
+    kicked_targets,
+    selectable_modes,
+    target_count,
+)
 from .turn import _next_blocker_decision
 from .zones import (
     move_object,
@@ -336,7 +344,9 @@ class Game:
         # a copy of, is a wasted question when the arrival itself is about to be
         # replaced.
         yield from offer_enters_replacement(state, oid, pid)
-        yield from offer_enters_costs(state, oid, pid)
+        # A shock land's answer rides on the drop itself (`Action.enters_paid`,
+        # offered as two land drops by legality), so this asks nothing then.
+        yield from offer_enters_costs(state, oid, pid, decided=action.enters_paid)
         yield from offer_enters_copy(state, oid, pid)
         # Riot, on a land drop: Dryad Arbor is a land *creature*, so a land put
         # onto the battlefield under a Rhythm of the Wild really does arrive
@@ -390,13 +400,34 @@ class Game:
             )
         from_command = obj.zone is Zone.COMMAND
 
+        # 601.2c for the one spec legality left empty: "any number of target
+        # permanents" is declared here, as a set, rather than picked from a
+        # capped list of subsets. See `casting.deferred_target_spec`, which
+        # legality asked with these same specs. First, because everything
+        # below that reads the targets -- discounts, taxes, the stored refs --
+        # has to read the real ones.
+        specs = tuple(card.targets)
+        if action.kicked and (swapped := kicked_targets(specs)) is not None:
+            specs = swapped
+        deferred = (
+            None
+            if action.overloaded or action.bestowed or action.mutated
+            else deferred_target_spec(state, card, specs)
+        )
+        late_refs: tuple[TargetRef, ...] = ()
+        if deferred is not None:
+            late_refs = yield from self._ask_deferred_targets(
+                pid, card, oid, deferred, action.targets
+            )
+        targets = tuple(action.targets) + late_refs
+
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
         # that also reduces its own cost is charged once. `pay` clamps at zero.
         # The targets the action actually carries, so a discount that reads
         # them charges the number legality offered -- `_priced_tuples` priced
         # this very tuple.
-        extra -= cost_reduction(state, pid, card, action.targets)
+        extra -= cost_reduction(state, pid, card, targets)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
@@ -518,7 +549,7 @@ class Game:
             # variant's price and before strive -- so `action.phyrexian` buys
             # the same pips here that it bought there.
             cost = cost.black_as_phyrexian()
-        cost = cost.plus(strive_surcharge(card, action.targets))
+        cost = cost.plus(strive_surcharge(card, targets))
 
         # 107.4f, and the paying half of the line `_cast_variant` offered. The
         # bought pips leave the cost here, before every relaxation and discount
@@ -626,12 +657,12 @@ class Game:
         # than a ward: it is charged whether or not the spell ever resolves, and
         # there is no moment at which the caster could decline it.
         #
-        # `action.targets` is the tuple legality priced the line with -- the
-        # same read `cost_reduction` above takes, and for the same reason: a
+        # `targets` is the tuple legality priced the line with -- the same read
+        # `cost_reduction` above takes, and for the same reason: a
         # surcharge sized off anything else would be a charge the offer never
         # showed. Legality proved this payable before offering the line, so a
         # failure here is a bug rather than a decision.
-        life_tax = spell_life_tax(state, pid, card, action.targets)
+        life_tax = spell_life_tax(state, pid, card, targets)
         if life_tax:
             ok = yield from pay(state, pid, Cost(pay_life=life_tax), oid)
             if not ok:  # pragma: no cover - legality already proved payability
@@ -809,7 +840,7 @@ class Game:
             state,
             oid,
             pid,
-            tuple(action.targets) + x_refs + mode_refs,
+            targets + x_refs + mode_refs,
             x=x,
             kicked=action.kicked,
             graveyard_permission=permission,
@@ -1358,6 +1389,37 @@ class Game:
                 )
                 out.extend(chosen)
         return tuple(out)
+
+    def _ask_deferred_targets(
+        self, pid: int, card, oid: int, spec, chosen
+    ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+        """Declare a variable-size spec's refs as one set -- "any number of targets".
+
+        The third sibling of :meth:`_ask_mode_targets` and :meth:`_ask_x_targets`:
+        a 601.2c declaration legality left to the cast, here because the subsets
+        of a board are too many to offer as lines. `casting.deferred_target_spec`
+        has the argument and says which spec.
+
+        Any size from zero to the ceiling, the two readings that reach here both
+        including zero. ``chosen`` is the refs the line already carries for the
+        specs before this one, struck off for the reason
+        `enumerate_target_tuples` drops a tuple that reuses an object: one
+        object cannot fill two targets of one spell.
+        """
+        state = self.state
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        taken = set(chosen)
+        options = [
+            (describe_ref(state, ref), ref)
+            for ref in candidates(state, pid, spec, oid)
+            if ref not in taken
+        ]
+        count = target_count(state, pid, spec, oid)
+        ceiling = len(options) if count == "any" else min(int(count), len(options))
+        picked = yield from ask_targets(
+            ctx, f"Targets for {card.name}", options, 0, ceiling, pid
+        )
+        return tuple(picked)
 
     def _ask_x_targets(
         self, pid: int, card, oid: int, x: int

@@ -27,7 +27,7 @@ import {
   resetGroups,
   setGroup,
 } from "./groups";
-import { stopElement, stopId } from "./stops";
+import { stopElement, stopId, stopIdOf, stopRoot, stopsIn } from "./stops";
 
 export interface TableRegionsInput {
   state: GameView;
@@ -130,6 +130,29 @@ export function useTableRegions({
    * whole hint bar was rewritten to stop.
    */
   const jumpToCommit = useCallback(() => {
+    /*
+     * OVER A PROMPT, THE PROMPT'S PRIMARY BUTTON.
+     *
+     * `L2` is "go to the thing that ends this", everywhere. With a dialog up
+     * the panel's slab is behind the modal trap and unreachable, so the jump
+     * landed nowhere; the dialog's own `btn--primary` -- Confirm on a
+     * proliferate pick, the commit of any prompt -- is the same answer for
+     * the surface that is actually on top. A disabled one denies, for the
+     * reason the combat landing above avoids a dead slab.
+     */
+    const top = stopRoot();
+    if (top.hasAttribute("data-modal-root")) {
+      const stops = stopsIn(top);
+      const index = stops.findIndex(
+        (el) => el.matches(".btn--primary") && !(el as HTMLButtonElement).disabled,
+      );
+      if (index === -1) {
+        cue("deny");
+        return;
+      }
+      setCursor(stopIdOf(stops[index], index));
+      return;
+    }
     const acts = groupRoot("acts");
     if (!acts || landableStopsIn(acts).length === 0) {
       cue("deny");
@@ -143,8 +166,12 @@ export function useTableRegions({
     const dock = document.querySelector<HTMLElement>(".commit-dock");
     if (!dock) return;
     const stops = landableStopsIn(dock);
+    // Combat lands on its "all" mark (above); anything else on the slab, which
+    // is the button that ends the decision -- a pick-several dock has a mark
+    // to its left too, and that one is a convenience, not the answer.
     const all = stops.find((el) => el.dataset.stop === stopId.commitMark("all"));
-    const slab = (all ?? stops[0])?.dataset.stop;
+    const commit = stops.find((el) => el.classList.contains("commit"));
+    const slab = (all ?? commit ?? stops[0])?.dataset.stop;
     if (slab) setCursor(slab);
   }, [enterGroup, cue]);
 

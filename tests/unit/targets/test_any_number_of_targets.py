@@ -39,9 +39,10 @@ import pytest
 
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step, Zone
+from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import DslError
-from tests.conftest import pass_until
+from automtg.engine.targeting import enumerate_target_tuples
+from tests.conftest import declare_targets, pass_until
 
 SPELL = "t_any_number_bounce"  # "Return any number of target creatures…"
 BEAR = "t_bear"
@@ -81,34 +82,85 @@ def casts(game) -> list:
     ]
 
 
+def tuples(game) -> list:
+    """The enumerator's own answer for the spell's spec, undeferred.
+
+    Triggers and activated abilities still take their "any number" targets
+    from this list, so its order guarantees are still the ones that matter
+    to an AI seat or a trigger resolving on its own.
+    """
+    oid = next(o.oid for o in game.state.objects.values() if o.def_id == SPELL)
+    card = game.state.card(oid)
+    return enumerate_target_tuples(game.state, 0, card.targets, oid)
+
+
+def bears(game) -> list[int]:
+    return [o.oid for o in game.state.battlefield_objects(1) if o.def_id == BEAR]
+
+
+class TestTheCastIsOneLine:
+    """A spell's "any number" is declared as the cast happens, not on the line.
+
+    One line per subset was 2**n of them, capped at `MAX_TARGET_OPTIONS`: a
+    six-permanent Clever Concealment offered eleven of sixty-three, and the
+    set the player wanted was usually not on the list. `casting.
+    deferred_target_spec` leaves the spec empty on the line and
+    `Game._ask_deferred_targets` asks for it as one decision.
+    """
+
+    def test_three_creatures_are_one_cast(self, builder):
+        offered = casts(board(builder, 3))
+        assert len(offered) == 1
+        assert offered[0].targets == ()
+
+    def test_the_cast_asks_for_the_set(self, builder):
+        game = board(builder, 3)
+        game.apply(casts(game)[0])
+        decision = game.pending()
+        assert decision.kind is DecisionKind.CHOOSE_OBJECTS
+        assert decision.context["purpose"] == "target"
+        assert sorted(o.ref.id for o in decision.options) == sorted(bears(game))
+
+    def test_any_size_from_none_to_all(self, builder):
+        """What `count: 3, optional: true` cannot say: every size between."""
+        game = board(builder, 3)
+        game.apply(casts(game)[0])
+        decision = game.pending()
+        assert (decision.min_count, decision.max_count) == (0, 3)
+
+    def test_a_big_board_offers_every_creature(self, builder):
+        """Forty creatures: one line, and all forty in the decision -- not the
+        twelve largest subsets the cap used to leave."""
+        game = board(builder, 40)
+        assert len(casts(game)) == 1
+        game.apply(casts(game)[0])
+        assert len(game.pending().options) == 40
+
+
 class TestEverySizeIsOffered:
+    """The enumerator, for the callers that still take a tuple from it."""
+
     def test_three_creatures_give_every_subset(self, builder):
         """2**3 = 8: every subset of three, the empty one included."""
-        game = board(builder, 3)
-        assert len(casts(game)) == 8
+        assert len(tuples(board(builder, 3))) == 8
 
     def test_including_the_sizes_in_between(self, builder):
-        """What `count: 3, optional: true` cannot say."""
-        game = board(builder, 3)
-        sizes = sorted(len(a.targets) for a in casts(game))
+        sizes = sorted(len(t) for t in tuples(board(builder, 3)))
         assert sizes == [0, 1, 1, 1, 2, 2, 2, 3]
 
     def test_zero_is_legal_without_the_optional_flag(self, builder):
         """"Any number" includes none, whatever the spec says."""
-        game = board(builder, 2)
-        assert any(len(a.targets) == 0 for a in casts(game))
+        assert any(len(t) == 0 for t in tuples(board(builder, 2)))
 
 
 class TestTheOrder:
     def test_the_whole_board_comes_first(self, builder):
         """Whatever takes a tuple without asking takes the first one, and "any
         number" defaulting to none is a spell that does nothing."""
-        game = board(builder, 3)
-        assert len(casts(game)[0].targets) == 3
+        assert len(tuples(board(builder, 3))[0]) == 3
 
     def test_declining_comes_last(self, builder):
-        game = board(builder, 3)
-        assert len(casts(game)[-1].targets) == 0
+        assert len(tuples(board(builder, 3))[-1]) == 0
 
 
 class TestABigBoardIsNotEnumerated:
@@ -123,13 +175,13 @@ class TestABigBoardIsNotEnumerated:
     def test_forty_creatures_cap_at_the_option_limit(self, builder):
         from automtg.engine.targeting import MAX_TARGET_OPTIONS
 
-        offered = casts(board(builder, 40))
+        offered = tuples(board(builder, 40))
         assert 0 < len(offered) <= MAX_TARGET_OPTIONS
 
     def test_the_whole_board_still_comes_first_and_none_last(self, builder):
-        offered = casts(board(builder, 40))
-        assert len(offered[0].targets) == 40
-        assert offered[-1].targets == ()
+        offered = tuples(board(builder, 40))
+        assert len(offered[0]) == 40
+        assert offered[-1] == ()
 
 
 class TestASingleTargetIsNeverCapped:
@@ -162,14 +214,16 @@ class TestASingleTargetIsNeverCapped:
 
 
 class TestItActuallyResolves:
+    def resolve(self, game) -> None:
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+
     def test_all_three_go_back_to_hand(self, builder):
         game = board(builder, 3)
         game.apply(casts(game)[0])
-        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        declare_targets(game, *bears(game))
+        self.resolve(game)
 
-        assert not [
-            o for o in game.state.battlefield_objects(1) if o.def_id == BEAR
-        ]
+        assert not bears(game)
         in_hand = [
             oid
             for oid in game.state.players[1].hand
@@ -179,23 +233,19 @@ class TestItActuallyResolves:
 
     def test_one_of_three_leaves_the_others(self, builder):
         game = board(builder, 3)
-        one = next(a for a in casts(game) if len(a.targets) == 1)
-        game.apply(one)
-        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        game.apply(casts(game)[0])
+        declare_targets(game, bears(game)[0])
+        self.resolve(game)
 
-        assert len(
-            [o for o in game.state.battlefield_objects(1) if o.def_id == BEAR]
-        ) == 2
+        assert len(bears(game)) == 2
 
     def test_choosing_none_leaves_the_board_alone(self, builder):
         game = board(builder, 3)
-        none = next(a for a in casts(game) if not a.targets)
-        game.apply(none)
-        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        game.apply(casts(game)[0])
+        declare_targets(game)
+        self.resolve(game)
 
-        assert len(
-            [o for o in game.state.battlefield_objects(1) if o.def_id == BEAR]
-        ) == 3
+        assert len(bears(game)) == 3
         assert game.state.objects[
             next(
                 o.oid

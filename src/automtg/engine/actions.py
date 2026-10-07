@@ -178,6 +178,15 @@ class Action:
     #: Deliberately not folded into ``choice``, which is the ordinal into a
     #: :class:`PendingDecision`'s options and is read as such by the client.
     mana_option: int | None = None
+    #: A land drop's answer to "As this land enters, you may pay 2 life. If you
+    #: don't, it enters tapped" -- the shock lands. ``True`` pays and the land
+    #: enters untapped, ``False`` declines and it enters tapped, ``None`` is
+    #: every other land drop (and any arrival that still asks, through
+    #: `zones.offer_enters_costs`). Part of the identity: the two are two
+    #: different land drops, and offering them as two actions is what lets an
+    #: agent -- or a seat with no UI at all -- make the choice by picking one,
+    #: rather than through a question that interrupts the drop.
+    enters_paid: bool | None = None
     label: str = field(default="", compare=False)
     #: ``label`` with the ``" -> target, target"`` suffix removed: what this
     #: action *is*, without which of its legal targets this copy aims at.  The
@@ -216,6 +225,7 @@ class Action:
             phyrexian=self.phyrexian,
             emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
+            enters_paid=self.enters_paid,
             label=label,
             base_label=label if base_label is None else base_label,
             option_label=self.option_label,
@@ -250,6 +260,8 @@ class Action:
             # line a spree card offers shares all of the above, so without this
             # the seven subsets are one key.
             self.spree_modes,
+            # A shock land's two drops share everything else.
+            -1 if self.enters_paid is None else int(self.enters_paid),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -270,6 +282,7 @@ class Action:
             "phyrexian": self.phyrexian,
             "emerge_oid": self.emerge_oid,
             "mana_option": self.mana_option,
+            "enters_paid": self.enters_paid,
             "label": self.label,
             "base_label": self.base_label,
             "option_label": self.option_label,

@@ -97,3 +97,39 @@ describe("abilityRoute", () => {
     expect(abilityRoute(actions, 7)).toEqual({ kind: "act", id: "a1" });
   });
 });
+
+/**
+ * A shock land's two land drops ask through the same menu.
+ *
+ * "As this land enters, you may pay 2 life. If you don't, it enters tapped."
+ * The engine offers paying and declining as two land drops, each saying what
+ * it does in `option_label`, so the hand press asks which -- the planeswalker's
+ * dialog, not a targeting step with two chips nobody can see from the hand.
+ */
+describe("a land drop with a choice in it", () => {
+  const drop = (id: string, option: string) =>
+    action({
+      id,
+      kind: "play_land",
+      label: `Play Blood Crypt (${option})`,
+      base_label: "Play Blood Crypt",
+      option_label: option,
+      source_oid: 9,
+    });
+
+  it("is a menu of the two drops", () => {
+    const route = abilityRoute([drop("p1", "Pay 2 life, untapped"), drop("p2", "Tapped")], 9);
+    expect(route.kind).toBe("menu");
+    if (route.kind !== "menu") return;
+    expect(route.abilities.map((a) => a.text)).toEqual(["Pay 2 life, untapped", "Tapped"]);
+    expect(route.abilities.map((a) => routeFor(a))).toEqual([
+      { kind: "act", id: "p1" },
+      { kind: "act", id: "p2" },
+    ]);
+  });
+
+  it("leaves a plain land drop alone", () => {
+    const plain = action({ id: "p1", kind: "play_land", label: "Play Forest", source_oid: 9 });
+    expect(abilitiesOf([plain], 9)).toEqual([]);
+  });
+});

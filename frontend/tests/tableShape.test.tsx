@@ -93,6 +93,7 @@ describe.each(["desktop", "handheld"] as const)("Table, %s layout", (layout) => 
 describe("ActionPanel alone, one snapshot per mode", () => {
   const base = {
     onStage: noop,
+    onChoose: noop,
     onDeclare: noop,
     onUndo: noop,
     onQuit: noop,

@@ -7,12 +7,13 @@ read apart.
 from __future__ import annotations
 
 import dataclasses
+from collections.abc import Sequence
 from itertools import combinations
 from typing import TYPE_CHECKING
 
 from . import suspend as suspend_mod
 from .actions import Action
-from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
+from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
 from .cost_reduction import cost_reduction, variant_reduction
 from .costs import can_pay, commander_cost, life_cost, mana_sources, spell_purpose, zone_of
@@ -40,7 +41,12 @@ from .player_statics import (
 )
 from .primitives import cast_locked_zones, life_locked
 from .stack import modal_cast_ok
-from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
+from .targeting import (
+    _names_a_sibling,
+    describe_ref,
+    enumerate_target_tuples,
+    kicked_targets,
+)
 from .temp_effects import sacrifice_forbidden
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -107,7 +113,13 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
                     pid,
                     oid,
                     card,
-                    enumerate_target_tuples(state, pid, card.targets, oid),
+                    enumerate_target_tuples(
+                        state,
+                        pid,
+                        card.targets,
+                        oid,
+                        defer=deferred_target_spec(state, card, card.targets),
+                    ),
                     extra_generic=0,
                     from_library_top=True,
                 )
@@ -190,7 +202,9 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         card = state.card(oid)
         if not _timing_ok(state, pid, card, sorcery_speed):
             continue
-        ft_tuples = enumerate_target_tuples(state, pid, card.targets, oid)
+        ft_tuples = enumerate_target_tuples(
+            state, pid, card.targets, oid, defer=deferred_target_spec(state, card, card.targets)
+        )
         out.extend(
             _charge_additional_cost(
                 state,
@@ -250,6 +264,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
                 card.targets,
                 oid,
                 exclude_sid=state.objects[oid].stack_id,
+                defer=deferred_target_spec(state, card, card.targets),
             )
             # "…for its flashback cost **and any additional costs**" is printed
             # in flashback's own reminder text, and 601.2f says it anyway.
@@ -334,7 +349,9 @@ def _prepared_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         face = state.registry.get(card.prepared_face)
         if not _timing_ok(state, pid, face, sorcery_speed):
             continue
-        tuples = enumerate_target_tuples(state, pid, face.targets, obj.oid)
+        tuples = enumerate_target_tuples(
+            state, pid, face.targets, obj.oid, defer=deferred_target_spec(state, face, face.targets)
+        )
         if not tuples:
             continue
         out.extend(_cast_variant(state, pid, obj.oid, face, tuples, extra_generic=0, prepared=True))
@@ -373,7 +390,12 @@ def _second_face_actions(
     if not _timing_ok(state, pid, face, sorcery_speed):
         return []
     tuples = enumerate_target_tuples(
-        state, pid, face.targets, oid, exclude_sid=state.objects[oid].stack_id
+        state,
+        pid,
+        face.targets,
+        oid,
+        exclude_sid=state.objects[oid].stack_id,
+        defer=deferred_target_spec(state, face, face.targets),
     )
     if not tuples:
         return []
@@ -390,7 +412,12 @@ def _second_face_actions(
             targets=tuple(card.targets) + tuple(face.targets),
         )
         fused_tuples = enumerate_target_tuples(
-            state, pid, both.targets, oid, exclude_sid=state.objects[oid].stack_id
+            state,
+            pid,
+            both.targets,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, both, both.targets),
         )
         if fused_tuples:
             out = out + _cast_variant(
@@ -516,7 +543,14 @@ def _cast_options(
     already replaced, and no printed card asks for that.
     """
     exclude_sid = state.objects[oid].stack_id
-    tuples = enumerate_target_tuples(state, pid, card.targets, oid, exclude_sid=exclude_sid)
+    tuples = enumerate_target_tuples(
+        state,
+        pid,
+        card.targets,
+        oid,
+        exclude_sid=exclude_sid,
+        defer=deferred_target_spec(state, card, card.targets),
+    )
     if not tuples:
         return []
 
@@ -573,7 +607,13 @@ def _cast_options(
         kicked_tuples = (
             tuples
             if kicked_specs is None
-            else enumerate_target_tuples(state, pid, kicked_specs, oid)
+            else enumerate_target_tuples(
+                state,
+                pid,
+                kicked_specs,
+                oid,
+                defer=deferred_target_spec(state, card, kicked_specs),
+            )
         )
         out += _cast_variant(
             state, pid, oid, card, kicked_tuples, extra_generic=extra_generic, kicked=True
@@ -1084,6 +1124,59 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
     ]
     creatures.sort(key=lambda c: (-state.card(c).mana_value, c))
     return creatures[:4]
+
+
+def deferred_target_spec(
+    state: GameState, card: CardDef, specs: Sequence[TargetSpec]
+) -> TargetSpec | None:
+    """The spec a cast declares **mid-cast** rather than on the line, or ``None``.
+
+    "Any number of target nonland permanents you control" (Clever
+    Concealment), "up to three target creatures". Every subset is a legal
+    choice, so legality offered one cast line per subset -- capped at
+    `targeting.MAX_TARGET_OPTIONS`, which on a six-permanent board is eleven
+    of sixty-three, and the set the player wanted was usually not among them.
+    And the eleven it did offer read as a column of "A + B + C" chips.
+
+    So the line is offered once, with this spec empty, and `Game._cast` asks
+    for it at 601.2c -- after announcing, before the cost is determined, which
+    is where the rules put targets anyway. `Game._ask_x_targets` is the same
+    move for "each of X targets", and for the same reason: a choice legality
+    could not make on the player's behalf.
+
+    Both ends call this with the same card and specs and the same board, so
+    they cannot disagree about which lines were deferred. It declines --
+    leaving the old enumeration in place -- whenever the **price** depends on
+    the targets, because legality proves a line payable before offering it
+    and a deferred line would be priced before its targets existed:
+
+    - strive, which charges per target beyond the first;
+    - a targeting tax on the board (Kasmina's mana, Terror of the Peaks' life);
+    - a cap *between* the picks (total mana value) or one per player, which
+      the decision's independent toggles cannot express;
+    - a spec reading a sibling's answer, which needs the sibling first.
+
+    Only a spec that can take **two or more**: "up to one target creature" is
+    a chip per creature plus "No target" today, and that already reads well.
+    """
+    if not specs or card.strive is not None:
+        return None
+    spec = specs[-1]
+    many = spec.count == "any" or (
+        spec.up_to and isinstance(spec.count, int) and spec.count >= 2
+    )
+    if (
+        not many
+        or spec.one_per_player
+        or spec.total_mana_value is not None
+        or spec.mode is not None
+    ):
+        return None
+    if _names_a_sibling(spec.selector, {s.id for s in specs[:-1]}):
+        return None
+    if spell_mana_tax_targeted(state) or spell_life_tax_on_board(state):
+        return None
+    return spec
 
 
 def strive_surcharge(card: CardDef, targets) -> ManaCost | None:

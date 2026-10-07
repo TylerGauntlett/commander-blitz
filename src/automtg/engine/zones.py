@@ -568,7 +568,35 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
         obj.enters_replacement_paid = True
 
 
-def offer_enters_costs(state: GameState, oid: int, controller: int):
+def enters_cost_offer(state: GameState, oid: int, controller: int, card=None):
+    """The first "pay this as it enters" price ``controller`` could pay, or ``None``.
+
+    With the replacement it belongs to, so a caller can say what paying buys.
+    `legality` asks this to offer a shock land as two land drops, and
+    :func:`offer_enters_costs` asks it to know whether there is anything to
+    ask -- one reading, so the two cannot disagree about which lands have a
+    choice. ``card`` is the face arriving, when it is not the object's own
+    (a modal DFC's land half, before it is showing).
+    """
+    from .costs import can_pay
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return None
+    card = card or state.card_of(obj)
+    for replacement in card.replacements:
+        node = replacement.get("unless_cost")
+        if not node:
+            continue
+        cost = Cost(**node) if not isinstance(node, Cost) else node
+        if can_pay(state, controller, cost, oid):
+            return replacement, cost
+    return None
+
+
+def offer_enters_costs(
+    state: GameState, oid: int, controller: int, *, decided: bool | None = None
+):
     """"As this enters, you may pay 3 life." Ask, and pay if the answer is yes.
 
     Called **just before** `move_object` by whichever path is putting the
@@ -590,6 +618,10 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
     An unaffordable price is not offered: `can_pay` is asked first, so a player
     at 2 life is never shown a question whose yes would kill them and whose
     payment would fail anyway.
+
+    ``decided`` is an answer given before the arrival -- a shock land's drop
+    carries it (`Action.enters_paid`), so it is honoured here and nothing is
+    asked. ``None`` asks, which is every arrival that is not a land drop.
     """
     # Local: `costs` imports `zones` to sacrifice, exile and bounce.
     from .costs import can_pay, pay
@@ -605,13 +637,40 @@ def offer_enters_costs(state: GameState, oid: int, controller: int):
         cost = Cost(**node) if not isinstance(node, Cost) else node
         if not can_pay(state, controller, cost, oid):
             continue
-        ctx = EffectContext(
-            state=state, controller=controller, source_oid=oid, source_name=card.name
-        )
-        if not (yield from ask_yes_no(ctx, f"Pay {card.name}'s cost as it enters?", controller)):
+        if decided is False:
             continue
+        if decided is None:
+            ctx = EffectContext(
+                state=state, controller=controller, source_oid=oid, source_name=card.name
+            )
+            prompt = enters_cost_prompt(replacement, cost, card.name)
+            if not (yield from ask_yes_no(ctx, prompt, controller)):
+                continue
         if (yield from pay(state, controller, cost, oid)):
             obj.enters_cost_paid = True
+
+
+def _life_only(cost: Cost) -> bool:
+    return bool(cost.pay_life) and cost == Cost(pay_life=cost.pay_life)
+
+
+def enters_cost_prompt(replacement, cost: Cost, name: str) -> str:
+    """The question, naming the price and what it buys when both are simple.
+
+    The shock lands, "pay 2 life or it enters tapped": "Pay Blood Crypt's
+    cost?" asked the player to remember the card's text mid-land-drop.
+    """
+    if replacement.get("event") == "self_enters_tapped" and _life_only(cost):
+        return f"Pay {cost.pay_life} life so {name} enters untapped?"
+    return f"Pay {name}'s cost as it enters?"
+
+
+def enters_cost_options(replacement, cost: Cost) -> tuple[str, str]:
+    """What the two land drops say on their chips: (paying, declining)."""
+    price = f"Pay {cost.pay_life} life" if _life_only(cost) else "Pay the cost"
+    if replacement.get("event") == "self_enters_tapped":
+        return f"{price}, untapped", "Tapped"
+    return price, "Don't pay"
 
 
 def offer_enters_copy(state: GameState, oid: int, controller: int):

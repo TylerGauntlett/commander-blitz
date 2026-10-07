@@ -13,6 +13,7 @@ import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
 import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
 import type { Gesture } from "../logic/followUp";
+import { isPickSeveral, pickKey, pickOptions } from "../logic/pickSeveral";
 import type { Lane as LaneName } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
 import type { useGame } from "../state/useGame";
@@ -65,6 +66,7 @@ export function useTableGestures({
   const viewingPid = useUiStore((s) => s.viewingPid);
   const setViewing = useUiStore((s) => s.setViewing);
   const setAbilityMenu = useUiStore((s) => s.setAbilityMenu);
+  const togglePick = useUiStore((s) => s.togglePick);
 
   /** Play a card from hand: straight through if unambiguous, else start targeting. */
   const playFromHand = useCallback(
@@ -72,6 +74,13 @@ export function useTableGestures({
       if (gateInput()) return;
       const candidates = actionsForCard(actions, card.oid);
       if (candidates.length === 0) return;
+      // A shock land: two land drops, paying and tapped. The ability menu asks
+      // which, the way it asks a planeswalker which loyalty ability -- the
+      // same router (`logic/abilities.ts`) and the same dialog.
+      if (abilityRoute(actions, card.oid).kind === "menu") {
+        setAbilityMenu(card.oid);
+        return;
+      }
       if (candidates.length === 1 && candidates[0].targets.length === 0) {
         act(candidates[0].id);
         // The card is leaving your hand, so the ring must not leave with it.
@@ -85,7 +94,7 @@ export function useTableGestures({
       // The board has just lit up somewhere else; go and stand on it.
       followUp({ kind: "targeting", actionIds: candidates.map((a) => a.id) });
     },
-    [gateInput, actions, act, beginTargeting, followUp],
+    [gateInput, actions, act, beginTargeting, followUp, setAbilityMenu],
   );
 
   /**
@@ -126,6 +135,22 @@ export function useTableGestures({
   const onBoardCard = useCallback(
     (card: CardView) => {
       if (gateInput()) return;
+
+      // 0. Building a pick-several set: the card is a toggle, the way an
+      //    attacker is. The panel holds the same set (`logic/pickSeveral.ts`).
+      if (isPickSeveral(state)) {
+        const option = pickOptions(state, actions).find((o) => o.oid === card.oid);
+        if (option) {
+          const ceiling = Math.min(
+            state.pending?.max_count ?? 0,
+            pickOptions(state, actions).length,
+          );
+          togglePick(pickKey(state), option.choice, ceiling);
+        } else {
+          cue("deny");
+        }
+        return;
+      }
 
       // 1. Finishing a targeted spell.
       //
@@ -251,6 +276,9 @@ export function useTableGestures({
       narrowTargeting,
       followUp,
       setAbilityMenu,
+      state,
+      togglePick,
+      cue,
     ],
   );
 

@@ -55,6 +55,20 @@ export function BlockGroups({
   ptOf,
   previewing,
 }: Props) {
+  /*
+   * Who is already standing in front of each attacker.
+   *
+   * The groups are per BLOCKER, so with three creatures able to block the same
+   * attacker you could not tell from any one group that another had already
+   * taken it -- and "which of mine should block this" is exactly the question
+   * a second blocker is asking. Each row names the others, so a double block is
+   * a decision and a wasted one is visible.
+   */
+  const blockedBy = new Map<number, number[]>();
+  for (const [blocker, attacker] of Object.entries(stagedBlocks)) {
+    blockedBy.set(attacker, [...(blockedBy.get(attacker) ?? []), Number(blocker)]);
+  }
+
   return (
     <>
       {blockers.map((blocker) => {
@@ -85,6 +99,7 @@ export function BlockGroups({
                 if (!action || !blockerCard || !attackerCard) return null;
                 const tier = blockTier(blockerCard, attackerCard);
                 const on = chosen === attacker;
+                const others = (blockedBy.get(attacker) ?? []).filter((b) => b !== blocker);
                 return (
                   <button
                     type="button"
@@ -112,6 +127,11 @@ export function BlockGroups({
                       only one of them used to be in the panel. */}
                     <span className="act__pt tabular">{statLine(attackerCard)}</span>
                     <span className={`verdict verdict--${tier}`}>{TIER_LABEL[tier]}</span>
+                    {others.length > 0 && (
+                      <span className="act__also" data-testid="also-blocked-by">
+                        Blocked by {others.map(nameOf).join(", ")}
+                      </span>
+                    )}
                   </button>
                 );
               })

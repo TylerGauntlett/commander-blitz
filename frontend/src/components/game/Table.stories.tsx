@@ -12,7 +12,7 @@
 // `TableZoom.stories.tsx`, `TableHandheld.stories.tsx`, `TablePad.stories.tsx`.
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { expectCardsSized, expectUniqueActionIds } from "../../testing/asserts";
 import { board } from "../../testing/board";
 import { idleMutation } from "../../testing/fakeGame";
@@ -64,6 +64,33 @@ export const EarlyBoard: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * A pick-several set shows on the board the way a staged attacker does.
+ *
+ * The rows are the panel's; the board's cards are the same set
+ * (`logic/pickSeveral.ts`). Picking a row stages its permanent, and pressing
+ * the permanent takes it back out -- one set, two surfaces.
+ */
+export const PickSeveralOnTheBoard: Story = {
+  args: board(scenarios.chooseSeveralTargets()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const [first] = await canvas.findAllByTestId("pick-option");
+    const oid = first.getAttribute("data-preview-oid");
+    const onBoard = () =>
+      canvasElement.querySelector<HTMLElement>(`.table__body [data-oid="${oid}"]`);
+    expect(onBoard(), "the candidate is on the board").not.toBeNull();
+    expect(onBoard()?.classList.contains("card--staged")).toBe(false);
+
+    await userEvent.click(first);
+    await waitFor(() => expect(onBoard()?.classList.contains("card--staged")).toBe(true));
+
+    await userEvent.click(onBoard() as HTMLElement);
+    await waitFor(() => expect(first.getAttribute("aria-pressed")).toBe("false"));
     expectUniqueActionIds(canvasElement);
   },
 };

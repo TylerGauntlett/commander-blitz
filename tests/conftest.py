@@ -105,6 +105,37 @@ def pass_until(game: Game, predicate, limit: int = 400) -> None:
     raise AssertionError("pass_until did not reach its condition")
 
 
+def declare_targets(game: Game, *oids: int) -> None:
+    """Answer a mid-cast "any number of targets" pick with exactly these objects.
+
+    `casting.deferred_target_spec` moved that choice off the cast line and into
+    a decision raised by the cast, so a test picks the set here rather than by
+    finding the cast action whose tuple matches. The same loop
+    `server.sessions.choose` runs for the client: one `CHOOSE` per object, then
+    `Done` if the set is smaller than the ceiling.
+    """
+    decision = game.pending()
+    assert decision is not None and decision.kind is DecisionKind.CHOOSE_OBJECTS, decision
+    assert decision.context.get("purpose") == "target", decision.context
+    wanted = set(oids)
+    picks = [
+        i
+        for i, option in enumerate(decision.options)
+        if option.ref is not None and option.ref.id in wanted
+    ]
+    assert len(picks) == len(wanted), f"not every object was offered: {sorted(wanted)}"
+    for index in picks:
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CHOOSE and a.choice == index
+            )
+        )
+    if game.pending() is decision:
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+
+
 def _default_answer(game: Game, decision: PendingDecision) -> Action:
     """The most passive legal answer to any decision."""
     actions = game.legal_actions()

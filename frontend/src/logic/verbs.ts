@@ -258,6 +258,9 @@ function contextVerbs(
    * dialog. `X` presses that button from anywhere in the dialog -- the one
    * place it earns a verb is the filter field, where `A` means typing.
    */
+  // The X stepper's two buttons, which say what they do to X.
+  if (ref.raw === "combo:x-down") return { a: "Less", b: "Back" };
+  if (ref.raw === "combo:x-up") return { a: "More", b: "Back" };
   if (ref.kind === "combo") {
     return ref.raw === "combo:filter"
       ? { a: "Type", x: "Choose", b: "Back" }
