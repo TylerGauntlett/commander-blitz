@@ -423,6 +423,16 @@ describe("ActionPanel", () => {
       expect(renderedIds()).toHaveLength(1);
     });
 
+    it("the ring can reach both buttons", () => {
+      // The panel declares its stops, so a button without one is invisible to
+      // the pad: X could only ever be paid at its floor.
+      render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={noop} {...base} />);
+      expect(screen.getByTestId("choose-x-down").getAttribute("data-stop")).toBe(
+        "combo:x-down",
+      );
+      expect(screen.getByTestId("choose-x-up").getAttribute("data-stop")).toBe("combo:x-up");
+    });
+
     it("starts at zero", () => {
       render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={noop} {...base} />);
       expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("0");
