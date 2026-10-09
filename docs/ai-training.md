@@ -122,6 +122,27 @@ every precon:
 python scripts/run_arena.py --agents heuristic,heuristic_classic --decks precons --pods 2,4 --games 60
 ```
 
+Measured when the strategies landed (40 games per pod size): **level within
+noise** — 50% vs 45% in duels, 22.5% vs 26.2% in four-player pods, with 95%
+intervals ±15 points. That run mixes decks and agents, so deck strength swamps
+the agent. The sharper measurement holds the deck fixed and swaps only its
+pilot, against a classic-piloted Zurgo, 12 duels each:
+
+| Deck | Strategy wins | Classic wins |
+|---|---|---|
+| Sheoldred | 6 | 2 |
+| Blor | 7 | 5 |
+| Atraxa | 2 | 1 |
+| Bard | 4 | 3 |
+| Edgar | 8 | 7 |
+| Giada, Isperia, Vivi | 9, 8, 4 | 9, 8, 4 |
+| Bruvac | 0 of 10 | 0 of 10 — but its mill gets an opponent to 9 and 28 cards left where classic stops at 57 and 39 |
+
+Never worse, sometimes much better — and the point of the plans is less the
+win rate than that each deck now *does its thing* where a player can see it.
+Aesi and the Ur-Dragon were left out: long games trip the engine's 200-trigger
+loop guard (Scute Swarm, Ganax), which the arena scores as a draw.
+
 ## The trainer
 
 Masked PPO. Two choices matter:

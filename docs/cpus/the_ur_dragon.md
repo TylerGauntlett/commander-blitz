@@ -66,6 +66,11 @@ as `UrDragon`, a subclass of `Dragons`.
 
 ## Weaknesses
 
+- **Long games can stop on the engine's loop guard.** A board of Dragon token
+  makers and Ganax, Astral Hunter's Treasure trigger can queue more than 200
+  triggers in one step, which the engine stops and the arena scores as a draw.
+  It is an engine limit rather than a plan decision, but it is how some of this
+  deck's best boards end.
 - **The free permanent is the agent's choice, not the plan's.** The Ur-Dragon's
   "put a permanent from your hand onto the battlefield" is answered by the
   generic choice logic, not steered toward the biggest dragon.
