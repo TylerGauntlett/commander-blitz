@@ -1,6 +1,6 @@
 {
-  "id": "aesi",
-  "name": "Reap the Tides",
+  "id": "aesi_tyrant_of_gyre_strait",
+  "name": "Aesi, Tyrant of Gyre Strait",
   "commanders": [
     "aesi_tyrant_of_gyre_strait"
   ],
@@ -8,322 +8,702 @@
     "G",
     "U"
   ],
-  "notes": "The Commander Legends precon, as printed. Simic ramp and landfall: play extra lands, turn each one into cards off Aesi and Seer's Sundial, and close with Leviathans nobody can block.",
+  "source": "precon",
+  "notes": "Moxfield list \"Lander Commander\" (https://moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw). Promoted from an import, card for card.",
+  "printings": {
+    "acidic_slime": {
+      "scryfall_id": "7dfeb1d1-7b2d-4235-902f-22a62af5dc0f",
+      "artist": "Karl Kopinski",
+      "set_code": "m3c",
+      "collector_number": "218"
+    },
+    "aesi_tyrant_of_gyre_strait": {
+      "scryfall_id": "673c21f8-02b6-4ac4-b2fc-df065b4ac662",
+      "artist": "Viktor Titov",
+      "set_code": "dsc",
+      "collector_number": "210"
+    },
+    "ancient_greenwarden": {
+      "scryfall_id": "12a0bf5c-a165-48f1-9a57-3a7cc9f3b0f9",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "otc",
+      "collector_number": "186"
+    },
+    "arcane_denial": {
+      "scryfall_id": "4931aa7c-b77b-4002-bfb1-b75a1bac1deb",
+      "artist": "Xi Zhang",
+      "set_code": "soc",
+      "collector_number": "187"
+    },
+    "arixmethes_slumbering_isle": {
+      "scryfall_id": "881607c8-bfe7-4903-861f-b51a5a332c17",
+      "artist": "Dimitar Marinski",
+      "set_code": "2xm",
+      "collector_number": "189"
+    },
+    "avenger_of_zendikar": {
+      "scryfall_id": "c6f1e60f-a195-4590-80b0-86767de6c423",
+      "artist": "Zoltan Boros & Gabor Szikszai",
+      "set_code": "ecc",
+      "collector_number": "98"
+    },
+    "azusa_lost_but_seeking": {
+      "scryfall_id": "2fe97fbe-a6d6-4e96-8c26-f81bcdf579a1",
+      "artist": "Winona Nelson",
+      "set_code": "cmm",
+      "collector_number": "274"
+    },
+    "beast_within": {
+      "scryfall_id": "2a000bb0-1dc4-4fda-b26d-d89cc8daf930",
+      "artist": "Jesper Ejsing",
+      "set_code": "soc",
+      "collector_number": "263"
+    },
+    "blighted_woodland": {
+      "scryfall_id": "94e0ad38-31b3-46ba-9999-9b6ff57906ae",
+      "artist": "Jason Felix",
+      "set_code": "clb",
+      "collector_number": "881"
+    },
+    "botanical_sanctum": {
+      "scryfall_id": "8744471b-a528-47d9-84d0-4526273f55e9",
+      "artist": "Christine Choi",
+      "set_code": "kld",
+      "collector_number": "244"
+    },
+    "burgeoning": {
+      "scryfall_id": "6da045f8-6278-4c84-9d39-025adf0789c1",
+      "artist": "Titus Lunter",
+      "set_code": "c16",
+      "collector_number": "143"
+    },
+    "coiling_oracle": {
+      "scryfall_id": "9cfb4080-0f31-4352-b47a-a36955b68a18",
+      "artist": "Mark Zug",
+      "set_code": "blc",
+      "collector_number": "250"
+    },
+    "command_tower": {
+      "scryfall_id": "5fc770b6-03ac-45c3-a2ca-bd508096384e",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "tdc",
+      "collector_number": "107"
+    },
+    "coral_atoll": {
+      "scryfall_id": "77e3ea71-ea9f-4bbf-93cb-0f6339f8a3ab",
+      "artist": "John Avon",
+      "set_code": "cmr",
+      "collector_number": "480"
+    },
+    "counterspell": {
+      "scryfall_id": "4f616706-ec97-4923-bb1e-11a69fbaa1f8",
+      "artist": "Zack Stella",
+      "set_code": "dsc",
+      "collector_number": "114"
+    },
+    "craterhoof_behemoth": {
+      "scryfall_id": "d84ee114-fa8a-4758-a074-1db414272644",
+      "artist": "Magali Villeneuve",
+      "set_code": "ptdm",
+      "collector_number": "138p"
+    },
+    "cultivate": {
+      "scryfall_id": "4d36559d-3b91-46e4-bc39-c489842adcbf",
+      "artist": "Anthony Palumbo",
+      "set_code": "ecc",
+      "collector_number": "103"
+    },
+    "cultivator_colossus": {
+      "scryfall_id": "426ed66e-41b3-4e44-90a2-697aafaa8c5c",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "inr",
+      "collector_number": "190"
+    },
+    "cyclonic_rift": {
+      "scryfall_id": "205c4689-8b02-4d40-9274-3c1fcafa8b82",
+      "artist": "Chris Rahn",
+      "set_code": "rtr",
+      "collector_number": "35"
+    },
+    "dreamroot_cascade": {
+      "scryfall_id": "9aedaceb-ce4d-4159-a389-11e357b9e0da",
+      "artist": "Sam Burley",
+      "set_code": "m3c",
+      "collector_number": "338"
+    },
+    "dryad_of_the_ilysian_grove": {
+      "scryfall_id": "43be1363-7e73-4862-b45f-07f490ab46be",
+      "artist": "Scott Murphy",
+      "set_code": "cmm",
+      "collector_number": "891"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "e524216c-ed35-49a3-868f-7ad0a0027a80",
+      "artist": "Steven Belledin",
+      "set_code": "dsc",
+      "collector_number": "274"
+    },
+    "exploration": {
+      "scryfall_id": "ce4c6535-afea-4704-b35c-badeb04c4f4c",
+      "artist": "Florian de Gesincourt",
+      "set_code": "2xm",
+      "collector_number": "167"
+    },
+    "fabled_passage": {
+      "scryfall_id": "8119d329-6ee5-433c-bd81-8579bb061162",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "soc",
+      "collector_number": "130"
+    },
+    "field_of_ruin": {
+      "scryfall_id": "d510eece-4f55-4198-83fe-5291a76ffdcc",
+      "artist": "Chris Ostrowski",
+      "set_code": "mid",
+      "collector_number": "262"
+    },
+    "finale_of_devastation": {
+      "scryfall_id": "0a481bb9-d213-4cb4-ace4-f8a2ebf663c9",
+      "artist": "Julie Dillon",
+      "set_code": "sld",
+      "collector_number": "2680"
+    },
+    "flooded_grove": {
+      "scryfall_id": "df797e0d-8ae2-4fdb-a33d-4ba7852b0172",
+      "artist": "Dave Kendall",
+      "set_code": "soc",
+      "collector_number": "373"
+    },
+    "forest": {
+      "scryfall_id": "845057a1-4da1-4a32-9bb2-bbf8502acd37",
+      "artist": "Xin-Yu Liu",
+      "set_code": "cmr",
+      "collector_number": "510"
+    },
+    "ghalta_primal_hunger": {
+      "scryfall_id": "6a9c39e4-a8cf-42dd-8d0e-45634b335546",
+      "artist": "Chase Stone",
+      "set_code": "fdn",
+      "collector_number": "222"
+    },
+    "ghost_quarter": {
+      "scryfall_id": "fb075747-c7e2-41eb-88a2-4fbca3447d18",
+      "artist": "Heather Hudson",
+      "set_code": "plst",
+      "collector_number": "DIS-173"
+    },
+    "goldvein_hydra": {
+      "scryfall_id": "3baebc29-bc89-4b56-a821-b5d3ca0cd3b4",
+      "artist": "David Auden Nash",
+      "set_code": "soc",
+      "collector_number": "270"
+    },
+    "greensleeves_maro_sorcerer": {
+      "scryfall_id": "0969d7f3-cec5-4118-adb1-ff957eedf6ab",
+      "artist": "Tuan Duong Chu",
+      "set_code": "dmc",
+      "collector_number": "27"
+    },
+    "growth_spiral": {
+      "scryfall_id": "bbc5995d-6b94-421b-b535-79657e29d70f",
+      "artist": "Seb McKinnon",
+      "set_code": "m3c",
+      "collector_number": "265"
+    },
+    "herd_heirloom": {
+      "scryfall_id": "c5e7d936-60f8-40fc-b6a9-be677a97395b",
+      "artist": "Clint Lockwood",
+      "set_code": "tdm",
+      "collector_number": "347"
+    },
+    "heroic_intervention": {
+      "scryfall_id": "9d3c402f-3133-40f2-bfda-613e2d936044",
+      "artist": "Billy Christian",
+      "set_code": "who",
+      "collector_number": "824"
+    },
+    "hinterland_harbor": {
+      "scryfall_id": "892451a1-5527-4857-84f8-62028d147489",
+      "artist": "Pace Wilder",
+      "set_code": "msc",
+      "collector_number": "250"
+    },
+    "imprisoned_in_the_moon": {
+      "scryfall_id": "ee28e147-6622-4399-a314-c14a5c912dd0",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "fdn",
+      "collector_number": "156"
+    },
+    "island": {
+      "scryfall_id": "bb15b40c-9795-42ae-9f88-8b8023b6c010",
+      "artist": "Babyson Chen & Uzhen Lin",
+      "set_code": "cmr",
+      "collector_number": "506"
+    },
+    "jin_gitaxias_progress_tyrant": {
+      "scryfall_id": "c57b4876-5387-4f73-b8e2-8e7bdca8b0bc",
+      "artist": "Chase Stone",
+      "set_code": "neo",
+      "collector_number": "59"
+    },
+    "jungle_basin": {
+      "scryfall_id": "d4929e39-fccc-450b-bb18-f5ad56a397bd",
+      "artist": "John Avon",
+      "set_code": "cmr",
+      "collector_number": "484"
+    },
+    "kodama_of_the_east_tree": {
+      "scryfall_id": "af5105ee-09e2-4344-ab39-00f0e9034c47",
+      "artist": "Daarken",
+      "set_code": "cmr",
+      "collector_number": "239"
+    },
+    "kodamas_reach": {
+      "scryfall_id": "90c423cc-1264-4067-9c50-e7c88c68ef2d",
+      "artist": "John Avon",
+      "set_code": "ecc",
+      "collector_number": "113"
+    },
+    "koma_cosmos_serpent": {
+      "scryfall_id": "b2f23d6f-f2c8-4022-9f46-ba7fda00ef99",
+      "artist": "Jesper Ejsing",
+      "set_code": "mkc",
+      "collector_number": "213"
+    },
+    "lotus_cobra": {
+      "scryfall_id": "9c3f861f-0f46-4360-970e-a5cfc5ef194b",
+      "artist": "Sam Rowan",
+      "set_code": "j25",
+      "collector_number": "685"
+    },
+    "mossborn_hydra": {
+      "scryfall_id": "7054a0d7-396f-40b4-ab24-db591c3b08f0",
+      "artist": "Monztre",
+      "set_code": "fdn",
+      "collector_number": "107"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "276f49f9-019b-44cb-a551-0fba9851ecc7",
+      "artist": "Jonas De Ro",
+      "set_code": "clb",
+      "collector_number": "904"
+    },
+    "negate": {
+      "scryfall_id": "ff3b0dba-0207-4249-bdab-e807c76ce39e",
+      "artist": "Magali Villeneuve",
+      "set_code": "fdn",
+      "collector_number": "710"
+    },
+    "nezahal_primal_tide": {
+      "scryfall_id": "a959b40d-dd8c-49d8-8003-744d0c877b04",
+      "artist": "Sam Burley",
+      "set_code": "cmr",
+      "collector_number": "401"
+    },
+    "oracle_of_mul_daya": {
+      "scryfall_id": "ab19808f-a5b8-4dfd-800e-2064cd6538c8",
+      "artist": "Vance Kovacs",
+      "set_code": "eoc",
+      "collector_number": "102"
+    },
+    "overwhelming_stampede": {
+      "scryfall_id": "8b7d65b9-5f66-4cf7-b3ef-c47e7c6a131b",
+      "artist": "Viko Menezes",
+      "set_code": "ltc",
+      "collector_number": "254"
+    },
+    "pongify": {
+      "scryfall_id": "4131fa63-5afc-4b63-a4b4-f47b4bced87f",
+      "artist": "Heather Hudson",
+      "set_code": "tdc",
+      "collector_number": "160"
+    },
+    "propaganda": {
+      "scryfall_id": "4c7c9072-d14c-442c-a386-bfdc0cbe110d",
+      "artist": "Erikas Perl",
+      "set_code": "acr",
+      "collector_number": "85"
+    },
+    "rampaging_baloths": {
+      "scryfall_id": "84aa18de-6acc-46cc-8e28-3046790a6751",
+      "artist": "Steve Prescott",
+      "set_code": "eoc",
+      "collector_number": "104"
+    },
+    "rampant_growth": {
+      "scryfall_id": "b7c47024-5e08-4b17-b41a-7647f8b814b9",
+      "artist": "Steven Belledin",
+      "set_code": "tdc",
+      "collector_number": "265"
+    },
+    "ramunap_excavator": {
+      "scryfall_id": "7e098506-b69d-4ab0-8ee9-af0d8c7efb8d",
+      "artist": "Mark Behm",
+      "set_code": "m3c",
+      "collector_number": "241"
+    },
+    "reclamation_sage": {
+      "scryfall_id": "b800bb44-3594-4fb7-b007-10732632b51a",
+      "artist": "Christopher Moeller",
+      "set_code": "cmr",
+      "collector_number": "248"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "e2a27742-08c1-4153-af7f-25a7a98f585e",
+      "artist": "Jesper Ejsing",
+      "set_code": "soc",
+      "collector_number": "398"
+    },
+    "rhystic_study": {
+      "scryfall_id": "d6914dba-0d27-4055-ac34-b3ebf5802221",
+      "artist": "Terese Nielsen",
+      "set_code": "jmp",
+      "collector_number": "169"
+    },
+    "scute_swarm": {
+      "scryfall_id": "61f42823-8a48-4b81-a037-664ba1c69f29",
+      "artist": "Alex Konstad",
+      "set_code": "znr",
+      "collector_number": "203"
+    },
+    "search_for_tomorrow": {
+      "scryfall_id": "029b6d93-0f7a-4df4-8c01-96cbd5e03315",
+      "artist": "Randy Gallegos",
+      "set_code": "cmr",
+      "collector_number": "436"
+    },
+    "simic_growth_chamber": {
+      "scryfall_id": "212d97c5-c144-483b-b42e-00623477e928",
+      "artist": "John Avon",
+      "set_code": "dsc",
+      "collector_number": "298"
+    },
+    "simic_signet": {
+      "scryfall_id": "bf222c78-f12e-4857-93da-fade99c740b8",
+      "artist": "Mike Sass",
+      "set_code": "dsc",
+      "collector_number": "252"
+    },
+    "sol_ring": {
+      "scryfall_id": "19911e6e-7c35-4281-b31c-266382f052cc",
+      "artist": "Mike Bierek",
+      "set_code": "m3c",
+      "collector_number": "305"
+    },
+    "springheart_nantuko": {
+      "scryfall_id": "54a3ea87-005e-4985-b2a5-21711d0b71c0",
+      "artist": "Valera Lutfullina",
+      "set_code": "mh3",
+      "collector_number": "171"
+    },
+    "swiftfoot_boots": {
+      "scryfall_id": "1969b151-3192-4d35-80ca-c4e180601ec8",
+      "artist": "Svetlin Velinov",
+      "set_code": "tdc",
+      "collector_number": "328"
+    },
+    "tatyova_benthic_druid": {
+      "scryfall_id": "eabc978a-0666-472d-bdc6-d4b29d29eca4",
+      "artist": "Mathias Kollros",
+      "set_code": "fdn",
+      "collector_number": "247"
+    },
+    "terastodon": {
+      "scryfall_id": "f25e0ef9-29e1-45fe-b9b1-b228594939ab",
+      "artist": "Lars Grant-West",
+      "set_code": "m3c",
+      "collector_number": "249"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "9c418bac-c1d1-4fbf-aaca-7bc36b3913c4",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "336"
+    },
+    "thought_vessel": {
+      "scryfall_id": "b54a2a39-83ec-4dd8-8599-6ce7ca338bb3",
+      "artist": "rk post",
+      "set_code": "scd",
+      "collector_number": "285"
+    },
+    "tireless_provisioner": {
+      "scryfall_id": "1163fe84-c5d5-42c8-b7cd-d206a9b0bd3f",
+      "artist": "Josu Hernaiz",
+      "set_code": "plst",
+      "collector_number": "MH2-180"
+    },
+    "turntimber_symbiosis_turntimber_serpentine_wood": {
+      "scryfall_id": "61bd69ea-1e9e-46b0-b1a1-ed7fdbe3deb6",
+      "artist": "Randy Vargas",
+      "set_code": "znr",
+      "collector_number": "215"
+    },
+    "urban_evolution": {
+      "scryfall_id": "6eecff8f-89c6-425d-baf7-1148b3cfc381",
+      "artist": "Eytan Zana",
+      "set_code": "m3c",
+      "collector_number": "276"
+    },
+    "verdant_kraken": {
+      "scryfall_id": "2bb7a8eb-227f-410b-859f-750ef0aea2f0",
+      "artist": "Wayne Reynolds",
+      "set_code": "fra",
+      "collector_number": "118"
+    },
+    "waterlogged_grove": {
+      "scryfall_id": "46931098-ae3c-409a-8789-7071205e11ee",
+      "artist": "John Di Giovanni",
+      "set_code": "who",
+      "collector_number": "331"
+    },
+    "yavimaya_coast": {
+      "scryfall_id": "9fbdd138-142d-4712-954e-8673d02d8079",
+      "artist": "Jesper Ejsing",
+      "set_code": "drc",
+      "collector_number": "184"
+    },
+    "yavimaya_elder": {
+      "scryfall_id": "27dacbde-a646-418c-b569-4a4f11c9faae",
+      "artist": "Matt Cavotta",
+      "set_code": "dsc",
+      "collector_number": "208"
+    },
+    "zendikars_roil": {
+      "scryfall_id": "79298a0f-50ca-4bf5-b863-a60f07846970",
+      "artist": "Sam Burley",
+      "set_code": "plst",
+      "collector_number": "ORI-209"
+    }
+  },
   "cards": [
     {
-      "id": "acidic_slime",
-      "qty": 1
+      "id": "acidic_slime"
     },
     {
-      "id": "arcane_denial",
-      "qty": 1
+      "id": "ancient_greenwarden"
     },
     {
-      "id": "avenger_of_zendikar",
-      "qty": 1
+      "id": "arcane_denial"
     },
     {
-      "id": "beast_within",
-      "qty": 1
+      "id": "arixmethes_slumbering_isle"
     },
     {
-      "id": "blighted_woodland",
-      "qty": 1
+      "id": "avenger_of_zendikar"
     },
     {
-      "id": "coiling_oracle",
-      "qty": 1
+      "id": "azusa_lost_but_seeking"
     },
     {
-      "id": "command_tower",
-      "qty": 1
+      "id": "beast_within"
     },
     {
-      "id": "compulsive_research",
-      "qty": 1
+      "id": "blighted_woodland"
     },
     {
-      "id": "coral_atoll",
-      "qty": 1
+      "id": "botanical_sanctum"
     },
     {
-      "id": "counterspell",
-      "qty": 1
+      "id": "burgeoning"
     },
     {
-      "id": "cultivate",
-      "qty": 1
+      "id": "coiling_oracle"
     },
     {
-      "id": "elder_deep_fiend",
-      "qty": 1
+      "id": "command_tower"
     },
     {
-      "id": "eternal_witness",
-      "qty": 1
+      "id": "coral_atoll"
     },
     {
-      "id": "evolving_wilds",
-      "qty": 1
+      "id": "counterspell"
     },
     {
-      "id": "explore",
-      "qty": 1
+      "id": "craterhoof_behemoth"
     },
     {
-      "id": "fact_or_fiction",
-      "qty": 1
+      "id": "cultivate"
     },
     {
-      "id": "fathom_mage",
-      "qty": 1
+      "id": "cultivator_colossus"
+    },
+    {
+      "id": "cyclonic_rift"
+    },
+    {
+      "id": "dreamroot_cascade"
+    },
+    {
+      "id": "dryad_of_the_ilysian_grove"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exploration"
+    },
+    {
+      "id": "fabled_passage"
+    },
+    {
+      "id": "field_of_ruin"
+    },
+    {
+      "id": "finale_of_devastation"
+    },
+    {
+      "id": "flooded_grove"
     },
     {
       "id": "forest",
-      "qty": 15
+      "qty": 13
     },
     {
-      "id": "growth_spiral",
-      "qty": 1
+      "id": "ghalta_primal_hunger"
     },
     {
-      "id": "harmonize",
-      "qty": 1
+      "id": "ghost_quarter"
     },
     {
-      "id": "into_the_roil",
-      "qty": 1
+      "id": "goldvein_hydra"
     },
     {
-      "id": "ior_ruin_expedition",
-      "qty": 1
+      "id": "greensleeves_maro_sorcerer"
+    },
+    {
+      "id": "growth_spiral"
+    },
+    {
+      "id": "herd_heirloom"
+    },
+    {
+      "id": "heroic_intervention"
+    },
+    {
+      "id": "hinterland_harbor"
+    },
+    {
+      "id": "imprisoned_in_the_moon"
     },
     {
       "id": "island",
-      "qty": 15
+      "qty": 12
     },
     {
-      "id": "jungle_basin",
-      "qty": 1
+      "id": "jin_gitaxias_progress_tyrant"
     },
     {
-      "id": "khalni_heart_expedition",
-      "qty": 1
+      "id": "jungle_basin"
     },
     {
-      "id": "kodamas_reach",
-      "qty": 1
+      "id": "kodama_of_the_east_tree"
     },
     {
-      "id": "meloku_the_clouded_mirror",
-      "qty": 1
+      "id": "kodamas_reach"
     },
     {
-      "id": "memorial_to_genius",
-      "qty": 1
+      "id": "koma_cosmos_serpent"
     },
     {
-      "id": "meteor_golem",
-      "qty": 1
+      "id": "lotus_cobra"
     },
     {
-      "id": "molimo_maro_sorcerer",
-      "qty": 1
+      "id": "mossborn_hydra"
     },
     {
-      "id": "mulldrifter",
-      "qty": 1
+      "id": "myriad_landscape"
     },
     {
-      "id": "murkfiend_liege",
-      "qty": 1
+      "id": "negate"
     },
     {
-      "id": "nezahal_primal_tide",
-      "qty": 1
+      "id": "nezahal_primal_tide"
     },
     {
-      "id": "peel_from_reality",
-      "qty": 1
+      "id": "oracle_of_mul_daya"
     },
     {
-      "id": "rampaging_baloths",
-      "qty": 1
+      "id": "overwhelming_stampede"
     },
     {
-      "id": "rampant_growth",
-      "qty": 1
+      "id": "pongify"
     },
     {
-      "id": "ramunap_excavator",
-      "qty": 1
+      "id": "propaganda"
     },
     {
-      "id": "reclamation_sage",
-      "qty": 1
+      "id": "rampaging_baloths"
     },
     {
-      "id": "reliquary_tower",
-      "qty": 1
+      "id": "rampant_growth"
     },
     {
-      "id": "retreat_to_kazandu",
-      "qty": 1
+      "id": "ramunap_excavator"
     },
     {
-      "id": "scourge_of_fleets",
-      "qty": 1
+      "id": "reclamation_sage"
     },
     {
-      "id": "search_for_tomorrow",
-      "qty": 1
+      "id": "reliquary_tower"
     },
     {
-      "id": "seer_s_sundial",
-      "qty": 1
+      "id": "rhystic_study"
     },
     {
-      "id": "sharktocrab",
-      "qty": 1
+      "id": "scute_swarm"
     },
     {
-      "id": "shipbreaker_kraken",
-      "qty": 1
+      "id": "search_for_tomorrow"
     },
     {
-      "id": "simic_charm",
-      "qty": 1
+      "id": "simic_growth_chamber"
     },
     {
-      "id": "simic_growth_chamber",
-      "qty": 1
+      "id": "simic_signet"
     },
     {
-      "id": "simic_guildgate",
-      "qty": 1
+      "id": "sol_ring"
     },
     {
-      "id": "simic_signet",
-      "qty": 1
+      "id": "springheart_nantuko"
     },
     {
-      "id": "simic_sky_swallower",
-      "qty": 1
+      "id": "swiftfoot_boots"
     },
     {
-      "id": "slinn_voda_the_rising_deep",
-      "qty": 1
+      "id": "tatyova_benthic_druid"
     },
     {
-      "id": "sol_ring",
-      "qty": 1
+      "id": "terastodon"
     },
     {
-      "id": "sphinx_of_uthuun",
-      "qty": 1
+      "id": "terramorphic_expanse"
     },
     {
-      "id": "spitting_image",
-      "qty": 1
+      "id": "thought_vessel"
     },
     {
-      "id": "sporemound",
-      "qty": 1
+      "id": "tireless_provisioner"
     },
     {
-      "id": "stormtide_leviathan",
-      "qty": 1
+      "id": "turntimber_symbiosis_turntimber_serpentine_wood"
     },
     {
-      "id": "stumpsquall_hydra",
-      "qty": 1
+      "id": "urban_evolution"
     },
     {
-      "id": "swiftfoot_boots",
-      "qty": 1
+      "id": "verdant_kraken"
     },
     {
-      "id": "terastodon",
-      "qty": 1
+      "id": "waterlogged_grove"
     },
     {
-      "id": "terramorphic_expanse",
-      "qty": 1
+      "id": "yavimaya_coast"
     },
     {
-      "id": "thornwood_falls",
-      "qty": 1
+      "id": "yavimaya_elder"
     },
     {
-      "id": "trench_behemoth",
-      "qty": 1
-    },
-    {
-      "id": "tromokratis",
-      "qty": 1
-    },
-    {
-      "id": "urban_evolution",
-      "qty": 1
-    },
-    {
-      "id": "verdant_sun_s_avatar",
-      "qty": 1
-    },
-    {
-      "id": "vivid_creek",
-      "qty": 1
-    },
-    {
-      "id": "vivid_grove",
-      "qty": 1
-    },
-    {
-      "id": "whelming_wave",
-      "qty": 1
-    },
-    {
-      "id": "wickerbough_elder",
-      "qty": 1
-    },
-    {
-      "id": "woodland_stream",
-      "qty": 1
-    },
-    {
-      "id": "yavimaya_elder",
-      "qty": 1
-    }
-  ],
-  "tags": [
-    "Ramp",
-    "Landfall",
-    "Card draw"
-  ],
-  "ratings": {
-    "speed": 2,
-    "complexity": 3,
-    "interaction": 2,
-    "resilience": 3,
-    "pilot": 2
-  },
-  "strategy": "The first several turns are mana: a Signet, Rampant Growth, Kodama's Reach, an Explore for the extra land drop. Aesi arrives on turn six and converts the whole plan into cards - every land after that draws one, and Aesi lets you play two. The top end is Leviathans that the deck's own Islands make unblockable: Stormtide Leviathan turns off the ground entirely, and Slinn Voda kicked clears the board of everything that is not one of yours.",
-  "signature": [
-    {
-      "card_id": "avenger_of_zendikar",
-      "why": "Turns a board full of lands into a board full of creatures in one cast."
-    },
-    {
-      "card_id": "stormtide_leviathan",
-      "why": "Makes every land an Island, so it is unblockable and nothing on the ground may attack."
-    },
-    {
-      "card_id": "rampaging_baloths",
-      "why": "Every land after this one is a 4/4."
-    },
-    {
-      "card_id": "seer_s_sundial",
-      "why": "Two mana a land, over and over, for as long as the game runs."
+      "id": "zendikars_roil"
     }
   ]
 }

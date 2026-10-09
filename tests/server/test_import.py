@@ -60,6 +60,9 @@ def sandbox(tmp_path, monkeypatch):
         shutil.copytree(DEFAULT_DATA_DIR / name, root / name, ignore=shutil.ignore_patterns("bulk"))
     (root / "art").mkdir(exist_ok=True)
     monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+    # These tests deal games from the fixture decks, which the server serves
+    # only when asked.
+    monkeypatch.setenv("AUTOMTG_FIXTURE_DECKS", "1")
 
     from automtg.cards import images as images_module
 

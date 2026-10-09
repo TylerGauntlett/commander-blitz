@@ -1,0 +1,698 @@
+{
+  "id": "blor_the_impervious",
+  "name": "Blor the Impervious",
+  "commanders": [
+    "blor_the_impervious"
+  ],
+  "color_identity": [
+    "G"
+  ],
+  "source": "precon",
+  "notes": "Moxfield list \"Blor\" (https://moxfield.com/decks/U8HzrTPiqEmcO--Jxi7PJQ). Promoted from an import, card for card.",
+  "printings": {
+    "adaptive_omnitool": {
+      "scryfall_id": "1603aab8-731c-407a-bb44-625c36ace43e",
+      "artist": "Adrián Rodríguez Pérez",
+      "set_code": "drc",
+      "collector_number": "16"
+    },
+    "arbor_elf": {
+      "scryfall_id": "8c61d23e-2be3-4b99-a24c-2a55e29d99d3",
+      "artist": "Inka Schulz",
+      "set_code": "ltc",
+      "collector_number": "232"
+    },
+    "archdruid_s_charm": {
+      "scryfall_id": "5caae5ae-845f-42c2-b1ae-956df2739433",
+      "artist": "Liiga Smilshkalne",
+      "set_code": "mkm",
+      "collector_number": "151"
+    },
+    "assault_suit": {
+      "scryfall_id": "92b22076-b04e-4d65-9d9c-d3e4c7a3cf1c",
+      "artist": "James Paick",
+      "set_code": "cmm",
+      "collector_number": "369"
+    },
+    "bala_ged_recovery_bala_ged_sanctuary": {
+      "scryfall_id": "c5cb3052-358d-44a7-8cfd-cd31b236494a",
+      "artist": "Lucas Staniec",
+      "set_code": "znr",
+      "collector_number": "180"
+    },
+    "basilisk_collar": {
+      "scryfall_id": "7b36fba7-71f7-4b7f-bde5-b3a9752ad21c",
+      "artist": "Craig J Spearing",
+      "set_code": "fdn",
+      "collector_number": "669"
+    },
+    "bear_umbra": {
+      "scryfall_id": "9fe8f2a7-70cd-41e9-b87d-16dc44c21537",
+      "artist": "Howard Lyon",
+      "set_code": "woc",
+      "collector_number": "121"
+    },
+    "beast_within": {
+      "scryfall_id": "2a000bb0-1dc4-4fda-b26d-d89cc8daf930",
+      "artist": "Jesper Ejsing",
+      "set_code": "soc",
+      "collector_number": "263"
+    },
+    "berserk": {
+      "scryfall_id": "ce109f77-1633-43f5-9682-b355209c3e45",
+      "artist": "Steve Prescott",
+      "set_code": "vma",
+      "collector_number": "197"
+    },
+    "bloodforged_battle_axe": {
+      "scryfall_id": "14f12690-377e-46ae-bbae-f17c27b6acb4",
+      "artist": "Alayna Danner",
+      "set_code": "moc",
+      "collector_number": "349"
+    },
+    "blor_the_impervious": {
+      "scryfall_id": "9c2239e5-cdbd-4d3d-81a1-5e18174f1209",
+      "artist": "Kaitlyn McCulley",
+      "set_code": "mbc",
+      "collector_number": "28"
+    },
+    "bone_sabres": {
+      "scryfall_id": "73d9374d-72b8-4397-9c46-be9216fab911",
+      "artist": "David Auden Nash",
+      "set_code": "40k",
+      "collector_number": "88"
+    },
+    "boseiju_who_endures": {
+      "scryfall_id": "2135ac5a-187b-4dc9-8f82-34e8d1603416",
+      "artist": "Chris Ostrowski",
+      "set_code": "neo",
+      "collector_number": "266"
+    },
+    "brass_knuckles": {
+      "scryfall_id": "fd31ee9e-1af7-4eb4-bda8-11451ebd6927",
+      "artist": "Yeong-Hao Han",
+      "set_code": "snc",
+      "collector_number": "234"
+    },
+    "bridgeworks_battle_tanglespan_bridgeworks": {
+      "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63",
+      "artist": "Ron Spears",
+      "set_code": "mh3",
+      "collector_number": "249"
+    },
+    "buried_ruin": {
+      "scryfall_id": "7ab1a074-9d92-4125-9200-84cd035f8f53",
+      "artist": "Franz Vohwinkel",
+      "set_code": "eoc",
+      "collector_number": "150"
+    },
+    "buster_sword": {
+      "scryfall_id": "374d7383-a1a7-4eea-91f7-290180e14cc9",
+      "artist": "Douzen",
+      "set_code": "fin",
+      "collector_number": "255"
+    },
+    "cavern_of_souls": {
+      "scryfall_id": "3aad15a2-8a1b-4460-9b06-e85863081878",
+      "artist": "Alayna Danner",
+      "set_code": "lci",
+      "collector_number": "269"
+    },
+    "commander_s_plate": {
+      "scryfall_id": "19992dbd-7a6a-43d3-b1db-01716b2eed27",
+      "artist": "Volkan Baǵa",
+      "set_code": "cmr",
+      "collector_number": "305"
+    },
+    "conqueror_s_flail": {
+      "scryfall_id": "d5f5399a-26c6-4ecd-9715-f6440f6958f1",
+      "artist": "Franz Vohwinkel",
+      "set_code": "2x2",
+      "collector_number": "302"
+    },
+    "creeping_renaissance": {
+      "scryfall_id": "71569961-d56c-43f9-ae51-d86561419743",
+      "artist": "Tomasz Jedruszek",
+      "set_code": "c18",
+      "collector_number": "137"
+    },
+    "delighted_halfling": {
+      "scryfall_id": "71384418-173a-4f77-adab-56e52fa23692",
+      "artist": "Inka Schulz",
+      "set_code": "ltr",
+      "collector_number": "158"
+    },
+    "elvish_mystic": {
+      "scryfall_id": "deb5ca6a-f91d-443d-ad84-6fe1e80bfb51",
+      "artist": "Wesley Burt",
+      "set_code": "m15",
+      "collector_number": "173"
+    },
+    "eternal_witness": {
+      "scryfall_id": "f13553a6-d565-4c18-a60d-20021bc813e7",
+      "artist": "Chris Rahn",
+      "set_code": "m3c",
+      "collector_number": "227"
+    },
+    "excalibur_sword_of_eden": {
+      "scryfall_id": "26dbf574-3193-413e-a982-4b9d27dafaf5",
+      "artist": "Thanh Tuấn",
+      "set_code": "acr",
+      "collector_number": "72"
+    },
+    "fanatic_of_rhonas": {
+      "scryfall_id": "1f9fb33a-3b39-4aff-93b8-aedafe0ea694",
+      "artist": "Scott Murphy",
+      "set_code": "mh3",
+      "collector_number": "152"
+    },
+    "forest": {
+      "scryfall_id": "c3e84b42-5423-4d4d-b8fc-cfbb2c53a4ca",
+      "artist": "Kamila Szutenberg",
+      "set_code": "hob",
+      "collector_number": "193"
+    },
+    "fyndhorn_elves": {
+      "scryfall_id": "450744cf-7eba-491b-97b0-ca80c6368bbb",
+      "artist": "Igor Kieryluk",
+      "set_code": "cmr",
+      "collector_number": "228"
+    },
+    "gemrazer": {
+      "scryfall_id": "0095245c-a30e-4e2a-88c9-632c678e9f03",
+      "artist": "Svetlin Velinov",
+      "set_code": "iko",
+      "collector_number": "155"
+    },
+    "genji_glove": {
+      "scryfall_id": "f724dde1-84b0-4e3b-a9b8-44cd22bb9f79",
+      "artist": "Elizabeth Peiró",
+      "set_code": "fin",
+      "collector_number": "258"
+    },
+    "hammer_of_nazahn": {
+      "scryfall_id": "e77a8ac1-f40d-423e-a0b3-0a8e236a6c1e",
+      "artist": "Victor Adame Minguez",
+      "set_code": "cmm",
+      "collector_number": "388"
+    },
+    "high_score": {
+      "scryfall_id": "b9077ef5-d19a-4106-950b-bb49b3b37510",
+      "artist": "Fahmi Fauzi",
+      "set_code": "tmc",
+      "collector_number": "29"
+    },
+    "hunter_s_insight": {
+      "scryfall_id": "4e1448cf-3ddc-437b-a21e-4f4086492ec6",
+      "artist": "Jim Murray",
+      "set_code": "cmr",
+      "collector_number": "232"
+    },
+    "hunter_s_talent": {
+      "scryfall_id": "e9a31863-9649-4a4f-99e4-c93729938bd7",
+      "artist": "Kisung Koh",
+      "set_code": "blb",
+      "collector_number": "179"
+    },
+    "inquisitor_s_flail": {
+      "scryfall_id": "3014f59d-9012-473a-8bb1-8085c6e91632",
+      "artist": "Rob Alexander",
+      "set_code": "isd",
+      "collector_number": "227"
+    },
+    "inventors_fair": {
+      "scryfall_id": "275471e3-ded1-40ac-91ef-369dce5764d9",
+      "artist": "Jonas De Ro",
+      "set_code": "kld",
+      "collector_number": "247"
+    },
+    "keen_sense": {
+      "scryfall_id": "d16e927d-0f23-4fac-9b35-3cfcb22ebc26",
+      "artist": "Jim Nelson",
+      "set_code": "tsr",
+      "collector_number": "213"
+    },
+    "krosan_grip": {
+      "scryfall_id": "d3571dee-7b90-4c0c-abc7-59b515ffa129",
+      "artist": "Zoltan Boros & Gabor Szikszai",
+      "set_code": "c21",
+      "collector_number": "198"
+    },
+    "lavaspur_boots": {
+      "scryfall_id": "e50709de-e6ef-4dbc-af1e-290fed279f34",
+      "artist": "Mila Pesic",
+      "set_code": "otj",
+      "collector_number": "243"
+    },
+    "legolas_s_quick_reflexes": {
+      "scryfall_id": "851c0167-04ba-4d15-b0fa-c211bd8826f1",
+      "artist": "Jason Rainville",
+      "set_code": "ltc",
+      "collector_number": "493"
+    },
+    "level_up": {
+      "scryfall_id": "d4398907-17d2-4fad-bfa9-56925fb75834",
+      "artist": "Narendra Bintara Adi",
+      "set_code": "tmc",
+      "collector_number": "31"
+    },
+    "llanowar_elves": {
+      "scryfall_id": "6a0b230b-d391-4998-a3f7-7b158a0ec2cd",
+      "artist": "Kev Walker",
+      "set_code": "fdn",
+      "collector_number": "227"
+    },
+    "mask_of_memory": {
+      "scryfall_id": "c6c4dffd-0ae9-493d-afa4-d1eb8bdba582",
+      "artist": "Alan Pollack",
+      "set_code": "onc",
+      "collector_number": "136"
+    },
+    "masterwork_of_ingenuity": {
+      "scryfall_id": "af244fed-ea12-4d8c-b090-91c5de62edb8",
+      "artist": "Ulrich Brunin",
+      "set_code": "2xm",
+      "collector_number": "271"
+    },
+    "mosswort_bridge": {
+      "scryfall_id": "7e608136-d934-4785-abb6-f423722e3835",
+      "artist": "Jeremy Jarvis",
+      "set_code": "dsc",
+      "collector_number": "288"
+    },
+    "nature_s_lore": {
+      "scryfall_id": "a68b86e1-12dd-4248-963d-19c390d2e320",
+      "artist": "Terese Nielsen",
+      "set_code": "vma",
+      "collector_number": "220"
+    },
+    "nettlecyst": {
+      "scryfall_id": "0a7cb0f8-2946-4b00-a192-0b31c8e1ec5c",
+      "artist": "Vincent Proce",
+      "set_code": "mkc",
+      "collector_number": "233"
+    },
+    "pip_boy_3000": {
+      "scryfall_id": "c2248694-aab0-47a8-ae8b-8d5283075e10",
+      "artist": "Mirko Failoni",
+      "set_code": "pip",
+      "collector_number": "140"
+    },
+    "power_fist": {
+      "scryfall_id": "9e8f7fbc-bf2a-43c1-a88d-807c1e7dab69",
+      "artist": "Campbell White",
+      "set_code": "pip",
+      "collector_number": "81"
+    },
+    "ram_through": {
+      "scryfall_id": "ac0b24e7-14e7-45ee-b5d8-bdb8674b669c",
+      "artist": "Zoltan Boros",
+      "set_code": "iko",
+      "collector_number": "170"
+    },
+    "return_of_the_wildspeaker": {
+      "scryfall_id": "b88a4943-bd1b-4d10-9cd3-b2ab91b25c10",
+      "artist": "Chris Rallis",
+      "set_code": "eld",
+      "collector_number": "172"
+    },
+    "rishkar_s_expertise": {
+      "scryfall_id": "a28ab6cc-d065-495c-a76c-7996a0e4d14d",
+      "artist": "Magali Villeneuve",
+      "set_code": "m3c",
+      "collector_number": "411"
+    },
+    "sakura_tribe_elder": {
+      "scryfall_id": "7a8b1c49-8594-426d-b585-41140235bb0e",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "soc",
+      "collector_number": "285"
+    },
+    "selvala_heart_of_the_wilds": {
+      "scryfall_id": "812856be-cf51-42de-96d2-4ac91e71d442",
+      "artist": "Tyler Jacobson",
+      "set_code": "ecc",
+      "collector_number": "116"
+    },
+    "shifting_woodland": {
+      "scryfall_id": "059164e1-894d-4586-9800-e60d6fbd6eb6",
+      "artist": "Josu Hernaiz",
+      "set_code": "mh3",
+      "collector_number": "228"
+    },
+    "silkguard": {
+      "scryfall_id": "2b5fbcb8-9023-4a1c-b082-db44be8d8325",
+      "artist": "Dan Murayama Scott",
+      "set_code": "soc",
+      "collector_number": "286"
+    },
+    "sixth_sense": {
+      "scryfall_id": "e564db6b-0b8b-4c67-9135-5da76d2225fe",
+      "artist": "Zoltan Boros",
+      "set_code": "akh",
+      "collector_number": "187"
+    },
+    "sol_ring": {
+      "scryfall_id": "0d38ff41-a60c-4d70-92e4-4d3d3ab073a3",
+      "artist": "Daria Aksenova",
+      "set_code": "ecc",
+      "collector_number": "58"
+    },
+    "song_of_the_dryads": {
+      "scryfall_id": "161e66e3-0339-495c-bd06-0a799a254906",
+      "artist": "Lars Grant-West",
+      "set_code": "cmm",
+      "collector_number": "324"
+    },
+    "staff_of_titania": {
+      "scryfall_id": "a5b765f3-e59e-4af1-bac5-e50797f8629f",
+      "artist": "Samuel Perin",
+      "set_code": "brc",
+      "collector_number": "27"
+    },
+    "strip_mine": {
+      "scryfall_id": "f57fd4c9-0004-4f71-a30f-2720943f57ca",
+      "artist": "John Avon",
+      "set_code": "vma",
+      "collector_number": "316"
+    },
+    "strong_back": {
+      "scryfall_id": "3f65afa5-e4f7-49c2-97f9-47ad5dbcacfa",
+      "artist": "Elizabeth Peiró",
+      "set_code": "pip",
+      "collector_number": "83"
+    },
+    "sword_of_fire_and_ice": {
+      "scryfall_id": "2626d4c9-fcef-4057-a154-7d987a4a4b84",
+      "artist": "Chris Rahn",
+      "set_code": "2xm",
+      "collector_number": "297"
+    },
+    "swordsman_s_steel": {
+      "scryfall_id": "ae4ab04b-a3bd-40ea-9a71-df221cde4496",
+      "artist": "Daneen Wilkerson",
+      "set_code": "msc",
+      "collector_number": "752"
+    },
+    "sylvan_library": {
+      "scryfall_id": "6ada256f-2e55-4c1f-b4d3-d7b10b498956",
+      "artist": "Yeong-Hao Han",
+      "set_code": "dmr",
+      "collector_number": "179"
+    },
+    "talon_gates_of_madara": {
+      "scryfall_id": "c565f8fe-acf7-40dd-8100-8f692d1e232c",
+      "artist": "Steven Belledin",
+      "set_code": "m3c",
+      "collector_number": "134"
+    },
+    "tanuki_transplanter": {
+      "scryfall_id": "45ea5ead-9fd8-4909-96aa-d4e970891c93",
+      "artist": "Oleksandr Kozachenko",
+      "set_code": "nec",
+      "collector_number": "30"
+    },
+    "the_irencrag": {
+      "scryfall_id": "8051c5ec-54a6-45a8-8945-fb93c5feaa39",
+      "artist": "Adam Paquette",
+      "set_code": "woe",
+      "collector_number": "248"
+    },
+    "the_mycosynth_gardens": {
+      "scryfall_id": "0a6f0408-6758-495f-9d6c-7686a1542fbd",
+      "artist": "Andrew Mar",
+      "set_code": "eoc",
+      "collector_number": "168"
+    },
+    "three_visits": {
+      "scryfall_id": "d74f59cd-0b58-4dbc-a4e7-742b012ba749",
+      "artist": "Yeong-Hao Han",
+      "set_code": "soc",
+      "collector_number": "289"
+    },
+    "toski_bearer_of_secrets": {
+      "scryfall_id": "0b261989-b34e-4bba-90f8-2adfda58c89b",
+      "artist": "Jason Rainville",
+      "set_code": "blc",
+      "collector_number": "244"
+    },
+    "ulvenwald_tracker": {
+      "scryfall_id": "4da9e7d8-5f01-4d55-a0a8-afe5e7d5f8e4",
+      "artist": "Christopher Moeller",
+      "set_code": "mm3",
+      "collector_number": "144"
+    },
+    "urza_s_saga": {
+      "scryfall_id": "c1e0f201-42cb-46a1-901a-65bb4fc18f6c",
+      "artist": "Titus Lunter",
+      "set_code": "mh2",
+      "collector_number": "259"
+    },
+    "utopia_sprawl": {
+      "scryfall_id": "5ea568df-04a1-4012-98ec-ba75e189e0ca",
+      "artist": "Ron Spears",
+      "set_code": "rvr",
+      "collector_number": "159"
+    },
+    "wild_growth": {
+      "scryfall_id": "61429340-15fa-4a70-aac3-3e358b23b02c",
+      "artist": "Tony Szczudlo",
+      "set_code": "dmr",
+      "collector_number": "184"
+    },
+    "yavimaya_cradle_of_growth": {
+      "scryfall_id": "8a12b4f7-8f6b-4a3c-9114-825e1b2099a0",
+      "artist": "Sarah Finnigan",
+      "set_code": "m3c",
+      "collector_number": "409"
+    }
+  },
+  "cards": [
+    {
+      "id": "adaptive_omnitool"
+    },
+    {
+      "id": "arbor_elf"
+    },
+    {
+      "id": "archdruid_s_charm"
+    },
+    {
+      "id": "assault_suit"
+    },
+    {
+      "id": "bala_ged_recovery_bala_ged_sanctuary"
+    },
+    {
+      "id": "basilisk_collar"
+    },
+    {
+      "id": "bear_umbra"
+    },
+    {
+      "id": "beast_within"
+    },
+    {
+      "id": "berserk"
+    },
+    {
+      "id": "bloodforged_battle_axe"
+    },
+    {
+      "id": "bone_sabres"
+    },
+    {
+      "id": "boseiju_who_endures"
+    },
+    {
+      "id": "brass_knuckles"
+    },
+    {
+      "id": "bridgeworks_battle_tanglespan_bridgeworks"
+    },
+    {
+      "id": "buried_ruin"
+    },
+    {
+      "id": "buster_sword"
+    },
+    {
+      "id": "cavern_of_souls"
+    },
+    {
+      "id": "commander_s_plate"
+    },
+    {
+      "id": "conqueror_s_flail"
+    },
+    {
+      "id": "creeping_renaissance"
+    },
+    {
+      "id": "delighted_halfling"
+    },
+    {
+      "id": "elvish_mystic"
+    },
+    {
+      "id": "eternal_witness"
+    },
+    {
+      "id": "excalibur_sword_of_eden"
+    },
+    {
+      "id": "fanatic_of_rhonas"
+    },
+    {
+      "id": "forest",
+      "qty": 25
+    },
+    {
+      "id": "fyndhorn_elves"
+    },
+    {
+      "id": "gemrazer"
+    },
+    {
+      "id": "genji_glove"
+    },
+    {
+      "id": "hammer_of_nazahn"
+    },
+    {
+      "id": "high_score"
+    },
+    {
+      "id": "hunter_s_insight"
+    },
+    {
+      "id": "hunter_s_talent"
+    },
+    {
+      "id": "inquisitor_s_flail"
+    },
+    {
+      "id": "inventors_fair"
+    },
+    {
+      "id": "keen_sense"
+    },
+    {
+      "id": "krosan_grip"
+    },
+    {
+      "id": "lavaspur_boots"
+    },
+    {
+      "id": "legolas_s_quick_reflexes"
+    },
+    {
+      "id": "level_up"
+    },
+    {
+      "id": "llanowar_elves"
+    },
+    {
+      "id": "mask_of_memory"
+    },
+    {
+      "id": "masterwork_of_ingenuity"
+    },
+    {
+      "id": "mosswort_bridge"
+    },
+    {
+      "id": "nature_s_lore"
+    },
+    {
+      "id": "nettlecyst"
+    },
+    {
+      "id": "pip_boy_3000"
+    },
+    {
+      "id": "power_fist"
+    },
+    {
+      "id": "ram_through"
+    },
+    {
+      "id": "return_of_the_wildspeaker"
+    },
+    {
+      "id": "rishkar_s_expertise"
+    },
+    {
+      "id": "sakura_tribe_elder"
+    },
+    {
+      "id": "selvala_heart_of_the_wilds"
+    },
+    {
+      "id": "shifting_woodland"
+    },
+    {
+      "id": "silkguard"
+    },
+    {
+      "id": "sixth_sense"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "song_of_the_dryads"
+    },
+    {
+      "id": "staff_of_titania"
+    },
+    {
+      "id": "strip_mine"
+    },
+    {
+      "id": "strong_back"
+    },
+    {
+      "id": "sword_of_fire_and_ice"
+    },
+    {
+      "id": "swordsman_s_steel"
+    },
+    {
+      "id": "sylvan_library"
+    },
+    {
+      "id": "talon_gates_of_madara"
+    },
+    {
+      "id": "tanuki_transplanter"
+    },
+    {
+      "id": "the_irencrag"
+    },
+    {
+      "id": "the_mycosynth_gardens"
+    },
+    {
+      "id": "three_visits"
+    },
+    {
+      "id": "toski_bearer_of_secrets"
+    },
+    {
+      "id": "ulvenwald_tracker"
+    },
+    {
+      "id": "urza_s_saga"
+    },
+    {
+      "id": "utopia_sprawl"
+    },
+    {
+      "id": "wild_growth"
+    },
+    {
+      "id": "yavimaya_cradle_of_growth"
+    }
+  ]
+}

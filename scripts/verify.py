@@ -160,6 +160,8 @@ def running_server(port: int):
             "warning",
         ],
         cwd=ROOT,
+        # The smoke script plays the fixture decks (`data/decks/fixtures/`).
+        env={**os.environ, "AUTOMTG_FIXTURE_DECKS": "1", "AUTOMTG_CPU": "classic"},
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,

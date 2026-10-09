@@ -590,8 +590,13 @@ class PodRegistry:
 
         Falls back through "any deck nobody holds" to "the first deck", which
         with four chairs and four shipped decks needs a pod that seats five.
+
+        ``GameData.seating`` goes first when it is set: the fixture decks pin it
+        so a seeded test server deals the opponents its tests were written for.
         """
-        decks = sorted(self.sessions.data.decks)
+        data = self.sessions.data
+        pinned = [d for d in data.seating if d in data.decks]
+        decks = pinned + sorted(set(data.decks) - set(pinned))
         if not decks:  # pragma: no cover -- the server always ships four
             raise PodError("unknown_deck", "no decks are loaded")
         seated_ids = {seat.deck_id for seat in pod.seats if seat.deck_id}

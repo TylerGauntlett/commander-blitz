@@ -8,23 +8,49 @@ from automtg.cards.registry import (
     COMMANDER_DECK_SIZE,
     CardRegistry,
     DeckList,
+    fixture_decks_dir,
     load_decks,
     validate_deck,
 )
 
-DECK_IDS = sorted(load_decks())
+#: The precons a player sees in the catalogue.
+PRECONS = {
+    "aesi_tyrant_of_gyre_strait",
+    "atraxa_praetors_voice",
+    "bard_king_of_dale",
+    "blor_the_impervious",
+    "bruvac_the_grandiloquent",
+    "edgar_markov",
+    "giada_font_of_hope",
+    "isperia",
+    "sheoldred_the_apocalypse",
+    "the_ur_dragon",
+    "vivi_ornitier",
+    "zurgo",
+}
+
+#: The retired first Edgar and Aesi lists, kept for the seeded tests.
+FIXTURES = {"aesi", "edgar"}
+
+
+def _all_decks() -> dict[str, DeckList]:
+    return {**load_decks(), **load_decks(fixture_decks_dir())}
+
+
+DECK_IDS = sorted(_all_decks())
 
 
 @pytest.fixture(scope="module")
 def decks() -> dict[str, DeckList]:
-    return load_decks()
+    return _all_decks()
 
 
 class TestDecksAreLegal:
     def test_the_shipped_decks_exist(self, decks):
         # `load_decks` reads the authored layer only, so an imported deck on the
         # developer's machine cannot make this fail.
-        assert set(decks) == {"aesi", "edgar", "isperia", "zurgo"}
+        assert set(load_decks()) == PRECONS
+        assert set(load_decks(fixture_decks_dir())) == FIXTURES
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)
     def test_deck_is_commander_legal(self, deck_id, decks, real_registry: CardRegistry):
@@ -79,7 +105,9 @@ class TestDecksAreLegal:
         # runs 44 -- Wizards builds precons land-heavy, and 30 of those are
         # basics. Raised rather than special-cased: the assertion is meant to
         # catch a deck that cannot cast its own cards, and 44 is not that.
-        assert 33 <= lands <= 45, f"{deck_id} runs {lands} lands"
+        # The floor went to 30 for the same reason: Bruvac's mill list runs 30
+        # lands on a 2.4 curve and Bard's 32 on 3.0, and both are real lists.
+        assert 30 <= lands <= 45, f"{deck_id} runs {lands} lands"
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)
     def test_no_tokens_in_the_deck_list(self, deck_id, decks, real_registry):

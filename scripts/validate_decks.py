@@ -33,7 +33,7 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        data = load_game_data(include_generated=args.all)
+        data = load_game_data(include_generated=args.all, include_fixtures=True)
     except AutoMtgError as exc:
         print(f"FAIL card files: {exc}")
         return 1
