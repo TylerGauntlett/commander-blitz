@@ -8,12 +8,12 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 8065 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 14509 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
-| `tests/ai/` | 80 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 359 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1534 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 406 + 53 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `tests/unit/` | 8114 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 14639 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/ai/` | 189 | Action-space correctness, the environment, agents, the arena, the model and trainer |
+| `tests/server/` | 363 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 1567 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 423 + 66 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
 | `frontend/e2e/` | 159 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
 The Count column is what the runner *collects* -- parametrised cases included, so
