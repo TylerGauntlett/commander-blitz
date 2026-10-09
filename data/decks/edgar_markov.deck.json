@@ -1,339 +1,861 @@
 {
-  "id": "edgar",
+  "id": "edgar_markov",
   "name": "Edgar Markov",
   "commanders": [
     "edgar_markov"
   ],
   "color_identity": [
-    "W",
     "B",
-    "R"
+    "R",
+    "W"
   ],
-  "notes": "Mardu vampire aggro. Eminence makes a token every time a Vampire is cast, lords make the swarm lethal, and drain effects convert every death and life gain into damage.",
+  "source": "precon",
+  "notes": "Moxfield list \"Markov Chains\" (https://moxfield.com/decks/Sr3op2p6G0m0Msv1n_jLZw). Promoted from an import, card for card.",
+  "tags": ["Tribal", "Tokens", "Sacrifice", "Combo"],
+  "ratings": {"speed": 4, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},
+  "strategy": "Edgar works from the command zone: every Vampire the deck casts brings a 1/1 Vampire with it, so the one- and two-drops are two bodies each and the board is wide long before Edgar arrives with haste to put a counter on all of it. Those bodies are fuel. Blood Artist, Cruel Celebrant and Bastion of Remembrance drain on every death, free sacrifice outlets turn any creature into a trigger, and Grave Pact makes each one an edict on the table. Bloodthirsty Conqueror with Vito or Marauding Blight Priest is an infinite drain, so the deck can win out of nowhere as well as on the board.",
+  "signature": [
+    {
+      "card_id": "bloodthirsty_conqueror",
+      "why": "Half of both infinite drains, and a 5/5 flying deathtoucher besides."
+    },
+    {
+      "card_id": "vito_thorn_of_the_dusk_rose",
+      "why": "Every life gained is lost by an opponent: with the Conqueror, the game."
+    },
+    {
+      "card_id": "grave_pact",
+      "why": "Each sacrifice of a token is an edict on every opponent."
+    },
+    {
+      "card_id": "cruel_celebrant",
+      "why": "Two mana, and every one of our creatures dying drains the table."
+    },
+    {
+      "card_id": "stromkirk_captain",
+      "why": "Turns every eminence token into a 2/2 first striker."
+    }
+  ],
+  "printings": {
+    "akroma_s_will": {
+      "scryfall_id": "0663dcc8-2f72-4439-bfa9-06c4ef06c54d",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "m3c",
+      "collector_number": "165"
+    },
+    "anguished_unmaking": {
+      "scryfall_id": "2cef491b-1838-473c-949e-671e8aae8585",
+      "artist": "Wesley Burt",
+      "set_code": "psoi",
+      "collector_number": "242p"
+    },
+    "anowon_the_ruin_sage": {
+      "scryfall_id": "7b247681-1cf6-42a0-ad44-76261c690596",
+      "artist": "Dan Murayama Scott",
+      "set_code": "wwk",
+      "collector_number": "49"
+    },
+    "arcane_signet": {
+      "scryfall_id": "935644d4-a140-4f24-b8ab-d5e79a682a9b",
+      "artist": "Racrufi",
+      "set_code": "tdc",
+      "collector_number": "105"
+    },
+    "baron_bertram_graywater": {
+      "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf",
+      "artist": "Johan Grenier",
+      "set_code": "otj",
+      "collector_number": "195"
+    },
+    "bastion_of_remembrance": {
+      "scryfall_id": "9d0c6077-f84c-4e91-87dc-b0ac81d557f8",
+      "artist": "Volkan Baǵa",
+      "set_code": "tdc",
+      "collector_number": "171"
+    },
+    "battlefield_forge": {
+      "scryfall_id": "c47c1bf5-f11e-4f86-b20b-5d899a11dc56",
+      "artist": "Thomas Stoop",
+      "set_code": "soc",
+      "collector_number": "362"
+    },
+    "black_market_connections": {
+      "scryfall_id": "9bac8176-d0db-4397-820d-acbdd3264377",
+      "artist": "Filipe Pagliuso",
+      "set_code": "acr",
+      "collector_number": "87"
+    },
+    "blade_of_the_bloodchief": {
+      "scryfall_id": "34e7bebf-1844-476c-a947-978393908fa2",
+      "artist": "Jung Park",
+      "set_code": "lcc",
+      "collector_number": "300"
+    },
+    "blood_artist": {
+      "scryfall_id": "c4c1641d-c4ea-4657-a0ae-db09bba83a0f",
+      "artist": "Julie Dillon",
+      "set_code": "j22",
+      "collector_number": "117"
+    },
+    "blood_crypt": {
+      "scryfall_id": "0994aef4-b341-45f4-8881-523565a5956e",
+      "artist": "Rob Alexander",
+      "set_code": "rvr",
+      "collector_number": "273"
+    },
+    "bloodghast": {
+      "scryfall_id": "08e01310-d192-41e9-a6f0-0edbd6fb3cfb",
+      "artist": "Lixin Yin",
+      "set_code": "lcc",
+      "collector_number": "184"
+    },
+    "bloodletter_of_aclazotz": {
+      "scryfall_id": "d4f6027a-003a-4f9d-929a-0b6da1fa42c9",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "lci",
+      "collector_number": "92"
+    },
+    "bloodline_keeper": {
+      "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00",
+      "artist": "Jason Chan",
+      "set_code": "inr",
+      "collector_number": "98"
+    },
+    "bloodthirsty_conqueror": {
+      "scryfall_id": "ce860ed4-a5bd-4347-9eab-dd716ea84db1",
+      "artist": "Dmitry Burmak",
+      "set_code": "fdn",
+      "collector_number": "58"
+    },
+    "bloodthrone_vampire": {
+      "scryfall_id": "e62f3371-8aa6-4fbf-b642-5ba6af219703",
+      "artist": "Steve Argyle",
+      "set_code": "m11",
+      "collector_number": "85"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "55b5b094-9d2d-4d96-b90c-78fecdae725a",
+      "artist": "Howard Lyon",
+      "set_code": "soc",
+      "collector_number": "363"
+    },
+    "captivating_vampire": {
+      "scryfall_id": "0f87aadf-7638-4691-b5a5-86f928e98462",
+      "artist": "Eric Deschamps",
+      "set_code": "inr",
+      "collector_number": "100"
+    },
+    "carmen_cruel_skymarcher": {
+      "scryfall_id": "c0e07f8a-5290-47c4-a93d-0c3a14afebd3",
+      "artist": "Randy Vargas",
+      "set_code": "lcc",
+      "collector_number": "5"
+    },
+    "carrion_feeder": {
+      "scryfall_id": "d3e33835-a293-4a1f-85d5-8ac22360ef35",
+      "artist": "Brian Snõddy",
+      "set_code": "ema",
+      "collector_number": "84"
+    },
+    "caves_of_koilos": {
+      "scryfall_id": "a8a57915-5226-4d3c-ae8e-a55c50f3c131",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "soc",
+      "collector_number": "365"
+    },
+    "charismatic_conqueror": {
+      "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515",
+      "artist": "Bram Sels",
+      "set_code": "lcc",
+      "collector_number": "70"
+    },
+    "clavileno_first_of_the_blessed": {
+      "scryfall_id": "9f55b648-b1ec-407a-a0c7-7647755793d1",
+      "artist": "Matt Stewart",
+      "set_code": "lcc",
+      "collector_number": "2"
+    },
+    "clever_concealment": {
+      "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639",
+      "artist": "Jurijus Chitrovas",
+      "set_code": "msc",
+      "collector_number": "125"
+    },
+    "command_tower": {
+      "scryfall_id": "5fc770b6-03ac-45c3-a2ca-bd508096384e",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "tdc",
+      "collector_number": "107"
+    },
+    "cordial_vampire": {
+      "scryfall_id": "a90a1c44-ee0f-4c12-bfaf-6f371bcce167",
+      "artist": "Winona Nelson",
+      "set_code": "mh1",
+      "collector_number": "83"
+    },
+    "cruel_celebrant": {
+      "scryfall_id": "87ead6ac-b1c5-4852-8413-7fa43c6cfc57",
+      "artist": "Bastien L. Deharme",
+      "set_code": "war",
+      "collector_number": "188"
+    },
+    "dark_ritual": {
+      "scryfall_id": "1b5fc7ce-0618-4145-b8aa-bc871e4afa99",
+      "artist": "John Coulthart",
+      "set_code": "mir",
+      "collector_number": "116"
+    },
+    "dragonskull_summit": {
+      "scryfall_id": "92964d76-3a01-4ab6-abf9-66b754708f90",
+      "artist": "Jon Foster",
+      "set_code": "ecc",
+      "collector_number": "147"
+    },
+    "edgar_ancient_bloodlord": {
+      "scryfall_id": "7c619fed-2394-4efc-8cdc-6df5f51c1f57",
+      "artist": "Joshua Raphael",
+      "set_code": "fra",
+      "collector_number": "270"
+    },
+    "edgar_charmed_groom_edgar_markov_s_coffin": {
+      "scryfall_id": "63ba8eef-b834-4031-b0a1-0f8505d53813",
+      "artist": "Volkan Baǵa",
+      "set_code": "vow",
+      "collector_number": "236"
+    },
+    "edgar_markov": {
+      "scryfall_id": "a577ba08-0aa8-45be-aa83-d5078770127c",
+      "artist": "Volkan Baǵa",
+      "set_code": "inr",
+      "collector_number": "234"
+    },
+    "elenda_the_dusk_rose": {
+      "scryfall_id": "e18feca3-1b1b-4456-8873-25a24849a917",
+      "artist": "Chris Rahn",
+      "set_code": "lcc",
+      "collector_number": "268"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "dc0a1bc1-ba94-4494-a196-5363fde85194",
+      "artist": "Steven Belledin",
+      "set_code": "ecc",
+      "collector_number": "148"
+    },
+    "fetid_heath": {
+      "scryfall_id": "f465ded8-0d38-42ac-bafc-a12185013c5d",
+      "artist": "Daarken",
+      "set_code": "soc",
+      "collector_number": "372"
+    },
+    "florian_voldaren_scion": {
+      "scryfall_id": "53289e69-74da-46d2-91c2-a11378ba76ef",
+      "artist": "Justine Cruz",
+      "set_code": "mid",
+      "collector_number": "223"
+    },
+    "forerunner_of_the_legion": {
+      "scryfall_id": "10718d37-63d4-44b7-9450-5d49cffce944",
+      "artist": "Josh Hass",
+      "set_code": "rix",
+      "collector_number": "9"
+    },
+    "ghostly_prison": {
+      "scryfall_id": "6ef870ec-5dc4-4d50-8d8f-31839758fa57",
+      "artist": "Wayne England",
+      "set_code": "cn2",
+      "collector_number": "86"
+    },
+    "godless_shrine": {
+      "scryfall_id": "ced4c824-2dfc-42ae-84e6-09f8e3f51b5b",
+      "artist": "Ravenna Tran",
+      "set_code": "rna",
+      "collector_number": "248"
+    },
+    "grave_pact": {
+      "scryfall_id": "b728cdab-e4fe-478b-b7b2-5912bd6a80a3",
+      "artist": "Zach Alexander",
+      "set_code": "wot",
+      "collector_number": "29"
+    },
+    "haunted_ridge": {
+      "scryfall_id": "01b62353-e170-4c29-bda1-7cd8441c01c2",
+      "artist": "Victor Harmatiuk",
+      "set_code": "who",
+      "collector_number": "286"
+    },
+    "henrika_domnathi_henrika_infernal_seer": {
+      "scryfall_id": "946ca338-5f43-4cff-bd93-1b28449c5fdc",
+      "artist": "Billy Christian",
+      "set_code": "vow",
+      "collector_number": "119"
+    },
+    "herald_s_horn": {
+      "scryfall_id": "2cfafee3-c060-44bd-be6e-8d36501d72d3",
+      "artist": "Jason Felix",
+      "set_code": "m3c",
+      "collector_number": "296"
+    },
+    "high_society_hunter": {
+      "scryfall_id": "51da4a4b-ea12-4169-a7cf-eb4427f13e84",
+      "artist": "Daneen Wilkerson",
+      "set_code": "fdn",
+      "collector_number": "61"
+    },
+    "impact_tremors": {
+      "scryfall_id": "e23cf8e0-0983-4495-ad3e-8b0c3e706115",
+      "artist": "Matteo Marjoram",
+      "set_code": "wot",
+      "collector_number": "44"
+    },
+    "indulgent_aristocrat": {
+      "scryfall_id": "296e4dc6-6997-4c4a-8137-c0835b44a1c9",
+      "artist": "Anna Steinbauer",
+      "set_code": "lcc",
+      "collector_number": "200"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "78814c92-b52c-462a-866f-3e7da9db9f70",
+      "artist": "Richard Wright",
+      "set_code": "soc",
+      "collector_number": "382"
+    },
+    "legion_lieutenant": {
+      "scryfall_id": "33f7ff99-65d6-4e97-bdfa-b6e6eac0588f",
+      "artist": "Zezhou Chen",
+      "set_code": "rix",
+      "collector_number": "163"
+    },
+    "malakir_bloodwitch": {
+      "scryfall_id": "be917193-f4ab-485d-aac2-826db6a08275",
+      "artist": "Shelly Wan",
+      "set_code": "c17",
+      "collector_number": "116"
+    },
+    "malakir_rebirth_malakir_mire": {
+      "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
+      "artist": "Marta Nael",
+      "set_code": "znr",
+      "collector_number": "111"
+    },
+    "marauding_blight_priest": {
+      "scryfall_id": "5f70dafc-c638-4ec0-ab5b-62998f752720",
+      "artist": "Caio Monteiro",
+      "set_code": "fdn",
+      "collector_number": "178"
+    },
+    "master_of_dark_rites": {
+      "scryfall_id": "6394a522-37bb-4cf3-b434-5121c8000ac6",
+      "artist": "Igor Kieryluk",
+      "set_code": "lcc",
+      "collector_number": "83"
+    },
+    "mirkwood_bats": {
+      "scryfall_id": "15f035df-784a-4dc8-b7f5-77139a4e6e99",
+      "artist": "John Tedrick",
+      "set_code": "ltr",
+      "collector_number": "95"
+    },
+    "necropotence": {
+      "scryfall_id": "ff727bfb-8cd8-43dd-afdf-eb74a4631eac",
+      "artist": "Abigail Larson",
+      "set_code": "wot",
+      "collector_number": "31"
+    },
+    "new_blood": {
+      "scryfall_id": "6ee669ab-0ae6-43e5-86fd-f0dcb621e478",
+      "artist": "Howard Lyon",
+      "set_code": "lcc",
+      "collector_number": "202"
+    },
+    "nomad_outpost": {
+      "scryfall_id": "a68fbeaa-941f-4d53-becd-f93ed22b9a54",
+      "artist": "Alayna Danner",
+      "set_code": "tdm",
+      "collector_number": "263"
+    },
+    "olivia_s_wrath": {
+      "scryfall_id": "98893cc1-f502-4ca6-b6c1-e09fa1f4ef7a",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "voc",
+      "collector_number": "20"
+    },
+    "oubliette": {
+      "scryfall_id": "96ccfecd-0dab-426a-8897-86c73934d21d",
+      "artist": "Jim Pavelec",
+      "set_code": "plst",
+      "collector_number": "2XM-100"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "9335e773-4b45-4b91-8140-5159fe7e0395",
+      "artist": "Alayna Danner",
+      "set_code": "soc",
+      "collector_number": "393"
+    },
+    "patron_of_the_vein": {
+      "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1",
+      "artist": "Tommy Arnold",
+      "set_code": "lcc",
+      "collector_number": "207"
+    },
+    "phyrexian_tower": {
+      "scryfall_id": "05b2cc68-1d20-421f-9800-af0996071554",
+      "artist": "Dimitar Marinski",
+      "set_code": "jmp",
+      "collector_number": "493"
+    },
+    "plains": {
+      "scryfall_id": "a4446149-341b-449b-86e2-2b6b47b7a75e",
+      "artist": "Sam Burley",
+      "set_code": "j25",
+      "collector_number": "81"
+    },
+    "qarsi_revenant": {
+      "scryfall_id": "8c93a0f6-5e50-4dda-9ff6-da741fb839ff",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "tdm",
+      "collector_number": "86"
+    },
+    "sacred_foundry": {
+      "scryfall_id": "8b4e2642-3c87-4708-b9b4-2e7f7359ac7d",
+      "artist": "Titus Lunter",
+      "set_code": "eoe",
+      "collector_number": "256"
+    },
+    "sanctum_seeker": {
+      "scryfall_id": "28da9211-13f4-4500-98f9-58c260c01e18",
+      "artist": "Volkan Baǵa",
+      "set_code": "voc",
+      "collector_number": "136"
+    },
+    "shared_animosity": {
+      "scryfall_id": "bb7a56c4-5f20-4fd0-8f95-44061dec1df8",
+      "artist": "Chuck Lukacs",
+      "set_code": "c20",
+      "collector_number": "158"
+    },
+    "shattered_sanctum": {
+      "scryfall_id": "2c531254-1b12-44d8-a942-e767d516364e",
+      "artist": "Muhammad Firdaus",
+      "set_code": "tdc",
+      "collector_number": "391"
+    },
+    "skullclamp": {
+      "scryfall_id": "b5bb89dd-9d31-49d9-ba54-4a04798e515e",
+      "artist": "Igor Krstic",
+      "set_code": "tdc",
+      "collector_number": "103"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "d6890462-aeb0-4356-93dc-b2eda0df0c0e",
+      "artist": "Adam Paquette",
+      "set_code": "ecc",
+      "collector_number": "168"
+    },
+    "sol_ring": {
+      "scryfall_id": "7b0ccfd4-f118-4497-9c5a-54cf12000e16",
+      "artist": "Leon Tukker",
+      "set_code": "tdc",
+      "collector_number": "106"
+    },
+    "sorin_imperious_bloodlord": {
+      "scryfall_id": "219d3e48-e0b1-472d-ac45-11c14b292c9e",
+      "artist": "Chase Stone",
+      "set_code": "inr",
+      "collector_number": "133"
+    },
+    "soul_shatter": {
+      "scryfall_id": "2c2fb07b-0f70-403b-be8b-b5217f12e671",
+      "artist": "Wylie Beckert",
+      "set_code": "znr",
+      "collector_number": "127"
+    },
+    "stromkirk_captain": {
+      "scryfall_id": "5bfcca87-04f8-480a-bae6-ae87f7afb7e1",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "dka",
+      "collector_number": "143"
+    },
+    "sulfurous_springs": {
+      "scryfall_id": "dfd5450a-6490-417f-9aea-b6fca6f380d7",
+      "artist": "Bruce Brenneise",
+      "set_code": "dmu",
+      "collector_number": "256"
+    },
+    "sundown_pass": {
+      "scryfall_id": "8f3fddd7-ede4-41c7-a645-a6af298a3d35",
+      "artist": "Muhammad Firdaus",
+      "set_code": "vow",
+      "collector_number": "266"
+    },
+    "swamp": {
+      "scryfall_id": "02fe3fdf-1d21-4e35-b0f3-3bcde7b05e23",
+      "artist": "Kasia 'Kafis' Zielińska",
+      "set_code": "j25",
+      "collector_number": "89"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "68ec2aed-7662-48ae-ab25-04f74ece1e41",
+      "artist": "Jesper Ejsing",
+      "set_code": "soc",
+      "collector_number": "179"
+    },
+    "takenuma_abandoned_mire": {
+      "scryfall_id": "499037cc-a577-41cb-8ca2-5e117945634f",
+      "artist": "Sam Burley",
+      "set_code": "neo",
+      "collector_number": "278"
+    },
+    "talisman_of_conviction": {
+      "scryfall_id": "efeafc9d-a953-4915-8342-725836d0f645",
+      "artist": "Lindsey Look",
+      "set_code": "tdc",
+      "collector_number": "329"
+    },
+    "talisman_of_hierarchy": {
+      "scryfall_id": "0c959368-2f58-48de-b7a5-2bab408652b5",
+      "artist": "Lindsey Look",
+      "set_code": "soc",
+      "collector_number": "358"
+    },
+    "talisman_of_indulgence": {
+      "scryfall_id": "3f1e2fad-0aab-4ead-9b25-509c83ad4a93",
+      "artist": "Xabi Gaztelua",
+      "set_code": "who",
+      "collector_number": "252"
+    },
+    "teferi_s_protection": {
+      "scryfall_id": "483fa1cb-1e35-44f2-a143-98c0f107f5ca",
+      "artist": "Chase Stone",
+      "set_code": "2x2",
+      "collector_number": "32"
+    },
+    "vampire_of_the_dire_moon": {
+      "scryfall_id": "b3c185b9-5d97-4a5a-af0b-8b9c44dcd235",
+      "artist": "Anna Podedworna",
+      "set_code": "m20",
+      "collector_number": "120"
+    },
+    "vault_of_the_archangel": {
+      "scryfall_id": "8f203f04-bd73-4d88-bb5e-aab63507dbd1",
+      "artist": "John Avon",
+      "set_code": "tdc",
+      "collector_number": "410"
+    },
+    "vein_ripper": {
+      "scryfall_id": "078933b3-6d82-45f2-94e8-addf54cf1704",
+      "artist": "Bastien L. Deharme",
+      "set_code": "mkm",
+      "collector_number": "110"
+    },
+    "village_rites": {
+      "scryfall_id": "2841339b-faef-407d-9838-d03fe80e6294",
+      "artist": "Igor Kieryluk",
+      "set_code": "lcc",
+      "collector_number": "212"
+    },
+    "viscera_seer": {
+      "scryfall_id": "f511830b-1c1f-4d30-aa5d-4314726d142e",
+      "artist": "John Stanko",
+      "set_code": "soc",
+      "collector_number": "229"
+    },
+    "vito_thorn_of_the_dusk_rose": {
+      "scryfall_id": "0fe79ee4-c3f3-4a6b-a967-203ca3b70ee5",
+      "artist": "Lie Setiawan",
+      "set_code": "m21",
+      "collector_number": "127"
+    },
+    "voldaren_estate": {
+      "scryfall_id": "2577e5fd-903a-44ce-989a-d53d56511ad3",
+      "artist": "Richard Wright",
+      "set_code": "vow",
+      "collector_number": "267"
+    },
+    "war_room": {
+      "scryfall_id": "48d6ce7c-5dc8-449b-acbd-db259ae687ed",
+      "artist": "Milivoj Ćeran",
+      "set_code": "cmr",
+      "collector_number": "361"
+    },
+    "welcoming_vampire": {
+      "scryfall_id": "a6ed954c-17e5-45e4-9fba-8eedcad8f9b9",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "mkc",
+      "collector_number": "91"
+    }
+  },
   "cards": [
     {
+      "id": "akroma_s_will"
+    },
+    {
+      "id": "anguished_unmaking"
+    },
+    {
+      "id": "anowon_the_ruin_sage"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "baron_bertram_graywater"
+    },
+    {
+      "id": "bastion_of_remembrance"
+    },
+    {
+      "id": "battlefield_forge"
+    },
+    {
+      "id": "black_market_connections"
+    },
+    {
+      "id": "blade_of_the_bloodchief"
+    },
+    {
+      "id": "blood_artist"
+    },
+    {
+      "id": "blood_crypt"
+    },
+    {
+      "id": "bloodghast"
+    },
+    {
+      "id": "bloodletter_of_aclazotz"
+    },
+    {
+      "id": "bloodline_keeper"
+    },
+    {
+      "id": "bloodthirsty_conqueror"
+    },
+    {
+      "id": "bloodthrone_vampire"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "captivating_vampire"
+    },
+    {
+      "id": "carmen_cruel_skymarcher"
+    },
+    {
+      "id": "carrion_feeder"
+    },
+    {
+      "id": "caves_of_koilos"
+    },
+    {
+      "id": "charismatic_conqueror"
+    },
+    {
+      "id": "clavileno_first_of_the_blessed"
+    },
+    {
+      "id": "clever_concealment"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "cordial_vampire"
+    },
+    {
+      "id": "cruel_celebrant"
+    },
+    {
+      "id": "dark_ritual"
+    },
+    {
+      "id": "dragonskull_summit"
+    },
+    {
+      "id": "edgar_ancient_bloodlord"
+    },
+    {
+      "id": "edgar_charmed_groom_edgar_markov_s_coffin"
+    },
+    {
+      "id": "elenda_the_dusk_rose"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "fetid_heath"
+    },
+    {
+      "id": "florian_voldaren_scion"
+    },
+    {
+      "id": "forerunner_of_the_legion"
+    },
+    {
+      "id": "ghostly_prison"
+    },
+    {
+      "id": "godless_shrine"
+    },
+    {
+      "id": "grave_pact"
+    },
+    {
+      "id": "haunted_ridge"
+    },
+    {
+      "id": "henrika_domnathi_henrika_infernal_seer"
+    },
+    {
+      "id": "herald_s_horn"
+    },
+    {
+      "id": "high_society_hunter"
+    },
+    {
+      "id": "impact_tremors"
+    },
+    {
+      "id": "indulgent_aristocrat"
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "legion_lieutenant"
+    },
+    {
+      "id": "malakir_bloodwitch"
+    },
+    {
+      "id": "malakir_rebirth_malakir_mire"
+    },
+    {
+      "id": "marauding_blight_priest"
+    },
+    {
+      "id": "master_of_dark_rites"
+    },
+    {
+      "id": "mirkwood_bats"
+    },
+    {
+      "id": "necropotence"
+    },
+    {
+      "id": "new_blood"
+    },
+    {
+      "id": "nomad_outpost"
+    },
+    {
+      "id": "olivia_s_wrath"
+    },
+    {
+      "id": "oubliette"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "patron_of_the_vein"
+    },
+    {
+      "id": "phyrexian_tower"
+    },
+    {
       "id": "plains",
-      "qty": 8
+      "qty": 4
+    },
+    {
+      "id": "qarsi_revenant"
+    },
+    {
+      "id": "sacred_foundry"
+    },
+    {
+      "id": "sanctum_seeker"
+    },
+    {
+      "id": "shared_animosity"
+    },
+    {
+      "id": "shattered_sanctum"
+    },
+    {
+      "id": "skullclamp"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sorin_imperious_bloodlord"
+    },
+    {
+      "id": "soul_shatter"
+    },
+    {
+      "id": "stromkirk_captain"
+    },
+    {
+      "id": "sulfurous_springs"
+    },
+    {
+      "id": "sundown_pass"
     },
     {
       "id": "swamp",
-      "qty": 12
+      "qty": 7
     },
     {
-      "id": "mountain",
-      "qty": 9
+      "id": "swords_to_plowshares"
     },
     {
-      "id": "command_tower",
-      "qty": 1
+      "id": "takenuma_abandoned_mire"
     },
     {
-      "id": "nomad_outpost",
-      "qty": 1
+      "id": "talisman_of_conviction"
     },
     {
-      "id": "savai_triome",
-      "qty": 1
+      "id": "talisman_of_hierarchy"
     },
     {
-      "id": "scoured_barrens",
-      "qty": 1
+      "id": "talisman_of_indulgence"
     },
     {
-      "id": "bloodfell_caves",
-      "qty": 1
+      "id": "teferi_s_protection"
     },
     {
-      "id": "wind_scarred_crag",
-      "qty": 1
+      "id": "vampire_of_the_dire_moon"
     },
     {
-      "id": "evolving_wilds",
-      "qty": 1
+      "id": "vault_of_the_archangel"
     },
     {
-      "id": "terramorphic_expanse",
-      "qty": 1
+      "id": "vein_ripper"
     },
     {
-      "id": "sol_ring",
-      "qty": 1
+      "id": "village_rites"
     },
     {
-      "id": "arcane_signet",
-      "qty": 1
+      "id": "viscera_seer"
     },
     {
-      "id": "commanders_sphere",
-      "qty": 1
+      "id": "vito_thorn_of_the_dusk_rose"
     },
     {
-      "id": "mind_stone",
-      "qty": 1
+      "id": "voldaren_estate"
     },
     {
-      "id": "wayfarers_bauble",
-      "qty": 1
+      "id": "war_room"
     },
     {
-      "id": "vampire_of_the_dire_moon",
-      "qty": 1
-    },
-    {
-      "id": "vampire_cutthroat",
-      "qty": 1
-    },
-    {
-      "id": "vicious_conquistador",
-      "qty": 1
-    },
-    {
-      "id": "guul_draz_vampire",
-      "qty": 1
-    },
-    {
-      "id": "vampire_lacerator",
-      "qty": 1
-    },
-    {
-      "id": "duskborne_skymarcher",
-      "qty": 1
-    },
-    {
-      "id": "skymarcher_aspirant",
-      "qty": 1
-    },
-    {
-      "id": "pulse_tracker",
-      "qty": 1
-    },
-    {
-      "id": "stromkirk_noble",
-      "qty": 1
-    },
-    {
-      "id": "martyr_of_dusk",
-      "qty": 1
-    },
-    {
-      "id": "child_of_night",
-      "qty": 1
-    },
-    {
-      "id": "gifted_aetherborn",
-      "qty": 1
-    },
-    {
-      "id": "legion_lieutenant",
-      "qty": 1
-    },
-    {
-      "id": "stromkirk_captain",
-      "qty": 1
-    },
-    {
-      "id": "indulgent_aristocrat",
-      "qty": 1
-    },
-    {
-      "id": "bloodthrone_vampire",
-      "qty": 1
-    },
-    {
-      "id": "vampire_aristocrat",
-      "qty": 1
-    },
-    {
-      "id": "blood_artist",
-      "qty": 1
-    },
-    {
-      "id": "kalastria_highborn",
-      "qty": 1
-    },
-    {
-      "id": "dusk_legion_zealot",
-      "qty": 1
-    },
-    {
-      "id": "cruel_celebrant",
-      "qty": 1
-    },
-    {
-      "id": "adanto_vanguard",
-      "qty": 1
-    },
-    {
-      "id": "markov_patrician",
-      "qty": 1
-    },
-    {
-      "id": "bloodrite_invoker",
-      "qty": 1
-    },
-    {
-      "id": "rakish_heir",
-      "qty": 1
-    },
-    {
-      "id": "vampire_nighthawk",
-      "qty": 1
-    },
-    {
-      "id": "drana_liberator_of_malakir",
-      "qty": 1
-    },
-    {
-      "id": "bloodline_keeper",
-      "qty": 1
-    },
-    {
-      "id": "falkenrath_noble",
-      "qty": 1
-    },
-    {
-      "id": "sangromancer",
-      "qty": 1
-    },
-    {
-      "id": "sengir_vampire",
-      "qty": 1
-    },
-    {
-      "id": "champion_of_dusk",
-      "qty": 1
-    },
-    {
-      "id": "captivating_vampire",
-      "qty": 1
-    },
-    {
-      "id": "bishop_of_rebirth",
-      "qty": 1
-    },
-    {
-      "id": "bishop_of_the_bloodstained",
-      "qty": 1
-    },
-    {
-      "id": "bloodline_necromancer",
-      "qty": 1
-    },
-    {
-      "id": "epicure_of_blood",
-      "qty": 1
-    },
-    {
-      "id": "vampire_nocturnus",
-      "qty": 1
-    },
-    {
-      "id": "vampire_sovereign",
-      "qty": 1
-    },
-    {
-      "id": "vampire_neonate",
-      "qty": 1
-    },
-    {
-      "id": "angel_of_despair",
-      "qty": 1
-    },
-    {
-      "id": "shared_animosity",
-      "qty": 1
-    },
-    {
-      "id": "sanguine_bond",
-      "qty": 1
-    },
-    {
-      "id": "vampiric_rites",
-      "qty": 1
-    },
-    {
-      "id": "phyrexian_arena",
-      "qty": 1
-    },
-    {
-      "id": "read_the_bones",
-      "qty": 1
-    },
-    {
-      "id": "nights_whisper",
-      "qty": 1
-    },
-    {
-      "id": "swords_to_plowshares",
-      "qty": 1
-    },
-    {
-      "id": "path_to_exile",
-      "qty": 1
-    },
-    {
-      "id": "terminate",
-      "qty": 1
-    },
-    {
-      "id": "go_for_the_throat",
-      "qty": 1
-    },
-    {
-      "id": "mortify",
-      "qty": 1
-    },
-    {
-      "id": "bedevil",
-      "qty": 1
-    },
-    {
-      "id": "anguished_unmaking",
-      "qty": 1
-    },
-    {
-      "id": "disfigure",
-      "qty": 1
-    },
-    {
-      "id": "zealous_persecution",
-      "qty": 1
-    },
-    {
-      "id": "lightning_strike",
-      "qty": 1
-    }
-  ],
-  "substitutions": [],
-  "tags": [
-    "Aggro",
-    "Tokens",
-    "Drain"
-  ],
-  "ratings": {
-    "speed": 4,
-    "complexity": 2,
-    "interaction": 3,
-    "resilience": 2,
-    "pilot": 2
-  },
-  "strategy": "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast - every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Shared Animosity turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
-  "signature": [
-    {
-      "card_id": "bloodline_keeper",
-      "why": "A token every turn, and a 5/5 lord once the swarm is five wide."
-    },
-    {
-      "card_id": "legion_lieutenant",
-      "why": "The lord that makes a board of 1/1 tokens lethal."
-    },
-    {
-      "card_id": "blood_artist",
-      "why": "Turns a board wipe into the winning turn."
-    },
-    {
-      "card_id": "falkenrath_noble",
-      "why": "A second Blood Artist, in the air."
+      "id": "welcoming_vampire"
     }
   ]
 }

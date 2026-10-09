@@ -7,6 +7,7 @@ uses over HTTP, so agents and humans are interchangeable in every seat.
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Protocol
 
@@ -48,12 +49,23 @@ def play(game: Game, agents: dict[int, Agent], *, max_steps: int = 20_000) -> Ga
 
 
 def agent_by_name(name: str, *, seed: int = 0, **kwargs):
-    """Build an agent from its short name, for CLI flags and the HTTP API."""
+    """Build an agent from its short name, for CLI flags and the HTTP API.
+
+    ``heuristic`` is deck-aware: it plays each seat with that deck's strategy.
+    ``heuristic_classic`` is the agent from before strategies, and
+    ``AUTOMTG_CPU=classic`` makes plain ``heuristic`` mean it too -- the
+    Playwright server sets it, so seeded browser games stay the games their
+    specs were written against.
+    """
 
     if name == "random":
         return RandomAgent(seed=seed)
     if name == "heuristic":
-        return HeuristicAgent(seed=seed)
+        return HeuristicAgent(seed=seed, classic=os.environ.get("AUTOMTG_CPU") == "classic")
+    if name == "heuristic_classic":
+        return HeuristicAgent(seed=seed, classic=True)
     if name == "policy":
         return PolicyAgent(seed=seed, **kwargs)
-    raise ValueError(f"unknown agent {name!r} (known: random, heuristic, policy)")
+    raise ValueError(
+        f"unknown agent {name!r} (known: random, heuristic, heuristic_classic, policy)"
+    )

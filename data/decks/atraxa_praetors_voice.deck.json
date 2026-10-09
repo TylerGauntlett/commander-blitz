@@ -1,0 +1,861 @@
+{
+  "id": "atraxa_praetors_voice",
+  "name": "Atraxa, Praetors' Voice",
+  "commanders": [
+    "atraxa_praetors_voice"
+  ],
+  "color_identity": [
+    "B",
+    "G",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "notes": "Moxfield list \"Superfriends\" (https://moxfield.com/decks/JtagAcICOXCi7qzC5-JZfA). Promoted from an import, card for card. Thirty-odd planeswalkers, proliferated toward their ultimates.",
+  "tags": [
+    "Planeswalkers",
+    "Proliferate",
+    "Control"
+  ],
+  "ratings": {
+    "speed": 1,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 4
+  },
+  "strategy": "Atraxa proliferates at every end step, and this list gives her thirty-odd planeswalkers to proliferate. Each walker that survives a turn cycle gains a loyalty from its own plus and another from Atraxa, so the plan is to land walkers early, plus them every turn and let the counters carry them to their ultimates - Vraska's assassins, Elspeth's emblem, Jace drawing a short library to nothing. Doubling Season, Inexorable Tide and Tekuthal turn that from a slow climb into a sprint. Everything else is removal and protection: the walkers' own minus abilities, a full suite of instants, two wraths and Teferi's Protection for the turn the table finally swings at the walkers. It is slow, it asks a lot of its pilot, and it is very hard to beat once three walkers are standing.",
+  "signature": [
+    {
+      "card_id": "doubling_season",
+      "why": "Every walker enters with double loyalty - some ultimate the turn they land."
+    },
+    {
+      "card_id": "inexorable_tide",
+      "why": "A proliferate on every spell, on top of Atraxa's end step."
+    },
+    {
+      "card_id": "vraska_the_unseen",
+      "why": "Removal on the minus, and an ultimate that ends the game through combat."
+    },
+    {
+      "card_id": "teferi_s_protection",
+      "why": "The answer to the alpha strike every superfriends deck eventually faces."
+    }
+  ],
+  "printings": {
+    "ajani_sleeper_agent": {
+      "scryfall_id": "7641f4d9-4614-41c8-87f5-4845bd78e9b3",
+      "artist": "Matt Stewart",
+      "set_code": "dmu",
+      "collector_number": "192"
+    },
+    "ajani_steadfast": {
+      "scryfall_id": "51825d35-cdb2-40fa-ab89-1625161b04af",
+      "artist": "Chris Rahn",
+      "set_code": "cmm",
+      "collector_number": "813"
+    },
+    "ajani_the_greathearted": {
+      "scryfall_id": "e4ec092e-af23-4f4b-91f1-f63d50e40b30",
+      "artist": "Victor Adame Minguez",
+      "set_code": "plst",
+      "collector_number": "WAR-184"
+    },
+    "ajani_unyielding": {
+      "scryfall_id": "23b82ee9-2ac6-4b81-8c64-dd4f47c2d8cb",
+      "artist": "Kieran Yanner",
+      "set_code": "aer",
+      "collector_number": "127"
+    },
+    "aminatou_the_fateshifter": {
+      "scryfall_id": "16b9f43a-9c3f-4bfa-9eb1-734189a4bb1f",
+      "artist": "Seb McKinnon",
+      "set_code": "c18",
+      "collector_number": "37"
+    },
+    "anguished_unmaking": {
+      "scryfall_id": "90ced4fa-6509-4f7a-9da7-efc70de6f90c",
+      "artist": "Wesley Burt",
+      "set_code": "soi",
+      "collector_number": "242"
+    },
+    "arcane_sanctum": {
+      "scryfall_id": "d15c35b2-ecec-4b63-afd5-25392bf58486",
+      "artist": "Anthony Francisco",
+      "set_code": "c16",
+      "collector_number": "281"
+    },
+    "ash_barrens": {
+      "scryfall_id": "9d7ac112-bb20-4ea4-b797-5d21f6b7c121",
+      "artist": "Jonas De Ro",
+      "set_code": "c16",
+      "collector_number": "56"
+    },
+    "ashiok_dream_render": {
+      "scryfall_id": "f2df3258-c053-48a8-974f-d80899b2cd93",
+      "artist": "Cynthia Sheppard",
+      "set_code": "war",
+      "collector_number": "228"
+    },
+    "ashiok_nightmare_weaver": {
+      "scryfall_id": "599c3c9f-dfb7-4357-9d9c-9a1a4616b103",
+      "artist": "Karla Ortiz",
+      "set_code": "ths",
+      "collector_number": "188"
+    },
+    "atraxa_praetors_voice": {
+      "scryfall_id": "c34ae834-775e-447a-a330-0270c227c667",
+      "artist": "Victor Adame Minguez",
+      "set_code": "c16",
+      "collector_number": "28"
+    },
+    "brokers_ascendancy": {
+      "scryfall_id": "799de0f1-6bf2-4158-8a4f-bedc3d2f6578",
+      "artist": "Dallas Williams",
+      "set_code": "snc",
+      "collector_number": "170"
+    },
+    "call_the_gatewatch": {
+      "scryfall_id": "4719ac60-2cff-4abb-b9cc-b677d3ac945c",
+      "artist": "Yefim Kligerman",
+      "set_code": "ogw",
+      "collector_number": "16"
+    },
+    "chromatic_lantern": {
+      "scryfall_id": "7ff8e733-877b-46e2-ac80-c51cafe18d3d",
+      "artist": "Jung Park",
+      "set_code": "c16",
+      "collector_number": "247"
+    },
+    "command_tower": {
+      "scryfall_id": "6a759aca-50a4-44ba-8a9d-a764da55bfb7",
+      "artist": "Ryan Yee",
+      "set_code": "c16",
+      "collector_number": "286"
+    },
+    "contentious_plan": {
+      "scryfall_id": "8e30deb6-9e1f-4545-ae30-c30ba6c7b3a0",
+      "artist": "Eric Deschamps",
+      "set_code": "war",
+      "collector_number": "46"
+    },
+    "cyclonic_rift": {
+      "scryfall_id": "1fadf1e3-4f4f-4f58-b8a9-11e14bb550f8",
+      "artist": "Chris Rahn",
+      "set_code": "c14",
+      "collector_number": "104"
+    },
+    "day_of_judgment": {
+      "scryfall_id": "03f6b25f-d11c-483a-a3e9-6b801d333482",
+      "artist": "Vincent Proce",
+      "set_code": "m11",
+      "collector_number": "12"
+    },
+    "deepglow_skate": {
+      "scryfall_id": "0f7c787f-2134-4cfd-901f-d5e45e62de1e",
+      "artist": "Jason Kang",
+      "set_code": "c16",
+      "collector_number": "7"
+    },
+    "deploy_the_gatewatch": {
+      "scryfall_id": "a3aa54d9-9f01-46e4-b4bd-f8bc57b44ac1",
+      "artist": "Wesley Burt",
+      "set_code": "emn",
+      "collector_number": "20"
+    },
+    "doubling_season": {
+      "scryfall_id": "f2c4f80e-84a0-463b-82c3-5c6503809351",
+      "artist": "Chuck Lukacs",
+      "set_code": "fdn",
+      "collector_number": "216"
+    },
+    "dovin_baan": {
+      "scryfall_id": "2344e710-4570-41b6-af84-a3e7d784003a",
+      "artist": "Tyler Jacobson",
+      "set_code": "kld",
+      "collector_number": "179"
+    },
+    "elspeth_sun_s_champion": {
+      "scryfall_id": "6f816d97-10f0-4d92-aa21-254754530554",
+      "artist": "Leonardo Santanna",
+      "set_code": "blc",
+      "collector_number": "97"
+    },
+    "eternal_witness": {
+      "scryfall_id": "c7e10ca7-1e5d-4224-82cf-798a4d436d72",
+      "artist": "Terese Nielsen",
+      "set_code": "5dn",
+      "collector_number": "86"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "7f8c9ac8-0741-4261-b43b-d745839e11f5",
+      "artist": "Izzy",
+      "set_code": "bfz",
+      "collector_number": "236"
+    },
+    "flux_channeler": {
+      "scryfall_id": "26a679fa-cefc-4222-a12c-3ab886940956",
+      "artist": "Heonhwa",
+      "set_code": "plst",
+      "collector_number": "WAR-52"
+    },
+    "forest": {
+      "scryfall_id": "562b16ae-8ae7-4b2d-9098-bf3ff1429f7b",
+      "artist": "Leon Tukker",
+      "set_code": "dft",
+      "collector_number": "291"
+    },
+    "fracture": {
+      "scryfall_id": "331c7cc7-0546-4852-a333-bce590201189",
+      "artist": "Miranda Meeks",
+      "set_code": "plst",
+      "collector_number": "STX-188"
+    },
+    "gideon_champion_of_justice": {
+      "scryfall_id": "93d0509a-a863-4d9c-b39f-625a8cc1a547",
+      "artist": "David Rapoza",
+      "set_code": "gtc",
+      "collector_number": "13"
+    },
+    "gideon_jura": {
+      "scryfall_id": "fb4ed14d-369e-4dd0-a6bf-258f031855fb",
+      "artist": "Chris Rahn",
+      "set_code": "e01",
+      "collector_number": "10"
+    },
+    "gideon_of_the_trials": {
+      "scryfall_id": "959ce13f-519f-4472-bbd1-f26a972723d7",
+      "artist": "Izzy",
+      "set_code": "akh",
+      "collector_number": "14"
+    },
+    "hissing_quagmire": {
+      "scryfall_id": "6ef11b54-205a-48e9-92d0-5d416be869ef",
+      "artist": "Cliff Childs",
+      "set_code": "ogw",
+      "collector_number": "171"
+    },
+    "inexorable_tide": {
+      "scryfall_id": "8f41e281-fcbb-450b-8a67-7b072c55c6f0",
+      "artist": "Dave Kendall",
+      "set_code": "som",
+      "collector_number": "35"
+    },
+    "innkeeper_s_talent": {
+      "scryfall_id": "941b0afc-0e8f-45f2-ae7f-07595e164611",
+      "artist": "Alix Branwyn",
+      "set_code": "blb",
+      "collector_number": "180"
+    },
+    "island": {
+      "scryfall_id": "dad64d3a-1868-4404-8692-d3c54071140d",
+      "artist": "Noah Bradley",
+      "set_code": "m13",
+      "collector_number": "235"
+    },
+    "jace_cunning_castaway": {
+      "scryfall_id": "b75f56f2-88fd-44ba-ad02-56ea3391f173",
+      "artist": "Kieran Yanner",
+      "set_code": "xln",
+      "collector_number": "60"
+    },
+    "jace_memory_adept": {
+      "scryfall_id": "f3f2a5b6-c26c-4355-b760-d87f074a4921",
+      "artist": "D. Alexander Gregory",
+      "set_code": "m12",
+      "collector_number": "58"
+    },
+    "jace_unraveler_of_secrets": {
+      "scryfall_id": "20d5521d-e9f1-49e0-aa13-8e6de794cb12",
+      "artist": "Tyler Jacobson",
+      "set_code": "soi",
+      "collector_number": "69"
+    },
+    "karn_s_bastion": {
+      "scryfall_id": "b9d895af-7e8c-419f-bc5d-5596083fbfb6",
+      "artist": "Adam Paquette",
+      "set_code": "war",
+      "collector_number": "248"
+    },
+    "kasmina_enigma_sage": {
+      "scryfall_id": "178bf300-38cf-4ab2-9e66-6fcaa112b649",
+      "artist": "Tyler Jacobson",
+      "set_code": "stx",
+      "collector_number": "196"
+    },
+    "kasmina_enigmatic_mentor": {
+      "scryfall_id": "c77d9454-a78c-4063-ad66-46b2f5a030aa",
+      "artist": "Magali Villeneuve",
+      "set_code": "war",
+      "collector_number": "56"
+    },
+    "kaya_the_inexorable": {
+      "scryfall_id": "166c0bd1-b59d-4644-832f-888a4ca3a0aa",
+      "artist": "Tyler Jacobson",
+      "set_code": "khm",
+      "collector_number": "218"
+    },
+    "kiora_master_of_the_depths": {
+      "scryfall_id": "4b63c228-3265-4029-9bc0-36b3e31dfb53",
+      "artist": "Jason Chan",
+      "set_code": "bfz",
+      "collector_number": "213"
+    },
+    "kiora_the_crashing_wave": {
+      "scryfall_id": "f77ac7fa-718d-425f-a0aa-2f8e2bfc0950",
+      "artist": "Scott M. Fischer",
+      "set_code": "bng",
+      "collector_number": "149"
+    },
+    "liliana_dreadhorde_general": {
+      "scryfall_id": "d75ebba8-34ca-47a0-bf13-8318ad73b343",
+      "artist": "Chris Rallis",
+      "set_code": "war",
+      "collector_number": "97"
+    },
+    "liliana_the_last_hope": {
+      "scryfall_id": "fa6ac7d2-0127-49a8-b7d2-a38308d3c27b",
+      "artist": "Anna Steinbauer",
+      "set_code": "emn",
+      "collector_number": "93"
+    },
+    "lumbering_falls": {
+      "scryfall_id": "f0d8d2e4-3ebe-4311-b99e-dea9fb0b20ac",
+      "artist": "Titus Lunter",
+      "set_code": "bfz",
+      "collector_number": "239"
+    },
+    "mortify": {
+      "scryfall_id": "9b84fdbf-12fe-40f9-97d1-1941d8a309b7",
+      "artist": "Nils Hamm",
+      "set_code": "c16",
+      "collector_number": "212"
+    },
+    "narset_parter_of_veils": {
+      "scryfall_id": "8c39f9b4-02b9-4d44-b8d6-4fd02ebbb0c5",
+      "artist": "Magali Villeneuve",
+      "set_code": "war",
+      "collector_number": "61"
+    },
+    "narset_transcendent": {
+      "scryfall_id": "4816d092-e34b-4397-8599-43d8e85a8f39",
+      "artist": "Magali Villeneuve",
+      "set_code": "dtk",
+      "collector_number": "225"
+    },
+    "nissa_vital_force": {
+      "scryfall_id": "bbaaa98a-ec40-4ff1-8762-a719cf1c475d",
+      "artist": "Clint Cearley",
+      "set_code": "kld",
+      "collector_number": "163"
+    },
+    "nissa_voice_of_zendikar": {
+      "scryfall_id": "6de97cf1-49b6-40b2-ab7f-1c8eb98f92af",
+      "artist": "Raymond Swanland",
+      "set_code": "ddr",
+      "collector_number": "1"
+    },
+    "oath_of_ajani": {
+      "scryfall_id": "968c7d5a-b037-4ff7-b6d2-df00adf5691b",
+      "artist": "Wesley Burt",
+      "set_code": "aer",
+      "collector_number": "131"
+    },
+    "oath_of_gideon": {
+      "scryfall_id": "97976ade-c6ec-4068-be6b-953255b86a79",
+      "artist": "Wesley Burt",
+      "set_code": "ogw",
+      "collector_number": "30"
+    },
+    "oath_of_nissa": {
+      "scryfall_id": "35b8ec5d-bb33-4733-883e-9002951ae2fb",
+      "artist": "Wesley Burt",
+      "set_code": "plst",
+      "collector_number": "OGW-140"
+    },
+    "ob_nixilis_reignited": {
+      "scryfall_id": "6bb7a4bd-0e74-4b1b-bf23-55c06442881e",
+      "artist": "Raymond Swanland",
+      "set_code": "ddr",
+      "collector_number": "36"
+    },
+    "oko_thief_of_crowns": {
+      "scryfall_id": "659e8760-c7a8-445d-bfef-7cd445ea67c3",
+      "artist": "Michael Walsh",
+      "set_code": "otp",
+      "collector_number": "50"
+    },
+    "opulent_palace": {
+      "scryfall_id": "21326575-80b9-4a4e-a93c-6880ec6575d5",
+      "artist": "Adam Paquette",
+      "set_code": "ktk",
+      "collector_number": "238"
+    },
+    "plains": {
+      "scryfall_id": "a2125c3e-d52c-44b9-b9f1-89f02236d447",
+      "artist": "Dimitar Marinski",
+      "set_code": "j25",
+      "collector_number": "82"
+    },
+    "prairie_stream": {
+      "scryfall_id": "9625911f-1dd3-4044-ac06-3c0c3198b6fd",
+      "artist": "Adam Paquette",
+      "set_code": "bfz",
+      "collector_number": "241"
+    },
+    "putrefy": {
+      "scryfall_id": "5afd1831-f264-422c-a791-dfb701ec03c9",
+      "artist": "Igor Kieryluk",
+      "set_code": "c16",
+      "collector_number": "217"
+    },
+    "rupture_spire": {
+      "scryfall_id": "e748fc8f-e369-4ccb-990a-d1abfa47a023",
+      "artist": "Jaime Jones",
+      "set_code": "c16",
+      "collector_number": "319"
+    },
+    "sandsteppe_citadel": {
+      "scryfall_id": "7d035968-ba49-47c1-b26a-2faead68b2ac",
+      "artist": "Sam Burley",
+      "set_code": "c16",
+      "collector_number": "320"
+    },
+    "seaside_citadel": {
+      "scryfall_id": "a43910f1-303d-4214-9404-cabee59b65bd",
+      "artist": "Volkan Baǵa",
+      "set_code": "c16",
+      "collector_number": "322"
+    },
+    "shambling_vent": {
+      "scryfall_id": "30a73816-1f33-4798-a9d6-5f0410d19625",
+      "artist": "Jung Park",
+      "set_code": "bfz",
+      "collector_number": "244"
+    },
+    "sol_ring": {
+      "scryfall_id": "b79cb394-eb91-4b3b-91d4-c6a0f723feb1",
+      "artist": "Mike Bierek",
+      "set_code": "c14",
+      "collector_number": "270"
+    },
+    "sorin_grim_nemesis": {
+      "scryfall_id": "c2933144-c931-498a-9e91-f5165873c3b7",
+      "artist": "Eric Deschamps",
+      "set_code": "soi",
+      "collector_number": "251"
+    },
+    "sorin_solemn_visitor": {
+      "scryfall_id": "a1cb8205-e08a-4d32-8912-cb1203350be6",
+      "artist": "Cynthia Sheppard",
+      "set_code": "plst",
+      "collector_number": "KTK-202"
+    },
+    "stirring_wildwood": {
+      "scryfall_id": "999b3016-2893-4d94-bcac-dfeac5290d93",
+      "artist": "Eric Deschamps",
+      "set_code": "c17",
+      "collector_number": "281"
+    },
+    "sunpetal_grove": {
+      "scryfall_id": "ee06bee0-912f-49ae-98ca-a30246de1a5a",
+      "artist": "Jason Chan",
+      "set_code": "c16",
+      "collector_number": "329"
+    },
+    "swamp": {
+      "scryfall_id": "537fb023-4352-406f-8435-51b37b99a6be",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "mh3",
+      "collector_number": "315"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "d8d4eaeb-6546-44d8-a96f-7270e23014d1",
+      "artist": "Terese Nielsen",
+      "set_code": "c17",
+      "collector_number": "76"
+    },
+    "tamiyo_collector_of_tales": {
+      "scryfall_id": "786d89de-da0c-47af-80ae-2734dc0514fc",
+      "artist": "Chase Stone",
+      "set_code": "pwar",
+      "collector_number": "220p"
+    },
+    "tamiyo_compleated_sage": {
+      "scryfall_id": "222a736e-d819-452d-aeda-eb848c4b2302",
+      "artist": "Chris Rahn",
+      "set_code": "neo",
+      "collector_number": "238"
+    },
+    "tamiyo_field_researcher": {
+      "scryfall_id": "5899d4c5-e6b8-48e9-9044-b5b34a1284f9",
+      "artist": "Justin Gerard",
+      "set_code": "blc",
+      "collector_number": "100"
+    },
+    "teferi_s_protection": {
+      "scryfall_id": "77f130c7-0138-4a1a-9f67-62d2c302dc48",
+      "artist": "Chase Stone",
+      "set_code": "c17",
+      "collector_number": "8"
+    },
+    "teferi_temporal_archmage": {
+      "scryfall_id": "4fe504bb-7e53-409d-b5b0-f252a3ed5445",
+      "artist": "Tyler Jacobson",
+      "set_code": "plst",
+      "collector_number": "C14-19"
+    },
+    "teferi_time_raveler": {
+      "scryfall_id": "5cb76266-ae50-4bbc-8f96-d98f309b02d3",
+      "artist": "Chris Rallis",
+      "set_code": "war",
+      "collector_number": "221"
+    },
+    "tekuthal_inquiry_dominus": {
+      "scryfall_id": "29c17f88-440b-443a-bca7-6f4e8587cffb",
+      "artist": "Dominik Mayer",
+      "set_code": "one",
+      "collector_number": "302"
+    },
+    "temple_of_deceit": {
+      "scryfall_id": "686559d7-8ac1-496b-a5a6-1467bf8fc7c5",
+      "artist": "Raymond Swanland",
+      "set_code": "ths",
+      "collector_number": "225"
+    },
+    "temple_of_malady": {
+      "scryfall_id": "f30220f1-1992-4b5c-9e13-1762fb673155",
+      "artist": "James Paick",
+      "set_code": "jou",
+      "collector_number": "165"
+    },
+    "temple_of_mystery": {
+      "scryfall_id": "2f66945b-3e64-498a-9478-5f96a61d4ec7",
+      "artist": "Noah Bradley",
+      "set_code": "ths",
+      "collector_number": "226"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "d7036f51-10a6-4036-8650-9bc12d2a55cb",
+      "artist": "Brian Snõddy",
+      "set_code": "scg",
+      "collector_number": "143"
+    },
+    "the_chain_veil": {
+      "scryfall_id": "1ca66955-d900-45b6-9a40-38467689a68d",
+      "artist": "Volkan Baǵa",
+      "set_code": "cmm",
+      "collector_number": "943"
+    },
+    "viral_drake": {
+      "scryfall_id": "26b098d7-9b8d-47a1-9694-22b0f0ef25ff",
+      "artist": "Lars Grant-West",
+      "set_code": "plst",
+      "collector_number": "NPH-49"
+    },
+    "vivid_creek": {
+      "scryfall_id": "65887a2e-893e-429d-8831-bd6e60941300",
+      "artist": "Fred Fields",
+      "set_code": "c17",
+      "collector_number": "290"
+    },
+    "vivid_grove": {
+      "scryfall_id": "b9ec7aed-5d90-43f5-90e4-9c0541b54fa8",
+      "artist": "Howard Lyon",
+      "set_code": "c17",
+      "collector_number": "291"
+    },
+    "vraska_relic_seeker": {
+      "scryfall_id": "967b7272-33a6-46e9-b0aa-4757aee54b3a",
+      "artist": "Chris Rahn",
+      "set_code": "xln",
+      "collector_number": "232"
+    },
+    "vraska_the_unseen": {
+      "scryfall_id": "8971938c-cd26-4b83-96d7-1408cd0b0de6",
+      "artist": "Aleksi Briclot",
+      "set_code": "rtr",
+      "collector_number": "208"
+    },
+    "woodland_cemetery": {
+      "scryfall_id": "67139101-ec5e-434b-be3a-21338cc33840",
+      "artist": "Lars Grant-West",
+      "set_code": "isd",
+      "collector_number": "249"
+    }
+  },
+  "cards": [
+    {
+      "id": "ajani_steadfast"
+    },
+    {
+      "id": "ajani_unyielding"
+    },
+    {
+      "id": "ajani_sleeper_agent"
+    },
+    {
+      "id": "ajani_the_greathearted"
+    },
+    {
+      "id": "aminatou_the_fateshifter"
+    },
+    {
+      "id": "anguished_unmaking"
+    },
+    {
+      "id": "arcane_sanctum"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "ashiok_dream_render"
+    },
+    {
+      "id": "ashiok_nightmare_weaver"
+    },
+    {
+      "id": "brokers_ascendancy"
+    },
+    {
+      "id": "call_the_gatewatch"
+    },
+    {
+      "id": "chromatic_lantern"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "contentious_plan"
+    },
+    {
+      "id": "cyclonic_rift"
+    },
+    {
+      "id": "day_of_judgment"
+    },
+    {
+      "id": "deepglow_skate"
+    },
+    {
+      "id": "deploy_the_gatewatch"
+    },
+    {
+      "id": "doubling_season"
+    },
+    {
+      "id": "dovin_baan"
+    },
+    {
+      "id": "elspeth_sun_s_champion"
+    },
+    {
+      "id": "eternal_witness"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "flux_channeler"
+    },
+    {
+      "id": "forest",
+      "qty": 5
+    },
+    {
+      "id": "fracture"
+    },
+    {
+      "id": "gideon_jura"
+    },
+    {
+      "id": "gideon_of_the_trials"
+    },
+    {
+      "id": "gideon_champion_of_justice"
+    },
+    {
+      "id": "hissing_quagmire"
+    },
+    {
+      "id": "inexorable_tide"
+    },
+    {
+      "id": "innkeeper_s_talent"
+    },
+    {
+      "id": "island",
+      "qty": 3
+    },
+    {
+      "id": "jace_cunning_castaway"
+    },
+    {
+      "id": "jace_memory_adept"
+    },
+    {
+      "id": "jace_unraveler_of_secrets"
+    },
+    {
+      "id": "karn_s_bastion"
+    },
+    {
+      "id": "kasmina_enigma_sage"
+    },
+    {
+      "id": "kasmina_enigmatic_mentor"
+    },
+    {
+      "id": "kaya_the_inexorable"
+    },
+    {
+      "id": "kiora_master_of_the_depths"
+    },
+    {
+      "id": "kiora_the_crashing_wave"
+    },
+    {
+      "id": "liliana_dreadhorde_general"
+    },
+    {
+      "id": "liliana_the_last_hope"
+    },
+    {
+      "id": "lumbering_falls"
+    },
+    {
+      "id": "mortify"
+    },
+    {
+      "id": "narset_transcendent"
+    },
+    {
+      "id": "narset_parter_of_veils"
+    },
+    {
+      "id": "nissa_vital_force"
+    },
+    {
+      "id": "nissa_voice_of_zendikar"
+    },
+    {
+      "id": "oath_of_ajani"
+    },
+    {
+      "id": "oath_of_gideon"
+    },
+    {
+      "id": "oath_of_nissa"
+    },
+    {
+      "id": "ob_nixilis_reignited"
+    },
+    {
+      "id": "oko_thief_of_crowns"
+    },
+    {
+      "id": "opulent_palace"
+    },
+    {
+      "id": "plains",
+      "qty": 3
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "putrefy"
+    },
+    {
+      "id": "rupture_spire"
+    },
+    {
+      "id": "sandsteppe_citadel"
+    },
+    {
+      "id": "seaside_citadel"
+    },
+    {
+      "id": "shambling_vent"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sorin_grim_nemesis"
+    },
+    {
+      "id": "sorin_solemn_visitor"
+    },
+    {
+      "id": "stirring_wildwood"
+    },
+    {
+      "id": "sunpetal_grove"
+    },
+    {
+      "id": "swamp",
+      "qty": 3
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "tamiyo_collector_of_tales"
+    },
+    {
+      "id": "tamiyo_compleated_sage"
+    },
+    {
+      "id": "tamiyo_field_researcher"
+    },
+    {
+      "id": "teferi_s_protection"
+    },
+    {
+      "id": "teferi_temporal_archmage"
+    },
+    {
+      "id": "teferi_time_raveler"
+    },
+    {
+      "id": "tekuthal_inquiry_dominus"
+    },
+    {
+      "id": "temple_of_deceit"
+    },
+    {
+      "id": "temple_of_malady"
+    },
+    {
+      "id": "temple_of_mystery"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "the_chain_veil"
+    },
+    {
+      "id": "viral_drake"
+    },
+    {
+      "id": "vivid_creek"
+    },
+    {
+      "id": "vivid_grove"
+    },
+    {
+      "id": "vraska_the_unseen"
+    },
+    {
+      "id": "vraska_relic_seeker"
+    },
+    {
+      "id": "woodland_cemetery"
+    }
+  ]
+}

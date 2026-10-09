@@ -62,7 +62,7 @@ def data_with_an_import(tmp_path, monkeypatch):
 
     # Reuse a real deck's list so the import is legal, swapping one card for the
     # generated one.  A deck that fails validation would not prove anything.
-    aesi = json.loads((root / "decks" / "aesi_tyrant_of_gyre_strait.deck.json").read_text())
+    aesi = json.loads((root / "decks" / "fixtures" / "aesi.deck.json").read_text())
     aesi["id"] = "mox_test"
     aesi["name"] = "Imported Test Deck"
     aesi["cards"][0] = {"id": PROXY_CARD["id"], "qty": aesi["cards"][0]["qty"]}
@@ -88,7 +88,7 @@ class TestTheLayersStayApart:
         assert "mox_test" in data.decks
         # ...and has not lost the authored cards in the process.
         assert "forest" in data.registry
-        assert "aesi" in data.decks
+        assert "zurgo" in data.decks
 
     def test_a_generated_card_compiles_like_any_other(self, data_with_an_import):
         card = server_registry().registry.get(PROXY_CARD["id"])
@@ -186,7 +186,7 @@ class TestTheDirectoryIsNotCommitted:
         monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
         assert not (root / "generated").exists()
         data = load_game_data(include_generated=True)
-        assert "aesi" in data.decks
+        assert "zurgo" in data.decks
 
 
 def test_the_module_exposes_both_loaders():

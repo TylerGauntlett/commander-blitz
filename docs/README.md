@@ -8,7 +8,8 @@
 | [card-dsl.md](card-dsl.md) | How to write or read a card definition |
 | [dsl-changelog.md](dsl-changelog.md) | How the card DSL got to where it is: what changed, what was fixed, and why |
 | [keywords.md](keywords.md) | Every Magic keyword, which mechanism carries it, and what is still missing |
-| [decks.md](decks.md) | The two decks and every substitution made |
+| [decks.md](decks.md) | The twelve shipped decks, the test fixtures, and promoting an import |
+| [cpus/](cpus/README.md) | **How each CPU deck plays and wins**, and the strategy layer that pilots it |
 | [ai-training.md](ai-training.md) | The environment, action space, agents, self-play |
 | [api.md](api.md) | The HTTP surface |
 | [frontend.md](frontend.md) | The playtest client |
@@ -39,6 +40,9 @@ separately:
 then [card-dsl.md](card-dsl.md).
 
 **train something** — [ai-training.md](ai-training.md).
+
+**make a CPU play better** — [cpus/README.md](cpus/README.md), then the page for
+the deck.
 
 **build a different client** — [api.md](api.md). The engine speaks in legal actions
 with opaque ids; a client needs no rules knowledge at all.

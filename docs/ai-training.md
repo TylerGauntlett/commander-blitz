@@ -95,7 +95,8 @@ per step; it is off by default and always off for evaluation.
 | Agent | What it does |
 |---|---|
 | `random` | Uniform over the mask. The floor everything else must beat |
-| `heuristic` | Reflexive, rule-ordered: never miss a land drop, remove the biggest threat, counter anything worth 3+ mana, attack when profitable, block when it trades up, chump only when desperate. In a pod it targets whoever is closest to dying |
+| `heuristic` | Reflexive, rule-ordered, and **deck-aware**: every score passes through the seat's strategy ([cpus/](cpus/README.md)) — the baseline fixes for any deck, and a plan of its own for each shipped precon |
+| `heuristic_classic` | The heuristic as it was before strategies: never miss a land drop, remove the biggest threat, counter anything worth 3+ mana, attack when profitable, block when it trades up, chump only when desperate, target whoever is closest to dying. Kept as a benchmark and for seeded tests; `AUTOMTG_CPU=classic` makes plain `heuristic` mean this |
 | `policy` | A trained checkpoint; falls back to `heuristic` when none is supplied |
 
 The heuristic agent is deliberately reflexive — no lookahead. Undo and env resets work
@@ -103,6 +104,44 @@ by replay rather than by cloning state, so an agent that wanted to explore
 hypotheticals would have to replay whole games to do it. That is a real constraint of
 the no-cloning design, and it is why the heuristic scores actions from the current
 position only.
+
+### Deck strategies
+
+The heuristic looks up a `Strategy` for each seat from the deck it is playing
+(`automtg.ai.strategy`): the precon's own plan by deck id, else a plan for the
+same commander, else `DefaultStrategy`. The agent still produces every score; the
+strategy adjusts it — a Voltron deck adds weight to equipping its commander, a
+mill deck to the shortest library — so `classic=True` (the neutral `Strategy`) is
+the old agent exactly. [cpus/README.md](cpus/README.md) has the design and one
+page per deck.
+
+The benchmark is the strategy agent against the classic one, seats rotated, over
+every precon:
+
+```bash
+python scripts/run_arena.py --agents heuristic,heuristic_classic --decks precons --pods 2,4 --games 60
+```
+
+Measured when the strategies landed (40 games per pod size): **level within
+noise** — 50% vs 45% in duels, 22.5% vs 26.2% in four-player pods, with 95%
+intervals ±15 points. That run mixes decks and agents, so deck strength swamps
+the agent. The sharper measurement holds the deck fixed and swaps only its
+pilot, against a classic-piloted Zurgo, 12 duels each:
+
+| Deck | Strategy wins | Classic wins |
+|---|---|---|
+| Sheoldred | 6 | 2 |
+| Blor | 7 | 5 |
+| Atraxa | 2 | 1 |
+| Bard | 4 | 3 |
+| Edgar | 8 | 7 |
+| Giada, Isperia, Vivi | 9, 8, 4 | 9, 8, 4 |
+| Bruvac | 0 of 10 | 0 of 10 — but its mill gets an opponent to 9 and 28 cards left where classic stops at 57 and 39 |
+
+Never worse, sometimes much better — and the point of the plans is less the
+win rate than that each deck now *does its thing* where a player can see it.
+Aesi and the Ur-Dragon were left out: long games trip the engine's 200-trigger
+loop guard (Scute Swarm, Ganax), which the arena scores as a draw.
 
 ## The trainer
 

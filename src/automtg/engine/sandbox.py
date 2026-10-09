@@ -138,6 +138,15 @@ class GameBuilder:
 
     # -- scalar state -------------------------------------------------------
 
+    def deck(self, pid: int, deck_id: str) -> GameBuilder:
+        """Name the deck this seat is playing -- which CPU strategy pilots it.
+
+        Only the label: nothing is dealt from the list, so a test still builds
+        the exact position it wants.
+        """
+        self.state.players[pid].deck_id = deck_id
+        return self
+
     def life(self, pid: int, amount: int) -> GameBuilder:
         self.state.players[pid].life = amount
         return self

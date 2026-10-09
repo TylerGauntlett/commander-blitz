@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
@@ -325,6 +326,10 @@ class GameData:
 
     registry: CardRegistry
     decks: dict[str, DeckList] = field(default_factory=dict)
+    #: The order a lobby hands decks to CPUs before it falls back to sorted ids.
+    #: Empty except when the fixture decks are loaded, which pin it so that every
+    #: seeded test keeps dealing the same opponents.
+    seating: tuple[str, ...] = ()
 
     def deck(self, deck_id: str) -> DeckList:
         try:
@@ -335,17 +340,33 @@ class GameData:
             ) from None
 
 
-def load_game_data(*, include_generated: bool = False) -> GameData:
+def fixture_decks_dir() -> Path:
+    return data_dir() / "decks" / "fixtures"
+
+
+def load_game_data(
+    *, include_generated: bool = False, include_fixtures: bool = False
+) -> GameData:
     """Compile the card pool and the deck lists.
 
     The authored layer always comes first, so ``CardRegistry.by_name`` resolves
     to a hand-written card whenever one exists and a generated proxy can never
     shadow ``forest``.
+
+    ``include_fixtures`` adds ``data/decks/fixtures/``: the retired first
+    Edgar and Aesi lists, which hundreds of seeded tests were written against.
+    They are not in the catalogue a player sees.
     """
     paths = authored_card_paths()
     if not paths:
         raise DslError(f"no card files found in {data_dir() / 'cards'}")
     deck_dirs = [data_dir() / "decks"]
+    seating: tuple[str, ...] = ()
+    if include_fixtures:
+        deck_dirs.append(fixture_decks_dir())
+        seating_file = fixture_decks_dir() / "seating.json"
+        if seating_file.exists():
+            seating = tuple(json.loads(seating_file.read_text(encoding="utf-8")))
 
     registry = CardRegistry.from_paths(paths)
     if include_generated:
@@ -368,17 +389,24 @@ def load_game_data(*, include_generated: bool = False) -> GameData:
             if deck_id in decks:
                 raise DeckError(f"duplicate deck id {deck_id!r}")
             decks[deck_id] = deck
-    return GameData(registry=registry, decks=decks)
+    return GameData(registry=registry, decks=decks, seating=seating)
 
 
 @lru_cache(maxsize=4)
 def default_registry() -> GameData:
     """The authored layer alone -- what the tests and the trainer see.
 
-    Cached because card compilation is pure and the files never change during a
-    run; a self-play session would otherwise re-parse 200 cards per game.
+    It includes the fixture decks, so a seeded test keeps meaning the game it
+    was written against. Cached because card compilation is pure and the files
+    never change during a run; a self-play session would otherwise re-parse 200
+    cards per game.
     """
-    return load_game_data()
+    return load_game_data(include_fixtures=True)
+
+
+def fixture_decks_enabled() -> bool:
+    """Whether the server should serve the fixture decks (test servers only)."""
+    return os.environ.get("AUTOMTG_FIXTURE_DECKS") == "1"
 
 
 @lru_cache(maxsize=2)
@@ -391,4 +419,4 @@ def server_registry() -> GameData:
     clearing this cache alone is not enough, because :class:`SessionRegistry`
     holds the :class:`GameData` it was built with.
     """
-    return load_game_data(include_generated=True)
+    return load_game_data(include_generated=True, include_fixtures=fixture_decks_enabled())

@@ -8,12 +8,12 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 8065 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 14509 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
-| `tests/ai/` | 80 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 359 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1534 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 406 + 53 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `tests/unit/` | 8114 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 14639 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/ai/` | 189 | Action-space correctness, the environment, agents, the arena, the model and trainer |
+| `tests/server/` | 363 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 1567 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 423 + 66 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
 | `frontend/e2e/` | 159 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
 The Count column is what the runner *collects* -- parametrised cases included, so
@@ -33,9 +33,11 @@ Helpers more than one file needs -- `settle`, `two_seat_board`, `activations`,
 `pt`, `pass_until`, `find_action` and the rest -- live in `tests/conftest.py`;
 import them rather than copying one in.
 
-`scripts/verify.py` runs up to 15 stages in dependency order and stops at the first failure:
+`scripts/verify.py` runs up to 16 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
-120-game arena (60 duels and 60 four-player pods), **a real uvicorn process playing full games at 2 players, 4 players and
+120-game arena (60 duels and 60 four-player pods, played by the pre-strategy
+`heuristic_classic` agent as a rules canary), every precon piloted by its own
+CPU strategy through whole four-player games, **a real uvicorn process playing full games at 2 players, 4 players and
 one pod driven entirely through the lobby**, then the frontend build, lint and tests,
 the Storybook build, and the story interaction tests **twice** — once at the desktop
 canvas and once at a Steam Deck's.
@@ -426,6 +428,22 @@ Every shuffle and random choice routes through `state.rng`. That is what lets
 `test_event_logs_match_for_identical_seeds` assert two games with the same seed produce
 byte-identical event logs, and `test_results_are_reproducible` assert an arena run
 repeats exactly.
+
+A seed only replays the game it was written against if the decks and the CPU are
+the same too, and both changed when the deck strategies landed. So the seeded
+Playwright specs run against a server started with two variables, which
+`playwright.config.ts` and `scripts/verify.py` set for the servers they boot:
+
+| Variable | Effect |
+|---|---|
+| `AUTOMTG_FIXTURE_DECKS=1` | Serves the retired Edgar and Aesi lists (`data/decks/fixtures/`) under their old ids, and pins the CPU deck order ([decks.md](decks.md#test-fixtures)) |
+| `AUTOMTG_CPU=classic` | Every `heuristic` seat plays the pre-strategy agent ([cpus/](cpus/README.md)) |
+
+**A dev server you let Playwright reuse needs both**, or the specs deal different
+games: `AUTOMTG_FIXTURE_DECKS=1 AUTOMTG_CPU=classic uvicorn automtg.server.app:get_app --factory`.
+`/health` lists the deck ids, so `aesi` missing from it is the tell. Python tests
+need neither: `default_registry()` always carries the fixtures, and a sandbox
+seat with no deck gets the baseline strategy.
 
 ## The test harness
 
