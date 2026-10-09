@@ -1,16 +1,31 @@
 # The decks
 
-Four Commander-legal 100-card decks, each the **printed precon**, with no
-substitutions left in any of them. **Every card in all four is implemented and
-tested** — `tests/cards/test_every_card_works.py` plays each one and asserts it
-resolves. That is what separates them from an imported deck, which is mostly
-cards generated with their rules text inert ([deck-import.md](deck-import.md)).
+Twelve Commander-legal 100-card decks ship with the game, each named after its
+commander, with no substitutions left in any of them. **Every card in all twelve
+is implemented and tested** — that is what separates them from an imported deck,
+whose unsupported cards are generated with their rules text inert
+([deck-import.md](deck-import.md)).
 
-| | Aesi | Edgar Markov | Isperia | Zurgo |
+Ten are real Moxfield lists, imported card for card and promoted into
+`data/decks/` by `scripts/promote_deck.py`; Isperia and Zurgo are the two
+original hand-built precons. **Each one is piloted by a CPU strategy of its own**,
+and each has a page in [cpus/](cpus/README.md) on how it plays, how it wins and
+how the CPU drives it.
+
+| Deck | Colours | Moxfield list | Plan | CPU |
 |---|---|---|---|---|
-| Colours | Simic (G/U) | Mardu (W/B/R) | Azorius (W/U) | Mardu (W/B/R) |
-| Avg mana value | 3.31 | 2.68 | 3.37 | 2.73 |
-| Plan | Ramp, hit extra land drops, convert every land that enters into cards, close with a big board | Flood the board with vampires, buff them with lords, drain on every death and life gain | Fly over, and make attacking you the worst option on the table | Attack, make a token, let it die, turn each death into a card or a drain |
+| Aesi, Tyrant of Gyre Strait | G/U | Lander Commander | Extra land drops, a card per land, a board of landfall payoffs | [landfall](cpus/aesi_tyrant_of_gyre_strait.md) |
+| Atraxa, Praetors' Voice | W/U/B/G | Superfriends | Planeswalkers, proliferated toward their ultimates | [superfriends](cpus/atraxa_praetors_voice.md) |
+| Bard, King of Dale | W/U | Bard | Tokens and value on a wide board | [go wide](cpus/bard_king_of_dale.md) |
+| Blor the Impervious | G | Blor | One commander, suited up and sent in | [voltron](cpus/blor_the_impervious.md) |
+| Bruvac the Grandiloquent | U | Millington | Mill, doubled; counter what stops it | [mill + combo](cpus/bruvac_the_grandiloquent.md) |
+| Edgar Markov | W/B/R | Markov Chains | Vampire swarm, lords, drain on every death | [vampire tribal + drain](cpus/edgar_markov.md) |
+| Giada, Font of Hope | W | Choir Practice | Angels that arrive bigger than they are printed | [angels](cpus/giada_font_of_hope.md) |
+| Isperia, Supreme Judge | W/U | — | Fly over, and make attacking you the worst option on the table | [control](cpus/isperia.md) |
+| Sheoldred, the Apocalypse | B | Draw Death | Punish every card the table draws | [punisher](cpus/sheoldred_the_apocalypse.md) |
+| The Ur-Dragon | W/U/B/R/G | Ur-Dragon | Ramp into dragons, then let them fly | [dragons](cpus/the_ur_dragon.md) |
+| Vivi Ornitier | U/R | Vivi | Instants and sorceries, every one of them a trigger | [spellslinger](cpus/vivi_ornitier.md) |
+| Zurgo Stormrender | W/B/R | — | Attack, make a token, let it die, turn each death into a card or a drain | [aristocrats](cpus/zurgo.md) |
 
 ## Isperia, Supreme Judge
 
@@ -48,11 +63,25 @@ Blood Artist, Cruel Celebrant and Falkenrath Noble are exactly what a deck built
 to sacrifice its own creatures wants. The cost is that a chunk of Zurgo's board
 is Vampires rather than Warriors, which only Chief of the Edge notices.
 
-## The original two
+## Test fixtures
 
-Both run 37 lands, as do Isperia and Zurgo.
+The first Edgar and Aesi lists — the Reap the Tides precon and a hand-built
+vampire deck — were retired from the catalogue when the Moxfield lists replaced
+them, and live on in `data/decks/fixtures/` under their old ids, `aesi` and
+`edgar`. Hundreds of seeded Python and Playwright tests were written against
+those exact 99s, and re-pinning every one of them would have bought nothing.
 
-## Aesi, Tyrant of Gyre Strait
+- `default_registry()` — tests, the arena, the trainer — always loads them.
+- The server loads them **only** with `AUTOMTG_FIXTURE_DECKS=1`, which the
+  Playwright web server and `scripts/verify.py` set. A player never sees them.
+- `data/decks/fixtures/seating.json` pins the order a lobby hands decks to CPUs
+  (`aesi`, `edgar`, `isperia`, `zurgo`), so a seeded pod deals the opponents its
+  test expects even though the new precons sort ahead of `edgar`.
+
+A dev server reused by Playwright needs the same variables
+([testing.md](testing.md)). What the two lists were:
+
+### Aesi (Reap the Tides)
 
 > You may play an additional land on each of your turns.
 > Landfall — Whenever a land you control enters, you may draw a card.
@@ -64,7 +93,7 @@ Avenger of Zendikar. Because Aesi is landfall rather than a land-drop trigger, a
 of those ramp spells draw too, and Ancient Greenwarden doubles it. Counterspells and
 instant-speed removal protect the engine; the top end is large creatures.
 
-## Edgar Markov
+### Edgar Markov (the hand-built vampires)
 
 > First strike. Eminence — whenever you cast another Vampire spell, create a 1/1 black
 > Vampire token. Whenever Edgar Markov attacks, put a +1/+1 counter on each Vampire
@@ -80,8 +109,8 @@ Lineage, a 5/5 that gives the rest of them +2/+2.
 
 ## Substitutions
 
-**None, in any of the four.** All four are the printed precons, and every card in
-every one of them does what it prints.
+**None, in any of the twelve** (or the two fixtures). Every card in every one of
+them does what it prints.
 
 That is a recent thing and it is the best evidence the
 [card pipeline](card-authoring.md) has. `substitutions` is still a field on
@@ -117,8 +146,13 @@ data/cards/aesi.cards.json      the Simic half, shared with Isperia
 data/cards/edgar.cards.json     Edgar's Mardu vampires
 data/cards/isperia.cards.json   the Azorius deck
 data/cards/zurgo.cards.json     Zurgo's token half
-data/decks/*.deck.json          the four 100-card lists
+data/decks/*.deck.json          the twelve 100-card lists
+data/decks/fixtures/            the retired Edgar and Aesi lists, for tests
 ```
+
+The ten Moxfield decks need no card file of their own: every card in them was
+authored by the [card pipeline](card-authoring.md) into `data/cards/auto/` while
+making the import native, which is the precondition `promote_deck.py` enforces.
 
 A card id is defined **once** and referenced by any number of decks. Zurgo's list
 is mostly ids that live in `edgar.cards.json`, and Isperia's borrows the blue
@@ -134,7 +168,7 @@ game — the test registry adds them, the shipped registry does not.
 The lobby's deck catalogue and dossier are fed from two halves, kept deliberately
 separate.
 
-**Authored**, in the deck file, and only for the four shipped decks:
+**Authored**, in the deck file, and only for the shipped decks:
 
 ```json
 "tags": ["Ramp", "Landfall", "Card draw"],
@@ -175,8 +209,8 @@ pay for 24 strategy essays.
 python scripts/validate_decks.py
 ```
 
-verifies every card file parses, every card id referenced exists, both decks have
-exactly 100 cards, singleton is respected outside basics, every card sits inside its
+verifies every card file parses, every card id referenced exists, every deck
+(fixtures included) has exactly 100 cards, singleton is respected outside basics, every card sits inside its
 commander's colour identity, and no tokens have leaked into a deck list.
 
 It checks the **authored** decks only, deliberately: `scripts/verify.py` has to
@@ -185,8 +219,19 @@ give the same answer on a fresh clone as on a machine with twenty imported decks
 ## Bringing your own
 
 Any public Moxfield deck can be imported and played — see
-[deck-import.md](deck-import.md). The two decks above are different in kind, not
+[deck-import.md](deck-import.md). The decks above are different in kind, not
 just in provenance: **every card in them is implemented and tested**, whereas an
-imported deck is mostly cards generated with their rules text inert. The import
+imported deck's unsupported cards are generated with their rules text inert.
+
+To make an imported list a shipped precon, the whole list has to be native
+first (`/import-moxfield`), then:
+
+```bash
+python scripts/promote_deck.py data/generated/decks/mox_<id>.deck.json \
+    --id <commander_card_id> --url https://moxfield.com/decks/<id>
+```
+
+It refuses a list the authored layer cannot play. The editorial fields and a CPU
+strategy ([cpus/README.md](cpus/README.md#adding-a-deck)) come after. The import
 report and the deck tile both say how many, because that difference decides
 whether a game makes sense.

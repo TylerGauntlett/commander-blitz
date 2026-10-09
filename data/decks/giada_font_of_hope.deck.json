@@ -8,7 +8,32 @@
     "W"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Choir Practice\" (https://moxfield.com/decks/28szhD1-rUyWMW5dTmryaA). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Choir Practice\" (https://moxfield.com/decks/28szhD1-rUyWMW5dTmryaA). Promoted from an import, card for card. Mono-white angels: Giada first, then a choir that enters bigger with every Angel already on the table, backed by a lifegain engine that turns each hit into counters.",
+  "tags": ["Tribal", "Fliers", "Lifegain"],
+  "ratings": {"speed": 3, "complexity": 2, "interaction": 3, "resilience": 2, "pilot": 2},
+  "strategy": "Giada costs two and should be the first creature down every game - each Angel after her enters with a +1/+1 counter for every Angel you already control, so the fourth three-drop is a 6/6 flier. Herald's Horn and Urza's Incubator make the choir cheaper; Lyra Dawnbringer gives it lifelink, and from there every combat is a lifegain event that Archangel of Thune and Lyra, Archangel of Dawn turn into more counters. The deck flies over almost every board and gets harder to race each turn. It closes with an anthem or with Angel of Destiny at 55 life, and its main fear is the wrath it cannot see coming.",
+  "signature": [
+    {
+      "card_id": "giada_font_of_hope",
+      "why": "Two mana, and every Angel after her lands bigger than the one before."
+    },
+    {
+      "card_id": "lyra_dawnbringer",
+      "why": "Lifelink and +1/+1 for the whole choir: every hit is lifegain."
+    },
+    {
+      "card_id": "archangel_of_thune",
+      "why": "Each time you gain life, the entire team grows."
+    },
+    {
+      "card_id": "angel_of_destiny",
+      "why": "Reach 55 life and everyone it hit this turn loses."
+    },
+    {
+      "card_id": "cathars_crusade",
+      "why": "A counter on everyone for every creature that enters."
+    }
+  ],
   "printings": {
     "akroma_s_will": {
       "scryfall_id": "c281997b-1566-4469-a14c-6645f81ab023",

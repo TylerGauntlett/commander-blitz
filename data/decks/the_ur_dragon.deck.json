@@ -12,7 +12,32 @@
     "W"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Ur-Dragon\" (https://moxfield.com/decks/4cGgAWPLdHqXuKyuB_9-gg). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Ur-Dragon\" (https://moxfield.com/decks/4cGgAWPLdHqXuKyuB_9-gg). Promoted from an import, card for card. A high-power five-colour dragon list: fast mana, eminence discounts, and enter triggers that turn each dragon into a burn spell.",
+  "tags": ["Tribal", "Ramp", "Fliers", "High power"],
+  "ratings": {"speed": 4, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},
+  "strategy": "Mana first, then dragons. Birds, the Hierarchs, Sol Ring, Mana Vault and the moxen put a 5-drop dragon on the table by turn three, and The Ur-Dragon's eminence makes every one of them a mana cheaper from the command zone. Once the dragons arrive the damage engines take over: Terror of the Peaks and Scourge of Valkas turn each dragon that enters into a burn spell, Lathliss and Miirym make more dragons to trigger them, and Draconic Visitor turns every Treasure into a 5/5 flier. When The Ur-Dragon itself lands, every attack draws a card per dragon and puts a free permanent onto the battlefield. It is far faster than a precon, and it pays for that in life and in fragility to a well-timed wrath.",
+  "signature": [
+    {
+      "card_id": "the_ur_dragon",
+      "why": "Discounts every dragon from the command zone, then turns attacks into cards and free permanents."
+    },
+    {
+      "card_id": "terror_of_the_peaks",
+      "why": "Every dragon that enters is also its power in damage to any target."
+    },
+    {
+      "card_id": "miirym_sentinel_wyrm",
+      "why": "A token copy of each dragon cast: every enter trigger twice."
+    },
+    {
+      "card_id": "draconic_visitor",
+      "why": "Treasure tokens become 5/5 flying dragons instead."
+    },
+    {
+      "card_id": "dracogenesis",
+      "why": "Every dragon after it is free."
+    }
+  ],
   "printings": {
     "ancient_copper_dragon": {
       "scryfall_id": "0c9ac08c-11ce-4e8a-8ea8-c18cfc745ac7",

@@ -427,6 +427,22 @@ Every shuffle and random choice routes through `state.rng`. That is what lets
 byte-identical event logs, and `test_results_are_reproducible` assert an arena run
 repeats exactly.
 
+A seed only replays the game it was written against if the decks and the CPU are
+the same too, and both changed when the deck strategies landed. So the seeded
+Playwright specs run against a server started with two variables, which
+`playwright.config.ts` and `scripts/verify.py` set for the servers they boot:
+
+| Variable | Effect |
+|---|---|
+| `AUTOMTG_FIXTURE_DECKS=1` | Serves the retired Edgar and Aesi lists (`data/decks/fixtures/`) under their old ids, and pins the CPU deck order ([decks.md](decks.md#test-fixtures)) |
+| `AUTOMTG_CPU=classic` | Every `heuristic` seat plays the pre-strategy agent ([cpus/](cpus/README.md)) |
+
+**A dev server you let Playwright reuse needs both**, or the specs deal different
+games: `AUTOMTG_FIXTURE_DECKS=1 AUTOMTG_CPU=classic uvicorn automtg.server.app:get_app --factory`.
+`/health` lists the deck ids, so `aesi` missing from it is the tell. Python tests
+need neither: `default_registry()` always carries the fixtures, and a sandbox
+seat with no deck gets the baseline strategy.
+
 ## The test harness
 
 `GameBuilder` puts the game into an exact position so a rules test can assert one

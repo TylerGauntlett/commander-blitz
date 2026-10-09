@@ -9,7 +9,32 @@
     "U"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Lander Commander\" (https://moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Lander Commander\" (https://moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw). Promoted from an import, card for card. Simic landfall: extra land drops, a card off every land, payoffs that turn each drop into a creature, and a Craterhoof to finish.",
+  "tags": ["Landfall", "Ramp", "Card draw", "Overrun"],
+  "ratings": {"speed": 2, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},
+  "strategy": "Lands are the spells. Exploration, Azusa and Oracle of Mul Daya multiply the land drops, Aesi draws a card off each one, and Lotus Cobra pays for the turn while it happens. The payoffs - Rampaging Baloths, Greensleeves, Scute Swarm, Avenger of Zendikar - want to be down before the land, so every drop is a creature as well as a card, and Ancient Greenwarden doubles all of it. The early turns look slow and the board stays home to block; then one turn of three land drops makes the board twelve wide and Craterhoof Behemoth ends the game. Counterspells and Cyclonic Rift keep the table honest while it builds.",
+  "signature": [
+    {
+      "card_id": "aesi_tyrant_of_gyre_strait",
+      "why": "An extra land drop and a card for every land: the engine is the commander."
+    },
+    {
+      "card_id": "avenger_of_zendikar",
+      "why": "A plant for every land, then a counter on each plant for every land after."
+    },
+    {
+      "card_id": "ancient_greenwarden",
+      "why": "Every landfall trigger happens twice."
+    },
+    {
+      "card_id": "lotus_cobra",
+      "why": "Each land drop is a land and a mana: the payoffs pay for themselves."
+    },
+    {
+      "card_id": "craterhoof_behemoth",
+      "why": "Takes the board the lands built and makes it lethal in one swing."
+    }
+  ],
   "printings": {
     "acidic_slime": {
       "scryfall_id": "7dfeb1d1-7b2d-4235-902f-22a62af5dc0f",

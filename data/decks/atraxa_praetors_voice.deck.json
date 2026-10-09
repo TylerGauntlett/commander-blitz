@@ -11,7 +11,38 @@
     "W"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Superfriends\" (https://moxfield.com/decks/JtagAcICOXCi7qzC5-JZfA). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Superfriends\" (https://moxfield.com/decks/JtagAcICOXCi7qzC5-JZfA). Promoted from an import, card for card. Thirty-odd planeswalkers, proliferated toward their ultimates.",
+  "tags": [
+    "Planeswalkers",
+    "Proliferate",
+    "Control"
+  ],
+  "ratings": {
+    "speed": 1,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 4
+  },
+  "strategy": "Atraxa proliferates at every end step, and this list gives her thirty-odd planeswalkers to proliferate. Each walker that survives a turn cycle gains a loyalty from its own plus and another from Atraxa, so the plan is to land walkers early, plus them every turn and let the counters carry them to their ultimates - Vraska's assassins, Elspeth's emblem, Jace drawing a short library to nothing. Doubling Season, Inexorable Tide and Tekuthal turn that from a slow climb into a sprint. Everything else is removal and protection: the walkers' own minus abilities, a full suite of instants, two wraths and Teferi's Protection for the turn the table finally swings at the walkers. It is slow, it asks a lot of its pilot, and it is very hard to beat once three walkers are standing.",
+  "signature": [
+    {
+      "card_id": "doubling_season",
+      "why": "Every walker enters with double loyalty - some ultimate the turn they land."
+    },
+    {
+      "card_id": "inexorable_tide",
+      "why": "A proliferate on every spell, on top of Atraxa's end step."
+    },
+    {
+      "card_id": "vraska_the_unseen",
+      "why": "Removal on the minus, and an ultimate that ends the game through combat."
+    },
+    {
+      "card_id": "teferi_s_protection",
+      "why": "The answer to the alpha strike every superfriends deck eventually faces."
+    }
+  ],
   "printings": {
     "ajani_sleeper_agent": {
       "scryfall_id": "7641f4d9-4614-41c8-87f5-4845bd78e9b3",

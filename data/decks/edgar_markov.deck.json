@@ -11,6 +11,31 @@
   ],
   "source": "precon",
   "notes": "Moxfield list \"Markov Chains\" (https://moxfield.com/decks/Sr3op2p6G0m0Msv1n_jLZw). Promoted from an import, card for card.",
+  "tags": ["Tribal", "Tokens", "Sacrifice", "Combo"],
+  "ratings": {"speed": 4, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},
+  "strategy": "Edgar works from the command zone: every Vampire the deck casts brings a 1/1 Vampire with it, so the one- and two-drops are two bodies each and the board is wide long before Edgar arrives with haste to put a counter on all of it. Those bodies are fuel. Blood Artist, Cruel Celebrant and Bastion of Remembrance drain on every death, free sacrifice outlets turn any creature into a trigger, and Grave Pact makes each one an edict on the table. Bloodthirsty Conqueror with Vito or Marauding Blight Priest is an infinite drain, so the deck can win out of nowhere as well as on the board.",
+  "signature": [
+    {
+      "card_id": "bloodthirsty_conqueror",
+      "why": "Half of both infinite drains, and a 5/5 flying deathtoucher besides."
+    },
+    {
+      "card_id": "vito_thorn_of_the_dusk_rose",
+      "why": "Every life gained is lost by an opponent: with the Conqueror, the game."
+    },
+    {
+      "card_id": "grave_pact",
+      "why": "Each sacrifice of a token is an edict on every opponent."
+    },
+    {
+      "card_id": "cruel_celebrant",
+      "why": "Two mana, and every one of our creatures dying drains the table."
+    },
+    {
+      "card_id": "stromkirk_captain",
+      "why": "Turns every eminence token into a 2/2 first striker."
+    }
+  ],
   "printings": {
     "akroma_s_will": {
       "scryfall_id": "0663dcc8-2f72-4439-bfa9-06c4ef06c54d",

@@ -8,7 +8,42 @@
     "B"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Draw Death\" (https://moxfield.com/decks/QmCtW-y1TkOQ76rHrBXlEw). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Draw Death\" (https://moxfield.com/decks/QmCtW-y1TkOQ76rHrBXlEw). Promoted from an import, card for card. Mono-black punisher: symmetric draw that only one player survives.",
+  "tags": [
+    "Punisher",
+    "Group draw",
+    "Drain"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 3
+  },
+  "strategy": "Sheoldred charges two life for every card an opponent draws and pays us two for each of ours, and the rest of the deck exists to make the table draw - Howling Mine, Font of Mythos, Temple Bell, Teferi's Puzzle Box, and pacts that read 'target player' for a reason. Before she lands it plays as patient black midrange: ramp, removal, draw spells pointed at itself. After she lands, every one of those cards becomes damage, and a Sign in Blood aimed across the table is six life. The danger is the order: a Font of Mythos with no punisher out is a gift to three opponents, so the deck waits for Sheoldred, Underworld Dreams or Fate Unraveler before it starts handing out cards, and keeps Lightning Greaves ready for the one creature that matters.",
+  "signature": [
+    {
+      "card_id": "underworld_dreams",
+      "why": "A second punisher, so the group draw still hurts when Sheoldred is answered."
+    },
+    {
+      "card_id": "font_of_mythos",
+      "why": "Two extra cards for everyone, every turn: eight life a round under Sheoldred."
+    },
+    {
+      "card_id": "sign_in_blood",
+      "why": "A draw spell at home and a six-point burn spell across the table."
+    },
+    {
+      "card_id": "teferi_s_puzzle_box",
+      "why": "Every opponent redraws their whole hand, and pays for every card of it."
+    },
+    {
+      "card_id": "lightning_greaves",
+      "why": "Shroud and haste for Sheoldred on the turn she lands."
+    }
+  ],
   "printings": {
     "alhammarret_s_archive": {
       "scryfall_id": "810c91b8-6b2f-469f-8fd1-568885178c9b",

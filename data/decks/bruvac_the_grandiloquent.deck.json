@@ -8,7 +8,38 @@
     "U"
   ],
   "source": "precon",
-  "notes": "Moxfield list \"Millington\" (https://moxfield.com/decks/VaOgAU_a5XSsXKHBgjMcfg). Promoted from an import, card for card.",
+  "notes": "Moxfield list \"Millington\" (https://moxfield.com/decks/VaOgAU_a5XSsXKHBgjMcfg). Promoted from an import, card for card. Twenty Persistent Petitioners and an Isochron Scepter loop, all doubled by Bruvac.",
+  "tags": [
+    "Mill",
+    "Combo",
+    "Advisors"
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 3
+  },
+  "strategy": "Bruvac doubles every card an opponent mills, which turns a pile of blue mill cards into a real clock - Traumatize with Bruvac out is a whole library. The engine is twenty Persistent Petitioners: one mana mills two, and four Advisors tapped together mill twenty-four. Isochron Scepter with Dramatic Reversal imprinted untaps all of them for two mana, and with a Sol Ring on the table the loop decks the whole pod in one turn. The deck never attacks and rarely needs to; it lands Bruvac, buys time with counters and bounce, and saves its big mill spells until he is there to double them. It is weakest when Bruvac keeps dying, and against a graveyard deck that thanks it for every card.",
+  "signature": [
+    {
+      "card_id": "persistent_petitioners",
+      "why": "Twenty copies: four of them tapped together mill twenty-four with Bruvac out."
+    },
+    {
+      "card_id": "isochron_scepter",
+      "why": "Dramatic Reversal imprinted untaps every Advisor and rock - the deck's one-turn kill."
+    },
+    {
+      "card_id": "traumatize",
+      "why": "Half a library, doubled: the whole library."
+    },
+    {
+      "card_id": "drowned_secrets",
+      "why": "Every blue spell mills two, four with Bruvac."
+    }
+  ],
   "printings": {
     "alloy_myr": {
       "scryfall_id": "f4a82ecd-ce0c-456e-bb79-b3b8d6602e1b",

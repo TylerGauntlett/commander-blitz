@@ -10,6 +10,27 @@
   ],
   "source": "precon",
   "notes": "Moxfield list \"Bard\" (https://moxfield.com/decks/0ISgAR0-aX-hg4Nkf_ZcoA). Promoted from an import, card for card.",
+  "tags": ["Tokens", "Card Draw", "Go Wide"],
+  "ratings": {"speed": 2, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},
+  "strategy": "Bard doubles every token the deck makes and turns every extra draw into two, and the list is built so the halves feed each other: a one-mana cantrip is a second card this turn, and Prince Imrahil, Mischievous Mystic and Detective of the Month turn that into bodies. The early game is rocks and cheap payoffs making tokens on their own; once Bard lands at six mana, Raise the Alarm is four Soldiers and Skullclamp on a 1/1 is four cards. The finish is an anthem on a board that is already wide - Cathars' Crusade, Elesh Norn or Moonshaker Cavalry turns a crowd of 1/1s into a lethal swing.",
+  "signature": [
+    {
+      "card_id": "skullclamp",
+      "why": "A 1/1 token into two cards - four with Bard out."
+    },
+    {
+      "card_id": "prince_imrahil_the_fair",
+      "why": "Two mana, and every cantrip after the draw step makes a Soldier (two under Bard)."
+    },
+    {
+      "card_id": "smothering_tithe",
+      "why": "The table's draws pay for a six-mana commander."
+    },
+    {
+      "card_id": "moonshaker_cavalry",
+      "why": "Every creature flies and gets +X/+X for the crowd: the token deck's kill."
+    }
+  ],
   "printings": {
     "abandoned_air_temple": {
       "scryfall_id": "9c0433f9-8f1e-4a19-a83f-a41925f1b1a9",

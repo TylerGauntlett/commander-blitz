@@ -10,6 +10,27 @@
   ],
   "source": "precon",
   "notes": "Moxfield list \"Vivi\" (https://moxfield.com/decks/z36gAULj5Xe4P-9ktC_vgw). Promoted from an import, card for card.",
+  "tags": ["Spellslinger", "Burn", "Card draw"],
+  "ratings": {"speed": 3, "complexity": 4, "interaction": 3, "resilience": 2, "pilot": 4},
+  "strategy": "Vivi turns every spell into more of everything: each noncreature spell puts a counter on her and pings every opponent, and her free mana ability turns that power straight back into mana for the next spell. The deck is a pile of one- and two-mana cantrips, burn and counters around that loop, with magecraft creatures that draw or ping again and two trigger doublers (Harmonic Prodigy, Veyran) that turn every instant into two counters and two damage to the table. Curiosity on Vivi makes each ping a card. It is fragile - Vivi is a 0/3 that the whole table wants dead - and it wins by attrition or by one enormous turn: a Vivi big enough to cast Chandra's Ignition off, or an Aetherflux Reservoir that has gained fifty.",
+  "signature": [
+    {
+      "card_id": "curiosity",
+      "why": "On Vivi, every noncreature spell draws a card per opponent."
+    },
+    {
+      "card_id": "harmonic_prodigy",
+      "why": "Vivi is a Wizard: two counters and two damage per spell."
+    },
+    {
+      "card_id": "winged_boots",
+      "why": "Flying and ward 4 on a commander the table has to kill."
+    },
+    {
+      "card_id": "aetherflux_reservoir",
+      "why": "A dozen cheap spells is fifty life, and fifty life is a kill."
+    }
+  ],
   "printings": {
     "abrade": {
       "scryfall_id": "fee393c7-1868-4d11-93c3-3d143e0c8dd9",

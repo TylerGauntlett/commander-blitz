@@ -9,6 +9,27 @@
   ],
   "source": "precon",
   "notes": "Moxfield list \"Blor\" (https://moxfield.com/decks/U8HzrTPiqEmcO--Jxi7PJQ). Promoted from an import, card for card.",
+  "tags": ["Voltron", "Equipment", "Ramp"],
+  "ratings": {"speed": 3, "complexity": 2, "interaction": 2, "resilience": 4, "pilot": 2},
+  "strategy": "Blor is a five-mana 3/3 that the table cannot target and cannot kill, which makes him the safest place in the game to put an equipment. The deck is elves and land ramp into a turn-three or turn-four Blor, then one equip a turn until a single trampling swing is most of 21 commander damage. Auras are as safe as he is, so Strong Back and Bear Umbra stack on top, and Genji Glove with Inquisitor's Flail turns one combat into four times his power. The answers that work are edicts and mass bounce; everything else bounces off the frog.",
+  "signature": [
+    {
+      "card_id": "commander_s_plate",
+      "why": "Three mana to equip, +3/+3 and protection from every colour that is not green."
+    },
+    {
+      "card_id": "strong_back",
+      "why": "Every attachment is worth two more power, and the equips get cheaper."
+    },
+    {
+      "card_id": "genji_glove",
+      "why": "Double strike and a second combat; with Inquisitor's Flail, four times the damage."
+    },
+    {
+      "card_id": "sword_of_fire_and_ice",
+      "why": "Stats, protection, two damage and a card every time Blor connects."
+    }
+  ],
   "printings": {
     "adaptive_omnitool": {
       "scryfall_id": "1603aab8-731c-407a-bb44-625c36ace43e",
