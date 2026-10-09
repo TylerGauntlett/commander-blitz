@@ -59,18 +59,32 @@ class TestAgentBasics:
 
 class TestHeuristicBehaviour:
     def test_it_always_makes_its_land_drop(self):
+        """Every turn a land could be played, one is -- not necessarily first.
+
+        A landfall deck casts its payoff before the land so the land triggers
+        it (Aesi's plan does exactly that), so the question is whether the turn
+        ends with the drop unused, not whether the first action was the land.
+        """
         agent = HeuristicAgent(0)
         game = create_game(["aesi", "edgar"], seed=2)
+        could: set[tuple[int, int]] = set()
+        did: set[tuple[int, int]] = set()
         for _ in range(300):
             if game.over:
                 break
             decision = game.pending()
             actions = game.legal_actions()
-            lands = [a for a in actions if a.kind is ActionKind.PLAY_LAND]
+            turn = (game.state.turn, decision.player)
+            if decision.kind is DecisionKind.PRIORITY and any(
+                a.kind is ActionKind.PLAY_LAND for a in actions
+            ):
+                could.add(turn)
             chosen = agent.act(game, decision.player, actions)
-            if lands and decision.kind is DecisionKind.PRIORITY:
-                assert chosen.kind is ActionKind.PLAY_LAND, "passed up a land drop"
+            if chosen.kind is ActionKind.PLAY_LAND:
+                did.add(turn)
             game.apply(chosen)
+        current = (game.state.turn, game.state.active_player)
+        assert could - did - {current} == set(), "passed up a land drop"
 
     def test_it_never_points_removal_at_its_own_creature(self):
         """A scoring bug here is invisible in win rates but obvious in play."""
