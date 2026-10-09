@@ -111,8 +111,21 @@ def run_matchup(
     for i in range(games):
         rotation = names[i % len(names) :] + names[: i % len(names)] if swap_seats else names
         matchup = Matchup(agent_names=rotation, pod_size=pod_size, checkpoint=checkpoint)
-        results.append(run_game(matchup, seed + i, data=game_data, decks=decks))
+        results.append(run_game(matchup, seed + i, data=game_data, decks=_deck_window(decks, pod_size, i)))
     return results
+
+
+def _deck_window(decks: Sequence[str], pod_size: int, game: int) -> Sequence[str]:
+    """The decks seated in game ``game``.
+
+    More decks than seats -- a benchmark over every precon -- slides the window
+    along by a pod each game, so every deck plays. Otherwise the list is used
+    as given, which keeps the default two-deck mirror exactly as it was.
+    """
+    if len(decks) <= pod_size:
+        return decks
+    start = (game * pod_size) % len(decks)
+    return [decks[(start + k) % len(decks)] for k in range(pod_size)]
 
 
 def run_arena(

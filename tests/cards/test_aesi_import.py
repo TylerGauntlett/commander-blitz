@@ -1,6 +1,6 @@
 """The Aesi precon, pasted as a link, every card engine-native.
 
-`data/decks/aesi_tyrant_of_gyre_strait.deck.json` is played straight from the
+`data/decks/fixtures/aesi.deck.json` (the retired first list) is played straight from the
 registry, so nothing about it ever went through `importer.import_deck` -- the path
 a pasted Moxfield link takes. The imported siblings (`test_lander_commander_import.py`
 and the rest) pin that path for a list somebody plays; this pins it for the list
@@ -24,7 +24,7 @@ from automtg.cards.importer import import_deck
 from automtg.cards.moxfield import ParsedDeck
 from automtg.cards.registry import data_dir, default_registry
 
-DECK_FILE = data_dir() / "decks" / "aesi_tyrant_of_gyre_strait.deck.json"
+DECK_FILE = data_dir() / "decks" / "fixtures" / "aesi.deck.json"
 
 pytestmark = pytest.mark.skipif(
     load_index() is None, reason="no card catalog; run scripts/build_card_index.py"

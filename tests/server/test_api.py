@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from automtg.server.app import create_app
+from tests.cards.test_deck_legality import FIXTURES, PRECONS
 
 
 @pytest.fixture(scope="module")
@@ -35,12 +36,13 @@ class TestStaticData:
         body = client.get("/health").json()
         assert body["status"] == "ok"
         # The fixture pins this client to `default_registry()`, so this is the
-        # shipped set regardless of what anyone has imported locally.
-        assert set(body["decks"]) == {"aesi", "edgar", "isperia", "zurgo"}
+        # shipped set regardless of what anyone has imported locally -- the
+        # precons plus the fixture decks the tests play.
+        assert set(body["decks"]) == PRECONS | FIXTURES
 
     def test_deck_list(self, client):
         decks = client.get("/api/decks").json()
-        assert {d["id"] for d in decks} == {"aesi", "edgar", "isperia", "zurgo"}
+        assert {d["id"] for d in decks} == PRECONS | FIXTURES
         for deck in decks:
             assert deck["card_count"] == 100
             assert deck["commander_names"]

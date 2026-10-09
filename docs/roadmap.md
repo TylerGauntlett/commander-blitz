@@ -25,6 +25,15 @@ controller". The client is playable end to end on a gamepad at a Steam Deck's
 
 C:\Users\tyler\.claude\plans\cpu-improvements-majestic-storm.md
 
+### Shipped: deck strategies
+
+The deterministic half landed per deck rather than per difficulty: every shipped
+precon is piloted by a strategy of its own on top of a baseline every deck gets
+(safe attacks, no crack-back suicide, harm aimed at opponents, sensible modes
+and mulligans). See [cpus/README.md](cpus/README.md). **Difficulty levels are
+still open** — the classic agent and the strategy agent are two natural rungs,
+and a lobby control to pick between them is the obvious next step.
+
 ---
 
 ## The opening hand — shipped

@@ -18,16 +18,21 @@ from automtg.engine.game import create_game
 
 GATE_WIN_RATE = 0.65
 ARENA_GAMES = 60
+#: The canary is the pre-strategy heuristic. It exists to catch a rules change
+#: that breaks combat or mana, which the classic agent shows as well as any; the
+#: deck plans keep boards bigger and games several times slower to simulate, and
+#: they have their own tests in `tests/ai/strategy/`.
+CANARY = "heuristic_classic"
 
 
 @pytest.fixture(scope="module")
 def duel_results():
-    return run_matchup(("heuristic", "random"), pod_size=2, games=ARENA_GAMES, seed=100)
+    return run_matchup((CANARY, "random"), pod_size=2, games=ARENA_GAMES, seed=100)
 
 
 @pytest.fixture(scope="module")
 def pod_results():
-    return run_matchup(("heuristic", "random"), pod_size=4, games=24, seed=200)
+    return run_matchup((CANARY, "random"), pod_size=4, games=24, seed=200)
 
 
 class TestAgentBasics:
@@ -59,18 +64,32 @@ class TestAgentBasics:
 
 class TestHeuristicBehaviour:
     def test_it_always_makes_its_land_drop(self):
+        """Every turn a land could be played, one is -- not necessarily first.
+
+        A landfall deck casts its payoff before the land so the land triggers
+        it (Aesi's plan does exactly that), so the question is whether the turn
+        ends with the drop unused, not whether the first action was the land.
+        """
         agent = HeuristicAgent(0)
         game = create_game(["aesi", "edgar"], seed=2)
+        could: set[tuple[int, int]] = set()
+        did: set[tuple[int, int]] = set()
         for _ in range(300):
             if game.over:
                 break
             decision = game.pending()
             actions = game.legal_actions()
-            lands = [a for a in actions if a.kind is ActionKind.PLAY_LAND]
+            turn = (game.state.turn, decision.player)
+            if decision.kind is DecisionKind.PRIORITY and any(
+                a.kind is ActionKind.PLAY_LAND for a in actions
+            ):
+                could.add(turn)
             chosen = agent.act(game, decision.player, actions)
-            if lands and decision.kind is DecisionKind.PRIORITY:
-                assert chosen.kind is ActionKind.PLAY_LAND, "passed up a land drop"
+            if chosen.kind is ActionKind.PLAY_LAND:
+                did.add(turn)
             game.apply(chosen)
+        current = (game.state.turn, game.state.active_player)
+        assert could - did - {current} == set(), "passed up a land drop"
 
     def test_it_never_points_removal_at_its_own_creature(self):
         """A scoring bug here is invisible in win rates but obvious in play."""
@@ -260,7 +279,7 @@ class TestHeuristicDoesNotSelfDestruct:
 class TestHeuristicIsCompetent:
     def test_heuristic_beats_random(self, duel_results):
         summary = summarize(duel_results)[2]
-        rate = summary.win_rate("heuristic")
+        rate = summary.win_rate(CANARY)
         assert rate >= GATE_WIN_RATE, (
             f"heuristic won only {rate:.1%} of {summary.games_by_agent['heuristic']} duels"
         )
@@ -280,7 +299,7 @@ class TestHeuristicIsCompetent:
 
     def test_heuristic_leads_in_four_player_pods_too(self, pod_results):
         summary = summarize(pod_results)[4]
-        assert summary.win_rate("heuristic") > summary.win_rate("random")
+        assert summary.win_rate(CANARY) > summary.win_rate("random")
 
 
 class TestArenaPlumbing:
@@ -290,12 +309,12 @@ class TestArenaPlumbing:
 
     def test_seat_rotation_keeps_agents_balanced(self, duel_results):
         summary = summarize(duel_results)[2]
-        assert summary.games_by_agent["heuristic"] == ARENA_GAMES
+        assert summary.games_by_agent[CANARY] == ARENA_GAMES
         assert summary.games_by_agent["random"] == ARENA_GAMES
 
     def test_results_are_reproducible(self):
-        first = run_matchup(("heuristic", "random"), pod_size=2, games=4, seed=42)
-        second = run_matchup(("heuristic", "random"), pod_size=2, games=4, seed=42)
+        first = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
+        second = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
         assert [r.to_dict() for r in first] == [r.to_dict() for r in second]
 
     def test_markdown_report_renders(self, duel_results):

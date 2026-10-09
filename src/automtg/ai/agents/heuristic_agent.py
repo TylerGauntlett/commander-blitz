@@ -8,6 +8,12 @@ hypotheticals would have to replay whole games to do it.
 The point of this agent is twofold: it is the "reasonably competent player" the
 app needs on the other side of the table, and it is the benchmark a trained
 policy has to beat before it is worth anything.
+
+**Deck-aware.** Every score passes through the seat's :class:`Strategy`
+(`automtg.ai.strategy`), looked up from the deck the seat is playing: the
+baseline fixes for every deck, and a plan of its own for each shipped precon.
+``classic=True`` skips all of it -- the agent exactly as it was before
+strategies, for seeded tests and as a benchmark.
 """
 
 from __future__ import annotations
@@ -15,6 +21,9 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from automtg.ai.strategy import CLASSIC, Strategy, strategy_for
+from automtg.ai.strategy.board import classify
+from automtg.ai.strategy.board import creatures as _creatures
 from automtg.engine.actions import Action
 from automtg.engine.carddef import CardDef
 from automtg.engine.characteristics import abilities_of, chars
@@ -26,6 +35,8 @@ from automtg.engine.rng import Rng
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.engine.game import Game
     from automtg.engine.state import GameState
+
+__all__ = ["HeuristicAgent", "classify"]
 
 #: Life total below which chump blocking becomes worthwhile.
 DESPERATE_LIFE = 10
@@ -43,8 +54,27 @@ HARMFUL_COUNTERS = frozenset({"-1/-1", "stun"})
 class HeuristicAgent:
     name = "heuristic"
 
-    def __init__(self, seed: int = 0) -> None:
+    def __init__(
+        self, seed: int = 0, *, strategy: Strategy | None = None, classic: bool = False
+    ) -> None:
         self.rng = Rng(seed)
+        #: Pins one strategy for every seat this agent plays (tests, benchmarks).
+        self.strategy = CLASSIC if classic else strategy
+        self._strategies: dict[tuple[int, str], Strategy] = {}
+
+    def strategy_of(self, state: GameState, seat: int) -> Strategy:
+        """The strategy piloting this seat, from the deck it is playing."""
+        if self.strategy is not None:
+            return self.strategy
+        player = state.players[seat]
+        key = (seat, player.deck_id)
+        found = self._strategies.get(key)
+        if found is None:
+            commanders = [
+                state.objects[oid].def_id for oid in player.commanders if oid in state.objects
+            ]
+            found = self._strategies[key] = strategy_for(player.deck_id, commanders)
+        return found
 
     # ------------------------------------------------------------------
 
@@ -73,6 +103,9 @@ class HeuristicAgent:
         player = state.players[seat]
         lands = sum(1 for oid in player.hand if state.card(oid).is_land)
         keep = 2 <= lands <= 5 or player.mulligans_taken >= 2
+        verdict = self.strategy_of(state, seat).keep_hand(state, seat)
+        if verdict is not None:
+            keep = verdict
         want = ActionKind.KEEP if keep else ActionKind.MULLIGAN
         return _first(actions, want) or actions[0]
 
@@ -86,12 +119,15 @@ class HeuristicAgent:
         if not attacks:
             return _first(actions, ActionKind.FINISH_DECLARATION) or actions[0]
 
-        target = self._best_defender(state, seat)
+        strategy = self.strategy_of(state, seat)
+        target = strategy.defender(state, seat, self._best_defender(state, seat))
         best: tuple[float, Action] | None = None
         for action in attacks:
             if action.targets and action.targets[0].id != target:
                 continue
-            score = self._attack_value(state, seat, action.source, target)
+            score = strategy.attack_value(
+                state, seat, action.source, target, self._attack_value(state, seat, action.source, target)
+            )
             if score > 0 and (best is None or score > best[0]):
                 best = (score, action)
         if best is not None:
@@ -154,9 +190,17 @@ class HeuristicAgent:
             return done or actions[0]
 
         desperate = state.players[seat].life <= DESPERATE_LIFE
+        strategy = self.strategy_of(state, seat)
         best: tuple[float, Action] | None = None
         for action in blocks:
-            score = self._block_value(state, seat, action.source, action.targets[0].id, desperate)
+            attacker = action.targets[0].id
+            score = strategy.block_value(
+                state,
+                seat,
+                action.source,
+                attacker,
+                self._block_value(state, seat, action.source, attacker, desperate),
+            )
             if score > 0 and (best is None or score > best[0]):
                 best = (score, action)
         if best is not None:
@@ -189,9 +233,12 @@ class HeuristicAgent:
 
     def _priority(self, game: Game, seat: int, actions: Sequence[Action]) -> Action:
         state = game.state
+        strategy = self.strategy_of(state, seat)
         best: tuple[float, Action] | None = None
         for action in actions:
-            score = self._priority_value(state, seat, action)
+            score = strategy.priority_value(
+                state, seat, action, self._priority_value(state, seat, action)
+            )
             if score > 0 and (best is None or score > best[0]):
                 best = (score, action)
         if best is not None:
@@ -360,6 +407,10 @@ class HeuristicAgent:
             return actions[0]
 
         state = game.state
+        strategy = self.strategy_of(state, seat)
+        answer = strategy.choose(state, seat, decision, choices)
+        if answer is not None:
+            return answer
         # X is not a menu item to pick the first of: `choices[0]` is X = 0,
         # which casts Blue Sun's Zenith for nothing. Spending everything is both
         # the better play in almost every position and exactly what the agent
@@ -374,9 +425,15 @@ class HeuristicAgent:
                 return max(keep or choices, key=lambda a: a.choice or 0)
             return max(choices, key=lambda a: a.choice or 0)
         if purpose == "sacrifice":
-            return min(choices, key=lambda a: self._creature_value(state, a))
+            return min(
+                choices,
+                key=lambda a: self._creature_value(state, a) - self._junk(strategy, state, seat, a),
+            )
         if purpose in ("discard", "scry_bottom", "surveil"):
-            return max(choices, key=lambda a: self._card_junk_score(state, a))
+            return max(
+                choices,
+                key=lambda a: self._card_junk_score(state, a) + self._junk(strategy, state, seat, a),
+            )
         if purpose == "search":
             return max(choices, key=lambda a: self._land_search_score(state, seat, a))
         if purpose == "destroy":
@@ -412,6 +469,13 @@ class HeuristicAgent:
             pool = [a for a in choices if ours(a)] or choices
             return max(pool, key=lambda a: self._creature_value(state, a))
         return choices[0]
+
+    def _junk(self, strategy: Strategy, state: GameState, seat: int, action: Action) -> float:
+        """The strategy's say on giving this card up: positive goes first."""
+        oid = _target_oid(action)
+        if oid is None:
+            return 0.0
+        return strategy.junk_value(state, seat, oid, 0.0)
 
     def _name_hits(self, state: GameState, seat: int, decision, action: Action) -> int:
         """How many cards in this seat's library carry the label this action names."""
@@ -506,44 +570,10 @@ class HeuristicAgent:
 # ----------------------------------------------------------------------
 
 
-def classify(card: CardDef) -> str:
-    """Bucket a card by what it is for, from the ops it actually uses."""
-    ops = {effect.get("op") for effect in _walk(card)}
-    if "counter" in ops:
-        return "counter"
-    if ops & {"destroy", "exile"} and card.targets:
-        return "removal"
-    if "search_library" in ops:
-        return "ramp"
-    if ops & {"pump", "grant_keyword"} and card.targets:
-        return "pump"
-    if "draw" in ops and not card.is_permanent:
-        return "draw"
-    if card.is_creature:
-        return "creature"
-    return "other"
-
-
-def _walk(card: CardDef):
-    def walk(effects):
-        for effect in effects:
-            yield effect
-            for key in ("then", "else", "effects"):
-                yield from walk(effect.get(key) or [])
-            for mode in effect.get("modes", []) or []:
-                yield from walk(mode.get("effects") or [])
-
-    yield from walk(card.spell_effects)
-
-
 def _in_combat(state: GameState, oid: int) -> bool:
     """Is this creature attacking or blocking right now?"""
     combat = state.combat
     return combat is not None and (oid in combat.attackers or oid in combat.blockers)
-
-
-def _creatures(state: GameState, pid: int):
-    return [o for o in state.battlefield_objects(pid) if "Creature" in chars(state, o.oid).types]
 
 
 def _first(actions: Sequence[Action], kind: ActionKind) -> Action | None:
