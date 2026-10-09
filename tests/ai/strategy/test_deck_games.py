@@ -3,6 +3,10 @@
 The unit tests pin one decision each; this is the check that the twelve plans
 survive contact with a real game -- no strategy hook raising on a card it did
 not expect, no pod that stalls -- and that a seed still replays exactly.
+
+Run by the gate's `sim` group rather than with the other Python suites
+(`scripts/verify.py`): whole games are simulation, and the Python job's time
+budget is the tighter one.
 """
 
 from __future__ import annotations
@@ -26,7 +30,10 @@ def test_a_pod_of_precons_plays_to_the_end(decks):
 
 
 def test_a_seed_replays_exactly():
-    matchup = Matchup(agent_names=["heuristic"], pod_size=4)
-    first = run_game(matchup, seed=5, decks=PODS[0])
-    again = run_game(matchup, seed=5, decks=PODS[0])
+    """A duel rather than a pod: replay is about the strategies holding no
+    hidden state, which two seats show as well as four, at a quarter the cost."""
+    matchup = Matchup(agent_names=["heuristic"], pod_size=2)
+    decks = ["bruvac_the_grandiloquent", "blor_the_impervious"]
+    first = run_game(matchup, seed=5, decks=decks)
+    again = run_game(matchup, seed=5, decks=decks)
     assert (first.winners, first.turns, first.life) == (again.winners, again.turns, again.life)

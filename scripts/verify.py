@@ -283,10 +283,13 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
         Stage("every card works", pytest("tests/cards")),
         Stage("HTTP API", pytest("tests/server")),
     ]
+    # Every precon through whole games is simulation, and runs with the sim
+    # group below: the Python job's time budget is the tight one.
+    deck_games = "tests/ai/strategy/test_deck_games.py"
     if quick:
         stages.append(Stage("AI (fast)", pytest("tests/ai", "-m", "not slow")))
     else:
-        stages.append(Stage("AI", pytest("tests/ai")))
+        stages.append(Stage("AI", pytest("tests/ai", f"--ignore={deck_games}")))
     if coverage:
         stages.append(
             Stage(
@@ -301,6 +304,10 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
                 [
                     PY,
                     "scripts/run_arena.py",
+                    # The pre-strategy agent: this is a rules canary, and the
+                    # deck plans make the same 120 games ~4x slower to play.
+                    "--agents",
+                    "heuristic_classic,random",
                     "--games",
                     "60",
                     "--pods",
@@ -308,6 +315,14 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
                     "--max-draw-rate",
                     "0.25",
                 ],
+                slow=True,
+                group="sim",
+            )
+        )
+        stages.append(
+            Stage(
+                "every precon, piloted by its own strategy",
+                [PY, "-m", "pytest", deck_games, "-q", "-p", "no:cacheprovider"],
                 slow=True,
                 group="sim",
             )

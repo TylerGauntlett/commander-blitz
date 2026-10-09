@@ -18,16 +18,21 @@ from automtg.engine.game import create_game
 
 GATE_WIN_RATE = 0.65
 ARENA_GAMES = 60
+#: The canary is the pre-strategy heuristic. It exists to catch a rules change
+#: that breaks combat or mana, which the classic agent shows as well as any; the
+#: deck plans keep boards bigger and games several times slower to simulate, and
+#: they have their own tests in `tests/ai/strategy/`.
+CANARY = "heuristic_classic"
 
 
 @pytest.fixture(scope="module")
 def duel_results():
-    return run_matchup(("heuristic", "random"), pod_size=2, games=ARENA_GAMES, seed=100)
+    return run_matchup((CANARY, "random"), pod_size=2, games=ARENA_GAMES, seed=100)
 
 
 @pytest.fixture(scope="module")
 def pod_results():
-    return run_matchup(("heuristic", "random"), pod_size=4, games=24, seed=200)
+    return run_matchup((CANARY, "random"), pod_size=4, games=24, seed=200)
 
 
 class TestAgentBasics:
@@ -274,7 +279,7 @@ class TestHeuristicDoesNotSelfDestruct:
 class TestHeuristicIsCompetent:
     def test_heuristic_beats_random(self, duel_results):
         summary = summarize(duel_results)[2]
-        rate = summary.win_rate("heuristic")
+        rate = summary.win_rate(CANARY)
         assert rate >= GATE_WIN_RATE, (
             f"heuristic won only {rate:.1%} of {summary.games_by_agent['heuristic']} duels"
         )
@@ -294,7 +299,7 @@ class TestHeuristicIsCompetent:
 
     def test_heuristic_leads_in_four_player_pods_too(self, pod_results):
         summary = summarize(pod_results)[4]
-        assert summary.win_rate("heuristic") > summary.win_rate("random")
+        assert summary.win_rate(CANARY) > summary.win_rate("random")
 
 
 class TestArenaPlumbing:
@@ -304,12 +309,12 @@ class TestArenaPlumbing:
 
     def test_seat_rotation_keeps_agents_balanced(self, duel_results):
         summary = summarize(duel_results)[2]
-        assert summary.games_by_agent["heuristic"] == ARENA_GAMES
+        assert summary.games_by_agent[CANARY] == ARENA_GAMES
         assert summary.games_by_agent["random"] == ARENA_GAMES
 
     def test_results_are_reproducible(self):
-        first = run_matchup(("heuristic", "random"), pod_size=2, games=4, seed=42)
-        second = run_matchup(("heuristic", "random"), pod_size=2, games=4, seed=42)
+        first = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
+        second = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
         assert [r.to_dict() for r in first] == [r.to_dict() for r in second]
 
     def test_markdown_report_renders(self, duel_results):
