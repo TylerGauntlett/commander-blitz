@@ -98,7 +98,11 @@ Two behaviours worth knowing:
 
 - **Auto-pass.** When a player's only legal action is "pass", the engine passes for
   them. This is why the game can jump several turns in one `apply()` call when nobody
-  has anything to do — no decision was skipped, only empty ones.
+  has anything to do — no decision was skipped, only empty ones. Mana abilities
+  alone count as nothing to do, with one exception for human (`auto_pass`) seats:
+  in their own main phase, if a card in hand is held back only by its cost and a
+  mana ability the payment solver can't use (a Treasure, Master of Dark Rites) is
+  on offer, the window stops so that mana can be made and spent before combat.
 - **A triggered ability chooses its targets on the way onto the stack** (603.3d),
   not as it resolves — so its controller is asked *before* anybody may respond, and
   what they answer is what an opponent is responding to. Nothing is asked when the

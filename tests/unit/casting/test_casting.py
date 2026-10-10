@@ -382,6 +382,75 @@ class TestPriorityStops:
         assert set(stops) <= {Step.DECLARE_BLOCKERS}
 
 
+class TestManaThatUnlocksASpell:
+    """The playtest report: Treasure and Master of Dark Rites make mana the
+    payment solver cannot tap, so a spell that needs it is not offered -- and
+    a window of Pass plus mana abilities read as empty, so main phase went
+    straight on to combat with the spell still castable."""
+
+    @staticmethod
+    def _game(builder, hand, *, auto_pass=True, active=0):
+        game = (
+            builder()
+            .hand(0, hand)
+            .battlefield(0, ["forest", "treasure_token"])
+            .active(active)
+            .step(Step.PRECOMBAT_MAIN)
+            .build(advance=False)
+        )
+        game.state.players[0].auto_pass = auto_pass
+        game._advance()
+        return game
+
+    @staticmethod
+    def _stopped_in_own_main(game) -> bool:
+        decision = game.pending()
+        return (
+            decision is not None
+            and decision.kind is DecisionKind.PRIORITY
+            and decision.player == 0
+            and game.state.active_player == 0
+            and game.state.step is Step.PRECOMBAT_MAIN
+        )
+
+    def test_main_phase_stops_when_the_treasure_pays_for_a_spell(self, builder):
+        game = self._game(builder, ["t_bear"])
+        assert self._stopped_in_own_main(game)
+        # Not castable yet: the Forest alone is one mana short.
+        assert not [a for a in game.legal_actions() if a.kind is ActionKind.CAST]
+
+        treasure = only_oid(game, "treasure_token", 0)
+        green = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE and a.source == treasure and "G" in a.label
+        )
+        game.apply(green)
+        game.apply(action_for_card(game, ActionKind.CAST, "t_bear"))
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[only_oid(game, "t_bear", 0)].zone is Zone.BATTLEFIELD
+
+    def test_no_stop_when_nothing_in_hand_needs_the_mana(self, builder):
+        game = self._game(builder, [])
+        assert not self._stopped_in_own_main(game)
+
+    def test_an_ai_seat_is_not_stopped(self, builder):
+        """``auto_pass`` is off for AI seats, and the heuristic agent would
+        sacrifice the Treasure for nothing if offered the window."""
+        game = self._game(builder, ["t_bear"], auto_pass=False)
+        assert not self._stopped_in_own_main(game)
+
+    def test_not_on_an_opponents_turn(self, builder):
+        game = self._game(builder, ["t_bear"], active=1)
+        decision = game.pending()
+        assert not (
+            decision is not None
+            and decision.player == 0
+            and game.state.active_player == 1
+            and game.state.step is Step.PRECOMBAT_MAIN
+        )
+
+
 class TestTurnStructure:
     def test_turn_walks_through_every_step(self, builder):
         """Auto-pass skips *decisions*, not steps -- the event log proves it."""
