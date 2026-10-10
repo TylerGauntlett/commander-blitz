@@ -50,6 +50,7 @@ import { api } from "../../api/client";
 import type { DeckImportResponse, DeckSummary, PodView } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { canStart, whyNot, yourSeat } from "../../logic/lobby";
+import { useAppConfig } from "../../state/useAppConfig";
 import { Glyph } from "../ui/Glyph";
 import { DeckCatalog } from "./DeckCatalog";
 import { DeckDossier } from "./DeckDossier";
@@ -92,6 +93,7 @@ export function PodLobby({
   );
   const [invite, setInvite] = useState(false);
   const [copied, setCopied] = useState(false);
+  const config = useAppConfig();
 
   const you = yourSeat(pod);
   const locked = you?.locked ?? false;
@@ -262,14 +264,19 @@ export function PodLobby({
 
         <span className="pod__gap" />
 
-        <button
-          type="button"
-          className="key"
-          data-testid="invite"
-          onClick={() => setInvite(true)}
-        >
-          Invite
-        </button>
+        {/* Not on the desktop: the sidecar is bound to 127.0.0.1, so there is
+            nobody an invite could reach. Pods with friends go through the
+            door's Online card to the hosted site, which has this button. */}
+        {config.mode !== "desktop" && (
+          <button
+            type="button"
+            className="key"
+            data-testid="invite"
+            onClick={() => setInvite(true)}
+          >
+            Invite
+          </button>
+        )}
         <button
           type="button"
           className="key key--quiet"

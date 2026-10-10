@@ -55,8 +55,16 @@ def generated_dir() -> Path:
     ``ai/encoding`` builds an embedding index from it.  If an import could add to
     that pool, ``pytest`` would return a different answer depending on what
     somebody imported last week.
+
+    ``AUTOMTG_GENERATED_DIR`` moves it on its own, leaving the authored data
+    where it is.  The desktop build needs that split: it runs the server out of
+    a read-only AppImage mount, so the only place an import or a fetched
+    illustration can land is a per-user directory beside it.  Every runtime
+    write in the package resolves through here, which is what makes one
+    variable sufficient.
     """
-    return data_dir() / "generated"
+    override = os.environ.get("AUTOMTG_GENERATED_DIR")
+    return Path(override) if override else data_dir() / "generated"
 
 
 class CardRegistry:
@@ -178,6 +186,8 @@ class DeckList:
     substitutions: tuple[dict, ...] = ()
     notes: str = ""
     source: str = "precon"
+    #: The Moxfield public id this was imported from.  See ``DeckModel.source_id``.
+    source_id: str = ""
     #: The browser library that imported this.  ``""`` is shared -- a precon, or
     #: an import from before libraries existed.  See ``DeckModel.owner``.
     owner: str = ""
@@ -216,6 +226,7 @@ class DeckList:
             substitutions=tuple(s.model_dump() for s in model.substitutions),
             notes=model.notes,
             source=model.source,
+            source_id=model.source_id,
             owner=model.owner,
             tags=tuple(model.tags),
             ratings=None if model.ratings is None else model.ratings.model_dump(),

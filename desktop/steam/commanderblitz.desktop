@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Commander Blitz
+Comment=A four-seat Commander table, built for a Steam Deck
+Exec=__APP__
+Icon=commanderblitz
+Terminal=false
+Categories=Game;CardGame;
+StartupWMClass=CommanderBlitz

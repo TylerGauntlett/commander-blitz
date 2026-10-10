@@ -46,11 +46,17 @@ interface Props {
   onImported: (result: DeckImportResponse) => void;
   /** `row` is the deck catalogue's footer strip; `panel` is the standalone block. */
   variant?: "panel" | "row";
+  /**
+   * False on the desktop with no connection: the field and the button are
+   * disabled and the hint says why, because Moxfield is the one thing in the
+   * game that cannot be reached from a server on the device.
+   */
+  enabled?: boolean;
 }
 
 type Status = "idle" | "fetching" | "error" | "ready";
 
-export function DeckImport({ onImported, variant = "panel" }: Props) {
+export function DeckImport({ onImported, variant = "panel", enabled = true }: Props) {
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -110,6 +116,7 @@ export function DeckImport({ onImported, variant = "panel" }: Props) {
           }}
           placeholder="https://moxfield.com/decks/..."
           spellCheck={false}
+          disabled={!enabled}
           data-testid="import-url"
           aria-label="Moxfield deck link"
         />
@@ -117,17 +124,24 @@ export function DeckImport({ onImported, variant = "panel" }: Props) {
           type="button"
           className="btn"
           onClick={run}
-          disabled={status === "fetching" || url.trim() === ""}
+          disabled={!enabled || status === "fetching" || url.trim() === ""}
           data-testid="import-go"
         >
           {status === "fetching" ? "Reading the list…" : row ? "Fetch" : "Import"}
         </button>
         {/* In the row the hint is beside the field rather than above it: the
             footer is one line tall and a paragraph over it would double that. */}
-        {row && status === "idle" && (
-          <span className="import__hint import__hint--inline">
-            Paste a public Moxfield deck link.
+        {!enabled ? (
+          <span className="import__hint import__hint--inline" data-testid="import-offline">
+            Importing a Moxfield deck needs a connection.
           </span>
+        ) : (
+          row &&
+          status === "idle" && (
+            <span className="import__hint import__hint--inline">
+              Paste a public Moxfield deck link.
+            </span>
+          )
         )}
       </div>
 

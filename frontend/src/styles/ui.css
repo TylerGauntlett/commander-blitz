@@ -1762,6 +1762,34 @@ fieldset.speed {
 }
 
 /*
+ * The desktop's "update ready", at the top rather than the foot: the foot is
+ * where the board's own toasts go, and the one thing this must not do is
+ * cover a prompt. It waits there, Chrome-style, until the player chooses.
+ */
+.toast--update {
+  top: 14px;
+  bottom: auto;
+  border: 1px solid var(--edge);
+  background: #171a2b;
+  color: var(--text);
+}
+
+.toast__act {
+  min-height: var(--hit-floor, 44px);
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent, #d8a63c);
+  color: #1b0f05;
+  font-weight: 700;
+}
+
+.toast__act[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/*
  * The control-scheme picker, folded into the settings menu.
  *
  * The menu's own `min-width` is 148px, which is a column of three words and not

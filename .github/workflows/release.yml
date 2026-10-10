@@ -1,0 +1,141 @@
+name: desktop release
+
+# A tag `vX.Y.Z` builds the Steam Deck AppImage and the content package and
+# publishes both to the PUBLIC releases repository. Tags only -- never a push
+# or a pull request -- because this is ~25 minutes of runner per run, the
+# repository is on the Free plan, and nothing here is a test of the code: the
+# gate (`deploy.yml`) is. The tag must match `desktop/package.json`, so a
+# release's version is the one the shell reports and the updater compares.
+#
+# Why a second repository: the source is private, and a private repository's
+# release assets cannot be downloaded without a token -- which `electron-updater`
+# on a player's Deck must never hold. `RELEASES_TOKEN` is a fine-grained PAT
+# with Contents: read/write on the releases repository and nothing else; see
+# docs/deployment.md.
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  RELEASES_REPO: TylerGauntlett/commander-blitz-releases
+
+jobs:
+  # The content package: the frozen server (built in a container, for glibc),
+  # the built client, and the card data, tarred with its manifest.
+  content:
+    name: content package
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./desktop/package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "tag v$tag does not match desktop/package.json ($pkg)"; exit 1
+          fi
+          echo "version=$tag" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/setup
+        with:
+          node: "true"
+          desktop: "true"
+      - run: npm run build
+        working-directory: frontend
+      - run: desktop/sidecar/build.sh
+      - run: PYTHON=python desktop/sidecar/smoke.sh
+      - run: >
+          node scripts/assemble-content.mjs --version ${{ steps.version.outputs.version }}
+          --server sidecar/build/server/commanderblitz-server
+          --client ../frontend/dist --data ../data --tar
+        working-directory: desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content
+          retention-days: 3
+          path: |
+            desktop/build/content
+            desktop/build/content-*.tar.gz
+            desktop/build/content-latest.json
+
+  # The AppImage, with the content package inside it as the bundled content.
+  shell:
+    name: appimage
+    needs: content
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup
+        with:
+          node: "true"
+          desktop: "true"
+      - uses: actions/download-artifact@v4
+        with:
+          name: content
+          path: desktop/build
+      - run: chmod +x build/content/server/commanderblitz-server/commanderblitz-server
+        working-directory: desktop
+      - run: npm run build
+        working-directory: desktop
+      - run: npx electron-builder --linux AppImage --publish never
+        working-directory: desktop
+      # The one proof the packaged artifact runs end to end: boot the sidecar
+      # from inside the AppImage and read /api/config. No FUSE on a runner,
+      # hence `--appimage-extract-and-run`; no display, hence xvfb.
+      - run: |
+          sudo apt-get install -y -qq xvfb >/dev/null
+          app="$(ls release/CommanderBlitz-*.AppImage)"
+          chmod +x "$app"
+          COMMANDERBLITZ_HOME="$(mktemp -d)" xvfb-run -a "$app" --appimage-extract-and-run --no-sandbox --smoke
+        working-directory: desktop
+      - run: bash desktop/steam/test/install.test.sh
+      - run: tar czf desktop/build/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          retention-days: 3
+          path: |
+            desktop/release/CommanderBlitz-*.AppImage
+            desktop/release/latest-linux.yml
+            desktop/build/steam-assets.tar.gz
+
+  publish:
+    name: publish to the releases repo
+    needs: [content, shell]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: content
+          path: out/content
+      - uses: actions/download-artifact@v4
+        with:
+          name: appimage
+          path: out/appimage
+      - run: |
+          v="${{ needs.content.outputs.version }}"
+          find out -type f | sort
+          cp desktop/steam/install.sh out/install.sh
+          (cd out && sha256sum appimage/release/CommanderBlitz-*.AppImage content/content-*.tar.gz | sed 's#[a-z]*/[a-z]*/##' > SHA256SUMS)
+          notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$v" "$RELEASES_REPO")"
+          gh release create "v$v" --repo "$RELEASES_REPO" --title "Commander Blitz $v" --notes "$notes" \
+            out/appimage/release/CommanderBlitz-*.AppImage \
+            out/appimage/release/latest-linux.yml \
+            out/appimage/build/steam-assets.tar.gz \
+            out/content/content-*.tar.gz \
+            out/content/content-latest.json \
+            out/install.sh \
+            out/SHA256SUMS
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}

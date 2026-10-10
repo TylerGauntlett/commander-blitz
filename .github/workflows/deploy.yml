@@ -253,6 +253,7 @@ jobs:
         with:
           node: "true"
           chromium: "true" # the coverage stage runs both story projects in a real browser
+          desktop: "true" # the desktop shell's lint, build and unit tests are in this group
       - run: python scripts/verify.py --only frontend --coverage --strict --verbose
       - if: failure()
         uses: actions/upload-artifact@v4
@@ -298,6 +299,9 @@ jobs:
           - { project: chromium, shard: 5, shards: 5 }
           - { project: handheld, shard: 1, shards: 1 }
           - { project: deckfit, shard: 1, shards: 1 }
+          # The desktop build: the sidecar serving `dist/`, offline. Its own
+          # config, and `verify.py` builds the client first (~1 min extra).
+          - { project: sidecar, shard: 1, shards: 1 }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -323,6 +327,19 @@ jobs:
           retention-days: 3
           path: frontend/test-results
 
+  # The Steam Deck install script, against a stub Steam in a scratch home. A
+  # minute of bash and python on a bare runner: no Node, no package install.
+  installer:
+    name: install.sh
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - run: bash desktop/steam/test/install.test.sh
+
   # The one check that means "the gate passed", and the only one `build` needs.
   gate:
     name: verify gate
@@ -330,7 +347,7 @@ jobs:
     # protection, so this must run and judge even when an upstream job was
     # cancelled -- otherwise a cancelled run is indistinguishable from a green one.
     if: always()
-    needs: [changes, lint, python, sim, frontend, e2e]
+    needs: [changes, lint, python, sim, frontend, installer, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -342,11 +359,12 @@ jobs:
           PY: ${{ needs.python.result }}
           SIM: ${{ needs.sim.result }}
           FE: ${{ needs.frontend.result }}
+          INST: ${{ needs.installer.result }}
           E2E: ${{ needs.e2e.result }}
           EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          echo "changes=$CHANGES test=$TEST lint=$LINT python=$PY sim=$SIM frontend=$FE e2e=$E2E event=$EVENT"
+          echo "changes=$CHANGES test=$TEST lint=$LINT python=$PY sim=$SIM frontend=$FE installer=$INST e2e=$E2E event=$EVENT"
           # `changes` decides whether a skip below is correct, so its own
           # failure is red: with no verdict there is no telling a deliberate
           # skip from a job that never got to run.
@@ -355,7 +373,7 @@ jobs:
           if [ "$TEST" != true ]; then
             # Nothing to test (see `changes`): every job must have stood down,
             # and anything else -- a job that ran anyway -- is a wiring fault.
-            for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE" "e2e:$E2E"; do
+            for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE" "installer:$INST" "e2e:$E2E"; do
               [ "${pair#*:}" = skipped ] || { echo "${pair%%:*} reported ${pair#*:} with nothing to test"; fail=1; }
             done
             exit $fail
@@ -363,7 +381,7 @@ jobs:
           # Compared against the literal "success", so cancelled, failure and an
           # unexpected skip are all red. `needs.e2e.result` is already the
           # aggregate over the matrix: one bad shard fails it.
-          for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE"; do
+          for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE" "installer:$INST"; do
             [ "${pair#*:}" = success ] || { echo "${pair%%:*} reported ${pair#*:}"; fail=1; }
           done
           # e2e is pull-request-only, so a skip is correct there and only there.

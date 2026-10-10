@@ -136,6 +136,10 @@ class DeckSummary(BaseModel):
     #: "precon" or "moxfield".  Lets a deck tile carry its own badge without the
     #: client fetching anything else.
     source: str = "precon"
+    #: The Moxfield public id an import came from, case preserved; ``""`` for a
+    #: precon.  The desktop sends these to the hosted server so a deck imported
+    #: at home can be imported there too.
+    source_id: str = ""
     #: Cards whose printed text this engine represents in full, and cards whose
     #: non-keyword text does nothing.  A precon is all playable by construction.
     playable: int = 0
@@ -309,6 +313,14 @@ class ImportedCardDTO(BaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class ArtPrefetchDTO(BaseModel):
+    """What an eager art fetch did, so the screen can say "art for 97 of 99"."""
+
+    fetched: int
+    cached: int
+    failed: list[str] = Field(default_factory=list)
+
+
 class DeckImportResponse(BaseModel):
     deck: DeckSummary
     source: str = "moxfield"
@@ -325,6 +337,29 @@ class DeckImportResponse(BaseModel):
     lands_inert: int = 0
     cards: list[ImportedCardDTO] = Field(default_factory=list)
     problems: list[str] = Field(default_factory=list)
+    #: Present only when the server fetches a deck's art at import time (the
+    #: desktop build does; the site fills lazily and sends nothing here).
+    art_prefetch: ArtPrefetchDTO | None = None
+
+
+class AppConfig(BaseModel):
+    """What kind of server answered, and whether the other kind is reachable.
+
+    The client's one source for "am I the desktop build" and "can I play
+    online right now".  It reads neither from its origin: a desktop that lost
+    its connection is still on ``127.0.0.1`` and still cannot join a pod.
+    """
+
+    mode: Literal["desktop", "hosted"]
+    #: Whether the hosted server answered a recent probe.  Always true when
+    #: this *is* the hosted server.
+    online: bool
+    #: Where to go to play with friends.  ``None`` on the hosted server.
+    remote_origin: str | None = None
+    #: The package version, and the content package version the desktop shell
+    #: is running (the same number on the hosted server).
+    app_version: str
+    content_version: str
 
 
 class CardResponse(BaseModel):

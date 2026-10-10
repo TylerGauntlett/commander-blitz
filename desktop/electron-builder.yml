@@ -1,0 +1,45 @@
+# The AppImage, and where its updates come from.
+#
+# `extraResources` puts the assembled content package at `resources/content/`
+# inside the AppImage: the frozen server, the built client and the card data,
+# with its manifest. The shell runs that in place on first launch and never
+# writes to it (`src/content.ts`).
+#
+# `publish` is read by electron-updater at runtime (electron-builder writes it
+# into the package as `app-update.yml`), not by the release workflow, which
+# uploads the assets itself with `gh release create`. The repository is the
+# PUBLIC releases repo, not this one: the source is private, and a private
+# repo's release assets need a token to download.
+appId: com.commanderblitz.desktop
+productName: CommanderBlitz
+artifactName: ${productName}-${version}.${ext}
+directories:
+  output: release
+  buildResources: build-resources
+files:
+  - dist/**
+  - splash.html
+  - package.json
+extraResources:
+  - from: build/content
+    to: content
+asar: true
+linux:
+  target:
+    - AppImage
+  category: Game
+  executableName: commanderblitz
+  icon: build-resources/icon.png
+  desktop:
+    entry:
+      Name: Commander Blitz
+      Comment: A four-seat Commander table, built for a Steam Deck
+      Categories: Game;CardGame;
+appImage:
+  # No update alert dialog from the AppImage runtime itself; the shell has
+  # its own banner.
+  license: null
+publish:
+  provider: github
+  owner: TylerGauntlett
+  repo: commander-blitz-releases
