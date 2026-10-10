@@ -90,9 +90,12 @@ describe("arriving from the desktop", () => {
       { url: "https://moxfield.com/decks/xYz", dry_run: false },
     ]);
 
-    await waitFor(() => expect(app.where.pathname).toBe("/"));
+    // The address starts at `/` already, so waiting on the pathname proves
+    // nothing (it passed locally and raced on the slower runner); what says
+    // the handoff is over is the replace that drops the query string.
+    await waitFor(() => expect(app.where.how).toBe("REPLACE"));
+    expect(app.where.pathname).toBe("/");
     expect(app.where.search).toBe("");
-    expect(app.where.how).toBe("REPLACE");
     expect(await screen.findByTestId("home")).toBeTruthy();
   });
 
