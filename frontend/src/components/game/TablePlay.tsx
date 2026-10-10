@@ -22,8 +22,8 @@ interface Props {
   state: GameView;
   viewer: PlayerView;
   opponents: number[];
-  podRef: RefObject<HTMLDivElement>;
-  mineRef: RefObject<HTMLDivElement>;
+  podRef: RefObject<HTMLDivElement | null>;
+  mineRef: RefObject<HTMLDivElement | null>;
   zoom: ReturnType<typeof useZoomFit>;
   derived: Derived;
   selectedOid: number | null;

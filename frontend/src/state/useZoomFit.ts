@@ -300,11 +300,11 @@ export function useZoomFit(args: {
   handheld?: boolean;
   /** A handheld too small for its floors: 56-96px cards and a shorter foot. */
   phone?: boolean;
-  tableRef: RefObject<HTMLElement>;
-  mineRef: RefObject<HTMLElement>;
-  podRef: RefObject<HTMLElement>;
+  tableRef: RefObject<HTMLElement | null>;
+  mineRef: RefObject<HTMLElement | null>;
+  podRef: RefObject<HTMLElement | null>;
   /** The foot, whose WIDTH the fan is solved against. See `Measurements`. */
-  footRef: RefObject<HTMLElement>;
+  footRef: RefObject<HTMLElement | null>;
 }): ZoomFit {
   const {
     state,
