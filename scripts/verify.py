@@ -17,7 +17,7 @@ flags are for::
 
     --only lint,pytest   # the stage groups to run; GROUPS lists them
     --jobs 2             # the pytest suites under xdist, N workers
-    --e2e-project X      # one Playwright project rather than all three
+    --e2e-project X      # one Playwright project rather than all four
     --e2e-shard 2/4      # ...and one shard of it
     --strict             # a stage that skips itself FAILS instead
 
@@ -45,6 +45,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
+DESKTOP = ROOT / "desktop"
 PY = sys.executable
 
 #: pyproject's `requires-python` floor, read rather than repeated so the two
@@ -374,9 +375,15 @@ def chromium_installed() -> bool:
     return any(root.is_dir() and any(root.glob("chromium-*")) for root in roots)
 
 
-#: The three Playwright projects, in the order `playwright.config.ts` lists
-#: them. Each is its own stage so a failure names the viewport it happened at.
-E2E_PROJECTS = ("chromium", "handheld", "deckfit")
+#: The Playwright projects, in the order `playwright.config.ts` lists them, then
+#: `sidecar` from its own config. Each is its own stage so a failure names the
+#: viewport -- or the server -- it happened at.
+E2E_PROJECTS = ("chromium", "handheld", "deckfit", "sidecar")
+
+#: The desktop build's project lives in a second config: it needs a different
+#: server (the sidecar serving `dist/`, no Vite), and `webServer` is per config.
+#: It also needs `dist/` to exist, which the other three never do.
+SIDECAR_CONFIG = "playwright.sidecar.config.ts"
 
 
 def run_e2e_stage(project: str, shard: str | None = None):
@@ -419,6 +426,25 @@ def run_e2e_stage(project: str, shard: str | None = None):
         if npx is None:
             return False, time.time() - started, "e2e: npx is not on PATH"
         command = [npx, "playwright", "test", f"--project={project}", "--reporter=list,json"]
+        if project == "sidecar":
+            # The sidecar serves the built client, so build it first. `npm run
+            # build` is `tsc --noEmit && vite build`; a type error fails here,
+            # which is right -- the shell would ship it otherwise.
+            runner = frontend_runner()
+            if runner is None:
+                return False, time.time() - started, "e2e: no npm or bun on PATH"
+            built = subprocess.run(
+                [runner, "run", "build"],
+                cwd=FRONTEND,
+                capture_output=not verbose,
+                text=True,
+                shell=False,
+                **DECODE,
+            )
+            if built.returncode != 0:
+                output = "" if verbose else (built.stdout or "") + (built.stderr or "")
+                return False, time.time() - started, "e2e: the client build failed\n" + output
+            command.insert(3, f"--config={SIDECAR_CONFIG}")
         if shard:
             command.append(f"--shard={shard}")
         result = subprocess.run(
@@ -572,6 +598,25 @@ def frontend_stages(
         stages.append(
             Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND, group="frontend")
         )
+
+    # The desktop shell's own package: its lint, its type-check and its unit
+    # tests, which run under Node with no Electron and no browser. Skipped
+    # like the frontend is when nothing has installed it, which on a runner
+    # `--strict` turns into a failure.
+    if (DESKTOP / "node_modules").is_dir():
+        stages.append(
+            Stage("desktop lint", [runner, "run", "lint"], cwd=DESKTOP, group="frontend")
+        )
+        stages.append(
+            Stage("desktop build", [runner, "run", "build"], cwd=DESKTOP, group="frontend")
+        )
+        stages.append(
+            Stage("desktop tests", [runner, "run", "test"], cwd=DESKTOP, group="frontend")
+        )
+    elif strict and "frontend" in want:
+        raise StrictSkip("the desktop package is not installed: npm ci in desktop/")
+    else:
+        print("SKIP desktop: run `npm ci` in desktop/\n")
 
     # The static build is pure -- it needs no browser -- so it can always run,
     # and it is what catches a story that no longer compiles.
