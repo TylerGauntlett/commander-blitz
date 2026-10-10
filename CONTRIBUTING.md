@@ -94,8 +94,9 @@ it is native; [docs/decks.md](docs/decks.md) has the steps, and
   release a new Steam Deck version; `docs`, `chore`, `ci`, `test` and `style` do
   not ([ADR 0010](docs/adr/0010-release-every-main-build.md)).
 - The body follows the template: a short summary, two risk bullets, one
-  before/after diagram, then what, why and how in three bullets each, with
-  everything else folded into Details. `/create-pr` writes it for you.
+  diagram (the old path dotted, the new one solid), then what, why and how in
+  three bullets each, with everything else folded into Details. `/create-pr`
+  writes it for you.
 - Say what changed and how you verified it. The template asks for both.
 - Rules questions are settled by the Comprehensive Rules, and the simplifications
   the engine makes on purpose are in [docs/rules-coverage.md](docs/rules-coverage.md).

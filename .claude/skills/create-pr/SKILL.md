@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Open a pull request the way this repository expects. It gives the PR a conventional-commit title, whose type decides whether the merge deploys the site and cuts a Steam Deck release, and a short reviewable body in the what/why/how template with one before/after diagram. Use when asked to open, create, raise or submit a PR or pull request, and from any skill that ends by opening one.
+description: Open a pull request the way this repository expects. It gives the PR a conventional-commit title, whose type decides whether the merge deploys the site and cuts a Steam Deck release, and a short reviewable body in the what/why/how template with one diagram (old path dotted, new path solid). Use when asked to open, create, raise or submit a PR or pull request, and from any skill that ends by opening one.
 ---
 
 # Opening a pull request
@@ -57,9 +57,11 @@ structure exactly:
 2. **Risks.** Two bullets: the blast radius (what could break, and for whom) and the
    rollback (how to undo it).
 3. **What.** **One** mermaid diagram, the only one in the PR, followed by three bullets.
-   - The diagram is a `flowchart LR` with a `Before` subgraph and an `After` subgraph.
-   - Keep it to about six nodes in total, and only draw what changes. For a change that
-     has no meaningful "before" (a brand-new file), draw the one flow it adds.
+   - It is one `flowchart LR` with no subgraphs. Old and new paths share nodes, so the
+     change shows up as a fork. Draw the old path dotted (`-.->`) and the new path solid
+     (`-->`). Anything that stays the same is part of the new path, so it is solid too.
+   - Keep it to about six nodes, and only draw what changes. For a change that has no
+     old path (a brand-new file), draw the one flow it adds, all solid.
    - Keep node labels to a few words, in quotes if they contain punctuation.
 4. **Why.** Three bullets.
 5. **How.** Three bullets on the approach, not a file list.

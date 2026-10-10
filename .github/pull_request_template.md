@@ -14,13 +14,10 @@ One short paragraph: what this changes and why, for someone who has not seen the
 ## What
 
 ```mermaid
+%% One diagram. Dotted (-.->) is the old path, solid (-->) the new one.
 flowchart LR
-  subgraph Before
-    a1[old] --> a2[step]
-  end
-  subgraph After
-    b1[new] --> b2[step]
-  end
+  a[start] -.->|old| b[old step]
+  a -->|new| c[new step]
 ```
 
 -

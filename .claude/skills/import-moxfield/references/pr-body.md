@@ -19,12 +19,8 @@ written through `/author-cards`.
 
 ```mermaid
 flowchart LR
-  subgraph Before
-    a["<deck>: <before>/<N> native"]
-  end
-  subgraph After
-    b["<M> new capabilities"] --> c["<deck>: <N>/<N> native"]
-  end
+  d["<deck> import"] -.-> a["<before>/<N> native"]
+  d --> b["<M> new capabilities"] --> c["<N>/<N> native"]
 ```
 
 - <the largest capability, in one line>
