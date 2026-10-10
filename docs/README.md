@@ -34,6 +34,7 @@ separately:
 - [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md) — how multiplayer clients hear about each other, without sockets
 - [adr/0008-url-routing.md](adr/0008-url-routing.md) — real addresses for pods, games and decks, reversing "no router"
 - [adr/0009-offline-first-desktop.md](adr/0009-offline-first-desktop.md) — the Steam Deck build runs its own server, goes to the site for friends, and never restarts itself to update
+- [adr/0010-release-every-main-build.md](adr/0010-release-every-main-build.md) — every merge that ships is a Steam Deck release, versioned `X.Y.<commits>`, and the PR title's type decides
 
 ## If you are here to...
 

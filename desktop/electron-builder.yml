@@ -7,9 +7,8 @@
 #
 # `publish` is read by electron-updater at runtime (electron-builder writes it
 # into the package as `app-update.yml`), not by the release workflow, which
-# uploads the assets itself with `gh release create`. The repository is the
-# PUBLIC releases repo, not this one: the source is private, and a private
-# repo's release assets need a token to download.
+# uploads the assets itself with `gh release create`. The repository is this
+# one, which is public, so a Deck reads its releases without a token.
 appId: com.commanderblitz.desktop
 productName: CommanderBlitz
 artifactName: ${productName}-${version}.${ext}
