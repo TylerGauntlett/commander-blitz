@@ -17,12 +17,24 @@
  * one on Windows, or accept the fallback face.
  */
 
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
+
+/**
+ * `--steam`: the Steam library artwork instead, into `desktop/steam/grid/`.
+ *
+ * Five rasters at the sizes Steam's library draws for a non-Steam shortcut --
+ * the portrait capsule, the wide capsule, the hero banner, the transparent
+ * logo over it, and the icon -- composed from the same mark and wordmark as
+ * the OG card, so the library tile is the front door. `install.sh` copies
+ * them into Steam's `grid/` under the shortcut's app id.
+ */
+const STEAM = process.argv.includes("--steam");
+const GRID = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "desktop", "steam", "grid");
 
 /** The ground the mark sits on: `--void-0`. */
 const VOID = "#0b0a16";
@@ -64,6 +76,21 @@ async function main() {
     await writeFile(join(PUBLIC, name), buffer);
     console.log(`${name.padEnd(24)} ${buffer.length.toLocaleString()} bytes`);
   };
+
+  if (STEAM) {
+    await mkdir(GRID, { recursive: true });
+    const grid = async (name, buffer) => {
+      await writeFile(join(GRID, name), buffer);
+      console.log(`${name.padEnd(24)} ${buffer.length.toLocaleString()} bytes`);
+    };
+    await grid("portrait.png", await shot(portrait(src), 600, 900));
+    await grid("header.png", await shot(wide(src, 920, 430), 920, 430));
+    await grid("hero.png", await shot(hero(src), 1920, 620));
+    await grid("logo.png", await shot(logo(), 1280, 420));
+    await grid("icon.png", await plain(256));
+    await browser.close();
+    return;
+  }
 
   // `favicon.ico` -- the address a browser asks for whether or not the document
   // links one, which is why it exists at all in a page that also ships an SVG.
@@ -123,6 +150,67 @@ function ogCard(src) {
     <div style="margin-top:38px;font-size:25px;letter-spacing:0.04em;color:#a09bc4">
       Four seats, four cards, all face-down.
     </div>
+  </div>`;
+}
+
+/** The three washes `body` has in `theme.css`, as one background. */
+const WASHES = `
+  radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
+  radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
+  linear-gradient(180deg, #141328 0%, ${VOID} 62%)`;
+
+const FONT = "'Segoe UI',Inter,system-ui,-apple-system,sans-serif";
+
+/** The wordmark: two lines, tracked, gold -- the OG card's, at a given size. */
+function wordmark(size, extra = "") {
+  return `<div style="
+      font-size:${size}px;font-weight:800;line-height:0.95;letter-spacing:0.14em;
+      text-transform:uppercase;color:${GOLD};text-align:center;
+      text-shadow:0 0 ${Math.round(size * 0.7)}px rgb(255 212 121 / 0.22);
+      text-indent:0.14em;${extra}">
+    <div>Commander</div>
+    <div>Blitz</div>
+  </div>`;
+}
+
+/** The portrait capsule, 600x900: the mark above the stacked wordmark. */
+function portrait(src) {
+  return `<div style="width:600px;height:900px;box-sizing:border-box;display:flex;
+      flex-direction:column;align-items:center;justify-content:center;
+      font-family:${FONT};background:${WASHES};">
+    <img src="${src}" width="200" height="200" alt="" style="margin-bottom:56px">
+    ${wordmark(72)}
+    <div style="margin-top:44px;font-size:22px;letter-spacing:0.04em;color:#a09bc4">
+      Four seats, four cards, all face-down.
+    </div>
+  </div>`;
+}
+
+/** The wide capsule: the OG card's composition at Steam's aspect. */
+function wide(src, width, height) {
+  return `<div style="width:${width}px;height:${height}px;box-sizing:border-box;display:flex;
+      align-items:center;justify-content:center;gap:48px;
+      font-family:${FONT};background:${WASHES};">
+    <img src="${src}" width="${Math.round(height * 0.52)}" height="${Math.round(height * 0.52)}" alt="">
+    ${wordmark(Math.round(height * 0.2), "text-align:left;text-indent:0")}
+  </div>`;
+}
+
+/** The hero banner, 1920x620: the washes alone, with the mark faint and large
+ * at the right, so the logo Steam draws over it has somewhere to sit. */
+function hero(src) {
+  return `<div style="width:1920px;height:620px;box-sizing:border-box;position:relative;
+      overflow:hidden;background:${WASHES};">
+    <img src="${src}" width="760" height="760" alt=""
+      style="position:absolute;right:120px;top:-70px;opacity:0.18">
+  </div>`;
+}
+
+/** The logo, transparent, 1280x420: the wordmark and nothing else. */
+function logo() {
+  return `<div style="width:1280px;height:420px;box-sizing:border-box;display:flex;
+      align-items:center;justify-content:center;font-family:${FONT};background:transparent;">
+    ${wordmark(150)}
   </div>`;
 }
 
