@@ -24,7 +24,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - id: version
@@ -51,7 +51,7 @@ jobs:
           --server sidecar/build/server/commanderblitz-server
           --client ../frontend/dist --data ../data --tar
         working-directory: desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: content
           retention-days: 3
@@ -67,14 +67,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
         with:
           node: "true"
           desktop: "true"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: content
           path: desktop/build
@@ -102,7 +102,7 @@ jobs:
         working-directory: desktop
       - run: bash desktop/steam/test/install.test.sh
       - run: tar czf desktop/build/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: appimage
           retention-days: 3
@@ -119,14 +119,14 @@ jobs:
     permissions:
       contents: write # to create the release and upload its assets
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: content
           path: out/content
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: appimage
           path: out/appimage

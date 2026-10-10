@@ -194,7 +194,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1 # full history packs to ~395MB (git count-objects -vH); no stage reads it.
       - uses: ./.github/actions/setup
@@ -206,7 +206,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -219,7 +219,7 @@ jobs:
       - run: python scripts/test_counts.py --check --no-frontend
         continue-on-error: true
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-data
           if-no-files-found: ignore
@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -246,7 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -256,7 +256,7 @@ jobs:
           desktop: "true" # the desktop shell's lint, build and unit tests are in this group
       - run: python scripts/verify.py --only frontend --coverage --strict --verbose
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage
           if-no-files-found: ignore
@@ -303,7 +303,7 @@ jobs:
           # config, and `verify.py` builds the client first (~1 min extra).
           - { project: sidecar, shard: 1, shards: 1 }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -320,7 +320,7 @@ jobs:
       # until the repo hit its Actions storage quota. The name must be unique per
       # leg -- v4 rejects a duplicate -- and may not contain a slash.
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-${{ matrix.project }}-${{ matrix.shard }}of${{ matrix.shards }}
           if-no-files-found: ignore
@@ -335,7 +335,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - run: bash desktop/steam/test/install.test.sh
@@ -411,7 +411,7 @@ jobs:
           && needs.changes.outputs.test == 'true'
           && needs.changes.outputs.tree != ''
         continue-on-error: true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tested-tree-${{ needs.changes.outputs.tree }}
           path: tested-tree.txt
@@ -448,7 +448,7 @@ jobs:
     outputs:
       image_tag: ${{ steps.tag.outputs.value }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -458,15 +458,15 @@ jobs:
         # the droplet. `latest` moves; this does not.
         run: echo "value=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }} # Injected; nothing to configure.
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         env:
           # Otherwise every push leaves a .dockerbuild record artifact behind.
           DOCKER_BUILD_RECORD_UPLOAD: false
@@ -505,7 +505,7 @@ jobs:
     # rejects the whole workflow before a single job runs.
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
