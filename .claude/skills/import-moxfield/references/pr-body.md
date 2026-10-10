@@ -1,18 +1,50 @@
 # PR body template
 
-Fill every `<...>`. Numbers come from `before.json` and a fresh `deck_status.py` /
-`author_cards.py --report` run. Delete a section only if it is genuinely empty, and
-say so in one line rather than deleting "Not done".
+This is `.github/pull_request_template.md` filled in for a deck import. It follows
+`/create-pr`. Fill in every `<...>`. Take the numbers from `before.json` and a fresh
+`deck_status.py` / `author_cards.py --report` run. Keep the top sections short; the
+tables and lists go inside Details.
 
-```markdown
-Makes every card in [*<deck name>*](<moxfield url>) playable — **<N> of <N>**, from a
-starting point of <before>.
+~~~markdown
+Makes every card in [*<deck name>*](<moxfield url>) playable: **<N> of <N>**, up from
+<before>. <M> engine capabilities were added through `/extend-dsl`, and the cards were
+written through `/author-cards`.
 
-Driven through the two existing pipelines: `/author-cards` for the card definitions,
-`/extend-dsl` for the engine capabilities that unblocked them. <K> commits, one per
-capability or authoring wave.
+## Risks
 
-## Coverage
+- Blast radius: <the engine subsystems the new capabilities touch, and which existing cards share them>.
+- Rollback: revert the merge; the new cards fall back to proxies, nothing else depends on them.
+
+## What
+
+```mermaid
+flowchart LR
+  subgraph Before
+    a["<deck>: <before>/<N> native"]
+  end
+  subgraph After
+    b["<M> new capabilities"] --> c["<deck>: <N>/<N> native"]
+  end
+```
+
+- <the largest capability, in one line>
+- <the next one, or "plus <k> smaller ones">
+- <tests: per-card behaviour file + import pin at <N>/<N>>
+
+## Why
+
+- The deck was not playable: <N - before> cards were proxies.
+- <the most-requested or most-reused capability, and what else it unblocks>
+- <anything else a reviewer should know the reason for>
+
+## How
+
+- `/author-cards` for the card definitions, `/extend-dsl` for what the DSL could not say.
+- One commit per capability or authoring wave (<K> commits).
+- Every card passes the six authoring gates; behaviour the gates cannot reach is in `tests/cards/test_<slug>_deck.py`.
+
+<details>
+<summary>Details</summary>
 
 | | before | after |
 |---|---|---|
@@ -21,39 +53,20 @@ capability or authoring wave.
 | Catalog coverage | <x.x>% | <y.y>% |
 | Open gap records | <capabilities> | <capabilities> |
 
-## What shipped
+**Capabilities:** one line each: <slug>, what it says, the near miss it is not, the cards it unblocked.
 
-**<M> engine capabilities.** The larger ones:
+**Bugs found by the tests:** <each: what was wrong, which card exposed it, the commit; or none>.
 
-- **<slug>** — <one sentence: what it says, and the near miss it is not>. Unblocked <cards>.
-- ...
+**Not done:** <empty; or the card, why it is not native, and what it would take>.
 
-<One paragraph per rules subsystem built under rule 2, if any.>
+**Verification**
+- `pytest tests/unit tests/cards tests/server tests/ai`: green
+- `ruff check src scripts tests`: clean
+- `scripts/verify.py`: all stages pass locally
+- changed files under `src/commanderblitz`: <lowest>% to <highest>% line coverage
+- `scripts/audit_cards.py`: no deck card has an open fidelity deficit
 
-**<T> new unit test files**, each with a rules argument naming the printed card.
-**<P> per-card behavioural tests** in `tests/cards/test_<slug>_deck.py` for what the six
-authoring gates cannot reach. `tests/cards/test_<slug>_import.py` pins the import at
-<N>/<N> native.
-<Frontend / e2e tests, if the branch touched a UI surface; otherwise one line saying no
-UI surface changed and the three CI Playwright projects are the e2e coverage.>
-
-## Bugs found by the tests
-
-<Each: what was wrong, which card exposed it, the commit. Or: none.>
-
-## Not done
-
-<Empty. If not: the card, why it is not native, and what it would take.>
-
-## Verification
-
-- `pytest tests/unit tests/cards tests/server tests/ai` — green; `tests/cards` re-runs
-  all six authoring gates over every machine-authored card
-- `ruff check src scripts tests` — clean
-- `scripts/verify.py` — all stages pass locally
-- changed files under `src/commanderblitz` — <lowest>% to <highest>% line coverage; the
-  repo-wide floor is held by `verify-slow`
-- `scripts/audit_cards.py` — no deck card has an open fidelity deficit
+</details>
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
-```
+~~~

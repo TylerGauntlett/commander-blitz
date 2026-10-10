@@ -215,15 +215,17 @@ own: `re-pin the pool for N new cards`.
 
 ## 9 · Push and open the pull request
 
-```bash
-git push -u origin feat/<slug>-deck-support
-gh pr create --base main --title "Support every card in the <deck> deck (N/N)" \
-  --body-file <scratch>/pr.md
+Follow `/create-pr`, using this title:
+
+```
+feat(cards): support every card in the <deck> deck (N/N)
 ```
 
-Write the body from `references/pr-body.md`. Numbers come from `before.json` and a
-fresh `deck_status.py` / `--report` run, not from memory. The body ends with the
-attribution line the template carries.
+Shorten the deck name if the title would go over 72 characters. Write the body from
+`references/pr-body.md`, which is the repository template filled in for a deck. Take
+the numbers from `before.json` and a fresh `deck_status.py` / `--report` run, not from
+memory. A `feat:` merge deploys the site and cuts a Steam Deck release, which is what a
+newly playable deck should do.
 
 ## 10 · Watch the pipeline to green
 
@@ -246,7 +248,7 @@ On a failure, read the log before doing anything. Then:
 - `main` moved underneath: `git merge origin/main`, re-run step 7, push
 
 The step ends when `gh pr checks <n>` shows every non-skipped check `pass`. The
-`build` and `deploy` jobs show `skipping` on a PR; that is correct.
+`build`, `deploy` and `release` jobs show `skipping` on a PR; that is correct.
 
 ## 11 · Summary
 

@@ -1,0 +1,41 @@
+name: pull request
+
+# The title is the squash merge's subject, and its conventional-commit type is
+# what decides whether the merge ships (deploy.yml): so it is checked here, on
+# every edit, not left to whoever presses merge. The body is held to the
+# template's shape -- headings and one diagram -- so every pull request reads
+# the same way. Rules in .github/scripts/conventional.sh.
+#
+# Its own workflow because it must re-run on `edited`, which the gate does not
+# listen for (an edited title should not cost a full test run).
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  title:
+    name: pull request title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: .github/scripts
+      # Through env, never `${{ }}` in the script: a title is untrusted input.
+      - name: Title is a conventional commit
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: bash .github/scripts/conventional.sh title "$TITLE"
+      # Dependabot writes its own body; its title is conventional through the
+      # prefix set in .github/dependabot.yml.
+      - name: Body follows the template
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s\n' "$BODY" > "$RUNNER_TEMP/body.md"
+          bash .github/scripts/conventional.sh body "$RUNNER_TEMP/body.md"
