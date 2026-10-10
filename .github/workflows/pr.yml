@@ -15,6 +15,11 @@ on:
 permissions:
   contents: read
 
+# Only the latest title and body matter: a burst of edits is one check.
+concurrency:
+  group: pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   title:
     name: pull request title
