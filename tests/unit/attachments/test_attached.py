@@ -30,10 +30,10 @@ is attached to; a dying creature does not know what was attached to it.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Zone
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import attach
-from automtg.engine.zones import destroy
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.primitives import attach
+from commanderblitz.engine.zones import destroy
 from tests.conftest import oids_of, settle
 
 CLAMP = "t_clamp"  # +1/-1, "whenever equipped creature dies, draw two"

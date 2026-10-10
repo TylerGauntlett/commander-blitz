@@ -42,4 +42,4 @@ appImage:
 publish:
   provider: github
   owner: TylerGauntlett
-  repo: commander-blitz-releases
+  repo: commander-blitz

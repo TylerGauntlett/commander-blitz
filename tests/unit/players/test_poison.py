@@ -31,16 +31,16 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, LossReason, Step
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.sba import POISON_THRESHOLD
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, LossReason, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.sba import POISON_THRESHOLD
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, find_action, only_oid, pass_until
 
 POISONOUS = "t_poisonous"  # 2/2; combat damage to a player gives 2 poison

@@ -28,12 +28,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_subtypes, change_control
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_subtypes, change_control
+from commanderblitz.engine.zones import destroy
 
 
 def a_bird_and_a_lord(builder):

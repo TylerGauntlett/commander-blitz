@@ -24,15 +24,15 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.effects.conditions import evaluate
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.errors import DslError
-from automtg.engine.player import STARTING_LIFE
-from automtg.engine.primitives import damage_player, gain_life, lose_life
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects.conditions import evaluate
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player import STARTING_LIFE
+from commanderblitz.engine.primitives import damage_player, gain_life, lose_life
 
 ANTHEM = "t_valkyrie_anthem"
 
@@ -177,7 +177,7 @@ class TestTheLoader:
             compile_card(self.probe({"sum": [{"const": 7}]}))
 
     def test_the_effect_side_refuses_a_plural_seat(self):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         with pytest.raises(DslError, match="one player's"):
             validate_value({"starting_life_of": "each_opponent"}, "probe")

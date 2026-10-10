@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 SNORT = "t_snort"
 BY_CARDS = "t_snort_by_cards"
@@ -127,9 +127,9 @@ class TestExceptNarrowsTheSet:
 
 class TestTheLoaderKeepsItHonest:
     def test_except_needs_something_to_narrow(self):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         card = CardModel.model_validate(
             {

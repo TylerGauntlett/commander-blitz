@@ -23,7 +23,7 @@ when the printed line says it happens — before the shuffle, not after.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 
 FORERUNNER = "t_forerunner"  # searches for a Bear, reveals, shuffles, puts on top
 BEAR = "t_bear"

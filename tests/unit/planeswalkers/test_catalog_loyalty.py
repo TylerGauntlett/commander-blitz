@@ -28,8 +28,8 @@ import sqlite3
 
 import pytest
 
-from automtg.cards.images import COLUMNS, LATE_COLUMNS, load_index
-from automtg.cards.proxy import build_proxy, facts_from_index
+from commanderblitz.cards.images import COLUMNS, LATE_COLUMNS, load_index
+from commanderblitz.cards.proxy import build_proxy, facts_from_index
 
 pytestmark = pytest.mark.skipif(
     load_index() is None, reason="no card catalog; run scripts/build_card_index.py"

@@ -44,14 +44,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import create_token
-from automtg.engine.stack import push_triggered_ability, resolve_top
-from automtg.engine.structs import TriggerInstance
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.stack import push_triggered_ability, resolve_top
+from commanderblitz.engine.structs import TriggerInstance
+from commanderblitz.engine.zones import move_object
 
 WEAVER = "t_matterweaver"
 GNOME = "gnome_1_1_c"

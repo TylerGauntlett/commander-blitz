@@ -43,12 +43,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.serialize import player_view
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.serialize import player_view
 from tests.conftest import pass_until
 
 
@@ -242,21 +242,21 @@ class TestTheLoaderRefusesNonsense:
         )
 
     def test_face_down_into_exile_is_fine(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         compile_card(self.card(face_down=True))
 
     def test_face_down_anywhere_else_is_a_load_error(self):
         """It would load clean, print the words and do nothing -- `_move_found`
         writes the privacy only on the way into exile."""
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError, match="face_down"):
             compile_card(self.card(face_down=True, destination="hand"))
 
     def test_face_down_with_cast_free_is_a_load_error(self):
         """`cast_free` replaces the branch that would honour it."""
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError):
             compile_card(self.card(face_down=True, cast_free=True))

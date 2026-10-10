@@ -13,9 +13,9 @@ class is one card and asserts the printed sentence the gate could not reach.
 
 from __future__ import annotations
 
-from automtg.engine import zones
-from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine import zones
+from commanderblitz.engine.characteristics import chars, has_keyword
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     _default_answer,
     advance_to_step,

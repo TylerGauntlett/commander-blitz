@@ -21,7 +21,7 @@ import { HomeScreen } from "./HomeScreen";
 const meta = {
   title: "Lobby/HomeScreen",
   component: HomeScreen,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: {
     deckCount: 4,
     busy: false,

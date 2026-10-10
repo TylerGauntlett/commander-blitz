@@ -1,4 +1,4 @@
-"""``AUTOMTG_GENERATED_DIR``: where runtime writes land, apart from the data.
+"""``COMMANDERBLITZ_GENERATED_DIR``: where runtime writes land, apart from the data.
 
 The desktop build runs the server from a read-only AppImage, so imports and
 fetched art must be able to go somewhere else without moving the authored
@@ -12,8 +12,8 @@ import shutil
 
 import pytest
 
-from automtg.cards import images, importer
-from automtg.cards.registry import (
+from commanderblitz.cards import images, importer
+from commanderblitz.cards.registry import (
     DEFAULT_DATA_DIR,
     data_dir,
     default_registry,
@@ -33,15 +33,15 @@ def clean_registries():
 
 
 def test_default_is_under_data_dir(monkeypatch):
-    monkeypatch.delenv("AUTOMTG_DATA_DIR", raising=False)
-    monkeypatch.delenv("AUTOMTG_GENERATED_DIR", raising=False)
+    monkeypatch.delenv("COMMANDERBLITZ_DATA_DIR", raising=False)
+    monkeypatch.delenv("COMMANDERBLITZ_GENERATED_DIR", raising=False)
     assert generated_dir() == data_dir() / "generated"
     assert data_dir() == DEFAULT_DATA_DIR
 
 
 def test_override_moves_every_runtime_write(tmp_path, monkeypatch):
-    monkeypatch.delenv("AUTOMTG_DATA_DIR", raising=False)
-    monkeypatch.setenv("AUTOMTG_GENERATED_DIR", str(tmp_path))
+    monkeypatch.delenv("COMMANDERBLITZ_DATA_DIR", raising=False)
+    monkeypatch.setenv("COMMANDERBLITZ_GENERATED_DIR", str(tmp_path))
 
     # Every path an import or a lazy art fill writes to.
     for path in (
@@ -60,9 +60,9 @@ def test_override_moves_every_runtime_write(tmp_path, monkeypatch):
 
 
 def test_server_registry_reads_decks_from_the_override(tmp_path, monkeypatch, clean_registries):
-    monkeypatch.delenv("AUTOMTG_DATA_DIR", raising=False)
-    monkeypatch.delenv("AUTOMTG_FIXTURE_DECKS", raising=False)
-    monkeypatch.setenv("AUTOMTG_GENERATED_DIR", str(tmp_path))
+    monkeypatch.delenv("COMMANDERBLITZ_DATA_DIR", raising=False)
+    monkeypatch.delenv("COMMANDERBLITZ_FIXTURE_DECKS", raising=False)
+    monkeypatch.setenv("COMMANDERBLITZ_GENERATED_DIR", str(tmp_path))
 
     # A retired fixture list: legal, every card authored, and not in the
     # catalogue unless the fixtures are asked for -- so finding it proves it

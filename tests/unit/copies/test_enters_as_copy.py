@@ -36,10 +36,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import pass_until
 
 MASTERWORK = "t_eac_masterwork"  # {1} blank Equipment, may enter as a copy
@@ -137,7 +137,7 @@ class TestItEntersAsTheCopy:
     def test_it_has_the_copied_abilities(self, builder):
         """The whole value of the card: a blank Equipment arrives with a +3/+3
         and an equip it never printed."""
-        from automtg.engine.characteristics import abilities_of
+        from commanderblitz.engine.characteristics import abilities_of
 
         game = position(builder, MASTERWORK, board=[BLADE])
         cast(game, MASTERWORK)

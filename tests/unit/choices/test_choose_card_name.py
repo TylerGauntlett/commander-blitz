@@ -25,13 +25,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.ops_control import OTHER_CARD_NAME
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.ops_control import OTHER_CARD_NAME
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import action_for_card
 
 SPELL = "t_name_and_look"
@@ -140,7 +140,7 @@ class TestTheLook:
 
 class TestTheHeuristicAgent:
     def test_it_names_what_its_library_holds_most_of(self, builder):
-        from automtg.ai.agents.heuristic_agent import HeuristicAgent
+        from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
 
         game = (
             builder(players=2)

@@ -29,13 +29,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.authoring.packet import _token_ids
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars, crew_power_bonus
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import create_token
+from commanderblitz.cards.authoring.packet import _token_ids
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars, crew_power_bonus
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import attack_with, only_oid
 from tests.unit.combat.test_combat import done, resolve_combat, to_attackers
 

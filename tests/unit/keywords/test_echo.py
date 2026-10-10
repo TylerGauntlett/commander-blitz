@@ -34,7 +34,7 @@ nothing would show it.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import find_action, only_oid, pass_until
 
 FOREST = "forest"

@@ -25,8 +25,8 @@ because the choice existed only as a cast line.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.mana import ManaCost
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.mana import ManaCost
 
 KRRIK = "t_krrik"
 BARGAIN = "t_night_bargain"  # {1}{B}{B}

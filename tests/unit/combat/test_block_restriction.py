@@ -26,9 +26,9 @@ ability that evades nothing, and it would load cleanly.
 
 from __future__ import annotations
 
-from automtg.engine.combat import blocks_valid, can_block
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.combat import blocks_valid, can_block
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import attack_with, find_action, only_oid, pass_until
 
 

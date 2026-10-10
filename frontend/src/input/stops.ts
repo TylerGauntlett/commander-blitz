@@ -150,7 +150,7 @@ export function stopRoot(doc: Document = document): HTMLElement {
  *
  * THE GROUP TRAP IS THE SECOND ONE, and it exists because directional
  * navigation crosses a 96px seat strip, three lanes, a fanned hand and a 243px
- * rail one card at a time. `docs/handheld-playtest.md` Loop 1 records walking
+ * rail one card at a time. Handheld playtest loop 1 records walking
  * the board as "a bad way to ask can you reach everything": reachable and
  * reachable-in-under-a-second are different properties and only the second is
  * playable. `L1`/`R1` step between regions; inside one, a thumb-flick cannot

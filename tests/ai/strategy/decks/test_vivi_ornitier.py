@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy.archetypes import Spellslinger
-from automtg.engine.enums import ActionKind
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy.archetypes import Spellslinger
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 DECK = "vivi_ornitier"

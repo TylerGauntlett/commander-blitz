@@ -20,12 +20,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.errors import DslError
-from automtg.engine.serialize import player_view
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.serialize import player_view
+from commanderblitz.engine.structs import TargetRef
 
 BEAR = "t_bear"
 FOREST = "forest"
@@ -72,7 +72,7 @@ class TestWhatTheLookerSees:
         wrong if the entitlement were stored on the player instead of the card."""
         game = board(builder)
         look(game, 0, 1)
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         draw_cards(game.state, 1, 1)
         assert len(game.state.players[1].hand) == 3, "they drew"

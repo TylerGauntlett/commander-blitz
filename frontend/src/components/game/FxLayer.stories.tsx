@@ -108,7 +108,7 @@ function exit(oid: number, overrides: Partial<ExitFx> = {}): ExitFx {
 const meta = {
   title: "Game/FxLayer",
   component: FxLayer,
-  parameters: { automtg: { mount: "tableBody" } },
+  parameters: { commanderblitz: { mount: "tableBody" } },
   args: { beat: null, speed: "cinematic", state, boardRef: { current: null } },
 } satisfies Meta<typeof FxLayer>;
 
@@ -225,7 +225,7 @@ export const FliesToTheGraveyard: Story = {
   // The flight *is* the transform, and `reducedMotion` removes exactly that --
   // under the harness default this story would measure a ghost already parked
   // on the pile and assert nothing at all.
-  parameters: { automtg: { mount: "tableBody", motion: "real" } },
+  parameters: { commanderblitz: { mount: "tableBody", motion: "real" } },
   render: () => (
     <Stage
       seed={[303]}

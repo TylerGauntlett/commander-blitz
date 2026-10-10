@@ -11,7 +11,7 @@ its library with basic lands and would only ever drive one of them.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import pass_until
 
 
@@ -70,8 +70,8 @@ class TestTheSelectorChangeItNeeded:
     """A `binding` combined with filters narrows; alone it still passes through."""
 
     def test_a_binding_with_no_other_keys_is_unfiltered(self, builder):
-        from automtg.engine.effects.context import EffectContext
-        from automtg.engine.effects.selectors import resolve_pool
+        from commanderblitz.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects.selectors import resolve_pool
 
         game = builder(players=2).battlefield(0, ["grizzly_bears"]).build()
         bear = game.state.battlefield[0]

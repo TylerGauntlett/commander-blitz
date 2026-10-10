@@ -72,7 +72,7 @@ them, and live on in `data/decks/fixtures/` under their old ids, `aesi` and
 those exact 99s, and re-pinning every one of them would have bought nothing.
 
 - `default_registry()` — tests, the arena, the trainer — always loads them.
-- The server loads them **only** with `AUTOMTG_FIXTURE_DECKS=1`, which the
+- The server loads them **only** with `COMMANDERBLITZ_FIXTURE_DECKS=1`, which the
   Playwright web server and `scripts/verify.py` set. A player never sees them.
 - `data/decks/fixtures/seating.json` pins the order a lobby hands decks to CPUs
   (`aesi`, `edgar`, `isperia`, `zurgo`), so a seeded pod deals the opponents its

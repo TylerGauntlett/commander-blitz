@@ -17,9 +17,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.ai.arena import DEFAULT_DECKS, run_arena
-from automtg.ai.stats import render_markdown
-from automtg.cards.registry import load_decks
+from commanderblitz.ai.arena import DEFAULT_DECKS, run_arena
+from commanderblitz.ai.stats import render_markdown
+from commanderblitz.cards.registry import load_decks
 
 
 def main() -> int:

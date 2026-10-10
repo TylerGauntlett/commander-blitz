@@ -10,8 +10,8 @@ branch is exercised at least once (TECH_DEBT CG-06).
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.ops_mana import (
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.ops_mana import (
     mana_string,
     op_add_mana,
     op_add_mana_per,

@@ -45,7 +45,7 @@ SYMBOL_DIR = Path(__file__).resolve().parents[1] / "public" / "symbols"
 MANIFEST = SYMBOL_DIR / "manifest.json"
 
 # Scryfall asks for a descriptive User-Agent and ~50-100ms between requests.
-HEADERS = {"User-Agent": "AutoMTG-symbols/0.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "CommanderBlitz-symbols/0.1", "Accept": "application/json"}
 DELAY = 0.1
 
 SYMBOLOGY = "https://api.scryfall.com/symbology"

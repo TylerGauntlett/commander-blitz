@@ -4,7 +4,7 @@
  * In Commander the command zone is not a side pocket: it is the card the deck is
  * built around, the one that comes back every time it dies, and the one whose
  * cost climbs every time you cast it. It used to be a `CMD 1` chip on the orb
- * that opened a read-only modal (docs/playtest-feedback-02.md item 7); then a
+ * that opened a read-only modal (playtest cycle 2, finding 7); then a
  * shrunken card face parked in the bottom-left corner beside the hand, where
  * `--card-w` resolved to ~74px and the name clipped to "Aesi, Tyra…" --
  * docs/design-record.md (Open fidelity findings) defect #5, the least legible card on the board being

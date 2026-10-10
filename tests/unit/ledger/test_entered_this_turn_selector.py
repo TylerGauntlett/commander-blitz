@@ -38,12 +38,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool, validate_selector
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.state import new_object
-from automtg.engine.zones import move_object
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.state import new_object
+from commanderblitz.engine.zones import move_object
 
 BEAR = "t_bear"  # {1}{G} vanilla creature
 PLAINS = "plains"

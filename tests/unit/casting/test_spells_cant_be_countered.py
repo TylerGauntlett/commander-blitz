@@ -19,7 +19,7 @@ would be a strictly better card than the one printed.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import pass_until
 
 LIER = "t_lier"  # "Spells can't be countered."

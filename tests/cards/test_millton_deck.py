@@ -22,10 +22,10 @@ wrong if it had been written the other way.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.primitives import mill_cards
-from automtg.engine.replacements import draw as draw_with_replacements
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.primitives import mill_cards
+from commanderblitz.engine.replacements import draw as draw_with_replacements
 from tests.conftest import action_for_card, count_on_battlefield, only_oid, pass_until
 
 ISLAND = "island"
@@ -309,8 +309,8 @@ class TestCrypticTrilobite:
     def test_its_mana_cannot_pay_for_a_spell(self, builder):
         """"Spend this mana only to activate abilities." The whole restriction,
         and the half that makes it not just ordinary colourless mana."""
-        from automtg.engine.costs import mana_sources
-        from automtg.engine.mana import CAST, SpendPurpose
+        from commanderblitz.engine.costs import mana_sources
+        from commanderblitz.engine.mana import CAST, SpendPurpose
 
         game, oid = self.position(builder)
         for source in mana_sources(game.state, 0, purpose=SpendPurpose(CAST, frozenset())):
@@ -335,14 +335,14 @@ class TestTidalBarracuda:
         )
 
     def test_its_controller_casts_at_instant_speed(self, builder):
-        from automtg.engine.player_statics import player_casts_as_though_flash
+        from commanderblitz.engine.player_statics import player_casts_as_though_flash
 
         game = self.position(builder, active=1)
         assert player_casts_as_though_flash(game.state, 0)
 
     def test_and_so_does_the_opponent_on_their_own_turn(self, builder):
         """"**Any** player", which is the half that makes this a group hug card."""
-        from automtg.engine.player_statics import player_casts_as_though_flash
+        from commanderblitz.engine.player_statics import player_casts_as_though_flash
 
         game = self.position(builder, active=1)
         assert player_casts_as_though_flash(game.state, 1)
@@ -351,7 +351,7 @@ class TestTidalBarracuda:
         """The control that keeps the next assertion from passing for the wrong
         reason: Opt targets nothing, so the only thing that can withhold it is
         the prohibition."""
-        from automtg.engine import legality
+        from commanderblitz.engine import legality
 
         game = self.position(builder, active=1)
         assert any(
@@ -361,7 +361,7 @@ class TestTidalBarracuda:
     def test_but_the_opponent_casts_nothing_during_your_turn(self, builder):
         """The second sentence, and 101.2: the "can't" beats the "may" the first
         sentence just handed out."""
-        from automtg.engine import legality
+        from commanderblitz.engine import legality
 
         game = self.position(builder, active=0)
         assert not any(
@@ -370,7 +370,7 @@ class TestTidalBarracuda:
         )
 
     def test_and_does_on_their_own(self, builder):
-        from automtg.engine import legality
+        from commanderblitz.engine import legality
 
         game = self.position(builder, active=1)
         assert any(
@@ -436,7 +436,7 @@ class TestTeferiMasterOfTime:
 
     def test_his_loyalty_abilities_work_on_an_opponents_turn(self, builder):
         """The printed first line, and the only one gate 5 could never see."""
-        from automtg.engine import legality
+        from commanderblitz.engine import legality
 
         game, teferi = self.position(builder, active=1)
         offered = [
@@ -448,7 +448,7 @@ class TestTeferiMasterOfTime:
 
     def test_but_still_only_one_of_them_a_turn(self, builder):
         """606.3's other half, which the permission does not lift."""
-        from automtg.engine import legality
+        from commanderblitz.engine import legality
 
         game, teferi = self.position(builder, active=1)
         first = next(

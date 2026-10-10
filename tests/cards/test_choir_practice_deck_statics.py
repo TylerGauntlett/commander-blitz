@@ -8,8 +8,8 @@ as well as the printed sentence.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import create_token
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import create_token
 from tests.cards.test_choir_practice_deck import (
     ANCHOR,
     ANGEL_TOKEN,
@@ -109,7 +109,7 @@ class TestAngelicFieldMarshal:
 
     def test_it_switches_off_when_the_commander_leaves(self, builder):
         """A condition, re-read every time -- not a bonus banked on arrival."""
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game = self.board(builder, commander=True)
         assert pt(game, only_oid(game, "angelic_field_marshal")) == (5, 5)
@@ -178,7 +178,7 @@ class TestAvacynAngelOfHope:
 
     def test_a_wrath_kills_only_the_opponents_bear(self, builder):
         """The grant read by the destroy, not just printed on the frame."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = self.board(builder)
         mine, theirs = only_oid(game, BEAR, 0), only_oid(game, BEAR, 1)

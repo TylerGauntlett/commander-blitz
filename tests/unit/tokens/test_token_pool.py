@@ -27,7 +27,7 @@ import json
 
 import pytest
 
-from automtg.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
 
 
 @pytest.fixture(scope="module")

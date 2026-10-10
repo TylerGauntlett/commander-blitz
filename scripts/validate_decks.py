@@ -19,8 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.cards.registry import load_game_data, validate_deck
-from automtg.engine.errors import AutoMtgError
+from commanderblitz.cards.registry import load_game_data, validate_deck
+from commanderblitz.engine.errors import CommanderBlitzError
 
 
 def main() -> int:
@@ -34,7 +34,7 @@ def main() -> int:
 
     try:
         data = load_game_data(include_generated=args.all, include_fixtures=True)
-    except AutoMtgError as exc:
+    except CommanderBlitzError as exc:
         print(f"FAIL card files: {exc}")
         return 1
 

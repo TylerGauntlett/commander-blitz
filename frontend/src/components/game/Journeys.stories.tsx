@@ -69,7 +69,7 @@ function board(scenario: Scenario, game = {}): Props {
 const meta = {
   title: "Game/Journeys",
   component: Table,
-  parameters: { automtg: { mount: "screen", zoomLock: false } },
+  parameters: { commanderblitz: { mount: "screen", zoomLock: false } },
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
   render: (args: Props) => <Playable {...args} />,

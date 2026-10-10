@@ -58,16 +58,16 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.primitives import become_monarch
-from automtg.engine.structs import TargetRef
-from automtg.engine.turn import DELAY_STEPS, _delay_due
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import become_monarch
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.turn import DELAY_STEPS, _delay_due
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, action_for_card, oids_of, only_oid
 
 JAILER = "palace_jailer"  # 2/2; the shipped witness for this capability

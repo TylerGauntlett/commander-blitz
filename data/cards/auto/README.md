@@ -1,6 +1,6 @@
 # Machine-authored cards
 
-Cards written by `automtg.cards.authoring` rather than by hand. They are
+Cards written by `commanderblitz.cards.authoring` rather than by hand. They are
 **committed and first-class**: loaded by `default_registry()`, playable by the
 server, the trainer and the arena.
 

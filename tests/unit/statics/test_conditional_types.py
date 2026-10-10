@@ -14,12 +14,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import mana_sources
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import mana_sources
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid
 
 
@@ -63,7 +63,7 @@ class TestArixmethes:
         assert any(s.oid == oid for s in mana_sources(game.state, 0))
 
     def test_it_cannot_attack_while_it_sleeps(self, builder):
-        from automtg.engine.enums import Step
+        from commanderblitz.engine.enums import Step
         from tests.conftest import advance_to_step
 
         game, oid = self.board(builder)

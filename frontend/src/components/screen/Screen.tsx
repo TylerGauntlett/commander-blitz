@@ -62,7 +62,7 @@ export const Screen = forwardRef<HTMLDivElement, Props>(function Screen(
    * The outer `AnimatePresence mode="wait"` mounts the next screen only once
    * this one's exit has reported complete, and an opacity exit started while
    * the entrance was still in flight was measured never to (the opening hand
-   * and the prompt dialog first; `docs/bugs.md`). Here the consequence is
+   * and the prompt dialog first). Here the consequence is
    * worse than a stuck overlay: NOTHING mounts. Back to the front door and
    * forward again inside a quarter of a second -- which is what a history
    * gesture on a slow machine looks like -- left the door fading forever and

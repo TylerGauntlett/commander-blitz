@@ -17,8 +17,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.authoring import verify as V
-from automtg.cards.registry import CardRegistry
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.registry import CardRegistry
 
 DIVINATION = {
     "id": "auto_test_divination",
@@ -58,7 +58,7 @@ def hand_written() -> CardRegistry:
     registry picks its props from 2,400 machine-authored cards instead, and one
     of them is an Aura, which state-based actions bin on sight.
     """
-    from automtg.cards.registry import data_dir
+    from commanderblitz.cards.registry import data_dir
 
     return CardRegistry.from_paths(sorted((data_dir() / "cards").glob("*.cards.json")))
 
@@ -475,12 +475,12 @@ class TestThePacketCarriesTheWholeVocabulary:
     """
 
     def test_it_lists_every_vocabulary_the_loader_validates_against(self):
-        from automtg.cards.authoring.packet import reference
-        from automtg.cards.loader.vocabulary import STATIC_EFFECTS, STATIC_FILTER_KEYS
-        from automtg.engine.effects import known_ops
-        from automtg.engine.effects.conditions import CONDITION_KEYS
-        from automtg.engine.effects.selectors import SELECTOR_KEYS
-        from automtg.engine.effects.values import VALUE_KEYS
+        from commanderblitz.cards.authoring.packet import reference
+        from commanderblitz.cards.loader.vocabulary import STATIC_EFFECTS, STATIC_FILTER_KEYS
+        from commanderblitz.engine.effects import known_ops
+        from commanderblitz.engine.effects.conditions import CONDITION_KEYS
+        from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
+        from commanderblitz.engine.effects.values import VALUE_KEYS
 
         ref = reference()
         for key, expected in (
@@ -545,7 +545,7 @@ class TestThePacketCarriesTheWholeVocabulary:
         needed it yet. It moves to both lists the day one does, and the three
         keys above are the precedent for how cheap that is.
         """
-        from automtg.cards.authoring.packet import reference
+        from commanderblitz.cards.authoring.packet import reference
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
@@ -562,8 +562,8 @@ class TestThePacketCarriesTheWholeVocabulary:
         """A third language, and the packet showed neither of the other two in
         its place: a worker who cannot see that a static may be conditional
         files a gap for "as long as" clauses that already work."""
-        from automtg.cards.authoring.packet import reference
-        from automtg.cards.loader.vocabulary import STATIC_CONDITION_HEADS
+        from commanderblitz.cards.authoring.packet import reference
+        from commanderblitz.cards.loader.vocabulary import STATIC_CONDITION_HEADS
 
         assert set(reference()["static_condition_keys"]) == set(STATIC_CONDITION_HEADS)
 
@@ -571,14 +571,14 @@ class TestThePacketCarriesTheWholeVocabulary:
         """A worker shown `ops` but not `cost_keys` cannot tell a cost from an
         effect, so every "<cost>: <effect>" card either guesses or files a gap
         for a cost that already exists. Derived, so it cannot go stale."""
-        from automtg.cards.authoring.packet import reference
-        from automtg.cards.schema import CostModel
+        from commanderblitz.cards.authoring.packet import reference
+        from commanderblitz.cards.schema import CostModel
 
         assert set(reference()["cost_keys"]) == set(CostModel.model_fields)
 
     def test_counters_on_is_reachable(self):
         """The specific omission that cost a card."""
-        from automtg.cards.authoring.packet import reference
+        from commanderblitz.cards.authoring.packet import reference
 
         ref = reference()
         assert "counters_on" in ref["value_keys"]
@@ -599,8 +599,8 @@ class TestThePacketCarriesTheWholeVocabulary:
         Derived from the shipped pool, so a token added in `tokens.cards.json`
         reaches the next packet without anybody remembering to say so.
         """
-        from automtg.cards.authoring.packet import reference
-        from automtg.cards.registry import default_registry
+        from commanderblitz.cards.authoring.packet import reference
+        from commanderblitz.cards.registry import default_registry
 
         named = reference()["token_ids"]
         pool = default_registry().registry
@@ -621,7 +621,7 @@ class TestThePacketCarriesTheWholeVocabulary:
         word are the reason -- picking the wrong one of those makes a card
         strictly better or worse than the printed one, silently.
         """
-        from automtg.cards.authoring.packet import reference
+        from commanderblitz.cards.authoring.packet import reference
 
         named = reference()["token_ids"]
         assert named["human_soldier_1_1_w"] == "1/1 white Human Soldier creature"
@@ -673,7 +673,7 @@ class TestATransformingCardIsOneAnswer:
         return front, back
 
     def test_a_front_with_its_back_passes(self, real_registry):
-        from automtg.cards.authoring import verify as V
+        from commanderblitz.cards.authoring import verify as V
 
         front, back = self.front_and_back()
         verdict = V.verify(
@@ -688,7 +688,7 @@ class TestATransformingCardIsOneAnswer:
         one-way link, so an answer that forgot its back face cannot ship a
         creature whose transform ability points at nothing.
         """
-        from automtg.cards.authoring import verify as V
+        from commanderblitz.cards.authoring import verify as V
 
         front, _ = self.front_and_back()
         verdict = V.verify(front, {"zone": "battlefield"}, real_registry)
@@ -716,7 +716,7 @@ class TestATransformingCardIsOneAnswer:
         `parent_face` on what used to be a free-standing card. Nothing raises;
         the pool just quietly stops being able to deal that card into a deck.
         """
-        from automtg.cards.authoring import verify as V
+        from commanderblitz.cards.authoring import verify as V
 
         front, back = self.front_and_back()
         front = {**front, "back_face": "sol_ring"}
@@ -760,8 +760,8 @@ class TestATransformingCardIsOneAnswer:
         """
         import json
 
-        from automtg.cards.authoring.queue import auto_cards_dir
-        from automtg.cards.registry import default_registry
+        from commanderblitz.cards.authoring.queue import auto_cards_dir
+        from commanderblitz.cards.registry import default_registry
 
         expectations = json.loads(
             (auto_cards_dir() / "expectations.json").read_text(encoding="utf-8")
@@ -890,7 +890,7 @@ class TestAMeldPairIsTwoAnswersAndAResult:
         author after Gisela already shipped her."""
         from scripts.author_cards import _finish_companion_entries
 
-        from automtg.cards.authoring.queue import Entry
+        from commanderblitz.cards.authoring.queue import Entry
 
         half, _, result = self.trio()
         front = Entry(name=half["name"], scryfall_id="id-half", status="done")
@@ -918,8 +918,8 @@ class TestAMeldPairIsTwoAnswersAndAResult:
 
     def test_the_packet_carries_the_melded_card(self):
         """The catalog links nothing, so the half's packet looks the result up by name."""
-        from automtg.cards.authoring.packet import meld_result_of
-        from automtg.cards.images import IndexEntry
+        from commanderblitz.cards.authoring.packet import meld_result_of
+        from commanderblitz.cards.images import IndexEntry
 
         half = IndexEntry(
             name="Half",
@@ -948,7 +948,7 @@ class TestTheQueueTracksWhatIsInYourDecks:
     """
 
     def _queue_with(self, *names: str):
-        from automtg.cards.authoring.queue import Entry, Queue
+        from commanderblitz.cards.authoring.queue import Entry, Queue
 
         return Queue(entries={n: Entry(name=n, scryfall_id=f"id-{n}") for n in names})
 
@@ -962,7 +962,7 @@ class TestTheQueueTracksWhatIsInYourDecks:
         `--report`'s "in your decks" line read 0 no matter how many decks were in
         `data/generated/`.
         """
-        from automtg.cards.images import load_index
+        from commanderblitz.cards.images import load_index
 
         queue = self._queue_with("Sol Ring", "Llanowar Elves")
         assert not any(e.wanted for e in queue)
@@ -979,7 +979,7 @@ class TestTheQueueTracksWhatIsInYourDecks:
         imported deck has to be able to take the flag back off -- otherwise the
         priority list silently keeps promoting cards nobody plays any more.
         """
-        from automtg.cards.images import load_index
+        from commanderblitz.cards.images import load_index
 
         queue = self._queue_with("Sol Ring")
         queue.entries["Sol Ring"].wanted = True
@@ -995,7 +995,7 @@ class TestTheQueueTracksWhatIsInYourDecks:
         -- is about the run's findings, and re-reading the flag must not cost
         them.
         """
-        from automtg.cards.images import load_index
+        from commanderblitz.cards.images import load_index
 
         queue = self._queue_with("Sol Ring")
         entry = queue.entries["Sol Ring"]

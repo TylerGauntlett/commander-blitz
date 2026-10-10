@@ -29,7 +29,7 @@ carries, and what keeps "when this attacks, put a creature in attacking" finite.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import _default_answer, oids_of, only_oid
 
 ISLAND = "island"

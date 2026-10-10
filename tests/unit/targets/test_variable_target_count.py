@@ -55,13 +55,13 @@ from typing import Any
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.carddef import TargetSpec
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.targeting import enumerate_target_tuples, filter_legal
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.carddef import TargetSpec
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.targeting import enumerate_target_tuples, filter_legal
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until, settle
 
 UP_TO = "t_up_to_x"  # multikicker {1}{W}; ETB returns up to X creature cards

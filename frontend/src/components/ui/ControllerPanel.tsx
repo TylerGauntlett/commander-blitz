@@ -5,7 +5,7 @@
  * it was written -- `supported`, `secure`, `focused` -- and its own docstring
  * says why: those separate an app problem from an environment one, all three
  * look identical from inside the app (an empty `pads`), and NONE OF THEM IS
- * FIXABLE IN THAT FILE. It was dev-only, behind `window.__AUTOMTG_RING`, which
+ * FIXABLE IN THAT FILE. It was dev-only, behind `window.__COMMANDERBLITZ_RING`, which
  * is no use at all to somebody on a Deck in gaming mode with no devtools and no
  * keyboard.
  *

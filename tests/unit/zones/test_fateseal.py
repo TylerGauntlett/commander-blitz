@@ -18,8 +18,8 @@ them apart to notice they were one thing.
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
 
 BEAR = "t_bear"
 WALL = "t_wall"

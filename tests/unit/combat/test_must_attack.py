@@ -26,8 +26,8 @@ controller's next declare-attackers and expires there whether or not it was met.
 
 from __future__ import annotations
 
-from automtg.engine.combat import attack_required, unmet_attack_requirements
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.combat import attack_required, unmet_attack_requirements
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import find_action, only_oid, pass_until
 
 

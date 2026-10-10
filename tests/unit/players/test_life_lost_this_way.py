@@ -24,11 +24,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import RECORDING_OPS, execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.errors import DslError
-from automtg.engine.structs import LifeLock
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import RECORDING_OPS, execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import LifeLock
 
 DOUBLER = "t_always_bloodletter"  # an opponent's life loss is doubled
 

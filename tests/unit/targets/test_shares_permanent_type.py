@@ -31,8 +31,8 @@ Two things worth pinning beyond the happy path:
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
 from tests.conftest import only_oid
 
 BEAR = "t_bear"
@@ -107,7 +107,7 @@ class TestItReadsCardTypesNotSubtypes:
             .battlefield(0, [BEAR, DORK])
             .build()
         )
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         bear, dork = only_oid(game, BEAR), only_oid(game, DORK)
         assert not (set(chars(game.state, bear).subtypes) & set(chars(game.state, dork).subtypes)), (

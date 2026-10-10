@@ -26,9 +26,9 @@ already untapped does not become untapped. `untap_all` skips those, and so does
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step
-from automtg.engine.events import EventType
-from automtg.engine.primitives import tap_permanent, untap_permanent
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import tap_permanent, untap_permanent
 from tests.conftest import _default_answer, only_oid, pass_until
 
 INSPIRED = "t_inspired"  # 1/3, "whenever this becomes untapped, draw a card"

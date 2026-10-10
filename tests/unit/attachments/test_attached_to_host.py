@@ -35,12 +35,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach
 from tests.conftest import oids_of, two_seat_board
 
 KNUCKLES = "t_knuckles"  # double strike while 2+ Equipment are attached

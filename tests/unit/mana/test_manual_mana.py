@@ -26,9 +26,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.game import _only_pass_or_mana
-from automtg.engine.mana import SYMBOL_INDEX
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.game import _only_pass_or_mana
+from commanderblitz.engine.mana import SYMBOL_INDEX
 
 #: A land in hand, so the main-phase window has a reason to stop.
 #:

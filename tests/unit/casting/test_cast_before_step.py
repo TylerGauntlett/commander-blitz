@@ -28,10 +28,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
 
 BERSERK = "t_cbs_berserk"  # "only before the combat damage step"
 FREE = "t_cbs_free"  # the same instant, unrestricted
@@ -100,12 +100,12 @@ class TestFirstStrikeClosesItEarly:
         because reaching a first-strike damage step needs a first striker and
         this claim is about the rule, not about that board.
         """
-        from automtg.engine.casting import _window_closes_at
+        from commanderblitz.engine.casting import _window_closes_at
 
         assert _window_closes_at(Step.COMBAT_DAMAGE) is Step.FIRST_STRIKE_DAMAGE
 
     def test_any_other_step_closes_where_it_says(self, builder):
-        from automtg.engine.casting import _window_closes_at
+        from commanderblitz.engine.casting import _window_closes_at
 
         assert _window_closes_at(Step.END_STEP) is Step.END_STEP
 

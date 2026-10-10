@@ -28,7 +28,7 @@ import { StackPanel } from "./StackPanel";
 const meta = {
   title: "Game/StackPanel",
   component: StackPanel,
-  parameters: { automtg: { mount: "play" } },
+  parameters: { commanderblitz: { mount: "play" } },
 } satisfies Meta<typeof StackPanel>;
 
 export default meta;

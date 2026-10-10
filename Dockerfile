@@ -52,8 +52,8 @@ COPY --from=client /build/dist ./frontend/dist
 # Both default to a walk up from __file__ that only resolves in a checkout
 # (registry.py CLIENT_DIR/DEFAULT_DATA_DIR use `parents[3]`). Installed into
 # site-packages that walk lands nowhere, so both must be explicit here.
-ENV AUTOMTG_DATA_DIR=/app/data \
-    AUTOMTG_CLIENT_DIR=/app/frontend/dist
+ENV COMMANDERBLITZ_DATA_DIR=/app/data \
+    COMMANDERBLITZ_CLIENT_DIR=/app/frontend/dist
 
 # Runtime writes, all of them, and all under one mount point: cards and decks
 # from an import, and the art the store lazily fetches. Created before the chown
@@ -79,5 +79,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
 # `--workers 1` is not a default, it is a constraint: sessions.py keeps games in
 # process memory, so a second worker would serve half the requests from a
 # process that has never heard of the game being played.
-CMD ["uvicorn", "automtg.server.app:get_app", "--factory", \
+CMD ["uvicorn", "commanderblitz.server.app:get_app", "--factory", \
      "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

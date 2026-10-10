@@ -37,10 +37,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import _default_answer
 
 GIFT = "t_gift"  # {1}{W} instant, gift a tapped Fish -- Parting Gust
@@ -313,19 +313,19 @@ class TestTheHarnessCanCastThePromisedLine:
     """
 
     def test_find_play_asks_for_the_promised_line(self, builder):
-        from automtg.cards.authoring.verify import find_play
+        from commanderblitz.cards.authoring.verify import find_play
 
         game = a_gift_spell(builder)
         assert find_play(game, GIFT, gifted=True).gift_to is not None
 
     def test_and_for_the_unpromised_one(self, builder):
-        from automtg.cards.authoring.verify import find_play
+        from commanderblitz.cards.authoring.verify import find_play
 
         game = a_gift_spell(builder)
         assert find_play(game, GIFT).gift_to is None
 
     def test_the_residual_gate_claims_the_printed_line(self, registry):
-        from automtg.cards.authoring.verify import _covered
+        from commanderblitz.cards.authoring.verify import _covered
 
         card = registry.get(GIFT)
         printed = (
@@ -338,7 +338,7 @@ class TestTheHarnessCanCastThePromisedLine:
     def test_but_not_a_line_promising_something_else(self, registry):
         """Strict like multikicker's claimant: what is promised is the whole of
         what the line says, so a cheaper promise cannot wear these words."""
-        from automtg.cards.authoring.verify import _covered
+        from commanderblitz.cards.authoring.verify import _covered
 
         assert not _covered(registry.get(GIFT), "Gift a card")
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.registry import (
+from commanderblitz.cards.registry import (
     COMMANDER_DECK_SIZE,
     CardRegistry,
     DeckList,

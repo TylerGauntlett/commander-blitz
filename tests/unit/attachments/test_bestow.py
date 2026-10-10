@@ -32,14 +32,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.authoring.packet import CARD_LEVEL_COST_KEYS
-from automtg.cards.authoring.verify import residual_text
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import destroy
+from commanderblitz.cards.authoring.packet import CARD_LEVEL_COST_KEYS
+from commanderblitz.cards.authoring.verify import residual_text
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 
 PLAINS = "plains"

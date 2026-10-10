@@ -51,7 +51,7 @@ UI surface changed and the three CI Playwright projects are the e2e coverage.>
   all six authoring gates over every machine-authored card
 - `ruff check src scripts tests` — clean
 - `scripts/verify.py` — all stages pass locally
-- changed files under `src/automtg` — <lowest>% to <highest>% line coverage; the
+- changed files under `src/commanderblitz` — <lowest>% to <highest>% line coverage; the
   repo-wide floor is held by `verify-slow`
 - `scripts/audit_cards.py` — no deck card has an open fidelity deficit
 

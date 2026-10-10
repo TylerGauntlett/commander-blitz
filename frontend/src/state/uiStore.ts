@@ -48,9 +48,9 @@ export const SPEED_MULTIPLIER: Record<Speed, number> = {
  * spend its time watching beats. There is simply no longer a way to set it from
  * inside the game.
  */
-const SPEED_KEY = "automtg.speed";
-const MUTED_KEY = "automtg.muted";
-const HINTS_KEY = "automtg.hints";
+const SPEED_KEY = "commanderblitz.speed";
+const MUTED_KEY = "commanderblitz.muted";
+const HINTS_KEY = "commanderblitz.hints";
 
 function storedSpeed(): Speed {
   try {

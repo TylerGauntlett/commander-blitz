@@ -33,7 +33,7 @@ import { ActionPanel } from "./ActionPanel";
 const meta = {
   title: "Game/ActionPanel",
   component: ActionPanel,
-  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
+  parameters: { commanderblitz: { mount: "railRightUnderPreviewWithFoot" } },
   args: {
     onAct: fn(),
     onStage: fn(),
@@ -178,7 +178,7 @@ export const CommitSlabOnHover: Story = {
   args: from(scenarios.earlyBoard()),
   // Real motion, because the scale *is* the bug: with `reducedMotion` on, the
   // transform never applies and this assertion passed against the defect.
-  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot", motion: "real" } },
+  parameters: { commanderblitz: { mount: "railRightUnderPreviewWithFoot", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const slab = await canvas.findByTestId("commit");
@@ -247,7 +247,7 @@ export const FillsTheRail: Story = {
  */
 export const NothingToDo: Story = {
   args: from({ ...scenarios.earlyBoard(), actions: [] }),
-  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
+  parameters: { commanderblitz: { mount: "railRightUnderPreviewWithFoot" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("action-panel");
@@ -343,7 +343,7 @@ export const StagingAnAttacker: Story = {
 export const ConfirmingAttacks: Story = {
   args: from(scenarios.combatDeclareAttackers()),
   parameters: {
-    automtg: {
+    commanderblitz: {
       mount: "railRightUnderPreviewWithFoot",
       ui: { stagedAttacks: { 301: 1, 302: 2 } },
     },
@@ -506,7 +506,7 @@ export const WaitingForOpponent: Story = {
     scenario.state.pending = pending({ player: 1 });
     return from({ ...scenario, actions: [] });
   })(),
-  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
+  parameters: { commanderblitz: { mount: "railRightUnderPreviewWithFoot" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect((await canvas.findByTestId("prompt")).textContent).toContain("Waiting for AI 1");

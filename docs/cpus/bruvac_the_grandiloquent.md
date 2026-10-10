@@ -47,13 +47,13 @@ one, the other gets the combo bonus; both are protected from discard.
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/bruvac_the_grandiloquent.py`](../../src/automtg/ai/strategy/decks/bruvac_the_grandiloquent.py)
+The plan lives in [`decks/bruvac_the_grandiloquent.py`](../../src/commanderblitz/ai/strategy/decks/bruvac_the_grandiloquent.py)
 as `Millington`, a subclass of the `Mill` archetype.
 
 | Behaviour | Where |
 |---|---|
-| **Bruvac first.** His key-card bonus (120) puts him over any other three-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
-| **Mill goes at the shortest library, never at ourselves.** | `Mill.player_score` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)), `DefaultStrategy.aim_at_players` |
+| **Bruvac first.** His key-card bonus (120) puts him over any other three-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
+| **Mill goes at the shortest library, never at ourselves.** | `Mill.player_score` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)), `DefaultStrategy.aim_at_players` |
 | **Traumatize and Cacophony wait for Bruvac** while he is in the command zone (until turn 12), then get +150 — +60 more for a kicked Cacophony. | `Millington.priority_value`, `BIG_MILL`, `HOLD_UNTIL` |
 | **Petitioners mill rather than attack.** "Tap four Advisors" gets +40 over the one-mana mill; Advisors never attack unless the swing is lethal. | `Millington._petition_value`, `Millington.attack_value` |
 | **The Scepter imprints Dramatic Reversal** over Brain Freeze or anything else, and Reversal itself is never cast from hand while a Scepter is waiting for it. | `Millington.choose`, `_scepter_needs` |

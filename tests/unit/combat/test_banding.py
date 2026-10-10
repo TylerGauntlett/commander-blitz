@@ -34,14 +34,14 @@ Every combat with no banding in it asks nothing and behaves exactly as before â€
 
 from __future__ import annotations
 
-from automtg.engine.combat import (
+from commanderblitz.engine.combat import (
     _divide,
     _order_chooser,
     add_attacker,
     add_blocker,
     start_combat,
 )
-from automtg.engine.enums import Keyword
+from commanderblitz.engine.enums import Keyword
 from tests.conftest import oids_of, only_oid
 
 PLAINS = "plains"
@@ -167,7 +167,7 @@ class TestDividingDamage:
 class TestTheBandIsBlockedAsAUnit:
     def test_an_unblocked_member_of_a_blocked_band_hits_nobody(self, builder):
         """702.21e -- the whole defensive value of blocking a band."""
-        from automtg.engine.combat import _attacker_assignments
+        from commanderblitz.engine.combat import _attacker_assignments
 
         game = board(builder, [BANDER, SQUIRE], [BEAR])
         bander, squire = only_oid(game, BANDER), only_oid(game, SQUIRE)
@@ -183,7 +183,7 @@ class TestTheBandIsBlockedAsAUnit:
         assert all(a.to_player is None for a in out), "it is blocked with its band"
 
     def test_without_the_band_it_gets_through(self, builder):
-        from automtg.engine.combat import _attacker_assignments
+        from commanderblitz.engine.combat import _attacker_assignments
 
         game = board(builder, [BANDER, SQUIRE], [BEAR])
         bander, squire = only_oid(game, BANDER), only_oid(game, SQUIRE)

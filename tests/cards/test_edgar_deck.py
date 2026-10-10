@@ -27,9 +27,9 @@ of one for the Epicure, an opponent's upkeep draws no card.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.zones import destroy
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.zones import destroy
 from tests.conftest import (
     _default_answer,
     advance_to_step,

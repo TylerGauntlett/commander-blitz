@@ -84,7 +84,7 @@ describe("blockTier", () => {
    * THE TWO KEYWORDS THAT CHANGE THE ANSWER MOST OFTEN, and for two cycles the
    * ranking read power and toughness and nothing else -- so a deathtouch
    * blocker was offered as a chump against a 5/5 and a first striker was scored
-   * as losing fights it walks away from. `docs/playtest-feedback-03.md`, cycle
+   * as losing fights it walks away from. The cycle-3 playtest, cycle
    * 4 item 5. The fight itself lives in `logic/fight.ts` now, shared with
    * `attackTier`, so the two shortcuts cannot disagree about the same cards.
    */

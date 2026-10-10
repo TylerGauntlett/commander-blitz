@@ -26,13 +26,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.sba import player_cant_lose, player_cant_win
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.sba import player_cant_lose, player_cant_win
+from commanderblitz.engine.zones import move_object
 
 HOLDER = "t_gideon_emblem_holder"
 GIDEON = "t_test_gideon"

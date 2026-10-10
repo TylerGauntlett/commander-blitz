@@ -34,9 +34,9 @@ against a number in a comment.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid, plus_one_counters
 
 MASCOT = "t_mascot"

@@ -40,9 +40,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import only_oid
 
 HOARDER = "t_hoarder"
@@ -163,7 +163,7 @@ class TestTheColoursAreWaived:
 
 class TestAsAnyType:
     def test_the_pips_become_generic(self):
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.mana import ManaCost
 
         relaxed = ManaCost.parse("{2}{U}{R}").as_any_type()
         assert relaxed.generic == 4
@@ -172,36 +172,36 @@ class TestAsAnyType:
     def test_the_colourless_pip_goes_too(self):
         """"any type" names the colourless type, which generic mana cannot
         otherwise pay."""
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.mana import ManaCost
 
         assert ManaCost.parse("{C}{C}").as_any_type().generic == 2
 
     def test_x_survives(self):
         """X is a number the caster chooses, not a colour."""
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.mana import ManaCost
 
         relaxed = ManaCost.parse("{X}{R}{R}").as_any_type()
         assert relaxed.x_count == 1
         assert relaxed.generic == 2
 
     def test_a_hybrid_pip_costs_what_it_did(self):
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.mana import ManaCost
 
         relaxed = ManaCost.parse("{2}{W/U}").as_any_type()
         assert relaxed.generic == 3
         assert relaxed.hybrid == ()
 
     def test_the_printed_cost_is_untouched(self):
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.mana import ManaCost
 
         assert ManaCost.parse("{2}{U}{R}").as_any_type().text == "{2}{U}{R}"
 
 
 class TestTheLoaderGuards:
     def test_a_link_with_nothing_to_link_is_refused(self):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="'link' needs 'objects'"):
             compile_card(
@@ -219,9 +219,9 @@ class TestTheLoaderGuards:
             )
 
     def test_a_grant_with_nothing_to_grant_on_is_refused(self):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="'grant_playable' needs 'objects'"):
             compile_card(

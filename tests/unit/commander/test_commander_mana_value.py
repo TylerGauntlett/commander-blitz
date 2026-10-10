@@ -45,12 +45,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.cost_reduction import cost_reduction, variant_reduction
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.cost_reduction import cost_reduction, variant_reduction
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import move_object
 
 SPELL = "t_commander_flashback"   # {4}{W}; flashback {8}{W}, less the greatest mv
 BIG = "t_commander_five"          # {3}{W}{W} — mana value 5
@@ -220,7 +220,7 @@ class TestOwnershipRatherThanControl:
 
 def _plain_copy(game, card_id: str) -> int:
     """``card_id`` onto the battlefield as an ordinary permanent, not a general."""
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.state import new_object
 
     obj = new_object(game.state, card_id, owner=0, zone=Zone.BATTLEFIELD)
     obj.entered_turn = game.state.turn - 1
@@ -386,6 +386,6 @@ class TestTheGateStillHoldsForEveryoneElse:
             .battlefield(1, ["t_bear", "t_bear"])
             .build()
         )
-        from automtg.engine.cost_reduction import reduction_amount
+        from commanderblitz.engine.cost_reduction import reduction_amount
 
         assert reduction_amount(game.state, 0, card.flashback.mana_reduction) == 1

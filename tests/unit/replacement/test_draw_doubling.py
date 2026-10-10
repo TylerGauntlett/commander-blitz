@@ -35,15 +35,15 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.player_statics import draw_replacements
-from automtg.engine.primitives import draw_cards
-from automtg.engine.replacements import draw as draw_with_replacements
-from automtg.engine.turn import _draw_step
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.player_statics import draw_replacements
+from commanderblitz.engine.primitives import draw_cards
+from commanderblitz.engine.replacements import draw as draw_with_replacements
+from commanderblitz.engine.turn import _draw_step
 from tests.conftest import pass_until
 
 PLAIN = "t_draw_doubler"   # Thought Reflection
@@ -227,7 +227,7 @@ class TestItIsTheControllersReplacement:
         assert draws(game, 1) == 2
 
     def test_it_wears_off_when_the_source_leaves(self, builder):
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game = position(builder, (PLAIN,))
         source = game.state.battlefield[0]

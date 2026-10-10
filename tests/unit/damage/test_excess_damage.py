@@ -18,8 +18,8 @@ a creature one point short of the death the rules say it took.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.primitives import damage_permanent
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.primitives import damage_permanent
 from tests.conftest import only_oid, pass_until
 
 SPILLS = "t_excess_five"  # 5 damage to target creature, excess to its controller
@@ -82,7 +82,7 @@ class TestTheSpill:
 
     def test_the_creature_still_dies(self, builder):
         """Only lethal is dealt, so the creature must still be destroyed by it."""
-        from automtg.engine.enums import Zone
+        from commanderblitz.engine.enums import Zone
 
         game = position(builder, SPILLS)
         bear = only_oid(game, BEAR, 1)
@@ -111,7 +111,7 @@ class TestDamageAlreadyMarkedCounts:
 class TestNothingToSpill:
     def test_a_creature_bigger_than_the_damage_takes_it_all(self, builder):
         """A 0/9 eats all five, so nothing reaches its controller and it lives."""
-        from automtg.engine.enums import Zone
+        from commanderblitz.engine.enums import Zone
 
         game = position(builder, SPILLS, defender_board=(BIG,))
         wall = only_oid(game, BIG, 1)

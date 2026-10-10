@@ -26,9 +26,9 @@ back out.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import find_action, only_oid, pass_until
 
 SPELL = "t_phase_out"  # "Target creature phases out."

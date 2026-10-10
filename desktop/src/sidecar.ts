@@ -1,7 +1,7 @@
 /**
  * The server, as a child process.
  *
- * `automtg.server.desktop` (frozen as `commanderblitz-server`) prints one
+ * `commanderblitz.server.desktop` (frozen as `commanderblitz-server`) prints one
  * line -- `READY {"port": …, "pid": …}` -- once its socket is bound and its
  * registry compiled, and nothing else on stdout. This module starts it, waits
  * for that line, pipes its stderr into `sidecar.log`, and stops it cleanly:

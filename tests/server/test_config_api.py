@@ -15,17 +15,17 @@ from contextlib import contextmanager
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg import __version__
-from automtg.server.app import create_app
-from automtg.server.connectivity import RemoteProbe
-from automtg.server.settings import ServerSettings, settings_from_env
+from commanderblitz import __version__
+from commanderblitz.server.app import create_app
+from commanderblitz.server.connectivity import RemoteProbe
+from commanderblitz.server.settings import ServerSettings, settings_from_env
 
 REMOTE = "http://remote.test:9"
 
 
 @pytest.fixture(scope="module")
 def data():
-    from automtg.cards.registry import default_registry
+    from commanderblitz.cards.registry import default_registry
 
     return default_registry()
 
@@ -170,10 +170,10 @@ class TestSettingsFromEnv:
     def test_desktop(self):
         settings = settings_from_env(
             {
-                "AUTOMTG_MODE": "desktop",
-                "AUTOMTG_REMOTE_ORIGIN": "https://commanderblitz.com/",
-                "AUTOMTG_CONTENT_VERSION": "1.2.3",
-                "AUTOMTG_EAGER_ART": "1",
+                "COMMANDERBLITZ_MODE": "desktop",
+                "COMMANDERBLITZ_REMOTE_ORIGIN": "https://commanderblitz.com/",
+                "COMMANDERBLITZ_CONTENT_VERSION": "1.2.3",
+                "COMMANDERBLITZ_EAGER_ART": "1",
             }
         )
         assert settings == ServerSettings(
@@ -184,10 +184,10 @@ class TestSettingsFromEnv:
         )
 
     def test_an_unknown_mode_is_refused(self):
-        with pytest.raises(ValueError, match="AUTOMTG_MODE"):
-            settings_from_env({"AUTOMTG_MODE": "kiosk"})
+        with pytest.raises(ValueError, match="COMMANDERBLITZ_MODE"):
+            settings_from_env({"COMMANDERBLITZ_MODE": "kiosk"})
 
     def test_blank_values_mean_unset(self):
-        settings = settings_from_env({"AUTOMTG_REMOTE_ORIGIN": "", "AUTOMTG_CONTENT_VERSION": ""})
+        settings = settings_from_env({"COMMANDERBLITZ_REMOTE_ORIGIN": "", "COMMANDERBLITZ_CONTENT_VERSION": ""})
         assert settings.remote_origin is None
         assert settings.content_version == __version__

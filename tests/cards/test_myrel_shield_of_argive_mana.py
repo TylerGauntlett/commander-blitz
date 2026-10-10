@@ -52,11 +52,11 @@ from here.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.costs import available_mana, mana_options_of
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.mana import SYMBOLS
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.costs import available_mana, mana_options_of
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.mana import SYMBOLS
 from tests.conftest import _default_answer, oids_of, only_oid, pass_until
 
 # A castable instant in a seat's hand, and it is load bearing rather than

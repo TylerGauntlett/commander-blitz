@@ -28,14 +28,14 @@ export function budget(ms: number): number {
  */
 export async function setInstant(page: Page): Promise<void> {
   await page.addInitScript(() => {
-    window.localStorage.setItem("automtg.speed", "instant");
+    window.localStorage.setItem("commanderblitz.speed", "instant");
     // Sound now defaults to *on*, so a run would otherwise synthesise a voice
     // for every click and every beat across sixteen specs. Explicit here rather
     // than relying on the default, which is exactly what changed underneath it.
-    window.localStorage.setItem("automtg.muted", "on");
+    window.localStorage.setItem("commanderblitz.muted", "on");
     // The hint bar is off by default (a settings toggle); several specs read
     // it to know what the ring is standing on.
-    window.localStorage.setItem("automtg.hints", "on");
+    window.localStorage.setItem("commanderblitz.hints", "on");
   });
 }
 
@@ -52,7 +52,7 @@ export async function setInstant(page: Page): Promise<void> {
  */
 export async function pinSeed(page: Page, seed: number): Promise<void> {
   await page.addInitScript((value) => {
-    (window as { __AUTOMTG_SEED?: number }).__AUTOMTG_SEED = value;
+    (window as { __COMMANDERBLITZ_SEED?: number }).__COMMANDERBLITZ_SEED = value;
   }, seed);
 }
 
@@ -71,7 +71,7 @@ export async function pinSeed(page: Page, seed: number): Promise<void> {
  */
 export async function lockZoom(page: Page): Promise<void> {
   await page.addInitScript(() => {
-    (window as { __AUTOMTG_ZOOM_LOCK?: boolean }).__AUTOMTG_ZOOM_LOCK = true;
+    (window as { __COMMANDERBLITZ_ZOOM_LOCK?: boolean }).__COMMANDERBLITZ_ZOOM_LOCK = true;
   });
 }
 

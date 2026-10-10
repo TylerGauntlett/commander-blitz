@@ -49,9 +49,9 @@ by widening the value to a union.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.primitives import damage_permanent
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.primitives import damage_permanent
 from tests.conftest import only_oid, pass_until
 
 WALKER = "t_walker"  # loyalty 4; "+1: gain 2 life" and "-3: draw a card"
@@ -235,7 +235,7 @@ class TestTheActionSpaceCanSayIt:
     size and therefore invalidated every checkpoint trained before it."""
 
     def test_attacking_a_planeswalker_has_an_index(self, builder):
-        from automtg.ai import action_space
+        from commanderblitz.ai import action_space
 
         game = (
             builder(players=2)
@@ -266,7 +266,7 @@ class TestTheActionSpaceCanSayIt:
     def test_a_player_and_a_planeswalker_do_not_share_a_slot(self, builder):
         """A player id and an object id are both ints, and 1 is a legal value of
         each -- so the slot map is keyed by a tagged id rather than a bare one."""
-        from automtg.ai.action_space import _Slots
+        from commanderblitz.ai.action_space import _Slots
 
         game = (
             builder(players=2)

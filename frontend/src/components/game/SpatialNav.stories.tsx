@@ -16,7 +16,7 @@ import { type Candidate, type Dir, PERP, pickStop, scoreStop } from "../../input
 
 const meta = {
   title: "game/SpatialNav",
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta;
 
 export default meta;

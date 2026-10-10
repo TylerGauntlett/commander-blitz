@@ -34,8 +34,8 @@ function.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.mana import ManaCost
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.mana import ManaCost
 
 ORRERY = "t_orrery_static"
 BOLT = "t_azure_bolt"  # {1}{U}

@@ -31,10 +31,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import COLORLESS, ActionKind, DecisionKind, Step
-from automtg.engine.mana import SYMBOL_INDEX
-from automtg.engine.primitives import create_token
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import COLORLESS, ActionKind, DecisionKind, Step
+from commanderblitz.engine.mana import SYMBOL_INDEX
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import oids_of, pass_until
 
 #: A castable instant in the OPPONENT's hand, so priority has a reason to stop

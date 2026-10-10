@@ -28,11 +28,11 @@ What is pinned below:
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.events import EventType
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import only_oid, pass_until
 
 SCOUT = "t_dcd_scout"  # 2/2, draws whenever it deals combat damage

@@ -18,7 +18,7 @@ cost, which is what the DSL could say before this existed, and it charges both.
 
 One thing deliberately *not* asserted here: what happens with an empty hand. The
 card being cast is still in hand when legality prices the cost, so it counts as
-fodder for its own discard — a pre-existing defect recorded in `docs/bugs.md`
+fodder for its own discard — a pre-existing defect
 and a different capability from this one. Every test below holds a real spare
 card, so none of them depends on it.
 """
@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 BITTER = "t_bitter"
 BOTH = "t_bitter_both"
@@ -131,7 +131,7 @@ class TestOnlyTheChosenBranchIsCharged:
 
 class TestTheLoaderRefusesNonsense:
     def _card(self, **extra):
-        from automtg.cards.schema import CardModel
+        from commanderblitz.cards.schema import CardModel
 
         return CardModel.model_validate(
             {
@@ -146,15 +146,15 @@ class TestTheLoaderRefusesNonsense:
         )
 
     def test_one_branch_is_not_a_choice(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="at least two"):
             compile_card(self._card(additional_cost_options=[{"discard": 1}]), source="t")
 
     def test_it_does_not_combine_with_a_single_additional_cost(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="not both"):
             compile_card(
@@ -167,8 +167,8 @@ class TestTheLoaderRefusesNonsense:
 
     def test_it_does_not_combine_with_repeatable(self):
         """One line per branch and one line per number paid disagree."""
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="additional_repeatable"):
             compile_card(

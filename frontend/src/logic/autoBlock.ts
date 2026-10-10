@@ -3,7 +3,7 @@
  *
  * "All defend" is not "block everything": a bad block throws a creature away for
  * nothing. The ranking below is the one a player uses without thinking about it,
- * written down (docs/playtest-feedback-02.md item 7):
+ * written down (playtest cycle 2, finding 7):
  *
  *   1. survive and kill   -- a free trade in your favour
  *   2. survive            -- a wall; you lose nothing

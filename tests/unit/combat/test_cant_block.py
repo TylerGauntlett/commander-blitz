@@ -25,12 +25,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import block_forbidden
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import block_forbidden
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 UNLEASHED = "t_unleashed"  # 2/2, can't block while it has a +1/+1 counter

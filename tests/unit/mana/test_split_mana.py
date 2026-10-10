@@ -29,10 +29,10 @@ five-colour deck.
 
 from __future__ import annotations
 
-from automtg.engine.costs import mana_amount, mana_options_of
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.mana import SYMBOLS
-from automtg.engine.primitives import add_counters
+from commanderblitz.engine.costs import mana_amount, mana_options_of
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.mana import SYMBOLS
+from commanderblitz.engine.primitives import add_counters
 from tests.conftest import only_oid
 
 MAGE = "t_vivi"  # {0}: add X mana split across {U}/{R}, X = its power

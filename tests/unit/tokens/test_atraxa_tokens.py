@@ -39,11 +39,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine import sba
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.primitives import create_token
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine import sba
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, oids_of, only_oid
 
 PRINTED: tuple[tuple[str, int, int, frozenset[str], frozenset[str], frozenset[str]], ...] = (

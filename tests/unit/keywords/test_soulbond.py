@@ -28,9 +28,9 @@ two filter keys: `paired` is "this creature, while it has a partner", and
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind
-from automtg.engine.zones import destroy
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.zones import destroy
 from tests.conftest import _default_answer, action_for_card, only_oid, pass_until
 
 PLAINS = "plains"

@@ -36,7 +36,7 @@ progress.
    gates; doing it by hand skips the gates entirely.
 3. **Never invent an op.** If the DSL cannot say a card, that is a gap record and
    a `/extend-dsl` job. Approximating it is the one failure this pipeline exists
-   to prevent, and this skill never edits `src/automtg/engine/`.
+   to prevent, and this skill never edits `src/commanderblitz/engine/`.
 4. **Never push.**
 
 ## The loop

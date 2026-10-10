@@ -48,8 +48,8 @@ ability stays a mana ability for 605.1a.
 
 from __future__ import annotations
 
-from automtg.engine.costs import mana_options_of, mana_sources
-from automtg.engine.mana import SYMBOL_INDEX
+from commanderblitz.engine.costs import mana_options_of, mana_sources
+from commanderblitz.engine.mana import SYMBOL_INDEX
 from tests.conftest import oids_of
 
 ORCHARD = "t_orchard"

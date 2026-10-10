@@ -17,10 +17,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import _default_answer
 
 
@@ -132,14 +132,14 @@ class TestTheTrigger:
 class TestPartnerIsInert:
     def test_it_loads_and_does_nothing(self, registry):
         """A deck-construction rule. Represented so the text is accounted for."""
-        from automtg.engine.enums import INERT_KEYWORDS, Keyword
+        from commanderblitz.engine.enums import INERT_KEYWORDS, Keyword
 
         card = registry.get("kodama_of_the_east_tree")
         assert "partner" in card.keywords
         assert Keyword.PARTNER in INERT_KEYWORDS
 
     def test_it_is_not_evasion_or_anything_else(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = (
             builder(players=2)

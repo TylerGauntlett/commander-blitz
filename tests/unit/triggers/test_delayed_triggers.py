@@ -13,13 +13,13 @@ silently does half of what it says.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import _default_answer
 
 
 def schedule(game, step: str, effects: list[dict], controller: int = 0) -> None:
     """Queue a delayed trigger directly, without a card in the way."""
-    from automtg.engine.structs import DelayedTrigger
+    from commanderblitz.engine.structs import DelayedTrigger
 
     game.state.delayed_triggers.append(
         DelayedTrigger(
@@ -80,7 +80,7 @@ class TestTiming:
         """
         game = builder(players=2).battlefield(0, ["forest"] * 4).build(advance=False)
         game._advance()
-        from automtg.engine.structs import DelayedTrigger
+        from commanderblitz.engine.structs import DelayedTrigger
 
         game.state.delayed_triggers.append(
             DelayedTrigger(
@@ -105,9 +105,9 @@ class TestArcaneDenialUsesIt:
         A/B against a plain Counterspell rather than an absolute count, so the
         ordinary draw steps cancel out and only the delayed draws are measured.
         """
-        from automtg.engine.enums import Zone
-        from automtg.engine.stack import push_spell
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.stack import push_spell
+        from commanderblitz.engine.state import new_object
 
         def play(card_id: str) -> tuple[int, int]:
             game = (

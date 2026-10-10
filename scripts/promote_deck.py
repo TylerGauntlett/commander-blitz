@@ -22,8 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.cards.registry import DeckList, data_dir, load_game_data, validate_deck
-from automtg.cards.schema import DeckModel
+from commanderblitz.cards.registry import DeckList, data_dir, load_game_data, validate_deck
+from commanderblitz.cards.schema import DeckModel
 
 #: Key order for the written file: identity first, the 99 last, so a diff of
 #: the editorial fields reads top to bottom.

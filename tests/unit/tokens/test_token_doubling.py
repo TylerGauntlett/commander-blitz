@@ -41,19 +41,19 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.linking import validate_token_references
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import create_token
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.structs import CombatState
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.linking import validate_token_references
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.structs import CombatState
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid
 
 BARD = "bard_doubler"

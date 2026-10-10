@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import action_for_card, oids_of, only_oid, pass_until
 
 PLUS_ONE = "+1/+1"
@@ -135,7 +135,7 @@ class TestTheAgentsAnswerIt:
         assert chars(game.state, only_oid(game, HYDRA, 0)).power == 3
 
     def test_the_heuristic_agent_takes_the_maximum(self, builder):
-        from automtg.ai.agents.heuristic_agent import HeuristicAgent
+        from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
 
         game = cast_hydra(builder, forests=4)
         decision = game.pending()

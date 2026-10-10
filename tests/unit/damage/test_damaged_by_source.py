@@ -33,9 +33,9 @@ Two things this file learned the hard way and pins so the next card does not:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.primitives import damage_permanent
-from automtg.engine.triggers import matches_card_filter
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.primitives import damage_permanent
+from commanderblitz.engine.triggers import matches_card_filter
 from tests.conftest import plus_one_counters
 
 SENGIR = "sengir_vampire"  # 4/4 flier
@@ -179,7 +179,7 @@ class TestItIsOnlyItsOwnVictims:
 
     def test_it_survives_the_victim_dying(self, builder):
         """The whole reason the ledger is on the state and not on the object."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder)
         sengir, flier = only(game, SENGIR), only(game, FLIER)

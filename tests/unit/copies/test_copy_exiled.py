@@ -24,7 +24,7 @@ strictly better card.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import find_action, pass_until, settle_to_priority
 
 MASTERY = "t_mastery"  # exile a graveyard card, copy it, cast the copy free

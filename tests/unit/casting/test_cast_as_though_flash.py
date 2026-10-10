@@ -42,12 +42,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import legality
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_casts_as_though_flash
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import legality
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import player_casts_as_though_flash
 
 BARRACUDA = "t_barracuda"  # any player
 ORRERY = "t_orrery"  # you
@@ -217,7 +217,7 @@ class TestAGrantedKeywordIsNotThis:
     """
 
     def test_a_sorcery_wearing_granted_flash_is_still_a_sorcery(self, builder):
-        from automtg.engine.structs import TempEffect
+        from commanderblitz.engine.structs import TempEffect
 
         game = position(builder, active=1)
         oid = game.state.players[0].hand[0]

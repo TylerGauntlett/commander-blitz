@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.structs import TargetRef, TempEffect
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.structs import TargetRef, TempEffect
 from tests.conftest import _default_answer, attack_with, find_action, oids_of, only_oid, pass_until
 
 
@@ -76,7 +76,7 @@ class TestDeclaringAttackers:
         assert not game.state.objects[oid].tapped
 
     def test_summoning_sick_creatures_cannot_attack(self, builder):
-        from automtg.engine.combat import can_attack
+        from commanderblitz.engine.combat import can_attack
 
         game = builder().battlefield(0, ["t_bear"], sick=True).build()
         bear = only_oid(game, "t_bear", 0)
@@ -100,7 +100,7 @@ class TestDeclaringAttackers:
         assert only_oid(game, "t_bear", 0) in sources
 
     def test_tapped_creatures_cannot_attack(self, builder):
-        from automtg.engine.combat import can_attack
+        from commanderblitz.engine.combat import can_attack
 
         game = builder().battlefield(0, ["t_bear"], tapped=True).build()
         # The untap step has not run for a battlefield placed mid-turn.

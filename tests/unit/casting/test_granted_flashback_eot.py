@@ -18,7 +18,7 @@ difference: same grant, same cast, one flag apart.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import settle_to_priority
 
 FLASHBACK = "t_will_flashback"  # grants flashback

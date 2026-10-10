@@ -30,7 +30,7 @@ can make one legal and the other not, which is the whole experiment.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.enums import ActionKind, Zone
 
 CARD = "t_modal_down"
 BEAR = "t_bear"
@@ -141,7 +141,7 @@ class TestTheModeIsNotAskedTwice:
         an answer that disagreed with the targets already declared would be
         unresolvable.
         """
-        from automtg.engine.enums import DecisionKind
+        from commanderblitz.engine.enums import DecisionKind
 
         game, oid = board(builder, graveyard=True, opponent=True)
         action = next(

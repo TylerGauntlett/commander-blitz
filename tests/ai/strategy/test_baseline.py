@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.ai.agents.base import agent_by_name
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import CLASSIC, DeckPlan, DefaultStrategy
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.structs import TargetRef
+from commanderblitz.ai.agents.base import agent_by_name
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import CLASSIC, DeckPlan, DefaultStrategy
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 
@@ -155,9 +155,9 @@ class TestClassic:
         assert agent_by_name("heuristic_classic").strategy is CLASSIC
 
     def test_the_environment_can_ask_for_it(self, monkeypatch):
-        monkeypatch.setenv("AUTOMTG_CPU", "classic")
+        monkeypatch.setenv("COMMANDERBLITZ_CPU", "classic")
         assert agent_by_name("heuristic").strategy is CLASSIC
-        monkeypatch.delenv("AUTOMTG_CPU")
+        monkeypatch.delenv("COMMANDERBLITZ_CPU")
         assert agent_by_name("heuristic").strategy is None
 
     def test_an_unknown_deck_gets_the_baseline(self, builder):

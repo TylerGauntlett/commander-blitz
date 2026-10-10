@@ -38,16 +38,16 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.rng import Rng
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.rng import Rng
 from tests.conftest import battlefield_ids, oids_of, pass_until
 
 BOBBLEHEAD = "t_bobblehead"
@@ -185,13 +185,13 @@ class TestTheResultItself:
         match against, so a false one would fall through to the bare count --
         on one die, 1 however it fell.
         """
-        from automtg.engine.effects.values import validate_rolled
+        from commanderblitz.engine.effects.values import validate_rolled
 
         with pytest.raises(DslError, match="must be true"):
             validate_rolled({"binding": "d20", "total": False}, "x")
 
     def test_it_may_not_be_combined_with_another_predicate(self, builder):
-        from automtg.engine.effects.values import validate_rolled
+        from commanderblitz.engine.effects.values import validate_rolled
 
         with pytest.raises(DslError, match="two predicates"):
             validate_rolled({"binding": "d20", "total": True, "parity": "even"}, "x")
@@ -452,6 +452,6 @@ class TestTheLoaderGuards:
 
     def test_an_as_on_the_roll_is_allowed_because_it_records(self):
         """`roll_dice` is in RECORDING_OPS, or the generic `as` guard refuses it."""
-        from automtg.engine.effects import RECORDING_OPS
+        from commanderblitz.engine.effects import RECORDING_OPS
 
         assert "roll_dice" in RECORDING_OPS

@@ -19,7 +19,7 @@ const ALL = Object.keys(PAD_LABEL) as PadButton[];
 const meta = {
   title: "ui/Glyph",
   component: Glyph,
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta<typeof Glyph>;
 
 export default meta;

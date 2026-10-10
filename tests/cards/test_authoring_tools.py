@@ -14,15 +14,15 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.authoring import fidelity as F
-from automtg.cards.authoring import packet as P
-from automtg.cards.authoring import queue as Q
-from automtg.cards.authoring import templates as T
-from automtg.cards.images import IndexEntry, catalog_path, load_index
-from automtg.cards.loader import compile_card
-from automtg.cards.proxy import facts_from_index
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
+from commanderblitz.cards.authoring import fidelity as F
+from commanderblitz.cards.authoring import packet as P
+from commanderblitz.cards.authoring import queue as Q
+from commanderblitz.cards.authoring import templates as T
+from commanderblitz.cards.images import IndexEntry, catalog_path, load_index
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.proxy import facts_from_index
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
 
 VISIONARY = {
     "id": "t_visionary",
@@ -318,7 +318,7 @@ class TestQueueReading:
 
 class TestWantedNames:
     def test_reads_the_generated_pool_or_nothing(self, tmp_path: Path, monkeypatch):
-        from automtg.cards import registry as R
+        from commanderblitz.cards import registry as R
 
         monkeypatch.setattr(R, "generated_dir", lambda: tmp_path)
         assert Q.wanted_names() == set()

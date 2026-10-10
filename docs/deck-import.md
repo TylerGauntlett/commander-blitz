@@ -62,7 +62,7 @@ a game wondering where their commander went.
 
 ## What the generator does and does not do
 
-`src/automtg/cards/proxy.py`, and it emits a `CardModel` that goes through the
+`src/commanderblitz/cards/proxy.py`, and it emits a `CardModel` that goes through the
 ordinary `compile_card` — so a generator bug is a `DslError` at import time
 rather than a mystery mid-game.
 

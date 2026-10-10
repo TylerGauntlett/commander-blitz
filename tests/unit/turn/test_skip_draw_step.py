@@ -29,10 +29,10 @@ witness for the conditional case here is `t_conditional_skip`.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step, Zone
-from automtg.engine.events import EventType
-from automtg.engine.player_statics import player_skips_draw_step
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.player_statics import player_skips_draw_step
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until
 
 
@@ -151,7 +151,7 @@ class TestTheStepStillHappens:
 class TestOnlyTheTurnBasedDraw:
     def test_a_draw_effect_still_draws(self, builder):
         """Necropotence does not stop you casting a draw spell."""
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         game = board(builder, card="t_necro_skip")
         before = library_size(game, 0)

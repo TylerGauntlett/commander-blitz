@@ -20,11 +20,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import DecisionKind, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import hand_ids, plus_one_counters
 
 FOREST = "forest"

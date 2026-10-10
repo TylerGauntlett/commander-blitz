@@ -23,9 +23,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import choose_objects, validate_selector
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import choose_objects, validate_selector
+from commanderblitz.engine.errors import DslError
 
 BEAR = "t_bear"  # 2/2
 DORK = "t_dork"  # 1/1

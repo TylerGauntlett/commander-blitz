@@ -29,9 +29,9 @@ another either strands the payment or hands out a discount. The same care
 
 from __future__ import annotations
 
-from automtg.engine.costs import can_pay, life_cost
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
+from commanderblitz.engine.costs import can_pay, life_cost
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
 from tests.conftest import oids_of
 
 WAR_ROOM = "t_war_room"

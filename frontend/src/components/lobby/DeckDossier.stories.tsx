@@ -64,7 +64,7 @@ const imported = deckDetail({
 const meta = {
   title: "Lobby/DeckDossier",
   component: DeckDossier,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { canTake: true, onTake: fn(), onClose: fn() },
 } satisfies Meta<typeof DeckDossier>;
 
@@ -74,7 +74,7 @@ type Story = StoryObj<typeof meta>;
 /** A fully authored precon: ratings, a write-up, signature cards. */
 export const Precon: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { query: seeded(precon) } },
+  parameters: { commanderblitz: { query: seeded(precon) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("dossier-ratings");
@@ -91,7 +91,7 @@ export const Precon: Story = {
  */
 export const Imported: Story = {
   args: { deckId: imported.id },
-  parameters: { automtg: { query: seeded(imported) } },
+  parameters: { commanderblitz: { query: seeded(imported) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("dossier-no-ratings");
@@ -106,7 +106,7 @@ export const Imported: Story = {
 export const NothingSwapped: Story = {
   args: { deckId: "clean" },
   parameters: {
-    automtg: {
+    commanderblitz: {
       query: seeded(deckDetail({ id: "clean", swaps: 0, swap_note: "" })),
     },
   },
@@ -115,7 +115,7 @@ export const NothingSwapped: Story = {
 /** Opened while browsing rather than from a seat: no take button. */
 export const CannotTake: Story = {
   args: { deckId: precon.id, canTake: false },
-  parameters: { automtg: { query: seeded(precon) } },
+  parameters: { commanderblitz: { query: seeded(precon) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("curve");
@@ -136,7 +136,7 @@ export const CannotTake: Story = {
  */
 export const Ratings: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
   render: () => (
     <div style={{ display: "grid", gap: 8, maxWidth: 320 }}>
       <RatingBar label="Speed" value={1} />
@@ -155,7 +155,7 @@ export const Ratings: Story = {
 /** The curve, tallest column at full height. */
 export const Curve: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
   render: () => <ManaCurve values={[9, 13, 18, 7, 7, 3, 5]} />,
   play: async ({ canvasElement }) => {
     const bars = [...canvasElement.querySelectorAll<HTMLElement>(".curve__bar")];
@@ -171,7 +171,7 @@ export const Curve: Story = {
 /** No curve at all: said, rather than drawn as a flat line. */
 export const EmptyCurve: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
   render: () => <ManaCurve values={[]} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

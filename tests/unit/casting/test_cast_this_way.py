@@ -30,7 +30,7 @@ matched no card at all and the whole clause silently did nothing.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 CAST_WAY = "t_kefka_bolt"
 EXILED_WAY = "t_kefka_exiled"

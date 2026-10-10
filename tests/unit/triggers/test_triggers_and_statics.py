@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.objects import PLUS_ONE
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.objects import PLUS_ONE
 from tests.conftest import action_for_card, find_action, oids_of, only_oid, pass_until
 
 
@@ -345,7 +345,7 @@ class TestStaticAbilities:
         bear = only_oid(game, "t_bear", 0)
         assert chars(game.state, bear).power == 3
         anthem = only_oid(game, "t_anthem", 0)
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         move_object(game.state, anthem, Zone.GRAVEYARD)
         assert chars(game.state, bear).power == 2
@@ -360,7 +360,7 @@ class TestStaticAbilities:
         game = builder().battlefield(0, ["t_bear"]).build()
         bear = only_oid(game, "t_bear", 0)
         assert chars(game.state, bear).power == 2
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.primitives import add_counters
 
         add_counters(game.state, bear, PLUS_ONE, 3)
         assert chars(game.state, bear).power == 5
@@ -383,7 +383,7 @@ class TestUntilEndOfTurn:
     def test_damage_clears_at_cleanup(self, builder):
         game = builder().battlefield(0, ["t_big"]).build()
         giant = only_oid(game, "t_big", 0)
-        from automtg.engine.primitives import damage_permanent
+        from commanderblitz.engine.primitives import damage_permanent
 
         damage_permanent(game.state, giant, 3, None)
         assert game.state.objects[giant].damage == 3
@@ -412,13 +412,13 @@ class TestActivatedAbilities:
         assert not [a for a in game.legal_actions() if a.kind is ActionKind.ACTIVATE]
 
     def test_summoning_sick_creature_cannot_tap_for_mana(self, builder):
-        from automtg.engine.costs import mana_sources
+        from commanderblitz.engine.costs import mana_sources
 
         game = builder().battlefield(0, ["t_dork"], sick=True).build(advance=False)
         assert mana_sources(game.state, 0) == []
 
     def test_a_settled_mana_dork_can_tap(self, builder):
-        from automtg.engine.costs import mana_sources
+        from commanderblitz.engine.costs import mana_sources
 
         game = builder().battlefield(0, ["t_dork"]).build(advance=False)
         assert len(mana_sources(game.state, 0)) == 1

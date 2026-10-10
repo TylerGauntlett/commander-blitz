@@ -17,7 +17,7 @@ export interface AppPaths {
   home: string;
   /** `content/<version>/` -- installed content packages, one directory each. */
   content: string;
-  /** What the server writes: imports, cached art. `AUTOMTG_GENERATED_DIR`. */
+  /** What the server writes: imports, cached art. `COMMANDERBLITZ_GENERATED_DIR`. */
   generated: string;
   logs: string;
   /** A content tarball on its way in. */

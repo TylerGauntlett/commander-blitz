@@ -161,7 +161,7 @@ describe("groupPlayActions", () => {
   });
 
   it("keeps two copies of the same card in hand apart", () => {
-    // docs/bugs.md: deduplicating by card rather than by object is what made
+    // deduplicating by card rather than by object is what made
     // the second and third Forest in hand unclickable.
     const groups = groupPlayActions([
       action({ id: "a1", kind: "play_land", label: "Play Forest", source_oid: 20 }),

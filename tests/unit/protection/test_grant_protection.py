@@ -21,10 +21,10 @@ downstream had to learn a new shape — the four rules that read protection
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import protection_from
-from automtg.engine.enums import ActionKind
-from automtg.engine.primitives import damage_permanent
-from automtg.engine.turn import clear_until_eot
+from commanderblitz.engine.characteristics import protection_from
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.primitives import damage_permanent
+from commanderblitz.engine.turn import clear_until_eot
 from tests.conftest import oids_of, pass_until
 
 PROTECTOR = "t_protector"  # instant: your creatures gain protection from each colour

@@ -40,11 +40,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.events import EventType
-from automtg.engine.zones import COMMANDER_REPLACED_ZONES
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.zones import COMMANDER_REPLACED_ZONES
 from tests.conftest import only_oid, pass_until
 
 COURSER = "t_cz_courser"
@@ -143,7 +143,7 @@ class TestTheCourserPutsItsCommanderDown:
         assert game.state.players[0].command == []
 
     def test_it_arrives_on_the_battlefield_with_haste(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = courser_trigger(board(builder))
         general = oid_of(game, GENERAL)
@@ -261,9 +261,9 @@ class TestTheLoaderChecksIt:
         """An omitted selector resolves to nothing, so the op would be a silent
         no-op: the delay fires, no permanent moves, and the commander stands on
         the battlefield for ever with nothing to say so."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="nothing to return"):
             compile_card(

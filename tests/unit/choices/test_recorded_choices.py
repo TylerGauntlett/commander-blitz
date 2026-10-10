@@ -29,12 +29,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import action_for_card, find_action, only_oid, pass_until, plus_one_counters
 
 FOREST = "forest"

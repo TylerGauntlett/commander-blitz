@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.actions import Action
-from automtg.engine.costs import land_drops_available
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import IllegalActionError
+from commanderblitz.engine.actions import Action
+from commanderblitz.engine.costs import land_drops_available
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import IllegalActionError
 from tests.conftest import (
     _default_answer,
     action_for_card,

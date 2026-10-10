@@ -23,8 +23,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import default_registry
-from automtg.server.app import create_app
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server.app import create_app
 
 #: Generous against a cold thread pool, and still far under any long poll.
 DEADLINE = 30.0
@@ -230,7 +230,7 @@ class TestConcurrentActions:
         game_id = client.post(f"/api/pods/{code}/start", headers=auth(host)).json()["game_id"]
         session = client.app.state.sessions.get(game_id)
 
-        from automtg.engine.serialize import fingerprint
+        from commanderblitz.engine.serialize import fingerprint
 
         versions = [session.version]
         for _ in range(6):

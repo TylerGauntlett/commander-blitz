@@ -39,13 +39,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.cards.authoring import fidelity as F
-from automtg.cards.authoring import verify as V
-from automtg.cards.authoring.queue import FIDELITY_GATE, Entry, Queue
-from automtg.cards.images import load_index
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry, data_dir
-from automtg.cards.schema import CardModel
+from commanderblitz.cards.authoring import fidelity as F
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.authoring.queue import FIDELITY_GATE, Entry, Queue
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry, data_dir
+from commanderblitz.cards.schema import CardModel
 
 #: Written by ``--update-baseline``, read by ``tests/cards/test_hand_written_cards.py``.
 BASELINE = Path(__file__).resolve().parents[1] / "tests" / "cards" / "precon_deficits.json"

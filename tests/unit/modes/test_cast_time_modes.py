@@ -23,8 +23,8 @@ docs/card-dsl.md is still required.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import pass_until
 
 PUMP, HEXPROOF, BOUNCE = 0, 1, 2
@@ -177,7 +177,7 @@ class TestTheRuleIsMechanical:
         # Two questions, and only one `modes` slot to answer with -- so the card
         # keeps asking as it resolves rather than binding the outer answer to
         # whichever `choose_mode` happens to run first.
-        from automtg.engine.carddef import CardDef, count_mode_specs
+        from commanderblitz.engine.carddef import CardDef, count_mode_specs
 
         nested = (
             {

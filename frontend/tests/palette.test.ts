@@ -211,7 +211,7 @@ describe("the frame", () => {
 
   it("tints a land's frame by the colour it taps for", () => {
     // Every land was the same tan rectangle, so a lane of twelve could only be
-    // read by reading names -- docs/playtest-feedback-02.md item 8.
+    // read by reading names -- a cycle-2 playtest finding (item 8).
     for (const tone of ["W", "U", "B", "R", "G", "C", "multi"]) {
       const body = rule(`.face--land-${tone}`);
       expect(body, `.face--land-${tone} is not defined`).not.toBeNull();

@@ -35,8 +35,8 @@ wrong player at the wrong price.
 
 from __future__ import annotations
 
-from automtg.engine.casting import _cast_actions
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.casting import _cast_actions
+from commanderblitz.engine.enums import ActionKind, Step
 
 REVERSAL = "t_gale_reversal"  # {0} sorcery: airbend all creatures
 SCATTER = "t_gale_scatter"  # {0} sorcery: plain `exile` + `playable` -- the near miss

@@ -49,14 +49,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import change_control, clear_until_eot
-from automtg.engine.structs import CombatState, TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import change_control, clear_until_eot
+from commanderblitz.engine.structs import CombatState, TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 
 TREASON = "t_treason"  # {2}{R} sorcery: steal, untap, haste — all until end of turn
@@ -340,7 +340,7 @@ class TestTheLoaderGuardsTheDuration:
 class TestTheShippedCard:
     def test_zealous_conscripts_steals_and_gives_back(self, real_registry):
         """The card the gap record named, played through the real registry."""
-        from automtg.engine.sandbox import GameBuilder
+        from commanderblitz.engine.sandbox import GameBuilder
 
         game = (
             GameBuilder(real_registry, players=2, seed=0)

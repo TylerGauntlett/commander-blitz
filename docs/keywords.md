@@ -516,6 +516,6 @@ keywords — the five basic types plus nonbasic — because that is how the engi
 models it, and the reason why is the first corollary above.
 
 Statuses were assigned by reading `reference()` in
-`src/automtg/cards/authoring/packet.py`, which derives every vocabulary list
+`src/commanderblitz/cards/authoring/packet.py`, which derives every vocabulary list
 from the enums rather than restating them, and is the single best oracle for
 what the DSL currently accepts.

@@ -28,12 +28,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.carddef import TargetSpec
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches, resolve_pool, validate_selector
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.targeting import candidates, still_legal
+from commanderblitz.engine.carddef import TargetSpec
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches, resolve_pool, validate_selector
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.targeting import candidates, still_legal
 from tests.conftest import only_oid
 
 #: What Field of Ruin's target spec says.

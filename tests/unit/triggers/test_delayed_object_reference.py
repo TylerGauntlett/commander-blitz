@@ -55,16 +55,16 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.characteristics import has_keyword
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.enums import ActionKind, Keyword, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.structs import DelayedTrigger, TargetRef
-from automtg.engine.turn import _run_delayed
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.characteristics import has_keyword
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.enums import ActionKind, Keyword, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import DelayedTrigger, TargetRef
+from commanderblitz.engine.turn import _run_delayed
+from commanderblitz.engine.zones import move_object
 from tests.conftest import oids_of, pass_until
 
 GILRAEN = "gilraen_dunedain_protector"

@@ -31,10 +31,10 @@ identical on the board and lose every counter on it.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword, Zone
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import add_counters, transform
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword, Zone
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.primitives import add_counters, transform
 from tests.conftest import only_oid
 
 PLAINS = "plains"
@@ -123,7 +123,7 @@ class TestItIsTheSamePermanent:
 class TestComingBack:
     def test_a_flipped_permanent_that_leaves_returns_unflipped(self, builder):
         """712.13a's rule, shared: a permanent enters front face up."""
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game, monk = position(builder)
         transform(game.state, monk, to_back=True)

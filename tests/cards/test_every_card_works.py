@@ -16,19 +16,19 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.authoring.verify import check_expectation, swap_in_tribal_body
-from automtg.cards.registry import CardRegistry
-from automtg.engine.actions import PendingDecision
-from automtg.engine.carddef import CardDef
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.events import EventType
-from automtg.engine.game import Game
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import add_counters, lose_life
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.stack import push_spell
-from automtg.engine.state import new_object
+from commanderblitz.cards.authoring.verify import check_expectation, swap_in_tribal_body
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.engine.actions import PendingDecision
+from commanderblitz.engine.carddef import CardDef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.game import Game
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.primitives import add_counters, lose_life
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.stack import push_spell
+from commanderblitz.engine.state import new_object
 
 EXPECTATIONS_PATH = Path(__file__).resolve().parent / "expectations.json"
 
@@ -171,7 +171,7 @@ def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
     `_ability_matches` reads only the controller -- so this picks the first one in
     the pool rather than trying to satisfy a selector it knows nothing about.
     """
-    from automtg.engine.stack import push_activated_ability
+    from commanderblitz.engine.stack import push_activated_ability
 
     for card_id in sorted(registry.ids()):
         card = registry.get(card_id)
@@ -829,7 +829,7 @@ def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None
     alone rather than approximated, and the ability reports as unusable -- which
     is the honest answer when the harness cannot build the position.
     """
-    from automtg.engine.primitives import create_token
+    from commanderblitz.engine.primitives import create_token
 
     spec = left.get("permanents_entered_this_turn") or {}
     if spec.get("controller", "you") != "you":
@@ -860,8 +860,8 @@ def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
     left = condition.get("left") or {}
     if "max_count_of" not in left:
         return False
-    from automtg.engine.effects.context import EffectContext
-    from automtg.engine.effects.values import evaluate_value
+    from commanderblitz.engine.effects.context import EffectContext
+    from commanderblitz.engine.effects.values import evaluate_value
 
     spec = left["max_count_of"]
     selector = spec.get("objects") or {}
@@ -959,7 +959,7 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
     merely unhelpful but actively wrong: "nonbasic land" excludes exactly the
     lands a naive first-by-id pick is most likely to land on.
     """
-    from automtg.engine.targeting import enumerate_target_tuples
+    from commanderblitz.engine.targeting import enumerate_target_tuples
 
     if not ability.targets:
         return

@@ -1,23 +1,18 @@
 name: desktop release
 
 # A tag `vX.Y.Z` builds the Steam Deck AppImage and the content package and
-# publishes both to the PUBLIC releases repository. Tags only -- never a push
-# or a pull request -- because this is ~25 minutes of runner per run, the
+# publishes both as a GitHub Release of this repository. Tags only -- never a
+# push or a pull request -- because this is ~25 minutes of runner per run, the
 # repository is on the Free plan, and nothing here is a test of the code: the
 # gate (`deploy.yml`) is. The tag must match `desktop/package.json`, so a
 # release's version is the one the shell reports and the updater compares.
 #
-# Why a second repository: the source is private, and a private repository's
-# release assets cannot be downloaded without a token -- which `electron-updater`
-# on a player's Deck must never hold. `RELEASES_TOKEN` is a fine-grained PAT
-# with Contents: read/write on the releases repository and nothing else; see
-# docs/deployment.md.
+# Everything a Deck fetches is a `releases/latest/download/<file>` URL: no API,
+# no token, no rate limit. The repository is public, so the assets are too,
+# and the workflow's own GITHUB_TOKEN is enough to publish them.
 on:
   push:
     tags: ["v*"]
-
-env:
-  RELEASES_REPO: TylerGauntlett/commander-blitz-releases
 
 jobs:
   # The content package: the frozen server (built in a container, for glibc),
@@ -117,10 +112,12 @@ jobs:
             desktop/build/steam-assets.tar.gz
 
   publish:
-    name: publish to the releases repo
+    name: publish the release
     needs: [content, shell]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write # to create the release and upload its assets
     steps:
       - uses: actions/checkout@v4
         with:
@@ -138,8 +135,8 @@ jobs:
           find out -type f | sort
           cp desktop/steam/install.sh out/install.sh
           (cd out && sha256sum appimage/release/CommanderBlitz-*.AppImage content/content-*.tar.gz | sed -E 's#^([a-f0-9]+)  .*/#\1  #' > SHA256SUMS)
-          notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$v" "$RELEASES_REPO")"
-          gh release create "v$v" --repo "$RELEASES_REPO" --title "Commander Blitz $v" --notes "$notes" \
+          notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$v" "$GITHUB_REPOSITORY")"
+          gh release create "v$v" --repo "$GITHUB_REPOSITORY" --title "Commander Blitz $v" --notes "$notes" \
             out/appimage/release/CommanderBlitz-*.AppImage \
             out/appimage/release/latest-linux.yml \
             out/appimage/build/steam-assets.tar.gz \
@@ -148,4 +145,4 @@ jobs:
             out/install.sh \
             out/SHA256SUMS
         env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

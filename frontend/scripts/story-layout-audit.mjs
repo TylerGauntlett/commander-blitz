@@ -35,7 +35,7 @@
  * width with the cards off the screen. Fifty-odd stories, invisible to the
  * suite, and it also found a discard prompt with 668px of overflow and a seat
  * arrangement that failed at exactly two opponents -- the density between the
- * two the e2e gate covered. See `docs/handheld-playtest.md` Loop 7.
+ * two the e2e gate covered. See handheld playtest loop 7.
  *
  * It is a sweep, not a gate: it needs Storybook running and takes a few
  * minutes. The gates are `e2e/deckfit.spec.ts` and `e2e/handheldAssert.ts`.

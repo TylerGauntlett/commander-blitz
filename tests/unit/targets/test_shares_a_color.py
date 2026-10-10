@@ -22,8 +22,8 @@ Two things it inherits from that clause and one it does not:
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool, validate_selector
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
 
 FOREST = "forest"
 BEAR = "t_bear"              # green

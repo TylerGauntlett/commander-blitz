@@ -30,12 +30,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import triggers
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType, GameEvent
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import triggers
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType, GameEvent
 
 DIED_TWICE = {"cmp": ">=", "left": {"creatures_died_this_turn": "all"}, "right": {"const": 2}}
 

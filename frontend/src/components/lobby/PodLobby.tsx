@@ -31,8 +31,8 @@
  * is a debugging tool, not a thing a player wants a text box for on the way
  * into a match -- and it was the second of the two fields on this screen that
  * the ring could walk into and never walk out of. Every deal is random now.
- * `e2e/helpers.ts` sets `window.__AUTOMTG_SEED` instead, which is the same seam
- * `__AUTOMTG_ZOOM_LOCK` already uses: a test can pin the shuffle without a
+ * `e2e/helpers.ts` sets `window.__COMMANDERBLITZ_SEED` instead, which is the same seam
+ * `__COMMANDERBLITZ_ZOOM_LOCK` already uses: a test can pin the shuffle without a
  * control existing in a real player's build to do it with.
  *
  * The seat-name field went the same way and for a sharper version of the same

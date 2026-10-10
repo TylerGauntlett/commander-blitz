@@ -36,13 +36,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.authoring.fidelity import unimplemented_mechanics
-from automtg.cards.authoring.verify import _covered
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import suspend
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.authoring.fidelity import unimplemented_mechanics
+from commanderblitz.cards.authoring.verify import _covered
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import suspend
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
 
 PLAINS = "plains"
 ISLAND = "island"

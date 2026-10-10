@@ -13,9 +13,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.ai.agents.base import agent_by_name
-from automtg.engine.characteristics import chars
-from automtg.engine.game import Game, create_game
+from commanderblitz.ai.agents.base import agent_by_name
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.game import Game, create_game
 
 BAR = "-" * 78
 

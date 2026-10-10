@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.structs import TargetRef
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 DECK = "atraxa_praetors_voice"

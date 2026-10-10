@@ -45,12 +45,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars, protection_from
-from automtg.engine.costs import activate_mana_ability, mana_options_of
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars, protection_from
+from commanderblitz.engine.costs import activate_mana_ability, mana_options_of
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
 
 BANNER = "t_heraldic"  # {3} artifact: choose a colour, anthem, and a mana ability
 BRAVE = "t_brave"  # {W} instant: protection from the colour of your choice
@@ -279,7 +279,7 @@ class TestItIsPerObject:
         assert chars(game.state, bear).power == 3, "one Banner matches, one does not"
 
     def test_the_choice_is_cleared_when_it_leaves(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder, "G", extra=[BEAR])
         banner = only(game, BANNER)
@@ -289,7 +289,7 @@ class TestItIsPerObject:
         )
 
     def test_the_anthem_wears_off_with_the_banner(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder, "G", extra=[BEAR])
         bear = only(game, BEAR)

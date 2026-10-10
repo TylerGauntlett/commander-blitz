@@ -36,14 +36,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine import triggers
-from automtg.engine.carddef import TriggerSpec
-from automtg.engine.effects.conditions import evaluate_condition, validate_condition
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType, GameEvent
-from automtg.engine.primitives import create_token
-from automtg.engine.zones import destroy, move_object
+from commanderblitz.engine import triggers
+from commanderblitz.engine.carddef import TriggerSpec
+from commanderblitz.engine.effects.conditions import evaluate_condition, validate_condition
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType, GameEvent
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import action_for_card, pass_until
 
 CREATURE = "llanowar_elves"
@@ -335,7 +335,7 @@ def _drew(game, pid: int) -> GameEvent:
 
 
 def _new_card_in_graveyard(game, card_id: str, pid: int) -> int:
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.state import new_object
 
     obj = new_object(game.state, card_id, owner=pid, zone=Zone.GRAVEYARD)
     game.state.players[pid].graveyard.append(obj.oid)

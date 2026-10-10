@@ -35,10 +35,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_counters, remove_counters
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_counters, remove_counters
 from tests.conftest import only_oid, two_seat_board
 
 SCALES = "t_rc_scales"  # +1/+1 only, "that many plus one", creatures you control

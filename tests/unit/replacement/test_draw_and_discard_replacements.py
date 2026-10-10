@@ -28,9 +28,9 @@ wrong without any board showing it:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.replacements import discard as discard_with_replacements
-from automtg.engine.replacements import draw as draw_with_replacements
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.replacements import discard as discard_with_replacements
+from commanderblitz.engine.replacements import draw as draw_with_replacements
 from tests.conftest import _default_answer, only_oid
 
 SWAMP = "swamp"

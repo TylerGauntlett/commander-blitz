@@ -35,9 +35,9 @@ line this is. Without it the card is a six-mana enchantment that does nothing.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.primitives import draw_cards
-from automtg.engine.zones import destroy
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.primitives import draw_cards
+from commanderblitz.engine.zones import destroy
 
 AMNESTY = "t_dragon_amnesty"  # "You may cast Dragon spells without paying their mana costs."
 WYRM = "t_cinder_wyrm"  # {4}{R}{R} Dragon 4/4

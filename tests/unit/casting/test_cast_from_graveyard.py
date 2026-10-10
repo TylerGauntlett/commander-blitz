@@ -39,7 +39,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 
 MACHINIST = "t_machinist"
 UNTAPPED = "t_untapped_machinist"
@@ -99,16 +99,16 @@ class TestItIsNarrowedByType:
         assert castable(board(builder, buried=(CREATURE,))) == []
 
     def test_the_loader_refuses_a_permission_with_no_filter(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="affects_spells"):
             compile_card(_permission(affects_spells=None), source="test")
 
     def test_the_loader_refuses_a_permission_with_no_rate_limit(self):
         """Without one it is an unbounded engine rather than the printed line."""
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="max_per_turn"):
             compile_card(_permission(static_max_per_turn=None), source="test")
@@ -162,7 +162,7 @@ class TestItCountsAsCastFromAGraveyard:
 
 
 def _permission(**overrides):
-    from automtg.cards.schema import CardModel
+    from commanderblitz.cards.schema import CardModel
 
     static = {
         "kind": "static",
@@ -221,8 +221,8 @@ class TestTheArrivalClause:
         )
 
     def bury(self, game, *, via: str):
-        from automtg.engine.enums import Zone
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.zones import move_object
 
         state = game.state
         oid = state.players[0].library[0]
@@ -262,16 +262,16 @@ class TestTheArrivalClause:
         assert castable(game) == [ARTIFACT]
 
     def test_the_loader_refuses_an_unknown_zone(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="unknown zone"):
             compile_card(_permission(arrived_this_turn_from=["!nowhere"]), source="t")
 
     def test_the_loader_refuses_an_empty_list(self):
         """Nothing in the graveyard would ever qualify."""
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="names no zone"):
             compile_card(_permission(arrived_this_turn_from=[]), source="t")

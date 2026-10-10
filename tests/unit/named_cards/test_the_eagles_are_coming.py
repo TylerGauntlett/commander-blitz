@@ -44,13 +44,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.actions import TargetRef
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.actions import TargetRef
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import oids_of
 
 EAGLES = "t_eagles"
@@ -98,7 +98,7 @@ class TestTheKickedLineTargetsAnyNumber:
         """Three creatures on the board, so the kicked cast should ask for a
         set larger than one -- which is the whole switch. Asked as the cast
         happens (`casting.deferred_target_spec`), so the line itself is one."""
-        from automtg.engine.enums import DecisionKind
+        from commanderblitz.engine.enums import DecisionKind
 
         game = position(builder)
         lines = cast_lines(game, kicked=True)
@@ -117,7 +117,7 @@ class TestTheKickedLineTargetsAnyNumber:
     def test_an_ordinary_card_is_unaffected(self, builder):
         """`_kicked_targets` returns None when nothing carries the key, so every
         other kicker card reuses the shared enumeration exactly as before."""
-        from automtg.engine.targeting import kicked_targets
+        from commanderblitz.engine.targeting import kicked_targets
 
         game = position(builder)
         card = game.state.registry.get(EAGLES)
@@ -242,7 +242,7 @@ class TestTheResolutionAgreesWithTheDeclaration:
     """
 
     def test_filter_legal_buckets_every_kicked_ref(self, builder):
-        from automtg.engine.targeting import filter_legal, kicked_targets
+        from commanderblitz.engine.targeting import filter_legal, kicked_targets
 
         game = position(builder)
         bears = oids_of(game, BEAR, 0)[:2]
@@ -257,7 +257,7 @@ class TestTheResolutionAgreesWithTheDeclaration:
     def test_the_printed_specs_bucket_only_one(self, builder):
         """The contrast that shows why the substitution has to happen at
         resolution too: unsubstituted, the second ref is orphaned."""
-        from automtg.engine.targeting import filter_legal
+        from commanderblitz.engine.targeting import filter_legal
 
         game = position(builder)
         bears = oids_of(game, BEAR, 0)[:2]

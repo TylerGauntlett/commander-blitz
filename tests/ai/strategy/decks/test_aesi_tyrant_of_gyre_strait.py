@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import strategy_for
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import strategy_for
+from commanderblitz.engine.enums import ActionKind, Step
 
 DECK = "aesi_tyrant_of_gyre_strait"
 LANDS = ["forest", "forest", "forest", "island", "island"]

@@ -31,13 +31,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import player_protected_from
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_player
-from automtg.engine.structs import PROTECTION_EVERYTHING, PlayerProtection
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import player_protected_from
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_player
+from commanderblitz.engine.structs import PROTECTION_EVERYTHING, PlayerProtection
 from tests.conftest import _default_answer, action_for_card, oids_of
 
 GRANT = "t_player_protection"  # until your next turn, protection from everything

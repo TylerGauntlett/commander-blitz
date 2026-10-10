@@ -63,7 +63,7 @@ const meta = {
   title: "Lobby/PodLobby",
   component: PodLobby,
   parameters: {
-    automtg: {
+    commanderblitz: {
       mount: "screen",
       query: [[["card", "aesi_tyrant_of_gyre_strait"], cardResponse()]],
     },
@@ -159,7 +159,7 @@ export const GuestView: Story = {
  * that is worth an assertion of its own, because the next field somebody adds
  * here will look perfectly reasonable.
  *
- * The specs pin the shuffle through `window.__AUTOMTG_SEED` instead; see
+ * The specs pin the shuffle through `window.__COMMANDERBLITZ_SEED` instead; see
  * `e2e/helpers.ts:pinSeed`.
  */
 export const NothingToTypeInto: Story = {

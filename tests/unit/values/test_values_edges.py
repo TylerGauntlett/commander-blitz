@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import (
     evaluate_value,
     validate_counter_kind,
     validate_counters_on,
@@ -22,7 +22,7 @@ from automtg.engine.effects.values import (
     validate_rolled,
     validate_value,
 )
-from automtg.engine.errors import DslError
+from commanderblitz.engine.errors import DslError
 
 
 @pytest.fixture

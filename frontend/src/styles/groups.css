@@ -5,7 +5,7 @@
    `L1`/`R1` step between the board's six regions and trap the ring inside the
    one it is in, because directional navigation crosses a 96px seat strip, three
    lanes, a fanned hand and a 243px rail one card at a time.
-   `docs/handheld-playtest.md` Loop 1 records walking the board as "a bad way to
+   handheld playtest loop 1 records walking the board as "a bad way to
    ask can you reach everything": reachable and reachable-in-under-a-second are
    different properties, and only the second is playable.
 

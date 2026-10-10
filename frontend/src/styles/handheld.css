@@ -417,7 +417,7 @@ html[data-input="keyboard"] .glyph--key {
  *
  * `flex: 0 0 auto` is the load-bearing line: the dock must never take slack
  * from `.acts__list` above it, because the list is the decision and the slab is
- * one button. It is the same ordering `docs/handheld-playtest.md` sets for
+ * one button. It is the same ordering the handheld playtest log sets for
  * everything else in this rail.
  */
 /*

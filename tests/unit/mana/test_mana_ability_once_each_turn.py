@@ -27,7 +27,7 @@ simply cannot be activated twice for some unrelated reason.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import pass_until
 
 LIMITED = "t_once_font"  # "Activate only once each turn."

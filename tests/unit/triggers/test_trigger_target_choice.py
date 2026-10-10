@@ -34,7 +34,7 @@ still owed an answer.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import only_oid
 
 BOG = "t_bog"

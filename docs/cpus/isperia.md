@@ -41,18 +41,18 @@ Bident of Thassa** (forced attacks are free cards).
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/isperia.py`](../../src/automtg/ai/strategy/decks/isperia.py)
+The plan lives in [`decks/isperia.py`](../../src/commanderblitz/ai/strategy/decks/isperia.py)
 as `IsperiaControl`, a subclass of `Control`.
 
 | Behaviour | Where |
 |---|---|
-| **Counters a two-drop.** The classic agent saved counterspells for three-mana spells; control spends them from two up. | `Control._cheap_counter` (`counter_floor = 2`, [archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Counters a two-drop.** The classic agent saved counterspells for three-mana spells; control spends them from two up. | `Control._cheap_counter` (`counter_floor = 2`, [archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Only evasive creatures attack into blockers.** Ground creatures stay home and block. | `Control.attack_value` |
 | **Wraths only when they are one-sided.** The classic agent cast Wrath of God whenever nothing scored higher — often with only its own fliers on the table. A sweeper now needs the opponents' creatures to be worth at least 8 more than ours (power plus mana value, a commander counted double). | `IsperiaControl._sweeper_value` (`SWEEP_MARGIN`) |
 | **Angel of the Dire Hour is held for the alpha strike.** During an opponent's combat with 5+ power attacking, it is flashed in to exile them all; in our own main phase it waits while the table has two or more creatures that could attack. | `IsperiaControl._dire_hour_value`, `_blowout` |
 | **Evacuation mid-combat.** The same blowout rule, for the instant that bounces everything. | `IsperiaControl._sweeper_value` |
 | **Bident on their turn, never ours.** Forced attacks only matter on an opponent's turn before combat, only with Isperia out, and only when that player's whole team cannot take half our life. | `IsperiaControl._bident_value` |
-| **Isperia, Consecrated Sphinx and the flier anthems first.** | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
+| **Isperia, Consecrated Sphinx and the flier anthems first.** | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
 | **Wraths and the Dire Hour are the last cards discarded.** | `DeckPlan.protect`, `DefaultStrategy.junk_value` |
 | **Isperia does not chump-block** unless the damage is lethal. | `DefaultStrategy.block_value` |
 

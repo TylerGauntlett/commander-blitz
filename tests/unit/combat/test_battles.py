@@ -49,14 +49,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent
-from automtg.engine.temp_effects import restrict_attack
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_permanent
+from commanderblitz.engine.temp_effects import restrict_attack
 from tests.conftest import only_oid, pass_until
 
 BATTLE = "t_battle_wall"  # Siege, defense 3, no text
@@ -196,7 +196,7 @@ class TestAttackingOne:
         what keeps the fifteen existing reads of it true -- but the creature is
         not attacking *them*, and `attacking_permanent` is the record that says
         so."""
-        from automtg.engine.effects.selectors import attacking_player_matches
+        from commanderblitz.engine.effects.selectors import attacking_player_matches
 
         game = board(builder)
         hitter, battle = only_oid(game, HITTER, 0), only_oid(game, BATTLE, 1)
@@ -256,7 +256,7 @@ class TestGoadSeesABattleAsSomewhereElseToSwing:
     """
 
     def test_a_third_players_battle_discharges_the_requirement(self, builder):
-        from automtg.engine import combat as combat_mod
+        from commanderblitz.engine import combat as combat_mod
 
         game = (
             builder(players=3)
@@ -317,7 +317,7 @@ class TestTheActionSpaceCanSayIt:
     every trained checkpoint."""
 
     def test_attacking_a_battle_has_an_index(self, builder):
-        from automtg.ai import action_space
+        from commanderblitz.ai import action_space
 
         game = board(builder)
         hitter, battle = only_oid(game, HITTER, 0), only_oid(game, BATTLE, 1)

@@ -32,7 +32,7 @@ stays where it was.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 UP_TO = "t_pitch_and_draw"
 ANY_NUMBER = "t_pitch_plus_one"
@@ -179,9 +179,9 @@ class TestTheLoaderKeepsItHonest:
         """Nobody is choosing, so there is no floor to relax."""
         import pytest
 
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         card = CardModel.model_validate(
             {

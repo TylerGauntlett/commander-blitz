@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ghcr.io/tylergauntlett/auto-mtg # GHCR paths must be lowercase.
+  IMAGE_NAME: ghcr.io/tylergauntlett/commander-blitz # GHCR paths must be lowercase.
 
 # `scripts/verify.py` is still the whole gate and still the thing a developer
 # runs; what changed is that its stage groups are dealt out across runners

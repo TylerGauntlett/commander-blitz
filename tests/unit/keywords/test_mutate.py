@@ -40,12 +40,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Keyword, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Keyword, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 
 FOREST = "forest"
@@ -206,8 +206,8 @@ class TestUnder:
 class TestThePermanentIsUntouched:
     def test_counters_and_damage_stay(self, builder):
         """702.140c, and also simply what happens when nothing moves."""
-        from automtg.engine.objects import PLUS_ONE
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.objects import PLUS_ONE
+        from commanderblitz.engine.primitives import add_counters
 
         game = position(builder)
         host = only_oid(game, HOST)
@@ -314,7 +314,7 @@ class TestTheMergedAbilitiesAreRenumbered:
     """
 
     def indices(self, game, oid: int) -> list[int]:
-        from automtg.engine.characteristics import abilities_of
+        from commanderblitz.engine.characteristics import abilities_of
 
         return [a.index for a in abilities_of(game.state, oid)]
 

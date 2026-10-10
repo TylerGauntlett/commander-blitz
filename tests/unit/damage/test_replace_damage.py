@@ -85,12 +85,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach, damage_permanent, damage_player
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach, damage_permanent, damage_player
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import only_oid, pass_until, two_seat_board
 
 FLAIL = "t_rd_flail"  # both filtered lines, combat only

@@ -9,9 +9,9 @@ stronger card than the one printed.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.zones import destroy
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 
 

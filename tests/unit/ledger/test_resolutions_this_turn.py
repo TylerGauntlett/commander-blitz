@@ -35,11 +35,11 @@ under test. Resolving the ability is the claim; how the land got there is not.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import Zone
-from automtg.engine.stack import push_triggered_ability, resolve_top
-from automtg.engine.structs import TriggerInstance, TurnLedger
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.stack import push_triggered_ability, resolve_top
+from commanderblitz.engine.structs import TriggerInstance, TurnLedger
 from tests.conftest import only_oid, plus_one_counters
 
 CAT = "t_scythe"  # 1/1; landfall, doubling on the second resolution
@@ -134,7 +134,7 @@ class TestOnlyRealResolutionsCount:
         trigger *fail* would double on its next real one."""
         game = builder(players=2).battlefield(0, [EVOLVER]).build(advance=False)
         evolver = only_oid(game, EVOLVER, 0)
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         create_token(game.state, BEAR, 0)  # a 2/2 joining a 1/1: condition holds
         big = next(

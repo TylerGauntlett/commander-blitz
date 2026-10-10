@@ -234,7 +234,7 @@ describe("manaPips", () => {
  * In Commander the commander is the card the deck is built around, so the dock
  * shows it at all times rather than only while it happens to be in the command
  * zone -- having it vanish from the interface the moment it resolves is the
- * opposite of what a player wants to track. See docs/playtest-feedback-02.md.
+ * opposite of what a player wants to track. A cycle-2 playtest finding.
  */
 describe("commandersOf", () => {
   const boss = (overrides = {}) =>

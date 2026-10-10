@@ -37,11 +37,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
 
 WARDEN = "warden_of_evos_isle"  # creature spells with flying cost {1} less
 WATCHER = "watcher_of_the_spheres"  # the same line

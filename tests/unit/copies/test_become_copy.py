@@ -32,9 +32,9 @@ Two details the printed card turns on, and both are asserted:
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute_one
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.primitives import clear_until_eot
+from commanderblitz.engine.effects import execute_one
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.primitives import clear_until_eot
 from tests.conftest import only_oid, pt
 
 MIME = "t_mime"

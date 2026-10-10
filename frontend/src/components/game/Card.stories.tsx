@@ -18,7 +18,7 @@ import { Card, StaticCard } from "./Card";
 const meta = {
   title: "Game/Card",
   component: Card,
-  parameters: { automtg: { mount: "laneCards" } },
+  parameters: { commanderblitz: { mount: "laneCards" } },
   args: { card: pool.grizzlyBears(), onActivate: fn(), onDropOn: fn() },
 } satisfies Meta<typeof Card>;
 

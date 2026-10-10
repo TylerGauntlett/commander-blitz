@@ -48,18 +48,18 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Keyword, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.objects import MINUS_ONE, SHIELD
-from automtg.engine.primitives import add_counters, damage_permanent, spend_shield_counter
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.zones import destroy, sacrifice
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Keyword, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.objects import MINUS_ONE, SHIELD
+from commanderblitz.engine.primitives import add_counters, damage_permanent, spend_shield_counter
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.zones import destroy, sacrifice
 from tests.conftest import only_oid, pass_until
 
 FOREST = "forest"

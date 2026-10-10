@@ -36,7 +36,7 @@ function Regions() {
 const meta = {
   title: "Game/GroupDial",
   component: GroupDial,
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
   args: { current: "hand", onPick: fn() },
   decorators: [
     (Story) => {

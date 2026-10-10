@@ -19,10 +19,10 @@ because it is the thing a player would notice first if it broke.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import mana_sources
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.primitives import add_counters, animate, pump
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import mana_sources
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.primitives import add_counters, animate, pump
 from tests.conftest import pass_until
 
 

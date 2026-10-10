@@ -29,7 +29,7 @@ import { Table } from "./Table";
 const meta = {
   title: "Game/Table Pad",
   component: Table,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
 } satisfies Meta<typeof Table>;
 
 export default meta;
@@ -86,7 +86,7 @@ export const EveryAdvertisedButtonIsBound: Story = {
  * Stepping between the board's regions, and the trap that follows.
  *
  * Directional navigation crosses a 96px seat strip, three lanes, a fanned hand
- * and a 243px rail one card at a time. `docs/handheld-playtest.md` Loop 1
+ * and a 243px rail one card at a time. Handheld playtest loop 1
  * records walking the board as "a bad way to ask can you reach everything":
  * reachable and reachable-in-under-a-second are different properties, and only
  * the second is playable.

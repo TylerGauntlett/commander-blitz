@@ -285,7 +285,7 @@ needs no browser and always runs.
 Every gate above answers something about a *state*: is this a stop, is it big
 enough, is it on screen, does it hold its own action id. None of them can answer
 how long a decision takes, and on a controller that is the property a player
-actually feels — `docs/handheld-playtest.md` Loop 1 put it as "reachable and
+actually feels — handheld playtest loop 1 put it as "reachable and
 reachable-in-under-a-second are different properties, and only the second is
 playable". A journey that grew from two presses to nine would have passed every
 check in this document.
@@ -444,11 +444,11 @@ Playwright specs run against a server started with two variables, which
 
 | Variable | Effect |
 |---|---|
-| `AUTOMTG_FIXTURE_DECKS=1` | Serves the retired Edgar and Aesi lists (`data/decks/fixtures/`) under their old ids, and pins the CPU deck order ([decks.md](decks.md#test-fixtures)) |
-| `AUTOMTG_CPU=classic` | Every `heuristic` seat plays the pre-strategy agent ([cpus/](cpus/README.md)) |
+| `COMMANDERBLITZ_FIXTURE_DECKS=1` | Serves the retired Edgar and Aesi lists (`data/decks/fixtures/`) under their old ids, and pins the CPU deck order ([decks.md](decks.md#test-fixtures)) |
+| `COMMANDERBLITZ_CPU=classic` | Every `heuristic` seat plays the pre-strategy agent ([cpus/](cpus/README.md)) |
 
 **A dev server you let Playwright reuse needs both**, or the specs deal different
-games: `AUTOMTG_FIXTURE_DECKS=1 AUTOMTG_CPU=classic uvicorn automtg.server.app:get_app --factory`.
+games: `COMMANDERBLITZ_FIXTURE_DECKS=1 COMMANDERBLITZ_CPU=classic uvicorn commanderblitz.server.app:get_app --factory`.
 `/health` lists the deck ids, so `aesi` missing from it is the tell. Python tests
 need neither: `default_registry()` always carries the fixtures, and a sandbox
 seat with no deck gets the baseline strategy.

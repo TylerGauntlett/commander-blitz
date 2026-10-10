@@ -64,7 +64,7 @@ function Board({ state }: { state: GameView }) {
 const meta = {
   title: "Game/CombatArrows",
   component: CombatArrows,
-  parameters: { automtg: { mount: "tableBody" } },
+  parameters: { commanderblitz: { mount: "tableBody" } },
 } satisfies Meta<typeof CombatArrows>;
 
 export default meta;
@@ -88,7 +88,7 @@ export const NoCombat: Story = {
 export const StagedAttacks: Story = {
   args: { state: scenarios.combatDeclareAttackers().state, boardRef: { current: null } },
   parameters: {
-    automtg: { ui: { stagedAttacks: { 301: 1, 302: 2 } } },
+    commanderblitz: { ui: { stagedAttacks: { 301: 1, 302: 2 } } },
   },
   render: () => <Board state={scenarios.combatDeclareAttackers().state} />,
   play: async ({ canvasElement }) => {
@@ -111,7 +111,7 @@ export const StagedAttacks: Story = {
 export const StagedBlocks: Story = {
   args: { state: scenarios.combatDeclareBlockers().state, boardRef: { current: null } },
   parameters: {
-    automtg: { ui: { stagedBlocks: { 401: 410, 402: 411, 403: 412 } } },
+    commanderblitz: { ui: { stagedBlocks: { 401: 410, 402: 411, 403: 412 } } },
   },
   render: () => <Board state={scenarios.combatDeclareBlockers().state} />,
 };
@@ -126,7 +126,7 @@ export const DeclaredCombat: Story = {
 export const FourPlayerCross: Story = {
   args: { state: scenarios.fourPlayerPod().state, boardRef: { current: null } },
   parameters: {
-    automtg: { ui: { stagedAttacks: { 603: 3 } } },
+    commanderblitz: { ui: { stagedAttacks: { 603: 3 } } },
   },
   render: () => <Board state={scenarios.fourPlayerPod().state} />,
 };

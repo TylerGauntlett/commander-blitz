@@ -32,7 +32,7 @@ rider, so there is no state where the first happened and the second did not.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import pass_until, settle_to_priority
 
 LILAH = "t_lilah"

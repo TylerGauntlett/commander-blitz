@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.registry import default_registry, server_registry
-from automtg.server.lobby import Pod, PodRegistry
-from automtg.server.sessions import SessionRegistry
+from commanderblitz.cards.registry import default_registry, server_registry
+from commanderblitz.server.lobby import Pod, PodRegistry
+from commanderblitz.server.sessions import SessionRegistry
 
 
 @pytest.fixture
@@ -18,14 +18,14 @@ def fresh_server_registry():
 
 class TestTheServerHidesThem:
     def test_a_player_never_sees_the_fixtures(self, fresh_server_registry, monkeypatch):
-        monkeypatch.delenv("AUTOMTG_FIXTURE_DECKS", raising=False)
+        monkeypatch.delenv("COMMANDERBLITZ_FIXTURE_DECKS", raising=False)
         data = server_registry()
         assert "aesi" not in data.decks and "edgar" not in data.decks
         assert "edgar_markov" in data.decks
         assert data.seating == ()
 
     def test_a_test_server_asks_for_them(self, fresh_server_registry, monkeypatch):
-        monkeypatch.setenv("AUTOMTG_FIXTURE_DECKS", "1")
+        monkeypatch.setenv("COMMANDERBLITZ_FIXTURE_DECKS", "1")
         data = server_registry()
         assert {"aesi", "edgar"} <= set(data.decks)
         assert data.seating == ("aesi", "edgar", "isperia", "zurgo")

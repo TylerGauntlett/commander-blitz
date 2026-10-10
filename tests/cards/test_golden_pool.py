@@ -11,7 +11,7 @@ moved.
 
 To re-pin after a deliberate change::
 
-    AUTOMTG_UPDATE_GOLDEN=1 python -m pytest tests/cards/test_golden_pool.py
+    COMMANDERBLITZ_UPDATE_GOLDEN=1 python -m pytest tests/cards/test_golden_pool.py
 
 and commit the two files with the change that made them move. The pin is the
 pool as shipped, so a card added in the normal way moves it too -- that is the
@@ -33,9 +33,9 @@ from typing import Any
 
 import pytest
 
-from automtg.cards import loader
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.engine.effects import known_ops
+from commanderblitz.cards import loader
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.engine.effects import known_ops
 
 HERE = Path(__file__).resolve().parent
 CARD_DIR = HERE.parents[1] / "data" / "cards"
@@ -55,7 +55,7 @@ def _engine_owned(name: str, value: Any) -> bool:
     return any(
         getattr(module, name, None) is value
         for module_name, module in sys.modules.items()
-        if module_name.startswith("automtg.engine") and module is not None
+        if module_name.startswith("commanderblitz.engine") and module is not None
     )
 
 
@@ -107,18 +107,18 @@ def shipped() -> CardRegistry:
 
 
 def _updating() -> bool:
-    return os.environ.get("AUTOMTG_UPDATE_GOLDEN") == "1"
+    return os.environ.get("COMMANDERBLITZ_UPDATE_GOLDEN") == "1"
 
 
 def test_every_shipped_card_compiles_to_what_it_did(shipped: CardRegistry) -> None:
     digest = pool_digest(shipped)
     if _updating():
         POOL_HASH.write_text(digest + "\n", encoding="utf-8", newline="\n")
-    assert POOL_HASH.exists(), "no golden hash yet: run with AUTOMTG_UPDATE_GOLDEN=1"
+    assert POOL_HASH.exists(), "no golden hash yet: run with COMMANDERBLITZ_UPDATE_GOLDEN=1"
     pinned = POOL_HASH.read_text(encoding="utf-8").strip()
     assert digest == pinned, (
         f"the compiled pool changed ({len(shipped)} cards). If that was the intent, "
-        "re-pin with AUTOMTG_UPDATE_GOLDEN=1 and commit golden_pool.sha256 with it."
+        "re-pin with COMMANDERBLITZ_UPDATE_GOLDEN=1 and commit golden_pool.sha256 with it."
     )
 
 
@@ -130,7 +130,7 @@ def test_the_ops_and_the_vocabulary_are_what_they_were() -> None:
             encoding="utf-8",
             newline="\n",
         )
-    assert VOCABULARY.exists(), "no golden vocabulary yet: run with AUTOMTG_UPDATE_GOLDEN=1"
+    assert VOCABULARY.exists(), "no golden vocabulary yet: run with COMMANDERBLITZ_UPDATE_GOLDEN=1"
     pinned = json.loads(VOCABULARY.read_text(encoding="utf-8"))
 
     # Ops first and separately, because the likeliest way to lose one is a new

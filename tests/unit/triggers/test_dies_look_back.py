@@ -17,7 +17,7 @@ Each test card gains 1 life per firing, so the life gained counts firings.
 
 from __future__ import annotations
 
-from automtg.engine.zones import destroy
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, settle
 
 

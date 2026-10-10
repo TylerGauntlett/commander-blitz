@@ -28,7 +28,7 @@ Two things that would be wrong if this were written the obvious way instead:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import _default_answer, only_oid
 
 FOREST = "forest"

@@ -27,12 +27,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, find_action, only_oid, pass_until, plus_one_counters
 
 RENOWNED = "t_renowned"  # 2/2, renown 2
@@ -122,7 +122,7 @@ class TestTheFlagItself:
         assert game.state.objects[only_oid(game, "t_bear", 0)].flags == set()
 
     def test_the_condition_reads_the_source(self, builder):
-        from automtg.engine.effects.conditions import evaluate_condition
+        from commanderblitz.engine.effects.conditions import evaluate_condition
 
         game = builder(players=2).battlefield(0, [RENOWNED]).build()
         oid = only_oid(game, RENOWNED, 0)

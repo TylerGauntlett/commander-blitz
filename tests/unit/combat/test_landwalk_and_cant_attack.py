@@ -27,9 +27,9 @@ static: nothing else could be *filtered on*.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.combat import can_attack, can_block
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.combat import can_attack, can_block
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import find_action, only_oid, pass_until
 
 

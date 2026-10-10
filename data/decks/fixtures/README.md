@@ -7,7 +7,7 @@ Hundreds of seeded Python and Playwright tests were written against these exact
 99s, so they live on as fixtures:
 
 - `default_registry()` (tests, arena, trainer) always loads them.
-- The server loads them only with `AUTOMTG_FIXTURE_DECKS=1`, which the
+- The server loads them only with `COMMANDERBLITZ_FIXTURE_DECKS=1`, which the
   Playwright web server and `scripts/verify.py` set. A player never sees them.
 - `seating.json` pins the order a lobby hands decks to CPUs, so a seeded pod
   deals the same opponents it always did.

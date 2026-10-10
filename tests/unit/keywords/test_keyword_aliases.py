@@ -24,9 +24,13 @@ keyword, which is how Simic Sky Swallower once shipped shroud as hexproof.
 
 from __future__ import annotations
 
-from automtg.cards.loader.vocabulary import KEYWORD_ALIASES, KNOWN_KEYWORDS, normalize_keyword
-from automtg.cards.proxy import lift_keywords
-from automtg.engine.enums import Keyword
+from commanderblitz.cards.loader.vocabulary import (
+    KEYWORD_ALIASES,
+    KNOWN_KEYWORDS,
+    normalize_keyword,
+)
+from commanderblitz.cards.proxy import lift_keywords
+from commanderblitz.engine.enums import Keyword
 
 BEAR_UMBRA = (
     "Enchant creature\n"

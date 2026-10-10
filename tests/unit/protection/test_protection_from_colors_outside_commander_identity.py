@@ -33,16 +33,16 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import AbilityModel, CardModel
-from automtg.engine.characteristics import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import AbilityModel, CardModel
+from commanderblitz.engine.characteristics import (
     chars,
     commander_color_identity,
     protection_from,
 )
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach, change_control
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach, change_control
 
 PLATE = "t_plate_probe"
 BEAR = "t_bear"
@@ -145,8 +145,8 @@ class TestWhereItIsRead:
         game, _, bear = position(builder, commanders=())
         game_state = game.state
         # An Azorius general in the *opponent's* command zone changes nothing.
-        from automtg.engine.enums import Zone
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.state import new_object
 
         theirs = new_object(game_state, AZORIUS, owner=1, zone=Zone.COMMAND, is_commander=True)
         game_state.players[1].command.append(theirs.oid)
@@ -182,7 +182,7 @@ class TestTheRulesThatReadIt:
 class TestTheEquipLines:
     def test_equip_commander_reaches_only_a_commander(self, builder):
         game, plate, bear = position(builder, commanders=(BLACK,), lands=["mountain"] * 5)
-        from automtg.engine.enums import Zone
+        from commanderblitz.engine.enums import Zone
 
         general = game.state.players[0].commanders[0]
         game.state.players[0].command.remove(general)

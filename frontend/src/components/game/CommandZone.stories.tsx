@@ -27,7 +27,7 @@ function withCommanders(cards = [pool.aesi({ oid: 900 })], overrides = {}) {
 const meta = {
   title: "Game/CommandZone",
   component: CommandZone,
-  parameters: { automtg: { mount: "orbBody" } },
+  parameters: { commanderblitz: { mount: "orbBody" } },
   args: {
     pid: 0,
     playableOids: new Set<number>(),
@@ -110,7 +110,7 @@ export const WithArt: Story = {
 /** Loaded, and this commander has no printing: the plate, drawn on purpose. */
 export const NoArt: Story = {
   args: { state: withCommanders() },
-  parameters: { automtg: { mount: "orbBody", art: "none" } },
+  parameters: { commanderblitz: { mount: "orbBody", art: "none" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText(/Aesi/);

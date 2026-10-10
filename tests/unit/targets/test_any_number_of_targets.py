@@ -37,11 +37,11 @@ import copy
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.targeting import enumerate_target_tuples
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.targeting import enumerate_target_tuples
 from tests.conftest import declare_targets, pass_until
 
 SPELL = "t_any_number_bounce"  # "Return any number of target creatures…"
@@ -173,7 +173,7 @@ class TestABigBoardIsNotEnumerated:
     """
 
     def test_forty_creatures_cap_at_the_option_limit(self, builder):
-        from automtg.engine.targeting import MAX_TARGET_OPTIONS
+        from commanderblitz.engine.targeting import MAX_TARGET_OPTIONS
 
         offered = tuples(board(builder, 40))
         assert 0 < len(offered) <= MAX_TARGET_OPTIONS
@@ -191,7 +191,7 @@ class TestASingleTargetIsNeverCapped:
     a busy board could not be chosen."""
 
     def test_every_permanent_is_offered(self, builder):
-        from automtg.engine.enums import ActionKind, Step
+        from commanderblitz.engine.enums import ActionKind, Step
         from tests.conftest import only_oid
 
         game = (

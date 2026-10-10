@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy.archetypes import Voltron
-from automtg.ai.strategy.decks.blor_the_impervious import STRATEGY
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.structs import TargetRef
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy.archetypes import Voltron
+from commanderblitz.ai.strategy.decks.blor_the_impervious import STRATEGY
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 DECK = "blor_the_impervious"

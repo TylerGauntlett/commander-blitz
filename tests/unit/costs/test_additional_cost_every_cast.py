@@ -32,7 +32,7 @@ additional cost — so every difference asserted below is that one field.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 
 MAD = "t_mad_laughter"
 PLAIN = "t_plain_laughter"

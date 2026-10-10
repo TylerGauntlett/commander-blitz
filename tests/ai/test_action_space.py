@@ -9,9 +9,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from automtg.ai import action_space
-from automtg.ai.agents import RandomAgent
-from automtg.engine.game import create_game
+from commanderblitz.ai import action_space
+from commanderblitz.ai.agents import RandomAgent
+from commanderblitz.engine.game import create_game
 
 
 def random_states(seed: int, deck_ids=("aesi", "edgar"), steps: int = 400):
@@ -88,7 +88,7 @@ class TestMaskCorrectness:
 
     @pytest.mark.parametrize("seed", [0, 1, 2])
     def test_pass_is_always_available_at_priority(self, seed):
-        from automtg.engine.enums import DecisionKind
+        from commanderblitz.engine.enums import DecisionKind
 
         for game in random_states(seed, steps=80):
             if game.pending().kind is not DecisionKind.PRIORITY:

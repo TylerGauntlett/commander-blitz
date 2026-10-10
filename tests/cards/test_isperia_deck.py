@@ -25,7 +25,7 @@ draw, the card that should *not* come back.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     _default_answer,
     action_for_card,

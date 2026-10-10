@@ -21,9 +21,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from automtg.cards.proxy import _enters_tapped
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.zones import enters_cost_prompt
+from commanderblitz.cards.proxy import _enters_tapped
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.zones import enters_cost_prompt
 from tests.conftest import _default_answer
 
 SHOCKS = [
@@ -107,7 +107,7 @@ class TestTheQuestionWhereItIsStillAsked:
 
     def test_it_names_the_price(self):
         replacement = {"event": "self_enters_tapped", "unless_cost": {"pay_life": 2}}
-        from automtg.engine.carddef import Cost
+        from commanderblitz.engine.carddef import Cost
 
         prompt = enters_cost_prompt(replacement, Cost(pay_life=2), "Blood Crypt")
         assert prompt == "Pay 2 life so Blood Crypt enters untapped?"

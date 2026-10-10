@@ -25,8 +25,8 @@ cipher keeps paying.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.primitives import damage_player
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.primitives import damage_player
 from tests.conftest import _default_answer, only_oid, pass_until
 
 SWAMP = "swamp"

@@ -20,7 +20,7 @@ shipped card exercises the same code through an activated ability.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import _default_answer, action_for_card
 
 

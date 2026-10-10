@@ -36,7 +36,7 @@ function hand(count: number): CardView[] {
 const meta = {
   title: "Game/HandFan",
   component: HandFan,
-  parameters: { automtg: { mount: "tableFoot" } },
+  parameters: { commanderblitz: { mount: "tableFoot" } },
   args: { onActivate: fn(), onDropOn: fn(), selectedOid: null },
 } satisfies Meta<typeof HandFan>;
 
@@ -164,7 +164,7 @@ export const TheArcAtFifteen: Story = {
  */
 export const HoverDoesNotMoveTheHitBox: Story = {
   args: { cards: hand(5), playableOids: new Set([100]) },
-  parameters: { automtg: { mount: "tableFoot", motion: "real" } },
+  parameters: { commanderblitz: { mount: "tableFoot", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Forest");

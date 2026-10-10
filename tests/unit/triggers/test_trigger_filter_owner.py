@@ -47,14 +47,14 @@ import re
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import triggers
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import change_control
-from automtg.engine.triggers import TRIGGER_FILTER_KEYS, matches_card_filter
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import triggers
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import change_control
+from commanderblitz.engine.triggers import TRIGGER_FILTER_KEYS, matches_card_filter
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, settle
 
 KEEPER = "t_page_keeper"  # Tome of Legends' two triggers, by ownership

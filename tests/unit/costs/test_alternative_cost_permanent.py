@@ -43,11 +43,11 @@ from pathlib import Path
 
 import pytest
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.cards.authoring.verify import _covered, residual_text
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.cards.authoring.verify import _covered, residual_text
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import _default_answer, oids_of
 
 BLADE = "t_sky_blade"  # {4}{W}{W}{W} 7/7 flier; or {W} + tap four fliers

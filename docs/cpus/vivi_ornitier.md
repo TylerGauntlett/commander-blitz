@@ -45,13 +45,13 @@ bonus while Vivi is in hand, in the command zone or on the battlefield.
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/vivi_ornitier.py`](../../src/automtg/ai/strategy/decks/vivi_ornitier.py)
+The plan lives in [`decks/vivi_ornitier.py`](../../src/commanderblitz/ai/strategy/decks/vivi_ornitier.py)
 as `ViviSpellslinger`, a subclass of `Spellslinger`.
 
 | Behaviour | Where |
 |---|---|
-| **Vivi first.** Her key-card bonus (120) puts her over any other three-drop or a mana rock. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
-| **Instants and sorceries outrank other spells**, a little more precombat. | `Spellslinger.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Vivi first.** Her key-card bonus (120) puts her over any other three-drop or a mana rock. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
+| **Instants and sorceries outrank other spells**, a little more precombat. | `Spellslinger.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **With Vivi out, every noncreature spell is worth more** — artifacts and enchantments trigger her too, which plain `Spellslinger` does not know. | `ViviSpellslinger._cast_value` (`VIVI_TRIGGER`) |
 | **Curiosity and Ophidian Eye go on Vivi or nowhere.** The classic agent put them on whatever creature came first, often an opponent's. Without Vivi on the battlefield they wait in hand. | `ViviSpellslinger._cast_value` (`PINGER_AURAS`) |
 | **Winged Boots equip Vivi and stay there.** | `ViviSpellslinger._equip_value` |

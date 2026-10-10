@@ -35,10 +35,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.ops_control import PERMANENT_TYPE_CHOICES
-from automtg.engine.effects.selectors import validate_selector
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects.ops_control import PERMANENT_TYPE_CHOICES
+from commanderblitz.engine.effects.selectors import validate_selector
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import hand_ids, pass_until
 
 RENAISSANCE = "t_cpt_renaissance"  # choose a permanent type, return those cards
@@ -162,7 +162,7 @@ class TestTheTwoAxesAreSeparate:
         cleared by `reset_permanent_state` as the sorcery reaches the graveyard,
         which is right and also means there is nothing left to read afterwards.
         """
-        from automtg.engine.effects.selectors import _resolve_chosen_card_type
+        from commanderblitz.engine.effects.selectors import _resolve_chosen_card_type
 
         class Source:
             chosen_type = "Vampire"  # the *creature* type axis
@@ -174,7 +174,7 @@ class TestTheTwoAxesAreSeparate:
         )
 
     def test_the_card_type_reader_uses_its_own_slot(self):
-        from automtg.engine.effects.selectors import _resolve_chosen_card_type
+        from commanderblitz.engine.effects.selectors import _resolve_chosen_card_type
 
         class Source:
             chosen_type = "Vampire"

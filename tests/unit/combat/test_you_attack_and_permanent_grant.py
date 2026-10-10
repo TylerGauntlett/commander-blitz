@@ -27,8 +27,8 @@ difference.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.zones import destroy, move_object
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import oids_of, settle
 
 ATTACKER_TRIGGER = "t_you_attack"  # "whenever you attack, you gain 1 life"
@@ -129,7 +129,7 @@ class TestAGrantWithNoPrintedDuration:
         assert not obj.until_eot, "and not in the list that is swept"
 
     def test_it_survives_the_cleanup_step(self, builder):
-        from automtg.engine.turn import clear_until_eot
+        from commanderblitz.engine.turn import clear_until_eot
 
         game, bear = self.board(builder)
         clear_until_eot(game.state)
@@ -137,7 +137,7 @@ class TestAGrantWithNoPrintedDuration:
         assert game.state.objects[bear].granted_abilities_permanent
 
     def test_the_granted_trigger_still_fires_afterwards(self, builder):
-        from automtg.engine.turn import clear_until_eot
+        from commanderblitz.engine.turn import clear_until_eot
 
         game, bear = self.board(builder)
         clear_until_eot(game.state)

@@ -44,12 +44,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import legality
-from automtg.engine.characteristics import loyalty_activation_timing_waived
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import legality
+from commanderblitz.engine.characteristics import loyalty_activation_timing_waived
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid
 
 TEFERI = "t_instant_walker"  # the permission, self_only

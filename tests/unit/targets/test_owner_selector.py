@@ -45,10 +45,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches, resolve_pool, validate_selector
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import change_control
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches, resolve_pool, validate_selector
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import change_control
 from tests.conftest import only_oid
 
 #: "A commander you own on the battlefield or in the command zone" -- the pool
@@ -99,7 +99,7 @@ def ctx_for(game, controller: int = 0) -> EffectContext:
 
 def x_from(game, selector, controller: int = 0) -> int:
     """The number Majestic Genesis looks that deep on."""
-    from automtg.engine.effects.values import evaluate_value
+    from commanderblitz.engine.effects.values import evaluate_value
 
     return evaluate_value(
         ctx_for(game, controller),

@@ -26,11 +26,11 @@ exactly the hand the test built, and every number below is that hand's size.
 
 from __future__ import annotations
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import DecisionKind, Step, Zone
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import DecisionKind, Step, Zone
 from tests.conftest import _default_answer
 
 BOX = "t_puzzle_box"

@@ -25,10 +25,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_player
+from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_player
 from tests.conftest import _default_answer, only_oid, pass_until
 
 ISLAND = "island"
@@ -125,7 +125,7 @@ class TestWhenTheProwlLineIsOffered:
 class TestItIsAboutTheDamageAndNotTheBoard:
     def test_it_survives_the_creature_dying(self, builder):
         """The whole reason it is a ledger entry. `exists` would go false here."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = position(builder)
         deal_combat_damage(game, ["Faerie"])

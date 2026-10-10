@@ -13,10 +13,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import pass_until
 
 
@@ -58,7 +58,7 @@ class TestWhatIsOffered:
         If it did not, the RL decoder and the server's index lookup would both
         be free to substitute one for the other.
         """
-        from automtg.engine.actions import Action
+        from commanderblitz.engine.actions import Action
 
         plain = Action(kind=ActionKind.CAST, source=1)
         kicked = Action(kind=ActionKind.CAST, source=1, kicked=True)
