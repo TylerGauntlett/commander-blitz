@@ -34,7 +34,14 @@ const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
  * them into Steam's `grid/` under the shortcut's app id.
  */
 const STEAM = process.argv.includes("--steam");
-const GRID = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "desktop", "steam", "grid");
+const GRID = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "desktop",
+  "steam",
+  "grid",
+);
 
 /** The ground the mark sits on: `--void-0`. */
 const VOID = "#0b0a16";
