@@ -1,0 +1,23 @@
+# Secret scanning, run on every pull request (`secrets` job in deploy.yml) and
+# over the full history before the repository went public.
+title = "commander-blitz"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Card data and lockfiles: large, machine-written, and secret-free by construction"
+paths = [
+  '''^data/art/''',
+  '''^data/catalog/''',
+  '''^data/cards/''',
+  '''^data/authoring/''',
+  '''^frontend/public/symbols/''',
+  '''package-lock\.json$''',
+  '''^constraints\.txt$''',
+]
+# Lobby codes and pod tokens are generated at runtime; the test fixtures that
+# pin them look like high-entropy strings and are not credentials.
+regexes = [
+  '''secrets\.token_urlsafe''',
+]

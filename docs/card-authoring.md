@@ -1,6 +1,6 @@
 # Implementing cards, systematically
 
-The engine plays a few hundred cards out of ~32,000. Everything else imports as
+The engine plays about three thousand cards out of ~32,000. Everything else imports as
 an inert *proxy* — right name, art, cost, types and keywords, with the rules text
 doing nothing ([deck-import.md](deck-import.md)). That is honest, and it is not a
 game: a real imported deck had 41 of its 100 cards doing nothing.

@@ -8,8 +8,8 @@ decision from a player.** Everything else is a *driver* that answers decisions.
 ```mermaid
 flowchart LR
     subgraph data["data/ — the authored layer"]
-        cards["cards/*.cards.json<br/>149 card definitions"]
-        decks["decks/*.deck.json<br/>2 Commander decks"]
+        cards["cards/*.cards.json<br/>~3,000 card definitions"]
+        decks["decks/*.deck.json<br/>12 Commander decks"]
     end
 
     subgraph generated["data/generated/ — imported, gitignored"]
@@ -32,8 +32,9 @@ flowchart LR
 
     subgraph clients["clients"]
         policy["PPO policy"]
-        heuristic["Heuristic agent"]
+        heuristic["Heuristic agent<br/>+ a strategy per CPU deck"]
         react["React client"]
+        desktop["desktop/ Electron shell<br/>runs the server as a sidecar"]
     end
 
     cards --> loader
@@ -49,6 +50,7 @@ flowchart LR
     env --> policy
     env --> heuristic
     server --> react
+    server --> desktop
 ```
 
 The dotted edges are the **two-layer registry**. `default_registry()` loads only
@@ -56,6 +58,15 @@ The dotted edges are the **two-layer registry**. `default_registry()` loads only
 the FastAPI app — every test, the trainer, the arena, the CLI — is on the first,
 so importing a deck cannot change the answer any of them gives. See
 [deck-import.md](deck-import.md).
+
+The heuristic agent is one agent with twelve plans: each shipped deck carries a
+*strategy* that scores the legal actions the way that deck wants to play. See
+[cpus/README.md](cpus/README.md).
+
+The desktop build ([steamdeck.md](steamdeck.md)) is the same server and the same
+client: an Electron shell starts the server as a sidecar on loopback and loads the
+built client from it, so a Steam Deck plays offline against the same engine the
+site runs. See [adr/0009-offline-first-desktop.md](adr/0009-offline-first-desktop.md).
 
 ## Why a single seam matters
 
