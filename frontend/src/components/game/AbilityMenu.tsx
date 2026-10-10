@@ -22,9 +22,15 @@
  *
  * `data-preview-oid` on every item keeps the reader on the card the question
  * is about, so `Y` reads it in full over the menu.
+ *
+ * TWO STEPS, AT MOST. A Treasure's one ability is five yields, and the menu
+ * asks which colour straight away. A card with that ability *and* another
+ * (Commander's Sphere) asks which ability first, then which colour, in the
+ * same dialog: the chosen item's route is itself a `menu`, and `step` holds
+ * which item that was so the yields are recomputed from the live actions.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { GameView, LegalAction } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { stopId } from "../../input/stops";
@@ -50,7 +56,17 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
   const card = oid === null ? null : findCard(state, oid);
   const route = oid === null ? null : abilityRoute(actions, oid, card?.name ?? null);
   const abilities: AbilityChoice[] | null = route?.kind === "menu" ? route.abilities : null;
-  const first = abilities?.[0];
+
+  const [step, setStep] = useState<string | null>(null);
+  // Every way the menu closes -- a pick, the backdrop, `B` -- clears the oid,
+  // so the next question starts at its first step.
+  useEffect(() => {
+    if (oid === null) setStep(null);
+  }, [oid]);
+  const chosen = step === null ? undefined : abilities?.find((a) => keyOf(a) === step);
+  const nested = chosen ? routeFor(chosen) : null;
+  const items = nested?.kind === "menu" ? nested.abilities : abilities;
+  const firstKey = items?.[0] ? keyOf(items[0]) : null;
 
   /*
    * The question can stop being one while it is open: an opponent's response
@@ -69,14 +85,18 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
    * same. The return address puts it back on the card afterwards.
    */
   useEffect(() => {
-    if (first) setCursor(stopId.menu(`ability:${first.key ?? first.index}`));
-  }, [first]);
+    if (firstKey !== null) setCursor(stopId.menu(`ability:${firstKey}`));
+  }, [firstKey]);
 
-  if (oid === null || abilities === null || card === null) return null;
+  if (oid === null || items === null || card === null) return null;
 
   const pick = (ability: AbilityChoice) => {
     if (disabled) return;
     const next = routeFor(ability);
+    if (next.kind === "menu") {
+      setStep(keyOf(ability));
+      return;
+    }
     setAbilityMenu(null);
     if (next.kind === "act") {
       act(next.id);
@@ -106,21 +126,17 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
       >
         <header className="prompt__head">
           <h2 className="prompt__title">{card.name}</h2>
-          <p className="prompt__hint">
-            {abilities.every((a) => a.key?.startsWith("land-"))
-              ? "How does it enter?"
-              : "Which ability?"}
-          </p>
+          <p className="prompt__hint">{hintFor(items)}</p>
         </header>
         <div className="menu__items">
-          {abilities.map((ability) => (
+          {items.map((ability) => (
             <button
               type="button"
-              key={ability.index === -1 ? ability.text : ability.index}
+              key={ability.key ?? (ability.index === -1 ? ability.text : ability.index)}
               className="menu__item act act--ability"
-              data-stop={stopId.menu(`ability:${ability.key ?? ability.index}`)}
+              data-stop={stopId.menu(`ability:${keyOf(ability)}`)}
               data-preview-oid={oid}
-              data-testid={`ability-${ability.key ?? ability.index}`}
+              data-testid={`ability-${keyOf(ability)}`}
               disabled={disabled}
               onClick={() => pick(ability)}
             >
@@ -133,4 +149,17 @@ export function AbilityMenu({ state, actions, act, followUp, disabled }: Props) 
       </div>
     </div>
   );
+}
+
+/** What names an item's stop and test id: its key, or else its place on the card. */
+function keyOf(ability: AbilityChoice): string {
+  return ability.key ?? String(ability.index);
+}
+
+/** The question the items answer, from what kind of items they are. */
+function hintFor(items: AbilityChoice[]): string {
+  if (items.every((a) => a.key?.startsWith("land-"))) return "How does it enter?";
+  // Only mana abilities name their yields today (`legality._mana_option_label`).
+  if (items.every((a) => a.key?.includes("-yield-"))) return "Which mana?";
+  return "Which ability?";
 }
