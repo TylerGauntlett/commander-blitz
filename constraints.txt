@@ -19,13 +19,13 @@ httpcore2==2.13.1
 httpx==0.28.1
 httpx2==2.13.1
 idna==3.20
-iniconfig==2.3.0
+iniconfig==2.3.1
 numpy==2.5.3
-opentelemetry-api==1.45.0
+opentelemetry-api==1.45.1
 packaging==26.3
 pluggy==1.6.0
 pydantic==2.13.5
-pydantic_core==2.46.5
+pydantic_core==2.49.0
 pygments==2.21.0
 pytest==9.1.1
 pytest-cov==7.1.0
