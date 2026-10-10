@@ -650,11 +650,11 @@ jobs:
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
           envs: IMAGE_TAG,GHCR_USER,GHCR_TOKEN,IMAGE_NAME
-          script_stop: true
           script: |
-            # Explicit, rather than relying on script_stop: a registry denial
-            # was observed to leave `docker compose pull` exiting 0, and the
-            # step went green having deployed nothing at all.
+            # The only thing that stops this script on an error: ssh-action
+            # dropped its `script_stop` input after v1.0.3, and a registry
+            # denial was once observed to leave `docker compose pull` exiting
+            # 0, so the step went green having deployed nothing at all.
             set -euo pipefail
 
             # First deploy after `terraform apply` can land while cloud-init is
