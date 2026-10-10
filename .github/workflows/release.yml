@@ -46,8 +46,11 @@ jobs:
           desktop: "true"
       - run: npm run build
         working-directory: frontend
-      - run: desktop/sidecar/build.sh
-      - run: PYTHON=python desktop/sidecar/smoke.sh
+      # Through `bash`, not by mode bit: the scripts are committed from
+      # Windows, and the first release died on `Permission denied` when the
+      # bit was missing. The bit is set too, for anybody running them by hand.
+      - run: bash desktop/sidecar/build.sh
+      - run: PYTHON=python bash desktop/sidecar/smoke.sh
       - run: >
           node scripts/assemble-content.mjs --version ${{ steps.version.outputs.version }}
           --server sidecar/build/server/commanderblitz-server
