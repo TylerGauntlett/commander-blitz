@@ -128,40 +128,30 @@ async function main() {
     ),
   );
 
-  await write("og.png", await shot(ogCard(src), 1200, 630));
+  await write("og.png", await shot(ogCard(src, await readRoom()), 1200, 630));
 
   await browser.close();
 }
 
 /**
- * The social preview: the front door, cropped to 1200x630.
+ * The social preview, 1200x630: the Steam hero's room, cropped to a link card.
  *
- * Deliberately not a new composition. The gradient is `body`'s three washes from
- * `theme.css` and the wordmark is the hero's two-line stack, so a link unfurled
- * in Discord shows the page somebody is about to land on.
+ * The mark and the stacked wordmark hold the left half; the doorway stands in
+ * the lit ring on the right, as on the hero banner and the portrait capsule, so
+ * a link unfurled in Discord shows the same front door as the Steam library.
  */
-function ogCard(src) {
-  return `<div style="
-      width:1200px;height:630px;box-sizing:border-box;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      font-family:'Segoe UI',Inter,system-ui,-apple-system,sans-serif;
-      background:
-        radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
-        radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
-        linear-gradient(180deg, #141328 0%, ${VOID} 62%);">
-    <img src="${src}" width="104" height="104" alt="" style="margin-bottom:34px">
-    <div style="
-        font-size:88px;font-weight:800;line-height:0.95;letter-spacing:0.14em;
-        text-transform:uppercase;color:${GOLD};text-align:center;
-        text-shadow:0 0 60px rgb(255 212 121 / 0.22);
-        /* The tracking is trailing space on the last glyph of each line; without
-           the matching indent the stack reads as leaning left. */
-        text-indent:0.14em;">
-      <div>Commander</div>
-      <div>Blitz</div>
-    </div>
-    <div style="margin-top:38px;font-size:25px;letter-spacing:0.04em;color:#a09bc4">
-      Four seats, four cards, all face-down.
+function ogCard(src, room) {
+  return `<div style="width:1200px;height:630px;position:relative;overflow:hidden">
+    ${roomSvg(room, 1200, 630, {
+      ySlice: "YMin",
+      sigil: { x: 880, y: 545, s: 1.1 },
+      door: { x: 880, y: 545, s: 2.7 },
+      scale: 1.2,
+    })}
+    <div style="position:absolute;left:90px;top:0;bottom:0;display:flex;flex-direction:column;
+        justify-content:center;align-items:flex-start;gap:34px;font-family:${FONT};">
+      <img src="${src}" width="112" height="112" alt="">
+      ${wordmark(76, "text-align:left;text-indent:0")}
     </div>
   </div>`;
 }
