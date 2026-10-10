@@ -244,8 +244,16 @@ export const FliesToTheGraveyard: Story = {
       );
 
     const started = distance(ghost.getBoundingClientRect());
-    await settled(ghost);
-    expect(distance(ghost.getBoundingClientRect())).toBeLessThan(started);
+    // Sample every frame the ghost is still mounted and stop the moment it has
+    // closed on the pile. Waiting for the transform to settle first measured a
+    // ghost the beat had already removed on a slow runner: a detached element's
+    // box is at the origin, which reads as a flight *away* from the pile.
+    let closest = started;
+    for (let i = 0; i < 180 && ghost.isConnected && closest >= started; i += 1) {
+      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+      closest = Math.min(closest, distance(ghost.getBoundingClientRect()));
+    }
+    expect(closest).toBeLessThan(started);
   },
 };
 
