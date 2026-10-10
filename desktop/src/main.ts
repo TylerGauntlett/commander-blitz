@@ -49,15 +49,19 @@ const sidecarLog = fileLogger(paths.logs, "sidecar");
 
 /*
  * Chromium under gamescope. Inside an AppImage there is no SUID sandbox
- * helper, and the Deck's compositor is Wayland with an X11 bridge; these are
- * the two switches every Electron-on-Deck report agrees on. A `flags` file in
- * the per-user directory adds more (`--disable-gpu` is the documented fallback
- * when the board draws nothing), one switch per line, so a player can try one
- * without a rebuild.
+ * helper, so `no-sandbox`. And X11, EXPLICITLY: the first build hinted
+ * `ozone-platform-hint=auto`, which under gamescope's Wayland picked the
+ * Wayland backend, and the result on a real Deck was Steam's spinner forever
+ * -- no window ever reached the compositor, and the stuck client could not
+ * even be force-closed. Gamescope always provides XWayland, and X11 is the
+ * route every working Electron-on-Deck app takes. A `flags` file in the
+ * per-user directory adds switches (`--disable-gpu` is the documented
+ * fallback when the board draws nothing), one per line, and an explicit
+ * `--ozone-platform=...` there would override this one.
  */
 if (process.env.APPIMAGE) {
   app.commandLine.appendSwitch("no-sandbox");
-  app.commandLine.appendSwitch("ozone-platform-hint", "auto");
+  app.commandLine.appendSwitch("ozone-platform", "x11");
 }
 const flagsFile = join(paths.home, "flags");
 if (existsSync(flagsFile)) {

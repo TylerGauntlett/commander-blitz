@@ -85,6 +85,32 @@ class TestArguments:
         assert env["SSL_CERT_FILE"] == "/etc/ssl/mine.pem"
 
 
+class TestParentWatch:
+    """Steam's force-close kills the shell and nothing else; the server has
+    to notice on its own."""
+
+    class Server:
+        should_exit = False
+
+    def test_a_parent_that_changes_stops_the_server(self):
+        server = self.Server()
+        pids = iter([100, 100, 100, 1])  # the shell, then reparented to init
+        thread = desktop.watch_parent(server, getppid=lambda: next(pids), interval=0.001)
+        thread.join(timeout=2)
+        assert server.should_exit is True
+        assert not thread.is_alive()
+
+    def test_a_parent_that_stays_leaves_it_alone(self):
+        server = self.Server()
+        thread = desktop.watch_parent(server, getppid=lambda: 100, interval=0.001)
+        time.sleep(0.05)
+        assert server.should_exit is False
+        assert thread.daemon, "must never keep the process alive by itself"
+        server.should_exit = True  # the normal stop; the watcher stands down
+        thread.join(timeout=2)
+        assert not thread.is_alive()
+
+
 class TestCheck:
     def test_it_prints_one_json_line_and_exits_zero(self, tmp_path, capsys, monkeypatch):
         for name in TEST_ONLY:
