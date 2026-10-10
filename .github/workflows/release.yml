@@ -91,7 +91,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           V: ${{ steps.version.outputs.version }}
         run: |
-          set -uo pipefail # not -e: a failed lookup must fall through to "rebuild"
+          # The runner invokes `bash -e`, and `set -uo pipefail` leaves -e on; turn
+          # it off so a failed lookup (or a grep that matches no shell file)
+          # falls through to "rebuild" or the carry instead of killing the step.
+          set +e -uo pipefail
           rebuild() {
             echo "shell=true" >> "$GITHUB_OUTPUT"
             echo "min_shell=$V" >> "$GITHUB_OUTPUT"
