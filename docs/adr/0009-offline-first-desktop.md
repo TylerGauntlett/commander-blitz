@@ -61,11 +61,13 @@ download in the background and install when the app quits; `quitAndInstall` is n
 called. The page shows one banner, Chrome-style, and the Restart button is disabled
 at the table because games live only in the server's memory.
 
-**Releases go to a public repository.** The source is private, and a private
-repository's release assets cannot be fetched without a token -- which the updater
-on a player's Deck must never hold. A `v*` tag builds the AppImage and the content
-package and publishes both to `commander-blitz`; the updater and the install
-script read `releases/latest/download/…`, which needs no API and no token.
+**Releases are public, and fetched without a token.** The updater on a player's Deck
+must never hold a token, so every asset has to be readable anonymously. While the
+source was private, that meant copying releases to a separate public repository. Since
+the project went public, they are this repository's own Releases. The updater and the
+install script read `releases/latest/download/…`, which needs no API and no token.
+Every push to main that ships builds the AppImage and the content package and publishes
+both. Before [ADR 0010](0010-release-every-main-build.md), a release needed a `v*` tag.
 
 **Install is one command, and it is testable.** `install.sh` downloads the AppImage
 to a fixed path (the Steam shortcut and the in-place updater both depend on the name
@@ -77,9 +79,10 @@ script runs in CI against a stub Steam in a scratch directory.
 
 ## Consequences
 
-- Two update channels, two cadences: the site deploys on every merge; the desktop
-  catches up when a release is tagged. Offline play is only as current as the last
-  tag.
+- There are two update channels on one cadence. Every merge that ships deploys the site
+  and releases the desktop build ([ADR 0010](0010-release-every-main-build.md)). This
+  originally read "the desktop catches up when a release is tagged". The change came
+  when the repository went public and Actions minutes stopped being rationed.
 - Two deck lists. A deck imported at home follows its owner to the site through the
   hand-off; a deck imported on the site does not come back.
 - A player who installed by hand, to a path of their choosing, gets a shell update

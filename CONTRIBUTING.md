@@ -85,9 +85,18 @@ it is native; [docs/decks.md](docs/decks.md) has the steps, and
 
 ## Pull requests
 
-- One pull request per piece of work, with phased commits if it is big. CI minutes
-  are the project's tightest budget, so a PR that goes green once beats three that
-  each need a run.
+- One pull request per piece of work, with phased commits if it is big. A full CI
+  run takes the better part of an hour, so a PR that goes green once beats three
+  that each need a run.
+- The title is a conventional commit, `type(scope): summary`, and CI checks it.
+  It becomes the squash merge's subject, and its type decides what the merge does:
+  `feat`, `fix`, `perf`, `refactor`, `build` and `revert` deploy the site and
+  release a new Steam Deck version; `docs`, `chore`, `ci`, `test` and `style` do
+  not ([ADR 0010](docs/adr/0010-release-every-main-build.md)).
+- The body follows the template: a short summary, two risk bullets, one
+  diagram (the old path dotted, the new one solid), then what, why and how in
+  three bullets each, with everything else folded into Details. `/create-pr`
+  writes it for you.
 - Say what changed and how you verified it. The template asks for both.
 - Rules questions are settled by the Comprehensive Rules, and the simplifications
   the engine makes on purpose are in [docs/rules-coverage.md](docs/rules-coverage.md).

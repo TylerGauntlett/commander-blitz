@@ -1,9 +1,12 @@
 name: verify and deploy
 
-# Every push to main that passes the full gate is deployed. Pull requests run
-# the same gate and stop there. "Passes" includes having nothing to re-prove --
-# a prose-only change, or a squash merge whose tree its pull request already
-# tested -- which the `changes` job decides and `gate` still reports.
+# Every push to main that passes the full gate and ships is deployed to the
+# site and released to the Steam Deck. Pull requests run the same gate and stop
+# there. "Passes" includes having nothing to re-prove -- a prose-only change, or
+# a squash merge whose tree its pull request already tested -- which the
+# `changes` job decides and `gate` still reports. "Ships" is the commit type: a
+# `docs:`, `chore:`, `ci:`, `test:` or `style:` merge passes the gate and
+# stops there (see `changes`, and .github/scripts/conventional.sh).
 on:
   push:
     branches: [main]
@@ -25,12 +28,20 @@ env:
 # makes a stage that skips itself fail instead, and `gate` below is the one
 # check that says whether all of it passed.
 jobs:
-  # Whether this run has anything to test (TECH_DEBT RS-02). Actions minutes are
-  # the binding limit on the Free plan, and two kinds of run used to spend them
-  # on nothing: a pull request that touched only prose (#52, a TECH_DEBT.md
-  # rewrite, billed 101 minutes to re-prove unchanged code), and the push to
-  # main after a squash merge, which re-ran ~41 minutes of lint, python, sim
-  # and frontend over the very tree the pull request had just passed.
+  # Whether this run has anything to test (TECH_DEBT RS-02). Two kinds of run
+  # used to spend their whole length re-proving nothing: a pull request that
+  # touched only prose (#52, a TECH_DEBT.md rewrite, took 101 runner-minutes
+  # over unchanged code), and the push to main after a squash merge, which
+  # re-ran ~41 minutes of lint, python, sim and frontend over the very tree the
+  # pull request had just passed -- and held the deploy back while it did.
+  #
+  # And whether a push to main ships. A squash merge's subject is its pull
+  # request's title, which pr.yml holds to a conventional-commit type; `docs`,
+  # `chore`, `ci`, `test` and `style` do not reach players, so they neither
+  # deploy the site nor cut a Steam Deck release (a release is a full AppImage
+  # download on every Deck). The doubt runs the other way from `test` -- any
+  # commit in the push that ships, or one that is not conventional at all, or
+  # a commit list that cannot be read whole, ships.
   #
   # A job and not `paths-ignore`, because `verify gate` is the required check: a
   # workflow that `paths-ignore` stops from starting never reports it, and the
@@ -42,8 +53,8 @@ jobs:
   # wasted half hour is the cost of being wrong in that direction; shipping an
   # untested tree is the cost of being wrong in the other.
   #
-  # No checkout: everything it needs is in the event and the REST API, and .git
-  # is ~130MB.
+  # A sparse checkout of the one script `ship` reads; everything else is in the
+  # event and the REST API, and .git is ~130MB.
   changes:
     name: what changed
     runs-on: ubuntu-latest
@@ -55,6 +66,7 @@ jobs:
     outputs:
       test: ${{ steps.decide.outputs.test }}
       tree: ${{ steps.decide.outputs.tree }}
+      ship: ${{ steps.ship.outputs.ship }}
     steps:
       - id: decide
         env:
@@ -178,6 +190,33 @@ jobs:
           esac
           echo "event=$EVENT test=$test"
           echo "test=$test" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: .github/scripts
+      - id: ship
+        env:
+          EVENT: ${{ github.event_name }}
+          COMMITS: ${{ toJSON(github.event.commits) }}
+        run: |
+          set -uo pipefail
+          case "$EVENT" in
+            push)
+              # The push payload lists at most 20 commits; at 20 it may be cut
+              # short, and an unseen commit could be the one that ships.
+              n=$(jq 'length' <<<"$COMMITS" 2>/dev/null) || n=""
+              if [ -z "$n" ] || [ "$n" -ge 20 ]; then
+                ship=true
+              else
+                ship=$(jq -r '.[].message | split("\n")[0]' <<<"$COMMITS" | bash .github/scripts/conventional.sh ships)
+              fi
+              ;;
+            pull_request) ship=false ;; # nothing ships from a pull request anyway
+            *) ship=true ;;             # workflow_dispatch: someone asked for it
+          esac
+          echo "event=$EVENT ship=$ship"
+          echo "ship=$ship" >> "$GITHUB_OUTPUT"
 
   # The front door, and deliberately cheap. `cancel-in-progress` means a
   # superseded pull request pays for whatever was running: before this split
@@ -421,7 +460,7 @@ jobs:
 
   build:
     name: build and push image
-    needs: gate
+    needs: [changes, gate]
     # `!cancelled()` and an explicit `needs.gate.result` are load-bearing, not
     # belt-and-braces. An `if` with no status-check function in it gets the
     # implicit "every job I depend on succeeded" -- and that is evaluated over the
@@ -438,6 +477,7 @@ jobs:
     if: >-
       !cancelled()
       && needs.gate.result == 'success'
+      && needs.changes.outputs.ship == 'true'
       && github.event_name == 'push'
       && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -621,6 +661,24 @@ jobs:
             --retry 30 --retry-delay 5 --retry-connrefused --retry-all-errors \
             "https://commanderblitz.com/health" | tee /dev/stderr | grep -q '"status":"ok"'
 
+  # The Steam Deck release: the AppImage and the content package, versioned
+  # `X.Y.<commits on main>` and published as this repository's latest release.
+  # Beside the site deploy rather than after it -- a Deck does not care whether
+  # the droplet came up -- and gated exactly as `build` is, for the same
+  # reasons. release.yml has the details.
+  release:
+    name: steam deck release
+    needs: [changes, gate]
+    if: >-
+      !cancelled()
+      && needs.gate.result == 'success'
+      && needs.changes.outputs.ship == 'true'
+      && github.event_name == 'push'
+      && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write # create the release and its tag
+    uses: ./.github/workflows/release.yml
+
   # The invariant the skip above violated in silence: a green gate on main means
   # the droplet is running that commit. Nothing checked it, so three pushes
   # reported success while `build` and `deploy` sat skipped, and the live site
@@ -633,7 +691,7 @@ jobs:
   # which is the failure mode wearing the check's own clothes.
   deployed:
     name: main is deployed
-    needs: [gate, deploy]
+    needs: [changes, gate, deploy, release]
     if: >-
       !cancelled()
       && github.event_name == 'push'
@@ -641,20 +699,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: A green gate on main must have deployed
+      - name: A green gate on main must have deployed and released
         env:
           GATE: ${{ needs.gate.result }}
+          SHIP: ${{ needs.changes.outputs.ship }}
           DEPLOY: ${{ needs.deploy.result }}
+          RELEASE: ${{ needs.release.result }}
         run: |
           set -euo pipefail
-          echo "gate=$GATE deploy=$DEPLOY"
+          echo "gate=$GATE ship=$SHIP deploy=$DEPLOY release=$RELEASE"
           # A red gate is already a red run and deploy is *meant* to be skipped;
           # saying so twice would only bury the real failure.
           if [ "$GATE" != success ]; then
-            echo "gate reported $GATE -- deploy correctly skipped"
+            echo "gate reported $GATE -- deploy and release correctly skipped"
             exit 0
           fi
-          [ "$DEPLOY" = success ] || {
-            echo "gate passed but deploy reported $DEPLOY: main is NOT live"
-            exit 1
-          }
+          # A push that does not ship must have shipped nothing; anything else
+          # is the wiring, not the verdict, going wrong.
+          if [ "$SHIP" != true ]; then
+            [ "$DEPLOY" = skipped ] && [ "$RELEASE" = skipped ] || {
+              echo "nothing in this push ships, yet deploy=$DEPLOY release=$RELEASE"
+              exit 1
+            }
+            echo "nothing in this push ships (docs/chore/ci/test/style) -- the site and the Deck stay as they are"
+            exit 0
+          fi
+          fail=0
+          [ "$DEPLOY" = success ] || { echo "gate passed but deploy reported $DEPLOY: main is NOT live"; fail=1; }
+          [ "$RELEASE" = success ] || { echo "gate passed but release reported $RELEASE: the Deck is NOT current"; fail=1; }
+          exit $fail

@@ -1,16 +1,26 @@
 # Deployment
 
-Every commit to `main` that passes `scripts/verify.py` is built into a container
-image and deployed to the droplet behind <https://commanderblitz.com>. Nothing is
-deployed by hand. The Steam Deck build is *released* rather than deployed, on its
-own cadence, when a version tag is pushed.
+Every commit to `main` that passes `scripts/verify.py` and *ships* is built into
+a container image and deployed to the droplet behind <https://commanderblitz.com>.
+At the same time it is released to the Steam Deck as a new version
+([ADR 0010](adr/0010-release-every-main-build.md)). Nothing is deployed or released
+by hand.
 
 ```
-                  ┌── python ──┐
-push to main ──▶ lint ─ sim ───┼─▶ gate ──▶ build image ──▶ push to GHCR ──▶ ssh + compose up ──▶ /health
-                  └── frontend ┘    │                                                                │
-                                    └── a failure here stops everything ─────────────────────────────┘
+                  ┌── python ──┐              ┌─▶ build image ──▶ push to GHCR ──▶ ssh + compose up ──▶ /health
+push to main ──▶ lint ─ sim ───┼─▶ gate ──────┤
+                  └── frontend ┘  (+ ships?)  └─▶ desktop release ──▶ GitHub Release vX.Y.<commits>
 ```
+
+Whether a commit ships depends on its conventional-commit type, which for a squash
+merge is the pull request's title:
+
+- `feat`, `fix`, `perf`, `refactor`, `build` and `revert` ship.
+- `docs`, `chore`, `ci`, `test` and `style` pass the gate and stop there.
+
+`pr.yml` holds every title to these types, and `.github/scripts/conventional.sh` has
+the rules. A push ships if any commit in it does, or if it contains a subject that is
+not a conventional commit.
 
 A pull request runs the same jobs plus a six-leg `e2e` matrix and a secrets scan;
 a push to main skips the e2e half, having already run it on the pull request that
@@ -203,17 +213,25 @@ make compose recreate the container; the deploy job runs
 
 ## Desktop releases
 
-The Steam Deck build ([steamdeck.md](steamdeck.md)) catches up when a version tag
-is pushed:
+The Steam Deck build ([steamdeck.md](steamdeck.md)) is released by every push to
+main that ships. `deploy.yml` calls `release.yml` next to the site deploy, behind the
+same green gate. The version is `X.Y.<commits on main>`:
+
+- Major and minor are whatever `desktop/package.json` says. Change them with a
+  pull request when a release deserves the number.
+- The patch is the commit count. CI stamps it into `package.json` at build time.
+  It only ever grows, and the same commit always gets the same version, so a re-run
+  finds its release already there and stops.
+
+To release by hand, for example after a merge that did not ship or a release that
+failed:
 
 ```bash
-# desktop/package.json must say 1.2.3
-git tag v1.2.3 && git push origin v1.2.3
+gh workflow run release.yml --ref main
 ```
 
-`release.yml` runs on `v*` tags only, because it is ~25 minutes of runner and
-tests nothing the gate has not already tested. It builds three things and
-publishes them together as a GitHub Release of this repository:
+The release builds three things and publishes them together as a GitHub Release of
+this repository:
 
 | asset | what it is | who reads it |
 |---|---|---|
@@ -221,17 +239,22 @@ publishes them together as a GitHub Release of this repository:
 | `content-<v>.tar.gz`, `content-latest.json` | the frozen server, the built client and the card data, versioned as one | the shell's own updater, which restarts the server in place |
 | `steam-assets.tar.gz`, `install.sh`, `SHA256SUMS` | the library artwork and launcher; the one-line installer | `install.sh` itself, and anybody checking a download |
 
-Everything the Deck fetches is a `releases/latest/download/<file>` URL: no API,
-no token, no rate limit. The workflow refuses a tag that does not match the
-package version. The first release of a risky change should go out as a
-pre-release tag and be installed on a Deck through `install.sh` before `latest`
-points at it.
+Everything the Deck fetches is a `releases/latest/download/<file>` URL, so it needs
+no API, no token and no rate limit. A release is uploaded as a draft and made latest
+only at the end, so a run that is cancelled by a newer push never leaves a
+half-uploaded `latest` behind. The workflow also refuses to publish a version that is
+not newer than `latest`.
 
-**Rolling back:** publish a newer version that undoes the change. `latest` is a
-pointer to the highest release, so deleting a release moves it back for *new*
-installs, but a Deck that already took the bad content keeps it; the shell never
-downgrades on its own. (It does roll back by itself when a new server fails to
-start; see ADR 0009.)
+There is no pre-release channel, because `install.sh` and both updaters read only
+`latest`. To hold a risky change back from Decks, merge it under a type that does not
+ship, build the AppImage locally (`desktop/README.md`) and try it on a Deck, then
+release it with `gh workflow run`.
+
+**Rolling back:** revert the change. The revert ships, and its release has a higher
+version. `latest` is a pointer to the highest release, so deleting a release moves it
+back for *new* installs. A Deck that already took the bad version keeps it, because the
+shell never downgrades on its own. (It does roll back by itself when a new server fails
+to start; see ADR 0009.)
 
 **Testing without a Deck:** `desktop/README.md`. The pure modules under
 `desktop/src/` run under vitest on any OS; the Electron wiring has a `--smoke`

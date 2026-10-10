@@ -1,12 +1,18 @@
-# Monthly and grouped: every pull request costs CI minutes, which are the
-# project's tightest budget, so one PR per ecosystem per month rather than one
-# per package. Security updates are not subject to the schedule.
+# Monthly and grouped: every merge of a runtime dependency is a Steam Deck
+# release that every Deck downloads whole (ADR 0010), so one PR per ecosystem
+# per month rather than one per package. Security updates are not subject to
+# the schedule.
+#
+# The prefixes make the titles conventional commits (pr.yml): a runtime bump is
+# `fix(deps)` and ships; an Actions bump is `ci(deps)` and does not.
 version: 2
 updates:
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: monthly
+    commit-message:
+      prefix: fix(deps)
     groups:
       python:
         patterns: ["*"]
@@ -14,6 +20,8 @@ updates:
     directory: /frontend
     schedule:
       interval: monthly
+    commit-message:
+      prefix: fix(deps)
     groups:
       frontend:
         patterns: ["*"]
@@ -21,6 +29,8 @@ updates:
     directory: /desktop
     schedule:
       interval: monthly
+    commit-message:
+      prefix: fix(deps)
     groups:
       desktop:
         patterns: ["*"]
@@ -28,6 +38,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    commit-message:
+      prefix: ci(deps)
     groups:
       actions:
         patterns: ["*"]
