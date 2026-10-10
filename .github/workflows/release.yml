@@ -83,7 +83,10 @@ jobs:
         with:
           name: content
           path: desktop/build
-      - run: chmod +x build/content/server/commanderblitz-server/commanderblitz-server
+      # The assembler copies PyInstaller's directory to `content/server/`, so
+      # the binary is `server/commanderblitz-server` with `_internal/` beside
+      # it -- the path the shell starts. Artifacts do not keep the mode bit.
+      - run: chmod +x build/content/server/commanderblitz-server
         working-directory: desktop
       - run: npm run build
         working-directory: desktop
