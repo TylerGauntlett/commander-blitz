@@ -30,8 +30,9 @@ import json
 import os
 import socket
 import sys
+import threading
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 READY_PREFIX = "READY "
 
@@ -144,8 +145,45 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # One worker, as the Docker image insists: sessions live in this process.
     server = uvicorn.Server(uvicorn.Config(app, log_level=args.log_level))
+    watch_parent(server)
     server.run(sockets=[sock])
     return 0
+
+
+#: How often the sidecar checks that the shell is still there.
+PARENT_POLL_SECONDS = 2.0
+
+
+def watch_parent(
+    server,
+    *,
+    getppid: Callable[[], int] = os.getppid,
+    interval: float = PARENT_POLL_SECONDS,
+) -> threading.Thread:
+    """Stop the server when the process that started it is gone.
+
+    Steam's force-close kills the process it launched -- the shell -- and
+    nothing else.  The shell's own `before-quit` never runs under SIGKILL, so
+    without this the server lived on as an orphan holding its port, and on a
+    Deck that was a game Steam showed as still running.  A parent that dies
+    reparents this process (to init, or a subreaper), which is the one
+    observable fact; polling it costs one syscall every couple of seconds.
+
+    ``server.should_exit`` is uvicorn's own clean stop, the same path SIGTERM
+    takes.  Daemon thread, so it never keeps the process alive itself.
+    """
+    parent = getppid()
+
+    def watch() -> None:
+        while not server.should_exit:
+            time.sleep(interval)
+            if getppid() != parent:
+                server.should_exit = True
+                return
+
+    thread = threading.Thread(target=watch, name="parent-watch", daemon=True)
+    thread.start()
+    return thread
 
 
 if __name__ == "__main__":
