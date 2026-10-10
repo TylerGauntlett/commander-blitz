@@ -188,7 +188,16 @@ function createWindow(): BrowserWindow {
     autoHideMenuBar: true,
     backgroundColor: "#0b0a16",
     title: "Commander Blitz",
-    show: false,
+    /*
+     * SHOWN AT ONCE, never on `ready-to-show`. That event fires on the first
+     * paint, and on a Steam Deck the GPU process segfaults three times
+     * before Chromium gives up and draws in software -- so the first paint
+     * came late or never, the hidden window was never shown, and Game Mode
+     * sat on its spinner with no window to hand the compositor. The
+     * background colour is what a visible window shows until the splash
+     * paints, which is all `ready-to-show` was buying.
+     */
+    show: true,
     webPreferences: {
       preload: join(HERE, "preload.cjs"),
       contextIsolation: true,
@@ -197,8 +206,6 @@ function createWindow(): BrowserWindow {
       additionalArguments: [`--cb-shell=${SHELL_VERSION}`, `--cb-remote=${REMOTE_ORIGIN}`],
     },
   });
-  window.once("ready-to-show", () => window.show());
-
   // The window goes two places and no further: the local server and the
   // hosted site. Anything else -- a link in a deck note, a redirect -- is
   // refused rather than turning the game into a browser.
