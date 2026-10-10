@@ -6,16 +6,24 @@ name: verify and deploy
 # a squash merge whose tree its pull request already tested -- which the
 # `changes` job decides and `gate` still reports. "Ships" is the commit type: a
 # `docs:`, `chore:`, `ci:`, `test:` or `style:` merge passes the gate and
-# stops there (see `changes`, and .github/scripts/conventional.sh).
+# stops there (see `changes`, and .github/scripts/conventional.sh). A hand-run
+# (`workflow_dispatch`) on main runs the whole gate and ships both, which is
+# the way to put main back on the site and the Deck after something went wrong.
 on:
   push:
     branches: [main]
   pull_request:
+    # The defaults plus `ready_for_review`: a draft runs no gate (see
+    # `changes`), so leaving draft has to start the run that does.
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 concurrency:
   # A newer commit supersedes an in-flight run: deploying an older SHA over a
   # newer one because it happened to finish second is the failure mode here.
+  # On main that is safe to do mid-deploy too, because what a run ships is
+  # measured from the last deploy and release that finished (`changes`), so
+  # the run that survives picks up whatever the cancelled one owed.
   group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
@@ -38,10 +46,16 @@ jobs:
   # And whether a push to main ships. A squash merge's subject is its pull
   # request's title, which pr.yml holds to a conventional-commit type; `docs`,
   # `chore`, `ci`, `test` and `style` do not reach players, so they neither
-  # deploy the site nor cut a Steam Deck release (a release is a full AppImage
-  # download on every Deck). The doubt runs the other way from `test` -- any
-  # commit in the push that ships, or one that is not conventional at all, or
-  # a commit list that cannot be read whole, ships.
+  # deploy the site nor cut a Steam Deck release. The commits judged are every
+  # one since the last deploy (or release) that finished, not just this push's.
+  # The doubt runs the other way from `test` -- any commit that ships, or one
+  # that is not conventional at all, or a commit list that cannot be read
+  # whole, ships.
+  #
+  # A draft pull request is not tested at all: it is still being written, and
+  # every push to it was a full ~75 runner-minutes. Its gate passes with
+  # nothing judged and leaves no tested-tree receipt behind, so a draft can
+  # never vouch for a merge; `ready_for_review` starts the real run.
   #
   # A job and not `paths-ignore`, because `verify gate` is the required check: a
   # workflow that `paths-ignore` stops from starting never reports it, and the
@@ -63,10 +77,12 @@ jobs:
       contents: read # compare, commits, trees
       pull-requests: read # a pull request's files
       actions: read # earlier runs and their tested-tree artifacts
+      deployments: read # the last production deploy that went green
     outputs:
       test: ${{ steps.decide.outputs.test }}
       tree: ${{ steps.decide.outputs.tree }}
-      ship: ${{ steps.ship.outputs.ship }}
+      ship_site: ${{ steps.ship.outputs.ship_site }}
+      ship_deck: ${{ steps.ship.outputs.ship_deck }}
     steps:
       - id: decide
         env:
@@ -77,6 +93,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           PR: ${{ github.event.pull_request.number }}
           PR_FILES: ${{ github.event.pull_request.changed_files }}
+          DRAFT: ${{ github.event.pull_request.draft }}
         run: |
           set -uo pipefail # not -e: a failed lookup must fall through to "test"
 
@@ -139,15 +156,23 @@ jobs:
           }
 
           # A prose-only push inherits its verdict from the commit before it,
-          # so that commit's own push run must have passed. Without this a
-          # README edit on top of a red main would go green and deploy the
-          # code that failed. A run still in flight does not count: it was
-          # cancelled by this one (`cancel-in-progress`), so nothing vouches.
+          # so that commit must have passed. Without this a README edit on top
+          # of a red main would go green and deploy the code that failed. Its
+          # own push run passing is one proof. A pull request run having passed
+          # its exact tree is the other, and the one that matters after a
+          # quick run of merges: the push run on it was cancelled by the next
+          # merge (`cancel-in-progress`), but the tree it would have tested
+          # was already tested whole, e2e included.
           green_on_main() {
-            local runs
+            local runs before_tree n
             runs=$(gh api "repos/$REPO/actions/workflows/deploy.yml/runs?event=push&branch=main&status=success&head_sha=$1&per_page=1" \
-              --jq .total_count) || return 1
-            [ "${runs:-0}" -gt 0 ] || { echo "the run on $1 did not pass; nothing to inherit"; return 1; }
+              --jq .total_count) || runs=0
+            [ "${runs:-0}" -gt 0 ] && return 0
+            before_tree=$(gh api "repos/$REPO/git/commits/$1" --jq .tree.sha) || return 1
+            n=$(gh api "repos/$REPO/actions/artifacts?name=tested-tree-$before_tree&per_page=100" \
+              --jq '[.artifacts[] | select(.expired | not)] | length') || return 1
+            [ "${n:-0}" -gt 0 ] || { echo "neither a push run nor a pull request run passed $1; nothing to inherit"; return 1; }
+            echo "$1's tree $before_tree passed a pull request run"
           }
 
           # One file per line as "name<TAB>previous name"; both names are fed
@@ -159,7 +184,10 @@ jobs:
             pull_request)
               # The files endpoint stops at 3,000: a list shorter than the
               # count the event reports is a list that cannot be trusted.
-              if rows=$(gh api --paginate "repos/$REPO/pulls/$PR/files?per_page=100" \
+              if [ "$DRAFT" = true ]; then
+                echo "draft: nothing is judged until it is ready for review"
+                test=false
+              elif rows=$(gh api --paginate "repos/$REPO/pulls/$PR/files?per_page=100" \
                    --jq '.[] | [.filename, (.previous_filename // "")] | @tsv'); then
                 listed=$(grep -c . <<<"$rows")
                 if [ "$listed" -ge "${PR_FILES:-0}" ] && names <<<"$rows" | all_inert; then
@@ -195,28 +223,73 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: .github/scripts
+      # What ships is everything since what was last *shipped*, not the
+      # commits in this push. `cancel-in-progress` makes the difference: a
+      # `feat:` merge whose run a quick `chore:` merge cancelled is not in the
+      # `chore:` push's commit list, and reading only that list is how #73
+      # sat merged and undeployed behind #77. Measured from the last real
+      # deploy and the last real release instead, cancelling a run on main is
+      # always safe: whichever run survives ships everything still owed.
+      #
+      # Two baselines, because the two can drift -- a deploy that failed or
+      # was killed mid-SSH while the release published, or the other way round.
+      # A deploy only counts once its status reached `success`.
       - id: ship
         env:
+          GH_TOKEN: ${{ github.token }}
           EVENT: ${{ github.event_name }}
-          COMMITS: ${{ toJSON(github.event.commits) }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
         run: |
-          set -uo pipefail
+          set -uo pipefail # not -e: a failed lookup must fall through to "ships"
+
+          # The newest production deployment that finished green.
+          deployed_sha() {
+            local id state
+            for id in $(gh api "repos/$REPO/deployments?environment=production&per_page=30" --jq '.[].id'); do
+              state=$(gh api "repos/$REPO/deployments/$id/statuses?per_page=1" --jq '.[0].state // ""') || return 1
+              [ "$state" = success ] && { gh api "repos/$REPO/deployments/$id" --jq .sha; return; }
+            done
+            return 1
+          }
+
+          # The commit the Latest release is tagged at. Drafts never count.
+          released_sha() {
+            local tag
+            tag=$(gh release view --repo "$REPO" --json tagName --jq .tagName) || return 1
+            gh api "repos/$REPO/commits/$tag" --jq .sha
+          }
+
+          # Prints true when anything between $1 and this commit ships. Every
+          # doubt ships: no baseline, a baseline that is not an ancestor (a
+          # force push, or history from before the rewrite), or a commit list
+          # the compare endpoint cut short (it returns at most 250).
+          ships_since() {
+            local base="$1" info status total listed
+            [ -n "$base" ] || { echo "no baseline" >&2; echo true; return; }
+            [ "$base" != "$SHA" ] || { echo false; return; }
+            info=$(gh api "repos/$REPO/compare/$base...$SHA" \
+              --jq '.status, .total_commits, (.commits | length), (.commits[].commit.message | split("\n")[0])') \
+              || { echo "compare $base...$SHA failed" >&2; echo true; return; }
+            { read -r status; read -r total; read -r listed; } <<<"$info"
+            [ "$status" = ahead ] || { echo "$base is $status of $SHA" >&2; echo true; return; }
+            [ "$listed" -ge "$total" ] || { echo "only $listed of $total commits listed" >&2; echo true; return; }
+            echo "since ${base::8}:" >&2
+            tail -n +4 <<<"$info" | sed 's/^/  /' >&2
+            tail -n +4 <<<"$info" | bash .github/scripts/conventional.sh ships
+          }
+
           case "$EVENT" in
             push)
-              # The push payload lists at most 20 commits; at 20 it may be cut
-              # short, and an unseen commit could be the one that ships.
-              n=$(jq 'length' <<<"$COMMITS" 2>/dev/null) || n=""
-              if [ -z "$n" ] || [ "$n" -ge 20 ]; then
-                ship=true
-              else
-                ship=$(jq -r '.[].message | split("\n")[0]' <<<"$COMMITS" | bash .github/scripts/conventional.sh ships)
-              fi
+              site=$(ships_since "$(deployed_sha)")
+              deck=$(ships_since "$(released_sha)")
               ;;
-            pull_request) ship=false ;; # nothing ships from a pull request anyway
-            *) ship=true ;;             # workflow_dispatch: someone asked for it
+            pull_request) site=false deck=false ;; # nothing ships from a pull request anyway
+            *) site=true deck=true ;;              # workflow_dispatch: someone asked for it
           esac
-          echo "event=$EVENT ship=$ship"
-          echo "ship=$ship" >> "$GITHUB_OUTPUT"
+          echo "event=$EVENT ship_site=$site ship_deck=$deck"
+          echo "ship_site=$site" >> "$GITHUB_OUTPUT"
+          echo "ship_deck=$deck" >> "$GITHUB_OUTPUT"
 
   # The front door, and deliberately cheap. `cancel-in-progress` means a
   # superseded pull request pays for whatever was running: before this split
@@ -477,8 +550,8 @@ jobs:
     if: >-
       !cancelled()
       && needs.gate.result == 'success'
-      && needs.changes.outputs.ship == 'true'
-      && github.event_name == 'push'
+      && needs.changes.outputs.ship_site == 'true'
+      && github.event_name != 'pull_request'
       && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -529,7 +602,7 @@ jobs:
     if: >-
       !cancelled()
       && needs.build.result == 'success'
-      && github.event_name == 'push'
+      && github.event_name != 'pull_request'
       && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -672,8 +745,8 @@ jobs:
     if: >-
       !cancelled()
       && needs.gate.result == 'success'
-      && needs.changes.outputs.ship == 'true'
-      && github.event_name == 'push'
+      && needs.changes.outputs.ship_deck == 'true'
+      && github.event_name != 'pull_request'
       && github.ref == 'refs/heads/main'
     permissions:
       contents: write # create the release and its tag
@@ -694,7 +767,7 @@ jobs:
     needs: [changes, gate, deploy, release]
     if: >-
       !cancelled()
-      && github.event_name == 'push'
+      && github.event_name != 'pull_request'
       && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -702,29 +775,35 @@ jobs:
       - name: A green gate on main must have deployed and released
         env:
           GATE: ${{ needs.gate.result }}
-          SHIP: ${{ needs.changes.outputs.ship }}
+          SITE: ${{ needs.changes.outputs.ship_site }}
+          DECK: ${{ needs.changes.outputs.ship_deck }}
           DEPLOY: ${{ needs.deploy.result }}
           RELEASE: ${{ needs.release.result }}
         run: |
           set -euo pipefail
-          echo "gate=$GATE ship=$SHIP deploy=$DEPLOY release=$RELEASE"
+          echo "gate=$GATE ship_site=$SITE ship_deck=$DECK deploy=$DEPLOY release=$RELEASE"
           # A red gate is already a red run and deploy is *meant* to be skipped;
           # saying so twice would only bury the real failure.
           if [ "$GATE" != success ]; then
             echo "gate reported $GATE -- deploy and release correctly skipped"
             exit 0
           fi
-          # A push that does not ship must have shipped nothing; anything else
-          # is the wiring, not the verdict, going wrong.
-          if [ "$SHIP" != true ]; then
-            [ "$DEPLOY" = skipped ] && [ "$RELEASE" = skipped ] || {
-              echo "nothing in this push ships, yet deploy=$DEPLOY release=$RELEASE"
-              exit 1
-            }
-            echo "nothing in this push ships (docs/chore/ci/test/style) -- the site and the Deck stay as they are"
-            exit 0
-          fi
+          # Each side on its own verdict: nothing owed must ship nothing (else
+          # the wiring, not the verdict, went wrong), and something owed must
+          # have shipped.
           fail=0
-          [ "$DEPLOY" = success ] || { echo "gate passed but deploy reported $DEPLOY: main is NOT live"; fail=1; }
-          [ "$RELEASE" = success ] || { echo "gate passed but release reported $RELEASE: the Deck is NOT current"; fail=1; }
+          if [ "$SITE" = true ]; then
+            [ "$DEPLOY" = success ] || { echo "gate passed but deploy reported $DEPLOY: main is NOT live"; fail=1; }
+          elif [ "$DEPLOY" != skipped ]; then
+            echo "nothing owed to the site, yet deploy=$DEPLOY"; fail=1
+          else
+            echo "nothing since the last deploy ships (docs/chore/ci/test/style) -- the site stays as it is"
+          fi
+          if [ "$DECK" = true ]; then
+            [ "$RELEASE" = success ] || { echo "gate passed but release reported $RELEASE: the Deck is NOT current"; fail=1; }
+          elif [ "$RELEASE" != skipped ]; then
+            echo "nothing owed to the Deck, yet release=$RELEASE"; fail=1
+          else
+            echo "nothing since the last release ships -- the Deck stays as it is"
+          fi
           exit $fail
