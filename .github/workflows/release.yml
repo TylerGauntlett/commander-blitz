@@ -34,7 +34,7 @@ jobs:
     steps:
       # Every commit, no trees or blobs: enough to count, a fraction of the
       # ~395MB full pack.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           filter: tree:0
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -95,7 +95,7 @@ jobs:
           --server sidecar/build/server/commanderblitz-server
           --client ../frontend/dist --data ../data --tar
         working-directory: desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: content
           retention-days: 3
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
@@ -121,7 +121,7 @@ jobs:
       # The same stamp: electron-builder names the AppImage, writes
       # `latest-linux.yml` and bakes `app.getVersion()` from it.
       - run: node -e "const f='desktop/package.json',p=require('./'+f);p.version=process.argv[1];require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')" "${{ needs.version.outputs.version }}"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: content
           path: desktop/build
@@ -149,7 +149,7 @@ jobs:
         working-directory: desktop
       - run: bash desktop/steam/test/install.test.sh
       - run: tar czf desktop/build/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: appimage
           retention-days: 3
@@ -171,14 +171,14 @@ jobs:
     permissions:
       contents: write # to create the release, its tag and its assets
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: content
           path: out/content
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: appimage
           path: out/appimage
