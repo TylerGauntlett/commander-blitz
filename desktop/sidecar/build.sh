@@ -32,7 +32,10 @@ else
       pip install --quiet -c /w/constraints.txt "/w[desktop]"
       python -m PyInstaller --clean --noconfirm \
         --distpath build/server --workpath build/work commanderblitz-server.spec
-      ldd --version | head -1 > build/server/glibc.txt
+      # `sed -n 1p`, not `head -1`: head closes the pipe after one line, ldd
+      # takes SIGPIPE, and under pipefail that is exit 141 after a build that
+      # had already succeeded. sed reads to the end.
+      ldd --version | sed -n 1p > build/server/glibc.txt
       # The container runs as root; hand the tree back to whoever called.
       chown -R "$(stat -c %u:%g /w/desktop)" build
     '
