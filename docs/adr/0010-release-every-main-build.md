@@ -75,6 +75,24 @@ the deploy and the release green. A push that doesn't ship must leave both skipp
 - `min_shell_version` still defaults to the content's own version. That's harmless
   because the shell and the content always release together.
 
+### Amended 2026-10-10: content-only releases, and what a push owes
+
+Two of the consequences above turned out to cost more than expected, and are changed:
+
+- **The AppImage is rebuilt only when the shell changed** since the latest release:
+  what electron-builder packs, what builds it, or `release.yml`. Otherwise the
+  release carries the previous AppImage and `latest-linux.yml` unchanged, and the
+  content's `min_shell_version` names that shell. A Deck downloads only the content
+  tarball, through the content updater that was already there. A fresh install
+  between shell releases boots the older bundled content for one update check.
+- **What ships is measured from the last deploy and the last release that
+  finished**, not from the commits in the push. `cancel-in-progress` on main had made
+  the push-only verdict lose work: a `feat:` merge cancelled by a quick `chore:`
+  merge was never deployed or released (#73 behind #77). The site and the Deck are
+  judged separately, because a cancel or a failure can leave them on different
+  commits. `workflow_dispatch` of `deploy.yml` on main now ships both, as the
+  recovery path.
+
 ## Rejected
 
 - **Release on every push regardless of type.** Deck players would download the

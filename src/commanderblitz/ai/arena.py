@@ -7,6 +7,7 @@ and can be used as a regression gate rather than just a vibe check.
 from __future__ import annotations
 
 from collections.abc import Sequence
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -103,16 +104,37 @@ def run_matchup(
     decks: Sequence[str] = DEFAULT_DECKS,
     swap_seats: bool = True,
     checkpoint: str | None = None,
+    workers: int = 1,
 ) -> list[GameResult]:
-    """Run ``games`` games, alternating seats so seat order cannot flatter an agent."""
-    game_data = data if data is not None else default_registry()
-    results: list[GameResult] = []
+    """Run ``games`` games, alternating seats so seat order cannot flatter an agent.
+
+    ``workers`` > 1 plays them across that many processes. Every game is
+    already seeded on its own (``seed + i``), so the results are the same
+    list in the same order either way; only the wall clock changes.
+    """
     names = list(agent_names)
+    games_to_play: list[tuple[Matchup, int, Sequence[str]]] = []
     for i in range(games):
         rotation = names[i % len(names) :] + names[: i % len(names)] if swap_seats else names
         matchup = Matchup(agent_names=rotation, pod_size=pod_size, checkpoint=checkpoint)
-        results.append(run_game(matchup, seed + i, data=game_data, decks=_deck_window(decks, pod_size, i)))
-    return results
+        games_to_play.append((matchup, seed + i, _deck_window(decks, pod_size, i)))
+
+    if workers > 1:
+        # Each worker loads the registry once for itself: shipping a GameData
+        # to it with every game would cost more than the game.
+        if data is not None and data is not default_registry():
+            raise ValueError("workers > 1 plays on the default registry only")
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            return list(pool.map(_play, games_to_play))
+
+    game_data = data if data is not None else default_registry()
+    return [run_game(m, s, data=game_data, decks=d) for m, s, d in games_to_play]
+
+
+def _play(game: tuple[Matchup, int, Sequence[str]]) -> GameResult:
+    """One game in a worker process, on that process's cached registry."""
+    matchup, seed, decks = game
+    return run_game(matchup, seed, data=default_registry(), decks=decks)
 
 
 def _deck_window(decks: Sequence[str], pod_size: int, game: int) -> Sequence[str]:
@@ -137,6 +159,7 @@ def run_arena(
     out_dir: Path | None = None,
     decks: Sequence[str] = DEFAULT_DECKS,
     checkpoint: str | None = None,
+    workers: int = 1,
 ) -> dict[int, Summary]:
     """Run the full matrix and, if ``out_dir`` is given, write the reports."""
     data = default_registry()
@@ -151,6 +174,7 @@ def run_arena(
                 data=data,
                 decks=decks,
                 checkpoint=checkpoint,
+                workers=workers,
             )
         )
 

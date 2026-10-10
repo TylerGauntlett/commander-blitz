@@ -16,7 +16,7 @@ CI runs this same script, one *slice* per runner, which is what the rest of the
 flags are for::
 
     --only lint,pytest   # the stage groups to run; GROUPS lists them
-    --jobs 2             # the pytest suites under xdist, N workers
+    --jobs 4             # pytest under xdist, and the arena, N workers
     --e2e-project X      # one Playwright project rather than all four
     --e2e-shard 2/4      # ...and one shard of it
     --strict             # a stage that skips itself FAILS instead
@@ -315,6 +315,9 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
                     "2,4",
                     "--max-draw-rate",
                     "0.25",
+                    # Every game is seeded on its own, so N processes play the
+                    # same 120 games; serial it was 21 of the sim job's 23 min.
+                    *(["--workers", str(jobs)] if jobs else []),
                 ],
                 slow=True,
                 group="sim",
@@ -730,7 +733,7 @@ def main() -> int:
         type=int,
         default=0,
         metavar="N",
-        help="run the pytest suites under xdist with N workers (default: serial)",
+        help="run the pytest suites under xdist, and the arena across processes, with N workers (default: serial)",
     )
     parser.add_argument(
         "--e2e-project",

@@ -111,8 +111,8 @@ check that says whether all of it passed:
 | job | slice | why it is its own runner |
 |---|---|---|
 | `lint` | `--only lint` | ~2 minutes in front of everything, so a superseded pull request wastes one runner and not nine — `cancel-in-progress` bills what was running |
-| `python` | `--only pytest --coverage --jobs 2` | the four suites and the 92% floor, under xdist |
-| `sim` | `--only sim` | the arena and the live server; no Node on the box at all |
+| `python` | `--only pytest --coverage --jobs "$(nproc)"` | the four suites and the 92% floor, under xdist |
+| `sim` | `--only sim --jobs "$(nproc)"` | the arena (its games across processes) and the live server; no Node on the box at all |
 | `frontend` | `--only frontend --coverage` | build, lint, and the one vitest process that merges jsdom with both story projects; then the desktop shell's lint, build and unit tests |
 | `installer` | `desktop/steam/test/install.test.sh` | a minute of bash on a bare runner: the Steam Deck install script against a stub Steam |
 | `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | eight legs: chromium sharded five ways, plus handheld, deckfit and sidecar (which builds the client first, because its server serves `dist/`) |

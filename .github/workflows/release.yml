@@ -14,6 +14,11 @@ name: desktop release
 # electron-updater and the content updater both move only to a strictly higher
 # version, so that growth is the whole update mechanism.
 #
+# Every release has a new content package; only a release whose shell changed
+# has a new AppImage. Otherwise the last AppImage is carried forward as it was,
+# and the content says it runs on that shell (`min_shell_version`), so a Deck
+# downloads the tarball rather than the whole app. See the `shell` step.
+#
 # Everything a Deck fetches is a `releases/latest/download/<file>` URL: no API,
 # no token, no rate limit. The repository is public, so the assets are too,
 # and the workflow's own GITHUB_TOKEN is enough to publish them.
@@ -31,6 +36,9 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       skip: ${{ steps.version.outputs.skip }}
+      shell: ${{ steps.shell.outputs.shell }}
+      min_shell: ${{ steps.shell.outputs.min_shell }}
+      previous: ${{ steps.shell.outputs.previous }}
     steps:
       # Every commit, no trees or blobs: enough to count, a fraction of the
       # ~395MB full pack.
@@ -64,6 +72,49 @@ jobs:
           echo "version=$v latest=${latest:-none} skip=$skip"
           echo "skip=$skip" >> "$GITHUB_OUTPUT"
 
+      # Whether the AppImage has to be rebuilt, or the latest release's can be
+      # carried forward with only the content package new. Most merges change
+      # cards, the engine or the client -- all content -- and a new shell
+      # makes every Deck download the whole AppImage again, where new content
+      # is just the tarball. The content updater already does that; it only
+      # needs `min_shell_version` to say the shell it really needs, rather than
+      # this release's version, which no installed shell could ever satisfy.
+      #
+      # The shell is what electron-builder packs (electron-builder.yml
+      # `files`), what builds it, and this workflow. The sidecar, the client
+      # and the data are content. Every doubt rebuilds: no release to carry,
+      # a compare that fails or is cut short, or a `latest-linux.yml` that
+      # will not say its version.
+      - id: shell
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ steps.version.outputs.version }}
+        run: |
+          set -uo pipefail # not -e: a failed lookup must fall through to "rebuild"
+          rebuild() {
+            echo "shell=true" >> "$GITHUB_OUTPUT"
+            echo "min_shell=$V" >> "$GITHUB_OUTPUT"
+            echo "shell: rebuild ($1)"
+            exit 0
+          }
+          tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName) || rebuild "no release to carry"
+          info=$(gh api "repos/$GITHUB_REPOSITORY/compare/$tag...$GITHUB_SHA" \
+            --jq '.status, (.files | length), .files[].filename') || rebuild "compare $tag failed"
+          { read -r status; read -r count; } <<<"$info"
+          [ "$status" = ahead ] || rebuild "$tag is $status of this commit"
+          # The compare endpoint lists at most 300 files.
+          [ "$count" -lt 300 ] || rebuild "$count files changed; the list may be cut short"
+          changed=$(tail -n +3 <<<"$info" | grep -E '^(desktop/(src/|build-resources/|package(-lock)?\.json$|build\.mjs$|electron-builder\.yml$|tsconfig\.json$|splash\.html$)|\.github/workflows/release\.yml$)' | head -5)
+          [ -z "$changed" ] || rebuild "the shell changed: $(tr '\n' ' ' <<<"$changed")"
+          shell=$(gh release download "$tag" --repo "$GITHUB_REPOSITORY" -p latest-linux.yml -O - \
+            | sed -n 's/^version: *//p' | tr -d "'\"\r") || shell=""
+          [ -n "$shell" ] || rebuild "$tag's latest-linux.yml has no version"
+          echo "shell=false" >> "$GITHUB_OUTPUT"
+          echo "min_shell=$shell" >> "$GITHUB_OUTPUT"
+          echo "previous=$tag" >> "$GITHUB_OUTPUT"
+          echo "shell: carry $tag's AppImage ($shell) forward; content only"
+
   # The content package: the frozen server (built in a container, for glibc),
   # the built client, and the card data, tarred with its manifest.
   content:
@@ -90,8 +141,10 @@ jobs:
       # bit was missing. The bit is set too, for anybody running them by hand.
       - run: bash desktop/sidecar/build.sh
       - run: PYTHON=python bash desktop/sidecar/smoke.sh
+      # `--min-shell`: the shell this content really needs (see `version`).
       - run: >
           node scripts/assemble-content.mjs --version ${{ needs.version.outputs.version }}
+          --min-shell ${{ needs.version.outputs.min_shell }}
           --server sidecar/build/server/commanderblitz-server
           --client ../frontend/dist --data ../data --tar
         working-directory: desktop
@@ -105,9 +158,11 @@ jobs:
             desktop/build/content-latest.json
 
   # The AppImage, with the content package inside it as the bundled content.
+  # Only when the shell changed: otherwise `publish` carries the last one.
   shell:
     name: appimage
     needs: [version, content]
+    if: needs.version.outputs.shell == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -148,7 +203,6 @@ jobs:
           COMMANDERBLITZ_HOME="$(mktemp -d)" timeout 300 xvfb-run -a "$app" --appimage-extract-and-run --no-sandbox --smoke
         working-directory: desktop
       - run: bash desktop/steam/test/install.test.sh
-      - run: tar czf desktop/build/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop
       - uses: actions/upload-artifact@v7
         with:
           name: appimage
@@ -156,7 +210,6 @@ jobs:
           path: |
             desktop/release/CommanderBlitz-*.AppImage
             desktop/release/latest-linux.yml
-            desktop/build/steam-assets.tar.gz
 
   # Draft first, then publish: a newer push to main cancels this run
   # (deploy.yml's `cancel-in-progress`), and a cancel halfway through the
@@ -166,6 +219,11 @@ jobs:
   publish:
     name: publish the release
     needs: [version, content, shell]
+    # `shell` is skipped, not failed, when the AppImage is carried forward.
+    if: >-
+      !cancelled()
+      && needs.content.result == 'success'
+      && (needs.shell.result == 'success' || (needs.shell.result == 'skipped' && needs.version.outputs.shell == 'false'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -178,18 +236,35 @@ jobs:
         with:
           name: content
           path: out/content
-      - uses: actions/download-artifact@v8
+      # The AppImage and its `latest-linux.yml` land flat in out/appimage
+      # either way: built by `shell` (an artifact keeps paths below the files'
+      # common directory, desktop/release/), or the latest release's own,
+      # unchanged. Carried, `latest-linux.yml` still names the old version, so
+      # electron-updater on a Deck sees nothing new and only the content
+      # updater moves; a fresh install boots the carried AppImage's bundled
+      # content and the updater replaces it on its first check.
+      - if: needs.version.outputs.shell == 'true'
+        uses: actions/download-artifact@v8
         with:
           name: appimage
           path: out/appimage
+      - if: needs.version.outputs.shell == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS: ${{ needs.version.outputs.previous }}
+        run: >
+          gh release download "$PREVIOUS" --repo "$GITHUB_REPOSITORY" --dir out/appimage
+          --pattern 'CommanderBlitz-*.AppImage' --pattern latest-linux.yml
       - env:
           GH_TOKEN: ${{ github.token }}
           V: ${{ needs.version.outputs.version }}
         run: |
           set -euo pipefail
+          # A tar of two committed paths: cheaper made here than carried.
+          tar czf out/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop
           find out -type f | sort
           cp desktop/steam/install.sh out/install.sh
-          (cd out && sha256sum appimage/release/CommanderBlitz-*.AppImage content/content-*.tar.gz | sed -E 's#^([a-f0-9]+)  .*/#\1  #' > SHA256SUMS)
+          (cd out && sha256sum appimage/CommanderBlitz-*.AppImage content/content-*.tar.gz | sed -E 's#^([a-f0-9]+)  .*/#\1  #' > SHA256SUMS)
           # A draft a cancelled run left behind holds the tag name; clear it.
           if [ "$(gh release view "v$V" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null)" = true ]; then
             gh release delete "v$V" --repo "$GITHUB_REPOSITORY" --yes
@@ -197,9 +272,9 @@ jobs:
           notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$V" "$GITHUB_REPOSITORY")"
           gh release create "v$V" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft \
             --title "Commander Blitz $V" --notes "$notes" --generate-notes \
-            out/appimage/release/CommanderBlitz-*.AppImage \
-            out/appimage/release/latest-linux.yml \
-            out/appimage/build/steam-assets.tar.gz \
+            out/appimage/CommanderBlitz-*.AppImage \
+            out/appimage/latest-linux.yml \
+            out/steam-assets.tar.gz \
             out/content/content-*.tar.gz \
             out/content/content-latest.json \
             out/install.sh \
