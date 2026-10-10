@@ -11,6 +11,9 @@ inputs:
   chromium:
     description: "the browser the stories and the e2e suite need"
     default: "false"
+  desktop:
+    description: "npm ci in desktop/ too (the desktop unit stage and the release)"
+    default: "false"
 
 # The three caches below (TECH_DEBT RS-02) are each a restore, an install on a
 # miss, and a save straight after the install -- not `actions/cache`, whose save
@@ -116,6 +119,27 @@ runs:
       with:
         path: frontend/node_modules
         key: ${{ steps.node-modules.outputs.cache-primary-key }}
+
+    # The same again for desktop/, whose lockfile is its own. Electron's
+    # binary download lands in node_modules too, which is why this is worth
+    # caching at all.
+    - id: desktop-modules
+      if: inputs.desktop == 'true'
+      uses: actions/cache/restore@v4
+      with:
+        path: desktop/node_modules
+        key: desktop-modules-${{ runner.os }}-${{ steps.image.outputs.os }}-node${{ steps.node.outputs.node-version }}-${{ hashFiles('desktop/package-lock.json') }}
+
+    - if: inputs.desktop == 'true' && steps.desktop-modules.outputs.cache-hit != 'true'
+      run: npm ci
+      shell: bash
+      working-directory: desktop
+
+    - if: inputs.desktop == 'true' && steps.desktop-modules.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: desktop/node_modules
+        key: ${{ steps.desktop-modules.outputs.cache-primary-key }}
 
     # ~120MB, identical on every leg, and downloaded seven times per pull
     # request without this. The browser build is fixed by playwright-core's

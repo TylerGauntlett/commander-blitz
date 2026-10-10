@@ -2,6 +2,7 @@
 
 import { libraryId } from "../state/library";
 import type {
+  AppConfig,
   CardResponse,
   DeckDetail,
   DeckImportResponse,
@@ -118,6 +119,9 @@ function stepQuery(aiSteps?: number): string {
 }
 
 export const api = {
+  /** Which server this is. See `state/useAppConfig`. */
+  config: () => request<AppConfig>("/config"),
+
   decks: () => request<DeckSummary[]>("/decks"),
 
   /**

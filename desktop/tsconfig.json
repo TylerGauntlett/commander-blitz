@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node"]
+  },
+  "//": "`../frontend/src/desktop/bridge.ts` is the contract the preload implements and the client compiles against; including it here is what makes a rename on either side fail the other side's build.",
+  "include": ["src", "test", "build.mjs", "scripts", "../frontend/src/desktop/bridge.ts"]
+}

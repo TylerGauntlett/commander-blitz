@@ -126,6 +126,17 @@ function indexOf(id: string): number {
   return DOOR_CARDS.findIndex((card) => card.id === id);
 }
 
+type DoorCard = (typeof DOOR_CARDS)[number];
+
+/** The desktop's Join card is the way to the site; the word changes with it. */
+function labelFor(card: DoorCard, desktop: boolean): string {
+  return desktop && card.id === "join" ? "Online" : card.label;
+}
+
+function verbFor(card: DoorCard, desktop: boolean): string {
+  return desktop && card.id === "join" ? "Play with friends on commanderblitz.com" : card.verb;
+}
+
 /**
  * The card the row opens on, and the one A presses if nothing is touched.
  *
@@ -167,6 +178,32 @@ interface Props {
   onJoin: (code: string) => void;
   busy: boolean;
   error: Error | null;
+  /**
+   * THE DESKTOP'S THIRD CARD IS "ONLINE", NOT "JOIN".
+   *
+   * On the Steam Deck the game runs from a server on the device, and a pod
+   * with other people lives on the hosted site. So the card that was Join
+   * becomes the way to the site: its hold takes a code, as before, and also
+   * offers to go with no code at all -- both through `onPlayOnline`, never
+   * `onJoin`, because the local server has nobody to join. Still three cards:
+   * the row's whole design is three, and a fourth would move Play off the
+   * middle for one mode.
+   */
+  mode?: "desktop" | "hosted";
+  /**
+   * Whether the hosted site answered the sidecar's last probe. Ignored on the
+   * site itself. When false the Online card stays a stop the ring can land on
+   * -- a card that vanished would move Play -- but pressing it says why rather
+   * than opening a hold that can go nowhere.
+   */
+  online?: boolean;
+  /** Go to the hosted site, into `code`'s pod when there is one. */
+  onPlayOnline?: (code?: string) => void;
+  /**
+   * The hosted site, opened from the desktop: the way back to the app. Only
+   * rendered when given, which the route does only when the shell is there.
+   */
+  onReturnLocal?: () => void;
 }
 
 export function HomeScreen({
@@ -176,7 +213,18 @@ export function HomeScreen({
   onJoin,
   busy,
   error,
+  mode = "hosted",
+  online = true,
+  onPlayOnline,
+  onReturnLocal,
 }: Props) {
+  const desktop = mode === "desktop";
+  const canGoOnline = !desktop || online;
+  /** Said once, when the Online card is pressed with no connection. */
+  const [offlineNote, setOfflineNote] = useState(false);
+  useEffect(() => {
+    if (canGoOnline) setOfflineNote(false);
+  }, [canGoOnline]);
   // Initialised, not synced: `initialCode` comes from `?join=` and is read once
   // at boot. A `useEffect` that pushed it into state later would arrive after
   // the field had already mounted empty -- and would fight anybody typing.
@@ -360,15 +408,19 @@ export function HomeScreen({
        */
       const id = DOOR_CARDS[i].id;
       if (id === "play") onCreate();
-      else if (id === "join") setJoinOpen(true);
-      else if (id === "settings") setSettingsOpen(true);
+      else if (id === "join") {
+        if (canGoOnline) setJoinOpen(true);
+        else setOfflineNote(true);
+      } else if (id === "settings") setSettingsOpen(true);
     },
-    [busy, onCreate],
+    [busy, onCreate, canGoOnline],
   );
 
   const submit = useCallback(() => {
-    if (looksLikeCode(code)) onJoin(normaliseCode(code));
-  }, [code, onJoin]);
+    if (!looksLikeCode(code)) return;
+    if (desktop) onPlayOnline?.(normaliseCode(code));
+    else onJoin(normaliseCode(code));
+  }, [code, onJoin, onPlayOnline, desktop]);
 
   const closeJoin = useCallback(() => setJoinOpen(false), []);
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
@@ -506,9 +558,15 @@ export function HomeScreen({
           >
             <button
               type="button"
-              className={i === sel ? "plank plank--on door__card" : "plank door__card"}
+              className={[
+                i === sel ? "plank plank--on door__card" : "plank door__card",
+                card.id === "join" && !canGoOnline ? "door__card--off" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               data-testid={card.testId}
-              aria-label={`${card.label}. ${card.verb}`}
+              aria-label={`${labelFor(card, desktop)}. ${verbFor(card, desktop)}`}
+              aria-disabled={card.id === "join" && !canGoOnline ? true : undefined}
               onFocus={() => select(i)}
               onClick={() => {
                 if (i !== targetRef.current) {
@@ -522,7 +580,7 @@ export function HomeScreen({
               <span className="door__win">
                 <DoorCardArt id={card.id} />
               </span>
-              <span className="door__name">{card.label}</span>
+              <span className="door__name">{labelFor(card, desktop)}</span>
               <span className="sheen" />
             </button>
           </div>
@@ -531,6 +589,19 @@ export function HomeScreen({
 
       <p className="door__count">
         <b className="tabular">{deckCount}</b> deck{deckCount === 1 ? "" : "s"} in the catalogue
+        {onReturnLocal && (
+          <>
+            {" · "}
+            <button
+              type="button"
+              className="door__link"
+              data-testid="return-local"
+              onClick={onReturnLocal}
+            >
+              Back to the app
+            </button>
+          </>
+        )}
       </p>
 
       <div className="room__hints" aria-hidden="true">
@@ -549,6 +620,11 @@ export function HomeScreen({
           {error.message.replace(/^\d+:\s*/, "")}
         </p>
       )}
+      {offlineNote && !openHold && !error && (
+        <p className="door__err" data-testid="offline-note" role="status">
+          Offline — connect to the internet to play with friends.
+        </p>
+      )}
 
       {joinOpen && (
         <div className="door__hold">
@@ -561,11 +637,15 @@ export function HomeScreen({
             role="dialog"
             aria-modal="true"
             data-modal-root
-            aria-label="Join a pod"
+            aria-label={desktop ? "Play online" : "Join a pod"}
             data-testid="join-hold"
           >
-            <h2 className="door__h">Join a pod</h2>
-            <p className="door__p">Type the code somebody sent you.</p>
+            <h2 className="door__h">{desktop ? "Play online" : "Join a pod"}</h2>
+            <p className="door__p">
+              {desktop
+                ? "Pods with friends live on commanderblitz.com. Type a code to join one, or go and make one."
+                : "Type the code somebody sent you."}
+            </p>
             <div className="door__holdrow">
               <span className="door__code">
                 <input
@@ -594,6 +674,17 @@ export function HomeScreen({
                 Join
               </button>
             </div>
+            {desktop && (
+              <button
+                type="button"
+                className="door__go door__go--wide"
+                data-testid="play-online"
+                disabled={busy}
+                onClick={() => onPlayOnline?.()}
+              >
+                Go to commanderblitz.com
+              </button>
+            )}
             {error && (
               <p className="door__err" data-testid="home-error">
                 {error.message.replace(/^\d+:\s*/, "")}

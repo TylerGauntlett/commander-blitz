@@ -18,7 +18,7 @@ from automtg.cards.images import CardArt, catalog_path
 from automtg.cards.registry import default_registry
 from automtg.server.app import create_app
 from automtg.server.art import ArtStore
-from automtg.server.routes import _spread_across_faces
+from automtg.server.art import spread_across_faces as _spread_across_faces
 
 # A 1x1 JPEG, so a planted file is a real image rather than bytes that happen to
 # have the right extension.

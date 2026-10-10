@@ -21,7 +21,10 @@
  */
 
 import { useEffect, useState } from "react";
+import type { DesktopDiagnostics as ShellDiagnostics } from "../../desktop/bridge";
+import { bridge } from "../../desktop/bridge";
 import { padDiagnostics } from "../../input/pad";
+import { useAppConfig } from "../../state/useAppConfig";
 import { SchemePicker } from "./SchemePicker";
 
 /** How often the panel re-reads the pad. See the header. */
@@ -38,11 +41,20 @@ type Diagnostics = ReturnType<typeof padDiagnostics>;
  * handheld -- has no `getGamepads` to fail, and every Steam-side fix below is
  * wasted effort until it is served over https. It is also the one nobody thinks
  * of, because the same URL works perfectly on the machine serving it.
+ *
+ * THE DESKTOP BUILD HAS TWO FEWER CAUSES. It is served from `127.0.0.1`, which
+ * is a secure context, and it is not a Flatpak browser -- so listing those
+ * would send somebody to fix things that are not broken. What is left is Steam
+ * Input, which can still hand a keyboard to an app it does not recognise, and
+ * the wording changes with it: there is no browser to blame.
  */
-export function causes(diag: Diagnostics): { when: boolean; title: string; body: string }[] {
+export function causes(
+  diag: Diagnostics,
+  env: { desktop: boolean } = { desktop: false },
+): { when: boolean; title: string; body: string }[] {
   return [
     {
-      when: !diag.secure || !diag.supported,
+      when: !env.desktop && (!diag.secure || !diag.supported),
       title: "This page is not a secure context",
       body:
         "The Gamepad API only exists over https, or on localhost. Opening the game " +
@@ -51,13 +63,15 @@ export function causes(diag: Diagnostics): { when: boolean; title: string; body:
     {
       when: true,
       title: "Steam is sending a keyboard, not a gamepad",
-      body:
-        "Steam Input picks a keyboard-and-mouse template for browsers. In the game's " +
-        "controller settings, change the layout template to Gamepad. Until you do, " +
-        "Steam grabs the pad and the page never sees it.",
+      body: env.desktop
+        ? "Steam Input may be using a keyboard-and-mouse template for this app. In " +
+          "the game's controller settings, change the layout template to Gamepad."
+        : "Steam Input picks a keyboard-and-mouse template for browsers. In the game's " +
+          "controller settings, change the layout template to Gamepad. Until you do, " +
+          "Steam grabs the pad and the page never sees it.",
     },
     {
-      when: true,
+      when: !env.desktop,
       title: "A Flatpak browser cannot reach the device",
       body:
         "If the browser was installed from Discover it is sandboxed away from the " +
@@ -74,6 +88,8 @@ export function causes(diag: Diagnostics): { when: boolean; title: string; body:
 
 export function ControllerPanel() {
   const [diag, setDiag] = useState<Diagnostics>(() => padDiagnostics());
+  const config = useAppConfig();
+  const desktop = config.mode === "desktop";
 
   useEffect(() => {
     const timer = setInterval(() => setDiag(padDiagnostics()), POLL_MS);
@@ -107,7 +123,7 @@ export function ControllerPanel() {
       */}
       {!found && (
         <ol className="ctrl__causes">
-          {causes(diag).map((cause) => (
+          {causes(diag, { desktop }).map((cause) => (
             <li key={cause.title} className="ctrl__cause">
               <b className="ctrl__causeh">{cause.title}</b>
               <span className="ctrl__causeb">{cause.body}</span>
@@ -115,6 +131,8 @@ export function ControllerPanel() {
           ))}
         </ol>
       )}
+
+      {desktop && <DesktopDiagnostics online={config.online} />}
 
       {/*
         The fallback, and it is a real one rather than a consolation: the whole
@@ -127,5 +145,57 @@ export function ControllerPanel() {
         when the pad is not detected.
       </p>
     </div>
+  );
+}
+
+/**
+ * What the desktop app is running, for a bug report from a device with no
+ * devtools. A screenshot of this panel answers the questions that would
+ * otherwise take three messages: which version, which content, is the server
+ * up, is the device online, and where the logs are.
+ */
+function DesktopDiagnostics({ online }: { online: boolean }) {
+  const [shell, setShell] = useState<ShellDiagnostics | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let live = true;
+    bridge()
+      ?.diagnostics()
+      .then((found) => {
+        if (live) setShell(found);
+      })
+      .catch(() => {
+        if (live) setFailed(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  return (
+    <dl className="ctrl__diag" data-testid="desktop-diagnostics">
+      <dt>Online</dt>
+      <dd data-testid="diag-online">
+        {online ? "yes" : "no — pods with friends are unavailable"}
+      </dd>
+      {shell && (
+        <>
+          <dt>App</dt>
+          <dd>{shell.shellVersion}</dd>
+          <dt>Content</dt>
+          <dd>{shell.contentVersion}</dd>
+          <dt>Server</dt>
+          <dd data-testid="diag-server">
+            port {shell.serverPort}, pid {shell.serverPid}
+          </dd>
+          <dt>Last update</dt>
+          <dd>{shell.lastUpdate ?? "never"}</dd>
+          <dt>Logs</dt>
+          <dd className="ctrl__path">{shell.logsDir}</dd>
+        </>
+      )}
+      {failed && <dd className="ctrl__none">The app did not answer for its diagnostics.</dd>}
+    </dl>
   );
 }

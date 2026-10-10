@@ -132,12 +132,19 @@ def act(
     return payload, False
 
 
-def play(url: str, players: int, seed: int, verbose: bool) -> int:
-    seats = [{"deck_id": "aesi", "kind": "human", "name": "You"}]
+def play(
+    url: str,
+    players: int,
+    seed: int,
+    verbose: bool,
+    deck: str = "aesi",
+    opponent_deck: str = "edgar",
+) -> int:
+    seats = [{"deck_id": deck, "kind": "human", "name": "You"}]
     for i in range(1, players):
         seats.append(
             {
-                "deck_id": "edgar" if i % 2 else "aesi",
+                "deck_id": opponent_deck if i % 2 else deck,
                 "kind": "ai",
                 "agent": "heuristic",
                 "name": f"AI {i}",
@@ -304,13 +311,19 @@ def main() -> int:
         help="drive the multiplayer lobby: every player is a human with a token",
     )
     parser.add_argument("--verbose", action="store_true")
+    # The fixture lists by default, which the test servers serve. A shipped
+    # build serves only the precons, so `desktop/sidecar/smoke.sh` names two.
+    parser.add_argument("--deck", default="aesi", help="your seat's deck id")
+    parser.add_argument("--opponent-deck", default="edgar", help="the odd seats' deck id")
     args = parser.parse_args()
 
     health = call(args.url, "/health")
     print(f"server ok: {health['cards']} cards, decks {health['decks']}")
     if args.pod:
         return play_pod(args.url, args.players, args.seed, args.verbose)
-    return play(args.url, args.players, args.seed, args.verbose)
+    return play(
+        args.url, args.players, args.seed, args.verbose, args.deck, args.opponent_deck
+    )
 
 
 if __name__ == "__main__":

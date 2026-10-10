@@ -239,6 +239,7 @@ def build_deck_model(
         cards=entries,
         notes=f"Imported from Moxfield ({deck.public_id}).",
         source="moxfield",
+        source_id=deck.public_id,
         owner=owner,
         printings=printings,
     )

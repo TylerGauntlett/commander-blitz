@@ -13,6 +13,8 @@
 | [ai-training.md](ai-training.md) | The environment, action space, agents, self-play |
 | [api.md](api.md) | The HTTP surface |
 | [frontend.md](frontend.md) | The playtest client |
+| [steamdeck.md](steamdeck.md) | **Playing on a Steam Deck**: the one-line install, offline and online, updates, the controller |
+| [deployment.md](deployment.md) | The site's pipeline and droplet, and the desktop build's release pipeline |
 | [testing.md](testing.md) | Every gate, and the current measured results |
 | [design-record.md](design-record.md) | What the design rounds established, and the fidelity findings still open |
 | [spec.md](spec.md) | The original brief |
@@ -30,6 +32,7 @@ separately:
 - [adr/0006-no-colour-accessibility-requirement.md](adr/0006-no-colour-accessibility-requirement.md) — colour accessibility is out of scope
 - [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md) — how multiplayer clients hear about each other, without sockets
 - [adr/0008-url-routing.md](adr/0008-url-routing.md) — real addresses for pods, games and decks, reversing "no router"
+- [adr/0009-offline-first-desktop.md](adr/0009-offline-first-desktop.md) — the Steam Deck build runs its own server, goes to the site for friends, and never restarts itself to update
 
 ## If you are here to...
 

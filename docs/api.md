@@ -69,9 +69,10 @@ a card, never enough to decide legality.
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/health` | Version, card count, deck list, live game and pod counts |
-| `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags` |
+| `GET` | `/api/config` | Which server this is: `mode` (`hosted` or `desktop`), whether the hosted server is reachable (`online`), `remote_origin`, and the app and content versions. The desktop build's client greys out what needs the other server on this answer, never on its origin |
+| `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags`, and `source_id` — the Moxfield id an import came from, case intact |
 | `GET` | `/api/decks/{deck_id}` | One deck with the dossier's fields: `ratings`, `strategy`, `signature`, and the derived `curve`/`lands`/`swaps` |
-| `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}` |
+| `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}`. With `AUTOMTG_EAGER_ART=1` (the desktop build) the response's `art_prefetch` says how much of the deck's art was fetched at once |
 | `DELETE` | `/api/decks/{deck_id}` | Remove an imported deck. `400` on a precon |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
 | `GET` | `/api/images?game_id=` | Card art paths. Static, so fetched once. Scoped to a game's own cards when `game_id` is given — unscoped it grows with every imported deck |

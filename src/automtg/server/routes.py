@@ -13,16 +13,19 @@ import time
 from fastapi import APIRouter, Body, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
+from automtg import __version__
 from automtg.cards import importer, moxfield
 from automtg.cards.images import CardIndex, IndexEntry
 from automtg.cards.registry import default_registry
 from automtg.engine.errors import IllegalActionError
 from automtg.engine.serialize import event_log, event_log_for, full_view, player_view
 
-from .art import ArtStore
+from .art import ArtStore, deck_art_requests, spread_across_faces, with_other_faces
 from .deckinfo import deck_detail, deck_summary
 from .schemas import (
+    AppConfig,
     ApplyActionRequest,
+    ArtPrefetchDTO,
     CardResponse,
     CatalogCardDTO,
     CatalogResponse,
@@ -118,6 +121,22 @@ def _state_response(session: GameSession, seat: int, since: int = 0) -> StateRes
 # ----------------------------------------------------------------------
 
 
+@router.get("/config", response_model=AppConfig)
+def app_config(request: Request) -> AppConfig:
+    """Which server this is, and whether the hosted one can be reached.
+
+    Cheap to poll: the probe behind ``online`` remembers its answer for
+    ``connectivity.PROBE_TTL`` seconds, so the client's periodic refetch is
+    one outbound request a half-minute, not one per poll.
+    """
+    settings = request.app.state.settings
+    return AppConfig(
+        mode=settings.mode,
+        online=request.app.state.probe.online(),
+        remote_origin=settings.remote_origin,
+        app_version=__version__,
+        content_version=settings.content_version,
+    )
 
 
 def _visible_to(deck, library: str | None) -> bool:
@@ -188,6 +207,17 @@ def import_deck(
 
     data = _registry(request).data
     deck = data.decks.get(report.deck_id)
+    prefetch = None
+    if deck is not None and request.app.state.settings.eager_art:
+        # The desktop asks for this: the next launch may be offline, and the
+        # lazy fill would leave the deck a grid of grey plates until then.
+        # `data.registry`, not the authored layer -- the deck's proxies and
+        # their faces live only in the merged pool.
+        art = _art(request)
+        found = art.prefetch(deck_art_requests(deck, data.registry, art))
+        prefetch = ArtPrefetchDTO(
+            fetched=found.fetched, cached=found.cached, failed=found.failed
+        )
     summary = (
         deck_summary(deck, data)
         if deck is not None
@@ -220,6 +250,7 @@ def import_deck(
             for c in report.cards
         ],
         problems=report.problems,
+        art_prefetch=prefetch,
     )
 
 
@@ -316,7 +347,7 @@ def _seat_overrides(deck, registry, art) -> dict[str, ImageRefDTO]:
     else's painting, which is worse than no credit at all.
     """
     overrides: dict[str, ImageRefDTO] = {}
-    for card_id, printing in _spread_across_faces(deck.printings, registry, art).items():
+    for card_id, printing in spread_across_faces(deck.printings, registry, art).items():
         url = art.url_for(card_id, printing=printing.get("scryfall_id"))
         if url is None or "?p=" not in url:
             continue
@@ -326,54 +357,13 @@ def _seat_overrides(deck, registry, art) -> dict[str, ImageRefDTO]:
     return overrides
 
 
-def _spread_across_faces(printings: dict[str, dict], registry, art) -> dict[str, dict]:
-    """``printings``, plus the other faces of the cards in it.
-
-    A deck list names the front (`bloodline_keeper`); the back is a card id of
-    its own that no list ever mentions, and the moment the permanent transforms
-    ``card_view`` starts sending that id.  Without this the deck's illustration
-    would vanish mid-flip -- the same class of bug ``_wanted_ids`` documents.
-
-    A face only inherits when it shares the front's catalog printing, which is
-    exactly the transform case: one Scryfall id, two faces, told apart by
-    ``back``.  A meld half or an adventure's other side has a printing of its
-    own, and inheriting onto it would fetch the wrong picture outright.
-    """
-    out = dict(printings)
-    pending = list(printings)
-    while pending:
-        card_id = pending.pop()
-        if card_id not in registry:
-            continue
-        base = art.images.get(card_id)
-        card = registry.get(card_id)
-        for face in (card.back_face, card.second_face):
-            if not face or face in out:
-                continue
-            other = art.images.get(face)
-            if base is None or other is None or other.scryfall_id != base.scryfall_id:
-                continue
-            out[face] = out[card_id]
-            pending.append(face)
-    return out
-
-
 def _wanted_ids(session: GameSession, registry) -> set[str]:
     """Every card that can appear in this game.
 
     The seats' decks, plus every token they can make -- a token is never in a
     deck list but is very much on the board, and missing one is a blank plate
-    the first time somebody attacks.
-
-    And every **other face** of those cards, for exactly the same reason. A deck
-    list names `henrika_domnathi_henrika_infernal_seer`; the moment that
-    creature transforms, `state.card_of` starts answering with the back face and
-    `card_view` sends `henrika_infernal_seer` as the `card_id`. That id was not
-    in this map, so `cardArt.artUrl` read `undefined`, decided the card has no
-    printing, and drew the hatched "no art" plate -- on a card whose art is
-    sitting in `data/art` under exactly that name. The same applies to
-    `second_face`: an adventure or a modal DFC's other half is serialized under
-    its own id while it is the face being shown.
+    the first time somebody attacks.  And every other face of those cards,
+    for the reason ``art.with_other_faces`` gives.
     """
     ids: set[str] = set()
     for seat in session.seats:
@@ -381,32 +371,7 @@ def _wanted_ids(session: GameSession, registry) -> set[str]:
     for card in registry:
         if card.is_token:
             ids.add(card.id)
-    return _with_other_faces(ids, registry)
-
-
-def _with_other_faces(ids: set[str], registry) -> set[str]:
-    """``ids`` plus every face reachable from them.
-
-    Transitive and loop-guarded rather than one hop: nothing prints a chain
-    today, and a map that quietly stopped one face short is the bug this
-    function exists to fix.
-    """
-    out = set(ids)
-    pending = list(ids)
-    while pending:
-        card_id = pending.pop()
-        # `registry.get` raises on a miss, and a deck naming an unknown card is
-        # already refused at load time -- so the membership test is a guard
-        # against a *generated* pool that has moved under us, not against a
-        # typo, and it costs one dict lookup.
-        if card_id not in registry:  # pragma: no cover
-            continue
-        card = registry.get(card_id)
-        for face in (card.back_face, card.second_face):
-            if face and face not in out:
-                out.add(face)
-                pending.append(face)
-    return out
+    return with_other_faces(ids, registry)
 
 
 # ----------------------------------------------------------------------

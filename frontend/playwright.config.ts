@@ -68,8 +68,9 @@ export default defineConfig({
       name: "chromium",
       // `\.spec\.` on both sides: a bare /handheld/ also matches
       // `handheldAssert.ts`, and Playwright refuses to let one test file import
-      // another.
-      testIgnore: /(handheld|pad|deckfit)\.spec\.ts/,
+      // another. `sidecar` has a config of its own (`playwright.sidecar.config.ts`):
+      // it needs a different server, and `webServer` is per config.
+      testIgnore: /(handheld|pad|deckfit|sidecar)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: { width: 1600, height: 950 } },
     },
     /*

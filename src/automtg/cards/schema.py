@@ -1514,6 +1514,12 @@ class DeckModel(BaseModel):
     #: valid untouched -- the model is ``extra="forbid"``, so a required field
     #: here would have broken every deck file in the repository.
     source: Literal["precon", "moxfield"] = "precon"
+    #: The Moxfield public id an import came from, case preserved -- ``id`` is
+    #: a lowercased slug of it and cannot be turned back.  What the desktop
+    #: build sends the hosted server so a deck imported at home can be imported
+    #: there too.  ``""`` for a precon, and for any deck imported before this
+    #: field existed; ``deckinfo.deck_summary`` recovers those from ``notes``.
+    source_id: str = ""
     #: Which browser library imported this -- the id a client mints once into
     #: its own ``localStorage`` and sends as ``X-Library-Id``.  There are no
     #: accounts here, so this is the whole of "mine": the deck list filters on

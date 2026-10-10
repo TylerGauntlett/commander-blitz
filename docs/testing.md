@@ -8,13 +8,20 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 8114 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 14639 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/unit/` | 8117 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 14642 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 189 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 363 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1567 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 423 + 66 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `tests/server/` | 407 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 1611 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 429 + 68 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
 | `frontend/e2e/` | 159 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
+| `desktop/test/` | 59 | The Steam Deck shell's pure modules, under Node with no Electron: the sidecar's lifecycle, the content swap and rollback, the update check, connectivity, and the restart-in-place |
+| `desktop/steam/test/install.test.sh` | 3 runs | `install.sh` against a stub Steam in a scratch home: a fresh install, a re-run, and the app-id fallback |
+
+The `frontend/e2e/` count includes `sidecar.spec.ts`, which runs under its own
+config (`playwright.sidecar.config.ts`): the desktop build's server serving the
+built client, with every request off the machine aborted and the server behind
+a proxy that answers nobody, dealing and playing a pod.
 
 The Count column is what the runner *collects* -- parametrised cases included, so
 `tests/cards/` counts every card the every-card gate is parametrised over, of which
@@ -66,7 +73,7 @@ canvas and once at a Steam Deck's.
 
 ```bash
 python scripts/verify.py --coverage   # every suite under coverage, one floor each side
-python scripts/verify.py --e2e        # the three Playwright projects, after the stories
+python scripts/verify.py --e2e        # the four Playwright projects, after the stories
 ```
 
 Both are off by default because each costs tens of minutes, and both run on every
@@ -81,7 +88,7 @@ story runs merge into one report and one set of floors in `vite.config.ts`. The
 `include: ["src/**"]` there is load-bearing: without it the provider instruments
 `storybook-static/` beside `src/` and the total reads 7%.
 
-`--e2e` runs `chromium`, `handheld` and `deckfit` as three stages with `E2E_SLOW=2`,
+`--e2e` runs `chromium`, `handheld`, `deckfit` and `sidecar` as four stages with `E2E_SLOW=2`,
 which doubles every budget in the suite because it runs after two Storybook browsers
 on the same machine. It then reads Playwright's JSON report and prints the failures
 sorted into **timed out** (a budget or a busy machine) and **failed an assertion**
@@ -106,8 +113,9 @@ check that says whether all of it passed:
 | `lint` | `--only lint` | ~2 minutes in front of everything, so a superseded pull request wastes one runner and not nine — `cancel-in-progress` bills what was running |
 | `python` | `--only pytest --coverage --jobs 2` | the four suites and the 92% floor, under xdist |
 | `sim` | `--only sim` | the arena and the live server; no Node on the box at all |
-| `frontend` | `--only frontend --coverage` | build, lint, and the one vitest process that merges jsdom with both story projects |
-| `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | seven legs: chromium sharded five ways, plus handheld and deckfit |
+| `frontend` | `--only frontend --coverage` | build, lint, and the one vitest process that merges jsdom with both story projects; then the desktop shell's lint, build and unit tests |
+| `installer` | `desktop/steam/test/install.test.sh` | a minute of bash on a bare runner: the Steam Deck install script against a stub Steam |
+| `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | eight legs: chromium sharded five ways, plus handheld, deckfit and sidecar (which builds the client first, because its server serves `dist/`) |
 
 **Sharding is the only parallelism this suite tolerates.** `workers` stays at 1 in
 `playwright.config.ts` because the app's motion is frame-driven and the runner

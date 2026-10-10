@@ -361,6 +361,31 @@ export interface DeckSummary {
   simplified: number;
   /** Editorial. Empty for an imported deck, which the catalogue draws honestly. */
   tags: string[];
+  /**
+   * The Moxfield public id an import came from, case preserved. Empty for a
+   * precon. What the desktop sends the hosted server so an imported deck can
+   * follow its owner online.
+   */
+  source_id?: string;
+}
+
+/**
+ * Which server answered, and whether the other kind is reachable.
+ *
+ * `GET /api/config`. The client's one source for "am I the desktop build" and
+ * "can I play online right now" -- never its origin, because a desktop that
+ * has lost its connection is still on `127.0.0.1` and still cannot join a pod.
+ */
+export interface AppConfig {
+  /** `desktop` is the sidecar on the Steam Deck; `hosted` is the site. */
+  mode: "desktop" | "hosted";
+  /** Whether the hosted server answered a recent probe. Always true on it. */
+  online: boolean;
+  /** Where to go to play with friends. `null` on the hosted server. */
+  remote_origin: string | null;
+  app_version: string;
+  /** The content package the desktop shell is running; `app_version` on the site. */
+  content_version: string;
 }
 
 /**
