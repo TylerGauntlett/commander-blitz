@@ -184,6 +184,59 @@ gh run list --workflow deploy.yml --limit 20     # find the run for that SHA
 gh run rerun <run-id>
 ```
 
+## Desktop releases
+
+The Steam Deck build ([steamdeck.md](steamdeck.md)) is not deployed; it is
+*released*, and on its own cadence. The site deploys on every merge to `main`;
+the desktop catches up when a version tag is pushed.
+
+```
+git tag v1.2.3 && git push origin v1.2.3     # desktop/package.json must say 1.2.3
+```
+
+`.github/workflows/release.yml` runs on `v*` tags only — never on a push or a
+pull request, because it is ~25 minutes of runner and tests nothing the gate
+has not already tested. It builds three things and publishes them together:
+
+| asset | what it is | who reads it |
+|---|---|---|
+| `CommanderBlitz-<v>.AppImage`, `latest-linux.yml` | the Electron shell, with the content package inside it | `install.sh` (first install), `electron-updater` (shell updates, installed on quit) |
+| `content-<v>.tar.gz`, `content-latest.json` | the frozen server, the built client and the card data, versioned as one | the shell's own updater, which restarts the server in place |
+| `steam-assets.tar.gz`, `install.sh`, `SHA256SUMS` | the library artwork and launcher; the one-line installer | `install.sh` itself, and anybody checking a download |
+
+**They go to a second, public repository:** `TylerGauntlett/commander-blitz-releases`.
+This one is private, and a private repository's release assets cannot be
+downloaded without a token — which an updater on a player's Deck must never
+hold. Everything the Deck fetches is a `releases/latest/download/<file>` URL on
+the public repository: no API, no token, no rate limit.
+
+**Setting it up, once:**
+
+1. Create the public repository (empty; it holds releases and nothing else).
+2. Make a fine-grained personal access token with **Contents: read and write**
+   on that repository only.
+3. `gh secret set RELEASES_TOKEN --repo TylerGauntlett/Auto-MTG` with it.
+
+**Cutting a release:** bump `version` in `desktop/package.json`, commit, tag
+`v<that>`, push the tag. The workflow refuses a tag that does not match the
+package version. Try the whole thing against a throwaway public repository first
+(`RELEASES_REPO` in the workflow); the first real release should go out as a
+pre-release tag and be installed on a Deck through `install.sh` before `latest`
+points at it.
+
+**Rolling back:** publish a newer version that undoes the change. `latest` is a
+pointer to the highest release, so deleting a release moves it back for *new*
+installs, but a Deck that already took the bad content keeps it — the shell
+never downgrades on its own. (It does roll back by itself when a new server
+fails to start; see ADR 0009.)
+
+**Where it can be tested without a Deck:** `desktop/README.md`. The pure
+modules under `desktop/src/` run under vitest on any OS; the Electron wiring has
+a `--smoke` mode that boots the sidecar and reads `/api/config`; the frozen
+server builds natively on Windows and in a Linux container; `install.sh` runs
+against a stub Steam in a scratch home (`desktop/steam/test/install.test.sh`,
+which the gate runs).
+
 ## Things to know
 
 **A redeploy drops in-flight games.** `server/sessions.py` keeps games in

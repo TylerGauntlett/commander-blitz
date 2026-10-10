@@ -1,66 +1,117 @@
 # Playing on a Steam Deck
 
 The game is built for this device — 1280×800 is the size every layout was
-measured at, and the whole controller layer exists for it. Getting there needs a
-few minutes of setup, because **in gaming mode a Steam Deck hands a browser a
-keyboard rather than a gamepad**.
+measured at, and the whole controller layer exists for it. There is a desktop
+build that installs in one step, plays with no connection at all, and goes to
+the site when you want to play with friends.
 
-## The symptom
+## Install
 
-Only the D-pad and A do anything. The sticks are dead, the shoulder buttons do
-nothing, and the hint bar (if you have turned it on) says `Enter` and `Esc`
-instead of `A` and `B`.
-
-That is Steam Input working as designed. Steam applies a controller layout to
-every non-Steam shortcut, and it recognises browsers and picks a *keyboard and
-mouse* template for them. Under that template Steam takes the controller
-exclusively and publishes no gamepad at all, so `navigator.getGamepads()` is
-empty while the D-pad arrives as arrow keys and A arrives as Enter.
-
-The game is still playable in that state — see [the fallback](#the-fallback) —
-but the sticks cannot work, because nothing is sending them.
-
-## The fix, in the order worth trying
-
-### 1. Serve the game over https (or localhost)
-
-**Check this first.** The Gamepad API is secure-context only: over plain `http://`
-to anything but `localhost`, `navigator.getGamepads` *does not exist*, and no
-amount of Steam configuration will help. Opening the dev server by LAN address —
-`http://192.168.1.x:5173`, which is exactly how you would test on a handheld — is
-the single most common cause, and it is invisible because the same URL works
-perfectly on the machine serving it.
-
-Use an https tunnel, or run the server on the Deck itself and use `localhost`.
-
-### 2. Set the layout template to Gamepad
-
-In gaming mode, select the shortcut → the controller icon → **Controller
-settings** → **Templates** → **Gamepad**.
-
-This stops Steam translating the pad into keystrokes and lets it through as a
-standard gamepad. Analog sticks start working the moment it takes effect.
-
-### 3. If the browser is a Flatpak, let it reach the device
-
-A browser installed from Discover is sandboxed away from the hardware, and the
-Gamepad API stays dead *even with a gamepad layout*. In Desktop Mode:
+In **Desktop Mode**, open Konsole and paste:
 
 ```bash
-flatpak override --user --filesystem=/run/udev:ro com.google.Chrome
+curl -fsSL https://github.com/TylerGauntlett/commander-blitz-releases/releases/latest/download/install.sh | bash
 ```
 
-Substitute the right application id for another browser
-(`org.mozilla.firefox`, `com.brave.Browser`, …). Restart the browser afterwards.
+That downloads the app to `~/Applications/CommanderBlitz.AppImage`, adds it to
+Steam, puts the library artwork in place, and says so as it goes. Switch back to
+**Game Mode** and Commander Blitz is in your library with a capsule, a hero and
+a logo like anything else there.
 
-## Checking whether it worked
+If Steam was not running when the script ran, or you would rather do it by hand:
+Steam → Games → **Add a Non-Steam Game** → Browse → the AppImage above. Then
+run the script again to get the artwork.
 
-Open the **Settings** card on the front door. It lists every controller the
-browser can see, and when it can see none it names which of the causes above
-applies. That panel is the fastest way to tell "the game is broken" from "the
-environment has not been set up", which from inside the game look identical.
+### What the script does, so you can undo it
 
-## The fallback
+| It wrote | Why |
+|---|---|
+| `~/Applications/CommanderBlitz.AppImage` | The app. A fixed name: the Steam shortcut points at it and updates replace it in place |
+| `~/.local/share/applications/commanderblitz.desktop` and an icon | A launcher for Desktop Mode, and what Steam reads the name and icon from |
+| `~/.steam/steam/userdata/<you>/config/grid/<appid>*.png` | The library artwork, named by the shortcut's app id |
+| `~/.local/share/commanderblitz/` | Everything the app writes while running: imported decks, art it fetched, logs, updates |
+
+Uninstall: remove the shortcut in Steam, then delete those four.
+
+## Offline and online
+
+**Everything you can do alone works with no connection.** The app runs the
+game's own server on the device; dealing a pod, filling the chairs with CPUs,
+and playing is all local. The only things that need the internet are the two
+that reach another machine:
+
+- **Online** (the third card on the door) takes you to `commanderblitz.com` to
+  play with friends. Pods with other people run there, in the site's own client;
+  there is a **Back to the app** link on the site's door. Any deck you imported
+  from Moxfield at home comes with you — the site imports it before showing the
+  door.
+- **Importing a Moxfield deck** needs Moxfield.
+
+When there is no connection the Online card is dimmed (it is still there, so the
+row does not move) and pressing it says why; the import strip in the deck
+catalogue is disabled with a note. The moment the connection is back, both come
+back on their own.
+
+A deck imported while online fetches all of its art at once, so it is complete the
+next time you are offline.
+
+## Updates
+
+The app checks for updates when it starts and every few hours after, downloads
+them in the background, and shows one line at the top of the screen when one is
+ready. Two kinds:
+
+- **The game** (the engine, the cards, the client): **Update ready — Restart.**
+  Restart takes a few seconds — the server restarts underneath the window — and
+  if the new version does not come up, the app goes back to the one that did.
+  The button waits while you are at a table: a restart mid-game would lose it.
+- **The app itself** (rare): *installs the next time you quit.* Nothing to press.
+
+Offline, no check happens and the version you have runs. Nothing about an update
+ever restarts the app or takes you out of Game Mode.
+
+## The controller
+
+The app is served from the device over `localhost`, which is a secure context,
+so the Gamepad API exists without any of the https work a browser needed. What
+can still happen is Steam Input handing the app a keyboard:
+
+**The symptom:** only the D-pad and A do anything, and the hint bar (if you have
+turned it on) says `Enter` and `Esc` instead of `A` and `B`.
+
+**The fix:** in Game Mode, select the game → the controller icon → **Controller
+settings** → **Templates** → **Gamepad**. The sticks and shoulder buttons start
+working the moment it takes effect. The in-game **Settings** card lists every
+controller the app can see and, when it sees none, what to check.
+
+## If it will not start
+
+The app shows the last lines of the server's log and where the full logs are
+(`~/.local/share/commanderblitz/logs/`). The **Settings** card on the door shows
+the app and content versions, the server's port, whether the device is online,
+and what the last update did — a screenshot of it is most of a bug report.
+
+Two switches, if the window is black under Game Mode: create
+`~/.local/share/commanderblitz/flags` with one Chromium flag per line
+(`--disable-gpu` is the one to try first) and relaunch.
+
+## Playing in a browser instead
+
+The site at <https://commanderblitz.com> plays the same game in any browser, and
+the fallback below applies there too. In a browser on a Deck three things need
+to be true before a gamepad works, in this order:
+
+1. **Serve it over https, or localhost.** The Gamepad API does not exist over
+   plain `http://` to anything but `localhost`; a dev server opened by LAN
+   address is the single most common cause, and invisible because the same URL
+   works on the machine serving it.
+2. **Set the Steam Input template to Gamepad**, as above — Steam recognises
+   browsers and picks a keyboard-and-mouse template for them.
+3. **If the browser is a Flatpak, let it reach the device:** in Desktop Mode,
+   `flatpak override --user --filesystem=/run/udev:ro com.google.Chrome` (or the
+   right application id), then restart it.
+
+### The fallback
 
 **The game is fully playable without any of this.** Every region of the board is
 reachable with the D-pad alone — walking into the edge of a region leaves it —
@@ -132,3 +183,11 @@ the decision is yours to make on the board.
 Where `X` already means something — activating an ability on a card you could
 also cast, re-aiming a staged attacker at a different opponent — it keeps
 meaning that.
+
+## How it is put together
+
+For the design and its reasons — why the server runs on the device, why online
+play goes to the site, why an update never restarts the app — see
+[adr/0009-offline-first-desktop.md](adr/0009-offline-first-desktop.md). For
+building and releasing it, [deployment.md](deployment.md#desktop-releases) and
+[`desktop/README.md`](../desktop/README.md).
