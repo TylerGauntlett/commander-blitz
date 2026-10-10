@@ -1,18 +1,17 @@
 # Tech Debt
 
-**Measured at:** 2026-10-06, after the tech-debt sweep cleared every S and M item.
-
 This is a working list: every item here is **open**. When you fix one, delete its entry
 in the same PR. Each item says why it matters, where to look, and what fixing it looks
 like. Sizes: **S** is an afternoon, **M** a focused PR, **L** a multi-PR effort.
 
-**Retired IDs.** Code and tests still cite IDs from the 2026-09-04 audit that are now
+**Retired IDs.** Code and tests still cite IDs from an earlier audit that are now
 resolved (`CG-01`–`CG-06`, `FT-03`–`FT-07`, `FB-*`, `DC-01`, `LP-*`, `NF-01`, `UV-*` and
 others). Their write-ups are in this file's history (`git log -p -- TECH_DEBT.md`).
 `OF-01` is the one old ID still open.
 
 ## Suggested order
 
+0. **Cheap and worth doing first:** SV-01 (gate `/debug`).
 1. **Cheap:** UI-02 (one accessibility pass).
 2. **Structural:** CD-01 (one card layer), OF-01.
 
@@ -24,13 +23,13 @@ others). Their write-ups are in this file's history (`git log -p -- TECH_DEBT.md
 
 Cards live in two places:
 
-| Layer | Where | Entries | Written by |
-|---|---|---|---|
-| hand-written | `data/cards/{aesi,edgar,isperia,zurgo,basics,core,tokens}.cards.json` | 285 (192 cards + 93 tokens) | a person or an agent, directly |
-| pipeline | `data/cards/auto/templates.cards.json` | 2,854 | `scripts/author_cards.py --collect`, after the six gates |
+| Layer | Where | Written by |
+|---|---|---|
+| hand-written | `data/cards/{aesi,edgar,isperia,zurgo,basics,core,tokens}.cards.json` | a person or an agent, directly |
+| pipeline | `data/cards/auto/templates.cards.json` | `scripts/author_cards.py --collect`, after the six gates |
 
 The split made sense when the hand-written cards were paraphrases nothing could check.
-That is no longer true. All 192 non-token hand-written cards pass the same six gates
+That is no longer true. Every non-token hand-written card passes the same six gates
 (`tests/cards/precon_deficits.json` is `{"cards": {}}`), and the two layers share no
 ids or names. What the split still costs:
 
@@ -42,18 +41,21 @@ ids or names. What the split still costs:
   `data/cards/auto/expectations.json`, with overlapping keys (see CD-05).
 - **Machinery that exists only to move cards from one layer to the other:**
   `--supersede`, plus `_drop_hand_written` and `_card_span` in
-  `scripts/author_cards.py:254-325`. These delete cards from hand-formatted JSON by
+  `scripts/author_cards.py`. These delete cards from hand-formatted JSON by
   matching braces.
 - **`scripts/audit_cards.py`, and the deficit baseline it writes.** The baseline is
   now permanently empty.
-- **Load order matters in one place:** `registry.py:29-43` loads the hand-written files
-  first, so they win `by_name`.
-- **`CardModel.source` (`schema.py:1403`) is written but never read.**
-- **Two tests may skip the pipeline layer by accident.** `tests/ai/test_agents.py:80,98`
-  and `tests/cards/test_schema.py:19` glob only the hand-written files.
+- **Load order matters in one place:** `authored_card_paths` in `cards/registry.py`
+  loads the hand-written files first, so they win `by_name`.
+- **`CardModel.source` (`cards/schema.py`) is written but never read.**
+- **Two tests may skip the pipeline layer by accident.**
+  `tests/ai/test_agents.py` (`test_it_always_makes_its_land_drop`,
+  `test_it_never_points_removal_at_its_own_creature`) and `all_card_files` in
+  `tests/cards/test_schema.py` glob only the hand-written files.
 
-**The blocker.** `authoring/verify.py:172-185` `_props` builds gate 5's sandbox board by
-taking the alphabetically-first card for each role from **the pool it is given**, and
+**The blocker.** `_props` in `authoring/verify.py` (with `OWN_BOARD_ROLES`,
+`OPPONENT_BOARD_ROLES` and `OWN_GRAVEYARD_ROLES` beside it) builds gate 5's sandbox
+board by taking the alphabetically-first card for each role from **the pool it is given**, and
 that pool is the hand-written one. With the full pool, the board changes: your own
 `acidic_slime ×2` becomes `a_i_m_bot ×2`, and the opponent's Azusa / Air Elemental
 become Aang and Katara / A.I.M. Bot. That invalidates the measured counts in
@@ -77,7 +79,8 @@ cards sorted by id, so moving a card between files does not change the hash.
 
 ### OF-01 · Oversized modules and functions — **L**
 
-27 modules in `src/` are over 1,000 lines, and 8 are over 2,000:
+At the time of writing, 27 modules in `src/` are over 1,000 lines, and 8 are over
+2,000:
 
 | Module | Lines |
 |---|---|
@@ -90,28 +93,25 @@ cards sorted by id, so moving a card between files does not change the hash.
 | `engine/effects/ops_cards.py` | 2,095 |
 | `engine/triggers.py` | 2,062 |
 
-The September splits brought every file under 2,000 lines. The DSL work since has
-pushed eight back over.
-
-The functions matter more than the files:
+The functions matter more than the files (also at the time of writing):
 
 | Function | Lines |
 |---|---|
-| `loader/effects.py:570` `_validate_effect` | 2,181 (87 `op ==` guards; 58 a month ago) |
-| `loader/__init__.py:2712` `_compile_static` | 1,524 |
-| `loader/__init__.py:582` `compile_card` | 1,069 |
-| `loader/__init__.py:1864` `_compile_printed_ability` | 718 |
-| `cards/authoring/packet.py:440` `reference` | 577 |
-| `engine/game.py:333` `_cast` | 538 |
+| `loader/effects.py` `_validate_effect` | 2,181 (87 `op ==` guards) |
+| `loader/__init__.py` `_compile_static` | 1,524 |
+| `loader/__init__.py` `compile_card` | 1,069 |
+| `loader/__init__.py` `_compile_printed_ability` | 718 |
+| `cards/authoring/packet.py` `reference` | 577 |
+| `engine/game.py` `Game._cast` | 538 |
 
 25 functions are over 200 lines. Every `/extend-dsl` run adds a branch to
 `_validate_effect`.
 
 **Fix:** a per-op validator registry, like the effect-op `register()` the engine
-already uses (now in `engine/effects/registry.py`). **Before you start:** the golden pool
-pins only cards that load. About 318 `raises(DslError, match=...)` tests pin many of the
-error messages invalid cards get; check that the ops you move are among them, or pin
-them first.
+already uses (`engine/effects/registry.py`). **Before you start:** the golden pool
+pins only cards that load. Many `raises(DslError, match=...)` tests pin the error
+messages invalid cards get; check that the ops you move are among them, or pin them
+first.
 
 ---
 
@@ -135,3 +135,39 @@ The biome 2 upgrade surfaced real accessibility findings, each now carrying a
 
 **Fix:** one accessibility pass with a screen reader on, removing each suppression as
 its element gets the right role.
+
+---
+
+## Server
+
+### SV-01 · `/debug` is reachable on the hosted server — **S**
+
+`GET /api/games/{id}/debug` returns the full state, hidden zones included. Its
+docstring and [docs/api.md](docs/api.md) call it development only, and
+`tests/server/test_api.py` asserts it reveals what the player view hides, but
+nothing in `server/routes.py` gates it: no setting, mode or environment check. On
+the site anyone holding a `game_id` can read every hand and library in a
+multiplayer pod.
+
+**Fix:** refuse it unless the app runs in a development or desktop mode
+(`settings.py` already distinguishes hosted from desktop), and add the test that
+asserts the hosted mode returns a 404. Found while writing
+[docs/server.md](docs/server.md).
+
+---
+
+## Strategy gaps
+
+Worked around in individual deck plans (`src/commanderblitz/ai/strategy/decks/`)
+and worth lifting into `DefaultStrategy`:
+
+- A modal spell's targets are chosen after its mode, so the cast action cannot
+  see them; a "choose one" burn spell can still be pointed at our own creature.
+- `classify` calls only destroy/exile "removal", so burn and bounce miss the
+  "never at our own board" rule (Vivi's plan adds it).
+- A spell that both draws and costs life (Sign in Blood) reads as harmful and
+  goes at an opponent even with nothing to punish them (Sheoldred's plan aims it).
+- A "may" is always answered yes before a strategy is asked (Blor's Assault
+  Suit gives its creature away every time).
+- Scute Swarm's landfall copies can trip `MAX_TRIGGERS_PER_STEP` in a long game,
+  which the arena scores as a draw.

@@ -16,7 +16,7 @@
       "capability": "target_ability_on_stack",
       "kind": "selector",
       "what": "a target kind for an activated or triggered ability on the stack, so \"target spell or ability\" can bind either an ability object or a spell",
-      "why_existing_wont_do": "Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/commanderblitz/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of \"target spell or ability\" is unsayable even once retargeting exists."
+      "why_existing_wont_do": "Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/commanderblitz/cards/loader/vocabulary.py); a spell target cannot bind an ability on the stack, so half of \"target spell or ability\" is unsayable even once retargeting exists."
     }
   ],
   "closest_existing": ["copy_spell", "counter"],

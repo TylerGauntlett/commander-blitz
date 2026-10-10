@@ -1,11 +1,11 @@
 # Implementing cards, systematically
 
-The engine plays about three thousand cards out of ~32,000. Everything else imports as
-an inert *proxy* — right name, art, cost, types and keywords, with the rules text
-doing nothing ([deck-import.md](deck-import.md)). That is honest, and it is not a
-game: a real imported deck had 41 of its 100 cards doing nothing.
+The engine plays a fraction of the catalog. Everything else imports as an inert
+*proxy* — right name, art, cost, types and keywords, with the rules text doing
+nothing ([deck-import.md](deck-import.md)). That is honest, and it is not a game:
+an imported deck with its removal doing nothing is not the deck its author built.
 
-This is the loop that closes the gap without anybody hand-writing 32,000 files.
+This is the loop that closes the gap without anybody hand-writing the rest.
 
 ```bash
 python scripts/author_cards.py --report                 # coverage, and what is blocking the rest
@@ -14,9 +14,9 @@ python scripts/author_cards.py --tier templates --dry-run --limit 200
 python scripts/audit_cards.py                           # where the *hand-written* pool falls short
 ```
 
-The last one is the newest and the least obvious: the gap this page is about is
-not only between the engine and the 32,000 cards it has never seen. It is also
-inside the pool the engine already plays. See
+The last one points the other way: the gap this page is about is not only
+between the engine and the catalog it has never seen. It is also inside the pool
+the engine already plays. See
 [Repairing a hand-written card](#repairing-a-hand-written-card).
 
 ## The thing that must not go wrong
@@ -93,15 +93,15 @@ and fails the other for the same behaviour.
 ## What to work on next
 
 `authoring/queue.py`. Order is the most consequential thing in the package,
-because there are 32,000 cards and finite effort. Alphabetical spends the first
-thousand units of work on cards nobody has played.
+because the catalog is large and effort is finite. Alphabetical spends the first
+stretch of work on cards nobody has played.
 
 1. **Cards from a deck somebody imported** — read from `data/generated/`. Someone
    put those in a real list and then watched them do nothing.
 2. **EDHREC rank** — Sol Ring, Command Tower, Arcane Signet. Cards it does not
    rank sort last rather than being dropped.
 
-The queue also records **why** each card failed, which is half its value: "400
+The queue also records **why** each card failed, which is half its value: "these
 cards need a union selector" is a roadmap, and `--report` prints it.
 
 ## The tiers
@@ -117,15 +117,15 @@ template knows what its effect does, so it emits the expectation too, and one
 that cannot say what to observe does not belong here.
 
 It also takes cards the proxy *already* finishes — a vanilla creature, a plain
-dual, a Signet. Those need no translation and are complete; leaving them to be
-regenerated as inert proxies for every deck was worth 6× the yield.
+dual, a Signet. Those need no translation and are complete, so the tier collects
+them rather than leaving them to be regenerated as inert proxies for every deck.
 
-**Engine mechanics** — the measured blockers, each unlocking hundreds of cards
-for one piece of work. `--report` ranks them by how many cards they hold up.
+**Engine mechanics** — the blockers, each unlocking many cards for one piece of
+work. `--report` ranks them by how many cards they hold up.
 
-*Auras and Equipment are done* — the largest block in the catalog at ~1,700
-cards, and most of the object model already existed (`attached_to`, the `attach`
-op, `CardDef.is_aura`, SBA unattachment). Two things were missing:
+*Auras and Equipment are done* — the largest block in the catalog, and most of
+the object model already existed (`attached_to`, the `attach` op,
+`CardDef.is_aura`, SBA unattachment). Two things were missing:
 
 - **An Aura enters attached to what its spell targeted.** It has to happen after
   the permanent is placed, because `move_object` calls `reset_permanent_state` on
@@ -162,8 +162,7 @@ report's "some of your lands do nothing" line. They came apart very differently:
 Both are anchored end-to-end on purpose, and what they refuse is as important as
 what they take: Fabled Passage's "Then if you control four or more lands, untap
 that land" and Raging Ravine's quoted `"Whenever this creature attacks…"` both
-fail, so those cards stay honestly unimplemented rather than quietly wrong. 46
-cards fell out of the top 12,000 for two sentence patterns.
+fail, so those cards stay honestly unimplemented rather than quietly wrong.
 
 Three more keywords turned out to need no engine work at all:
 
@@ -174,8 +173,7 @@ Three more keywords turned out to need no engine work at all:
 - **Prowess** is a `spell_cast` trigger filtered to noncreature spells, which
   the DSL has always been able to say.
 
-*Cycling is done* — 44 cards in one harvest, every cycling land in the catalog.
-It needed two things that only work together: `active_zones` honoured on an
+*Cycling is done* — every cycling land in the catalog with it. It needed two things that only work together: `active_zones` honoured on an
 *activated* ability, so legality offers it from your hand, and a `discard_self`
 cost, because `discard: 1` lets the player pitch something else and keep the
 card. The loader now refuses one without the other — an ability activated from
@@ -185,11 +183,11 @@ and "when you cycle this card" are deliberately still refused; see
 
 *The Aesi precon is done, and it is the best evidence this loop has.* The deck
 shipped here was never the precon -- it was a hand-curated Simic list built
-around what the engine could already say, with five substitutions and five
-*invented* cards wearing real cards' ids. Importing the real thing, Commander
-Legends' **Reap the Tides**, resolved 100 cards with 19 simplified.
+around what the engine could already say, with substitutions and *invented* cards
+wearing real cards' ids. Importing the real thing, Commander Legends' **Reap the
+Tides**, left a set of simplified cards.
 
-Getting those 19 to zero took fourteen capabilities, and the shape of the work is
+Getting those to zero took a run of capabilities, and the shape of the work is
 the argument for driving the pipeline from a deck somebody else built:
 
 | | |
@@ -200,18 +198,18 @@ the argument for driving the pipeline from a deck somebody else built:
 | Costs | `may.pay`, `return_to_hand`, `evoke`, `emerge` |
 | Rules seams | `block_restriction`, `must_attack`, `cant_attack`, untap-on-another-turn, stack triggers, the `kicked` lifetime |
 
-**Three cards were filed as blocked on mechanics that already existed**, and all
-three for the same reason: the work packet under-reported the language. It listed
+**Cards were filed as blocked on mechanics that already existed**, and all of
+them for the same reason: the work packet under-reported the language. It listed
 ops, keywords and trigger events, and omitted conditions, value expressions, the
-effect-side selector keys, and nine of the fourteen static effects. A worker sees
+effect-side selector keys, and most of the static effects. A worker sees
 only its packet, so an omission there reads as an absence -- and a gap record is
 read as a build order, so it buys engine work for something that already ships.
 Every one of those lists is now derived from what the loader enforces, pinned by
 `tests/cards/test_authoring.py`. That is the single highest-leverage fix in the
 whole run.
 
-The same failure recurred twice more while the Edgar precon was being finished,
-and both times the packet was again the cause rather than the engine:
+The same failure recurred while the Edgar precon was being finished, and each
+time the packet was again the cause rather than the engine:
 
 - **`cost_keys` was missing entirely.** A worker shown `ops` but never the cost
   vocabulary cannot tell a cost from an effect, so every "`<cost>`: `<effect>`"
@@ -227,10 +225,10 @@ The pattern is worth naming: **when a worker files a gap, suspect the packet
 before the engine.**
 
 *The Edgar Markov precon is done too, and it is the sharper lesson of the two.*
-It shipped with **seven** substitutions — cards whose text the DSL could not say,
-each replaced by something in the same colours and each recorded in the deck
-file. Clearing them took six capabilities, and the first thing the run found was
-that three of the seven needed **nothing at all**:
+It shipped with substitutions — cards whose text the DSL could not say, each
+replaced by something in the same colours and each recorded in the deck file.
+The first thing the run clearing them found was that several needed **nothing at
+all**:
 
 | | |
 |---|---|
@@ -241,8 +239,8 @@ that three of the seven needed **nothing at all**:
 | A subsystem `rules-coverage.md` had listed as absent | transforming cards, plus "activate only if…" — Bloodline Keeper |
 
 **A substitution is a claim about the engine, written down once and never
-re-checked.** That is what `--check-substitutions` is for, and three stale swaps
-in one deck is the argument for running it rather than trusting the note.
+re-checked.** That is what `--check-substitutions` is for, and stale swaps in one
+deck is the argument for running it rather than trusting the note.
 
 The transform work is worth reading for the opposite reason: it was listed as a
 missing *subsystem* and turned out to be one boolean and one branch, because
@@ -250,10 +248,10 @@ missing *subsystem* and turned out to be one boolean and one branch, because
 "Not implemented" in a coverage doc is a measurement of what was tried, not of
 what is hard.
 
-Still outstanding: **Crew** (74), **Convoke** (39), and **modal spells** (153).
+Still outstanding: **modal spells**.
 
-**Ward** is done, and it is the second entry on this list to be smaller than its
-count suggested. Ward-on-yourself had shipped for years as a hand-written
+**Ward** is done, and it is another entry on this list to be smaller than it
+looked. Ward-on-yourself had shipped as a hand-written
 `becomes_target` trigger; what was missing was that a keyword could not carry a
 cost, so ward could never be *granted* to anything. It became a static, the way
 protection already had — see [rules-coverage.md](rules-coverage.md) — and the
@@ -287,12 +285,13 @@ A reader that *cannot* express a card must not approximate it. It writes a **gap
 record** to `data/authoring/gaps/<card_id>.json` instead — the missing capability,
 named, with the reason the existing vocabulary falls short. `scripts/report_gaps.py`
 collapses those into [unsupported-cards.md](unsupported-cards.md), ranked by how
-many cards each one blocks. One refusal is an anecdote; seventy cards waiting on
-cycling is a build order.
+many cards each one blocks. One refusal is an anecdote; a crowd of cards waiting
+on the same mechanic is a build order.
 
 ### Driving it
 
-Two Claude Code skills wrap this loop end to end (`.claude/skills/`):
+Four Claude Code skills live in `.agents/skills/`; two of them wrap this loop end
+to end:
 
 - **`/author-cards`** — runs the free template tier, hands the residual to one
   concurrent worker per card, collects through the six gates, verifies and commits.
@@ -308,7 +307,7 @@ touches `src/commanderblitz/engine/`; it measures what it cannot do and hands th
 
 A packet is deliberately a **file format** rather than an API call, because the
 same packet has to serve a Claude Code session with a person watching *and* an
-unattended worker running 10,000 cards. Both read the same JSON and write the
+unattended worker running the whole queue. Both read the same JSON and write the
 same `{"card": ..., "expectation": ...}`, so the API worker costs no rework once
 the session has proved the loop.
 
@@ -317,44 +316,20 @@ sentences still outstanding, why the template tier gave up, the whole DSL
 vocabulary, and worked examples from cards already in the pool. Nothing assumes
 the reader has the repository open, because the API worker does not.
 
-### What the gates actually caught, authoring by hand
+### The sandbox grows; the gates do not loosen
 
-Both of the first two answers were wrong, and both were mine:
-
-- **Swiftfoot Boots** — I asserted a creature would have haste. Equip is a
-  separate sorcery-speed activation the sandbox never performs, so nothing was
-  equipped. The card was right; the claim was not.
-- **Heroic Intervention** — I asserted 2 permanents would gain the keywords. It
-  is "*Permanents* you control", so the answer was 32.
-
-And chasing the second one found a **bug in the harness**: `drive` was walking
-the sandbox through combat and into the next turn, crossing the cleanup step —
-which wipes every until-end-of-turn effect. Every pump spell and keyword grant
-was being measured *after the thing it did had worn off*, so gate 5 passed them
-regardless of what they did. That is the exact failure this harness exists to
-catch, hiding inside the harness. `drive` now stops at priority, at combat, and
-at the turn boundary.
-
-The third one was not a wrong answer at all — it was the sandbox.
-
-**Commander Sofia Daguerre** — "When this enters, destroy up to one target
-legendary permanent." Every clause of her compiled, and she failed gate 4 with
-"is a permanent but ended in graveyard": she is Legendary, so she is a legal
-target for her own trigger, and she was the *only* legendary permanent in the
-sandbox. The harness could offer the trigger nothing but the card under test.
-
-The fix was a **prop, not a wider gate**. Widening gate 4 to let any permanent
-whose own trigger can finish it end in the graveyard would cover nearly every
-removal creature ever printed, and gate 4's whole job is noticing a creature
-that is simply gone. So the opponent's creature slot became a `legendary_creature`
-role — a *replacement*, not an addition, because the boards are 32 and 6 and
-every expectation in `data/cards/auto/` was written against those numbers. Same
-answer as `noncreature_spell` and `x_spell` before it: **add the role, do not
-relax the gate.** The role also requires the prop to be *inert* — nothing on it
-triggers and nothing on it can be activated — because a prop that acts folds its
-own behaviour into every card's verdict, and in the opponent's hands a payable
-activated ability suppresses the auto-pass and makes every card in the pool fail
-gate 4 with "never left the stack".
+**When a card's expectation needs a board role the sandbox lacks, add the role;
+never relax the gate.** A gate widened to admit one card admits every card that
+fails the same way — a gate 4 that let a permanent end in the graveyard because
+its own trigger can finish it would pass nearly every removal creature ever
+printed, and gate 4's whole job is noticing a creature that is simply gone. Roles
+live in `verify.py` (`OWN_BOARD_ROLES`, `OPPONENT_BOARD_ROLES`,
+`OWN_GRAVEYARD_ROLES`; `legendary_creature`, `noncreature_spell` and `x_spell` are
+the pattern). A new role *replaces* a prop rather than adding one, because every
+expectation in `data/cards/auto/` was recorded against the board the props make,
+and a prop must be inert — nothing on it triggers and nothing on it can be
+activated — because a prop that acts folds its own behaviour into every card's
+verdict.
 
 ## Where the output lives
 
@@ -376,8 +351,7 @@ that.
 stale proxy in somebody's `data/generated/` pool is dropped rather than merged —
 the deck goes on referencing the same id and silently picks up the real rules.
 Without that the server stops booting the first time the pipeline implements a
-card sitting in an imported deck, which is exactly what happened on
-`simic_guildgate` the moment 280 cards landed.
+card sitting in an imported deck.
 
 ## There is no promoting one to hand-written
 

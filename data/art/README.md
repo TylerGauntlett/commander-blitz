@@ -1,7 +1,7 @@
 # data/art/
 
-One illustration per card the engine plays, as `{scryfall_id}.jpg` (and
-`{scryfall_id}_back.jpg` for a double-faced card), fetched once by
+One illustration per card the engine plays, as `{card_id}.jpg` (and
+`{card_id}_back.jpg` for a double-faced card), fetched once by
 `scripts/fetch_card_art.py` and committed so a game renders with the network
 unplugged. `manifest.json` records, for every file, the card it belongs to, the
 Scryfall id of the printing and the **artist**.

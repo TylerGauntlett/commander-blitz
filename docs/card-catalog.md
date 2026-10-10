@@ -32,11 +32,11 @@ run downloads nothing.
 data/catalog/
 ├── bulk/                        the Scryfall dump. NEVER committed.
 │   ├── .gitignore                 ← the only thing between a refresh and a huge commit
-│   └── default_cards-*.jsonl.gz   ~74 MB, a download cache
+│   └── default_cards-*.jsonl.gz   a download cache
 ├── art_pins.json                printings chosen by hand (committed, tiny)
-├── cards.sqlite                 the built index          (committed, ~14 MB)
-└── registry_images.json         the engine's cards only  (committed, ~104 KB)
-data/art/{card_id}.jpg           owned image bytes        (committed, ~63 MB)
+├── cards.sqlite                 the built index          (committed)
+└── registry_images.json         the engine's cards only  (committed)
+data/art/{card_id}.jpg           owned image bytes        (committed)
 data/generated/art/{id}.jpg      the lazy fill's cache    (gitignored, per-deployment)
 ```
 
@@ -46,18 +46,19 @@ repository owns: committed, baked into the image, never written at runtime.
 art that persists across a deploy. Owned bytes win when both hold the same name
 — see "Serving" below.
 
-**Two index artifacts, and the split matters.** `cards.sqlite` holds all ~32,700
-distinct English cards and is opened lazily, only by `/api/catalog`. Loading
-32k rows at import time would tax `scripts/train.py` and `run_arena.py` for a
-thing neither of them uses. `registry_images.json` holds only the ~877 cards the
+**Two index artifacts, and the split matters.** `cards.sqlite` holds every
+distinct English card and is opened by the server (`create_app` loads the
+index at boot for `/api/catalog`, deck import and `/health`), never by the
+engine, so `scripts/train.py` and `run_arena.py` pay nothing for a thing
+neither of them uses. `registry_images.json` holds only the cards the
 engine actually ships, and is what the server reads at boot.
 
 **The bundle stays gzipped.** `gzip` streams line by line perfectly well, so
-there is no reason to spend 600 MB of disk expanding it.
+there is no reason to spend the disk expanding it.
 
 ### The three columns that are not about art
 
-`oracle_text`, `keywords` and `produced_mana` cost ~7 MB and exist for one
+`oracle_text`, `keywords` and `produced_mana` exist for one
 consumer: `src/commanderblitz/cards/proxy.py`, which generates a playable card
 definition for a card nobody has hand-written. Without `produced_mana` a
 generated land taps for nothing, and a deck of inert lands is not a deck.
@@ -85,11 +86,11 @@ curl -s localhost:8000/health | python -m json.tool
 
 ```json
 "catalog": {
-  "source_name": "default_cards-2026-08-07.jsonl.gz",
-  "built_at": "2026-08-08T04:27:49+00:00",
-  "rows": 32749
+  "source_name": "default_cards-<date>.jsonl.gz",
+  "built_at": "<date>T<time>+00:00",
+  "rows": <n>
 },
-"art": { "cached": 877, "known": 877, "artless": 0 }
+"art": { "cached": <n>, "known": <n>, "artless": <n> }
 ```
 
 The `meta` table in the index records this at build time, so "where did this art
@@ -98,10 +99,10 @@ come from" is answerable in one request rather than by guessing.
 ## Why `default_cards`
 
 Scryfall publishes several bundles. `default_cards` is every card in English,
-one row per printing — **~74 MB gzipped**. `all_cards` is the same thing in every
-language at ~372 MB, and every extra row is a non-English printing this build
-discards, so it is five times the download for nothing. Verified: the index
-built from `default_cards` is byte-identical to one built from the full dump.
+one row per printing. `all_cards` is the same thing in every language, and every
+extra row is a non-English printing this build discards, so it is a far larger
+download for nothing. Verified: the index built from `default_cards` is
+byte-identical to one built from the full dump.
 
 Override with `--bulk-type` if you need something else.
 
@@ -109,8 +110,8 @@ Override with `--bulk-type` if you need something else.
 
 `scripts/build_card_index.py` reduces every printing to one row per name:
 
-- **Filtered out**: non-English, digital-only, oversized, `art_series` (2,650 of
-  those wear a real card's name while showing a different illustration), and
+- **Filtered out**: non-English, digital-only, oversized, `art_series` (those
+  wear a real card's name while showing a different illustration), and
   memorabilia/joke sets.
 - **Deduped** by a *total* order — best scan, then highres, then not-promo, then
   not-textless, then newest, then set, then id. The last key is what makes two
@@ -119,7 +120,7 @@ Override with `--bulk-type` if you need something else.
 - **Pinned**, where that order picks the wrong picture. See below.
 - **Image URLs are never stored.** Every Scryfall image URL is a pure function of
   the card's 36-character id, so the index stores the id and derives the rest.
-  Storing both sizes verbatim would add ~6.7 MB of pure redundancy.
+  Storing both sizes verbatim would be pure redundancy.
 
 ### Three layers, and which one wins
 
@@ -145,7 +146,7 @@ next seat keeps its own Forests. See `docs/deck-import.md`.
 "Newest" is a good proxy for "best scan" and a bad one for "the art people mean".
 A reprint with a fresh illustration is strictly newer than the printing the card
 is *known* by, so it wins — which is how Sheoldred, the Apocalypse came to show
-a 2026 Secret Lair borderless instead of Chris Rahn's Dominaria United art.
+a later Secret Lair borderless instead of Chris Rahn's Dominaria United art.
 
 `data/catalog/art_pins.json` names the printing to use, and a pinned printing
 wins outright — no later record can displace it, which is the point, since the
@@ -164,11 +165,11 @@ already on disk and would otherwise keep the old bytes under the new id.
 Three things the pin file is deliberately not allowed to do:
 
 - **Retune the sort.** A preference term added to rescue one card silently
-  reshuffles the other 32,000. A named exception is auditable; a nudged weight
+  reshuffles every other card. A named exception is auditable; a nudged weight
   is not.
 - **Get an unshowable printing in.** A pin still has to pass `is_wanted`, so it
   cannot smuggle in a digital-only row or an `art_series` one — the latter being
-  2,650 different illustrations wearing real cards' names.
+  different illustrations wearing real cards' names.
 - **Fail quietly.** A pin that matches nothing in the dump — a wrong id, or a
   dump older than the printing — leaves the card on its old art, so the build
   prints a warning, and a test asserts every committed pin matches the printing
@@ -189,11 +190,9 @@ Then each engine card is matched to a printing (`src/commanderblitz/cards/images
 3. the suffix strip, as a second chance;
 4. nothing — the client draws a deliberate "no art" plate.
 
-**All of them resolve.** There used to be five that did not — original designs
-with no printing anywhere — and they were the hand-curated Aesi list's, so they
-went when the printed precon shipped. `KNOWN_ARTLESS` is now the empty set and
-the test asserts that rather than a frozen list of five: *any* card appearing in
-it means a real card stopped resolving.
+**All of them resolve.** `KNOWN_ARTLESS` is the empty set and the test asserts
+that rather than a frozen list: *any* card appearing in it means a real card
+stopped resolving.
 
 A **transforming** card is one catalog row under a joined name, "Bloodline
 Keeper // Lord of Lineage", which neither face matches on its own — so both
@@ -223,9 +222,9 @@ response. It carries **no `cards.scryfall.io` URL** — `tests/server/test_art_a
 asserts the string never appears in the payload, because that is the whole point.
 
 The image deliberately does *not* ride along on `card_view`. `player_view`
-re-serialises ~90 cards on every poll of the AI pump, and the image is a function
-of the immutable `card_id`, so putting it there would re-send a constant
-thousands of times a game.
+re-serialises every visible card on every poll of the AI pump, and the image is a
+function of the immutable `card_id`, so putting it there would re-send a constant
+over and over through a game.
 
 ## If you are working offline
 
