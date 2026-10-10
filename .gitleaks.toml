@@ -12,12 +12,16 @@ paths = [
   '''^data/catalog/''',
   '''^data/cards/''',
   '''^data/authoring/''',
+  '''^tests/data/''',
   '''^frontend/public/symbols/''',
   '''package-lock\.json$''',
   '''^constraints\.txt$''',
 ]
-# Lobby codes and pod tokens are generated at runtime; the test fixtures that
-# pin them look like high-entropy strings and are not credentials.
+# A card definition's `"token": "<id>"` names the token it creates; a Scryfall
+# printing id is a UUID; lobby codes and pod tokens are generated at runtime.
+# None is a credential, and all three trip the generic-api-key rule.
 regexes = [
+  '''"token": "[a-z0-9_]+"''',
+  '''PROXY_SECRET_LAIR''',
   '''secrets\.token_urlsafe''',
 ]
