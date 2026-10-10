@@ -26,6 +26,7 @@
 import { AnimatePresence, MotionConfig } from "motion/react";
 import { useEffect } from "react";
 import { Route, Routes, useLocation, useMatch } from "react-router";
+import { UpdateBanner } from "./components/ui/UpdateBanner";
 import { startInputMode } from "./input/inputMode";
 import { screenKey, titleFor } from "./logic/routes";
 import { DeckDossierRoute } from "./screens/DeckDossierRoute";
@@ -34,6 +35,7 @@ import { GameRoute } from "./screens/GameRoute";
 import { HomeRoute } from "./screens/HomeRoute";
 import { NotFound } from "./screens/NotFound";
 import { PodRoute } from "./screens/PodRoute";
+import { AppConfigProvider } from "./state/useAppConfig";
 import { useHandheld, usePhone } from "./state/useHandheld";
 import { useImages } from "./state/useImages";
 
@@ -108,19 +110,27 @@ export function App() {
    * captions, the log, the ring flashes. "How it felt" goes; "what happened"
    * stays.
    */
+  // `AppConfigProvider` outside the screens: which server this is -- the
+  // desktop sidecar or the site -- is something the door, the catalogue and
+  // the lobby all ask, and none of them should fetch it twice.
   return (
-    <MotionConfig reducedMotion="user">
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={screenKey(location.pathname)}>
-          <Route path="/" element={<HomeRoute />} />
-          <Route path="/pods/:code" element={<PodRoute />} />
-          <Route path="/games/:gameId" element={<GameRoute />} />
-          <Route path="/decks" element={<DecksRoute />}>
-            <Route path=":deckId" element={<DeckDossierRoute />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </AnimatePresence>
-    </MotionConfig>
+    <AppConfigProvider>
+      {/* Above the screens, so the desktop's "update ready" outlives any one
+          of them. It renders nothing on the site. */}
+      <UpdateBanner />
+      <MotionConfig reducedMotion="user">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={screenKey(location.pathname)}>
+            <Route path="/" element={<HomeRoute />} />
+            <Route path="/pods/:code" element={<PodRoute />} />
+            <Route path="/games/:gameId" element={<GameRoute />} />
+            <Route path="/decks" element={<DecksRoute />}>
+              <Route path=":deckId" element={<DeckDossierRoute />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AnimatePresence>
+      </MotionConfig>
+    </AppConfigProvider>
   );
 }

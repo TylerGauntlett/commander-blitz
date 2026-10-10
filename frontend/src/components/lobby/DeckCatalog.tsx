@@ -32,6 +32,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { DeckImportResponse, DeckSummary } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { useDismiss } from "../../input/useDismiss";
+import { canImport } from "../../logic/desktop";
 import {
   type CatalogFilters,
   type DeckSort,
@@ -39,6 +40,7 @@ import {
   EMPTY_FILTERS,
   visibleDecks,
 } from "../../logic/lobby";
+import { useAppConfig } from "../../state/useAppConfig";
 import { ManaSymbol } from "../game/ManaSymbol";
 import { DeckImport } from "../menu/DeckImport";
 import { Glyph } from "../ui/Glyph";
@@ -108,6 +110,9 @@ export function DeckCatalog({
   inUse = [],
 }: Props) {
   const [filters, setFilters] = useState<CatalogFilters>(EMPTY_FILTERS);
+  // Whether the import strip can work: it needs Moxfield, and on the desktop
+  // the sidecar's probe is the best word there is on whether that is reachable.
+  const config = useAppConfig();
 
   /* Escape and B, and only while nothing is open over this. The footer has
      advertised `B — Back` since the first draft and nothing was listening for
@@ -299,7 +304,7 @@ export function DeckCatalog({
         <footer className="shelf__foot">
           {/* The same component the front door used to carry, in the
               catalogue's box. See the note at the top of `DeckImport`. */}
-          <DeckImport variant="row" onImported={onImported} />
+          <DeckImport variant="row" onImported={onImported} enabled={canImport(config)} />
         </footer>
       </section>
 

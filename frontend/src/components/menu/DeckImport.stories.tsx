@@ -69,6 +69,21 @@ export const Row: Story = {
 };
 
 /**
+ * The desktop with no connection: Moxfield is the one thing the game cannot
+ * reach from a server on the device, so the strip is disabled and says so.
+ */
+export const Offline: Story = {
+  args: { variant: "row", enabled: false },
+  parameters: { automtg: { mount: "catalogFoot" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByRole("textbox")).toBeDisabled();
+    expect(await canvas.findByTestId("import-go")).toBeDisabled();
+    await canvas.findByTestId("import-offline");
+  },
+};
+
+/**
  * A URL that is not a Moxfield deck.
  *
  * Rejected before any request goes out, so this story needs no stub at all.

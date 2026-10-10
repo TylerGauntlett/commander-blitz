@@ -469,6 +469,42 @@
   box-shadow: 0 3px 0 #4a3a18;
 }
 
+/* The desktop's hold has a second way through: no code, straight to the site.
+   A full-width row under the code so the ring walks field, Join, then this. */
+.door__go--wide {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* ==========================================================================
+   THE DESKTOP, OFFLINE
+   ==========================================================================
+
+   The Online card stays in the row -- a card that vanished would move Play
+   off the middle -- and stays a stop, so the ring can still land on it and
+   be told why it does nothing. It is dimmed, not hidden, and the dim is on
+   the plank rather than the slot so the press flash still plays. */
+.door__card--off {
+  filter: saturate(0.35) brightness(0.7);
+}
+
+.door__card--off .door__name {
+  opacity: 0.7;
+}
+
+/* The hosted site, opened from the desktop app: the way back, beside the deck
+   count because it is the same weight of information -- here, not a verb. */
+.door__link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--accent, #d8a63c);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /*
  * The way out, as a control.
  *

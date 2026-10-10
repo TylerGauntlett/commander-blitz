@@ -196,10 +196,12 @@ describe("the endpoints", () => {
     await api.importDeck("https://moxfield.com/decks/x", true);
     await api.images();
     await api.images("g 1");
+    await api.config();
     expect(sent.map((s) => `${s.method} ${s.url}`)).toEqual([
       "POST /api/decks/import",
       "GET /api/images",
       "GET /api/images?game_id=g%201",
+      "GET /api/config",
     ]);
     expect(sent[0].body).toEqual({ url: "https://moxfield.com/decks/x", dry_run: true });
   });

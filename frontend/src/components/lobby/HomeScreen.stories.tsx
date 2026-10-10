@@ -156,6 +156,53 @@ export const SettingsHold: Story = {
   },
 };
 
+/**
+ * THE DESKTOP'S THIRD CARD IS ONLINE.
+ *
+ * On the Steam Deck the game runs from a server on the device and a pod with
+ * other people lives on the hosted site, so Join becomes the way there. With no
+ * connection the card stays in the row -- removing it would move Play off the
+ * middle -- dimmed, still a stop, and pressing it says why.
+ */
+export const DesktopOffline: Story = {
+  args: { mode: "desktop", online: false, onPlayOnline: fn() },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const card = await canvas.findByTestId("join-pod");
+    expect(card).toHaveTextContent("Online");
+    expect(card).toHaveAttribute("aria-disabled", "true");
+    // One click selects the card, the second presses it.
+    await userEvent.click(card);
+    await userEvent.click(card);
+    await canvas.findByTestId("offline-note");
+    expect(canvas.queryByTestId("join-hold")).toBeNull();
+    expect(args.onPlayOnline).not.toHaveBeenCalled();
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
+/** ...and with a connection, the hold takes a code or goes with none. */
+export const DesktopOnline: Story = {
+  args: { mode: "desktop", online: true, onPlayOnline: fn() },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const card = await canvas.findByTestId("join-pod");
+    await userEvent.click(card);
+    await userEvent.click(card);
+    await canvas.findByTestId("join-hold");
+    const go = await canvas.findByTestId("play-online");
+    expect(Math.round(go.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    await userEvent.click(go);
+    expect(args.onPlayOnline).toHaveBeenCalledWith();
+    expect(args.onJoin).not.toHaveBeenCalled();
+  },
+};
+
 /** The front door on a Deck: three cards, each a target. */
 export const FreshHandheld: Story = {
   args: Fresh.args,
