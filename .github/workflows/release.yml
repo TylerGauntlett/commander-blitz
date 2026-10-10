@@ -95,11 +95,15 @@ jobs:
       # The one proof the packaged artifact runs end to end: boot the sidecar
       # from inside the AppImage and read /api/config. No FUSE on a runner,
       # hence `--appimage-extract-and-run`; no display, hence xvfb.
+      # `timeout`: an uncaught exception at startup puts up Electron's error
+      # dialog, which under xvfb nobody can dismiss, and the first AppImage
+      # sat on one until the job's own timeout. Five minutes is generous for
+      # a boot that takes seconds.
       - run: |
           sudo apt-get install -y -qq xvfb >/dev/null
           app="$(ls release/CommanderBlitz-*.AppImage)"
           chmod +x "$app"
-          COMMANDERBLITZ_HOME="$(mktemp -d)" xvfb-run -a "$app" --appimage-extract-and-run --no-sandbox --smoke
+          COMMANDERBLITZ_HOME="$(mktemp -d)" timeout 300 xvfb-run -a "$app" --appimage-extract-and-run --no-sandbox --smoke
         working-directory: desktop
       - run: bash desktop/steam/test/install.test.sh
       - run: tar czf desktop/build/steam-assets.tar.gz -C desktop/steam grid commanderblitz.desktop

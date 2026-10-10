@@ -2,10 +2,12 @@
  * Bundle the shell: `src/main.ts` and `src/preload.ts` into `dist/`.
  *
  * CommonJS, because Electron loads the main process and a sandboxed preload
- * as scripts, not modules. `electron` is always external; so are the two
- * runtime dependencies (`electron-updater`, `tar`), which electron-builder
- * packs from `node_modules` -- bundling them would duplicate what is shipped
- * anyway and lose electron-updater's own resource lookup.
+ * as scripts, not modules. Only `electron` is external: `tar` and
+ * `electron-updater` are bundled in, so the packaged app depends on nothing
+ * in `node_modules` at runtime. They were external once, on the theory that
+ * electron-builder would pack them -- and the first AppImage died on
+ * `Cannot find module 'tar'`, because an explicit `files` list in
+ * electron-builder.yml replaces the default that would have.
  *
  * `--dev` also writes `dev-content/manifest.json`, so `npm run dev` on a
  * checkout has a "bundled" content directory to point the state at.
@@ -24,7 +26,7 @@ await build({
   platform: "node",
   format: "cjs",
   target: "node22",
-  external: ["electron", "electron-updater", "tar"],
+  external: ["electron"],
   sourcemap: true,
   // `import.meta.url` has no meaning in a CommonJS bundle; `__filename` does.
   define: { "import.meta.url": "__cb_file_url" },
