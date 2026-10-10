@@ -125,7 +125,7 @@ function path(arrow: Arrow): string {
 interface Props {
   state: GameView;
   /** The element arrows are drawn over; positions are relative to it. */
-  boardRef: React.RefObject<HTMLElement>;
+  boardRef: React.RefObject<HTMLElement | null>;
 }
 
 export function CombatArrows({ state, boardRef }: Props) {

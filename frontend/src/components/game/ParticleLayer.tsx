@@ -129,7 +129,7 @@ function draw(ctx: CanvasRenderingContext2D, width: number, height: number): voi
 
 interface Props {
   /** The element the canvas covers; particle coordinates are relative to it. */
-  boardRef: React.RefObject<HTMLElement>;
+  boardRef: React.RefObject<HTMLElement | null>;
 }
 
 export function ParticleLayer({ boardRef }: Props) {

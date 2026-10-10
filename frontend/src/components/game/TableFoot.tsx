@@ -17,7 +17,7 @@ import { HandFan } from "./HandFan";
 import { HintBar } from "./HintBar";
 
 interface Props {
-  footRef: RefObject<HTMLDivElement>;
+  footRef: RefObject<HTMLDivElement | null>;
   handheld: boolean;
   state: GameView;
   actions: LegalAction[];

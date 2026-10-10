@@ -251,7 +251,7 @@ function ghostFor(
 interface Props {
   beat: LiveBeat | null;
   speed: Speed;
-  boardRef: React.RefObject<HTMLElement>;
+  boardRef: React.RefObject<HTMLElement | null>;
   /** For resolving a spotlit card's face; see `findCardByDefId`. */
   state: GameView;
 }

@@ -10,7 +10,7 @@ import { drive } from "./actuators";
 
 export function useAttackLean(
   stagedAttacks: Record<number, number>,
-  boardRef: RefObject<HTMLDivElement>,
+  boardRef: RefObject<HTMLDivElement | null>,
 ): void {
   /*
    * A staged attacker leans toward the seat it is aimed at, and holds.
