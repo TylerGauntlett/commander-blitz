@@ -1,6 +1,6 @@
 # What a deck import's PR body says
 
-The structure, the diagram rule and the checks all come from `/create-pr`. They are the
+The structure, the diagram rule and the checks all come from `SKILL.md`. They are the
 same for every PR. This file only lists the deck-specific facts and where each one goes.
 Take the numbers from `before.json` and a fresh `deck_status.py` /
 `author_cards.py --report` run, not from memory.

@@ -222,9 +222,10 @@ feat(cards): support every card in the <deck> deck (N/N)
 ```
 
 Shorten the deck name if the title would go over 72 characters. The body is the same
-template every PR uses, through `/create-pr`. `references/pr-body.md` lists only the
-deck-specific facts and which section each one goes in. A `feat:` merge deploys the site and cuts a Steam Deck release, which is what a
-newly playable deck should do.
+template every PR uses, through `/create-pr`. Its `references/deck-import.md` lists
+only the deck-specific facts and which section each one goes in. A `feat:` merge
+deploys the site and cuts a Steam Deck release, which is what a newly playable deck
+should do.
 
 ## 10 · Watch the pipeline to green
 
