@@ -158,7 +158,7 @@ export function PlayerMat({
       {/*
         Everything that is a fact about this player rather than a permanent on
         their board -- and it is a different component depending on whose seat
-        it is, which is the whole of the seat round's (`docs/design-record.md#seat`) argument.
+        it is, which is the whole of the seat round's argument.
 
         THE VIEWER GETS A PANEL THEY OPERATE. Commander, life, mana, zones: all
         of it is theirs to press, and all of it lives inside the orb.

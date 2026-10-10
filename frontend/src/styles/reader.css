@@ -2,7 +2,7 @@
    The reader: the card you are pointing at, compressed
    ==========================================================================
 
-   the handheld-board round's (`docs/design-record.md#handheld-board`) `.reader`, and it is the compact half of
+   the handheld-board round's (`docs/adr/0012-art-fetched-once-served-locally.md`) `.reader`, and it is the compact half of
    `components/game/CardPreview.tsx` rather than a component of its own.
 
    THE PICTURE IS A LANDSCAPE WINDOW AND NOT A SMALL CARD, which is the whole
@@ -23,7 +23,7 @@
  * under the cursor mid-turn. That is the same failure `.preview`'s own height
  * note records on a desktop, arriving at a third of the size.
  *
- * 236px was the handheld-board round's measurements (`docs/design-record.md#handheld-board`)'s number, and it was
+ * 236px was the handheld-board round's number (`docs/adr/0013-handheld-floors-are-ci-gates.md`), and it was
  * affordable for the first time because the rail runs the full height of the
  * screen -- 748px rather than 514 -- and still left the list 363-398.
  *

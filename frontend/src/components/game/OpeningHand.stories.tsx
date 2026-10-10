@@ -336,7 +336,7 @@ export const HandheldKeep: Story = {
      *
      * These slots are rotated, and a rect is the AXIS-ALIGNED box of a rotated
      * element -- so the end card measured 295px against an expected 278 and
-     * looked like a scale bug. the mulligan round's measurements (`docs/design-record.md#gates-and-measurement`) carries the same
+     * looked like a scale bug. the mulligan round's measurements (`docs/adr/0014-measured-numbers-invariant-relationships.md`) carries the same
      * note for the same reason: its first table reported every fanned direction
      * 15-28% too wide and only the one that does not rotate was right.
      */

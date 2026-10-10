@@ -110,8 +110,8 @@ interface Props {
    *
    * The prompt and the tools stay in the document. Note they are not *reachable*
    * while a dialog is up: `.prompt-backdrop` is fixed at `inset: 0` above
-   * everything and swallows the clicks. That predates this panel and is recorded
-   * in docs/design-record.md (Open fidelity findings) rather than worked around here.
+   * everything and swallows the clicks. That predates this panel and is a known
+   * open defect rather than one worked around here.
    */
   standDown: boolean;
 }
@@ -148,7 +148,7 @@ export function ActionPanel({
    * longer holds: the rail runs the full height of the screen now, 748px rather
    * than 514, so the 65px the slab costs is affordable and the list still comes
    * out at 363-398. Putting it back is also the arrangement
-   * the handheld-board round (`docs/design-record.md#handheld-board`) draws and the one that reads better -- the thing
+   * the handheld-board round (`docs/adr/0013-handheld-floors-are-ci-gates.md`) draws and the one that reads better -- the thing
    * you press to end a decision belongs under the list of that decision, not in
    * the corner of the hand.
    *

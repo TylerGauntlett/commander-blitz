@@ -1,6 +1,6 @@
 """Reading a deck list off Moxfield.
 
-the design record (`docs/design-record.md#board-themes`) records that ``api2.moxfield.com`` answers a scripted
+ADR 0012 (`docs/adr/0012-art-fetched-once-served-locally.md`) records that ``api2.moxfield.com`` answers a scripted
 client with a Cloudflare 403.  That was measured against ``/v2/cards/search/user``
 and it is still true of *that* endpoint; the deck endpoint is open:
 

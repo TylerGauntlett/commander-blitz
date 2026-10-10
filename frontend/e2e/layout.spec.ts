@@ -5,7 +5,7 @@
  * `scrollHeight === clientHeight` even while the board visibly runs under the
  * foot, so a naive overflow assertion is worthless here. Both of the bugs
  * below were present in the mockups and both passed exactly such a check --
- * see the design record (`docs/design-record.md#board-themes`), "Notes on fidelity".
+ * see `docs/adr/0014-measured-numbers-invariant-relationships.md`.
  *
  * The lesson these encode is the one the cycle-3 playtest draws from
  * the mana-pip bug: an assertion about *content* passes happily through a
@@ -470,7 +470,7 @@ test("an opponent's board filling up does not move the viewer's board", async ({
   // filled up" must not move anything; "a player was knocked out" plainly may,
   // and pretending otherwise would either weaken this assertion or demand the
   // loss line be drawn somewhere it does not belong. Recorded as an open defect
-  // in docs/design-record.md (Open fidelity findings) so the question is not lost.
+  // against docs/adr/0016-nothing-changes-size-with-game-state.md so the question is not lost.
   const eliminated = () => page.locator(".play__opponents .orb__loss").count();
 
   const samples = [await topOfMine()];

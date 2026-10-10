@@ -73,7 +73,7 @@ export const ZoomFifteenCardHand: Story = {
  * than looked at. The rail used to stop where the hand started, because the
  * foot spanned the full width beneath both rails -- 514px at 1280x800, of
  * which the action list, the rows a turn is actually spent in, got 172.
- * the handheld-board round's measurements (`docs/design-record.md#handheld-board`) measures the same rail at 748 when it
+ * the handheld-board round's measurements (`docs/adr/0013-handheld-floors-are-ci-gates.md`) measures the same rail at 748 when it
  * runs to the bottom edge instead.
  *
  * `zoomLock: false` deliberately, and it is the point of this story rather than

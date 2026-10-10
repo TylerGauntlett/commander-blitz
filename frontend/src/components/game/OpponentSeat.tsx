@@ -18,7 +18,7 @@
  *
  * ## The gate is the point
  *
- * the seat round (`docs/design-record.md#seat`) records the failure mode this whole family of components has:
+ * the seat round records the failure mode this whole family of components has:
  * **a summary that cannot be checked against the thing it summarises**. Five of
  * its six directions could not be wrong about the board, because the numbers
  * were never in the payload. Every number here comes from `musterOf`, which is
@@ -309,8 +309,8 @@ export function OpponentSeat({
    * `onFocus` is for focus that does not come from the ring, and it stands down
    * in mouse mode. A click focuses the button too, and a pointer player who
    * clicked the seat to read their board is pointing at the board next, not at
-   * this commander -- the rail pinned to a card nobody is on is open defect #4
-   * in `docs/design-record.md` again. The pointer already has the window.
+   * this commander -- the rail pinned to a card nobody is on would be the same
+   * defect again. The pointer already has the window.
    *
    * `onBlur` clears only what this seat wrote. Blur fires on the mousedown of
    * the NEXT click, by which time the pointer has already put whatever it is

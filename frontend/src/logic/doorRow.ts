@@ -1,7 +1,7 @@
 /**
  * The front door's row of cards, as arithmetic.
  *
- * Ported from the door round's row arithmetic (`docs/design-record.md#door`). One continuous number in -- `s`, where
+ * Ported from the door round's row arithmetic. One continuous number in -- `s`, where
  * the selection currently is in card-index space -- and one pose per card out.
  * Nothing here is keyframed and nothing is a discrete state, so a card
  * mid-flight is at a real position rather than at a tween between two poses.

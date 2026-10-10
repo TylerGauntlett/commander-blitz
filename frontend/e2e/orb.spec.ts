@@ -1,5 +1,5 @@
 /**
- * The player orb, rebuilt from the orb round's 03 'Plinth' (`docs/design-record.md#orb`).
+ * The player orb, rebuilt from the orb round's 03 'Plinth'.
  *
  * Two things here reduce to numbers, and `docs/testing.md` is explicit that where
  * they do they must be *measured* rather than looked at: `body { overflow:
@@ -65,7 +65,7 @@ test.describe("the orb fills its column", () => {
   });
 
   test("nothing paints outside the panel", async ({ page }) => {
-    // The "escape" check the design record (`docs/design-record.md#board-themes`) asks for, and the one `overflow:
+    // The "escape" check `docs/adr/0014-measured-numbers-invariant-relationships.md` asks for, and the one `overflow:
     // hidden` on the orb would hide if it were asserted by eye. The seal hangs
     // off the *portrait*, deliberately; it must not hang off the panel.
     test.setTimeout(budget(180_000));

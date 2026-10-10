@@ -1,6 +1,6 @@
 """Pull the real Magic mana symbols.
 
-Written for the card-face design round (docs/design-record.md#cards); direction
+Written for the card-face design round (docs/adr/0012-art-fetched-once-served-locally.md); direction
 D shipped, so these are the client's symbols, written straight into
 `frontend/public/symbols/`.
 
@@ -40,7 +40,7 @@ from pathlib import Path
 # `ManaSymbol` loads these from `/symbols/`, which Vite serves out of `public/`
 # in dev and copies into `dist/` on build. This script used to live in the
 # card-face mockup round and mirrored its output here; the mockups are gone
-# (see docs/design-record.md#cards) and the shipped copy is the only copy.
+# (see docs/adr/0012-art-fetched-once-served-locally.md) and the shipped copy is the only copy.
 SYMBOL_DIR = Path(__file__).resolve().parents[1] / "public" / "symbols"
 MANIFEST = SYMBOL_DIR / "manifest.json"
 

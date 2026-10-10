@@ -1,7 +1,7 @@
 /**
  * Paste a Moxfield link, get a deck.
  *
- * Following the flow round's shared state (`docs/design-record.md#flow`)'s `CUSTOM`, whose comment is the design
+ * Following the flow round's shared state's `CUSTOM` (`docs/adr/0019-pod-seats-symmetric-readiness.md`), whose comment is the design
  * brief: *"The error state matters more than the happy path, because it is the
  * state the real feature will spend its life in."* So this component is mostly
  * error states, and the one success state leads with what the import could not

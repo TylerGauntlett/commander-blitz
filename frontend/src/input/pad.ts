@@ -52,7 +52,7 @@
  *    the pad's first gesture. So `startPad()` ran one frame, saw nothing, and
  *    died, leaving the `gamepadconnected` listener as the only way back. The
  *    prototype this was ported from binds that same listener with an EMPTY BODY
- *    on purpose (`the handheld round's 06 'One Thumb' (`docs/design-record.md#handheld`):2313`) and polls
+ *    on purpose and polls
  *    unconditionally; the port inverted it and made the decorative listener
  *    load-bearing. A controller that was plugged in before the tab existed, or
  *    whose event landed before React mounted `Screen`, was then never seen at
