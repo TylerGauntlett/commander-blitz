@@ -68,6 +68,13 @@ structure exactly:
 6. **Details** (`<details>`, collapsed). This holds everything else: the verification
    commands and their results, coverage tables, follow-ups and caveats.
 
+Some kinds of branch have facts of their own that go into these sections. Read the
+reference that matches before you write:
+
+| branch | reference |
+|---|---|
+| a Moxfield deck import (`/import-moxfield`) | `references/deck-import.md` |
+
 End the body with the attribution line from the session's instructions, if there is one.
 
 ## 4 · Check, push, open
