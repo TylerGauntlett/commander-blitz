@@ -30,6 +30,15 @@ frontend/tsconfig.tsbuildinfo
 # Storybook
 frontend/storybook-static/
 
+# The desktop shell: bundles, the assembled content package, the AppImage,
+# the dev manifest, and PyInstaller's working directories.
+desktop/dist/
+desktop/build/
+desktop/release/
+desktop/dev-content/
+desktop/sidecar/build/
+desktop/sidecar/dist/
+
 # Playwright artifacts
 frontend/e2e-report/
 frontend/e2e-shots/
