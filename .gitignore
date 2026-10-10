@@ -75,3 +75,4 @@ data/authoring/packets/
 .claude/worktrees/
 # Per-person permission allowlist; Claude Code writes it, nobody shares it.
 .claude/settings.local.json
+desktop/coverage/
