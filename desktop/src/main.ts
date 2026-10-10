@@ -48,8 +48,12 @@ const log = fileLogger(paths.logs, "shell");
 const sidecarLog = fileLogger(paths.logs, "sidecar");
 
 /*
- * Chromium under gamescope. Inside an AppImage there is no SUID sandbox
- * helper, so `no-sandbox`. And X11, EXPLICITLY: the first build hinted
+ * Chromium under gamescope. Inside an AppImage there is no usable SUID
+ * sandbox helper, and on SteamOS Chromium aborts over it BEFORE THIS FILE
+ * RUNS -- so `--no-sandbox` has to arrive on the command line, which the
+ * launcher `install.sh` writes provides. The switch below is for a launch
+ * that got this far some other way, and it is not what saves the first one.
+ * And X11, EXPLICITLY: the first build hinted
  * `ozone-platform-hint=auto`, which under gamescope's Wayland picked the
  * Wayland backend, and the result on a real Deck was Steam's spinner forever
  * -- no window ever reached the compositor, and the stuck client could not
