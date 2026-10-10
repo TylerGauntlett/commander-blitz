@@ -19,7 +19,9 @@ Steam, puts the library artwork in place, and says so as it goes. Switch back to
 a logo like anything else there.
 
 If Steam was not running when the script ran, or you would rather do it by hand:
-Steam → Games → **Add a Non-Steam Game** → Browse → the AppImage above. Then
+Steam → Games → **Add a Non-Steam Game** → Browse → the AppImage above, then
+Properties → **Launch Options**: `--no-sandbox` (without it, Chromium refuses
+to start inside an AppImage on SteamOS and Steam's spinner never ends). Then
 run the script again to get the artwork.
 
 ### What the script does, so you can undo it
@@ -27,7 +29,7 @@ run the script again to get the artwork.
 | It wrote | Why |
 |---|---|
 | `~/Applications/CommanderBlitz.AppImage` | The app. A fixed name: the Steam shortcut points at it and updates replace it in place |
-| `~/.local/share/applications/commanderblitz.desktop` and an icon | A launcher for Desktop Mode, and what Steam reads the name and icon from |
+| `~/.local/share/applications/commanderblitz.desktop` and an icon | A launcher for Desktop Mode, and what Steam reads the name, icon and the `--no-sandbox` launch option from. Start the app through it, not by double-clicking the AppImage |
 | `~/.steam/steam/userdata/<you>/config/grid/<appid>*.png` | The library artwork, named by the shortcut's app id |
 | `~/.local/share/commanderblitz/` | Everything the app writes while running: imported decks, art it fetched, logs, updates |
 

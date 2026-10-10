@@ -72,7 +72,8 @@ if [[ -n "${STUB_WRITES_VDF:-}" ]]; then
   "$PYTHON" - "$1" "$STUB_WRITES_VDF" "$HOME" <<'PY'
 import re, struct, sys
 launcher, out, home = sys.argv[1], sys.argv[2], sys.argv[3]
-exe = re.search(r"^Exec=(.*)$", open(launcher).read(), re.M).group(1)
+# As Steam does: the executable apart from its arguments.
+exe = re.search(r"^Exec=(.*)$", open(launcher).read(), re.M).group(1).split(" --", 1)[0]
 name = re.search(r"^Name=(.*)$", open(launcher).read(), re.M).group(1)
 def s(k, v): return b"\x01" + k.encode() + b"\x00" + v.encode() + b"\x00"
 def i(k, v): return b"\x02" + k.encode() + b"\x00" + struct.pack("<I", v)
@@ -106,7 +107,8 @@ pass "AppImage at $APP"
 
 LAUNCHER="$HOME/.local/share/applications/commanderblitz.desktop"
 [[ -f "$LAUNCHER" ]] || fail "no launcher"
-grep -q "^Exec=$APP$" "$LAUNCHER" || fail "launcher Exec is not the AppImage"
+# With `--no-sandbox`: Chromium aborts inside an AppImage on SteamOS without it.
+grep -q "^Exec=$APP --no-sandbox$" "$LAUNCHER" || fail "launcher Exec is not the AppImage with --no-sandbox"
 grep -q "^Name=Commander Blitz$" "$LAUNCHER" || fail "launcher name"
 [[ -f "$HOME/.local/share/icons/hicolor/256x256/apps/commanderblitz.png" ]] || fail "no icon"
 pass "launcher and icon"
@@ -148,7 +150,7 @@ grep -q "has not written the shortcut yet" "$SCRATCH/run3.log" || fail "the fall
 APP="$HOME/Applications/CommanderBlitz.AppImage"
 # From the launcher file, as install.sh does: see `read_appid` there for why
 # the path is not simply passed as a string.
-EXPECTED="$("$PY" -c "import re,sys,zlib; t=open(sys.argv[1]).read(); e=re.search(r'^Exec=(.*)$',t,re.M).group(1); print((zlib.crc32(('\"'+e+'\"'+'Commander Blitz').encode())|0x80000000)&0xFFFFFFFF)" "$HOME/.local/share/applications/commanderblitz.desktop")"
+EXPECTED="$("$PY" -c "import re,sys,zlib; t=open(sys.argv[1]).read(); e=re.search(r'^Exec=(.*)$',t,re.M).group(1).split(' --',1)[0]; print((zlib.crc32(('\"'+e+'\"'+'Commander Blitz').encode())|0x80000000)&0xFFFFFFFF)" "$HOME/.local/share/applications/commanderblitz.desktop")"
 GRID="$HOME/.local/share/Steam/userdata/42/config/grid"
 [[ -f "$GRID/${EXPECTED}p.png" ]] || fail "fallback art not named $EXPECTED: $(ls "$GRID" 2>/dev/null)"
 [[ -f "$GRID/${EXPECTED}_hero.png" ]] || fail "fallback hero"

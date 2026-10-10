@@ -48,16 +48,24 @@ const log = fileLogger(paths.logs, "shell");
 const sidecarLog = fileLogger(paths.logs, "sidecar");
 
 /*
- * Chromium under gamescope. Inside an AppImage there is no SUID sandbox
- * helper, and the Deck's compositor is Wayland with an X11 bridge; these are
- * the two switches every Electron-on-Deck report agrees on. A `flags` file in
- * the per-user directory adds more (`--disable-gpu` is the documented fallback
- * when the board draws nothing), one switch per line, so a player can try one
- * without a rebuild.
+ * Chromium under gamescope. Inside an AppImage there is no usable SUID
+ * sandbox helper, and on SteamOS Chromium aborts over it BEFORE THIS FILE
+ * RUNS -- so `--no-sandbox` has to arrive on the command line, which the
+ * launcher `install.sh` writes provides. The switch below is for a launch
+ * that got this far some other way, and it is not what saves the first one.
+ * And X11, EXPLICITLY: the first build hinted
+ * `ozone-platform-hint=auto`, which under gamescope's Wayland picked the
+ * Wayland backend, and the result on a real Deck was Steam's spinner forever
+ * -- no window ever reached the compositor, and the stuck client could not
+ * even be force-closed. Gamescope always provides XWayland, and X11 is the
+ * route every working Electron-on-Deck app takes. A `flags` file in the
+ * per-user directory adds switches (`--disable-gpu` is the documented
+ * fallback when the board draws nothing), one per line, and an explicit
+ * `--ozone-platform=...` there would override this one.
  */
 if (process.env.APPIMAGE) {
   app.commandLine.appendSwitch("no-sandbox");
-  app.commandLine.appendSwitch("ozone-platform-hint", "auto");
+  app.commandLine.appendSwitch("ozone-platform", "x11");
 }
 const flagsFile = join(paths.home, "flags");
 if (existsSync(flagsFile)) {
@@ -180,7 +188,16 @@ function createWindow(): BrowserWindow {
     autoHideMenuBar: true,
     backgroundColor: "#0b0a16",
     title: "Commander Blitz",
-    show: false,
+    /*
+     * SHOWN AT ONCE, never on `ready-to-show`. That event fires on the first
+     * paint, and on a Steam Deck the GPU process segfaults three times
+     * before Chromium gives up and draws in software -- so the first paint
+     * came late or never, the hidden window was never shown, and Game Mode
+     * sat on its spinner with no window to hand the compositor. The
+     * background colour is what a visible window shows until the splash
+     * paints, which is all `ready-to-show` was buying.
+     */
+    show: true,
     webPreferences: {
       preload: join(HERE, "preload.cjs"),
       contextIsolation: true,
@@ -189,8 +206,6 @@ function createWindow(): BrowserWindow {
       additionalArguments: [`--cb-shell=${SHELL_VERSION}`, `--cb-remote=${REMOTE_ORIGIN}`],
     },
   });
-  window.once("ready-to-show", () => window.show());
-
   // The window goes two places and no further: the local server and the
   // hosted site. Anything else -- a link in a deck note, a redirect -- is
   // refused rather than turning the game into a browser.

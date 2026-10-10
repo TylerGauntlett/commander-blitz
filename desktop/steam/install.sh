@@ -58,6 +58,12 @@ mkdir -p "$WORK/assets"
 tar xzf "$WORK/assets.tar.gz" -C "$WORK/assets"
 mkdir -p "$(dirname "$LAUNCHER")" "$(dirname "$ICON")"
 cp "$WORK/assets/grid/icon.png" "$ICON"
+# The launcher's Exec carries `--no-sandbox`, and it has to: inside an
+# AppImage Chromium's SUID sandbox helper cannot be set up, and on SteamOS
+# Chromium then aborts before the app's own code runs -- which is what the
+# first release did, in Game Mode and Desktop Mode alike. The switch must be
+# on the command line; the app setting it from inside is too late. Steam
+# copies Exec, arguments included, into the shortcut's launch options.
 sed "s#__APP__#$APP#" "$WORK/assets/commanderblitz.desktop" > "$LAUNCHER"
 chmod +x "$LAUNCHER"
 note "$LAUNCHER"
@@ -83,7 +89,9 @@ read_appid() {
   "$PY" - "$1" "$LAUNCHER" <<'EOF'
 import re, struct, sys
 path, launcher = sys.argv[1], sys.argv[2]
-app = re.search(r"^Exec=(.*)$", open(launcher, encoding="utf-8").read(), re.M).group(1).strip()
+exec_line = re.search(r"^Exec=(.*)$", open(launcher, encoding="utf-8").read(), re.M).group(1).strip()
+# Steam stores the executable and the arguments apart; match on the path.
+app = exec_line.split(" --", 1)[0]
 try:
     data = open(path, "rb").read()
 except OSError:
@@ -126,7 +134,9 @@ guess_appid() {
   "$PY" - "$LAUNCHER" <<'EOF'
 import re, sys, zlib
 text = open(sys.argv[1], encoding="utf-8").read()
-exe = re.search(r"^Exec=(.*)$", text, re.M).group(1).strip()
+# The path alone: Steam keeps the arguments as launch options, outside the
+# id's input.
+exe = re.search(r"^Exec=(.*)$", text, re.M).group(1).strip().split(" --", 1)[0]
 name = re.search(r"^Name=(.*)$", text, re.M).group(1).strip()
 print((zlib.crc32((f'"{exe}"' + name).encode("utf-8")) | 0x80000000) & 0xFFFFFFFF)
 EOF
@@ -164,6 +174,7 @@ elif command -v steamos-add-to-steam >/dev/null 2>&1; then
 else
   say "Steam's helper is not here"
   note "Add it by hand: Steam > Games > Add a Non-Steam Game > Browse > $APP"
+  note "then Properties > Launch Options: --no-sandbox   (it will not start without it)"
 fi
 
 # -- 4. the artwork -----------------------------------------------------------
