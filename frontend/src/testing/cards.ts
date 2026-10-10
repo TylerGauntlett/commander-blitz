@@ -188,6 +188,27 @@ export const mindStone = (overrides: Partial<CardView> = {}): CardView =>
     ...overrides,
   });
 
+/**
+ * One ability, five yields: the colour is the player's call, and the engine
+ * offers it as five activate actions told apart by `option_label`.
+ */
+export const treasure = (overrides: Partial<CardView> = {}): CardView =>
+  card({
+    card_id: "treasure",
+    name: "Treasure",
+    type_line: "Token Artifact — Treasure",
+    mana_cost: "",
+    mana_value: 0,
+    colors: [],
+    types: ["Artifact"],
+    subtypes: ["Treasure"],
+    power: null,
+    toughness: null,
+    produces: ["W", "U", "B", "R", "G"],
+    oracle_text: "{T}, Sacrifice this artifact: Add one mana of any color.",
+    ...overrides,
+  });
+
 export const counterspell = (overrides: Partial<CardView> = {}): CardView =>
   card({
     card_id: "counterspell",

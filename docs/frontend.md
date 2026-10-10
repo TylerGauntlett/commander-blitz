@@ -1421,7 +1421,11 @@ seat's commander — in Commander the deck is the commander.
 permanent with one untargeted ability activates it; with one that needs a target
 it enters targeting on exactly that ability's ids and follows up to the target;
 with two or more it opens `AbilityMenu`, a decision dialog like any other, whose
-items decide and whose ids stay on the panel rows. `X` asks the same router,
+items decide and whose ids stay on the panel rows. One ability with several
+yields — a Treasure's five colours, told apart by `option_label` — is a menu
+of those yields rather than five chips in the panel; a card with that ability
+and another (Commander's Sphere) asks which ability, then which colour, in the
+same dialog. `X` asks the same router,
 where it used to post the first `activate` action it found. The panel rows draw
 the card's name on one faint line and the ability text under it (`abilityText`
 takes the `"<Card>: "` prefix off the engine's label), and on a handheld the

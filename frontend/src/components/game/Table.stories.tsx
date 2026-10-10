@@ -225,6 +225,35 @@ export const PlayingALand: Story = {
 };
 
 /**
+ * A Treasure asks which colour on the board.
+ *
+ * Its one ability is five actions, one per colour. They used to enter targeting
+ * and light five chips in the panel; the press is on the card, so the card's
+ * menu asks, and the chosen colour posts that colour's action.
+ */
+export const ChoosingATreasureColour: Story = {
+  args: board(scenarios.treasureColours(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    await userEvent.click(await canvas.findByTestId("card-451"));
+    expect(args.game.act.mutate, "clicking the Treasure spent it").not.toHaveBeenCalled();
+
+    const menu = await canvas.findByTestId("ability-menu");
+    expect(menu.textContent).toContain("Which mana?");
+    const items = menu.querySelectorAll("[data-stop^='menu:ability:']");
+    expect(items, "one item per colour").toHaveLength(5);
+    expect(menu.querySelector("[data-action-id]")).toBeNull();
+    expectUniqueActionIds(canvasElement);
+
+    await userEvent.click(canvas.getByTestId("ability-0-yield-3"));
+    expect(args.game.act.mutate).toHaveBeenCalledWith("a3-activate");
+    expect(canvasElement.querySelector('[data-testid="ability-menu"]')).toBeNull();
+  },
+};
+
+/**
  * A gesture that must *not* reach the server by itself.
  *
  * The other half of `PlayingALand`. Mind Stone offers two abilities and one of

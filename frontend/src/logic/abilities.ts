@@ -16,8 +16,10 @@
  *   - `act`:    one ability, one way to do it. Post it.
  *   - `target`: one ability that still needs something pointed at (or a choice
  *               between its variants). Enter targeting on exactly its ids.
- *   - `menu`:   several abilities. Ask which, in `AbilityMenu`, and then do
- *               whichever of the two above the chosen ability wants.
+ *   - `menu`:   several abilities, or one ability with several yields (a
+ *               Treasure's five colours). Ask which, in `AbilityMenu`, and
+ *               then do whatever the chosen item wants -- which, for an
+ *               ability chosen from a menu, can be a second menu of its yields.
  *   - `none`:   nothing is offered.
  *
  * An ability is identified by `ability_index`; the engine sends it on every
@@ -38,6 +40,12 @@ export interface AbilityChoice {
   ids: string[];
   /** Whether choosing it still leaves a target or variant to pick. */
   targeted: boolean;
+  /**
+   * Each id's `option_label`, in step with `ids`: what that copy yields when the
+   * copies differ by something other than a target -- "{R}" for one of "Add
+   * one mana of any color". Absent on an item that is already one of them.
+   */
+  options?: string[];
   /**
    * What the menu's stop and test id are named by, when `index` cannot say:
    * a shock land's two land drops are not abilities and have no index.
@@ -84,6 +92,7 @@ export function abilitiesOf(
     const found = byKey.get(key);
     if (found) {
       found.ids.push(action.id);
+      found.options?.push(action.option_label);
       found.targeted ||= action.targets.length > 0;
       continue;
     }
@@ -92,9 +101,44 @@ export function abilitiesOf(
       text: abilityText(action.base_label, sourceName),
       ids: [action.id],
       targeted: action.targets.length > 0,
+      options: [action.option_label],
     });
   }
   return [...byKey.values()];
+}
+
+/**
+ * An ability's yields, one menu item each, or `[]` when it has fewer than two.
+ *
+ * A TREASURE IS A QUESTION TOO. "Add one mana of any color" is one ability and
+ * five actions, told apart only by `option_label`. Routed as targeting, the
+ * choice lit five chips in the panel -- on a Steam Deck a 230px column the ring
+ * has to be sent to, away from the card that was pressed. The menu asks on the
+ * board, the way it asks a planeswalker which loyalty ability.
+ *
+ * Grouped by label rather than one item per id, so an ability that also takes
+ * an X or a target keeps every copy of one colour behind one item, and
+ * `routeFor` on that item goes on to the X or target the way it would have.
+ */
+function yieldsOf(ability: AbilityChoice): AbilityChoice[] {
+  const { options } = ability;
+  if (!options || options.some((label) => label === "")) return [];
+  const byLabel = new Map<string, AbilityChoice>();
+  ability.ids.forEach((id, i) => {
+    const found = byLabel.get(options[i]);
+    if (found) {
+      found.ids.push(id);
+      return;
+    }
+    byLabel.set(options[i], {
+      index: ability.index,
+      text: options[i],
+      ids: [id],
+      targeted: ability.targeted,
+      key: `${ability.key ?? ability.index}-yield-${byLabel.size}`,
+    });
+  });
+  return byLabel.size > 1 ? [...byLabel.values()] : [];
 }
 
 /** Which of the three things a press on `oid` should do. */
@@ -112,13 +156,15 @@ export function abilityRoute(
 /**
  * What a single, already-chosen ability wants next.
  *
- * Several ids with no target among them is still `target`: "Add one mana of
- * any colour" is five untargeted actions, and the panel's chips are where that
- * choice is drawn. Entering targeting on them is what lights the chips up and
- * sends the ring there (`followUp`'s `targeting` gesture falls through to the
- * panel rows when nothing on the board is a target).
+ * Several yields are a `menu` of them (`yieldsOf`). Several ids that differ by
+ * something the server did not name -- a target, an X -- are `target`:
+ * entering targeting on them is what lights the board or the panel's chips up
+ * and sends the ring there (`followUp`'s `targeting` gesture falls through to
+ * the panel rows when nothing on the board is a target).
  */
 export function routeFor(ability: AbilityChoice): AbilityRoute {
+  const yields = yieldsOf(ability);
+  if (yields.length > 0) return { kind: "menu", abilities: yields };
   if (ability.ids.length === 1 && !ability.targeted) return { kind: "act", id: ability.ids[0] };
   return { kind: "target", ids: ability.ids };
 }

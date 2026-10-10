@@ -550,6 +550,39 @@ export const HandheldAbilityMenu: Story = {
 };
 
 /**
+ * `A` ON A TREASURE ASKS WHICH COLOUR.
+ *
+ * The colour used to be five chips in the panel, a column the ring had to be
+ * sent to and back from. Now the menu opens over the board with the ring on
+ * its first colour, and `A` on another spends the Treasure for that one.
+ */
+export const HandheldTreasureColour: Story = {
+  args: board(scenarios.treasureColours(), { act: idleMutation(fn()) }),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    setGroup(null);
+    expect(setCursor("card:451"), "the Treasure is reachable").toBe(true);
+    await userEvent.click(canvas.getByTestId("card-451"));
+    await canvas.findByTestId("ability-menu");
+    await waitFor(() => expect(getCursor()).toBe("menu:ability:0-yield-0"));
+
+    moveCursor("down");
+    moveCursor("down");
+    expect(getCursor()).toBe("menu:ability:0-yield-2");
+    await userEvent.click(canvas.getByTestId("ability-0-yield-2"));
+    expect(args.game.act.mutate).toHaveBeenCalledWith("a2-activate");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="ability-menu"]')).toBeNull();
+    });
+  },
+};
+
+/**
  * A HELD DOWN-PRESS WALKS EVERY TARGET CHIP, IN ORDER.
  *
  * On a desktop the chips wrap as pills sized to their names, and from a pill on

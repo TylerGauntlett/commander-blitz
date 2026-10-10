@@ -42,14 +42,73 @@ describe("abilityRoute", () => {
     expect(abilityRoute(actions, 7)).toEqual({ kind: "target", ids: ["a1", "a2"] });
   });
 
-  it("treats several untargeted variants of one ability as a choice, not a post", () => {
-    // "Add one mana of any colour" is five actions that target nothing; the
-    // panel's chips are where the colour is chosen.
-    const actions = ["W", "U", "B"].map((c, i) => ({
-      ...activate(`a${i}`, 0, "{T}: Add one mana of any color."),
+  it("asks which yield when one ability makes several, as a Treasure does", () => {
+    // "Add one mana of any colour" is five actions that target nothing. The
+    // board asks which colour, rather than sending the ring to the panel.
+    const actions = ["{W}", "{U}", "{B}"].map((c, i) => ({
+      ...activate(`a${i}`, 0, "{T}, Sacrifice this artifact: Add one mana of any color."),
       option_label: c,
     }));
-    expect(abilityRoute(actions, 7)).toEqual({ kind: "target", ids: ["a0", "a1", "a2"] });
+    const route = abilityRoute(actions, 7);
+    expect(route.kind).toBe("menu");
+    if (route.kind !== "menu") return;
+    expect(route.abilities.map((a) => a.text)).toEqual(["{W}", "{U}", "{B}"]);
+    expect(route.abilities.map((a) => a.key)).toEqual(["0-yield-0", "0-yield-1", "0-yield-2"]);
+    expect(route.abilities.map((a) => routeFor(a))).toEqual([
+      { kind: "act", id: "a0" },
+      { kind: "act", id: "a1" },
+      { kind: "act", id: "a2" },
+    ]);
+  });
+
+  it("asks which ability first, then which yield", () => {
+    // Commander's Sphere: a colour ability and a sacrifice ability.
+    const actions = [
+      ...["{G}", "{U}"].map((c, i) => ({
+        ...activate(
+          `m${i}`,
+          0,
+          "{T}: Add one mana of any color in your commander's color identity.",
+        ),
+        option_label: c,
+      })),
+      activate("d1", 1, "Sacrifice this artifact: Draw a card."),
+    ];
+    const route = abilityRoute(actions, 7);
+    expect(route.kind).toBe("menu");
+    if (route.kind !== "menu") return;
+    expect(route.abilities).toHaveLength(2);
+    const colours = routeFor(route.abilities[0]);
+    expect(colours.kind).toBe("menu");
+    if (colours.kind !== "menu") return;
+    expect(colours.abilities.map((a) => [a.text, routeFor(a)])).toEqual([
+      ["{G}", { kind: "act", id: "m0" }],
+      ["{U}", { kind: "act", id: "m1" }],
+    ]);
+    expect(routeFor(route.abilities[1])).toEqual({ kind: "act", id: "d1" });
+  });
+
+  it("keeps a yield's targets behind its item", () => {
+    const actions = [
+      { ...activate("a1", 0, "{T}: Add one mana of any color.", [11]), option_label: "{R}" },
+      { ...activate("a2", 0, "{T}: Add one mana of any color.", [12]), option_label: "{R}" },
+      { ...activate("a3", 0, "{T}: Add one mana of any color.", [11]), option_label: "{G}" },
+    ];
+    const route = abilityRoute(actions, 7);
+    expect(route.kind).toBe("menu");
+    if (route.kind !== "menu") return;
+    expect(route.abilities.map((a) => routeFor(a))).toEqual([
+      { kind: "target", ids: ["a1", "a2"] },
+      { kind: "target", ids: ["a3"] },
+    ]);
+  });
+
+  it("does not ask when every copy yields the same thing", () => {
+    const actions = [
+      { ...activate("a1", 0, "{T}: Add {R}.", [11]), option_label: "{R}" },
+      { ...activate("a2", 0, "{T}: Add {R}.", [12]), option_label: "{R}" },
+    ];
+    expect(abilityRoute(actions, 7)).toEqual({ kind: "target", ids: ["a1", "a2"] });
   });
 
   it("asks which ability when there are two, with the card's name taken off", () => {

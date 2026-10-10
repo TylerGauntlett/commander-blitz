@@ -311,6 +311,42 @@ export function targetVariants(): Scenario {
 }
 
 /**
+ * A Treasure: one ability whose five actions differ only by the colour made.
+ *
+ * Pressing it asks which colour on the board (`AbilityMenu`), the way a
+ * planeswalker asks which loyalty ability, rather than lighting five chips in
+ * the panel.
+ */
+export function treasureColours(): Scenario {
+  const battlefield = [pool.treasure({ oid: 451 }), pool.forest({ oid: 452 })];
+
+  const state = gameView({
+    players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
+    battlefield,
+  });
+
+  const base = "Treasure: {T}, Sacrifice this artifact: Add one mana of any color.";
+  return {
+    state,
+    actions: [
+      pass,
+      ...["W", "U", "B", "R", "G"].map((colour, i) =>
+        action({
+          id: `a${i}-activate`,
+          kind: "activate",
+          label: `${base} ({${colour}})`,
+          base_label: base,
+          option_label: `{${colour}}`,
+          source_oid: 451,
+          ability_index: 0,
+        }),
+      ),
+    ],
+    events: [],
+  };
+}
+
+/**
  * A permanent offering two abilities, neither of them targeted.
  *
  * The counterpart to `targetVariants`: there the ambiguity is *which target*,
