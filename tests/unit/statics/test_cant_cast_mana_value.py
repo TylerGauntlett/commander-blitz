@@ -26,13 +26,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import legality
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import cast_lock_min_x, player_cant_cast_spells
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import legality
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import cast_lock_min_x, player_cant_cast_spells
+from commanderblitz.engine.zones import destroy
 from tests.conftest import oids_of, only_oid, pass_until
 
 LOCK = "t_mv_lock"

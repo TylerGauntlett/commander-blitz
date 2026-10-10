@@ -36,12 +36,12 @@ from __future__ import annotations
 
 import contextlib
 
-from automtg.cards.registry import DeckList, validate_deck
-from automtg.engine import legality
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.cards.registry import DeckList, validate_deck
+from commanderblitz.engine import legality
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     activations,
     find_action,

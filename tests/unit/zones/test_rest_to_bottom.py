@@ -22,8 +22,8 @@ lands and still buries them.
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
 
 
 def library_ids(game, pid: int = 0) -> list[str]:

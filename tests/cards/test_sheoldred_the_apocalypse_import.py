@@ -17,10 +17,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.images import load_index
-from automtg.cards.importer import import_deck
-from automtg.cards.moxfield import ParsedDeck
-from automtg.cards.registry import default_registry
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.importer import import_deck
+from commanderblitz.cards.moxfield import ParsedDeck
+from commanderblitz.cards.registry import default_registry
 
 #: Names exactly as printed, since `importer` reconciles against the catalog by
 #: name and a typo here would be indistinguishable from a missing card.

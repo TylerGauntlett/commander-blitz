@@ -923,7 +923,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     end of a duration written on a *different* effect -- "exile it **until** an
     opponent becomes the monarch" -- so it fires once and has to outlive the
     turn, since the crown may not move for six of them. See
-    :data:`~automtg.engine.structs.DELAYED_DURATIONS`; the two values are read at
+    :data:`~commanderblitz.engine.structs.DELAYED_DURATIONS`; the two values are read at
     exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
     """
 

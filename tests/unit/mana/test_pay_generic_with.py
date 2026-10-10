@@ -30,10 +30,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import _default_answer
 
 CONVOKER = "t_convoker"  # {3}{R} sorcery, convoke, 2 damage
@@ -57,7 +57,7 @@ def settle(game, limit: int = 40) -> None:
     an empty stack therefore returns immediately, leaving the cast suspended
     mid-payment with nothing having happened.
     """
-    from automtg.engine.enums import DecisionKind
+    from commanderblitz.engine.enums import DecisionKind
 
     for _ in range(limit):
         decision = game.pending()

@@ -9,20 +9,20 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from automtg.engine.effects import RECORDING_OPS, known_ops
-from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
-from automtg.engine.effects.ops_player import CASTABLE_ZONES
-from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects import RECORDING_OPS, known_ops
+from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
+from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
+from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
+from commanderblitz.engine.effects.values import (
     validate_value,
 )
-from automtg.engine.enums import SUBTYPE_CLASS
-from automtg.engine.errors import DslError
-from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
-from automtg.engine.mana import ManaCost, compile_restriction
-from automtg.engine.objects import PLAYABLE_DURATIONS
-from automtg.engine.structs import (
+from commanderblitz.engine.enums import SUBTYPE_CLASS
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
+from commanderblitz.engine.mana import ManaCost, compile_restriction
+from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
@@ -38,8 +38,8 @@ from automtg.engine.structs import (
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
-from automtg.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
-from automtg.engine.turn import DELAY_STEPS
+from commanderblitz.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
+from commanderblitz.engine.turn import DELAY_STEPS
 
 from ..schema import CardModel, CostModel
 from .statics import (

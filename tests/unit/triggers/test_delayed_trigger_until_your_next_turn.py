@@ -33,15 +33,15 @@ What is pinned below:
 
 from __future__ import annotations
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.primitives import damage_player
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.primitives import damage_player
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import oids_of, pass_until
 
 BEAR = "t_bear"  # 2/2

@@ -28,11 +28,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 
 CRAG = "t_rn_crag"  # renames itself as it enters
@@ -97,7 +97,7 @@ class TestItReachesTheReaders:
         """`selector.name` reads the card `card_of` hands back, so a renamed
         permanent answers a question asked about the new name -- which is what
         makes the rename a fact about the game rather than a caption."""
-        from automtg.engine.characteristics import _matches_printed
+        from commanderblitz.engine.characteristics import _matches_printed
 
         game = board(builder, cast_card=CRAG)
         oid = only_oid(game, CRAG)
@@ -105,7 +105,7 @@ class TestItReachesTheReaders:
         assert _matches_printed(card, {"name": "Everflame"})
 
     def test_and_no_longer_answers_to_the_printed_one(self, builder):
-        from automtg.engine.characteristics import _matches_printed
+        from commanderblitz.engine.characteristics import _matches_printed
 
         game = board(builder, cast_card=CRAG)
         oid = only_oid(game, CRAG)
@@ -114,7 +114,7 @@ class TestItReachesTheReaders:
 
     def test_a_permanent_printed_with_that_name_matches_too(self, builder):
         """The control: the selector is not being fooled, it is being told."""
-        from automtg.engine.characteristics import _matches_printed
+        from commanderblitz.engine.characteristics import _matches_printed
 
         game = board(builder, mine=[PLAIN])
         oid = only_oid(game, PLAIN)

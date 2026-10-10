@@ -1,6 +1,6 @@
 """The sidecar: this server as the desktop shell starts it.
 
-``python -m automtg.server.desktop`` (or the frozen ``commanderblitz-server``
+``python -m commanderblitz.server.desktop`` (or the frozen ``commanderblitz-server``
 the AppImage carries) is one process on ``127.0.0.1`` that the Electron shell
 spawns on every launch, reads one line from, and talks to over HTTP for the
 rest of the session.  The contract with the shell is small and all here:
@@ -58,16 +58,16 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 #: The variables ``apply_env`` owns.  Listed so a test can hold it to exactly
-#: these: ``AUTOMTG_CPU`` and ``AUTOMTG_FIXTURE_DECKS`` are test switches that
+#: these: ``COMMANDERBLITZ_CPU`` and ``COMMANDERBLITZ_FIXTURE_DECKS`` are test switches that
 #: a shipped build must never set.
 ENV_VARS = (
-    "AUTOMTG_DATA_DIR",
-    "AUTOMTG_CLIENT_DIR",
-    "AUTOMTG_GENERATED_DIR",
-    "AUTOMTG_MODE",
-    "AUTOMTG_REMOTE_ORIGIN",
-    "AUTOMTG_CONTENT_VERSION",
-    "AUTOMTG_EAGER_ART",
+    "COMMANDERBLITZ_DATA_DIR",
+    "COMMANDERBLITZ_CLIENT_DIR",
+    "COMMANDERBLITZ_GENERATED_DIR",
+    "COMMANDERBLITZ_MODE",
+    "COMMANDERBLITZ_REMOTE_ORIGIN",
+    "COMMANDERBLITZ_CONTENT_VERSION",
+    "COMMANDERBLITZ_EAGER_ART",
 )
 
 
@@ -81,14 +81,14 @@ def apply_env(args: argparse.Namespace, environ: dict[str, str] | None = None) -
     them.
     """
     env = os.environ if environ is None else environ
-    env["AUTOMTG_MODE"] = "desktop"
-    env["AUTOMTG_EAGER_ART"] = "1"
+    env["COMMANDERBLITZ_MODE"] = "desktop"
+    env["COMMANDERBLITZ_EAGER_ART"] = "1"
     for flag, name in (
-        (args.data_dir, "AUTOMTG_DATA_DIR"),
-        (args.client_dir, "AUTOMTG_CLIENT_DIR"),
-        (args.generated_dir, "AUTOMTG_GENERATED_DIR"),
-        (args.remote_origin, "AUTOMTG_REMOTE_ORIGIN"),
-        (args.content_version, "AUTOMTG_CONTENT_VERSION"),
+        (args.data_dir, "COMMANDERBLITZ_DATA_DIR"),
+        (args.client_dir, "COMMANDERBLITZ_CLIENT_DIR"),
+        (args.generated_dir, "COMMANDERBLITZ_GENERATED_DIR"),
+        (args.remote_origin, "COMMANDERBLITZ_REMOTE_ORIGIN"),
+        (args.content_version, "COMMANDERBLITZ_CONTENT_VERSION"),
     ):
         if flag:
             env[name] = flag
@@ -111,8 +111,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     # call time, but the registry module caches `DEFAULT_DATA_DIR` at import.
     import uvicorn
 
-    from automtg.server.app import create_app
-    from automtg.server.settings import settings_from_env
+    from commanderblitz.server.app import create_app
+    from commanderblitz.server.settings import settings_from_env
 
     started = time.monotonic()
     app = create_app(serve_client=True, settings=settings_from_env())

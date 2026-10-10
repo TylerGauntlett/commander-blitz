@@ -17,9 +17,9 @@ it; it exists to be watched.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Keyword
-from automtg.engine.events import EventType
-from automtg.engine.primitives import animate, grant_keyword, pump
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import animate, grant_keyword, pump
 
 
 def a_creature(builder):

@@ -24,7 +24,7 @@ inside the non-poison branch.
 
 from __future__ import annotations
 
-from automtg.engine.primitives import damage_player, gain_life, lose_life
+from commanderblitz.engine.primitives import damage_player, gain_life, lose_life
 from tests.conftest import settle
 
 CONQUEROR = "t_conqueror"  # "whenever an opponent loses life, you gain that much"

@@ -1,4 +1,4 @@
-"""Turning a :class:`~automtg.cards.registry.DeckList` into what a client shows.
+"""Turning a :class:`~commanderblitz.cards.registry.DeckList` into what a client shows.
 
 Two renderings, split by cost.  ``deck_summary`` backs every deck tile in the
 catalogue and every seat in a pod, so it is fetched dozens of times and stays
@@ -15,8 +15,8 @@ from __future__ import annotations
 import json
 import re
 
-from automtg.cards.importer import coverage_path
-from automtg.cards.registry import DeckList, GameData
+from commanderblitz.cards.importer import coverage_path
+from commanderblitz.cards.registry import DeckList, GameData
 
 from .art import ArtStore
 from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, SignatureCardDTO

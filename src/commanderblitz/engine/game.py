@@ -7,7 +7,7 @@ Three methods make up the entire interface::
     game.apply(action)     validate, mutate, then advance until the next decision
 
 A human clicking in the browser and a PPO policy sampling an index both end up
-calling ``apply`` with the same :class:`~automtg.engine.actions.Action`, so there
+calling ``apply`` with the same :class:`~commanderblitz.engine.actions.Action`, so there
 is exactly one code path for "a player did something".
 """
 
@@ -17,7 +17,7 @@ import dataclasses
 from collections.abc import Generator, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from automtg.cards.registry import default_registry
+from commanderblitz.cards.registry import default_registry
 
 from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
@@ -84,7 +84,7 @@ from .zones import (
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.cards.registry import CardRegistry, DeckList, GameData
+    from commanderblitz.cards.registry import CardRegistry, DeckList, GameData
 
 #: Opening hand size.
 STARTING_HAND = 7

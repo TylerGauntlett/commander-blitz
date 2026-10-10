@@ -24,9 +24,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost, ManaPool, Requirement, satisfies
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import ManaCost, ManaPool, Requirement, satisfies
 
 ISLANDS = ["island"] * 4
 MOUNTAINS = ["mountain"] * 4

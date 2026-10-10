@@ -10,10 +10,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from automtg.cards.registry import GameData, default_registry
-from automtg.engine.errors import RulesLoopError
-from automtg.engine.game import create_game
-from automtg.engine.sba import declare_draw
+from commanderblitz.cards.registry import GameData, default_registry
+from commanderblitz.engine.errors import RulesLoopError
+from commanderblitz.engine.game import create_game
+from commanderblitz.engine.sba import declare_draw
 
 from .agents.base import Agent, agent_by_name
 from .stats import GameResult, Summary, render_markdown, summarize, write_jsonl

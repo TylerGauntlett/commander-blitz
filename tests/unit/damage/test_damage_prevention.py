@@ -60,13 +60,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent, damage_player
-from automtg.engine.temp_effects import clear_damage_shields, shield_player, shielded
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_permanent, damage_player
+from commanderblitz.engine.temp_effects import clear_damage_shields, shield_player, shielded
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, advance_to_step, only_oid, plus_one_counters
 
 SQUIRE = "selfless_squire"  # 1/1 flash; shield on ETB, counters on prevention
@@ -444,8 +444,8 @@ class TestTheShippedCard:
         squire = only_oid(game, SQUIRE, 0)
         # The builder places permanents rather than entering them, so the ETB is
         # driven here -- the ability is the card's, not the test's.
-        from automtg.engine.events import EventType
-        from automtg.engine.triggers import fire
+        from commanderblitz.engine.events import EventType
+        from commanderblitz.engine.triggers import fire
 
         fire(game.state, EventType.ENTERS_BATTLEFIELD, player=0, oid=squire)
         settle(game)

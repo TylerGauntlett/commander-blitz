@@ -31,10 +31,10 @@ attacked in a later one would still get its extra combat.
 
 from __future__ import annotations
 
-from automtg.engine.combat import start_combat
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import Step
+from commanderblitz.engine.combat import start_combat
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import Step
 from tests.conftest import pass_until
 
 FIRST = {"cmp": "==", "left": {"combats_this_turn": True}, "right": {"const": 1}}
@@ -109,7 +109,7 @@ class TestItIsNotTheMonotonicCounter:
 
 class TestAsThePrintedClause:
     def test_it_is_true_in_the_first_combat(self, builder):
-        from automtg.engine.effects.conditions import evaluate_condition
+        from commanderblitz.engine.effects.conditions import evaluate_condition
 
         game = fresh(builder)
         start_combat(game.state)
@@ -117,7 +117,7 @@ class TestAsThePrintedClause:
 
     def test_it_is_false_in_the_second(self, builder):
         """The assertion Genji Glove's loop turns on."""
-        from automtg.engine.effects.conditions import evaluate_condition
+        from commanderblitz.engine.effects.conditions import evaluate_condition
 
         game = fresh(builder)
         start_combat(game.state)

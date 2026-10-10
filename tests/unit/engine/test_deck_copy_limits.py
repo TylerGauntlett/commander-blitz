@@ -34,9 +34,9 @@ direction:
 
 from __future__ import annotations
 
-from automtg.cards.authoring.verify import _covered
-from automtg.cards.registry import CardRegistry, DeckList, validate_deck
-from automtg.engine.carddef import CardDef
+from commanderblitz.cards.authoring.verify import _covered
+from commanderblitz.cards.registry import CardRegistry, DeckList, validate_deck
+from commanderblitz.engine.carddef import CardDef
 
 PRINTED_LINE = "A deck can have any number of cards named Persistent Petitioners."
 

@@ -13,8 +13,8 @@ plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.costs import available_mana
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.costs import available_mana
+from commanderblitz.engine.enums import ActionKind, Step
 
 from ..archetypes import Landfall, cast_card
 from ..base import Combo, DeckPlan

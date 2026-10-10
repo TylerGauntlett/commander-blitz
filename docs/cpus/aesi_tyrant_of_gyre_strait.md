@@ -41,12 +41,12 @@ land).
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/aesi_tyrant_of_gyre_strait.py`](../../src/automtg/ai/strategy/decks/aesi_tyrant_of_gyre_strait.py)
+The plan lives in [`decks/aesi_tyrant_of_gyre_strait.py`](../../src/commanderblitz/ai/strategy/decks/aesi_tyrant_of_gyre_strait.py)
 as `LanderCommander`, a subclass of `Landfall`.
 
 | Behaviour | Where |
 |---|---|
-| **Ramp spells first.** Cultivate, Kodama's Reach, Growth Spiral and anything that searches for or puts a land into play get a bonus. | `Landfall.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Ramp spells first.** Cultivate, Kodama's Reach, Growth Spiral and anything that searches for or puts a land into play get a bonus. | `Landfall.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Extra land drops early.** A permanent with an extra-land-drop static (Exploration, Azusa, Oracle, Dryad) gets a large bonus: the archetype's bonus only sees spell effects, and these are statics. | `LanderCommander.priority_value`, `extra_drops` |
 | **The payoff before the land.** If a landfall payoff is affordable without this turn's land, the land drop waits: Lotus Cobra pays for itself, Tatyova draws, Baloths makes a 4/4. The classic agent always played the land first. | `LanderCommander._land_value`, `landfall_payoff` |
 | **Overruns saved for a board.** Overwhelming Stampede is cast only precombat with four or more creatures; Craterhoof gets a big bonus on that board and a penalty without one (it is still a hasty 5/5 late). | `LanderCommander._overrun_value` |

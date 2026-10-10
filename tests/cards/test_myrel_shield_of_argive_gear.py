@@ -7,9 +7,9 @@ which says why these files exist and holds the helpers this file shares.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, prevents_all_damage
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.targeting import can_be_targeted
+from commanderblitz.engine.characteristics import chars, prevents_all_damage
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.targeting import can_be_targeted
 from tests.cards.test_myrel_shield_of_argive_mana import (
     ANCHOR,
     BEAR,

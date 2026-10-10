@@ -23,7 +23,7 @@ const AESI = "aesi_tyrant_of_gyre_strait";
 const meta = {
   title: "Lobby/Parts",
   component: CardBack,
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta<typeof CardBack>;
 
 export default meta;
@@ -62,13 +62,13 @@ export const CardBacks: Story = {
 /* ------------------------------------------------------------------ */
 
 export const ReadyTrackPartial: Story = {
-  parameters: { automtg: { mount: "podRail" } },
+  parameters: { commanderblitz: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.filling()} />,
 };
 
 export const ReadyTrackComplete: Story = {
-  parameters: { automtg: { mount: "podRail" } },
+  parameters: { commanderblitz: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.ready()} />,
   play: async ({ canvasElement }) => {
@@ -85,7 +85,7 @@ export const ReadyTrackComplete: Story = {
 
 /** Three seats, so the denominator is three. */
 export const ReadyTrackThreeHanded: Story = {
-  parameters: { automtg: { mount: "podRail" } },
+  parameters: { commanderblitz: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.threeHanded()} />,
   play: async ({ canvasElement }) => {
@@ -101,7 +101,7 @@ export const ReadyTrackThreeHanded: Story = {
 /* ------------------------------------------------------------------ */
 
 export const Invite: Story = {
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { mark: "" },
   render: () => <InviteDialog pod={pods.filling()} onClose={fn()} onOpenChair={fn()} />,
   play: async ({ canvasElement }) => {
@@ -115,13 +115,13 @@ export const Invite: Story = {
 
 /** No chairs open: inviting somebody needs one, so the dialog offers to make it. */
 export const InviteWithNoOpenChairs: Story = {
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { mark: "" },
   render: () => <InviteDialog pod={pods.ready()} onClose={fn()} onOpenChair={fn()} />,
 };
 
 export const InviteOpensAChair: Story = {
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { mark: "" },
   render: function Render() {
     const onOpenChair = fn();
@@ -145,7 +145,7 @@ export const InviteOpensAChair: Story = {
 export const CommanderInASeat: Story = {
   args: { mark: "" },
   parameters: {
-    automtg: { mount: "podSlot", query: [[["card", AESI], cardResponse()]] },
+    commanderblitz: { mount: "podSlot", query: [[["card", AESI], cardResponse()]] },
   },
   render: () => <CommanderCard cardId={AESI} variant="big" />,
   play: async ({ canvasElement }) => {
@@ -162,7 +162,7 @@ export const CommanderInASeat: Story = {
 export const CommanderInTheCatalogue: Story = {
   args: { mark: "" },
   parameters: {
-    automtg: { mount: "catalogPick", query: [[["card", AESI], cardResponse()]] },
+    commanderblitz: { mount: "catalogPick", query: [[["card", AESI], cardResponse()]] },
   },
   render: () => <CommanderCard cardId={AESI} variant="board" />,
   play: async ({ canvasElement }) => {
@@ -204,7 +204,7 @@ export const CommanderInTheCatalogue: Story = {
 export const CommanderInTheDossier: Story = {
   args: { mark: "" },
   parameters: {
-    automtg: { mount: "dossierCard", query: [[["card", AESI], cardResponse()]] },
+    commanderblitz: { mount: "dossierCard", query: [[["card", AESI], cardResponse()]] },
   },
   render: () => <CommanderCard cardId={AESI} variant="big" />,
   play: async ({ canvasElement }) => {
@@ -221,7 +221,7 @@ export const CommanderInTheDossier: Story = {
  */
 export const CommanderLoading: Story = {
   args: { mark: "" },
-  parameters: { automtg: { mount: "podSlot" } },
+  parameters: { commanderblitz: { mount: "podSlot" } },
   render: () => <CommanderCard cardId="not_seeded_yet" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -232,7 +232,7 @@ export const CommanderLoading: Story = {
 /** No card at all, which is a seat with no deck. */
 export const CommanderAbsent: Story = {
   args: { mark: "" },
-  parameters: { automtg: { mount: "podSlot" } },
+  parameters: { commanderblitz: { mount: "podSlot" } },
   render: () => <CommanderCard cardId={null} placeholder="No deck" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

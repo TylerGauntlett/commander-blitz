@@ -19,8 +19,8 @@ the two were different problems.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, find_action, only_oid, pass_until
 
 ANNIHILATOR = "t_annihilator"  # 5/5, annihilator 2

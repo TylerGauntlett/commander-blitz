@@ -96,7 +96,7 @@ function seat(state: GameView) {
 const meta = {
   title: "Game/OpponentSeat",
   component: OpponentSeat,
-  parameters: { automtg: { mount: "matSideCompact" } },
+  parameters: { commanderblitz: { mount: "matSideCompact" } },
 } satisfies Meta<typeof OpponentSeat>;
 
 export default meta;

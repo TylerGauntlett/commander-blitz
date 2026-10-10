@@ -30,8 +30,8 @@ never fires there. This file is the only coverage the Clue has.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, CardType, DecisionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, CardType, DecisionKind
 
 # A creature spell on each side of "mana value 3 or less", both with
 # generic-only costs so the boundary under test is the mana *value* and never

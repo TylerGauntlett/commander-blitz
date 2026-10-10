@@ -13,7 +13,7 @@ See docs/cpus/edgar_markov.md for how the deck plays and what this plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, creature_types_of
+from commanderblitz.engine.characteristics import chars, creature_types_of
 
 from ..archetypes import Tribal, activated_ability, cast_card, target_objects
 from ..base import Combo, DeckPlan

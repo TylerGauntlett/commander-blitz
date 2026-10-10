@@ -1,7 +1,7 @@
 /**
  * The desktop build, offline.
  *
- * The server is `automtg.server.desktop` serving the built client, started by
+ * The server is `commanderblitz.server.desktop` serving the built client, started by
  * `playwright.sidecar.config.ts` the way the Electron shell starts it, with the
  * hosted origin pointed at a port nobody answers. Every request that would
  * leave the machine is aborted at the browser, so a pass here means the game

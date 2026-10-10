@@ -45,13 +45,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.serialize import card_view
-from automtg.engine.text_change import displayed, printed_type_instances, substitute
-from automtg.engine.zones import move_object
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.serialize import card_view
+from commanderblitz.engine.text_change import displayed, printed_type_instances, substitute
+from commanderblitz.engine.zones import move_object
 
 
 def board(builder, mine=(), theirs=()):
@@ -151,7 +151,7 @@ class TestAnotherCardsAnthemSeesIt:
 
     def test_added_subtypes_still_layer_on_top(self, builder):
         """Layer 4 is unaffected -- a creature can be under both effects."""
-        from automtg.engine.primitives import add_subtypes
+        from commanderblitz.engine.primitives import add_subtypes
 
         game = board(builder, mine=["t_goblin_lord", "t_plain_goblin"])
         goblin = oid_of(game, "t_plain_goblin")
@@ -228,8 +228,8 @@ class TestActivatedAndTriggeredHalves:
 
     def test_resolution_reads_the_rewritten_ability(self, builder):
         """`ability_of` is what resolution looks the ability up through."""
-        from automtg.engine.stack import ability_of
-        from automtg.engine.structs import StackItem
+        from commanderblitz.engine.stack import ability_of
+        from commanderblitz.engine.structs import StackItem
 
         game = board(builder, mine=["t_goblin_herald"])
         herald = oid_of(game, "t_goblin_herald")
@@ -357,26 +357,26 @@ class TestTheLoaderRefusesNonsense:
         )
 
     def test_a_creature_type_is_fine(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         compile_card(self.card(to="Vampire"))
 
     def test_a_missing_to_is_a_load_error(self):
         """Without it the op has nothing to write and would silently do nothing."""
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError, match=r"'to'"):
             compile_card(self.card())
 
     def test_a_non_creature_subtype_is_a_load_error(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError, match="creature type"):
             compile_card(self.card(to="Equipment"))
 
     def test_another_word_class_is_refused_by_name(self):
         """Colour words and basic land types are their own surfaces, not built."""
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError, match=r"color_word|not modelled"):
             compile_card(self.card(to="Vampire", word_class="color_word"))

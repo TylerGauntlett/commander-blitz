@@ -31,16 +31,16 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.state import new_object
-from automtg.engine.triggers import matches_card_filter
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.state import new_object
+from commanderblitz.engine.triggers import matches_card_filter
+from commanderblitz.engine.zones import move_object
 from tests.conftest import oids_of, pass_until
 
 ARTISANS = "t_faerie_artisans"
@@ -123,7 +123,7 @@ class TestTheLinkIsRecorded:
 
 class TestFaerieArtisans:
     def test_the_first_copy_is_made_and_is_an_artifact(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game, _ = position(builder, ARTISANS)
         enter(game, 1)

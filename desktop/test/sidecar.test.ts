@@ -52,7 +52,7 @@ describe("start", () => {
     const { sidecar, spawned } = manager();
     const starting = sidecar.start(SPEC);
     const child = spawned.children[0];
-    child.stderr.write("ModuleNotFoundError: No module named 'automtg'\n");
+    child.stderr.write("ModuleNotFoundError: No module named 'commanderblitz'\n");
     await new Promise((r) => setImmediate(r));
     child.exit(1);
     await expect(starting).rejects.toThrow(/exited with code 1[\s\S]*ModuleNotFoundError/);

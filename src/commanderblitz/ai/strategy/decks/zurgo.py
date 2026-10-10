@@ -13,7 +13,7 @@ See docs/cpus/zurgo.md for how the deck plays and what this plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 
 from ..archetypes import Aristocrats, activated_ability
 from ..base import Combo, DeckPlan

@@ -29,8 +29,8 @@ through to `event.source`, which is the dealer, exactly as on the player half.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step
-from automtg.engine.primitives import damage_permanent
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.primitives import damage_permanent
 from tests.conftest import only_oid, pass_until
 
 BOTH = "t_cdpw_saboteur"  # both halves, two abilities, one line

@@ -3,7 +3,7 @@ offline.
 
 The desktop runs the server as a sidecar and fills art lazily like the site
 does -- except that a deck imported on the train would then be a grid of grey
-plates until the Deck next sees a network.  ``AUTOMTG_EAGER_ART`` makes the
+plates until the Deck next sees a network.  ``COMMANDERBLITZ_EAGER_ART`` makes the
 import fetch everything the board will ask for, in parallel, and say what it
 got.  The site keeps its lazy fill: ``eager_art`` is off by default.
 """
@@ -17,11 +17,11 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.images import CardArt, art_cache_dir
-from automtg.cards.registry import default_registry
-from automtg.server.app import create_app
-from automtg.server.art import ArtStore, deck_art_requests
-from automtg.server.settings import ServerSettings
+from commanderblitz.cards.images import CardArt, art_cache_dir
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server.app import create_app
+from commanderblitz.server.art import ArtStore, deck_art_requests
+from commanderblitz.server.settings import ServerSettings
 from tests.server.test_import import do_import
 from tests.server.test_import import payload as payload_fixture
 from tests.server.test_import import sandbox as sandbox_fixture

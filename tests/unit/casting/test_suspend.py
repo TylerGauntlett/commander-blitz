@@ -17,8 +17,8 @@ upkeep, not your first and not immediately.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.suspend import TIME_COUNTER
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.suspend import TIME_COUNTER
 from tests.conftest import pass_until
 
 
@@ -213,7 +213,7 @@ class TestTheFreeCast:
         No creature in this pool suspends, so the flag is exercised directly --
         the alternative is asserting nothing about a rule 65 catalog cards need.
         """
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = builder(players=2).battlefield(0, ["grizzly_bears"]).build()
         bear = game.state.battlefield[0]

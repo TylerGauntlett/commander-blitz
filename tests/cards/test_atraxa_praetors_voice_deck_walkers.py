@@ -8,9 +8,9 @@ helpers this file shares. Each class is one card, and pins the near miss as well
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.cards.test_atraxa_praetors_voice_deck import (
     ANCHOR,
     ARTIFACT,

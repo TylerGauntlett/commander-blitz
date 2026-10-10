@@ -30,7 +30,7 @@ services:
         max-file: "3"
 
   web:
-    image: ghcr.io/tylergauntlett/auto-mtg:${IMAGE_TAG:?set IMAGE_TAG in /opt/automtg/.env}
+    image: ghcr.io/tylergauntlett/commander-blitz:${IMAGE_TAG:?set IMAGE_TAG in /opt/automtg/.env}
     restart: unless-stopped
     expose:
       # Reachable only on the compose network, as web:8000. Caddy is the edge.
@@ -38,7 +38,7 @@ services:
     volumes:
       # One volume, holding exactly what is written at runtime: imported decks
       # and their cards, plus the art the store lazily fetches from Scryfall
-      # (`data/generated/art`, see automtg.cards.images.art_cache_dir).
+      # (`data/generated/art`, see commanderblitz.cards.images.art_cache_dir).
       #
       # There used to be a second volume mounted at `/app/data/art`, over the
       # ~800 committed jpgs. A named volume seeds itself from the image only

@@ -34,9 +34,9 @@ that almost never triggered at a table.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step
-from automtg.engine.player import MAX_HAND_SIZE
-from automtg.engine.primitives import discard_cards
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.player import MAX_HAND_SIZE
+from commanderblitz.engine.primitives import discard_cards
 from tests.conftest import pass_until
 
 SANGROMANCER = "sangromancer"
@@ -202,7 +202,7 @@ class TestTheShippedCard:
         kind of edit that can shadow the first if the trigger list is rebuilt
         rather than appended to.
         """
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = (
             builder(players=2)

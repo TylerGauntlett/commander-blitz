@@ -39,7 +39,7 @@ oids by every consumer — both are `int`, and `_bound_oids` cannot tell them ap
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 
 ORVAR = "t_orvar"
 LOOSE = "t_orvar_unconditional"  # the stronger card, kept as a control
@@ -149,7 +149,7 @@ class TestAPlayerTargetIsNotAPermanentTarget:
     """
 
     def test_the_binding_holds_no_player_ids(self, builder):
-        from automtg.engine.events import EventType
+        from commanderblitz.engine.events import EventType
 
         game = position(builder, hand=[PLAYER_SPELL])
         cast(game, PLAYER_SPELL)

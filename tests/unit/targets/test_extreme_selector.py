@@ -30,12 +30,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.characteristics import chars
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool, validate_selector
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, find_action, only_oid, pass_until
 
 BEAR = "t_bear"  # 2/2
@@ -134,7 +134,7 @@ class TestTheExtremeSelector:
 class TestBolster:
     def enter_bolsterer(self, game) -> None:
         """Put the bolsterer onto the battlefield so its ETB actually fires."""
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         create_token(game.state, BOLSTERER, 0)
         settle(game)
@@ -203,7 +203,7 @@ class TestEvolveWasAlreadyExpressible:
     def test_a_bigger_creature_entering_grows_it(self, builder):
         game = builder(players=2).battlefield(0, [EVOLVER]).build()
         evolver = only_oid(game, EVOLVER, 0)
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         create_token(game.state, BEAR, 0)  # a 2/2 joining a 1/1
         settle(game)
@@ -214,7 +214,7 @@ class TestEvolveWasAlreadyExpressible:
         creature enters"."""
         game = builder(players=2).battlefield(0, [EVOLVER], counters={"+1/+1": 3}).build()
         evolver = only_oid(game, EVOLVER, 0)
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         create_token(game.state, BEAR, 0)  # a 2/2 joining a 4/4
         settle(game)

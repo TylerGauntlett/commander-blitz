@@ -30,18 +30,18 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.characteristics import chars
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import destroy, exile
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import destroy, exile
 from tests.conftest import only_oid, pass_until, settle
 
 ROLE = "wicked_role"
@@ -264,7 +264,7 @@ class TestTheLoader:
         )
         cards = {c.id: c for c in registry}
         cards[card.id] = card
-        from automtg.cards.loader.linking import validate_token_references
+        from commanderblitz.cards.loader.linking import validate_token_references
 
         with pytest.raises(DslError, match="needs an Aura token"):
             validate_token_references(cards)
@@ -287,7 +287,7 @@ class TestTheLoader:
         )
         cards = {c.id: c for c in registry}
         cards["t_y"] = compile_card(model)
-        from automtg.cards.loader.linking import validate_token_references
+        from commanderblitz.cards.loader.linking import validate_token_references
 
         with pytest.raises(DslError, match="no_such_token"):
             validate_token_references(cards)

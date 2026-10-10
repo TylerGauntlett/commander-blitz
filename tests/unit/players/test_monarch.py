@@ -50,17 +50,17 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.effects import execute
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.primitives import become_monarch
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import become_monarch
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, find_action, only_oid, pass_until
 
 BEARER = "t_crown_bearer"  # 2/2; "when this enters, you become the monarch"
@@ -190,7 +190,7 @@ class TestTheEndStepDraw:
         the *next* player's draw step, so a hand-size assertion would be reading
         an ordinary turn draw and would pass whatever this step did.
         """
-        from automtg.engine import turn
+        from commanderblitz.engine import turn
 
         game.state.step_started = False
         gen = turn.begin_step(game.state)
@@ -416,7 +416,7 @@ class TestTheOp:
         sorcery in a graveyard by the time the crown arrives."""
         game, oid = board(builder)
         run_op(game, {"op": "become_monarch"}, source=oid)
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         destroy(game.state, oid)
         sba.run(game.state)

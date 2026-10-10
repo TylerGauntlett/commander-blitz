@@ -35,13 +35,13 @@ from __future__ import annotations
 
 from contextlib import suppress
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.events import EventType
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid, pass_until
 
 WATCHER = "t_search_watcher"  # Whenever an opponent searches their library, ...

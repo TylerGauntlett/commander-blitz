@@ -19,8 +19,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.actions import Action, PendingDecision
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.actions import Action, PendingDecision
+    from commanderblitz.engine.state import GameState
 
 
 @dataclass(frozen=True)

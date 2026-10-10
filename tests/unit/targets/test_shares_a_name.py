@@ -31,10 +31,10 @@ what it models.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool, validate_selector
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 
 FOREST = "forest"
 BEAR = "t_bear"

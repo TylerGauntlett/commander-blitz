@@ -52,7 +52,7 @@ def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
     silently taking the first would be a different answer with nothing to say so.
 
     A player who is already the monarch is left alone rather than re-designated,
-    so nothing fires. See :func:`~automtg.engine.primitives.become_monarch`.
+    so nothing fires. See :func:`~commanderblitz.engine.primitives.become_monarch`.
     """
     for pid in select_players(ctx, spec.get("player", "you")):
         become_monarch(ctx.state, pid, source=ctx.source_oid)
@@ -206,7 +206,7 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     same `loader.effects._validate_player_spec`.
 
     A spec naming more than one seat is not refused, and does not need to be:
-    :func:`~automtg.engine.sba.declare_win` is a no-op once the game is over, so
+    :func:`~commanderblitz.engine.sba.declare_win` is a no-op once the game is over, so
     the first player named wins and the rest are ignored. No printed card says
     "each player wins the game" -- the one shape that would matter is a *team*
     win, and teams are not modelled.

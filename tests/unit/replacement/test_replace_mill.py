@@ -33,11 +33,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import mill_multiplier
-from automtg.engine.primitives import mill_cards
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import mill_multiplier
+from commanderblitz.engine.primitives import mill_cards
 
 DOUBLER = "t_bruvac_doubler"  # opponents mill twice as many
 SELF_DOUBLER = "t_self_mill_doubler"  # you mill twice as many
@@ -168,8 +168,8 @@ class TestTheBoundaries:
         assert game.state.players[1].library == []
 
     def test_the_hold_ends_when_the_source_leaves(self, builder):
-        from automtg.engine.enums import Zone
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.zones import move_object
         from tests.conftest import only_oid
 
         game = (

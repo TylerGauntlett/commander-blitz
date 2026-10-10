@@ -38,9 +38,9 @@ is a strictly better card -- it would fire on every spell.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import mana_source_traits
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.mana import ManaCost, ManaOrigin, ManaPool
+from commanderblitz.engine.characteristics import mana_source_traits
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.mana import ManaCost, ManaOrigin, ManaPool
 from tests.conftest import only_oid, settle
 
 WORM = "t_hoard_worm"

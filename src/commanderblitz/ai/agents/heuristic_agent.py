@@ -10,7 +10,7 @@ app needs on the other side of the table, and it is the benchmark a trained
 policy has to beat before it is worth anything.
 
 **Deck-aware.** Every score passes through the seat's :class:`Strategy`
-(`automtg.ai.strategy`), looked up from the deck the seat is playing: the
+(`commanderblitz.ai.strategy`), looked up from the deck the seat is playing: the
 baseline fixes for every deck, and a plan of its own for each shipped precon.
 ``classic=True`` skips all of it -- the agent exactly as it was before
 strategies, for seeded tests and as a benchmark.
@@ -21,20 +21,20 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from automtg.ai.strategy import CLASSIC, Strategy, strategy_for
-from automtg.ai.strategy.board import classify
-from automtg.ai.strategy.board import creatures as _creatures
-from automtg.engine.actions import Action
-from automtg.engine.carddef import CardDef
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.combat import can_block
-from automtg.engine.costs import life_cost
-from automtg.engine.enums import ActionKind, DecisionKind, Keyword, Step
-from automtg.engine.rng import Rng
+from commanderblitz.ai.strategy import CLASSIC, Strategy, strategy_for
+from commanderblitz.ai.strategy.board import classify
+from commanderblitz.ai.strategy.board import creatures as _creatures
+from commanderblitz.engine.actions import Action
+from commanderblitz.engine.carddef import CardDef
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.combat import can_block
+from commanderblitz.engine.costs import life_cost
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Keyword, Step
+from commanderblitz.engine.rng import Rng
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.game import Game
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.game import Game
+    from commanderblitz.engine.state import GameState
 
 __all__ = ["HeuristicAgent", "classify"]
 

@@ -40,11 +40,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.game import create_game
-from automtg.engine.primitives import damage_player, lose_life
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.game import create_game
+from commanderblitz.engine.primitives import damage_player, lose_life
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     action_for_card,
@@ -282,7 +282,7 @@ class TestDamageAndLifeLoss:
 
 
 def bolt_a_bear(game, oid: int) -> None:
-    from automtg.engine.primitives import damage_permanent
+    from commanderblitz.engine.primitives import damage_permanent
 
     damage_permanent(game.state, oid, 3, None)
 
@@ -331,7 +331,7 @@ class TestCardsToGraveyard:
 
     def test_a_token_does_not(self, builder):
         """Gravestorm counts *cards*, and a token is the commonest non-card."""
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         game, ledger = position(builder)
         (oid,) = create_token(game.state, "t_warrior_token", 0)
@@ -407,8 +407,8 @@ class TestTheValueLanguageReadsIt:
         ],
     )
     def test_each_form_reads_the_ledger(self, builder, expr, expected):
-        from automtg.engine.effects.context import EffectContext
-        from automtg.engine.effects.values import evaluate_value
+        from commanderblitz.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects.values import evaluate_value
 
         game, _ = position(builder)
         move_object(game.state, only_oid(game, BEAR, 1), Zone.GRAVEYARD)
@@ -418,7 +418,7 @@ class TestTheValueLanguageReadsIt:
 
     def test_morbid_is_an_ordinary_comparison(self, builder):
         """The reason these are values and not condition leaves."""
-        from automtg.engine.effects.conditions import evaluate_condition
+        from commanderblitz.engine.effects.conditions import evaluate_condition
 
         game, _ = position(builder)
         morbid = {"cmp": ">=", "left": {"creatures_died_this_turn": "all"}, "right": 1}
@@ -427,8 +427,8 @@ class TestTheValueLanguageReadsIt:
         assert evaluate_condition(game.state, morbid, controller=0)
 
     def test_an_unknown_tally_is_refused_at_load_time(self):
-        from automtg.engine.effects.values import validate_value
-        from automtg.engine.errors import DslError
+        from commanderblitz.engine.effects.values import validate_value
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError):
             validate_value({"creatures_died_last_turn": "all"}, "test")

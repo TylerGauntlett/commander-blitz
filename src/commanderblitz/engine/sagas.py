@@ -12,7 +12,7 @@ draw lives in :mod:`turn` and the legend rule lives in :mod:`sba` -- three
 behaviours the *game* supplies, hung off one counter kind and one number on the
 card (``CardDef.final_chapter``).
 
-There is no state on :class:`~automtg.engine.state.GameState` for any of it, and
+There is no state on :class:`~commanderblitz.engine.state.GameState` for any of it, and
 that is the difference from the monarch: the crown belongs to the table, while a
 Saga's progress belongs to the permanent. Lore counters are ordinary counters on
 an ordinary ``GameObject``, so `counters_on`, `proliferate`, `move_counters`,

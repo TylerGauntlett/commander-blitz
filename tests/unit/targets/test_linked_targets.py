@@ -38,11 +38,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.targeting import enumerate_target_tuples, filter_legal
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.targeting import enumerate_target_tuples, filter_legal
 from tests.conftest import only_oid
 
 DAGGER = "t_dagger"

@@ -1410,7 +1410,7 @@ class CardModel(BaseModel):
     #: ability: the card has no suspend ability while it sits in your hand.
     suspend: dict[str, Any] | None = None
     #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
-    #: ``automtg.cards.authoring`` did, and it only got here by clearing the six
+    #: ``commanderblitz.cards.authoring`` did, and it only got here by clearing the six
     #: gates in ``authoring/verify.py`` -- including one that casts it and checks
     #: the board.  Provenance rather than rules: the loader ignores it, and it
     #: exists so a diff shows at a glance which cards a machine wrote.

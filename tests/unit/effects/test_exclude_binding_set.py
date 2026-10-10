@@ -23,9 +23,9 @@ Only this one call site was still asking the singular question.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.primitives import create_token
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import oids_of
 
 BEAR = "t_bear"

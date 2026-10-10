@@ -12,7 +12,7 @@ See docs/cpus/isperia.md for how the deck plays and what this plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 
 from ..archetypes import Control, activated_ability, cast_card, main_phase_mine
 from ..base import Combo, DeckPlan

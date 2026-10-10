@@ -33,8 +33,8 @@ Two places had to learn about it, and missing either is silent:
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import only_oid, pass_until
 
 CLOAKER = "t_cloaker"  # "Cloak the top card of your library."

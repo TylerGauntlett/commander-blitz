@@ -44,8 +44,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind
-from automtg.engine.player_statics import (
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.player_statics import (
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,
@@ -171,7 +171,7 @@ class TestItSwitchesWithTheBoard:
     """An "as long as…" clause is re-read, not latched at any moment."""
 
     def test_it_switches_off_when_the_opponent_loses_lands(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = table(builder, SCOUT, 2, 4, hand=[PLAINS])
         assert top_offered(game), "an opponent is ahead four lands to two"
@@ -182,8 +182,8 @@ class TestItSwitchesWithTheBoard:
         assert not top_offered(game), "one land to two -- nobody is ahead"
 
     def test_it_switches_on_when_the_opponent_gains_lands(self, builder):
-        from automtg.engine.enums import Zone
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.state import new_object
 
         game = table(builder, SCOUT, 3, 3, hand=[PLAINS])
         assert not top_offered(game), "level on lands"
@@ -196,7 +196,7 @@ class TestItSwitchesWithTheBoard:
 
     def test_it_switches_off_when_its_own_source_leaves(self, builder):
         """The gate is additional to the source being on the battlefield."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = table(builder, SCOUT, 2, 5, hand=[PLAINS])
         assert top_offered(game)
@@ -220,7 +220,7 @@ class TestTheAmount:
 
     def test_the_second_land_drop_is_offered_only_while_it_holds(self, builder):
         """Through `costs.land_drops_available`, which prices the real action."""
-        from automtg.engine.costs import land_drops_available
+        from commanderblitz.engine.costs import land_drops_available
 
         behind = table(builder, RAMP, 2, 5, hand=[PLAINS], lands_played=1)
         assert land_drops_available(behind.state, 0) == 1
@@ -298,7 +298,7 @@ class TestSerializationFollowsTheGate:
     """
 
     def library_top_visible(self, game) -> bool:
-        from automtg.engine.serialize import player_view
+        from commanderblitz.engine.serialize import player_view
 
         # Read from the *opponent's* seat: `library_top` is public whenever it is
         # sent at all, so the seat that must stop seeing it is seat 1.

@@ -33,9 +33,9 @@ branch now goes through `destroy` like every other.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.structs import TempEffect
-from automtg.engine.zones import destroy, move_object, sacrifice
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.structs import TempEffect
+from commanderblitz.engine.zones import destroy, move_object, sacrifice
 from tests.conftest import only_oid, pass_until
 
 WRATH = "t_exile_wrath"  # 4 damage to each creature; they exile instead of dying

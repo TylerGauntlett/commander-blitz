@@ -28,7 +28,7 @@ costs mana and does nothing.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import only_oid, pass_until
 
 BURN = "t_tiered_burn"  # {R}; +{0}/+{2}/+{5} for 1/2/3 damage to each creature

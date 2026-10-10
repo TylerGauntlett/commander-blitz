@@ -23,8 +23,8 @@ Moxfield supplies a name and a quantity; every characteristic comes from
 what ``/api/catalog`` already says, and a second importer would be an adapter
 rather than a second generator.
 
-**The output is a** :class:`~automtg.cards.schema.CardModel`, which then goes
-through the ordinary :func:`~automtg.cards.loader.compile_card`.  A bug here is
+**The output is a** :class:`~commanderblitz.cards.schema.CardModel`, which then goes
+through the ordinary :func:`~commanderblitz.cards.loader.compile_card`.  A bug here is
 therefore a ``DslError`` at import time rather than a mystery mid-game, and the
 JSON is byte-for-byte the ``data/cards/*.cards.json`` format -- so *promoting* a
 generated card is a copy-paste plus the abilities somebody writes by hand.
@@ -37,7 +37,7 @@ import unicodedata
 from dataclasses import dataclass
 from typing import Literal
 
-from automtg.engine.enums import CardType
+from commanderblitz.engine.enums import CardType
 
 from .images import IndexEntry
 from .loader.vocabulary import KNOWN_KEYWORDS, KNOWN_SUPERTYPES, KNOWN_TYPES, normalize_keyword

@@ -25,8 +25,8 @@ cannot, because an op runs at resolution and by then the creature is gone.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid
 
 HYDRA = "t_dying_payout"  # printed 2/2, "Treasures equal to its power" on death
@@ -102,7 +102,7 @@ class TestItReadsThePowerItDiedWith:
 class TestTheSnapshotIsTakenOnTheWayOut:
     def test_it_does_not_read_the_graveyard_card(self, builder):
         """The object really is back to its printed line once it has left."""
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = (
             builder(players=2)

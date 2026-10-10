@@ -39,7 +39,7 @@ const meta = {
   title: "Lobby/PodSeat",
   component: PodSeat,
   parameters: {
-    automtg: {
+    commanderblitz: {
       mount: "podHand",
       // Seeded so the commander face is there on first paint rather than
       // resolving a tick later and racing the assertion.

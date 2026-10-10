@@ -34,18 +34,18 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from automtg.engine.actions import PendingDecision
-from automtg.engine.carddef import CardDef, Cost
-from automtg.engine.characteristics import chars
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import AutoMtgError, DslError
-from automtg.engine.game import Game
-from automtg.engine.mana import ManaCost
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.stack import push_spell
-from automtg.engine.state import new_object
+from commanderblitz.engine.actions import PendingDecision
+from commanderblitz.engine.carddef import CardDef, Cost
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import CommanderBlitzError, DslError
+from commanderblitz.engine.game import Game
+from commanderblitz.engine.mana import ManaCost
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.stack import push_spell
+from commanderblitz.engine.state import new_object
 
 from ..loader import compile_card
 from ..loader.linking import link_faces, validate_token_references
@@ -508,7 +508,7 @@ _NOT_OUR_BUSINESS = frozenset(
 def _answer(game: Game, decision: PendingDecision):
     actions = game.legal_actions()
     if not actions:
-        raise AutoMtgError(f"no legal action for {decision.kind.value}")
+        raise CommanderBlitzError(f"no legal action for {decision.kind.value}")
 
     # Decline combat: this is about the card, and letting the sandbox attack
     # would fold combat damage and creature deaths into every card's outcome.
@@ -792,7 +792,7 @@ def verify(
     # -- 2. compile -----------------------------------------------------
     try:
         card = compile_card(model)
-    except AutoMtgError as exc:
+    except CommanderBlitzError as exc:
         verdict.failed_gate = "compile"
         verdict.reason = str(exc)
         return verdict
@@ -870,7 +870,7 @@ def verify(
         link_faces(pool)
         merged = CardRegistry(pool)
         validate_token_references({c.id: c for c in merged})
-    except AutoMtgError as exc:
+    except CommanderBlitzError as exc:
         verdict.failed_gate = "registry"
         verdict.reason = str(exc)
         return verdict
@@ -1075,7 +1075,7 @@ def _cast(
     )
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
-        raise AutoMtgError(f"{card.id} is not playable in the sandbox; offered: {offered}")
+        raise CommanderBlitzError(f"{card.id} is not playable in the sandbox; offered: {offered}")
     oid = action.source
 
     target_oid = next((ref.id for ref in action.targets if ref.kind == "object"), None)

@@ -27,19 +27,19 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import protected_from, protection_from
-from automtg.engine.combat import can_block
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach, damage_permanent
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.structs import PROTECTION_COLORLESS, CombatState, TargetRef
-from automtg.engine.targeting import can_be_targeted
-from automtg.engine.turn import clear_until_eot
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import protected_from, protection_from
+from commanderblitz.engine.combat import can_block
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach, damage_permanent
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.structs import PROTECTION_COLORLESS, CombatState, TargetRef
+from commanderblitz.engine.targeting import can_be_targeted
+from commanderblitz.engine.turn import clear_until_eot
 from tests.conftest import only_oid
 
 BEAR = "t_bear"  # green 2/2 -- the creature that gains protection
@@ -281,7 +281,7 @@ class TestTheModesAreNamed:
     mode is named after the one sentence it does."""
 
     def test_giver_of_runes_offers_each_quality_by_name(self, registry):
-        from automtg.engine.effects.modes import mode_labels
+        from commanderblitz.engine.effects.modes import mode_labels
 
         (choose,) = registry.get("giver_of_runes").abilities[0].effects
         assert mode_labels(choose["modes"]) == [
@@ -294,12 +294,12 @@ class TestTheModesAreNamed:
         ]
 
     def test_a_printed_label_still_wins(self):
-        from automtg.engine.effects.modes import mode_labels
+        from commanderblitz.engine.effects.modes import mode_labels
 
         mode = {"label": "Red", "effects": [{"op": "add_mana", "mana": "{R}"}]}
         assert mode_labels([mode]) == ["Red"]
 
     def test_an_effect_it_cannot_say_falls_back_to_the_index(self):
-        from automtg.engine.effects.modes import mode_labels
+        from commanderblitz.engine.effects.modes import mode_labels
 
         assert mode_labels([{"effects": [{"op": "draw", "count": 1}]}]) == ["Mode 1"]

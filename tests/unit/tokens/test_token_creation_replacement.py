@@ -49,16 +49,16 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.linking import validate_token_references
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import create_token
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.linking import validate_token_references
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid, pass_until
 
 MANUFACTOR = "academy_manufactor"

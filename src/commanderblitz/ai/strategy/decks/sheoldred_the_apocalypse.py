@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from math import ceil
 
-from automtg.engine.costs import available_mana
+from commanderblitz.engine.costs import available_mana
 
 from ..archetypes import Punisher, activated_ability, cast_card, target_objects
 from ..base import Combo, DeckPlan

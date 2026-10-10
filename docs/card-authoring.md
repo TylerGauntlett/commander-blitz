@@ -37,7 +37,7 @@ cheap; trust is expensive.
 
 ## The six gates
 
-`src/automtg/cards/authoring/verify.py`. All six, or the card is not written.
+`src/commanderblitz/cards/authoring/verify.py`. All six, or the card is not written.
 
 | | |
 |---|---|
@@ -303,7 +303,7 @@ Two Claude Code skills wrap this loop end to end (`.claude/skills/`):
   template tier to harvest the cards it unblocked.
 
 The division is the same one this document already draws. `/author-cards` never
-touches `src/automtg/engine/`; it measures what it cannot do and hands that to
+touches `src/commanderblitz/engine/`; it measures what it cannot do and hands that to
 `/extend-dsl`.
 
 A packet is deliberately a **file format** rather than an API call, because the

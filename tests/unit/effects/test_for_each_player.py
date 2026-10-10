@@ -24,8 +24,8 @@ opponent every wrong implementation looks right.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
 
 BEAR = "t_bear"  # {1}{G} 2/2
 DORK = "t_dork"  # {G} 1/1 -- cheaper, so never the greatest
@@ -101,7 +101,7 @@ DRAIN = {
 
 
 def run(ctx, spec) -> None:
-    from automtg.engine.effects import execute
+    from commanderblitz.engine.effects import execute
 
     for _ in execute(ctx, [spec]):
         raise AssertionError("this body asks nothing")

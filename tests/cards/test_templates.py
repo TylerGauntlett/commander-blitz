@@ -14,11 +14,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.authoring import templates as T
-from automtg.cards.authoring import verify as V
-from automtg.cards.images import catalog_path, load_index
-from automtg.cards.proxy import facts_from_index
-from automtg.cards.registry import CardRegistry, data_dir
+from commanderblitz.cards.authoring import templates as T
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.images import catalog_path, load_index
+from commanderblitz.cards.proxy import facts_from_index
+from commanderblitz.cards.registry import CardRegistry, data_dir
 
 pytestmark = pytest.mark.skipif(
     not catalog_path().exists(), reason="no card catalog; run scripts/build_card_index.py"

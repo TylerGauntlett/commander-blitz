@@ -33,7 +33,7 @@ const meta = {
   title: "game/HintBar",
   component: HintBar,
   globals: { input: "pad" },
-  parameters: { automtg: { mount: "tableFoot" } },
+  parameters: { commanderblitz: { mount: "tableFoot" } },
 } satisfies Meta<typeof HintBar>;
 
 export default meta;
@@ -48,7 +48,7 @@ export const Playing: Story = {
       action({ id: "p", kind: "pass", label: "Pass" }),
     ],
   },
-  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "card:1" } },
 };
 
 /** Declaring attackers: `A` toggles, and `X` appears only with a seat to re-aim at. */
@@ -78,7 +78,7 @@ export const DeclaringAttackers: Story = {
       }),
     ],
   },
-  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "card:1" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").textContent).toContain("Attack");
@@ -101,7 +101,7 @@ export const DeclaringBlockers: Story = {
       }),
     ],
   },
-  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "card:1" } },
 };
 
 /** The ring on the commit slab, where it rests whenever a decision is pending. */
@@ -110,7 +110,7 @@ export const OnTheCommitSlab: Story = {
     state: gameView(),
     actions: [action({ id: "p", kind: "pass", label: "Pass" })],
   },
-  parameters: { automtg: { mount: "tableFoot", cursor: "commit" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "commit" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").textContent).toContain("Confirm");
@@ -125,7 +125,7 @@ export const OnTheCommitSlab: Story = {
  */
 export const NothingToDoHere: Story = {
   args: { state: gameView({ battlefield: [bear(1)] }), actions: [] },
-  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "card:1" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").textContent).toContain("Read");
@@ -139,7 +139,7 @@ export const OnAKeyboard: Story = {
     actions: [action({ id: "p", kind: "pass", label: "Pass" })],
   },
   globals: { input: "keyboard" },
-  parameters: { automtg: { mount: "tableFoot", cursor: "commit" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "commit" } },
   play: async ({ canvasElement }) => {
     const shown = [...canvasElement.querySelectorAll<HTMLElement>(".glyph")].filter(
       (el) => getComputedStyle(el).display !== "none",
@@ -157,7 +157,7 @@ export const MouseSeesNothing: Story = {
     actions: [action({ id: "p", kind: "pass", label: "Pass" })],
   },
   globals: { input: "mouse" },
-  parameters: { automtg: { mount: "tableFoot", cursor: "commit" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "commit" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").getBoundingClientRect().height).toBe(0);
@@ -183,7 +183,7 @@ export const PlayingHandheld: Story = {
 export const HiddenByDefault: Story = {
   args: Playing.args,
   globals: { input: "pad", hints: "off" },
-  parameters: { automtg: { mount: "tableFoot", cursor: "card:1" } },
+  parameters: { commanderblitz: { mount: "tableFoot", cursor: "card:1" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").getBoundingClientRect().height).toBe(0);

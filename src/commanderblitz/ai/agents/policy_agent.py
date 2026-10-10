@@ -13,15 +13,15 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from automtg.cards.registry import default_registry
-from automtg.engine.actions import Action
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.engine.actions import Action
 
 from .. import action_space, encoding
 from ..model import load, load_vocab_ids
 from .heuristic_agent import HeuristicAgent
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.game import Game
+    from commanderblitz.engine.game import Game
 
 
 class PolicyAgent:

@@ -32,13 +32,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.zones import move_object
 
 CONTROL_A_COMMANDER = {
     "exists": {"zone": "battlefield", "controller": "you", "is_commander": True}

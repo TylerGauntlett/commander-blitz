@@ -12,8 +12,8 @@ See docs/cpus/bard_king_of_dale.md for how the deck plays and what this plan enc
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Step
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Step
 
 from ..archetypes import GoWide, activated_ability, cast_card, target_objects
 from ..base import DeckPlan

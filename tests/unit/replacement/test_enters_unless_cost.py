@@ -29,7 +29,7 @@ shown a question whose "yes" cannot be honoured.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import pass_until
 
 SPRINGS = "t_springs"  # "you may pay 3 life"
@@ -180,7 +180,7 @@ class TestTheLandStillWorks:
     """
 
     def mana_after(self, builder, *, pay: bool) -> int:
-        from automtg.engine.costs import available_mana
+        from commanderblitz.engine.costs import available_mana
 
         game = position(builder, SPRINGS)
         play_the_land(game, SPRINGS, pay=pay)

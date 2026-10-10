@@ -35,7 +35,7 @@ from .structs import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.cards.registry import CardRegistry
+    from commanderblitz.cards.registry import CardRegistry
 
 #: Hard cap on turns; a game that reaches it is scored as a draw.  Without this a
 #: self-play run can stall forever on two durdling boards.

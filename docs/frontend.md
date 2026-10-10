@@ -11,7 +11,7 @@ npm install && npm run dev        # http://127.0.0.1:5173
 with the engine running alongside:
 
 ```bash
-uvicorn automtg.server.app:get_app --factory --reload
+uvicorn commanderblitz.server.app:get_app --factory --reload
 ```
 
 The board is themed against the board-themes round's 05 'Planar Art' (`docs/design-record.md#board-themes`). Where the two still differ
@@ -890,12 +890,12 @@ swaps on — it names the *screen*, not the path, which is why both `/decks` pat
 
 **The URL carries the place; `sessionStorage` carries the identity.** A link gets pasted
 into a group chat, so arriving at one must not be what grants a seat. `usePodSession`
-derives a `PodSession` from the two: `/pods/CODE` plus a stored `automtg.pod.<CODE>`
+derives a `PodSession` from the two: `/pods/CODE` plus a stored `commanderblitz.pod.<CODE>`
 token. A tab with no token is redirected to `/?join=CODE`, the join flow that already
 existed — one click, not none.
 
 A table is keyed by game id but identity is keyed by pod code, so a second key,
-`automtg.game.<id>` → pod code, is written the moment a client learns the game id. That
+`commanderblitz.game.<id>` → pod code, is written the moment a client learns the game id. That
 is what lets a reload at `/games/:id` find its own token. **Reloading at the table and
 coming back to your seat is new** — before, a refresh mid-game dropped you at the door.
 
@@ -1023,14 +1023,14 @@ by a flag set in `.storybook/vitest.setup.ts`. Holding motion still for both mea
 fan's lift and every `layoutId` cross-fade simply did not happen when you opened Storybook
 to look at them, which is a visual suite that cannot show you the visuals.
 
-`parameters.automtg.motion: "real"` opts a story back in, and a few need it: a hover that
+`parameters.commanderblitz.motion: "real"` opts a story back in, and a few need it: a hover that
 *scales* is a transform, so `reducedMotion` removes the thing under test. That is not
 hypothetical — the story asserting the commit slab stays inside its rail passed against the
 bug, because the scale it was measuring had been configured away. Stories that run with
 real motion use `settled()` from `asserts.ts`, since waiting for a transform to merely
 exist returns on the spring's first frame.
 
-The rest of `parameters.automtg`: `ui` seeds the store, `query` pre-loads react-query so a
+The rest of `parameters.commanderblitz`: `ui` seeds the store, `query` pre-loads react-query so a
 lobby story paints its loaded state immediately, `art` picks the card art, `zoomLock` opts
 out of the pinned zoom for the two stories that exercise the solver. Fixtures are in
 `src/testing/` — `fixtures.ts` for the DTOs, `cards.ts` for a real card pool,
@@ -1114,7 +1114,7 @@ Three things answer that, and `docs/steamdeck.md` is the player-facing version:
   must never be told to press "A". A single character key disqualifies it
   permanently — somebody who typed has a keyboard.
 - **A diagnosis.** `padDiagnostics()` already computed `supported`/`secure`/
-  `focused`, and was dev-only behind `window.__AUTOMTG_RING` — no use to somebody
+  `focused`, and was dev-only behind `window.__COMMANDERBLITZ_RING` — no use to somebody
   on a Deck with no devtools. `components/ui/ControllerPanel.tsx` puts it on
   screen with the fix for each cause. Note **secure context first**: the Gamepad
   API does not exist over plain http to anything but localhost, so a Deck pointed
@@ -1180,7 +1180,7 @@ Two more things a real pad does that a synthetic one does not:
 
 ### When the controller does nothing, ask the browser first
 
-`window.__AUTOMTG_RING.pad()` reports `supported`, `secure`, `focused` and the
+`window.__COMMANDERBLITZ_RING.pad()` reports `supported`, `secure`, `focused` and the
 raw `pads` list beside the loop's own state, because the three commonest
 failures are not in this code and all three look identical from inside it — an
 empty `pads`:

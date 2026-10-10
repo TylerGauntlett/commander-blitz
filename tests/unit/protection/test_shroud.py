@@ -21,10 +21,10 @@ unblockable. Nimble Mongoose and Simic Sky Swallower are the witnesses.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, protected_from
-from automtg.engine.enums import ActionKind, Keyword
-from automtg.engine.primitives import damage_permanent
-from automtg.engine.targeting import can_be_targeted
+from commanderblitz.engine.characteristics import chars, protected_from
+from commanderblitz.engine.enums import ActionKind, Keyword
+from commanderblitz.engine.primitives import damage_permanent
+from commanderblitz.engine.targeting import can_be_targeted
 from tests.conftest import only_oid
 
 

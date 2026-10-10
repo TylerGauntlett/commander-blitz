@@ -34,12 +34,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.combat import attack_required, unmet_attack_requirements
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import attack_compelled
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.combat import attack_required, unmet_attack_requirements
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import attack_compelled
 
 BEAST = "t_compelled_beast"  # attacks each combat if able, unless Advocate
 ADVOCATE = "t_advocate_of_the_beast"

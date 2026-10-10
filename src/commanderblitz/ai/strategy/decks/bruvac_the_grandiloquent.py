@@ -14,7 +14,7 @@ plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.enums import DecisionKind, Zone
+from commanderblitz.engine.enums import DecisionKind, Zone
 
 from ..archetypes import Mill, activated_ability, cast_card
 from ..base import Combo, DeckPlan

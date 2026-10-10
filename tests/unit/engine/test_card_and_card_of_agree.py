@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import Zone
-from automtg.engine.state import new_object
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.state import new_object
 
 FRONT = "malakir_rebirth_malakir_mire"
 

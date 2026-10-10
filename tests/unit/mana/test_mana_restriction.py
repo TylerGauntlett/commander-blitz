@@ -33,13 +33,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import ability_purpose, mana_sources, spell_purpose
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ACTIVATE, CAST, ManaRestriction, ManaSource, SpendPurpose
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import ability_purpose, mana_sources, spell_purpose
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import ACTIVATE, CAST, ManaRestriction, ManaSource, SpendPurpose
 from tests.conftest import only_oid, pass_until
 
 COURTYARD = "secluded_courtyard"

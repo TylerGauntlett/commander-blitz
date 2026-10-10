@@ -24,13 +24,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.casting import _timing_ok
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.errors import DslError
-from automtg.engine.temp_effects import clear_flash_permissions
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.casting import _timing_ok
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.temp_effects import clear_flash_permissions
 
 GRANT = {"op": "grant_flash_permission", "types": ["Sorcery"], "duration": "until_your_next_turn"}
 

@@ -15,14 +15,14 @@ import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
-from automtg.ai.agents.base import Agent, agent_by_name
-from automtg.cards.registry import GameData, default_registry
-from automtg.engine.actions import Action
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import IllegalActionError
-from automtg.engine.game import create_game
-from automtg.engine.legality import legal_actions
-from automtg.engine.structs import TargetRef
+from commanderblitz.ai.agents.base import Agent, agent_by_name
+from commanderblitz.cards.registry import GameData, default_registry
+from commanderblitz.engine.actions import Action
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import IllegalActionError
+from commanderblitz.engine.game import create_game
+from commanderblitz.engine.legality import legal_actions
+from commanderblitz.engine.structs import TargetRef
 
 from .schemas import LegalActionDTO, SeatConfig
 

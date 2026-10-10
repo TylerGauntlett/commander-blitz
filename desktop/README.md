@@ -37,7 +37,7 @@ are. Set these first (the repo's venv has the package installed):
 
 | variable | what |
 |---|---|
-| `COMMANDERBLITZ_SIDECAR_PYTHON` | the interpreter to run `-m automtg.server.desktop` with (`../.venv/Scripts/python.exe` on Windows) |
+| `COMMANDERBLITZ_SIDECAR_PYTHON` | the interpreter to run `-m commanderblitz.server.desktop` with (`../.venv/Scripts/python.exe` on Windows) |
 | `COMMANDERBLITZ_DATA_DIR` | `../data` |
 | `COMMANDERBLITZ_CLIENT_DIR` | `../frontend/dist` (`npm run build` in `frontend/` first) |
 | `COMMANDERBLITZ_HOME` | somewhere scratch, so nothing lands in your real per-user directory |

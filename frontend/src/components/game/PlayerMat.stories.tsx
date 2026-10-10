@@ -38,7 +38,7 @@ function mat(state = early, pid = 0, overrides = {}) {
 const meta = {
   title: "Game/PlayerMat",
   component: PlayerMat,
-  parameters: { automtg: { mount: "playMine" } },
+  parameters: { commanderblitz: { mount: "playMine" } },
 } satisfies Meta<typeof PlayerMat>;
 
 export default meta;
@@ -78,7 +78,7 @@ export const Viewer: Story = {
  * alone, because each looks entirely deliberate on its own.
  */
 export const Opponent: Story = {
-  parameters: { automtg: { mount: "playOpponents" } },
+  parameters: { commanderblitz: { mount: "playOpponents" } },
   args: (() => {
     // Not `earlyBoard`: its opponent controls nothing, and a compact mat hides
     // empty lanes -- so there would be no bands to compare. This one has a
@@ -109,7 +109,7 @@ export const Opponent: Story = {
  * `Viewer` is where that shows.
  */
 export const OpponentWithEmptyBoard: Story = {
-  parameters: { automtg: { mount: "playOpponents" } },
+  parameters: { commanderblitz: { mount: "playOpponents" } },
   args: mat(early, 1, { compact: true, mirrored: true, cardScale: opponentCardScale(1) }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -119,7 +119,7 @@ export const OpponentWithEmptyBoard: Story = {
 };
 
 export const OpponentInAFourPlayerPod: Story = {
-  parameters: { automtg: { mount: "playOpponents" } },
+  parameters: { commanderblitz: { mount: "playOpponents" } },
   args: (() => {
     const state = scenarios.fourPlayerPod().state;
     return mat(state, 2, { compact: true, mirrored: true, cardScale: opponentCardScale(3) });
@@ -176,7 +176,7 @@ export const StagedAttackers: Story = {
 
 /** This player can be pointed at right now. */
 export const PlayerTargetable: Story = {
-  parameters: { automtg: { mount: "playOpponents" } },
+  parameters: { commanderblitz: { mount: "playOpponents" } },
   args: mat(early, 1, { compact: true, mirrored: true, playerTargetable: true }),
 };
 

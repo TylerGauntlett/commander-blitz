@@ -25,10 +25,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import ManaCost
 from tests.conftest import _default_answer, find_action, only_oid
 
 ISLAND = "island"

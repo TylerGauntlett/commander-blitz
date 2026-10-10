@@ -21,9 +21,9 @@ import collections
 
 import pytest
 
-from automtg.cards.images import catalog_path, load_index
-from automtg.cards.loader import compile_card
-from automtg.cards.proxy import build_proxy, facts_from_index
+from commanderblitz.cards.images import catalog_path, load_index
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.proxy import build_proxy, facts_from_index
 
 pytestmark = pytest.mark.skipif(
     not catalog_path().exists(),
@@ -90,7 +90,7 @@ class TestTheGeneratedCardsAreUsable:
     def test_ids_are_unique_and_fit_the_art_path_guard(self, generated):
         import re
 
-        from automtg.server.art import CARD_ID
+        from commanderblitz.server.art import CARD_ID
 
         seen = collections.Counter(r.card_id for _, r, c, _ in generated if c)
         assert [cid for cid, n in seen.items() if n > 1] == []

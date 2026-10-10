@@ -31,7 +31,7 @@ cannot be explained by the cast half firing.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import action_for_card, count_on_battlefield, event_types, pass_until
 
 BOLT = "t_stormbolt"  # {2}{R} instant, 1 damage to any target

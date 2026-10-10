@@ -33,13 +33,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.vocabulary import STATIC_FILTER_KEYS
-from automtg.engine.carddef import TargetSpec
-from automtg.engine.effects.selectors import SELECTOR_KEYS, validate_selector
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.targeting import still_legal
+from commanderblitz.cards.loader.vocabulary import STATIC_FILTER_KEYS
+from commanderblitz.engine.carddef import TargetSpec
+from commanderblitz.engine.effects.selectors import SELECTOR_KEYS, validate_selector
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.targeting import still_legal
 from tests.conftest import action_for_card, pass_until, settle
 
 #: "{X}{R}" instant, X damage to any target — the Fireball half of the pair.

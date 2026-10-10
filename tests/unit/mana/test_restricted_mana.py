@@ -20,12 +20,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import available_mana, mana_sources, spell_purpose
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.mana import RestrictionGroup
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import available_mana, mana_sources, spell_purpose
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import RestrictionGroup
 from tests.conftest import only_oid, pass_until
 
 
@@ -126,14 +126,14 @@ class TestGrantedAbilities:
         return only_oid(game, "terastodon")
 
     def test_the_keyword_half_lands(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = self.board(builder)
         beast = self.grant(game)
         assert "trample" in chars(game.state, beast).keywords
 
     def test_the_ability_half_is_recorded_against_the_creature(self, builder):
-        from automtg.engine.characteristics import granted_abilities
+        from commanderblitz.engine.characteristics import granted_abilities
 
         game = self.board(builder)
         beast = self.grant(game)
@@ -149,8 +149,8 @@ class TestGrantedAbilities:
         Nothing about the artifact deals combat damage, so a version that kept
         the artifact as the trigger's source would simply never fire.
         """
-        from automtg.engine.events import EventType
-        from automtg.engine.triggers import fire
+        from commanderblitz.engine.events import EventType
+        from commanderblitz.engine.triggers import fire
 
         game = self.board(builder)
         beast = self.grant(game)
@@ -168,7 +168,7 @@ class TestGrantedAbilities:
         assert len(game.state.players[0].hand) == before + 1
 
     def test_it_wears_off_at_end_of_turn(self, builder):
-        from automtg.engine.characteristics import granted_abilities
+        from commanderblitz.engine.characteristics import granted_abilities
 
         game = self.board(builder)
         beast = self.grant(game)

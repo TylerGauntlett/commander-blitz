@@ -1,7 +1,7 @@
 """The effect-op registry: ``OPS``, the ``@register`` decorator, ``RECORDING_OPS``.
 
 A leaf the ``ops_*`` modules can import without running the package, which
-imports them. See `automtg.engine.effects.load_ops`.
+imports them. See `commanderblitz.engine.effects.load_ops`.
 """
 
 from __future__ import annotations

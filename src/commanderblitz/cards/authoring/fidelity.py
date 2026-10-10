@@ -36,7 +36,7 @@ from ..proxy import _strip_reminders
 from .verify import EXPECTATION_KEYS, claimed_lines, fold_self_reference
 
 if TYPE_CHECKING:
-    from automtg.engine.carddef import CardDef
+    from commanderblitz.engine.carddef import CardDef
 
     from ..registry import CardRegistry
 

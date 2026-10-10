@@ -105,13 +105,13 @@ export default defineConfig({
     {
       // Quoted: a `sys.executable` handed in from `verify.py` is absolute, and
       // this checkout's path has a space in it.
-      command: `"${PYTHON}" -m uvicorn automtg.server.app:get_app --factory --port 8000`,
+      command: `"${PYTHON}" -m uvicorn commanderblitz.server.app:get_app --factory --port 8000`,
       cwd: "..",
       url: "http://127.0.0.1:8000/health",
       // The seeded specs were written against the retired first Edgar and Aesi
       // lists and the pre-strategy CPU. Both come back only on request; a dev
       // server you reuse needs the same two variables (docs/testing.md).
-      env: { AUTOMTG_FIXTURE_DECKS: "1", AUTOMTG_CPU: "classic" },
+      env: { COMMANDERBLITZ_FIXTURE_DECKS: "1", COMMANDERBLITZ_CPU: "classic" },
       reuseExistingServer: true,
       timeout: 120_000,
     },

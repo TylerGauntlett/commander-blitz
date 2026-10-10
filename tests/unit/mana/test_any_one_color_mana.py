@@ -34,13 +34,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import mana_amount, mana_options_of, mana_sources, spell_purpose
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.mana import SYMBOLS, compile_restriction
-from automtg.engine.primitives import add_counters
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import mana_amount, mana_options_of, mana_sources, spell_purpose
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import SYMBOLS, compile_restriction
+from commanderblitz.engine.primitives import add_counters
 from tests.conftest import only_oid
 
 #: "{T}: Add X mana of any one color, where X is its power." Restricted to

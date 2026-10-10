@@ -20,10 +20,10 @@ one is self-clearing.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches
-from automtg.engine.enums import Step
-from automtg.engine.primitives import draw_cards
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.primitives import draw_cards
 from tests.conftest import pass_until
 
 DRAWN = {"zone": "hand", "controller": "you", "drawn_this_turn": True}

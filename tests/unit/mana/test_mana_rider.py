@@ -38,11 +38,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
 from tests.conftest import oids_of
 
 PAINLAND = "t_painland"
@@ -115,8 +115,8 @@ class TestTheSolverPaysItToo:
     """The path that would silently make the land painless."""
 
     def test_the_auto_payment_solver_applies_the_rider(self, builder):
-        from automtg.engine.costs import pay_mana
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.costs import pay_mana
+        from commanderblitz.engine.mana import ManaCost
 
         game = position(builder, lands=2)
         before = game.state.players[0].life
@@ -133,8 +133,8 @@ class TestOnePermanentOneTap:
     """
 
     def _pay(self, game, text: str) -> bool:
-        from automtg.engine.costs import pay_mana
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.costs import pay_mana
+        from commanderblitz.engine.mana import ManaCost
 
         return pay_mana(game.state, 0, ManaCost.parse(text).with_x(0))
 
@@ -168,8 +168,8 @@ class TestOnePermanentOneTap:
         assert game.state.players[0].life == before - 1
 
     def test_affordability_agrees(self, builder):
-        from automtg.engine.costs import can_pay_mana
-        from automtg.engine.mana import ManaCost
+        from commanderblitz.engine.costs import can_pay_mana
+        from commanderblitz.engine.mana import ManaCost
 
         game = position(builder, lands=1)
         assert can_pay_mana(game.state, 0, ManaCost.parse("{R}"))
@@ -177,8 +177,8 @@ class TestOnePermanentOneTap:
 
     def test_a_plan_that_taps_one_permanent_twice_is_refused(self, builder, monkeypatch):
         """The guard behind the solver: a double tap must not become free mana."""
-        from automtg.engine import costs
-        from automtg.engine.mana import ManaCost, Payment
+        from commanderblitz.engine import costs
+        from commanderblitz.engine.mana import ManaCost, Payment
 
         game = position(builder, lands=1)
         oid = a_painland(game)

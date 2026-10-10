@@ -12,16 +12,16 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from automtg.engine.characteristics import chars, protected_from
-from automtg.engine.combat import block_prohibited, can_block, unblockable
-from automtg.engine.costs import produced_symbols
-from automtg.engine.enums import Keyword
-from automtg.engine.player_statics import block_forbidden
+from commanderblitz.engine.characteristics import chars, protected_from
+from commanderblitz.engine.combat import block_prohibited, can_block, unblockable
+from commanderblitz.engine.costs import produced_symbols
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.player_statics import block_forbidden
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.carddef import CardDef
-    from automtg.engine.objects import GameObject
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.carddef import CardDef
+    from commanderblitz.engine.objects import GameObject
+    from commanderblitz.engine.state import GameState
 
 #: Keywords that make a creature hard to block, for "does this get through".
 EVASION = frozenset({"flying", "menace", "shadow", "horsemanship", "fear", "intimidate", "skulk"})

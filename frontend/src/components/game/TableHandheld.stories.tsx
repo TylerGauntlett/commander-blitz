@@ -18,7 +18,7 @@ import { Table } from "./Table";
 const meta = {
   title: "Game/Table Handheld",
   component: Table,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
 } satisfies Meta<typeof Table>;
 
 export default meta;
@@ -58,7 +58,7 @@ export const HandheldBoard: Story = {
   args: board(scenarios.earlyBoard()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -77,7 +77,7 @@ export const HandheldPod: Story = {
   args: board(scenarios.fourPlayerPod()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -91,7 +91,7 @@ export const HandheldDeclareAttackers: Story = {
   args: board(scenarios.combatDeclareAttackers()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -105,7 +105,7 @@ export const HandheldDeclareBlockers: Story = {
   args: board(scenarios.combatDeclareBlockers()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -129,7 +129,7 @@ export const HandheldModalDecision: Story = {
   args: board(scenarios.mulligan()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -155,7 +155,7 @@ export const HandheldFullGlobalLane: Story = {
   args: board(scenarios.fullGlobalLane()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -195,7 +195,7 @@ export const HandheldCrowdedBoard: Story = {
   args: board(scenarios.crowdedBoard()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -221,7 +221,7 @@ export const HandheldViewingAnOpponent: Story = {
   args: board(scenarios.fourPlayerPod()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -296,7 +296,7 @@ export const HandheldHoldingR2ViewsAnOpponent: Story = {
   args: board(scenarios.fourPlayerPod()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
@@ -336,7 +336,7 @@ export const HandheldSeatPressTargetsFirst: Story = {
   args: board(scenarios.combatDeclareAttackers()),
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");

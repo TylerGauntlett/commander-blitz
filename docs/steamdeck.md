@@ -10,7 +10,7 @@ the site when you want to play with friends.
 In **Desktop Mode**, open Konsole and paste:
 
 ```bash
-curl -fsSL https://github.com/TylerGauntlett/commander-blitz-releases/releases/latest/download/install.sh | bash
+curl -fsSL https://github.com/TylerGauntlett/commander-blitz/releases/latest/download/install.sh | bash
 ```
 
 That downloads the app to `~/Applications/CommanderBlitz.AppImage`, adds it to

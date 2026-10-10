@@ -5898,7 +5898,7 @@ control of the player who played it (110.2).
 
 ## Generated cards, and promoting one
 
-Deck import writes card files too. `src/automtg/cards/proxy.py` turns a catalog
+Deck import writes card files too. `src/commanderblitz/cards/proxy.py` turns a catalog
 row into a `CardModel` for a card nobody wrote rules for: real name, cost, types,
 stats, colours, the keywords the engine implements, and a `{T}: Add` mana ability
 where there is one. **Everything else its printed text claims does nothing**, and
@@ -8859,7 +8859,7 @@ could attack **its controller** -- the planeswalker rule applied unchanged --
 where a real Siege is attacked by its controller, because its protector is an
 opponent. Every battle in print is a Siege, so writing one is writing an honest
 permanent with a life total and **not** a playable Siege. See
-`docs/rules-coverage.md` and `src/automtg/engine/battles.py`.
+`docs/rules-coverage.md` and `src/commanderblitz/engine/battles.py`.
 
 The proxy tier refuses battles outright: 310.3's printed defense is not a column
 in the card catalog, so there is no number to generate one from.
@@ -13840,7 +13840,7 @@ Two boundaries:
 | **A second roll into the same name replaces the first** | a binding is a record of *this* roll, not a tape of every roll |
 
 Every face comes from `state.rng`, the engine's one seeded source, so a replay of
-the same seed and action tape rolls the same dice. Nothing in `src/automtg` may
+the same seed and action tape rolls the same dice. Nothing in `src/commanderblitz` may
 call `random` directly.
 
 The loader refuses either half without the other, exactly as it does for clash:
@@ -14473,7 +14473,7 @@ are things that can suspend.**
 
 `primitives.draw_cards` and `discard_cards` still ask nothing — that module's
 contract is "no decisions" and it is intact — and
-[`engine/replacements.py`](../src/automtg/engine/replacements.py) wraps them.
+[`engine/replacements.py`](../src/commanderblitz/engine/replacements.py) wraps them.
 Every draw and discard in the engine goes through the wrapper except the
 **opening hand**, which rule 103 deals before the game begins: no graveyard to
 dredge from, and no turn to have drawn a first card in.
@@ -14931,7 +14931,7 @@ scans the graveyard alongside the hand. The additional cost is
 `Cost.discard_selector`, the same one "discard a land card" uses.
 
 **Suspend** is the odd one, and gets its own module
-([`engine/suspend.py`](../src/automtg/engine/suspend.py)) for three reasons:
+([`engine/suspend.py`](../src/commanderblitz/engine/suspend.py)) for three reasons:
 
 - *Suspending is not casting.* Nothing goes on the stack and nobody gets
   priority, so it is `ActionKind.SUSPEND` rather than a variant of `CAST` — and

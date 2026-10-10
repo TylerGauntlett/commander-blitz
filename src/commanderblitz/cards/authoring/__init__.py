@@ -2,7 +2,7 @@
 
 The engine plays a few hundred hand-written cards out of ~32,000 in the catalog.
 Everything else imports as a *proxy*: right name, art, cost, types and keywords,
-with the rules text inert (``automtg.cards.proxy``). That is honest, and it is not
+with the rules text inert (``commanderblitz.cards.proxy``). That is honest, and it is not
 a game -- a real imported deck had 41 of its 100 cards doing nothing.
 
 This package turns "somebody writes a card" into a repeatable batch:

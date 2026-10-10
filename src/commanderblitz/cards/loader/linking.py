@@ -5,12 +5,12 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Mapping
 
-from automtg.engine.carddef import (
+from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
 )
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost, parse_mana_production
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import ManaCost, parse_mana_production
 
 from .walk import (
     _walk_effect_specs,

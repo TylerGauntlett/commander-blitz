@@ -28,7 +28,7 @@ const combat = scenarios.combatDeclareAttackers().state;
 const meta = {
   title: "Game/CardPreview",
   component: CardPreview,
-  parameters: { automtg: { mount: "railRight" } },
+  parameters: { commanderblitz: { mount: "railRight" } },
 } satisfies Meta<typeof CardPreview>;
 
 export default meta;
@@ -45,7 +45,7 @@ export const Nothing: Story = {
 
 export const HoveredCreature: Story = {
   args: { state: board },
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Llanowar Elves");
@@ -56,18 +56,18 @@ export const HoveredCreature: Story = {
 
 export const HoveredLand: Story = {
   args: { state: board },
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 204 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 204 } } },
 };
 
 export const HoveredCommander: Story = {
   args: { state: board },
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 900 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 900 } } },
 };
 
 /** An attacker: the status line leads with what it is doing, not where it is. */
 export const HoveredAttacker: Story = {
   args: { state: combat },
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 302 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 302 } } },
 };
 
 /**
@@ -85,7 +85,7 @@ export const HoveredAttacker: Story = {
  */
 export const HeightDoesNotChange: Story = {
   args: { state: board },
-  parameters: { automtg: { mount: "railRight" } },
+  parameters: { commanderblitz: { mount: "railRight" } },
   /*
    * Rendered inside the right rail on purpose. The fixed height is
    * `.rail--right .preview { height: clamp(240px, 34vh, 420px) }` -- it is a
@@ -130,7 +130,7 @@ export const ReaderCreature: Story = {
   args: { state: board },
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Llanowar Elves");
@@ -175,7 +175,7 @@ export const ReaderCounters: Story = {
   },
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Llanowar Elves");
@@ -204,7 +204,7 @@ export const ReaderLand: Story = {
   args: { state: board },
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 204 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 204 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("card-preview");
@@ -223,7 +223,7 @@ export const ReaderHoldsItsHeight: Story = {
   args: { state: board },
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const panel = await canvas.findByTestId("card-preview");
@@ -270,7 +270,7 @@ export const ReaderUnplayable: Story = {
   globals: { handheld: "on" },
   tags: ["handheld"],
   parameters: {
-    automtg: {
+    commanderblitz: {
       mount: "railRight",
       ui: { hoveredOid: scenarios.openingHand().state.players[0].hand?.[0]?.oid ?? null },
     },
@@ -298,7 +298,7 @@ export const ReaderKeywordLine: Story = {
   },
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 7 } } },
+  parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 7 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Serra Angel");

@@ -10,13 +10,13 @@
       "capability": "choose_new_targets",
       "kind": "op",
       "what": "an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it",
-      "why_existing_wont_do": "The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/automtg/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it."
+      "why_existing_wont_do": "The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/commanderblitz/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it."
     },
     {
       "capability": "target_ability_on_stack",
       "kind": "selector",
       "what": "a target kind for an activated or triggered ability on the stack, so \"target spell or ability\" can bind either an ability object or a spell",
-      "why_existing_wont_do": "Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/automtg/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of \"target spell or ability\" is unsayable even once retargeting exists."
+      "why_existing_wont_do": "Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/commanderblitz/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of \"target spell or ability\" is unsayable even once retargeting exists."
     }
   ],
   "closest_existing": ["copy_spell", "counter"],

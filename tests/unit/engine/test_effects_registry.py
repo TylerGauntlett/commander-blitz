@@ -14,9 +14,9 @@ import sys
 
 import pytest
 
-from automtg.engine import effects
-from automtg.engine.effects import OPS, register
-from automtg.engine.errors import DslError
+from commanderblitz.engine import effects
+from commanderblitz.engine.effects import OPS, register
+from commanderblitz.engine.errors import DslError
 
 
 def op_modules() -> list[str]:

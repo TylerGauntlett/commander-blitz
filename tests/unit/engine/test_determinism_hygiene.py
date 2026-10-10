@@ -1,7 +1,7 @@
 """The rule the whole engine's reproducibility rests on, actually enforced.
 
 `engine/rng.py` opens: "Every shuffle, coin flip and random choice routes
-through :class:`Rng`.  Nothing else in ``automtg`` may call :mod:`random` or
+through :class:`Rng`.  Nothing else in ``commanderblitz`` may call :mod:`random` or
 ``numpy.random`` directly -- a test in ``tests/unit/engine/test_determinism_hygiene.py``
 enforces this by scanning the source."
 
@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-SRC = Path(__file__).resolve().parents[3] / "src" / "automtg"
+SRC = Path(__file__).resolve().parents[3] / "src" / "commanderblitz"
 
 #: The two modules allowed to reach for randomness directly, and why.
 #:

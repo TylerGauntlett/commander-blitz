@@ -9,8 +9,8 @@ make.  A cycle-2 playtest finding (item 8).
 
 from __future__ import annotations
 
-from automtg.engine.costs import produced_symbols
-from automtg.engine.serialize import card_view
+from commanderblitz.engine.costs import produced_symbols
+from commanderblitz.engine.serialize import card_view
 
 
 def view_of(game, card_id: str, pid: int = 0) -> dict:

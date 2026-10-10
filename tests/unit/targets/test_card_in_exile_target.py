@@ -30,11 +30,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import exile as exile_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import exile as exile_object
 
 MAGICITE = "t_magicite"
 WIDE = "t_wide_magicite"
@@ -124,7 +124,7 @@ class TestExiledThisWay:
 
     def test_the_wide_version_offers_the_stranded_card(self, builder):
         """Named directly, since which of the two it then takes is a choice."""
-        from automtg.engine.targeting import candidates
+        from commanderblitz.engine.targeting import candidates
 
         game = board(builder, WIDE, stranded=DORK)
         state = game.state
@@ -135,7 +135,7 @@ class TestExiledThisWay:
     def test_the_narrow_version_offers_nothing_before_it_exiles(self, builder):
         """The same board, the same moment, the binding empty: the printed card
         can only ever reach what its own first sentence put in exile."""
-        from automtg.engine.targeting import candidates
+        from commanderblitz.engine.targeting import candidates
 
         game = board(builder, MAGICITE, stranded=DORK)
         state = game.state
@@ -189,8 +189,8 @@ class TestTheKindAndTheZoneMustAgree:
 class TestItIsRecheckedOnResolution:
     def test_a_card_that_left_exile_is_no_longer_legal(self, builder, registry):
         """608.2b. The zone half of the re-check."""
-        from automtg.engine.structs import TargetRef
-        from automtg.engine.targeting import still_legal
+        from commanderblitz.engine.structs import TargetRef
+        from commanderblitz.engine.targeting import still_legal
 
         game = board(builder)
         state = game.state
@@ -205,8 +205,8 @@ class TestItIsRecheckedOnResolution:
     def test_a_card_the_binding_no_longer_names_is_not_legal(self, builder, registry):
         """The selector half, which `card_in_graveyard` does not ask and this
         kind must: "exiled **this way**" is a binding."""
-        from automtg.engine.structs import TargetRef
-        from automtg.engine.targeting import still_legal
+        from commanderblitz.engine.structs import TargetRef
+        from commanderblitz.engine.targeting import still_legal
 
         game = board(builder)
         state = game.state

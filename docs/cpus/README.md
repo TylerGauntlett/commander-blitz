@@ -26,7 +26,7 @@ only at the position in front of it ([why](#what-the-cpu-cannot-do)).
 
 ## How a CPU decides
 
-`HeuristicAgent` ([heuristic_agent.py](../../src/automtg/ai/agents/heuristic_agent.py))
+`HeuristicAgent` ([heuristic_agent.py](../../src/commanderblitz/ai/agents/heuristic_agent.py))
 scores every legal action from the current position — a land drop 1000, a
 counterspell 500 and up, removal 350 and up, a creature about 300 — and takes the
 best one, or passes when nothing scores above zero. That has always been true.
@@ -38,10 +38,10 @@ legal actions ──> agent's score ──> strategy.priority_value(...) ──>
 ```
 
 The strategy is looked up per seat from the deck it is playing
-(`automtg.ai.strategy.strategy_for`):
+(`commanderblitz.ai.strategy.strategy_for`):
 
 1. **The deck id.** Each shipped precon has a module in
-   [`strategy/decks/`](../../src/automtg/ai/strategy/decks/), found automatically.
+   [`strategy/decks/`](../../src/commanderblitz/ai/strategy/decks/), found automatically.
 2. **The commander.** A player's own import of Bruvac is still piloted as a mill
    deck, because a plan is really about the commander.
 3. **`DefaultStrategy`**, the baseline, for everything else.
@@ -63,7 +63,7 @@ seeded browser tests ([testing.md](../testing.md#determinism)).
 
 ### The baseline every deck gets
 
-`DefaultStrategy` ([default.py](../../src/automtg/ai/strategy/default.py)) is
+`DefaultStrategy` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) is
 the list of mistakes no competent player makes, each one something a playtester
 watched the old CPU do:
 
@@ -97,7 +97,7 @@ watched the old CPU do:
 
 ### Archetypes
 
-[`archetypes.py`](../../src/automtg/ai/strategy/archetypes.py) builds on the
+[`archetypes.py`](../../src/commanderblitz/ai/strategy/archetypes.py) builds on the
 baseline:
 
 | Archetype | What it changes |
@@ -123,7 +123,7 @@ no archetype has subclasses the archetype in its own module.
 ## Adding a deck
 
 1. Make the list native and promote it ([decks.md](../decks.md#bringing-your-own)).
-2. Add `src/automtg/ai/strategy/decks/<deck_id>.py` exporting `STRATEGY`.
+2. Add `src/commanderblitz/ai/strategy/decks/<deck_id>.py` exporting `STRATEGY`.
 3. Write this page for it: overview, win conditions, key cards and combos, how
    the CPU pilots it (each behaviour named with its hook), strengths, weaknesses,
    mulligan.

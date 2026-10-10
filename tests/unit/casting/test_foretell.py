@@ -24,7 +24,7 @@ turn is the printed cost paid in two instalments with the discount thrown in, so
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import pass_until
 
 MOUNTAIN = "mountain"
@@ -163,7 +163,7 @@ class TestTheLaterCast:
         game = position(builder)
         to_my_main(game, 3)
         bolt = game.state.players[0].hand[0]
-        from automtg.engine.zones import exile
+        from commanderblitz.engine.zones import exile
 
         exile(game.state, bolt)
         to_my_main(game, 5)

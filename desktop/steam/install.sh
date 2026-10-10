@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install Commander Blitz on a Steam Deck, from Desktop Mode, in one go.
 #
-#   curl -fsSL https://github.com/TylerGauntlett/commander-blitz-releases/releases/latest/download/install.sh | bash
+#   curl -fsSL https://github.com/TylerGauntlett/commander-blitz/releases/latest/download/install.sh | bash
 #
 # What it does, in order:
 #   1. downloads the latest AppImage to ~/Applications/CommanderBlitz.AppImage
@@ -25,7 +25,7 @@
 # runs the whole thing against a stub in a scratch directory.
 set -euo pipefail
 
-RELEASES="${COMMANDERBLITZ_RELEASES:-https://github.com/TylerGauntlett/commander-blitz-releases/releases/latest/download}"
+RELEASES="${COMMANDERBLITZ_RELEASES:-https://github.com/TylerGauntlett/commander-blitz/releases/latest/download}"
 APPS="$HOME/Applications"
 APP="$APPS/CommanderBlitz.AppImage"
 LAUNCHER="$HOME/.local/share/applications/commanderblitz.desktop"

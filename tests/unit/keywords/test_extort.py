@@ -29,8 +29,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from automtg.cards.authoring.templates import extort_ability
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.cards.authoring.templates import extort_ability
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import _default_answer, action_for_card, find_action
 
 EXTORTER = "t_extortioner"

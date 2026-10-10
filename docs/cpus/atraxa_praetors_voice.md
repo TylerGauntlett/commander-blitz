@@ -46,16 +46,16 @@ Holding one, the other gets the combo bonus; both are protected from discard.
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/atraxa_praetors_voice.py`](../../src/automtg/ai/strategy/decks/atraxa_praetors_voice.py)
+The plan lives in [`decks/atraxa_praetors_voice.py`](../../src/commanderblitz/ai/strategy/decks/atraxa_praetors_voice.py)
 as `Proliferate`, a subclass of the `Superfriends` archetype.
 
 | Behaviour | Where |
 |---|---|
-| **Walkers before creatures.** The archetype's +120 alone loses to a creature of the same cost (the agent scores creatures from 300), so this deck adds another 150: Oko comes down before Eternal Witness. | `Superfriends.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)), `Proliferate.walker_bonus` |
+| **Walkers before creatures.** The archetype's +120 alone loses to a creature of the same cost (the agent scores creatures from 300), so this deck adds another 150: Oko comes down before Eternal Witness. | `Superfriends.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)), `Proliferate.walker_bonus` |
 | **Plus first; a minus only when it hits something of theirs or is the ultimate.** A walker is never minused to death. | `Superfriends._loyalty_value` |
 | **Engines are better with walkers out** — Doubling Season, Tide, Channeler, Tekuthal and Brokers Ascendancy get +25 per walker we control. | `Proliferate.priority_value`, `ENGINES` |
 | **Proliferate is priced by what it grows.** Contentious Plan gets +15 per permanent with counters (and per poisoned opponent); Karn's Bastion and Viral Drake are not activated at all when nothing would grow. | `Proliferate.priority_value`, `growing` |
-| **Proliferate picks our walkers and their −1/−1 or poison counters**, never the reverse. | the agent's `proliferate` choice ([heuristic_agent.py](../../src/automtg/ai/agents/heuristic_agent.py)) |
+| **Proliferate picks our walkers and their −1/−1 or poison counters**, never the reverse. | the agent's `proliferate` choice ([heuristic_agent.py](../../src/commanderblitz/ai/agents/heuristic_agent.py)) |
 | **Jace, Memory Adept's −7 only at opponents it decks.** Never with ourselves among the targets, never at a library deeper than twenty; more decked opponents is better. | `Proliferate._jace_ultimate` |
 | **Creatures block for walkers** that are being attacked. | `Superfriends.block_value` |
 | **Teferi's Protection waits for the lethal swing.** The agent would cast it at sorcery speed for nothing; this holds it until unblocked damage would kill us, then casts it before damage. | `Proliferate.priority_value`, `PROTECTION` |

@@ -11,9 +11,9 @@ import dataclasses
 
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import DeckList, default_registry
-from automtg.server.app import create_app
-from automtg.server.deckinfo import source_id_of
+from commanderblitz.cards.registry import DeckList, default_registry
+from commanderblitz.server.app import create_app
+from commanderblitz.server.deckinfo import source_id_of
 from tests.server.test_import import do_import
 from tests.server.test_import import payload as payload_fixture
 from tests.server.test_import import sandbox as sandbox_fixture

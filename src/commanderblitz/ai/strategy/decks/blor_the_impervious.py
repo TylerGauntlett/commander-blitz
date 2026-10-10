@@ -11,8 +11,8 @@ See docs/cpus/blor_the_impervious.md for how the deck plays and what this plan e
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword
 
 from ..archetypes import Voltron
 from ..base import Combo, DeckPlan

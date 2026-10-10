@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy.decks.edgar_markov import STRATEGY
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy.decks.edgar_markov import STRATEGY
 from tests.conftest import only_oid
 
 DECK = "edgar_markov"

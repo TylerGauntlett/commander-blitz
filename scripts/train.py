@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.ai.train import TrainConfig, train
+from commanderblitz.ai.train import TrainConfig, train
 
 
 def main() -> int:

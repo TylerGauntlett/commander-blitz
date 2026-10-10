@@ -32,13 +32,13 @@ from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
-from automtg.engine.effects import OPS, known_ops
-from automtg.engine.effects.conditions import CONDITION_KEYS
-from automtg.engine.effects.selectors import SELECTOR_KEYS
-from automtg.engine.effects.values import VALUE_KEYS
-from automtg.engine.enums import CardType, Keyword, Supertype
-from automtg.engine.objects import PLAYABLE_DURATIONS
-from automtg.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
+from commanderblitz.engine.effects import OPS, known_ops
+from commanderblitz.engine.effects.conditions import CONDITION_KEYS
+from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
+from commanderblitz.engine.effects.values import VALUE_KEYS
+from commanderblitz.engine.enums import CardType, Keyword, Supertype
+from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
 from ..images import IndexEntry
 from ..loader.vocabulary import (

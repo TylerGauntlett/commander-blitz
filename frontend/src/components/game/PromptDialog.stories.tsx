@@ -21,7 +21,7 @@ import { PromptDialog } from "./PromptDialog";
 const meta = {
   title: "Game/PromptDialog",
   component: PromptDialog,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { onAct: fn(), disabled: false },
 } satisfies Meta<typeof PromptDialog>;
 
@@ -73,7 +73,7 @@ export const Simplest: Story = {
  */
 export const OptionOnHover: Story = {
   args: { state: scenarios.mayAbility().state, actions: scenarios.mayAbility().actions },
-  parameters: { automtg: { mount: "screen", motion: "real" } },
+  parameters: { commanderblitz: { mount: "screen", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("prompt-dialog");
@@ -293,7 +293,7 @@ export const ChooseTypeOnPad: Story = {
    * the player ever sees. `OptionOnHover` opted into real motion for the same
    * reason, one lift lower down.
    */
-  parameters: { automtg: { mount: "screen", motion: "real" } },
+  parameters: { commanderblitz: { mount: "screen", motion: "real" } },
   beforeEach: () => {
     noteInput("pad");
     return resetInputMode;
@@ -329,7 +329,7 @@ export const ChooseTypeHandheld: Story = {
   args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "screen", motion: "real" } },
+  parameters: { commanderblitz: { mount: "screen", motion: "real" } },
   beforeEach: () => {
     noteInput("pad");
     return resetInputMode;

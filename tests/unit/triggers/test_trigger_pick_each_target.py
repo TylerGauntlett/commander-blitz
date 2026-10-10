@@ -14,8 +14,8 @@ decision's min/max.
 
 from __future__ import annotations
 
-from automtg.engine.enums import DecisionKind, Step, Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import DecisionKind, Step, Zone
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid
 
 ANGEL = "angel_of_the_ruins"

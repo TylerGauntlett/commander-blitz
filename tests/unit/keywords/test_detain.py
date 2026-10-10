@@ -27,12 +27,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, only_oid, pass_until
 
 DETAINER = "t_detainer"  # {1}{W} sorcery: detain target creature an opponent controls

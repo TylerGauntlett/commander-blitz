@@ -6,7 +6,7 @@ Card JSON is *data*; this package is the interpreter for it.  There is no
 name at load time so a typo fails the test suite instead of a game.
 
 Effects are **generators**.  An op that needs a choice from a player yields a
-:class:`~automtg.engine.actions.PendingDecision` and receives the answer back.
+:class:`~commanderblitz.engine.actions.PendingDecision` and receives the answer back.
 That is what lets resolution pause mid-effect for "sacrifice a creature" without
 the engine needing continuations or state cloning.
 """

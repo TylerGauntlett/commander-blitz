@@ -24,7 +24,7 @@ every existing copier uses and must not have moved.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import event_types, settle_to_priority
 
 FORK = "t_fork"  # {U}{R}, copy target instant or sorcery spell

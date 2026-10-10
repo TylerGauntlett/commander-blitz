@@ -41,13 +41,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.characteristics import chars
-from automtg.engine.errors import DslError
-from automtg.engine.sba import ASCEND_THRESHOLD
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.sba import ASCEND_THRESHOLD
+from commanderblitz.engine.zones import destroy
 
 ASPIRANT = "skymarcher_aspirant"
 
@@ -146,8 +146,8 @@ class TestTheConditionalFlying:
         permanent that granted it.
         """
         game, first = board(builder, ASCEND_THRESHOLD)
-        from automtg.engine.enums import Zone
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.state import new_object
 
         second = new_object(game.state, ASPIRANT, owner=0, zone=Zone.BATTLEFIELD).oid
         game.state.battlefield.append(second)

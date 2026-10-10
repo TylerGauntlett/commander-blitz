@@ -1,7 +1,7 @@
 """The single source of randomness in the engine.
 
 Every shuffle, coin flip and random choice routes through :class:`Rng`.  Nothing
-else in ``automtg`` may call :mod:`random` or ``numpy.random`` directly -- a test
+else in ``commanderblitz`` may call :mod:`random` or ``numpy.random`` directly -- a test
 in ``tests/unit/engine/test_determinism_hygiene.py`` enforces this by scanning the
 source.  Determinism is what makes golden replays, undo-by-replay and
 reproducible training runs possible.

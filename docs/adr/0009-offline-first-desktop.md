@@ -45,7 +45,7 @@ imports them before showing the door. For that, imported decks now record their
 
 **A deck imported on the desktop fetches its art at once.** The site fills art
 lazily, on the first board that shows a card. A desktop whose next launch may be
-offline cannot wait for that, so with `AUTOMTG_EAGER_ART` the import prefetches
+offline cannot wait for that, so with `COMMANDERBLITZ_EAGER_ART` the import prefetches
 every printing the deck will ask for, in parallel. The art store's lock used to be
 held across each download, which made a hundred-card prefetch a hundred sequential
 round trips; it now guards the bookkeeping only, with one gate per file.
@@ -64,7 +64,7 @@ at the table because games live only in the server's memory.
 **Releases go to a public repository.** The source is private, and a private
 repository's release assets cannot be fetched without a token -- which the updater
 on a player's Deck must never hold. A `v*` tag builds the AppImage and the content
-package and publishes both to `commander-blitz-releases`; the updater and the install
+package and publishes both to `commander-blitz`; the updater and the install
 script read `releases/latest/download/…`, which needs no API and no token.
 
 **Install is one command, and it is testable.** `install.sh` downloads the AppImage

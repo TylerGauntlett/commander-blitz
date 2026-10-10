@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 from .registry import data_dir, generated_dir
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.carddef import CardDef
+    from commanderblitz.engine.carddef import CardDef
 
 #: Scryfall's image CDN.  Contacted by the fetch script and by the lazy fill in
 #: the ``/art`` route -- never by the client, and never during a game.

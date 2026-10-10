@@ -9,9 +9,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from automtg import __version__
-from automtg.cards.images import load_index
-from automtg.cards.registry import GameData, server_registry
+from commanderblitz import __version__
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.registry import GameData, server_registry
 
 from .art import build_store
 from .connectivity import RemoteProbe
@@ -44,7 +44,7 @@ LAN_ORIGIN_RE = (
 
 #: Where ``npm run build`` leaves the client, when this is a checkout.  Under a
 #: site-packages install that walk lands nowhere, which is why ``client_dir``
-#: and ``AUTOMTG_CLIENT_DIR`` exist -- the default is a convenience, not a rule.
+#: and ``COMMANDERBLITZ_CLIENT_DIR`` exist -- the default is a convenience, not a rule.
 CLIENT_DIR = Path(__file__).resolve().parents[3] / "frontend" / "dist"
 
 #: First segments the SPA fallback must never answer for.  A mistyped ``/api``
@@ -191,7 +191,7 @@ def create_app(
     # whether somebody has run `npm run build` is one that behaves differently
     # on two machines, and `create_app` is called directly by the test suite.
     if serve_client:
-        root = client_dir or Path(os.environ.get("AUTOMTG_CLIENT_DIR", CLIENT_DIR))
+        root = client_dir or Path(os.environ.get("COMMANDERBLITZ_CLIENT_DIR", CLIENT_DIR))
         if (root / "index.html").is_file():
             _serve_client(app, root)
 
@@ -202,7 +202,7 @@ app = None
 
 
 def get_app() -> FastAPI:
-    """Lazily built module-level app, for ``uvicorn automtg.server.app:get_app``.
+    """Lazily built module-level app, for ``uvicorn commanderblitz.server.app:get_app``.
 
     Serves the built client too, because this is the entry point a deployment
     uses -- one process on one origin, so a deep link resolves without a second

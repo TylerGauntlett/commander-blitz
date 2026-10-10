@@ -12,9 +12,9 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import default_registry
-from automtg.server import lobby as L
-from automtg.server.app import create_app
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server import lobby as L
+from commanderblitz.server.app import create_app
 
 
 @pytest.fixture(scope="module")

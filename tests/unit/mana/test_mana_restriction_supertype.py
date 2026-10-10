@@ -24,7 +24,7 @@ permitted payment and an unrestricted one cannot be confused.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import pass_until
 
 HALFLING = "t_halfling_mana"  # "spend this mana only to cast a legendary spell"

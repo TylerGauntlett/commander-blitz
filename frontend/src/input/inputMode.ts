@@ -56,7 +56,7 @@ export type InputMode = "mouse" | "keyboard" | "pad";
 /** What the player chose. `auto` means "work it out", and is the default. */
 export type SchemePref = "auto" | "pad" | "keyboard" | "mouse";
 
-const SCHEME_KEY = "automtg.scheme";
+const SCHEME_KEY = "commanderblitz.scheme";
 
 let pref: SchemePref = "auto";
 let mode: InputMode = "mouse";

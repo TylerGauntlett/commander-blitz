@@ -4,7 +4,7 @@ Known hands, known battlefields, a known top of library -- so a caller can asser
 one thing without playing ten turns first.
 
 This lives in ``src`` rather than in ``tests`` because it is not test-only: the
-card-authoring verifier (``automtg.cards.authoring``) has to stand a candidate
+card-authoring verifier (``commanderblitz.cards.authoring``) has to stand a candidate
 card up in a real position and watch what it does, and production code importing
 from the test suite is backwards.
 """
@@ -13,14 +13,14 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from automtg.cards.registry import CardRegistry
-from automtg.engine.battles import DEFENSE
-from automtg.engine.enums import Step, Zone
-from automtg.engine.game import Game
-from automtg.engine.player import PlayerState
-from automtg.engine.rng import Rng
-from automtg.engine.sagas import LORE
-from automtg.engine.state import GameState, new_object
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.engine.battles import DEFENSE
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.game import Game
+from commanderblitz.engine.player import PlayerState
+from commanderblitz.engine.rng import Rng
+from commanderblitz.engine.sagas import LORE
+from commanderblitz.engine.state import GameState, new_object
 
 #: Library filler so a position never loses to decking by accident.
 FILLER_CARD = "island"

@@ -54,10 +54,10 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.stack import push_activated_ability
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.stack import push_activated_ability
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import only_oid
 
 CAMERA = "t_camera"
@@ -83,8 +83,8 @@ def builder_with_opponent_gainer(game):
     needs the Camera on one side and the ability's source on the other, which the
     fixture's single `battlefield(0, ...)` call cannot express.
     """
-    from automtg.engine.enums import Zone
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.enums import Zone
+    from commanderblitz.engine.state import new_object
 
     obj = new_object(game.state, GAINER, owner=1, zone=Zone.BATTLEFIELD)
     obj.controller = 1
@@ -115,7 +115,7 @@ def run(ctx_, spec):
 
 class TestAnAbilityCanBeTargeted:
     def test_the_camera_sees_an_ability_on_the_stack(self, builder):
-        from automtg.engine.targeting import candidates
+        from commanderblitz.engine.targeting import candidates
 
         game = board(builder)
         item = push_activated_ability(game.state, only_oid(game, GAINER, 0), 0, 0)
@@ -128,7 +128,7 @@ class TestAnAbilityCanBeTargeted:
     def test_a_spell_is_not_offered(self, builder):
         """The complement of the `spell` kind, not a widening of it: this branch
         takes only non-spell stack items."""
-        from automtg.engine.targeting import candidates
+        from commanderblitz.engine.targeting import candidates
 
         game = board(builder)
         push_activated_ability(game.state, only_oid(game, GAINER, 0), 0, 0)
@@ -137,9 +137,9 @@ class TestAnAbilityCanBeTargeted:
         before = len(candidates(game.state, 0, spec, only_oid(game, CAMERA, 0)))
 
         # A spell on the stack must not enlarge the pool.
-        from automtg.engine.enums import Zone
-        from automtg.engine.stack import push_spell
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.stack import push_spell
+        from commanderblitz.engine.state import new_object
 
         obj = new_object(game.state, PLAINS, owner=0, zone=Zone.HAND)
         game.state.players[0].hand.append(obj.oid)
@@ -149,7 +149,7 @@ class TestAnAbilityCanBeTargeted:
 
     def test_an_opponents_ability_is_not_offered(self, builder):
         """"…you control" -- the one selector clause this kind honours."""
-        from automtg.engine.targeting import candidates
+        from commanderblitz.engine.targeting import candidates
 
         game = board(builder, mine=(CAMERA,))
         # The Gainer on the opponent's side, so its activation is theirs.
@@ -230,9 +230,9 @@ class TestItFizzlesRatherThanCrashes:
     def test_a_spell_ref_is_skipped(self, builder):
         """Defensive: the op copies abilities, and a spell handed to it is not
         one. `copy_spell` is the op for that and they are not interchangeable."""
-        from automtg.engine.enums import Zone
-        from automtg.engine.stack import push_spell
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.stack import push_spell
+        from commanderblitz.engine.state import new_object
 
         game = board(builder)
         obj = new_object(game.state, PLAINS, owner=0, zone=Zone.HAND)
@@ -255,7 +255,7 @@ class TestTheMatcherIsNarrow:
     """
 
     def test_controller_you_is_honoured(self, builder):
-        from automtg.engine.targeting import _ability_matches
+        from commanderblitz.engine.targeting import _ability_matches
 
         game = board(builder)
         item = push_activated_ability(game.state, only_oid(game, GAINER, 0), 0, 0)
@@ -267,7 +267,7 @@ class TestTheMatcherIsNarrow:
     def test_an_unrelated_clause_is_ignored_rather_than_misread(self, builder):
         """If somebody does get a `types` clause past the loader, it must not be
         answered off the source permanent -- it is simply not consulted."""
-        from automtg.engine.targeting import _ability_matches
+        from commanderblitz.engine.targeting import _ability_matches
 
         game = board(builder)
         item = push_activated_ability(game.state, only_oid(game, GAINER, 0), 0, 0)

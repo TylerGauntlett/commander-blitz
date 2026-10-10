@@ -29,13 +29,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars, top_of_library
-from automtg.engine.enums import Keyword
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_reveals_library_top
-from automtg.engine.serialize import player_view
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars, top_of_library
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import player_reveals_library_top
+from commanderblitz.engine.serialize import player_view
 
 #: A black card and a non-black one, for stacking a library top.
 BLACK = "t_deathtoucher"
@@ -95,7 +95,7 @@ class TestTheConditionalStatic:
         game, source = nocturnus(builder, top=BLACK)
         assert Keyword.FLYING.value in chars(game.state, source).keywords
 
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         draw_cards(game.state, 0, 1)
         assert Keyword.FLYING.value not in chars(game.state, source).keywords
@@ -133,7 +133,7 @@ class TestTheReveal:
 
     def test_it_stops_when_the_permanent_leaves(self, builder):
         game, source = nocturnus(builder, top=BLACK)
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         destroy(game.state, source)
         assert player_reveals_library_top(game.state, 0) is False

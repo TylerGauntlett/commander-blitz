@@ -49,12 +49,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import activate_mana_ability, mana_sources
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.game import create_game
-from automtg.engine.primitives import draw_cards
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import activate_mana_ability, mana_sources
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.game import create_game
+from commanderblitz.engine.primitives import draw_cards
 from tests.conftest import action_for_card, only_oid, pass_until
 
 KYDELE = "kydele_chosen_of_kruphix"

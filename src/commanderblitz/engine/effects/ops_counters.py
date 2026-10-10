@@ -292,7 +292,7 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     the loader rather than this default that keeps a misspelling from silently
     becoming it.  The two are different cards and not degrees of one, which is
     why neither is ever inferred from the rest of the effect.  See
-    :func:`automtg.engine.primitives.change_control` for the handback.
+    :func:`commanderblitz.engine.primitives.change_control` for the handback.
 
     ``as`` names the permanents taken, so a later clause of the same spell can
     say **"those creatures"** -- Call for Aid's "gain control of all creatures

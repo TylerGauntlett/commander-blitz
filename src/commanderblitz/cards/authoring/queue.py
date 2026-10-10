@@ -37,7 +37,7 @@ from ..registry import CardRegistry, data_dir, default_registry
 Status = Literal["pending", "done", "failed", "unexpressible"]
 
 #: ``Entry.gate`` for a card that is in the pool and *plays*, but does not do
-#: everything it prints -- found by ``automtg.cards.authoring.fidelity`` and
+#: everything it prints -- found by ``commanderblitz.cards.authoring.fidelity`` and
 #: written by ``scripts/audit_cards.py --open-deficits``.
 #:
 #: It needs its own value because every other part of this package reads "in the

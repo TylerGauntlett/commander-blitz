@@ -17,16 +17,16 @@ flowchart LR
         mox["decks/mox_*.deck.json"]
     end
 
-    subgraph core["automtg.engine — the rules"]
-        loader["automtg.cards<br/>validate + compile"]
+    subgraph core["commanderblitz.engine — the rules"]
+        loader["commanderblitz.cards<br/>validate + compile"]
         state["GameState<br/>zones, players, stack"]
         game["Game facade<br/>pending / legal_actions / apply"]
         effects["effects/<br/>the card DSL interpreter"]
     end
 
     subgraph drivers["drivers"]
-        env["automtg.ai.env<br/>Gymnasium environment"]
-        server["automtg.server<br/>FastAPI"]
+        env["commanderblitz.ai.env<br/>Gymnasium environment"]
+        server["commanderblitz.server<br/>FastAPI"]
         cli["scripts/play_cli.py"]
     end
 

@@ -88,7 +88,7 @@ function walker(page: Page) {
 /**
  * The stop the ring is on.
  *
- * `window.__AUTOMTG_RING` and not `[data-cursor]`'s `data-stop`, because OFF
+ * `window.__COMMANDERBLITZ_RING` and not `[data-cursor]`'s `data-stop`, because OFF
  * THE BOARD THERE IS NO SUCH ATTRIBUTE. The lobby declares no stops at all --
  * everything interactive there is already a control, so `stops.ts` falls back
  * to native focusables and derives `ui:<testid>` ids on the fly. Reading the
@@ -100,8 +100,8 @@ function walker(page: Page) {
  */
 const ring = (page: Page) =>
   page.evaluate(() => {
-    const diag = (window as unknown as { __AUTOMTG_RING?: { cursor(): string | null } })
-      .__AUTOMTG_RING;
+    const diag = (window as unknown as { __COMMANDERBLITZ_RING?: { cursor(): string | null } })
+      .__COMMANDERBLITZ_RING;
     if (diag) return diag.cursor();
     return document.querySelector("[data-cursor]")?.getAttribute("data-stop") ?? null;
   });
@@ -414,8 +414,8 @@ test.describe("the core journeys, in presses", () => {
     await reachDeclaration(page, "blockers");
 
     const attackerIsReachable = await page.evaluate(() => {
-      const ring = (window as unknown as { __AUTOMTG_RING?: { stops(): string[] } })
-        .__AUTOMTG_RING;
+      const ring = (window as unknown as { __COMMANDERBLITZ_RING?: { stops(): string[] } })
+        .__COMMANDERBLITZ_RING;
       const stops = new Set(ring?.stops() ?? []);
       return [...document.querySelectorAll(".card--attacking")].some((el) =>
         stops.has(`card:${(el as HTMLElement).dataset.oid}`),

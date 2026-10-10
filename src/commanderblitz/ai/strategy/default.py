@@ -18,9 +18,9 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import available_mana, produced_symbols
-from automtg.engine.enums import ActionKind, DecisionKind, Keyword
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import available_mana, produced_symbols
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Keyword
 
 from .base import Strategy
 from .board import (
@@ -39,9 +39,9 @@ from .board import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.actions import Action, PendingDecision
-    from automtg.engine.carddef import CardDef
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.actions import Action, PendingDecision
+    from commanderblitz.engine.carddef import CardDef
+    from commanderblitz.engine.state import GameState
 
 #: Life at or under which a shock land comes in tapped, whatever it would enable.
 SHOCK_FLOOR = 15

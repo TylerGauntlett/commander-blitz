@@ -30,7 +30,7 @@ import { OpeningHand } from "./OpeningHand";
 const meta = {
   title: "Game/OpeningHand",
   component: OpeningHand,
-  parameters: { automtg: { mount: "tableOverlay" } },
+  parameters: { commanderblitz: { mount: "tableOverlay" } },
   args: { onAct: fn(), disabled: false },
 } satisfies Meta<typeof OpeningHand>;
 
@@ -112,7 +112,7 @@ export const KeepAfterPaidMulligan: Story = {
  */
 export const ReadingMovesNothing: Story = {
   args: { state: keep().state, actions: keep().actions },
-  parameters: { automtg: { mount: "tableOverlay", motion: "real" } },
+  parameters: { commanderblitz: { mount: "tableOverlay", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const stage = await canvas.findByTestId("opening-hand");
@@ -228,7 +228,7 @@ export const OneRulesBoxAtATime: Story = {
  */
 export const TheRingRisesWithTheCard: Story = {
   args: { state: keep().state, actions: keep().actions },
-  parameters: { automtg: { mount: "tableOverlay", motion: "real" } },
+  parameters: { commanderblitz: { mount: "tableOverlay", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const stage = await canvas.findByTestId("opening-hand");
@@ -302,7 +302,7 @@ export const HandheldKeep: Story = {
   args: { state: keep().state, actions: keep().actions },
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "tableOverlay", motion: "real", zoomLock: false } },
+  parameters: { commanderblitz: { mount: "tableOverlay", motion: "real", zoomLock: false } },
   beforeEach: () => {
     noteInput("pad");
     return resetInputMode;
@@ -354,7 +354,7 @@ export const HandheldBottom: Story = {
   args: { state: bottom(2).state, actions: bottom(2).actions },
   globals: { handheld: "on", input: "pad" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "tableOverlay", motion: "real", zoomLock: false } },
+  parameters: { commanderblitz: { mount: "tableOverlay", motion: "real", zoomLock: false } },
   beforeEach: () => {
     noteInput("pad");
     return resetInputMode;

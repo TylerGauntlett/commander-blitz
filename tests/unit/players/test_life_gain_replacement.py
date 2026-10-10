@@ -27,13 +27,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import life_gain_multiplier
-from automtg.engine.primitives import damage_player, gain_life
-from automtg.engine.structs import LifeLock
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import life_gain_multiplier
+from commanderblitz.engine.primitives import damage_player, gain_life
+from commanderblitz.engine.structs import LifeLock
 from tests.conftest import action_for_card, pass_until
 
 ARCHIVE = "t_archive"
@@ -146,8 +146,8 @@ class TestAPlainLifeGain:
         assert game.state.players[0].life == 40
 
     def test_it_stops_applying_when_the_archive_leaves(self, builder):
-        from automtg.engine.enums import Zone
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.zones import move_object
 
         game = position(builder, ARCHIVE)
         move_object(game.state, oid_of(game, ARCHIVE), Zone.GRAVEYARD)

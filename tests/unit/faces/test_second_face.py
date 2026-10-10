@@ -41,11 +41,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.linking import link_faces
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.linking import link_faces
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import action_for_card, pass_until
 
 FOREST = "forest"
@@ -191,9 +191,9 @@ class TestTheAdventureRider:
         outside. The claim under test is about the seam between `push_spell` and
         `_place_after_resolution`, which is exactly what this drives.
         """
-        from automtg.engine import stack
-        from automtg.engine.effects.context import EffectContext
-        from automtg.engine.effects.ops_stack import op_counter
+        from commanderblitz.engine import stack
+        from commanderblitz.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects.ops_stack import op_counter
 
         game = position(builder, ADVENTURER)
         adventurer = only_object(game, ADVENTURER)

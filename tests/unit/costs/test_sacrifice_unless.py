@@ -9,7 +9,7 @@ other two are pinned here.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import pass_until
 
 

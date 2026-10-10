@@ -42,10 +42,10 @@ The statics -- lords, Lieutenant and the discounts -- are in
 
 from __future__ import annotations
 
-from automtg.engine import legality
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import create_token
+from commanderblitz.engine import legality
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import (
     _default_answer,
     activations,
@@ -266,7 +266,7 @@ def pick_everything(game, limit: int = 200) -> None:
 
 def kill(game, oid: int) -> None:
     """Destroy ``oid`` and let whatever watches for a death resolve."""
-    from automtg.engine.zones import destroy
+    from commanderblitz.engine.zones import destroy
 
     assert destroy(game.state, oid)
     game.state.bump_chars()
@@ -744,7 +744,7 @@ def end_step_tokens(builder, card: str, gained: int, *, active: int = 0, token: 
     gain spell in the pool is a fixed number, and the claims are about the
     boundary between two adjacent ones.
     """
-    from automtg.engine.primitives import gain_life
+    from commanderblitz.engine.primitives import gain_life
 
     game = (
         builder(players=2)
@@ -855,7 +855,7 @@ class TestResplendentAngel:
 
     def test_the_token_has_flying_and_vigilance(self, builder):
         """The plain Angel token would pass a count; this one has vigilance too."""
-        from automtg.engine.primitives import gain_life
+        from commanderblitz.engine.primitives import gain_life
 
         game = anchored(builder, ["resplendent_angel"])
         gain_life(game.state, 0, 5)
@@ -909,7 +909,7 @@ class TestValkyrieHarbinger:
 
     def test_an_opponent_gaining_life_does_not_count(self, builder):
         """ "if **you** gained" -- player 1 gains 10 and the Harbinger's side sees none."""
-        from automtg.engine.primitives import gain_life
+        from commanderblitz.engine.primitives import gain_life
 
         game = anchored(builder, ["valkyrie_harbinger"])
         gain_life(game.state, 1, 10)
@@ -1081,7 +1081,7 @@ class TestGraspOfFate:
 
     def test_they_come_back_when_it_leaves(self, builder):
         """ "**until** this enchantment leaves the battlefield" -- under their owners."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game, _offered = self.cast(builder)
         destroy(game.state, only_oid(game, "grasp_of_fate"))

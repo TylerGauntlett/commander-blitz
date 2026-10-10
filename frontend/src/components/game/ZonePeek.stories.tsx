@@ -19,7 +19,7 @@ const full = scenarios.fullZones().state;
 const meta = {
   title: "Game/ZonePeek",
   component: ZonePeek,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
 } satisfies Meta<typeof ZonePeek>;
 
 export default meta;
@@ -36,7 +36,7 @@ export const Closed: Story = {
 
 export const Graveyard: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Grizzly Bears");
@@ -53,17 +53,17 @@ export const Graveyard: Story = {
 
 export const Exile: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "exile" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "exile" } } } },
 };
 
 export const CommandZone: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "command" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "command" } } } },
 };
 
 export const Hand: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "hand" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "hand" } } } },
 };
 
 /**
@@ -75,7 +75,7 @@ export const Hand: Story = {
  */
 export const HiddenHand: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 1, zone: "hand" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 1, zone: "hand" } } } },
 };
 
 /** An empty zone still opens, and says it is empty. */
@@ -83,7 +83,7 @@ export const EmptyZone: Story = {
   args: {
     state: gameView({ players: [player({ graveyard: [] }), player({ pid: 1, hand: null })] }),
   },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
 };
 
 /**
@@ -105,7 +105,7 @@ export const WithRemovalNotes: Story = {
       [873, "Lethal damage"],
     ]),
   },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Destroyed by Swords to Plowshares");
@@ -117,7 +117,7 @@ export const WithRemovalNotes: Story = {
 /** The same in exile, where the question is usually more urgent. */
 export const ExileWithNotes: Story = {
   args: { state: full, reasons: new Map([[880, "Exiled by Leyline of the Void"]]) },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "exile" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "exile" } } } },
   play: async ({ canvasElement }) => {
     await within(canvasElement).findByText("Exiled by Leyline of the Void");
   },
@@ -126,7 +126,7 @@ export const ExileWithNotes: Story = {
 /** Clicking the backdrop closes it, which is the only way out on a touch device. */
 export const ClosingIt: Story = {
   args: { state: full },
-  parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
+  parameters: { commanderblitz: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Grizzly Bears");

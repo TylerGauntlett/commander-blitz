@@ -20,7 +20,7 @@ const meta = {
   title: "game/FocusRing",
   component: FocusRing,
   args: { context: "story" },
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta<typeof FocusRing>;
 
 export default meta;
@@ -47,7 +47,7 @@ function Stops() {
 
 export const OnAControl: Story = {
   globals: { input: "pad" },
-  parameters: { automtg: { mount: "bare", cursor: "tool:two" } },
+  parameters: { commanderblitz: { mount: "bare", cursor: "tool:two" } },
   render: (args) => (
     <>
       <Stops />
@@ -75,7 +75,7 @@ export const OnAControl: Story = {
  */
 export const FillIsFocus: Story = {
   globals: { input: "pad" },
-  parameters: { automtg: { mount: "bare", cursor: "tool:two" } },
+  parameters: { commanderblitz: { mount: "bare", cursor: "tool:two" } },
   render: (args) => (
     <>
       <Stops />
@@ -93,7 +93,7 @@ export const FillIsFocus: Story = {
 /** A mouse player gets no ring: the outline is suppressed even on the cursor. */
 export const MouseHasNoRing: Story = {
   globals: { input: "mouse" },
-  parameters: { automtg: { mount: "bare", cursor: "tool:two" } },
+  parameters: { commanderblitz: { mount: "bare", cursor: "tool:two" } },
   render: (args) => (
     <>
       <Stops />

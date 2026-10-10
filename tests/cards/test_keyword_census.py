@@ -33,10 +33,10 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader.vocabulary import STATIC_EFFECTS
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import known_ops
-from automtg.engine.enums import Keyword
+from commanderblitz.cards.loader.vocabulary import STATIC_EFFECTS
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import known_ops
+from commanderblitz.engine.enums import Keyword
 
 CENSUS = Path(__file__).resolve().parents[2] / "docs" / "keywords.md"
 

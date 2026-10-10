@@ -43,12 +43,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.statics import _validate_static_value
-from automtg.engine.characteristics import NO_PLAYERS_COUNT, chars
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value, validate_value
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader.statics import _validate_static_value
+from commanderblitz.engine.characteristics import NO_PLAYERS_COUNT, chars
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value, validate_value
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import action_for_card, find_action, only_oid, pass_until
 
 FOREST = "forest"
@@ -345,7 +345,7 @@ class TestInsideAStatic:
 
     def test_it_switches_off_when_the_board_moves(self, builder):
         """An "as long as" clause is re-read, not latched."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game, oid = self.watcher(builder, 2, 3)
         assert "flying" in chars(game.state, oid).keywords

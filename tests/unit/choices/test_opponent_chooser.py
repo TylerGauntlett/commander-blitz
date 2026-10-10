@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 REJOIN = "t_rejoin"
 
@@ -116,7 +116,7 @@ class TestTheChoicesAccumulate:
 
 class TestTheLoaderValidatesIt:
     def test_a_player_spec_is_accepted(self):
-        from automtg.engine.effects.selectors import validate_selector
+        from commanderblitz.engine.effects.selectors import validate_selector
 
         validate_selector({"zone": "graveyard", "chooser": "opponent"}, "test")
         validate_selector(
@@ -125,8 +125,8 @@ class TestTheLoaderValidatesIt:
 
     def test_a_typo_is_still_refused(self):
         """The whole reason the three names were a closed set."""
-        from automtg.engine.effects.selectors import validate_selector
-        from automtg.engine.errors import DslError
+        from commanderblitz.engine.effects.selectors import validate_selector
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="unknown chooser"):
             validate_selector({"zone": "graveyard", "chooser": "each_oponent"}, "test")

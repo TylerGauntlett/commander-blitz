@@ -32,19 +32,19 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import (
     create_token,
     damage_player,
     give_emblem,
     lose_life,
 )
-from automtg.engine.temp_effects import life_floor
-from automtg.engine.zones import destroy, move_object
+from commanderblitz.engine.temp_effects import life_floor
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import only_oid, static_probe
 
 EMBLEM = "t_life_floor_emblem"  # sorcery carrying Serra the Benevolent's emblem

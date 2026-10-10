@@ -14,7 +14,7 @@ plan encodes.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
+from commanderblitz.engine.characteristics import chars
 
 from ..archetypes import Superfriends, activated_ability, cast_card
 from ..base import Combo, DeckPlan

@@ -32,9 +32,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
 from tests.conftest import only_oid
 
 FLIPPER = "t_dominant"
@@ -95,7 +95,7 @@ class TestItComesBackTransformed:
         assert game.state.objects[oid].zone is Zone.BATTLEFIELD
 
     def test_the_back_face_is_a_four_four(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game, oid = activate(board(builder), FLIPPER)
         assert (chars(game.state, oid).power, chars(game.state, oid).toughness) == (4, 4)
@@ -165,7 +165,7 @@ class TestUnderItsOwnersControl:
 
 class TestTheLoaderRequiresTheFace:
     def _card(self, **effect):
-        from automtg.cards.schema import CardModel
+        from commanderblitz.cards.schema import CardModel
 
         return CardModel.model_validate(
             {
@@ -182,15 +182,15 @@ class TestTheLoaderRequiresTheFace:
         """Defaulted to "turn it over" it reads correctly on a card's front and
         silently wrongly on its back, where the sentence turns it the other
         way -- and both faces of the cycle print one."""
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="'front' or 'back'"):
             compile_card(self._card(objects={"self_only": True}), source="test")
 
     def test_a_misspelled_face_is_refused(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="'front' or 'back'"):
             compile_card(
@@ -199,8 +199,8 @@ class TestTheLoaderRequiresTheFace:
             )
 
     def test_nothing_to_exile_is_refused(self):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="nothing to exile"):
             compile_card(self._card(face="back"), source="test")

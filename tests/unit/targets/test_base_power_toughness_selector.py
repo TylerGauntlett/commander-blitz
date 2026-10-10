@@ -32,10 +32,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool, validate_selector
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_counters
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_counters
 from tests.conftest import only_oid
 
 BEAR = "t_bear"  # 2/2 vanilla

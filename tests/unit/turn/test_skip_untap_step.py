@@ -43,10 +43,10 @@ complement is not a spelling of it: that is every permanent which is not a land.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.player_statics import untap_held
-from automtg.engine.primitives import untap_all, untap_permanent
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.player_statics import untap_held
+from commanderblitz.engine.primitives import untap_all, untap_permanent
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid
 
 VAULT = "t_vault_self_lock"

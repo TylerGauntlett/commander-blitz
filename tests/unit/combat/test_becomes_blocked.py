@@ -28,10 +28,10 @@ takes a binding naming the attacker, which is the shape `shares_a_type_with` and
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.events import EventType
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import _default_answer, attack_with, find_action, oids_of, only_oid, pass_until
 
 RAMPAGER = "t_rampager"  # 3/3, rampage 2

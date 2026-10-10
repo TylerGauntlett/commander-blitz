@@ -8,7 +8,7 @@ would need first (TECH_DEBT CG-06's neighbour: `rng.py` was 88%).
 
 from __future__ import annotations
 
-from automtg.engine.rng import Rng
+from commanderblitz.engine.rng import Rng
 
 
 def test_the_same_seed_gives_the_same_sequence_every_way_it_is_drawn():

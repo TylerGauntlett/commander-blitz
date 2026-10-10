@@ -25,19 +25,19 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.registry import default_registry
-from automtg.engine.characteristics import (
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.engine.characteristics import (
     abilities_of,
     chars,
     protection_from,
     ward_abilities,
 )
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.costs import ability_mana, activate_mana_ability, available_mana
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.mana import SYMBOL_INDEX
-from automtg.engine.player_statics import player_cant_cast_spells
-from automtg.engine.primitives import attach, damage_permanent, damage_player
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.costs import ability_mana, activate_mana_ability, available_mana
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.mana import SYMBOL_INDEX
+from commanderblitz.engine.player_statics import player_cant_cast_spells
+from commanderblitz.engine.primitives import attach, damage_permanent, damage_player
 from tests.conftest import (
     _default_answer,
     activations,

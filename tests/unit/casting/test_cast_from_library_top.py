@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 
 CITADEL = "t_citadel"
 BEAR = "t_bear"  # {1}{G}, mana value 2
@@ -122,9 +122,9 @@ class TestTheLifeBoundary:
 class TestTheLoaderRequiresThePrice:
     def test_a_permission_with_no_price_is_refused(self):
         """It would be every spell in the deck, free, off the top."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         card = CardModel.model_validate(
             {

@@ -42,19 +42,19 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.vocabulary import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.vocabulary import (
     GRANTABLE_STATIC_EFFECTS,
     STATIC_EFFECTS,
     UNGRANTABLE_STATIC_EFFECTS,
 )
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import ABILITY_STATICS, abilities_of, chars
-from automtg.engine.enums import Keyword
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import change_control, create_token
-from automtg.engine.sandbox import GameBuilder
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import ABILITY_STATICS, abilities_of, chars
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import change_control, create_token
+from commanderblitz.engine.sandbox import GameBuilder
 
 LEADER = "inspiring_leader"
 BEAR = "granted_static_bear"

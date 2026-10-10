@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.ai.strategy import STRATEGIES, DefaultStrategy, strategy_for
-from automtg.cards.registry import default_registry
+from commanderblitz.ai.strategy import STRATEGIES, DefaultStrategy, strategy_for
+from commanderblitz.cards.registry import default_registry
 from tests.cards.test_deck_legality import FIXTURES, PRECONS
 
 

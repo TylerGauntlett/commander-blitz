@@ -28,14 +28,14 @@ from collections.abc import Callable
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import sba
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import sba
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
 from tests.conftest import action_for_card, oids_of, only_oid
 
 BEAR = "t_bear"
@@ -249,7 +249,7 @@ class TestTheHeuristicAgent:
         return game
 
     def answer(self, game) -> None:
-        from automtg.ai.agents.heuristic_agent import HeuristicAgent
+        from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
 
         agent = HeuristicAgent(seed=0)
         for _ in range(200):

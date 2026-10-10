@@ -11,8 +11,8 @@ three and nothing on the board would say so.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
 from tests.conftest import pass_until
 
 
@@ -26,8 +26,8 @@ def copies_of(game, def_id: str, pid: int = 0):
 
 class TestWhatACopyIs:
     def test_it_is_a_token_with_the_originals_identity(self, builder):
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = builder(players=2).battlefield(0, ["grizzly_bears"]).build()
         bear = game.state.battlefield[0]
@@ -42,8 +42,8 @@ class TestWhatACopyIs:
 
     def test_it_copies_the_printed_card_not_the_object(self, builder):
         """Counters and damage on the original are not part of the copy."""
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = builder(players=2).battlefield(0, ["grizzly_bears"]).build()
         bear = game.state.battlefield[0]
@@ -61,8 +61,8 @@ class TestWhatACopyIs:
         assert chars(game.state, copy.oid).power == 2, "a 2/2, not a 5/5"
 
     def test_a_copy_of_nothing_makes_nothing(self, builder):
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = builder(players=2).battlefield(0, ["forest"]).build()
         before = len(game.state.battlefield_objects(0))
@@ -130,7 +130,7 @@ class TestScuteSwarm:
         assert len(copies_of(game, "scute_swarm")) == 3, "each Swarm made one"
 
     def test_a_copy_is_a_token_and_ceases_to_exist(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = self.board(builder, lands=5)
         self.play_a_land(game)

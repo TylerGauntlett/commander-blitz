@@ -45,14 +45,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.cost_reduction import variant_reduction
-from automtg.engine.costs import ability_mana, can_pay
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import become_monarch
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.cost_reduction import variant_reduction
+from commanderblitz.engine.costs import ability_mana, can_pay
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import become_monarch
 from tests.conftest import only_oid, pass_until
 
 CROWN = "t_monarch_equip"          # Equip {4}, {3} less if you're the monarch
@@ -346,7 +346,7 @@ class TestTheReductionIsScopedToTheCastVariant:
         `cost_reduction` is variant-blind, so the same spec written there
         discounts the hand cast that the printed line never mentions."""
         game, oid = hand_spell(builder, SCALER, lands=5, creatures=4)
-        from automtg.engine.cost_reduction import cost_reduction
+        from commanderblitz.engine.cost_reduction import cost_reduction
 
         card = game.state.card(oid)
         assert cost_reduction(game.state, 0, card) == 0, "nothing card-level here"

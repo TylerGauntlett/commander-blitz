@@ -1,11 +1,11 @@
 """Immutable card definitions.
 
 One :class:`CardDef` exists per distinct card and is shared by every instance of
-it in every game.  These objects are built by :mod:`automtg.cards.loader` from
+it in every game.  These objects are built by :mod:`commanderblitz.cards.loader` from
 JSON and are never mutated afterwards, so the engine can treat them as constants.
 
 The effect bodies (``effects``, ``static``, selectors, conditions) stay as plain
-dicts: they are *data* interpreted by :mod:`automtg.engine.effects`, and the
+dicts: they are *data* interpreted by :mod:`commanderblitz.engine.effects`, and the
 loader has already validated every key and op name against the registries.
 """
 
@@ -871,7 +871,7 @@ class Ability:
     mana_chosen_color: bool = False
     #: "Spend this mana only to cast a creature spell of the chosen type or
     #: activate an ability of a creature source of the chosen type."  ``None`` is
-    #: ordinary mana.  See :class:`~automtg.engine.mana.ManaRestriction` for the
+    #: ordinary mana.  See :class:`~commanderblitz.engine.mana.ManaRestriction` for the
     #: shape; a group may hold `mana.CHOSEN_TYPE`, resolved per permanent by
     #: `costs.resolve_mana_restriction` rather than at load time.
     mana_restriction: ManaRestriction | None = None

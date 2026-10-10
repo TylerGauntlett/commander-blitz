@@ -31,10 +31,10 @@ from __future__ import annotations
 
 import contextlib
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.events import EventType
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.events import EventType
 from tests.conftest import _default_answer, action_for_card
 
 BOLT = "t_bolt"  # {R} instant, 3 damage to any target

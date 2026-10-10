@@ -10,11 +10,11 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.values import (
     validate_counter_kind,
 )
-from automtg.engine.errors import DslError
-from automtg.engine.mana import validate_printed_cost_list
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import validate_printed_cost_list
 
 from ..schema import CardModel
 from .vocabulary import (

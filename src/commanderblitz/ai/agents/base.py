@@ -11,14 +11,14 @@ import os
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Protocol
 
-from automtg.engine.actions import Action
+from commanderblitz.engine.actions import Action
 
 from .heuristic_agent import HeuristicAgent
 from .policy_agent import PolicyAgent
 from .random_agent import RandomAgent
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.game import Game
+    from commanderblitz.engine.game import Game
 
 
 class Agent(Protocol):
@@ -53,7 +53,7 @@ def agent_by_name(name: str, *, seed: int = 0, **kwargs):
 
     ``heuristic`` is deck-aware: it plays each seat with that deck's strategy.
     ``heuristic_classic`` is the agent from before strategies, and
-    ``AUTOMTG_CPU=classic`` makes plain ``heuristic`` mean it too -- the
+    ``COMMANDERBLITZ_CPU=classic`` makes plain ``heuristic`` mean it too -- the
     Playwright server sets it, so seeded browser games stay the games their
     specs were written against.
     """
@@ -61,7 +61,7 @@ def agent_by_name(name: str, *, seed: int = 0, **kwargs):
     if name == "random":
         return RandomAgent(seed=seed)
     if name == "heuristic":
-        return HeuristicAgent(seed=seed, classic=os.environ.get("AUTOMTG_CPU") == "classic")
+        return HeuristicAgent(seed=seed, classic=os.environ.get("COMMANDERBLITZ_CPU") == "classic")
     if name == "heuristic_classic":
         return HeuristicAgent(seed=seed, classic=True)
     if name == "policy":

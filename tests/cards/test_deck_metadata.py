@@ -16,8 +16,8 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import CardRegistry, DeckList, default_registry, load_decks
-from automtg.server.app import create_app
+from commanderblitz.cards.registry import CardRegistry, DeckList, default_registry, load_decks
+from commanderblitz.server.app import create_app
 
 SHIPPED = sorted(load_decks())
 
@@ -117,7 +117,7 @@ class TestDerivedFields:
         exactly what just happened seven times. With no shipped deck left to
         exercise it, it is tested against a synthetic pair rather than deleted.
         """
-        from automtg.server.deckinfo import swap_note
+        from commanderblitz.server.deckinfo import swap_note
 
         one = swap_note([{"slot": "mortify"}], game_data)
         assert "1 card swapped" in one
@@ -168,7 +168,7 @@ class TestImportedDecksLoadWithoutMetadata:
         against is the opposite one -- a required field would break every deck
         file that predates it.
         """
-        from automtg.cards.schema import DeckModel
+        from commanderblitz.cards.schema import DeckModel
 
         deck = DeckModel(
             id="imported",

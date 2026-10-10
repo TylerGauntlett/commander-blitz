@@ -44,16 +44,16 @@ life total runs out.
 ## How the CPU pilots it
 
 The plan lives in
-[`decks/blor_the_impervious.py`](../../src/automtg/ai/strategy/decks/blor_the_impervious.py)
+[`decks/blor_the_impervious.py`](../../src/commanderblitz/ai/strategy/decks/blor_the_impervious.py)
 as `BlorVoltron`, a subclass of `Voltron`.
 
 | Behaviour | Where |
 |---|---|
-| **Equipment goes on Blor**, never moved off him, never onto an elf while he is out. | `Voltron.priority_value`, `equip_bonus` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Equipment goes on Blor**, never moved off him, never onto an elf while he is out. | `Voltron.priority_value`, `equip_bonus` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Auras go on Blor**; Utopia Sprawl and Wild Growth still go on our own lands. | `Voltron.priority_value`, `aura_bonus` |
 | **Tanuki Transplanter reconfigures onto Blor.** Reconfigure is an attach that is not an equip ability; `Voltron` treats any attach the same way. | `Voltron.priority_value` (`_attaches`) |
 | **An equip is spent once a turn, and never onto the creature already wearing it.** Without this guard, found by this deck's smoke games, the CPU re-equipped Staff of Titania onto the same elf until the game stalled. | `Voltron.priority_value` |
-| **Ramp and the strongest equipment first** — Sol Ring, land ramp, Plate, the Sword, Strong Back. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
+| **Ramp and the strongest equipment first** — Sol Ring, land ramp, Plate, the Sword, Strong Back. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
 | **Genji Glove and Inquisitor's Flail** get a combo bonus once the other is in hand or on the table. | `DeckPlan.combos`, `DefaultStrategy.combo_bonus` |
 | **Blor attacks the player he has already hurt most**, then whoever can block him least. | `Voltron.defender` |
 | **Blor attacks whenever the block cannot kill him** — which, being indestructible, is always. The crack-back veto can still keep him home. | `DefaultStrategy.attack_value` |

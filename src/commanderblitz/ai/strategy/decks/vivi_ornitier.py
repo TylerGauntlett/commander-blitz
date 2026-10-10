@@ -13,7 +13,7 @@ See docs/cpus/vivi_ornitier.md for how the deck plays and what this plan encodes
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 
 from ..archetypes import Spellslinger, activated_ability, cast_card, target_objects
 from ..base import Combo, DeckPlan

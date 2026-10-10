@@ -22,7 +22,7 @@ import { Table } from "./Table";
 const meta = {
   title: "Game/Table",
   component: Table,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
 } satisfies Meta<typeof Table>;
 
 export default meta;

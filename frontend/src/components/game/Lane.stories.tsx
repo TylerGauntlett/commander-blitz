@@ -17,7 +17,7 @@ import { Lane } from "./Lane";
 const meta = {
   title: "Game/Lane",
   component: Lane,
-  parameters: { automtg: { mount: "bandFront" } },
+  parameters: { commanderblitz: { mount: "bandFront" } },
   args: {
     pid: 0,
     cardScale: CARD_SCALE.own,
@@ -43,7 +43,7 @@ export const Creatures: Story = {
 };
 
 export const Lands: Story = {
-  parameters: { automtg: { mount: "bandBack" } },
+  parameters: { commanderblitz: { mount: "bandBack" } },
   args: {
     lane: "Lands",
     cards: [
@@ -74,7 +74,7 @@ export const Empty: Story = {
  * count, and its members really are offset rather than superimposed.
  */
 export const TwelveBasicsStacked: Story = {
-  parameters: { automtg: { mount: "bandBack" } },
+  parameters: { commanderblitz: { mount: "bandBack" } },
   args: {
     lane: "Lands",
     cards: [
@@ -97,7 +97,7 @@ export const TwelveBasicsStacked: Story = {
  * and stay individually clickable.
  */
 export const ActionableSplitOut: Story = {
-  parameters: { automtg: { mount: "bandBack" } },
+  parameters: { commanderblitz: { mount: "bandBack" } },
   args: {
     lane: "Lands",
     cards: Array.from({ length: 7 }, (_, i) => pool.forest({ oid: 30 + i })),
@@ -116,7 +116,7 @@ export const ActionableSplitOut: Story = {
 
 /** Highlighted as a legal destination for whatever is being dragged. */
 export const ActiveDropTarget: Story = {
-  parameters: { automtg: { mount: "bandBack" } },
+  parameters: { commanderblitz: { mount: "bandBack" } },
   args: {
     lane: "Lands",
     cards: [pool.forest({ oid: 10 })],

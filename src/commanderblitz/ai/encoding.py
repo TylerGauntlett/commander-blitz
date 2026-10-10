@@ -11,7 +11,7 @@ embedding table.  With only a couple of hundred distinct cards in the pool this
 is cheap, and it is the single biggest quality-per-line win in the ML layer:
 without it the policy can only see "a 2/2 creature", not "Legion Lieutenant".
 
-Slot ordering matches :mod:`automtg.ai.action_space`, so observation slot *k* and
+Slot ordering matches :mod:`commanderblitz.ai.action_space`, so observation slot *k* and
 action slot *k* refer to the same object.
 """
 
@@ -22,16 +22,16 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import can_pay_mana, land_drops_available
-from automtg.engine.enums import COLOR_ORDER, Keyword, Step
-from automtg.engine.player import COMMANDER_DAMAGE_THRESHOLD, STARTING_LIFE
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import can_pay_mana, land_drops_available
+from commanderblitz.engine.enums import COLOR_ORDER, Keyword, Step
+from commanderblitz.engine.player import COMMANDER_DAMAGE_THRESHOLD, STARTING_LIFE
 
 from .action_space import BF_CAP, HAND_CAP, _bf_key, _hand_key
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.cards.registry import CardRegistry
-    from automtg.engine.state import GameState
+    from commanderblitz.cards.registry import CardRegistry
+    from commanderblitz.engine.state import GameState
 
 STACK_CAP = 8
 SEAT_CAP = 4

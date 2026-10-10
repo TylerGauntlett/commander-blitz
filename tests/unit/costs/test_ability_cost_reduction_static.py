@@ -38,11 +38,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import ability_mana
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import ability_mana
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid, two_seat_board
 
 AURA = "t_acr_aura"  # equip abilities you activate cost {3} less
@@ -124,7 +124,7 @@ class TestTheTargetingClause:
         # and it is an Equipment rather than the printed Aura because an Aura
         # attached to nothing is buried by the state-based actions, while
         # `attached` means the same thing on either.
-        from automtg.engine.primitives import attach
+        from commanderblitz.engine.primitives import attach
 
         assert attach(game.state, only_oid(game, AIMED), only_oid(game, BEAR))
         game.state.bump_chars()

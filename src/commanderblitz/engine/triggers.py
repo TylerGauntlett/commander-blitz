@@ -572,7 +572,7 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
     crossing arms it again before the advance loop gets round to the copy --
     which `_delayed_bindings` has already snapshotted everything it needs from.
 
-    See :data:`~automtg.engine.structs.DELAYED_DURATIONS` for why that is one
+    See :data:`~commanderblitz.engine.structs.DELAYED_DURATIONS` for why that is one
     field with two values rather than two booleans.
     """
     if not state.delayed_triggers:

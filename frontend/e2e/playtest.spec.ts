@@ -34,7 +34,7 @@ test.describe("playtest capture", () => {
     // floating numerals, which instant deliberately skips. Set through the
     // stored preference, because the control itself sits behind any modal.
     await page.addInitScript(() => {
-      window.localStorage.setItem("automtg.speed", "fast");
+      window.localStorage.setItem("commanderblitz.speed", "fast");
     });
 
     // The front door first, with its entrance animation finished.
@@ -135,7 +135,7 @@ test.describe("playtest capture", () => {
   test("photograph a four-player pod", async ({ page }) => {
     test.setTimeout(budget(600_000));
     await page.addInitScript(() => {
-      window.localStorage.setItem("automtg.speed", "instant");
+      window.localStorage.setItem("commanderblitz.speed", "instant");
     });
     await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });
 

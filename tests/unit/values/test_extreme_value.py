@@ -24,8 +24,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
 
 ARTIFACTS = {"zone": "battlefield", "controller": "you", "types": ["Artifact"]}
 
@@ -100,7 +100,7 @@ class TestItReadsOtherCharacteristics:
 
 class TestTheLoaderKnowsTheKey:
     def test_it_validates(self):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         validate_value(
             {"extreme_value": {"of": "mana_value", "pick": "greatest", "objects": ARTIFACTS}},
@@ -108,8 +108,8 @@ class TestTheLoaderKnowsTheKey:
         )
 
     def test_an_unknown_value_key_is_still_refused(self):
-        from automtg.engine.effects.values import validate_value
-        from automtg.engine.errors import DslError
+        from commanderblitz.engine.effects.values import validate_value
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="unknown value keys"):
             validate_value({"extremest_value": {}}, "test")

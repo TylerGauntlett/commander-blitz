@@ -12,11 +12,11 @@ rather than any particular choice of lands.
 
 from __future__ import annotations
 
-from automtg.engine.actions import Action, PendingDecision
-from automtg.engine.costs import mana_sources
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.legality import legal_actions
-from automtg.engine.mana import solve_payment
+from commanderblitz.engine.actions import Action, PendingDecision
+from commanderblitz.engine.costs import mana_sources
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.legality import legal_actions
+from commanderblitz.engine.mana import solve_payment
 
 
 def priority_to(game, pid: int = 0):

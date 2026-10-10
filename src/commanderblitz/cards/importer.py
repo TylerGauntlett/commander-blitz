@@ -30,7 +30,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from automtg.engine.errors import DslError
+from commanderblitz.engine.errors import DslError
 
 from .images import CardIndex, generated_images_path
 from .loader import compile_card

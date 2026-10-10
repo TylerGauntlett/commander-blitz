@@ -17,9 +17,9 @@ would quietly make Emergency Eject a strictly better card than the printed one.
 
 from __future__ import annotations
 
-from automtg.engine.enums import COLORLESS, ActionKind, DecisionKind, Step, Zone
-from automtg.engine.mana import SYMBOL_INDEX
-from automtg.engine.primitives import create_token
+from commanderblitz.engine.enums import COLORLESS, ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.mana import SYMBOL_INDEX
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import _default_answer, oids_of, pass_until
 
 BEAR = "t_bear"

@@ -44,11 +44,11 @@ Witness: Approach of the Second Sun
 
 from __future__ import annotations
 
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.state import new_object
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.state import new_object
 from tests.conftest import _default_answer
 
 APPROACH = "t_approach"  # the printed card
@@ -234,7 +234,7 @@ class TestGateFourAcceptsTheTuck:
     def _pool(self):
         from pathlib import Path
 
-        from automtg.cards.registry import CardRegistry, authored_card_paths
+        from commanderblitz.cards.registry import CardRegistry, authored_card_paths
 
         return CardRegistry.from_paths(
             authored_card_paths(Path("data/cards"))

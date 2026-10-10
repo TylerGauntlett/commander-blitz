@@ -27,7 +27,7 @@ prompt.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import pass_until
 
 SPELL = "t_budget"

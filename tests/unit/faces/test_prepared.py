@@ -47,7 +47,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import only_oid
 
 EMERITUS = "t_emeritus"
@@ -182,7 +182,7 @@ class TestCastingItUnpreparesIt:
 
 class TestEnteringPrepared:
     def test_a_resolved_creature_arrives_prepared(self, builder):
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game = (
             builder(players=2)
@@ -196,7 +196,7 @@ class TestEnteringPrepared:
         assert game.state.objects[oid].prepared
 
     def test_the_counterfactual_does_not(self, builder):
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game = (
             builder(players=2)
@@ -212,7 +212,7 @@ class TestEnteringPrepared:
     def test_a_permanent_that_leaves_is_no_longer_prepared(self, builder):
         """400.7 makes it a new object, and the printed line is what puts the
         state on."""
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game = board(builder)
         oid = only_oid(game, EMERITUS)
@@ -222,8 +222,8 @@ class TestEnteringPrepared:
 
 class TestBecomingPrepared:
     def test_the_op_turns_it_on(self, builder):
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = board(builder, prepared=False)
         state = game.state
@@ -250,7 +250,7 @@ class TestTiming:
 
 class TestTheLoaderChecksTheLink:
     def _card(self, **overrides):
-        from automtg.cards.schema import CardModel
+        from commanderblitz.cards.schema import CardModel
 
         body = {
             "id": "t_bad_prepared",
@@ -266,9 +266,9 @@ class TestTheLoaderChecksTheLink:
         return CardModel.model_validate(body)
 
     def test_an_unknown_face_is_refused(self, registry):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.loader.linking import link_prepared_faces
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.loader.linking import link_prepared_faces
+        from commanderblitz.engine.errors import DslError
 
         pool = {c.id: c for c in registry}
         card = compile_card(self._card(prepared_face="t_nothing"), source="test")
@@ -279,9 +279,9 @@ class TestTheLoaderChecksTheLink:
     def test_a_permanent_face_is_refused(self, registry):
         """"a copy of its **spell**" -- a creature put on the stack this way
         would be a spell that never leaves it."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.loader.linking import link_prepared_faces
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.loader.linking import link_prepared_faces
+        from commanderblitz.engine.errors import DslError
 
         pool = {c.id: c for c in registry}
         card = compile_card(self._card(prepared_face="t_bear"), source="test")
@@ -290,9 +290,9 @@ class TestTheLoaderChecksTheLink:
             link_prepared_faces(pool)
 
     def test_the_op_needs_objects(self):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="nothing to prepare"):
             compile_card(

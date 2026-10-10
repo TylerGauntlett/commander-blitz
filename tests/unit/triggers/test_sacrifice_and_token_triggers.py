@@ -35,8 +35,8 @@ event for one creature would toll three times.
 
 from __future__ import annotations
 
-from automtg.engine.primitives import create_token
-from automtg.engine.zones import destroy, sacrifice
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.zones import destroy, sacrifice
 from tests.conftest import oids_of, settle
 
 BATS = "t_bats"  # "whenever you create or sacrifice a token, each opponent loses 1"
@@ -124,7 +124,7 @@ class TestTheDeathIsStillADeath:
     """Firing `sacrificed` beside `dies` rather than instead of it."""
 
     def test_a_sacrificed_creature_still_fires_dies(self, builder):
-        from automtg.engine.events import EventType
+        from commanderblitz.engine.events import EventType
 
         game = board(builder, extra=(BEAR,))
         bear = oids_of(game, BEAR)[0]

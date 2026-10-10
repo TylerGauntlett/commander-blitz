@@ -38,8 +38,8 @@ is observable only by another trigger ordered between the two.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 BANNER = "vanquishers_banner"
 FLIER = "t_flier"  # {2}{U} Bird
@@ -183,7 +183,7 @@ class TestTheDrawTrigger:
 
 class TestItIsPerObject:
     def test_the_choice_is_cleared_when_it_leaves(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder, extra=[BEAR])
         banner = only(game, BANNER)
@@ -237,7 +237,7 @@ class TestTheChoiceReachesTheOtherTwoReaders:
 
     def cost_of(self, game, def_id: str) -> int:
         """What legality is actually charging for this card right now."""
-        from automtg.engine.cost_reduction import cost_reduction
+        from commanderblitz.engine.cost_reduction import cost_reduction
 
         card = game.state.card_of(
             next(

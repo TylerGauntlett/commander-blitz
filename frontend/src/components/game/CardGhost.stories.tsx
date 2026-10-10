@@ -6,7 +6,7 @@
  * a thing you can look at side by side rather than a moment you have to catch
  * in a running game.
  *
- * These run with real motion (`automtg.motion: "real"`), because with
+ * These run with real motion (`commanderblitz.motion: "real"`), because with
  * `reducedMotion` the transform under test is exactly what is removed. The
  * assertions are therefore about what is *drawn* -- the caption, the card, the
  * destination class -- and the geometry is left to `FxLayer.stories.tsx`, which
@@ -21,7 +21,7 @@ import { CardGhost } from "./CardGhost";
 const meta = {
   title: "Game/CardGhost",
   component: CardGhost,
-  parameters: { automtg: { mount: "tableBody", motion: "real" } },
+  parameters: { commanderblitz: { mount: "tableBody", motion: "real" } },
   args: {
     oid: 4,
     card: pool.grizzlyBears(),

@@ -25,7 +25,7 @@ from pathlib import Path
 
 import numpy as np
 
-from automtg.cards.registry import default_registry
+from commanderblitz.cards.registry import default_registry
 
 from . import encoding
 from .agents.base import Agent

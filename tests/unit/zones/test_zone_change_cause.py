@@ -12,10 +12,10 @@ These tests pin the payload, not the prose -- the words live in the client's
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.primitives import damage_permanent
-from automtg.engine.sba import run as run_sba
-from automtg.engine.zones import bounce, destroy, exile, move_object, sacrifice
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.primitives import damage_permanent
+from commanderblitz.engine.sba import run as run_sba
+from commanderblitz.engine.zones import bounce, destroy, exile, move_object, sacrifice
 from tests.conftest import action_for_card, only_oid, pass_until
 
 

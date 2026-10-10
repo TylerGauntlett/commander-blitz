@@ -14,15 +14,15 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from automtg.engine.carddef import (
+from commanderblitz.engine.carddef import (
     Cost,
 )
-from automtg.engine.effects.selectors import validate_selector
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.selectors import validate_selector
+from commanderblitz.engine.effects.values import (
     validate_value,
 )
-from automtg.engine.errors import DslError
-from automtg.engine.mana import (
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import (
     ManaKeywordGrant,
     parse_mana_production,
 )

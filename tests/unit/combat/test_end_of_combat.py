@@ -49,14 +49,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import execute_one
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.structs import CombatState, DelayedTrigger
-from automtg.engine.turn import DELAY_STEPS, _delay_due
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import execute_one
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.structs import CombatState, DelayedTrigger
+from commanderblitz.engine.turn import DELAY_STEPS, _delay_due
 from tests.conftest import _default_answer, action_for_card, find_action, oids_of
 
 RIDER = "t_rider"  # attacks: copy itself tapped and attacking; exile it at EOC

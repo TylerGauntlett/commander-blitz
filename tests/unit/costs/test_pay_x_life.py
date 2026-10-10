@@ -33,8 +33,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 
 DELUGE = "t_toxic_deluge"
 FIXED = "t_fixed_deluge"
@@ -156,9 +156,9 @@ class TestTheCeiling:
 class TestTheLoaderKeepsItHonest:
     def test_an_announced_x_and_a_fixed_amount_are_refused(self):
         """Two numbers for one payment; one of them would never be charged."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         card = CardModel.model_validate(
             {

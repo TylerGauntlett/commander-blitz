@@ -2,14 +2,14 @@
 
 Validation happens in three passes:
 
-1. **Shape** -- pydantic models in :mod:`automtg.cards.schema`.
+1. **Shape** -- pydantic models in :mod:`commanderblitz.cards.schema`.
 2. **Vocabulary** -- every effect op, selector key, value form, trigger event,
    keyword and type name must be one the engine actually implements.
 3. **Constraints** -- static ability filters may only read printed
-   characteristics (see :mod:`automtg.engine.characteristics`), and abilities
+   characteristics (see :mod:`commanderblitz.engine.characteristics`), and abilities
    flagged as mana abilities must really be mana abilities.
 
-Anything that fails raises :class:`~automtg.engine.errors.DslError` at load time.
+Anything that fails raises :class:`~commanderblitz.engine.errors.DslError` at load time.
 """
 
 from __future__ import annotations
@@ -20,8 +20,8 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
-from automtg.engine.battles import DEFENSE as BATTLE_DEFENSE
-from automtg.engine.carddef import (
+from commanderblitz.engine.battles import DEFENSE as BATTLE_DEFENSE
+from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
     Cost,
@@ -32,28 +32,28 @@ from automtg.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
-from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.ops_player import shut_cast_zones
-from automtg.engine.effects.selectors import ZONE_NAMES, validate_selector
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.effects.ops_player import shut_cast_zones
+from commanderblitz.engine.effects.selectors import ZONE_NAMES, validate_selector
+from commanderblitz.engine.effects.values import (
     validate_value,
 )
-from automtg.engine.enums import (
+from commanderblitz.engine.enums import (
     AbilityKind,
     CardType,
     Step,
     Zone,
 )
-from automtg.engine.errors import DslError
-from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
-from automtg.engine.mana import (
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
+from commanderblitz.engine.mana import (
     ManaCost,
     ManaRestriction,
     compile_restriction,
     parse_mana_production,
 )
-from automtg.engine.sagas import LORE, SAGA
-from automtg.engine.triggers import (
+from commanderblitz.engine.sagas import LORE, SAGA
+from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
     TRIGGER_EVENTS,
     validate_trigger_filter,
@@ -94,7 +94,7 @@ from .targets import (
 # (ATTACKING_OPS, the COST_REDUCTION_* keys, the STATIC_* condition, count, life
 # and value keys, ...). They are imported only to stay in this namespace:
 # tests/cards/test_golden_pool.py pins the DSL's vocabulary by scanning
-# `vars(automtg.cards.loader)`. Code should import them from `.vocabulary`.
+# `vars(commanderblitz.cards.loader)`. Code should import them from `.vocabulary`.
 from .vocabulary import (  # noqa: F401
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,

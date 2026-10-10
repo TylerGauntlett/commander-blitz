@@ -9,15 +9,15 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from automtg.engine.effects.conditions import validate_condition
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
     validate_counters_on,
     validate_entered_filter,
     validate_mana_symbols,
     validate_per_player_count,
 )
-from automtg.engine.errors import DslError
+from commanderblitz.engine.errors import DslError
 
 from .vocabulary import (
     COST_CONDITION_HEADS,

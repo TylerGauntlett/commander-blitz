@@ -41,11 +41,11 @@ a naive "controls a land" reading.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.combat import can_block
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.primitives import animate
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.combat import can_block
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.primitives import animate
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 

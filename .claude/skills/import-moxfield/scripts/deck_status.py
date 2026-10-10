@@ -25,10 +25,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from automtg.cards.images import load_index  # noqa: E402
-from automtg.cards.importer import import_deck  # noqa: E402
-from automtg.cards.moxfield import ImportFailed, load  # noqa: E402
-from automtg.cards.registry import default_registry  # noqa: E402
+from commanderblitz.cards.images import load_index  # noqa: E402
+from commanderblitz.cards.importer import import_deck  # noqa: E402
+from commanderblitz.cards.moxfield import ImportFailed, load  # noqa: E402
+from commanderblitz.cards.registry import default_registry  # noqa: E402
 
 
 def main() -> int:

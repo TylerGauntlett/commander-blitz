@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.enums import ActionKind, Zone
 
 EXILER = "t_phoenix_down"
 SACKER = "t_sac_down"
@@ -122,8 +122,8 @@ class TestItSatisfiesTheOutsideTheBattlefieldGuard:
         `discard_self` and `exile_from_graveyard` already satisfied it; exiling
         the source is the same promise made a third way.
         """
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
 
         compile_card(
             CardModel.model_validate(
@@ -149,9 +149,9 @@ class TestItSatisfiesTheOutsideTheBattlefieldGuard:
 
     def test_mana_alone_is_still_refused(self):
         """The guard has not been weakened, only widened."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="removes its source"):
             compile_card(

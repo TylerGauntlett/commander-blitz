@@ -47,14 +47,14 @@ and is protected from discard.
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/sheoldred_the_apocalypse.py`](../../src/automtg/ai/strategy/decks/sheoldred_the_apocalypse.py)
+The plan lives in [`decks/sheoldred_the_apocalypse.py`](../../src/commanderblitz/ai/strategy/decks/sheoldred_the_apocalypse.py)
 as `DrawDeath`, a subclass of the `Punisher` archetype. Everything hangs off one
 number, **`pain`**: how much life an opponent loses per card drawn, from the
 punishers we control right now (Sheoldred 2, each of the others 1).
 
 | Behaviour | Where |
 |---|---|
-| **Sheoldred first.** Her key-card bonus (120) beats any other four-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
+| **Sheoldred first.** Her key-card bonus (120) beats any other four-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
 | **Group draw gets +40 per point of pain.** With Sheoldred out, Howling Mine outranks most creatures. | `DrawDeath.priority_value`, `GROUP_DRAW` |
 | **Font of Mythos, Puzzle Box and Dark Deal are held** while pain is zero — they only feed the table. | `DrawDeath.priority_value`, `HELD` |
 | **Temple Bell, Mikokoro, Geier Reach and Otherworld Atlas are only activated under a punisher**, and then they are worth 30 per point of pain (Atlas: per charge counter too). | `DrawDeath.priority_value`, `GROUP_DRAW_ABILITIES` |

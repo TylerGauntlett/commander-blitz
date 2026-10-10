@@ -45,13 +45,13 @@ prohibition. `tests/unit/casting/test_split_second.py` measures it where it live
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import (
+from commanderblitz.engine.characteristics import (
     chars,
     player_protected_from,
     protection_from,
 )
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import life_locked, lose_life
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import life_locked, lose_life
 from tests.conftest import (
     action_for_card,
     battlefield_ids,

@@ -53,7 +53,7 @@ const meta = {
   title: "Menu/DeckImport",
   component: DeckImport,
   args: { onImported: fn() },
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta<typeof DeckImport>;
 
 export default meta;
@@ -65,7 +65,7 @@ export const Panel: Story = {};
 /** The catalogue's footer strip: `flex: 1; min-width: 300px` needs that row. */
 export const Row: Story = {
   args: { variant: "row" },
-  parameters: { automtg: { mount: "catalogFoot" } },
+  parameters: { commanderblitz: { mount: "catalogFoot" } },
 };
 
 /**
@@ -74,7 +74,7 @@ export const Row: Story = {
  */
 export const Offline: Story = {
   args: { variant: "row", enabled: false },
-  parameters: { automtg: { mount: "catalogFoot" } },
+  parameters: { commanderblitz: { mount: "catalogFoot" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByRole("textbox")).toBeDisabled();

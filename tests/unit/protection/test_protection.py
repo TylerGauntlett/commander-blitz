@@ -15,10 +15,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import protected_from, protection_from
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import protected_from, protection_from
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid
 
 
@@ -111,7 +111,7 @@ class TestTheFourRules:
         )
 
     def test_damage_from_it_is_prevented(self, registry, builder):
-        from automtg.engine.primitives import damage_permanent
+        from commanderblitz.engine.primitives import damage_permanent
 
         game, greensleeves, wizard, bear = self.board(builder, registry)
         assert damage_permanent(game.state, greensleeves, 3, wizard) == 0
@@ -121,7 +121,7 @@ class TestTheFourRules:
         assert game.state.objects[greensleeves].damage == 3
 
     def test_it_cannot_be_targeted_by_it(self, registry, builder):
-        from automtg.engine.targeting import can_be_targeted
+        from commanderblitz.engine.targeting import can_be_targeted
 
         game, greensleeves, wizard, bear = self.board(builder, registry)
         assert not can_be_targeted(game.state, 1, greensleeves, source_oid=wizard)
@@ -129,14 +129,14 @@ class TestTheFourRules:
 
     def test_protection_stops_its_own_controller_too(self, registry, builder):
         """The half a hexproof-shaped implementation would get wrong."""
-        from automtg.engine.targeting import can_be_targeted
+        from commanderblitz.engine.targeting import can_be_targeted
 
         game, greensleeves, wizard, _ = self.board(builder, registry)
         assert not can_be_targeted(game.state, 0, greensleeves, source_oid=wizard)
 
     def test_it_cannot_be_blocked_by_it(self, registry, builder):
-        from automtg.engine.combat import can_block
-        from automtg.engine.structs import CombatState
+        from commanderblitz.engine.combat import can_block
+        from commanderblitz.engine.structs import CombatState
 
         game, greensleeves, wizard, bear = self.board(builder, registry)
         game.state.combat = CombatState()
@@ -149,7 +149,7 @@ class TestTheFourRules:
         assert can_block(game.state, bear, greensleeves, 1)
 
     def test_it_cannot_be_enchanted_by_it(self, registry, builder):
-        from automtg.engine.primitives import attach
+        from commanderblitz.engine.primitives import attach
 
         game, greensleeves, wizard, bear = self.board(builder, registry)
         assert not attach(game.state, wizard, greensleeves)

@@ -33,11 +33,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import wins_on_empty_draw
-from automtg.engine.replacements import draw as draw_with_replacements
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import wins_on_empty_draw
+from commanderblitz.engine.replacements import draw as draw_with_replacements
 
 MANIAC = "t_lab_maniac"
 
@@ -128,8 +128,8 @@ class TestWhoItAppliesTo:
         assert game.state.players[1].attempted_draw_from_empty
 
     def test_the_permission_ends_when_the_source_leaves(self, builder):
-        from automtg.engine.enums import Zone
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.zones import move_object
         from tests.conftest import only_oid
 
         game = _board(builder, maniac=True, library=0)

@@ -9,12 +9,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.ai.agents import HeuristicAgent, RandomAgent
-from automtg.ai.agents.base import agent_by_name, play
-from automtg.ai.arena import decks_for, run_matchup
-from automtg.ai.stats import render_markdown, summarize, wilson_interval
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.game import create_game
+from commanderblitz.ai.agents import HeuristicAgent, RandomAgent
+from commanderblitz.ai.agents.base import agent_by_name, play
+from commanderblitz.ai.arena import decks_for, run_matchup
+from commanderblitz.ai.stats import render_markdown, summarize, wilson_interval
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.game import create_game
 
 GATE_WIN_RATE = 0.65
 ARENA_GAMES = 60
@@ -93,8 +93,8 @@ class TestHeuristicBehaviour:
 
     def test_it_never_points_removal_at_its_own_creature(self):
         """A scoring bug here is invisible in win rates but obvious in play."""
-        from automtg.cards.registry import CardRegistry
-        from automtg.engine.sandbox import GameBuilder
+        from commanderblitz.cards.registry import CardRegistry
+        from commanderblitz.engine.sandbox import GameBuilder
         from tests.conftest import CARD_DIR, TEST_CARD_DIR
 
         paths = sorted(CARD_DIR.glob("*.cards.json")) + sorted(
@@ -112,8 +112,8 @@ class TestHeuristicBehaviour:
         assert chosen.kind is not ActionKind.CAST, "cast removal with only its own target"
 
     def test_it_blocks_when_blocking_is_free(self):
-        from automtg.cards.registry import CardRegistry
-        from automtg.engine.sandbox import GameBuilder
+        from commanderblitz.cards.registry import CardRegistry
+        from commanderblitz.engine.sandbox import GameBuilder
         from tests.conftest import CARD_DIR, TEST_CARD_DIR
 
         paths = sorted(CARD_DIR.glob("*.cards.json")) + sorted(
@@ -128,7 +128,7 @@ class TestHeuristicBehaviour:
         )
         agent = HeuristicAgent(0)
         # Advance to blockers with player 0 attacking into a 6/6.
-        from automtg.engine.structs import TargetRef
+        from commanderblitz.engine.structs import TargetRef
         from tests.conftest import find_action, only_oid, pass_until
 
         pass_until(
@@ -162,7 +162,7 @@ class TestHeuristicDoesNotSelfDestruct:
 
     def _blocked_vanguard(self, builder, life: int = 40):
         """Seat 0's Adanto Vanguard attacking into a block, priority to seat 0."""
-        from automtg.engine.structs import TargetRef
+        from commanderblitz.engine.structs import TargetRef
         from tests.conftest import find_action, only_oid, pass_until
 
         game = (
@@ -253,7 +253,7 @@ class TestHeuristicDoesNotSelfDestruct:
 
     def test_it_never_repeats_a_non_mana_ability_in_one_turn(self):
         """The property, over a real game rather than one built position."""
-        from automtg.engine.characteristics import abilities_of
+        from commanderblitz.engine.characteristics import abilities_of
 
         game = create_game(["edgar", "aesi"], seed=5)
         agents = {0: HeuristicAgent(0), 1: HeuristicAgent(1)}

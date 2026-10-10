@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.images import (
+from commanderblitz.cards.images import (
     CardArt,
     build_registry_images,
     catalog_path,
@@ -21,7 +21,7 @@ from automtg.cards.images import (
     strip_token_suffix,
     token_key,
 )
-from automtg.cards.registry import default_registry
+from commanderblitz.cards.registry import default_registry
 
 #: Cards in ``data/cards/`` that are original designs with no printing anywhere.
 #:

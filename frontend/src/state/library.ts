@@ -18,7 +18,7 @@
  * public id, so a re-import lands on the same deck and re-claims it.
  */
 
-const KEY = "automtg.library";
+const KEY = "commanderblitz.library";
 
 /**
  * Read once, then remember. `request` calls this on every fetch, and going to

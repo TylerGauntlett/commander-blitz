@@ -23,9 +23,9 @@ established rather than a general LKI system.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step, Zone
-from automtg.engine.primitives import add_counters
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.primitives import add_counters
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid, pass_until
 
 OZOLITH = "t_ozolith"  # all kinds, off a departed creature
@@ -112,7 +112,7 @@ class TestTheOneKindVersionIsWrong:
 class TestOffALivePermanent:
     def test_all_kinds_move_and_the_source_is_emptied(self, builder):
         """The second line: a live source, so the counters must also LEAVE it."""
-        from automtg.engine.enums import ActionKind
+        from commanderblitz.engine.enums import ActionKind
 
         game = position(builder, MOVER)
         rock, bear = only_oid(game, MOVER), only_oid(game, BEAR)

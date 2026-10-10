@@ -1,7 +1,7 @@
 """Card definition loading.
 
-Card files are JSON validated by :mod:`automtg.cards.schema` (pydantic) and then
-compiled into the immutable :class:`~automtg.engine.carddef.CardDef` objects the
+Card files are JSON validated by :mod:`commanderblitz.cards.schema` (pydantic) and then
+compiled into the immutable :class:`~commanderblitz.engine.carddef.CardDef` objects the
 engine consumes.  Validation is strict on purpose: an unknown effect op, an
 unknown selector key or a malformed value expression is an error at *load* time,
 so ``pytest`` catches a typo in a card file instead of a game crashing.

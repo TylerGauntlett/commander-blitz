@@ -30,12 +30,12 @@ import copy
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer
 
 MASTERY = "t_baleful_probe"  # {3}{B}, or {1}{B} and an opponent draws
@@ -198,7 +198,7 @@ class TestWhenItDoesNotResolve:
 class TestACopy:
     def test_a_copy_of_the_alternative_cast_draws_again(self, builder):
         """707.10: a copy copies the alternative cost paid for the original."""
-        from automtg.engine.effects.ops_stack import put_copy_on_stack
+        from commanderblitz.engine.effects.ops_stack import put_copy_on_stack
 
         game, _ = position(builder)
         before = libraries(game)
@@ -213,7 +213,7 @@ class TestACopy:
         assert libraries(game)[1] == before[1] - 2, "one card per resolution"
 
     def test_a_copy_of_the_printed_cast_does_not(self, builder):
-        from automtg.engine.effects.ops_stack import put_copy_on_stack
+        from commanderblitz.engine.effects.ops_stack import put_copy_on_stack
 
         game, _ = position(builder)
         before = libraries(game)

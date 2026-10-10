@@ -58,7 +58,7 @@ there is no reason to spend 600 MB of disk expanding it.
 ### The three columns that are not about art
 
 `oracle_text`, `keywords` and `produced_mana` cost ~7 MB and exist for one
-consumer: `src/automtg/cards/proxy.py`, which generates a playable card
+consumer: `src/commanderblitz/cards/proxy.py`, which generates a playable card
 definition for a card nobody has hand-written. Without `produced_mana` a
 generated land taps for nothing, and a deck of inert lands is not a deck.
 
@@ -178,7 +178,7 @@ Three things the pin file is deliberately not allowed to do:
 printed *over the illustration*, inside the `art_crop` band the app shows, so
 `dmu #107` is pinned rather than the otherwise identical `pdmu #107s`.
 
-Then each engine card is matched to a printing (`src/automtg/cards/images.py`):
+Then each engine card is matched to a printing (`src/commanderblitz/cards/images.py`):
 
 1. exact name;
 2. **for tokens, the sorted subtypes** — Scryfall names the token `"Vampire"`,

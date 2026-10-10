@@ -12,12 +12,12 @@ import pytest
 
 torch = pytest.importorskip("torch", reason="requires the [train] extra")
 
-from automtg.ai import action_space, encoding  # noqa: E402
-from automtg.ai.agents.base import play  # noqa: E402
-from automtg.ai.agents.policy_agent import PolicyAgent  # noqa: E402
-from automtg.ai.agents.random_agent import RandomAgent  # noqa: E402
-from automtg.ai.env import make_env  # noqa: E402
-from automtg.ai.model import (  # noqa: E402
+from commanderblitz.ai import action_space, encoding  # noqa: E402
+from commanderblitz.ai.agents.base import play  # noqa: E402
+from commanderblitz.ai.agents.policy_agent import PolicyAgent  # noqa: E402
+from commanderblitz.ai.agents.random_agent import RandomAgent  # noqa: E402
+from commanderblitz.ai.env import make_env  # noqa: E402
+from commanderblitz.ai.model import (  # noqa: E402
     ModelConfig,
     build_model,
     load,
@@ -25,8 +25,8 @@ from automtg.ai.model import (  # noqa: E402
     save,
     to_batch,
 )
-from automtg.ai.train import TrainConfig, train  # noqa: E402
-from automtg.engine.game import create_game  # noqa: E402
+from commanderblitz.ai.train import TrainConfig, train  # noqa: E402
+from commanderblitz.engine.game import create_game  # noqa: E402
 
 
 @pytest.fixture(scope="module")

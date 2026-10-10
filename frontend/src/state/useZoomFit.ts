@@ -264,7 +264,7 @@ function locked(opponents: number): ZoomFit {
 }
 
 /**
- * `?zoom=lock`, or `window.__AUTOMTG_ZOOM_LOCK`.
+ * `?zoom=lock`, or `window.__COMMANDERBLITZ_ZOOM_LOCK`.
  *
  * A window flag rather than a persisted preference: `e2e/helpers.ts` sets it with
  * `addInitScript`, the same way it forces instant narration, and unlike a
@@ -274,7 +274,8 @@ function locked(opponents: number): ZoomFit {
  */
 function zoomLocked(): boolean {
   if (typeof window === "undefined") return true;
-  if ((window as { __AUTOMTG_ZOOM_LOCK?: boolean }).__AUTOMTG_ZOOM_LOCK === true) return true;
+  if ((window as { __COMMANDERBLITZ_ZOOM_LOCK?: boolean }).__COMMANDERBLITZ_ZOOM_LOCK === true)
+    return true;
   try {
     return new URLSearchParams(window.location.search).get("zoom") === "lock";
   } catch {

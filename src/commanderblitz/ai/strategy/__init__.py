@@ -8,7 +8,7 @@ Lookup, in order:
 3. :class:`DefaultStrategy` -- the baseline every other deck gets.
 
 ``CLASSIC`` is the neutral base class, the agent as it was before any of this,
-kept for seeded tests (``AUTOMTG_CPU=classic``) and as a benchmark opponent.
+kept for seeded tests (``COMMANDERBLITZ_CPU=classic``) and as a benchmark opponent.
 """
 
 from __future__ import annotations

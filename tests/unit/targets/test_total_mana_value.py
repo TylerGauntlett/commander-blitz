@@ -26,10 +26,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.targeting import enumerate_target_tuples
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.targeting import enumerate_target_tuples
 
 REBIRTH = "t_flames_of_rebirth"
 EACH = "t_each_six"

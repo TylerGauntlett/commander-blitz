@@ -12,7 +12,7 @@ one asserted against here.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 

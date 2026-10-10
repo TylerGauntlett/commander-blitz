@@ -9,14 +9,14 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
-from automtg.engine.carddef import CardDef
-from automtg.engine.errors import DeckError, DslError
+from commanderblitz.engine.carddef import CardDef
+from commanderblitz.engine.errors import DeckError, DslError
 
 from .loader import load_card_file, load_deck_file
 from .loader.linking import link_faces, validate_token_references
 from .schema import DeckModel
 
-#: Repo-root ``data/`` directory, overridable for tests via ``AUTOMTG_DATA_DIR``.
+#: Repo-root ``data/`` directory, overridable for tests via ``COMMANDERBLITZ_DATA_DIR``.
 DEFAULT_DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 
 #: Commander deck size, including the commander.
@@ -24,14 +24,14 @@ COMMANDER_DECK_SIZE = 100
 
 
 def data_dir() -> Path:
-    override = os.environ.get("AUTOMTG_DATA_DIR")
+    override = os.environ.get("COMMANDERBLITZ_DATA_DIR")
     return Path(override) if override else DEFAULT_DATA_DIR
 
 
 def authored_card_paths(base: Path | None = None) -> list[Path]:
     """Every hand-written card file, then every machine-authored one.
 
-    ``auto/`` holds cards written by ``automtg.cards.authoring`` -- generated,
+    ``auto/`` holds cards written by ``commanderblitz.cards.authoring`` -- generated,
     but only after clearing the six gates in ``authoring/verify.py``, so they are
     *authored* in the sense that matters: their behaviour was demonstrated. They
     are committed and playable everywhere, unlike the inert proxies in
@@ -56,14 +56,14 @@ def generated_dir() -> Path:
     that pool, ``pytest`` would return a different answer depending on what
     somebody imported last week.
 
-    ``AUTOMTG_GENERATED_DIR`` moves it on its own, leaving the authored data
+    ``COMMANDERBLITZ_GENERATED_DIR`` moves it on its own, leaving the authored data
     where it is.  The desktop build needs that split: it runs the server out of
     a read-only AppImage mount, so the only place an import or a fetched
     illustration can land is a per-user directory beside it.  Every runtime
     write in the package resolves through here, which is what makes one
     variable sufficient.
     """
-    override = os.environ.get("AUTOMTG_GENERATED_DIR")
+    override = os.environ.get("COMMANDERBLITZ_GENERATED_DIR")
     return Path(override) if override else data_dir() / "generated"
 
 
@@ -417,7 +417,7 @@ def default_registry() -> GameData:
 
 def fixture_decks_enabled() -> bool:
     """Whether the server should serve the fixture decks (test servers only)."""
-    return os.environ.get("AUTOMTG_FIXTURE_DECKS") == "1"
+    return os.environ.get("COMMANDERBLITZ_FIXTURE_DECKS") == "1"
 
 
 @lru_cache(maxsize=2)
@@ -426,7 +426,7 @@ def server_registry() -> GameData:
 
     Separate from :func:`default_registry` so that importing a deck cannot
     change the answer any test gives.  Invalidated by
-    ``automtg.server.app``'s reload hook after an import writes new files;
+    ``commanderblitz.server.app``'s reload hook after an import writes new files;
     clearing this cache alone is not enough, because :class:`SessionRegistry`
     holds the :class:`GameData` it was built with.
     """

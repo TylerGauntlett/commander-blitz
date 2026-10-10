@@ -22,7 +22,7 @@ of the four wrong readings.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import pass_until
 
 WINDFALL = "t_windfall"

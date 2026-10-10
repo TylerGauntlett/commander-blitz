@@ -100,7 +100,7 @@ describe("narrowTargeting", () => {
  */
 describe("hints", () => {
   beforeEach(() => {
-    localStorage.removeItem("automtg.hints");
+    localStorage.removeItem("commanderblitz.hints");
     useUiStore.setState({ hints: false });
   });
 
@@ -114,7 +114,7 @@ describe("hints", () => {
   it("toggles on, remembers it, and stamps the document", () => {
     useUiStore.getState().toggleHints();
     expect(useUiStore.getState().hints).toBe(true);
-    expect(localStorage.getItem("automtg.hints")).toBe("on");
+    expect(localStorage.getItem("commanderblitz.hints")).toBe("on");
     expect(document.documentElement.getAttribute("data-hints")).toBe("on");
   });
 });

@@ -22,7 +22,7 @@ The claims, and what each would be wrong without:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import pass_until
 
 VEIL = "t_veil_tap"

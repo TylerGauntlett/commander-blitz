@@ -32,7 +32,7 @@ const meta = {
     onImported: fn(),
     onDelete: fn(),
   },
-  parameters: { automtg: { mount: "screen", query: cards } },
+  parameters: { commanderblitz: { mount: "screen", query: cards } },
 } satisfies Meta<typeof DeckCatalog>;
 
 export default meta;

@@ -35,17 +35,17 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import abilities_of, chars, creature_types_of
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import change_control
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import abilities_of, chars, creature_types_of
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import change_control
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until
 
 FOLK_HERO = "folk_hero"

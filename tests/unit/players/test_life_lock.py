@@ -35,13 +35,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import can_pay
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_player, gain_life, life_locked, lose_life
-from automtg.engine.structs import LifeLock
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import can_pay
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_player, gain_life, life_locked, lose_life
+from commanderblitz.engine.structs import LifeLock
 from tests.conftest import _default_answer, action_for_card, oids_of
 
 LOCK = "t_life_lock"  # instant: until your next turn, your life total can't change

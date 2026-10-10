@@ -31,7 +31,7 @@ test.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import pass_until
 
 PRODIGY = "t_prodigy"  # doubles a Shaman or another Wizard you control

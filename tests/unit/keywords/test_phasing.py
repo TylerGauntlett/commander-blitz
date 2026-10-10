@@ -33,10 +33,10 @@ permanent would phase back in naked, which is a different card.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Keyword, Zone
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import add_counters, attach
-from automtg.engine.turn import _phase
+from commanderblitz.engine.enums import Keyword, Zone
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.primitives import add_counters, attach
+from commanderblitz.engine.turn import _phase
 from tests.conftest import only_oid
 
 ISLAND = "island"
@@ -183,7 +183,7 @@ class TestWhatIsAttachedGoesWithIt:
         assert game.state.objects[aura].attached_to == phaser
 
     def test_the_buff_is_back_with_them(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game, phaser, _ = self._enchanted(builder)
         _phase(game.state, 0)

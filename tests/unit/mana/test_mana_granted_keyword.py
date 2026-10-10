@@ -35,15 +35,15 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.enums import ActionKind, Keyword, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.mana import SYMBOL_INDEX, ManaKeywordGrant, ManaPool, Pip, Requirement
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.enums import ActionKind, Keyword, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import SYMBOL_INDEX, ManaKeywordGrant, ManaPool, Pip, Requirement
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import action_for_card, find_action, only_oid, pass_until
 
 ARENA = "t_glory_arena"  # ability 0 is the plain {R}; ability 1 carries the rider

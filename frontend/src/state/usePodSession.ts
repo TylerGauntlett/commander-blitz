@@ -10,7 +10,7 @@
  * already existed.
  *
  * The awkward part is the table. Identity is stored per *pod code*
- * (`automtg.pod.<CODE>`, see `usePod`) but `/games/:id` is keyed by game id, and
+ * (`commanderblitz.pod.<CODE>`, see `usePod`) but `/games/:id` is keyed by game id, and
  * a reload there has no way to get from one to the other. So a second key
  * records which pod dealt which game -- written the moment a client learns the
  * game id, read on a cold boot at a table. The token itself still lives in
@@ -21,7 +21,7 @@ import { useCallback, useState } from "react";
 import { setPlayerToken } from "../api/client";
 import { forgetPod, type PodSession, storedToken } from "./usePod";
 
-const GAME_PREFIX = "automtg.game.";
+const GAME_PREFIX = "commanderblitz.game.";
 
 function gameKey(gameId: string): string {
   return `${GAME_PREFIX}${gameId}`;

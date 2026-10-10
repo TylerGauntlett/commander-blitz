@@ -47,18 +47,18 @@ closest thing to an engine, and the CPU plays it as one.
 ## How the CPU pilots it
 
 The plan lives in
-[`decks/bard_king_of_dale.py`](../../src/automtg/ai/strategy/decks/bard_king_of_dale.py)
+[`decks/bard_king_of_dale.py`](../../src/commanderblitz/ai/strategy/decks/bard_king_of_dale.py)
 as `BardGoWide`, a subclass of `GoWide` (which is `Aggro`).
 
 | Behaviour | Where |
 |---|---|
-| **Rocks and Bard first.** Sol Ring, Signets, Talismans and Bard himself carry key-card bonuses. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
+| **Rocks and Bard first.** Sol Ring, Signets, Talismans and Bard himself carry key-card bonuses. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
 | **Cantrips outrank a cheap creature once a draw payoff is out.** With Prince Imrahil, Mystic, Bard or another "second card" payoff on the battlefield, a draw spell gets +150. | `BardGoWide.priority_value`, `DRAW_PAYOFFS`, `draw_bonus` |
 | **Lightning Greaves goes on Bard** and is never moved off him. | `BardGoWide._equip_value` |
 | **Skullclamp goes on a 1-toughness token**, which dies on the spot and draws. | `BardGoWide._equip_value` |
 | **Makindi Stampede waits for the swing:** cast only precombat with three or more creatures ready to attack. | `BardGoWide.priority_value`, `stampede_attackers` |
 | **Perch Protection is never cast with its gift.** Giving an opponent an extra turn is a timing play the agent cannot judge; the four Birds are the play. | `BardGoWide.priority_value` |
-| **Token makers and creatures early.** | `Aggro.priority_value`, `GoWide.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Token makers and creatures early.** | `Aggro.priority_value`, `GoWide.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **A wide board swings past the blockers**, small bodies accepted as losses. | `GoWide.attack_value` |
 | **Attacks are careful otherwise** (`aggression = 0.5`): no walking into a block that eats an attacker, no swinging into the crack-back. | `DefaultStrategy.attack_value` |
 | **Tithe, Skullclamp and Greaves** are the last things discarded. | `DeckPlan.protect`, `DefaultStrategy.junk_value` |

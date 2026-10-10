@@ -38,13 +38,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.state import MAX_EXTRA_PHASES_PER_TURN
-from automtg.engine.turn import grant_extra_phases
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.state import MAX_EXTRA_PHASES_PER_TURN
+from commanderblitz.engine.turn import grant_extra_phases
 from tests.conftest import _default_answer, find_action, only_oid, pass_until
 
 CELEBRANT = "t_celebrant"  # 2/2 vigilance; once a turn, exert for an extra combat

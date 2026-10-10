@@ -21,7 +21,7 @@
  *
  * `page.evaluate` serialises this function, so it may close over nothing and
  * import nothing. Everything it needs is inlined, and the app publishes its own
- * ring state on `window.__AUTOMTG_RING` rather than having this re-derive it --
+ * ring state on `window.__COMMANDERBLITZ_RING` rather than having this re-derive it --
  * a gate that reimplements the thing it is checking is a gate that can agree
  * with itself while disagreeing with the app.
  */
@@ -282,13 +282,13 @@ export function handheldAssert(): HandheldReport {
    */
   const ring = (
     window as unknown as {
-      __AUTOMTG_RING?: {
+      __COMMANDERBLITZ_RING?: {
         cursor: () => string | null;
         stops: () => string[];
         unreachable: () => string[];
       };
     }
-  ).__AUTOMTG_RING;
+  ).__COMMANDERBLITZ_RING;
   const named = ring?.cursor() ?? null;
   const stops = ring?.stops() ?? [];
   const marked = document.querySelectorAll<HTMLElement>("[data-cursor]");

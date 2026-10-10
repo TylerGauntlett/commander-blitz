@@ -26,9 +26,9 @@ file did.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, only_oid, pass_until
 
 EXERTER = "t_exerter"  # 2/2; may exert as it attacks for +2/+2

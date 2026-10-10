@@ -39,7 +39,7 @@ const REMOTE_ORIGIN = process.env.COMMANDERBLITZ_REMOTE ?? "https://commanderbli
 /** Where releases are published; `content-latest.json` lives here. */
 const RELEASES_BASE =
   process.env.COMMANDERBLITZ_RELEASES ??
-  "https://github.com/TylerGauntlett/commander-blitz-releases/releases/latest/download";
+  "https://github.com/TylerGauntlett/commander-blitz/releases/latest/download";
 
 const SHELL_VERSION = app.getVersion();
 const SMOKE = process.argv.includes("--smoke");
@@ -113,7 +113,7 @@ let stopping = false;
  *
  * `COMMANDERBLITZ_SIDECAR_PYTHON` is the development override: the path to
  * an interpreter with the package installed (the repo's venv), which runs
- * `-m automtg.server.desktop` in the checkout. With it the data and client
+ * `-m commanderblitz.server.desktop` in the checkout. With it the data and client
  * come from the checkout too (`COMMANDERBLITZ_DATA_DIR`,
  * `COMMANDERBLITZ_CLIENT_DIR`) rather than from a content package. A path,
  * not a command line: this checkout's own path has a space in it.
@@ -139,7 +139,7 @@ function specFor(contentDir: string): SidecarSpec {
   if (dev) {
     return {
       command: dev,
-      args: ["-m", "automtg.server.desktop", ...args],
+      args: ["-m", "commanderblitz.server.desktop", ...args],
       cwd: join(HERE, "..", ".."),
     };
   }

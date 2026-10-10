@@ -16,7 +16,7 @@ import os
 from dataclasses import dataclass
 from typing import Literal
 
-from automtg import __version__
+from commanderblitz import __version__
 
 Mode = Literal["desktop", "hosted"]
 
@@ -41,13 +41,13 @@ class ServerSettings:
 
 def settings_from_env(environ: dict[str, str] | None = None) -> ServerSettings:
     env = os.environ if environ is None else environ
-    mode = env.get("AUTOMTG_MODE", "hosted")
+    mode = env.get("COMMANDERBLITZ_MODE", "hosted")
     if mode not in ("desktop", "hosted"):
-        raise ValueError(f"AUTOMTG_MODE must be 'desktop' or 'hosted', not {mode!r}")
-    remote = env.get("AUTOMTG_REMOTE_ORIGIN") or None
+        raise ValueError(f"COMMANDERBLITZ_MODE must be 'desktop' or 'hosted', not {mode!r}")
+    remote = env.get("COMMANDERBLITZ_REMOTE_ORIGIN") or None
     return ServerSettings(
         mode=mode,
         remote_origin=remote.rstrip("/") if remote else None,
-        content_version=env.get("AUTOMTG_CONTENT_VERSION") or __version__,
-        eager_art=env.get("AUTOMTG_EAGER_ART") == "1",
+        content_version=env.get("COMMANDERBLITZ_CONTENT_VERSION") or __version__,
+        eager_art=env.get("COMMANDERBLITZ_EAGER_ART") == "1",
     )

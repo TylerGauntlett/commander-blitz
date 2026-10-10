@@ -32,9 +32,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value, validate_value
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value, validate_value
+from commanderblitz.engine.errors import DslError
 
 FOREST = "forest"
 ISLAND = "island"
@@ -156,7 +156,7 @@ class TestDelirium:
 class TestUsedAsACondition:
     def test_coven_is_an_ordinary_comparison(self, builder):
         """Nothing new in the condition language: `cmp` already takes values."""
-        from automtg.engine.effects.conditions import evaluate_condition
+        from commanderblitz.engine.effects.conditions import evaluate_condition
 
         game = builder(players=2).battlefield(0, [BEAR, GIANT, FOREST]).build(advance=False)
         three = {"cmp": ">=", "left": coven(), "right": {"const": 3}}
@@ -196,7 +196,7 @@ class TestTheLoaderGuards:
         language is a whitelist, so it already refuses it; this pins that it
         stays refused.
         """
-        from automtg.cards.loader.statics import _validate_static_value
+        from commanderblitz.cards.loader.statics import _validate_static_value
 
         with pytest.raises(DslError, match="static values may only use"):
             _validate_static_value(coven(), "test")

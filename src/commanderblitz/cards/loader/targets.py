@@ -5,18 +5,18 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from automtg.engine.carddef import (
+from commanderblitz.engine.carddef import (
     Ability,
     TargetSpec,
 )
-from automtg.engine.effects.selectors import validate_selector
-from automtg.engine.effects.values import (
+from commanderblitz.engine.effects.selectors import validate_selector
+from commanderblitz.engine.effects.values import (
     validate_value,
 )
-from automtg.engine.enums import (
+from commanderblitz.engine.enums import (
     AbilityKind,
 )
-from automtg.engine.errors import DslError
+from commanderblitz.engine.errors import DslError
 
 from ..schema import CardModel, TargetModel
 from .effects import (

@@ -30,8 +30,8 @@ every wither creature a poison threat.
 
 from __future__ import annotations
 
-from automtg.engine.objects import MINUS_ONE
-from automtg.engine.primitives import damage_permanent, damage_player
+from commanderblitz.engine.objects import MINUS_ONE
+from commanderblitz.engine.primitives import damage_permanent, damage_player
 
 BEAR = "t_bear"                # 2/2
 WITHER = "t_witherer"          # 2/2 wither
@@ -79,7 +79,7 @@ class TestDamageToCreatures:
 
     def test_the_counters_shrink_it_permanently(self, builder):
         """The point of the keyword: damage wears off at cleanup, counters do not."""
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game, spider, bear = board(builder, WITHER)
         damage_permanent(game.state, bear, 1, spider, is_combat=True)

@@ -31,7 +31,7 @@ copying it does not spend it, and the artifact goes on copying the same card.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.enums import ActionKind, Zone
 from tests.conftest import action_for_card, only_oid, pass_until
 
 WASTE = "island"
@@ -149,7 +149,7 @@ class TestReadingItBack:
 
     def test_it_copies_its_own_card_and_not_another_in_exile(self, builder):
         """A bare `{"zone": "exile"}` would copy somebody else's card."""
-        from automtg.engine.zones import exile
+        from commanderblitz.engine.zones import exile
 
         game = position(builder, [BEAR, GIANT])
         giant = next(

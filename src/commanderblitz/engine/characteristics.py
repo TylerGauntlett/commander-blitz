@@ -14,7 +14,7 @@ same way -- 613.1f applies keyword counters with the ability-adding effects and
 613.1d applies +1/+1 counters four layers later.
 
 To make that safe there is one hard constraint, enforced by
-:func:`automtg.cards.loader.check_static_constraints`:
+:func:`commanderblitz.cards.loader.check_static_constraints`:
 
     **A static ability's filter may not read another static ability's output.**
 
@@ -45,10 +45,10 @@ costs nothing to keep true: :func:`_compute` *begins* by calling the very
 function the filter calls, so the two cannot drift.
 
 Two readers of the static filter language sit **outside** this pipeline and so
-read the real, fully derived power: :func:`automtg.engine.triggers.matches_card_filter`
+read the real, fully derived power: :func:`commanderblitz.engine.triggers.matches_card_filter`
 (Welcoming Vampire's "creatures you control with power 2 or less enter" must see
 the anthem, and has since it was written) and
-:func:`automtg.engine.cost_reduction._object_matches` (which already reads derived types
+:func:`commanderblitz.engine.cost_reduction._object_matches` (which already reads derived types
 and keywords, for the same reason).  Only the reader inside the pipeline is
 restricted, because only it can be asked the question halfway through.
 
@@ -60,7 +60,7 @@ than an output: printed characteristics, an object's own board state, counters,
 whose turn it is, and how many cards sit in a zone.  No layer can change whether
 another static is switched on, so the gate is computed once and the fixed order
 stays acyclic.  That is the whole reason the condition language is a mirror of
-:mod:`automtg.engine.effects.conditions` rather than that module itself: `if`'s
+:mod:`commanderblitz.engine.effects.conditions` rather than that module itself: `if`'s
 conditions go through the selector engine, which calls :func:`chars`.
 
 The **player-wide** statics -- the ones that take `affects_player` and describe a
@@ -1154,7 +1154,7 @@ def _static_active(state: GameState, source: GameObject, static: Mapping[str, An
 def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
     """Evaluate a static's condition tree.
 
-    A deliberately smaller language than :func:`automtg.engine.effects.conditions.evaluate`
+    A deliberately smaller language than :func:`commanderblitz.engine.effects.conditions.evaluate`
     -- see the module docstring.  Every leaf here reads a pipeline *input*, so
     nothing it can ask depends on a static's output:
 
@@ -1276,7 +1276,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     magnitude that silently reads 0 is an anthem that loads clean, prints as the
     card does and does nothing -- the exact failure the whole validation pass
     exists to refuse -- and every expression reaching here has been through
-    :func:`automtg.cards.loader.statics._validate_static_value`, so an unknown leaf means
+    :func:`commanderblitz.cards.loader.statics._validate_static_value`, so an unknown leaf means
     the two languages have drifted and the loader is the thing to fix. ``None``
     is still 0, because a `buff` with no `toughness` is a real card.
     """
@@ -1772,7 +1772,7 @@ def _matches(
     """Match ``obj`` against a static ability's filter, using printed characteristics.
 
     A deliberately smaller language than the full selector DSL in
-    :mod:`automtg.engine.effects.selectors` -- see the module docstring for why.
+    :mod:`commanderblitz.engine.effects.selectors` -- see the module docstring for why.
     """
     if selector is None:
         return False

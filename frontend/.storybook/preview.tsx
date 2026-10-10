@@ -14,7 +14,7 @@
  *   4. The component is where the app puts it. This is the one that matters most
  *      and is the easiest to get silently wrong -- see `withMount`.
  *
- * A story configures the harness through `parameters.automtg`, never by
+ * A story configures the harness through `parameters.commanderblitz`, never by
  * reaching into the store itself -- that way the reset above stays the only
  * thing that has to know how to undo it.
  */
@@ -54,7 +54,7 @@ import type { MountId } from "../src/testing/mounts";
 import { Mounted } from "../src/testing/mounts";
 
 /** What a story may ask the harness for. */
-export interface AutomtgParameters {
+export interface CommanderBlitzParameters {
   /**
    * Where in the app this component hangs. Required -- see `withMount`.
    *
@@ -107,13 +107,13 @@ const PRISTINE = useUiStore.getState();
  * holds for 400ms per event is 400ms a play function has to wait for.
  */
 try {
-  localStorage.setItem("automtg.speed", "instant");
-  localStorage.setItem("automtg.muted", "on");
+  localStorage.setItem("commanderblitz.speed", "instant");
+  localStorage.setItem("commanderblitz.muted", "on");
 } catch {
   // No storage in this context. The defaults are already what we want.
 }
 
-type ZoomWindow = Window & { __AUTOMTG_ZOOM_LOCK?: boolean };
+type ZoomWindow = Window & { __COMMANDERBLITZ_ZOOM_LOCK?: boolean };
 
 /**
  * A fresh react-query client per story.
@@ -123,7 +123,7 @@ type ZoomWindow = Window & { __AUTOMTG_ZOOM_LOCK?: boolean };
  * where it is unused and removes the entire class of "why did this one story
  * explode with 'No QueryClient set'".
  *
- * `parameters.automtg.query` seeds the cache, which is what makes a lobby story
+ * `parameters.commanderblitz.query` seeds the cache, which is what makes a lobby story
  * render its loaded state on first paint instead of a placeholder that resolves
  * a tick later and races the assertion.
  */
@@ -142,7 +142,8 @@ const withQueryClient: Decorator = (Story, context) => {
         },
       },
     });
-    const seeds = (context.parameters.automtg as AutomtgParameters | undefined)?.query ?? [];
+    const seeds =
+      (context.parameters.commanderblitz as CommanderBlitzParameters | undefined)?.query ?? [];
     for (const [key, data] of seeds) fresh.setQueryData(key, data);
     return fresh;
   });
@@ -184,7 +185,9 @@ const inTestRunner = (): boolean =>
   (window as Window & { __STORY_TEST__?: boolean }).__STORY_TEST__ === true;
 
 const withMotion: Decorator = (Story, context) => {
-  const real = (context.parameters.automtg as AutomtgParameters | undefined)?.motion === "real";
+  const real =
+    (context.parameters.commanderblitz as CommanderBlitzParameters | undefined)?.motion ===
+    "real";
 
   /*
    * The same decision, told to the effects layer.
@@ -237,7 +240,8 @@ const withMotion: Decorator = (Story, context) => {
  * check. Same for every other size: see `src/testing/mounts.tsx`.
  */
 const withMount: Decorator = (Story, context) => {
-  const mount = (context.parameters.automtg as AutomtgParameters | undefined)?.mount;
+  const mount = (context.parameters.commanderblitz as CommanderBlitzParameters | undefined)
+    ?.mount;
   if (!mount) {
     // `bare` is a valid answer; it just has to be an answer. See mounts.tsx.
     throw new Error(`story "${context.title} / ${context.name}" declares no mount`);
@@ -304,7 +308,8 @@ const withInputMode: Decorator = (Story, context) => {
  * would otherwise leak into the next story.
  */
 const withCursor: Decorator = (Story, context) => {
-  const stop = (context.parameters.automtg as AutomtgParameters | undefined)?.cursor;
+  const stop = (context.parameters.commanderblitz as CommanderBlitzParameters | undefined)
+    ?.cursor;
   useLayoutEffect(() => {
     if (!stop) return;
     /*
@@ -345,11 +350,11 @@ const preview: Preview = {
    * sampled by an assertion.
    */
   beforeEach: async ({ parameters, globals }) => {
-    const automtg = (parameters.automtg ?? {}) as AutomtgParameters;
-    const mode = (automtg.art ?? globals.art ?? "stub") as ArtMode;
+    const commanderblitz = (parameters.commanderblitz ?? {}) as CommanderBlitzParameters;
+    const mode = (commanderblitz.art ?? globals.art ?? "stub") as ArtMode;
 
     useUiStore.setState({ ...PRISTINE, speed: "instant", images: artFor(mode) }, true);
-    if (automtg.ui) useUiStore.setState(automtg.ui);
+    if (commanderblitz.ui) useUiStore.setState(commanderblitz.ui);
 
     /*
      * Locked by default, for the reason `e2e/helpers.ts` locks it: a story
@@ -357,11 +362,11 @@ const preview: Preview = {
      * entire job is to move it. The handful of stories that exist to exercise
      * the solver opt out with `zoomLock: false`.
      */
-    const lock = automtg.zoomLock ?? true;
-    (window as ZoomWindow).__AUTOMTG_ZOOM_LOCK = lock ? true : undefined;
+    const lock = commanderblitz.zoomLock ?? true;
+    (window as ZoomWindow).__COMMANDERBLITZ_ZOOM_LOCK = lock ? true : undefined;
 
     return () => {
-      (window as ZoomWindow).__AUTOMTG_ZOOM_LOCK = undefined;
+      (window as ZoomWindow).__COMMANDERBLITZ_ZOOM_LOCK = undefined;
       useUiStore.setState({ ...PRISTINE }, true);
     };
   },

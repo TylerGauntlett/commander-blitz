@@ -22,11 +22,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, find_action, only_oid, plus_one_counters
 
 MODULAR = "t_modular"  # 0/0 artifact creature, modular 3
@@ -121,8 +121,8 @@ class TestMovingFromALiveSource:
     def move(self, game, grafter: int, bear: int, **extra) -> None:
         import contextlib
 
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         ctx = EffectContext(state=game.state, controller=0, source_oid=grafter)
         ctx.bindings["dest"] = bear

@@ -76,7 +76,7 @@ const meta = {
   component: Stage,
   parameters: {
     layout: "fullscreen",
-    automtg: { mount: "bare", motion: "real" },
+    commanderblitz: { mount: "bare", motion: "real" },
   },
 } satisfies Meta<typeof Stage>;
 

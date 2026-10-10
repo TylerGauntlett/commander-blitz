@@ -26,11 +26,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import Step
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent, damage_player, give_emblem
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_permanent, damage_player, give_emblem
 from tests.conftest import only_oid, static_probe
 
 EMBLEM = "t_all_but_emblem"  # sorcery carrying Ajani Steadfast's emblem

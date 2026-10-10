@@ -27,13 +27,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
 from tests.conftest import pass_until
 
 BEAR = "t_bear"  # {1}{G} 2/2, mana value 2
@@ -186,7 +186,7 @@ class TestNothingTakenNothingCountered:
     def test_the_counters_wear_off_with_the_arrival(self, builder):
         """A promise about one arrival: the card coming back later is a new
         object (400.7) and enters with only what it prints."""
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         game, (hydra,) = a_library(builder, [HYDRA])
         dig(game)

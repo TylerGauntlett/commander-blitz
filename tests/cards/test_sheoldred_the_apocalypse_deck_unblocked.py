@@ -7,10 +7,10 @@ could not express until a capability landed for it, and asserts what it prints.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, protection_from
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars, protection_from
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.structs import TargetRef
 from tests.cards.test_sheoldred_the_apocalypse_deck import (
     ANCHOR,
     BEAR,

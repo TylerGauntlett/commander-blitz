@@ -13,8 +13,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.enums import ActionKind, Step
 
 from .board import (
     EVASION,
@@ -30,9 +30,9 @@ from .board import (
 from .default import DefaultStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.actions import Action
-    from automtg.engine.carddef import Ability, CardDef
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.actions import Action
+    from commanderblitz.engine.carddef import Ability, CardDef
+    from commanderblitz.engine.state import GameState
 
 
 # ----------------------------------------------------------------------

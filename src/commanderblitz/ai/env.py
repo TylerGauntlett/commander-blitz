@@ -1,7 +1,7 @@
 """A Gymnasium environment wrapping the engine.
 
 The env owns exactly one seat.  Every other seat is driven inside ``step`` by its
-own :class:`~automtg.ai.agents.base.Agent` until control comes back, so from the
+own :class:`~commanderblitz.ai.agents.base.Agent` until control comes back, so from the
 policy's point of view the game is a normal single-agent MDP.
 
 The action mask lives *in the observation* rather than in ``info`` so it survives
@@ -17,10 +17,10 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from automtg.cards.registry import GameData, default_registry
-from automtg.engine.errors import RulesLoopError
-from automtg.engine.game import create_game
-from automtg.engine.sba import declare_draw
+from commanderblitz.cards.registry import GameData, default_registry
+from commanderblitz.engine.errors import RulesLoopError
+from commanderblitz.engine.game import create_game
+from commanderblitz.engine.sba import declare_draw
 
 from . import action_space, encoding
 from .agents.base import Agent, agent_by_name

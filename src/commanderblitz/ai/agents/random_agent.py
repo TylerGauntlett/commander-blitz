@@ -5,11 +5,11 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from automtg.engine.actions import Action
-from automtg.engine.rng import Rng
+from commanderblitz.engine.actions import Action
+from commanderblitz.engine.rng import Rng
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.game import Game
+    from commanderblitz.engine.game import Game
 
 
 class RandomAgent:

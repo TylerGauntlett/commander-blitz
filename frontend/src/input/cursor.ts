@@ -734,7 +734,7 @@ function setSweeping(on: boolean): void {
  * against a real defect. This publishes the real answers.
  */
 if (import.meta.env?.DEV) {
-  (window as unknown as Record<string, unknown>).__AUTOMTG_RING = {
+  (window as unknown as Record<string, unknown>).__COMMANDERBLITZ_RING = {
     cursor: () => cursor,
     stops: () => candidatesIn().map((c) => c.id),
     unreachable: () => unreachableStops(candidatesIn()),

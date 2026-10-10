@@ -27,12 +27,12 @@ import copy
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.carddef import Cost
-from automtg.engine.costs import can_pay
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.carddef import Cost
+from commanderblitz.engine.costs import can_pay
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
 from tests.conftest import oids_of, only_oid, pass_until
 
 EATER = "t_counter_eater"
@@ -179,7 +179,7 @@ class TestPayingIt:
 
 class TestTheHeuristicAgent:
     def test_it_takes_the_harmful_counter_first(self, builder):
-        from automtg.ai.agents.heuristic_agent import HeuristicAgent
+        from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
 
         game, source = board(
             builder, bear={"-1/-1": 1}, walker={"loyalty": 5}

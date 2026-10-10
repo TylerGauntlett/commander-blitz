@@ -24,7 +24,7 @@ opponent simply always says no and the card is a vanilla 2/2.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import _default_answer, action_for_card, find_action, only_oid
 
 TRIBUTER = "t_tributer"  # 2/2; tribute 2, else each opponent loses 3

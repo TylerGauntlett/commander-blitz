@@ -19,13 +19,13 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from automtg.engine import legality
-from automtg.engine.actions import Action
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine import legality
+from commanderblitz.engine.actions import Action
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
 
 if TYPE_CHECKING:  # pragma: no cover
-    from automtg.engine.state import GameState
+    from commanderblitz.engine.state import GameState
 
 # -- capacities -------------------------------------------------------------
 HAND_CAP = 20

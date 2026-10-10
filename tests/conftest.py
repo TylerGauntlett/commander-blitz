@@ -1,7 +1,7 @@
 """Shared test fixtures.
 
 :class:`GameBuilder` -- the exact-position builder most rules tests start from --
-lives in ``automtg.engine.sandbox``, because the card-authoring verifier needs
+lives in ``commanderblitz.engine.sandbox``, because the card-authoring verifier needs
 it too and production code must not import from the test suite. Import it from
 there; this module uses it only for the ``builder`` fixture.
 """
@@ -13,15 +13,15 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.registry import CardRegistry, GameData, authored_card_paths, load_decks
-from automtg.cards.schema import CardModel
-from automtg.engine.actions import Action, PendingDecision
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.game import Game
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.registry import CardRegistry, GameData, authored_card_paths, load_decks
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.actions import Action, PendingDecision
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.game import Game
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.structs import TargetRef
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CARD_DIR = REPO_ROOT / "data" / "cards"

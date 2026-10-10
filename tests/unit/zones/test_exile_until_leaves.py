@@ -37,11 +37,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import destroy, exile
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import destroy, exile
 
 RING = "oblivion_ring"
 
@@ -222,6 +222,6 @@ class TestTheLoader:
             compile_card(CardModel.model_validate(payload))
 
     def test_exiled_with_is_a_known_selector_key(self):
-        from automtg.engine.effects.selectors import SELECTOR_KEYS
+        from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
 
         assert "exiled_with" in SELECTOR_KEYS

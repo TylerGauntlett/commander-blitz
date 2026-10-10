@@ -1,7 +1,7 @@
 """HTTP routes.
 
 The client never reconstructs an action: it receives a list of
-:class:`~automtg.server.schemas.LegalActionDTO` with opaque ids and echoes one id
+:class:`~commanderblitz.server.schemas.LegalActionDTO` with opaque ids and echoes one id
 back.  Desync between client and engine is therefore structurally impossible, and
 the whole rules vocabulary can grow without touching the frontend.
 """
@@ -13,12 +13,12 @@ import time
 from fastapi import APIRouter, Body, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
-from automtg import __version__
-from automtg.cards import importer, moxfield
-from automtg.cards.images import CardIndex, IndexEntry
-from automtg.cards.registry import default_registry
-from automtg.engine.errors import IllegalActionError
-from automtg.engine.serialize import event_log, event_log_for, full_view, player_view
+from commanderblitz import __version__
+from commanderblitz.cards import importer, moxfield
+from commanderblitz.cards.images import CardIndex, IndexEntry
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.engine.errors import IllegalActionError
+from commanderblitz.engine.serialize import event_log, event_log_for, full_view, player_view
 
 from .art import ArtStore, deck_art_requests, spread_across_faces, with_other_faces
 from .deckinfo import deck_detail, deck_summary

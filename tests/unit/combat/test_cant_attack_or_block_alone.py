@@ -29,19 +29,19 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.combat import attacks_valid, blocks_valid
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.combat import attacks_valid, blocks_valid
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import (
     attack_alone_forbidden,
     attack_forbidden,
     block_alone_forbidden,
     block_forbidden,
 )
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import destroy
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import destroy
 from tests.conftest import attack_with, find_action, oids_of, only_oid, pass_until
 
 #: Toby's Beast: 4/4 white, "This token can't attack or block alone."

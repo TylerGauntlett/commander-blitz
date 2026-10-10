@@ -25,9 +25,9 @@ text, so every card named here has a class. The second half of the list is in
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.events import EventType
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.events import EventType
 from tests.conftest import (
     _default_answer,
     action_for_card,
@@ -709,7 +709,7 @@ class TestPerchProtection:
         assert len(birds) == 4 and all(o.phased_out for o in birds)
 
     def test_promised_your_life_total_can_t_change(self, builder):
-        from automtg.engine.primitives import gain_life, lose_life
+        from commanderblitz.engine.primitives import gain_life, lose_life
 
         game = self.position(builder)
         cast(game, "perch_protection", gift_to=1)
@@ -869,7 +869,7 @@ class TestFaerieArtisans:
 
     def test_a_token_it_did_not_make_is_left_alone(self, builder):
         """"All other tokens **created with this creature**", not all other tokens."""
-        from automtg.engine.primitives import create_token
+        from commanderblitz.engine.primitives import create_token
 
         game = self.position(builder)
         create_token(game.state, "illusion_1_1_u", 0)

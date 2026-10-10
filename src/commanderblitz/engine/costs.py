@@ -1,6 +1,6 @@
 """Paying costs.
 
-Mana payment is automatic (see :mod:`automtg.engine.mana`): an action never
+Mana payment is automatic (see :mod:`commanderblitz.engine.mana`): an action never
 carries a payment, and legality only offers a cast or activation when the solver
 can find a set of sources to tap.  Non-mana costs (sacrifice, discard, pay life)
 may need a choice, so :func:`pay` is a generator.

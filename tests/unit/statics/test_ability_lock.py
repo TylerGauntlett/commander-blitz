@@ -12,9 +12,9 @@ Koma, Cosmos Serpent is the card that needs it, so it is also the case here.
 
 from __future__ import annotations
 
-from automtg.engine.costs import mana_sources
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.primitives import lock_abilities
+from commanderblitz.engine.costs import mana_sources
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.primitives import lock_abilities
 from tests.conftest import only_oid, pass_until
 
 TAP_AND_LOCK, INDESTRUCTIBLE = 0, 1
@@ -103,7 +103,7 @@ class TestKomaUsesIt:
         assert mana_sources(game.state, 1) == []
 
     def test_the_second_mode_makes_koma_indestructible(self, builder):
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         game = self.board(builder)
         koma = only_oid(game, "koma_cosmos_serpent")
