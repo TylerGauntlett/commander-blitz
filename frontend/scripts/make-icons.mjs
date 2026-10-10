@@ -64,7 +64,12 @@ async function main() {
   const browser = await chromium.launch();
   const page = await browser.newPage({ deviceScaleFactor: 1 });
 
-  const shot = async (html, width, height) => {
+  /**
+   * `transparent`: keep the alpha. Without it the page's white canvas is the
+   * ground, which is how the Steam logo shipped as a white box with a gold glow
+   * on it and the icon shipped with white corners outside its radius.
+   */
+  const shot = async (html, width, height, { transparent = false } = {}) => {
     await page.setViewportSize({ width, height });
     await page.setContent(
       `<style>html,body{margin:0;padding:0;width:${width}px;height:${height}px;overflow:hidden}</style>${html}`,
@@ -72,12 +77,12 @@ async function main() {
     // The mark is one inline SVG with no network fetch, but the page still has
     // to lay out and paint before the pixels exist.
     await page.waitForLoadState("load");
-    return page.screenshot({ type: "png" });
+    return page.screenshot({ type: "png", omitBackground: transparent });
   };
 
   /** The mark, edge to edge. */
-  const plain = (size) =>
-    shot(`<img src="${src}" width="${size}" height="${size}" alt="">`, size, size);
+  const plain = (size, opts) =>
+    shot(`<img src="${src}" width="${size}" height="${size}" alt="">`, size, size, opts);
 
   const write = async (name, buffer) => {
     await writeFile(join(PUBLIC, name), buffer);
@@ -90,11 +95,12 @@ async function main() {
       await writeFile(join(GRID, name), buffer);
       console.log(`${name.padEnd(24)} ${buffer.length.toLocaleString()} bytes`);
     };
-    await grid("portrait.png", await shot(portrait(src), 600, 900));
-    await grid("header.png", await shot(wide(src, 920, 430), 920, 430));
-    await grid("hero.png", await shot(hero(src), 1920, 620));
-    await grid("logo.png", await shot(logo(), 1280, 420));
-    await grid("icon.png", await plain(256));
+    const room = await readRoom();
+    await grid("portrait.png", await shot(portrait(room), 600, 900));
+    await grid("header.png", await shot(wide(src, room, 920, 430), 920, 430));
+    await grid("hero.png", await shot(hero(room), 1920, 620));
+    await grid("logo.png", await shot(logo(), 1280, 420, { transparent: true }));
+    await grid("icon.png", await plain(256, { transparent: true }));
     await browser.close();
     return;
   }
@@ -160,12 +166,6 @@ function ogCard(src) {
   </div>`;
 }
 
-/** The three washes `body` has in `theme.css`, as one background. */
-const WASHES = `
-  radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
-  radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
-  linear-gradient(180deg, #141328 0%, ${VOID} 62%)`;
-
 const FONT = "'Segoe UI',Inter,system-ui,-apple-system,sans-serif";
 
 /** The wordmark: two lines, tracked, gold -- the OG card's, at a given size. */
@@ -180,44 +180,165 @@ function wordmark(size, extra = "") {
   </div>`;
 }
 
-/** The portrait capsule, 600x900: the mark above the stacked wordmark. */
-function portrait(src) {
-  return `<div style="width:600px;height:900px;box-sizing:border-box;display:flex;
-      flex-direction:column;align-items:center;justify-content:center;
-      font-family:${FONT};background:${WASHES};">
-    <img src="${src}" width="200" height="200" alt="" style="margin-bottom:56px">
-    ${wordmark(72)}
-    <div style="margin-top:44px;font-size:22px;letter-spacing:0.04em;color:#a09bc4">
-      Four seats, four cards, all face-down.
+/**
+ * The front door's room, lifted out of `doorArt.tsx` rather than restated.
+ *
+ * The hall (sky, beams, vignette), the sigil cut into its floor, and the open
+ * doorway from the Join card are module constants there, and that file is the
+ * one place their geometry lives. It is TSX and this is plain Node, so the
+ * strings are read out of the source by name; a rename there fails loudly here
+ * rather than drawing an empty room.
+ */
+async function readRoom() {
+  const file = join(
+    dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "src",
+    "components",
+    "lobby",
+    "doorArt.tsx",
+  );
+  const source = await readFile(file, "utf8");
+  const lift = (pattern, name) => {
+    const found = source.match(pattern);
+    if (!found) throw new Error(`make-icons: no ${name} in doorArt.tsx`);
+    return found[1];
+  };
+  return {
+    ground: lift(/const GROUND = `([\s\S]*?)`;/, "GROUND"),
+    floor: lift(/const FLOOR = `([\s\S]*?)`;/, "FLOOR"),
+    door: lift(/\n {2}join: `([\s\S]*?)`,/, "CARD_ART.join"),
+  };
+}
+
+/**
+ * What `room.css` gives those classes on the door with no card selected -- the
+ * room's resting colour, since there is no `--lit` here to inherit.
+ */
+const ROOM_STYLE = `<style>
+  .room__beam { fill: rgb(195 182 255 / 0.12); }
+  .room__sigil { stroke: ${GOLD}; opacity: 0.34; }
+  .room__sigil--glow { opacity: 0.16; filter: blur(3px); }
+</style>`;
+
+/**
+ * Specks of the door's motes (`ambience.css`), frozen. Fixed positions, as
+ * fractions of the frame, so a re-run draws the same pixels.
+ */
+const MOTES = [
+  [0.12, 0.62, 2.2, 0.5],
+  [0.21, 0.34, 1.4, 0.35],
+  [0.33, 0.71, 1.8, 0.4],
+  [0.41, 0.22, 1.2, 0.3],
+  [0.48, 0.55, 2.6, 0.45],
+  [0.57, 0.38, 1.5, 0.35],
+  [0.64, 0.78, 2, 0.4],
+  [0.72, 0.18, 1.3, 0.3],
+  [0.79, 0.49, 2.4, 0.5],
+  [0.86, 0.66, 1.6, 0.35],
+  [0.92, 0.29, 1.9, 0.4],
+  [0.06, 0.41, 1.5, 0.3],
+  [0.27, 0.86, 1.3, 0.3],
+  [0.68, 0.58, 1.2, 0.3],
+  [0.53, 0.12, 1.7, 0.35],
+];
+
+/**
+ * The room as one SVG at the frame's own size.
+ *
+ * The hall `slice`s to the frame the way `RoomGround` does on the door; `ySlice`
+ * picks which band of it survives a frame wider than 16:10. The sigil and the
+ * doorway are placed independently: `sigil` is where the ring's centre lands and
+ * its scale, `door` is where the doorway's threshold lands -- so the door stands
+ * in the ring the way the menu cards stand on it.
+ */
+function roomSvg(room, width, height, { ySlice = "YMid", sigil, door, scale = 1 }) {
+  const place = (x, y, s, ox, oy) => `translate(${x - ox * s} ${y - oy * s}) scale(${s})`;
+  const motes = MOTES.map(
+    ([fx, fy, r, a]) =>
+      `<circle cx="${fx * width}" cy="${fy * height}" r="${r * scale}" fill="${GOLD}" fill-opacity="${a}"/>`,
+  ).join("");
+  return `${ROOM_STYLE}
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"
+         viewBox="0 0 ${width} ${height}" style="display:block">
+      <defs>
+        <filter id="s-mote" x="-200%" y="-200%" width="500%" height="500%">
+          <feGaussianBlur stdDeviation="${1.2 * scale}"/>
+        </filter>
+      </defs>
+      <svg width="${width}" height="${height}" viewBox="0 0 1280 800"
+           preserveAspectRatio="xMid${ySlice} slice">${room.ground}</svg>
+      <g transform="${place(sigil.x, sigil.y, sigil.s, 640, 585)}">${room.floor}</g>
+      ${door ? `<g transform="${place(door.x, door.y, door.s, 100, 132)}">${room.door}</g>` : ""}
+      <g filter="url(#s-mote)">${motes}</g>
+    </svg>`;
+}
+
+/**
+ * The portrait capsule, 600x900: the door's room, the wordmark in the sky
+ * above the doorway. The doorway standing in the lit ring is the whole front
+ * door in one picture; the title sits clear of it in the band the beams fall
+ * from, sized so the tracked "COMMANDER" keeps a margin inside 600px.
+ */
+function portrait(room) {
+  return `<div style="width:600px;height:900px;position:relative;overflow:hidden">
+    ${roomSvg(room, 600, 900, {
+      sigil: { x: 300, y: 700, s: 0.9 },
+      door: { x: 300, y: 700, s: 2.5 },
+    })}
+    <div style="position:absolute;left:0;right:0;top:110px;display:flex;justify-content:center;
+        font-family:${FONT};">
+      ${wordmark(58)}
     </div>
   </div>`;
 }
 
-/** The wide capsule: the OG card's composition at Steam's aspect. */
-function wide(src, width, height) {
-  return `<div style="width:${width}px;height:${height}px;box-sizing:border-box;display:flex;
-      align-items:center;justify-content:center;gap:48px;
-      font-family:${FONT};background:${WASHES};">
-    <img src="${src}" width="${Math.round(height * 0.52)}" height="${Math.round(height * 0.52)}" alt="">
-    ${wordmark(Math.round(height * 0.2), "text-align:left;text-indent:0")}
+/**
+ * The wide capsule: the mark and the stacked wordmark, over the room.
+ *
+ * The wordmark is sized to the frame rather than the frame's height: at 20% of
+ * 430 the tracked "COMMANDER" ran off both edges.
+ */
+function wide(src, room, width, height) {
+  return `<div style="width:${width}px;height:${height}px;position:relative;overflow:hidden">
+    ${roomSvg(room, width, height, {
+      sigil: { x: width / 2, y: height * 0.9, s: 0.75 },
+      scale: 0.8,
+    })}
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+        gap:36px;font-family:${FONT};">
+      <img src="${src}" width="150" height="150" alt="">
+      ${wordmark(62, "text-align:left;text-indent:0")}
+    </div>
   </div>`;
 }
 
-/** The hero banner, 1920x620: the washes alone, with the mark faint and large
- * at the right, so the logo Steam draws over it has somewhere to sit. */
-function hero(src) {
-  return `<div style="width:1920px;height:620px;box-sizing:border-box;position:relative;
-      overflow:hidden;background:${WASHES};">
-    <img src="${src}" width="760" height="760" alt=""
-      style="position:absolute;right:120px;top:-70px;opacity:0.18">
+/**
+ * The hero banner, 1920x620: the door's room, with its doorway standing in the
+ * ring at the right. The left half is left as dark hall so the logo Steam draws
+ * over it has somewhere to sit; the sky band is kept (`YMin`) because a slice
+ * from the middle would be all floor.
+ */
+function hero(room) {
+  return `<div style="width:1920px;height:620px;overflow:hidden">
+    ${roomSvg(room, 1920, 620, {
+      ySlice: "YMin",
+      sigil: { x: 1440, y: 540, s: 1.45 },
+      door: { x: 1440, y: 540, s: 3.1 },
+      scale: 1.6,
+    })}
   </div>`;
 }
 
-/** The logo, transparent, 1280x420: the wordmark and nothing else. */
+/**
+ * The logo, transparent, 1280x420: the wordmark and nothing else. The second
+ * shadow is dark, so the gold still separates from a bright patch of whatever
+ * hero Steam -- or a user's custom art -- puts behind it.
+ */
 function logo() {
   return `<div style="width:1280px;height:420px;box-sizing:border-box;display:flex;
       align-items:center;justify-content:center;font-family:${FONT};background:transparent;">
-    ${wordmark(150)}
+    ${wordmark(132, "filter:drop-shadow(0 4px 14px rgb(0 0 0 / 0.55))")}
   </div>`;
 }
 
