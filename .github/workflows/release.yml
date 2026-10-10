@@ -1,44 +1,88 @@
 name: desktop release
 
-# A tag `vX.Y.Z` builds the Steam Deck AppImage and the content package and
-# publishes both as a GitHub Release of this repository. Tags only -- never a
-# push or a pull request -- because this is ~25 minutes of runner per run, the
-# repository is on the Free plan, and nothing here is a test of the code: the
-# gate (`deploy.yml`) is. The tag must match `desktop/package.json`, so a
-# release's version is the one the shell reports and the updater compares.
+# Builds the Steam Deck AppImage and the content package and publishes both as
+# a GitHub Release of this repository. Every push to main that passes the gate
+# and ships calls this from deploy.yml (ADR 0010); `workflow_dispatch` is for
+# releasing main by hand, after a merge that did not ship (`docs:`, `chore:`...)
+# or a release that failed. Nothing here is a test of the code -- the gate is --
+# so it never runs on a pull request.
+#
+# The version is `X.Y.<commits on main>`: major and minor are whatever
+# `desktop/package.json` says, set by hand; the patch is CI's. Squash merges
+# keep main linear, so the count only ever grows, and the same commit always
+# gets the same version -- a re-run finds its release already there and stops.
+# electron-updater and the content updater both move only to a strictly higher
+# version, so that growth is the whole update mechanism.
 #
 # Everything a Deck fetches is a `releases/latest/download/<file>` URL: no API,
 # no token, no rate limit. The repository is public, so the assets are too,
 # and the workflow's own GITHUB_TOKEN is enough to publish them.
 on:
-  push:
-    tags: ["v*"]
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
+  # The version, and whether there is anything to do with it.
+  version:
+    name: version
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      skip: ${{ steps.version.outputs.skip }}
+    steps:
+      # Every commit, no trees or blobs: enough to count, a fraction of the
+      # ~395MB full pack.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: tree:0
+      - id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          base="$(git show HEAD:desktop/package.json | node -p "JSON.parse(require('fs').readFileSync(0)).version.split('.').slice(0, 2).join('.')")"
+          v="$base.$(git rev-list --count HEAD)"
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          skip=false
+          # Already published: a re-run of the same commit. A draft left behind
+          # by a cancelled run does not count; `publish` replaces it.
+          if draft="$(gh release view "v$v" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null)" \
+            && [ "$draft" = false ]; then
+            echo "v$v is already released"; skip=true
+          fi
+          # Never put an older commit over a newer one: `latest` is what every
+          # Deck reads, and the updaters will not step back down from it anyway.
+          latest="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || true)"
+          latest="${latest#v}"
+          if [ "$skip" = false ] && [ -n "$latest" ] \
+            && [ "$(printf '%s\n%s\n' "$latest" "$v" | sort -V | tail -1)" = "$latest" ]; then
+            echo "v$v is not newer than the latest release v$latest"; skip=true
+          fi
+          echo "version=$v latest=${latest:-none} skip=$skip"
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
   # The content package: the frozen server (built in a container, for glibc),
   # the built client, and the card data, tarred with its manifest.
   content:
     name: content package
+    needs: version
+    if: needs.version.outputs.skip == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    outputs:
-      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - id: version
-        run: |
-          tag="${GITHUB_REF_NAME#v}"
-          pkg="$(node -p "require('./desktop/package.json').version")"
-          if [ "$tag" != "$pkg" ]; then
-            echo "tag v$tag does not match desktop/package.json ($pkg)"; exit 1
-          fi
-          echo "version=$tag" >> "$GITHUB_OUTPUT"
       - uses: ./.github/actions/setup
         with:
           node: "true"
           desktop: "true"
+      # Stamped before anything reads it, so the manifest's `app_version` and
+      # `min_shell_version` say the release's version, as the shell will.
+      - run: node -e "const f='desktop/package.json',p=require('./'+f);p.version=process.argv[1];require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')" "${{ needs.version.outputs.version }}"
       - run: npm run build
         working-directory: frontend
       # Through `bash`, not by mode bit: the scripts are committed from
@@ -47,7 +91,7 @@ jobs:
       - run: bash desktop/sidecar/build.sh
       - run: PYTHON=python bash desktop/sidecar/smoke.sh
       - run: >
-          node scripts/assemble-content.mjs --version ${{ steps.version.outputs.version }}
+          node scripts/assemble-content.mjs --version ${{ needs.version.outputs.version }}
           --server sidecar/build/server/commanderblitz-server
           --client ../frontend/dist --data ../data --tar
         working-directory: desktop
@@ -63,7 +107,7 @@ jobs:
   # The AppImage, with the content package inside it as the bundled content.
   shell:
     name: appimage
-    needs: content
+    needs: [version, content]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -74,6 +118,9 @@ jobs:
         with:
           node: "true"
           desktop: "true"
+      # The same stamp: electron-builder names the AppImage, writes
+      # `latest-linux.yml` and bakes `app.getVersion()` from it.
+      - run: node -e "const f='desktop/package.json',p=require('./'+f);p.version=process.argv[1];require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')" "${{ needs.version.outputs.version }}"
       - uses: actions/download-artifact@v4
         with:
           name: content
@@ -111,13 +158,18 @@ jobs:
             desktop/release/latest-linux.yml
             desktop/build/steam-assets.tar.gz
 
+  # Draft first, then publish: a newer push to main cancels this run
+  # (deploy.yml's `cancel-in-progress`), and a cancel halfway through the
+  # uploads must not leave a `latest` release with assets missing -- every
+  # Deck's updater and every new install would 404 on it. A draft is invisible
+  # to `releases/latest`; only the last step makes it real.
   publish:
     name: publish the release
-    needs: [content, shell]
+    needs: [version, content, shell]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: write # to create the release and upload its assets
+      contents: write # to create the release, its tag and its assets
     steps:
       - uses: actions/checkout@v4
         with:
@@ -130,13 +182,21 @@ jobs:
         with:
           name: appimage
           path: out/appimage
-      - run: |
-          v="${{ needs.content.outputs.version }}"
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.version.outputs.version }}
+        run: |
+          set -euo pipefail
           find out -type f | sort
           cp desktop/steam/install.sh out/install.sh
           (cd out && sha256sum appimage/release/CommanderBlitz-*.AppImage content/content-*.tar.gz | sed -E 's#^([a-f0-9]+)  .*/#\1  #' > SHA256SUMS)
-          notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$v" "$GITHUB_REPOSITORY")"
-          gh release create "v$v" --repo "$GITHUB_REPOSITORY" --title "Commander Blitz $v" --notes "$notes" \
+          # A draft a cancelled run left behind holds the tag name; clear it.
+          if [ "$(gh release view "v$V" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null)" = true ]; then
+            gh release delete "v$V" --repo "$GITHUB_REPOSITORY" --yes
+          fi
+          notes="$(printf 'Commander Blitz %s for Steam Deck.\n\nInstall (Desktop Mode, Konsole):\n\n    curl -fsSL https://github.com/%s/releases/latest/download/install.sh | bash\n' "$V" "$GITHUB_REPOSITORY")"
+          gh release create "v$V" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft \
+            --title "Commander Blitz $V" --notes "$notes" --generate-notes \
             out/appimage/release/CommanderBlitz-*.AppImage \
             out/appimage/release/latest-linux.yml \
             out/appimage/build/steam-assets.tar.gz \
@@ -144,5 +204,4 @@ jobs:
             out/content/content-latest.json \
             out/install.sh \
             out/SHA256SUMS
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          gh release edit "v$V" --repo "$GITHUB_REPOSITORY" --draft=false --latest
