@@ -14,10 +14,12 @@ from automtg.cards.images import load_index
 from automtg.cards.registry import GameData, server_registry
 
 from .art import build_store
+from .connectivity import RemoteProbe
 from .lobby import PodRegistry
 from .pod_routes import router as pod_router
 from .routes import art_router, router
 from .sessions import SessionRegistry
+from .settings import ServerSettings, settings_from_env
 
 #: The Vite dev server and any local preview build.
 LOCAL_ORIGINS = [
@@ -91,7 +93,12 @@ def create_app(
     allow_art_fetch: bool = True,
     serve_client: bool = False,
     client_dir: Path | None = None,
+    settings: ServerSettings | None = None,
+    probe: RemoteProbe | None = None,
 ) -> FastAPI:
+    # Hosted unless told otherwise.  Every existing caller -- the tests, the
+    # Docker image, the scripts -- passes nothing and gets the server it had.
+    settings = settings or ServerSettings()
     app = FastAPI(
         title="Commander Blitz",
         version=__version__,
@@ -110,6 +117,10 @@ def create_app(
     # trainer, the arena -- stays on the authored layer.
     pinned = data is not None
     game_data = data if pinned else server_registry()
+    app.state.settings = settings
+    # The probe is what `/api/config` means by "online".  Injectable so a test
+    # can be offline without unplugging anything.
+    app.state.probe = probe or RemoteProbe(settings.remote_origin)
     app.state.sessions = SessionRegistry(game_data)
     # Handed the session registry rather than the GameData: a pod must read
     # decks through `sessions.data` so an imported deck shows up in the lobby
@@ -200,5 +211,5 @@ def get_app() -> FastAPI:
     """
     global app
     if app is None:
-        app = create_app(serve_client=True)
+        app = create_app(serve_client=True, settings=settings_from_env())
     return app

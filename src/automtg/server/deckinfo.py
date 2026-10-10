@@ -13,6 +13,7 @@ wrong direction of dependency.
 from __future__ import annotations
 
 import json
+import re
 
 from automtg.cards.importer import coverage_path
 from automtg.cards.registry import DeckList, GameData
@@ -24,6 +25,26 @@ from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, SignatureCardDTO
 #: it is a real card the deck can cast on turn one, and a column of its own for
 #: the two free artifacts in the format would be almost always empty.
 CURVE_BUCKETS = 7
+
+
+#: What the importer has always written into ``notes``; see ``source_id_of``.
+_NOTES_SOURCE = re.compile(r"Imported from Moxfield \(([^)\s]+)\)")
+
+
+def source_id_of(deck: DeckList) -> str:
+    """The Moxfield id a deck came from, or ``""``.
+
+    The field is new; every deck imported before it carries the same id inside
+    the note the importer has always written, case intact.  Reading it back
+    from there is what lets those decks follow their owner online without a
+    re-import.
+    """
+    if deck.source_id:
+        return deck.source_id
+    if deck.source != "moxfield":
+        return ""
+    found = _NOTES_SOURCE.search(deck.notes)
+    return found.group(1) if found else ""
 
 
 def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
@@ -49,6 +70,7 @@ def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
         card_count=deck.total_cards(),
         notes=deck.notes,
         source=deck.source,
+        source_id=source_id_of(deck),
         playable=deck.total_cards() - simplified,
         simplified=simplified,
         tags=list(deck.tags),

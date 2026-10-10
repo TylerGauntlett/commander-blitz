@@ -31,7 +31,9 @@ import re
 import threading
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
+from collections.abc import Callable, Iterable
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from automtg.cards.images import (
@@ -62,6 +64,25 @@ CARD_ID = re.compile(r"^[a-z0-9_]{1,80}$")
 HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)"}
 TIMEOUT = 15
 
+#: Parallel fills in one ``prefetch``.  Scryfall asks for 50-100 ms between
+#: requests from one client; six in flight against a CDN that serves static
+#: files is well inside what it tolerates and makes a 100-card deck a matter
+#: of seconds rather than a minute.
+PREFETCH_WORKERS = 6
+
+
+@dataclass
+class PrefetchReport:
+    """What ``ArtStore.prefetch`` found and fetched."""
+
+    #: Files that were not there and are now.
+    fetched: int = 0
+    #: Files that were already there.
+    cached: int = 0
+    #: Card ids with no art at the end of it -- no printing anywhere, or a
+    #: fetch that failed.  Those are remembered as missing and not retried.
+    failed: list[str] = field(default_factory=list)
+
 
 @dataclass
 class ArtStore:
@@ -84,7 +105,15 @@ class ArtStore:
 
     def __post_init__(self) -> None:
         self._missing: set[str] = set()
+        #: Guards ``images``, ``_missing`` and ``_inflight``.  Never held
+        #: across a download: see ``_fill``.
         self._lock = threading.Lock()
+        #: One gate per file being fetched, so two requests for the same card
+        #: produce one download and requests for different cards proceed at
+        #: once.  A global lock around the download used to serialise every
+        #: fill in the process, which was invisible on a board that fills one
+        #: card at a time and a minute-long stall for ``prefetch``.
+        self._inflight: dict[str, threading.Lock] = {}
         if self.cache is None:
             self.cache = self.directory
 
@@ -203,20 +232,7 @@ class ArtStore:
         path = self.path_for(card_id)
         if path.is_file():
             return path
-        if not self.allow_fetch or card_id in self._missing:
-            return None
-
-        with self._lock:
-            # Another thread may have filled it while we waited.
-            if path.is_file():
-                return path
-            if card_id in self._missing:
-                return None
-            url = self.remote_for(card_id)
-            if url is None or not self._download(url, path):
-                self._missing.add(card_id)
-                return None
-            return path
+        return self._fill(card_id, path, lambda: self.remote_for(card_id))
 
     def _resolve_printing(self, card_id: str, printing: str) -> Path | None:
         """The deck's illustration, or ``None`` to fall back to the card's own."""
@@ -228,19 +244,78 @@ class ArtStore:
         # Keyed by printing and face, never by card id: a printing that cannot
         # be fetched must not also blacklist the card's ordinary art.
         key = f"{printing}|{back}"
+        return self._fill(key, path, lambda: self.remote_for(card_id, printing=printing))
+
+    def _fill(self, key: str, path: Path, remote: Callable[[], str | None]) -> Path | None:
+        """Fetch ``path`` once, under a gate that is this file's and no other's.
+
+        The store lock is taken only to consult or update the bookkeeping;
+        the download itself runs under ``key``'s own gate.  A second caller
+        for the same key waits on that gate and then finds the file; a caller
+        for a different key does not wait at all.
+        """
         if not self.allow_fetch or key in self._missing:
             return None
-
         with self._lock:
-            if path.is_file():
-                return path
             if key in self._missing:
                 return None
-            url = self.remote_for(card_id, printing=printing)
-            if url is None or not self._download(url, path):
-                self._missing.add(key)
-                return None
-            return path
+            gate = self._inflight.setdefault(key, threading.Lock())
+        with gate:
+            # Whoever held the gate before us either wrote the file or
+            # recorded the miss.
+            if path.is_file():
+                return path
+            with self._lock:
+                if key in self._missing:
+                    return None
+            url = remote()
+            filled = url is not None and self._download(url, path)
+            with self._lock:
+                self._inflight.pop(key, None)
+                if not filled:
+                    self._missing.add(key)
+            return path if filled else None
+
+    def prefetch(
+        self,
+        requests: Iterable[tuple[str, str | None]],
+        *,
+        workers: int = PREFETCH_WORKERS,
+    ) -> PrefetchReport:
+        """Make every ``(card_id, printing)`` in ``requests`` a local file now.
+
+        For the desktop build, whose next launch may be offline: a deck
+        imported on the train has to carry its art with it.  Each request is
+        exactly what one ``GET /art/{card_id}.jpg[?p=printing]`` would do,
+        including the fall-back to the card's own art when the printing cannot
+        be had -- so what the board asks for later is already on disk.
+        """
+        report = PrefetchReport()
+        todo: list[tuple[str, str | None]] = []
+        for card_id, printing in requests:
+            if self._on_disk(card_id, printing):
+                report.cached += 1
+            else:
+                todo.append((card_id, printing))
+        if not todo:
+            return report
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            found = list(
+                pool.map(lambda req: self.resolve(req[0], printing=req[1]), todo)
+            )
+        for (card_id, _), path in zip(todo, found, strict=True):
+            if path is None:
+                report.failed.append(card_id)
+            else:
+                report.fetched += 1
+        return report
+
+    def _on_disk(self, card_id: str, printing: str | None) -> bool:
+        if printing is not None and SCRYFALL_ID.match(printing):
+            art = self.images.get(card_id)
+            if self._printing_path(printing, back=bool(art and art.back)).is_file():
+                return True
+        return self.path_for(card_id).is_file()
 
     def _download(self, url: str, path: Path) -> bool:
         request = urllib.request.Request(url, headers=HEADERS)
@@ -257,6 +332,86 @@ class ArtStore:
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError):
             temp.unlink(missing_ok=True)
             return False
+
+
+def spread_across_faces(printings: dict[str, dict], registry, art: ArtStore) -> dict[str, dict]:
+    """``printings``, plus the other faces of the cards in it.
+
+    A deck list names the front (`bloodline_keeper`); the back is a card id of
+    its own that no list ever mentions, and the moment the permanent transforms
+    ``card_view`` starts sending that id.  Without this the deck's illustration
+    would vanish mid-flip -- the same class of bug ``with_other_faces`` documents.
+
+    A face only inherits when it shares the front's catalog printing, which is
+    exactly the transform case: one Scryfall id, two faces, told apart by
+    ``back``.  A meld half or an adventure's other side has a printing of its
+    own, and inheriting onto it would fetch the wrong picture outright.
+    """
+    out = dict(printings)
+    pending = list(printings)
+    while pending:
+        card_id = pending.pop()
+        if card_id not in registry:
+            continue
+        base = art.images.get(card_id)
+        card = registry.get(card_id)
+        for face in (card.back_face, card.second_face):
+            if not face or face in out:
+                continue
+            other = art.images.get(face)
+            if base is None or other is None or other.scryfall_id != base.scryfall_id:
+                continue
+            out[face] = out[card_id]
+            pending.append(face)
+    return out
+
+
+def with_other_faces(ids: set[str], registry) -> set[str]:
+    """``ids`` plus every face reachable from them.
+
+    A deck list names `henrika_domnathi_henrika_infernal_seer`; the moment that
+    creature transforms, `state.card_of` starts answering with the back face and
+    `card_view` sends `henrika_infernal_seer` as the `card_id`.  If that id is
+    not in the client's image map it draws the hatched "no art" plate -- on a
+    card whose art is sitting in `data/art` under exactly that name.  The same
+    applies to `second_face`: an adventure or a modal DFC's other half is
+    serialized under its own id while it is the face being shown.
+
+    Transitive and loop-guarded rather than one hop: nothing prints a chain
+    today, and a map that quietly stopped one face short is the bug this
+    function exists to fix.
+    """
+    out = set(ids)
+    pending = list(ids)
+    while pending:
+        card_id = pending.pop()
+        # `registry.get` raises on a miss, and a deck naming an unknown card is
+        # already refused at load time -- so the membership test is a guard
+        # against a *generated* pool that has moved under us, not against a
+        # typo, and it costs one dict lookup.
+        if card_id not in registry:  # pragma: no cover
+            continue
+        card = registry.get(card_id)
+        for face in (card.back_face, card.second_face):
+            if face and face not in out:
+                out.add(face)
+                pending.append(face)
+    return out
+
+
+def deck_art_requests(deck, registry, art: ArtStore) -> list[tuple[str, str | None]]:
+    """Every ``(card_id, printing)`` a board showing ``deck`` will ask for.
+
+    The deck's cards and their other faces, each with the printing the deck
+    chose for it or ``None`` for the catalog's own -- the same answer
+    ``/api/images?game_id=`` gives seat by seat, computed once for a deck so
+    ``ArtStore.prefetch`` can fetch it before any game is dealt.
+    """
+    chosen = spread_across_faces(deck.printings, registry, art)
+    return [
+        (card_id, (chosen.get(card_id) or {}).get("scryfall_id"))
+        for card_id in sorted(with_other_faces(deck.unique_ids(), registry))
+    ]
 
 
 def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
