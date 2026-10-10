@@ -1760,7 +1760,13 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
         #
         # A player who asked for `manual_mana` is excluded: floating mana on
         # purpose is exactly what they turned it on for.
-        return True
+        #
+        # The exception is below: "nothing else to spend it on" is only true of
+        # the *offered* actions, and those price spells against the solver's
+        # sources alone. A Treasure or Master of Dark Rites is not one, so the
+        # spell that mana would pay for is withheld as unaffordable -- and the
+        # window looked empty, and main phase went straight on to combat.
+        return not _mana_would_unlock_a_spell(state, options, player)
 
     if pid is None or player is None:
         return False
@@ -1777,12 +1783,43 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
         return False
     if state.step in ALWAYS_STOP_STEPS:
         return False
-    if state.active_player == pid and state.step in (
-        Step.PRECOMBAT_MAIN,
-        Step.POSTCOMBAT_MAIN,
-    ):
+    if _own_main_phase(state, pid):
         return False
     return True
+
+
+def _own_main_phase(state: GameState, pid: int) -> bool:
+    return state.active_player == pid and state.step in (
+        Step.PRECOMBAT_MAIN,
+        Step.POSTCOMBAT_MAIN,
+    )
+
+
+def _mana_would_unlock_a_spell(state: GameState, options: list[Action], player) -> bool:
+    """Is this a Pass-plus-mana window where the mana has somewhere to go?
+
+    Asked only of a window `_only_pass_or_mana` has already called empty. It is
+    not empty when the offered mana abilities -- Treasure, Master of Dark Rites,
+    a Signet -- are not the payment solver's, and a card in hand is held back
+    by its cost alone: activating them first is how that card gets cast.
+
+    Narrowed to the stops a human with ``auto_pass`` already gets -- their own
+    main phase, stack empty -- so a Treasure on the board does not bring back the
+    eleven-stops-a-turn this policy exists to remove, and AI seats (``auto_pass``
+    off) never see the window: ``heuristic_agent`` would sacrifice the Treasure
+    for nothing. A hand card is the test because `legality.unplayable_reason`
+    can name "mana" for it and for nothing else.
+    """
+    if player is None or not player.auto_pass or state.stack:
+        return False
+    pid = player.pid
+    if not _own_main_phase(state, pid):
+        return False
+    if not any(action.kind is ActionKind.ACTIVATE for action in options):
+        return False
+    return any(
+        legality.unplayable_reason(state, pid, oid) == "mana" for oid in player.hand
+    )
 
 
 # ----------------------------------------------------------------------
