@@ -27,7 +27,7 @@ const PYTHON =
  * Every budget in the suite, scaled once.
  *
  * The same unchanged commit produced three different timeout failures across
- * two runs, and no two runs agreed on which test (TECH_DEBT FT-06). Each one
+ * two runs, and no two runs agreed on which test. Each one
  * passed alone on a quiet machine: the trigger was load, not code. Raising the
  * numbers in place would hide a real slowdown, so the numbers stay and the
  * *multiplier* is the knob -- `scripts/verify.py --e2e` sets `E2E_SLOW=2`

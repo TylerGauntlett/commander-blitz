@@ -4,7 +4,7 @@
     python scripts/verify.py --quick        # skip the slow simulation stages
     python scripts/verify.py --no-frontend  # Python only
     python scripts/verify.py --coverage     # ...and hold the coverage floors
-    python scripts/verify.py --e2e          # ...and the three Playwright projects
+    python scripts/verify.py --e2e          # ...and the Playwright projects
 
 Runs every check in dependency order and stops at the first failure, so the first
 thing it prints about a broken build is the thing that broke.
@@ -21,7 +21,7 @@ flags are for::
     --e2e-shard 2/4      # ...and one shard of it
     --strict             # a stage that skips itself FAILS instead
 
-Those exist so nine runners can share the work the sequential list describes,
+Those exist so a set of runners can share the work the sequential list describes,
 without any of them being able to quietly assert nothing: ``--strict`` and the
 "no stages selected" check are the two guards, and `.github/workflows/deploy.yml`
 is the map of which slice runs where.
@@ -395,7 +395,7 @@ def run_e2e_stage(project: str, shard: str | None = None):
     The suite's verdict was not reproducible: the same unchanged commit produced
     three different *timeout* failures across two runs and no two runs agreed
     on which test, while the two genuine assertion failures reproduced exactly
-    (TECH_DEBT FT-06). Telling the two apart took four extra runs by hand. So
+    Telling the two apart took four extra runs by hand. So
     this stage reads Playwright's JSON report and says, per test, which kind of
     failure it was -- a timeout is a budget problem or a busy machine, an
     assertion is a bug -- and the budgets themselves are scaled by `E2E_SLOW`,
@@ -651,10 +651,10 @@ def frontend_stages(
         # project: the desktop numbers must never move, and they would move the
         # instant that canvas did.
         #
-        # THIS IS THE ONLY PLACE THE HANDHELD FLOORS ARE GATED BY CI. Playwright
-        # is not run here, so `e2e/handheldAssert.ts` -- which has asserted the
-        # 16/44/96 floors since Loop 3 -- has never actually stopped anything
-        # landing. It found `.hand__empty` at 14px the first time it ran.
+        # The handheld floors are gated twice: here, over every story's states,
+        # and by the `handheld` Playwright project against a real engine. This
+        # one reaches states the e2e suite never does (an empty hand, for one),
+        # which is how it caught a label under the floor the first time it ran.
         stages.append(
             Stage(
                 "storybook stories (handheld)",
@@ -719,7 +719,7 @@ def main() -> int:
     parser.add_argument(
         "--e2e",
         action="store_true",
-        help="also run the three Playwright projects (needs Chromium; ~40 minutes)",
+        help="also run every Playwright project (needs Chromium; tens of minutes)",
     )
     parser.add_argument(
         "--only",
@@ -846,22 +846,9 @@ def main() -> int:
 
     print(f"\nAll {len(stages)} stages passed in {total:.1f}s.")
     if args.quick:
-        print("(--quick skipped the arena and the training tests)")
+        print("(--quick skipped the arena, the precon games and the Storybook build)")
     elif args.only:
         print(f"(--only {args.only}: this was one slice of the gate, not all of it)")
-    else:
-        # Informational, never a failing stage: the suite counts in
-        # `docs/testing.md` drifted twice between two audits (TECH_DEBT SD-01).
-        # A stale number is a documentation bug; this says so and moves on.
-        counts = subprocess.run(
-            [PY, "scripts/test_counts.py", "--check", "--no-frontend"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            **DECODE,
-        )
-        verdict = (counts.stdout or "").strip().splitlines()
-        print(readable(verdict[-1]) if verdict else "docs/testing.md: count check gave no output")
     return 0
 
 

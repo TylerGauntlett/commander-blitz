@@ -15,7 +15,7 @@ inputs:
     description: "npm ci in desktop/ too (the desktop unit stage and the release)"
     default: "false"
 
-# The three caches below (TECH_DEBT RS-02) are each a restore, an install on a
+# The three caches below are each a restore, an install on a
 # miss, and a save straight after the install -- not `actions/cache`, whose save
 # waits for the end of the job. Two reasons. A save at the end captures whatever
 # the job wrote into the cached tree on the way (vite's and storybook's caches
