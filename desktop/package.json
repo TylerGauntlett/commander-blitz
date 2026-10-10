@@ -1,0 +1,30 @@
+{
+  "name": "commanderblitz-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The Commander Blitz desktop shell: an Electron window around the bundled server, built for a Steam Deck.",
+  "main": "dist/main.cjs",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && node build.mjs",
+    "dev": "tsc --noEmit && node build.mjs --dev && electron .",
+    "smoke": "electron . --smoke",
+    "test": "vitest run",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "assemble-content": "node scripts/assemble-content.mjs",
+    "package": "electron-builder --linux AppImage --publish never"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.3",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "electron-updater": "^6.8.9",
+    "esbuild": "^0.28.2",
+    "tar": "^7.5.22",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}
