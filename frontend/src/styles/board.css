@@ -78,7 +78,7 @@
  * one-opponent game spent its largest row on empty table while the viewer's own
  * creature lane -- the row that owns every drop target, and the thing the
  * current decision is nearly always about -- fell below the fold and had to be
- * scrolled to. That is playtest-feedback-03 Cycle 4 item 1.
+ * scrolled to. That was the first item on the cycle-4 backlog.
  *
  * `auto` gives a lone opponent exactly the height their board needs and hands
  * everything left over to the viewer. A four-player pod still grows the top row
@@ -247,7 +247,7 @@
  * The hero of the info panel, and no longer a card.
  *
  * It was a count on a chip, then a ghost button in the action bar's overflow
- * (docs/playtest-feedback-02.md), then a shrunken card face in the bottom-left
+ * (a cycle-2 playtest finding), then a shrunken card face in the bottom-left
  * corner where `--card-w` resolved to ~74px and the name clipped to
  * "Aesi, Tyra…" -- docs/design-record.md (Open fidelity findings) defect #5. A card face has six
  * things to fit and this column has room for three, so it stopped being a card
@@ -551,7 +551,7 @@
 
    `height` is a *fixed* box now rather than whatever the content wanted. That is
    what stops an opponent's board growing from translating the viewer's board down
-   the screen -- `docs/roadmap.md`'s recorded limit -- and it is what makes the
+   the screen -- the roadmap's recorded limit -- and it is what makes the
    opponent row's height a function of the viewport alone, so the pod card size can
    be solved against it without solving against itself. See `--pod-lanes-h`.
 

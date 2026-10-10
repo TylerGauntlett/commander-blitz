@@ -19,7 +19,7 @@ would still receive.
 
 By the end it was not a check, it was the deciding argument. the design record (`docs/design-record.md#board-themes`)
 called the greyscale twin "the verdict" for the board direction and rejected
-menu 05 on it. `docs/roadmap.md` ranked the two most urgent open UI defects as
+menu 05 on it. The roadmap ranked the two most urgent open UI defects as
 "both greyscale failures". A criterion nobody had signed up for was vetoing
 design directions.
 

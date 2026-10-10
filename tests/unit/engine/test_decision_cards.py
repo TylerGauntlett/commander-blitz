@@ -4,7 +4,7 @@
 recover the card itself, from the zones ``player_view`` sends -- which excludes
 libraries.  So every "search your library", scry, surveil and mulligan-bottom
 prompt degraded to buttons reading only a card name, with no way to see what you
-were choosing between.  See docs/playtest-feedback-02.md item 9.
+were choosing between.  A cycle-2 playtest finding (item 9).
 
 The face is attached in ``serialize._pending`` rather than in
 ``PendingDecision.to_dict``, which keeps ``actions.py`` free of display concerns

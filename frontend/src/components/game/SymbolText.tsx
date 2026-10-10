@@ -5,7 +5,7 @@
  * else that names mana was raw text: "{T}: Add {G}." on a land, and
  * "Wayfarer's Bauble: {2}, {T}, Sacrifice: ..." in the action bar. Two
  * renderings of the same notation on the same screen, one of which needs
- * decoding -- see docs/playtest-feedback-02.md item 10.
+ * decoding -- a cycle-2 playtest finding (item 10).
  *
  * Splits on `{...}` and hands the pieces to `ManaSymbol`, the same component the
  * cost row uses, so a {G} is one thing everywhere. Anything it does not

@@ -3,7 +3,7 @@
  *
  * The multipliers are divisors on every beat's hold and every FX lifetime, so
  * their absolute values are the game's sense of speed. Cycle 3 halved them:
- * "the game moves too quickly" (docs/playtest-feedback-02.md) was true at both
+ * "the game moves too quickly" (a cycle-2 playtest finding) was true at both
  * watchable settings, and the slowest thing on offer was 1x.
  *
  * The per-beat holds in `logic/events.ts` were deliberately left alone -- they

@@ -3,7 +3,7 @@
 The mana row shows what you have; it could not show what a spell would cost you,
 which is the interesting question in a turn with two plays in it.  The solver
 already knew -- ``solve_payment`` returns the taps and ``_cast_options`` was
-discarding them.  See docs/playtest-feedback-02.md item 4.
+discarding them.  A cycle-2 playtest finding (item 4).
 
 This is a *forecast*, not a commitment: ``costs.pay_mana`` re-solves when the
 action is applied.  The tests below therefore pin agreement with the solver

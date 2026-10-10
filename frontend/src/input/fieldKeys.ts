@@ -32,7 +32,7 @@ export function isField(target: EventTarget | null): boolean {
  * moving around -- and once there, every arrow went to the caret and none of
  * them to navigation. On a desktop Tab is the way out; on a Deck there is no
  * Tab, so the ring was in the field for the rest of the session and the screen
- * was over. `docs/handheld-playtest.md` has no word for this because no loop
+ * was over. The handheld playtest log has no word for this because no loop
  * ever got past it.
  *
  * The rule is the one every console text field uses, and it needs no mode and

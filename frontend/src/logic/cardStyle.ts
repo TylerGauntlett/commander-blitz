@@ -59,7 +59,7 @@ const TYPE_PRECEDENCE: ReadonlyArray<[string, TypeTone]> = [
  * Colour identity already owns the border and interaction state owns the outer
  * glow, so type gets the largest channel left: the stock itself. The point is
  * scanning a pod board where the type line renders at under 6px -- see
- * docs/playtest-feedback-01.md item 4.
+ * a cycle-1 playtest finding (item 4).
  */
 export function typeTone(card: CardView): TypeTone {
   for (const [type, tone] of TYPE_PRECEDENCE) {

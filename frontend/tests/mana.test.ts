@@ -281,7 +281,7 @@ describe("unplayableHint", () => {
  *
  * The row could say what you have but not what a play would leave you with,
  * which is the interesting question in a turn with two plays in it -- see
- * docs/playtest-feedback-02.md item 4. The answer is the engine's own solved
+ * a cycle-2 playtest finding (item 4). The answer is the engine's own solved
  * payment, arriving on the action as `pays`. Nothing here computes affordability
  * or picks lands; guessing is precisely what the `options` payload exists to
  * prevent, since two "{G} or {U}" duals can pay {G}{U} but not {U}{U}.

@@ -161,7 +161,7 @@ function firstTargetId(action: LegalAction): number {
  * creatures on the board is six `cast` actions -- and the panel drew them as
  * six identical rows, because for a card it draws the card, never the label.
  * This is presentational only: the engine must keep one action per object per
- * variant (docs/bugs.md records deduplicating there as the bug that made the
+ * variant (deduplicating there was the bug that made the
  * second and third Forest in hand unclickable), and it is also the RL action
  * space.
  *

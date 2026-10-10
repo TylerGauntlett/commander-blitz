@@ -81,7 +81,7 @@ class GameState:
     #: cap and the RL encoding.  But a player counting their own turns says "this
     #: is my second turn" while ``turn`` reads 3 in a two-player game, so the UI
     #: needs the round and cannot derive it: eliminations make
-    #: ``turn // num_players`` drift.  See docs/playtest-feedback-02.md.
+    #: ``turn // num_players`` drift.  A cycle-2 playtest finding.
     round: int = 0
     active_idx: int = 0
     step: Step = Step.UNTAP

@@ -61,7 +61,7 @@ response is self-describing — its events end at its `event_cursor` — so a cl
 receives one overlapping something it already holds can trim it rather than render a
 move twice, which is what makes it safe for a pump reply and a poll reply to land in
 either order. The first game client carried only the version and asked for events from
-zero, and every poll that landed replayed the whole game (`docs/bugs.md`).
+zero, and every poll that landed replayed the whole game.
 
 ## Alternatives considered
 

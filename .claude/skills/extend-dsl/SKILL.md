@@ -104,8 +104,7 @@ The common case, and the whole job for most mechanics.
 5. History goes elsewhere. What a capability used to do, the bug you fixed, what
    you renamed or removed, and which card motivated the work go under the matching
    heading in `docs/dsl-changelog.md` (create the heading if it is new; it mirrors
-   `card-dsl.md`'s headings). The full write-up — tier, what was built, tests —
-   goes in `docs/completed-features.md`; what is and is not modelled goes in
+   `card-dsl.md`'s headings). What is and is not modelled goes in
    `docs/rules-coverage.md`.
 6. **Server: nothing. Frontend: nothing.** Verified — see §5.
 

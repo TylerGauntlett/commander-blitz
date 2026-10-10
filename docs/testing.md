@@ -285,7 +285,7 @@ needs no browser and always runs.
 Every gate above answers something about a *state*: is this a stop, is it big
 enough, is it on screen, does it hold its own action id. None of them can answer
 how long a decision takes, and on a controller that is the property a player
-actually feels — `docs/handheld-playtest.md` Loop 1 put it as "reachable and
+actually feels — handheld playtest loop 1 put it as "reachable and
 reachable-in-under-a-second are different properties, and only the second is
 playable". A journey that grew from two presses to nine would have passed every
 check in this document.

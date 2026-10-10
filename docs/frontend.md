@@ -224,7 +224,7 @@ Four things about it are worth knowing before touching it:
   `.mat__side` is 330px against 299px of lanes, and the compact orb is 297px — 627 of
   the 649px play area is furniture, and the mana row grows as lands are played. That
   is why the zoom gains 36% at 2560×1278 and about 2% at 1600×950. Making that column
-  fluid is the change that would unlock the common viewport; see `docs/roadmap.md`.
+  fluid is the change that would unlock the common viewport.
 
 Zoom changes animate off one `--card-w` transition. `--card-w` is a registered
 `@property` of type `<length>`, so interpolating it re-resolves every declaration that
@@ -599,7 +599,7 @@ every abandoned poll is a server thread parked for up to 25 s.
 
 The first version of this was a one-shot effect that sent `?since=0`. It went deaf the
 first time a poll timed out, and the one poll that did land replayed the whole game.
-`docs/bugs.md` has the account; `tests/useGame.test.tsx` pins the loop.
+The bug log of the day had the account; `tests/useGame.test.tsx` pins the loop.
 
 ### Identity
 
@@ -959,10 +959,8 @@ the card face, the action bar, the player mat and every decision kind the prompt
 has to cover.
 
 `tests/playerMat.test.tsx` carries more weight than most: the tucked-attachment path is
-real and unit-tested, but **neither shipped precon contains an Aura or an Equipment**, so
-no game and no e2e spec can currently reach it. Until the card catalogue grows (see
-[roadmap.md](roadmap.md), "All Card Support"), that file and
-`PlayerMat.stories.tsx`'s `WithAttachments` are its only coverage.
+real and unit-tested, and that file and `PlayerMat.stories.tsx`'s `WithAttachments`
+are its direct coverage.
 
 ### Storybook
 
@@ -1056,7 +1054,7 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
   a dropped `mirrored` prop and a re-collapsed empty lane are each only visible as a
   comparison of two numbers.
 - `clarity.spec.ts` — the information surfaces from
-  [playtest-feedback-02.md](playtest-feedback-02.md): the mana pip row agrees with its own
+  playtest cycle 2: the mana pip row agrees with its own
   summary, a dimmed hand card explains itself in a sentence, card types render distinct
   tones and glyphs, no two rendered actions share an id across a whole game, no hand card
   hangs below the viewport, and `g` opens the graveyard.
@@ -1288,8 +1286,7 @@ ring can land on, **44px** on any control, a ring at least 3px *and not
 `outline-style: none`*, at most one cursor, zero unreachable stops, zero
 `title` tooltips.
 
-Every one of those numbers caught something real. The full record is in
-[handheld-playtest.md](handheld-playtest.md); the short version is that the app
+Every one of those numbers caught something real. The short version is that the app
 had **123 elements under the floor at 6.5px, 142 native tooltips, and a card
 floor being missed by a card the ring could sit on** — none of which is visible
 in a screenshot, because a reviewer already knows what the label says.
@@ -1357,7 +1354,7 @@ type line and the line ellipsised away the number.
 ### Jumping around the board
 
 Directional navigation crosses a 96px seat strip, three lanes, a fanned hand and
-a 243px rail one card at a time. `docs/handheld-playtest.md` Loop 1 records
+a 243px rail one card at a time. Handheld playtest loop 1 records
 walking the board as "a bad way to ask can you reach everything": reachable and
 reachable-in-under-a-second are different properties, and only the second is
 playable.
@@ -1434,7 +1431,7 @@ as a planeswalker's loyalty rows, which already did.
 Reaching a control and reaching it in two presses are different properties, and
 for eight loops only the first had a gate. Every check asked "is this a stop",
 "is it big enough", "is it on screen" — so a journey that grew from two presses
-to nine would have passed all of them. `docs/handheld-playtest.md` Loop 9 is the
+to nine would have passed all of them. Handheld playtest loop 9 is the
 round that counted, and this is what came out of it.
 
 **The ring follows the decision it just started** (`logic/followUp.ts`). Half the
@@ -1587,7 +1584,7 @@ in a game played in to turn six, two-player and four-seat.
 reason. The floors it already checked answer "is this big enough"; neither of
 them can answer "and does it still fit", which is how a 220px opponent seat
 holding an empty board passed every gate in the suite. See
-`docs/handheld-playtest.md` Loop 6.
+handheld playtest loop 6.
 
 ### Not built
 

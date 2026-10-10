@@ -2,7 +2,7 @@
  * The polling loop, against pads that behave like real ones.
  *
  * This file exists because the controller work was reviewed and play-tested
- * entirely through the KEYBOARD FALLBACK -- `docs/handheld-playtest.md` says so
+ * entirely through the KEYBOARD FALLBACK -- the handheld playtest log says so
  * outright, and for good reason: Playwright cannot synthesise a `Gamepad`. That
  * exercises the ring, the trap and the ramp, and it exercises none of the code
  * that turns a real controller into those presses. Everything below that path

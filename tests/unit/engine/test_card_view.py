@@ -4,7 +4,7 @@
 it taps for.  ``produces`` in particular has to come from here: "Island" is
 inferable from a subtype, but a nonbasic dual is not, and parsing ``oracle_text``
 in the browser would be exactly the guess the client's mana module refuses to
-make.  See docs/playtest-feedback-02.md item 8.
+make.  A cycle-2 playtest finding (item 8).
 """
 
 from __future__ import annotations

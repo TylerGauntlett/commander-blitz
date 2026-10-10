@@ -7,7 +7,7 @@
  * below were present in the mockups and both passed exactly such a check --
  * see the design record (`docs/design-record.md#board-themes`), "Notes on fidelity".
  *
- * The lesson these encode is the one docs/playtest-feedback-03.md draws from
+ * The lesson these encode is the one the cycle-3 playtest draws from
  * the mana-pip bug: an assertion about *content* passes happily through a
  * layout failure, so where a visual property reduces to a number, assert the
  * number.
@@ -444,7 +444,7 @@ test("the zoom never grows the board under the hand", async ({ page }) => {
 });
 
 /**
- * The limit `docs/roadmap.md` used to record, as an assertion.
+ * The limit the roadmap used to record, as an assertion.
  *
  * An opponent's mat was content-sized, so a pod board growing translated the
  * viewer's whole board down the screen -- every drop target with it. Their lanes now

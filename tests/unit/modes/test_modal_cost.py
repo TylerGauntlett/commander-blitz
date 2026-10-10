@@ -18,7 +18,7 @@ cost, which is what the DSL could say before this existed, and it charges both.
 
 One thing deliberately *not* asserted here: what happens with an empty hand. The
 card being cast is still in hand when legality prices the cost, so it counts as
-fodder for its own discard — a pre-existing defect recorded in `docs/bugs.md`
+fodder for its own discard — a pre-existing defect
 and a different capability from this one. Every test below holds a real spare
 card, so none of them depends on it.
 """

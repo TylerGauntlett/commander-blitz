@@ -1,7 +1,6 @@
 # Tech Debt
 
-**Measured at:** the `tech-debt-sweep` branch (2026-10-06), after every S and M item
-from the `adf05b8e` list was cleared.
+**Measured at:** 2026-10-06, after the tech-debt sweep cleared every S and M item.
 
 This is a working list: every item here is **open**. When you fix one, delete its entry
 in the same PR. Each item says why it matters, where to look, and what fixing it looks
@@ -9,14 +8,13 @@ like. Sizes: **S** is an afternoon, **M** a focused PR, **L** a multi-PR effort.
 
 **Retired IDs.** Code and tests still cite IDs from the 2026-09-04 audit that are now
 resolved (`CG-01`–`CG-06`, `FT-03`–`FT-07`, `FB-*`, `DC-01`, `LP-*`, `NF-01`, `UV-*` and
-others). Their write-ups are in the last version of the old report:
-`git show ab86d46f:TECH_DEBT.md`. `OF-01` is the one old ID still open.
+others). Their write-ups are in this file's history (`git log -p -- TECH_DEBT.md`).
+`OF-01` is the one old ID still open.
 
 ## Suggested order
 
 1. **Cheap:** UI-02 (one accessibility pass).
 2. **Structural:** CD-01 (one card layer), OF-01.
-3. **Decision:** RS-01 (rewrite history or not).
 
 ---
 
@@ -72,32 +70,6 @@ expectations that were recorded against the old board.
 
 Keep `tokens.cards.json` hand-written (CD-02). `test_golden_pool` hashes the compiled
 cards sorted by id, so moving a card between files does not change the hash.
-
----
-
-## Repository size and CI cost
-
-### RS-01 · About 395 MB of history — **decision**
-
-The working-tree causes are settled: packets left git (`.gitignore`) and collect now
-retires them; `queue.json` stays, because it records why each card failed and cannot
-be regenerated; `cards.sqlite` stays committed, because CI cannot rebuild it
-deterministically (its input is a dated, gitignored Scryfall dump) and Git LFS
-bandwidth on the Free plan would cost more than it saves. What is left is the
-history itself, and rewriting it is a separate, explicit decision.
-
----|---|---|
-| `data/authoring/queue.json` | 11 MB | 365 (touched by 242 of 673 commits) |
-| `data/catalog/cards.sqlite` | 15.7 MB, binary | 83 |
-| `data/cards/auto/templates.cards.json` | — | 364 |
-| `data/authoring/packets/` | 29 MB, 836 files | — |
-
-**Fix options:**
-- stop committing `packets/` (see CD-03), and decide whether `queue.json` must be in git;
-- build `cards.sqlite` in CI, or keep it in Git LFS;
-- update the stale comment.
-
-Rewriting history is a separate, explicit decision.
 
 ---
 

@@ -77,7 +77,7 @@ const HAND_FRACTION = 0.26;
  * MEASURED DOWN FROM 0.34, and the 0.06 is not rounding. A four-seat pod played
  * several turns in put `.play__mine` over its row by 11px at 0.34 and 6px at
  * 0.30, at 1280x800; `e2e/deckfit.spec.ts` is the gate, and its claim is the
- * whole board on screen with no scroller, which `docs/roadmap.md` asks for by
+ * whole board on screen with no scroller, which the roadmap asked for by
  * name. The mockup can afford the extra because its board is a fixture: nothing
  * on it ever grows a fourth land row.
  *

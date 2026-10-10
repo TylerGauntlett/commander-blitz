@@ -76,3 +76,6 @@ data/authoring/packets/
 # Per-person permission allowlist; Claude Code writes it, nobody shares it.
 .claude/settings.local.json
 desktop/coverage/
+# Saved plans are build artifacts and can embed key material.
+tfplan
+*.tfplan

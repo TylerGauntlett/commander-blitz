@@ -390,7 +390,7 @@ export function handheldAssert(): HandheldReport {
      * overflow counts a child's TRANSFORMED box, and the hand is an arc -- the
      * outermost cards are rotated about 8 degrees, so a 103px card reports a
      * 122px rect and every hand of six or more looked 26-30px over. The arc is
-     * the feature; `docs/roadmap.md` asks for it by name.
+     * the feature; the roadmap asked for it by name.
      *
      * `offsetLeft` and `offsetWidth` are untransformed layout values, which is
      * the same distinction the handheld-board round's layout code (`docs/design-record.md#handheld-board`) records about its
