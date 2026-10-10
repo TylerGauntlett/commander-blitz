@@ -16,6 +16,11 @@ updates:
     groups:
       python:
         patterns: ["*"]
+    # pydantic pins pydantic-core exactly, but constraints.txt lists core as
+    # its own line, so Dependabot bumps it alone into an unresolvable lock.
+    # Core moves only with pydantic, via scripts/lock_deps.py.
+    ignore:
+      - dependency-name: pydantic-core
   - package-ecosystem: npm
     directory: /frontend
     schedule:
