@@ -23,9 +23,9 @@ a permission that silently did nothing.
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Zone
 from tests.conftest import action_for_card
 
 BEAR = "t_bear"

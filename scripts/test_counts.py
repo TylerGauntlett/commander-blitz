@@ -35,7 +35,7 @@ def run(command: list[str], cwd: Path) -> str:
 def pytest_count(suite: str) -> int:
     """The suite's collected count -- or exit, never a quiet 0.
 
-    A Python that cannot import ``automtg`` collects nothing and prints errors,
+    A Python that cannot import ``commanderblitz`` collects nothing and prints errors,
     and reading that as "0 tests" made the table look stale in the wrong way.
     """
     out = run([PY, "-m", "pytest", suite, "--collect-only", "-q", "-o", "addopts="], ROOT)

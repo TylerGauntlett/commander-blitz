@@ -62,15 +62,15 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine import sba
-from automtg.engine.characteristics import _condition_met
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach, attach_to_player
-from automtg.engine.temp_effects import restrict_attack
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import sba
+from commanderblitz.engine.characteristics import _condition_met
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach, attach_to_player
+from commanderblitz.engine.temp_effects import restrict_attack
 from tests.conftest import _default_answer, oids_of, only_oid
 
 AURA = "t_encumber"  # the Overencumbered prototype -- all three sentences
@@ -301,7 +301,7 @@ class TestTheAuraSurvivesEnchantingAPlayer:
 
 def _place(game, def_id: str, *, controller: int) -> int:
     """Put a permanent on the battlefield attached to nothing at all."""
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.state import new_object
 
     obj = new_object(game.state, def_id, owner=controller, zone=Zone.BATTLEFIELD)
     obj.controller = controller

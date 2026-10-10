@@ -34,12 +34,12 @@ from __future__ import annotations
 import pydantic
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.carddef import Cost
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.carddef import Cost
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid, pass_until
 
 ARENA = "t_glory_arena"  # ability 0 is the plain {R}; ability 1 exerts

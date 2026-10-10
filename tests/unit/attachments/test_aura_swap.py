@@ -20,11 +20,11 @@ Aura attaching itself during `spell_effects` falls into.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.primitives import attach
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.primitives import attach
 from tests.conftest import only_oid
 
 PLAINS = "plains"

@@ -40,12 +40,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import move_object
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import move_object
 from tests.conftest import action_for_card, count_on_battlefield, oids_of, only_oid, pass_until
 
 HUMAN = "t_human_soldier"  # {1}{W} 2/2 Human Soldier
@@ -107,7 +107,7 @@ def entered(game, spec, controller: int = 0, source: int | None = None) -> int:
 
 def card_in_hand(game, card_id: str, pid: int = 0) -> int:
     """Put a card into a player's hand, for a test that only needs it to arrive."""
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.state import new_object
 
     obj = new_object(game.state, card_id, owner=pid, zone=Zone.HAND)
     game.state.players[pid].hand.append(obj.oid)
@@ -245,7 +245,7 @@ class TestTheFilterAsksWhichPermanentsEntered:
     def test_controller_is_the_one_it_entered_under(self, builder):
         """"Under your control" is a fact about the arrival (109.5). A creature
         stolen afterwards did not retroactively enter under the thief."""
-        from automtg.engine.primitives import change_control
+        from commanderblitz.engine.primitives import change_control
 
         game = board(builder, hand=(HUMAN,))
         oid = put_onto_battlefield(game, HUMAN)
@@ -408,7 +408,7 @@ class TestTheFilterIsCheckedAtLoadTime:
     what the key registries exist to refuse."""
 
     def validate(self, spec):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         validate_value({"permanents_entered_this_turn": spec}, "test")
 
@@ -416,7 +416,7 @@ class TestTheFilterIsCheckedAtLoadTime:
         self.validate({"controller": "you", "subtypes": ["Human"], "exclude_self": True})
 
     def test_the_key_itself_must_be_spelled_right(self):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         with pytest.raises(DslError):
             validate_value({"permanents_entered_last_turn": {"controller": "you"}}, "test")

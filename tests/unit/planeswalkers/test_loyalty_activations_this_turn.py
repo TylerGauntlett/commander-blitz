@@ -26,11 +26,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value, validate_value
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value, validate_value
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid, pass_until
 
 VEIL = "t_veil_keeper"  # your end step, if you activated no loyalty ability: lose 2

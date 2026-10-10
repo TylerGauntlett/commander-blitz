@@ -29,12 +29,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Step
-from automtg.engine.errors import DslError
-from automtg.engine.structs import DelayedTrigger
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import DelayedTrigger
 from tests.conftest import pass_until
 
 
@@ -177,7 +177,7 @@ class TestTheOpRecordsTheFlag:
 class TestTheLoaderRefusesNonsense:
     def test_a_non_boolean_your_turn_is_a_load_error(self):
         """A step name here would load clean and schedule against the wrong seat."""
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         with pytest.raises(DslError, match="your_turn"):
             compile_card(

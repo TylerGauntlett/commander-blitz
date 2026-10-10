@@ -42,14 +42,14 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.objects import MINUS_ONE
-from automtg.engine.primitives import add_counters, attach
-from automtg.engine.zones import destroy, sacrifice
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.objects import MINUS_ONE
+from commanderblitz.engine.primitives import add_counters, attach
+from commanderblitz.engine.zones import destroy, sacrifice
 from tests.conftest import only_oid, pass_until
 
 FOREST = "forest"
@@ -205,7 +205,7 @@ class TestTotemArmor:
         is never offered the chance to replace anything -- it simply falls off
         and is binned as an Aura attached to nothing.
         """
-        from automtg.engine import sba
+        from commanderblitz.engine import sba
 
         game, bear, aura = self._enchanted(builder)
         add_counters(game.state, bear, MINUS_ONE, 5)

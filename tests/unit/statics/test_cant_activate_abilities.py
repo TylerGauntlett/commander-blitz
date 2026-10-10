@@ -42,13 +42,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import legality
-from automtg.engine.costs import _sources_of
-from automtg.engine.enums import Step
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_cant_activate
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import legality
+from commanderblitz.engine.costs import _sources_of
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import player_cant_activate
 from tests.conftest import oids_of, only_oid
 
 ABOLISHER = "t_abolisher"  # opponents can't activate, during your turn

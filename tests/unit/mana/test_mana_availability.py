@@ -9,7 +9,7 @@ per source instead of summing into per-colour totals.
 
 from __future__ import annotations
 
-from automtg.engine.costs import mana_availability
+from commanderblitz.engine.costs import mana_availability
 
 
 def sources(game, pid: int = 0) -> list[dict]:
@@ -139,7 +139,7 @@ class TestTwoAbilitiesOnePermanent:
         assert total(game) == 2
 
     def test_the_heuristic_count_agrees(self, builder):
-        from automtg.engine.costs import available_mana
+        from commanderblitz.engine.costs import available_mana
 
         alone = builder().battlefield(0, ["t_painland"]).build(advance=False)
         assert available_mana(alone.state, 0) == 1
@@ -149,7 +149,7 @@ class TestTwoAbilitiesOnePermanent:
 
 class TestSerialized:
     def test_it_reaches_the_player_view(self, builder):
-        from automtg.engine.serialize import player_view
+        from commanderblitz.engine.serialize import player_view
 
         game = builder().battlefield(0, ["forest", "island"]).build(advance=False)
         view = player_view(game.state, 0)
@@ -157,7 +157,7 @@ class TestSerialized:
 
     def test_opponent_mana_is_visible_too(self, builder):
         """Untapped lands are public information; hiding them would be wrong."""
-        from automtg.engine.serialize import player_view
+        from commanderblitz.engine.serialize import player_view
 
         game = builder().battlefield(1, ["island"]).build(advance=False)
         view = player_view(game.state, 0)
@@ -174,7 +174,7 @@ class TestSharedSourceIndex:
     """
 
     def test_it_matches_the_per_player_walk(self, builder):
-        from automtg.engine.costs import sources_by_controller
+        from commanderblitz.engine.costs import sources_by_controller
 
         game = (
             builder(players=4)
@@ -190,13 +190,13 @@ class TestSharedSourceIndex:
             )
 
     def test_every_seat_gets_a_bucket_even_with_an_empty_board(self, builder):
-        from automtg.engine.costs import sources_by_controller
+        from commanderblitz.engine.costs import sources_by_controller
 
         game = builder(players=4).build(advance=False)
         assert sources_by_controller(game.state) == {0: [], 1: [], 2: [], 3: []}
 
     def test_a_tapped_permanent_is_excluded_from_the_shared_walk_too(self, builder):
-        from automtg.engine.costs import sources_by_controller
+        from commanderblitz.engine.costs import sources_by_controller
 
         game = (
             builder()
@@ -208,7 +208,7 @@ class TestSharedSourceIndex:
         assert source.oid == game.state.battlefield[1]
 
     def test_a_summoning_sick_creature_is_excluded_from_the_shared_walk_too(self, builder):
-        from automtg.engine.costs import sources_by_controller
+        from commanderblitz.engine.costs import sources_by_controller
 
         game = builder().battlefield(0, ["llanowar_elves"], sick=True).build(advance=False)
         assert sources_by_controller(game.state)[0] == []

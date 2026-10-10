@@ -52,12 +52,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.state import new_object
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.state import new_object
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid
 
 RIP = "t_rip"  # every card and token, every graveyard, from anywhere
@@ -277,7 +277,7 @@ class TestTheReaderHasNoDefaultEither:
         return fake
 
     def test_a_static_without_affects_player_does_nothing(self, builder, monkeypatch):
-        from automtg.engine import characteristics
+        from commanderblitz.engine import characteristics
 
         game = board(builder)
         monkeypatch.setattr(
@@ -289,7 +289,7 @@ class TestTheReaderHasNoDefaultEither:
         assert send_to_graveyard(game, put_in(game, BEAR, Zone.LIBRARY)) is Zone.GRAVEYARD
 
     def test_and_the_same_static_with_it_exiles(self, builder, monkeypatch):
-        from automtg.engine import characteristics
+        from commanderblitz.engine import characteristics
 
         game = board(builder)
         monkeypatch.setattr(

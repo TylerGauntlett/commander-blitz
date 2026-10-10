@@ -36,9 +36,9 @@ it night when it should not be:
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword
-from automtg.engine.turn import _day_night
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.turn import _day_night
 from tests.conftest import only_oid
 
 MOUNTAIN = "mountain"

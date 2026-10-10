@@ -28,7 +28,7 @@ Two things this pins that would otherwise be silent:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine.enums import ActionKind, Zone
 from tests.conftest import action_for_card, find_action, oids_of, only_oid, pass_until
 
 FOREST = "forest"
@@ -90,7 +90,7 @@ class TestWithAnElfToChampion:
         assert not oids_of(game, CHAMPION), "the champion sacrificed itself"
 
     def test_the_elf_comes_back_when_the_champion_leaves(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game, elf = self._play(builder, accept=True)
         newcomer = only_oid(game, CHAMPION)

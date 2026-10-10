@@ -25,7 +25,7 @@ tell the new leaf apart from `mana_value_of`.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import only_oid, pass_until
 
 WATCHER = "t_emperor"  # +1/+1 when you cast a noncreature spell paid with 4+

@@ -25,13 +25,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.cards.loader.statics import _validate_static_condition
-from automtg.engine.characteristics import chars
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.cards.loader.statics import _validate_static_condition
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
 
 BLADE = "t_reconfigurer"
 BEAR = "t_bear"
@@ -63,7 +63,7 @@ def run_unattach(game, oid: int, spec=None):
 
 
 def attach(game, blade: int, bear: int) -> None:
-    from automtg.engine.primitives import attach as attach_primitive
+    from commanderblitz.engine.primitives import attach as attach_primitive
 
     attach_primitive(game.state, blade, bear)
 

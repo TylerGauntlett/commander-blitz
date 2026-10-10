@@ -36,8 +36,8 @@ cycle, which reads the same count the other way round.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 
 CHECKLAND = "t_checkland"  # tapped unless you control a Mountain or a Plains
 SLOWLAND = "t_slowland"  # tapped unless you control two or more other lands

@@ -475,7 +475,7 @@ export function stopPad(): void {
  * There was no way to tell "the loop is dead" from "the browser never saw a
  * gamepad" from "the pad is seen and the ring is suppressed", and those three
  * want three completely different fixes. Every one of them is one call away
- * now. Dev only, and named like `window.__AUTOMTG_RING` beside it.
+ * now. Dev only, and named like `window.__COMMANDERBLITZ_RING` beside it.
  *
  * `supported`, `secure` and `focused` are the three that separate an app
  * problem from an environment one, and they are here because on a desktop the

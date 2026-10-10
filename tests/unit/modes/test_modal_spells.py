@@ -11,8 +11,8 @@ subsystems -- a pump, a keyword grant to a whole board, and a zone change.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import action_for_card, pass_until
 
 PUMP, HEXPROOF, BOUNCE = 0, 1, 2

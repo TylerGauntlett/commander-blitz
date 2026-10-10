@@ -41,13 +41,13 @@ The plan names four combos, each a pair that multiplies the other:
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/the_ur_dragon.py`](../../src/automtg/ai/strategy/decks/the_ur_dragon.py)
+The plan lives in [`decks/the_ur_dragon.py`](../../src/commanderblitz/ai/strategy/decks/the_ur_dragon.py)
 as `UrDragon`, a subclass of `Dragons`.
 
 | Behaviour | Where |
 |---|---|
 | **Rocks and dorks are ramp.** `Dragons` boosts what `classify` calls "ramp", which is land search — and this list runs none. Through turn eight, any nonland permanent that taps for mana scores above a three-drop, falling off each turn. | `UrDragon.priority_value`, `makes_mana` |
-| **Dragons over other creatures.** The tribe bonus. | `Tribal.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Dragons over other creatures.** The tribe bonus. | `Tribal.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Demonic Tutor early.** It searches the library, so `classify` calls it ramp and `Dragons` boosts it through turn twelve. | `Dragons.priority_value` |
 | **Enablers before the dragons.** Dragon Tempest, Rhythm of the Wild, Temur Ascendancy and Up the Beanstalk get bonuses that put them ahead of filler, so they are down before the dragons they trigger off. | `DeckPlan.key_cards` |
 | **The commander cast as soon as it can be.** | `DeckPlan.key_cards` |

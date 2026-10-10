@@ -29,7 +29,7 @@ Millikin, silently.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 
@@ -140,7 +140,7 @@ class TestTheSolverMustNotTapItForFree:
         An ability neither claims can never be activated at all; one they both
         claim could be spent twice. So the mill rock must land in exactly one.
         """
-        from automtg.engine.costs import offerable_mana_ability, solver_taps
+        from commanderblitz.engine.costs import offerable_mana_ability, solver_taps
 
         game, oid = rock(builder, "t_mill_rock")
         ability = game.state.card_of(game.state.objects[oid]).abilities[0]

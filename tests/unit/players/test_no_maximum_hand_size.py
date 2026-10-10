@@ -26,14 +26,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.player import MAX_HAND_SIZE
-from automtg.engine.player_statics import player_has_no_hand_limit
-from automtg.engine.serialize import full_view
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player import MAX_HAND_SIZE
+from commanderblitz.engine.player_statics import player_has_no_hand_limit
+from commanderblitz.engine.serialize import full_view
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until
 
 SEA_GATE = "t_sea_gate"  # {U} sorcery: you have no maximum hand size for the rest of the game

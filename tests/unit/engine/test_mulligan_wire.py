@@ -23,9 +23,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.game import FREE_MULLIGANS, MAX_MULLIGANS, create_game
-from automtg.engine.serialize import player_view
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.game import FREE_MULLIGANS, MAX_MULLIGANS, create_game
+from commanderblitz.engine.serialize import player_view
 
 
 @pytest.fixture

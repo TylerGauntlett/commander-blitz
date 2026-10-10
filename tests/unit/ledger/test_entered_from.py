@@ -33,8 +33,8 @@ and it counts three where the printed card counts one.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid, plus_one_counters
 
 CELES = "t_celes"

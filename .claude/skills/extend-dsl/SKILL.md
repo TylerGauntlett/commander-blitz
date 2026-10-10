@@ -44,7 +44,7 @@ way to over-build here is reaching for a new `DecisionKind` when an existing
 
 > Fact or Fiction needs *an opponent* to split a pile of cards, and it introduced no
 > new decision kind. `op_two_piles` composes `ask_objects(...)` from
-> `src/automtg/engine/effects/context.py` with the player argument set to the
+> `src/commanderblitz/engine/effects/context.py` with the player argument set to the
 > opponent, because `ask_objects` always took an arbitrary player. "Somebody else
 > decides" was free.
 
@@ -86,10 +86,10 @@ fixtures and near-miss contrasts.
 
 The common case, and the whole job for most mechanics.
 
-1. `src/automtg/engine/effects/ops_*.py` — the function, decorated
+1. `src/commanderblitz/engine/effects/ops_*.py` — the function, decorated
    `@register("name")`. Make it a **generator** if it needs a decision; `yield` from
    an `ask_*` helper in `effects/context.py`.
-2. `src/automtg/cards/loader/effects.py::_validate_effect` — a guard for required sub-keys.
+2. `src/commanderblitz/cards/loader/effects.py::_validate_effect` — a guard for required sub-keys.
    House style, alongside the existing guards for `create_token`, `add_mana`,
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.
@@ -104,8 +104,7 @@ The common case, and the whole job for most mechanics.
 5. History goes elsewhere. What a capability used to do, the bug you fixed, what
    you renamed or removed, and which card motivated the work go under the matching
    heading in `docs/dsl-changelog.md` (create the heading if it is new; it mirrors
-   `card-dsl.md`'s headings). The full write-up — tier, what was built, tests —
-   goes in `docs/completed-features.md`; what is and is not modelled goes in
+   `card-dsl.md`'s headings). What is and is not modelled goes in
    `docs/rules-coverage.md`.
 6. **Server: nothing. Frontend: nothing.** Verified — see §5.
 
@@ -113,11 +112,11 @@ The common case, and the whole job for most mechanics.
 
 Tier A, plus:
 
-- `src/automtg/engine/structs.py` — a `TempEffect.kind` and its fields, and
+- `src/commanderblitz/engine/structs.py` — a `TempEffect.kind` and its fields, and
   `to_dict`.
-- `src/automtg/engine/primitives.py` — the primitive. One rules-relevant thing, and
+- `src/commanderblitz/engine/primitives.py` — the primitive. One rules-relevant thing, and
   it asks no questions; deciding is the effect layer's job.
-- `src/automtg/engine/characteristics.py::_compute` — where the layer sits, which is
+- `src/commanderblitz/engine/characteristics.py::_compute` — where the layer sits, which is
   the whole design question. `animate` had to run *before* every static, because it
   replaces base P/T and anything later would be cancelled by it rather than added
   to it.
@@ -129,7 +128,7 @@ Only when no `ask_*` helper composes. Say why not.
 `engine/enums.py` → `engine/actions.py` (`GENERATOR_DECISIONS`, if a suspended
 effect generator drives it) → `engine/legality.py::_choice_actions` →
 `engine/game.py::apply` → a new `ask_*` in `engine/effects/context.py` →
-**`src/automtg/cards/authoring/verify.py`'s auto-answer table.**
+**`src/commanderblitz/cards/authoring/verify.py`'s auto-answer table.**
 
 That last one is not optional. The behaviour gate answers decisions automatically;
 a kind it cannot answer hangs the verifier, which breaks `/author-cards` for every
@@ -144,7 +143,7 @@ unknown kinds, so this is polish.
 **The only change that genuinely forces frontend work**, and the only one that will
 not fail a test if you skip it.
 
-`src/automtg/engine/events.py`, then both of:
+`src/commanderblitz/engine/events.py`, then both of:
 
 - `frontend/src/logic/labels.ts::describeEvent` — the event as prose in the log
 - `frontend/src/logic/events.ts::beatsFor` — timing, sound and visual effects
@@ -155,12 +154,12 @@ than crashing. Nothing will tell you. Check it deliberately.
 ### Tier E — a new API field
 
 Only if the mechanic must reach the UI as data. Four files and a test:
-`src/automtg/server/schemas.py` → `src/automtg/server/routes.py` →
+`src/commanderblitz/server/schemas.py` → `src/commanderblitz/server/routes.py` →
 `frontend/src/api/types.ts` → the consuming component → `tests/server/test_*.py`.
 
 Note the server needs **no** change for a new op, keyword, counter type, decision
 kind or action kind: game state is serialized generically by
-`src/automtg/engine/serialize.py`, and `LegalActionDTO.kind` is a bare string the
+`src/commanderblitz/engine/serialize.py`, and `LegalActionDTO.kind` is a bare string the
 client echoes back.
 
 ## 3 · The test is not optional
@@ -197,7 +196,7 @@ python scripts/author_cards.py --tier templates --retry
 ```
 
 If the mechanic also needs the importer to *read* the printed sentence, add a
-template to `src/automtg/cards/authoring/templates.py`. Templates are all-or-nothing
+template to `src/commanderblitz/cards/authoring/templates.py`. Templates are all-or-nothing
 by design: a card is produced only when every residual line is consumed, and an
 unrecognised clause must fail the whole card rather than be dropped silently.
 Without a template the cards stay in the agent tier and get picked up by the next

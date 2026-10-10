@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "automtg"
-version = "0.1.0"
+name = "commanderblitz"
+version = "1.0.0"
 description = "Magic: The Gathering Commander board state engine, self-play trainer, and playtest server"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -24,10 +24,10 @@ dev = ["pytest>=8.0", "pytest-cov>=4.1", "pytest-xdist>=3.6", "ruff>=0.4", "http
 desktop = ["pyinstaller>=6.11", "certifi"]
 
 [project.scripts]
-commanderblitz-server = "automtg.server.desktop:main"
+commanderblitz-server = "commanderblitz.server.desktop:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/automtg"]
+packages = ["src/commanderblitz"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

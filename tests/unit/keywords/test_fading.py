@@ -17,7 +17,7 @@ That off-by-one is why the test walks three upkeeps and asserts at each.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step, Zone
+from commanderblitz.engine.enums import Step, Zone
 from tests.conftest import only_oid, pass_until
 
 FADER = "t_fader"  # 3/3, fading 2

@@ -54,21 +54,21 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine import sagas, sba
-from automtg.engine.carddef import Cost
-from automtg.engine.casting import _emerge_fodder
-from automtg.engine.costs import can_pay
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.temp_effects import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import sagas, sba
+from commanderblitz.engine.carddef import Cost
+from commanderblitz.engine.casting import _emerge_fodder
+from commanderblitz.engine.costs import can_pay
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.temp_effects import (
     clear_sacrifice_restrictions,
     forbid_sacrifice,
     sacrifice_forbidden,
 )
-from automtg.engine.zones import destroy
+from commanderblitz.engine.zones import destroy
 from tests.conftest import _default_answer, oids_of, only_oid, pass_until
 
 BEAR = "t_bear"

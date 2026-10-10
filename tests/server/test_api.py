@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.server.app import create_app
+from commanderblitz.server.app import create_app
 from tests.cards.test_deck_legality import FIXTURES, PRECONS
 
 
@@ -16,7 +16,7 @@ def client(game_data_module) -> TestClient:
 
 @pytest.fixture(scope="module")
 def game_data_module():
-    from automtg.cards.registry import default_registry
+    from commanderblitz.cards.registry import default_registry
 
     return default_registry()
 

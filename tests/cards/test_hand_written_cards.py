@@ -31,10 +31,10 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.authoring import fidelity as F
-from automtg.cards.authoring import verify as V
-from automtg.cards.images import load_index
-from automtg.cards.registry import CardRegistry, data_dir
+from commanderblitz.cards.authoring import fidelity as F
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.registry import CardRegistry, data_dir
 
 BASELINE = Path(__file__).parent / "precon_deficits.json"
 EXPECTATIONS = Path(__file__).parent / "expectations.json"

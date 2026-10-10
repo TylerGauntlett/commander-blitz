@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import DefaultStrategy
-from automtg.ai.strategy.archetypes import Aristocrats
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import DefaultStrategy
+from commanderblitz.ai.strategy.archetypes import Aristocrats
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import only_oid, pass_until
 
 DECK = "zurgo"

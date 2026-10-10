@@ -1,6 +1,6 @@
 """``unplayable_reason`` -- the UI's "why can't I play this?" diagnostic.
 
-The function restates gates that :mod:`automtg.engine.legality` already owns, so
+The function restates gates that :mod:`commanderblitz.engine.legality` already owns, so
 the tests that matter most are the agreement ones: a reason must appear exactly
 when no action names the card, and never when one does.  If a future change to
 the generators drifts from the diagnostic, ``test_agrees_with_the_action_list``
@@ -13,9 +13,9 @@ action is Pass -- which is precisely the seat these tests are about.
 
 from __future__ import annotations
 
-from automtg.engine.actions import PendingDecision
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.legality import UNPLAYABLE_REASONS, legal_actions, unplayable_reason
+from commanderblitz.engine.actions import PendingDecision
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.legality import UNPLAYABLE_REASONS, legal_actions, unplayable_reason
 
 
 def priority_to(game, pid: int = 0):
@@ -161,7 +161,7 @@ class TestOrdering:
 
 class TestSerialized:
     def test_hand_reasons_reaches_the_player_view(self, builder):
-        from automtg.engine.serialize import player_view
+        from commanderblitz.engine.serialize import player_view
 
         game = priority_to(
             builder().hand(0, ["forest", "llanowar_elves"]).build(advance=False)
@@ -173,7 +173,7 @@ class TestSerialized:
         assert next(iter(reasons.values())) == "mana"
 
     def test_opponents_get_no_reasons(self, builder):
-        from automtg.engine.serialize import player_view
+        from commanderblitz.engine.serialize import player_view
 
         game = priority_to(
             builder().hand(0, ["forest"]).hand(1, ["forest"]).build(advance=False)

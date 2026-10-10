@@ -30,10 +30,10 @@ available the engine's auto-pass runs whole turns inside one `apply`, and an
 
 from __future__ import annotations
 
-from automtg.engine import legality
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import create_token
+from commanderblitz.engine import legality
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import create_token
 from tests.conftest import (
     _default_answer,
     activations,

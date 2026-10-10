@@ -39,8 +39,8 @@ the mana it just made is at the end of the list, and a Path of Ancestry tapped
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.mana import ManaCost, ManaPool
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.mana import ManaCost, ManaPool
 from tests.conftest import only_oid, pass_until
 
 ANCESTRY = "t_ancestry"

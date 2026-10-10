@@ -28,8 +28,8 @@ first of the top one.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Keyword
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Keyword
 from tests.conftest import only_oid, pass_until
 
 PLAINS = "plains"
@@ -100,8 +100,8 @@ class TestItReplacesRatherThanAdds:
 
     def test_a_counter_still_layers_on_top(self, builder):
         """The band sets the base; +1/+1 counters apply after it, as they should."""
-        from automtg.engine.objects import PLUS_ONE
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.objects import PLUS_ONE
+        from commanderblitz.engine.primitives import add_counters
 
         game, knight = position(builder, levels=1)
         add_counters(game.state, knight, PLUS_ONE, 2)

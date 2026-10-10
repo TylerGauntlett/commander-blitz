@@ -1,4 +1,4 @@
-"""``automtg.server.desktop``: the contract between the sidecar and the shell.
+"""``commanderblitz.server.desktop``: the contract between the sidecar and the shell.
 
 The shell spawns this, reads one ``READY {...}`` line from stdout, and from
 then on talks HTTP.  These tests hold both ends of that: what the arguments
@@ -19,11 +19,11 @@ from pathlib import Path
 
 import pytest
 
-from automtg.server import desktop
-from automtg.server.desktop import ENV_VARS, READY_PREFIX, apply_env, parse_args
+from commanderblitz.server import desktop
+from commanderblitz.server.desktop import ENV_VARS, READY_PREFIX, apply_env, parse_args
 
 ROOT = Path(__file__).resolve().parents[2]
-TEST_ONLY = ("AUTOMTG_CPU", "AUTOMTG_FIXTURE_DECKS")
+TEST_ONLY = ("COMMANDERBLITZ_CPU", "COMMANDERBLITZ_FIXTURE_DECKS")
 
 
 class TestArguments:
@@ -49,18 +49,18 @@ class TestArguments:
             env,
         )
         assert env == {
-            "AUTOMTG_MODE": "desktop",
-            "AUTOMTG_EAGER_ART": "1",
-            "AUTOMTG_DATA_DIR": "/content/data",
-            "AUTOMTG_CLIENT_DIR": "/content/client",
-            "AUTOMTG_GENERATED_DIR": "/home/deck/.local/share/commanderblitz/generated",
-            "AUTOMTG_REMOTE_ORIGIN": "https://commanderblitz.com",
-            "AUTOMTG_CONTENT_VERSION": "1.2.3",
+            "COMMANDERBLITZ_MODE": "desktop",
+            "COMMANDERBLITZ_EAGER_ART": "1",
+            "COMMANDERBLITZ_DATA_DIR": "/content/data",
+            "COMMANDERBLITZ_CLIENT_DIR": "/content/client",
+            "COMMANDERBLITZ_GENERATED_DIR": "/home/deck/.local/share/commanderblitz/generated",
+            "COMMANDERBLITZ_REMOTE_ORIGIN": "https://commanderblitz.com",
+            "COMMANDERBLITZ_CONTENT_VERSION": "1.2.3",
         }
         assert set(env) <= set(ENV_VARS)
 
     def test_the_test_switches_are_never_set(self):
-        # `AUTOMTG_CPU=classic` is the old AI and `AUTOMTG_FIXTURE_DECKS` puts
+        # `COMMANDERBLITZ_CPU=classic` is the old AI and `COMMANDERBLITZ_FIXTURE_DECKS` puts
         # retired lists in the catalogue.  Both are for the test servers.
         env: dict[str, str] = {}
         apply_env(parse_args([]), env)
@@ -68,9 +68,9 @@ class TestArguments:
         assert not (set(ENV_VARS) & set(TEST_ONLY))
 
     def test_an_absent_flag_leaves_the_variable_alone(self):
-        env = {"AUTOMTG_DATA_DIR": "/already"}
+        env = {"COMMANDERBLITZ_DATA_DIR": "/already"}
         apply_env(parse_args([]), env)
-        assert env["AUTOMTG_DATA_DIR"] == "/already"
+        assert env["COMMANDERBLITZ_DATA_DIR"] == "/already"
 
     def test_a_frozen_build_points_ssl_at_its_own_bundle(self, monkeypatch):
         monkeypatch.setattr(sys, "frozen", True, raising=False)
@@ -136,7 +136,7 @@ class TestTheProcess:
         env = {k: v for k, v in os.environ.items() if k not in TEST_ONLY}
         process = subprocess.Popen(
             [
-                sys.executable, "-m", "automtg.server.desktop",
+                sys.executable, "-m", "commanderblitz.server.desktop",
                 "--port", "0",
                 "--generated-dir", str(tmp_path / "generated"),
                 "--remote-origin", "http://127.0.0.1:1",

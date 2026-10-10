@@ -30,16 +30,16 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.vocabulary import SPELL_FILTER_KEYS, STATIC_FILTER_KEYS
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import _matches_printed
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import SELECTOR_KEYS, matches, validate_selector
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost, printed_cost_is
-from automtg.engine.triggers import matches_card_filter
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.vocabulary import SPELL_FILTER_KEYS, STATIC_FILTER_KEYS
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import _matches_printed
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import SELECTOR_KEYS, matches, validate_selector
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import ManaCost, printed_cost_is
+from commanderblitz.engine.triggers import matches_card_filter
 from tests.conftest import action_for_card, only_oid, pass_until
 
 ONE = "t_mc_one"  # {1}, Sol Ring's cost

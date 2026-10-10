@@ -23,9 +23,9 @@ Three things this has to get right:
 
 from __future__ import annotations
 
-from automtg.cards.authoring.verify import _covered
-from automtg.cards.registry import CardRegistry, DeckList, validate_deck
-from automtg.engine.carddef import CardDef
+from commanderblitz.cards.authoring.verify import _covered
+from commanderblitz.cards.registry import CardRegistry, DeckList, validate_deck
+from commanderblitz.engine.carddef import CardDef
 
 TEFERI_LINE = "Teferi, Temporal Archmage can be your commander."
 

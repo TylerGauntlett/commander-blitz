@@ -56,17 +56,17 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine import sba
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import untap_permanent
-from automtg.engine.state import new_object
-from automtg.engine.temp_effects import clear_goad, goad_creature, restrict_attack
-from automtg.engine.turn import grant_extra_phases
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import sba
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import untap_permanent
+from commanderblitz.engine.state import new_object
+from commanderblitz.engine.temp_effects import clear_goad, goad_creature, restrict_attack
+from commanderblitz.engine.turn import grant_extra_phases
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 
 BEAR = "t_bear"

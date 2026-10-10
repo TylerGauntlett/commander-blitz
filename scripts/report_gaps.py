@@ -30,9 +30,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.cards.authoring.packet import gaps_dir
-from automtg.cards.authoring.queue import Queue
-from automtg.cards.registry import data_dir
+from commanderblitz.cards.authoring.packet import gaps_dir
+from commanderblitz.cards.authoring.queue import Queue
+from commanderblitz.cards.registry import data_dir
 
 #: What kind of thing is missing.  Not enforced -- a worker that needs a word not
 #: on this list has found something worth reading rather than made a mistake --

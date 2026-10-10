@@ -47,12 +47,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import spell_life_tax
-from automtg.engine.structs import LifeLock
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import spell_life_tax
+from commanderblitz.engine.structs import LifeLock
 from tests.conftest import only_oid, pass_until, settle
 
 DRAKE = "t_life_toll_drake"  # spells opponents cast that target it cost 3 life more

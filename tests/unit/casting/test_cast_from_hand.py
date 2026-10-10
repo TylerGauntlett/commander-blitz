@@ -21,7 +21,7 @@ spell that reached the stack cannot have been paid for.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import pass_until, settle_to_priority
 
 DOMINANCE = "t_dominance"  # {R}; free cast of an instant/sorcery with MV <= 2

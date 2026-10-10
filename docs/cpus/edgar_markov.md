@@ -50,14 +50,14 @@ anything; all three pieces are protected from discard and sacrifice.
 ## How the CPU pilots it
 
 The plan lives in
-[`decks/edgar_markov.py`](../../src/automtg/ai/strategy/decks/edgar_markov.py)
+[`decks/edgar_markov.py`](../../src/commanderblitz/ai/strategy/decks/edgar_markov.py)
 as `VampireAristocrats`, a subclass of `Tribal` (which is `GoWide`, which is
 `Aggro`).
 
 | Behaviour | Where |
 |---|---|
-| **Vampires before anything else of the same cost** — each is an eminence token too. | `Tribal.priority_value`, `tribe = "Vampire"` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
-| **Lords, drain creatures and Grave Pact** carry key-card bonuses. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
+| **Vampires before anything else of the same cost** — each is an eminence token too. | `Tribal.priority_value`, `tribe = "Vampire"` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
+| **Lords, drain creatures and Grave Pact** carry key-card bonuses. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
 | **The loop is completed on sight.** Vito or Blight Priest with the Conqueror out (or the reverse) gets the combo bonus. | `DeckPlan.combos`, `DefaultStrategy.combo_bonus` |
 | **Olivia's Wrath waits until it is one-sided:** at least three more non-Vampire creatures on the other side than ours, and then it is a priority play. | `VampireAristocrats.priority_value`, `wrath_margin` |
 | **Skullclamp goes on a 1-toughness token.** | `VampireAristocrats.priority_value` |

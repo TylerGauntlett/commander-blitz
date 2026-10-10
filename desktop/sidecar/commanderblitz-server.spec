@@ -23,7 +23,7 @@ a = Analysis(
     binaries=[],
     datas=collect_data_files("certifi"),
     hiddenimports=[
-        *collect_submodules("automtg"),
+        *collect_submodules("commanderblitz"),
         *collect_submodules("uvicorn"),
         "certifi",
     ],

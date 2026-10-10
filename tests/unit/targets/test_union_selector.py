@@ -33,10 +33,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import validate_selector
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import validate_selector
+from commanderblitz.engine.errors import DslError
 
 UNION = "t_union_grab"
 HAND = "t_hand_grab"

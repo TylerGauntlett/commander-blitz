@@ -32,10 +32,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 
 ORVAR = "t_forced_orvar"  # with the cause clause
 LOOSE = "t_loose_orvar"  # without it -- the stronger card
@@ -151,7 +151,7 @@ class TestTheEventCarriesTheCause:
     """Read directly, so the clause and the payload cannot drift apart."""
 
     def test_an_opponents_spell_records_that_opponent(self, builder):
-        from automtg.engine.events import EventType
+        from commanderblitz.engine.events import EventType
 
         game = position(builder, caster=1, spell=MIND_ROT)
         cast(game, MIND_ROT, 1)
@@ -159,7 +159,7 @@ class TestTheEventCarriesTheCause:
         assert events and all(e.data.get("cause_controller") == 1 for e in events)
 
     def test_your_own_spell_records_you(self, builder):
-        from automtg.engine.events import EventType
+        from commanderblitz.engine.events import EventType
 
         game = position(builder, caster=0, spell=RUMMAGE)
         cast(game, RUMMAGE, 0)
@@ -175,8 +175,8 @@ class TestAnUncausedDiscardFailsTheClause:
     """
 
     def test_discard_cards_records_no_cause_by_default(self, builder):
-        from automtg.engine.events import EventType
-        from automtg.engine.primitives import discard_cards
+        from commanderblitz.engine.events import EventType
+        from commanderblitz.engine.primitives import discard_cards
 
         game = position(builder, caster=0, spell=RUMMAGE)
         oid = game.state.players[0].hand[0]
@@ -186,7 +186,7 @@ class TestAnUncausedDiscardFailsTheClause:
 
     def test_and_the_trigger_does_not_fire_on_it(self, builder):
         game = position(builder, caster=0, spell=RUMMAGE)
-        from automtg.engine.primitives import discard_cards
+        from commanderblitz.engine.primitives import discard_cards
 
         oid = next(
             o for o in game.state.players[0].hand if game.state.objects[o].def_id == ORVAR

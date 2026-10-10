@@ -22,8 +22,8 @@ ability — the same widening the cycling trigger needed for the graveyard.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.zones import destroy
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.zones import destroy
 from tests.conftest import _default_answer, only_oid, pass_until
 
 PLAINS = "plains"

@@ -51,14 +51,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine import sba
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.temp_effects import forbid_block, make_unblockable
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import sba
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.temp_effects import forbid_block, make_unblockable
+from commanderblitz.engine.zones import destroy
 from tests.conftest import _default_answer, oids_of, only_oid, pass_until
 
 BEAR = "t_bear"

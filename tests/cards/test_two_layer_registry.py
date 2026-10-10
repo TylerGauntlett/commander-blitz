@@ -19,8 +19,8 @@ import shutil
 
 import pytest
 
-from automtg.cards import registry as registry_module
-from automtg.cards.registry import (
+from commanderblitz.cards import registry as registry_module
+from commanderblitz.cards.registry import (
     DEFAULT_DATA_DIR,
     default_registry,
     generated_dir,
@@ -68,7 +68,7 @@ def data_with_an_import(tmp_path, monkeypatch):
     aesi["cards"][0] = {"id": PROXY_CARD["id"], "qty": aesi["cards"][0]["qty"]}
     (gen / "decks" / "mox_test.deck.json").write_text(json.dumps(aesi), encoding="utf-8")
 
-    monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+    monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(root))
     default_registry.cache_clear()
     server_registry.cache_clear()
     yield root
@@ -130,7 +130,7 @@ class TestAnAuthoredCardSupersedesItsOwnProxy:
         (gen / "pool.cards.json").write_text(
             json.dumps({"cards": [inert]}), encoding="utf-8"
         )
-        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+        monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(root))
         default_registry.cache_clear()
         server_registry.cache_clear()
         yield root
@@ -165,7 +165,7 @@ class TestNameResolutionPrefersTheAuthoredCard:
             json.dumps({"cards": [impostor]}), encoding="utf-8"
         )
 
-        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+        monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(root))
         registry = load_game_data(include_generated=True).registry
         assert registry.by_name("Forest").id == "forest"
 
@@ -183,7 +183,7 @@ class TestTheDirectoryIsNotCommitted:
         root = tmp_path / "data"
         for name in ("cards", "decks"):
             shutil.copytree(DEFAULT_DATA_DIR / name, root / name)
-        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+        monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(root))
         assert not (root / "generated").exists()
         data = load_game_data(include_generated=True)
         assert "zurgo" in data.decks

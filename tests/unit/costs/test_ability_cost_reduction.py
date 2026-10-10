@@ -27,7 +27,7 @@ each of them exists to prevent.
 
 from __future__ import annotations
 
-from automtg.engine.costs import ability_mana, can_pay
+from commanderblitz.engine.costs import ability_mana, can_pay
 from tests.conftest import oids_of
 
 SCALER = "t_scaling_ability"  # {5}, {T}: draw; {1} less per Vampire

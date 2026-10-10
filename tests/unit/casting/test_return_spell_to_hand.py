@@ -33,18 +33,18 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.ops_stack import put_copy_on_stack
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.sandbox import GameBuilder
-from automtg.engine.stack import pull_spell_off_stack, push_spell
-from automtg.engine.structs import TargetRef
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.ops_stack import put_copy_on_stack
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.sandbox import GameBuilder
+from commanderblitz.engine.stack import pull_spell_off_stack, push_spell
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import count_on_battlefield, event_types, pass_until
 
 #: Reprieve, in the DSL. Written here rather than added to the shared test pool
@@ -312,7 +312,7 @@ class TestWhenTheSpellHasAlreadyGone:
     def test_an_ability_on_the_stack_is_not_a_spell(self, builder):
         """"Target spell" never names one, but the helper is asked directly by
         tests and by any future op, and an ability has no card to return."""
-        from automtg.engine.stack import push_activated_ability
+        from commanderblitz.engine.stack import push_activated_ability
 
         game = builder(players=2).battlefield(0, ["forest"]).build()
         forest = game.state.battlefield[0]

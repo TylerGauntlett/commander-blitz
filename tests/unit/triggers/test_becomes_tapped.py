@@ -19,10 +19,10 @@ tapped, and it is asserted below in both directions.
 
 from __future__ import annotations
 
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.enums import DecisionKind, Step
-from automtg.engine.events import EventType
-from automtg.engine.primitives import tap_permanent, untap_permanent
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.enums import DecisionKind, Step
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import tap_permanent, untap_permanent
 from tests.conftest import only_oid, pass_until
 
 WATCHER = "t_bt_pinger"  # "whenever this creature becomes tapped, draw a card"

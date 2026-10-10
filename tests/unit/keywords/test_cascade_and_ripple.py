@@ -32,9 +32,9 @@ moment anything copies the card.
 
 from __future__ import annotations
 
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
 from tests.conftest import library_ids
 
 FOREST = "forest"

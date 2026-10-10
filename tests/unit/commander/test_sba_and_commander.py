@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.objects import MINUS_ONE, PLUS_ONE
-from automtg.engine.primitives import create_token, damage_permanent
-from automtg.engine.sba import run as run_sba
-from automtg.engine.zones import move_object
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.objects import MINUS_ONE, PLUS_ONE
+from commanderblitz.engine.primitives import create_token, damage_permanent
+from commanderblitz.engine.sba import run as run_sba
+from commanderblitz.engine.zones import move_object
 from tests.conftest import action_for_card, oids_of, only_oid
 
 
@@ -167,7 +167,7 @@ class TestMultiplayer:
         assert game.state.turn_order() == [0, 2, 3]
 
     def test_a_defeated_player_is_not_a_legal_attack_target(self, builder):
-        from automtg.engine.combat import legal_defenders
+        from commanderblitz.engine.combat import legal_defenders
 
         game = builder(players=4).build(advance=False)
         game.state.players[1].life = 0
@@ -189,7 +189,7 @@ class TestLossConditions:
         game = builder().library(0, []).build(advance=False)
         run_sba(game.state)
         assert not game.state.players[0].has_lost
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         draw_cards(game.state, 0, 1)
         run_sba(game.state)

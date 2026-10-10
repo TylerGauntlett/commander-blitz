@@ -28,9 +28,9 @@ test that only checks the number goes green.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import add_counters, create_token
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import add_counters, create_token
 from tests.conftest import (
     _default_answer,
     activations,

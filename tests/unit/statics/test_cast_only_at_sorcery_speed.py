@@ -25,14 +25,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import legality
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_casts_only_at_sorcery_speed
-from automtg.engine.suspend import cast_for_free
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import legality
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import player_casts_only_at_sorcery_speed
+from commanderblitz.engine.suspend import cast_for_free
+from commanderblitz.engine.zones import move_object
 from tests.conftest import only_oid
 
 TIMER = "t_sorcery_timer"  # each opponent casts only at sorcery speed

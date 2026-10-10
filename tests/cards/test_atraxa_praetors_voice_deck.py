@@ -39,9 +39,9 @@ The Oaths, the lands and removal, the walker finders and The Chain Veil are in
 
 from __future__ import annotations
 
-from automtg.engine import legality
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine import legality
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     _default_answer,
     find_action,

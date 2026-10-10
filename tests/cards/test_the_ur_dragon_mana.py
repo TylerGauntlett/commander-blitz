@@ -29,8 +29,8 @@ from the printed "add one mana", pinned as such in `TestKinnanBonderProdigy`.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.costs import (
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import (
     activate_mana_ability,
     available_mana,
     mana_amount,
@@ -38,10 +38,10 @@ from automtg.engine.costs import (
     mana_sources,
     spell_purpose,
 )
-from automtg.engine.enums import ActionKind, DecisionKind, Keyword, Step, Zone
-from automtg.engine.mana import SYMBOLS
-from automtg.engine.primitives import add_counters
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Keyword, Step, Zone
+from commanderblitz.engine.mana import SYMBOLS
+from commanderblitz.engine.primitives import add_counters
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import action_for_card, find_action, only_oid, pass_until
 
 # A castable instant in a seat's hand, and it is load bearing rather than

@@ -12,9 +12,9 @@ out the division drifts by one round per elimination, permanently.
 
 from __future__ import annotations
 
-from automtg.engine.enums import Step
-from automtg.engine.serialize import player_view
-from automtg.engine.turn import _begin_next_turn
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.serialize import player_view
+from commanderblitz.engine.turn import _begin_next_turn
 
 
 def cycle(game, times: int = 1) -> None:

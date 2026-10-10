@@ -33,10 +33,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import oids_of
 
 HENRIKA = "t_henrika"  # two modes, "that hasn't been chosen"
@@ -186,7 +186,7 @@ class TestASpentModeIsNotOffered:
 class TestTheFlagsHaveTheRightLifetime:
     def test_leaving_the_battlefield_clears_them(self, builder):
         """712.13a -- a permanent that comes back is a new object."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder)
         henrika = oids_of(game, HENRIKA)[0]

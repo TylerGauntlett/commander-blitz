@@ -36,7 +36,7 @@ import { linkGame, usePodSession } from "../state/usePodSession";
  * never walk out of.
  *
  * The specs still need determinism, so it is a window flag set by
- * `page.addInitScript` -- exactly the seam `__AUTOMTG_ZOOM_LOCK` already uses,
+ * `page.addInitScript` -- exactly the seam `__COMMANDERBLITZ_ZOOM_LOCK` already uses,
  * and for the same stated reason: `localStorage` would survive into a real
  * player's browser and silently pin their shuffle with nothing on screen to
  * point at, whereas a window global cannot outlive the page it was injected
@@ -47,7 +47,7 @@ import { linkGame, usePodSession } from "../state/usePodSession";
  * good seed and would deal the same game every time.
  */
 function pinnedSeed(): number | undefined {
-  const pinned = (window as { __AUTOMTG_SEED?: unknown }).__AUTOMTG_SEED;
+  const pinned = (window as { __COMMANDERBLITZ_SEED?: unknown }).__COMMANDERBLITZ_SEED;
   return typeof pinned === "number" && Number.isFinite(pinned) ? pinned : undefined;
 }
 

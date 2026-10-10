@@ -46,7 +46,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from automtg.cards.images import (
+from commanderblitz.cards.images import (
     ART_CROP,
     COLUMNS,
     SCHEMA,
@@ -58,7 +58,7 @@ from automtg.cards.images import (
     registry_images_path,
     write_registry_images,
 )
-from automtg.cards.registry import data_dir, default_registry
+from commanderblitz.cards.registry import data_dir, default_registry
 
 BULK_DIR = data_dir() / "catalog" / "bulk"
 BULK_DATA_API = "https://api.scryfall.com/bulk-data"
@@ -103,7 +103,7 @@ def resolve_source(explicit: str | None) -> Path | None:
     found = newest_bundle(BULK_DIR)
     if found is not None:
         return found
-    env = os.environ.get("AUTOMTG_CARD_CATALOG")
+    env = os.environ.get("COMMANDERBLITZ_CARD_CATALOG")
     return Path(env) if env else None
 
 

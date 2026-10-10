@@ -37,11 +37,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import activate_mana_ability
-from automtg.engine.errors import DslError
-from automtg.engine.mana import SYMBOL_INDEX, ManaPool, Pip, Requirement
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import activate_mana_ability
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import SYMBOL_INDEX, ManaPool, Pip, Requirement
 
 CAVERN = "t_cavern"  # ability 0 is plain {C}; ability 1 carries the rider
 PLAIN = "t_uc_plain_rock"  # the same any-colour mana, no rider

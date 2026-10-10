@@ -43,3 +43,10 @@ forced, and both the human UX and the RL sample efficiency would suffer badly.
 
 **Greedy payment with no ordering heuristic.** Simplest, and rejected because it
 strands colours often enough to be noticeable within a few turns.
+
+## Addendum
+
+The reversal the cost section priced came, in part: a human seat can set
+`manual_mana` (`POST /api/games/{id}/options`, see [api.md](../api.md)), which
+adds tap actions to legality and stops the engine paying on that seat's behalf.
+The default is still automatic, and every CPU seat stays on it.

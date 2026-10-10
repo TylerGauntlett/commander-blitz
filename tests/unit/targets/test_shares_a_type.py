@@ -25,12 +25,12 @@ granted type counts — which is most of what anybody plays Shared Animosity wit
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.primitives import add_subtypes
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.primitives import add_subtypes
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import find_action, pass_until
 
 

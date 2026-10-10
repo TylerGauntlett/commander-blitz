@@ -519,7 +519,7 @@ describe("escapeGroup", () => {
  * Asked the first way, the follow-up rejected the panel row for any blocker
  * below the fold, which is exactly the row it exists to reach when the
  * attacker's card is not drawable, and the ring stayed on the creature with
- * nothing to do. See `docs/handheld-playtest.md` Loop 9.3.
+ * nothing to do. See handheld playtest loop 9.3.
  */
 describe("sendableIn", () => {
   /** A box, stated: jsdom measures nothing. */

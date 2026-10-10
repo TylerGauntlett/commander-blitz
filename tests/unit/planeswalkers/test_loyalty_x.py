@@ -31,11 +31,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid, pass_until, settle
 
 WALKER = "t_lx_walker"  # loyalty 4; "+1: gain 2 life", "-X: gain X life"

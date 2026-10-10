@@ -28,7 +28,7 @@ kind further along.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import pass_until, settle_to_priority
 
 SINK = "t_sink"

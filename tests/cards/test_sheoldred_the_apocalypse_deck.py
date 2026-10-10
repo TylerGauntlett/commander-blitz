@@ -28,9 +28,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import create_token
-from automtg.engine.structs import TargetRef
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import (
     _default_answer,
     action_for_card,

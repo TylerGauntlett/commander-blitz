@@ -241,7 +241,7 @@
  * It used to set an eight-step `--stock` luminance ladder plus a matching
  * `--type-ring`, because the type line renders at 5.6px on a pod board and
  * something had to say "creature" from across the table
- * (docs/playtest-feedback-01.md item 4). Art bleed does that job better: the
+ * (playtest cycle 1, finding 4). Art bleed does that job better: the
  * card is now a picture, and a picture is per-card rather than per-category.
  * Twelve Forests are one recognisable image; under the ladder they were twelve
  * copies of "one of the tan ones", which is the same problem the ladder was
@@ -254,7 +254,7 @@
 /* Land colours ----------------------------------------------------------
  *
  * Every land was the same tan rectangle, so a lane of twelve of them could only
- * be read by reading names -- docs/playtest-feedback-02.md item 8. These narrow
+ * be read by reading names -- a cycle-2 playtest finding (item 8). These narrow
  * the *frame* to the colour the land actually taps for, taken from the server's
  * `produces` (see costs.produced_symbols) rather than guessed from a subtype, so
  * a nonbasic dual is as honest as an Island.

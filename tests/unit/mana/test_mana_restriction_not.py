@@ -30,12 +30,18 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.costs import spell_purpose
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.mana import ACTIVATE, CAST, ManaRestriction, RestrictionGroup, SpendPurpose
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.costs import spell_purpose
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import (
+    ACTIVATE,
+    CAST,
+    ManaRestriction,
+    RestrictionGroup,
+    SpendPurpose,
+)
 from tests.conftest import pass_until
 
 NEGATED = "t_emperor_mana"  # [[{"not": "creature"}]]
@@ -81,7 +87,7 @@ class TestTheNegationItself:
         return ManaRestriction(cast=(RestrictionGroup(frozenset(), frozenset({"creature"})),))
 
     def permits(self, names: set[str]) -> bool:
-        from automtg.engine.mana import ManaSource
+        from commanderblitz.engine.mana import ManaSource
 
         source = ManaSource(oid=1, ability_index=0, options=((0, 1, 0, 0, 0, 0),), restriction=self.group())
         return source.permits(SpendPurpose(CAST, frozenset(names)))
@@ -101,7 +107,7 @@ class TestARequiredNameAndAForbiddenOneTogether:
     """"a noncreature **artifact** spell" -- both halves in one group."""
 
     def permits(self, names: set[str]) -> bool:
-        from automtg.engine.mana import ManaSource
+        from commanderblitz.engine.mana import ManaSource
 
         restriction = ManaRestriction(
             cast=(RestrictionGroup(frozenset({"artifact"}), frozenset({"creature"})),)
@@ -125,7 +131,7 @@ class TestARequiredNameAndAForbiddenOneTogether:
 class TestTheKindStillMatters:
     def test_a_cast_restriction_does_not_fund_an_activation(self):
         """The negation changes nothing about which half is being asked."""
-        from automtg.engine.mana import ManaSource
+        from commanderblitz.engine.mana import ManaSource
 
         restriction = ManaRestriction(cast=(RestrictionGroup(frozenset(), frozenset({"creature"})),))
         source = ManaSource(

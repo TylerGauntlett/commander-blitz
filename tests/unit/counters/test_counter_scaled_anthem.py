@@ -40,11 +40,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.statics import _validate_static_value
-from automtg.engine.characteristics import chars
-from automtg.engine.effects.values import validate_value
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_counters, remove_counters
+from commanderblitz.cards.loader.statics import _validate_static_value
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.effects.values import validate_value
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_counters, remove_counters
 
 BANNER = "t_charge_banner"  # creatures you control get +1/+1 per charge counter on it
 ENGINE = "t_charge_engine"  # */* equal to the charge counters on it
@@ -117,8 +117,8 @@ class TestTheAnthemHasASize:
         `add_counters` onto the creatures themselves would leave this one a 2/2:
         the counters were placed before it existed.
         """
-        from automtg.engine.enums import Zone
-        from automtg.engine.state import new_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.state import new_object
 
         game = board(builder, charges=4, bears=0)
         obj = new_object(game.state, BEAR, owner=0, zone=Zone.BATTLEFIELD)
@@ -258,7 +258,7 @@ class TestNoLeafReadsZeroInSilence:
     """
 
     def test_an_unknown_leaf_raises_rather_than_reading_zero(self, builder):
-        from automtg.engine.characteristics import _static_value
+        from commanderblitz.engine.characteristics import _static_value
 
         game = board(builder, charges=1)
         source = game.state.objects[oid_of(game, BANNER)]
@@ -266,7 +266,7 @@ class TestNoLeafReadsZeroInSilence:
             _static_value(game.state, {"counters_of": "charge"}, source)
 
     def test_a_non_object_value_raises_too(self, builder):
-        from automtg.engine.characteristics import _static_value
+        from commanderblitz.engine.characteristics import _static_value
 
         game = board(builder, charges=1)
         source = game.state.objects[oid_of(game, BANNER)]
@@ -275,7 +275,7 @@ class TestNoLeafReadsZeroInSilence:
 
     def test_an_absent_field_is_still_zero(self, builder):
         """A `buff` with no `toughness` is a real card, so None stays 0."""
-        from automtg.engine.characteristics import _static_value
+        from commanderblitz.engine.characteristics import _static_value
 
         game = board(builder, charges=1)
         source = game.state.objects[oid_of(game, BANNER)]

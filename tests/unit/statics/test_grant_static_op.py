@@ -28,9 +28,9 @@ here too would fire it twice.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.zones import destroy
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid, pass_until
 
 CRAG = "t_gso_crag"  # grants itself an anthem as it enters

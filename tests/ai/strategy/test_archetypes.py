@@ -7,10 +7,10 @@ modules' own tests (``decks/``) cover the plans built on top.
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import Combo, DeckPlan, DefaultStrategy
-from automtg.ai.strategy.archetypes import Aristocrats, GoWide, Mill, Voltron
-from automtg.engine.enums import ActionKind, DecisionKind
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import Combo, DeckPlan, DefaultStrategy
+from commanderblitz.ai.strategy.archetypes import Aristocrats, GoWide, Mill, Voltron
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import only_oid, pass_until
 
 

@@ -31,8 +31,8 @@ other activation in the pool pays one attribute check and keeps its old shape.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.legality import _mentions_x, _targets_read_x
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.legality import _mentions_x, _targets_read_x
 from tests.conftest import only_oid, pass_until
 
 GARDENS = "t_xdt_gardens"  # target artifact with mana value X

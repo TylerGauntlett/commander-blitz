@@ -28,14 +28,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.ops_life import op_fight
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.ops_life import op_fight
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import destroy
 from tests.conftest import oids_of, pass_until
 
 SPELL = "t_fighter"  # "target creature you control fights another target creature"

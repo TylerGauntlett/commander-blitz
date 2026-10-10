@@ -1,6 +1,6 @@
 # Implementing cards, systematically
 
-The engine plays a few hundred cards out of ~32,000. Everything else imports as
+The engine plays about three thousand cards out of ~32,000. Everything else imports as
 an inert *proxy* — right name, art, cost, types and keywords, with the rules text
 doing nothing ([deck-import.md](deck-import.md)). That is honest, and it is not a
 game: a real imported deck had 41 of its 100 cards doing nothing.
@@ -37,7 +37,7 @@ cheap; trust is expensive.
 
 ## The six gates
 
-`src/automtg/cards/authoring/verify.py`. All six, or the card is not written.
+`src/commanderblitz/cards/authoring/verify.py`. All six, or the card is not written.
 
 | | |
 |---|---|
@@ -303,7 +303,7 @@ Two Claude Code skills wrap this loop end to end (`.claude/skills/`):
   template tier to harvest the cards it unblocked.
 
 The division is the same one this document already draws. `/author-cards` never
-touches `src/automtg/engine/`; it measures what it cannot do and hands that to
+touches `src/commanderblitz/engine/`; it measures what it cannot do and hands that to
 `/extend-dsl`.
 
 A packet is deliberately a **file format** rather than an API call, because the

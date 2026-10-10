@@ -47,14 +47,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_extra_land_drops
-from automtg.engine.primitives import give_emblem
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import player_extra_land_drops
+from commanderblitz.engine.primitives import give_emblem
 from tests.conftest import only_oid
 
 EMINENCE = "t_eminence_dragon"  # the command-zone-or-battlefield discount
@@ -167,7 +167,7 @@ class TestOther:
         -- so the word is the only thing standing between a nine-drop and a
         {1} discount on itself.
         """
-        from automtg.engine.characteristics import _matches_printed
+        from commanderblitz.engine.characteristics import _matches_printed
 
         card = registry.get(EMINENCE)
         filt = dict(card.abilities[0].static["affects_spells"])

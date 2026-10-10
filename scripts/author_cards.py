@@ -11,14 +11,14 @@ inert proxy. This is the loop that closes that gap without anybody hand-writing
 
 Order is the most consequential thing here, so it is not alphabetical: cards from
 a deck somebody actually imported come first, then EDHREC rank. See
-``automtg.cards.authoring.queue``.
+``commanderblitz.cards.authoring.queue``.
 
 ``--card`` overrides that order for one named card, which is a different job with
 the same machinery: somebody needs *this* card now, for a deck or a test, and
 does not want it to wait behind eleven thousand more popular ones.
 
 **Nothing is written that has not demonstrated its behaviour.** Every candidate
-runs the six gates in ``automtg.cards.authoring.verify`` -- including one that
+runs the six gates in ``commanderblitz.cards.authoring.verify`` -- including one that
 casts it in a real position and checks the board afterwards -- because
 ``compile_card`` validates vocabulary, not meaning, and a card that compiles
 cleanly and does the wrong thing is worse than one that does nothing.
@@ -34,10 +34,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from automtg.cards.authoring import packet as P
-from automtg.cards.authoring import templates as T
-from automtg.cards.authoring import verify as V
-from automtg.cards.authoring.queue import (
+from commanderblitz.cards.authoring import packet as P
+from commanderblitz.cards.authoring import templates as T
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.authoring.queue import (
     FIDELITY_GATE,
     Entry,
     Queue,
@@ -45,9 +45,9 @@ from automtg.cards.authoring.queue import (
     build,
     wanted_names,
 )
-from automtg.cards.images import load_index
-from automtg.cards.proxy import facts_from_index
-from automtg.cards.registry import CardRegistry, data_dir, default_registry
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.proxy import facts_from_index
+from commanderblitz.cards.registry import CardRegistry, data_dir, default_registry
 
 BATCH_FILE = "templates.cards.json"
 

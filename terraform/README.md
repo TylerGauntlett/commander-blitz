@@ -1,22 +1,24 @@
 # terraform/
 
-Provisions the deployment target: one droplet, a reserved IP, a firewall, and
-two SSH keys. Run by hand, never by CI. The full walkthrough is in
+Provisions the hosting for the site: one DigitalOcean droplet, a reserved IP, a
+firewall, and two SSH keys. Run by hand, never by CI. The walkthrough, including
+the GitHub secrets the deploy job needs afterwards, is in
 [../docs/deployment.md](../docs/deployment.md); this is the short version.
 
-```powershell
-# From the repo root, with .env filled in:
-Get-Content .env | Where-Object { $_ -match '^\s*[^#].*=' } | ForEach-Object {
-  $k, $v = $_ -split '=', 2; Set-Item "env:$($k.Trim())" $v.Trim()
-}
-
+```bash
+# DIGITALOCEAN_TOKEN in the environment (see ../.env.example), then:
 cd terraform
-Copy-Item terraform.tfvars.example terraform.tfvars   # then fill it in
+cp terraform.tfvars.example terraform.tfvars   # fill in the two public keys
 terraform init
 terraform apply
 terraform output -raw reserved_ip
 ```
 
-State is local and gitignored, so this directory on this machine is the only
-record of what exists. `terraform destroy` tears the whole thing down; the two
-Docker volumes holding fetched art and imported decks go with it.
+State is local and gitignored (`*.tfstate`, `*.tfvars`, saved plans), so the copy
+of this directory that ran `apply` is the only record of what exists: back it up.
+`terraform destroy` tears the whole thing down, including the Docker volume that
+holds imported decks.
+
+You do not need any of this to run the game. `docker compose up` with the
+[`docker-compose.yml`](../docker-compose.yml) at the root runs the same image
+anywhere, and `docs/deployment.md` has the self-hosting notes.

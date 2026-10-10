@@ -24,11 +24,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.carddef import Cost
-from automtg.engine.costs import can_pay
-from automtg.engine.enums import ActionKind
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.carddef import Cost
+from commanderblitz.engine.costs import can_pay
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 BOUNCER = {

@@ -28,19 +28,19 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import combat as combat_mod
-from automtg.engine import sba
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.temp_effects import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import sba
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.temp_effects import (
     ATTACK_REQUIREMENT_PENDING,
     goad_creature,
     require_attack_on,
     restrict_attack,
 )
-from automtg.engine.zones import move_object
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 
 BEAR = "t_bear"

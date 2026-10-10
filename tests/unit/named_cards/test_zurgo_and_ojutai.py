@@ -33,8 +33,8 @@ The two divergences this pins, both inherited and both already written down:
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import _default_answer, only_oid, pass_until
 
 LORD = "t_zao_lord"  # Zurgo and Ojutai's shape
@@ -178,7 +178,7 @@ def _settle(game, *, take_the_option: bool = False) -> None:
     right passivity everywhere else and silently skips the clause this file
     exists to check.
     """
-    from automtg.engine.actions import DecisionKind
+    from commanderblitz.engine.actions import DecisionKind
 
     mark = (game.state.turn, Step.POSTCOMBAT_MAIN)
     for _ in range(400):
@@ -204,8 +204,8 @@ def _arrive(game, card_id: str, pid: int = 0) -> int:
     reads. Borrowed from `test_entered_this_turn_filter.py`, which is where
     that distinction is argued out.
     """
-    from automtg.engine.state import new_object
-    from automtg.engine.zones import move_object
+    from commanderblitz.engine.state import new_object
+    from commanderblitz.engine.zones import move_object
 
     obj = new_object(game.state, card_id, owner=pid, zone=Zone.HAND)
     game.state.players[pid].hand.append(obj.oid)

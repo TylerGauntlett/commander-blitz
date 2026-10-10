@@ -37,13 +37,13 @@ commander mid-game.
 
 from __future__ import annotations
 
-from automtg.cards.loader import compile_card
-from automtg.cards.proxy import lift_keywords
-from automtg.cards.registry import CardRegistry
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import INERT_KEYWORDS, KEYWORD_COUNTERS, Keyword
-from automtg.engine.sandbox import GameBuilder
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.proxy import lift_keywords
+from commanderblitz.cards.registry import CardRegistry
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import INERT_KEYWORDS, KEYWORD_COUNTERS, Keyword
+from commanderblitz.engine.sandbox import GameBuilder
 from tests.conftest import only_oid
 
 BEAR = "t_bear"

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.errors import DslError
-from automtg.engine.mana import (
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.mana import (
     SYMBOL_INDEX,
     ManaCost,
     ManaPool,

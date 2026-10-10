@@ -1,7 +1,7 @@
 {
-  "name": "automtg-frontend",
+  "name": "commanderblitz-frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "The Commander Blitz client: a four-seat Commander table in the browser.",
   "scripts": {

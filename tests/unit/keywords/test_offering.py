@@ -21,11 +21,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_subtypes
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_subtypes
 from tests.conftest import _default_answer, only_oid
 
 OFFERING = "t_offering"  # {4}{R} 4/4 Goblin, Goblin offering, flash

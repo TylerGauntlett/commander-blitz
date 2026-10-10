@@ -151,7 +151,7 @@ def running_server(port: int):
             PY,
             "-m",
             "uvicorn",
-            "automtg.server.app:get_app",
+            "commanderblitz.server.app:get_app",
             "--factory",
             "--host",
             "127.0.0.1",
@@ -162,7 +162,7 @@ def running_server(port: int):
         ],
         cwd=ROOT,
         # The smoke script plays the fixture decks (`data/decks/fixtures/`).
-        env={**os.environ, "AUTOMTG_FIXTURE_DECKS": "1", "AUTOMTG_CPU": "classic"},
+        env={**os.environ, "COMMANDERBLITZ_FIXTURE_DECKS": "1", "COMMANDERBLITZ_CPU": "classic"},
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
@@ -257,7 +257,7 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
             command += ["-n", str(jobs), "--dist", "loadfile"]
         if coverage:
             # No per-stage report: the summary comes once, from the floor stage.
-            command += ["--cov=src/automtg", "--cov-append", "--cov-report="]
+            command += ["--cov=src/commanderblitz", "--cov-append", "--cov-report="]
         return command
 
     stages = [
@@ -294,7 +294,7 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
     if coverage:
         stages.append(
             Stage(
-                f"coverage: src/automtg holds {PYTHON_COVERAGE_FLOOR}%",
+                f"coverage: src/commanderblitz holds {PYTHON_COVERAGE_FLOOR}%",
                 [PY, "-m", "coverage", "report", f"--fail-under={PYTHON_COVERAGE_FLOOR}"],
             )
         )

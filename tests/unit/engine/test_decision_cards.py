@@ -4,7 +4,7 @@
 recover the card itself, from the zones ``player_view`` sends -- which excludes
 libraries.  So every "search your library", scry, surveil and mulligan-bottom
 prompt degraded to buttons reading only a card name, with no way to see what you
-were choosing between.  See docs/playtest-feedback-02.md item 9.
+were choosing between.  A cycle-2 playtest finding (item 9).
 
 The face is attached in ``serialize._pending`` rather than in
 ``PendingDecision.to_dict``, which keeps ``actions.py`` free of display concerns
@@ -16,9 +16,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.actions import PendingDecision
-from automtg.engine.enums import ActionKind, DecisionKind
-from automtg.engine.serialize import player_view
+from commanderblitz.engine.actions import PendingDecision
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from commanderblitz.engine.serialize import player_view
 from tests.conftest import action_for_card, pass_until
 
 
@@ -141,8 +141,8 @@ class TestOtherDecisions:
 
 
 def _option(state, oid: int):
-    from automtg.engine.actions import DecisionOption
-    from automtg.engine.structs import TargetRef
+    from commanderblitz.engine.actions import DecisionOption
+    from commanderblitz.engine.structs import TargetRef
 
     return DecisionOption(
         label=state.card(oid).name, ref=TargetRef.obj(oid), value=oid
@@ -150,7 +150,7 @@ def _option(state, oid: int):
 
 
 def _yes_no():
-    from automtg.engine.actions import DecisionOption
+    from commanderblitz.engine.actions import DecisionOption
 
     return (
         DecisionOption(label="Yes", value=True),

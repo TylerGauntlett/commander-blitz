@@ -45,11 +45,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import NO_PLAYERS_LIFE, chars, min_life
-from automtg.engine.enums import ActionKind, Keyword, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import NO_PLAYERS_LIFE, chars, min_life
+from commanderblitz.engine.enums import ActionKind, Keyword, Step
+from commanderblitz.engine.errors import DslError
 
 
 def vampire(builder, lives: list[int]):
@@ -143,7 +143,7 @@ class TestItFollowsTheLifeTotal:
     """
 
     def test_a_loss_switches_it_on(self, builder):
-        from automtg.engine.primitives import lose_life
+        from commanderblitz.engine.primitives import lose_life
 
         game, oid = vampire(builder, [40, 11])
         assert chars(game.state, oid).power == 1
@@ -151,7 +151,7 @@ class TestItFollowsTheLifeTotal:
         assert chars(game.state, oid).power == 3
 
     def test_damage_switches_it_on(self, builder):
-        from automtg.engine.primitives import damage_player
+        from commanderblitz.engine.primitives import damage_player
 
         game, oid = vampire(builder, [40, 12])
         assert chars(game.state, oid).power == 1
@@ -159,7 +159,7 @@ class TestItFollowsTheLifeTotal:
         assert chars(game.state, oid).power == 3
 
     def test_a_gain_switches_it_off(self, builder):
-        from automtg.engine.primitives import gain_life
+        from commanderblitz.engine.primitives import gain_life
 
         game, oid = vampire(builder, [40, 10])
         assert chars(game.state, oid).power == 3

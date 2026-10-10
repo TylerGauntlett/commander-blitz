@@ -15,7 +15,7 @@ import { GameOverScreen } from "./GameOverScreen";
 const meta = {
   title: "Game/GameOverScreen",
   component: GameOverScreen,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { onRematch: fn(), onQuit: fn() },
 } satisfies Meta<typeof GameOverScreen>;
 

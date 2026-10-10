@@ -26,10 +26,10 @@ read from the other end.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches
-from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import add_counters, attach
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches
+from commanderblitz.engine.objects import PLUS_ONE
+from commanderblitz.engine.primitives import add_counters, attach
 from tests.conftest import oids_of, two_seat_board
 
 GEAR = "t_plain_gear"  # an Equipment with no abilities

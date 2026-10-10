@@ -21,8 +21,8 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards import images as images_module
-from automtg.cards.images import CardIndex, image_url
+from commanderblitz.cards import images as images_module
+from commanderblitz.cards.images import CardIndex, image_url
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE = REPO / "tests" / "data" / "mini_cards.jsonl"

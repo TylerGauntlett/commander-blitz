@@ -38,7 +38,7 @@ function seat(overrides = {}) {
 const meta = {
   title: "Game/PlayerOrb",
   component: PlayerOrb,
-  parameters: { automtg: { mount: "matSide" } },
+  parameters: { commanderblitz: { mount: "matSide" } },
 } satisfies Meta<typeof PlayerOrb>;
 
 export default meta;
@@ -244,7 +244,7 @@ export const HandheldLifeStaysReadableAfterAHit: Story = {
   args: seat(),
   globals: { handheld: "on" },
   tags: ["handheld"],
-  parameters: { automtg: { mount: "matSide", motion: "real" } },
+  parameters: { commanderblitz: { mount: "matSide", motion: "real" } },
   render: (args) => <TakesAHit {...(args as ReturnType<typeof seat>)} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

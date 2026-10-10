@@ -17,8 +17,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import default_registry
-from automtg.server.app import create_app
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server.app import create_app
 
 
 @pytest.fixture(scope="module")

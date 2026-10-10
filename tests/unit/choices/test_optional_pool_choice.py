@@ -42,11 +42,11 @@ import contextlib
 
 import pytest
 
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import choose_objects, validate_selector
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import choose_objects, validate_selector
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import library_ids
 
 BEAR = "t_bear"

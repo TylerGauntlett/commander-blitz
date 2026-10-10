@@ -7,7 +7,7 @@ reason ``mini_cards.jsonl`` is real -- the shapes that break this code are the
 ones nobody would think to invent, like the em-dash in ``type_line`` and the
 ``boards.{commanders,mainboard}`` nesting.
 
-Nothing here writes into the repository: ``AUTOMTG_DATA_DIR`` is pointed at a
+Nothing here writes into the repository: ``COMMANDERBLITZ_DATA_DIR`` is pointed at a
 copy of ``data/`` under ``tmp_path`` first, and the registry caches are cleared
 around it, because the env var is read per call and the cache is not.
 """
@@ -23,13 +23,13 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards import moxfield
-from automtg.cards.registry import (
+from commanderblitz.cards import moxfield
+from commanderblitz.cards.registry import (
     DEFAULT_DATA_DIR,
     default_registry,
     server_registry,
 )
-from automtg.server.app import create_app
+from commanderblitz.server.app import create_app
 
 PAYLOAD = Path(__file__).resolve().parents[1] / "data" / "moxfield_deck.json"
 DECK_URL = "https://moxfield.com/decks/vVdybWVgC0imBOlW63FlTg"
@@ -59,12 +59,12 @@ def sandbox(tmp_path, monkeypatch):
     for name in ("cards", "decks", "catalog"):
         shutil.copytree(DEFAULT_DATA_DIR / name, root / name, ignore=shutil.ignore_patterns("bulk"))
     (root / "art").mkdir(exist_ok=True)
-    monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+    monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(root))
     # These tests deal games from the fixture decks, which the server serves
     # only when asked.
-    monkeypatch.setenv("AUTOMTG_FIXTURE_DECKS", "1")
+    monkeypatch.setenv("COMMANDERBLITZ_FIXTURE_DECKS", "1")
 
-    from automtg.cards import images as images_module
+    from commanderblitz.cards import images as images_module
 
     default_registry.cache_clear()
     server_registry.cache_clear()

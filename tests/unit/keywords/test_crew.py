@@ -28,8 +28,8 @@ than taking every creature that could have helped.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import only_oid
 
 VEHICLE = "t_vehicle"      # crew 3

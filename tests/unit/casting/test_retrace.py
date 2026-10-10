@@ -12,7 +12,7 @@ is the whole reason anyone plays it.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import _default_answer
 
 

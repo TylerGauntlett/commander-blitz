@@ -14,11 +14,11 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.images import CardArt, catalog_path
-from automtg.cards.registry import default_registry
-from automtg.server.app import create_app
-from automtg.server.art import ArtStore
-from automtg.server.art import spread_across_faces as _spread_across_faces
+from commanderblitz.cards.images import CardArt, catalog_path
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server.app import create_app
+from commanderblitz.server.art import ArtStore
+from commanderblitz.server.art import spread_across_faces as _spread_across_faces
 
 # A 1x1 JPEG, so a planted file is a real image rather than bytes that happen to
 # have the right extension.
@@ -410,7 +410,7 @@ class TestTheAuthoredLayerWins:
     """
 
     def _resolve(self, tmp_path, monkeypatch, *, committed, generated):
-        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(tmp_path))
+        monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(tmp_path))
         catalog = tmp_path / "catalog"
         catalog.mkdir(parents=True)
         (catalog / "registry_images.json").write_text(
@@ -419,7 +419,7 @@ class TestTheAuthoredLayerWins:
         pool = tmp_path / "generated" / "cards"
         pool.mkdir(parents=True)
         (pool / "pool.images.json").write_text(json.dumps(generated), encoding="utf-8")
-        from automtg.server.art import _resolve_images
+        from commanderblitz.server.art import _resolve_images
 
         # `registry` and `index` are only consulted when the committed file is
         # missing or empty, and here it is neither.
@@ -539,7 +539,7 @@ class TestTheDeployedShape:
     """The two invariants that live outside Python and broke it from there."""
 
     def test_the_cache_is_inside_the_tree_the_volume_persists(self):
-        from automtg.cards.images import art_cache_dir, art_dir, generated_dir
+        from commanderblitz.cards.images import art_cache_dir, art_dir, generated_dir
 
         assert art_dir() != art_cache_dir()
         # `generated/` is the one mount point, so the cache has to be under it
@@ -615,8 +615,8 @@ class TestDegradesWithoutTheArtifacts:
     """A fresh clone has neither the index nor the images and must still play."""
 
     def test_the_app_boots_and_deals_a_game(self, tmp_path, game_data, monkeypatch):
-        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(tmp_path))
-        from automtg.cards import images as images_module
+        monkeypatch.setenv("COMMANDERBLITZ_DATA_DIR", str(tmp_path))
+        from commanderblitz.cards import images as images_module
 
         images_module.load_index.cache_clear()
         try:

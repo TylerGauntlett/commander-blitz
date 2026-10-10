@@ -34,9 +34,9 @@ shown. Exotic Orchard had the same seam; this closes it for both.
 
 from __future__ import annotations
 
-from automtg.engine.costs import mana_options_of
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.mana import SYMBOLS
+from commanderblitz.engine.costs import mana_options_of
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.mana import SYMBOLS
 from tests.conftest import only_oid
 
 TOWER = "t_command_tower"

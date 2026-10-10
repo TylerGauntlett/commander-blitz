@@ -96,7 +96,7 @@ per step; it is off by default and always off for evaluation.
 |---|---|
 | `random` | Uniform over the mask. The floor everything else must beat |
 | `heuristic` | Reflexive, rule-ordered, and **deck-aware**: every score passes through the seat's strategy ([cpus/](cpus/README.md)) — the baseline fixes for any deck, and a plan of its own for each shipped precon |
-| `heuristic_classic` | The heuristic as it was before strategies: never miss a land drop, remove the biggest threat, counter anything worth 3+ mana, attack when profitable, block when it trades up, chump only when desperate, target whoever is closest to dying. Kept as a benchmark and for seeded tests; `AUTOMTG_CPU=classic` makes plain `heuristic` mean this |
+| `heuristic_classic` | The heuristic as it was before strategies: never miss a land drop, remove the biggest threat, counter anything worth 3+ mana, attack when profitable, block when it trades up, chump only when desperate, target whoever is closest to dying. Kept as a benchmark and for seeded tests; `COMMANDERBLITZ_CPU=classic` makes plain `heuristic` mean this |
 | `policy` | A trained checkpoint; falls back to `heuristic` when none is supplied |
 
 The heuristic agent is deliberately reflexive — no lookahead. Undo and env resets work
@@ -108,7 +108,7 @@ position only.
 ### Deck strategies
 
 The heuristic looks up a `Strategy` for each seat from the deck it is playing
-(`automtg.ai.strategy`): the precon's own plan by deck id, else a plan for the
+(`commanderblitz.ai.strategy`): the precon's own plan by deck id, else a plan for the
 same commander, else `DefaultStrategy`. The agent still produces every score; the
 strategy adjusts it — a Voltron deck adds weight to equipping its commander, a
 mill deck to the shortest library — so `classic=True` (the neutral `Strategy`) is

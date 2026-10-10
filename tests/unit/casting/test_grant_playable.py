@@ -27,9 +27,9 @@ turn ledger, the same slot a `cast_from_graveyard` permission bills.
 
 from __future__ import annotations
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind
 
 LOCKE = "t_locke"
 

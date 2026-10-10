@@ -45,14 +45,14 @@ a second drain and a third. The pieces are protected from discard.
 
 ## How the CPU pilots it
 
-The plan lives in [`decks/zurgo.py`](../../src/automtg/ai/strategy/decks/zurgo.py)
+The plan lives in [`decks/zurgo.py`](../../src/commanderblitz/ai/strategy/decks/zurgo.py)
 as `ZurgoAristocrats`, a subclass of `Aristocrats` (which is `GoWide`, which is
 `Aggro`).
 
 | Behaviour | Where |
 |---|---|
-| **Zurgo on turn three.** His key-card bonus (120) puts him over any other three-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/automtg/ai/strategy/default.py)) |
-| **Creatures and token makers early.** | `Aggro.priority_value`, `GoWide.priority_value` ([archetypes.py](../../src/automtg/ai/strategy/archetypes.py)) |
+| **Zurgo on turn three.** His key-card bonus (120) puts him over any other three-drop. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
+| **Creatures and token makers early.** | `Aggro.priority_value`, `GoWide.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Even trades are taken.** With `aggression = 0.8` an attacker swings into a blocker of about its own worth; the baseline, at 0.5, holds back. | `DefaultStrategy._attack_worth` |
 | **Zurgo swings first when the attack is safe**, so the mobilize token joins whatever follows. He is still kept out of blocks that kill him for free. | `ZurgoAristocrats.attack_value` |
 | **Tokens attack into blockers while Zurgo is out.** A blocked-and-killed token is a card off Zurgo plus every death payoff; unblocked, it deals damage. Only the crack-back veto keeps one home. | `ZurgoAristocrats.attack_value` |

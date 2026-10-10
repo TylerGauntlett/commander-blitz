@@ -15,7 +15,7 @@ import { Table } from "./Table";
 const meta = {
   title: "Game/Table Zoom",
   component: Table,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
 } satisfies Meta<typeof Table>;
 
 export default meta;
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const ZoomCrowdedBoard: Story = {
   args: board(scenarios.crowdedBoard()),
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const table = await canvas.findByTestId("table");
@@ -56,7 +56,7 @@ export const ZoomFifteenCardHand: Story = {
     scenario.state.players[0].hand_count = crowded.length;
     return board(scenario);
   })(),
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const table = await canvas.findByTestId("table");
@@ -85,7 +85,7 @@ export const ZoomFifteenCardHand: Story = {
  */
 export const FullHeightRail: Story = {
   args: board(scenarios.fourPlayerPod()),
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -167,7 +167,7 @@ export const FullHeightRail: Story = {
  */
 export const ViewingAnOpponent: Story = {
   args: board(scenarios.fourPlayerPod()),
-  parameters: { automtg: { zoomLock: false } },
+  parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");

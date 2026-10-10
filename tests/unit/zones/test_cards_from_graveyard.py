@@ -28,10 +28,10 @@ as "a card left" would make the condition true on every turn anything died.
 
 from __future__ import annotations
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.zones import move_object
 
 BEAR = "t_bear"
 

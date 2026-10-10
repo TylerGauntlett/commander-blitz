@@ -24,8 +24,8 @@ nothing on your own end step, and so on.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.characteristics import chars, has_keyword
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import _default_answer, action_for_card, oids_of, pass_until
 
 LUCY = "lucy_maclean_positively_armed"

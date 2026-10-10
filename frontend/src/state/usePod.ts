@@ -38,7 +38,7 @@ const POLL_SECONDS = 25;
  */
 const RETRY_MS = 2000;
 
-const TOKEN_PREFIX = "automtg.pod.";
+const TOKEN_PREFIX = "commanderblitz.pod.";
 
 function tokenKey(code: string): string {
   return `${TOKEN_PREFIX}${code.toUpperCase()}`;

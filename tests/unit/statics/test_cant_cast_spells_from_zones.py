@@ -36,8 +36,8 @@ carrying one three times as harsh.
 
 from __future__ import annotations
 
-from automtg.engine.casting import _cast_actions
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.casting import _cast_actions
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import pass_until
 
 DECREE = "t_hand_only_decree"  # {0} sorcery: opponents cast from hands only

@@ -32,12 +32,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import Keyword, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import Keyword, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid
 
 PLAINS = "plains"
@@ -61,8 +61,8 @@ def position(builder, *, partner: bool = True):
 
 def meld(game, bruna: int):
     """Run the meld op directly — the trigger's timing is not what is under test."""
-    from automtg.engine.effects.context import EffectContext
-    from automtg.engine.effects.ops_counters import op_meld
+    from commanderblitz.engine.effects.context import EffectContext
+    from commanderblitz.engine.effects.ops_counters import op_meld
 
     ctx = EffectContext(state=game.state, controller=0, source_oid=bruna)
     list(op_meld(ctx, {"op": "meld"}))
@@ -244,7 +244,7 @@ class TestTheGuards:
         """`parent_face`, the same back-link a back face and a second face use."""
         from pathlib import Path
 
-        from automtg.cards.registry import CardRegistry, authored_card_paths
+        from commanderblitz.cards.registry import CardRegistry, authored_card_paths
 
         registry = CardRegistry.from_paths(
             authored_card_paths(Path("data/cards"))

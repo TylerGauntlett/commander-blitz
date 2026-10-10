@@ -24,8 +24,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.enums import ActionKind
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.enums import ActionKind
 
 CYAN = "t_cyan"
 BEAR = "t_bear"
@@ -106,9 +106,9 @@ def _cast_lines(game):
 class TestTheLoaderStillRefusesAHiddenZone:
     def test_the_hand_is_not_countable(self):
         """Hidden, and so not a thing a public price may be computed from."""
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         card = CardModel.model_validate(
             {

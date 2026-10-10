@@ -99,7 +99,7 @@ export function CardFace({ card, variant = "board" }: Props) {
 
   // What a land taps for. Every land used to be the same tan rectangle, so a
   // board of twelve of them was unreadable without stopping to read names --
-  // see docs/playtest-feedback-02.md item 8. On a bleed face the symbols are
+  // a cycle-2 playtest finding (item 8). On a bleed face the symbols are
   // large and centred over the art, which is direction D's answer for lands.
   const land = landTone(card);
   const mana = landSymbols(card);

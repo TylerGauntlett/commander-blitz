@@ -33,10 +33,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import pass_until
 
 THIS_TURN = "t_impulse"  # playable_this_turn -- the duration the engine had
@@ -199,7 +199,7 @@ class TestTheEndStepClockEnds:
         having asked anything. Calling it is the claim: same state, seat 1
         active, and a permission belonging to seat 0 left alone.
         """
-        from automtg.engine import turn as turn_module
+        from commanderblitz.engine import turn as turn_module
 
         game = position(builder, END_STEP)
         hand_turn_to(game, 1, END_STEP)

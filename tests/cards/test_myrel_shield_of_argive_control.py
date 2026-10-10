@@ -45,13 +45,13 @@ prohibition. `tests/unit/casting/test_split_second.py` measures it where it live
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import (
+from commanderblitz.engine.characteristics import (
     chars,
     player_protected_from,
     protection_from,
 )
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import life_locked, lose_life
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import life_locked, lose_life
 from tests.conftest import (
     action_for_card,
     battlefield_ids,
@@ -368,7 +368,7 @@ class TestThaliaHereticCathar:
     at all to her opponents, so she was simultaneously inert and worse than
     printed -- a 3/2 first-striker that could not block the turn she landed.
 
-    `docs/completed-features.md` named her as one of ten shipped cards written
+    The feature log of the day named her as one of ten shipped cards written
     this way and said they were "repaired in the commit after this one". That
     repair never landed. She is repaired here, as two `enters_tapped` statics --
     the shape Authority of the Consuls already uses -- one filtered to an

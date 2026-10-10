@@ -31,9 +31,9 @@ object. Two details are the keyword rather than plumbing:
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind
-from automtg.engine.mana import ManaCost, ManaPool
-from automtg.engine.objects import PLUS_ONE
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.mana import ManaCost, ManaPool
+from commanderblitz.engine.objects import PLUS_ONE
 from tests.conftest import action_for_card, only_oid, pass_until
 
 GOLEM = "t_sunburst"      # {5}

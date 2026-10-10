@@ -33,7 +33,7 @@ export const MAX_LEAVES = 9;
  * rendered as the same purple stack -- and on a handheld, where the compact
  * strip drops the words, the only thing telling "89 cards left in their deck"
  * from "7 cards in their hand" was which came first. That is exactly the
- * argument `docs/handheld-playtest.md` records for taking `.pile__label` back:
+ * argument the handheld playtest log records for taking `.pile__label` back:
  * a fixed order only helps somebody who already knows it.
  */
 export type PileKind = "lib" | "hand" | "gy" | "ex" | "cmd";

@@ -26,7 +26,7 @@ that already shows the step.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import oids_of
 
 WATCHER = "t_precombat"  # gains 1 life at the beginning of your first main phase

@@ -14,8 +14,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 from fastapi.testclient import TestClient
 
-from automtg.cards.registry import default_registry
-from automtg.server.app import create_app
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server.app import create_app
 
 
 @pytest.fixture(scope="module")
@@ -161,8 +161,8 @@ def put_on_battlefield(client: TestClient, game_id: str, seat: int, card_id: str
     boundary under test is HTTP, not the cast, so the board is arranged directly
     and then read back through the endpoint like any other state.
     """
-    from automtg.engine.enums import Zone
-    from automtg.engine.state import new_object
+    from commanderblitz.engine.enums import Zone
+    from commanderblitz.engine.state import new_object
 
     session = client.app.state.sessions.get(game_id)
     with session._lock:

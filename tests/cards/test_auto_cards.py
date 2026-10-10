@@ -15,9 +15,9 @@ import json
 
 import pytest
 
-from automtg.cards.authoring import verify as V
-from automtg.cards.authoring.queue import auto_cards_dir
-from automtg.cards.registry import CardRegistry, data_dir
+from commanderblitz.cards.authoring import verify as V
+from commanderblitz.cards.authoring.queue import auto_cards_dir
+from commanderblitz.cards.registry import CardRegistry, data_dir
 
 
 def _auto_payloads() -> list[dict]:
@@ -119,7 +119,7 @@ def test_the_auto_directory_is_wired_into_the_registry():
     picking up the subdirectory, every card the pipeline writes would sit on disk
     doing nothing -- the exact failure the pipeline exists to fix.
     """
-    from automtg.cards.registry import authored_card_paths
+    from commanderblitz.cards.registry import authored_card_paths
 
     paths = authored_card_paths()
     assert any(p.parent.name == "cards" for p in paths), "hand-written cards are not loaded"

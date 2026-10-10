@@ -18,12 +18,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import grant_ability
-from automtg.engine.zones import bounce, destroy, move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import grant_ability
+from commanderblitz.engine.zones import bounce, destroy, move_object
 from tests.conftest import count_on_battlefield, only_oid, settle
 
 SPIRIT = "spirit_1_1_w_flying"

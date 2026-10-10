@@ -38,11 +38,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import prevented_damage, prevents_all_damage
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import prevented_damage, prevents_all_damage
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_permanent
 from tests.conftest import only_oid
 
 RETRIEVER = "t_retriever"  # prevent all damage to OTHER ATTACKING Soldiers
@@ -68,7 +68,7 @@ def attacking(game, *oids: int) -> None:
     declaration would also have to survive blockers and first strike to reach
     the same call.
     """
-    from automtg.engine.structs import CombatState
+    from commanderblitz.engine.structs import CombatState
 
     game.state.combat = CombatState(attackers={oid: 1 for oid in oids})
 

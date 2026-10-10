@@ -31,8 +31,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import Step, Zone
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Step, Zone
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until
 
 UNTAPPED = "t_untapped_conqueror"  # fires only on an untapped arrival

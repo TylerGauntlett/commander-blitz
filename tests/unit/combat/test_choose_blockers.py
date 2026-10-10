@@ -36,10 +36,10 @@ Witness: Odric, Master Tactician
 
 from __future__ import annotations
 
-from automtg.engine.combat import add_attacker, add_blocker, legal_blocks, start_combat
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.combat import add_attacker, add_blocker, legal_blocks, start_combat
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import _default_answer, only_oid
 
 TACTICIAN = "t_tactician"  # the battalion-conditioned printed card
@@ -74,7 +74,7 @@ class TestTheDecisionMoves:
         game = board(builder, [BEAR], [SQUIRE])
         add_attacker(game.state, only_oid(game, BEAR, 0), 1)
         take_over(game)
-        from automtg.engine.turn import _next_blocker_decision
+        from commanderblitz.engine.turn import _next_blocker_decision
 
         game.state.combat.pending_blockers = [1]
         _next_blocker_decision(game.state)
@@ -89,7 +89,7 @@ class TestTheDecisionMoves:
         """Pins that the reassignment is the op's and not the harness's."""
         game = board(builder, [BEAR], [SQUIRE])
         add_attacker(game.state, only_oid(game, BEAR, 0), 1)
-        from automtg.engine.turn import _next_blocker_decision
+        from commanderblitz.engine.turn import _next_blocker_decision
 
         game.state.combat.pending_blockers = [1]
         _next_blocker_decision(game.state)
@@ -105,8 +105,8 @@ class TestTheDecisionMoves:
         game = board(builder, [BEAR, SQUIRE], [MENACER])
         add_attacker(game.state, only_oid(game, BEAR, 0), 1)
         take_over(game)
-        from automtg.engine.legality import _blocker_actions
-        from automtg.engine.turn import _next_blocker_decision
+        from commanderblitz.engine.legality import _blocker_actions
+        from commanderblitz.engine.turn import _next_blocker_decision
 
         game.state.combat.pending_blockers = [1]
         _next_blocker_decision(game.state)
@@ -129,7 +129,7 @@ class TestTheRulesStillBind:
         attacker = only_oid(game, MENACER, 0)
         add_attacker(game.state, attacker, 1)
         take_over(game)
-        from automtg.engine.combat import blocks_valid
+        from commanderblitz.engine.combat import blocks_valid
 
         add_blocker(game.state, only_oid(game, BEAR, 1), attacker, 1)
         assert blocks_valid(game.state, 1) is False, "one blocker cannot block menace"

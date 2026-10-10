@@ -23,13 +23,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine import turn as turn_module
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.objects import PLAYABLE_DURATIONS
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine import turn as turn_module
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.zones import move_object
 from tests.conftest import pass_until
 
 FOREVER = "t_brain_impulse"  # playable: "while_exiled"
@@ -222,6 +222,6 @@ class TestAnOpponentsExiledCards:
 
 class TestTheWorkerIsShownIt:
     def test_the_packet_lists_every_duration(self):
-        from automtg.cards.authoring.packet import reference
+        from commanderblitz.cards.authoring.packet import reference
 
         assert set(reference()["playable_durations"]) == set(PLAYABLE_DURATIONS)

@@ -38,13 +38,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import move_object
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     action_for_card,
@@ -95,7 +95,7 @@ def to_attackers(game):
 
 
 def attack_with(game, *oids: int, defender: int = 1):
-    from automtg.engine.structs import TargetRef
+    from commanderblitz.engine.structs import TargetRef
 
     for oid in oids:
         game.apply(
@@ -183,7 +183,7 @@ class TestTheLedgerRecordsWhichCreaturesAttacked:
 
     def test_a_creature_tapped_for_mana_is_not_recorded(self, builder):
         """The other half: `tapped` catches this creature, which never attacked."""
-        from automtg.engine.primitives import tap_permanent
+        from commanderblitz.engine.primitives import tap_permanent
 
         game = board(builder, mine=(BEAR, DORK))
         dork = only_oid(game, DORK, 0)
@@ -279,7 +279,7 @@ class TestTheSelectorFindsThemAfterCombat:
 
     def test_untap_all_creatures_that_attacked_untaps_exactly_those(self, builder):
         """Relentless Assault's first sentence, cast in a real game."""
-        from automtg.engine.primitives import tap_permanent
+        from commanderblitz.engine.primitives import tap_permanent
 
         game = board(builder, mine=(BEAR, BEAR, DORK), hand=(RELENTLESS,))
         bears = oids_of(game, BEAR, 0)
@@ -433,14 +433,14 @@ class TestBothSpellingsAreCheckedAtLoadTime:
     key registries exist to refuse."""
 
     def test_the_selector_key_is_known(self):
-        from automtg.engine.effects.selectors import validate_selector
+        from commanderblitz.engine.effects.selectors import validate_selector
 
         validate_selector(ATTACKED, "test")
         with pytest.raises(DslError):
             validate_selector({"attacked_this_turn_objects": True}, "test")
 
     def test_the_value_key_is_known(self):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         validate_value({"attackers_this_turn": "you"}, "test")
         with pytest.raises(DslError):

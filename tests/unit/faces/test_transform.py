@@ -29,14 +29,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader.linking import link_faces
-from automtg.cards.registry import validate_deck
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.primitives import transform
-from automtg.engine.zones import destroy, move_object
+from commanderblitz.cards.loader.linking import link_faces
+from commanderblitz.cards.registry import validate_deck
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.primitives import transform
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import event_types, only_oid
 
 KEEPER = "bloodline_keeper"
@@ -162,7 +162,7 @@ class TestTheActivationCondition:
 
 class TestABackFaceIsNotACard:
     def test_a_deck_may_not_list_one(self, real_registry):
-        from automtg.cards.registry import DeckList
+        from commanderblitz.cards.registry import DeckList
 
         deck = DeckList(
             id="t",
@@ -184,7 +184,7 @@ class TestLoadTimeGuards:
     def _pair(self, front_back: str | None, back_back: str | None):
         from dataclasses import replace
 
-        from automtg.engine.carddef import CardDef
+        from commanderblitz.engine.carddef import CardDef
 
         front = CardDef(id="f", name="F", back_face=front_back)
         back = CardDef(id="b", name="B", back_face=back_back)
@@ -211,7 +211,7 @@ class TestTheArtIsTheOtherFace:
     def test_both_faces_share_a_printing_and_differ_by_face(self, real_registry):
         """The scryfall id names the card, not the face. Without `CardArt.back`
         Lord of Lineage downloads the illustration it just turned away from."""
-        from automtg.cards.images import build_registry_images, load_index
+        from commanderblitz.cards.images import build_registry_images, load_index
 
         index = load_index()
         if index is None:

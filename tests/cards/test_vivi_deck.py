@@ -20,8 +20,8 @@ class is one card and asserts the printed sentence the gate could not reach.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     action_for_card,
     advance_to_step,
@@ -534,7 +534,7 @@ class TestViviOrnitier:
         Counters rather than a cast, because a ritual would put its own {R}{R}{R}
         in the pool and there would be no way to tell whose mana was whose.
         """
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.primitives import add_counters
 
         game, vivi = self.position(builder)
         add_counters(game.state, vivi, "+1/+1", 2)
@@ -550,7 +550,7 @@ class TestViviOrnitier:
 
     def test_it_is_offered_only_once_each_turn(self, builder):
         """"Activate only … once each turn." The second look finds nothing."""
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.primitives import add_counters
 
         game, vivi = self.position(builder)
         add_counters(game.state, vivi, "+1/+1", 2)
@@ -562,7 +562,7 @@ class TestViviOrnitier:
 
     def test_it_is_not_offered_on_an_opponents_turn(self, builder):
         """"Activate only during your turn."""
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.primitives import add_counters
 
         game, vivi = self.position(builder)
         add_counters(game.state, vivi, "+1/+1", 2)

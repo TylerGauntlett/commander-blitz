@@ -170,12 +170,12 @@ is proven at the Python layer.
 
 ## 6 · Coverage
 
-CI holds `src/automtg` at 92% overall (`verify.py --coverage`), but a branch can
+CI holds `src/commanderblitz` at 92% overall (`verify.py --coverage`), but a branch can
 lower a file it created while the total still passes. So measure the files this
 branch added or changed:
 
 ```bash
-python -m pytest tests/unit tests/cards tests/server -q --cov=src/automtg --cov-report=
+python -m pytest tests/unit tests/cards tests/server -q --cov=src/commanderblitz --cov-report=
 python -m coverage report --include="$(git diff --name-only origin/main -- src | tr '\n' ',')"
 ```
 
@@ -204,7 +204,7 @@ Any failure: fix, commit, re-run. Never push red.
 Adding a card is a change, and two pins say so on purpose:
 
 ```bash
-AUTOMTG_UPDATE_GOLDEN=1 python -m pytest tests/cards/test_golden_pool.py   # pool hash + vocabulary
+COMMANDERBLITZ_UPDATE_GOLDEN=1 python -m pytest tests/cards/test_golden_pool.py   # pool hash + vocabulary
 python scripts/build_card_index.py                                          # registry_images.json
 ```
 

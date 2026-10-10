@@ -7,7 +7,7 @@
  * diff fails on every palette tweak and says nothing about whether the
  * information reached the player.
  *
- * See docs/playtest-feedback-02.md for what each of these is answering.
+ * Each answers a cycle-2 playtest finding.
  */
 
 import { expect, type Page, test } from "@playwright/test";
@@ -373,7 +373,7 @@ test.describe("mana notation is drawn, not spelled", () => {
   test("rules text and action labels use the same pips as a cost row", async ({ page }) => {
     // A card's casting cost had been coloured pips since cycle 1, but rules text
     // and activation costs still read "{T}: Add {G}." -- two renderings of one
-    // notation on one screen. See docs/playtest-feedback-02.md item 10.
+    // notation on one screen. A cycle-2 playtest finding (item 10).
     test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
@@ -643,7 +643,7 @@ test.describe("a four-player pod fits", () => {
      * lanes had *wrapped*, and wrapping past a row meant a board you could not
      * read. `--pod-lanes-h` then pinned the lanes to a fixed box that scrolls
      * (`board.css`, `.mat--compact .mat__lanes`), which is the fix
-     * `docs/roadmap.md` called for and the thing the old comment here said it
+     * the roadmap called for and the thing the old comment here said it
      * was waiting on. In a fixed box the hidden amount grows without bound with
      * the board, so "less than one row" is not a property the design has --
      * a token deck reached 102px of it against a 72.8px card.

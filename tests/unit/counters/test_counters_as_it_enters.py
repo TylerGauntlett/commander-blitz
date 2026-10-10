@@ -49,10 +49,10 @@ most (`zones._entering_counters`), and COUNTER_PLACED reports that total.
 
 from __future__ import annotations
 
-from automtg.engine import sagas
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.events import EventType
-from automtg.engine.zones import move_object
+from commanderblitz.engine import sagas
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.zones import move_object
 from tests.conftest import action_for_card, only_oid, settle
 
 GIADA = "giada_font_of_hope"  # the shipped card: "…an additional +1/+1 counter
@@ -162,7 +162,7 @@ class TestTheWitness:
     def test_once_each_turn_still_holds(self, builder):
         """The arrival spends Exemplar's once-each-turn: a second placement the
         same turn draws nothing more."""
-        from automtg.engine.primitives import add_counters
+        from commanderblitz.engine.primitives import add_counters
 
         game = board(builder, mine=[GIADA])
         oid = arrive(game, EXEMPLAR)

@@ -20,12 +20,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
 from tests.conftest import action_for_card, oids_of, only_oid
 
 BEAR = "t_bear"
@@ -146,7 +146,7 @@ class TestTheNewController:
 class TestTheHeuristicAgent:
     def test_it_takes_the_richer_board(self, builder):
         """`choices[0]` would be "left" whatever sits there; seat 3 has the rings."""
-        from automtg.ai.agents.heuristic_agent import HeuristicAgent
+        from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
 
         b = builder(players=4).hand(0, [FATESHIFT]).battlefield(0, ["island"])
         b = b.battlefield(3, [RING, RING, RING])

@@ -26,10 +26,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_counters
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_counters
 from tests.conftest import only_oid
 
 #: The same 1/1 draw trigger twice: `t_counter_watcher` names `+1/+1`,

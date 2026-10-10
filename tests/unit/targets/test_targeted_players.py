@@ -31,11 +31,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind
-from automtg.engine.errors import DslError
-from automtg.engine.structs import PROTECTION_EVERYTHING, PlayerProtection
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.structs import PROTECTION_EVERYTHING, PlayerProtection
 from tests.conftest import declare_targets
 
 COPPERCOATS = "t_coppercoats"

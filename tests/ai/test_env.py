@@ -5,8 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from automtg.ai import action_space, encoding
-from automtg.ai.env import MtgEnv, make_env
+from commanderblitz.ai import action_space, encoding
+from commanderblitz.ai.env import MtgEnv, make_env
 
 
 def rollout(env: MtgEnv, seed: int, limit: int = 4000) -> dict:
@@ -100,9 +100,9 @@ class TestDeterminism:
         assert np.array_equal(a["card_ids"], b["card_ids"])
 
     def test_event_logs_match_for_identical_seeds(self):
-        from automtg.ai.agents import RandomAgent
-        from automtg.ai.agents.base import play
-        from automtg.engine.game import create_game
+        from commanderblitz.ai.agents import RandomAgent
+        from commanderblitz.ai.agents.base import play
+        from commanderblitz.engine.game import create_game
 
         def fingerprint(seed: int) -> list[str]:
             game = create_game(["aesi", "edgar"], seed=seed)
@@ -112,9 +112,9 @@ class TestDeterminism:
         assert fingerprint(4) == fingerprint(4)
 
     def test_different_seeds_give_different_games(self):
-        from automtg.ai.agents import RandomAgent
-        from automtg.ai.agents.base import play
-        from automtg.engine.game import create_game
+        from commanderblitz.ai.agents import RandomAgent
+        from commanderblitz.ai.agents.base import play
+        from commanderblitz.engine.game import create_game
 
         def fingerprint(seed: int) -> list[str]:
             game = create_game(["aesi", "edgar"], seed=seed)

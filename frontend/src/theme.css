@@ -316,7 +316,7 @@
    * solving the pod card size against the space available would be solving a
    * value against a box that value defines. Pinning the box breaks the loop.
    *
-   * It also closes the limit `docs/roadmap.md` recorded: an opponent's board
+   * It also closes the limit the roadmap recorded: an opponent's board
    * growing used to translate the viewer's whole board down the screen. Now it
    * scrolls in place, and `.mat--compact .mat__lanes` already had the fade
    * affordance for exactly this.

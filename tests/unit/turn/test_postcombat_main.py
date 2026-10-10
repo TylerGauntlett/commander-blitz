@@ -23,7 +23,7 @@ step.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import oids_of
 
 WATCHER = "t_postcombat"  # gains 1 life at each of your postcombat mains

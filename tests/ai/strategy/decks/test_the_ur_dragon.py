@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import DefaultStrategy, strategy_for
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import DefaultStrategy, strategy_for
+from commanderblitz.engine.enums import ActionKind, Step
 
 DECK = "the_ur_dragon"
 

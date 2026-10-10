@@ -31,10 +31,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.cost_reduction import cost_reduction
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.cost_reduction import cost_reduction
+from commanderblitz.engine.errors import DslError
 from tests.conftest import two_seat_board
 
 HISTORIC = "t_rao_historic"  # any_of: Artifact / Legendary / Saga

@@ -14,8 +14,8 @@ last test here is the one that would catch them drifting apart.
 
 from __future__ import annotations
 
-from automtg.engine.costs import available_mana, mana_sources
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.costs import available_mana, mana_sources
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import only_oid, pass_until
 
 
@@ -57,7 +57,7 @@ class TestYourLandsMakeTwice:
 
     def test_the_pool_actually_receives_the_doubled_mana(self, builder):
         """Legality's count and payment's addition must be the same number."""
-        from automtg.engine.costs import activate_mana_ability
+        from commanderblitz.engine.costs import activate_mana_ability
 
         game = board(builder, with_vorinclex=True)
         forest = next(o.oid for o in game.state.battlefield_objects(0) if o.def_id == "forest")
@@ -68,7 +68,7 @@ class TestYourLandsMakeTwice:
 class TestOpponentLandsStayTapped:
     def play_a_spell(self, game, pid: int):
         """Tap one of this player's lands for mana by casting something."""
-        from automtg.engine.costs import activate_mana_ability
+        from commanderblitz.engine.costs import activate_mana_ability
 
         land = next(o.oid for o in game.state.battlefield_objects(pid) if o.def_id == "forest")
         activate_mana_ability(game.state, land, 0, pid)
@@ -118,8 +118,8 @@ class TestTheSkipUntapOp:
 
     def tap_and_skip(self, builder):
         """A creature the opponent controls, tapped, told not to untap."""
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = builder(players=2).battlefield(1, ["grizzly_bears"]).build()
         bear = only_oid(game, "grizzly_bears", 1)
@@ -153,8 +153,8 @@ class TestTheSkipUntapOp:
 
     def test_an_already_untapped_permanent_still_spends_it(self, builder):
         """Otherwise the flag waits around and skips some later, unrelated step."""
-        from automtg.engine.effects import execute
-        from automtg.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects import execute
+        from commanderblitz.engine.effects.context import EffectContext
 
         game = builder(players=2).battlefield(1, ["grizzly_bears"]).build()
         bear = only_oid(game, "grizzly_bears", 1)

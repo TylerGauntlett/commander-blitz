@@ -35,15 +35,15 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.registry import CardRegistry, authored_card_paths
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import abilities_of, chars
-from automtg.engine.costs import mana_sources
-from automtg.engine.enums import Keyword
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach
-from automtg.engine.sandbox import GameBuilder
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import abilities_of, chars
+from commanderblitz.engine.costs import mana_sources
+from commanderblitz.engine.enums import Keyword
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach
+from commanderblitz.engine.sandbox import GameBuilder
 from tests.conftest import only_oid
 
 MOON = "imprisoned_in_the_moon"
@@ -192,8 +192,8 @@ class TestItComesBack:
         cobra = imprison(game, "lotus_cobra")
         moon = only_oid(game, MOON)
 
-        from automtg.engine.enums import Zone
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.enums import Zone
+        from commanderblitz.engine.zones import move_object
 
         move_object(game.state, moon, Zone.GRAVEYARD, to_player=0)
         game.state.bump_chars()
@@ -316,8 +316,8 @@ class TestTheSubtypeTable:
         import sqlite3
         from collections import defaultdict
 
-        from automtg.cards.images import catalog_path
-        from automtg.engine.enums import SUBTYPE_CLASS
+        from commanderblitz.cards.images import catalog_path
+        from commanderblitz.engine.enums import SUBTYPE_CLASS
 
         classes = {
             "Land", "Artifact", "Enchantment", "Planeswalker",

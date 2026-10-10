@@ -13,7 +13,7 @@
  *
  * At 1280x800 the ring has to cross a 96px seat strip, three lanes, a fanned
  * hand and a 243px rail, and directional navigation crosses them one card at a
- * time. `docs/handheld-playtest.md` Loop 1 records walking the board as "a bad
+ * time. Handheld playtest loop 1 records walking the board as "a bad
  * way to ask can you reach everything" -- reachable and reachable-in-under-a-
  * second are different properties, and only the second is playable.
  *

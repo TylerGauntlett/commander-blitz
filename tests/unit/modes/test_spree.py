@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import pass_until
 
 CAPER = "t_spree_caper"  # {G}; +{1} draw, +{2} gain 3, +{4} 2 damage to each opponent
@@ -209,7 +209,7 @@ class TestTheSubsetIsPartOfTheAction:
 
 class TestTheLoaderRefusesWhatSpreeCannotMean:
     def _card(self, **extra):
-        from automtg.cards.schema import CardModel
+        from commanderblitz.cards.schema import CardModel
 
         return CardModel.model_validate(
             {
@@ -224,8 +224,8 @@ class TestTheLoaderRefusesWhatSpreeCannotMean:
         )
 
     def _refuses(self, match: str, **extra):
-        from automtg.cards.loader import compile_card
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match=match):
             compile_card(self._card(**extra), source="t")

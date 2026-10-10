@@ -28,7 +28,7 @@ changes, and phasing deliberately does none of that.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, Step, Zone
 from tests.conftest import only_oid, pass_until
 
 OUBLIETTE = "t_oubliette"  # links, and taps on the way back
@@ -89,7 +89,7 @@ def destroy_it(game, oid: int) -> None:
     The trigger has not even drained yet. Waiting on the `phased_in` event waits
     for the thing the test is actually about.
     """
-    from automtg.engine.zones import destroy
+    from commanderblitz.engine.zones import destroy
 
     destroy(game.state, oid)
     pass_until(game, lambda g: any(e.type == "phased_in" for e in g.state.events))

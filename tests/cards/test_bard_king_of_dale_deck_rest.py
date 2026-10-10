@@ -8,8 +8,8 @@ the printed sentence the gate could not reach, plus the near miss.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.cards.test_bard_king_of_dale_deck import (
     ANCHOR,
     BEAR,
@@ -546,7 +546,7 @@ class TestLuminarchAscension:
             .build()
         )
         if lose:
-            from automtg.engine.primitives import lose_life
+            from commanderblitz.engine.primitives import lose_life
 
             lose_life(game.state, 0, 1)
         to_step(game, Step.END_STEP, active)

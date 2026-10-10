@@ -47,12 +47,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, DecisionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.events import EventType
-from automtg.engine.structs import DelayedTrigger
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
+from commanderblitz.engine.structs import DelayedTrigger
 from tests.conftest import _default_answer, oids_of
 
 BEAR = "t_bear"
@@ -321,7 +321,7 @@ class TestItLastsExactlyTheTurn:
         swing(game, {1: 1})
         assert game.state.players[0].life == before + 1
 
-        from automtg.engine.turn import grant_extra_phases
+        from commanderblitz.engine.turn import grant_extra_phases
 
         grant_extra_phases(game.state, ["combat"])
         run_to(game, lambda g: g.state.step is Step.DECLARE_ATTACKERS)

@@ -28,11 +28,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach
 from tests.conftest import oids_of, two_seat_board
 
 DOUBLER = "t_st_doubler"  # +2/+2 for each Equipment you control

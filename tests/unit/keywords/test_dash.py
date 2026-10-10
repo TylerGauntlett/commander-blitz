@@ -36,11 +36,11 @@ import copy
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import _default_answer, only_oid
 
 DASHER = "t_dasher"  # 3/2, dash {1}{R}, printed {2}{R}

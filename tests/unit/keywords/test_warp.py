@@ -45,9 +45,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.schema import AbilityModel, CardModel
-from automtg.engine.enums import ActionKind, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.schema import AbilityModel, CardModel
+from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import pass_until
 
 MARSHAL = "t_warp_marshal"  # grants warp {2}{R} to artifact cards and red creature cards
@@ -181,7 +181,7 @@ class TestItIsAnAlternativeCostAndNotADiscount:
         warp_in(game, LANCER)
         lancer = next(o for o in game.state.battlefield_objects(0) if o.def_id == LANCER)
         assert not lancer.tapped
-        from automtg.engine.characteristics import chars
+        from commanderblitz.engine.characteristics import chars
 
         assert (chars(game.state, lancer.oid).power, chars(game.state, lancer.oid).toughness) == (
             4,
@@ -256,7 +256,7 @@ class TestItIsExiledAtTheNextEndStep:
         # end step comes. Exiling it there would be the delay reaching past the
         # permanent it was made for -- and would hand the caster a free
         # recursion the card does not print.
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder, hand=[LANCER])
         warp_in(game, LANCER)
@@ -354,14 +354,14 @@ class TestTheGrantsScope:
         # A card drawn after the granter arrived has warp too: this is a static
         # re-read every time the cast lines are built, which is what
         # `grant_playable` could not be.
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         game = board(builder, hand=["forest"], library=[LANCER])
         draw_cards(game.state, 0, 1)
         assert [a.warp for a in casts(game, LANCER)] == [None, "{2}{R}"]
 
     def test_the_grant_wears_off_with_its_source(self, builder):
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = board(builder, hand=[LANCER])
         marshal = next(o.oid for o in game.state.battlefield_objects(0) if o.def_id == MARSHAL)
@@ -401,14 +401,14 @@ class TestTheLoaderRefusesTheSilentFailures:
         return AbilityModel(**base)
 
     def test_a_grant_with_no_filter_is_refused(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(abilities=[self._grant(affects_spells=None)])
         with pytest.raises(DslError, match="affects_spells"):
             compile_card(model)
 
     def test_a_grant_with_no_price_is_refused(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(abilities=[self._grant(warp_cost=None)])
         with pytest.raises(DslError, match="warp_cost"):
@@ -418,14 +418,14 @@ class TestTheLoaderRefusesTheSilentFailures:
         # A card in a hand has no board state, and `_matches_printed` would
         # walk past the word -- granting warp to everything the rest of the
         # filter admits.
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(abilities=[self._grant(affects_spells={"tapped": True})])
         with pytest.raises(DslError, match="tapped"):
             compile_card(model)
 
     def test_board_state_inside_an_any_of_branch_is_refused_too(self):
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(
             abilities=[
@@ -440,7 +440,7 @@ class TestTheLoaderRefusesTheSilentFailures:
     def test_a_warp_cost_equal_to_the_printed_one_is_refused(self):
         # One cast offered twice, and nobody would take the second -- evoke's
         # invariant, for evoke's reason.
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(mana_cost="{2}{R}", warp="{2}{R}")
         with pytest.raises(DslError, match="the same as the printed cost"):
@@ -450,7 +450,7 @@ class TestTheLoaderRefusesTheSilentFailures:
         # "Exile that permanent" has nothing to exile when the spell goes to a
         # graveyard, so the card would load, print its reminder text and simply
         # cost less.
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.loader import compile_card
 
         model = self._card(types=["Instant"], power=None, toughness=None, warp="{R}")
         with pytest.raises(DslError, match="only on a permanent card"):
@@ -492,8 +492,8 @@ class TestThePrintedWarpLineIsClaimed:
         return CardModel.model_validate(base)
 
     def test_the_printed_warp_line_is_claimed(self):
-        from automtg.cards.authoring.verify import residual_text
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.authoring.verify import residual_text
+        from commanderblitz.cards.loader import compile_card
 
         card = compile_card(self._card())
         assert residual_text(card, card.oracle_text) == ""
@@ -504,8 +504,8 @@ class TestThePrintedWarpLineIsClaimed:
         This is the half that stops the exemption becoming a way to print a
         mechanic you did not implement.
         """
-        from automtg.cards.authoring.verify import residual_text
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.authoring.verify import residual_text
+        from commanderblitz.cards.loader import compile_card
 
         card = compile_card(self._card(id="t_warp_absent", warp=None))
         assert "Warp {1}{R}" in residual_text(card, card.oracle_text)
@@ -518,8 +518,8 @@ class TestThePrintedWarpLineIsClaimed:
         words. The line stays residual rather than being waved through on the
         first word alone.
         """
-        from automtg.cards.authoring.verify import residual_text
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.authoring.verify import residual_text
+        from commanderblitz.cards.loader import compile_card
 
         card = compile_card(
             self._card(
@@ -533,8 +533,8 @@ class TestThePrintedWarpLineIsClaimed:
     def test_the_reminder_text_does_not_have_to_match(self):
         """`_declares_printed_cost` cuts at the parenthesis before parsing, so a
         real printing -- which always carries the reminder -- is claimed."""
-        from automtg.cards.authoring.verify import residual_text
-        from automtg.cards.loader import compile_card
+        from commanderblitz.cards.authoring.verify import residual_text
+        from commanderblitz.cards.loader import compile_card
 
         card = compile_card(
             self._card(

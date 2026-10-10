@@ -18,7 +18,7 @@ caster would hand them a tempo decision the card deliberately gives away.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from tests.conftest import only_oid, pass_until
 
 BOTTOM = "t_tuck_bottom"  # always the bottom

@@ -36,13 +36,13 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader.effects import _validate_effect
-from automtg.engine.effects import OPS
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Keyword, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import attach
-from automtg.engine.zones import destroy
+from commanderblitz.cards.loader.effects import _validate_effect
+from commanderblitz.engine.effects import OPS
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Keyword, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import attach
+from commanderblitz.engine.zones import destroy
 from tests.conftest import only_oid
 
 FOREST = "forest"

@@ -31,11 +31,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import player_looks_at_library_top, player_reveals_library_top
-from automtg.engine.serialize import player_view
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import (
+    player_looks_at_library_top,
+    player_reveals_library_top,
+)
+from commanderblitz.engine.serialize import player_view
 from tests.conftest import only_oid
 
 #: "You may look at the top card of your library any time." — private.
@@ -96,7 +99,7 @@ class TestTheControllerSeesIt:
 
     def test_it_follows_the_library(self, builder):
         """Continuous, not measured once -- drawing the card shows the next."""
-        from automtg.engine.primitives import draw_cards
+        from commanderblitz.engine.primitives import draw_cards
 
         game = position(builder, PEEKER)
         assert top_seen_by(game, 0)["card_id"] == TOP
@@ -182,7 +185,7 @@ class TestLookingIsNotRevealing:
 class TestItWearsOff:
     def test_it_stops_when_the_source_leaves(self, builder):
         """A standing permission, not a look that already happened."""
-        from automtg.engine.zones import destroy
+        from commanderblitz.engine.zones import destroy
 
         game = position(builder, PEEKER)
         assert top_seen_by(game, 0) is not None

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.engine.enums import ActionKind
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.engine.enums import ActionKind
 from tests.conftest import action_for_card
 
 DECK = "bruvac_the_grandiloquent"

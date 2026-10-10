@@ -26,9 +26,9 @@ door.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.primitives import animate
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.primitives import animate
 from tests.conftest import only_oid, pass_until
 
 LAND = "t_restless"  # the quoted, your-turn-only version

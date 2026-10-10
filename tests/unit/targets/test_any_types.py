@@ -21,9 +21,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import matches, validate_selector
-from automtg.engine.errors import DslError
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import matches, validate_selector
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid
 
 ARTIFACT_OR_ENCHANTMENT = {

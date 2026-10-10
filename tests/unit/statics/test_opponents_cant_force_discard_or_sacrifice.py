@@ -28,14 +28,14 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import DecisionKind, Step, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.player_statics import forced_discard_or_sacrifice_barred
-from automtg.engine.zones import move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import DecisionKind, Step, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.player_statics import forced_discard_or_sacrifice_barred
+from commanderblitz.engine.zones import move_object
 
 TAMIYO = "t_tamiyo_shield"
 BEAR = "t_bear"

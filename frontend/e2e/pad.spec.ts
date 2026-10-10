@@ -308,7 +308,7 @@ test.describe("a gamepad drives the board", () => {
      * element is its axis-aligned ENVELOPE -- wider and shorter than the card,
      * and upright. So the ring stood clear of a hand card at two corners and
      * cut it at the other two, on the surface a controller player spends a main
-     * phase in. `docs/roadmap.md` asks for the arc by name, so the ring is the
+     * phase in. The roadmap asked for the arc by name, so the ring is the
      * half that had to move.
      *
      * Asserted here rather than in a story because `FocusRing` is mounted by

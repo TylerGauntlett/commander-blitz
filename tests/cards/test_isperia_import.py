@@ -19,10 +19,10 @@ import json
 
 import pytest
 
-from automtg.cards.images import load_index
-from automtg.cards.importer import import_deck
-from automtg.cards.moxfield import ParsedDeck
-from automtg.cards.registry import data_dir, default_registry
+from commanderblitz.cards.images import load_index
+from commanderblitz.cards.importer import import_deck
+from commanderblitz.cards.moxfield import ParsedDeck
+from commanderblitz.cards.registry import data_dir, default_registry
 
 DECK_FILE = data_dir() / "decks" / "isperia_supreme_judge.deck.json"
 

@@ -27,13 +27,13 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects.conditions import evaluate_condition
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value, validate_value
-from automtg.engine.enums import ActionKind, Step
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_player, gain_life, lose_life
-from automtg.engine.structs import LifeLock
+from commanderblitz.engine.effects.conditions import evaluate_condition
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value, validate_value
+from commanderblitz.engine.enums import ActionKind, Step
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import damage_player, gain_life, lose_life
+from commanderblitz.engine.structs import LifeLock
 from tests.conftest import action_for_card, oids_of, pass_until
 
 WITCH = "t_moors_witch"  # your end step, if you gained life this turn: opponents lose 1

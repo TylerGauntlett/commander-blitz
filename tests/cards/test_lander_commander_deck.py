@@ -19,8 +19,8 @@ in one placement rather than after it.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import _default_answer, action_for_card, oids_of, pass_until
 
 AESI = "aesi_tyrant_of_gyre_strait"

@@ -7,8 +7,7 @@ what the vocabulary *is*; this file says how it got there.
 
 The sections mirror `card-dsl.md`'s headings, so the history of a reference section
 sits under the same heading here. Within a section, entries are in the order the
-reference used to carry them. For a capability's full write-up (the tier, what was
-built, the tests), see [completed-features.md](completed-features.md); for dates, see
+reference used to carry them. For dates, see
 `git log -- docs/card-dsl.md`.
 
 When you change a capability, write the current behaviour into `card-dsl.md` in the
@@ -283,7 +282,7 @@ Ward: `may` has taken an arbitrary `player` since Fact or Fiction and a `pay` co
 
 `dealt_damage`: "…deals **that much** damage" needs nothing extra: `amount` was always copied into the trigger's bindings, so `{"binding": "amount"}` reads it.
 
-Landfall: Reading the first as the second is a silent defect, because the card still works on your own land drops and only goes quiet on ramp — it is exactly what was wrong with Aesi (see [bugs.md](bugs.md)).
+Landfall: Reading the first as the second is a silent defect, because the card still works on your own land drops and only goes quiet on ramp — it is exactly what was wrong with Aesi.
 
 ## Static abilities
 

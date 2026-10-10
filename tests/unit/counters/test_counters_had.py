@@ -23,9 +23,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.enums import Zone
-from automtg.engine.errors import DslError
-from automtg.engine.zones import move_object
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, only_oid
 
 PERSISTER = "t_persister"  # 3/3, persist
@@ -88,7 +88,7 @@ class TestPersist:
 
 class TestTheSnapshotIsWhatMakesItWork:
     def test_the_dies_event_carries_the_counters(self, builder):
-        from automtg.engine.events import EventType
+        from commanderblitz.engine.events import EventType
 
         game, oid = position(builder)
         game.state.objects[oid].add_counter("+1/+1", 2)
@@ -107,8 +107,8 @@ class TestTheSnapshotIsWhatMakesItWork:
 
     def test_counters_had_is_zero_outside_a_dies_trigger(self, builder):
         """No binding, no snapshot: it reports nothing rather than guessing."""
-        from automtg.engine.effects.context import EffectContext
-        from automtg.engine.effects.values import evaluate_value
+        from commanderblitz.engine.effects.context import EffectContext
+        from commanderblitz.engine.effects.values import evaluate_value
 
         game, _ = position(builder)
         ctx = EffectContext(state=game.state, controller=0)
@@ -123,7 +123,7 @@ class TestTheLoaderKnowsIt:
         assert ability.trigger.condition is not None
 
     def test_an_unknown_value_key_is_still_refused(self):
-        from automtg.engine.effects.values import validate_value
+        from commanderblitz.engine.effects.values import validate_value
 
         with pytest.raises(DslError):
             validate_value({"counters_used_to_have": "-1/-1"}, "test")

@@ -3,7 +3,7 @@
  *
  * Everything here answers a question the player could not previously answer by
  * looking: how much mana do I have, why is that card dim, what type is that
- * permanent, what is the opponent doing. See docs/playtest-feedback-01.md.
+ * permanent, what is the opponent doing. They came out of the first playtest.
  *
  * These are deliberately assertions about *what is rendered*, not about
  * pixels -- a screenshot diff would fail on every palette tweak and tell us

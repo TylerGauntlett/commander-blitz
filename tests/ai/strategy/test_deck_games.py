@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.ai.arena import Matchup, run_game
+from commanderblitz.ai.arena import Matchup, run_game
 from tests.cards.test_deck_legality import PRECONS
 
 #: Three four-player pods, every precon seated once.

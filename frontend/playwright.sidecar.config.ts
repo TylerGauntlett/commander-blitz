@@ -9,10 +9,10 @@ import { defineConfig, devices } from "@playwright/test";
  * A config of its own rather than a fourth project in `playwright.config.ts`,
  * because `webServer` is per config and this one is different in kind. There
  * is no Vite: the server serves `dist/` itself at `/`, which is exactly how the
- * Electron shell loads it. And the server is `automtg.server.desktop`, started
+ * Electron shell loads it. And the server is `commanderblitz.server.desktop`, started
  * the way the shell starts it -- `--generated-dir` pointed at a scratch
  * directory, `--remote-origin` pointed at a port nobody answers, and the two
- * test switches (`AUTOMTG_FIXTURE_DECKS`, `AUTOMTG_CPU`) deliberately absent,
+ * test switches (`COMMANDERBLITZ_FIXTURE_DECKS`, `COMMANDERBLITZ_CPU`) deliberately absent,
  * because a shipped build never sets them.
  *
  * What it proves is in `e2e/sidecar.spec.ts`: a page that makes no request off
@@ -55,7 +55,11 @@ const GENERATED =
  */
 const env: Record<string, string> = {};
 for (const [key, value] of Object.entries(process.env)) {
-  if (value !== undefined && key !== "AUTOMTG_FIXTURE_DECKS" && key !== "AUTOMTG_CPU") {
+  if (
+    value !== undefined &&
+    key !== "COMMANDERBLITZ_FIXTURE_DECKS" &&
+    key !== "COMMANDERBLITZ_CPU"
+  ) {
     env[key] = value;
   }
 }
@@ -88,7 +92,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      `"${PYTHON}" -m automtg.server.desktop --port ${PORT}` +
+      `"${PYTHON}" -m commanderblitz.server.desktop --port ${PORT}` +
       ` --client-dir frontend/dist --generated-dir "${GENERATED}"` +
       " --remote-origin http://127.0.0.1:1 --content-version e2e",
     cwd: "..",

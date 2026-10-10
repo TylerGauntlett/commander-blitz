@@ -7,8 +7,8 @@ anything ordered wrongly here is what a trigger picks when nobody is asked.
 
 from __future__ import annotations
 
-from automtg.engine.carddef import TargetSpec
-from automtg.engine.targeting import enumerate_target_tuples
+from commanderblitz.engine.carddef import TargetSpec
+from commanderblitz.engine.targeting import enumerate_target_tuples
 
 CREATURE = {"types": ["Creature"], "zone": "battlefield"}
 

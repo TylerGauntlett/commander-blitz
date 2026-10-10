@@ -34,11 +34,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.enums import Zone
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import exile as exile_object
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.enums import Zone
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import exile as exile_object
 from tests.conftest import only_oid
 
 CLOAK = "t_cloak"
@@ -179,9 +179,9 @@ class TestTheOriginRecord:
 
 class TestTheLoaderChecksIt:
     def test_a_return_with_nothing_to_return_is_refused(self):
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="nothing to return"):
             compile_card(

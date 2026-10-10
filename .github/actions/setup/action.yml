@@ -59,7 +59,7 @@ runs:
     - id: venv
       uses: actions/cache/restore@v4
       with:
-        path: ~/.automtg-venv
+        path: ~/.commanderblitz-venv
         key: venv-${{ runner.os }}-${{ steps.image.outputs.os }}-py${{ steps.python.outputs.python-version }}-${{ hashFiles('pyproject.toml', 'constraints.txt') }}
 
     # Pinned by constraints.txt (scripts/lock_deps.py), so a release that lands
@@ -69,21 +69,21 @@ runs:
     # and everything else it would do is fixed by the key.
     - if: steps.venv.outputs.cache-hit != 'true'
       run: |
-        python -m venv ~/.automtg-venv
-        ~/.automtg-venv/bin/python -m pip install -c constraints.txt -e ".[dev]"
+        python -m venv ~/.commanderblitz-venv
+        ~/.commanderblitz-venv/bin/python -m pip install -c constraints.txt -e ".[dev]"
       shell: bash
 
     - if: steps.venv.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
-        path: ~/.automtg-venv
+        path: ~/.commanderblitz-venv
         key: ${{ steps.venv.outputs.cache-primary-key }}
 
     # Every later step's `python` is the venv's, so verify.py's sys.executable
     # -- and the PYTHON it hands playwright.config.ts -- is too.
     - run: |
-        echo "VIRTUAL_ENV=$HOME/.automtg-venv" >> "$GITHUB_ENV"
-        echo "$HOME/.automtg-venv/bin" >> "$GITHUB_PATH"
+        echo "VIRTUAL_ENV=$HOME/.commanderblitz-venv" >> "$GITHUB_ENV"
+        echo "$HOME/.commanderblitz-venv/bin" >> "$GITHUB_PATH"
       shell: bash
 
     # No `cache: npm`, for the same reason as pip: node_modules itself is

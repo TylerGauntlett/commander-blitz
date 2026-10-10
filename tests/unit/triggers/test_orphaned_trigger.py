@@ -25,8 +25,8 @@ and being pushed.
 
 from __future__ import annotations
 
-from automtg.engine.stack import push_triggered_ability, resolve_top
-from automtg.engine.structs import TriggerInstance
+from commanderblitz.engine.stack import push_triggered_ability, resolve_top
+from commanderblitz.engine.structs import TriggerInstance
 
 BEAR = "t_bear"
 

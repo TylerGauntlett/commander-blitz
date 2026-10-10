@@ -43,11 +43,11 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, Keyword, Step, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, Keyword, Step, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import advance_to_step, find_action, pass_until
 
 SWAMP = "swamp"
@@ -216,7 +216,7 @@ class TestItIsExiledHoweverItLeaves:
         pass_until(game, lambda g: not g.state.stack)
         assert game.state.objects[oid].zone is Zone.BATTLEFIELD
 
-        from automtg.engine.zones import move_object
+        from commanderblitz.engine.zones import move_object
 
         move_object(game.state, oid, to, to_player=0, cause="test")
         return game.state.objects[oid].zone

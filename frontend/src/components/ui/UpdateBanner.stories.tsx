@@ -54,7 +54,7 @@ function Stage({ path, update }: { path: string; update: UpdateReady }) {
 const meta = {
   title: "ui/UpdateBanner",
   component: Stage,
-  parameters: { automtg: { mount: "bare" } },
+  parameters: { commanderblitz: { mount: "bare" } },
 } satisfies Meta<typeof Stage>;
 
 export default meta;

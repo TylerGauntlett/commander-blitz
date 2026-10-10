@@ -34,12 +34,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.carddef import CLOAK_WARD, ward_ability
-from automtg.engine.characteristics import chars, ward_abilities
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.carddef import CLOAK_WARD, ward_ability
+from commanderblitz.engine.characteristics import chars, ward_abilities
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
 from tests.conftest import only_oid, pass_until, settle
 
 LORD = "t_ward_lord"  # "Each other Human you control gets +1/+0 and has ward {1}."

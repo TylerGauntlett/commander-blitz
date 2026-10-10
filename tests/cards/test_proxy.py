@@ -12,8 +12,8 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.proxy import (
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.proxy import (
     CardFacts,
     build_proxy,
     lift_keywords,

@@ -28,9 +28,9 @@ fizzled alike, with nothing to remember to clear.
 
 from __future__ import annotations
 
-from automtg.engine import legality
-from automtg.engine import stack as stack_mod
-from automtg.engine.enums import ActionKind, Zone
+from commanderblitz.engine import legality
+from commanderblitz.engine import stack as stack_mod
+from commanderblitz.engine.enums import ActionKind, Zone
 from tests.conftest import only_oid
 
 SPLIT = "t_split_second"  # {1}{B} instant, split second: destroy target creature

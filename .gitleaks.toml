@@ -1,0 +1,28 @@
+# Secret scanning, run on every pull request (`secrets` job in deploy.yml) and
+# over the full history before the repository went public.
+title = "commander-blitz"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Card data and lockfiles: large, machine-written, and secret-free by construction"
+paths = [
+  '''^data/art/''',
+  '''^data/catalog/''',
+  '''^data/cards/''',
+  '''^data/authoring/''',
+  '''^tests/data/''',
+  '''^frontend/public/symbols/''',
+  '''package-lock\.json$''',
+  '''^constraints\.txt$''',
+]
+# A card definition's `"token": "<id>"` names the token it creates; a Scryfall
+# printing id is a UUID; lobby codes and pod tokens are generated at runtime.
+# None is a credential, and all three trip the generic-api-key rule.
+regexTarget = "line"
+regexes = [
+  '''"token": "[a-z0-9_]+"''',
+  '''PROXY_SECRET_LAIR''',
+  '''secrets\.token_urlsafe''',
+]

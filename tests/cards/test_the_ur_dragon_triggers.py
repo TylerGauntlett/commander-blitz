@@ -26,11 +26,11 @@ the card were mis-written.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.primitives import change_control, damage_permanent, damage_player
-from automtg.engine.state import new_object
-from automtg.engine.zones import move_object
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.primitives import change_control, damage_permanent, damage_player
+from commanderblitz.engine.state import new_object
+from commanderblitz.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     count_on_battlefield,
@@ -861,7 +861,7 @@ class TestSteelyResolve:
     def test_a_shrouded_dragon_cannot_be_targeted(self, builder):
         """Shroud is what the card buys, so it is read once as a rules fact and
         not only as a word in a keyword set."""
-        from automtg.engine.targeting import can_be_targeted
+        from commanderblitz.engine.targeting import can_be_targeted
 
         game = self.position(builder)
         dragon = only_oid(game, self.MY_DRAGON)

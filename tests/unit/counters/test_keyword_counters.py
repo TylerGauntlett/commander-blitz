@@ -44,18 +44,18 @@ import contextlib
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.schema import CardModel
-from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.combat import can_block
-from automtg.engine.effects import execute
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.values import evaluate_value
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import DslError
-from automtg.engine.primitives import add_counters, grant_keyword, remove_counters
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import destroy, move_object
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.characteristics import chars, has_keyword
+from commanderblitz.engine.combat import can_block
+from commanderblitz.engine.effects import execute
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.values import evaluate_value
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.primitives import add_counters, grant_keyword, remove_counters
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import action_for_card, find_action, only_oid, pass_until
 
 BEAR = "t_bear"

@@ -32,11 +32,11 @@ trigger's bindings, so `{"binding": "amount"}` reads the damage that was dealt.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.primitives import damage_permanent, damage_player
-from automtg.engine.structs import TargetRef
-from automtg.engine.zones import move_object
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.primitives import damage_permanent, damage_player
+from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.zones import move_object
 from tests.conftest import _default_answer, find_action, only_oid, pass_until, plus_one_counters
 
 ENRAGER = "t_enrager"  # 3/4, "whenever dealt damage, put a +1/+1 counter on it"
@@ -217,9 +217,9 @@ class TestTheLoaderKnowsIt:
     def test_an_unknown_event_is_still_refused(self):
         import pytest
 
-        from automtg.cards.loader import compile_card
-        from automtg.cards.schema import CardModel
-        from automtg.engine.errors import DslError
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+        from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError):
             compile_card(

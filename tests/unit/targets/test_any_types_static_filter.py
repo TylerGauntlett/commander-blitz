@@ -21,7 +21,7 @@ The shipped witness is Archmage of Runes; `t_runes` is its shape.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.engine.enums import ActionKind, Step
 
 REDUCER = "t_runes"  # any_types: the working spelling
 BROKEN = "t_runes_conjunction"  # types: the conjunction that matches nothing

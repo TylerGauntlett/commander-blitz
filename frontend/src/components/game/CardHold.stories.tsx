@@ -16,7 +16,7 @@ import { CardHold } from "./CardHold";
 const meta = {
   title: "Game/CardHold",
   component: CardHold,
-  parameters: { automtg: { mount: "tableOverlay" } },
+  parameters: { commanderblitz: { mount: "tableOverlay" } },
 } satisfies Meta<typeof CardHold>;
 
 export default meta;

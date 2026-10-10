@@ -19,11 +19,11 @@ effect-side selector), so it is never silently ignored.
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import matches_static, ward_abilities
-from automtg.engine.effects.context import EffectContext
-from automtg.engine.effects.selectors import resolve_pool
-from automtg.engine.enums import Step
-from automtg.engine.primitives import add_counters, remove_counters
+from commanderblitz.engine.characteristics import matches_static, ward_abilities
+from commanderblitz.engine.effects.context import EffectContext
+from commanderblitz.engine.effects.selectors import resolve_pool
+from commanderblitz.engine.enums import Step
+from commanderblitz.engine.primitives import add_counters, remove_counters
 from tests.conftest import only_oid
 
 WARDEN = "t_hc_warden"

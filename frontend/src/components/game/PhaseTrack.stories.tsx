@@ -16,7 +16,7 @@ import { PhaseTrack } from "./PhaseTrack";
 const meta = {
   title: "Game/PhaseTrack",
   component: PhaseTrack,
-  parameters: { automtg: { mount: "trackRow" } },
+  parameters: { commanderblitz: { mount: "trackRow" } },
 } satisfies Meta<typeof PhaseTrack>;
 
 export default meta;

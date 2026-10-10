@@ -22,7 +22,7 @@ import { POD_HUE, Room, SHELF_HUE, soft } from "./Room";
 const meta = {
   title: "Lobby/Room",
   component: Room,
-  parameters: { automtg: { mount: "screen" } },
+  parameters: { commanderblitz: { mount: "screen" } },
   args: { hue: POD_HUE, children: null },
 } satisfies Meta<typeof Room>;
 

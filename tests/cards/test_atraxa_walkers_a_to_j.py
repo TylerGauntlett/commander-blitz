@@ -31,13 +31,13 @@ castable instant in each seat's hand is a reason for priority to stop.
 
 from __future__ import annotations
 
-from automtg.engine import combat as combat_mod
-from automtg.engine import legality, sba
-from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
-from automtg.engine.player_statics import search_forbidden
-from automtg.engine.sba import player_cant_lose, player_cant_win
-from automtg.engine.zones import move_object
+from commanderblitz.engine import combat as combat_mod
+from commanderblitz.engine import legality, sba
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.player_statics import search_forbidden
+from commanderblitz.engine.sba import player_cant_lose, player_cant_win
+from commanderblitz.engine.zones import move_object
 from tests.conftest import (
     _default_answer,
     activations,

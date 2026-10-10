@@ -18,7 +18,7 @@ Worth recording, because the gap record filed it as missing.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import only_oid, pass_until
 
 IGNITION = "t_ignition"  # the creature deals it

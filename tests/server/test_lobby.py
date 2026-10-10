@@ -9,10 +9,10 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.registry import default_registry
-from automtg.server import lobby as L
-from automtg.server.lobby import Pod, PodError, PodRegistry, PodSeat
-from automtg.server.sessions import SessionRegistry
+from commanderblitz.cards.registry import default_registry
+from commanderblitz.server import lobby as L
+from commanderblitz.server.lobby import Pod, PodError, PodRegistry, PodSeat
+from commanderblitz.server.sessions import SessionRegistry
 
 
 @pytest.fixture(scope="module")
@@ -232,7 +232,7 @@ class TestSeatAdmin:
         """
         from dataclasses import replace
 
-        from automtg.cards.registry import GameData
+        from commanderblitz.cards.registry import GameData
 
         # Three decks, two of which are the same commander under different ids.
         aesi = data.decks["aesi"]
@@ -533,7 +533,7 @@ class TestDeckLookupIsLive:
         """
         from dataclasses import replace
 
-        from automtg.cards.registry import GameData
+        from commanderblitz.cards.registry import GameData
 
         pod, (host,) = seated(pods, guests=0)
         seat = pod.view_for(host.player_id).seats[0]
@@ -551,7 +551,7 @@ class TestDeckLookupIsLive:
     def test_a_deck_added_after_the_pod_opened_is_selectable(self, pods, data):
         from dataclasses import replace
 
-        from automtg.cards.registry import GameData
+        from commanderblitz.cards.registry import GameData
 
         pod, (host,) = seated(pods, guests=0)
         with pytest.raises(PodError):

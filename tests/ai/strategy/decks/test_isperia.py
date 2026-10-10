@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from automtg.ai.agents.heuristic_agent import HeuristicAgent
-from automtg.ai.strategy import DefaultStrategy
-from automtg.ai.strategy.archetypes import Control
-from automtg.engine.enums import ActionKind, Step
+from commanderblitz.ai.agents.heuristic_agent import HeuristicAgent
+from commanderblitz.ai.strategy import DefaultStrategy
+from commanderblitz.ai.strategy.archetypes import Control
+from commanderblitz.engine.enums import ActionKind, Step
 from tests.conftest import action_for_card, only_oid, pass_until
 
 DECK = "isperia"

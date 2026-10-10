@@ -25,12 +25,12 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import compile_card
-from automtg.cards.loader.statics import _validate_cost_reduction
-from automtg.cards.schema import CardModel
-from automtg.engine.cost_reduction import reduction_amount
-from automtg.engine.costs import ability_mana
-from automtg.engine.errors import DslError
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.loader.statics import _validate_cost_reduction
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.cost_reduction import reduction_amount
+from commanderblitz.engine.costs import ability_mana
+from commanderblitz.engine.errors import DslError
 from tests.conftest import oids_of
 
 LEGEND_SCALER = "t_legend_scaling_ability"  # {5}, {T}: draw; {1} less per legendary creature

@@ -5,7 +5,7 @@
  * "does mine die, does theirs" -- and for two cycles only one side asked it.
  * `autoBlock.blockTier` read power and toughness and nothing else, so a
  * deathtouch blocker was ranked a chump against a 5/5 and a first striker was
- * scored as losing fights it walks away from (`docs/playtest-feedback-03.md`,
+ * scored as losing fights it walks away from (the cycle-3 playtest,
  * cycle 4 item 5). Putting the fight in one place is what stops the two
  * shortcuts from disagreeing about the same two cards.
  *

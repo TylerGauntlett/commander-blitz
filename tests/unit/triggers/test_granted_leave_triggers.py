@@ -28,8 +28,8 @@ problem rather than an engine one.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, Zone
-from automtg.engine.zones import destroy
+from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.zones import destroy
 from tests.conftest import oids_of, settle
 
 REBIRTH = "t_rebirth"  # grants "when this dies, return it tapped"

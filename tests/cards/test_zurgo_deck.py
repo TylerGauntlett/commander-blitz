@@ -26,8 +26,8 @@ card placed with `.battlefield` is an ordinary object, not a token, and every
 
 from __future__ import annotations
 
-from automtg.engine.characteristics import chars, has_keyword
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.characteristics import chars, has_keyword
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import _default_answer, action_for_card, oids_of, only_oid, pass_until
 
 ZURGO = "zurgo_stormrender"

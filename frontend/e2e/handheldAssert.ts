@@ -21,7 +21,7 @@
  *
  * `page.evaluate` serialises this function, so it may close over nothing and
  * import nothing. Everything it needs is inlined, and the app publishes its own
- * ring state on `window.__AUTOMTG_RING` rather than having this re-derive it --
+ * ring state on `window.__COMMANDERBLITZ_RING` rather than having this re-derive it --
  * a gate that reimplements the thing it is checking is a gate that can agree
  * with itself while disagreeing with the app.
  */
@@ -282,13 +282,13 @@ export function handheldAssert(): HandheldReport {
    */
   const ring = (
     window as unknown as {
-      __AUTOMTG_RING?: {
+      __COMMANDERBLITZ_RING?: {
         cursor: () => string | null;
         stops: () => string[];
         unreachable: () => string[];
       };
     }
-  ).__AUTOMTG_RING;
+  ).__COMMANDERBLITZ_RING;
   const named = ring?.cursor() ?? null;
   const stops = ring?.stops() ?? [];
   const marked = document.querySelectorAll<HTMLElement>("[data-cursor]");
@@ -390,7 +390,7 @@ export function handheldAssert(): HandheldReport {
      * overflow counts a child's TRANSFORMED box, and the hand is an arc -- the
      * outermost cards are rotated about 8 degrees, so a 103px card reports a
      * 122px rect and every hand of six or more looked 26-30px over. The arc is
-     * the feature; `docs/roadmap.md` asks for it by name.
+     * the feature; the roadmap asked for it by name.
      *
      * `offsetLeft` and `offsetWidth` are untransformed layout values, which is
      * the same distinction the handheld-board round's layout code (`docs/design-record.md#handheld-board`) records about its
