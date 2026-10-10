@@ -34,6 +34,12 @@ def main() -> int:
         "(default: the aesi/edgar fixture mirror)",
     )
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="play games across N processes (same results, in the same order)",
+    )
     parser.add_argument("--out", type=Path, default=None, help="write reports here")
     parser.add_argument(
         "--checkpoint",
@@ -66,6 +72,7 @@ def main() -> int:
         out_dir=args.out,
         decks=decks,
         checkpoint=args.checkpoint,
+        workers=args.workers,
     )
     elapsed = time.time() - start
 

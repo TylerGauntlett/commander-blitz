@@ -324,8 +324,9 @@ jobs:
       - uses: ./.github/actions/setup
       # `--coverage` on every event now, not just pull requests: sysmon (which
       # the 3.13 bump bought) makes the floors nearly free, so a push to main
-      # holds them too. `--jobs 2` is the runner's core count.
-      - run: python scripts/verify.py --only pytest --coverage --jobs 2 --strict --verbose
+      # holds them too. `--jobs` is the runner's core count: 4 on a public
+      # repository's standard runner, 2 while this one was private.
+      - run: python scripts/verify.py --only pytest --coverage --jobs "$(nproc)" --strict --verbose
       # Informational, as in verify.py: a stale count in docs/testing.md is a doc
       # bug, not a build break -- but no `--only` slice ever ran it (SD-01).
       - run: python scripts/test_counts.py --check --no-frontend
@@ -350,7 +351,7 @@ jobs:
         with:
           fetch-depth: 1
       - uses: ./.github/actions/setup
-      - run: python scripts/verify.py --only sim --strict --verbose
+      - run: python scripts/verify.py --only sim --jobs "$(nproc)" --strict --verbose
 
   frontend:
     name: frontend, stories and coverage floors

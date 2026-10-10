@@ -317,6 +317,16 @@ class TestArenaPlumbing:
         second = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
         assert [r.to_dict() for r in first] == [r.to_dict() for r in second]
 
+    def test_workers_play_the_same_games(self):
+        # The gate's arena runs under --workers; it must still be the same canary.
+        serial = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42)
+        pooled = run_matchup((CANARY, "random"), pod_size=2, games=4, seed=42, workers=2)
+        assert [r.to_dict() for r in pooled] == [r.to_dict() for r in serial]
+
+    def test_workers_refuse_a_registry_they_cannot_see(self):
+        with pytest.raises(ValueError, match="default registry"):
+            run_matchup((CANARY, "random"), pod_size=2, games=2, data=object(), workers=2)
+
     def test_markdown_report_renders(self, duel_results):
         text = render_markdown(summarize(duel_results))
         assert "# Arena results" in text
