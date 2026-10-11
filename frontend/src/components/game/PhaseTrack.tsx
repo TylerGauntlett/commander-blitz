@@ -115,8 +115,8 @@ export function PhaseTrack({ state }: Props) {
         
         The ribbon ran them together into one chip, which is wrong in the case
         that matters most: on somebody else's turn, holding your own priority is
-        the whole of a Commander player's job. the handheld-board round's (`docs/design-record.md#handheld-board`)
-        `02-blockers` is the file that proves it -- Edgar's turn, your decision,
+        the whole of a Commander player's job. the handheld-board round's
+        `02-blockers` was the file that proved it -- Edgar's turn, your decision,
         so the seat wears the priority tick and not the active ring.
 
         Drawn only when the two DISAGREE. On your own turn with your own

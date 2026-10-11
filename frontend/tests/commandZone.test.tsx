@@ -129,7 +129,7 @@ describe("clearing a hover the plinth can no longer own", () => {
   it("clears the preview when the hovered plinth unmounts", () => {
     // `hoveredOid` is otherwise only ever cleared by an element's own leave
     // handler, so a commander shuffled back into the library while hovered pins
-    // the rail to a card nobody is pointing at -- mockup-fidelity.md defect #4.
+    // the rail to a card nobody is pointing at.
     useUiStore.setState({ hoveredOid: 99 });
     const { unmount, hovered } = renderZone([commander()]);
     unmount();

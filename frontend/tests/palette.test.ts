@@ -1,7 +1,7 @@
 /**
  * Can you read a card that is an illustration?
  *
- * The art bleeds to the frame -- a decision, see docs/mockup-fidelity.md and
+ * The art bleeds to the frame -- a decision, see docs/adr/0011-the-card-is-the-illustration.md and
  * the header of `cards.css`: a full-bleed illustration identifies a card better
  * than one of eight pale washes, and it does it per card rather than per
  * category.
@@ -223,7 +223,7 @@ describe("the frame", () => {
   it("no longer encodes card type as a colour", () => {
     // The guard on the decision itself. Re-adding `.face--type-*` fills would
     // put a pale wash back over the illustration and re-open a question
-    // docs/mockup-fidelity.md records as closed -- so make that a deliberate
+    // docs/adr/0011-the-card-is-the-illustration.md records as closed -- so make that a deliberate
     // act rather than something that can be slipped back in.
     expect(CSS).not.toMatch(/\.face--type-\w+\s*\{/);
     expect(CSS).not.toMatch(/--type-ring(-w)?:/);

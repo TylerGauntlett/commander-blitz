@@ -157,16 +157,5 @@ four-player games and checks a seed replays exactly.
 - **Hold mana open.** Instants other than counterspells and removal are cast in
   its own main phase, and nothing keeps counterspell mana up on purpose.
 
-Known gaps the deck work turned up, each worked around in the decks that needed
-it and worth lifting into the baseline:
-
-- A modal spell's targets are chosen after its mode, so the cast action cannot
-  see them; a "choose one" burn spell can still be pointed at our own creature.
-- `classify` calls only destroy/exile "removal", so burn and bounce miss the
-  "never at our own board" rule (Vivi's plan adds it for its deck).
-- A spell that both draws and costs life (Sign in Blood) reads as harmful and
-  goes at an opponent even with nothing to punish them (Sheoldred's plan aims it).
-- A "may" is always answered yes before a strategy is asked (Blor's Assault
-  Suit gives its creature away every time).
-- Scute Swarm's landfall copies can trip the engine's 200-trigger loop guard in
-  a long game, which scores it as a draw.
+Gaps worked around in individual deck plans and worth lifting into the baseline
+are listed under "Strategy gaps" in [TECH_DEBT.md](../../TECH_DEBT.md).

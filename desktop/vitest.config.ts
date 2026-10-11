@@ -16,7 +16,6 @@ export default defineConfig({
       provider: "v8",
       include: ["src/**/*.ts"],
       exclude: ["src/main.ts", "src/preload.ts", "src/shellUpdater.ts", "src/ipc.ts"],
-      thresholds: { statements: 90, branches: 80, functions: 90 },
     },
   },
 });

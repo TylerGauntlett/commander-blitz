@@ -1,7 +1,7 @@
 /**
  * The front door: a main menu made of cards.
  *
- * Ported from the door round's 01 'The Hand' (`docs/design-record.md#door`), the direction that round
+ * Ported from the door round's 01 'The Hand', the direction that round
  * converged on. **THE MENU IS A HAND OF CARDS AND YOU ARE ALREADY HOLDING IT** --
  * the one you are on squares up, lifts and lights the room; the other two tilt
  * away and stack behind it. Selecting is casting: pressing A on a card is the

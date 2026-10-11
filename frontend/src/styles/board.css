@@ -20,7 +20,7 @@
  * -- which is why the right rail stopped where the hand started. At 1280x800
  * that rail was 514px, and the action list, the rows a turn is actually spent
  * in, got 172 of them. Running the rail to the bottom edge instead makes it
- * 748 and the list 363-398; the handheld-board round's measurements (`docs/design-record.md#handheld-board`) prints both.
+ * 748 and the list 363-398; the handheld-board round's measurements (`docs/adr/0013-handheld-floors-are-ci-gates.md`) prints both.
  *
  * The cost is that the hand no longer has the whole width. Retiring the left
  * rail is what pays for it -- see `.table__body`.
@@ -249,7 +249,7 @@
  * It was a count on a chip, then a ghost button in the action bar's overflow
  * (a cycle-2 playtest finding), then a shrunken card face in the bottom-left
  * corner where `--card-w` resolved to ~74px and the name clipped to
- * "Aesi, Tyra…" -- docs/design-record.md (Open fidelity findings) defect #5. A card face has six
+ * "Aesi, Tyra…". A card face has six
  * things to fit and this column has room for three, so it stopped being a card
  * face: a portrait, a name, and a state strip, sized for the column instead of
  * shrunk into it. The full card is one hover away in the preview rail.
@@ -278,7 +278,7 @@
    No box around the portrait. The picture has a ring of its own and the orb has
    a border of its own; a third rectangle between them is a frame around a frame,
    and padding this column cannot spend at any width. This is the handheld-board
-   round's plinth (`docs/design-record.md#handheld-board`), drawn the same at
+   round's plinth, drawn the same at
    every size rather than only on a Deck. */
 .cmdslot {
   /* Pips size themselves off `--card-w`, which nothing sets in this column;
@@ -318,7 +318,7 @@
  * where the seal clamps to 76px of a 156px portrait, that left 76px for a
  * two-line name and put the disc through the middle of "Aesi, Tyrant of Gyre
  * Strait". Half the caption's width is a bad trade for 26px of height in a panel
- * that now has height to spare, and it is the same trade the orb round's 03 'Plinth' (`docs/design-record.md#orb`)
+ * that now has height to spare, and it is the same trade the orb round's 03 'Plinth'
  * already made with `.cmdwrap`'s bottom padding.
  */
 /*
@@ -578,7 +578,7 @@
  * The commander's art is the panel's ground, and that is the whole direction:
  * four seats in a pod used to be four grey rectangles told apart by a name in
  * 12px type, while the one asset that separates them instantly was already
- * loaded and drawn at 80px. the orb round (`docs/design-record.md#orb`) calls that defect #4 and
+ * loaded and drawn at 80px. the orb round (`docs/adr/0012-art-fetched-once-served-locally.md`) names that defect and
  * picks this direction to answer it.
  *
  * **There is no colour-identity tint**, deliberately, and it is the one thing
@@ -593,7 +593,7 @@
  * floors it at its content, so a short viewport crops nothing.
  *
  * **One design, sized by its column.** This is the handheld-board round's
- * plinth (`docs/design-record.md#handheld-board`) at every size. It used to be
+ * plinth at every size. It used to be
  * that only on a Deck, with a brass seal, leaf stacks and a 2:1 banner on
  * desktop -- two designs off one DOM. Now the orb is an inline-size container
  * and everything in it is sized in `cqi`, so the 190px desktop column and the
@@ -625,7 +625,7 @@
  * `inset: -14%` so the blur's soft edge falls outside the panel instead of
  * feathering into a visible border. The blur is for the type's sake, not to hide
  * a stretch: the crop is 626x457 and this box is 190px wide (0.30x) or 112px
- * (0.18x) -- see the art ceiling rule in the design record (`docs/design-record.md#board-themes`) before porting this
+ * (0.18x) -- see the art ceiling rule in `docs/adr/0012-art-fetched-once-served-locally.md` before porting this
  * to anything wider.
  */
 .orb__wash {
@@ -1011,7 +1011,7 @@
  * them, a `SeatIcon` mark and the count -- the chip an opponent's seat already
  * draws, so a zone is a shape and a colour and a number. These were leaf stacks
  * with a word under them, and the word could go once the mark could say it
- * (`docs/design-record.md#handheld-board`).
+ * (`docs/adr/0013-handheld-floors-are-ci-gates.md`).
  *
  * Which of them you can press is drawn rather than learned: a lit top edge and a
  * dropped bottom one on the four that open a peek, a recessed and desaturated

@@ -2,7 +2,7 @@
 
 **Status:** accepted
 
-Supersedes the "no router" decision recorded in `App.tsx` and `frontend.md`, which was
+Supersedes the "no router" decision recorded in `App.tsx` and `client.md`, which was
 never written up as an ADR.
 
 ## Context

@@ -1,7 +1,7 @@
 /*
  * The front door, as a main menu made of three cards.
  *
- * Ported from the door round's 01 'The Hand' (`docs/design-record.md#door`) -- `_door.css` plus that file's
+ * Ported from the door round's 01 'The Hand' -- `_door.css` plus that file's
  * own overrides -- and the round's README is the argument for it. Short
  * version: the shipped door's one card-shaped object was a fan of four `.back`
  * plates you could not select, press or reach with a pad, so **the only thing

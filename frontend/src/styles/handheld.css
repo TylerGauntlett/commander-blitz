@@ -423,7 +423,7 @@ html[data-input="keyboard"] .glyph--key {
 /*
  * NO PANE AROUND THE READER OR THE LIST.
  *
- * the handheld-board round (`docs/design-record.md#handheld-board`) puts it plainly: the rows are already bordered
+ * the handheld-board round puts it plainly: the rows are already bordered
  * rectangles, and a well around the only content in a 243px column is a frame
  * around a frame. Three nested boxes is also what the rail looked like -- pane,
  * pane, dock -- where the mockup has two open regions and one well, and the
@@ -463,7 +463,7 @@ html[data-input="keyboard"] .glyph--key {
  * the hint bar's keycap at 18px around 11px, and both are right at those sizes.
  * The 16px floor raises the TYPE and leaves the BOX -- and a 16px Segoe line
  * box is about 21px, so the digit cannot centre inside 19 and sits hard against
- * the edges. the handheld-board round's stylesheet (`docs/design-record.md#handheld-board`) records the same fix on its
+ * the edges. the handheld-board round's stylesheet records the same fix on its
  * own `.key` and calls 26 the number.
  *
  * `line-height: 1` is half the fix and the half that is easy to miss: `grid`
@@ -777,7 +777,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
    THE VIEWER'S ORB: THE DECK'S FLOORS, NOT A SECOND DESIGN
    ==========================================================================
 
-   The plinth (`docs/design-record.md#handheld-board`) is the orb's design at
+   The plinth is the orb's design at
    every size now -- `board.css` draws it, sized off its own column in `cqi`.
    It used to be drawn only here, as a skin over a desktop panel with a brass
    seal and leaf stacks, which made the same seat look like two games. What is
@@ -1156,8 +1156,8 @@ html[data-input="keyboard"] [data-cursor].card {
  * exactly where a player does not yet know what `A` and `B` do, and the bar's
  * whole job is answering that.
  *
- * This is a narrower version of the problem `docs/design-record.md` (Open fidelity findings) records
- * as open defect #3: the tool strip is visible but unreachable behind a
+ * This is a narrower version of a known open
+ * defect: the tool strip is visible but unreachable behind a
  * backdrop. The bar is not a control, so lifting it costs nothing and cannot
  * make anything clickable that should not be.
  */
@@ -1619,7 +1619,7 @@ html[data-input="pad"] .act__key {
    IT IS 139 NOW, AND THE FIVE THAT LEFT ARE THE POINT. `.hero__line`, `.or`,
    `.join__go`, `.join__in` and `.door__cap` were the front door, authored at
    11-14px and repaired here. The door was rebuilt from
-   the door round's 01 'The Hand' (`docs/design-record.md#door`) and `styles/door.css` is written at the floor
+   the door round's 01 'The Hand' and `styles/door.css` is written at the floor
    -- every size on it is `max(16px, ...)` -- so there is nothing left on that
    screen for this list to reach. Shrinking this list by rewriting a screen is
    the only way it is meant to shrink; adding to it is the other way to pass the

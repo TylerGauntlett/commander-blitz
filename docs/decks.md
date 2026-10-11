@@ -1,31 +1,16 @@
 # The decks
 
-Twelve Commander-legal 100-card decks ship with the game, each named after its
-commander, with no substitutions left in any of them. **Every card in all twelve
-is implemented and tested** — that is what separates them from an imported deck,
-whose unsupported cards are generated with their rules text inert
-([deck-import.md](deck-import.md)).
+The shipped list is whatever `data/decks/*.deck.json` holds, and `GET /api/decks`
+returns it. Each is a Commander-legal 100-card deck named after its commander, and
+**every card in every one of them is implemented and tested** — that is what
+separates them from an imported deck, whose unsupported cards are generated with
+their rules text inert ([deck-import.md](deck-import.md)).
 
-Ten are real Moxfield lists, imported card for card and promoted into
-`data/decks/` by `scripts/promote_deck.py`; Isperia and Zurgo are the two
-original hand-built precons. **Each one is piloted by a CPU strategy of its own**,
-and each has a page in [cpus/](cpus/README.md) on how it plays, how it wins and
-how the CPU drives it.
-
-| Deck | Colours | Moxfield list | Plan | CPU |
-|---|---|---|---|---|
-| Aesi, Tyrant of Gyre Strait | G/U | Lander Commander | Extra land drops, a card per land, a board of landfall payoffs | [landfall](cpus/aesi_tyrant_of_gyre_strait.md) |
-| Atraxa, Praetors' Voice | W/U/B/G | Superfriends | Planeswalkers, proliferated toward their ultimates | [superfriends](cpus/atraxa_praetors_voice.md) |
-| Bard, King of Dale | W/U | Bard | Tokens and value on a wide board | [go wide](cpus/bard_king_of_dale.md) |
-| Blor the Impervious | G | Blor | One commander, suited up and sent in | [voltron](cpus/blor_the_impervious.md) |
-| Bruvac the Grandiloquent | U | Millington | Mill, doubled; counter what stops it | [mill + combo](cpus/bruvac_the_grandiloquent.md) |
-| Edgar Markov | W/B/R | Markov Chains | Vampire swarm, lords, drain on every death | [vampire tribal + drain](cpus/edgar_markov.md) |
-| Giada, Font of Hope | W | Choir Practice | Angels that arrive bigger than they are printed | [angels](cpus/giada_font_of_hope.md) |
-| Isperia, Supreme Judge | W/U | — | Fly over, and make attacking you the worst option on the table | [control](cpus/isperia.md) |
-| Sheoldred, the Apocalypse | B | Draw Death | Punish every card the table draws | [punisher](cpus/sheoldred_the_apocalypse.md) |
-| The Ur-Dragon | W/U/B/R/G | Ur-Dragon | Ramp into dragons, then let them fly | [dragons](cpus/the_ur_dragon.md) |
-| Vivi Ornitier | U/R | Vivi | Instants and sorceries, every one of them a trigger | [spellslinger](cpus/vivi_ornitier.md) |
-| Zurgo Stormrender | W/B/R | — | Attack, make a token, let it die, turn each death into a card or a drain | [aristocrats](cpus/zurgo.md) |
+Most are real Moxfield lists, imported card for card and promoted into
+`data/decks/` by `scripts/promote_deck.py`; Isperia and Zurgo are the original
+hand-built precons. **Each one is piloted by a CPU strategy of its own**, and each
+has a page in [cpus/](cpus/README.md) on how it plays, how it wins and how the
+CPU drives it.
 
 ## Isperia, Supreme Judge
 
@@ -33,9 +18,9 @@ how the CPU drives it.
 > draw a card.
 
 The trigger only pays if you survive being attacked more than once, so the deck
-is built around the *defence*: twelve creatures that block well, two wraths, a
-Sunblast Angel, an Evacuation, and enough counterspells that the alpha strike
-never lands. The fliers are how it wins while doing that.
+is built around the *defence*: creatures that block well, wraths, a Sunblast
+Angel, an Evacuation, and enough counterspells that the alpha strike never
+lands. The fliers are how it wins while doing that.
 
 **What it does not have** is a pillowfort. Propaganda, Ghostly Prison and
 Windborn Muse are the obvious cards for this commander and none is expressible:
@@ -56,7 +41,7 @@ Both halves needed new engine vocabulary (see [card-dsl.md](card-dsl.md)):
 `leaves_battlefield` for the payoff — last-known information, because by the time
 the trigger resolves the token is off the battlefield and out of combat.
 
-The list is eight more token-makers so the engine does not depend on Zurgo
+The list is more token-makers so the engine does not depend on Zurgo
 surviving, and a sacrifice/drain suite **shared with Edgar Markov**. That sharing
 is deliberate rather than lazy: the two decks have the same colour identity, and
 Blood Artist, Cruel Celebrant and Falkenrath Noble are exactly what a deck built
@@ -68,8 +53,8 @@ is Vampires rather than Warriors, which only Chief of the Edge notices.
 The first Edgar and Aesi lists — the Reap the Tides precon and a hand-built
 vampire deck — were retired from the catalogue when the Moxfield lists replaced
 them, and live on in `data/decks/fixtures/` under their old ids, `aesi` and
-`edgar`. Hundreds of seeded Python and Playwright tests were written against
-those exact 99s, and re-pinning every one of them would have bought nothing.
+`edgar`. The seeded Python and Playwright tests were written against those exact
+99s, and re-pinning every one of them would have bought nothing.
 
 - `default_registry()` — tests, the arena, the trainer — always loads them.
 - The server loads them **only** with `COMMANDERBLITZ_FIXTURE_DECKS=1`, which the
@@ -86,11 +71,11 @@ A dev server reused by Playwright needs the same variables
 > You may play an additional land on each of your turns.
 > Landfall — Whenever a land you control enters, you may draw a card.
 
-The deck is built to make that trigger fire as often as possible: 21 ramp effects, two
-more sources of extra land drops (Exploration, Azusa), and payoffs that scale with
+The deck is built to make that trigger fire as often as possible: ramp effects, more
+sources of extra land drops (Exploration, Azusa), and payoffs that scale with
 lands entering — Tatyova, Rampaging Baloths, Zendikar's Roil, Tireless Provisioner,
-Avenger of Zendikar. Because Aesi is landfall rather than a land-drop trigger, all 21
-of those ramp spells draw too, and Ancient Greenwarden doubles it. Counterspells and
+Avenger of Zendikar. Because Aesi is landfall rather than a land-drop trigger, every
+one of those ramp spells draws too, and Ancient Greenwarden doubles it. Counterspells and
 instant-speed removal protect the engine; the top end is large creatures.
 
 ### Edgar Markov (the hand-built vampires)
@@ -100,65 +85,45 @@ instant-speed removal protect the engine; the top end is large creatures.
 > you control.
 
 Eminence works from the command zone, which the engine supports through an ability's
-`active_zones`. 37 of the 62 non-land cards are Vampires, so the token trigger fires
+`active_zones`. Most of the non-land cards are Vampires, so the token trigger fires
 constantly. Legion Lieutenant, Stromkirk Captain and Shared Animosity turn the
 swarm lethal; Blood Artist, Cruel Celebrant, Kalastria Highborn and Sanguine Bond mean
-that even losing creatures drains the table. Bloodline Keeper is the one card in
-the four decks with two faces: five Vampires on the board turns it into Lord of
-Lineage, a 5/5 that gives the rest of them +2/+2.
+that even losing creatures drains the table. Bloodline Keeper has two faces: five
+Vampires on the board turns it into Lord of Lineage, a 5/5 that gives the rest of
+them +2/+2.
 
 ## Substitutions
 
-**None, in any of the twelve** (or the two fixtures). Every card in every one of
-them does what it prints.
-
-That is a recent thing and it is the best evidence the
-[card pipeline](card-authoring.md) has. `substitutions` is still a field on
-`DeckModel`, and the dossier still derives `swaps` and `swap_note` from it, so a
-future deck can record one — the mechanism did not go away, the swaps did.
-
-Aesi got there first, when the hand-curated Simic list was replaced by Commander
-Legends' Reap the Tides.
-
-Edgar Markov was the last, and it took seven cards and six capabilities:
-
-| Card | What it was waiting on |
-|---|---|
-| Mortify, Bedevil, Anguished Unmaking | **nothing** — `any_types` and `any_of` had shipped for other cards, so the note claiming "selectors cannot express *creature or enchantment*" was stale rather than true |
-| Captivating Vampire | `gain_control`, the `add_subtype` **op**, and a `tap_permanents` cost |
-| Shared Animosity | `shares_a_type_with` and `exclude_binding` — selectors describing one object relative to another |
-| Vampire Nocturnus | `reveal_library_top` and a `top_of_library` static condition |
-| Bloodline Keeper | transforming double-faced cards, and "activate only if…" |
-
-The three cards that needed nothing are the useful half of that table. A
-substitution is a claim about the engine written down at a moment in time, and
-nothing re-checks it — which is exactly what
-`python scripts/audit_cards.py --check-substitutions` is for, and why it prints
-"0 substitution(s) the engine has outgrown" rather than nothing at all.
+`substitutions` is a `DeckModel` field for a card the engine cannot yet express,
+recording the slot, what replaced it and why; the dossier derives `swaps` and
+`swap_note` from it. Promoted decks ship with none, and
+`tests/cards/test_deck_metadata.py::test_no_shipped_deck_has_a_substitution_left`
+fails if one appears. A substitution is a claim about the engine written down at a
+moment in time, and nothing else re-checks it — that is what
+`python scripts/audit_cards.py --check-substitutions` is for.
 
 ## Where the cards live
 
 ```
-data/cards/basics.cards.json    5 basic lands
-data/cards/tokens.cards.json    87 token definitions
+data/cards/basics.cards.json    the basic lands
+data/cards/tokens.cards.json    token definitions
 data/cards/core.cards.json      colourless staples shared by every deck
 data/cards/aesi.cards.json      the Simic half, shared with Isperia
 data/cards/edgar.cards.json     Edgar's Mardu vampires
 data/cards/isperia.cards.json   the Azorius deck
 data/cards/zurgo.cards.json     Zurgo's token half
-data/decks/*.deck.json          the twelve 100-card lists
+data/decks/*.deck.json          the shipped lists
 data/decks/fixtures/            the retired Edgar and Aesi lists, for tests
 ```
 
-The ten Moxfield decks need no card file of their own: every card in them was
+The promoted Moxfield decks need no card file of their own: every card in them was
 authored by the [card pipeline](card-authoring.md) into `data/cards/auto/` while
 making the import native, which is the precondition `promote_deck.py` enforces.
 
 A card id is defined **once** and referenced by any number of decks. Zurgo's list
 is mostly ids that live in `edgar.cards.json`, and Isperia's borrows the blue
-half of `aesi.cards.json` — which is why 81 new definitions were enough for two
-whole decks. `CardRegistry.from_paths` raises on a duplicate id, so the only way
-to share a card is to share it.
+half of `aesi.cards.json`. `CardRegistry.from_paths` raises on a duplicate id, so
+the only way to share a card is to share it.
 
 Test-only cards live in `tests/data/testing.cards.json` and are never loaded by a real
 game — the test registry adds them, the shipped registry does not.
@@ -194,14 +159,14 @@ card renamed or cut fails there rather than rendering a blank frame six months l
 
 | Field | From |
 |---|---|
-| `curve` | Seven buckets — mana values 1..6 and 7+ — of non-land cards, weighted by quantity. Lands are excluded; 37 of them would swamp the first bucket and tell you nothing |
+| `curve` | Seven buckets — mana values 1..6 and 7+ — of non-land cards, weighted by quantity. Lands are excluded; they would swamp the first bucket and tell you nothing |
 | `lands` | Entries whose type line includes `Land` |
 | `swaps`, `swap_note` | `substitutions`, above — already in every deck file and, until the dossier, never sent to the client |
 
 Derived rather than authored so they cannot drift: change the list and the numbers
 change with it. `GET /api/decks` returns the light summary the catalogue tiles need;
-`GET /api/decks/{id}` adds the dossier's half, so a screen showing 24 tiles does not
-pay for 24 strategy essays.
+`GET /api/decks/{id}` adds the dossier's half, so a screen of tiles does not pay
+for every deck's strategy essay.
 
 ## Checking a deck
 

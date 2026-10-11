@@ -1,7 +1,7 @@
 /**
  * The opening hand, as a screen rather than as a dialog.
  *
- * Ported from the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`), the direction that round
+ * Ported from the mulligan round's 01 'The Deal' (`docs/client.md`, Surfaces and their rules), the direction that round
  * converged on. What it replaces is `PromptDialog` drawing the first decision of
  * every game as a centred rectangle with an 18px title and two identical grey
  * buttons, standing on top of the hand it is asking about -- and

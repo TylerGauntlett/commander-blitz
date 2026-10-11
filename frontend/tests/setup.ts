@@ -56,6 +56,7 @@ if (typeof globalThis.requestAnimationFrame === "undefined") {
  * error" that failed whole runs in which every test had passed, from
  * whichever file happened to be last. Once, here, rather than per file.
  */
+import { configure } from "@testing-library/react";
 import { afterEach } from "vitest";
 import { resetInputMode } from "../src/input/inputMode";
 import { resetPad } from "../src/input/pad";
@@ -64,3 +65,13 @@ afterEach(() => {
   resetPad();
   resetInputMode();
 });
+
+/*
+ * `waitFor` and `findBy*` give up after one second by default. That is a
+ * budget, not an assertion: the desktop handoff in `handoff.test.tsx` runs an
+ * import round trip and a navigation before the address it waits for appears,
+ * and a CI runner carrying the whole vitest process in parallel took longer
+ * than the default once. A wider budget changes nothing a passing test
+ * observes and only costs time on a test that is already failing.
+ */
+configure({ asyncUtilTimeout: 5000 });

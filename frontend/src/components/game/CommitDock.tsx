@@ -121,7 +121,7 @@ export function CommitDock({
         `Attack with 0` -> `Attack with 10` is a label that changes width,
         so the button re-centres itself under the thumb every time a
         creature is staged, which is exactly while you are aiming at it.
-        the handheld-board round (`docs/design-record.md#handheld-board`) names this and puts the number on a line
+        the handheld-board round (`docs/adr/0016-nothing-changes-size-with-game-state.md`) names this and puts the number on a line
         of its own above the bar. It is also the line the block forecast
         wants, so the two states share one row rather than each inventing a
         place to sit.

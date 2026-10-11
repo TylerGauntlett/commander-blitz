@@ -1,8 +1,8 @@
 /**
  * The opening hand's arch, as arithmetic, and which half of a mulligan it is.
  *
- * Ported from the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`). The round's whole finding is
- * one number: the mulligan round's probe (`docs/design-record.md#mulligan`) binary-searches a real card in a real
+ * Ported from the mulligan round's 01 'The Deal' (`docs/client.md`, Surfaces and their rules). The round's whole finding is
+ * one number: the mulligan round's probe (`docs/adr/0013-handheld-floors-are-ci-gates.md`) binary-searches a real card in a real
  * browser for the narrowest width at which it can print its own name, cost, type
  * line and rules text at the 16px floor, and the answer for the widest of a
  * seven-card hand is **296px**. Seven of those laid flush is 2072px against a
@@ -97,7 +97,7 @@ export function mulliganCost(taken: number, free: number): MulliganCost {
 /**
  * The tune, at the 1280x800 the mockup was measured on.
  *
- * Every one of these is a number the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`) states out
+ * Every one of these is a number the mulligan round's 01 'The Deal' states out
  * loud; the two in degrees are the only ones that do not scale.
  */
 export const MULL_TUNE = {

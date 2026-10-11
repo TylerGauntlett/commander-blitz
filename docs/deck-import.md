@@ -1,9 +1,9 @@
 # Importing a deck
 
 Paste a public Moxfield link on the setup screen and you get a playable deck.
-The engine plays about 3,000 cards — 192 hand-written, the rest authored by the
+The engine plays the cards in `data/cards/` — hand-written, or authored by the
 [card pipeline](card-authoring.md); a real Commander deck contains a
-hundred, most of which say something nobody has written rules for. So the deal
+hundred, many of which say something nobody has written rules for. So the deal
 this feature makes is:
 
 > **Every card is on the board with its real name, art, cost, types and stats.
@@ -24,7 +24,7 @@ paste  ->  moxfield.py   fetch the list        (names, quantities, printings)
 ```
 
 `GET https://api2.moxfield.com/v3/decks/all/{publicId}` is open to a plain
-`urllib` client. the design record (`docs/design-record.md#board-themes`) records a Cloudflare 403 against
+`urllib` client. [ADR 0012](adr/0012-art-fetched-once-served-locally.md) records a Cloudflare 403 against
 `api2.moxfield.com` — that was `/v2/cards/search/user`, a different endpoint, and
 it is still true of that one.
 
@@ -67,7 +67,7 @@ ordinary `compile_card` — so a generator bug is a `DslError` at import time
 rather than a mystery mid-game.
 
 **Kept:** name, mana cost, supertypes/types/subtypes, power/toughness, colours,
-colour identity, printed oracle text (displayed), the 14 keywords the engine
+colour identity, printed oracle text (displayed), the keywords the engine
 implements, `{T}: Add` mana abilities, and enters-tapped.
 
 **Not modelled**, each recorded as a note on the card:
@@ -85,8 +85,11 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   longer rewritten at all: both are parsed and paid properly now, and narrowing
   `{U/P}` to `{U}` was worse than a simplification — it deleted the "or 2 life"
   clause that is the whole reason a Gitaxian Probe or a Gut Shot is played.
-- **Loyalty and defence.** Planeswalkers and Battles enter play as inert
-  permanents.
+- **Loyalty and defence.** A planeswalker enters play as an inert permanent. A
+  battle is refused outright: 310.3's printed defense is not a column in the
+  catalog, and a battle entering with no defense counters would be defeated by
+  704.5x as it resolves — so a generated one would vanish rather than be weak.
+  It goes in the import report to be hand-written.
 - **Mana quantity.** Scryfall's `produced_mana` carries no amount, so a generated
   Sol Ring taps for one.
 - **A mana ability whose cost is more than `{T}` and mana** is not generated at
@@ -103,8 +106,8 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   and carries `produced_mana` for all five colours; lifting that would give the
   *Aura* a five-colour mana ability. Same trap as `keywords`.
 - **A mana ability's rider** — the sentence after the mana, as on a painland —
-  is read only for "deals N damage to you", which is the shape 34 cards in the
-  catalog print. A rider it cannot read ("Put a depletion counter on this land",
+  is read only for "deals N damage to you", the shape the painlands print. A
+  rider it cannot read ("Put a depletion counter on this land",
   "Spend this mana only to cast a creature spell") means the *whole line* is not
   generated, rather than generated without its drawback. One line short is a
   worse card, which is the safe direction; a painless painland is a better one,
@@ -128,11 +131,9 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   asked. What is left is the genuinely unexpressible: a bounce land's "return an
   Island you control to its owner's hand".
 
-Measured over the whole catalog: **32,827 rows, zero compile failures**, ~3.8%
-`full`, and 37 of the 1,081 mana-producing lands generate inert because their
-cost is unexpressible. The import report counts those.
-
-`tests/cards/test_proxy_against_the_catalog.py` is the gate.
+`tests/cards/test_proxy_against_the_catalog.py` is the gate: every row in the
+catalog generates without a compile failure. The import report counts the lands
+that generate inert.
 
 ## Where it goes, and why it is not committed
 
@@ -151,7 +152,7 @@ the arena all use the first.
 
 Three gates assume the authored pool is exactly what the repo ships:
 `test_every_card_works` parametrises over all of it, `test_image_resolution`
-pins the artless set at exactly five ids, and `ai/encoding` builds an embedding
+pins the artless set (`KNOWN_ARTLESS`), and `ai/encoding` builds an embedding
 index from `registry.ids()`. If an import could reach those, `pytest` would give
 a different answer depending on what somebody imported last week. Gitignoring
 `data/generated/` is what makes the split actually hold.
@@ -178,13 +179,8 @@ Once a card is authored, **the stale proxy is dropped**: the deck goes on
 referencing the same id and silently picks up the real rules on the next boot.
 Nothing about the deck file changes.
 
-## Promoting a generated card
-
-A generated card is written in exactly the `data/cards/*.cards.json` format, so
-promotion is a copy: move the object into an authored file, fill in its
-`abilities` and `spell_effects` by hand (see [card-dsl.md](card-dsl.md)), delete
-it from the pool. Every deck referencing that id picks up the real rules on the
-next import.
+There is no promoting a generated card by hand: it becomes native only by being
+authored through the six gates ([card-authoring.md](card-authoring.md)).
 
 ## The API
 
@@ -192,7 +188,7 @@ next import.
 |---|---|
 | `POST /api/decks/import` | `{url, dry_run}` → 201 with the coverage report. `dry_run` reports without writing. |
 | `DELETE /api/decks/{id}` | Imported decks only; 400 on a precon. |
-| `GET /api/decks` | Now carries `source`, `playable`, `simplified`. |
+| `GET /api/decks` | Carries `source`, `playable`, `simplified`. |
 
 Errors carry a **code** as well as a sentence, because "that deck is private"
 and "there is no such deck" send somebody to two different places:

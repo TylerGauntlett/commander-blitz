@@ -10,10 +10,10 @@
 </p>
 
 **Commander Blitz** is a Magic: The Gathering **Commander** engine you can play
-against, in a browser or on a Steam Deck: twelve decks, each piloted by a CPU with
-its own plan, two to four seats at the table, and a rules engine that implements
-the stack, priority, combat and about 3,000 cards faithfully enough that a game
-feels like a game.
+against, in a browser or on a Steam Deck: a shelf of precon decks, each piloted
+by a CPU with its own plan, two to four seats at the table, and a rules engine
+that implements the stack, priority, combat and thousands of cards faithfully
+enough that a game feels like a game.
 
 The rules live in exactly one place. A human clicking a card, a CPU scoring the
 board, and a reinforcement-learning policy sampling an action index all end up
@@ -100,10 +100,10 @@ cd frontend && npm run dev -- --host
 
 | | |
 |---|---|
-| **Twelve decks** | Commander-legal 100-card lists, ten of them real Moxfield decks imported card for card: Aesi, Atraxa, Bard, Blor, Bruvac, Edgar Markov, Giada, Isperia, Sheoldred, The Ur-Dragon, Vivi and Zurgo. Every card in all twelve is implemented and tested. [docs/decks.md](docs/decks.md) |
+| **The decks** | Commander-legal 100-card lists, most of them real Moxfield decks imported card for card. Every card in every shipped deck is implemented and tested. [docs/decks.md](docs/decks.md) |
 | **A CPU per deck** | Each deck ships with a strategy that knows how it wins: landfall, superfriends, voltron, mill, aristocrats, dragons. [docs/cpus/](docs/cpus/README.md) explains how each one plays |
 | **The rules** | Full turn structure, the stack and priority, triggered and static abilities, combat with the evergreen keywords, state-based actions, commander tax and damage, N-player pods. What is simplified or absent is written down in [docs/rules-coverage.md](docs/rules-coverage.md) |
-| **~3,000 cards** | JSON definitions in a DSL the engine compiles at load time, verified card by card against Scryfall's oracle text. Any other card imports as an inert proxy, and [docs/unsupported-cards.md](docs/unsupported-cards.md) says why |
+| **The cards** | Thousands of JSON definitions in a DSL the engine compiles at load time, verified card by card against Scryfall's oracle text. Any other card imports as an inert proxy, and [docs/unsupported-cards.md](docs/unsupported-cards.md) says why |
 | **Import a deck** | Paste a Moxfield link. Every card the engine knows plays natively; the rest get their art, cost and types and do nothing |
 | **Multiplayer** | Two to four people in their own browsers against one process, with versioned long-polling and no sockets. [docs/api.md](docs/api.md) |
 | **Steam Deck** | A self-contained build: 1280×800 is the size every layout was measured at, and the whole controller layer exists for it |
@@ -133,16 +133,19 @@ diagrams.
 - [docs/engine-rules.md](docs/engine-rules.md) — turn structure, the stack, combat, with diagrams
 - [docs/rules-coverage.md](docs/rules-coverage.md) — **what is implemented, what is simplified, and what is not**
 - [docs/card-dsl.md](docs/card-dsl.md) — how to write a card
-- [docs/testing.md](docs/testing.md) — every gate, and `python scripts/verify.py` to run them all
+- [docs/testing.md](docs/testing.md) — the quality strategy, and `python scripts/verify.py` to run every gate
+- [docs/ci-cd.md](docs/ci-cd.md) — what runs where, and what a merge ships
 - [docs/README.md](docs/README.md) — the rest, including the ADRs
 
 ## 🤝 Contributing
 
 Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) covers
-the setup, the gates, and the three Claude Code skills that grow the card pool:
-`/import-moxfield` makes a whole deck playable, `/author-cards` implements cards
-the DSL can express, and `/extend-dsl` builds the engine capability that unblocks
-the ones it cannot.
+the setup, the gates, and the agent skills that grow the card pool and open the
+pull request: `/import-moxfield` makes a whole deck playable, `/author-cards`
+implements cards the DSL can express, `/extend-dsl` builds the engine capability
+that unblocks the ones it cannot, and `/create-pr` opens the pull request the way
+CI expects. [AGENTS.md](AGENTS.md) is the short orientation for an agent or a
+person working here.
 
 ## 📜 License
 

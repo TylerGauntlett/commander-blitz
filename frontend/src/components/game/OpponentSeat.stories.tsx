@@ -124,7 +124,7 @@ export const Developed: Story = {
     /*
      * The seat and the board it summarises, checked against each other.
      *
-     * the seat round (`docs/design-record.md#seat`) names this the failure mode the whole family of
+     * the seat round names this the failure mode the whole family of
      * components has: a summary that cannot be checked against the thing it
      * summarises. Here it can, because both come off the same view.
      */

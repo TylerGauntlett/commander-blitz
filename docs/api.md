@@ -77,13 +77,14 @@ a card, never enough to decide legality.
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
 | `GET` | `/api/images?game_id=` | Card art paths. Static, so fetched once. Scoped to a game's own cards when `game_id` is given — unscoped it grows with every imported deck |
 | `GET` | `/art/{card_id}.jpg` | The art itself, from disk. Lazily fetched for cards outside the shipped pool |
-| `GET` | `/api/catalog?q=&colors=&types=&limit=` | Search the ~32,700-card Scryfall-derived catalog |
+| `GET` | `/api/catalog?q=&colors=&types=&limit=` | Search the Scryfall-derived catalog ([card-catalog.md](card-catalog.md)). A reference surface, not a playable one |
 | `GET` | `/api/catalog/{scryfall_id}` | One catalog card |
 | `POST` | `/api/games` | Create a game. Body: `{seats: [{deck_id, kind, agent, name}], seed?}` |
 | `GET` | `/api/games/{id}/state?seat=&since=&since_version=&timeout=` | The player view, legal actions, and new events. Omit `seat` to be told yours by your token; pass `since_version` to long-poll |
 | `GET` | `/api/games/{id}/actions?seat=` | Just the legal actions |
 | `POST` | `/api/games/{id}/actions` | Apply one action id |
 | `POST` | `/api/games/{id}/declare` | Submit a whole attack or block at once |
+| `POST` | `/api/games/{id}/choose` | Answer a pick-several decision with the whole set at once. Body: `{seat, choices}`, where `choices` are ordinals into the pending decision's `options`; the server loops the engine's one-at-a-time `CHOOSE` increments and sends `Done` when the set is under the ceiling. Every check runs before anything is applied, so a bad set never half-applies |
 | `POST` | `/api/games/{id}/advance` | Let the AI seats act (rarely needed) |
 | `POST` | `/api/games/{id}/options` | Change a human seat's play settings (`full_control`, `manual_mana`) |
 | `POST` | `/api/games/{id}/undo` | Rewind past the last human action. `409 multiplayer_undo` with more than one human |

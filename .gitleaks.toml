@@ -1,4 +1,4 @@
-# Secret scanning, run on every pull request (`secrets` job in deploy.yml) and
+# Secret scanning, run on every pull request and push to main (secrets.yml) and
 # over the full history before the repository went public.
 title = "commander-blitz"
 

@@ -66,8 +66,10 @@ must never hold a token, so every asset has to be readable anonymously. While th
 source was private, that meant copying releases to a separate public repository. Since
 the project went public, they are this repository's own Releases. The updater and the
 install script read `releases/latest/download/…`, which needs no API and no token.
-Every push to main that ships builds the AppImage and the content package and publishes
-both. Before [ADR 0010](0010-release-every-main-build.md), a release needed a `v*` tag.
+Every push to main that ships publishes a release. Before
+[ADR 0010](0010-release-every-main-build.md), a release needed a `v*` tag; since its
+amendment, the AppImage is rebuilt only when the shell changed and the content package
+is published every time.
 
 **Install is one command, and it is testable.** `install.sh` downloads the AppImage
 to a fixed path (the Steam shortcut and the in-place updater both depend on the name

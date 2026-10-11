@@ -1,7 +1,7 @@
 /**
  * The right-hand rail: the hovered card, big enough to read.
  *
- * This panel had no test at all, which `docs/mockup-fidelity.md` lists as an
+ * This panel had no test at all, which was an
  * open defect -- and it is the surface the commander plinth points at, so it
  * gets one now. The cases worth holding are the two that were broken rather than
  * the rendering, which the card face's own tests already cover.

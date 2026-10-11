@@ -192,7 +192,7 @@ export function HandFan({
    * 1266, and laying a 1180px fan into either ran the rail past its box with
    * `overflow: hidden` hiding it. `e2e/handheldAssert.ts`'s `fanOverflow`
    * measured it at 26-30px against a real engine, which is the same failure
-   * the handheld-board round (`docs/design-record.md#handheld-board`) records and the reason that gate exists.
+   * the handheld-board round (`docs/adr/0014-measured-numbers-invariant-relationships.md`) records and the reason that gate exists.
    */
   const step = handStep(count, cardW, fanWidth);
   const width = count > 0 ? cardW + step * (count - 1) : 0;

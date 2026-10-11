@@ -32,9 +32,10 @@ say more about what the mechanic really needs than one does — typecycling and 
 cycling are the same missing cost with different effects, and a design driven by
 only one of them gets rebuilt.
 
-Also read `docs/card-dsl.md` (the DSL reference) and `docs/rules-coverage.md`
-(what is deliberately not modelled — if your capability is listed there, say so
-before building, because that was a decision).
+Also read `docs/card-dsl.md` (the DSL concepts), `docs/card-dsl-cookbook.md`
+(worked mechanics), `docs/card-dsl-reference.md` (the generated vocabulary) and
+`docs/rules-coverage.md` (what is deliberately not modelled — if your capability
+is listed there, say so before building, because that was a decision).
 
 ## 2 · Route to a tier, and say which before writing code
 
@@ -94,18 +95,21 @@ The common case, and the whole job for most mechanics.
    `delay` and `animate`. Without it a malformed card fails at runtime instead of at
    load time, which is the difference between a test failure and a broken game.
 3. `tests/unit/<area>/test_<op>.py` — see §3.
-4. `docs/card-dsl.md` — a row in the op table, **the "N of them" count above it**,
-   and a section for anything non-trivial. `card-dsl.md` is the **current
-   reference only**: say what the op, key, cost, trigger or condition *is* — its
-   parameters, defaults, constraints, load-time refusals, an example card, and the
-   near miss an author might reach for instead — once, in the present tense. When
-   you change something already documented, rewrite its entry to describe the new
-   behaviour; do not append "it used to…" or "is now…" beside the old text.
-5. History goes elsewhere. What a capability used to do, the bug you fixed, what
-   you renamed or removed, and which card motivated the work go under the matching
-   heading in `docs/dsl-changelog.md` (create the heading if it is new; it mirrors
-   `card-dsl.md`'s headings). What is and is not modelled goes in
-   `docs/rules-coverage.md`.
+4. The docs, present tense only. The vocabulary table is generated: add the new
+   op's group and one-line description to `scripts/gen_dsl_reference.py` and run
+   `python scripts/gen_dsl_reference.py --write` (the `--check` and
+   `tests/cards/test_dsl_reference.py` fail until you do). Then a section for
+   anything non-trivial: a concept goes in `docs/card-dsl.md`, a worked mechanic in
+   `docs/card-dsl-cookbook.md`. Say what the op, key, cost, trigger or condition
+   *is* — its parameters, defaults, constraints, load-time refusals, an example
+   card, and the near miss an author might reach for instead — once. When you
+   change something already documented, rewrite its entry; never append "it used
+   to…" or "is now…" beside the old text.
+5. History is the commit message. What a capability used to do, the bug you
+   fixed, what you renamed and which card motivated the work belong in the commit,
+   not in a doc. A decision with consequences a later change could reverse by
+   accident gets an ADR in `docs/adr/`. What is and is not modelled goes in
+   `docs/rules-coverage.md`, one line per area.
 6. **Server: nothing. Frontend: nothing.** Verified — see §5.
 
 ### Tier B — a new continuous effect
@@ -247,5 +251,5 @@ push.
    makes a cheaper card than the printed one. The existing fetchland template fails
    Fabled Passage on purpose rather than dropping its second sentence.
 4. If the capability turns out to need a rules subsystem the engine does not have
-   (planeswalkers, sagas, transform — see `docs/rules-coverage.md`), stop and report
-   the scope rather than starting it inside a card-unblocking run.
+   (see "Not implemented" in `docs/rules-coverage.md`), stop and report the scope
+   rather than starting it inside a card-unblocking run.

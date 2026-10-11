@@ -10,7 +10,7 @@ promote a deck the authored layer cannot play: every card must already be
 native, or the precon would reference ids that only exist on one machine.
 
 The editorial fields (tags, ratings, strategy, signature) are left for a person
-to write -- ``tests/cards/test_precons.py`` fails until they are.
+to write -- ``tests/cards/test_deck_metadata.py`` fails until they are.
 """
 
 from __future__ import annotations

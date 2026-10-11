@@ -149,9 +149,8 @@ place.
 | `by` | the oid of what moved it — the resolving spell or ability, or the creature that dealt the killing blow. `None` when nothing sensible can be named |
 | `by_card` | that object's card id, resolved *before* the move, because the culprit may itself be leaving in the same SBA pass |
 
-`source` on this event is the object that **moved**, not the thing that moved it,
-which is why `by` had to be added: without it no consumer could build a sentence of
-the form "X destroys Y", and the client's log said only "Grizzly Bears dies".
+`source` on this event is the object that **moved**, not the thing that moved it;
+`by` is what a consumer reads to build a sentence of the form "X destroys Y".
 
 Two rules the client depends on:
 
@@ -209,23 +208,36 @@ All assignments are collected first and applied together, so simultaneous trades
 
 ## State-based actions
 
-Run to a fixpoint before any player gets priority and after anything resolves:
+`sba.check` is one pass; `sba.run` repeats it to a fixpoint before any player gets
+priority and after anything resolves. Order within a pass does not matter. What a
+pass does:
 
-1. A player at 0 or less life loses.
-2. A player who tried to draw from an empty library loses.
-3. A player who has taken 21+ combat damage from a single commander loses.
-4. A creature with toughness 0 or less is put into its graveyard (indestructible does
-   not save it — this is not destruction).
-5. A creature with lethal damage, or damaged by deathtouch, is destroyed unless
-   indestructible.
-6. An Aura or Equipment attached to nothing falls off; an Aura with nothing to
-   enchant is put into the graveyard.
-7. A token outside the battlefield ceases to exist.
-8. `+1/+1` and `-1/-1` counters annihilate in pairs.
-9. The legend rule.
+1. A player loses at 0 or less life, after trying to draw from an empty library, at
+   `COMMANDER_DAMAGE_THRESHOLD` combat damage from a single commander, or at
+   `POISON_THRESHOLD` poison counters. "You can't lose the game" (104.3b,
+   `player_cant_lose`) holds off all four.
+2. A token outside the battlefield ceases to exist — except on the stack, where a
+   spell copy is a legal object until it resolves.
+3. An Aura or Equipment attached to an illegal or missing host falls off; an Aura
+   with nothing to enchant is put into the graveyard. An Aura enchanting a player
+   who is still in the game has a legal host.
+4. `+1/+1` and `-1/-1` counters annihilate in pairs.
+5. A creature with toughness 0 or less is put into its graveyard (indestructible does
+   not save it — this is not destruction). A creature with lethal damage, or damaged
+   by deathtouch, is **destroyed** unless indestructible — through `zones.destroy`,
+   so regeneration, totem armor and shield counters replace it.
+6. A planeswalker with no loyalty counters, and a battle with no defense counters,
+   are put into their owner's graveyard — not destruction either.
+7. A Saga whose lore counters have reached its final chapter is sacrificed, once its
+   chapter ability has left the stack.
+8. The legend rule: one of each legendary name per controller, the newest kept.
+9. The Role rule: one Role per controller per permanent, the newest kept.
+10. Ascend: a player controlling `ASCEND_THRESHOLD` permanents while they control an
+    Ascend card gets the city's blessing, a state trigger rather than an event.
 
-When a player loses, their permanents and stack objects are exiled and their commander
-goes to the command zone. The game ends when one player is left (or none — a draw).
+When a player loses, their permanents are exiled, their stack objects and pending
+triggers dropped, and their commander goes to the command zone. The game ends when
+one player is left (or none — a draw).
 
 ## Commander rules
 
@@ -245,22 +257,28 @@ engine applies a fixed order instead:
 
 ```
 printed values
-  -> subtype/type grants
-  -> keyword grants
+  -> subtype grants
+  -> keyword grants (statics, then keyword counters)
   -> P/T setting effects
   -> P/T modifying effects (anthems)
   -> +1/+1 and -1/-1 counters
   -> until-end-of-turn pumps
 ```
 
+Counters are read in two places on purpose: a +1/+1 counter is a size and sits
+beside the anthems, a keyword counter is an ability and sits beside the keyword
+grants — the same split the real layers make (613.1f and 613.1d).
+
 One constraint makes that safe, and it is enforced at load time:
 
 > **A static ability's filter may not read another static ability's output.**
 
 Static filters are matched against *printed* characteristics plus the object's own
-board state (controller, tapped, attacking). That removes all recursion and all
-dependency ordering. The cost is that a card whose anthem depends on another anthem's
-result cannot be expressed — the curated decks contain no such card, and the loader
-rejects one if you try to add it.
+board state (controller, tapped, attacking, counters). That removes all recursion and
+all dependency ordering. The cost is that a card whose anthem depends on another
+anthem's result cannot be expressed — the curated decks contain no such card, and the
+loader rejects one if you try to add it. `power` and `toughness` are the one derived
+characteristic a filter may name, and what it reads is the base P/T the pipeline
+*starts* with (`_base_pt`), never anything a layer below writes.
 
 Results are cached against `state.char_version`, which every mutating primitive bumps.

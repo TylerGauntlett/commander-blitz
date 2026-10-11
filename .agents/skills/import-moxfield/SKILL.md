@@ -26,8 +26,8 @@ minutes.
    `/extend-dsl` run. Read both SKILL.md files before starting; this skill adds a
    loop, it does not relax anything inside it.
 2. **One exception to `/extend-dsl` rule 4.** That skill stops at a capability
-   needing a rules subsystem (planeswalkers, sagas, transform — see
-   `docs/rules-coverage.md`). Here the deck is the deliverable, so build the
+   needing a rules subsystem ("Not implemented" in `docs/rules-coverage.md`).
+   Here the deck is the deliverable, so build the
    subsystem — as its own sequence of one-capability runs, one commit each, and
    name it in the PR under its own heading. Still say so before starting it.
 3. **Native, not `full`.** The finish line is the pin test's claim: every distinct
@@ -66,7 +66,7 @@ instead.
 ## 2 · Import, and take the baseline
 
 ```bash
-python .claude/skills/import-moxfield/scripts/deck_status.py <url> --json <scratch>/before.json
+python .agents/skills/import-moxfield/scripts/deck_status.py <url> --json <scratch>/before.json
 python scripts/author_cards.py --report
 ```
 

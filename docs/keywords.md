@@ -1,13 +1,21 @@
 # Keywords, and where each one lands
 
-The engine implements 36 keywords. Every one arrived the same way: a card in the
+> Test-enforced: `tests/cards/test_keyword_census.py` parses the four census tables
+> (Evergreen keywords, Keyword actions, Expansion keywords, Ability words; columns
+> Keyword / Status / Mechanism / Engine name) and asserts that every `Keyword` enum
+> value is the engine name of exactly one `shipped` row, that every `shipped` row's
+> engine name is a `Keyword`, a `STATIC_EFFECTS` entry, a `CardModel` field or a
+> registered op (or `—`), and that every status is one of `shipped`, `free`,
+> `routed`, `blocked`, `refused`. Edit the census and the enum together.
+
+Every keyword the engine implements arrived the same way: a card in the
 authoring queue could not be expressed, a worker wrote a gap record,
 `/extend-dsl` built it. That loop works, and [card-authoring.md](card-authoring.md)
 is the argument for it.
 
 But it re-asks one question from scratch every time — *given a printed keyword,
 which of the engine's mechanisms should carry it?* — and the answer has been
-worked out at least five times in five unconnected places:
+worked out in several unconnected places:
 
 | in [card-dsl.md](card-dsl.md) | the argument made there |
 |---|---|
@@ -95,19 +103,23 @@ all exemption-shaped, which is a second, independent reason none of them could
 be a `block_restriction` — and it is the one that still applies to keywords
 whose quality happens to be printed rather than derived.
 
+**Before building a subsystem for a keyword, re-derive it from its printed
+text.** A row filed as `blocked` names a subsystem the printed line usually does
+not require: a damage keyword is a check where deathtouch already sits, a
+destruction replacement is a check in `zones.destroy`, a second castable face is
+`card_of`. Treat `blocked` as a routing question before a size estimate.
+
 ## How to read the census
 
 | Status | Means |
 |---|---|
-| **shipped** | Implemented and tested. Guarded by the drift test below |
+| **shipped** | Implemented and tested. Guarded by the drift test named at the top |
 | **free** | The DSL can already say it. The Mechanism column names the construction; what is missing is a *card*, not engine work |
 | **routed** | The mechanism is decided and the gap is small and named. A cheap `/extend-dsl` job |
 | **blocked** | Needs a subsystem the engine does not have. The blocker is named |
 | **refused** | A decision already recorded in [rules-coverage.md](rules-coverage.md) |
 
-**Only `shipped` is machine-checked.** `tests/cards/test_keyword_census.py`
-asserts that every value in `Keyword` appears here exactly once as a shipped
-row, and that every engine name a shipped row claims is real. The other four
+**Only `shipped` is machine-checked** (the note at the top). The other four
 statuses are editorial judgements made by reading the DSL, and they can be
 wrong — a `free` row is a *claim* that `/author-cards` will either cash or
 refuse with a gap record, which is the honest way for it to be settled.
@@ -118,8 +130,9 @@ justify is `routed`, however likely it looks, because a row marked `free` that
 is not free produces exactly the card this repo exists to refuse — one that
 looks implemented and does nothing.
 
-Rows marked **†** are not in the source document. They are here because the
-engine implements them, or because the family would otherwise have a hole.
+Rows marked **†** are not in the comprehensive rules' keyword list. They are here
+because the engine implements them, or because the family would otherwise have a
+hole.
 
 ## Evergreen keywords
 
@@ -358,164 +371,3 @@ is ordinary, which is why most of this table is `free`.
 | Threshold | free | condition `cmp` on `count` of `zone: "graveyard"`, `controller: "you"` | — |
 | Undergrowth | free | value `count` of creatures in your graveyard | — |
 
-## What the census says
-
-**Every row is shipped or free** — 93 shipped, 93 free. `routed`, `blocked` and
-`refused` are all empty.
-
-The single most useful finding, made over and over, is that **`blocked` was a
-routing error rather than a size estimate** — every one of the twenty-five rows
-that started there has shipped. Eleven keywords filed
-against a subsystem turned out to need something that already existed, or
-something small in a place nobody had looked:
-
-| filed as | what it actually was |
-|---|---|
-| wither, infect — "the whitelist has no damage form" | a keyword read by `damage_permanent`, where deathtouch already sits |
-| regeneration, totem armor — "a destruction replacement" | a check in `zones.destroy`, the one function every destruction goes through |
-| dredge, madness, miracle — "the whitelist has no draw/discard form" | a **call-graph** change: `turn.begin_step` already ran through `Game._run`, so only `_draw_step` beneath it could not suspend |
-| cascade, ripple — "free casts off a library scan" | the free cast was `suspend.cast_for_free`; only the scan was missing |
-| foretell — "suspend is the nearest shape" | suspend is the *same* shape, down to the `ActionKind` |
-| champion, imprint — "exile tied to a permanent" | `exile` with `until_leaves`, shipped for Oblivion Ring, read from each end |
-| level up — "a characteristic-defining subsystem" | `set_pt` (which *replaces* P/T) plus a band written as `all` over two `counters` comparisons |
-
-**Before building a subsystem for a keyword, re-derive the keyword from its
-printed text.** Twice the census named a subsystem that the printed line did not
-actually require, and once (dredge) it named the right cluster for the wrong
-reason — the obstacle was not the replacement whitelist but the call graph
-above it.
-
-### What is genuinely left
-
-**Nothing.** The `blocked` column is empty.
-
-Every one of the twenty-five rows that started there has shipped, and the
-pattern held to the last one: **`blocked` was a routing error, not a size
-estimate.** The final four were the cluster the census called "a second castable
-face", and it was three different problems wearing one name:
-
-| keyword | what the census said | what it was |
-|---|---|---|
-| adventure, aftermath | one cluster, needing the authoring pipeline | one cluster, needing `card_of` — which `back_face` had already built |
-| bestow | the same cluster | not a second *spell* at all: one spell landing as two different permanents, so `chars` rather than `card_of` |
-| mutate | "the only genuine subsystem left" | one `CardDef` **synthesised at merge time**, precisely *because* `card_of` is a single choke point |
-
-Mutate is the sharpest version of the finding. The census's argument was "a
-`GameObject` is one card, and every choke point the other reversals leaned on
-assumes that" — and the first half is true while the conclusion is backwards. A
-merged permanent is one `CardDef`: the card on top, carrying the abilities of
-everything under it, built once and stored on the object. `chars`, legality,
-triggers, the stack's ability lookup and the serializer all read it through
-`card_of` and none of them changed. The subsystem the census feared was the
-*alternative* implementation — a list of cards per permanent, and every reader
-taught to walk it.
-
-What remains genuinely open is the **authoring pipeline**, not the engine: it
-emits one card entry per answer file, so a two-faced card is two hand-written
-entries linked by id, the way `bloodline_keeper` / `lord_of_lineage` already
-are. That is what the `split-cards-fuse` gap record is really asking for.
-
-**Fuse** was the other half of that record and it is done. `second_face` shipped
-one face *or* the other — `card_of` answers with exactly one — and fuse is the
-case where the answer is *both*. The shape it needed already existed and it is
-**splice**: a spliced card's effects run after its host's through the same
-`EffectContext`, and that shared context is what makes them one spell rather
-than two. Fuse is the same thing with the second effect list coming from the
-card's own other half, so nothing reaches into `card_of` at all — the fused cast
-builds one card from the two and hands it to the machinery that prices, targets
-and resolves any other spell.
-
-### The refused, all of them reversed
-
-`refused` is a recorded decision rather than a difficulty, and **all six have
-been reversed**:
-
-- **Regeneration** was refused as "a destruction-replacement shield" and now
-  ships, because `zones.destroy` is a single choke point.
-- **Daybound / nightbound** was refused as needing "a game-wide designated
-  state the engine has no place to keep". That describes the problem exactly and
-  the answer is one field: `GameState.day_night`, the same shape `turn` and
-  `step` already are, because day and night belong to the **table**. Everything
-  else was there — `TurnLedger.spells_cast` for "cast no spells during their own
-  turn", `transform` for the permanents turning over, and `chars` for which way
-  round one is, since daybound is printed on the front face and nightbound on
-  the back.
-- **Phasing** was refused as changing "how the untap step works for *every*
-  permanent in the game". It changes it for one permanent, once. 702.26c
-  ("treated as though it does not exist") is a **list membership**: the
-  permanent leaves `state.battlefield` and stays in `state.objects`, which is
-  where a card on the stack and a card under a merged permanent already sit, so
-  every walk of the battlefield misses it with no test of its own — and no zone
-  change means counters, auras, damage and 702.26f's "continuously on the
-  battlefield" all hold because nothing moved.
-- **Meld** was refused for the same words as flip — "a card-wide designated
-  state the engine has no place to keep" — and by the time mutate shipped, the
-  place existed. It is the merged permanent again, with the pair fixed by the
-  card rather than chosen by the caster, and one thing genuinely harder: 701.37c
-  exiles both cards and returns them melded, so the melded permanent *enters*.
-- **Flip** was refused as needing "a card-wide designated state the engine has
-  no place to keep", and needed *nothing*. Rule 711 is `back_face` plus the
-  `transform` op, both of which shipped for Bloodline Keeper, and every
-  difference between a flip card and a transforming double-faced one is a
-  difference about **cardboard** — which way you turn it. It is now `free`, with
-  `tests/unit/faces/test_flip.py` as the witness, because a status nobody checked is a
-  status nobody should trust.
-
-**Nothing is refused any more.** Banding was the last row, and its recorded
-reason was half right in the way that turned out to matter:
-
-> needs player-chosen combat damage assignment, which the engine automates for
-> every creature.
-
-The engine does not *lack* damage assignment order. It has had the concept all
-along — `CombatState.block_order` — and has simply been **sorting it instead of
-asking**. The automatic sort by effective toughness *is* a choice made silently
-on the attacking player's behalf, so banding is two sentences rather than a
-subsystem: ask, and ask the other player. `ask_objects` already records the
-order options were taken in, which is exactly what a damage assignment order is,
-so it needed no new `DecisionKind` either.
-
-| half | rule | how |
-|---|---|---|
-| attacking as a band | 702.21b | two `ask_objects` questions, because the printed sentence is two constraints — any number *with* banding, then at most one *without* |
-| blocked as a unit | 702.21e | `band_of`, which returns a band of one for everything else, so the ordinary case falls straight through |
-| the damage assignment order changes hands | 702.21 | `_order_chooser`, and `_divide` — one walk of 510.1c, pointed either way |
-
-*Manual damage division* remains a recorded simplification in
-[rules-coverage.md](rules-coverage.md) for combats with no banding in them: the
-automatic sort still stands there, and nobody is asked. That is a divergence
-about **who is asked in the ordinary case**, not about banding, and it is stated
-where the rest of the simplifications are.
-
-## Suggested build order
-
-There is no engine work left in this census. The next thing worth building is
-the **authoring pipeline's** two-entries-from-one-answer, which is what
-`split-cards-fuse` is really asking for, and after that **fuse** — the one
-printed shape `card_of` cannot answer, because it is a single spell made of two
-faces at once.
-
-Cross-check [unsupported-cards.md](unsupported-cards.md) first: where a
-capability already has gap records, those cards are the real specification.
-`/extend-dsl` rule 1 still applies: **one capability per run.**
-
-## Provenance
-
-The census is the supplied source document, entry for entry, plus the rows
-marked **†**: hexproof, skulk, intimidate, partner and choose a Background, which
-the engine implements and the source omits — the last folded into the partner
-entry by the source and kept as its own `Keyword` here, because the two words
-build different decks; nightbound, which the source folds into the
-daybound entry and the engine keeps as its own `Keyword` because it is printed
-on the other face; fuse, which the source omits and which the engine implements
-as a card-level field rather than a `Keyword`, since it is a third way to cast
-one card rather than a characteristic of anything; mill and surveil, which are keyword actions the
-engine already has as ops; and infect, which the source discusses inside the
-poisonous entry rather than as one of its own. Landwalk is expanded into its six
-keywords — the five basic types plus nonbasic — because that is how the engine
-models it, and the reason why is the first corollary above.
-
-Statuses were assigned by reading `reference()` in
-`src/commanderblitz/cards/authoring/packet.py`, which derives every vocabulary list
-from the enums rather than restating them, and is the single best oracle for
-what the DSL currently accepts.

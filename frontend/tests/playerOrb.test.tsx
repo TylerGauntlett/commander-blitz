@@ -71,7 +71,7 @@ describe("the commander plinth", () => {
 
   it("shows the commander's name in full rather than a count", () => {
     // The whole reason it stopped being a shrunken card face: at ~74px the name
-    // clipped to "Aesi, Tyra…" -- docs/mockup-fidelity.md defect #5.
+    // clipped to "Aesi, Tyra…".
     const { container } = renderOrb({ command: [commander()] });
     expect(container.querySelector(".cmdplinth__name")?.textContent).toBe(
       "Aesi, Tyrant of Gyre Strait",

@@ -1,37 +1,16 @@
 # Deployment
 
-Every commit to `main` that passes `scripts/verify.py` and *ships* is built into
-a container image and deployed to the droplet behind <https://commanderblitz.com>.
-At the same time it is released to the Steam Deck as a new version
-([ADR 0010](adr/0010-release-every-main-build.md)). Nothing is deployed or released
-by hand.
+Operating the site: what runs on the droplet, how to self-host it, how to
+provision and roll back, and what keeps HTTPS alive. How a commit gets here --
+the gate, what ships, the image build, the deploy job and the Steam Deck
+release -- is [ci-cd.md](ci-cd.md). Nothing is deployed or released by hand in
+the normal course of things; the hand-run paths below exist for recovery.
 
-```
-                  ┌── python ──┐              ┌─▶ build image ──▶ push to GHCR ──▶ ssh + compose up ──▶ /health
-push to main ──▶ lint ─ sim ───┼─▶ gate ──────┤
-                  └── frontend ┘  (+ ships?)  └─▶ desktop release ──▶ GitHub Release vX.Y.<commits>
-```
-
-Whether a commit ships depends on its conventional-commit type, which for a squash
-merge is the pull request's title:
-
-- `feat`, `fix`, `perf`, `refactor`, `build` and `revert` ship.
-- `docs`, `chore`, `ci`, `test` and `style` pass the gate and stop there.
-
-`pr.yml` holds every title to these types, and `.github/scripts/conventional.sh` has
-the rules. A push ships if any commit in it does, or if it contains a subject that is
-not a conventional commit.
-
-A pull request runs the same jobs plus a six-leg `e2e` matrix and a secrets scan;
-a push to main skips the e2e half, having already run it on the pull request that
-became the merge. `gate` is the single check that judges them all, and the only one
-`build` waits on.
-
-- **Pipeline** — [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)
-- **Image** — [`Dockerfile`](../Dockerfile), published to `ghcr.io/tylergauntlett/commander-blitz`
-- **Runtime** — [`docker-compose.yml`](../docker-compose.yml) and [`Caddyfile`](../Caddyfile), which live at `/opt/automtg/` on the droplet
-- **Infrastructure** — [`terraform/`](../terraform/)
-- **Desktop releases** — [`.github/workflows/release.yml`](../.github/workflows/release.yml)
+- **Pipeline** -- [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), described in [ci-cd.md](ci-cd.md)
+- **Image** -- [`Dockerfile`](../Dockerfile), published to `ghcr.io/tylergauntlett/commander-blitz`
+- **Runtime** -- [`docker-compose.yml`](../docker-compose.yml) and [`Caddyfile`](../Caddyfile), which live at `/opt/automtg/` on the droplet
+- **Infrastructure** -- [`terraform/`](../terraform/)
+- **Desktop releases** -- [`.github/workflows/release.yml`](../.github/workflows/release.yml)
 
 ## How it fits together
 
@@ -121,7 +100,7 @@ terraform init
 terraform apply
 ```
 
-This creates the droplet, a reserved IP, a firewall (22, 80 and 443 inbound), and
+This creates the droplet, a reserved IP, a firewall (the rules are in `terraform/`), and
 runs a cloud-init bootstrap that installs Docker and creates the `deploy` user.
 Bootstrap takes a couple of minutes after `apply` returns; the deploy job waits
 for it. Terraform state is local and gitignored: the `terraform/` directory on the
@@ -131,7 +110,7 @@ machine that ran `apply` is the only record of what exists, so back it up.
 
 | Secret | Purpose |
 | --- | --- |
-| `DROPLET_HOST` | Where to SSH, and what the health check curls |
+| `DROPLET_HOST` | Where to SSH. The health check curls the public domain, not this address, so that DNS and TLS are proven too |
 | `DROPLET_SSH_KEY` | Private half of the CI deploy key |
 
 ```bash
@@ -174,12 +153,11 @@ echo "IMAGE_TAG=sha-abc1234" > .env                                        # pic
 docker compose up -d
 ```
 
-Confirm with `curl https://commanderblitz.com/health`. This only works for a tag
-still in the droplet's local image cache (the nightly prune keeps 168h); the
-deploy job logs out of `ghcr.io` when it finishes, deliberately, so a pruned tag
-cannot be re-pulled by hand. To go back further, re-run the pipeline at that
-commit instead: `gh run list --workflow deploy.yml --limit 20`, then
-`gh run rerun <run-id>`.
+Confirm with `curl https://commanderblitz.com/health`. The image is public, so a tag
+the nightly prune has dropped from the droplet's cache pulls again anonymously;
+the deploy job's `docker logout` only discards the run's own token. If a tag is
+gone from the registry too, re-run the pipeline at that commit:
+`gh run list --workflow deploy.yml --limit 20`, then `gh run rerun <run-id>`.
 
 ### HTTPS
 
@@ -214,14 +192,11 @@ make compose recreate the container; the deploy job runs
 ## Desktop releases
 
 The Steam Deck build ([steamdeck.md](steamdeck.md)) is released by every push to
-main that ships. `deploy.yml` calls `release.yml` next to the site deploy, behind the
-same green gate. The version is `X.Y.<commits on main>`:
-
-- Major and minor are whatever `desktop/package.json` says. Change them with a
-  pull request when a release deserves the number.
-- The patch is the commit count. CI stamps it into `package.json` at build time.
-  It only ever grows, and the same commit always gets the same version, so a re-run
-  finds its release already there and stops.
+main that ships, behind the same green gate as the site; how the version is
+formed, when the AppImage is rebuilt versus carried forward, and why a release
+is published as a draft first are in [ci-cd.md](ci-cd.md#release). Major and
+minor come from `desktop/package.json`; change them with a pull request when a
+release deserves the number.
 
 To release by hand, for example after a merge that did not ship or a release that
 failed:
@@ -230,25 +205,20 @@ failed:
 gh workflow run release.yml --ref main
 ```
 
-The release builds three things and publishes them together as a GitHub Release of
-this repository:
+A release carries three things, published together as a GitHub Release of this
+repository:
 
 | asset | what it is | who reads it |
 |---|---|---|
-| `CommanderBlitz-<v>.AppImage`, `latest-linux.yml` | the Electron shell, with the content package inside it | `install.sh` (first install), `electron-updater` (shell updates, installed on quit) |
+| `CommanderBlitz-<v>.AppImage`, `latest-linux.yml` | the Electron shell, with the content package inside it; rebuilt only when the shell changed, otherwise the previous one carried forward | `install.sh` (first install), `electron-updater` (shell updates, installed on quit) |
 | `content-<v>.tar.gz`, `content-latest.json` | the frozen server, the built client and the card data, versioned as one | the shell's own updater, which restarts the server in place |
 | `steam-assets.tar.gz`, `install.sh`, `SHA256SUMS` | the library artwork and launcher; the one-line installer | `install.sh` itself, and anybody checking a download |
 
 Everything the Deck fetches is a `releases/latest/download/<file>` URL, so it needs
-no API, no token and no rate limit. A release is uploaded as a draft and made latest
-only at the end, so a run that is cancelled by a newer push never leaves a
-half-uploaded `latest` behind. The workflow also refuses to publish a version that is
-not newer than `latest`.
-
-There is no pre-release channel, because `install.sh` and both updaters read only
-`latest`. To hold a risky change back from Decks, merge it under a type that does not
-ship, build the AppImage locally (`desktop/README.md`) and try it on a Deck, then
-release it with `gh workflow run`.
+no API, no token and no rate limit. There is no pre-release channel, because
+`install.sh` and both updaters read only `latest`. To hold a risky change back
+from Decks, merge it under a type that does not ship, build the AppImage locally
+(`desktop/README.md`) and try it on a Deck, then release it with `gh workflow run`.
 
 **Rolling back:** revert the change. The revert ships, and its release has a higher
 version. `latest` is a pointer to the highest release, so deleting a release moves it
@@ -273,8 +243,9 @@ also rules out horizontal scaling without a shared session store.
 
 **One Docker volume holds everything durable.** `generated` carries cards and
 decks from deck imports plus the card art lazily fetched from Scryfall
-(`data/generated/art`), named `{scryfall_id}.jpg` so it is shared across decks
-and seats that chose the same illustration. Everything else in `/app/data`, the
+(`data/generated/art`): a card's own art as `{card_id}.jpg`, and a printing a
+deck or a catalog hover chose as `{scryfall_id}.jpg`, so it is shared across
+decks and seats that chose the same illustration. Everything else in `/app/data`, the
 committed art and the catalog index, comes from the image and is replaced
 wholesale by every deploy.
 
@@ -290,11 +261,3 @@ nothing reads it, and `docker volume rm automtg_art` reclaims it.
 **`terraform destroy` deletes the volume** along with the droplet. Nothing in it
 is irreplaceable (art re-downloads) but imported decks are not recoverable from
 the repository.
-
-**The verify gate's skips are failures in CI.** `verify.py` prints `SKIP frontend`
-and exits zero when `frontend/node_modules` is missing, when neither npm nor bun
-is on PATH, and skips the story and Playwright stages when no Chromium build is
-present. Every CI job passes `--strict`, which turns all three into failures, so a
-job whose toolchain went missing fails instead of passing having asserted nothing.
-An unknown `--only` group is an argparse error, and a slice that selects zero
-stages exits 1 rather than reporting success.

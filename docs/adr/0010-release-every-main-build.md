@@ -39,7 +39,8 @@ and `pr.yml` requires that title to be a conventional commit. `feat`, `fix`, `pe
 the `/create-pr` skill all call. A push ships if any commit in it ships, or if it
 contains a non-conventional subject, or if its commit list can't be read in full. Doubt
 resolves to shipping, because a quiet type over a real change would leave that code
-unreleased.
+unreleased. *(The "commits in the push" baseline is superseded by the amendment
+below.)*
 
 **The version is `X.Y.<commits on main>`.** Major and minor come from
 `desktop/package.json` and change only through a deliberate pull request. The patch is
@@ -64,7 +65,7 @@ the deploy and the release green. A push that doesn't ship must leave both skipp
   that shipped.
 - Every shipping merge is a full AppImage download on every Deck. No blockmap is
   published, so updates aren't differential. They download in the background and
-  install on quit.
+  install on quit. *(Superseded by the amendment below: content-only releases.)*
 - There is no pre-release channel. `install.sh` and both updaters read only
   `releases/latest`. To hold a change back, merge it under a non-shipping type and
   release later with `workflow_dispatch` on `release.yml`. To undo one, revert it: the
@@ -73,7 +74,8 @@ the deploy and the release green. A push that doesn't ship must leave both skipp
   merge (once "pull request title" is a required check). Dependabot gets `fix(deps)` for
   runtime ecosystems and `ci(deps)` for Actions.
 - `min_shell_version` still defaults to the content's own version. That's harmless
-  because the shell and the content always release together.
+  because the shell and the content always release together. *(Superseded by the
+  amendment below.)*
 
 ### Amended 2026-10-10: content-only releases, and what a push owes
 

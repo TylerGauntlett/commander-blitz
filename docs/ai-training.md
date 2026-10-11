@@ -80,8 +80,8 @@ network works from any seat.
 
 That second array is where most of the usable signal is. It lets the model learn a
 32-dimensional embedding per card, so it can distinguish "Legion Lieutenant" from
-"some 2/2". With only ~150 distinct cards the table is tiny, and it is the single
-biggest quality-per-line decision in this layer.
+"some 2/2". The table is small, and it is the single biggest quality-per-line
+decision in this layer.
 
 ## Rewards
 
@@ -122,26 +122,12 @@ every precon:
 python scripts/run_arena.py --agents heuristic,heuristic_classic --decks precons --pods 2,4 --games 60
 ```
 
-Measured when the strategies landed (40 games per pod size): **level within
-noise** — 50% vs 45% in duels, 22.5% vs 26.2% in four-player pods, with 95%
-intervals ±15 points. That run mixes decks and agents, so deck strength swamps
-the agent. The sharper measurement holds the deck fixed and swaps only its
-pilot, against a classic-piloted Zurgo, 12 duels each:
-
-| Deck | Strategy wins | Classic wins |
-|---|---|---|
-| Sheoldred | 6 | 2 |
-| Blor | 7 | 5 |
-| Atraxa | 2 | 1 |
-| Bard | 4 | 3 |
-| Edgar | 8 | 7 |
-| Giada, Isperia, Vivi | 9, 8, 4 | 9, 8, 4 |
-| Bruvac | 0 of 10 | 0 of 10 — but its mill gets an opponent to 9 and 28 cards left where classic stops at 57 and 39 |
-
-Never worse, sometimes much better — and the point of the plans is less the
-win rate than that each deck now *does its thing* where a player can see it.
-Aesi and the Ur-Dragon were left out: long games trip the engine's 200-trigger
-loop guard (Scute Swarm, Ganax), which the arena scores as a draw.
+That run mixes decks and agents, so deck strength swamps the agent; the sharper
+measurement holds the deck fixed (`--decks <id>`) and swaps only its pilot. A
+healthy result is the strategy agent level with or ahead of the classic one on
+every deck — and the point of the plans is less the win rate than that each deck
+*does its thing* where a player can see it. A long game can trip
+`MAX_TRIGGERS_PER_STEP` (Scute Swarm, Ganax), which the arena scores as a draw.
 
 ## The trainer
 
@@ -179,23 +165,21 @@ pod size.
 python scripts/run_arena.py --games 200 --pods 2,4 --out runs/
 ```
 
-## What to expect
+## How to measure
 
-Measured on this machine, after a 120-update CPU run (~61k environment steps, 871
-episodes):
+Train a checkpoint per pod size with `scripts/train.py` (`--pod`, `--updates`,
+`--steps`, `--seed`, `--lr`, `--out`), then seat it with
+`scripts/run_arena.py --agents policy,heuristic --checkpoint <path>` and again
+against `random`; `--games`, `--pods`, `--decks`, `--seed`, `--workers` and `--out`
+shape the run, and `--max-draw-rate` turns it into a gate.
 
-| Matchup | Win rate | 95% CI |
-|---|---|---|
-| Heuristic vs random | ~85% | — |
-| **Trained policy vs random** | **60%** | 47–71% |
-| **Trained policy vs heuristic** | **10%** | 4–23% |
-
-The policy has clearly learned something — 60% against random is well clear of a coin
-flip — and it is just as clearly not competitive with the heuristic yet. That is the
-expected shape at this budget. An 825-wide action space, 15–40 turn episodes and a
-terminal-only reward need orders of magnitude more experience than a background CPU
-run.
+A healthy result is qualitative, not a number to hit: the heuristic is well clear of
+random, and a trained policy at a small budget sits above random but below the
+heuristic. A wide action space, long episodes and a terminal-only reward need far
+more experience than a background CPU run before the policy catches the heuristic.
 
 Treat this as a working pipeline with sensible defaults rather than a finished player.
 If you want to push it: more updates first, then reward shaping to get a denser signal
-early, then a wider trunk. The heuristic agent remains the opponent the app ships with.
+early, then a wider trunk. The heuristic agent remains the opponent the app ships with,
+and `scripts/verify.py` gates on the heuristic, not the policy: its arena stage seats
+`heuristic_classic` against `random` under `--max-draw-rate`.

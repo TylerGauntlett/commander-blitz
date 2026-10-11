@@ -531,8 +531,8 @@ test.describe("reading a card from the panel", () => {
    * your creature -- is correct and was verified by hand, but it is not testable
    * here yet: the rail can arrive at a blocker decision already pinned to a card
    * from earlier in the turn, and in that state it does not swap to the newly
-   * hovered one. That is a preview bug, not a panel bug, and it is written up in
-   * docs/design-record.md (Open fidelity findings) rather than papered over with a retry loop that
+   * hovered one. That is a preview bug, not a panel bug, and it is left as a
+   * known defect rather than papered over with a retry loop that
    * would pass for the wrong reason.
    *
    * So this checks what it can check deterministically: both surfaces carry the
@@ -584,7 +584,7 @@ test.describe("the tools footer", () => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     // Past the opening hand first. It is a full-screen surface above
     // everything, so while it is up the tools are on screen but not clickable --
-    // the same shape as `.prompt-backdrop`'s, see docs/design-record.md (Open fidelity findings). That
+    // the same shape as `.prompt-backdrop`'s. That
     // is pre-existing and out of scope here; this test is about the footer.
     await keepOpeningHand(page);
 
