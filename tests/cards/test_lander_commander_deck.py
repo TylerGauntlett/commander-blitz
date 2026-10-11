@@ -1,7 +1,7 @@
-"""The Lander Commander deck (Aesi, Tyrant of Gyre Strait): the two cards this
-branch added, doing what they print.
+"""The Lander Commander deck (Aesi, Tyrant of Gyre Strait): the cards the gates
+could not watch, doing what they print.
 
-Both cleared the six authoring gates, and both were measured by gate 5 at almost
+Each cleared the six authoring gates, and each was measured by gate 5 at almost
 nothing -- which is the gate's documented limit, not the cards':
 
 - **Verdant Kraken** is an upkeep trigger, and the sandbox never reaches an
@@ -10,24 +10,37 @@ nothing -- which is the gate's documented limit, not the cards':
   creature it may put onto the battlefield is never there; its expectation is
   "it resolved and found nothing". Its land face is a second face, which the
   gate never plays.
+- **Oboro, Palace in the Clouds** returns itself for {1}, an activated ability,
+  and gate 5 never activates one.
 
 So these are the observations. Each pins the near miss as well: the Kraken's
 token on an *opponent's* upkeep is still yours, and the Symbiosis' counters go
 on a mana-value-3 creature and not a mana-value-4 one, and arrive with the card
-in one placement rather than after it.
+in one placement rather than after it; Oboro's return is refused with no mana
+to pay it, and its replay spends a land drop.
 """
 
 from __future__ import annotations
 
 from commanderblitz.engine.characteristics import chars
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
-from tests.conftest import _default_answer, action_for_card, oids_of, pass_until
+from tests.conftest import (
+    _default_answer,
+    action_for_card,
+    activations,
+    hand_ids,
+    oids_of,
+    only_oid,
+    pass_until,
+)
 
 AESI = "aesi_tyrant_of_gyre_strait"
 KRAKEN = "verdant_kraken"
 TENTACLE = "forest_tentacle_3_3_g_land"
 SYMBIOSIS = "turntimber_symbiosis_turntimber_serpentine_wood"
 WOOD = "turntimber_serpentine_wood"
+OBORO = "oboro_palace_in_the_clouds"
+BOUNCE = 1  # "{1}: Return Oboro to its owner's hand."; 0 is its mana ability
 BEAR = "t_bear"  # {1}{G} 2/2, mana value 2
 BOUNDARY = "mossborn_hydra"  # {2}{G} 0/0 that enters with a +1/+1 counter: mana value 3
 FOUR = "wickerbough_elder"  # {3}{G} 4/4 that enters with a -1/-1 counter: mana value 4
@@ -280,3 +293,77 @@ class TestTurntimberSerpentineWood:
         mana = [a for a in game.state.card_of(wood).abilities if a.is_mana_ability]
         assert len(mana) == 1
 
+
+
+class TestOboroPalaceInTheClouds:
+    """"{T}: Add {U}. {1}: Return Oboro to its owner's hand." -- a land that
+    goes back to hand to be played again, so in this list it is a landfall
+    trigger Aesi's extra drop can buy every turn."""
+
+    # Two Plains: whichever pays the {1}, the other keeps the {W} anchor
+    # castable, so the turn stays seat 0's after the return resolves.
+    HELD = ("plains", "plains")
+
+    def board(self, builder, *, mine=(), tapped: bool = False, played: int = 0):
+        game = (
+            builder(players=2)
+            .battlefield(0, [OBORO, *mine])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .library(0, ["forest"] * 20)
+            .library(1, ["forest"] * 20)
+            .active(0)
+            .step(Step.PRECOMBAT_MAIN)
+            .lands_played(0, played)
+            .build()
+        )
+        oboro = only_oid(game, OBORO, 0)
+        game.state.objects[oboro].tapped = tapped
+        return game, oboro
+
+    def bounce(self, game, oboro) -> None:
+        [line] = activations(game, oboro, BOUNCE)
+        game.apply(line)
+        answer(game)
+
+    def test_one_mana_returns_it_to_hand(self, builder):
+        game, oboro = self.board(builder, mine=self.HELD)
+        self.bounce(game, oboro)
+        assert hand_ids(game, 0).count(OBORO) == 1
+        assert oids_of(game, OBORO, 0) == []
+
+    def test_it_pays_for_its_own_return(self, builder):
+        """The return costs {1}, not {T}: Oboro alone can tap for the {U} that
+        pays it -- the line that saves it from a land-destruction spell."""
+        game, oboro = self.board(builder)
+        self.bounce(game, oboro)
+        assert hand_ids(game, 0).count(OBORO) == 1
+
+    def test_tapped_and_alone_it_cannot(self, builder):
+        """The near miss: with no mana anywhere the {1} is unpayable, so a
+        bare `{T}`-free activation must still be refused."""
+        game, oboro = self.board(builder, tapped=True)
+        assert activations(game, oboro, BOUNCE) == []
+
+    def test_replayed_it_is_a_land_drop_and_a_card_off_aesi(self, builder):
+        """Returned and replayed, it enters again, so Aesi's landfall draws --
+        and the replay spends a land drop like any other, which is why the
+        deck wants Aesi's second one."""
+        game, oboro = self.board(builder, mine=[*self.HELD, AESI])
+        self.bounce(game, oboro)
+        library, turn = len(game.state.players[0].library), game.state.turn
+        game.apply(action_for_card(game, ActionKind.PLAY_LAND, OBORO))
+        answer(game)
+        assert game.state.turn == turn, "a draw step would also shrink the library"
+        assert len(oids_of(game, OBORO, 0)) == 1
+        assert game.state.players[0].lands_played == 1
+        assert len(game.state.players[0].library) == library - 1
+
+    def test_with_the_drops_spent_it_stays_in_hand(self, builder):
+        """Aesi's two drops both used: the return still works, the replay
+        does not."""
+        game, oboro = self.board(builder, mine=[*self.HELD, AESI], played=2)
+        self.bounce(game, oboro)
+        assert game.state.active_player == 0
+        assert hand_ids(game, 0).count(OBORO) == 1
+        assert [a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND] == []

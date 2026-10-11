@@ -10,9 +10,10 @@ and one capability: Verdant Kraken's 3/3 Forest Tentacle land creature token --
 a land on every player's upkeep, so a card off Aesi on every upkeep -- and
 Turntimber Symbiosis' "it enters with three additional +1/+1 counters", a real
 614.1c enters-with on a card `look_at_top` puts onto the battlefield, with its
-land face Turntimber, Serpentine Wood.
+land face Turntimber, Serpentine Wood. A later edit of the list swapped an
+Island for Oboro, Palace in the Clouds, which was already native.
 
-So this file pins the same claim as its siblings: **every one of its 77 distinct
+So this file pins the same claim as its siblings: **every one of its 78 distinct
 cards resolving `native`**, through the same `importer.import_deck` a pasted link
 goes through. A card dropping out of `data/cards/auto/`, or an engine change
 invalidating one, turns a `native` into a `partial` here rather than in somebody's
@@ -73,7 +74,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Heroic Intervention", 1),
     ("Hinterland Harbor", 1),
     ("Imprisoned in the Moon", 1),
-    ("Island", 12),
+    ("Island", 11),
     ("Jin-Gitaxias, Progress Tyrant", 1),
     ("Jungle Basin", 1),
     ("Kodama of the East Tree", 1),
@@ -84,6 +85,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Myriad Landscape", 1),
     ("Negate", 1),
     ("Nezahal, Primal Tide", 1),
+    ("Oboro, Palace in the Clouds", 1),
     ("Oracle of Mul Daya", 1),
     ("Overwhelming Stampede", 1),
     ("Pongify", 1),
@@ -141,7 +143,7 @@ class TestEveryCardIsNative:
         here would still pass, which is the one way this file could lie.
         """
         assert report.total == 100
-        assert len(report.cards) == 77
+        assert len(report.cards) == 78
 
     def test_nothing_is_a_proxy(self, report):
         """The claim. `partial` means the printed text is inert."""
