@@ -404,6 +404,12 @@
     "file": "anafenza_unyielding_lineage.jpg",
     "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725"
   },
+  "ancestral_craving": {
+    "artist": "Cynthia Sheppard",
+    "bytes": 49388,
+    "file": "ancestral_craving.jpg",
+    "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9"
+  },
   "ancestral_recall": {
     "artist": "Mark Poole",
     "bytes": 106084,
@@ -1783,6 +1789,12 @@
     "bytes": 70662,
     "file": "bloodline_necromancer.jpg",
     "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92"
+  },
+  "bloodline_recollector_ancestral_craving": {
+    "artist": "Cynthia Sheppard",
+    "bytes": 49388,
+    "file": "bloodline_recollector_ancestral_craving.jpg",
+    "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9"
   },
   "bloodrite_invoker": {
     "artist": "Svetlin Velinov",
@@ -7164,6 +7176,12 @@
     "bytes": 50606,
     "file": "henrika_infernal_seer.jpg",
     "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e"
+  },
+  "herald_of_eternal_dawn": {
+    "artist": "Martina Fa\u010dkov\u00e1",
+    "bytes": 56859,
+    "file": "herald_of_eternal_dawn.jpg",
+    "scryfall_id": "bdcddceb-6b5e-4c19-9069-457c3736932d"
   },
   "herald_s_horn": {
     "artist": "Pablo Mendoza",
