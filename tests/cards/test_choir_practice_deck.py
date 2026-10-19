@@ -26,10 +26,11 @@ would be wrong if the card had been written the other way: an opponent's Angel,
 a non-Angel, a token, one point of life short of a threshold.
 
 Cards whose own lanes wrote unit tests with the real card (Giada, Angel of
-Vitality, Archangel of Tithes, Righteous Valkyrie, Angel of Destiny, Archivist of
-Oghma, Folk Hero, Exemplar of Light, Drannith Magistrate, Giver of Runes) are not
-repeated here; `TestGiadaWithTheDeck` covers the commander only where it meets
-the rest of the list.
+Vitality, Archangel of Tithes, Righteous Valkyrie, Angel of Destiny, Folk Hero,
+Exemplar of Light, Drannith Magistrate, Giver of Runes) are not repeated here,
+nor is Lightning Greaves, which `test_myrel_shield_of_argive_gear.py` covers;
+`TestGiadaWithTheDeck` covers the commander only where it meets the rest of the
+list.
 
 **Why positions hold an `ANCHOR`.** With no play available to anybody the
 engine's auto-pass runs whole turns inside a single `apply`, wiping an
@@ -42,7 +43,7 @@ The statics -- lords, Lieutenant and the discounts -- are in
 
 from __future__ import annotations
 
-from commanderblitz.engine import legality
+from commanderblitz.engine import legality, sba
 from commanderblitz.engine.cost_reduction import cost_reduction
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.primitives import create_token
@@ -1277,3 +1278,70 @@ class TestGiadaWithTheDeck:
         game = frozen(builder, [PLAINS, PLAINS, PLAINS], [PLAINS], hand=["starnheim_aspirant"])
 
         assert "starnheim_aspirant" in offers(game, 0, ActionKind.CAST)
+
+
+class TestHeraldOfEternalDawn:
+    """ "Flash" / "You can't lose the game and your opponents can't win the game."
+
+    The gate casts the Herald and reads "on the battlefield": nobody is at 0 life
+    in its sandbox and nobody wins, so the line the card is played for is never
+    read. The near misses are the seats -- the protection is its controller's,
+    so an opponent at 0 life still loses -- and the source: the Herald leaving
+    ends it, and a player held in at 0 life then loses at once.
+    """
+
+    HERALD = "herald_of_eternal_dawn"
+
+    def herald(self, builder):
+        game = anchored(builder, [self.HERALD])
+        return game, only_oid(game, self.HERALD)
+
+    def test_at_zero_life_you_are_still_in_the_game(self, builder):
+        game, _ = self.herald(builder)
+        game.state.players[0].life = 0
+        sba.run(game.state)
+        assert not game.state.players[0].has_lost
+        assert not game.over
+
+    def test_an_opponent_at_zero_life_still_loses(self, builder):
+        """ "You can't lose", not "players can't lose"."""
+        game, _ = self.herald(builder)
+        game.state.players[1].life = 0
+        sba.run(game.state)
+        assert game.state.players[1].has_lost
+        assert game.over and game.winners == [0]
+
+    def test_an_opponent_cannot_win_the_game(self, builder):
+        """ "You win the game", from the other seat, simply does not happen."""
+        game, _ = self.herald(builder)
+        sba.declare_win(game.state, 1)
+        assert not game.state.players[0].has_lost
+        assert not game.over
+
+    def test_you_still_can(self, builder):
+        game, _ = self.herald(builder)
+        sba.declare_win(game.state, 0)
+        assert game.over and game.winners == [0]
+
+    def test_the_herald_leaving_ends_it(self, builder):
+        game, herald = self.herald(builder)
+        game.state.players[0].life = 0
+        sba.run(game.state)
+        assert not game.state.players[0].has_lost
+        kill(game, herald)
+        sba.run(game.state)
+        assert game.state.players[0].has_lost
+
+    def test_flash_casts_it_on_an_opponents_turn(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [PLAINS] * 7)
+            .battlefield(1, [PLAINS])
+            .hand(0, [self.HERALD])
+            .hand(1, [ANCHOR])
+            .active(1)
+            .build()
+        )
+        pass_until(game, lambda g: g.pending() is not None and g.pending().player == 0)
+        assert game.state.active_player == 1
+        assert castable(game, self.HERALD)
