@@ -271,6 +271,10 @@
     "artist": "Matt Stewart",
     "scryfall_id": "29957f49-9a6b-42f6-b2fb-b48f653ab725"
   },
+  "ancestral_craving": {
+    "artist": "Cynthia Sheppard",
+    "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9"
+  },
   "ancestral_recall": {
     "artist": "Mark Poole",
     "scryfall_id": "2dd41293-d7c8-4422-9f0c-b3e96350f5c9"
@@ -1194,6 +1198,10 @@
   "bloodline_necromancer": {
     "artist": "J.P. Targete",
     "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92"
+  },
+  "bloodline_recollector_ancestral_craving": {
+    "artist": "Cynthia Sheppard",
+    "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9"
   },
   "bloodrite_invoker": {
     "artist": "Svetlin Velinov",
@@ -4788,6 +4796,10 @@
     "artist": "Billy Christian",
     "back": true,
     "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e"
+  },
+  "herald_of_eternal_dawn": {
+    "artist": "Martina Fa\u010dkov\u00e1",
+    "scryfall_id": "bdcddceb-6b5e-4c19-9069-457c3736932d"
   },
   "herald_s_horn": {
     "artist": "Jason Felix",

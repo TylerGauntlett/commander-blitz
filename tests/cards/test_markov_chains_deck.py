@@ -9,6 +9,7 @@ misfire, not that it works.
 
 So the authoring expectation is a floor, and these are the observations. Each
 class is one card and asserts the printed sentence the gate could not reach.
+Authority of the Consuls is covered by `test_myrel_shield_of_argive_control.py`.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from tests.conftest import (
 BEAR = "grizzly_bears"  # a plain 2/2
 WALKER = "t_walker"  # a loyalty-4 planeswalker with no static of its own
 PRISON = "ghostly_prison"
+ANCHOR = "t_plain_instant"  # {W}, gain 1 life -- a reason for priority to stop
 
 
 def attack_actions(game, oid: int | None = None):
@@ -451,3 +453,93 @@ class TestCarmenCruelSkymarcher:
         self.attack(game, carmen)
         self.settle(game, targets=[])
         assert game.state.objects[bear].zone is Zone.GRAVEYARD
+
+
+class TestBloodlineRecollector:
+    """ "At the beginning of each end step, if three or more creatures died this
+    turn, this creature becomes prepared." // Ancestral Craving: "Target player
+    draws three cards and loses 3 life."
+
+    The gate casts the creature and reads "on the battlefield": nothing dies in
+    its sandbox and nobody reaches an end step, so the trigger never runs and the
+    spell it unlocks is never cast. The near misses are the threshold (two
+    deaths is not three), the seat (*each* end step, not only yours) and the
+    spell's target (the player chosen draws and loses, not its caster).
+    """
+
+    CARD = "bloodline_recollector_ancestral_craving"
+    SPELL = "ancestral_craving"
+
+    def board(self, builder, *, active: int = 0, bears: int = 3):
+        # An anchor in each hand gives priority a reason to stop, or the
+        # auto-pass would run straight through the end step being watched.
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.CARD, "swamp", "plains"])
+            .battlefield(1, ["plains"])
+            .battlefield(active, [BEAR] * bears)
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .library(0, ["forest"] * 10)
+            .library(1, ["forest"] * 10)
+            .active(active)
+            .build()
+        )
+        return game, only_oid(game, self.CARD)
+
+    def deaths_then_end_step(self, game, count: int) -> None:
+        for oid in [o for o in game.state.battlefield if game.state.objects[o].def_id == BEAR][:count]:
+            assert zones.destroy(game.state, oid)
+        game.state.bump_chars()
+        advance_to_step(game, Step.END_STEP)
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+
+    def test_three_deaths_prepare_it_at_your_end_step(self, builder):
+        game, oid = self.board(builder)
+        self.deaths_then_end_step(game, 3)
+        assert game.state.objects[oid].prepared
+
+    def test_two_deaths_do_not(self, builder):
+        game, oid = self.board(builder)
+        self.deaths_then_end_step(game, 2)
+        assert not game.state.objects[oid].prepared
+
+    def test_an_opponents_end_step_counts_too(self, builder):
+        """ "Each end step" -- the reading "your end step" would miss this one."""
+        game, oid = self.board(builder, active=1)
+        self.deaths_then_end_step(game, 3)
+        assert game.state.active_player == 1
+        assert game.state.objects[oid].prepared
+
+    def prepared(self, builder):
+        game, oid = self.board(builder, bears=0)
+        game.state.objects[oid].prepared = True
+        return game, oid
+
+    def test_prepared_it_offers_ancestral_craving(self, builder):
+        game, _ = self.prepared(builder)
+        offered = [a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.prepared]
+        assert {game.state.card(a.source).prepared_face for a in offered} == {self.SPELL}
+        assert {a.targets[0].id for a in offered} == {0, 1}, "target player: either seat"
+
+    def test_the_target_draws_three_and_loses_three(self, builder):
+        game, oid = self.prepared(builder)
+        state = game.state
+        hand, life = len(state.players[1].hand), state.players[1].life
+        mine = len(state.players[0].hand)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CAST and a.prepared and a.targets[0].id == 1
+            )
+        )
+        pass_until(
+            game,
+            lambda g: not g.state.stack and g.pending() is not None and g.pending().kind is DecisionKind.PRIORITY,
+        )
+        assert len(state.players[1].hand) == hand + 3
+        assert state.players[1].life == life - 3
+        assert len(state.players[0].hand) == mine, "the caster did not draw"
+        assert not state.objects[oid].prepared, "doing so unprepares it"
+        assert state.objects[oid].zone is Zone.BATTLEFIELD

@@ -1185,6 +1185,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "bloodline_recollector_ancestral_craving": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {
@@ -4831,6 +4835,10 @@
       "1": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "herald_of_eternal_dawn": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "herald_s_horn": {

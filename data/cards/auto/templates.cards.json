@@ -3296,6 +3296,52 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ancestral_craving",
+      "mana_cost": "{B}",
+      "name": "Ancestral Craving",
+      "oracle_text": "Target player draws three cards and loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -12348,6 +12394,56 @@
         "Vampire"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodline_recollector_ancestral_craving",
+      "mana_cost": "{1}{B}",
+      "name": "Bloodline Recollector // Ancestral Craving",
+      "oracle_text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "ancestral_craving",
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Warlock"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -52459,6 +52555,45 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "cant_lose_the_game",
+          "kind": "static",
+          "text": "You can't lose the game and your opponents can't win the game."
+        },
+        {
+          "affects_player": "opponent",
+          "effect": "cant_win_the_game",
+          "kind": "static",
+          "text": "You can't lose the game and your opponents can't win the game."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "herald_of_eternal_dawn",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}{W}",
+      "name": "Herald of Eternal Dawn",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nFlying\nYou can't lose the game and your opponents can't win the game.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

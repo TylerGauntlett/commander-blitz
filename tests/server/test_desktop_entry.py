@@ -16,6 +16,7 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -115,7 +116,11 @@ class TestCheck:
     def test_it_prints_one_json_line_and_exits_zero(self, tmp_path, capsys, monkeypatch):
         for name in TEST_ONLY:
             monkeypatch.delenv(name, raising=False)
-        code = desktop.main(["--check", "--generated-dir", str(tmp_path)])
+        # `main` writes its flags into the real `os.environ`; without the patch
+        # COMMANDERBLITZ_GENERATED_DIR outlives the test and every later import
+        # in the same process writes to this test's tmp_path.
+        with mock.patch.dict(os.environ):
+            code = desktop.main(["--check", "--generated-dir", str(tmp_path)])
         out, _ = capsys.readouterr()
         assert code == 0
         lines = out.strip().splitlines()
