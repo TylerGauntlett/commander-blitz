@@ -19,6 +19,10 @@ Bruna into Brisela) -- plus three engine fixes the cards exposed: an intervening
 statics reading them, and counters a permanent enters with that never counted as
 "put on" it (122.6).
 
+The list then moved -- Archivist of Oghma and Heraldic Banner out, Herald of
+Eternal Dawn and Lightning Greaves in -- and came back 73 of 74, with the Herald's
+"you can't lose the game" inert until it was written.
+
 So this file pins the same claim as its siblings: **every one of its 74 distinct
 cards resolving `native`**, through the same `importer.import_deck` a pasted link
 goes through. A card dropping out of `data/cards/auto/`, or an engine change
@@ -53,7 +57,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Arcane Signet", 1),
     ("Archangel of Thune", 1),
     ("Archangel of Tithes", 1),
-    ("Archivist of Oghma", 1),
     ("Austere Command", 1),
     ("Avacyn, Angel of Hope", 1),
     ("Bishop of Wings", 1),
@@ -80,9 +83,10 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Gisela, the Broken Blade", 1),
     ("Giver of Runes", 1),
     ("Grasp of Fate", 1),
+    ("Herald of Eternal Dawn", 1),
     ("Herald's Horn", 1),
-    ("Heraldic Banner", 1),
     ("Inspiring Overseer", 1),
+    ("Lightning Greaves", 1),
     ("Lyra Dawnbringer", 1),
     ("Lyra, Archangel of Dawn", 1),
     ("Magus of the Moat", 1),

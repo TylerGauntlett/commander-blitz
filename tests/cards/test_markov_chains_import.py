@@ -6,7 +6,10 @@ with the one pillowfort in it reading as inert text. It moved again -- Canyon
 Slough and Zulaport Cutthroat out, Clever Concealment and Edgar, Ancient
 Bloodlord in -- and came back 90 of 91 with Edgar partial. Then once more --
 Vampire Nocturnus out, Carmen, Cruel Skymarcher in -- and 90 of 91 with Carmen
-partial, until #53 wrote her. This file holds the list
+partial, until #53 wrote her. Then Florian, Malakir Bloodwitch and Sundown
+Pass out, Authority of the Consuls, Bloodline Recollector and an eighth Swamp
+in -- 89 of 90 with Bloodline Recollector's prepare trigger inert, until it
+was written. This file holds the list
 as it now stands, imported through the same `importer.import_deck` a pasted
 link goes through, so a card dropping out of `data/cards/auto/` or an engine
 change invalidating one fails here rather than in a game.
@@ -33,6 +36,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Anguished Unmaking", 1),
     ("Anowon, the Ruin Sage", 1),
     ("Arcane Signet", 1),
+    ("Authority of the Consuls", 1),
     ("Baron Bertram Graywater", 1),
     ("Bastion of Remembrance", 1),
     ("Battlefield Forge", 1),
@@ -43,6 +47,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Bloodghast", 1),
     ("Bloodletter of Aclazotz", 1),
     ("Bloodline Keeper // Lord of Lineage", 1),
+    ("Bloodline Recollector // Ancestral Craving", 1),
     ("Bloodthirsty Conqueror", 1),
     ("Bloodthrone Vampire", 1),
     ("Bojuka Bog", 1),
@@ -63,7 +68,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Elenda, the Dusk Rose", 1),
     ("Exotic Orchard", 1),
     ("Fetid Heath", 1),
-    ("Florian, Voldaren Scion", 1),
     ("Forerunner of the Legion", 1),
     ("Ghostly Prison", 1),
     ("Godless Shrine", 1),
@@ -76,7 +80,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Indulgent Aristocrat", 1),
     ("Isolated Chapel", 1),
     ("Legion Lieutenant", 1),
-    ("Malakir Bloodwitch", 1),
     ("Malakir Rebirth // Malakir Mire", 1),
     ("Marauding Blight-Priest", 1),
     ("Master of Dark Rites", 1),
@@ -102,8 +105,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Soul Shatter", 1),
     ("Stromkirk Captain", 1),
     ("Sulfurous Springs", 1),
-    ("Sundown Pass", 1),
-    ("Swamp", 7),
+    ("Swamp", 8),
     ("Swords to Plowshares", 1),
     ("Takenuma, Abandoned Mire", 1),
     ("Talisman of Conviction", 1),
@@ -147,7 +149,7 @@ class TestEveryCardIsNative:
         here would still pass, which is the one way this file could lie.
         """
         assert report.total == 100
-        assert len(report.cards) == 91
+        assert len(report.cards) == 90
 
     def test_nothing_is_a_proxy(self, report):
         """The claim. `partial` means the printed text is inert."""
