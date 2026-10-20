@@ -167,8 +167,11 @@ export function commandZoneCommanderCount(player: PlayerView): number {
  * card is in no other zone. Without it the dock blinks empty at exactly the
  * moment the player is watching it.
  *
- * A commander in a *hidden* zone (hand or library, after a return-to-hand) has
- * no view to return, and is simply absent until it reappears.
+ * Last come the commanders in none of those: phased out (Oubliette), or in a
+ * hand or library. They used to be simply absent, which took the seat's portrait
+ * -- the thing that says whose seat this is -- off the table with them. The
+ * server sends their identity in `commanders_unseen` for exactly this, and the
+ * plinth says where they went.
  */
 export function commandersOf(state: GameView, pid: number): CardView[] {
   const player = state.players[pid];
@@ -186,6 +189,7 @@ export function commandersOf(state: GameView, pid: number): CardView[] {
   for (const card of state.battlefield) consider(card);
   for (const card of player.graveyard) consider(card);
   for (const card of player.exile) consider(card);
+  for (const card of player.commanders_unseen ?? []) consider(card);
   return found;
 }
 
@@ -259,7 +263,16 @@ export function findCard(state: GameView, oid: number): CardView | null {
     // mechanic exists to show. Whichever put it there, this seat was sent it,
     // so hovering it is allowed.
     if (player.library_top?.oid === oid) return player.library_top;
-    for (const zone of [player.hand ?? [], player.graveyard, player.exile, player.command]) {
+    // `commanders_unseen` last, so hovering a phased-out commander's plinth
+    // still fills the rail -- the plinth is drawn from it, and nothing else
+    // carries that card.
+    for (const zone of [
+      player.hand ?? [],
+      player.graveyard,
+      player.exile,
+      player.command,
+      player.commanders_unseen ?? [],
+    ]) {
       for (const card of zone) {
         if (card.oid === oid) return card;
       }

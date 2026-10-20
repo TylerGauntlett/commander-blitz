@@ -58,6 +58,11 @@ export interface CardView {
   attached_to?: number | null;
   attacking?: boolean;
   blocking?: boolean;
+  /**
+   * Only on an entry of `PlayerView.commanders_unseen`: the commander is phased
+   * out (Oubliette). `zone` still says battlefield, which is true and useless.
+   */
+  phased_out?: boolean;
 }
 
 /** Why a hand card has no play action right now. See engine/legality.py. */
@@ -190,6 +195,13 @@ export interface PlayerView {
    */
   exile_hidden_count: number;
   command: CardView[];
+  /**
+   * This player's commanders that are in none of the zones above: phased out,
+   * or in their hand or library. Sent to every seat, because a commander's
+   * identity is public, and it is what keeps the seat's portrait on screen.
+   * See `commandersOf`. Optional only so older fixtures still type-check.
+   */
+  commanders_unseen?: CardView[];
 }
 
 export interface DecisionOption {
@@ -302,6 +314,12 @@ export interface LegalAction {
    * not itemise floating mana, so the pool is never claimed here.
    */
   pays: number[];
+  /**
+   * For an action that names targets: oid -> why that permanent cannot be
+   * named by this spell or ability at all ("Hexproof", "Shroud", "Protection
+   * from red"). Display only; see `logic/targetHint.ts`.
+   */
+  untargetable?: Record<string, string>;
 }
 
 export interface GameEvent {

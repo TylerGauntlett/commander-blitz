@@ -1010,6 +1010,16 @@
   font-weight: 700;
 }
 
+/* "Can't target X -- Hexproof." Said in the warning colour so it reads as a
+   refusal at a glance, and with a leading mark so it still does in greyscale. */
+.choices__label--refused {
+  color: var(--danger);
+}
+
+.choices__label--refused::before {
+  content: "⊘ ";
+}
+
 /* Dialogs -------------------------------------------------------------- */
 
 .prompt-backdrop,

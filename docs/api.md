@@ -51,6 +51,10 @@ list rather than parse labels: `base_label` is the label without its
 `" -> target"` suffix, `option_label` is what a chip says when a row groups
 actions that differ by something other than a target (`"{R}"` for one yield of
 "Add one mana of any colour"), and `mana_option` is which yield that is.
+`untargetable`, on an action that names targets, maps each permanent that spell or
+ability may not name at all to the engine's reason (`"Hexproof"`, `"Shroud"`,
+`"Protection from red"`, from `targeting.target_refusal`), so the client can say why
+a card it will not let you click is skipped.
 `x` is now always `0` on a cast: the value is chosen through a `choose_x`
 decision after the action is submitted, not carried on it.
 
