@@ -109,6 +109,8 @@ interface Props {
   onActivate: (card: CardView) => void;
   onDropOn: (card: CardView, zone: string) => void;
   disabled?: boolean;
+  /** Pressable but not draggable: there is no lane on screen to drop on. */
+  noDrag?: boolean;
 }
 
 export function HandFan({
@@ -122,6 +124,7 @@ export function HandFan({
   onActivate,
   onDropOn,
   disabled = false,
+  noDrag = false,
 }: Props) {
   /*
    * WHICH CARD IS RAISED, BY OID -- never by index.
@@ -281,7 +284,7 @@ export function HandFan({
                     variant="board"
                     lift={false}
                     ownsHover={false}
-                    draggable={!disabled}
+                    draggable={!disabled && !noDrag}
                     playable={playableOids.has(card.oid)}
                     selected={selectedOid === card.oid}
                     dimmed={!disabled && !playableOids.has(card.oid)}

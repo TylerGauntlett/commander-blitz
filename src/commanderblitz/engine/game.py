@@ -47,7 +47,7 @@ from .costs import (
 )
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import modal_bounds, mode_labels
-from .enums import ActionKind, DecisionKind, Step, Zone
+from .enums import ActionKind, CardType, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
@@ -1746,6 +1746,14 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     pid = state.priority_player
     player = state.players[pid] if pid is not None else None
 
+    # Somebody else's removal or sweeper is on the stack. Stopped at even with
+    # nothing to answer it with, because without the stop it resolved the
+    # instant it was cast and the player's permanents simply vanished -- both
+    # cards gone before either could be read. Passing here is a read, not a
+    # choice, and it is the one window worth spending a press on to see.
+    if player is not None and player.auto_pass and _faces_disruption(state, player.pid):
+        return False
+
     if _only_pass_or_mana(state, options, player):
         # Nothing else is legal: offering this would waste a step for the agent
         # and a click for the human, regardless of policy.
@@ -1786,6 +1794,35 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     if _own_main_phase(state, pid):
         return False
     return True
+
+
+def _faces_disruption(state: GameState, pid: int) -> bool:
+    """Is the top of the stack an opponent's spell or ability worth showing?
+
+    Their instant or sorcery -- removal, a sweeper, a counterspell, the cards
+    that change the board out from under you -- or anything of theirs aimed at
+    you or at something you control. A creature spell or a trigger aimed
+    elsewhere is not: those are most of the stack in a four-seat game, and
+    stopping for each would bring back the forced Pass clicks auto-pass exists
+    to remove.
+    """
+    if not state.stack:
+        return False
+    top = state.stack[-1]
+    if top.controller == pid:
+        return False
+    if top.kind == "spell" and top.oid is not None and top.oid in state.objects:
+        types = chars(state, top.oid).types
+        if CardType.INSTANT.value in types or CardType.SORCERY.value in types:
+            return True
+    for ref in top.targets:
+        if ref.kind == "player" and ref.id == pid:
+            return True
+        if ref.kind == "object":
+            target = state.objects.get(ref.id)
+            if target is not None and target.controller == pid:
+                return True
+    return False
 
 
 def _own_main_phase(state: GameState, pid: int) -> bool:

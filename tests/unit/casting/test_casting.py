@@ -382,6 +382,61 @@ class TestPriorityStops:
         assert set(stops) <= {Step.DECLARE_BLOCKERS}
 
 
+class TestDisruptionStops:
+    """The playtest report: an opponent's removal resolved the instant it was
+    cast when the player had nothing to answer it with, so a creature simply
+    vanished with both cards gone before either could be read. An opponent's
+    instant or sorcery, or anything of theirs aimed at you, is a window even
+    when Pass is the only thing in it."""
+
+    @staticmethod
+    def _game(builder, hand1):
+        game = (
+            builder()
+            .battlefield(0, ["t_bear"])
+            .hand(1, hand1)
+            .battlefield(1, ["plains", "forest", "forest"])
+            .active(1)
+            .step(Step.PRECOMBAT_MAIN)
+            .build(advance=False)
+        )
+        game.state.players[0].auto_pass = True
+        game._advance()
+        return game
+
+    def test_their_removal_stops_with_only_pass_legal(self, builder):
+        game = self._game(builder, ["t_removal"])
+        game.apply(action_for_card(game, ActionKind.CAST, "t_removal"))
+        pass_until(game, lambda g: g.pending() and g.pending().player == 0)
+        decision = game.pending()
+        assert decision.kind is DecisionKind.PRIORITY
+        assert [a.kind for a in game.legal_actions()] == [ActionKind.PASS]
+        assert game.state.stack and game.state.stack[-1].controller == 1
+
+    def test_their_creature_spell_does_not(self, builder):
+        game = self._game(builder, ["t_bear"])
+        game.apply(action_for_card(game, ActionKind.CAST, "t_bear"))
+        for _ in range(50):
+            decision = game.pending()
+            if decision is None or not game.state.stack:
+                break
+            assert decision.player != 0, "a creature spell is not worth a stop"
+            game.apply(_default_answer(game, decision))
+        assert not game.state.stack
+
+    def test_an_ai_seat_never_stops_for_it(self, builder):
+        game = self._game(builder, ["t_removal"])
+        game.state.players[0].auto_pass = False
+        game.apply(action_for_card(game, ActionKind.CAST, "t_removal"))
+        for _ in range(50):
+            decision = game.pending()
+            if decision is None or not game.state.stack:
+                break
+            assert decision.player != 0
+            game.apply(_default_answer(game, decision))
+        assert not game.state.stack
+
+
 class TestManaThatUnlocksASpell:
     """The playtest report: Treasure and Master of Dark Rites make mana the
     payment solver cannot tap, so a spell that needs it is not offered -- and

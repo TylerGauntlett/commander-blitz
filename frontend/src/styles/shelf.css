@@ -216,7 +216,15 @@
   color: var(--text-dim);
   font: inherit;
   font-size: max(var(--type-floor), calc(16px * var(--du)));
+  white-space: nowrap;
+  /* Sized for the longest order, so cycling does not move its neighbours. */
+  min-width: calc(22ch + 24px * var(--du));
+  text-align: left;
   cursor: pointer;
+}
+
+.shelf__sortk {
+  color: var(--text-faint);
 }
 
 .shelf__note {
@@ -517,8 +525,20 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   color: var(--text-faint);
 }
 
+/*
+ * ONE SLOT, ONE WIDTH, whatever it is saying. The hint, an error and a
+ * finished import all take turns in it, and a slot sized by its text would
+ * hand the difference to the field beside it -- which then resized under the
+ * thumb on every import. Two lines at most, and the rest is in `data-hint`.
+ */
 .shelf__foot .import__hint--inline {
+  flex: 0 0 34ch;
   max-width: 34ch;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   font-size: max(var(--type-floor), calc(16px * var(--du)));
   line-height: 1.3;
 }

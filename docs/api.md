@@ -156,7 +156,9 @@ abilities are legal in all of them -- so a player holding one instant used to be
 about every window, on every player's turn. The engine auto-passes any window with only
 `PASS` in it; on top of that, a seat with `auto_pass` set skips windows where passing is
 not a real choice. It stops when the stack is non-empty, in its own main phases, and at
-declare blockers.
+declare blockers. It also stops, even with only `PASS` legal, when an opponent's instant
+or sorcery is on top of the stack or an opponent's spell or ability targets the seat or
+something it controls, so the player sees the removal before it resolves.
 
 `GameSession.start` sets `auto_pass` on **human seats only**, so the RL environment and
 the golden tests see exactly the behaviour they always did. `POST /options` flips

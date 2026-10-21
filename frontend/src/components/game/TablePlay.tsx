@@ -66,6 +66,7 @@ export function TablePlay({
    * decision's (`pickKey`).
    */
   const picked = useUiStore((s) => s.picked);
+  const setPeek = useUiStore((s) => s.setPeek);
   const pickedOids = new Set<number>();
   if (isPickSeveral(state) && picked.key === pickKey(state)) {
     for (const choice of picked.choices) {
@@ -152,14 +153,47 @@ export function TablePlay({
             <span className="viewing__who">
               Viewing <b>{state.players[viewing]?.name ?? `Player ${viewing}`}</b>
             </span>
-            <button
-              type="button"
-              className="btn btn--ghost"
-              data-stop={stopId.tool("stop-viewing")}
-              onClick={() => setViewing(null)}
-            >
-              Back to your board
-            </button>
+            {/*
+              THEIR GRAVEYARD AND EXILE, as controls. The seat draws them as
+              marks, because a 96px seat has no room for a 44px button
+              (`OpponentSeat`), so this strip -- which only exists while you
+              are standing at their board -- is where they open. A removal
+              spell that resolved before you could read it is in there.
+            */}
+            <span className="viewing__piles">
+              <button
+                type="button"
+                className="btn btn--ghost"
+                data-stop={stopId.pile(viewing, "graveyard")}
+                data-testid={`viewing-graveyard-${viewing}`}
+                onClick={() => setPeek({ pid: viewing, zone: "graveyard" })}
+              >
+                Graveyard {state.players[viewing]?.graveyard.length ?? 0}
+              </button>
+              {(state.players[viewing]?.exile.length ?? 0) +
+                (state.players[viewing]?.exile_hidden_count ?? 0) >
+                0 && (
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  data-stop={stopId.pile(viewing, "exile")}
+                  data-testid={`viewing-exile-${viewing}`}
+                  onClick={() => setPeek({ pid: viewing, zone: "exile" })}
+                >
+                  Exile{" "}
+                  {(state.players[viewing]?.exile.length ?? 0) +
+                    (state.players[viewing]?.exile_hidden_count ?? 0)}
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn--ghost"
+                data-stop={stopId.tool("stop-viewing")}
+                onClick={() => setViewing(null)}
+              >
+                Back to your board
+              </button>
+            </span>
           </div>
         )}
 

@@ -103,6 +103,11 @@ Two behaviours worth knowing:
   in their own main phase, if a card in hand is held back only by its cost and a
   mana ability the payment solver can't use (a Treasure, Master of Dark Rites) is
   on offer, the window stops so that mana can be made and spent before combat.
+  The other exception, also for `auto_pass` seats only: an opponent's instant or
+  sorcery on top of the stack, or anything of theirs targeting the seat or what it
+  controls, stops even when passing is all there is (`_faces_disruption`). Without
+  it a removal spell resolved in the same call that cast it, and the board changed
+  with nothing on screen to say why.
 - **A triggered ability chooses its targets on the way onto the stack** (603.3d),
   not as it resolves — so its controller is asked *before* anybody may respond, and
   what they answer is what an opponent is responding to. Nothing is asked when the

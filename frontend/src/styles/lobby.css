@@ -1213,6 +1213,21 @@
   max-width: 34ch;
 }
 
+.import__hint--error {
+  color: var(--danger);
+}
+
+/* A finished import: a green check and the one line that matters. */
+.import__check {
+  margin-right: 0.4em;
+  color: var(--gain);
+  font-weight: 900;
+}
+
+.import__hint--done {
+  color: var(--text-dim);
+}
+
 /* The dossier ------------------------------------------------------------- */
 
 .dos {

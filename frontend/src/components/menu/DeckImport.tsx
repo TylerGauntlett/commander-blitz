@@ -136,16 +136,11 @@ export function DeckImport({ onImported, variant = "panel", enabled = true }: Pr
             Importing a Moxfield deck needs a connection.
           </span>
         ) : (
-          row &&
-          status === "idle" && (
-            <span className="import__hint import__hint--inline">
-              Paste a public Moxfield deck link.
-            </span>
-          )
+          row && <RowStatus status={status} error={error} result={result} />
         )}
       </div>
 
-      {status === "error" && error && (
+      {!row && status === "error" && error && (
         <motion.p
           className="menu__error"
           data-testid="import-error"
@@ -157,7 +152,7 @@ export function DeckImport({ onImported, variant = "panel", enabled = true }: Pr
         </motion.p>
       )}
 
-      {status === "ready" && result && (
+      {!row && status === "ready" && result && (
         <motion.div
           className="import__report"
           data-testid="import-coverage"
@@ -217,6 +212,75 @@ export function DeckImport({ onImported, variant = "panel", enabled = true }: Pr
         </motion.div>
       )}
     </section>
+  );
+}
+
+/**
+ * The row's one status slot: the hint, the error, or the result -- in the
+ * same fixed-width box, so nothing beside it moves.
+ *
+ * The row is a strip in the catalogue's footer, and a report that arrived
+ * beneath the field was a flex item in that strip: it took its width out of
+ * the field, which shrank under the player's thumb the moment an import
+ * worked. So the row says everything in the place the hint already held. A
+ * success is a green check and the one line that matters -- what is playable
+ * and what was simplified -- and the full story of the simplified cards is
+ * the dossier's, one press away on the deck that has just been taken.
+ */
+function RowStatus({
+  status,
+  error,
+  result,
+}: {
+  status: Status;
+  error: string | null;
+  result: DeckImportResponse | null;
+}) {
+  if (status === "error" && error) {
+    return (
+      <span
+        className="import__hint import__hint--inline import__hint--error"
+        data-testid="import-error"
+        role="alert"
+      >
+        {error}
+      </span>
+    );
+  }
+  if (status === "ready" && result) {
+    const inert = result.lands_inert ?? 0;
+    const summary = `${result.deck.name}: ${result.playable} playable, ${result.simplified} simplified${
+      inert > 0 ? `, ${inert} of ${result.lands} lands do nothing here` : ""
+    }`;
+    return (
+      <span
+        className="import__hint import__hint--inline import__hint--done"
+        data-testid="import-coverage"
+        role="status"
+        aria-label={`Imported ${summary}`}
+        data-hint={`Imported ${summary}`}
+      >
+        <span className="import__check" aria-hidden="true">
+          ✓
+        </span>
+        <span className="import__done">
+          <span data-testid="import-playable">{result.playable} playable</span>
+          {" · "}
+          <span data-testid="import-simplified">{result.simplified} simplified</span>
+          {inert > 0 && (
+            <span data-testid="import-mana">
+              {" · "}
+              {inert} of {result.lands} lands do nothing
+            </span>
+          )}
+        </span>
+      </span>
+    );
+  }
+  return (
+    <span className="import__hint import__hint--inline">
+      Paste a public Moxfield deck link.
+    </span>
   );
 }
 

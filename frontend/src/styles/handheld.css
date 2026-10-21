@@ -66,6 +66,17 @@
   outline: none;
 }
 
+/*
+ * A segment sits inside a pill that clips (`.seg { overflow: hidden }`), so a
+ * ring drawn outside the button was cut down to whichever edge touched the
+ * pill's inside -- All, Precons and Yours each wore one gold line rather than
+ * a ring. Inside the button, the whole ring is drawn.
+ */
+.seg__b[data-cursor] {
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--focus-glow);
+}
+
 /* A mouse player has a pointer to say where they are and does not need this. */
 html[data-input="mouse"] [data-cursor] {
   outline: none;

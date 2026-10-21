@@ -160,7 +160,11 @@ function DetailCell({ muster }: { muster: Muster }) {
   }`;
 
   return (
-    <span className="perm perm--detail" aria-label={label} data-hint={label}>
+    <span
+      className={`perm perm--detail${muster.creatures === 0 ? " perm--zero" : ""}`}
+      aria-label={label}
+      data-hint={label}
+    >
       <span className="pips">
         {pips.map((pip, i) => (
           <span
@@ -173,7 +177,15 @@ function DetailCell({ muster }: { muster: Muster }) {
           />
         ))}
         {more > 0 && <span className="pips__more tabular">+{more}</span>}
-        {muster.creatures === 0 && <span className="pips__more">none</span>}
+        {/* No creatures is a number like every other cell's zero -- untapped
+            of total, because a creature taps -- and a hollow pip says which
+            number it is. The word "none" read as a fourth kind of permanent. */}
+        {muster.creatures === 0 && (
+          <>
+            <span className="tpip" aria-hidden="true" />
+            <span className="pips__more tabular">0/0</span>
+          </>
+        )}
       </span>
       <span className="perm__pow tabular" data-power={muster.power}>
         <SeatIcon name="power" />
@@ -501,7 +513,8 @@ export function OpponentSeat({
         can spare is 20 -- a 44px hit target does not fit, and faking one with a
         transparent overlay would steal presses from the gauge and the counts
         above it. So the marks report, and the way into an opponent's zones is
-        to read their board: press the seat.
+        to read their board: press the seat, and their graveyard and exile
+        open from the strip over it (`TablePlay`'s "Viewing" strip).
 
         They keep `pile-<pid>-<zone>` so the counts stay queryable, and they are
         text inside the seat's own button, which a reader announces with it.

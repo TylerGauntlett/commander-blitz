@@ -105,6 +105,26 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
   const ringTo = useRef(false);
   const listId = useId();
 
+  /*
+   * WHERE THE DIALOG STARTS: the field for somebody at a keyboard, the first
+   * row for everybody else.
+   *
+   * The ring resolves onto a new dialog's first stop and focuses it, and the
+   * first stop is the field. On a Steam Deck a focused text field raises the
+   * on-screen keyboard, so a Herald's Horn opened under the keyboard and walking
+   * the list meant B to dismiss it, down, B again, down again. A handheld or a
+   * pad starts on the first row instead: the arrows walk the list from the
+   * first press, and the field is one press up for whoever wants to type.
+   */
+  const typeFirst =
+    getInputMode() !== "pad" && !document.documentElement.hasAttribute("data-handheld");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: where a dialog opens is a moment, not a state.
+  useLayoutEffect(() => {
+    if (typeFirst) return;
+    const first = listRef.current?.querySelector<HTMLElement>("[data-stop]")?.dataset.stop;
+    if (first) setCursor(first);
+  }, []);
+
   const shown = useMemo(() => narrow(choices, query), [choices, query]);
   /*
    * The highlight is CLAMPED rather than corrected.
@@ -232,11 +252,10 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
             data-testid="combo-filter"
             data-stop={stopId.combo("filter")}
             /*
-             * NOT ON A PAD, where nobody asked for a keyboard and where a
-             * focused field deadens the arrow keys that stand in for the d-pad
-             * (`pad.ts:isTyping`). The ring still resolves onto the field,
-             * because it is the dialog's first stop -- which is the right first
-             * thing for a four-hundred-option prompt to offer.
+             * NOT ON A PAD OR A HANDHELD, where nobody asked for a keyboard and
+             * where a focused field deadens the arrow keys that stand in for
+             * the d-pad (`pad.ts:isTyping`) -- and on a Deck raises the
+             * on-screen keyboard over the list. See `typeFirst` above.
              *
              * The rule this suppresses is about stealing focus from somebody
              * who did not ask. Here the dialog IS the whole screen, it opened
@@ -245,7 +264,7 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
              * the surprise.
              */
             // biome-ignore lint/a11y/noAutofocus: a modal that exists to be answered; see above.
-            autoFocus={getInputMode() !== "pad"}
+            autoFocus={typeFirst}
           />
         </label>
 

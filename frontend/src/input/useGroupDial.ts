@@ -7,12 +7,55 @@
  * across a re-render, and a hold kept in a store is a hold that can get stuck.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getCursor } from "./cursor";
+import { GROUPS, type GroupId } from "./groups";
 import { onFrame as onPadFrame } from "./pad";
 import { stopRoot } from "./stops";
 
-export function useGroupDial(): [boolean, (open: boolean) => void] {
-  const [dialOpen, setDialOpen] = useState(false);
+/** The region a dial spoke's stop names, or null for any other stop. */
+function spokeGroup(stop: string | null): GroupId | null {
+  const id = stop?.startsWith("tool:group-") ? stop.slice("tool:group-".length) : null;
+  return GROUPS.find((group) => group.id === id)?.id ?? null;
+}
+
+export interface GroupDial {
+  dialOpen: boolean;
+  setDialOpen: (open: boolean) => void;
+  /** Choose a region: the dial closes, and `picked` names it once it has. */
+  pick: (id: GroupId) => void;
+  /** A region chosen and not yet entered. Entered only once the dial is gone. */
+  picked: GroupId | null;
+  clearPicked: () => void;
+}
+
+export function useGroupDial(): GroupDial {
+  const [dialOpen, setDialOpenState] = useState(false);
+  const openRef = useRef(false);
+  const setDialOpen = useCallback((open: boolean) => {
+    openRef.current = open;
+    setDialOpenState(open);
+  }, []);
+
+  /*
+   * THE PICK LANDS AFTER THE DIAL HAS GONE, never while it is up.
+   *
+   * The dial is `.wheelwrap`, which `stopRoot` prefers over everything, so a
+   * `setCursor` aimed at a hand card while the dial is still mounted resolves
+   * inside the dial, finds nothing and does nothing -- and the dial closing
+   * then hands the ring back to the stop it was on before the hold. Choosing a
+   * region did nothing at all, by `A` or by release. So the choice is held
+   * here and `Table` enters it on the render after the dial has unmounted.
+   */
+  const [picked, setPicked] = useState<GroupId | null>(null);
+  const pick = useCallback(
+    (id: GroupId) => {
+      setPicked(id);
+      setDialOpen(false);
+    },
+    [setDialOpen],
+  );
+  const clearPicked = useCallback(() => setPicked(null), []);
 
   /*
    * The dial, on `L2` HELD.
@@ -72,17 +115,26 @@ export function useGroupDial(): [boolean, (open: boolean) => void] {
       // Not over a prompt: the dial is a map of the board, and the board is
       // behind the modal trap. `L2` there is the jump to the primary button.
       if (held && !stopRoot().hasAttribute("data-modal-root")) {
-        timer = setTimeout(() => setDialOpen(true), HOLD);
+        timer = setTimeout(() => {
+          setPicked(null);
+          setDialOpen(true);
+        }, HOLD);
       }
       // The release closes it whether or not it ever opened, so a hold that is
-      // let go of never leaves the dial up.
-      else setDialOpen(false);
+      // let go of never leaves the dial up -- and LETTING GO ON A SPOKE CHOOSES
+      // IT. Hold, point, release is the whole gesture; needing `A` as well made
+      // the release a cancel, which is not what a player letting go means.
+      else {
+        const chosen = openRef.current ? spokeGroup(getCursor()) : null;
+        if (chosen) setPicked(chosen);
+        setDialOpen(false);
+      }
     });
     return () => {
       if (timer !== null) clearTimeout(timer);
       off();
     };
-  }, []);
+  }, [setDialOpen]);
 
-  return [dialOpen, setDialOpen];
+  return { dialOpen, setDialOpen, pick, picked, clearPicked };
 }

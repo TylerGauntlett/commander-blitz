@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef } from "react";
 import type { GameView, LegalAction } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import { availableBlockers, blockableBy } from "../logic/actionMatch";
-import { groupForDecision } from "../logic/focusGroup";
+import { groupForDecision, opponentTop } from "../logic/focusGroup";
 import type { useGame } from "../state/useGame";
 import { getCursor, setCursor, subscribeCursor } from "./cursor";
 import {
@@ -66,7 +66,9 @@ export function useTableRegions({
     const here = getGroup();
     const cursor = getCursor();
     // Leaving: note where we were, so coming back is a jump and not a reset.
-    if (here && cursor) rememberStop(here, cursor);
+    // Not a dial spoke: a region chosen on the dial is entered with the ring
+    // still naming the spoke, which is nowhere in the region being left.
+    if (here && cursor && !cursor.startsWith("tool:group-")) rememberStop(here, cursor);
 
     setGroup(id);
     const root = groupRoot(id);
@@ -268,9 +270,15 @@ export function useTableRegions({
    * and narration only decides *when* -- never *whether*.
    */
   const focusedFor = useRef<string | null>(null);
+  /*
+   * The third part of the key is the newest of somebody else's stack items
+   * waiting on you, so a removal spell cast in a step that already asked
+   * something is still a new decision. See `focusGroup.ts:opponentTop`.
+   */
+  const threat = opponentTop(state);
   // biome-ignore lint/correctness/useExhaustiveDependencies: the narrow key is the point; see above.
   useEffect(() => {
-    const key = `${state.pending?.kind ?? ""}|${state.step}`;
+    const key = `${state.pending?.kind ?? ""}|${state.step}|${threat ?? ""}`;
     if (focusedFor.current === key) return;
     // Wait for the board to stop moving, but do not treat waiting as done: the
     // key is still unclaimed, so the next run after narration settles takes it.
@@ -278,6 +286,13 @@ export function useTableRegions({
     focusedFor.current = key;
     const wanted = groupForDecision(state, actions, modalOwns, boardCanDecide());
     if (!wanted) return;
+    // The stack lands on the card that asked, never on a remembered ply: the
+    // point of going there is to read what has just arrived.
+    if (wanted === "stack" && threat !== null) {
+      enterGroup("stack");
+      setCursor(stopId.stack(threat));
+      return;
+    }
     /*
      * ALREADY THERE IS NOT ENOUGH; the ring has to be standing on something.
      *
@@ -300,7 +315,7 @@ export function useTableRegions({
       cursor !== null &&
       landableStopsIn(root).some((el) => el.dataset.stop === cursor);
     if (!standing) enterGroup(wanted);
-  }, [state.pending?.kind, state.step, narration.busy]);
+  }, [state.pending?.kind, state.step, threat, narration.busy]);
 
   return { enterGroup, jumpToCommit, stepGroup };
 }

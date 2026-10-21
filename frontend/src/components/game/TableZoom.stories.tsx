@@ -202,7 +202,7 @@ export const ViewingAnOpponent: Story = {
     // assess a threat against.
     expect(canvasElement.querySelector(".play__mine .mat__side")).not.toBeNull();
 
-    await userEvent.click(within(strip).getByRole("button"));
+    await userEvent.click(within(strip).getByRole("button", { name: "Back to your board" }));
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
     });

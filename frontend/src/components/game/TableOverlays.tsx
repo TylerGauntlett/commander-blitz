@@ -35,8 +35,8 @@ interface Props {
   /** Put the held card down -- the pointer's way out, which a pad never needed. */
   closeHold: () => void;
   dialOpen: boolean;
-  setDialOpen: (open: boolean) => void;
-  enterGroup: (id: GroupId) => void;
+  /** Choose a region on the dial; `Table` enters it once the dial is gone. */
+  pickGroup: (id: GroupId) => void;
   logOverlay: boolean;
   toggleLogOverlay: () => void;
   act: (actionId: string) => void;
@@ -60,8 +60,7 @@ export function TableOverlays({
   heldCard,
   closeHold,
   dialOpen,
-  setDialOpen,
-  enterGroup,
+  pickGroup,
   logOverlay,
   toggleLogOverlay,
   act,
@@ -117,15 +116,7 @@ export function TableOverlays({
         disabled={locked}
       />
 
-      {dialOpen && (
-        <GroupDial
-          current={getGroup()}
-          onPick={(id) => {
-            setDialOpen(false);
-            enterGroup(id);
-          }}
-        />
-      )}
+      {dialOpen && <GroupDial current={getGroup()} onPick={pickGroup} />}
 
       {logOverlay && (
         <div className="logover" data-modal-root data-testid="log-overlay">

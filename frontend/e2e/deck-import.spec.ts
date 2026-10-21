@@ -145,7 +145,7 @@ test.describe("importing a Moxfield deck", () => {
     await expect(page.getByTestId("import-error")).toContainText("97");
   });
 
-  test("the coverage report leads with what was simplified", async ({ page }) => {
+  test("the result says what was simplified, beside the field", async ({ page }) => {
     await stubImport(page, { status: 201, body: REPORT });
 
     await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
@@ -157,23 +157,26 @@ test.describe("importing a Moxfield deck", () => {
     await expect(page.getByTestId("import-simplified")).toHaveText("74 simplified");
 
     // A deck that looks like 37 lands and has 3 of them doing nothing at all is
-    // the single most confusing thing an import can produce, so it gets its own
-    // line. The count is `lands_inert`, not the mana gap: a fetchland makes no
-    // mana by design and is not what this warning is about.
-    await expect(page.getByTestId("import-mana")).toContainText("3 of them do nothing");
+    // the single most confusing thing an import can produce, so it is said. The
+    // count is `lands_inert`, not the mana gap: a fetchland makes no mana by
+    // design and is not what this warning is about.
+    await expect(page.getByTestId("import-mana")).toContainText("3 of 37 lands do nothing");
   });
 
-  test("each simplified card can be expanded to see what changed", async ({ page }) => {
+  test("a finished import does not resize the field", async ({ page }) => {
     await stubImport(page, { status: 201, body: REPORT });
 
-    await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
+    const field = page.getByTestId("import-url");
+    await field.fill("https://moxfield.com/decks/abc123");
+    const before = await field.boundingBox();
     await page.getByTestId("import-go").click();
+    await expect(page.getByTestId("import-coverage")).toBeVisible();
 
-    // Collapsed by default: 74 cards of notes would bury the Play button.
-    await expect(page.getByTestId("import-toggle")).toBeVisible();
-    await page.getByTestId("import-toggle").click();
-    await expect(page.getByText("Shelob, Child of Ungoliant")).toBeVisible();
-    await expect(page.getByText(/rules text not implemented/)).toBeVisible();
+    // The result takes the hint's slot, at the hint's width: a report that
+    // arrived beside the field used to take its width out of the field.
+    const after = await field.boundingBox();
+    expect(after?.width).toBe(before?.width);
+    expect(after?.height).toBe(before?.height);
   });
 
   test("the imported deck joins the rack and is taken", async ({ page }) => {

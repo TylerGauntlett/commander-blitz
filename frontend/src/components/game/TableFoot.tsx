@@ -156,9 +156,12 @@ export function TableFoot({
         fanWidth={zoom.fanW}
         onActivate={playFromHand}
         onDropOn={onDropOnZone}
+        disabled={locked}
         // Your lanes are not on screen while you are reading somebody
-        // else's, so there is nowhere legal to drop.
-        disabled={locked || viewing !== null}
+        // else's, so there is nowhere legal to DROP -- but a card is still
+        // yours to press. Removal aimed at the board you are reading is the
+        // reason to be reading it, so the click route stays open.
+        noDrag={viewing !== null}
       />
     </div>
   );

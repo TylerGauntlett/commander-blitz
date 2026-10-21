@@ -17,7 +17,7 @@ import {
   setGroup,
 } from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
-import { activeRoot } from "../../input/stops";
+import { activeRoot, stopId } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
 import { useUiStore } from "../../state/uiStore";
 import { board } from "../../testing/board";
@@ -427,11 +427,16 @@ export const HandheldRegionDial: Story = {
     expect(dial.querySelectorAll(".wheel__spoke").length).toBeGreaterThan(1);
     expect(dial.querySelector("[data-action-id]")).toBeNull();
 
-    // Letting go puts it away -- which is the whole argument for a hold over a
-    // toggle: you cannot forget to release.
+    // Point at the hand, then let go: the release puts the dial away -- which
+    // is the whole argument for a hold over a toggle, you cannot forget to
+    // release -- AND chooses the spoke the ring is on.
+    expect(setCursor(stopId.tool("group-hand"))).toBe(true);
     key("keyup");
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="group-dial"]')).toBeNull();
+    });
+    await waitFor(() => {
+      expect(groupOf(ringed(canvasElement))).toBe("hand");
     });
   },
 };

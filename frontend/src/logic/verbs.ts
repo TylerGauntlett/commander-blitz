@@ -233,6 +233,9 @@ function contextVerbs(
    * to stop.
    */
   if (ref.kind === "commit") {
+    // The idle bar: a place for the ring to wait, with nothing to press yet.
+    // Saying so is the honest bar; a blank one reads as broken.
+    if (ref.raw === "commit:idle") return { a: "Wait", b: "Back" };
     if (ref.raw === "commit:all") {
       if (decision === "declare_attackers") return { a: "All attack", b: "Back" };
       if (decision === "declare_blockers") return { a: "All defend", b: "Back" };
