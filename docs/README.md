@@ -56,6 +56,7 @@ separately:
 - [adr/0017-animation-reports-state.md](adr/0017-animation-reports-state.md) — the engine commits first; motion narrates and never lags
 - [adr/0018-card-data-checked-against-the-printing.md](adr/0018-card-data-checked-against-the-printing.md) — oracle text is a contract; the loader refuses what it would ignore
 - [adr/0019-pod-seats-symmetric-readiness.md](adr/0019-pod-seats-symmetric-readiness.md) — everyone locks in; a CPU differs only by deck
+- [adr/0020-convoke-is-one-line.md](adr/0020-convoke-is-one-line.md) — convoke and delve are one cast line; the pick is asked while paying
 
 ## If you are here to...
 

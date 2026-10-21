@@ -38,6 +38,7 @@ from .costs import (
     ability_purpose,
     activate_mana_ability,
     can_pay,
+    can_pay_mana,
     commander_cost,
     defined_x,
     mana_sources,
@@ -61,7 +62,7 @@ from .player_statics import (
     player_spends_mana_as_any_color,
     spell_life_tax,
 )
-from .primitives import add_counters, draw_cards
+from .primitives import add_counters, draw_cards, tap_permanent
 from .rng import Rng
 from .state import GameState, new_object
 from .structs import TargetRef
@@ -74,6 +75,7 @@ from .targeting import (
     target_count,
 )
 from .turn import _next_blocker_decision
+from .zones import exile as exile_object
 from .zones import (
     move_object,
     offer_enters_copy,
@@ -94,6 +96,9 @@ MAX_MULLIGANS = 6
 FREE_MULLIGANS = 1
 #: Safety valve on the internal advance loop.
 MAX_ADVANCE_STEPS = 20_000
+#: How many times a convoke pick that leaves the rest of the mana unpayable is
+#: asked again before `Game._ask_pay_generic` picks for the player.
+MAX_PAY_GENERIC_ASKS = 3
 #: Default turn cap, per player in the game.
 TURNS_PER_PLAYER = 30
 
@@ -580,12 +585,23 @@ class Game:
             # is read here off the same static `_cast_variant` read.
             cost = cost.as_any_color()
 
-        # Convoke and delve. Netted into `extra` alongside the commander tax
-        # and emerge's sacrifice, so it goes through the same clamp: `pay`
-        # floors the generic part at zero, and no amount of convoking makes a
-        # spell free of its coloured pips.
-        if action.pay_generic and card.pay_generic_with is not None:
-            extra -= action.pay_generic
+        # Convoke and delve. Which creatures tap, or which cards are exiled, is
+        # asked here -- the one line legality offered carries only the fewest
+        # the player must spend -- and netted into `extra` alongside the
+        # commander tax and emerge's sacrifice, so it goes through the same
+        # clamp: `pay` floors the generic part at zero, and no amount of
+        # convoking makes a spell free of its coloured pips. Before X, because
+        # X's ceiling is what the mana has left once this is spent.
+        if (
+            card.pay_generic_with is not None
+            and obj.zone is Zone.HAND
+            and not action.cast_free
+            and not action.from_library_top
+        ):
+            spent = yield from self._ask_pay_generic(
+                pid, card, oid, cost, extra, action.pay_generic
+            )
+            extra -= spent
 
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
@@ -701,34 +717,6 @@ class Game:
         # help pay for the spell it is about to be eaten by.
         if action.emerge_oid is not None:
             sacrifice_object(state, action.emerge_oid)
-
-        # Convoke and delve, for the same reason and at the same moment: the
-        # creature that tapped for mana above may still be convoked, which is
-        # wrong, so the tap is charged *after* payment and only untapped
-        # creatures are eligible. Expressed as an ordinary `Cost` so the player
-        # picks which ones, through the machinery every other selector cost
-        # already uses.
-        if action.pay_generic and card.pay_generic_with is not None:
-            if card.pay_generic_with == "tap_creatures":
-                spend = Cost(
-                    tap_permanents={
-                        "controller": "you",
-                        "types": ["Creature"],
-                        "tapped": False,
-                        "count": action.pay_generic,
-                    }
-                )
-            else:
-                spend = Cost(
-                    exile_from_graveyard={
-                        "controller": "you",
-                        "count": action.pay_generic,
-                        "exclude_self": True,
-                    }
-                )
-            ok = yield from pay(state, pid, spend, oid)
-            if not ok:  # pragma: no cover - legality already proved payability
-                return
 
         # The non-mana half of an additional cost -- casualty's sacrifice,
         # Deadly Dispute's artifact. Paid after the mana (rule 601.2g), the same
@@ -1132,6 +1120,82 @@ class Game:
                 shares[picked[0] if picked else oids[0]] += 1
             out[target_id] = [[oid, n] for oid, n in shares.items()]
         return out
+
+    def _ask_pay_generic(
+        self, pid: int, card, oid: int, cost: ManaCost, extra: int, fewest: int
+    ) -> Generator[Any, list[int], int]:
+        """Convoke and delve: ask which creatures tap, or which cards go, and spend them.
+
+        Between ``fewest`` -- what legality found the mana could not cover, the
+        floor the line was offered at -- and the most the generic part can
+        absorb. Returns how many were spent.
+
+        Convoked creatures are tapped *here*, before any mana is paid, so the
+        payment below cannot also tap one of them for mana (a creature taps
+        once). That makes a pick that convokes the very Elf the rest of the
+        cost needed unpayable, so a pick is checked against the mana before it
+        is spent and asked again if the rest could not then be paid.
+        """
+        state = self.state
+        convoke = card.pay_generic_with == "tap_creatures"
+        if convoke:
+            pool = [
+                other
+                for other in state.battlefield
+                if (o := state.objects.get(other)) is not None
+                and o.controller == pid
+                and not o.tapped
+                and "Creature" in chars(state, other).types
+            ]
+        else:
+            pool = [other for other in state.players[pid].graveyard if other != oid]
+        most = min(max(0, cost.generic + extra), len(pool))
+        fewest = min(fewest, most)
+        if most <= 0:
+            return 0
+        purpose = spell_purpose(card)
+
+        def payable(picked: list[int]) -> bool:
+            if not convoke:
+                return True
+            # Tapped for the question only, with no event: nothing has happened yet.
+            for other in picked:
+                state.objects[other].tapped = True
+            state.bump_chars()
+            try:
+                return can_pay_mana(
+                    state, pid, cost, extra_generic=extra - len(picked), purpose=purpose
+                )
+            finally:
+                for other in picked:
+                    state.objects[other].tapped = False
+                state.bump_chars()
+
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+        verb = "Tap creatures to convoke" if convoke else "Exile cards to delve"
+        floor = f"at least {fewest}, " if fewest else ""
+        prompt = f"{verb} for {card.name} ({floor}up to {most})"
+        picked: list[int] = []
+        for _attempt in range(MAX_PAY_GENERIC_ASKS):
+            picked = yield from ask_objects(
+                ctx, prompt, pool, fewest, most, pid, "convoke" if convoke else "delve"
+            )
+            if payable(picked):
+                break
+            prompt = f"Not enough mana left for the rest. {verb} for {card.name} ({floor}up to {most})"
+        else:
+            # Nobody is asked forever. The creatures the mana does not need
+            # first, as many as may go -- the pick most likely to leave the rest
+            # payable.
+            sources = {source.oid for source in mana_sources(state, pid, purpose=purpose)}
+            picked = sorted(pool, key=lambda other: other in sources)[:most]
+
+        for other in picked:
+            if convoke:
+                tap_permanent(state, other)
+            else:
+                exile_object(state, other, cause="cost")
+        return len(picked)
 
     def _ask_x(
         self,

@@ -4205,8 +4205,8 @@ instead of it, and makes the printed hard-cast illegal with no Island out.
 sacrifice anything — and it is paid **once**.
 
 So `additional_cost` is a full `Cost`, and legality offers **one cast line per
-number of times paid** — convoke's shape rather than kicker's, because the count
-changes both the price and what the spell does. The two modifiers are three
+number of times paid** rather than kicker's one, because the count changes both
+the price and what the spell does. The two modifiers are three
 different printed cards:
 
 | | |

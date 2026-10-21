@@ -230,7 +230,7 @@ This is the long tail, and where the build order comes from.
 | Cipher | shipped | the `encode` op (a fourth destination rider) and `cast_copy`, read back by an `encoded_by` trigger filter | `encode` |
 | Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
-| Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
+| Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line; which creatures tap is asked as it is paid. Generic only; the colour half is a documented simplification | `pay_generic_with` |
 | Coven | free | condition `cmp` on `{"distinct": {"of": "power"}}` over creatures you control | `distinct` |
 | Crew | shipped | `tap_permanents` with a `total_power`, summed off **derived** power plus each creature's `crew_power_bonus` ("crews Vehicles as though its power were N greater"); *Vehicle* is free text | — |
 | Compleated | shipped | `Keyword`, applied in `zones._enter_battlefield` straight after the starting-loyalty replacement: two fewer loyalty per printed Phyrexian symbol paid with life, counted by `game._cast` onto `GameObject.cast_phyrexian_life` and read only on the arrival that was that cast (`entered_by_cast`) | `compleated` |
