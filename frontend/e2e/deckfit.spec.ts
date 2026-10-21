@@ -23,7 +23,7 @@
 
 import { expect, type Page, test } from "@playwright/test";
 import { handheldAssert } from "./handheldAssert";
-import { clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
+import { budget, clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 const SIZES = [
   { w: 1200, h: 800 },
@@ -115,6 +115,20 @@ async function scrollers(page: Page): Promise<{ selector: string; by: number }[]
   });
 }
 
+/**
+ * Nothing scrolls, once the board has come to rest.
+ *
+ * Polled, because `develop` returns the moment its last action lands and a
+ * card drawn by it is still springing up into the fan from below -- measured
+ * mid-flight it reports as hanging off the bottom of `.hand`. Which seed and
+ * which step leaves a card in flight is down to how the game happens to go, so
+ * a single read made this gate fail on an unrelated rules change. A real
+ * overflow does not come to rest and still fails here.
+ */
+async function expectSettledFit(page: Page): Promise<void> {
+  await expect.poll(() => scrollers(page), { timeout: budget(5_000) }).toEqual([]);
+}
+
 for (const { w, h } of SIZES) {
   test.describe(`the whole board is on screen at ${w}x${h}`, () => {
     test.use({ viewport: { width: w, height: h } });
@@ -122,7 +136,7 @@ for (const { w, h } of SIZES) {
     test("a two-player board, played in", async ({ page }) => {
       await startGame(page, { opponents: 1, seed: 7 });
       await develop(page);
-      expect(await scrollers(page)).toEqual([]);
+      await expectSettledFit(page);
       // The page itself must not scroll either -- `body { overflow: hidden }`
       // would hide it, so this asks the documentElement directly.
       expect(
@@ -147,13 +161,13 @@ for (const { w, h } of SIZES) {
     }) => {
       await startGame(page, { opponents: 2, seed: 3 });
       await develop(page);
-      expect(await scrollers(page)).toEqual([]);
+      await expectSettledFit(page);
     });
 
     test("a four-seat pod, which is the density that decides it", async ({ page }) => {
       await startGame(page, { opponents: 3, seed: 5 });
       await develop(page);
-      expect(await scrollers(page)).toEqual([]);
+      await expectSettledFit(page);
     });
 
     test("the floors and the budgets still hold", async ({ page }) => {

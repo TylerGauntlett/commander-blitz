@@ -47,7 +47,7 @@ from .costs import (
 )
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import modal_bounds, mode_labels
-from .enums import ActionKind, CardType, DecisionKind, Step, Zone
+from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
@@ -1796,25 +1796,50 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     return True
 
 
-def _faces_disruption(state: GameState, pid: int) -> bool:
-    """Is the top of the stack an opponent's spell or ability worth showing?
+#: Effect ops that take something away: a permanent, a spell, control of either.
+#: An opponent's instant or sorcery carrying one of these is removal or a sweeper
+#: whatever it targets, which is why the stop reads the effects and not the
+#: targets alone -- a Wrath targets nothing.
+DISRUPTIVE_OPS = frozenset(
+    {
+        "counter",
+        "damage",
+        "destroy",
+        "exile",
+        "fight",
+        "gain_control",
+        "put_on_top",
+        "return_to_hand",
+        "sacrifice",
+    }
+)
 
-    Their instant or sorcery -- removal, a sweeper, a counterspell, the cards
-    that change the board out from under you -- or anything of theirs aimed at
-    you or at something you control. A creature spell or a trigger aimed
-    elsewhere is not: those are most of the stack in a four-seat game, and
-    stopping for each would bring back the forced Pass clicks auto-pass exists
-    to remove.
+
+def _carries_op(node: Any, ops: frozenset[str]) -> bool:
+    """Does an effect tree contain any of ``ops``, at any depth (modes, ifs)?"""
+    if isinstance(node, Mapping):
+        if node.get("op") in ops:
+            return True
+        return any(_carries_op(value, ops) for value in node.values())
+    if isinstance(node, (list, tuple)):
+        return any(_carries_op(value, ops) for value in node)
+    return False
+
+
+def _faces_disruption(state: GameState, pid: int) -> bool:
+    """Is the top of the stack an opponent's removal, worth showing even unanswered?
+
+    Their instant or sorcery whose effects take something away -- removal, a
+    sweeper, a counterspell, a bounce -- or anything of theirs aimed at you or
+    at something you control. Not their card draw, ramp or creature spells:
+    those are most of the stack in a four-seat game, and stopping for each
+    would bring back the forced Pass clicks auto-pass exists to remove.
     """
     if not state.stack:
         return False
     top = state.stack[-1]
     if top.controller == pid:
         return False
-    if top.kind == "spell" and top.oid is not None and top.oid in state.objects:
-        types = chars(state, top.oid).types
-        if CardType.INSTANT.value in types or CardType.SORCERY.value in types:
-            return True
     for ref in top.targets:
         if ref.kind == "player" and ref.id == pid:
             return True
@@ -1822,7 +1847,12 @@ def _faces_disruption(state: GameState, pid: int) -> bool:
             target = state.objects.get(ref.id)
             if target is not None and target.controller == pid:
                 return True
-    return False
+    if top.kind != "spell" or top.def_id not in state.registry:
+        return False
+    card = state.registry.get(top.def_id)
+    if not (card.is_instant or card.is_sorcery):
+        return False
+    return _carries_op(card.spell_effects, DISRUPTIVE_OPS)
 
 
 def _own_main_phase(state: GameState, pid: int) -> bool:

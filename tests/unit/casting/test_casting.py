@@ -395,7 +395,7 @@ class TestDisruptionStops:
             builder()
             .battlefield(0, ["t_bear"])
             .hand(1, hand1)
-            .battlefield(1, ["plains", "forest", "forest"])
+            .battlefield(1, ["plains", "forest", "island", "mountain", "mountain"])
             .active(1)
             .step(Step.PRECOMBAT_MAIN)
             .build(advance=False)
@@ -412,6 +412,24 @@ class TestDisruptionStops:
         assert decision.kind is DecisionKind.PRIORITY
         assert [a.kind for a in game.legal_actions()] == [ActionKind.PASS]
         assert game.state.stack and game.state.stack[-1].controller == 1
+
+    def test_their_sweeper_stops_though_it_targets_nothing(self, builder):
+        game = self._game(builder, ["t_exile_wrath"])
+        game.apply(action_for_card(game, ActionKind.CAST, "t_exile_wrath"))
+        pass_until(game, lambda g: g.pending() and g.pending().player == 0)
+        assert game.state.stack and game.state.stack[-1].controller == 1
+
+    def test_their_card_draw_does_not(self, builder):
+        """An opponent's sorcery that takes nothing away is not disruption."""
+        game = self._game(builder, ["t_draw_spell"])
+        game.apply(action_for_card(game, ActionKind.CAST, "t_draw_spell"))
+        for _ in range(50):
+            decision = game.pending()
+            if decision is None or not game.state.stack:
+                break
+            assert decision.player != 0, "card draw is not worth a stop"
+            game.apply(_default_answer(game, decision))
+        assert not game.state.stack
 
     def test_their_creature_spell_does_not(self, builder):
         game = self._game(builder, ["t_bear"])

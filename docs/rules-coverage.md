@@ -23,7 +23,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Turn structure** | Every step and turn-based action, cleanup repeating per 514.3a, and priority windows, walked by `turn` over the `Step` enum |
 | **Additional combat and main phases** | 506.1, 505.1b: `GameState.extra_phases` queues granted phases and `resume_step` is the bookmark the turn returns to; an extra combat is inserted before the combat already owed, the additional main is a `POSTCOMBAT_MAIN` step and not an extra land drop, and an unspent grant expires with the turn |
 | **"At end of combat"** | The `delay` step keyed to `GameState.combat_number` (603.7), so a delay created in one combat of a multi-combat turn fires at that combat's end |
-| **Priority** | APNAP order, retaining priority after acting, auto-pass when passing is the only option, except for a human facing an opponent's instant, sorcery or targeted effect |
+| **Priority** | APNAP order, retaining priority after acting, auto-pass when passing is the only option, except for a human facing an opponent's removal, sweeper or targeted effect |
 | **The stack** | LIFO resolution, responses, countering, fizzling when every target is illegal (608.2b); "unless its controller pays {N}" bills the targeted spell's controller via the `controller_of_target` player spec (109.5, 608.2); `return_spell_to_hand` removes a spell without countering it (701.5a, 706.10) |
 | **Split second** | 702.61a: priority is kept, casting and non-mana activations are withheld while the spell is on the stack, mana abilities and special actions survive |
 | **State-based actions** | Every action listed in [engine-rules.md](engine-rules.md), plus ten poison counters (704.5c) and the Role rule (704.5y, 303.7a, `attached_timestamp`) |
