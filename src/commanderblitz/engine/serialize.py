@@ -293,7 +293,36 @@ def _player(
             if state.objects[oid].hidden_in_exile and seat not in state.objects[oid].revealed_to
         ),
         "command": [card_view(state, oid) for oid in player.command],
+        "commanders_unseen": _commanders_unseen(state, pid),
     }
+
+
+def _commanders_unseen(state: GameState, pid: int) -> list[dict[str, Any]]:
+    """``pid``'s commanders that are in no zone this view otherwise sends.
+
+    The client draws a seat's commander as its portrait and finds it by
+    searching the zones above -- so a commander that left all of them took the
+    seat's identity with it. Oubliette is the common case: a phased-out
+    permanent leaves `state.battlefield` (702.26) and is in no list at all. A
+    commander bounced to hand or tucked into the library is the other.
+
+    Sent to every seat, because which card is a player's commander is public
+    from the first turn (903.3) and moving it into a hidden zone happened in
+    front of the table. Only the identity is new information here -- the hand
+    and library contents around it stay counts. ``phased_out`` is added because
+    `zone` cannot say it: the object never left the battlefield zone, it is
+    only treated as though it does not exist.
+    """
+    out: list[dict[str, Any]] = []
+    for oid in state.players[pid].commanders:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        if obj.phased_out:
+            out.append({**card_view(state, oid), "phased_out": True})
+        elif obj.zone in (Zone.HAND, Zone.LIBRARY):
+            out.append(card_view(state, oid))
+    return out
 
 
 def _stack_item(state: GameState, item) -> dict[str, Any]:

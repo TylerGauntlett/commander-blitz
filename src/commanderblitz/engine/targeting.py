@@ -16,7 +16,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import TargetSpec
-from .characteristics import chars, player_protected_from, protected_from
+from .characteristics import chars, player_protected_from, protected_from, protection_from
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
@@ -294,19 +294,36 @@ def can_be_targeted(
     better card than the one printed.  Unlike protection it is read here and
     nowhere else: shroud says nothing about damage, blocking or enchant/equip.
     """
+    if oid not in state.objects:
+        return False
+    return target_refusal(state, controller, oid, source_oid=source_oid) is None
+
+
+def target_refusal(
+    state: GameState, controller: int, oid: int, *, source_oid: int | None = None
+) -> str | None:
+    """Why ``controller`` may not target ``oid`` from ``source_oid`` at all, or None.
+
+    The half of target legality that is about the *object* rather than the
+    spell: hexproof, shroud and protection refuse it whatever the target line
+    says. `can_be_targeted` is this function's ``is None``, so the reason a
+    player is shown and the rule the engine applies cannot drift apart.
+
+    The other half -- "target creature" does not reach a land -- is the spec's,
+    and has no single reason to give; the client says it from the printed text.
+    """
     obj = state.objects.get(oid)
-    if obj is None:
-        return False
-    if not obj.on_battlefield:
-        return True
+    if obj is None or not obj.on_battlefield:
+        return None
     if protected_from(state, oid, source_oid):
-        return False
+        qualities = sorted(protection_from(state, oid))
+        return f"Protection from {' and '.join(qualities)}" if qualities else "Protection"
     keywords = chars(state, oid).keywords
     if Keyword.SHROUD.value in keywords:
-        return False
-    if obj.controller == controller:
-        return True
-    return Keyword.HEXPROOF.value not in keywords
+        return "Shroud"
+    if obj.controller != controller and Keyword.HEXPROOF.value in keywords:
+        return "Hexproof"
+    return None
 
 
 def _one_each(state: GameState, refs: Sequence[TargetRef]) -> bool:

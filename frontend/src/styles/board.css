@@ -539,6 +539,14 @@
   color: var(--text-dim);
 }
 
+/* Away: phased out, or in a hand or library. Still this seat's portrait, so it
+   keeps its colour -- greyscale would read as dead, and it is not -- but faded
+   behind a dashed ring, the same "not here" fallen uses. */
+.cmdslot--away .cmdplinth__art {
+  outline-style: dashed;
+  opacity: 0.5;
+}
+
 /* A narrow pod mat can still outgrow the row it sits in once a board gets big.
    Scroll inside the mat rather than letting `.play__opponents` clip a card in
    half at the boundary.
