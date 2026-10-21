@@ -66,7 +66,53 @@ export function abilitiesOf(
   sourceName: string | null = null,
 ): AbilityChoice[] {
   const byKey = new Map<string, AbilityChoice>();
+  /*
+   * A MODAL DOUBLE-FACED CARD IS THE SAME QUESTION AGAIN: Malakir Rebirth is
+   * cast, Malakir Mire is played, and both are offered for the one card in
+   * hand. Without this the cast and the land drop went into targeting
+   * together, where pressing a creature could only ever answer the cast and
+   * nothing could answer the land -- neither face was choosable from the hand.
+   * So when a card offers both, each face is a menu item: every cast copy (one
+   * per target) behind "Cast ...", and the land drop as its own item.
+   */
+  const twoFaced =
+    actions.some((a) => a.kind === "play_land" && a.source_oid === oid) &&
+    actions.some((a) => a.kind === "cast" && a.source_oid === oid);
   for (const action of actions) {
+    if (twoFaced && action.kind === "cast" && action.source_oid === oid) {
+      const found = byKey.get("cast");
+      if (found) {
+        found.ids.push(action.id);
+        found.targeted ||= action.targets.length > 0;
+      } else {
+        byKey.set("cast", {
+          index: -1,
+          // "Cast Malakir Rebirth // Malakir Mire" names both faces; the item
+          // is the front one. A variant's suffix goes with it, since every
+          // variant shares the item and targeting asks which.
+          text: action.base_label.split(" // ")[0],
+          ids: [action.id],
+          targeted: action.targets.length > 0,
+          key: "cast",
+        });
+      }
+      continue;
+    }
+    if (
+      twoFaced &&
+      action.kind === "play_land" &&
+      action.source_oid === oid &&
+      !action.option_label
+    ) {
+      byKey.set(`land:${action.base_label}`, {
+        index: -1,
+        text: action.base_label,
+        ids: [action.id],
+        targeted: false,
+        key: `land-${byKey.size}`,
+      });
+      continue;
+    }
     /*
      * A LAND DROP WITH A CHOICE IN IT is the same question: "As this land
      * enters, you may pay 2 life. If you don't, it enters tapped." The engine
@@ -104,7 +150,10 @@ export function abilitiesOf(
       options: [action.option_label],
     });
   }
-  return [...byKey.values()];
+  // The spell first: it is the face printed on the front.
+  const cast = byKey.get("cast");
+  const rest = [...byKey.values()].filter((choice) => choice !== cast);
+  return cast ? [cast, ...rest] : rest;
 }
 
 /**

@@ -432,7 +432,9 @@ and counts what is still unaccounted for (`ZonePeek`); a `ZonePile` is a button 
 the zone can be opened, because a decorative pile would make the graveyard unreachable
 without a keyboard. Which ability a press asks for is `logic/abilities.ts`: one untargeted
 ability activates, one targeted enters targeting, several open `AbilityMenu`, whose ids
-stay on the panel rows.
+stay on the panel rows. A hand card with two ways to be played asks the same way — a shock
+land's two land drops, a modal double-faced card's spell and land — and `HandFan` marks it
+with the green `rune--ways` badge before it is pressed.
 
 **The lobby** (ADR 0019 *A pod is seats with symmetric readiness*). `logic/lobby.ts` holds
 the predicates so they test without a DOM; `canStart` and `whyNot` answer the same

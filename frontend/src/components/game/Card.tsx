@@ -67,6 +67,12 @@ export interface CardProps {
   playable?: boolean;
   /** This permanent has an activated ability available right now. */
   hasAbility?: boolean;
+  /**
+   * A hand card with more than one way to be played -- a modal double-faced
+   * card's spell and land, a shock land's two land drops. Pressing it asks
+   * which (`logic/abilities.ts`), and this mark says so before it is pressed.
+   */
+  twoWays?: boolean;
   /** The ability's label, shown in a popover while the card is hovered. */
   abilityLabel?: string | null;
   /** A legal action could target this card: blue rim. */
@@ -112,6 +118,7 @@ export function Card({
   draggable = false,
   playable = false,
   hasAbility = false,
+  twoWays = false,
   abilityLabel = null,
   targetable = false,
   staged = false,
@@ -284,6 +291,11 @@ export function Card({
         rendered nodes share an id -- so this is a *sign*, and clicking the
         card is what routes into `Table.onBoardCard`.
       */}
+      {twoWays && (
+        <span className="rune rune--ways" aria-hidden="true" data-hint="Two ways to play this">
+          &#8644;
+        </span>
+      )}
       {hasAbility && (
         <span className="rune" aria-hidden="true" data-hint="Has an activated ability">
           &#8631;

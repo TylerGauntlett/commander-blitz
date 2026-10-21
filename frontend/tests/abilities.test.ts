@@ -192,3 +192,47 @@ describe("a land drop with a choice in it", () => {
     expect(abilitiesOf([plain], 9)).toEqual([]);
   });
 });
+
+describe("a modal double-faced card in hand", () => {
+  /*
+   * Malakir Rebirth // Malakir Mire: the front is cast (one action per
+   * target), the back is played as a land. Pressing the card has to ask which,
+   * or the land half can never be chosen from the hand.
+   */
+  const cast = (id: string, target: number) =>
+    action({
+      id,
+      kind: "cast",
+      source_oid: 9,
+      base_label: "Cast Malakir Rebirth // Malakir Mire",
+      targets: [{ kind: "object", id: target }],
+    });
+  const land = action({
+    id: "land",
+    kind: "play_land",
+    source_oid: 9,
+    base_label: "Play Malakir Mire",
+  });
+
+  it("asks which face, the spell first", () => {
+    const route = abilityRoute([land, cast("c1", 3), cast("c2", 4)], 9);
+    expect(route.kind).toBe("menu");
+    if (route.kind !== "menu") return;
+    expect(route.abilities.map((a) => a.text)).toEqual([
+      "Cast Malakir Rebirth",
+      "Play Malakir Mire",
+    ]);
+    expect(route.abilities[0].ids).toEqual(["c1", "c2"]);
+  });
+
+  it("then targets with the spell and plays the land outright", () => {
+    const route = abilityRoute([land, cast("c1", 3), cast("c2", 4)], 9);
+    if (route.kind !== "menu") throw new Error("expected a menu");
+    expect(routeFor(route.abilities[0])).toEqual({ kind: "target", ids: ["c1", "c2"] });
+    expect(routeFor(route.abilities[1])).toEqual({ kind: "act", id: "land" });
+  });
+
+  it("is a plain cast when the land drop is spent", () => {
+    expect(abilityRoute([cast("c1", 3)], 9)).toEqual({ kind: "none" });
+  });
+});

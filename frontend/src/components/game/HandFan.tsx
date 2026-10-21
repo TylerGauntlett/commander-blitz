@@ -111,6 +111,8 @@ interface Props {
   disabled?: boolean;
   /** Pressable but not draggable: there is no lane on screen to drop on. */
   noDrag?: boolean;
+  /** Cards a press asks "which way" of: an MDFC's two faces, a shock land. */
+  twoWayOids?: ReadonlySet<number>;
 }
 
 export function HandFan({
@@ -125,6 +127,7 @@ export function HandFan({
   onDropOn,
   disabled = false,
   noDrag = false,
+  twoWayOids,
 }: Props) {
   /*
    * WHICH CARD IS RAISED, BY OID -- never by index.
@@ -286,6 +289,7 @@ export function HandFan({
                     ownsHover={false}
                     draggable={!disabled && !noDrag}
                     playable={playableOids.has(card.oid)}
+                    twoWays={twoWayOids?.has(card.oid) ?? false}
                     selected={selectedOid === card.oid}
                     dimmed={!disabled && !playableOids.has(card.oid)}
                     onActivate={disabled ? undefined : onActivate}

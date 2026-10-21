@@ -1064,6 +1064,15 @@
   pointer-events: none;
 }
 
+/* Two ways to play: the same badge, in the playable green rather than the
+   ability violet, because it is a hand card's choice and not a permanent's. */
+.rune--ways {
+  border-color: #e6fff0;
+  background: radial-gradient(circle at 34% 28%, #c9f7da, #2f9e5f);
+  color: #0c2016;
+  box-shadow: 0 0 15px rgb(92 224 138 / 0.7);
+}
+
 .card--staged .card__actor::after {
   opacity: 1;
   box-shadow:

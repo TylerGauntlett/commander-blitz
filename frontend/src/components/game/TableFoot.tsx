@@ -8,9 +8,10 @@
  * the component has no state of its own.
  */
 
-import type { RefObject } from "react";
+import { type RefObject, useMemo } from "react";
 import type { CardView, GameView, LegalAction, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
+import { abilityRoute } from "../../logic/abilities";
 import type { useZoomFit } from "../../state/useZoomFit";
 import { Glyph } from "../ui/Glyph";
 import { HandFan } from "./HandFan";
@@ -53,6 +54,15 @@ export function TableFoot({
   playFromHand,
   onDropOnZone,
 }: Props) {
+  // Hand cards a press will ask "which way" of; `HandFan` marks them.
+  const twoWayOids = useMemo(() => {
+    const out = new Set<number>();
+    for (const card of viewer.hand ?? []) {
+      if (abilityRoute(actions, card.oid).kind === "menu") out.add(card.oid);
+    }
+    return out;
+  }, [viewer.hand, actions]);
+
   return (
     <div className="table__foot" ref={footRef}>
       {/*
@@ -162,6 +172,7 @@ export function TableFoot({
         // yours to press. Removal aimed at the board you are reading is the
         // reason to be reading it, so the click route stays open.
         noDrag={viewing !== null}
+        twoWayOids={twoWayOids}
       />
     </div>
   );
