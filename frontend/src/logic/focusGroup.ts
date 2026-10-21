@@ -75,6 +75,15 @@ export function groupForDecision(
   if (kind && COMBAT.has(kind)) return boardCanDecide ? "board" : "acts";
 
   /*
+   * Somebody else's spell or ability is waiting on you: the stack, so the card
+   * is being read before anything is decided about it. The engine stops for an
+   * opponent's removal even when Pass is all you have (`_faces_disruption`),
+   * and that stop is only worth its press if the card is in front of you;
+   * with an answer in hand, reading what you are answering is the decision.
+   */
+  if (opponentTop(state) !== null) return "stack";
+
+  /*
    * Your main phase, with something castable in hand.
    *
    * The hand rather than the panel, because a main phase is spent deciding WHAT
@@ -101,4 +110,23 @@ export function groupForDecision(
    * player does during it.
    */
   return actions.length > 1 ? "acts" : null;
+}
+
+/**
+ * The newest item on the stack that somebody else put there, while the
+ * viewer holds priority over it -- else null.
+ *
+ * The newest of THEIRS, not the top: answering it puts your own spell on top,
+ * and that must not read as a new decision and drag the ring off the card it
+ * just pressed. `useTableRegions` keys its nudge on this, so a fresh threat is
+ * a fresh nudge and a response to it is not.
+ */
+export function opponentTop(state: GameView): number | null {
+  if (state.priority_player !== state.seat) return null;
+  if (state.pending && state.pending.player !== state.seat) return null;
+  let newest: number | null = null;
+  for (const item of state.stack) {
+    if (item.controller !== state.seat) newest = item.sid;
+  }
+  return newest;
 }

@@ -160,7 +160,7 @@ describe("the counts", () => {
     // widths of the ones that remain every time a board changed.
     const { container } = renderSeat(view([]));
     expect(container.querySelectorAll(".perm")).toHaveLength(4);
-    expect(container.querySelector(".pips__more")?.textContent).toBe("none");
+    expect(container.querySelector(".pips__more")?.textContent).toBe("0/0");
   });
 });
 

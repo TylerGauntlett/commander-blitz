@@ -9,8 +9,8 @@
 
 import { describe, expect, it } from "vitest";
 import type { GameView, LegalAction } from "../src/api/types";
-import { groupForDecision } from "../src/logic/focusGroup";
-import { action, gameView, pending, player } from "./fixtures";
+import { groupForDecision, opponentTop } from "../src/logic/focusGroup";
+import { action, gameView, pending, player, stackItem } from "./fixtures";
 
 function view(overrides: Partial<GameView> = {}): GameView {
   return gameView({
@@ -129,5 +129,48 @@ describe("leaving the ring alone", () => {
     // A step whose only legal action is passing does not deserve the ring being
     // taken off whatever the player was reading.
     expect(groupForDecision(view({ phase: "upkeep" }), [pass], false)).toBeNull();
+  });
+});
+
+describe("the stack", () => {
+  /*
+   * Somebody else's removal is waiting on you. The engine stops there even
+   * with nothing to answer it with, and the stop is only worth its press if
+   * the card is being read -- so the ring goes to it, holding an answer or not.
+   */
+  it("goes to an opponent's spell waiting on you", () => {
+    const state = view({
+      active_player: 1,
+      stack: [stackItem({ sid: 7, controller: 1 })],
+    });
+    expect(opponentTop(state)).toBe(7);
+    expect(groupForDecision(state, [pass], false)).toBe("stack");
+    expect(groupForDecision(state, [cast, pass], false)).toBe("stack");
+  });
+
+  it("keys on their newest item, so answering it is not a new decision", () => {
+    // Your response on top of theirs must not read as a fresh threat and pull
+    // the ring off what you just pressed.
+    const state = view({
+      active_player: 1,
+      stack: [stackItem({ sid: 7, controller: 1 }), stackItem({ sid: 8, controller: 0 })],
+    });
+    expect(opponentTop(state)).toBe(7);
+  });
+
+  it("leaves your own spell alone", () => {
+    const state = view({ stack: [stackItem({ sid: 3, controller: 0 })] });
+    expect(opponentTop(state)).toBeNull();
+    expect(groupForDecision(state, [cast, pass], false)).toBe("hand");
+  });
+
+  it("waits for priority to be yours", () => {
+    const state = view({
+      active_player: 1,
+      priority_player: 1,
+      stack: [stackItem({ sid: 7, controller: 1 })],
+    });
+    expect(opponentTop(state)).toBeNull();
+    expect(groupForDecision(state, [pass], false)).toBeNull();
   });
 });

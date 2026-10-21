@@ -7,8 +7,10 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
+import { useUiStore } from "../../state/uiStore";
 import { expectCardsSized } from "../../testing/asserts";
 import { board } from "../../testing/board";
+import { card } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { Table } from "./Table";
 
@@ -166,7 +168,16 @@ export const FullHeightRail: Story = {
  * one visible and one invisible.
  */
 export const ViewingAnOpponent: Story = {
-  args: board(scenarios.fourPlayerPod()),
+  args: board(
+    (() => {
+      // Something in their exile, so the strip offers it beside the graveyard.
+      const scenario = scenarios.fourPlayerPod();
+      scenario.state.players[1].exile = [
+        card({ oid: 9901, name: "Exiled Thing", zone: "exile", controller: 1, owner: 1 }),
+      ];
+      return scenario;
+    })(),
+  ),
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -202,7 +213,18 @@ export const ViewingAnOpponent: Story = {
     // assess a threat against.
     expect(canvasElement.querySelector(".play__mine .mat__side")).not.toBeNull();
 
-    await userEvent.click(within(strip).getByRole("button"));
+    // Their graveyard and exile open from the strip, each as their own peek.
+    for (const zone of ["graveyard", "exile"]) {
+      await userEvent.click(within(strip).getByTestId(`viewing-${zone}-1`));
+      await canvas.findByTestId("zone-peek");
+      expect(useUiStore.getState().peek).toEqual({ pid: 1, zone });
+      useUiStore.getState().setPeek(null);
+      await waitFor(() =>
+        expect(canvasElement.querySelector('[data-testid="zone-peek"]')).toBeNull(),
+      );
+    }
+
+    await userEvent.click(within(strip).getByRole("button", { name: "Back to your board" }));
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
     });

@@ -254,13 +254,23 @@ it; on the board a card is a `div`, so following focus would drag the ring off t
 every engine push. `focusHolder` in `cursor.ts` is the one function that draws that line.
 
 **Focus nudges fire on transitions, never on state.** `logic/focusGroup.ts` moves the ring
-when the *decision* changes — combat to the board, your main phase to the hand, otherwise
-the panel — keyed on the pending kind and the step only. Run on every render it would pin
-the ring on each state the engine pushes. The lobby's nudges follow the same rule: the
+when the *decision* changes — combat to the board, an opponent's spell waiting on you to
+the top of the stack, your main phase to the hand, otherwise the panel — keyed on the
+pending kind, the step and `opponentTop` (the newest stack item of somebody else's while you
+hold priority, so a response of your own on top of it is not a new decision). Run on every
+render it would pin the ring on each state the engine pushes. The lobby's nudges follow the same rule: the
 pod commits whenever anybody is choosing, and re-asserting a cursor on each would make
 the rest of the screen unreachable. A block declaration is the one case where the region
 depends on the layout as well as the game, so `boardCanDecide` is asked of the DOM and
 passed in.
+
+**A control that comes and goes leaves a stop behind.** Between priority windows the commit
+slab has nothing to carry and becomes the idle bar; the bar is a `commit:idle` stop in the
+slab's own box, so `cursor.ts:nearestTo` hands the ring from the slab to the bar and back
+and a player passing repeatedly never has to walk back to it. Overlays that trap the ring
+apply a choice only after they unmount: the region dial's pick (by `A` or by releasing
+`L2` on a spoke) is held in `useGroupDial` and entered by `Table` once `.wheelwrap` is
+gone, because `setCursor` resolves through the trap and would find nothing outside it.
 
 **Do not advertise a button without binding it.** `HintBar` renders *from*
 `NAVIGATION_HINTS` in `logic/verbs.ts` rather than restating it, and
@@ -407,8 +417,9 @@ question than `isModalDecision`; getting that split wrong renders keep and mulli
 carries an action id**, bound to the highlighted row, so the panel invariant reads one
 action rather than hundreds and `e2e/full-game.spec.ts` can answer the prompt. A row's
 `onFocus` is what highlights it, so the ring's landing and a mousedown both do the job;
-horizontal presses page via `padnav`. The filter field is **not autofocused in pad mode**,
-since a focused input deadens the arrow keys standing in for the d-pad.
+horizontal presses page via `padnav`. On a pad or a handheld the ring **starts on the
+first row, not the filter field**: a focused input deadens the arrow keys standing in for
+the d-pad, and on a Steam Deck it raises the on-screen keyboard. The field is one press up.
 
 **Attack and block helpers share `logic/fight.ts`.** `autoAttack.ts` mirrors
 `autoBlock.ts` tier for tier, and both ask the same two questions of the same model —
@@ -425,7 +436,9 @@ and counts what is still unaccounted for (`ZonePeek`); a `ZonePile` is a button 
 the zone can be opened, because a decorative pile would make the graveyard unreachable
 without a keyboard. Which ability a press asks for is `logic/abilities.ts`: one untargeted
 ability activates, one targeted enters targeting, several open `AbilityMenu`, whose ids
-stay on the panel rows.
+stay on the panel rows. A hand card with two ways to be played asks the same way — a shock
+land's two land drops, a modal double-faced card's spell and land — and `HandFan` marks it
+with the green `rune--ways` badge before it is pressed.
 
 **The lobby** (ADR 0019 *A pod is seats with symmetric readiness*). `logic/lobby.ts` holds
 the predicates so they test without a DOM; `canStart` and `whyNot` answer the same

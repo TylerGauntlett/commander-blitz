@@ -63,6 +63,16 @@ const SORTS: [DeckSort, string][] = [
   ["pilot", "Easiest to pilot"],
 ];
 
+/** The order after this one, wrapping round. */
+function nextSort(sort: DeckSort): DeckSort {
+  const at = SORTS.findIndex(([id]) => id === sort);
+  return SORTS[(at + 1) % SORTS.length][0];
+}
+
+function sortName(sort: DeckSort): string {
+  return SORTS.find(([id]) => id === sort)?.[1] ?? SORTS[0][1];
+}
+
 const SOURCES: [DeckSource, string][] = [
   ["all", "All"],
   ["precon", "Precons"],
@@ -255,19 +265,27 @@ export function DeckCatalog({
             ))}
           </span>
 
-          <select
+          {/*
+            A BUTTON THAT CYCLES, NOT A `<select>`. A pad's `A` is a synthetic
+            `click()`, and a native select opens on nothing but a real pointer
+            or key -- so on a Steam Deck the sort could be landed on and never
+            changed. Four orders is a short enough loop that pressing through
+            them is quicker than opening a list would be anyway.
+          */}
+          <button
+            type="button"
             className="shelf__sort"
-            value={filters.sort}
-            onChange={(event) => set("sort", event.target.value as DeckSort)}
-            aria-label="Sort decks"
+            onClick={() => set("sort", nextSort(filters.sort))}
+            aria-label={`Sort decks: ${sortName(filters.sort)}`}
+            data-hint="Change the order"
             data-testid="deck-sort"
+            data-sort={filters.sort}
           >
-            {SORTS.map(([id, name]) => (
-              <option value={id} key={id}>
-                {name}
-              </option>
-            ))}
-          </select>
+            <span className="shelf__sortk" aria-hidden="true">
+              Sort
+            </span>{" "}
+            {sortName(filters.sort)}
+          </button>
 
           <span className="shelf__gap" />
 

@@ -422,8 +422,9 @@ export const PassInOnePress: Story = {
 /**
  * A CREATURE TYPE IN A LIST OF HUNDREDS, WITHOUT A KEYBOARD.
  *
- * The ring opens on the filter field, where `A` means typing and a Deck has
- * nothing to type with. `down` is the first row; `right` pages ten rows on and
+ * The ring opens on the first row, not the filter field: a focused field
+ * raises the Deck's on-screen keyboard, and `A` there means typing with
+ * nothing to type with. `up` is the field for whoever wants it; `right` pages ten rows on and
  * `left` ten back (`useCursorNav` hands the horizontal axis to the list as a
  * `padnav` event); `A` on a row chooses it, through the one Choose button.
  * Four hundred rows is forty presses end to end, and a held direction ramps.
@@ -437,9 +438,8 @@ export const ChooseATypeByPaging: Story = {
     const options = actions.filter((a) => a.kind !== "pass");
     const run = journey();
 
-    await waitFor(() => expect(run.at()).toBe("combo:filter"));
-    await run.press("down");
-    expect(run.at()).toBe(`combo:opt:${options[0].id}`);
+    await waitFor(() => expect(run.at()).toBe(`combo:opt:${options[0].id}`));
+    expect(document.activeElement).not.toBe(canvas.getByTestId("combo-filter"));
 
     await run.press("right");
     expect(run.at(), run.trail.join("\n")).toBe(`combo:opt:${options[10].id}`);
@@ -456,6 +456,6 @@ export const ChooseATypeByPaging: Story = {
 
     await run.press("a");
     expect(args.game.act.mutate).toHaveBeenCalledWith(options[11].id);
-    expect(run.cost).toBeLessThanOrEqual(6);
+    expect(run.cost).toBeLessThanOrEqual(5);
   },
 };

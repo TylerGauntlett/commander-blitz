@@ -6,6 +6,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { startPad } from "../../input/pad";
+import { useUiStore } from "../../state/uiStore";
 import {
   expectHandheldFloors,
   expectNothingOverflows,
@@ -277,7 +278,17 @@ export const HandheldViewingAnOpponent: Story = {
     // The strip carries the way back, and it is not an action id: coming home
     // is not a move in the game.
     expect(strip.querySelector("[data-action-id]")).toBeNull();
-    await userEvent.click(within(strip).getByRole("button"));
+
+    // Their graveyard opens from the strip: the seat has no room to carry it
+    // as a control, and a removal spell that has resolved is in there.
+    await userEvent.click(within(strip).getByTestId("viewing-graveyard-1"));
+    await canvas.findByTestId("zone-peek");
+    useUiStore.getState().setPeek(null);
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[data-testid="zone-peek"]')).toBeNull(),
+    );
+
+    await userEvent.click(within(strip).getByRole("button", { name: "Back to your board" }));
     await waitFor(() => {
       expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
     });

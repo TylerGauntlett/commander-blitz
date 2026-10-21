@@ -93,16 +93,26 @@ export function CommitDock({
    * playing out somebody else's turn it is not.
    *
    * IT IS NOT AN ACTION AND IS NOT A BUTTON. A `div`, not a disabled
-   * `<button>`: there is nothing here to press even in principle, and a
-   * disabled control is a promise that it will become pressable. It carries no
-   * `data-action-id` -- the exactly-once invariant at the top of this file --
-   * and no `data-stop`, so the controller cursor cannot land on it either.
-   * `aria-hidden` because `.acts__none` in the list above already says
-   * "Waiting..." to a screen reader, and saying it twice is worse than once.
+   * `<button>`: there is nothing here to press, so `A` on it clicks nothing.
+   * It carries no `data-action-id` -- the exactly-once invariant at the top of
+   * this file. `aria-hidden` because `.acts__none` in the list above already
+   * says "Waiting..." to a screen reader, and saying it twice is worse than once.
+   *
+   * IT IS A STOP, though, and that is what keeps Pass under the thumb. Holding
+   * an instant means passing at every window, and between windows -- while a
+   * trigger resolves or another seat acts -- the slab has nothing to carry and
+   * becomes this bar. With no stop here the ring fell to the nearest card, so
+   * every re-pass was a walk back to the corner. As a stop in the slab's own
+   * box, `cursor.ts:nearestTo` hands the ring from the slab to the bar and back
+   * to whatever slab replaces it, and the player never has to move.
    */
   const idleBar = (
     <div className="bar">
-      <div className="commit commit--idle" aria-hidden="true">
+      <div
+        className="commit commit--idle"
+        aria-hidden="true"
+        data-stop={stopId.commitMark("idle")}
+      >
         <span className="commit__dots" data-testid="commit-idle">
           <span className="acts__dot" />
           <span className="acts__dot" />

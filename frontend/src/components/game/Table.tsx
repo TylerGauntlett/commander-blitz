@@ -18,6 +18,7 @@ import type { GameView } from "../../api/types";
 import { play, type SoundName } from "../../audio/sfx";
 import { useAttackLean } from "../../fx/useAttackLean";
 import { setCursorContext } from "../../input/cursor";
+import { getGroup } from "../../input/groups";
 import { useStickScroll } from "../../input/stickScroll";
 import { useCardHold } from "../../input/useCardHold";
 import { useFollowThrough, useFollowUp } from "../../input/useFollowUp";
@@ -82,7 +83,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * reading hold is: a hold has no meaning across a re-render, and a hold kept
    * in a store is a hold that can get stuck.
    */
-  const [dialOpen, setDialOpen] = useGroupDial();
+  const { dialOpen, setDialOpen, pick: pickGroup, picked, clearPicked } = useGroupDial();
   // The right stick scrolls the reader, or the list the ring is in.
   useStickScroll();
 
@@ -296,6 +297,18 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     narration,
     cue,
   });
+
+  /*
+   * A region chosen on the dial, entered on the commit that took the dial
+   * away -- `useGroupDial` says why it cannot be entered any sooner. The
+   * region the ring is already in is no move at all: the dial closing hands
+   * the ring back to where it stood, which is the better answer.
+   */
+  useEffect(() => {
+    if (dialOpen || picked === null) return;
+    clearPicked();
+    if (picked !== getGroup()) enterGroup(picked);
+  }, [dialOpen, picked, clearPicked, enterGroup]);
 
   usePadBindings({
     back,
@@ -545,8 +558,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         heldCard={heldCard}
         closeHold={closeHold}
         dialOpen={dialOpen}
-        setDialOpen={setDialOpen}
-        enterGroup={enterGroup}
+        pickGroup={pickGroup}
         logOverlay={logOverlay}
         toggleLogOverlay={toggleLogOverlay}
         act={act}

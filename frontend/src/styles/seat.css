@@ -775,14 +775,16 @@
 }
 
 /*
- * The way back is a control, not a hint.
+ * The way back is a control, not a hint -- and so are their graveyard and
+ * exile, which open from here because the seat has no room to.
  *
- * `margin-left: auto` puts it at the end of the strip rather than beside the
- * sentence: it is the one thing here you press, and a button that sits inside a
- * sentence reads as part of it. The 44px floor is `ui.css`'s, unchanged --
+ * `margin-left: auto` puts them at the end of the strip rather than beside the
+ * sentence: a button that sits inside a sentence reads as part of it. The 44px floor is `ui.css`'s, unchanged --
  * this strip is on the viewer's own mat, which has the room a 96px seat does
  * not.
  */
-.viewing .btn {
+.viewing__piles {
+  display: flex;
+  gap: 8px;
   margin-left: auto;
 }

@@ -8,9 +8,10 @@
  * the component has no state of its own.
  */
 
-import type { RefObject } from "react";
+import { type RefObject, useMemo } from "react";
 import type { CardView, GameView, LegalAction, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
+import { abilityRoute } from "../../logic/abilities";
 import { targetHint } from "../../logic/targetHint";
 import { useUiStore } from "../../state/uiStore";
 import type { useZoomFit } from "../../state/useZoomFit";
@@ -58,6 +59,15 @@ export function TableFoot({
   playFromHand,
   onDropOnZone,
 }: Props) {
+  // Hand cards a press will ask "which way" of; `HandFan` marks them.
+  const twoWayOids = useMemo(() => {
+    const out = new Set<number>();
+    for (const card of viewer.hand ?? []) {
+      if (abilityRoute(actions, card.oid).kind === "menu") out.add(card.oid);
+    }
+    return out;
+  }, [viewer.hand, actions]);
+
   // The pointer and the ring both write `hoveredOid` (`input/cursor.ts`'s
   // `hoverFor`), so one subscription answers a mouse, a keyboard and a pad.
   const hoveredOid = useUiStore((s) => s.hoveredOid);
@@ -178,9 +188,13 @@ export function TableFoot({
         fanWidth={zoom.fanW}
         onActivate={playFromHand}
         onDropOn={onDropOnZone}
+        disabled={locked}
         // Your lanes are not on screen while you are reading somebody
-        // else's, so there is nowhere legal to drop.
-        disabled={locked || viewing !== null}
+        // else's, so there is nowhere legal to DROP -- but a card is still
+        // yours to press. Removal aimed at the board you are reading is the
+        // reason to be reading it, so the click route stays open.
+        noDrag={viewing !== null}
+        twoWayOids={twoWayOids}
       />
     </div>
   );
