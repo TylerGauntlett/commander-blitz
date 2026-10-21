@@ -144,6 +144,10 @@ target choice) it jumps to the prompt's primary button. In a pick-several
 prompt, `A` on a card picks it and steps the ring to the next one, so
 choosing three is `A A A`, then Confirm.
 
+Holding `R2` stands you at an opponent's seat, and letting go brings your own
+board back. Each press reads the next opponent in seat order, wrapping, so
+press, release, press is the first opponent, your board, the second opponent.
+
 ### The keys, if you would rather bind them yourself
 
 Point a Steam keyboard layout at these and every control works:
