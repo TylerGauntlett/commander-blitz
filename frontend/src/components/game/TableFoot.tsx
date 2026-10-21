@@ -12,6 +12,8 @@ import { type RefObject, useMemo } from "react";
 import type { CardView, GameView, LegalAction, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
 import { abilityRoute } from "../../logic/abilities";
+import { targetHint } from "../../logic/targetHint";
+import { useUiStore } from "../../state/uiStore";
 import type { useZoomFit } from "../../state/useZoomFit";
 import { Glyph } from "../ui/Glyph";
 import { HandFan } from "./HandFan";
@@ -24,6 +26,8 @@ interface Props {
   actions: LegalAction[];
   viewer: PlayerView;
   targeting: LegalAction[];
+  /** What the targeting can land on, for the hint about the hovered card. */
+  targetableOids: ReadonlySet<number>;
   targetChosen: boolean;
   endTargeting: () => void;
   playableOids: ReadonlySet<number>;
@@ -43,6 +47,7 @@ export function TableFoot({
   actions,
   viewer,
   targeting,
+  targetableOids,
   targetChosen,
   endTargeting,
   playableOids,
@@ -63,6 +68,10 @@ export function TableFoot({
     return out;
   }, [viewer.hand, actions]);
 
+  // The pointer and the ring both write `hoveredOid` (`input/cursor.ts`'s
+  // `hoverFor`), so one subscription answers a mouse, a keyboard and a pad.
+  const hoveredOid = useUiStore((s) => s.hoveredOid);
+  const hint = targetChosen ? null : targetHint(state, targeting, targetableOids, hoveredOid);
   return (
     <div className="table__foot" ref={footRef}>
       {/*
@@ -135,10 +144,23 @@ export function TableFoot({
       mana (Stage 2) reaches it immediately. The panel owns the choice; the
       foot only ever says what the click is for.
     */}
+      {/*
+        The label also answers "why won't this click". A card the targeting
+        cannot land on is still focusable -- the ring has to be able to pass
+        over it -- so pointing at one names the reason here rather than doing
+        nothing. `aria-live` so a screen reader hears it on focus too. See
+        `logic/targetHint.ts` for where each reason comes from.
+      */}
       {targeting.length > 0 && (
         <div className="choices" data-testid={targetChosen ? "variant-hint" : "targeting-hint"}>
-          <span className="choices__label">
-            {targetChosen ? "Pick how, in the panel" : "Pick a target"}
+          <span
+            className={
+              hint?.refused ? "choices__label choices__label--refused" : "choices__label"
+            }
+            data-testid="targeting-reason"
+            aria-live="polite"
+          >
+            {targetChosen ? "Pick how, in the panel" : (hint?.text ?? "Pick a target")}
           </span>
           <button type="button" className="btn btn--ghost" onClick={endTargeting}>
             Cancel (Esc)

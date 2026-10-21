@@ -529,6 +529,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           actions={actions}
           viewer={viewer}
           targeting={targeting}
+          targetableOids={targetableOids}
           targetChosen={targetChosen}
           endTargeting={endTargeting}
           playableOids={playableOids}

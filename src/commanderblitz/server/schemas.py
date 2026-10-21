@@ -50,6 +50,11 @@ class LegalActionDTO(BaseModel):
     #: Permanents the solver would tap to pay for this. A forecast for the UI,
     #: not a commitment -- payment is re-solved when the action is applied.
     pays: list[int] = Field(default_factory=list)
+    #: For an action that names targets: oid -> why that permanent could not be
+    #: named by this spell or ability at all ("Hexproof", "Shroud", "Protection
+    #: from red"). Display only, so a player hovering a card the targeting skips
+    #: is told why; the action list is still the whole of what is legal.
+    untargetable: dict[str, str] = Field(default_factory=dict)
 
 
 class ApplyActionRequest(BaseModel):

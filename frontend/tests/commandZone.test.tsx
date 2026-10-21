@@ -258,3 +258,86 @@ describe("FB-13: the plinth reads Ready without the pointer", () => {
     expect(useUiStore.getState().hoveredOid).toBe(7);
   });
 });
+
+describe("a commander in no zone the view sends keeps its plinth", () => {
+  /* Oubliette phases a commander out; a bounce or a tuck sends it to a hidden
+     zone. The server names it in `commanders_unseen`, and the plinth must
+     still draw the seat's portrait and say where it went. */
+  function renderUnseen(unseen: CardView) {
+    return render(
+      <CommandZone
+        state={gameView({
+          players: [
+            player({ pid: 0, command: [], commanders_unseen: [unseen] }),
+            player({ pid: 1, name: "AI 1", hand: null }),
+          ],
+          battlefield: [],
+        })}
+        pid={0}
+        playableOids={new Set()}
+      />,
+    );
+  }
+
+  it.each([
+    [{ zone: "battlefield", phased_out: true } as const, "Phased out"],
+    [{ zone: "hand" } as const, "In hand"],
+    [{ zone: "library" } as const, "In library"],
+  ])("draws %o as away, reading %s", (where, word) => {
+    const { getByTestId } = renderUnseen(commander(where));
+    const plinth = getByTestId("commander-99");
+    expect(plinth.dataset.cmdState).toBe("away");
+    expect(plinth.textContent).toContain(word);
+    expect(plinth.getAttribute("aria-disabled")).toBe("true");
+  });
+});
+
+describe("the plinth's own gestures", () => {
+  it("casts a ready commander on click, and only then", () => {
+    const cast: number[] = [];
+    const state = viewWith([commander()]);
+    const { getByTestId, rerender } = render(
+      <CommandZone
+        state={state}
+        pid={0}
+        playableOids={new Set([99])}
+        onActivate={(c) => cast.push(c.oid)}
+      />,
+    );
+    fireEvent.click(getByTestId("commander-99"));
+    rerender(
+      <CommandZone
+        state={state}
+        pid={0}
+        playableOids={new Set()}
+        onActivate={(c) => cast.push(c.oid)}
+      />,
+    );
+    fireEvent.click(getByTestId("commander-99"));
+    expect(cast).toEqual([99]);
+  });
+
+  it("says a commander mid-cast is on the stack", () => {
+    const { getByTestId } = renderZone(
+      [commander({ zone: "stack" })],
+      {},
+      {
+        stack: [
+          {
+            sid: 1,
+            kind: "spell",
+            controller: 0,
+            def_id: "aesi",
+            name: "Aesi",
+            type_line: "Legendary Creature",
+            oid: 99,
+            source_oid: null,
+            targets: [],
+            card: commander({ zone: "stack" }),
+          } as unknown as GameView["stack"][number],
+        ],
+      },
+    );
+    expect(getByTestId("commander-99").textContent).toContain("On the stack");
+  });
+});

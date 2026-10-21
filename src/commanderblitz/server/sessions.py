@@ -23,6 +23,7 @@ from commanderblitz.engine.errors import IllegalActionError
 from commanderblitz.engine.game import create_game
 from commanderblitz.engine.legality import legal_actions
 from commanderblitz.engine.structs import TargetRef
+from commanderblitz.engine.targeting import target_refusal
 
 from .schemas import LegalActionDTO, SeatConfig
 
@@ -304,6 +305,7 @@ class GameSession:
             decision = self.game.pending()
             if decision is None or decision.player != seat or self.game.over:
                 return []
+            refusals = self._target_refusals(seat)
             return [
                 LegalActionDTO(
                     id=action_id,
@@ -317,9 +319,40 @@ class GameSession:
                     choice=action.choice,
                     x=action.x,
                     pays=list(action.pays),
+                    untargetable=(
+                        refusals.get((action.kind, action.source, action.ability_index), {})
+                        if action.targets
+                        else {}
+                    ),
                 )
                 for action_id, action in self._action_ids.items()
             ]
+
+    def _target_refusals(self, seat: int) -> dict[tuple, dict[str, str]]:
+        """Why each permanent a targeted action never names cannot be named.
+
+        Keyed the way the client groups one spell's or ability's actions while
+        it is choosing a target -- kind, source and ability -- and computed once
+        per group, since every action in it would carry the same map. Only the
+        permanents `target_refusal` has a reason for: hexproof, shroud and
+        protection are rare on a board, so the map is almost always empty.
+        """
+        state = self.game.state
+        named: dict[tuple, set[int]] = {}
+        for action in self._action_ids.values():
+            if not action.targets:
+                continue
+            ids = named.setdefault((action.kind, action.source, action.ability_index), set())
+            ids.update(ref.id for ref in action.targets if ref.kind == "object")
+        out: dict[tuple, dict[str, str]] = {}
+        for key, ids in named.items():
+            out[key] = {
+                str(oid): reason
+                for oid in state.battlefield
+                if oid not in ids
+                and (reason := target_refusal(state, seat, oid, source_oid=key[1])) is not None
+            }
+        return out
 
     def apply_action_id(
         self,

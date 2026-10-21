@@ -69,6 +69,9 @@ interface CommanderState {
 
 function commanderState(card: CardView, castable: boolean): CommanderState {
   if (castable) return { key: "ready", word: "Ready", glyph: "▶" };
+  // Checked before the zone, which still says battlefield: a phased-out
+  // permanent never left it, it is only treated as though it does not exist.
+  if (card.phased_out) return { key: "away", word: "Phased out", glyph: "◌" };
   switch (card.zone) {
     case "command":
       return { key: "waiting", word: "In command", glyph: "·" };
@@ -83,6 +86,12 @@ function commanderState(card: CardView, castable: boolean): CommanderState {
       return { key: "fallen", word: "In the graveyard", glyph: "✕" };
     case "exile":
       return { key: "fallen", word: "Exiled", glyph: "✕" };
+    // Hidden zones. The server sends the commander anyway (`commanders_unseen`)
+    // so the seat keeps its portrait; this says why it cannot be reached.
+    case "hand":
+      return { key: "away", word: "In hand", glyph: "◌" };
+    case "library":
+      return { key: "away", word: "In library", glyph: "◌" };
     default:
       return { key: "waiting", word: card.zone, glyph: "·" };
   }

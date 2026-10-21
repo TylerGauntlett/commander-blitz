@@ -36,7 +36,11 @@ fallback:
    springs the card back with nothing sent.
 2. **Click** a card, then its target. What is targetable comes from the action's own
    `targets`; a click settles only the half it answers, and `uiStore.narrowTargeting`
-   leaves the panel to ask the rest.
+   leaves the panel to ask the rest. Hovering or focusing a card the targeting skips
+   names the reason in the foot's targeting hint (`logic/targetHint.ts`): the engine's
+   own refusal from `LegalAction.untargetable` when it has one (hexproof, shroud,
+   protection), else the source's printed target line. The hint quotes; it never
+   decides what is legal.
 3. **The action panel**, which lists every legal action as a button. That is what makes
    the game keyboard-reachable and the end-to-end specs writable.
 

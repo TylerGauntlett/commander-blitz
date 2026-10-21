@@ -247,6 +247,19 @@ describe("commandersOf", () => {
     expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50]);
   });
 
+  it("keeps the seat's portrait when the commander is phased out", () => {
+    // Oubliette: a phased-out permanent is in no zone the view sends, so the
+    // server names it in `commanders_unseen` and the seat keeps its identity.
+    const state = gameView({
+      players: [
+        player({ commanders_unseen: [boss({ zone: "battlefield", phased_out: true })] }),
+        player({ pid: 1 }),
+      ],
+    });
+    expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50]);
+    expect(findCard(state, 50)?.phased_out).toBe(true);
+  });
+
   it("still finds it once it has resolved onto the battlefield", () => {
     const state = gameView({ battlefield: [boss({ zone: "battlefield" })] });
     expect(commandersOf(state, 0).map((c) => c.name)).toEqual(["Aesi"]);
