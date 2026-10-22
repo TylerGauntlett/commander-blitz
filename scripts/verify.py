@@ -276,6 +276,11 @@ def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[St
             [PY, "scripts/build_card_index.py", "--check"],
             group="lint",
         ),
+        # The feature backlog: every item under docs/roadmap/ is well formed,
+        # its dependencies resolve, and docs/roadmap.md is what the script
+        # would write now. Cheap, and it catches a plan that was scaffolded
+        # and never filled in.
+        Stage("roadmap is current", [PY, "scripts/roadmap.py", "--check"], group="lint"),
     ]
     if coverage:
         stages.append(Stage("coverage: start fresh", [PY, "-m", "coverage", "erase"]))

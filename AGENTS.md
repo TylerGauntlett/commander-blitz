@@ -30,7 +30,7 @@ routes in [docs/README.md](docs/README.md) take you to the rest.
 Python 3.13 and Node 20+. [CONTRIBUTING.md](CONTRIBUTING.md) has the commands.
 One step is easy to miss on Windows:
 
-**Skills are symlinks.** The four skills live in `.agents/skills/`, which Cursor
+**Skills are symlinks.** The skills live in `.agents/skills/`, which Cursor
 reads directly. Claude Code reads `.claude/skills/`, so each entry there is a
 symlink to its `.agents/skills/` twin. Git on macOS and Linux checks those out as
 links with nothing to do. Git for Windows checks a symlink out as a plain text
@@ -44,9 +44,9 @@ git rm -r --cached .claude/skills && git checkout -- .claude/skills   # existing
 git ls-files -s .claude/skills              # every entry shows mode 120000
 ```
 
-Then Claude Code lists `/author-cards`, `/extend-dsl`, `/import-moxfield` and
-`/create-pr`. Without the step, the links are text files and Claude Code sees no
-skills; Cursor is unaffected.
+Then Claude Code lists `/author-cards`, `/extend-dsl`, `/import-moxfield`,
+`/create-pr`, `/plan-feature` and `/extend-roadmap`. Without the step, the
+links are text files and Claude Code sees no skills; Cursor is unaffected.
 
 ## Conventions
 
@@ -75,6 +75,7 @@ skills; Cursor is unaffected.
 | `docs/unsupported-cards.md` | `python scripts/report_gaps.py` | the gap records in `data/authoring/gaps/` |
 | `docs/card-dsl-reference.md` | `python scripts/gen_dsl_reference.py --write` | `tests/cards/test_dsl_reference.py` and the engine's registries |
 | `docs/keywords.md` census tables | edit together with `engine/enums.py` | `tests/cards/test_keyword_census.py` |
+| `docs/roadmap.md` | `python scripts/roadmap.py --write` | the items in `docs/roadmap/`, checked by the lint stage and `tests/unit/roadmap/` |
 
 ## Which doc to touch
 
@@ -86,6 +87,7 @@ skills; Cursor is unaffected.
 | A client pattern | `docs/client.md`; a floor or budget is also an ADR |
 | A server or lobby change | `docs/server.md`; the endpoint table in `docs/api.md` |
 | A rules decision | an ADR; the matching row in `docs/rules-coverage.md` |
+| A feature planned, or one delivered | its item under `docs/roadmap/`, through `/plan-feature` or `/extend-roadmap`; never `docs/roadmap.md` itself |
 
 ## How the docs are written
 

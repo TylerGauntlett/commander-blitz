@@ -110,11 +110,13 @@ jobs:
           #   terraform/ is applied by hand. None is linted, tested, or in the
           #   image.
           # - docs/keywords.md and docs/card-dsl-reference.md are held to the
-          #   engine by tests, so an edit to either is a code change.
+          #   engine by tests, so an edit to either is a code change; so is
+          #   docs/roadmap.md and docs/roadmap/*, held to scripts/roadmap.py
+          #   by the lint stage.
           # Anything not listed -- .github/ included -- runs the gate.
           inert() {
             case "$1" in
-              docs/keywords.md | docs/card-dsl-reference.md) return 1 ;;
+              docs/keywords.md | docs/card-dsl-reference.md | docs/roadmap.md | docs/roadmap/*) return 1 ;;
               docs/* | .agents/* | .claude/* | terraform/*) return 0 ;;
               data/authoring/packets/* | data/authoring/gaps/* | data/authoring/queue.json) return 0 ;;
               data/*/README.md) return 0 ;; # `*` crosses `/` in a case pattern: any depth
