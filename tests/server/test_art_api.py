@@ -703,6 +703,39 @@ class TestTheDeployedShape:
             "re-seeded, so committed art can never be updated by a deploy"
         )
 
+    def test_the_image_carries_the_store_in_a_layer_of_its_own(self):
+        """ADR 0021. One `COPY data/` again would put the whole corpus in the
+        layer every card edit rebuilds, and every deploy would re-ship it."""
+        from pathlib import Path
+
+        dockerfile = (Path(__file__).resolve().parents[2] / "Dockerfile").read_text(encoding="utf-8")
+        copies = [line for line in dockerfile.splitlines() if line.startswith("COPY")]
+        assert "COPY data/art_store/ ./data/art_store/" in copies
+        data = [line for line in copies if " data/ " in line]
+        assert data == ["COPY --exclude=**/art_store data/ ./data/"]
+        assert copies.index(data[0]) > copies.index("COPY data/art_store/ ./data/art_store/")
+        assert dockerfile.startswith("# syntax=docker/dockerfile:1.7-labs\n"), "for --exclude"
+        ignored = (Path(__file__).resolve().parents[2] / ".dockerignore").read_text(encoding="utf-8")
+        assert "art_store" not in ignored
+
+    def test_the_decks_package_leaves_the_store_out(self):
+        """A Deck asks the site for the store's art; carrying it would put the
+        whole corpus in every content update."""
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[2]
+        assembler = (root / "desktop" / "scripts" / "assemble-content.mjs").read_text(encoding="utf-8")
+        assert 'rel.startsWith("/art_store")' in assembler
+
+    def test_the_gate_treats_a_crawl_as_inert(self):
+        """`art-backfill.yml` opens a pull request per crawl; each would cost a
+        full gate run if the store were not inert in `changes`."""
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[2]
+        deploy = (root / ".github" / "workflows" / "deploy.yml").read_text(encoding="utf-8")
+        assert "data/art_store/*) return 0 ;;" in deploy
+
 
 @pytest.mark.skipif(not catalog_path().exists(), reason="no card index built")
 class TestCatalog:

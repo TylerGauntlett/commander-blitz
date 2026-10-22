@@ -1,0 +1,134 @@
+name: art backfill
+
+# Crawls the catalog's art into data/art_store/ and commits it through a pull
+# request that merges itself (ADR 0021). Each run picks up where the committed
+# tree leaves off -- scripts/backfill_art.py skips every file it already has --
+# and is capped, so one pull request stays a size git and a reviewer can take.
+#
+# `chore(art):` is deliberate: a crawl neither deploys the site nor cuts a Deck
+# release on its own (conventional.sh), and the gate treats data/art_store/ as
+# inert (deploy.yml `changes`). The illustrations reach the site with the next
+# merge that ships; until then the lazy fill covers them.
+#
+# Needs two things a maintainer sets up once, both in docs/ci-cd.md:
+# - ART_BACKFILL_TOKEN, a fine-grained token with contents and pull-requests
+#   write on this repository. Not GITHUB_TOKEN: a pull request opened with that
+#   starts no workflow, so its required checks would never report and the
+#   auto-merge would wait forever.
+# - "Allow auto-merge" in the repository settings.
+#
+# Note: GitHub disables `schedule` triggers after 60 days without repo
+# activity; a hand-run starts it again.
+
+on:
+  schedule:
+    - cron: "17 4 * * 0" # Sundays, 04:17 UTC.
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "new files this run may add"
+        default: "2000"
+
+permissions:
+  contents: read
+
+# Two crawls at once would fetch the same files into two pull requests.
+concurrency:
+  group: art-backfill
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    name: crawl and open a pull request
+    runs-on: ubuntu-latest
+    # Scryfall's pace (~0.1s a request) times the cap, with room to spare.
+    timeout-minutes: 90
+    steps:
+      # Loudly, before the crawl: an hour of downloads that cannot be pushed is
+      # the failure worth avoiding.
+      - name: The token is configured
+        env:
+          TOKEN: ${{ secrets.ART_BACKFILL_TOKEN }}
+        run: |
+          [ -n "$TOKEN" ] || { echo "::error::ART_BACKFILL_TOKEN is not set; see docs/ci-cd.md"; exit 1; }
+
+      # Shallow: the crawl reads the tree, never the history.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.ART_BACKFILL_TOKEN }}
+
+      - uses: ./.github/actions/setup
+
+      - name: Crawl
+        env:
+          LIMIT: ${{ inputs.limit || '2000' }}
+        run: python scripts/backfill_art.py --limit "$LIMIT" | tee "$RUNNER_TEMP/crawl.txt"
+
+      - name: Open the pull request
+        env:
+          GH_TOKEN: ${{ secrets.ART_BACKFILL_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          git add data/art_store
+          # `_state.json` moves on every run; on its own it is not news.
+          if git diff --cached --quiet -- data/art_store ':!data/art_store/_state.json'; then
+            echo "nothing new to commit"
+            exit 0
+          fi
+          added=$(git diff --cached --name-only --diff-filter=A -- data/art_store | grep -c '\.jpg$' || true)
+          title="chore(art): crawl $added illustrations into the store"
+          branch="art/backfill-$RUN_ID"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -q -m "$title"
+          git push -q origin "$branch"
+
+          # The template's shape, which pr.yml holds every body to.
+          {
+            echo "The scheduled art crawl, run $RUN_ID: $added new illustrations in \`data/art_store/\`, written by \`scripts/backfill_art.py\` (ADR 0021). It merges itself once the gate passes."
+            echo
+            echo "## Risks"
+            echo
+            echo "- Blast radius: \`data/art_store/\` only, which no test reads and nothing but the image carries."
+            echo "- Rollback: revert the merge; the lazy fill serves those printings again."
+            echo
+            echo "## What"
+            echo
+            echo '```mermaid'
+            echo 'flowchart LR'
+            echo '  a[/art request/] -.->|before| b[lazy fill from Scryfall]'
+            echo '  a -->|after| c[data/art_store]'
+            echo '```'
+            echo
+            echo "- $added new files under \`data/art_store/\`, keyed by printing."
+            echo "- \`_unavailable.json\` and \`_state.json\` as the crawl left them."
+            echo
+            echo "## Why"
+            echo
+            echo "- Every printing the store holds is one no server has to fetch while a player waits."
+            echo
+            echo "## How"
+            echo
+            echo "- \`python scripts/backfill_art.py\` on the schedule in \`art-backfill.yml\`, capped per run."
+            echo
+            echo "<details>"
+            echo "<summary>Details</summary>"
+            echo
+            echo "[The run]($RUN_URL) printed:"
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/crawl.txt"
+            echo '```'
+            echo
+            echo "</details>"
+          } > "$RUNNER_TEMP/body.md"
+          bash .github/scripts/conventional.sh title "$title"
+          bash .github/scripts/conventional.sh body "$RUNNER_TEMP/body.md"
+
+          gh pr create --base main --head "$branch" --title "$title" --body-file "$RUNNER_TEMP/body.md"
+          gh pr merge "$branch" --auto --squash

@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1.7-labs
+# The labs syntax is for `COPY --exclude`, which keeps the art store out of the
+# data layer below so the two ship apart (ADR 0021).
+#
 # Commander Blitz: one image, one origin -- the API and the built client together.
 #
 # The client talks to same-origin `/api` and `/art` (frontend/src/api/client.ts),
@@ -40,13 +44,20 @@ RUN python -c "import tomllib; print('\n'.join(tomllib.load(open('pyproject.toml
 # `--no-deps`: everything is already installed above, and this keeps the layer
 # cheap. No `[dev]` and no `[train]` -- torch is ~800MB and nothing serving a
 # game imports it.
+# The crawled art store, the largest thing in the image and the slowest to
+# change: a layer of its own, ahead of the source, so a code or card change
+# re-ships none of it and a crawl re-ships only it (ADR 0021).
+COPY data/art_store/ ./data/art_store/
+
 COPY src/ ./src/
 RUN pip install --no-cache-dir --no-deps .
 
 # The card pool, the art cache and the catalog index. `.dockerignore` keeps the
 # 74MB Scryfall bulk dump out; `data/catalog/cards.sqlite` and `data/art` are
-# both read at runtime and have to be here.
-COPY data/ ./data/
+# both read at runtime and have to be here. The store is excluded because the
+# layer above already carries it; `**/` matches it whichever root the pattern
+# is read against.
+COPY --exclude=**/art_store data/ ./data/
 COPY --from=client /build/dist ./frontend/dist
 
 # Both default to a walk up from __file__ that only resolves in a checkout
