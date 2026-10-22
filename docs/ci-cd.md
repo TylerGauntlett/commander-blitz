@@ -52,9 +52,11 @@ that was already tested, so these runs skip the gate and `gate` still reports:
 
 - **Inert paths.** A change touching only prose (`docs/`, `.agents/`, `.claude/`,
   `terraform/`, top-level `*.md`, the authoring queue, gaps and packets, the data
-  READMEs) has nothing to run. Two files under `docs/` are *not* inert:
+  READMEs) has nothing to run. Three things under `docs/` are *not* inert:
   [keywords.md](keywords.md) and [card-dsl-reference.md](card-dsl-reference.md)
-  are held to the engine by tests, so an edit to either is a code change.
+  are held to the engine by tests, and [roadmap.md](roadmap.md) with the
+  items under `docs/roadmap/` is held to `scripts/roadmap.py` by the lint
+  stage, so an edit to any of them is a code change.
 - **Drafts.** A draft pull request runs no gate; it is still being written.
   Leaving draft (`ready_for_review`) starts the real run, and a draft's gate
   leaves no receipt behind, so it can never vouch for a merge.

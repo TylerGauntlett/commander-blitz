@@ -101,6 +101,16 @@ A deck becomes a shipped deck through `scripts/promote_deck.py` once every card 
 it is native; [docs/decks.md](docs/decks.md) has the steps, and
 [docs/cpus/](docs/cpus/README.md) is where its CPU strategy gets a page.
 
+Features beyond cards go through the roadmap, which is a backlog as data:
+one item per file under `docs/roadmap/`, ranked by `scripts/roadmap.py` on
+effort, impact and dependencies, and rendered into
+[docs/roadmap.md](docs/roadmap.md).
+
+- **`/plan-feature`** writes an item: what is true today, what would change,
+  and the gate that would hold it, with the properties the queue ranks on.
+- **`/extend-roadmap`** takes the next ready item, or a named one, and
+  delivers it end to end, retiring the item in the same pull request.
+
 ## Pull requests
 
 - One pull request per piece of work, with phased commits if it is big. A full CI

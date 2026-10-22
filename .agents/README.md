@@ -11,6 +11,11 @@
 - `/create-pr` opens a pull request the way CI expects: a conventional-commit
   title, whose type decides whether the merge deploys and releases, and the
   what/why/how body from `.github/pull_request_template.md`.
+- `/plan-feature` turns an idea into a roadmap item under `docs/roadmap/`,
+  with effort, impact, dependencies and a gate, that the backlog can rank.
+- `/extend-roadmap` takes the next ready item off that backlog, or a named
+  one, and delivers it end to end: the ADR first where asked, the change, the
+  gate, `verify.py`, the item retired, and the pull request.
 
 Cursor reads `.agents/skills/` directly. Claude Code reads `.claude/skills/`, so
 each entry there is a symlink to its twin here. On Windows that needs
