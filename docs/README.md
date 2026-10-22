@@ -33,6 +33,7 @@ here.
 | [scripts.md](scripts.md) | Every script, and every environment variable the code reads |
 | [../data/README.md](../data/README.md) | The data directory: what is authored, what is generated, what is pinned |
 | [../TECH_DEBT.md](../TECH_DEBT.md) | The open items, each with what fixing it looks like |
+| [roadmap.md](roadmap.md) | **What comes after the core loop**: the candidate features, what each runs into, and the order their dependencies impose |
 
 Decisions with consequences big enough to be worth arguing with are recorded
 separately:
