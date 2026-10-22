@@ -5,7 +5,7 @@ area: cards
 effort: L
 impact: high
 why: the difference between a deck and an inert list, for every link ever pasted
-depends_on: [art-store]
+depends_on: []
 status: proposed
 continuous: true
 ---

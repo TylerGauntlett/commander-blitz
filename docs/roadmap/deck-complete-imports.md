@@ -5,7 +5,7 @@ area: steamdeck
 effort: M
 impact: high
 why: a deck imported on a Deck plays offline later exactly as it played online, which is the whole offline promise for anything not on the shelf
-depends_on: [art-store]
+depends_on: []
 status: proposed
 ---
 
