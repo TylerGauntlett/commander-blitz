@@ -402,6 +402,18 @@ behind a tapped one. `splitActionable` pulls out any member a legal action names
 stack can never bury a choice. Hidden members stay mounted, because unmounting would
 destroy their `layoutId` identity.
 
+**One selection model, audited.** Every question the engine asks is one of six
+surfaces today: the board, the action panel, `PromptDialog`, the `ChoiceCombo` inside
+it, `AbilityMenu`, and the `OpeningHand` screen. The rule they converge on is that a
+choice among things on the table is made on the table, staged and committed once; a
+choice among things not on the table is made in the panel or a dialog; and the panel
+stays the fallback under which every legal action is one control (ADR 0015).
+`components/game/decisionAudit.ts` is the record: one row per `DecisionKind` and per
+`purpose` tag, with the surface each uses today, the surface the rule gives it
+(`ruleFor`, derived) and the press ceiling its journey in `Journeys.stories.tsx` is
+held to. A surface that moves a question changes a row there first, and
+[testing.md](testing.md#the-gates-that-matter-and-why-each-exists) says what holds it.
+
 **OpeningHand** owns the first decision. The hand is the screen; `logic/openingHand.ts`
 computes the arch once per resize and takes no selected index, so moving the ring moves
 nothing (`tests/openingHand.test.ts`). Only the selected card prints its rules. `A` is

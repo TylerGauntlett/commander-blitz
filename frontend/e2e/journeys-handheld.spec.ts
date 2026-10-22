@@ -30,6 +30,7 @@
  */
 
 import { expect, type Page, test } from "@playwright/test";
+import { ceiling } from "../src/components/game/decisionAudit";
 import {
   budget,
   isOver,
@@ -295,6 +296,42 @@ test.describe("the core journeys, in presses", () => {
     );
     expect(stillInHand, `${run.story}\nthe ring followed the card out of the hand`).toBe(true);
     expect(await ring(page), run.story).not.toBe(played);
+  });
+
+  /**
+   * THE FIRST DECISION OF EVERY GAME, AGAINST THE REAL ENGINE.
+   *
+   * `Journeys.stories.tsx:KeepTheHand` counts the same press over a fixture.
+   * Here the keep is a real mutation: the screen has to put the ring on a card
+   * before anything is pressed, the press has to reach the server, and the
+   * screen has to leave on the engine's answer -- which is the half a fixture
+   * cannot stand in for. Held to the audit's ceiling, by name, so the two
+   * halves cannot be allowed different numbers.
+   */
+  test("keeping the opening hand is one press, from where the screen puts the ring", async ({
+    page,
+  }) => {
+    await startGame(page, { deck: "edgar", opponents: 1, seed: 11 });
+    const stage = page.getByTestId("opening-hand");
+    await expect(stage).toHaveAttribute("data-phase", "keep");
+    // The screen lands the ring on a card, so `A` is Keep without a walk.
+    await expect.poll(() => ring(page), { timeout: budget(10_000) }).toMatch(/^card:/);
+
+    const run = walker(page);
+    await run.press("a", 1500);
+
+    // Answered: the screen is leaving, gone, or on to the bottoming half.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const root = document.querySelector<HTMLElement>('[data-testid="opening-hand"]');
+            return !root || root.dataset.closing !== undefined || root.dataset.phase !== "keep";
+          }),
+        { timeout: budget(15_000) },
+      )
+      .toBe(true);
+    expect(run.cost, run.story).toBeLessThanOrEqual(ceiling("KeepTheHand"));
   });
 
   /**

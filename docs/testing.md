@@ -239,6 +239,12 @@ about a *state*; none can answer how long a decision takes on a controller, whic
 is the property a player feels. `src/testing/journey.ts` walks a journey and
 returns what it cost; `Journeys.stories.tsx` holds a budget per journey in CI, and
 `e2e/journeys-handheld.spec.ts` holds the same journeys against a real engine.
+The budgets live once, in `src/components/game/decisionAudit.ts`, the table of
+every decision kind and purpose the engine can raise against the surface that
+answers it ([client.md](client.md#surfaces-and-their-rules)); a story is held to
+the ceiling under its own name, `tests/unit/choices/test_decision_audit.py` holds
+the table to the engine's `DecisionKind` and purpose tags, and
+`tests/decisionAudit.test.ts` holds every ceiling to a story that measures it.
 Budgets are ceilings, never exact counts: an exact count fails on an improvement.
 A journey whose follow-up depends on a new action list from the server is e2e or
 it is nothing, because a fixture never produces one. Two things have to be right
