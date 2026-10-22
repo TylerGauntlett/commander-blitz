@@ -62,7 +62,9 @@ API — the pod token, the library id — travels in a header rather than a cook
 
 Registered in `app.py` because it reports on `app.state` as a whole: version,
 cards and decks loaded, live game and pod counts, the catalog bundle the index
-came from, and how much art is cached, known and artless. Playwright's
+came from, how much art is cached, known and artless, and under `art.store`
+how far the art crawl has got and how many lazy fills this process attempted
+([card-catalog.md](card-catalog.md#the-art-store)). Playwright's
 `webServer` waits on it; the desktop probe polls it.
 
 ### Serving the built client
