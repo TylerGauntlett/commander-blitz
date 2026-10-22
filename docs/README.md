@@ -58,6 +58,7 @@ separately:
 - [adr/0018-card-data-checked-against-the-printing.md](adr/0018-card-data-checked-against-the-printing.md) — oracle text is a contract; the loader refuses what it would ignore
 - [adr/0019-pod-seats-symmetric-readiness.md](adr/0019-pod-seats-symmetric-readiness.md) — everyone locks in; a CPU differs only by deck
 - [adr/0020-convoke-is-one-line.md](adr/0020-convoke-is-one-line.md) — convoke and delve are one cast line; the pick is asked while paying
+- [adr/0021-art-store-is-committed.md](adr/0021-art-store-is-committed.md) — the crawled art is committed, written by a bot, and asked before Scryfall
 
 ## If you are here to...
 
