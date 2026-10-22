@@ -124,7 +124,7 @@ reduced-motion channel decides whether it plays.
 
 ## Cards
 
-### Full engine support for the catalog — **L**, continuous
+### Every import native, every time — **L**, continuous
 
 **Today.** Every shipped deck is native; everything else imports as a proxy
 that keeps its keywords and loses its text ([deck-import.md](deck-import.md)).
@@ -134,7 +134,36 @@ behind six gates, gap records, and `/extend-dsl` to clear them
 players have imported and then by EDHREC rank, which is the right order and
 stays.
 
-**What "all known cards" runs into, in the order it will be met:**
+**The target.** Any public Moxfield link a player pastes imports with a
+simplified count of zero, and keeps doing so as sets are released. That is
+the whole catalog, with each card carrying its own verified behaviour, not a
+working set. Three things make it a target rather than a wish:
+
+- **A card's unit test already exists as a shape.** Gate 5's expectation is
+  the per-card test, `test_auto_cards.py` re-runs all six gates over every
+  authored card on every run, and `test_every_card_works.py` casts each one
+  in a sandbox and checks where it lands. "Every card has unit tests" means
+  every card goes through that door and none is promoted around it; the
+  per-deck behaviour files stay for what a one-cast sandbox cannot reach.
+- **An unattended worker.** The agent tier's packet is a file format
+  precisely so that a worker with no repository open can drain the queue
+  ([card-authoring.md](card-authoring.md#driving-it)). Running that worker
+  continuously, collecting through the gates and opening the pull request
+  itself, is what turns the loop from a session someone drives into a
+  pipeline that keeps up with the catalog. Its gaps still go to
+  `/extend-dsl`, which stays a person's decision because it changes the
+  engine.
+- **Set releases are events.** A refresh of the Scryfall bundle on each
+  release, a queue refresh over the new rows, and the worker on them before
+  players meet the cards. The gap report after each release is the list of
+  new mechanics the set introduced, which is the engine roadmap for that
+  quarter written by the set itself.
+
+Until the count reaches zero, an import's report and the per-card marker in
+the list view below say exactly which cards are still waiting, and a card
+imported by a player goes to the front of the queue as it does now.
+
+**What the catalog runs into, in the order it will be met:**
 
 1. **The validator.** Every new op adds a branch to `_validate_effect`, which
    is already the largest function in the tree (`OF-01`). A per-op validator
@@ -157,60 +186,109 @@ stays.
    needs sharding by card file, as the e2e slice is sharded today, and the
    golden pool hash needs a per-file variant so a change to one file re-pins
    one hash.
-5. **Art.** Every supported card wants its art committed or lazily filled, and
-   `data/art/` is Wizards-owned illustration
-   ([card-catalog.md](card-catalog.md#a-note-on-the-images)). The note there
-   asks for a deliberate decision before the corpus grows; scaling to the
-   catalog is that moment. The desktop's content package also carries the art
-   it ships, so a size budget for the package belongs in the same decision.
-
-**Working set first.** Full support is open-ended, so the measurable target
-is the one the deck roadmap below sets: every card in every deck on the
-curated list, native. That set is a few thousand distinct cards and it is the
-set players will actually meet; the queue's existing order already favours
-it. The proxy generator stays as the honest fallback for everything else.
+5. **Art.** Every supported card wants its illustration, which is the next
+   item.
 
 **Gates:** `author_cards.py --report` for coverage, the generated
-[unsupported-cards.md](unsupported-cards.md) for what blocks what, and one
-import pin per shipped deck, which is the guarantee behind "paste a link".
+[unsupported-cards.md](unsupported-cards.md) for what blocks what, one
+import pin per shipped deck, and a new one: a sample of public lists
+imported as a dry run on a schedule, with the simplified count reported as
+the number this item exists to drive to zero.
+
+### An art store the servers own — **M**
+
+**Today.** The repository commits the art for the cards it ships, and the
+hosted server lazily fetches anything else from Scryfall the first time a
+board shows it ([card-catalog.md](card-catalog.md#serving)). The browser
+never talks to Scryfall, which is the rule
+[ADR 0012](adr/0012-art-fetched-once-served-locally.md) set; the server
+still does, at a moment a player is waiting, and so does every Steam Deck
+on its own behalf. At catalog scale that is a rate limit and an outage
+waiting to be met by whoever imports the wrong deck on the wrong evening.
+
+**The change.** Download every illustration once, slowly, into a store the
+project owns, and have every Commander Blitz server serve from that store
+and nothing else:
+
+- **A backfill job** that walks the catalog at the pace Scryfall asks for,
+  resumable, keyed by `scryfall_id`, and idempotent, so it can be stopped
+  and restarted and never fetches a file twice. It runs on a schedule after
+  each bundle refresh to pick up new printings. One printing per name is the
+  first pass, since that is what the index already resolves; the printings
+  decks have chosen and the pins come next; every printing is a later,
+  separate decision, because it is an order of magnitude more storage for
+  illustrations almost nobody will see.
+- **The store** is a volume or an object store, not the repository, since a
+  git history of every illustration ever printed is the wrong shape. The
+  serving path is unchanged: `/art/{card_id}.jpg` and `?p=` keep their
+  meaning and the owned-wins rule keeps its order, with the store as a third
+  layer behind the committed files and ahead of the lazy fill. The lazy fill
+  stays as the fallback for a printing the backfill has not reached, and the
+  `_missing` set stays as the answer for one Scryfall does not have.
+- **The Deck fetches from the site**, not from Scryfall. The sidecar's lazy
+  fill and eager prefetch point at the hosted origin's `/art`, so one
+  throttled crawl serves every device and the desktop's offline story is
+  unchanged: what it has, it has.
+- **`/health` reports the backfill**: how far it is, when it last ran, and
+  how many lookups fell through to the fallback, which is the number that
+  should go to zero and stay there.
+
+**The decision this forces.** `data/art/` is Wizards-owned illustration, and
+[card-catalog.md](card-catalog.md#a-note-on-the-images) asks for a
+deliberate decision before the corpus grows. A store holding the whole
+catalog is that moment, and the decision belongs in an ADR before the
+backfill runs: what is stored, at what size, under which policy, and what
+the content package the Deck downloads carries versus fetches.
 
 ## Decks
 
-### A catalogue of the most-played decks — **L**
+### The real precons — **L**
 
-**Target.** Roughly the hundred most popular commanders, each with a
-representative public list, selectable from the shelf the way the twelve
-precons are now; the user's brief says a hundred or more, and the number is a
-floor to plan the data model around rather than a ceiling.
+**Today.** The shelf's "Precons" segment holds twelve decks, and all but two
+are lists the maintainer likes, promoted from Moxfield. The word is doing
+work it cannot do: a player who filters to precons expects the decks Wizards
+sells, and a deck somebody built is a different promise.
 
-**Sources.** The catalog index already carries Scryfall's `edhrec_rank`, so a
-first cut of "popular commanders" is the legendary creatures ranked by it
-with no scraping at all; EDHREC's own commander pages are the sharper source
-and the one to prefer when a list is curated by hand. Lists come from
-Moxfield through the import path that exists today (`/v3/decks/all/{id}` is
-open; Moxfield's search is not, as [deck-import.md](deck-import.md) records),
-so the curated input is a manifest, `data/decks/sources.json`: one row per
-deck with the commander, the Moxfield URL, the author to credit, and the
-EDHREC rank at the time of curation, kept by a script that re-reads the rank
-and reports which rows have drifted. Attribution stays on the deck file, as
-`promote_deck.py --url` already records it.
+**Target.** The shelf ships the official Commander preconstructed decks from
+the last *N* years, where *N* is a constant the sources manifest names, and
+nothing else under that word. The lists the maintainer likes become what any
+other list is: a personal import, pasted from Moxfield, native because the
+card roadmap above makes every import native.
 
-**What a shipped deck costs today, and what has to change at a hundred:**
+**Sources.** Official lists are published data, not something to scrape:
+MTGJSON's deck files carry every preconstructed deck with its set, release
+date and the exact printings, and Moxfield mirrors the same lists under its
+own precon section. The manifest, `data/decks/sources.json`, is one row per
+precon with the set, the release date, the product name and the source URL,
+generated from the deck files and filtered to the window, so adding a year is
+a change to one constant and a run of the script. Printings come with the
+list, which is what the per-seat `printings` design was built for.
 
-| Requirement now | Held by | At a hundred decks |
+**What a shipped deck costs today, and what changes at dozens per year:**
+
+| Requirement now | Held by | For the precon window |
 |---|---|---|
-| Every card native | the import pin test per deck | Unchanged. This is what makes it a precon, and it is what drives the card roadmap in the order players meet cards |
-| Tags, ratings, strategy, signature cards | `test_deck_metadata.py` | Two tiers in the catalogue: a **precon** with the full dossier, and a **featured** deck with the honest empty states the dossier already draws. The `source` field grows a third value; the shelf's source filter grows a third segment |
-| A CPU strategy module and a page under `docs/cpus/` | `test_registry.py` | A deck file declares an `archetype`, and `strategy_for` falls back deck id, commander, archetype, default. A module and a page stay the mark of a precon; a featured deck gets the archetype's plan and the test asks for one or the other |
-| Every precon through a whole four-player game | `test_deck_games.py` | A seeded sample per run rather than every deck, with the full matrix in the arena stage, which is already its own runner |
-| Art for every printing the list chose | eager prefetch on the desktop | The content package's size budget, from the card roadmap |
+| Every card native | the import pin test per deck | Unchanged, and it is what orders the card roadmap: each new precon set is a dated deadline for the mechanics it introduces |
+| Tags, ratings, strategy, signature cards | `test_deck_metadata.py` | Keep the dossier editorial, since nothing in a list says a deck is hard to pilot, but seed the tags and the strategy paragraph from the product's own description, with a person's edit as the gate rather than a person's blank page |
+| A CPU strategy module and a page under `docs/cpus/` | `test_registry.py` | A deck file declares an `archetype`, and `strategy_for` falls back deck id, commander, archetype, default. A module and a page are written where the archetype's plan visibly misplays the deck, and the test asks for a module or an archetype |
+| Every precon through a whole four-player game | `test_deck_games.py` | A seeded sample per run, with the full matrix in the arena stage, which is already its own runner |
+| Art for every printing the list chose | eager prefetch on the desktop | The owned art store above; the content package carries the window's printings and fetches the rest |
 
-**The shelf at a hundred.** `DeckCatalog` is a grid with search, colour pips,
-a source filter and a cycling sort. At this size it needs: a sort by
-popularity (the rank from the manifest, carried on `DeckSummary`), an
-archetype filter, the bracket filter from the matchmaking section, and a grid
-that stays walkable with a pad, which means grouping by archetype or colour
-with group headers as regions rather than one long sweep. The floors of
+**What happens to the twelve.** Their strategies and pages stay, because a
+plan is really about the commander and `strategy_for` already looks a deck up
+by commander second, so a personal import of Bruvac keeps milling. The lists
+themselves follow the precedent of the retired Aesi and Edgar lists
+([decks.md](decks.md#test-fixtures)): they move to the fixtures directory,
+`default_registry()` keeps loading them so every seeded test and import pin
+stands, and the server shows them only under the fixture switch. The shelf's
+segments become **Precons**, which is then true, and **Yours**.
+
+**The shelf at dozens.** `DeckCatalog` is a grid with search, colour pips, a
+source filter and a cycling sort. For the window it needs: grouping by set
+with the release as the order, so the newest precons are the first row; an
+archetype filter; the bracket filter from the matchmaking section; and group
+headers as regions so the grid stays walkable with a pad rather than being
+one long sweep. The floors of
 [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) apply to every tile.
 
 ### Viewing a deck's list — **M**
@@ -316,6 +394,54 @@ advanced-CPU work below a place to land that a player can see.
 
 [deck-import.md](deck-import.md) says an adapter, not a second pipeline. It
 is the second most common link a player will paste.
+
+## The Steam Deck build
+
+### Compressed art, shipped for offline precon play — **M**
+
+**Today.** The content package the Deck downloads carries the frozen server,
+the built client and the card data as one versioned asset, and the art the
+repository commits rides inside it at the size the site serves. Anything
+outside the shipped pool is fetched on first sight, or eagerly on import,
+and only while online ([steamdeck.md](steamdeck.md#offline-and-online)). So
+the Deck's offline promise is exactly as wide as the art it holds, and
+every content update re-downloads illustrations that did not change.
+
+**The change.** A second encoding of the art, made for the device, shipped
+with the precons, and versioned apart from the code:
+
+- **One encoding per surface.** The Deck's panel is a fixed size and the
+  largest card it ever draws is the full-card read, so a modern format at
+  that width, and the board width beside it, is a fraction of the site's
+  bytes with no visible loss on the panel. The rule of
+  [ADR 0012](adr/0012-art-fetched-once-served-locally.md) holds unchanged:
+  nothing is ever upscaled, which is exactly why the encoding is sized to
+  the largest the Deck draws and not smaller. `e2e/legibility.spec.ts`
+  runs against the compressed set under the handheld project, so the scrims
+  and the text are proven over the bytes the device will actually show.
+- **The art store makes it.** The backfill job above writes the device
+  encoding beside the full one, keyed the same way, so the site serves
+  `/art/...` at either size on request and the sidecar asks for the small
+  one. One crawl, two outputs, no second source.
+- **The precon window ships inside the package**, so every deck on the
+  shelf plays offline with its art on the first launch; everything a player
+  imports is prefetched at import, as now, from the site's store rather than
+  from Scryfall.
+- **Art is its own asset.** `content-latest.json` grows an art version, the
+  release carries `art-<v>` beside `content-<v>`, and the updater fetches the
+  art asset only when its version moved. Code ships on every merge; art
+  ships when a set is added to the window or a pin changes. A content update
+  gets small enough to take over a hotel connection, which is where a Deck
+  usually is.
+- **A size budget as a gate.** The package and the art asset each get a
+  ceiling in the release workflow, in the spirit of
+  [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md): a precon set that
+  would push the asset over its budget fails the release rather than
+  quietly doubling every Deck's download.
+
+The licensing ADR the art store forces covers this too: a second encoding
+is the same illustration, and the decision is about what is distributed,
+not at which size.
 
 ## Advanced CPUs
 
@@ -460,18 +586,23 @@ The dependencies, not the priorities, decide most of this:
    Deck updating while a game is open. Gate `/debug` in the same week.
 2. **The selection audit, then the unified selection model**, before the
    shelf and the list view add surfaces that would have to be unified later.
-3. **The deck data model**: the featured tier, the archetype fallback for
-   strategies, the sources manifest, the derived bracket. All of it before
-   the first batch of decks, so that the hundredth deck costs what the
-   thirteenth did.
-4. **Decks and cards together**, in batches: import a batch, drive the card
-   loop until every list is native, promote, repeat. The card roadmap is
-   continuous and this is what orders it.
-5. **The list view**, once there are lists worth looking at.
-6. **Advanced CPUs**, starting with the threat model, as soon as the outcome
+3. **The art store**, since both the precon window and the catalog target
+   multiply the illustrations the servers need, and the licensing ADR it
+   forces should be taken before the corpus grows rather than after. The
+   Deck's compressed art and separate art asset come out of the same job.
+4. **The deck data model**: the archetype fallback for strategies, the
+   sources manifest, the fixture move for the twelve, the derived bracket.
+   All of it before the first precon set, so that the last set in the window
+   costs what the first did.
+5. **Precons and cards together**, one set at a time, newest first: import
+   the set's decks, drive the card loop and the unattended worker until every
+   list is native, promote, repeat. The catalog target is continuous and the
+   precon window is what orders its first years.
+6. **The list view**, once there are lists worth looking at.
+7. **Advanced CPUs**, starting with the threat model, as soon as the outcome
    log and replays give it positions to learn from; the difficulty picker
    can ship before any model does.
-7. **Matchmaking**, last among the large items, because it depends on nearly
+8. **Matchmaking**, last among the large items, because it depends on nearly
    everything above it.
 
 Branding runs beside all of it and blocks none of it.
