@@ -554,7 +554,7 @@ def _cast_options(
     if not tuples:
         return []
 
-    out = _cast_variant(
+    plain = _cast_variant(
         state,
         pid,
         oid,
@@ -571,6 +571,7 @@ def _cast_options(
         # {2} on exactly the branch that has no other flag set.
         alt_cost=alt_cost,
     )
+    out = list(plain)
     # "You may cast Dragon spells without paying their mana costs" --
     # Dracogenesis. A standing board permission rather than a price on this
     # card, so it is asked here, where every cast line for this object is
@@ -778,12 +779,21 @@ def _cast_options(
                 extra_generic=extra_generic,
                 emerge_oid=victim,
             )
-    # Convoke and delve. One line per *number* spent, for the reason emerge
-    # offers one per victim: the number changes the price, and it is the
-    # player's to choose. Zero is the printed line already offered above.
+    # Convoke and delve. ONE line, not one per number spent: which creatures
+    # tap (or which cards are exiled) is asked as the spell is paid for, by
+    # `Game._cast`, the way Captivating Vampire's five Vampires are. One line
+    # per count drew Cleaver Concealment once per count in the panel, and the
+    # count was still not the whole choice -- *which* creatures was asked
+    # afterwards anyway.
+    #
+    # The line carries the fewest the player must spend (`pay_generic`), so a
+    # spell that mana alone cannot pay is still offered; the printed line is
+    # that line at zero. A tuple already covered at a smaller spend is not
+    # offered again, so each target is one row whatever it costs to reach.
     if card.pay_generic_with is not None and state.objects[oid].zone is Zone.HAND:
+        covered = {action.targets for action in plain}
         for spend in range(1, _pay_generic_ceiling(state, pid, oid, card) + 1):
-            out += _cast_variant(
+            for action in _cast_variant(
                 state,
                 pid,
                 oid,
@@ -791,13 +801,17 @@ def _cast_options(
                 tuples,
                 extra_generic=extra_generic,
                 pay_generic=spend,
-            )
+            ):
+                if action.targets not in covered:
+                    covered.add(action.targets)
+                    out.append(action)
+            if len(covered) >= len(tuples):
+                break
     return out
 
 
-#: How many times a repeatable additional cost is offered. Capped for the reason
-#: convoke's ceiling is: every count is a separate cast action multiplied by
-#: every legal target tuple.
+#: How many times a repeatable additional cost is offered. Capped because every
+#: count is a separate cast action multiplied by every legal target tuple.
 MAX_ADDITIONAL_TIMES = 6
 
 
@@ -907,8 +921,8 @@ def _charge_additional_cost(
     ``build(times)`` makes the same cast line again with the cost charged
     ``times`` over; ``out`` is the free line or lines the caller already built.
 
-    One line per number of times paid, for the reason convoke offers one per
-    number convoked: the count changes the price and is the player's to choose.
+    One line per number of times paid: the count changes the price and what the
+    spell does, and it is the player's to choose.
 
     A *mandatory* cost withdraws the free lines entirely -- not merely when it
     happens to be unpayable. Clearing it only in the unpayable case is the same
@@ -1059,12 +1073,6 @@ MORPH_COST = ManaCost.parse("{3}")
 #: cost reduced to zero -- on an X spell a discount still leaves X to pay.
 FREE_COST = ManaCost.parse("")
 
-#: How many creatures a convoke line may tap, or cards a delve line may exile.
-#: Capped for the reason `_emerge_fodder` is capped: every one is a separate
-#: cast action multiplied by every legal target tuple.
-MAX_PAY_GENERIC = 6
-
-
 def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
     """The most a convoke or delve line could usefully spend.
 
@@ -1088,7 +1096,7 @@ def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) ->
         # Delve exiles from the graveyard, and the spell being cast is not in
         # it -- it is on the stack by the time this is paid.
         available = sum(1 for other in state.players[pid].graveyard if other != oid)
-    return min(generic, available, MAX_PAY_GENERIC)
+    return min(generic, available)
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
@@ -1719,9 +1727,9 @@ def _cast_variant(
             label_base += " (spree " + " ".join(
                 card.spree[mode].describe() for mode in spree_modes
             ) + ")"
-        if pay_generic:
-            word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
-            label_base += f" ({word} {pay_generic})"
+        # No word for `pay_generic`: it is the one convoke or delve line, and the
+        # count it carries is a floor the cast asks the player to meet, not a
+        # price the row has to tell apart from another row.
         if flashback:
             label_base += " (flashback)"
         if emerge_oid is not None:

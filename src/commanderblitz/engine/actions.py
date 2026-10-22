@@ -152,9 +152,10 @@ class Action:
     alternative: bool = False
     #: How much of the generic cost is paid with something other than mana --
     #: convoke (creatures tapped) and delve (cards exiled from the graveyard).
-    #: Part of the action's identity: convoking two creatures and convoking
-    #: three are two different things to do with the same card, at two
-    #: different prices.
+    #: The *fewest* the cast must spend, which is all legality decides: the one
+    #: convoke or delve line carries it, and `Game._cast` asks which creatures
+    #: or cards -- at least this many -- as the spell is paid for. Zero when
+    #: the mana alone pays.
     pay_generic: int = 0
     #: How many of the spell's **Phyrexian** pips are being paid with 2 life each
     #: rather than with mana (rule 107.4f). Part of the action's identity for the

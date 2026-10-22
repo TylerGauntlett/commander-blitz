@@ -1144,9 +1144,9 @@ class CardModel(BaseModel):
     #:
     #: ``additional_optional`` makes it "you **may**", and
     #: ``additional_repeatable`` makes it payable "any number of times"
-    #: (replicate). Legality offers one cast line per number of times paid,
-    #: exactly as convoke offers one per number convoked -- the count changes
-    #: the price and is the player's to choose. How many times it was paid is
+    #: (replicate). Legality offers one cast line per number of times paid --
+    #: the count changes the price and what the spell does, and is the
+    #: player's to choose. How many times it was paid is
     #: read back with ``{"additional_paid": true}``.
     additional_cost: CostModel | None = None
     #: "As an additional cost to cast this spell, discard a card **or** pay 3
@@ -1310,9 +1310,8 @@ class CardModel(BaseModel):
     #: **Convoke** and **delve**: a way to pay part of the *generic* cost with
     #: something other than mana. ``"tap_creatures"`` taps creatures you
     #: control; ``"exile_from_graveyard"`` exiles cards from your graveyard.
-    #: One cast line per number spent, the way ``emerge`` offers one per
-    #: victim, because the number changes the price and is the player's to
-    #: choose.
+    #: One cast line, and which creatures tap (or which cards go) is asked as
+    #: the spell is paid for -- see ADR 0020.
     #:
     #: Generic only, and clamped at what the spell actually costs. Convoke's
     #: "or one mana of that creature's colour" is a documented simplification:

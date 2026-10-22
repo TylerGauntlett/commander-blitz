@@ -137,8 +137,14 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   /** A handheld whose floors are too big for it. See `logic/breakpoints.ts`. */
   const phone = usePhone();
 
+  // Only the seats still in the game: the viewing guard would show an empty
+  // seat as your own board, which would make one press of `R2` look dead.
+  const liveOpponents = useMemo(
+    () => opponents.filter((pid) => !state.players[pid]?.has_lost),
+    [opponents, state.players],
+  );
   /** Which opponent is being read while `R2` is held. See `useOpponentReading`. */
-  const reading = useOpponentReading(handheld, opponents, state.seat);
+  const reading = useOpponentReading(handheld, liveOpponents);
 
   // Card positions are remembered globally, by oid, and oids restart with each
   // game. Leaving them behind would let the first death of a new table fly out

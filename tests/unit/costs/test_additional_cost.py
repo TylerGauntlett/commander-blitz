@@ -11,8 +11,8 @@ computes `mana_cost.plus(kicker)`, a `ManaCost`, which cannot sacrifice
 anything — and it is paid **once**.
 
 So `additional_cost` is a full `Cost`, and legality offers **one cast line per
-number of times paid**, which is convoke's shape rather than kicker's: the count
-changes the price, and it is the player's to choose.
+number of times paid**, rather than kicker's one: the count changes the price
+and what the spell does, and it is the player's to choose.
 
 Three things the modifiers decide, and each is a different printed card:
 
@@ -131,7 +131,7 @@ class TestCasualty:
 
 class TestReplicate:
     def test_one_line_per_number_of_times_paid(self, builder):
-        """Convoke's shape: the count changes the price and is the player's."""
+        """The count changes the price and is the player's."""
         game = replicate_board(builder, lands=3)
         counts = sorted({a.additional_times for a in lines(game, REPLICATE)})
         assert counts == [0, 1, 2], "{R}, {R}{1}, {R}{1}{1}"
