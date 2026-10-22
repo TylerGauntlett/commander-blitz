@@ -175,9 +175,14 @@ describe("joining from the door", () => {
     await waitFor(() => expect(app.where.pathname).toBe("/games/g9"));
     expect(app.where.how).toBe("REPLACE");
     // ...and everything asked on behalf of that game carries the token.
-    const forGame = calls.filter((call) => call.path.includes("g9"));
-    expect(forGame.length).toBeGreaterThan(0);
-    expect(forGame.every((call) => call.token === "tok-1")).toBe(true);
+    //
+    // Waited for, not read off at once: the address moves when the table
+    // commits, and the table's first state request goes out from an effect
+    // after that commit. Between the two is a gap wide enough for a loaded
+    // runner to assert into, and an empty list would then pass the `every`.
+    const forGame = () => calls.filter((call) => call.path.includes("g9"));
+    await waitFor(() => expect(forGame().length).toBeGreaterThan(0));
+    expect(forGame().every((call) => call.token === "tok-1")).toBe(true);
   });
 
   it("stays at the door, saying why, when the join is refused for any other reason", async () => {
