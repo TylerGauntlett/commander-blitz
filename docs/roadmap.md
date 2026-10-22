@@ -43,13 +43,12 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [An art store the servers own](#an-art-store-the-servers-own) | M | high | nothing | 6 |
 | [One selection model](#one-selection-model) | M | high | nothing | 1 |
-| [Imports complete on the device](#imports-complete-on-the-device) | M | high | An art store the servers own | 0 |
+| [Imports complete on the device](#imports-complete-on-the-device) | M | high | nothing | 0 |
 | [Zero-downtime deployments](#zero-downtime-deployments) | L | high | nothing | 4 |
-| [The real precons](#the-real-precons) | L | high | An art store the servers own | 3 |
+| [The real precons](#the-real-precons) | L | high | nothing | 3 |
 | [A phone modality](#a-phone-modality) | L | high | One selection model | 0 |
-| [Every import native, every time](#every-import-native-every-time) | L, continuous | high | An art store the servers own | 0 |
+| [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
@@ -58,7 +57,7 @@ generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | Zero-downtime deployments | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | Zero-downtime deployments | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
-| [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | An art store the servers own, The real precons | 0 |
+| [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | The real precons | 0 |
 | [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing | 0 |
 | [A queue](#a-queue) | L | medium | Zero-downtime deployments, CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
@@ -73,28 +72,27 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [An art store the servers own](#an-art-store-the-servers-own) — M, high
-2. [One selection model](#one-selection-model) — M, high
+1. [One selection model](#one-selection-model) — M, high
+2. [Imports complete on the device](#imports-complete-on-the-device) — M, high
 3. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
-4. [Difficulty](#difficulty) — S, medium
-5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-6. [Outcomes as data](#outcomes-as-data) — M, medium
-7. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-8. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-9. [Archidekt import](#archidekt-import) — S, low
-10. [Sound](#sound) — S, low
+4. [The real precons](#the-real-precons) — L, high
+5. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+6. [Difficulty](#difficulty) — S, medium
+7. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+8. [Outcomes as data](#outcomes-as-data) — M, medium
+9. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+10. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+11. [Archidekt import](#archidekt-import) — S, low
+12. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
-- [Imports complete on the device](#imports-complete-on-the-device) — [An art store the servers own](#an-art-store-the-servers-own)
-- [The real precons](#the-real-precons) — [An art store the servers own](#an-art-store-the-servers-own)
 - [A phone modality](#a-phone-modality) — [One selection model](#one-selection-model)
-- [Every import native, every time](#every-import-native-every-time) — [An art store the servers own](#an-art-store-the-servers-own)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [Brackets, derived from the list](#brackets-derived-from-the-list) — [The real precons](#the-real-precons)
 - [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — [Zero-downtime deployments](#zero-downtime-deployments)
 - [Replays and sharing](#replays-and-sharing) — [Zero-downtime deployments](#zero-downtime-deployments)
-- [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — [An art store the servers own](#an-art-store-the-servers-own), [The real precons](#the-real-precons)
+- [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — [The real precons](#the-real-precons)
 - [A queue](#a-queue) — [Zero-downtime deployments](#zero-downtime-deployments), [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
 ## Operating the site
@@ -276,69 +274,9 @@ and the mute setting's e2e assertion still passes.
 
 ## Cards
 
-### An art store the servers own
-
-Effort **M** · Impact **high**, removes the one runtime dependency on a third party, and every deck and card expansion sits on top of it · Depends on nothing · ADR first.
-
-#### Today
-
-The repository commits the art for the cards it ships, and the
-hosted server lazily fetches anything else from Scryfall the first time a
-board shows it ([card-catalog.md](card-catalog.md#serving)). The browser
-never talks to Scryfall, which is the rule
-[ADR 0012](adr/0012-art-fetched-once-served-locally.md) set; the server
-still does, at a moment a player is waiting, and so does every Steam Deck
-on its own behalf. At catalog scale that is a rate limit and an outage
-waiting to be met by whoever imports the wrong deck on the wrong evening.
-
-#### The change
-
-Download every illustration once, slowly, into a store the
-project owns, and have every Commander Blitz server serve from that store
-and nothing else:
-
-- **A backfill job** that walks the catalog at the pace Scryfall asks for,
-  resumable, keyed by `scryfall_id`, and idempotent, so it can be stopped
-  and restarted and never fetches a file twice. It runs on a schedule after
-  each bundle refresh to pick up new printings. One printing per name is the
-  first pass, since that is what the index already resolves; the printings
-  decks have chosen and the pins come next; every printing is a later,
-  separate decision, because it is an order of magnitude more storage for
-  illustrations almost nobody will see.
-- **The store** is a volume or an object store, not the repository, since a
-  git history of every illustration ever printed is the wrong shape. The
-  serving path is unchanged: `/art/{card_id}.jpg` and `?p=` keep their
-  meaning and the owned-wins rule keeps its order, with the store as a third
-  layer behind the committed files and ahead of the lazy fill. The lazy fill
-  stays as the fallback for a printing the backfill has not reached, and the
-  `_missing` set stays as the answer for one Scryfall does not have.
-- **The Deck fetches from the site**, not from Scryfall. The sidecar's lazy
-  fill and eager prefetch point at the hosted origin's `/art`, so one
-  throttled crawl serves every device and the desktop's offline story is
-  unchanged: what it has, it has.
-- **`/health` reports the backfill**: how far it is, when it last ran, and
-  how many lookups fell through to the fallback, which is the number that
-  should go to zero and stay there.
-
-**The decision this forces.** `data/art/` is Wizards-owned illustration, and
-[card-catalog.md](card-catalog.md#a-note-on-the-images) asks for a
-deliberate decision before the corpus grows. A store holding the whole
-catalog is that moment, and the decision belongs in an ADR before the
-backfill runs: what is stored, at what size, under which policy, and what
-the content package the Deck downloads carries versus fetches.
-
-#### Gate
-
-The art API tests gain the third layer: a store file is served ahead of a
-cached one and behind a committed one, and a request for a printing the
-store lacks still fills lazily. The backfill script is resumable under test:
-interrupt it, run it again, and no file is fetched twice. `/health` carries
-the backfill fields and `tests/server/test_art_api.py` asserts the payload
-still names no `cards.scryfall.io` URL.
-
 ### Every import native, every time
 
-Effort **L, continuous** · Impact **high**, the difference between a deck and an inert list, for every link ever pasted · Depends on [An art store the servers own](#an-art-store-the-servers-own).
+Effort **L, continuous** · Impact **high**, the difference between a deck and an inert list, for every link ever pasted · Depends on nothing.
 
 #### Today
 
@@ -423,7 +361,7 @@ the number this item exists to drive to zero.
 
 ### The real precons
 
-Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on [An art store the servers own](#an-art-store-the-servers-own).
+Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on nothing.
 
 #### Today
 
@@ -780,7 +718,7 @@ resolve the same way as the equivalent Moxfield list.
 
 ### Imports complete on the device
 
-Effort **M** · Impact **high**, a deck imported on a Deck plays offline later exactly as it played online, which is the whole offline promise for anything not on the shelf · Depends on [An art store the servers own](#an-art-store-the-servers-own).
+Effort **M** · Impact **high**, a deck imported on a Deck plays offline later exactly as it played online, which is the whole offline promise for anything not on the shelf · Depends on nothing.
 
 #### Today
 
@@ -839,7 +777,7 @@ matrix plays a full game on the imported deck offline.
 
 ### Compressed art, shipped for offline precon play
 
-Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on [An art store the servers own](#an-art-store-the-servers-own), [The real precons](#the-real-precons).
+Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on [The real precons](#the-real-precons).
 
 #### Today
 

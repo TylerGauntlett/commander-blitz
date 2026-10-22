@@ -246,7 +246,7 @@ decks from deck imports plus the card art lazily fetched from Scryfall
 (`data/generated/art`): a card's own art as `{card_id}.jpg`, and a printing a
 deck or a catalog hover chose as `{scryfall_id}.jpg`, so it is shared across
 decks and seats that chose the same illustration. Everything else in `/app/data`, the
-committed art and the catalog index, comes from the image and is replaced
+committed art, the art store and the catalog index, comes from the image and is replaced
 wholesale by every deploy.
 
 **A volume must never be mounted over repository content.** There used to be a

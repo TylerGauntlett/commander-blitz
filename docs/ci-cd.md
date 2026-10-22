@@ -5,7 +5,7 @@ itself is `scripts/verify.py` ([testing.md](testing.md)); this page is about how
 GitHub Actions slices it, decides whether there is anything to prove, and ships
 what passed. Operating the site after it ships is [deployment.md](deployment.md).
 
-## Five workflows
+## Six workflows
 
 | Workflow | Trigger | Job |
 |---|---|---|
@@ -13,6 +13,7 @@ what passed. Operating the site after it ships is [deployment.md](deployment.md)
 | `pr.yml` "pull request" | pull request, including `edited` | The title is a conventional commit and the body follows the template. Separate so that editing a title does not cost a gate run; Dependabot is exempt from the body check |
 | `secrets.yml` "secrets" | push to `main`; every pull request | gitleaks, with the allowlist in `.gitleaks.toml`. Shallow on a pull request (its commits plus a little context), full history on `main`. Runs even when the gate decides there is nothing to test |
 | `release.yml` "desktop release" | called by `deploy.yml`; `workflow_dispatch` on `main` | The content package and, when the shell changed, the AppImage, published as a GitHub Release |
+| `art-backfill.yml` "art backfill" | weekly schedule; `workflow_dispatch` with a `limit` | Crawls the art store and opens a `chore(art):` pull request that merges itself ([below](#art-backfill)) |
 | `tls-check.yml` "tls check" | weekly schedule; `workflow_dispatch` | An alarm, renewing nothing: fails if the certificate is near expiry, `/health` stops answering over TLS, or port 80 stops redirecting. GitHub disables a schedule after two months without repository activity |
 
 Every workflow has its own concurrency group with `cancel-in-progress`
@@ -192,6 +193,26 @@ The last job checks the whole invariant from outside the chain: once the gate is
 green, if something was owed then the deploy or the release must have succeeded,
 and if nothing was owed both must have been skipped. It exists so that a
 skipped deploy can never look like a quiet success.
+
+## Art backfill
+
+`art-backfill.yml` runs `scripts/backfill_art.py` with a per-run cap, commits
+what it fetched under `data/art_store/` on an `art/backfill-<run>` branch, and
+opens a pull request set to auto-merge with a squash
+([ADR 0021](adr/0021-art-store-is-committed.md)). A run that found nothing
+new opens nothing. The title is `chore(art):`, so the merge neither deploys nor
+releases; the art reaches the site with the next merge that ships. `changes`
+treats `data/art_store/*` as inert, so the crawl's pull request costs no gate
+run, and `tests/server/test_art_api.py::TestTheDeployedShape` holds that line.
+
+It needs two things set once, by a maintainer:
+
+- **`ART_BACKFILL_TOKEN`**, a repository secret: a fine-grained token with
+  *Contents* and *Pull requests* write on this repository. Not `GITHUB_TOKEN`,
+  because a pull request opened with that one starts no workflow, so the
+  required checks never report and the auto-merge waits forever. The workflow
+  fails at its first step without it.
+- **Allow auto-merge**, under the repository's general settings.
 
 ## Conventions CI enforces
 

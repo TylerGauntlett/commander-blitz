@@ -72,7 +72,7 @@ a card, never enough to decide legality.
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/health` | Version, card count, deck list, live game and pod counts |
+| `GET` | `/health` | Version, card count, deck list, live game and pod counts, the catalog bundle and the art store's progress |
 | `GET` | `/api/config` | Which server this is: `mode` (`hosted` or `desktop`), whether the hosted server is reachable (`online`), `remote_origin`, and the app and content versions. The desktop build's client greys out what needs the other server on this answer, never on its origin |
 | `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags`, and `source_id` — the Moxfield id an import came from, case intact |
 | `GET` | `/api/decks/{deck_id}` | One deck with the dossier's fields: `ratings`, `strategy`, `signature`, and the derived `curve`/`lands`/`swaps` |

@@ -113,12 +113,16 @@ jobs:
           #   engine by tests, so an edit to either is a code change; so is
           #   docs/roadmap.md and docs/roadmap/*, held to scripts/roadmap.py
           #   by the lint stage.
+          # - data/art_store/ is the crawled art, committed by art-backfill.yml.
+          #   No test reads it (ADR 0021), so a crawl costs no gate; the image
+          #   still carries it, through the next merge that ships.
           # Anything not listed -- .github/ included -- runs the gate.
           inert() {
             case "$1" in
               docs/keywords.md | docs/card-dsl-reference.md | docs/roadmap.md | docs/roadmap/*) return 1 ;;
               docs/* | .agents/* | .claude/* | terraform/*) return 0 ;;
               data/authoring/packets/* | data/authoring/gaps/* | data/authoring/queue.json) return 0 ;;
+              data/art_store/*) return 0 ;;
               data/*/README.md) return 0 ;; # `*` crosses `/` in a case pattern: any depth
             esac
             # Top-level prose: README.md, TECH_DEBT.md.

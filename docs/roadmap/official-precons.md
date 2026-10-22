@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: the shelf's main promise, and the driver that orders the card work
-depends_on: [art-store]
+depends_on: []
 status: proposed
 ---
 

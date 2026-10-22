@@ -203,19 +203,42 @@ the face.
 ## Serving
 
 `GET /art/{card_id}.jpg` is a FastAPI route returning `FileResponse`, not a
-`StaticFiles` mount — the route also does a **lazy fill**. A card outside
-`data/cards/` (a catalog search result, a future deck) has no file yet, so the
-first request fetches it once, writes it to `data/generated/art/`, and serves it.
-The app gets more self-owned as it is used, and the browser still only ever talks
-to this server.
+`StaticFiles` mount — the route also does a **lazy fill**. A card with no
+committed file (a catalog search result, a deck's printing the crawl has not
+reached) is fetched once on first request, written to `data/generated/art/`, and
+served. The browser still only ever talks to this server.
+
+The route also answers a printing by its store name: `/art/{scryfall_id}.jpg`
+for the front, `/art/{scryfall_id}_back.jpg` for the back. That is what a Steam
+Deck's sidecar asks the site for before it asks Scryfall
+(`ArtStore.upstream`), so one crawl serves every device.
 
 **A committed file always beats a cached one of the same name.** `path_for`
 checks `data/art/` first. A cached file is only ever what some earlier boot
 believed the printing to be, and `art_pins.json` exists precisely to change that
-belief — so the reviewed answer has to be the one that wins. The two directories
+belief — so the reviewed answer has to be the one that wins. Between them sits **the art store** (below), so the order is
+committed, then stored, then cached. The two runtime directories
 are also what keeps the runtime-writable state on one Docker volume, without a
 mount sitting over repository content; `docs/deployment.md` has the failure that
 taught us to care.
+
+### The art store
+
+`data/art_store/` is the catalog's art, crawled ahead of time by
+`scripts/backfill_art.py` so no server waits on Scryfall while a player does:
+every printing the index resolves (both faces where a card has two), every pin,
+and every printing a shipped deck chose, less what `data/art/` owns. It is keyed
+by printing, `{scryfall_id}[_back].jpg` sharded by the id's first two
+characters, and `ArtStore.committed` is the one lookup both the server and the
+crawl use. The scheduled `art-backfill.yml` commits each capped crawl through a
+pull request that merges itself; [ci-cd.md](ci-cd.md#art-backfill) has the
+setup. The image carries it, the Deck's content package does not.
+
+`/health` reports it under `art.store`: the last crawl's `_state.json` (when,
+how much is wanted, how much is held, whether it finished) and `fell_through`,
+how many lazy fills this process has attempted. That number is the one that
+should reach zero. [ADR 0021](adr/0021-art-store-is-committed.md) is the
+decision.
 
 `GET /api/images` hands the client every card's art path in one cacheable
 response. It carries **no `cards.scryfall.io` URL** — `tests/server/test_art_api.py`
@@ -240,6 +263,8 @@ renders text frames, `/api/images` reports every card as artless, and
 
 ## A note on the images
 
-`data/art/` is Wizards-owned illustration, cached from a third-party CDN for a
-local playtest client. That is normal for this kind of tool, but it is worth a
-deliberate decision before this repository is made public.
+`data/art/` and `data/art_store/` are Wizards-owned illustration, cached from a
+third-party CDN for a playtest client. What is stored, where it ships and what
+the Deck fetches is decided in
+[ADR 0021](adr/0021-art-store-is-committed.md); widening it amends that ADR
+first.

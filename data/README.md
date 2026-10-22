@@ -13,6 +13,7 @@ data/
 │   └── fixtures/     retired lists kept for tests      committed
 ├── catalog/          the Scryfall-derived index        committed, except bulk/
 ├── art/              owned card art                    committed
+├── art_store/        the crawled catalog art           committed, by a bot
 ├── authoring/        the card pipeline's working state partly committed
 └── generated/        imports and runtime writes        gitignored
 ```
@@ -91,11 +92,21 @@ order and the pins are owned by [docs/card-catalog.md](../docs/card-catalog.md).
 `{card_id}.jpg` per card the engine plays, plus `manifest.json` recording each
 file's printing and artist. Committed, baked into the deploy image, and
 written only by `scripts/fetch_card_art.py` — never at runtime. A deck's chosen
-printing that differs from the one here is not committed; the server fetches
-it into `generated/art/`. `tests/server/test_art_api.py::TestTheDeployedShape`
+printing that differs from the one here is crawled into `art_store/`, and
+until the crawl reaches it the server fetches it into `generated/art/`. `tests/server/test_art_api.py::TestTheDeployedShape`
 pins that the two directories stay apart. Read [art/README.md](art/README.md);
 serving and the owned-wins rule are in
 [docs/card-catalog.md](../docs/card-catalog.md#serving).
+
+## `art_store/` — the crawled catalog art
+
+`{scryfall_id}.jpg` and `{scryfall_id}_back.jpg` for every printing the index
+resolves, every pin and every printing a shipped deck chose, sharded by the
+id's first two characters. Committed, but written only by
+`scripts/backfill_art.py` through the scheduled `art-backfill.yml` workflow.
+Served behind `art/` and ahead of `generated/art/`; in the image, not in the
+Deck's content package. Read [art_store/README.md](art_store/README.md) and
+[ADR 0021](../docs/adr/0021-art-store-is-committed.md).
 
 ## `authoring/` — the card pipeline's working state
 

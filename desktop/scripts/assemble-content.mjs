@@ -8,8 +8,9 @@
  *
  * `data/` is copied without what the server never reads at runtime:
  * `generated/` (per-user, written at runtime), `authoring/` (the card
- * pipeline's working files) and `catalog/bulk/` (the Scryfall dump the index
- * was built from; `cards.sqlite` is the index). The checksum and size in the
+ * pipeline's working files), `catalog/bulk/` (the Scryfall dump the index
+ * was built from; `cards.sqlite` is the index) and `art_store/` (the crawled
+ * catalog art, which a Deck asks the site for instead -- ADR 0021). The checksum and size in the
  * manifest describe the tarball, so with `--tar` the manifest inside the
  * directory is written first (with the version), the tarball is made from
  * it, and `content-latest.json` beside the tarball carries the final hash.
@@ -56,7 +57,8 @@ await cp(data, join(content, "data"), {
     return !(
       rel.startsWith("/generated") ||
       rel.startsWith("/authoring") ||
-      rel.startsWith("/catalog/bulk")
+      rel.startsWith("/catalog/bulk") ||
+      rel.startsWith("/art_store")
     );
   },
 });
