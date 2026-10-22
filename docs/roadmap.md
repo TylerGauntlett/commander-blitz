@@ -43,12 +43,11 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [One selection model](#one-selection-model) | M | high | nothing | 2 |
 | [Imports complete on the device](#imports-complete-on-the-device) | M | high | nothing | 0 |
-| [One staged set](#one-staged-set) | M | high | One selection model | 0 |
+| [One staged set](#one-staged-set) | M | high | nothing | 0 |
 | [Zero-downtime deployments](#zero-downtime-deployments) | L | high | nothing | 4 |
 | [The real precons](#the-real-precons) | L | high | nothing | 3 |
-| [A phone modality](#a-phone-modality) | L | high | One selection model | 0 |
+| [A phone modality](#a-phone-modality) | L | high | nothing | 0 |
 | [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
@@ -73,28 +72,26 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [One selection model](#one-selection-model).
-
 **Ready now, best first:**
 
 1. [Imports complete on the device](#imports-complete-on-the-device) — M, high
-2. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
-3. [The real precons](#the-real-precons) — L, high
-4. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-5. [Difficulty](#difficulty) — S, medium
-6. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-7. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-8. [Why a press is refused](#why-a-press-is-refused) — S, medium
-9. [Outcomes as data](#outcomes-as-data) — M, medium
-10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-11. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-12. [Archidekt import](#archidekt-import) — S, low
-13. [Sound](#sound) — S, low
+2. [One staged set](#one-staged-set) — M, high
+3. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
+4. [The real precons](#the-real-precons) — L, high
+5. [A phone modality](#a-phone-modality) — L, high
+6. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+7. [Difficulty](#difficulty) — S, medium
+8. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+9. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+10. [Why a press is refused](#why-a-press-is-refused) — S, medium
+11. [Outcomes as data](#outcomes-as-data) — M, medium
+12. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+13. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+14. [Archidekt import](#archidekt-import) — S, low
+15. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
-- [One staged set](#one-staged-set) — [One selection model](#one-selection-model)
-- [A phone modality](#a-phone-modality) — [One selection model](#one-selection-model)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [Brackets, derived from the list](#brackets-derived-from-the-list) — [The real precons](#the-real-precons)
 - [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — [Zero-downtime deployments](#zero-downtime-deployments)
@@ -498,78 +495,9 @@ with a pad by group and reads one card.
 
 ## Play experience
 
-### One selection model
-
-Effort **M** · Impact **high**, every decision in every game, on every device · Depends on nothing · **In progress**.
-
-#### Today
-
-Pressing a permanent with several abilities asks
-which one in a modal (`AbilityMenu`); a Treasure asks which colour the same
-way. Proliferate, "any number of target permanents" and the other pick-several
-decisions are answered as rows in the action panel with a commit slab
-(`PickRows`), and the board's cards toggle those rows. Targets are chosen on
-the board. Modes and yes-or-no are dialogs (`PromptDialog`); so is a single
-pick of an object, a library search or a player. X is a stepper in the panel
-(`XStepper`), the one decision whose control changes which id the slab
-carries. The opening hand is a screen of its own (`OpeningHand`), for both
-halves of the mulligan. Many options with no card face are a `ChoiceCombo`.
-Every one of these was the right call for the decision it was built for, and
-together they are six shapes for what a player experiences as one question:
-*which of these things do I mean?* Nothing records which decision uses which
-shape, and nothing fails when a new surface moves one.
-
-#### The change
-
-**The rule to converge on:** a choice among things on the table is made on
-the table, staged, and committed once; a choice among things that are not on
-the table is made in the panel or a dialog; and the panel remains the
-universal fallback under which every legal action is one control exactly once
-([ADR 0015](adr/0015-every-legal-action-is-one-control.md)). Attack
-declaration already follows the rule, and `PickRows` already borrowed its
-shape.
-
-**This item is the audit, done before the rule is done as code.** A table of
-every `PendingDecision` kind and purpose against the surface it uses today
-and the surface the rule gives it, with a press ceiling per decision, kept
-beside `Journeys.stories.tsx` as a module the stories import their ceilings
-from (`decisionAudit.ts`). The ceilings are what make "unified" measurable
-and what stop a later surface from drifting back. The phone modality adds a
-touch column to the same table, which is why it waits for this.
-
-- **Kinds and purposes both.** `DecisionKind` is a closed enum; `purpose` is
-  the open tag `effects/context.ask_objects` and its siblings stamp on a
-  decision so agents and the client can branch without reading the prompt.
-  The table has a row per kind, and per purpose of the kinds that carry one,
-  and the test that holds it reads the enum and walks the engine's source
-  for every purpose literal passed to an ask helper, so a purpose added
-  without a row fails where it is added.
-- **A ceiling per decision kind.** Each kind gets a journey counted in
-  presses, in `Journeys.stories.tsx` where a fixture is honest and in the
-  handheld e2e journeys where the server has to answer, under the ceiling its
-  row holds. The number is measured at the Deck's panel, as every budget in
-  that file is, and written down as a ceiling, never an exact count.
-
-The code the rule asks for is its own items, each grounded in a row of this
-table: `one-staged-set` for the board as the primary surface of every object
-pick with one staged set and one commit control, and `B` backing out of a
-set; `refusal-reasons` for the hint that says why a press is refused;
-`stack-in-order` for the panel reading a stack of three in order. `UI-02` in
-[TECH_DEBT.md](../TECH_DEBT.md), the accessibility pass, stays a debt item
-and is paid by whichever of those touches its surfaces.
-
-#### Gate
-
-The audit table itself, held by a test that every `PendingDecision` kind the
-engine can emit, and every purpose the engine stamps, has a row; a journey
-with a press ceiling per decision kind in `Journeys.stories.tsx` and the
-handheld e2e journeys, each reading its ceiling from the table; and the
-existing one-control-per-action invariant, which must hold through every
-surface the pass touches.
-
 ### One staged set
 
-Effort **M** · Impact **high**, every pick of a thing on the table, in every game, on every device · Depends on [One selection model](#one-selection-model).
+Effort **M** · Impact **high**, every pick of a thing on the table, in every game, on every device · Depends on nothing.
 
 #### Today
 
@@ -644,7 +572,7 @@ across a game.
 
 ### A phone modality
 
-Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on [One selection model](#one-selection-model).
+Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on nothing.
 
 #### Today
 

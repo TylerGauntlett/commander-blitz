@@ -5,7 +5,7 @@ area: play
 effort: M
 impact: high
 why: every pick of a thing on the table, in every game, on every device
-depends_on: [selection-model]
+depends_on: []
 status: proposed
 ---
 
