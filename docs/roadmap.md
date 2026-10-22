@@ -73,22 +73,23 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [One selection model](#one-selection-model).
+
 **Ready now, best first:**
 
-1. [One selection model](#one-selection-model) — M, high
-2. [Imports complete on the device](#imports-complete-on-the-device) — M, high
-3. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
-4. [The real precons](#the-real-precons) — L, high
-5. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-6. [Difficulty](#difficulty) — S, medium
-7. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-8. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-9. [Why a press is refused](#why-a-press-is-refused) — S, medium
-10. [Outcomes as data](#outcomes-as-data) — M, medium
-11. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-12. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-13. [Archidekt import](#archidekt-import) — S, low
-14. [Sound](#sound) — S, low
+1. [Imports complete on the device](#imports-complete-on-the-device) — M, high
+2. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
+3. [The real precons](#the-real-precons) — L, high
+4. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+5. [Difficulty](#difficulty) — S, medium
+6. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+7. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+8. [Why a press is refused](#why-a-press-is-refused) — S, medium
+9. [Outcomes as data](#outcomes-as-data) — M, medium
+10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+11. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+12. [Archidekt import](#archidekt-import) — S, low
+13. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -499,7 +500,7 @@ with a pad by group and reads one card.
 
 ### One selection model
 
-Effort **M** · Impact **high**, every decision in every game, on every device · Depends on nothing.
+Effort **M** · Impact **high**, every decision in every game, on every device · Depends on nothing · **In progress**.
 
 #### Today
 
