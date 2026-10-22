@@ -250,18 +250,21 @@ work it cannot do: a player who filters to precons expects the decks Wizards
 sells, and a deck somebody built is a different promise.
 
 **Target.** The shelf ships the official Commander preconstructed decks from
-the last *N* years, where *N* is a constant the sources manifest names, and
-nothing else under that word. The lists the maintainer likes become what any
-other list is: a personal import, pasted from Moxfield, native because the
-card roadmap above makes every import native.
+the last five years, a window the sources manifest names as one constant so
+it is a rolling window and not a list that goes stale, and nothing else under
+that word. The lists the maintainer likes stay shipped,
+under a word that is true of them: **Favorites**.
 
 **Sources.** Official lists are published data, not something to scrape:
 MTGJSON's deck files carry every preconstructed deck with its set, release
 date and the exact printings, and Moxfield mirrors the same lists under its
 own precon section. The manifest, `data/decks/sources.json`, is one row per
 precon with the set, the release date, the product name and the source URL,
-generated from the deck files and filtered to the window, so adding a year is
-a change to one constant and a run of the script. Printings come with the
+generated from the deck files and filtered to the window, so widening it is
+a change to one constant and a run of the script, and a set ageing out of
+the five years is the script reporting a row to retire. Five years of
+Commander releases is on the order of a hundred decks, which is why the
+data-model changes in the table below come before the first set. Printings come with the
 list, which is what the per-seat `printings` design was built for.
 
 **What a shipped deck costs today, and what changes at dozens per year:**
@@ -274,14 +277,23 @@ list, which is what the per-seat `printings` design was built for.
 | Every precon through a whole four-player game | `test_deck_games.py` | A seeded sample per run, with the full matrix in the arena stage, which is already its own runner |
 | Art for every printing the list chose | eager prefetch on the desktop | The owned art store above; the content package carries the window's printings and fetches the rest |
 
-**What happens to the twelve.** Their strategies and pages stay, because a
-plan is really about the commander and `strategy_for` already looks a deck up
-by commander second, so a personal import of Bruvac keeps milling. The lists
-themselves follow the precedent of the retired Aesi and Edgar lists
-([decks.md](decks.md#test-fixtures)): they move to the fixtures directory,
-`default_registry()` keeps loading them so every seeded test and import pin
-stands, and the server shows them only under the fixture switch. The shelf's
-segments become **Precons**, which is then true, and **Yours**.
+**Favorites.** The site's most frequent player is its maintainer, and the
+twelve are the decks that player wants at the table without pasting a link
+every time. So they stay exactly where they are, in `data/decks/`, native,
+with their strategies, their pages and their import pins, and the only
+change is the word on the tile: `source` grows a `favorite` value beside
+`precon` and `moxfield`, the deck file carries it, and the shelf's segments
+become **Precons**, **Favorites** and **Yours**. The dossier, the ratings and
+the signature cards stay editorial for a favorite, since they are the one
+tier a person has actually written about. Promoting a personal import to a
+favorite is the existing `promote_deck.py` with the source set, which is
+how a thirteenth arrives.
+
+The same word works for a player's own imports: a star on a tile in
+**Yours** that pins the deck to the top of that segment, kept on the server
+beside the import so it survives a reload, which is one field on the
+generated deck file. It is a small thing, and it is the thing the segment
+is for once the imports outnumber the shelf.
 
 **The shelf at dozens.** `DeckCatalog` is a grid with search, colour pips, a
 source filter and a cycling sort. For the window it needs: grouping by set
@@ -591,7 +603,7 @@ The dependencies, not the priorities, decide most of this:
    forces should be taken before the corpus grows rather than after. The
    Deck's compressed art and separate art asset come out of the same job.
 4. **The deck data model**: the archetype fallback for strategies, the
-   sources manifest, the fixture move for the twelve, the derived bracket.
+   sources manifest, the favorites tier for the twelve, the derived bracket.
    All of it before the first precon set, so that the last set in the window
    costs what the first did.
 5. **Precons and cards together**, one set at a time, newest first: import
