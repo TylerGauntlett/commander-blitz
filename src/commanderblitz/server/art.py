@@ -23,6 +23,16 @@ image, never written at runtime.  ``art_cache_dir()`` holds what the lazy fill
 downloaded, which is per-deployment state living on a Docker volume.  **Owned
 wins**: a cached file is only ever what some earlier boot believed the printing
 to be, and a pin in ``art_pins.json`` can change that belief.
+
+Between them sits the **store**, ``art_store_dir()``: the catalog's art, crawled
+ahead of time by ``scripts/backfill_art.py`` and committed like the owned bytes
+(ADR 0021).  It is keyed by printing, so it answers for a card through the
+printing the card resolves to.  Owned beats store beats cache, and the lazy fill
+is only what happens when all three come up empty -- ``fell_through`` counts how
+often, which is the number the crawl exists to drive to zero.
+
+A desktop sidecar has an **upstream**, the hosted site, and its lazy fill asks
+that site's store before Scryfall: one crawl serves every device.
 """
 
 from __future__ import annotations
@@ -42,10 +52,14 @@ from commanderblitz.cards.images import (
     CardIndex,
     art_cache_dir,
     art_dir,
+    art_store_dir,
     build_registry_images,
     generated_images_path,
     image_url,
     read_registry_images,
+    read_store_state,
+    store_name,
+    store_path,
 )
 from commanderblitz.cards.schema import SCRYFALL_ID
 
@@ -53,6 +67,11 @@ from commanderblitz.cards.schema import SCRYFALL_ID
 #: whitelist rather than a guess.  It is also the path-traversal guard: the id
 #: goes into a filename, so ".." and separators must be unrepresentable.
 CARD_ID = re.compile(r"^[a-z0-9_]{1,80}$")
+
+#: The back face of a printing, addressed by its store name.  The front needs
+#: no pattern of its own: it is a bare ``SCRYFALL_ID``, which ``/art`` already
+#: serves for the catalog.  This is what a sidecar asks its upstream for.
+BACK_FILE = re.compile(SCRYFALL_ID.pattern.removesuffix("$") + "_back$")
 
 #: A catalog card is addressed by its Scryfall uuid rather than by a slug of its
 #: name.  Slugs are not reversible -- "Aesi, Tyrant of Gyre Strait" and
@@ -102,9 +121,19 @@ class ArtStore:
     #: which is what a caller holding a single directory wants -- a test with
     #: one ``tmp_path``, or any code that has no cache to offer.
     cache: Path | None = None
+    #: The crawled catalog art, keyed by printing.  ``None`` is a store with no
+    #: such layer, which is what every caller but ``build_store`` wants.
+    store: Path | None = None
+    #: The hosted origin a sidecar asks before Scryfall.  ``None`` on the site.
+    upstream: str | None = None
+    #: The last crawl's summary, for ``/health``.
+    store_state: dict = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self._missing: set[str] = set()
+        #: Downloads the lazy fill attempted since boot: lookups that neither
+        #: the owned bytes, the store nor the cache could answer.
+        self.fell_through = 0
         #: Guards ``images``, ``_missing`` and ``_inflight``.  Never held
         #: across a download: see ``_fill``.
         self._lock = threading.Lock()
@@ -116,6 +145,18 @@ class ArtStore:
         self._inflight: dict[str, threading.Lock] = {}
         if self.cache is None:
             self.cache = self.directory
+        self._index_owned()
+
+    def _index_owned(self) -> None:
+        #: Which card's owned file shows a given face of a given printing, so a
+        #: request by printing -- a catalog hover, a deck's choice, a sidecar
+        #: asking upstream -- is answered from ``data/art`` too.  The crawl
+        #: skips what is owned, so without this those would fall through.
+        self._owned: dict[tuple[str, bool], str] = {
+            (art.scryfall_id, art.back): card_id
+            for card_id, art in self.images.items()
+            if art.scryfall_id
+        }
 
     # -- paths ----------------------------------------------------------
 
@@ -129,6 +170,7 @@ class ArtStore:
         with self._lock:
             self.images = _resolve_images(registry, index)
             self._missing = set()
+            self._index_owned()
 
     def path_for(self, card_id: str) -> Path:
         """This card's art, or where a fill would put it.
@@ -136,12 +178,33 @@ class ArtStore:
         Owned bytes win outright.  A cached file under the same name is a copy
         of whatever printing an earlier boot resolved, and the committed answer
         is the one that was reviewed -- so a file shipped in the image is never
-        overruled by one sitting in the volume.
+        overruled by one sitting in the volume.  The store sits between them:
+        committed too, but crawled rather than reviewed, so a pin that lands in
+        ``data/art`` still wins over it.
         """
         owned = self.directory / f"{card_id}.jpg"
         if owned.is_file():
             return owned
+        face = self._face_for(card_id)
+        committed = self.committed(*face) if face else None
+        if committed is not None:
+            return committed
         return self.cache / f"{card_id}.jpg"
+
+    def committed(self, scryfall_id: str, back: bool) -> Path | None:
+        """A committed file showing this face of this printing, if there is one.
+
+        The owned bytes first, then the store: the same order ``path_for``
+        keeps.  ``scripts/backfill_art.py`` asks this too, to skip what is
+        already had.
+        """
+        owner = self._owned.get((scryfall_id, back))
+        if owner is not None and (owned := self.directory / f"{owner}.jpg").is_file():
+            return owned
+        if self.store is None:
+            return None
+        path = store_path(self.store, scryfall_id, back=back)
+        return path if path.is_file() else None
 
     def cached_ids(self) -> set[str]:
         ids: set[str] = set()
@@ -183,8 +246,10 @@ class ArtStore:
 
     # -- resolution -----------------------------------------------------
 
-    def remote_for(self, card_id: str, *, printing: str | None = None) -> str | None:
-        """The CDN URL to fill from.  Server-side only.
+    def _face_for(
+        self, card_id: str, *, printing: str | None = None
+    ) -> tuple[str, bool] | None:
+        """Which printing, and which face of it, this card shows.
 
         A ``printing`` names the illustration but not the *face*: a transforming
         card's two faces share one Scryfall id and differ only by ``back``.  So
@@ -193,13 +258,30 @@ class ArtStore:
         """
         art = self.images.get(card_id)
         if printing is not None and SCRYFALL_ID.match(printing):
-            return image_url(printing, ART_CROP, back=bool(art and art.back))
+            return printing, bool(art and art.back)
         if art is not None:
-            return art.remote_url(ART_CROP)
+            return (art.scryfall_id, art.back) if art.scryfall_id else None
         # Not an engine card: a catalog result, addressed by its Scryfall uuid.
         if SCRYFALL_ID.match(card_id):
-            return image_url(card_id, ART_CROP)
+            return card_id, False
         return None
+
+    def remote_for(self, card_id: str, *, printing: str | None = None) -> str | None:
+        """The CDN URL a fill would end at.  Server-side only."""
+        face = self._face_for(card_id, printing=printing)
+        return image_url(face[0], ART_CROP, back=face[1]) if face else None
+
+    def _remotes(self, scryfall_id: str, back: bool) -> list[str]:
+        """Where a fill of this face may come from, in the order to ask.
+
+        The upstream first, by the store's own name for the file, so a Deck
+        is served by the site's crawl; Scryfall behind it, so a site that is
+        down costs the Deck nothing it had before.
+        """
+        urls = [image_url(scryfall_id, ART_CROP, back=back)]
+        if self.upstream:
+            urls.insert(0, f"{self.upstream}/art/{store_name(scryfall_id, back=back)}")
+        return urls
 
     def _printing_path(self, printing: str, *, back: bool) -> Path:
         """Where a deck-chosen printing is cached.
@@ -221,6 +303,8 @@ class ArtStore:
         cannot be validated against anything before it is served, and the honest
         failure for a dud id is the illustration we do have -- not a hole.
         """
+        if BACK_FILE.match(card_id):
+            return self._resolve_face(card_id.removesuffix("_back"), True)
         if not (CARD_ID.match(card_id) or SCRYFALL_ID.match(card_id)):
             return None
 
@@ -232,21 +316,27 @@ class ArtStore:
         path = self.path_for(card_id)
         if path.is_file():
             return path
-        return self._fill(card_id, path, lambda: self.remote_for(card_id))
+        face = self._face_for(card_id)
+        return self._fill(card_id, path, lambda: self._remotes(*face) if face else [])
 
     def _resolve_printing(self, card_id: str, printing: str) -> Path | None:
         """The deck's illustration, or ``None`` to fall back to the card's own."""
-        art = self.images.get(card_id)
-        back = bool(art and art.back)
+        return self._resolve_face(*self._face_for(card_id, printing=printing))
+
+    def _resolve_face(self, printing: str, back: bool) -> Path | None:
+        """One face of one printing: committed, then cached, then a fill."""
+        committed = self.committed(printing, back)
+        if committed is not None:
+            return committed
         path = self._printing_path(printing, back=back)
         if path.is_file():
             return path
         # Keyed by printing and face, never by card id: a printing that cannot
         # be fetched must not also blacklist the card's ordinary art.
         key = f"{printing}|{back}"
-        return self._fill(key, path, lambda: self.remote_for(card_id, printing=printing))
+        return self._fill(key, path, lambda: self._remotes(printing, back))
 
-    def _fill(self, key: str, path: Path, remote: Callable[[], str | None]) -> Path | None:
+    def _fill(self, key: str, path: Path, remotes: Callable[[], list[str]]) -> Path | None:
         """Fetch ``path`` once, under a gate that is this file's and no other's.
 
         The store lock is taken only to consult or update the bookkeeping;
@@ -268,10 +358,12 @@ class ArtStore:
             with self._lock:
                 if key in self._missing:
                     return None
-            url = remote()
-            filled = url is not None and self._download(url, path)
+            urls = remotes()
+            filled = any(self._download(url, path) for url in urls)
             with self._lock:
                 self._inflight.pop(key, None)
+                if urls:
+                    self.fell_through += 1
                 if not filled:
                     self._missing.add(key)
             return path if filled else None
@@ -312,8 +404,8 @@ class ArtStore:
 
     def _on_disk(self, card_id: str, printing: str | None) -> bool:
         if printing is not None and SCRYFALL_ID.match(printing):
-            art = self.images.get(card_id)
-            if self._printing_path(printing, back=bool(art and art.back)).is_file():
+            back = bool((art := self.images.get(card_id)) and art.back)
+            if self.committed(printing, back) or self._printing_path(printing, back=back).is_file():
                 return True
         return self.path_for(card_id).is_file()
 
@@ -446,17 +538,28 @@ def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
     return images
 
 
-def build_store(registry, index: CardIndex | None, *, allow_fetch: bool = True) -> ArtStore:
+def build_store(
+    registry,
+    index: CardIndex | None,
+    *,
+    allow_fetch: bool = True,
+    upstream: str | None = None,
+) -> ArtStore:
     """Resolve the engine's cards against ``registry_images.json``.
 
     Falls back to resolving live from the index when that file is absent, and to
     an empty map when neither exists -- a fresh clone must still start a game,
-    it just draws text frames.
+    it just draws text frames.  A checkout without the store is the same: the
+    layer is simply empty.
     """
+    store = art_store_dir()
     return ArtStore(
         images=_resolve_images(registry, index),
         directory=art_dir(),
         cache=art_cache_dir(),
         index=index,
         allow_fetch=allow_fetch,
+        store=store,
+        upstream=upstream,
+        store_state=read_store_state(store),
     )

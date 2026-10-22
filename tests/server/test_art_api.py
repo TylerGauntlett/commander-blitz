@@ -535,6 +535,147 @@ class TestOwnedBytesBeatTheCache:
         assert store.cached_ids() == {"forest"}
 
 
+class TestTheStoreLayer:
+    """The crawled store sits behind the committed art and ahead of the cache.
+
+    ADR 0021. It is keyed by printing, so a card is answered through the
+    printing it resolves to, and a deck's choice is answered without a fetch.
+    """
+
+    BASE = "0" * 8 + "-0000-0000-0000-" + "0" * 12
+
+    def _store(self, tmp_path, monkeypatch, *, back=False, upstream=None, fail=()):
+        from commanderblitz.cards.images import store_path
+
+        for name in ("owned", "store", "cache"):
+            (tmp_path / name).mkdir()
+        store = ArtStore(
+            images={"forest": CardArt(card_id="forest", scryfall_id=self.BASE, back=back)},
+            directory=tmp_path / "owned",
+            cache=tmp_path / "cache",
+            store=tmp_path / "store",
+            upstream=upstream,
+            index=None,
+        )
+        calls: list[str] = []
+
+        def fake_download(url, path):
+            calls.append(url)
+            if any(f in url for f in fail):
+                return False
+            path.write_bytes(JPEG)
+            return True
+
+        monkeypatch.setattr(store, "_download", fake_download)
+
+        def plant(scryfall_id, *, back=False):
+            path = store_path(tmp_path / "store", scryfall_id, back=back)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(JPEG)
+            return path
+
+        return store, calls, plant
+
+    def test_a_store_file_is_served_ahead_of_a_cached_one(self, tmp_path, monkeypatch):
+        store, calls, plant = self._store(tmp_path, monkeypatch)
+        (tmp_path / "cache" / "forest.jpg").write_bytes(JPEG)
+        stored = plant(self.BASE)
+        assert store.resolve("forest") == stored
+        assert calls == []
+
+    def test_a_committed_file_is_served_ahead_of_the_store(self, tmp_path, monkeypatch):
+        store, _, plant = self._store(tmp_path, monkeypatch)
+        plant(self.BASE)
+        (tmp_path / "owned" / "forest.jpg").write_bytes(JPEG)
+        assert store.resolve("forest") == tmp_path / "owned" / "forest.jpg"
+
+    def test_the_back_face_is_its_own_file(self, tmp_path, monkeypatch):
+        store, calls, plant = self._store(tmp_path, monkeypatch, back=True)
+        plant(self.BASE)
+        back = plant(self.BASE, back=True)
+        assert store.resolve("forest") == back
+        assert calls == []
+
+    def test_a_decks_printing_is_served_from_the_store(self, tmp_path, monkeypatch):
+        store, calls, plant = self._store(tmp_path, monkeypatch)
+        chosen = plant(CHOSEN)
+        assert store.resolve("forest", printing=CHOSEN) == chosen
+        assert calls == []
+        assert store.fell_through == 0
+
+    def test_a_printing_the_store_lacks_still_fills_lazily(self, tmp_path, monkeypatch):
+        store, calls, _ = self._store(tmp_path, monkeypatch)
+        path = store.resolve("forest", printing=CHOSEN)
+        assert path == tmp_path / "cache" / f"{CHOSEN}.jpg"
+        assert calls == [f"https://cards.scryfall.io/art_crop/front/1/1/{CHOSEN}.jpg"]
+        assert store.fell_through == 1, "and /health hears about it"
+
+    def test_a_printing_owned_under_a_card_id_is_served_by_printing(self, tmp_path, monkeypatch):
+        """The crawl skips printings `data/art` owns, so a catalog hover or a
+        sidecar asking by uuid must be answered from the owned file."""
+        store, calls, _ = self._store(tmp_path, monkeypatch)
+        (tmp_path / "owned" / "forest.jpg").write_bytes(JPEG)
+        assert store.resolve(self.BASE) == tmp_path / "owned" / "forest.jpg"
+        assert calls == []
+
+    def test_the_back_of_a_printing_is_addressable_by_its_store_name(
+        self, tmp_path, monkeypatch
+    ):
+        store, calls, plant = self._store(tmp_path, monkeypatch)
+        back = plant(CHOSEN, back=True)
+        assert store.resolve(f"{CHOSEN}_back") == back
+        assert store.resolve(f"{CHOSEN}_front") is None, "only the one suffix"
+        assert calls == []
+
+
+class TestTheDeckAsksTheSiteFirst:
+    """A sidecar's fill asks the hosted store, then Scryfall (ADR 0021)."""
+
+    def _store(self, tmp_path, monkeypatch, *, fail=()):
+        store = ArtStore(
+            images={"lord_of_lineage": CardArt(card_id="lord_of_lineage", scryfall_id=CHOSEN, back=True)},
+            directory=tmp_path,
+            upstream="https://commanderblitz.com",
+            index=None,
+        )
+        calls: list[str] = []
+
+        def fake_download(url, path):
+            calls.append(url)
+            if any(f in url for f in fail):
+                return False
+            path.write_bytes(JPEG)
+            return True
+
+        monkeypatch.setattr(store, "_download", fake_download)
+        return store, calls
+
+    def test_the_site_is_asked_by_the_stores_own_name(self, tmp_path, monkeypatch):
+        store, calls = self._store(tmp_path, monkeypatch)
+        assert store.resolve("lord_of_lineage") is not None
+        assert calls == [f"https://commanderblitz.com/art/{CHOSEN}_back.jpg"]
+
+    def test_scryfall_is_asked_when_the_site_fails(self, tmp_path, monkeypatch):
+        store, calls = self._store(tmp_path, monkeypatch, fail=("commanderblitz.com",))
+        assert store.resolve("lord_of_lineage") is not None
+        assert calls == [
+            f"https://commanderblitz.com/art/{CHOSEN}_back.jpg",
+            f"https://cards.scryfall.io/art_crop/back/1/1/{CHOSEN}.jpg",
+        ]
+
+    def test_the_sidecar_gets_the_site_and_the_site_gets_nobody(self, game_data):
+        from commanderblitz.server.settings import ServerSettings
+
+        desktop = create_app(
+            game_data,
+            allow_art_fetch=False,
+            settings=ServerSettings(mode="desktop", remote_origin="https://commanderblitz.com"),
+        )
+        assert desktop.state.art.upstream == "https://commanderblitz.com"
+        hosted = create_app(game_data, allow_art_fetch=False)
+        assert hosted.state.art.upstream is None
+
+
 class TestTheDeployedShape:
     """The two invariants that live outside Python and broke it from there."""
 
@@ -609,6 +750,14 @@ class TestHealth:
         assert art["known"] > 0
         assert art["artless"] >= 0
         assert art["cached"] >= 0
+
+    def test_reports_the_backfill(self, client):
+        """How far the crawl got and when, and how often this process still
+        went to the lazy fill -- the number the store exists to zero."""
+        body = client.get("/health")
+        store = body.json()["art"]["store"]
+        assert store["fell_through"] >= 0
+        assert "cards.scryfall.io" not in body.text
 
 
 class TestDegradesWithoutTheArtifacts:

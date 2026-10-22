@@ -99,6 +99,52 @@ def art_cache_dir() -> Path:
     return generated_dir() / "art"
 
 
+#: What the backfill has learned, beside the files it wrote: the printings the
+#: CDN does not have, and how far the last crawl got.  Committed with the
+#: illustrations, so a crawl resumes from the tree it was checked out at.
+STORE_UNAVAILABLE = "_unavailable.json"
+STORE_STATE = "_state.json"
+
+
+def art_store_dir() -> Path:
+    """The crawled catalog art: committed, baked into the image, read-only.
+
+    Written only by ``scripts/backfill_art.py``.  Keyed by printing rather than
+    by card id, because a printing is what Scryfall serves and what a deck
+    names -- see ``store_path`` and ADR 0021.
+    """
+    return data_dir() / "art_store"
+
+
+def store_name(scryfall_id: str, *, back: bool = False) -> str:
+    """The file name of one face of one printing, in the store and on ``/art``."""
+    return f"{scryfall_id}_back.jpg" if back else f"{scryfall_id}.jpg"
+
+
+def store_path(root: Path, scryfall_id: str, *, back: bool = False) -> Path:
+    """Where one face of one printing lives under ``root``.
+
+    Sharded by the id's first two characters, so no one directory holds the
+    whole catalog -- a listing of it is what a person browsing the tree on
+    github.com would otherwise be handed.
+    """
+    return root / scryfall_id[:2] / store_name(scryfall_id, back=back)
+
+
+def read_store_state(root: Path) -> dict:
+    """The last crawl's summary, or ``{}`` for a store that has never run.
+
+    Tolerant on purpose: the gate treats the store as inert, so nothing but
+    the backfill ever checks this file, and a server must still boot over a
+    bad one.
+    """
+    try:
+        state = json.loads((root / STORE_STATE).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return state if isinstance(state, dict) else {}
+
+
 def image_url(scryfall_id: str, size: str = ART_CROP, *, back: bool = False) -> str:
     """The CDN URL for a printing.
 

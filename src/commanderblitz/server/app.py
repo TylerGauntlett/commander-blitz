@@ -131,8 +131,13 @@ def create_app(
     # still deal a game -- it simply renders text frames, which is what the
     # client did before any of this existed.
     app.state.card_index = load_index()
+    # A sidecar's lazy fill asks the site's art store before Scryfall
+    # (ADR 0021); the site itself has nobody to ask.
     app.state.art = build_store(
-        game_data.registry, app.state.card_index, allow_fetch=allow_art_fetch
+        game_data.registry,
+        app.state.card_index,
+        allow_fetch=allow_art_fetch,
+        upstream=settings.remote_origin if settings.mode == "desktop" else None,
     )
 
     def reload() -> None:
@@ -183,6 +188,12 @@ def create_app(
                 "artless": sum(
                     1 for a in app.state.art.images.values() if not a.has_printing
                 ),
+                # How far the crawl has got and when it last ran, as it left
+                # them, and how often this process still went to the lazy fill.
+                "store": {
+                    **app.state.art.store_state,
+                    "fell_through": app.state.art.fell_through,
+                },
             },
         }
 
