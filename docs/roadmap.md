@@ -14,8 +14,15 @@ How to read it:
   easy, how it would be built, and what gate would hold it. Where an item
   turns on a decision with consequences, the decision gets an ADR before the
   code.
-- Sizes are the ones [TECH_DEBT.md](../TECH_DEBT.md) uses: **S** an afternoon,
-  **M** a focused pull request, **L** a multi-PR effort.
+- Every item opens with three properties, so the page can be sorted without
+  re-reading it. **Effort** uses the sizes [TECH_DEBT.md](../TECH_DEBT.md)
+  uses: **S** an afternoon, **M** a focused pull request, **L** a multi-PR
+  effort. **Impact** is who it reaches and how often: **high** touches every
+  game or every player of the site, **medium** touches a class of players or
+  removes a weekly annoyance, **low** is polish somebody would notice and
+  nobody would miss. **Depends on** names the items that have to land first;
+  "nothing" means it can start today. The [grid](#the-grid) near the end
+  lists them all on one screen.
 - An item leaves this page the way a debt item leaves that one: when the work
   lands, delete the entry in the same pull request and let the docs it touched
   carry the result. Nothing here is a changelog.
@@ -25,7 +32,9 @@ depend on one another and the dependencies are the useful part.
 
 ## Operating the site
 
-### Zero-downtime deployments — **L**
+### Zero-downtime deployments
+
+Effort **L** · Impact **high**, every game on the site is at risk on every shipping merge, and the site ships on most merges · Depends on nothing. Unblocks CPU takeover, replays, the queue, and the Deck updating at the table.
 
 **Today.** Every pod and every game lives in one uvicorn worker's memory
 ([server.md](server.md#in-process-memory)); the deploy job replaces the
@@ -75,14 +84,18 @@ What this does *not* buy is a second worker: two processes answering for one
 game still need a shared store, and `--workers 1` stays until matchmaking
 needs more than one machine, which is further down this page.
 
-### Gate the debug endpoint — **S**
+### Gate the debug endpoint
+
+Effort **S** · Impact **medium**, a hidden-information leak that is harmless until strangers share a table · Depends on nothing.
 
 `GET /api/games/{id}/debug` reveals every hand on the hosted site to anyone
 holding a `game_id`. It is `SV-01` in [TECH_DEBT.md](../TECH_DEBT.md), the
 cheapest item there, and it should land before anything that puts more
 strangers at one table.
 
-### Outcomes as data — **M**
+### Outcomes as data
+
+Effort **M** · Impact **medium**, nothing a player sees, and everything brackets, matchmaking and the CPU need to be tuned from real play · Depends on nothing.
 
 Several items below want to know what actually happens at the table: how long
 games run, which decks win, how often a draw is a `RulesLoopError`, how often
@@ -94,7 +107,9 @@ on the desktop, where the player's machine is the server.
 
 ## Presentation and branding
 
-### A mark, a wordmark, and the surfaces that carry them — **M**
+### A mark, a wordmark, and the surfaces that carry them
+
+Effort **M** · Impact **medium**, the first impression for a stranger; nothing for the games already being played · Depends on nothing.
 
 The door's room art, the Steam capsule and hero and the OG card all exist and
 are drawn from the same scene, and the board's look is settled by
@@ -116,7 +131,9 @@ the rule for how each sits over art it must not fight. Deliverables:
   capture of a turn, since the Steam Deck install is the project's front door
   for a stranger.
 
-### Sound — **S**
+### Sound
+
+Effort **S** · Impact **low**, a nicer beat, in a game that already narrates every one · Depends on nothing.
 
 `audio/sfx.ts` synthesises its palette. A recorded set, one cue per beat the
 narration already names, replaces it without touching the scheduler; the
@@ -124,7 +141,9 @@ reduced-motion channel decides whether it plays.
 
 ## Cards
 
-### Every import native, every time — **L**, continuous
+### Every import native, every time
+
+Effort **L, continuous** · Impact **high**, the difference between a deck and an inert list, for every link ever pasted · Depends on the validator registry (`OF-01`) before the long tail; the art store beside it.
 
 **Today.** Every shipped deck is native; everything else imports as a proxy
 that keeps its keywords and loses its text ([deck-import.md](deck-import.md)).
@@ -195,7 +214,9 @@ import pin per shipped deck, and a new one: a sample of public lists
 imported as a dry run on a schedule, with the simplified count reported as
 the number this item exists to drive to zero.
 
-### An art store the servers own — **M**
+### An art store the servers own
+
+Effort **M** · Impact **high**, removes the one runtime dependency on a third party, and every deck and card expansion sits on top of it · Depends on the licensing ADR it forces.
 
 **Today.** The repository commits the art for the cards it ships, and the
 hosted server lazily fetches anything else from Scryfall the first time a
@@ -242,7 +263,9 @@ the content package the Deck downloads carries versus fetches.
 
 ## Decks
 
-### The real precons — **L**
+### The real precons
+
+Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on the art store and the deck data model.
 
 **Today.** The shelf's "Precons" segment holds twelve decks, and all but two
 are lists the maintainer likes, promoted from Moxfield. The word is doing
@@ -303,7 +326,9 @@ headers as regions so the grid stays walkable with a pad rather than being
 one long sweep. The floors of
 [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) apply to every tile.
 
-### Viewing a deck's list — **M**
+### Viewing a deck's list
+
+Effort **M** · Impact **medium**, every deck pick, and the only honest per-card view of an import · Depends on nothing, though it is worth more once the precons exist.
 
 **Today.** The dossier shows the commander, the editorial half, the curve, the
 land count and the simplified count. It never shows the list.
@@ -335,7 +360,9 @@ deck, so it has to render for a deck with no dossier at all.
 
 ## Play experience
 
-### One selection model — **M**
+### One selection model
+
+Effort **M** · Impact **high**, every decision in every game, on every device · Depends on nothing.
 
 **The problem, by example.** Pressing a permanent with several abilities asks
 which one in a modal (`AbilityMenu`); a Treasure asks which colour the same
@@ -376,7 +403,62 @@ from drifting back.
 - `UI-02`, the accessibility pass, because every surface this touches is one
   of the ones it lists.
 
-### CPU takeover and reconnection — **M**
+### A phone modality
+
+Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on the selection audit, since touch is a fourth input across the same surfaces.
+
+**Today.** Phone is a tier under handheld, not a mode: `phone.css` lowers the
+handheld floors and restacks the table under `data-phone`, and everything
+else assumes the Deck ([client.md](client.md#layout-modes)). The input layer
+knows mouse, keyboard and pad, and every way to *read* a card is one of them:
+hover for a pointer, `Y` or the ring for a pad. Drag is a pointer gesture
+over drop zones sized for one. The floors, the press budgets and the
+legibility spec are measured at the Deck's panel in landscape, there is no
+phone story global and no phone Playwright project, so nothing fails when a
+phone layout breaks, which is why it does.
+
+**The change: phone is a fourth layout mode and touch is a fourth input
+mode**, each a peer of the three that exist rather than a squeeze of the
+handheld one.
+
+- **Layout, portrait first.** The viewer's mat is the board and the
+  opponents are a strip of orbs that open a seat on a tap, which the
+  compact layout's "the viewer's board is the only board" rule already
+  allows. The hand is a drawer and the action panel is a bottom sheet, so
+  the commit control is always under the thumb. Safe-area insets are
+  tokens in `theme.css`. The zoom-fit solver gets portrait inputs and keeps
+  its one rule, that it reads only what cannot move
+  ([ADR 0014](adr/0014-measured-numbers-invariant-relationships.md)), and
+  nothing changes size with game state ([ADR 0016](adr/0016-nothing-changes-size-with-game-state.md))
+  holds on a screen where that is most tempting to break. Landscape is a
+  second layout of the same mode, not the handheld layout.
+- **Touch, as `data-input="touch"`.** There is no hover, so a tap selects
+  and a second tap or a long press reads (`input/longPress.ts` exists for
+  the pad and gets a second caller); the targeting hint and the "why not"
+  reasons move into the sheet; no ring is drawn and no glyphs. Drop zones
+  grow under a finger. The invariant of
+  [ADR 0015](adr/0015-every-legal-action-is-one-control.md) is untouched,
+  because the sheet is the panel: every legal action is still one control,
+  exactly once. A hit-target floor for a thumb joins the floors.
+- **Stories per device, as a gate.** The Storybook toolbar's handheld
+  on/off becomes a viewport global: desktop, the Deck, and a matrix of
+  popular phones named by Playwright's device descriptors rather than by
+  pixel counts, each in portrait and landscape. The floors of
+  [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) are asserted per
+  viewport, the legibility spec runs per viewport, and `tests/breakpoints.test.ts`
+  holds the new query to its stylesheet as it holds the two today.
+- **A `phone` Playwright project** on the same descriptors, walking the
+  handheld journeys with tap budgets in place of press budgets, and one
+  full game on each device. No horizontal scroll, every stop reachable by
+  tap, every decision answerable from the sheet.
+
+Do it after the selection audit, not before: touch is one more column in
+that audit's table, and a sheet built on surfaces that are about to be
+unified would be built twice.
+
+### CPU takeover and reconnection
+
+Effort **M** · Impact **medium**, every multi-human game somebody drops from; required before strangers share a table · Depends on persisted sessions.
 
 A seat whose human stops answering holds the table. The pod sweep already
 evicts an idle chair before the deal; after it, the sweep ends the session.
@@ -385,7 +467,9 @@ is piloted by the strategy CPU for the deck it holds, that the human may
 reclaim it with the same token, and that the table is told. This is also the
 precondition for matchmaking with strangers, where leaving is normal.
 
-### Replays and sharing — **M**
+### Replays and sharing
+
+Effort **M** · Impact **medium**, every bug report becomes a tape and every CPU misplay becomes a training position · Depends on persisted sessions.
 
 The seed and the tape are a replay ([ADR 0005](adr/0005-no-state-cloning.md)).
 A "share this game" link that serves them to a replay viewer, which steps the
@@ -394,7 +478,9 @@ small amount of client work and a large amount of value: every bug report
 becomes a tape, every CPU misplay in the next section becomes a position the
 arena can be pointed at, and a game worth watching can be watched.
 
-### Difficulty — **S**
+### Difficulty
+
+Effort **S** · Impact **medium**, visible in every pod, and the place the CPU work lands where a player can see it · Depends on nothing.
 
 Three agents already exist with a clear ordering: `heuristic_classic`,
 `heuristic` with its strategies, and `policy`. A per-seat choice in the pod
@@ -402,14 +488,18 @@ Three agents already exist with a clear ordering: `heuristic_classic`,
 chair, with hard meaning the best checkpoint shipped, and it gives the
 advanced-CPU work below a place to land that a player can see.
 
-### Archidekt import — **S**
+### Archidekt import
+
+Effort **S** · Impact **low**, the second link players paste; the maintainer pastes the first · Depends on nothing.
 
 [deck-import.md](deck-import.md) says an adapter, not a second pipeline. It
 is the second most common link a player will paste.
 
 ## The Steam Deck build
 
-### Compressed art, shipped for offline precon play — **M**
+### Compressed art, shipped for offline precon play
+
+Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on the art store and the precon window.
 
 **Today.** The content package the Deck downloads carries the frozen server,
 the built client and the card data as one versioned asset, and the art the
@@ -456,6 +546,10 @@ is the same illustration, and the decision is about what is distributed,
 not at which size.
 
 ## Advanced CPUs
+
+### Learned judgements behind the strategy hooks
+
+Effort **L** · Impact **high**, every game the maintainer plays is against the CPU, and so is most of every stranger's first · Depends on the outcome log and replays for positions; difficulty for a place to ship.
 
 **Today.** The CPU is reflexive: the heuristic scores every legal action from
 the position in front of it and a per-deck `Strategy` adjusts the scores
@@ -520,7 +614,9 @@ checkpoint has beaten it across the board for long enough to be trusted.
 
 ## Matchmaking
 
-### Brackets, derived from the list — **M**
+### Brackets, derived from the list
+
+Effort **M** · Impact **medium**, a filter and a signal on every tile; the precondition for the queue · Depends on the deck data model.
 
 The Commander Brackets, one to five, are defined by what a list contains:
 Game Changers, mass land denial, chained extra turns, two-card infinite
@@ -542,7 +638,9 @@ deck overrides it where the heuristic misreads a list. It is shown on the
 tile and in the dossier, filters the shelf, and is what the queue below
 matches on.
 
-### A queue — **L**
+### A queue
+
+Effort **L** · Impact **medium**, strangers only, and the site is mostly one player today · Depends on persisted sessions, CPU takeover, brackets and the outcome log.
 
 **Shape.** `POST /api/queue {deck_id, pod_size}` and a long poll on the ticket,
 the way pods already work ([ADR 0007](adr/0007-versioned-long-polling.md)).
@@ -589,6 +687,39 @@ Named so that nobody re-litigates them by accident:
   ([api.md](api.md#undo)); a take-back by consent is a different feature and
   nobody has asked for it.
 
+## The grid
+
+Every item, sorted by impact and then by effort, so the page can be
+prioritised from one screen. The properties are the ones under each heading;
+this table restates them and must change with them.
+
+| Item | Effort | Impact | Depends on |
+|---|---|---|---|
+| [One selection model](#one-selection-model) | M | high | nothing |
+| [An art store the servers own](#an-art-store-the-servers-own) | M | high | the licensing ADR |
+| [Zero-downtime deployments](#zero-downtime-deployments) | L | high | nothing; unblocks four others |
+| [Every import native, every time](#every-import-native-every-time) | L, continuous | high | the validator registry, the art store |
+| [The real precons](#the-real-precons) | L | high | the art store, the deck data model |
+| [A phone modality](#a-phone-modality) | L | high | the selection audit |
+| [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | the outcome log, replays, difficulty |
+| [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing |
+| [Difficulty](#difficulty) | S | medium | nothing |
+| [Outcomes as data](#outcomes-as-data) | M | medium | nothing |
+| [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing |
+| [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing |
+| [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | persisted sessions |
+| [Replays and sharing](#replays-and-sharing) | M | medium | persisted sessions |
+| [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | the art store, the precon window |
+| [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | the deck data model |
+| [A queue](#a-queue) | L | medium | persisted sessions, takeover, brackets, the outcome log |
+| [Sound](#sound) | S | low | nothing |
+| [Archidekt import](#archidekt-import) | S | low | nothing |
+
+Read down the first column for what to do with a free afternoon (the two
+small mediums), and read the top block for what a quarter should hold: the
+selection model and the art store are the two high-impact items that fit in
+one pull request each, and everything large sits on one or the other.
+
 ## Suggested order
 
 The dependencies, not the priorities, decide most of this:
@@ -597,7 +728,9 @@ The dependencies, not the priorities, decide most of this:
    unblocks the handover deploy, CPU takeover, replays, matchmaking, and the
    Deck updating while a game is open. Gate `/debug` in the same week.
 2. **The selection audit, then the unified selection model**, before the
-   shelf and the list view add surfaces that would have to be unified later.
+   shelf and the list view add surfaces that would have to be unified later,
+   and **the phone modality** on the audited surfaces straight after, since
+   it is the largest item that depends on nothing else on this page.
 3. **The art store**, since both the precon window and the catalog target
    multiply the illustrations the servers need, and the licensing ADR it
    forces should be taken before the corpus grows rather than after. The
