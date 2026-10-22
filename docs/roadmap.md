@@ -71,18 +71,19 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [An art store the servers own](#an-art-store-the-servers-own).
+
 **Ready now, best first:**
 
-1. [An art store the servers own](#an-art-store-the-servers-own) — M, high
-2. [One selection model](#one-selection-model) — M, high
-3. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
-4. [Difficulty](#difficulty) — S, medium
-5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-6. [Outcomes as data](#outcomes-as-data) — M, medium
-7. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-8. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-9. [Archidekt import](#archidekt-import) — S, low
-10. [Sound](#sound) — S, low
+1. [One selection model](#one-selection-model) — M, high
+2. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
+3. [Difficulty](#difficulty) — S, medium
+4. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+5. [Outcomes as data](#outcomes-as-data) — M, medium
+6. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+7. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+8. [Archidekt import](#archidekt-import) — S, low
+9. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -278,7 +279,7 @@ and the mute setting's e2e assertion still passes.
 
 ### An art store the servers own
 
-Effort **M** · Impact **high**, removes the one runtime dependency on a third party, and every deck and card expansion sits on top of it · Depends on nothing · ADR first.
+Effort **M** · Impact **high**, removes the one runtime dependency on a third party, and every deck and card expansion sits on top of it · Depends on nothing · **In progress** · ADR first.
 
 #### Today
 

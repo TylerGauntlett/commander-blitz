@@ -6,7 +6,7 @@ effort: M
 impact: high
 why: removes the one runtime dependency on a third party, and every deck and card expansion sits on top of it
 depends_on: []
-status: proposed
+status: in_progress
 adr: true
 ---
 
