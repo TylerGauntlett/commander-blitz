@@ -19,7 +19,7 @@
     "@biomejs/biome": "^2.5.15",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.3",
-    "electron": "^44.7.0",
+    "electron": "^44.9.1",
     "electron-builder": "^26.15.3",
     "electron-updater": "^6.8.9",
     "esbuild": "^0.28.2",
