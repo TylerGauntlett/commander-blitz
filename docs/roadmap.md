@@ -71,22 +71,23 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Zero-downtime deployments](#zero-downtime-deployments).
+
 **Ready now, best first:**
 
-1. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
-2. [The real precons](#the-real-precons) — L, high
-3. [A phone modality](#a-phone-modality) — L, high
-4. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-5. [Difficulty](#difficulty) — S, medium
-6. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-7. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-8. [Why a press is refused](#why-a-press-is-refused) — S, medium
-9. [Outcomes as data](#outcomes-as-data) — M, medium
-10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-11. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-12. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-13. [Archidekt import](#archidekt-import) — S, low
-14. [Sound](#sound) — S, low
+1. [The real precons](#the-real-precons) — L, high
+2. [A phone modality](#a-phone-modality) — L, high
+3. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+4. [Difficulty](#difficulty) — S, medium
+5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+6. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+7. [Why a press is refused](#why-a-press-is-refused) — S, medium
+8. [Outcomes as data](#outcomes-as-data) — M, medium
+9. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+10. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+11. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+12. [Archidekt import](#archidekt-import) — S, low
+13. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -101,7 +102,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 ### Zero-downtime deployments
 
-Effort **L** · Impact **high**, every game on the site is at risk on every shipping merge, and the site ships on most merges · Depends on nothing · ADR first.
+Effort **L** · Impact **high**, every game on the site is at risk on every shipping merge, and the site ships on most merges · Depends on nothing · **In progress** · ADR first.
 
 #### Today
 

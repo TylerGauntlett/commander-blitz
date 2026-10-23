@@ -6,7 +6,7 @@ effort: L
 impact: high
 why: every game on the site is at risk on every shipping merge, and the site ships on most merges
 depends_on: []
-status: proposed
+status: in_progress
 adr: true
 ---
 
