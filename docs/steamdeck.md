@@ -47,7 +47,10 @@ that reach another machine:
   there is a **Back to the app** link on the site's door. Any deck you imported
   from Moxfield at home comes with you — the site imports it before showing the
   door.
-- **Importing a Moxfield deck** needs Moxfield.
+- **Importing a Moxfield deck** goes through the site, which reads Moxfield and
+  sends the deck back with the rules for every card in it, so a card the site
+  learned since your last update plays in full. If the site does not answer,
+  the app reads Moxfield itself.
 
 When there is no connection the Online card is dimmed (it is still there, so the
 row does not move) and pressing it says why; the import strip in the deck
@@ -55,7 +58,9 @@ catalogue is disabled with a note. The moment the connection is back, both come
 back on their own.
 
 A deck imported while online fetches all of its art at once, so it is complete the
-next time you are offline.
+next time you are offline. If the import is cut short, the deck's tile and its
+details say some art is not on the device yet, and the next launch with a
+connection finishes it before the front door appears.
 
 ## Updates
 

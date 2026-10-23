@@ -270,6 +270,10 @@ same card produce one download and different cards never wait on each other.
 A failed fetch goes into `_missing`, one lookup per process rather than one
 per re-render. `prefetch` runs the same resolution over a whole deck in a
 thread pool; the desktop calls it from the import route under `eager_art`.
+`missing` is the verdict afterwards: the requests with no file on disk that
+have a printing anywhere, so a card with no art at all never holds a deck
+back. `forget_misses` empties the negative set before a deliberate retry,
+which is what `POST /api/decks/complete` makes.
 
 `_resolve_images` builds the `card_id -> CardArt` map from the committed
 `registry_images.json` and overlays the importer's `pool.images.json` with
@@ -293,6 +297,12 @@ origin, remembered for `PROBE_TTL` seconds and bounded by `PROBE_TIMEOUT`, so
 a client refetching `/api/config` on a cadence costs one outbound request per
 interval. It never raises — being offline is a normal state — and with no
 remote origin it is online by definition.
+
+`upstream.py` is the sidecar's other conversation with the remote origin: an
+import asked of the site and fetched back as a bundle. A refusal the site gives
+with an importer code is raised as that refusal; anything else is
+`SiteUnavailable`, and the import route reads Moxfield itself
+([ADR 0022](adr/0022-deck-imports-through-the-site.md)).
 
 `desktop.py` is the sidecar entry point (`python -m commanderblitz.server.desktop`,
 or the frozen `commanderblitz-server` the AppImage carries). Its contract with

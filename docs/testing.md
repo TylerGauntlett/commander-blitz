@@ -142,7 +142,7 @@ build, `playwright.sidecar.config.ts`):
 | `chromium` | The desktop board: the critical player path, a full game clicked to the end, the action panel's contract, art self-ownership, legibility, layout, stacking, routing, deck import, a two-browser pod |
 | `handheld` | The Steam Deck panel: the floors at every reachable state, the synthetic gamepad, the press budgets against a real engine |
 | `deckfit` | Nothing scrolls at the handheld sizes |
-| `sidecar` | The desktop build's own server serving the built client, with every request off the machine aborted |
+| `sidecar` | The desktop build's own server serving the built client, with every request off the machine aborted; its hosted origin is `tests/server/stub_site.py`, switched off except while a deck is imported through it |
 
 `chromium` ignores the handheld specs and `handheld` matches only them. Running
 the compact specs at the desktop size would test the wide layout while claiming
