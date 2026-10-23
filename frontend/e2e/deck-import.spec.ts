@@ -167,16 +167,50 @@ test.describe("importing a Moxfield deck", () => {
     await stubImport(page, { status: 201, body: REPORT });
 
     const field = page.getByTestId("import-url");
+    const section = page.getByTestId("deck-import");
+    /*
+     * The field's size as a share of the import section's width, which is what
+     * "the report took the field's width" changes and what the catalogue's
+     * entrance does not: it scales the whole panel in, so a raw box read during
+     * it differed from a settled one by a pixel or more and this was red on a
+     * runner with nothing wrong. A share is the same at every scale.
+     */
+    const share = async () => {
+      const [own, whole] = [await field.boundingBox(), await section.boundingBox()];
+      const across = whole?.width ?? 1;
+      return { width: (own?.width ?? 0) / across, height: (own?.height ?? 0) / across };
+    };
+    /*
+     * ...and only once the panel has stopped moving, so an entrance that is
+     * not a pure scale cannot reach the reading either: two reads a frame
+     * apart, equal.
+     */
+    const still = async () => {
+      let last = JSON.stringify(await section.boundingBox());
+      await expect
+        .poll(
+          async () => {
+            const now = JSON.stringify(await section.boundingBox());
+            const same = now === last;
+            last = now;
+            return same;
+          },
+          { intervals: [100] },
+        )
+        .toBe(true);
+    };
     await field.fill("https://moxfield.com/decks/abc123");
-    const before = await field.boundingBox();
+    await still();
+    const before = await share();
     await page.getByTestId("import-go").click();
     await expect(page.getByTestId("import-coverage")).toBeVisible();
 
     // The result takes the hint's slot, at the hint's width: a report that
     // arrived beside the field used to take its width out of the field.
-    const after = await field.boundingBox();
-    expect(after?.width).toBe(before?.width);
-    expect(after?.height).toBe(before?.height);
+    await still();
+    const after = await share();
+    expect(after.width).toBeCloseTo(before.width, 2);
+    expect(after.height).toBeCloseTo(before.height, 2);
   });
 
   test("the imported deck joins the rack and is taken", async ({ page }) => {
