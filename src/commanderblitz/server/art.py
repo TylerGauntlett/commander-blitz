@@ -402,6 +402,33 @@ class ArtStore:
                 report.fetched += 1
         return report
 
+    def missing(self, requests: Iterable[tuple[str, str | None]]) -> list[str]:
+        """The card ids in ``requests`` a board would draw blank with no network.
+
+        A card whose request has no face at all -- no catalog printing, no
+        deck printing -- has nothing anywhere to fetch, and the board draws its
+        text frame online and offline alike, so it is never missing.  This is
+        the one place that tells "not fetched" from "not fetchable": a deck is
+        complete exactly when this is empty (ADR 0022).
+        """
+        out: list[str] = []
+        for card_id, printing in requests:
+            if card_id in out or self._on_disk(card_id, printing):
+                continue
+            if self._face_for(card_id, printing=printing) is not None:
+                out.append(card_id)
+        return out
+
+    def forget_misses(self) -> None:
+        """Let every fill that failed this process try again.
+
+        The negative set is a per-process economy for a board that re-requests
+        an image on every render.  A deliberate retry -- finishing a deck once
+        the connection is back -- must not be answered from it.
+        """
+        with self._lock:
+            self._missing = set()
+
     def _on_disk(self, card_id: str, printing: str | None) -> bool:
         if printing is not None and SCRYFALL_ID.match(printing):
             back = bool((art := self.images.get(card_id)) and art.back)

@@ -74,6 +74,7 @@ def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
         playable=deck.total_cards() - simplified,
         simplified=simplified,
         tags=list(deck.tags),
+        complete=deck.complete,
     )
 
 

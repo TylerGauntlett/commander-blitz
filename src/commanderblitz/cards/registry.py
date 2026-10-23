@@ -201,6 +201,8 @@ class DeckList:
     #: printings the source list chose.  Empty for a precon and for anything
     #: imported before the importer recorded them.  See ``DeckModel.printings``.
     printings: dict[str, dict] = field(default_factory=dict)
+    #: Whether its art is all on this machine.  See ``DeckModel.complete``.
+    complete: bool | None = None
 
     def expanded(self) -> list[str]:
         """The 99 non-commander cards, one entry per physical card."""
@@ -233,6 +235,7 @@ class DeckList:
             strategy=model.strategy,
             signature=tuple(s.model_dump() for s in model.signature),
             printings={cid: p.model_dump() for cid, p in model.printings.items()},
+            complete=model.complete,
         )
 
 

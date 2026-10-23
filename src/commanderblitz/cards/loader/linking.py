@@ -230,6 +230,20 @@ def link_meld_results(cards: dict[str, CardDef]) -> None:
         cards[result.id] = dataclasses.replace(result, parent_face=card.id)
 
 
+def token_references(card: CardDef) -> set[str]:
+    """Every token id ``card`` can create: the ids `validate_token_references`
+    checks, for a caller that needs them rather than a verdict -- the deck
+    bundle, which has to carry a card's tokens with it."""
+    out: set[str] = set()
+    for effect in _walk_effects(card):
+        if effect.get("op") == "create_token":
+            out.add(str(effect.get("token")))
+    for ability in card.abilities:
+        static = ability.static or {}
+        out.update(str(token_id) for token_id in static.get("create_instead", ()))
+    return out
+
+
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:
     """Every ``create_token`` must name a card id that exists and is a token.
 

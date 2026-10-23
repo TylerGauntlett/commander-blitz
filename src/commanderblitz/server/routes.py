@@ -8,6 +8,7 @@ the whole rules vocabulary can grow without touching the frontend.
 
 from __future__ import annotations
 
+import logging
 import time
 
 from fastapi import APIRouter, Body, Header, HTTPException, Query, Request
@@ -15,8 +16,8 @@ from fastapi.responses import FileResponse
 
 from commanderblitz import __version__
 from commanderblitz.cards import importer, moxfield
+from commanderblitz.cards.bundle import adopt_bundle, build_bundle
 from commanderblitz.cards.images import CardIndex, IndexEntry
-from commanderblitz.cards.registry import default_registry
 from commanderblitz.engine.errors import IllegalActionError
 from commanderblitz.engine.serialize import event_log, event_log_for, full_view, player_view
 
@@ -30,6 +31,8 @@ from .schemas import (
     CatalogCardDTO,
     CatalogResponse,
     ChooseRequest,
+    DeckBundle,
+    DeckCompletionDTO,
     DeckDetail,
     DeckImportResponse,
     DeckSummary,
@@ -44,8 +47,10 @@ from .schemas import (
     StateResponse,
 )
 from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry, StaleActionError
+from .upstream import Site, SiteUnavailable
 
 router = APIRouter(prefix="/api")
+log = logging.getLogger(__name__)
 
 #: An import failure is not one status code.  "Private" sends somebody to their
 #: Moxfield settings and "not found" sends them back to the address bar, so
@@ -182,18 +187,26 @@ def import_deck(
     On success the deck is a ``deck_id`` like any other, so starting a game with
     it goes through ``POST /api/games`` unchanged.
     """
+    settings = request.app.state.settings
+    # The desktop build marks its import incomplete until the art is in: an
+    # interrupted prefetch then leaves a deck that says so (ADR 0022).
+    complete = False if settings.eager_art and not body.dry_run else None
     try:
-        parsed = moxfield.load(body.url)
-        report = importer.import_deck(
-            parsed,
-            # The *authored* layer, deliberately. Handed the server's merged
-            # registry, a re-import would find the proxies the first import
-            # wrote and report them as hand-written cards.
-            default_registry().registry,
-            getattr(request.app.state, "card_index", None),
-            dry_run=body.dry_run,
-            owner=library or "",
-        )
+        report = None
+        if settings.mode == "desktop" and settings.remote_origin and not body.dry_run:
+            report = _import_through_site(request, body.url, library, complete)
+        if report is None:
+            report = importer.import_deck(
+                moxfield.load(body.url),
+                # The *authored* layer, deliberately. Handed the server's merged
+                # registry, a re-import would find the proxies the first import
+                # wrote and report them as hand-written cards.
+                importer.authored_layer(),
+                getattr(request.app.state, "card_index", None),
+                dry_run=body.dry_run,
+                owner=library or "",
+                complete=complete,
+            )
     except moxfield.ImportFailed as exc:
         raise HTTPException(
             status_code=_IMPORT_STATUS.get(exc.code, 422),
@@ -208,16 +221,12 @@ def import_deck(
     data = _registry(request).data
     deck = data.decks.get(report.deck_id)
     prefetch = None
-    if deck is not None and request.app.state.settings.eager_art:
+    if deck is not None and settings.eager_art:
         # The desktop asks for this: the next launch may be offline, and the
         # lazy fill would leave the deck a grid of grey plates until then.
-        # `data.registry`, not the authored layer -- the deck's proxies and
-        # their faces live only in the merged pool.
-        art = _art(request)
-        found = art.prefetch(deck_art_requests(deck, data.registry, art))
-        prefetch = ArtPrefetchDTO(
-            fetched=found.fetched, cached=found.cached, failed=found.failed
-        )
+        prefetch = _finish_art(request, deck)
+        data = _registry(request).data
+        deck = data.decks.get(report.deck_id)
     summary = (
         deck_summary(deck, data)
         if deck is not None
@@ -252,6 +261,97 @@ def import_deck(
         problems=report.problems,
         art_prefetch=prefetch,
     )
+
+
+def _import_through_site(request: Request, url: str, library: str | None, complete):
+    """The sidecar's import, done by the site and adopted here, or ``None``
+    when the site could not be asked and Moxfield should be read directly."""
+    try:
+        report, bundle = Site(request.app.state.settings.remote_origin).import_deck(url, library)
+    except SiteUnavailable as exc:
+        log.info("import through the site failed, reading Moxfield directly: %s", exc)
+        return None
+    return adopt_bundle(
+        bundle,
+        importer.authored_layer(),
+        getattr(request.app.state, "card_index", None),
+        owner=library or "",
+        complete=complete,
+        problems=report.get("problems") or (),
+    )
+
+
+def _finish_art(request: Request, deck) -> ArtPrefetchDTO:
+    """Fetch what ``deck`` is missing and record the verdict in its file.
+
+    `data.registry`, not the authored layer -- the deck's proxies and their
+    faces live only in the merged pool.  Reloads when the verdict changed, so
+    the next deck list says what the file says.
+    """
+    data = _registry(request).data
+    art = _art(request)
+    wanted = deck_art_requests(deck, data.registry, art)
+    found = art.prefetch(wanted)
+    missing = art.missing(wanted)
+    complete = not missing
+    if deck.complete is not complete and importer.mark_complete(deck.id, complete):
+        request.app.state.reload()
+    return ArtPrefetchDTO(
+        fetched=found.fetched,
+        cached=found.cached,
+        failed=found.failed,
+        complete=complete,
+        missing=missing,
+    )
+
+
+@router.post("/decks/complete", response_model=list[DeckCompletionDTO])
+def complete_decks(request: Request, library: str | None = _LIBRARY) -> list[DeckCompletionDTO]:
+    """Finish every imported deck whose art is not all on this machine.
+
+    The desktop door calls this before it draws, whenever the site answers: a
+    deck an earlier import left half fetched -- the app closed, the network
+    dropped -- is finished here, and one already complete costs nothing.  A
+    deck that has never been checked (``complete`` absent) is checked once.
+    Failures from earlier in this process are retried, not remembered.
+    """
+    if not request.app.state.settings.eager_art:
+        return []
+    _art(request).forget_misses()
+    out: list[DeckCompletionDTO] = []
+    for deck in list(_registry(request).data.decks.values()):
+        if deck.source != "moxfield" or deck.complete or not _visible_to(deck, library):
+            continue
+        verdict = _finish_art(request, deck)
+        out.append(
+            DeckCompletionDTO(
+                deck_id=deck.id,
+                fetched=verdict.fetched,
+                complete=verdict.complete,
+                missing=verdict.missing,
+            )
+        )
+    return out
+
+
+@router.get("/decks/{deck_id}/bundle", response_model=DeckBundle)
+def get_bundle(request: Request, deck_id: str, library: str | None = _LIBRARY) -> DeckBundle:
+    """An imported deck with every card definition behind it (ADR 0022).
+
+    What a desktop build fetches after asking the site to import a deck, so
+    the deck plays on the device with the site's rules for every card.  Only
+    imports have one; a precon ships with every build.
+    """
+    data = _registry(request).data
+    deck = data.decks.get(deck_id)
+    if deck is None or deck.source != "moxfield":
+        raise HTTPException(status_code=404, detail=f"no imported deck {deck_id}")
+    if not _visible_to(deck, library):
+        raise HTTPException(status_code=403, detail=f"{deck_id} belongs to another library")
+    try:
+        return DeckBundle(**build_bundle(deck, data.registry, _art(request).images))
+    except LookupError:
+        raise HTTPException(status_code=404, detail=f"no imported deck {deck_id}") from None
 
 
 @router.delete("/decks/{deck_id}", status_code=204)
