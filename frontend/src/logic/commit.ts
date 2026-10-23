@@ -3,7 +3,8 @@
  *
  * Every decision this game asks ends at ONE control in the commit dock: Pass on
  * a priority window, All attack then Attack on a declaration, All defend then
- * Block, and "No attacks" when nothing can go. The dock lives in the right rail
+ * Block, "No attacks" when nothing can go, and All then Confirm on a set of
+ * picks. The dock lives in the right rail
  * and the ring is almost never near it -- you are in your hand, or out on your
  * own board choosing what to swing -- so `L2` exists to jump there and `A`
  * presses it. Two presses, every phase, thirteen phases a turn.
@@ -28,7 +29,9 @@
  *
  * "All attack" and the Attack slab are LOCAL: they write to `uiStore` and the
  * slab declares whatever is staged, so neither exists in the action list and
- * neither has an id to post. Those two are pressed by clicking the control the
+ * neither has an id to post. A pick's slab does carry an id -- the carrier
+ * `logic/pickSeveral.pickCarrier` names, so it is a real control -- but its
+ * press sends the set through `/choose`, not that id, so it is pressed too. Those two are pressed by clicking the control the
  * panel already rendered -- the same discipline `useCursorNav` uses for `A`,
  * which is what stops a controller ever reaching an action a pointer cannot.
  * "No attacks" and Pass are server actions and carry ids, so those are posted
@@ -38,20 +41,28 @@
 import type { GameView, LegalAction } from "../api/types";
 import { availableAttackers, availableBlockers } from "./actionMatch";
 import { autoBlocks } from "./autoBlock";
+import { isPickSeveral, pickCarrier, pickOptions } from "./pickSeveral";
+import { decisionKey, pickedFor, stagedAs } from "./staging";
 import type { Staging } from "./verbs";
 
 export interface Commitment {
   /**
    * Which control in the dock this is.
    *
-   * `all` and `confirm` are `data-testid`s on controls the panel renders;
-   * `skip` and `pass` are server actions and come with an `actionId`.
+   * `all`, `confirm`, `pick-all` and `pick` are `data-testid`s on controls the
+   * panel renders; `skip` and `pass` are server actions and come with an
+   * `actionId`.
    */
-  target: "all" | "confirm" | "skip" | "pass";
+  target: "all" | "confirm" | "pick-all" | "pick" | "skip" | "pass";
   /** The verb, in the button's own words. A bar that renames a button lies. */
   verb: string;
   /** The action to post, for the two that are real actions. Null for staging. */
   actionId: string | null;
+  /**
+   * The `act:` stop the control stands on, when it carries an id it is not
+   * posted by -- the pick slab -- so the bar knows the ring is already there.
+   */
+  carrierId?: string;
 }
 
 /**
@@ -79,6 +90,11 @@ export interface Commitment {
  * disabled -- and `X` goes quiet rather than reaching past it to "No blocks".
  * Taking the damage is a decision a player makes, not a default: they still
  * have every card on the board, and the panel still has the row.
+ *
+ * **A set of picks is the attack's shape.** Something chosen goes to the slab,
+ * once the set is as large as the decision needs; nothing chosen goes to the
+ * "all" mark, which stages. A set short of its minimum goes to the mark too,
+ * since the slab is disabled until it is not.
  */
 export function commitmentFor(
   state: GameView,
@@ -100,7 +116,7 @@ export function commitmentFor(
   const decline = () => actions.find((action) => action.kind === "finish_declaration") ?? null;
 
   if (decision === "declare_attackers") {
-    if (Object.keys(staging.stagedAttacks).length > 0) {
+    if (Object.keys(stagedAs(staging.staged, "attack")).length > 0) {
       return { target: "confirm", verb: "Attack", actionId: null };
     }
     if (availableAttackers(actions).length > 0) {
@@ -111,7 +127,8 @@ export function commitmentFor(
   }
 
   if (decision === "declare_blockers") {
-    if (Object.keys(staging.stagedBlocks).length > 0) {
+    const stagedBlocks = stagedAs(staging.staged, "block");
+    if (Object.keys(stagedBlocks).length > 0) {
       return { target: "confirm", verb: "Block", actionId: null };
     }
     if (availableBlockers(actions).length === 0) {
@@ -125,9 +142,27 @@ export function commitmentFor(
      * fact rather than through a second copy of a string.
      */
     const worth = autoBlocks(state, actions).filter(
-      ({ blocker }) => staging.stagedBlocks[blocker] === undefined,
+      ({ blocker }) => stagedBlocks[blocker] === undefined,
     );
     return worth.length > 0 ? { target: "all", verb: "All defend", actionId: null } : null;
+  }
+
+  if (isPickSeveral(state)) {
+    const pending = state.pending;
+    const carrier = pickCarrier(actions);
+    if (pending === null || carrier === null) return null;
+    const chosen = pickedFor(staging.staged, decisionKey(state)).length;
+    const max = Math.min(pending.max_count, pickOptions(state, actions).length);
+    // The slab's own words: "Choose none" or "Confirm N" (`CommitDock`).
+    const confirm: Commitment = {
+      target: "pick",
+      verb: chosen === 0 ? "Choose none" : `Confirm ${chosen}`,
+      actionId: null,
+      carrierId: carrier.id,
+    };
+    if (chosen > 0 && chosen >= pending.min_count) return confirm;
+    if (max > chosen) return { target: "pick-all", verb: `All (${max})`, actionId: null };
+    return chosen >= pending.min_count ? confirm : null;
   }
 
   const pass = actions.find((action) => action.kind === "pass");
@@ -138,6 +173,8 @@ export function commitmentFor(
 export const COMMIT_TESTID: Record<Commitment["target"], string> = {
   all: "combat-all",
   confirm: "combat-confirm",
+  "pick-all": "pick-all",
+  pick: "pick-confirm",
   skip: "combat-skip",
   pass: "commit",
 };

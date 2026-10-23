@@ -30,6 +30,7 @@ import { useTableRegions } from "../../input/useTableRegions";
 import { useTableVerbs } from "../../input/useTableVerbs";
 import { reset as forgetCardRects } from "../../logic/cardRects";
 import { removalsByOid } from "../../logic/removals";
+import { stagedAs } from "../../logic/staging";
 import { seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
@@ -92,8 +93,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
   const targetingActionIds = useUiStore((s) => s.targetingActionIds);
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
+  const stagedAttacks = useUiStore((s) => stagedAs(s.staged, "attack"));
+  const stagedBlocks = useUiStore((s) => stagedAs(s.staged, "block"));
   const endTargeting = useUiStore((s) => s.endTargeting);
   const setPeek = useUiStore((s) => s.setPeek);
   const logOverlay = useUiStore((s) => s.logOverlay);

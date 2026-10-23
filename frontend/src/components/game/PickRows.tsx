@@ -22,7 +22,7 @@ import type { Previewing } from "./previewing";
 interface Props {
   state: GameView;
   options: PickOption[];
-  chosen: number[];
+  chosen: readonly number[];
   full: boolean;
   disabled: boolean;
   onToggle: (option: PickOption, index: number, event: MouseEvent<HTMLButtonElement>) => void;

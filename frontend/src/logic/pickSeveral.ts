@@ -101,16 +101,3 @@ export function pickCarrier(actions: LegalAction[]): LegalAction | null {
     null
   );
 }
-
-/**
- * Which decision a set of picks belongs to.
- *
- * A decision has no id, and the store outlives it: the picks for one Clever
- * Concealment must not still be on when the next pick-several opens. The
- * prompt names the source, and the options say what it is choosing among.
- */
-export function pickKey(state: GameView): string {
-  const pending = state.pending;
-  if (pending === null) return "";
-  return `${state.turn}|${state.step}|${pending.prompt}|${pending.options.map((o) => o.label).join(",")}`;
-}

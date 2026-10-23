@@ -11,6 +11,7 @@ import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
 import { defendersFor } from "../logic/actionMatch";
 import { COMMIT_TESTID, commitmentFor } from "../logic/commit";
+import { decisionKey, stagedAs } from "../logic/staging";
 import { parseStop } from "../logic/verbs";
 import { useUiStore } from "../state/uiStore";
 import { getCursor } from "./cursor";
@@ -45,11 +46,12 @@ export function useTableVerbs({
 }: Args) {
   const selectedOid = useUiStore((s) => s.selectedOid);
   const targetingActionIds = useUiStore((s) => s.targetingActionIds);
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
+  const staged = useUiStore((s) => s.staged);
+  const stagedAttacks = stagedAs(staged, "attack");
   const endTargeting = useUiStore((s) => s.endTargeting);
   const select = useUiStore((s) => s.select);
-  const stageAttack = useUiStore((s) => s.stageAttack);
+  const stage = useUiStore((s) => s.stage);
+  const backOutStaged = useUiStore((s) => s.backOutStaged);
   const setPeek = useUiStore((s) => s.setPeek);
   const logOverlay = useUiStore((s) => s.logOverlay);
   const setViewing = useUiStore((s) => s.setViewing);
@@ -130,6 +132,35 @@ export function useTableVerbs({
         endTargeting();
         return true;
       }
+      /*
+       * A STAGED SET, between targeting and selection, at every decision that
+       * has one: attackers, blockers, picks.
+       *
+       * It never discards what the player cannot put back in one press. A set
+       * the "all" mark built goes whole, because the mark rebuilds it; a set
+       * built by hand goes one press per entry, newest first, because nothing
+       * rebuilds it but the same presses again (`logic/staging.backedOut`).
+       *
+       * A blocker picked and not yet aimed is the one selection newer than
+       * the set -- it is half of the next block -- so it is put down first. An
+       * attacker's selection is only the staged attacker itself, and goes
+       * with it.
+       */
+      const combatSet = { ...stagedAs(staged, "attack"), ...stagedAs(staged, "block") };
+      if (
+        selectedOid !== null &&
+        combatSet[selectedOid] === undefined &&
+        staged.order.length > 0
+      ) {
+        select(null);
+        return true;
+      }
+      if (backOutStaged()) {
+        if (selectedOid !== null && !(selectedOid in useUiStore.getState().staged.as)) {
+          select(null);
+        }
+        return true;
+      }
       if (selectedOid !== null) {
         select(null);
         return true;
@@ -154,6 +185,8 @@ export function useTableVerbs({
     setViewing,
     targetingActionIds,
     endTargeting,
+    staged,
+    backOutStaged,
     selectedOid,
     select,
     cue,
@@ -215,7 +248,7 @@ export function useTableVerbs({
         if (defenders.length > 1) {
           const next =
             defenders[(defenders.indexOf(stagedAttacks[oid]) + 1) % defenders.length];
-          stageAttack(oid, next);
+          stage(decisionKey(state), "attack", oid, next);
           return;
         }
       }
@@ -248,8 +281,7 @@ export function useTableVerbs({
      * explain.
      */
     const commit = commitmentFor(state, actions, {
-      stagedAttacks,
-      stagedBlocks,
+      staged,
       selectedOid,
       targeting: targetingActionIds.length > 0,
     });
@@ -271,12 +303,12 @@ export function useTableVerbs({
   }, [
     decisionKind,
     stagedAttacks,
-    stagedBlocks,
+    staged,
     selectedOid,
     targetingActionIds,
     state,
     actions,
-    stageAttack,
+    stage,
     beginTargeting,
     setAbilityMenu,
     onBarAct,

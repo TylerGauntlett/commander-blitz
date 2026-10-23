@@ -28,6 +28,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GameView } from "../../api/types";
 import { visibleBox } from "../../input/stops";
+import { stagedAs } from "../../logic/staging";
 import { findCard } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 
@@ -129,8 +130,8 @@ interface Props {
 }
 
 export function CombatArrows({ state, boardRef }: Props) {
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
+  const stagedAttacks = useUiStore((s) => stagedAs(s.staged, "attack"));
+  const stagedBlocks = useUiStore((s) => stagedAs(s.staged, "block"));
   const [arrows, setArrows] = useState<Arrow[]>([]);
   // Read through a ref: the fallback needs who controls a hidden card, and
   // listing `state` as a dependency of `measure` would re-burst on every poll.

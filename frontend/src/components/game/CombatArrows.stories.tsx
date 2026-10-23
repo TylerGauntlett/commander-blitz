@@ -16,6 +16,7 @@ import { useRef } from "react";
 import { expect, waitFor } from "storybook/test";
 import type { GameView } from "../../api/types";
 import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
+import { stagedAs, stagedSet } from "../../logic/staging";
 import { seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import * as scenarios from "../../testing/scenarios";
@@ -88,11 +89,11 @@ export const NoCombat: Story = {
 export const StagedAttacks: Story = {
   args: { state: scenarios.combatDeclareAttackers().state, boardRef: { current: null } },
   parameters: {
-    commanderblitz: { ui: { stagedAttacks: { 301: 1, 302: 2 } } },
+    commanderblitz: { ui: { staged: stagedSet("attack", { 301: 1, 302: 2 }) } },
   },
   render: () => <Board state={scenarios.combatDeclareAttackers().state} />,
   play: async ({ canvasElement }) => {
-    expect(useUiStore.getState().stagedAttacks).toEqual({ 301: 1, 302: 2 });
+    expect(stagedAs(useUiStore.getState().staged, "attack")).toEqual({ 301: 1, 302: 2 });
 
     // Arrows are measured after layout, so they arrive a frame late.
     await waitFor(
@@ -111,7 +112,7 @@ export const StagedAttacks: Story = {
 export const StagedBlocks: Story = {
   args: { state: scenarios.combatDeclareBlockers().state, boardRef: { current: null } },
   parameters: {
-    commanderblitz: { ui: { stagedBlocks: { 401: 410, 402: 411, 403: 412 } } },
+    commanderblitz: { ui: { staged: stagedSet("block", { 401: 410, 402: 411, 403: 412 }) } },
   },
   render: () => <Board state={scenarios.combatDeclareBlockers().state} />,
 };
@@ -126,7 +127,7 @@ export const DeclaredCombat: Story = {
 export const FourPlayerCross: Story = {
   args: { state: scenarios.fourPlayerPod().state, boardRef: { current: null } },
   parameters: {
-    commanderblitz: { ui: { stagedAttacks: { 603: 3 } } },
+    commanderblitz: { ui: { staged: stagedSet("attack", { 603: 3 }) } },
   },
   render: () => <Board state={scenarios.fourPlayerPod().state} />,
 };

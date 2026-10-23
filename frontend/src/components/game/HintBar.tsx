@@ -63,14 +63,12 @@ export function HintBar({ state, actions }: Props) {
   // and this is the supported way to read a value React does not own without
   // tearing during a concurrent render.
   const cursor = useSyncExternalStore(subscribeCursor, getCursor, () => null);
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
+  const staged = useUiStore((s) => s.staged);
   const selectedOid = useUiStore((s) => s.selectedOid);
   const targetingActionIds = useUiStore((s) => s.targetingActionIds);
 
   const verbs: Verbs = verbsFor(state, actions, cursor, {
-    stagedAttacks,
-    stagedBlocks,
+    staged,
     selectedOid,
     targeting: targetingActionIds.length > 0,
   });

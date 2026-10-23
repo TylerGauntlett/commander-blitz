@@ -9,7 +9,8 @@
 import type { RefObject } from "react";
 import type { CardView, GameView, PlayerView, StackItemView } from "../../api/types";
 import { stopId } from "../../input/stops";
-import { isPickSeveral, pickKey } from "../../logic/pickSeveral";
+import { isPickSeveral } from "../../logic/pickSeveral";
+import { decisionKey, pickedFor } from "../../logic/staging";
 import { useUiStore } from "../../state/uiStore";
 import type { useTableDerived } from "../../state/useTableDerived";
 import type { useZoomFit } from "../../state/useZoomFit";
@@ -63,13 +64,13 @@ export function TablePlay({
    * What is in a pick-several set right now, as oids, so the board shows it the
    * way it shows a staged attacker. Read off the decision's own options --
    * `choices` are ordinals into them -- and only while the set is this
-   * decision's (`pickKey`).
+   * decision's (`logic/staging.decisionKey`).
    */
-  const picked = useUiStore((s) => s.picked);
+  const staged = useUiStore((s) => s.staged);
   const setPeek = useUiStore((s) => s.setPeek);
   const pickedOids = new Set<number>();
-  if (isPickSeveral(state) && picked.key === pickKey(state)) {
-    for (const choice of picked.choices) {
+  if (isPickSeveral(state)) {
+    for (const choice of pickedFor(staged, decisionKey(state))) {
       const ref = state.pending?.options[choice]?.ref;
       if (ref?.kind === "object") pickedOids.add(ref.id);
     }
