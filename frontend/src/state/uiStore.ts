@@ -1,13 +1,22 @@
 /**
  * UI-only state.
  *
- * Nothing here is ever sent to the server except through an action id. Staged
- * attackers and blockers live here until the player confirms; selection and
- * targeting are gestures, not rules.
+ * Nothing here is ever sent to the server except through an action id. The
+ * staged set lives here until the player confirms; selection and targeting are
+ * gestures, not rules.
  */
 
 import { create } from "zustand";
 import type { ImageMap, SeatImages } from "../logic/cardArt";
+import {
+  backedOut,
+  NOTHING_STAGED,
+  type Staged,
+  type StageKind,
+  withMarked,
+  withoutStaged,
+  withStaged,
+} from "../logic/staging";
 
 /** How fast the narration queue plays back. */
 export type Speed = "instant" | "fast" | "cinematic";
@@ -142,17 +151,12 @@ interface UiState {
   hoveredOid: number | null;
   /** Actions the current selection could still resolve to, awaiting a target. */
   targetingActionIds: string[];
-  /** attacker oid -> defending player id, staged before "Confirm attacks". */
-  stagedAttacks: Record<number, number>;
-  /** blocker oid -> attacker oid, staged before "Confirm blocks". */
-  stagedBlocks: Record<number, number>;
   /**
-   * The set being built for a pick-several decision, as option ordinals, and
-   * the decision it belongs to (`logic/pickSeveral.pickKey`). Here rather
-   * than in the panel so the board's cards can toggle it, the way they stage
-   * an attacker.
+   * The one staged set: attackers, blockers or picks, owned by the decision it
+   * answers (`logic/staging.ts`). Here rather than in the panel so the board's
+   * cards and the panel's rows stage the same thing.
    */
-  picked: { key: string; choices: number[] };
+  staged: Staged;
   /** Stack group currently fanned open, keyed by `stackKey`. */
   openStack: string | null;
 
@@ -241,14 +245,27 @@ interface UiState {
   narrowTargeting: (actionIds: string[]) => void;
   endTargeting: () => void;
 
-  stageAttack: (attacker: number, defender: number) => void;
-  unstageAttack: (attacker: number) => void;
-  stageBlock: (blocker: number, attacker: number) => void;
-  unstageBlock: (blocker: number) => void;
+  /**
+   * Stage `thing` as `as` for the decision `key`: an attacker at a seat, a
+   * blocker on an attacker, an option (`as` 1) into a pick. A key or a kind
+   * that is not the set's starts a new set.
+   */
+  stage: (key: string, kind: StageKind, thing: number, as: number) => void;
+  unstage: (thing: number) => void;
+  /** What the "all" mark stages: added to the set, which remembers the mark built it. */
+  stageMarked: (
+    key: string,
+    kind: StageKind,
+    entries: ReadonlyArray<readonly [number, number]>,
+  ) => void;
+  /** Empty the set, and only the set. */
+  emptyStaged: () => void;
+  /** The decision on the table is `key` now; a set for any other is emptied. */
+  rekeyStaging: (key: string) => void;
+  /** One level of `B` on the set; false when there was nothing to back out. */
+  backOutStaged: () => boolean;
+  /** The set, the selection, targeting, and everything else a decision opened. */
   clearStaging: () => void;
-  /** Put an option in the set, or take it out; a full set takes nothing more. */
-  togglePick: (key: string, choice: number, max: number) => void;
-  setPicked: (key: string, choices: number[]) => void;
 
   setImages: (images: ImageMap, seatImages?: SeatImages) => void;
   openStackGroup: (key: string | null) => void;
@@ -265,13 +282,11 @@ interface UiState {
   toggleHints: () => void;
 }
 
-export const useUiStore = create<UiState>((set) => ({
+export const useUiStore = create<UiState>((set, get) => ({
   selectedOid: null,
   hoveredOid: null,
   targetingActionIds: [],
-  stagedAttacks: {},
-  stagedBlocks: {},
-  picked: { key: "", choices: [] },
+  staged: NOTHING_STAGED,
   openStack: null,
   images: null,
   seatImages: null,
@@ -293,39 +308,24 @@ export const useUiStore = create<UiState>((set) => ({
   narrowTargeting: (actionIds) => set({ targetingActionIds: actionIds }),
   endTargeting: () => set({ targetingActionIds: [], selectedOid: null }),
 
-  stageAttack: (attacker, defender) =>
-    set((s) => ({ stagedAttacks: { ...s.stagedAttacks, [attacker]: defender } })),
-  unstageAttack: (attacker) =>
-    set((s) => {
-      const next = { ...s.stagedAttacks };
-      delete next[attacker];
-      return { stagedAttacks: next };
-    }),
-
-  stageBlock: (blocker, attacker) =>
-    set((s) => ({ stagedBlocks: { ...s.stagedBlocks, [blocker]: attacker } })),
-  unstageBlock: (blocker) =>
-    set((s) => {
-      const next = { ...s.stagedBlocks };
-      delete next[blocker];
-      return { stagedBlocks: next };
-    }),
-
-  togglePick: (key, choice, max) =>
-    set((s) => {
-      const now = s.picked.key === key ? s.picked.choices : [];
-      if (now.includes(choice))
-        return { picked: { key, choices: now.filter((c) => c !== choice) } };
-      if (now.length >= max) return {};
-      return { picked: { key, choices: [...now, choice] } };
-    }),
-  setPicked: (key, choices) => set({ picked: { key, choices } }),
+  stage: (key, kind, thing, as) =>
+    set((s) => ({ staged: withStaged(s.staged, key, kind, thing, as) })),
+  unstage: (thing) => set((s) => ({ staged: withoutStaged(s.staged, thing) })),
+  stageMarked: (key, kind, entries) =>
+    set((s) => ({ staged: withMarked(s.staged, key, kind, entries) })),
+  emptyStaged: () => set((s) => ({ staged: { ...NOTHING_STAGED, key: s.staged.key } })),
+  rekeyStaging: (key) =>
+    set((s) => (s.staged.key === key ? {} : { staged: { ...NOTHING_STAGED, key } })),
+  backOutStaged: () => {
+    const next = backedOut(get().staged);
+    if (next === null) return false;
+    set({ staged: next });
+    return true;
+  },
 
   clearStaging: () =>
     set({
-      stagedAttacks: {},
-      stagedBlocks: {},
-      picked: { key: "", choices: [] },
+      staged: NOTHING_STAGED,
       selectedOid: null,
       targetingActionIds: [],
       openStack: null,

@@ -16,6 +16,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { stagedSet } from "../../logic/staging";
 import { useUiStore } from "../../state/uiStore";
 import { APP_VAR } from "../../testing/appGeometry";
 import {
@@ -345,7 +346,7 @@ export const ConfirmingAttacks: Story = {
   parameters: {
     commanderblitz: {
       mount: "railRightUnderPreviewWithFoot",
-      ui: { stagedAttacks: { 301: 1, 302: 2 } },
+      ui: { staged: stagedSet("attack", { 301: 1, 302: 2 }) },
     },
   },
   play: async ({ canvasElement, args }) => {

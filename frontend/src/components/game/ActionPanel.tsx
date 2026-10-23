@@ -55,12 +55,13 @@ import { autoBlocks } from "../../logic/autoBlock";
 import { statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import {
+  isBoardPick,
   isPickSeveral,
   type PickOption,
   pickCarrier,
-  pickKey,
   pickOptions,
 } from "../../logic/pickSeveral";
+import { decisionKey, pickedFor, stagedAs, stagedOrder } from "../../logic/staging";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -68,7 +69,7 @@ import { useHandheldLayout } from "../../state/useHandheld";
 import { AttackRows } from "./AttackRows";
 import { BlockGroups } from "./BlockGroups";
 import { CommitDock } from "./CommitDock";
-import { PickRows, pickStop } from "./PickRows";
+import { PickOneRows, PickRows, pickStop } from "./PickRows";
 import { PlayRows } from "./PlayRows";
 import { ToolStrip } from "./ToolStrip";
 import { XStepper } from "./XStepper";
@@ -82,7 +83,7 @@ import { XStepper } from "./XStepper";
  */
 const COMMIT_KINDS = ["keep", "yes", "pass"];
 
-type Mode = "attack" | "block" | "play" | "chooseX" | "pick";
+type Mode = "attack" | "block" | "play" | "chooseX" | "pick" | "pickOne";
 
 interface Props {
   state: GameView;
@@ -190,10 +191,13 @@ export function ActionPanel({
     setHosts((c) => (c.slab === null && c.tools === tools ? c : { slab: null, tools }));
   }, [handheld]);
 
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
-  const stageAttack = useUiStore((s) => s.stageAttack);
-  const stageBlock = useUiStore((s) => s.stageBlock);
+  const staged = useUiStore((s) => s.staged);
+  const stage = useUiStore((s) => s.stage);
+  const unstage = useUiStore((s) => s.unstage);
+  const stageMarked = useUiStore((s) => s.stageMarked);
+  const emptyStaged = useUiStore((s) => s.emptyStaged);
+  const stagedAttacks = stagedAs(staged, "attack");
+  const stagedBlocks = stagedAs(staged, "block");
   const hover = useUiStore((s) => s.hover);
   const targetingActionIds = useUiStore((s) => s.targetingActionIds);
 
@@ -209,8 +213,11 @@ export function ActionPanel({
           ? "chooseX"
           : isPickSeveral(state)
             ? "pick"
-            : "play";
+            : isBoardPick(state)
+              ? "pickOne"
+              : "play";
   const isCombat = mode === "attack" || mode === "block";
+  const key = decisionKey(state);
 
   const card = (oid: number): CardView | null => findCard(state, oid);
   const nameOf = (oid: number) => card(oid)?.name ?? `#${oid}`;
@@ -280,13 +287,13 @@ export function ActionPanel({
     return found ? statLine(found) : null;
   };
 
-  const attackPairs = Object.entries(stagedAttacks).map(
-    ([attacker, defender]) => [Number(attacker), defender] as [number, number],
+  const attackPairs = stagedOrder(staged, "attack").map(
+    (attacker) => [attacker, stagedAttacks[attacker]] as [number, number],
   );
-  const blockPairs = Object.entries(stagedBlocks).map(
-    ([blocker, attacker]) => [Number(blocker), attacker] as [number, number],
+  const blockPairs = stagedOrder(staged, "block").map(
+    (blocker) => [blocker, stagedBlocks[blocker]] as [number, number],
   );
-  const staged = mode === "attack" ? attackPairs : blockPairs;
+  const combatPairs = mode === "attack" ? attackPairs : blockPairs;
 
   // ------------------------------------------------------------------ attack
 
@@ -344,14 +351,20 @@ export function ActionPanel({
 
   const attackWithAll = () => {
     if (allOut || newAttacks.length === 0) {
+      const everyone: [number, number][] = [];
       for (const oid of unstagedAttackers) {
         const [first] = defendersFor(actions, oid);
-        if (first !== undefined) stageAttack(oid, first);
+        if (first !== undefined) everyone.push([oid, first]);
       }
+      stageMarked(key, "attack", everyone);
       setEscalated({ key: combatKey, on: true });
       return;
     }
-    for (const { attacker, defender } of newAttacks) stageAttack(attacker, defender);
+    stageMarked(
+      key,
+      "attack",
+      newAttacks.map(({ attacker, defender }) => [attacker, defender] as const),
+    );
     setEscalated({ key: combatKey, on: true });
   };
 
@@ -372,7 +385,11 @@ export function ActionPanel({
   const suggested = mode === "block" ? autoBlocks(state, actions) : [];
   const newBlocks = suggested.filter(({ blocker }) => stagedBlocks[blocker] === undefined);
   const blockWithAll = () => {
-    for (const { blocker, attacker } of newBlocks) stageBlock(blocker, attacker);
+    stageMarked(
+      key,
+      "block",
+      newBlocks.map(({ blocker, attacker }) => [blocker, attacker] as const),
+    );
   };
 
   // -------------------------------------------------------------------- pick
@@ -381,12 +398,8 @@ export function ActionPanel({
   // is: a row per candidate, the board's cards toggling the same set, and one
   // slab that sends it. See `logic/pickSeveral.ts`.
 
-  const picked = useUiStore((s) => s.picked);
-  const togglePick = useUiStore((s) => s.togglePick);
-  const setPicked = useUiStore((s) => s.setPicked);
-  const pickOpts = mode === "pick" ? pickOptions(state, actions) : [];
-  const pickId = mode === "pick" ? pickKey(state) : "";
-  const chosen = mode === "pick" && picked.key === pickId ? picked.choices : [];
+  const pickOpts = mode === "pick" || mode === "pickOne" ? pickOptions(state, actions) : [];
+  const chosen = mode === "pick" ? pickedFor(staged, key) : [];
   const pickMax = mode === "pick" ? Math.min(pending?.max_count ?? 0, pickOpts.length) : 0;
   const pickMin = mode === "pick" ? (pending?.min_count ?? 0) : 0;
   const pickFull = chosen.length >= pickMax;
@@ -405,7 +418,8 @@ export function ActionPanel({
    */
   const toggleOption = (option: PickOption, index: number, event: MouseEvent) => {
     const on = chosen.includes(option.choice);
-    togglePick(pickId, option.choice, pickMax);
+    if (on) unstage(option.choice);
+    else if (!pickFull) stage(key, "pick", option.choice, 1);
     if (on || event.detail !== 0) return;
     const taken = new Set([...chosen, option.choice]);
     const next =
@@ -429,15 +443,16 @@ export function ActionPanel({
    */
   const pickAll = () => {
     if (pickFull) {
-      setPicked(pickId, []);
+      emptyStaged();
       return;
     }
-    const filled = [...chosen];
-    for (const option of pickOpts) {
-      if (filled.length >= pickMax) break;
-      if (!filled.includes(option.choice)) filled.push(option.choice);
-    }
-    setPicked(pickId, filled);
+    const room = pickMax - chosen.length;
+    const more = pickOpts.filter((option) => !chosen.includes(option.choice)).slice(0, room);
+    stageMarked(
+      key,
+      "pick",
+      more.map((option) => [option.choice, 1] as const),
+    );
   };
 
   /** Total power aimed at this seat, so the stakes are a number rather than a count. */
@@ -448,9 +463,12 @@ export function ActionPanel({
   // -------------------------------------------------------------------- play
 
   const finish = actions.find((a) => a.kind === "finish_declaration") ?? null;
+  // A board pick's decline ("up to one") is its slab; there is nothing else to commit.
   const commit = standDown
     ? null
-    : (actions.find((a) => COMMIT_KINDS.includes(a.kind)) ?? null);
+    : mode === "pickOne"
+      ? finish
+      : (actions.find((a) => COMMIT_KINDS.includes(a.kind)) ?? null);
   /**
    * Ids `Table`'s `.choices` fallback bar is rendering in the foot right now.
    *
@@ -546,7 +564,9 @@ export function ActionPanel({
           ? pickMin === pickMax
             ? `Choose ${pickMax}. Click one again to take it back.`
             : `Choose up to ${pickMax}. Click one again to take it back.`
-          : null;
+          : mode === "pickOne"
+            ? "Click a permanent to choose it."
+            : null;
 
   /*
    * The dock, in whichever parent it belongs to this session.
@@ -658,6 +678,18 @@ export function ActionPanel({
             />
           )}
 
+          {mode === "pickOne" && (
+            <PickOneRows
+              state={state}
+              options={pickOpts}
+              actions={actions}
+              disabled={disabled}
+              onAct={onAct}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
+
           {mode === "chooseX" && (
             <XStepper
               clampedX={clampedX}
@@ -728,7 +760,7 @@ export function ActionPanel({
           nothingToDeclare={nothingToDeclare}
           attackPairs={attackPairs}
           blockPairs={blockPairs}
-          staged={staged}
+          staged={combatPairs}
           unstagedAttackers={unstagedAttackers}
           wouldAttack={wouldAttack}
           attackWithAll={attackWithAll}
@@ -747,7 +779,7 @@ export function ActionPanel({
                   ready: chosen.length >= pickMin,
                   carrier,
                   onAll: pickAll,
-                  onConfirm: () => onChoose(chosen),
+                  onConfirm: () => onChoose([...chosen]),
                 }
               : null
           }

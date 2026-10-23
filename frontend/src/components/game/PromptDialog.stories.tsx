@@ -109,12 +109,18 @@ export const DiscardToHandSize: Story = {
   },
 };
 
+/**
+ * One pick of a card that is not on the table: the dialog's, drawn as faces.
+ *
+ * This was "Sacrifice a creature", and that pick is the board's now
+ * (`logic/pickSeveral.isBoardPick`); `StandsDownForABoardPick` holds that.
+ */
 export const ChooseTarget: Story = {
-  args: { state: scenarios.chooseTarget().state, actions: scenarios.chooseTarget().actions },
+  args: { state: scenarios.discardACard().state, actions: scenarios.discardACard().actions },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("prompt-dialog");
-    // An option that names a permanent draws as a real card, not a bare label.
+    // An option that names an object draws as a real card, not a bare label.
     expect(canvasElement.querySelector('[data-card-name="Serra Angel"]')).not.toBeNull();
     // Clicked by id: the name is on the card face, and the face is not the
     // only text in the dialog, so the text is not a unique handle.
@@ -122,6 +128,18 @@ export const ChooseTarget: Story = {
       canvasElement.querySelector('[data-action-id="a1-choose"]') as HTMLElement,
     );
     expect(args.onAct).toHaveBeenCalledWith("a1-choose");
+  },
+};
+
+/**
+ * A pick of a permanent opens no dialog: the board answers it and the panel
+ * mirrors it, so a modal here would put every option's id in the document
+ * twice (ADR 0015).
+ */
+export const StandsDownForABoardPick: Story = {
+  args: { state: scenarios.chooseTarget().state, actions: scenarios.chooseTarget().actions },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-testid="prompt-dialog"]')).toBeNull();
   },
 };
 

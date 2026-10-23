@@ -103,14 +103,48 @@ export function pickCarrier(actions: LegalAction[]): LegalAction | null {
 }
 
 /**
- * Which decision a set of picks belongs to.
+ * Is the decision on the table ours, and one pick of a permanent at a time?
  *
- * A decision has no id, and the store outlives it: the picks for one Clever
- * Concealment must not still be on when the next pick-several opens. The
- * prompt names the source, and the options say what it is choosing among.
+ * "Sacrifice a creature", "destroy target artifact", a trigger's target: a
+ * `choose_objects` whose every option is a permanent on the battlefield. The
+ * board answers it -- the press on the card IS the answer, so a pick of one
+ * costs one press, the ring opening on the first option -- and the panel's
+ * rows mirror it for whatever the layout does not draw. Before this it was a
+ * modal of card faces over the board, so the press a handheld player makes on
+ * the board went nowhere for exactly the decision whose subject is the board.
+ *
+ * A set to build (`isPickSeveral`) is not this, and neither is anything whose
+ * options are off the table -- a library, a hand, a graveyard, a player, a
+ * mode -- which `PromptDialog` keeps. `isModalDecision` reads this, so the
+ * split between the board and the dialog is decided once.
  */
-export function pickKey(state: GameView): string {
+export function isBoardPick(state: GameView): boolean {
   const pending = state.pending;
-  if (pending === null) return "";
-  return `${state.turn}|${state.step}|${pending.prompt}|${pending.options.map((o) => o.label).join(",")}`;
+  if (pending === null || pending.player !== state.seat || state.game_over) return false;
+  if (pending.kind !== "choose_objects" || isPickSeveral(state)) return false;
+  if (pending.options.length === 0) return false;
+  return pending.options.every((option) => {
+    const ref = option.ref;
+    return ref?.kind === "object" && findCard(state, ref.id)?.zone === "battlefield";
+  });
+}
+
+/** The `choose` action a press on `oid` answers a board pick with, if any. */
+export function boardPickAction(
+  state: GameView,
+  actions: LegalAction[],
+  oid: number,
+): LegalAction | null {
+  const pending = state.pending;
+  if (pending === null) return null;
+  return (
+    actions.find((action) => {
+      if (action.kind !== "choose") return false;
+      const ref =
+        action.choice !== null
+          ? (pending.options[action.choice]?.ref ?? action.targets[0])
+          : action.targets[0];
+      return ref?.kind === "object" && ref.id === oid;
+    }) ?? null
+  );
 }

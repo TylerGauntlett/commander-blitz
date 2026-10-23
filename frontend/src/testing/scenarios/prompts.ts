@@ -5,7 +5,10 @@ import { action, decisionOption, gameView, pending } from "../fixtures";
 import type { Scenario } from "./build";
 import { opponent, pass, you } from "./build";
 
-/** Choosing a permanent: options that name real objects draw as real cards. */
+/**
+ * "Sacrifice a creature": one pick of a permanent, which the board answers
+ * (`logic/pickSeveral.isBoardPick`) and the panel mirrors.
+ */
 export function chooseTarget(): Scenario {
   const battlefield = [
     pool.grizzlyBears({ oid: 901 }),
@@ -16,7 +19,15 @@ export function chooseTarget(): Scenario {
   const state = gameView({
     players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
     battlefield,
-    pending: pending({ kind: "choose_objects", prompt: "Sacrifice a creature" }),
+    pending: pending({
+      kind: "choose_objects",
+      prompt: "Sacrifice a creature",
+      // The engine names each option's object (`serialize._pending`).
+      options: battlefield.map((c, i) =>
+        decisionOption({ label: c.name, ref: { kind: "object", id: c.oid }, value: i }),
+      ),
+      context: { purpose: "sacrifice" },
+    }),
   });
 
   return {
@@ -27,6 +38,46 @@ export function chooseTarget(): Scenario {
         kind: "choose",
         label: c.name,
         base_label: c.name,
+        choice: i,
+        targets: [{ kind: "object", id: c.oid }],
+      }),
+    ),
+    events: [],
+  };
+}
+
+/**
+ * "Discard a card": one pick among cards in your hand, which are not on the
+ * table, so the dialog keeps it and draws each option as its face.
+ */
+export function discardACard(): Scenario {
+  const hand = [
+    pool.grizzlyBears({ oid: 921, zone: "hand" }),
+    pool.serraAngel({ oid: 922, zone: "hand" }),
+    pool.counterspell({ oid: 923, zone: "hand" }),
+  ];
+
+  const state = gameView({
+    players: [you({ hand }), opponent(1, "AI 1")],
+    pending: pending({
+      kind: "choose_objects",
+      prompt: "Discard a card",
+      options: hand.map((c, i) =>
+        decisionOption({ label: c.name, ref: { kind: "object", id: c.oid }, value: i }),
+      ),
+      context: { purpose: "discard" },
+    }),
+  });
+
+  return {
+    state,
+    actions: hand.map((c, i) =>
+      action({
+        id: `a${i}-choose`,
+        kind: "choose",
+        label: c.name,
+        base_label: c.name,
+        choice: i,
         targets: [{ kind: "object", id: c.oid }],
       }),
     ),

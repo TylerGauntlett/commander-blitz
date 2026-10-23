@@ -14,9 +14,15 @@
 
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
+import { decisionKey, NOTHING_STAGED, pickedSet, stagedSet } from "../src/logic/staging";
 import { parseStop, type Staging, verbsFor } from "../src/logic/verbs";
 import { action, card, gameView, pending, player, stackItem } from "../src/testing/fixtures";
-import { mulligan, mulliganBottom } from "../src/testing/scenarios";
+import {
+  chooseSeveralTargets,
+  chooseTarget,
+  mulligan,
+  mulliganBottom,
+} from "../src/testing/scenarios";
 
 const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
   card({
@@ -30,9 +36,20 @@ const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
     ...overrides,
   });
 
-const staging = (overrides: Partial<Staging> = {}): Staging => ({
-  stagedAttacks: {},
-  stagedBlocks: {},
+/** Staging, with a combat set written as the map it is staged as. */
+const staging = ({
+  stagedAttacks,
+  stagedBlocks,
+  ...overrides
+}: Partial<Staging> & {
+  stagedAttacks?: Record<number, number>;
+  stagedBlocks?: Record<number, number>;
+} = {}): Staging => ({
+  staged: stagedAttacks
+    ? stagedSet("attack", stagedAttacks)
+    : stagedBlocks
+      ? stagedSet("block", stagedBlocks)
+      : NOTHING_STAGED,
   selectedOid: null,
   targeting: false,
   ...overrides,
@@ -251,6 +268,15 @@ describe("verbsFor", () => {
     });
   });
 
+  describe("one pick of a permanent", () => {
+    it("chooses with A on an option, and says so on anything else", () => {
+      const { state, actions } = chooseTarget();
+      expect(verbsFor(state, actions, "card:902").a).toBe("Choose");
+      const elsewhere = { ...state, battlefield: [...state.battlefield, creature(950)] };
+      expect(verbsFor(elsewhere, actions, "card:950").a).toBe("Not an option");
+    });
+  });
+
   describe("play mode", () => {
     it("says the verb and not the card's name, and offers X when it also has an ability", () => {
       /*
@@ -371,6 +397,19 @@ describe("verbsFor", () => {
       ];
       const verbs = verbsFor(state, actions, "card:1", staging({ stagedAttacks: { 1: 1 } }));
       expect(verbs.x).toMatch(/Re-aim/);
+    });
+
+    it("commits a set of picks from wherever the ring is, in the slab's words", () => {
+      const { state, actions } = chooseSeveralTargets();
+      const key = decisionKey(state);
+      // Nothing chosen: the mark, which stages.
+      expect(verbsFor(state, actions, "card:801").x).toBe("All (2)");
+      // Chosen: the slab, from a card or a row.
+      const one = staging({ staged: pickedSet(key, [1]) });
+      expect(verbsFor(state, actions, "card:801", one).x).toBe("Confirm 1");
+      expect(verbsFor(state, actions, "combo:pick:0", one).x).toBe("Confirm 1");
+      // Not on the slab itself, which carries `Done`'s id: `A` is already it.
+      expect(verbsFor(state, actions, "act:a4-finish_declaration", one).x).toBeUndefined();
     });
 
     it("stays quiet on the opening hand, where there is no priority to pass", () => {

@@ -45,6 +45,7 @@ import type { GameEvent, GameView, SeatConfig, StateResponse } from "../api/type
 import { beatsFor } from "../logic/events";
 import { playerNames } from "../logic/labels";
 import { isPickSeveral } from "../logic/pickSeveral";
+import { decisionKey } from "../logic/staging";
 import { useNarration } from "./narration";
 import { useUiStore } from "./uiStore";
 
@@ -173,6 +174,7 @@ export function useGame(session: GameSession | null) {
   const queryClient = useQueryClient();
   const setError = useUiStore((s) => s.setError);
   const clearStaging = useUiStore((s) => s.clearStaging);
+  const rekeyStaging = useUiStore((s) => s.rekeyStaging);
   const speed = useUiStore((s) => s.speed);
 
   const narration = useNarration(speed);
@@ -251,7 +253,9 @@ export function useGame(session: GameSession | null) {
       // set mid-choice loses work the player has not committed yet.
       const pending = response.state.pending;
       // A pick-several set is the same kind of half-built answer, kept for the
-      // same reason; `pickKey` drops it when the next decision is a new one.
+      // same reason. Kept only while it is the same question: the set is keyed
+      // by the decision (`logic/staging.ts`), and a new one empties it.
+      rekeyStaging(decisionKey(response.state));
       const stillDeclaring =
         pending !== null &&
         pending.player === response.your_seat &&
@@ -261,7 +265,17 @@ export function useGame(session: GameSession | null) {
       if (!stillDeclaring) clearStaging();
       setError(null);
     },
-    [session, key, queryClient, clearStaging, setError, narration.push, lookup, remember],
+    [
+      session,
+      key,
+      queryClient,
+      clearStaging,
+      rekeyStaging,
+      setError,
+      narration.push,
+      lookup,
+      remember,
+    ],
   );
   const absorbRef = useRef(absorb);
   useEffect(() => {

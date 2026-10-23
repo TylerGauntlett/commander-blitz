@@ -12,6 +12,7 @@
  */
 
 import { beforeEach, describe, expect, it } from "vitest";
+import { NOTHING_STAGED, pickedFor, stagedAs } from "../src/logic/staging";
 import { SPEED_MULTIPLIER, type Speed, useUiStore } from "../src/state/uiStore";
 
 const WATCHABLE: Speed[] = ["cinematic", "fast"];
@@ -116,5 +117,104 @@ describe("hints", () => {
     expect(useUiStore.getState().hints).toBe(true);
     expect(localStorage.getItem("commanderblitz.hints")).toBe("on");
     expect(document.documentElement.getAttribute("data-hints")).toBe("on");
+  });
+});
+
+/**
+ * The one staged set (`logic/staging.ts`).
+ *
+ * Attackers, blockers and picks were three sets with three shapes; they are
+ * one map from the thing staged to what it is staged as, owned by the decision
+ * it answers. What these pin: the three call sites stage into the same set, a
+ * different decision empties it, `clearStaging` empties it, and `B` backs it
+ * out without discarding what one press could not put back.
+ */
+describe("the staged set", () => {
+  beforeEach(() => useUiStore.getState().clearStaging());
+  const store = () => useUiStore.getState();
+
+  it("stages an attacker, a blocker and a pick through one call", () => {
+    store().stage("k", "attack", 301, 1);
+    store().stage("k", "attack", 302, 2);
+    expect(stagedAs(store().staged, "attack")).toEqual({ 301: 1, 302: 2 });
+
+    // Re-aiming keeps the attacker where it was in the set.
+    store().stage("k", "attack", 301, 3);
+    expect(stagedAs(store().staged, "attack")).toEqual({ 301: 3, 302: 2 });
+    expect(store().staged.order).toEqual([301, 302]);
+
+    store().stage("b", "block", 401, 410);
+    expect(stagedAs(store().staged, "block")).toEqual({ 401: 410 });
+    // One set: staging blocks for another decision left no attackers behind.
+    expect(stagedAs(store().staged, "attack")).toEqual({});
+
+    store().stage("p", "pick", 2, 1);
+    store().stage("p", "pick", 0, 1);
+    expect(pickedFor(store().staged, "p")).toEqual([2, 0]);
+    expect(stagedAs(store().staged, "block")).toEqual({});
+  });
+
+  it("takes one thing out with unstage", () => {
+    store().stage("k", "attack", 301, 1);
+    store().stage("k", "attack", 302, 1);
+    store().unstage(301);
+    expect(stagedAs(store().staged, "attack")).toEqual({ 302: 1 });
+  });
+
+  it("is emptied when the decision changes, and kept while it does not", () => {
+    store().stage("k", "pick", 1, 1);
+    store().rekeyStaging("k");
+    expect(pickedFor(store().staged, "k")).toEqual([1]);
+
+    store().rekeyStaging("next");
+    expect(store().staged.order).toEqual([]);
+    expect(pickedFor(store().staged, "k")).toEqual([]);
+  });
+
+  it("starts a new set when a stage names another decision", () => {
+    store().stage("k", "pick", 1, 1);
+    store().stage("next", "pick", 3, 1);
+    expect(pickedFor(store().staged, "next")).toEqual([3]);
+    expect(pickedFor(store().staged, "k")).toEqual([]);
+  });
+
+  it("is emptied by clearStaging", () => {
+    store().stage("k", "attack", 301, 1);
+    store().clearStaging();
+    expect(store().staged).toEqual(NOTHING_STAGED);
+  });
+
+  it("backs a hand-built set out one entry per press, newest first", () => {
+    store().stage("k", "attack", 302, 1);
+    store().stage("k", "attack", 301, 1);
+    expect(store().backOutStaged()).toBe(true);
+    expect(store().staged.order).toEqual([302]);
+    expect(store().backOutStaged()).toBe(true);
+    expect(store().staged.order).toEqual([]);
+    expect(store().backOutStaged()).toBe(false);
+  });
+
+  it("backs a set the 'all' mark built out whole, since the mark rebuilds it", () => {
+    store().stageMarked("k", "attack", [
+      [301, 1],
+      [302, 1],
+    ]);
+    expect(store().staged.marked).toBe(true);
+    expect(store().backOutStaged()).toBe(true);
+    expect(store().staged.order).toEqual([]);
+  });
+
+  it("stops treating the set as the mark's once a hand has changed it", () => {
+    store().stageMarked("k", "block", [[401, 410]]);
+    store().stage("k", "block", 402, 410);
+    expect(store().staged.marked).toBe(false);
+    expect(store().backOutStaged()).toBe(true);
+    expect(store().staged.order).toEqual([401]);
+
+    // A set started by hand is not the mark's even after the mark adds to it.
+    store().clearStaging();
+    store().stage("k", "pick", 0, 1);
+    store().stageMarked("k", "pick", [[1, 1]]);
+    expect(store().staged.marked).toBe(false);
   });
 });

@@ -13,12 +13,25 @@
 import { describe, expect, it } from "vitest";
 import type { CardView, GameView } from "../src/api/types";
 import { COMMIT_TESTID, commitmentFor } from "../src/logic/commit";
+import { decisionKey, NOTHING_STAGED, pickedSet, stagedSet } from "../src/logic/staging";
 import type { Staging } from "../src/logic/verbs";
+import { chooseSeveralTargets } from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
-const staging = (overrides: Partial<Staging> = {}): Staging => ({
-  stagedAttacks: {},
-  stagedBlocks: {},
+/** Staging, with a combat set written as the map it is staged as. */
+const staging = ({
+  stagedAttacks,
+  stagedBlocks,
+  ...overrides
+}: Partial<Staging> & {
+  stagedAttacks?: Record<number, number>;
+  stagedBlocks?: Record<number, number>;
+} = {}): Staging => ({
+  staged: stagedAttacks
+    ? stagedSet("attack", stagedAttacks)
+    : stagedBlocks
+      ? stagedSet("block", stagedBlocks)
+      : NOTHING_STAGED,
   selectedOid: null,
   targeting: false,
   ...overrides,
@@ -183,6 +196,8 @@ describe("the controls it names", () => {
     expect(COMMIT_TESTID).toEqual({
       all: "combat-all",
       confirm: "combat-confirm",
+      "pick-all": "pick-all",
+      pick: "pick-confirm",
       skip: "combat-skip",
       pass: "commit",
     });
@@ -194,5 +209,55 @@ describe("the controls it names", () => {
     expect(commitmentFor(board([], "declare_attackers"), [finish], staging())?.actionId).toBe(
       "fin",
     );
+  });
+});
+
+/**
+ * A set of picks ends at its slab the way a declaration ends at Attack.
+ *
+ * "Exile up to two target artifacts": nothing chosen goes to the "all" mark,
+ * which stages and does not send; something chosen goes to the slab, in the
+ * slab's own words. The slab carries `Done`'s id so it is a real control, but
+ * it sends the set, so `X` presses it rather than posting that id.
+ */
+describe("a pick-several decision", () => {
+  const { state, actions } = chooseSeveralTargets();
+  const picked = (choices: number[]) =>
+    staging({ staged: pickedSet(decisionKey(state), choices) });
+
+  it("goes to the 'all' mark while nothing is chosen", () => {
+    expect(commitmentFor(state, actions, staging())).toEqual({
+      target: "pick-all",
+      verb: "All (2)",
+      actionId: null,
+    });
+  });
+
+  it("goes to the slab once something is, and names the carrier it stands on", () => {
+    expect(commitmentFor(state, actions, picked([1]))).toEqual({
+      target: "pick",
+      verb: "Confirm 1",
+      actionId: null,
+      carrierId: "a4-finish_declaration",
+    });
+  });
+
+  it("ignores a set built for another decision", () => {
+    const stale = staging({ staged: pickedSet("another question", [1, 3]) });
+    expect(commitmentFor(state, actions, stale)?.target).toBe("pick-all");
+  });
+
+  it("goes to the mark while the set is short of the decision's minimum", () => {
+    const exactlyTwo = {
+      ...state,
+      pending: state.pending ? { ...state.pending, min_count: 2 } : null,
+    };
+    expect(
+      commitmentFor(
+        exactlyTwo,
+        actions,
+        staging({ staged: pickedSet(decisionKey(exactlyTwo), [1]) }),
+      )?.target,
+    ).toBe("pick-all");
   });
 });

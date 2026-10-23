@@ -13,6 +13,7 @@ import type { GameView, LegalAction } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import { availableBlockers, blockableBy } from "../logic/actionMatch";
 import { groupForDecision, opponentTop } from "../logic/focusGroup";
+import { isBoardPick, pickOptions } from "../logic/pickSeveral";
 import type { useGame } from "../state/useGame";
 import { getCursor, setCursor, subscribeCursor } from "./cursor";
 import {
@@ -284,6 +285,25 @@ export function useTableRegions({
     // key is still unclaimed, so the next run after narration settles takes it.
     if (narration.busy) return;
     focusedFor.current = key;
+    /*
+     * A BOARD PICK OPENS ON ITS FIRST OPTION, so a pick of one is one press:
+     * the card, which is the answer (`useTableGestures`, step 0b). Yours come
+     * first (`pickOptions`), and only one the ring can land on counts -- an
+     * option on a clipped lane is answered from the panel's mirror instead,
+     * which is where `groupForDecision` sends the ring when none is here.
+     */
+    if (isBoardPick(state)) {
+      const mine = groupRoot("board");
+      const reachable = new Set(mine ? landableStopsIn(mine).map((el) => el.dataset.stop) : []);
+      const first = pickOptions(state, actions).find(
+        (option) => option.oid !== null && reachable.has(stopId.card(option.oid)),
+      );
+      if (first?.oid != null) {
+        enterGroup("board");
+        setCursor(stopId.card(first.oid));
+        return;
+      }
+    }
     const wanted = groupForDecision(state, actions, modalOwns, boardCanDecide());
     if (!wanted) return;
     // The stack lands on the card that asked, never on a remembered ply: the

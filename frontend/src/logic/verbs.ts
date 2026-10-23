@@ -23,6 +23,8 @@ import type { GameView, LegalAction } from "../api/types";
 import { blockableBy, defendersFor } from "./actionMatch";
 import { commitmentFor } from "./commit";
 import { mulliganPhase } from "./openingHand";
+import { boardPickAction, isBoardPick } from "./pickSeveral";
+import { NOTHING_STAGED, type Staged, stagedAs } from "./staging";
 import { findCard } from "./zoneGrouping";
 
 /** The kinds of thing the ring can be resting on. See `input/stops.ts`. */
@@ -88,10 +90,10 @@ export interface Verbs {
   b?: string;
 }
 
-/** The player's own combat staging, as `uiStore` holds it. */
+/** The player's own staging, as `uiStore` holds it. */
 export interface Staging {
-  stagedAttacks: Record<number, number>;
-  stagedBlocks: Record<number, number>;
+  /** The one staged set (`logic/staging.ts`). */
+  staged: Staged;
   /** The blocker picked but not yet pointed at an attacker. */
   selectedOid: number | null;
   /** True while a spell is waiting for a target. */
@@ -99,8 +101,7 @@ export interface Staging {
 }
 
 const EMPTY: Staging = {
-  stagedAttacks: {},
-  stagedBlocks: {},
+  staged: NOTHING_STAGED,
   selectedOid: null,
   targeting: false,
 };
@@ -175,8 +176,9 @@ export function verbsFor(
   const commit = commitmentFor(state, actions, staging);
   if (!commit) return verbs;
   const ref = parseStop(stop);
+  const standsOn = commit.actionId ?? commit.carrierId ?? null;
   const alreadyThere =
-    ref.kind === "commit" || (commit.actionId !== null && ref.raw === `act:${commit.actionId}`);
+    ref.kind === "commit" || (standsOn !== null && ref.raw === `act:${standsOn}`);
   return alreadyThere ? verbs : { ...verbs, x: commit.verb };
 }
 
@@ -308,6 +310,13 @@ function contextVerbs(
   const oid = ref.id;
   const card = findCard(state, oid);
 
+  // 0. One pick of a permanent: the press answers it (`useTableGestures`, 0b).
+  if (isBoardPick(state)) {
+    return boardPickAction(state, actions, oid)
+      ? { a: "Choose", y: "Read", b: "Back" }
+      : { a: "Not an option", y: "Read", b: "Back" };
+  }
+
   // 1. Finishing a targeted spell.
   if (staging.targeting) {
     const targetable = actions.some((action) =>
@@ -319,7 +328,7 @@ function contextVerbs(
 
   // 2. Attacking: a plain toggle, and `X` re-aims a staged attacker.
   if (decision === "declare_attackers") {
-    const staged = staging.stagedAttacks[oid];
+    const staged = stagedAs(staging.staged, "attack")[oid];
     if (staged !== undefined) {
       const canReaim = defendersFor(actions, oid).length > 1;
       return {
@@ -334,7 +343,8 @@ function contextVerbs(
 
   // 3. Blocking: pick your creature, then the attacker it stops.
   if (decision === "declare_blockers") {
-    if (staging.stagedBlocks[oid] !== undefined) return { a: "Release", y: "Read", b: "Back" };
+    const stagedBlocks = stagedAs(staging.staged, "block");
+    if (stagedBlocks[oid] !== undefined) return { a: "Release", y: "Read", b: "Back" };
     if (
       staging.selectedOid !== null &&
       blockableBy(actions, staging.selectedOid).includes(oid)
@@ -348,7 +358,7 @@ function contextVerbs(
         b: "Back",
       };
     }
-    const aimedHere = Object.values(staging.stagedBlocks).includes(oid);
+    const aimedHere = Object.values(stagedBlocks).includes(oid);
     if (aimedHere) return { a: "Clear blocks", y: "Read", b: "Back" };
   }
 

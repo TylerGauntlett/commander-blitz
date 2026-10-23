@@ -13,7 +13,8 @@ import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
 import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
 import type { Gesture } from "../logic/followUp";
-import { isPickSeveral, pickKey, pickOptions } from "../logic/pickSeveral";
+import { boardPickAction, isBoardPick, isPickSeveral, pickOptions } from "../logic/pickSeveral";
+import { decisionKey, pickedFor, stagedAs } from "../logic/staging";
 import type { Lane as LaneName } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
 import type { useGame } from "../state/useGame";
@@ -54,19 +55,18 @@ export function useTableGestures({
   holdCard,
 }: Args) {
   const selectedOid = useUiStore((s) => s.selectedOid);
-  const stagedAttacks = useUiStore((s) => s.stagedAttacks);
-  const stagedBlocks = useUiStore((s) => s.stagedBlocks);
+  const staged = useUiStore((s) => s.staged);
+  const stagedAttacks = stagedAs(staged, "attack");
+  const stagedBlocks = stagedAs(staged, "block");
+  const key = decisionKey(state);
   const beginTargeting = useUiStore((s) => s.beginTargeting);
   const narrowTargeting = useUiStore((s) => s.narrowTargeting);
   const select = useUiStore((s) => s.select);
-  const stageAttack = useUiStore((s) => s.stageAttack);
-  const unstageAttack = useUiStore((s) => s.unstageAttack);
-  const stageBlock = useUiStore((s) => s.stageBlock);
-  const unstageBlock = useUiStore((s) => s.unstageBlock);
+  const stage = useUiStore((s) => s.stage);
+  const unstage = useUiStore((s) => s.unstage);
   const viewingPid = useUiStore((s) => s.viewingPid);
   const setViewing = useUiStore((s) => s.setViewing);
   const setAbilityMenu = useUiStore((s) => s.setAbilityMenu);
-  const togglePick = useUiStore((s) => s.togglePick);
 
   /** Play a card from hand: straight through if unambiguous, else start targeting. */
   const playFromHand = useCallback(
@@ -145,10 +145,23 @@ export function useTableGestures({
             state.pending?.max_count ?? 0,
             pickOptions(state, actions).length,
           );
-          togglePick(pickKey(state), option.choice, ceiling);
+          const chosen = pickedFor(staged, key);
+          // A full set takes nothing more; what is in it can still come out.
+          if (chosen.includes(option.choice)) unstage(option.choice);
+          else if (chosen.length < ceiling) stage(key, "pick", option.choice, 1);
         } else {
           cue("deny");
         }
+        return;
+      }
+
+      // 0b. One pick of a permanent: the press is the answer, the way a row
+      //     in the panel's mirror is. A card that is not an option is refused
+      //     out loud rather than read as an ability -- the decision is open.
+      if (isBoardPick(state)) {
+        const answer = boardPickAction(state, actions, card.oid);
+        if (answer) act(answer.id);
+        else cue("deny");
         return;
       }
 
@@ -183,13 +196,13 @@ export function useTableGestures({
       //    one click per opponent in a pod.
       if (decisionKind === "declare_attackers" && combatCandidates.has(card.oid)) {
         if (stagedAttacks[card.oid] !== undefined) {
-          unstageAttack(card.oid);
+          unstage(card.oid);
           select(null);
           return;
         }
         const [first] = defendersFor(actions, card.oid);
         if (first !== undefined) {
-          stageAttack(card.oid, first);
+          stage(key, "attack", card.oid, first);
           select(card.oid);
         }
         return;
@@ -200,7 +213,7 @@ export function useTableGestures({
       //    click the attacker to clear everything aimed at it.
       if (decisionKind === "declare_blockers") {
         if (stagedBlocks[card.oid] !== undefined) {
-          unstageBlock(card.oid);
+          unstage(card.oid);
           return;
         }
         if (combatCandidates.has(card.oid)) {
@@ -213,7 +226,7 @@ export function useTableGestures({
           return;
         }
         if (selectedOid !== null && blockableBy(actions, selectedOid).includes(card.oid)) {
-          stageBlock(selectedOid, card.oid);
+          stage(key, "block", selectedOid, card.oid);
           select(null);
           // ...and on to the next creature with a job, so a pod's worth of
           // attackers is two presses each rather than two plus a walk back.
@@ -224,7 +237,7 @@ export function useTableGestures({
           .filter(([, attacker]) => attacker === card.oid)
           .map(([blocker]) => Number(blocker));
         if (aimedHere.length > 0) {
-          for (const blocker of aimedHere) unstageBlock(blocker);
+          for (const blocker of aimedHere) unstage(blocker);
           return;
         }
       }
@@ -266,18 +279,17 @@ export function useTableGestures({
       actions,
       stagedAttacks,
       stagedBlocks,
+      key,
       selectedOid,
-      stageAttack,
-      unstageAttack,
-      stageBlock,
-      unstageBlock,
+      stage,
+      unstage,
       select,
       beginTargeting,
       narrowTargeting,
       followUp,
       setAbilityMenu,
       state,
-      togglePick,
+      staged,
       cue,
     ],
   );
@@ -327,7 +339,7 @@ export function useTableGestures({
             a.targets.some((ref) => ref.kind === "player" && ref.id === pid),
         );
         if (legal) {
-          stageAttack(selectedOid, pid);
+          stage(key, "attack", selectedOid, pid);
           return;
         }
       }
@@ -357,7 +369,8 @@ export function useTableGestures({
       decisionKind,
       selectedOid,
       actions,
-      stageAttack,
+      stage,
+      key,
       targeting,
       act,
       narrowTargeting,
@@ -398,9 +411,9 @@ export function useTableGestures({
         const defender = action.targets.find((ref) => ref.kind === "player")?.id;
         if (defender === undefined) return;
         if (stagedAttacks[action.source_oid] === defender) {
-          unstageAttack(action.source_oid);
+          unstage(action.source_oid);
         } else {
-          stageAttack(action.source_oid, defender);
+          stage(key, "attack", action.source_oid, defender);
         }
         return;
       }
@@ -409,9 +422,9 @@ export function useTableGestures({
         const attacker = action.targets.find((ref) => ref.kind === "object")?.id;
         if (attacker === undefined) return;
         if (stagedBlocks[action.source_oid] === attacker) {
-          unstageBlock(action.source_oid);
+          unstage(action.source_oid);
         } else {
-          stageBlock(action.source_oid, attacker);
+          stage(key, "block", action.source_oid, attacker);
           // The row and the card are two ways to make one gesture, so they get
           // the same follow-up. Only on staging: releasing a block is the
           // player putting a decision back, not making the next one.
@@ -422,8 +435,8 @@ export function useTableGestures({
 
       if (action.kind === "finish_declaration") {
         const kind = decisionKind === "declare_attackers" ? "attackers" : "blockers";
-        const staged = kind === "attackers" ? stagedAttacks : stagedBlocks;
-        const pairs = Object.entries(staged).map(
+        const set = kind === "attackers" ? stagedAttacks : stagedBlocks;
+        const pairs = Object.entries(set).map(
           ([source, target]) => [Number(source), target] as [number, number],
         );
         // Nothing staged still means what it always meant: decline entirely.
@@ -442,10 +455,9 @@ export function useTableGestures({
       decisionKind,
       stagedAttacks,
       stagedBlocks,
-      stageAttack,
-      unstageAttack,
-      stageBlock,
-      unstageBlock,
+      key,
+      stage,
+      unstage,
       onDeclare,
       act,
       followUp,
