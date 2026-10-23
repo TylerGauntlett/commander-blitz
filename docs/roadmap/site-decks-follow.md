@@ -5,7 +5,7 @@ area: steamdeck
 effort: M
 impact: medium
 why: a deck imported on the site with friends is on the Deck the next time its owner plays alone
-depends_on: [deck-complete-imports]
+depends_on: []
 status: proposed
 ---
 
@@ -21,15 +21,17 @@ agree on who the owner is. A library is a random id each client mints into
 its own `localStorage` (`frontend/src/state/library.ts`), and the site's
 browser and the Deck's window are two clients with two ids, so the site has
 no way to know that a deck its browser library imported belongs to the
-player holding a given Deck.
+player holding a given Deck. The half that exists is the other direction's
+plumbing ([ADR 0022](../adr/0022-deck-imports-through-the-site.md)): a Deck's
+own import goes through the site under the Deck's library id, comes back
+through `GET /api/decks/{deck_id}/bundle` and `adopt_bundle`, and is finished
+by `POST /api/decks/complete` at the door.
 
 ## The change
 
 A deck imported on the site is on its owner's Deck after the
-next launch with a connection, complete, through the bundle
-[deck-complete-imports](deck-complete-imports.md) builds. That item is a real
-dependency: the bundle route, the adopt step and the `complete` verdict are
-what this item reuses unchanged.
+next launch with a connection, complete, through the bundle route, the
+adopt step and the `complete` verdict that already exist, unchanged.
 
 - **One library across the hand-off.** The Online hand-off carries the
   Deck's library id, and the site's client adopts it for that browser
