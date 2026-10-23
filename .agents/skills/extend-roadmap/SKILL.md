@@ -1,6 +1,6 @@
 ---
 name: extend-roadmap
-description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — ask the architecture questions the item leaves open before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, and open the pull request with /create-pr. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
+description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — brief the person on what the item is and what the run will build, then ask the architecture questions the item leaves open before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, and open the pull request with /create-pr. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
 ---
 
 # Delivering a feature
@@ -56,13 +56,42 @@ a plan can go stale between planning and delivery. A claim that no longer
 holds is a reason to re-plan, not to improvise: fix the item through
 `/plan-feature` first, commit that, then continue.
 
-## 2 · Ask the architecture questions, before anything else
+## 2 · Brief the work, then ask the architecture questions
 
 An item is a plan written before the work, and every plan leaves decisions
 open that only the person who owns the project can close: which of two
 shapes the data takes, how far the scope reaches, what the pull request may
 and may not touch, what the ADR should decide. Find those **before** the
 branch exists, not after the code does.
+
+### The briefing comes first
+
+A question is only answerable by someone who knows what it is about, and the
+person who typed `/extend-roadmap` may not have read the item, or may have
+named the top of the queue without knowing what is at the top. So before any
+question, say plainly what this run is about to build, in one message of
+prose and a short list, never a paste of the item:
+
+- **The item**: its id and title, why it was picked (the top ready item, or
+  the one named), and its effort, impact and whether it asks for an ADR.
+- **The problem**: what is true today, from **Today**, in a sentence or
+  two, as checked against the code in §1, including any claim that no
+  longer holds.
+- **The change**: what a player or contributor gets when it lands, and the
+  steps from **The change** in the order you will build them, naming the
+  seams (modules, routes, components) the work goes through.
+- **The gate**: the tests that will hold it.
+- **The shape of the run**: the branch it goes on, whether it is one pull
+  request or several, what it will touch and what it deliberately will not,
+  and which other skills it will call (`/plan-feature`, `/author-cards`,
+  `/extend-dsl`, `/create-pr`).
+
+Write it for someone who has never opened the item: a term the item coins
+is explained, not assumed. Then the questions follow, in the same message or
+straight after it, each pointing back at the part of the briefing it
+decides, so every answer is given with the whole plan in view.
+
+### The questions
 
 Read the item's **The change** and **Gate** sections and the ADR it asks
 for, and list every point where you would otherwise choose for the person:
@@ -83,7 +112,8 @@ and why, so one answer settles the run. Use the harness's question tool
 where it has one. Then wait. Do not scaffold, branch or write a line until
 the answers are in; a run with nobody to answer stops here and says so,
 because a feature built on a guess is a pull request that gets rewritten.
-An item with genuinely nothing open says that in one line and goes on.
+An item with genuinely nothing open still gets the briefing, says in one
+line that nothing is open, and goes on.
 
 Record the answers in the item itself, through `/plan-feature`, as the
 first commit on the branch, so the plan the pull request was built from is
