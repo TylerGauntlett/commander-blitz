@@ -376,6 +376,13 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
   white-space: nowrap;
 }
 
+/* The other caveat, and only on the desktop build: art still to fetch. Cooler
+   than the simplified count, because it goes away on its own. */
+.tile__badge--art {
+  background: rgb(140 170 210 / 0.16);
+  color: var(--text-dim);
+}
+
 /*
  * `i` and `✕` ARE MARKS, AND A MARK IS A TARGET RATHER THAN A SIZE.
  *

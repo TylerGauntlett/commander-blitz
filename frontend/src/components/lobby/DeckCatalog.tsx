@@ -441,6 +441,20 @@ function DeckPick({
                 {deck.simplified}
               </span>
             )}
+            {/* Only on the desktop build, and only while some of the deck's art is
+                not on the device: offline, those cards would draw plain frames.
+                The next launch with a connection finishes it. */}
+            {deck.complete === false && (
+              <span
+                className="tile__badge tile__badge--art"
+                role="img"
+                aria-label="Some art is not on this device yet"
+                data-hint="Some art is not on this device yet"
+                data-testid={`deck-${deck.id}-incomplete`}
+              >
+                art
+              </span>
+            )}
             <button
               type="button"
               className="tile__i"

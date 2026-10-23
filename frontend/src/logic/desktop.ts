@@ -8,7 +8,7 @@
  * no React, the same way `logic/routes.ts` decides addresses.
  */
 
-import type { AppConfig } from "../api/types";
+import type { AppConfig, DeckSummary } from "../api/types";
 
 /**
  * What the client assumes until `/api/config` answers, and what every component
@@ -43,6 +43,25 @@ export function canPlayOnline(config: AppConfig): boolean {
  */
 export function canImport(config: AppConfig): boolean {
   return canPlayOnline(config);
+}
+
+/**
+ * The imported decks whose art is not known to be all on this device.
+ *
+ * The desktop door finishes these before it draws, whenever the site answers:
+ * an import the app was closed in the middle of, or one from before the
+ * server kept count. Nothing on the site, nothing offline -- there is nobody
+ * to fetch from -- and nothing at all once every deck says it is complete, so
+ * an ordinary launch costs no request.
+ */
+export function decksToFinish(
+  config: AppConfig,
+  decks: readonly DeckSummary[] | undefined,
+): string[] {
+  if (config.mode !== "desktop" || !config.online || decks === undefined) return [];
+  return decks
+    .filter((deck) => deck.source === "moxfield" && deck.complete !== true)
+    .map((deck) => deck.id);
 }
 
 /** At most this many imported decks ride along to the hosted site. */

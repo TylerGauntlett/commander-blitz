@@ -65,6 +65,13 @@ beforeEach(() => {
         problems: [],
       });
     }
+    if (path === "/api/decks/complete") {
+      // The server finishes what it can and the list says so afterwards.
+      decks = decks.map((deck) =>
+        deck.source === "moxfield" ? { ...deck, complete: true } : deck,
+      );
+      return json([]);
+    }
     if (path.startsWith("/api/images")) return json({ images: {}, seats: null });
     // Anything else hangs, the way a long poll does.
     return new Promise<Response>(() => undefined);
@@ -182,5 +189,43 @@ describe("the door on the desktop", () => {
     } finally {
       window.commanderblitz = undefined;
     }
+  });
+
+  it("finishes an import's art before showing the door, once", async () => {
+    config = {
+      mode: "desktop",
+      online: true,
+      remote_origin: "https://commanderblitz.com",
+      app_version: "0.1.0",
+      content_version: "1.2.3",
+    };
+    decks = [
+      deckSummary(),
+      deckSummary({ id: "mox_abc", source: "moxfield", complete: false }),
+    ];
+    renderApp("/");
+    const finishing = () => calls.filter((c) => c.path === "/api/decks/complete");
+    await waitFor(() => expect(finishing()).toHaveLength(1));
+    // Back at the door, with the list refetched and nothing asked twice.
+    await waitFor(() => expect(screen.queryByTestId("finishing-art")).toBeNull());
+    await screen.findByTestId("join-pod");
+    expect(finishing()).toHaveLength(1);
+  });
+
+  it("asks nothing when every deck is complete", async () => {
+    config = {
+      mode: "desktop",
+      online: true,
+      remote_origin: "https://commanderblitz.com",
+      app_version: "0.1.0",
+      content_version: "1.2.3",
+    };
+    decks = [deckSummary(), deckSummary({ id: "mox_abc", source: "moxfield", complete: true })];
+    renderApp("/");
+    await screen.findByTestId("join-pod");
+    // Once the list has been read and the door has had a chance to act on it.
+    await waitFor(() => expect(calls.some((c) => c.path === "/api/decks")).toBe(true));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(calls.filter((c) => c.path === "/api/decks/complete")).toHaveLength(0);
   });
 });

@@ -13,6 +13,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
+import { expectFontFloor } from "../../testing/asserts";
 import { cardResponse, deckDetail } from "../../testing/fixtures";
 import { DeckDossier, ManaCurve, RatingBar } from "./DeckDossier";
 
@@ -99,6 +100,27 @@ export const Imported: Story = {
     // Derived, not authored, so it survives the import.
     await canvas.findByTestId("curve");
     expect(canvas.queryByTestId("dossier-ratings")).toBeNull();
+  },
+};
+
+/**
+ * An import whose art is not all on this device yet (ADR 0022).
+ *
+ * The head says so in two words and the body says what happens next, so a
+ * player looking at a deck before going offline knows what they will see.
+ */
+export const ArtMissing: Story = {
+  args: { deckId: "unfinished" },
+  parameters: {
+    commanderblitz: { query: seeded({ ...imported, id: "unfinished", complete: false }) },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("dossier-incomplete");
+    expect((await canvas.findByTestId("dossier-incomplete-note")).textContent).toMatch(
+      /next time the app starts with a connection/,
+    );
+    expectFontFloor(canvasElement);
   },
 };
 
