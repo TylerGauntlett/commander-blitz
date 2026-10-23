@@ -60,6 +60,7 @@ separately:
 - [adr/0020-convoke-is-one-line.md](adr/0020-convoke-is-one-line.md) — convoke and delve are one cast line; the pick is asked while paying
 - [adr/0021-art-store-is-committed.md](adr/0021-art-store-is-committed.md) — the crawled art is committed, written by a bot, and asked before Scryfall
 - [adr/0022-deck-imports-through-the-site.md](adr/0022-deck-imports-through-the-site.md) — a Deck imports through the site, and a deck on the device is complete or says so
+- [adr/0023-games-outlive-the-process.md](adr/0023-games-outlive-the-process.md) — a game lives on disk as its tape, comes back whole or not at all, and the site is handed over blue/green
 
 ## If you are here to...
 
