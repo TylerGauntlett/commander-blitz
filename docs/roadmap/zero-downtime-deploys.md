@@ -27,28 +27,45 @@ serialisable: the seat configuration, the seed, every `TapeEntry`, the token
 map and the per-seat settings. A pod is smaller still. Nothing about the
 engine has to change for a session to survive a process.
 
+Three things the design does not yet offer. `Action` and `TargetRef` have a
+`to_dict` and no way back, so a tape can be written but not read.
+`GameSession.last_seen` is `time.monotonic()`, which means nothing to another
+process, so the sweep's TTLs cannot be applied to a session read off disk
+without a wall-clock stamp beside it. And `docker compose up -d` always stops
+the old container before it starts the new one: a start-first update order
+exists only under Swarm, so the handover cannot be one compose setting.
+
 ## The change
 
-Three steps, each shippable on its own, and the first is the one every
-dependent item needs:
+Three steps, one pull request with a commit per step; the first is the one
+every dependent item needs:
 
-1. **Persist the tape.** `GameSession` writes its description to the
-   `generated` volume after every applied action (one small file per game, or
-   one SQLite file beside the imported decks), and `SessionRegistry` rehydrates
-   every unexpired session on boot by replaying it under each entry's recorded
-   settings, exactly as `undo` does. Pods persist the same way. Versions are
-   process-local ([ADR 0007](../adr/0007-versioned-long-polling.md)) and a client
-   that sees a lower version than it held already refetches from zero, so no
-   client change is needed for the state to come back. The sweep's TTLs still
-   decide what is worth keeping. The ADR records where sessions live and what
-   a rehydrated session promises.
-2. **Hand over instead of replace.** Start the new container beside the old
-   one, wait for its `/health`, point Caddy at it, then stop the old one. With
-   step 1 the old container has nothing to lose, so this is a compose
-   `healthcheck` plus a start-first update order, and Caddy's retry settings
-   cover the moment of the switch; two `web` services behind one upstream list
-   is the fallback if compose's ordering is not enough. The deploy job's
-   `docker image inspect` and the public `/health` curl stay as they are.
+1. **Persist the tape.** `GameSession` writes its description, one JSON file
+   per game under `data/generated/sessions/` on the `generated` volume, after
+   every mutation, atomically (a temporary file renamed over the old one).
+   `Action` and `TargetRef` gain the inverse of `to_dict`, and the file carries
+   a wall-clock stamp for the sweep and the session's `version`, so versions
+   stay monotonic across processes and a click read off the old process is
+   still recognised as stale ([ADR 0007](../adr/0007-versioned-long-polling.md)).
+   `SessionRegistry.get` loads a game from disk on a cache miss, and reloads
+   one whose file is newer than the copy in memory, by replaying the tape
+   under each entry's recorded settings exactly as `undo` does. A tape that
+   does not replay in full is not restored at all: the game is dropped, the
+   reason logged, and the client gets the "game not found" it already handles;
+   a shortened game would rewind a table that has already watched it move on.
+   Pods persist the same way, one file per pod. The sweep's TTLs still decide
+   what is worth keeping and delete the file with the session. The ADR
+   records where sessions live and what a rehydrated session promises.
+2. **Hand over instead of replace.** Blue/green: `web_blue` and `web_green`
+   services, each with a compose `healthcheck` on `/health`, behind one Caddy
+   `reverse_proxy` with `lb_policy first`, active health checks and a retry
+   window, so exactly one backend answers at any instant and a request that
+   lands in the switch is retried rather than dropped. The deploy script
+   brings up the idle colour on the new tag, waits for it to be healthy, then
+   stops the other. Because games load from disk on a miss and reload when
+   the file is newer, whichever side answers next sees the last action the
+   other side wrote. The deploy job's `docker image inspect` and the public
+   `/health` curl stay as they are.
 3. **Tell the client.** `index.html` is already `no-store` and the bundles are
    hashed, so a reload lands on the new build; what is missing is knowing a
    reload is due. `GET /api/config` already carries the app version, and
@@ -58,8 +75,9 @@ dependent item needs:
    restart at the table.
 
 What this does *not* buy is a second worker: two processes answering for one
-game still need a shared store, and `--workers 1` stays until matchmaking
-needs more than one machine.
+game at once still need a shared store with locking, and `--workers 1` stays
+until matchmaking needs more than one machine. Blue/green never has two
+processes answering at once; it has one, then the other.
 
 ## Gate
 
