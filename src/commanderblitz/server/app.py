@@ -11,11 +11,12 @@ from fastapi.responses import FileResponse
 
 from commanderblitz import __version__
 from commanderblitz.cards.images import load_index
-from commanderblitz.cards.registry import GameData, server_registry
+from commanderblitz.cards.registry import GameData, generated_dir, server_registry
 
 from .art import build_store
 from .connectivity import RemoteProbe
 from .lobby import PodRegistry
+from .persist import session_store
 from .pod_routes import router as pod_router
 from .routes import art_router, router
 from .sessions import SessionRegistry
@@ -95,6 +96,7 @@ def create_app(
     client_dir: Path | None = None,
     settings: ServerSettings | None = None,
     probe: RemoteProbe | None = None,
+    sessions_dir: Path | None = None,
 ) -> FastAPI:
     # Hosted unless told otherwise.  Every existing caller -- the tests, the
     # Docker image, the scripts -- passes nothing and gets the server it had.
@@ -121,11 +123,15 @@ def create_app(
     # The probe is what `/api/config` means by "online".  Injectable so a test
     # can be offline without unplugging anything.
     app.state.probe = probe or RemoteProbe(settings.remote_origin)
-    app.state.sessions = SessionRegistry(game_data)
+    # Games and pods on disk only when asked (ADR 0023): the deployment entry
+    # points pass a directory, and an app a test builds stays in memory unless
+    # the test is about surviving a restart.
+    games, pods = session_store(sessions_dir) if sessions_dir else (None, None)
+    app.state.sessions = SessionRegistry(game_data, games)
     # Handed the session registry rather than the GameData: a pod must read
     # decks through `sessions.data` so an imported deck shows up in the lobby
     # the moment `reload()` rebinds it.
-    app.state.pods = PodRegistry(app.state.sessions)
+    app.state.pods = PodRegistry(app.state.sessions, pods)
 
     # Both are optional. A fresh clone that has not run the build script must
     # still deal a game -- it simply renders text frames, which is what the
@@ -222,5 +228,9 @@ def get_app() -> FastAPI:
     """
     global app
     if app is None:
-        app = create_app(serve_client=True, settings=settings_from_env())
+        app = create_app(
+            serve_client=True,
+            settings=settings_from_env(),
+            sessions_dir=generated_dir() / "sessions",
+        )
     return app

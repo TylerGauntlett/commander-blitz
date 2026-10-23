@@ -330,9 +330,30 @@ Why the desktop runs its own server, and goes to the site only for friends:
 [adr/0009-offline-first-desktop.md](adr/0009-offline-first-desktop.md). Running
 it: [steamdeck.md](steamdeck.md).
 
-## In-process memory
+## Games on disk
 
-Every pod and every game lives in this process: no database, no shared store,
-one uvicorn worker. The consequences — a redeploy drops games, a second worker
-would answer for games it never heard of — are owned by
-[deployment.md](deployment.md#things-to-know).
+Every pod and every game lives in this process, and, when `create_app` is given
+a `sessions_dir`, on disk as well: one JSON file per game and per pod,
+written by `persist.JsonStore` on every `_bump`. The memory copy is a cache of
+the file. `SessionRegistry.get` and `PodRegistry.get` read a file on a miss and
+read it again when another process has rewritten it, so a game outlives the
+process that dealt it and one container can hand the site to the next. What
+the file holds and what a restored game promises are
+[ADR 0023](adr/0023-games-outlive-the-process.md)'s:
+
+- **The input, never the state.** A game's record is its seats, seed, tokens,
+  per-seat settings, version counters and tape, each `Action` written by
+  `Action.to_record`. A restore deals from the seed and replays the tape the
+  way `undo` does, through `GameSession._replay_locked`.
+- **Whole or not at all.** A tape that stops replaying raises `RestoreError`;
+  the file is deleted and the game answers 404.
+- **The version carries over**, so a long poll resumes and a stale click is
+  still a 409 on the other side of a restart.
+- **A file is written under the lock that guards the change it records**, and
+  before the waiters are woken.
+
+The deployment entry point and the desktop sidecar both pass
+`generated_dir() / "sessions"`; an app a test builds keeps everything in
+memory unless the test passes a directory. Still one uvicorn worker: two
+processes moving one game at once would need locking across them, and the
+handover never has two ([deployment.md](deployment.md#things-to-know)).

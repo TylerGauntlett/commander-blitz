@@ -235,11 +235,14 @@ runs).
 
 ## Things to know
 
-**A redeploy drops in-flight games.** `server/sessions.py` keeps games in
-process memory, so replacing the container ends every game in progress. Same
-reason the container runs `--workers 1`: a second worker would serve half the
-requests from a process that has never heard of the game being played. This
-also rules out horizontal scaling without a shared session store.
+**A redeploy keeps games, unless their rules changed.** Every game and pod is
+also a file under `data/generated/sessions/` on the `generated` volume
+([server.md](server.md#games-on-disk)), so the container that takes over picks
+each game up on its first request. A game whose tape no longer replays under
+the new build, because a card it used changed, is dropped and logged as
+`dropping game`. The container still runs `--workers 1`: two processes moving
+one game at once would need locking across them, which rules out horizontal
+scaling without a shared session store.
 
 **One Docker volume holds everything durable.** `generated` carries cards and
 decks from deck imports plus the card art lazily fetched from Scryfall

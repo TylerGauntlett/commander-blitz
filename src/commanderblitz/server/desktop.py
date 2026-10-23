@@ -111,11 +111,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     # call time, but the registry module caches `DEFAULT_DATA_DIR` at import.
     import uvicorn
 
+    from commanderblitz.cards.registry import generated_dir
     from commanderblitz.server.app import create_app
     from commanderblitz.server.settings import settings_from_env
 
     started = time.monotonic()
-    app = create_app(serve_client=True, settings=settings_from_env())
+    # The same disk the site keeps its games on (ADR 0023): a game survives
+    # the sidecar being restarted under it.
+    app = create_app(
+        serve_client=True,
+        settings=settings_from_env(),
+        sessions_dir=generated_dir() / "sessions",
+    )
     elapsed = time.monotonic() - started
 
     if args.check:
