@@ -8,6 +8,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { expectFontFloor } from "../../testing/asserts";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
 import { DeckCatalog } from "./DeckCatalog";
@@ -69,6 +70,27 @@ export const WithImportedDeck: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Zada Storm");
+  },
+};
+
+/**
+ * An import the desktop build has not finished fetching the art for.
+ *
+ * Only that tile says so, and only on the desktop: a deck file there carries
+ * `complete`, and the next launch with a connection finishes it (ADR 0022).
+ */
+export const ArtStillToFetch: Story = {
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  args: {
+    decks: pods.DECKS.map((deck) => (deck.id === "mine" ? { ...deck, complete: false } : deck)),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const badge = await canvas.findByTestId("deck-mine-incomplete");
+    expect(badge.getAttribute("aria-label")).toMatch(/not on this device/);
+    expect(canvas.queryByTestId("deck-aesi-incomplete")).toBeNull();
+    expectFontFloor(canvasElement);
   },
 };
 

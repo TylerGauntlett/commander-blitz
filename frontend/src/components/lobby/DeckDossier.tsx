@@ -137,6 +137,11 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
           {deck && deck.simplified > 0 && (
             <span className="badge badge--partial">{deck.simplified} simplified</span>
           )}
+          {deck?.complete === false && (
+            <span className="badge badge--partial" data-testid="dossier-incomplete">
+              Art missing
+            </span>
+          )}
           <button
             type="button"
             className="key key--mark dos__x"
@@ -227,6 +232,14 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
                   None picked. Choosing three cards to call defining is a judgement, and nobody
                   has made it for this list.
                 </p>
+              )}
+
+              {deck.complete === false && (
+                <div className="note" data-testid="dossier-incomplete-note">
+                  Some of this deck's art is not on this device yet. It finishes the next time
+                  the app starts with a connection; until then those cards show a plain frame
+                  when you are offline.
+                </div>
               )}
 
               <h3 className="dos__h">Mana curve</h3>

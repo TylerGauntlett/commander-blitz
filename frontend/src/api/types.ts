@@ -385,6 +385,12 @@ export interface DeckSummary {
    * follow its owner online.
    */
   source_id?: string;
+  /**
+   * `false` when this machine is still missing illustrations the deck can have,
+   * so it would play with blank plates offline. Only the desktop build sets
+   * it; `null` or absent means nobody checked.
+   */
+  complete?: boolean | null;
 }
 
 /**
@@ -437,6 +443,27 @@ export interface DeckImportResponse {
   lands_inert: number;
   cards: ImportedCard[];
   problems: string[];
+  /** What the desktop build's art fetch did; `null` on the site. */
+  art_prefetch?: ArtPrefetch | null;
+}
+
+/** An imported deck's art on the desktop build, and the verdict. */
+export interface ArtPrefetch {
+  fetched: number;
+  cached: number;
+  failed: string[];
+  /** Every illustration the deck can have is on this machine. */
+  complete: boolean;
+  /** Card ids with a printing somewhere and no file here yet. */
+  missing: string[];
+}
+
+/** One deck `POST /api/decks/complete` looked at. */
+export interface DeckCompletion {
+  deck_id: string;
+  fetched: number;
+  complete: boolean;
+  missing: string[];
 }
 
 export interface SeatConfig {

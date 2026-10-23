@@ -142,6 +142,7 @@ data/generated/          gitignored in full
 ├── cards/pool.cards.json      one shared pool, not one file per deck
 ├── cards/pool.images.json     {card_id: {scryfall_id, artist} | null}
 ├── cards/pool.coverage.json   {card_id: {coverage, notes[]}}
+├── cards/site.cards.json      the desktop build only: hand-written cards taken from the site
 └── decks/mox_<publicId>.deck.json
 ```
 
@@ -168,6 +169,25 @@ imported in — and these ids are art filenames and deck-list keys that must
 survive a re-import unchanged. Re-importing the same deck rewrites the same
 bytes.
 
+## On the Steam Deck: through the site
+
+The desktop build's sidecar does not read Moxfield first. It posts the link to
+the hosted site's own import route, under the Deck's library id, then fetches
+the deck back from `GET /api/decks/{deck_id}/bundle`: the deck file the site
+wrote and the definition of every card it names, with the faces and tokens
+those reach (`cards/bundle.py`). `adopt_bundle` keeps every card the Deck
+already has, takes the rest as data, and turns a definition the Deck's loader
+refuses into a local proxy with a note, so a card authored since the Deck's
+last content update plays with its rules rather than as a proxy. When the
+site does not answer, the sidecar reads Moxfield itself, as above
+(`server/upstream.py`).
+
+An import there is also not done until its art is: the deck file carries
+`complete`, written `false` before the art is fetched and `true` once
+`ArtStore.missing` is empty, and `POST /api/decks/complete` finishes whatever
+an interrupted import left. The decision and what was rejected are
+[ADR 0022](adr/0022-deck-imports-through-the-site.md).
+
 ## Shrinking the "simplified" number
 
 A proxy exists because nobody had implemented that card yet, so the way to have
@@ -188,7 +208,9 @@ authored through the six gates ([card-authoring.md](card-authoring.md)).
 |---|---|
 | `POST /api/decks/import` | `{url, dry_run}` → 201 with the coverage report. `dry_run` reports without writing. |
 | `DELETE /api/decks/{id}` | Imported decks only; 400 on a precon. |
-| `GET /api/decks` | Carries `source`, `playable`, `simplified`. |
+| `GET /api/decks` | Carries `source`, `playable`, `simplified`, and `complete` on the desktop build. |
+| `GET /api/decks/{id}/bundle` | The deck file and every card definition behind it; 404 on a precon. |
+| `POST /api/decks/complete` | The desktop build fetches what its imported decks are missing. |
 
 Errors carry a **code** as well as a sentence, because "that deck is private"
 and "there is no such deck" send somebody to two different places:
@@ -198,7 +220,7 @@ and "there is no such deck" send somebody to two different places:
 | `bad_url` | 400 |
 | `private` | 403 |
 | `not_found` | 404 |
-| `not_commander`, `bad_size`, `unknown_cards`, `illegal` | 422 |
+| `not_commander`, `bad_size`, `unknown_cards`, `illegal`, `bad_bundle` | 422 |
 | `unreachable` | 502 |
 | `no_catalog` | 503 |
 
@@ -213,3 +235,8 @@ persisting rather than holding an ephemeral deck in session state.
 `tests/data/moxfield_deck.json` — a real, trimmed v3 payload, for the same reason
 `mini_cards.jsonl` is real: the shapes that break this code are the ones nobody
 would think to invent, like the em-dash in `type_line`.
+
+The desktop path needs a site as well as a list. `tests/server/stub_site.py` is
+the real hosted app with Moxfield answered from the same fixture, canned art,
+and a switch that turns it off or holds its art halfway; the desktop entry
+point's tests and the `sidecar` Playwright project both import through it.

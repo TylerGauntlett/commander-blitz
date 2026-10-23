@@ -11,12 +11,18 @@ import { defineConfig, devices } from "@playwright/test";
  * is no Vite: the server serves `dist/` itself at `/`, which is exactly how the
  * Electron shell loads it. And the server is `commanderblitz.server.desktop`, started
  * the way the shell starts it -- `--generated-dir` pointed at a scratch
- * directory, `--remote-origin` pointed at a port nobody answers, and the two
- * test switches (`COMMANDERBLITZ_FIXTURE_DECKS`, `COMMANDERBLITZ_CPU`) deliberately absent,
+ * directory, `--remote-origin` pointed at the stub site, and the two test
+ * switches (`COMMANDERBLITZ_FIXTURE_DECKS`, `COMMANDERBLITZ_CPU`) deliberately absent,
  * because a shipped build never sets them.
  *
+ * The site is `tests/server/stub_site.py`: the real hosted app with Moxfield
+ * answered from a fixture, started switched OFF. Every spec but one sees a
+ * site that is down; the import spec switches it on, imports through it, and
+ * switches it off again before it plays.
+ *
  * What it proves is in `e2e/sidecar.spec.ts`: a page that makes no request off
- * the machine can deal a pod and play it, and the door says what it cannot do.
+ * the machine can deal a pod and play it, the door says what it cannot do, and
+ * a deck imported through the site plays a whole game once the site is gone.
  */
 
 const VENV_PYTHON =
@@ -29,6 +35,9 @@ const SLOW = Number(process.env.E2E_SLOW ?? 1);
 /** A Steam Deck's panel. */
 const PORT = 8010;
 
+/** The stub site, the sidecar's `--remote-origin`. */
+const SITE_PORT = 8011;
+
 /**
  * Fresh per run: nothing an earlier run imported or cached may leak in.
  *
@@ -39,6 +48,10 @@ const PORT = 8010;
 const GENERATED =
   process.env.TEST_WORKER_INDEX === undefined
     ? mkdtempSync(join(tmpdir(), "commanderblitz-e2e-"))
+    : "unused-in-a-worker";
+const SITE_GENERATED =
+  process.env.TEST_WORKER_INDEX === undefined
+    ? mkdtempSync(join(tmpdir(), "commanderblitz-e2e-site-"))
     : "unused-in-a-worker";
 
 /**
@@ -51,7 +64,8 @@ const GENERATED =
  * so a precon's chosen printing that is not in `data/art` fails to fetch and
  * falls back to the card's own art, exactly as it would on a Deck with no
  * connection. On the server only: a browser that read them could not reach
- * the sidecar either.
+ * the sidecar either. `127.0.0.1` is exempt, because that is where the stub
+ * site is, and the stub's own switch decides whether it answers.
  */
 const env: Record<string, string> = {};
 for (const [key, value] of Object.entries(process.env)) {
@@ -67,8 +81,8 @@ env.HTTP_PROXY = "http://127.0.0.1:1";
 env.HTTPS_PROXY = "http://127.0.0.1:1";
 env.http_proxy = env.HTTP_PROXY;
 env.https_proxy = env.HTTPS_PROXY;
-env.NO_PROXY = "";
-env.no_proxy = "";
+env.NO_PROXY = "127.0.0.1,localhost";
+env.no_proxy = env.NO_PROXY;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -90,16 +104,28 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
     },
   ],
-  webServer: {
-    command:
-      `"${PYTHON}" -m commanderblitz.server.desktop --port ${PORT}` +
-      ` --client-dir frontend/dist --generated-dir "${GENERATED}"` +
-      " --remote-origin http://127.0.0.1:1 --content-version e2e",
-    cwd: "..",
-    url: `http://127.0.0.1:${PORT}/health`,
-    env,
-    // Never reused: the whole point is the server this config starts.
-    reuseExistingServer: false,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command:
+        `"${PYTHON}" -m tests.server.stub_site --port ${SITE_PORT}` +
+        ` --generated-dir "${SITE_GENERATED}" --offline`,
+      cwd: "..",
+      url: `http://127.0.0.1:${SITE_PORT}/__stub/stats`,
+      env,
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+    {
+      command:
+        `"${PYTHON}" -m commanderblitz.server.desktop --port ${PORT}` +
+        ` --client-dir frontend/dist --generated-dir "${GENERATED}"` +
+        ` --remote-origin http://127.0.0.1:${SITE_PORT} --content-version e2e`,
+      cwd: "..",
+      url: `http://127.0.0.1:${PORT}/health`,
+      env,
+      // Never reused: the whole point is the server this config starts.
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 });

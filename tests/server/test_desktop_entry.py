@@ -11,15 +11,19 @@ from __future__ import annotations
 
 import json
 import os
+import socket
 import subprocess
 import sys
+import threading
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 from unittest import mock
 
 import pytest
 
+from commanderblitz.cards.registry import DEFAULT_DATA_DIR
 from commanderblitz.server import desktop
 from commanderblitz.server.desktop import ENV_VARS, READY_PREFIX, apply_env, parse_args
 
@@ -198,8 +202,187 @@ class TestTheProcess:
         assert process.wait(timeout=10) is not None
 
 
-def _get(url: str) -> str:
-    deadline = time.time() + 30
+class TestAnImportIsCompleteOnTheDevice:
+    """ADR 0022, over real sockets: the sidecar imports through a stub site
+    with every other host refused, and a deck it could not finish is finished
+    on the next launch."""
+
+    DECK_ID = "mox_vvdybwvgc0imbolw63fltg"
+    URL = "https://moxfield.com/decks/vVdybWVgC0imBOlW63FlTg"
+
+    @pytest.fixture
+    def site(self, tmp_path):
+        port = _free_port()
+        process = subprocess.Popen(
+            [
+                sys.executable, "-m", "tests.server.stub_site",
+                "--port", str(port), "--generated-dir", str(tmp_path / "site"),
+            ],
+            cwd=ROOT,
+            env={k: v for k, v in os.environ.items() if k not in TEST_ONLY},
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        origin = f"http://127.0.0.1:{port}"
+        try:
+            _get(f"{origin}/__stub/stats", deadline=90)
+            yield origin
+        finally:
+            process.terminate()
+            process.wait(timeout=10)
+
+    @pytest.fixture
+    def content(self, tmp_path):
+        """The Deck's data directory: what the content package carries, which
+        is ``data/`` without the art store (ADR 0021) -- so the art a deck
+        names has to come from the site, and the site is the stub."""
+        root = tmp_path / "content"
+        root.mkdir()
+        for child in DEFAULT_DATA_DIR.iterdir():
+            if child.name in ("art_store", "generated"):
+                continue
+            try:
+                (root / child.name).symlink_to(child, target_is_directory=child.is_dir())
+            except OSError:  # pragma: no cover - Windows without symlink rights
+                pytest.skip("symlinks are unavailable on this machine")
+        return root
+
+    def launch(self, content, generated, origin):
+        """The sidecar as the shell starts it, with every host but the stub
+        refused through a proxy that answers nobody."""
+        env = {k: v for k, v in os.environ.items() if k not in TEST_ONLY}
+        for name in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy"):
+            env[name] = "http://127.0.0.1:1"
+        env["NO_PROXY"] = env["no_proxy"] = "127.0.0.1,localhost"
+        process = subprocess.Popen(
+            [
+                sys.executable, "-m", "commanderblitz.server.desktop",
+                "--port", "0",
+                "--data-dir", str(content),
+                "--generated-dir", str(generated),
+                "--remote-origin", origin,
+                "--content-version", "e2e",
+            ],
+            cwd=ROOT,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            encoding="utf-8",
+        )
+        deadline = time.time() + 120
+        while time.time() < deadline:
+            line = process.stdout.readline()
+            if line.startswith(READY_PREFIX):
+                return process, f"http://127.0.0.1:{json.loads(line[len(READY_PREFIX):])['port']}"
+            assert process.poll() is None, "the sidecar exited before READY"
+        process.kill()
+        pytest.fail("no READY line within 120s")
+
+    def test_an_import_lands_whole_and_an_interrupted_one_finishes(
+        self, site, content, tmp_path
+    ):
+        # One Deck imports, and everything it names is on disk.
+        generated = tmp_path / "first"
+        process, local = self.launch(content, generated, site)
+        try:
+            body = _post(f"{local}/api/decks/import", {"url": self.URL})
+            assert body["deck"]["id"] == self.DECK_ID
+            assert body["art_prefetch"]["complete"] is True, body["art_prefetch"]
+            assert body["art_prefetch"]["missing"] == []
+            decks = {d["id"]: d for d in json.loads(_get(f"{local}/api/decks"))}
+            assert decks[self.DECK_ID]["complete"] is True
+        finally:
+            process.terminate()
+            process.wait(timeout=10)
+        served = _stats(site)["art"]
+        assert served, "the deck's art came from the site"
+        # One file per download, named for the card or for the printing.
+        assert len(list((generated / "art").glob("*.jpg"))) == len(served)
+        deck = json.loads((generated / "decks" / f"{self.DECK_ID}.deck.json").read_text("utf-8"))
+        assert deck["complete"] is True
+
+        # A second Deck is stopped halfway through the same import...
+        generated = tmp_path / "second"
+        half = len(served) // 2
+        _post(f"{site}/__stub/state", {"hang_after": len(served) + half})
+        process, local = self.launch(content, generated, site)
+        caught: list[BaseException] = []
+        importing = threading.Thread(
+            target=lambda: _swallow(caught, _post, f"{local}/api/decks/import", {"url": self.URL}),
+            daemon=True,
+        )
+        importing.start()
+        deadline = time.time() + 120
+        while len(_stats(site)["art"]) < len(served) + half:
+            assert time.time() < deadline, "the import never reached halfway"
+            time.sleep(0.1)
+        # Every later request is held at the stub, so the sidecar is quiet once
+        # the files it was sent are written; a moment lets the last of those land.
+        time.sleep(1.0)
+        process.kill()
+        process.wait(timeout=10)
+        importing.join(timeout=30)
+        _post(f"{site}/__stub/state", {"hang_after": None})
+        before = _stats(site)["art"][len(served):]
+        deck = json.loads((generated / "decks" / f"{self.DECK_ID}.deck.json").read_text("utf-8"))
+        assert deck["complete"] is False, "an interrupted import says so in its file"
+
+        # ...and the next launch with a connection finishes it.
+        process, local = self.launch(content, generated, site)
+        try:
+            listed = {d["id"]: d for d in json.loads(_get(f"{local}/api/decks"))}
+            assert listed[self.DECK_ID]["complete"] is False
+            done = _post(f"{local}/api/decks/complete", None)
+            assert done == [
+                {"deck_id": self.DECK_ID, "fetched": done[0]["fetched"],
+                 "complete": True, "missing": []}
+            ]
+            assert _post(f"{local}/api/decks/complete", None) == []
+        finally:
+            process.terminate()
+            process.wait(timeout=10)
+        after = _stats(site)["art"][len(served) + len(before):]
+        assert after, "the relaunch fetched what was missing"
+        # Exactly the downloads the uninterrupted Deck made, split across two
+        # launches: nothing is fetched twice, and nothing is left out.
+        assert len(before) + len(after) == len(served)
+        assert sorted(before + after) == sorted(served)
+        assert len(list((generated / "art").glob("*.jpg"))) == len(served)
+
+
+def _free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return sock.getsockname()[1]
+
+
+def _post(url: str, body: dict | None):
+    request = urllib.request.Request(
+        url,
+        data=json.dumps(body or {}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=300) as response:
+        raw = response.read()
+    return json.loads(raw) if raw else None
+
+
+def _stats(origin: str) -> dict:
+    return json.loads(_get(f"{origin}/__stub/stats"))
+
+
+def _swallow(caught: list[BaseException], call, *args) -> None:
+    try:
+        call(*args)
+    except (urllib.error.URLError, OSError) as exc:
+        caught.append(exc)
+
+
+def _get(url: str, *, deadline: float = 30) -> str:
+    deadline = time.time() + deadline
     while True:
         try:
             with urllib.request.urlopen(url, timeout=5) as response:

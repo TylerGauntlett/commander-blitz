@@ -17,13 +17,20 @@
  * what makes a deck follow its owner online.
  */
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { ApiError, api, setPlayerToken } from "../api/client";
 import { HomeScreen } from "../components/lobby/HomeScreen";
 import { Screen } from "../components/screen/Screen";
 import { bridge } from "../desktop/bridge";
-import { handoffImports, isHandoff, moxfieldUrl, onlineUrl } from "../logic/desktop";
+import {
+  decksToFinish,
+  handoffImports,
+  isHandoff,
+  moxfieldUrl,
+  onlineUrl,
+} from "../logic/desktop";
 import { gamePath, joinPath, podPath } from "../logic/routes";
 import { useAppConfig } from "../state/useAppConfig";
 import { useDecks } from "../state/useGame";
@@ -105,10 +112,20 @@ export function HomeRoute() {
     params,
     decks.data?.map((deck) => deck.id),
   );
+  const finishing = useFinishDecks(decksToFinish(config, decks.data));
 
   // Not `center`: `.screen--center` adds 24px of padding, which would put the
   // door's `--du` at 0.94 on a Deck and every number the mockup round measured
   // out by six percent. The door fills the screen itself.
+  if (finishing) {
+    return (
+      <Screen center>
+        <p className="door__p" data-testid="finishing-art" role="status">
+          Finishing your decks' art…
+        </p>
+      </Screen>
+    );
+  }
   if (handoff) {
     return (
       <Screen center>
@@ -185,6 +202,41 @@ function useHandoff(params: URLSearchParams, present: readonly string[] | undefi
       cancelled = true;
     };
   }, [wanted, present, params, search, navigate]);
+
+  return working;
+}
+
+/**
+ * The desktop end of a complete import (ADR 0022): finish, then show the door.
+ *
+ * Asked once per page load, and only with something to finish, so a launch
+ * where every deck already says it is complete makes no request at all. A
+ * failure is logged and the door shown anyway: the deck still plays, and its
+ * tile still says what it is missing. The deck list is refetched afterwards
+ * so the tiles say what the files now say.
+ */
+function useFinishDecks(pending: readonly string[]): boolean {
+  const queries = useQueryClient();
+  const wanted = pending.length > 0;
+  const [working, setWorking] = useState(false);
+  const started = useRef(false);
+
+  useEffect(() => {
+    if (!wanted || started.current) return;
+    started.current = true;
+    setWorking(true);
+    // Not cancelled by a re-render: the list it was started from changes the
+    // moment the decks are refetched, and the door must still come back.
+    (async () => {
+      try {
+        await api.completeDecks();
+      } catch (caught) {
+        console.warn("could not finish the decks' art", caught);
+      }
+      await queries.invalidateQueries({ queryKey: ["decks"] });
+      setWorking(false);
+    })();
+  }, [wanted, queries]);
 
   return working;
 }

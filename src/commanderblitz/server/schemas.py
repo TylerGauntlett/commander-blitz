@@ -152,6 +152,10 @@ class DeckSummary(BaseModel):
     #: Editorial, authored per deck.  Empty for an imported deck, and the client
     #: draws that state rather than inventing a strategy paragraph.
     tags: list[str] = Field(default_factory=list)
+    #: ``False`` when this machine is still missing illustrations the deck can
+    #: have, so it would play with blank plates offline (ADR 0022).  ``None``
+    #: means nobody checked, which is every deck the hosted server lists.
+    complete: bool | None = None
 
 
 class DeckRatingsDTO(BaseModel):
@@ -319,11 +323,42 @@ class ImportedCardDTO(BaseModel):
 
 
 class ArtPrefetchDTO(BaseModel):
-    """What an eager art fetch did, so the screen can say "art for 97 of 99"."""
+    """What an eager art fetch did, and whether the deck is done (ADR 0022)."""
 
     fetched: int
     cached: int
     failed: list[str] = Field(default_factory=list)
+    #: The verdict: every illustration the deck can have is on this machine.
+    complete: bool = False
+    #: Card ids that have a printing somewhere and no file here yet.  A card
+    #: with no printing anywhere is in ``failed`` and never in ``missing``.
+    missing: list[str] = Field(default_factory=list)
+
+
+class DeckCompletionDTO(BaseModel):
+    """One deck that ``POST /api/decks/complete`` looked at."""
+
+    deck_id: str
+    fetched: int
+    complete: bool
+    missing: list[str] = Field(default_factory=list)
+
+
+class DeckBundle(BaseModel):
+    """A deck as a machine needs it to play the deck offline (ADR 0022).
+
+    ``deck`` is the deck file exactly as the site wrote it.  ``cards`` holds
+    the definition of every card it names, plus the faces and tokens those
+    reach, in the card-file shape.  ``coverage`` is the importer's verdict on
+    each generated card in it, for the cards the site wrote as proxies.
+    ``images`` is which printing shows each card, ``None`` for a card with
+    none: a machine that has never seen a card has no other way to know.
+    """
+
+    deck: dict
+    cards: list[dict]
+    coverage: dict[str, dict] = Field(default_factory=dict)
+    images: dict[str, dict | None] = Field(default_factory=dict)
 
 
 class DeckImportResponse(BaseModel):

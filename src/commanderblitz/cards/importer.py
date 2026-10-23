@@ -36,7 +36,7 @@ from .images import CardIndex, generated_images_path
 from .loader import compile_card
 from .moxfield import ImportFailed, ParsedDeck, Printing
 from .proxy import ProxyResult, build_proxy, facts_from_index
-from .registry import CardRegistry, DeckList, generated_dir, validate_deck
+from .registry import CardRegistry, DeckList, default_registry, generated_dir, validate_deck
 from .schema import CardModel, DeckModel, PrintingModel
 
 Origin = Literal["native", "full", "partial"]
@@ -104,6 +104,28 @@ def coverage_path() -> Path:
 
 def decks_dir() -> Path:
     return generated_dir() / "decks"
+
+
+def site_cards_path() -> Path:
+    """Hand-written cards a desktop build took from the site (ADR 0022).
+
+    A file of their own, apart from the proxy pool: these are *authored*, so
+    an import treats them as native, and the next content update that ships
+    the same card replaces them at load the way it replaces a proxy.
+    """
+    return generated_dir() / "cards" / "site.cards.json"
+
+
+def authored_layer() -> CardRegistry:
+    """The registry an import reconciles against: what this machine ships,
+    plus whatever hand-written cards it has taken from the site.
+
+    Never the merged pool -- see :func:`resolve_cards` -- and on the hosted
+    server, where nothing writes ``site.cards.json``, exactly the shipped layer.
+    """
+    shipped = default_registry().registry
+    site = site_cards_path()
+    return shipped.extended_with([site]) if site.is_file() else shipped
 
 
 def deck_id_for(public_id: str) -> str:
@@ -192,7 +214,12 @@ def _front_face(name: str) -> str:
 
 
 def build_deck_model(
-    deck: ParsedDeck, resolved: list[ResolvedCard], registry, *, owner: str = ""
+    deck: ParsedDeck,
+    resolved: list[ResolvedCard],
+    registry,
+    *,
+    owner: str = "",
+    complete: bool | None = None,
 ) -> DeckModel:
     """A deck list in the same shape the precons are written in.
 
@@ -242,6 +269,7 @@ def build_deck_model(
         source_id=deck.public_id,
         owner=owner,
         printings=printings,
+        complete=complete,
     )
 
 
@@ -305,6 +333,25 @@ def persist(
         )
 
 
+def mark_complete(deck_id: str, complete: bool) -> bool:
+    """Record whether an imported deck's art is all on this machine.
+
+    Rewrites the one field and nothing else, under the importer's lock so it
+    cannot interleave with an import of the same deck.  ``False`` for a deck
+    that is not an import here: precons ship their art.
+    """
+    path = decks_dir() / f"{deck_id}.deck.json"
+    with _WRITE_LOCK:
+        raw = _read_json(path, None)
+        if not isinstance(raw, dict):
+            return False
+        if raw.get("complete") is complete:
+            return True
+        raw["complete"] = complete
+        _write_atomic(path, raw)
+    return True
+
+
 def delete_deck(deck_id: str) -> bool:
     """Remove an imported deck.  Its cards stay: they cost a few KB and the next
     import probably wants them."""
@@ -313,6 +360,69 @@ def delete_deck(deck_id: str) -> bool:
         return False
     path.unlink()
     return True
+
+
+def persist_adopted(
+    deck_model: DeckModel,
+    site_cards: dict[str, dict],
+    site_proxies: dict[str, tuple[dict, dict]],
+    proxies: dict[str, tuple[CardModel, ProxyResult]],
+    entries: dict[str, dict | None],
+) -> None:
+    """``persist`` for a deck adopted from the site's bundle (ADR 0022).
+
+    ``site_cards`` are the site's hand-written definitions and go to their own
+    file; a proxy this pool holds under the same id is dropped, because the
+    pool is read first and would otherwise shadow the real card.
+    ``site_proxies`` are the site's proxies with the site's coverage verdict,
+    and ``proxies`` the ones built here.  Cards before the deck, as ``persist``.
+    """
+    with _WRITE_LOCK:
+        pool = _read_json(cards_path(), {"cards": []})
+        by_id = {c["id"]: c for c in pool.get("cards", []) if c.get("id") not in site_cards}
+        coverage = {
+            k: v for k, v in _read_json(coverage_path(), {}).items() if k not in site_cards
+        }
+        for card_id, (definition, verdict) in site_proxies.items():
+            by_id[card_id] = definition
+            coverage[card_id] = verdict
+        for card_id, (model, result) in proxies.items():
+            by_id[card_id] = model.model_dump(exclude_defaults=True, exclude_none=True)
+            coverage[card_id] = {"coverage": result.coverage, "notes": list(result.notes)}
+
+        site = _read_json(site_cards_path(), {"cards": []})
+        site_by_id = {c["id"]: c for c in site.get("cards", [])} | site_cards
+
+        images = _read_json(generated_images_path(), {})
+        images.update(entries)
+
+        if site_cards:
+            _write_atomic(site_cards_path(), {"cards": [site_by_id[k] for k in sorted(site_by_id)]})
+        _write_atomic(cards_path(), {"cards": [by_id[k] for k in sorted(by_id)]})
+        _write_atomic(coverage_path(), coverage)
+        _write_atomic(generated_images_path(), images)
+        _write_atomic(
+            decks_dir() / f"{deck_model.id}.deck.json",
+            deck_model.model_dump(exclude_defaults=True),
+        )
+
+
+def count_lands(resolved: list[ResolvedCard], registry: CardRegistry) -> tuple[int, int, int]:
+    """``(lands, lands producing mana, lands doing nothing at all)``."""
+    lands = producing = inert = 0
+    for entry in resolved:
+        card = registry.get(entry.card_id)
+        if not card.is_land:
+            continue
+        lands += entry.qty
+        if any(a.is_mana_ability for a in card.abilities):
+            producing += entry.qty
+        elif not card.abilities:
+            # No mana and nothing else: an unimplemented fetchland or
+            # creature-land, which is the only case worth putting on the screen.
+            # A *real* fetchland also has no mana ability and is not inert.
+            inert += entry.qty
+    return lands, producing, inert
 
 
 # ----------------------------------------------------------------------
@@ -327,11 +437,13 @@ def import_deck(
     *,
     dry_run: bool = False,
     owner: str = "",
+    complete: bool | None = None,
 ) -> ImportReport:
     """Reconcile, validate, and -- unless this is a dry run -- write.
 
     ``registry`` is the authored layer.  See :func:`resolve_cards` for why that
-    matters more than it looks.
+    matters more than it looks.  ``complete`` is written into the deck file as
+    it is: the desktop build passes ``False`` and settles it once the art is in.
     """
     if index is None:
         raise ImportFailed(
@@ -348,24 +460,12 @@ def import_deck(
     merged = CardRegistry({**{c.id: c for c in registry}, **{
         cid: compile_card(model) for cid, (model, _) in generated.items()
     }})
-    deck_model = build_deck_model(deck, resolved, merged, owner=owner)
+    deck_model = build_deck_model(deck, resolved, merged, owner=owner, complete=complete)
     problems = validate_deck(DeckList.from_model(deck_model), merged)
     if problems:
         raise ImportFailed("illegal", "; ".join(problems[:4]))
 
-    lands = producing = inert = 0
-    for entry in resolved:
-        card = merged.get(entry.card_id)
-        if not card.is_land:
-            continue
-        lands += entry.qty
-        if any(a.is_mana_ability for a in card.abilities):
-            producing += entry.qty
-        elif not card.abilities:
-            # No mana and nothing else: an unimplemented fetchland or
-            # creature-land, which is the only case worth putting on the screen.
-            # A *real* fetchland also has no mana ability and is not inert.
-            inert += entry.qty
+    lands, producing, inert = count_lands(resolved, merged)
 
     report = ImportReport(
         deck_id=deck_model.id,

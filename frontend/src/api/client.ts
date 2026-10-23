@@ -4,6 +4,7 @@ import { libraryId } from "../state/library";
 import type {
   AppConfig,
   CardResponse,
+  DeckCompletion,
   DeckDetail,
   DeckImportResponse,
   DeckSummary,
@@ -138,6 +139,13 @@ export const api = {
     }),
 
   deleteDeck: (deckId: string) => request<void>(`/decks/${deckId}`, { method: "DELETE" }),
+
+  /**
+   * Finish every imported deck whose art is not all on this machine. The
+   * desktop door calls it before drawing when the site answers; the site
+   * answers with an empty list.
+   */
+  completeDecks: () => request<DeckCompletion[]>("/decks/complete", { method: "POST" }),
 
   /** One deck with the dossier's essays, curve and swap note. */
   deck: (deckId: string) => request<DeckDetail>(`/decks/${deckId}`),

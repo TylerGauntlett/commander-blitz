@@ -1550,3 +1550,9 @@ class DeckModel(BaseModel):
     #: for ``source``'s reason: every deck file written before this existed
     #: lacks it, and must still load under ``extra="forbid"``.
     printings: dict[str, PrintingModel] = Field(default_factory=dict)
+    #: Whether every illustration this deck can have is on this machine (ADR
+    #: 0022).  Written by the desktop build only: ``False`` before an import
+    #: fetches its art, ``True`` once nothing is left to fetch.  ``None`` is a
+    #: deck nobody has checked -- a precon, a site import, or a Deck import from
+    #: before the field -- and defaulted for ``source``'s reason.
+    complete: bool | None = None
