@@ -149,15 +149,19 @@ and two hosts would mean a base-URL setting and CORS. It pushes an immutable
 layer cache.
 
 `deploy` runs in the `production` environment, which is the Deployments record
-the ship baseline reads. Its SSH script waits for the droplet's cloud-init to
-finish, logs in to the registry with the run's own `GITHUB_TOKEN` (no stored
-registry token exists anywhere), writes the tag into the compose `.env`, pulls,
-then **asserts the image is present** with `docker image inspect`, because a
-pull that "succeeded" without the image is a failure mode worth refusing. It
-brings the stack up, reloads Caddy (a bind-mounted `Caddyfile` changing does not
-make compose recreate the container), logs out, polls until a container is
-running, and finally curls `/health` on the public domain rather than the
-droplet's address, which proves DNS and TLS as well as the app.
+the ship baseline reads. It copies the compose file, the `Caddyfile` and
+`scripts/handover.sh` up, then its SSH script waits for the droplet's cloud-init
+to finish, logs in to the registry with the run's own `GITHUB_TOKEN` (no stored
+registry token exists anywhere), and **hands over rather than replacing**
+([ADR 0023](adr/0023-games-outlive-the-process.md)): `handover.sh` pulls the new
+tag for the stopped colour, **asserts the image is present** with
+`docker image inspect` (a pull that "succeeded" without the image is a failure
+mode worth refusing), starts it, waits for its healthcheck, reloads Caddy, and
+only then stops the live colour. A probe polls the site through the droplet's
+own Caddy under the public name for the whole handover, and a single poll that
+did not answer fails the deploy. Finally the job curls `/health` on the public
+domain rather than the droplet's address, which proves DNS and TLS as well as
+the app.
 
 ### Release
 

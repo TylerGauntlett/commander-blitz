@@ -1,9 +1,13 @@
-# Runs on the droplet, not here. The deploy job copies this file and the
-# Caddyfile to /opt/automtg/ and writes a sibling .env holding IMAGE_TAG, so
-# both stay in version control and the tag stays a per-deploy value.
+# Runs on the droplet, not here. The deploy job copies this file, the
+# Caddyfile and scripts/handover.sh to /opt/automtg/, and the script writes a
+# sibling .env holding each colour's tag and which colour is live, so all three
+# stay in version control and the tags stay per-deploy values.
 #
-# Rollback is therefore: edit IMAGE_TAG in /opt/automtg/.env to an older
-# sha-<commit> and re-run `docker compose up -d`. See docs/deployment.md.
+# Two copies of the app, web_blue and web_green, and only one runs between
+# deploys. A deploy starts the stopped colour on the new tag, waits for it to be
+# healthy, and stops the other; Caddy sends every request to whichever is up
+# (ADR 0023). Rollback is starting the stopped colour again, which still has
+# the previous image: see docs/deployment.md.
 
 services:
   # The only service bound to a host port. Terminates TLS for
@@ -21,20 +25,36 @@ services:
       # re-issues on every restart and runs into Let's Encrypt's rate limit.
       - caddy_data:/data
       - caddy_config:/config
-    depends_on:
-      - web
+    # No depends_on: it would start both colours with Caddy. Caddy retries an
+    # upstream that is not there yet, so the order does not matter.
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
 
-  web:
-    image: ghcr.io/tylergauntlett/commander-blitz:${IMAGE_TAG:?set IMAGE_TAG in /opt/automtg/.env}
+  web_blue: &web
+    image: ghcr.io/tylergauntlett/commander-blitz:${BLUE_TAG:-latest}
     restart: unless-stopped
     expose:
-      # Reachable only on the compose network, as web:8000. Caddy is the edge.
+      # Reachable only on the compose network, as web_blue:8000 and
+      # web_green:8000. Caddy is the edge.
       - "8000"
+    healthcheck:
+      # The image's own check, on the clock a deploy waits on: the handover
+      # stops the old colour only once this says the new one is healthy.
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()
+      interval: 3s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    # Long enough for a long poll (MAX_POLL_SECONDS) to finish on the old colour
+    # while the new one takes the next request.
+    stop_grace_period: 30s
     volumes:
       # One volume, holding exactly what is written at runtime: imported decks
       # and their cards, plus the art the store lazily fetches from Scryfall
@@ -51,6 +71,10 @@ services:
       # The old `automtg_art` volume is left behind as an orphan on any droplet
       # that predates this; `docker volume rm automtg_art` reclaims its ~63MB
       # once the new image is up. Nothing reads it.
+      #
+      # Both colours mount it: it also holds every game and pod in progress
+      # (`data/generated/sessions`, ADR 0023), which is how the colour that
+      # takes over picks up the games the other one dealt.
       - generated:/app/data/generated
     logging:
       # Uncapped json-file logging is the classic way to fill a droplet's disk.
@@ -58,6 +82,10 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  web_green:
+    <<: *web
+    image: ghcr.io/tylergauntlett/commander-blitz:${GREEN_TAG:-latest}
 
 volumes:
   generated:

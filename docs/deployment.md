@@ -39,16 +39,20 @@ public, and the compose file at the root is the whole runtime:
 mkdir commanderblitz && cd commanderblitz
 curl -fsSLO https://raw.githubusercontent.com/TylerGauntlett/commander-blitz/main/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/TylerGauntlett/commander-blitz/main/Caddyfile
-echo "IMAGE_TAG=latest" > .env
+echo "BLUE_TAG=latest" > .env
 # Edit the Caddyfile: replace commanderblitz.com with your own name, or with
 # `:80` for plain HTTP on a LAN.
-docker compose up -d
+docker compose up -d caddy web_blue
 ```
 
 Caddy terminates TLS for whatever name the Caddyfile holds and proxies to the app
 on the compose network; the app itself listens on 8000 and knows nothing about
-TLS or the host name. One named volume, `generated`, holds everything written at
-runtime (imported decks and their art). Building the image yourself is
+TLS or the host name. The compose file defines the app twice, `web_blue` and
+`web_green`, so the hosted site can hand over between them; a self-hosted box
+needs only one, so name it: `docker compose up -d caddy web_blue`, and
+`scripts/handover.sh <tag>` when you want a deploy that keeps games. One named
+volume, `generated`, holds everything written at runtime (imported decks, their
+art, and the games and pods in progress). Building the image yourself is
 `docker build -t commanderblitz .` at the repository root.
 
 ## The hosted site
@@ -139,18 +143,21 @@ ssh admin@<ip>
 cd /opt/automtg
 docker compose ps
 docker compose logs -f --tail=100
-cat .env                     # the SHA currently deployed
+cat .env                     # each colour's SHA, and which one is LIVE
 ```
 
-**Rolling back.** The live version is one line in `/opt/automtg/.env`, and every
-deploy leaves an immutable `sha-<commit>` tag in GHCR.
+**Rolling back.** Between deploys one colour runs and the other is stopped on
+the previous image, so going back one deploy is a handover to the colour that is
+already there; anything older is a handover to its tag. Either way it keeps the
+games, as a deploy does, and every deploy leaves an immutable `sha-<commit>` tag
+in GHCR.
 
 ```bash
 ssh deploy@<ip>
 cd /opt/automtg
+cat .env                                                                   # LIVE, and both tags
 docker images ghcr.io/tylergauntlett/commander-blitz --format '{{.Tag}}'   # what is cached
-echo "IMAGE_TAG=sha-abc1234" > .env                                        # pick one of those
-docker compose up -d
+bash scripts/handover.sh sha-abc1234                                       # the previous one, or any of those
 ```
 
 Confirm with `curl https://commanderblitz.com/health`. The image is public, so a tag
@@ -162,7 +169,8 @@ gone from the registry too, re-run the pipeline at that commit:
 ### HTTPS
 
 A [`caddy`](../Caddyfile) sidecar is the only container bound to a host port; it
-terminates TLS and reverse-proxies to `web:8000` on the compose network. Renewal
+terminates TLS and reverse-proxies to `web_blue:8000` or `web_green:8000` on the
+compose network, whichever is up (`lb_policy first`). Renewal
 is automatic and there is no cron job: Caddy renews at roughly 30 days remaining
 and reloads without dropping connections. Three things make that work, and each
 is a way to break it:

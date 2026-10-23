@@ -85,7 +85,7 @@ uvicorn commanderblitz.server.app:get_app --factory --reload
 cd frontend && npm install && npm run dev        # then open http://localhost:5173
 ```
 
-Or the whole thing in one container: `docker compose up` (see
+Or the whole thing in one container: `docker compose up caddy web_blue` (see
 [docs/deployment.md](docs/deployment.md#self-hosting)).
 
 **Over a LAN**, bind both servers to the network instead of loopback and everybody

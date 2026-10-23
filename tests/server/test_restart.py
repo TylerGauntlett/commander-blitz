@@ -267,3 +267,34 @@ class TestWaiters:
         waiter.join(timeout=5)
         assert returned.is_set() and time.monotonic() - started < 5
         assert fresh is not held and fresh.version > since
+
+
+class TestTheHandoverShape:
+    """ADR 0023's deploy, as the files the droplet runs state it.
+
+    Nothing in Python can watch a handover; these hold the shape it depends on,
+    so a later edit cannot quietly put back a single service the deploy has to
+    stop before it can start the next one.
+    """
+
+    ROOT = __import__("pathlib").Path(__file__).resolve().parents[2]
+
+    def test_two_colours_share_the_volume_the_games_are_on(self):
+        compose = (self.ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+        assert "  web_blue: &web\n" in compose
+        assert "  web_green:\n    <<: *web\n" in compose
+        assert "\n  web:\n" not in compose
+        assert "- generated:/app/data/generated" in compose
+        assert "healthcheck:" in compose
+
+    def test_caddy_sends_each_request_to_one_colour(self):
+        caddyfile = (self.ROOT / "Caddyfile").read_text(encoding="utf-8")
+        assert "reverse_proxy web_blue:8000 web_green:8000 {" in caddyfile
+        assert "lb_policy first" in caddyfile
+        assert "lb_try_duration" in caddyfile
+        assert "health_uri /health" in caddyfile
+
+    def test_the_deploy_hands_over_rather_than_replacing(self):
+        workflow = (self.ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
+        assert "scripts/handover.sh" in workflow
+        assert "docker compose up -d --remove-orphans" not in workflow
