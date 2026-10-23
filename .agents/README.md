@@ -15,7 +15,8 @@
   with effort, impact, dependencies and a gate, that the backlog can rank.
 - `/extend-roadmap` takes the next ready item off that backlog, or a named
   one, and delivers it end to end: the ADR first where asked, the change, the
-  gate, `verify.py`, the item retired, and the pull request.
+  gate, `verify.py`, the item retired, and the pull request, which it then
+  watches and fixes until CI is green.
 
 Cursor reads `.agents/skills/` directly. Claude Code reads `.claude/skills/`, so
 each entry there is a symlink to its twin here. On Windows that needs

@@ -1,6 +1,6 @@
 ---
 name: extend-roadmap
-description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — brief the person on what the item is and what the run will build, then ask the architecture questions the item leaves open before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, and open the pull request with /create-pr. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
+description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — brief the person on what the item is and what the run will build, then ask the architecture questions the item leaves open before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, open the pull request with /create-pr, then watch it and fix every CI failure and review ask until it is green and mergeable, without being asked. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
 ---
 
 # Delivering a feature
@@ -11,8 +11,9 @@ the backlog is worked in the order its own properties impose rather than the
 order somebody remembers it in.
 
 **One item per run, one pull request per item**, phased commits inside it when
-the item is large. The deliverable is a merge-ready pull request whose gate is
-the one the item named, and a backlog that no longer lists the item.
+the item is large. The deliverable is a pull request that is green and
+mergeable, whose gate is the one the item named, and a backlog that no longer
+lists the item. Opening the pull request is not the end of the run: §9 is.
 
 ## Invocation
 
@@ -227,8 +228,49 @@ releases ([ADR 0010](../../../docs/adr/0010-release-every-main-build.md)):
 an item a player gets is `feat`, and a `docs:` title over code is the one
 failure to avoid. The body's summary names the roadmap item by id and says
 what the queue now has at its top; its details block carries the
-`verify.py` result. Then watch CI to green and address review, as that skill
-and the repository's PR rules expect.
+`verify.py` result. Then go straight on to §9; nobody has to ask.
+
+## 9 · Drive the pull request to green
+
+A pull request this skill opened is the run's to finish. Watching it is the
+default, not a favour the person has to request, and it ends only when the
+pull request is green and mergeable, is merged or closed, or the person says
+stop.
+
+**Watch it.** Subscribe to the pull request's activity where the harness can
+(Claude Code on the web has `subscribe_pr_activity`, which delivers CI results
+and review comments as events), and arm one safety-net check-in for the gaps
+events miss: merge conflicts, other people's pushes, a lost delivery. Without
+a subscription, `gh pr checks <n> --watch` is the loop. Never poll with
+`sleep`.
+
+**Every red check is work now**, in this order:
+
+1. **Read the failing job's log** to the first error, not the summary line.
+2. **Is it this pull request's?** A job that died before any test body ran
+   (checkout, dependency install, a runner lost or timed out in setup), or a
+   check that is red on `main` too, is not. Say so once on the pull request,
+   naming the check and why, then re-run it once: the re-run, or the next push
+   if one is coming anyway. A second failure is real. Where a fix for it
+   already exists elsewhere, port it into this branch rather than waiting on it.
+3. **Otherwise root-cause it.** "Flake" is not a cause. Reproduce it with the
+   stage that failed (`python scripts/verify.py --only <group>`, or the one
+   test), fix it at the cause, show the same check passing, run the fast
+   checks, and push. A failure in code the item did not touch is still fixed
+   here when it blocks the pull request, as the smallest change that does; one
+   that does not block it is a new item, through `/plan-feature`.
+4. **One validated push beats three speculative ones**: re-read the diff for
+   what CI would reject before pushing.
+
+**Review is the same loop.** A reviewer's small, local ask (a rename, a nit, an
+added test) is implemented and pushed; a larger one gets a proposal on its
+thread, and the decision is the person's. A bot finding is verified before it
+is acted on. Resolve the threads you addressed.
+
+**Then say so once**: green and waiting on reviewers, or exactly what blocks it
+and what is needed. Re-arm the check-in silently while nothing changes; stop
+after a few quiet ones in a row, and tell the person the next event brings the
+run back.
 
 ## Hard rules
 
@@ -243,3 +285,7 @@ and the repository's PR rules expect.
 5. **Everything the other skills forbid stays forbidden**: only `--collect`
    writes cards, one capability per `/extend-dsl` run, never push to a
    branch you did not create, never merge.
+6. **Never leave the pull request red.** A run ends on a green, mergeable pull
+   request or on a stated blocker, never on an unread failure. Never skip,
+   weaken or quarantine a test, push an empty commit, or close and reopen the
+   pull request to get CI to pass.
