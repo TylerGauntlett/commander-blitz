@@ -404,6 +404,14 @@ vendored SVGs under `public/symbols/`, drawn by `ManaSymbol` on every surface th
 notation; a code with no SVG falls back to a disc and `e2e/cycle3.spec.ts` fails the run
 if any does.
 
+**An update is said, never applied.** `UpdateBanner` is the one line the app says
+about itself: on the desktop when the shell has an update, on the site when
+`GET /api/config` (polled every `CONFIG_REFRESH_MS`) answers with a version this page
+did not load (`logic/siteUpdate.ts`). A deploy keeps every game
+([ADR 0023](adr/0023-games-outlive-the-process.md)), so the site's Reload is safe at the
+table and is still the player's to press: an automatic reload could land in the middle
+of a choice the client is holding.
+
 **Identical permanents stack** (`logic/stacking.ts`). `stackKey` includes everything that
 makes two permanents behave differently — tapped, damage, counters, sickness, attacking,
 blocking, attachment, commander-ness, controller — so an untapped Forest never hides

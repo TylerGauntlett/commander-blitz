@@ -1,27 +1,34 @@
 /**
- * "Update ready — Restart", the desktop's one line about itself.
+ * "Update ready", the one line the app says about itself.
  *
- * The shell downloads updates on its own and says so through the bridge; this
- * is the only place the player hears about it. Two kinds, told apart by
- * `appliesOnQuit`:
+ * On the **desktop** the shell downloads updates on its own and says so
+ * through the bridge. Two kinds, told apart by `appliesOnQuit`:
  *
  * - A **content** update (the engine, the client, the cards) is applied in
  *   place: the shell stops its server, swaps the content, starts it again and
- *   reloads this page. The Restart button does that -- but NEVER MID-GAME.
- *   Games live only in the server's memory, so a restart at the table is a
- *   lost game, and the button waits at the door instead.
+ *   reloads this page. The Restart button does that -- but NEVER MID-GAME. A
+ *   restart at the table pulls the player out of the game, so the button waits
+ *   at the door instead.
  * - A **shell** update (Electron itself, rare) installs when the app quits and
  *   never restarts anything. There is nothing to press, only something to
  *   know.
  *
- * Renders nothing on the site, and nothing on the desktop until an update has
- * actually arrived. Like Chrome's: it waits, and it never interrupts.
+ * On the **site** a deploy hands over to the new build without dropping a game
+ * (ADR 0023), and what is left is this page running the old client. The banner
+ * says so once `/api/config` answers with a version this page did not load,
+ * and Reload is the player's to press: an automatic one could land in the
+ * middle of a choice the client is still holding, so it never happens on its
+ * own. At the table the line says the game carries over, because it does.
+ *
+ * Renders nothing until there is an update to talk about. Like Chrome's: it
+ * waits, and it never interrupts.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMatch } from "react-router";
 import type { UpdateReady } from "../../desktop/bridge";
 import { bridge } from "../../desktop/bridge";
+import { siteUpdate } from "../../logic/siteUpdate";
 import { useAppConfig } from "../../state/useAppConfig";
 
 export function UpdateBanner() {
@@ -29,8 +36,14 @@ export function UpdateBanner() {
   const [update, setUpdate] = useState<UpdateReady | null>(null);
   const [restarting, setRestarting] = useState(false);
   const atTheTable = useMatch("/games/:gameId") !== null;
+  // The first version the server answered with is the build this page loaded.
+  const loaded = useRef("");
+  if (!loaded.current && config.app_version) loaded.current = config.app_version;
 
   useEffect(() => bridge()?.onUpdate(setUpdate), []);
+
+  const live = siteUpdate(loaded.current, config);
+  if (live) return <SiteUpdate version={live} atTheTable={atTheTable} />;
 
   if (config.mode !== "desktop" || !update) return null;
 
@@ -63,6 +76,27 @@ export function UpdateBanner() {
           {restarting ? "Restarting…" : "Restart"}
         </button>
       )}
+    </div>
+  );
+}
+
+/** The site moved on; a reload picks the new client up. */
+function SiteUpdate({ version, atTheTable }: { version: string; atTheTable: boolean }) {
+  return (
+    <div className="toast toast--update" data-testid="update-banner" role="status">
+      {atTheTable ? (
+        <span>Version {version} is live — reload when you like; this game carries over.</span>
+      ) : (
+        <span>Version {version} is live.</span>
+      )}
+      <button
+        type="button"
+        className="toast__act"
+        data-testid="update-reload"
+        onClick={() => window.location.reload()}
+      >
+        Reload
+      </button>
     </div>
   );
 }

@@ -68,10 +68,12 @@ side that writes a file after the new side loaded the game is picked up by the
 newer-file reload, and a long poll parked on the old side times out and is
 retried on the new one.
 
-**The hosted client is told.** When the app version it reads from
-`GET /api/config` moves, the client shows the same `UpdateBanner` line the
-desktop updater draws and reloads once no decision is pending, so a player is
-not pulled out of a choice.
+**The hosted client is told, and the reload is the player's.** When the app
+version it polls from `GET /api/config` moves, the client shows the same
+`UpdateBanner` line the desktop updater draws, with a Reload button. It never
+reloads on its own: the game would survive it, but a choice the client is still
+holding (attackers half picked, a set of cards staged) would not, and only the
+player knows whether one is.
 
 ## Consequences
 
@@ -110,6 +112,9 @@ not pulled out of a choice.
 - **Preloading every game at boot.** The new side would load before the old
   side stopped writing and serve a game a few actions behind. Loading on the
   first request after the switch reads the file as the old side left it.
+- **Reloading automatically once no decision is pending.** The item proposed
+  it; the client cannot see a half-made choice from the game state alone, and
+  a page that reloads under the player is the interruption this avoids.
 - **A third-party rollout plugin.** One more thing to install on the droplet
   and keep current, for what two services and Caddy's `first` policy already
   do.
