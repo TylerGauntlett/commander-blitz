@@ -8,7 +8,7 @@ with two things answered here instead of by a third party:
 * **Moxfield** is the trimmed fixture deck (``tests/data/moxfield_deck.json``)
   for any link, so the site's import runs end to end and never leaves the
   machine.
-* **``/art``** is a tiny JPEG for any file name, counted, so a test can say
+* **``/art``** is one committed illustration for any file name, counted, so a test can say
   exactly what the Deck fetched and that it fetched nothing twice.
 
 And a switch, under ``/__stub``, that a test flips over HTTP:
@@ -39,8 +39,10 @@ from pathlib import Path
 
 PAYLOAD = Path(__file__).resolve().parents[1] / "data" / "moxfield_deck.json"
 
-#: The smallest file a browser will take as a JPEG.
-JPEG = b"\xff\xd8\xff\xd9"
+#: What every ``/art`` request is answered with: a real illustration the
+#: repository owns, so a browser draws it rather than the no-art plate a
+#: byte string shaped like a JPEG would leave it with.
+ILLUSTRATION = next((Path(__file__).resolve().parents[2] / "data" / "art").glob("*.jpg"))
 
 
 class StubSite:
@@ -54,6 +56,7 @@ class StubSite:
         self.offline_hits = 0
         #: Art asked for while switched off: what a board went looking for.
         self.offline_art: list[str] = []
+        self.illustration = ILLUSTRATION.read_bytes()
 
     async def __call__(self, scope, receive, send) -> None:
         if scope["type"] != "http":
@@ -76,7 +79,7 @@ class StubSite:
                 await _respond(send, 503, b"held", "text/plain")
                 return
             self.art.append(path.removeprefix("/art/"))
-            await _respond(send, 200, JPEG, "image/jpeg")
+            await _respond(send, 200, self.illustration, "image/jpeg")
         else:
             await self.app(scope, receive, send)
 

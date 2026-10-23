@@ -175,6 +175,26 @@ class TestDownloadsRunInParallel:
         assert len(calls) == 1 and UUIDS[0] in store._missing
 
 
+class TestADeckThatChoseTheCatalogsPrinting:
+    """A deck naming the printing the catalog already shows is served with no
+    ``?p``, so the card's own art must answer from the file its prefetch
+    wrote under the printing's name -- offline, with nothing left to fetch."""
+
+    def test_the_prefetched_file_serves_the_card(self, tmp_path, monkeypatch):
+        images = {"bear": CardArt(card_id="bear", scryfall_id=CHOSEN, artist="A")}
+        store, calls = counting_store(tmp_path, monkeypatch, images=images)
+        assert store.url_for("bear", printing=CHOSEN) == "/art/bear.jpg"
+
+        report = store.prefetch([("bear", CHOSEN)])
+        assert report.fetched == 1 and len(calls) == 1
+        assert store.missing([("bear", CHOSEN)]) == []
+
+        store.allow_fetch = False  # offline
+        assert store.resolve("bear") == tmp_path / "cache" / f"{CHOSEN}.jpg"
+        assert store.missing([("bear", None)]) == []
+        assert len(calls) == 1
+
+
 class TestTheImportRoute:
     @pytest.fixture
     def downloads(self, monkeypatch):

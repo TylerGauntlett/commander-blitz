@@ -316,8 +316,26 @@ class ArtStore:
         path = self.path_for(card_id)
         if path.is_file():
             return path
+        shared = self._shared(card_id)
+        if shared is not None:
+            return shared
         face = self._face_for(card_id)
         return self._fill(card_id, path, lambda: self._remotes(*face) if face else [])
+
+    def _shared(self, card_id: str) -> Path | None:
+        """The card's own face, already cached under its printing's name.
+
+        A deck that chose the very printing the catalog shows is served
+        without ``?p`` (``url_for`` drops it), but its prefetch fetched that
+        printing by name.  Without this the file is on disk and the board asks
+        for it under the card's name, finds nothing, and draws a blank plate
+        offline -- while ``missing`` says the deck is complete.
+        """
+        face = self._face_for(card_id)
+        if face is None:
+            return None
+        path = self._printing_path(face[0], back=face[1])
+        return path if path.is_file() else None
 
     def _resolve_printing(self, card_id: str, printing: str) -> Path | None:
         """The deck's illustration, or ``None`` to fall back to the card's own."""
@@ -434,7 +452,7 @@ class ArtStore:
             back = bool((art := self.images.get(card_id)) and art.back)
             if self.committed(printing, back) or self._printing_path(printing, back=back).is_file():
                 return True
-        return self.path_for(card_id).is_file()
+        return self.path_for(card_id).is_file() or self._shared(card_id) is not None
 
     def _download(self, url: str, path: Path) -> bool:
         request = urllib.request.Request(url, headers=HEADERS)
