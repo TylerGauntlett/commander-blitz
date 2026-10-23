@@ -43,7 +43,7 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [Imports complete on the device](#imports-complete-on-the-device) | M | high | nothing | 0 |
+| [Imports complete on the device](#imports-complete-on-the-device) | M | high | nothing | 1 |
 | [One staged set](#one-staged-set) | M | high | nothing | 0 |
 | [Zero-downtime deployments](#zero-downtime-deployments) | L | high | nothing | 4 |
 | [The real precons](#the-real-precons) | L | high | nothing | 3 |
@@ -60,6 +60,7 @@ generated from them.
 | [Replays and sharing](#replays-and-sharing) | M | medium | Zero-downtime deployments | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | The real precons | 0 |
+| [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | Imports complete on the device | 0 |
 | [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing | 0 |
 | [A queue](#a-queue) | L | medium | Zero-downtime deployments, CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
@@ -97,6 +98,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — [Zero-downtime deployments](#zero-downtime-deployments)
 - [Replays and sharing](#replays-and-sharing) — [Zero-downtime deployments](#zero-downtime-deployments)
 - [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — [The real precons](#the-real-precons)
+- [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — [Imports complete on the device](#imports-complete-on-the-device)
 - [A queue](#a-queue) — [Zero-downtime deployments](#zero-downtime-deployments), [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
 ## Operating the site
@@ -846,62 +848,79 @@ resolve the same way as the equivalent Moxfield list.
 
 ### Imports complete on the device
 
-Effort **M** · Impact **high**, a deck imported on a Deck plays offline later exactly as it played online, which is the whole offline promise for anything not on the shelf · Depends on nothing.
+Effort **M** · Impact **high**, a deck imported on a Deck plays offline later exactly as it played online, which is the whole offline promise for anything not on the shelf · Depends on nothing · ADR first.
 
 #### Today
 
-An import on the Deck fetches the list from Moxfield itself,
-reconciles it against the sidecar's own catalog, and with eager art
-prefetches every printing from Scryfall ([steamdeck.md](steamdeck.md#offline-and-online)).
-That is two third parties that both have to be up, a rate limit paid per
-device, and no record of whether the prefetch finished: an import
-interrupted at the eightieth card is a deck that plays with twenty blank
-plates the next time the Deck is offline, and nothing says so. The rules an
-imported card gets are whatever the Deck's content version can say, which
-may be less than the site says for the same card.
+An import on the Deck fetches the list from Moxfield itself
+(`moxfield.load` inside the sidecar's `POST /api/decks/import`), reconciles
+it against the sidecar's own catalog (`importer.import_deck`), and with
+`COMMANDERBLITZ_EAGER_ART` prefetches every printing the deck names
+(`ArtStore.prefetch`, [steamdeck.md](steamdeck.md#offline-and-online)).
+Since [ADR 0021](adr/0021-art-store-is-committed.md) that prefetch asks
+the site's `/art` store first and Scryfall second, so the art half already
+goes through the site; the list does not. The response's `art_prefetch` is a
+count, and nothing is recorded anywhere: an import interrupted at the
+eightieth card is a deck that plays with twenty blank plates the next time
+the Deck is offline, and nothing says so. The rules an imported card gets are
+whatever the Deck's content version can say, which may be less than the site
+says for the same card.
 
 #### The change
 
-The Deck talks to one origin, and an import is not done
-until it would play the same with the network unplugged.
+An import on the Deck asks the site first, and is not done
+until it would play the same with the network unplugged. Decided when the
+item was taken up: the Scryfall fallback behind the site's store stays
+([ADR 0021](adr/0021-art-store-is-committed.md) rejected a Deck that can
+only ask the site); the illustration is the site's `art_crop` as served, and
+a device encoding stays with
+[deck-compressed-art](deck-compressed-art.md); a Moxfield import still works
+when the site does not answer; and a deck imported on the site following its
+owner to the Deck is its own item,
+[site-decks-follow](site-decks-follow.md).
 
 - **The import goes through the site.** The sidecar sends the Moxfield link
-  to the hosted server's import route, which does what it does today, and
-  asks back for a bundle: the deck file with its printings, and the card
-  definitions behind it, so that a card the site has authored since the
-  Deck's last content update arrives as data rather than as a proxy. A
-  definition the Deck's loader refuses, because its vocabulary is newer than
-  the Deck's engine, becomes a proxy with a note, exactly as an unsupported
-  card does now, and resolves on the next content update. Moxfield is still
-  the source of the list; the Deck simply never speaks to it directly, so
-  the site's catalog and the Deck's agree on what every card *is*.
-- **Every illustration comes from the site's store**, at the device
-  encoding, through the same `/art` path the browser uses, into the Deck's
-  own generated directory beside the deck. One throttled crawl on the site
-  serves every device, and a printing the backfill has not reached is the
-  site's lazy fill to fetch, never the Deck's.
-- **Complete means complete.** The import response already carries
-  `art_prefetch`; it becomes a verdict rather than a count. A deck whose art
-  is all on disk is marked complete in its file and plays offline. One that
-  is not says so on its tile and in the dossier, and a resumable job keyed
-  by deck finishes it on the next launch with a connection, before the door
-  is shown, the way the hand-off to the site imports decks before showing
-  the door today. Nothing is ever fetched twice, and a deck already
-  complete costs the next launch nothing.
-- **The same path, both ways.** A deck imported on the site follows its
-  owner to the Deck through the same bundle, which closes the "a deck
-  imported on the site does not come back" consequence recorded in
-  [ADR 0009](adr/0009-offline-first-desktop.md). Pods with friends stay on
-  the site, as that ADR decided; this item is about what is on the device
-  when there is no connection.
+  to the hosted server's import route under its own library id, then asks a
+  new route, `GET /api/decks/{deck_id}/bundle`, for the deck file with its
+  printings and the definitions of every card it names, with the faces and
+  tokens they reach. A card the Deck already has is its own; a definition
+  it lacks is taken as data, so a card the site has authored since the
+  Deck's last content update arrives with its rules rather than as a proxy.
+  A definition the Deck's loader refuses, because its vocabulary is newer
+  than the Deck's engine, becomes a local proxy with a note and resolves on
+  the next content update, where the authored layer wins over it
+  (`CardRegistry.extended_with`).
+- **The site not answering is not a failure.** A transport error or a
+  server error from the site falls back to today's path, Moxfield read by
+  the sidecar itself; a refusal the site gives with a code (a private deck,
+  a missing one, an illegal list) is the answer, because Moxfield would give
+  the same one.
+- **Complete means complete.** The deck file carries `complete`, written
+  `false` before the art is fetched and `true` once every illustration the
+  deck can have is on disk; a card with no printing anywhere is not
+  missing. `art_prefetch` becomes the verdict, with what is still missing.
+  A deck that is not complete says so on its tile and in the dossier.
+  `POST /api/decks/complete` finishes every incomplete deck, retrying what
+  an earlier attempt could not reach, and the desktop door calls it before
+  showing itself whenever the site is reachable, the way the hand-off to the
+  site imports decks before showing the door today. Nothing on disk is
+  fetched twice, and a launch with every deck complete costs nothing.
+
+It deliberately does not change what the site stores, add an encoding, or
+make the site's own imports reach the Deck.
 
 #### Gate
 
-The desktop entry point's tests run an import against a stub site
-with the network otherwise refused, assert every file the deck names is on
-disk and the deck is marked complete, then interrupt a second import
-halfway, relaunch, and assert it finishes. The sidecar spec in the e2e
-matrix plays a full game on the imported deck offline.
+The desktop entry point's tests run an import against a stub
+site, the real hosted app with Moxfield answered from the fixture, with every
+other host refused, and assert every file the deck names is on disk and the
+deck is marked complete; then interrupt a second import halfway by stopping
+the process, relaunch, and assert `POST /api/decks/complete` finishes it
+without fetching anything twice. Server tests hold the bundle route, the
+fall-back to Moxfield, and a definition the loader refuses becoming a proxy.
+The sidecar spec in the e2e matrix imports through the same stub, turns the
+stub off, and plays a full game on the imported deck with nothing off the
+device. A story shows an incomplete deck's tile and dossier.
 
 ### Compressed art, shipped for offline precon play
 
@@ -957,6 +976,51 @@ release workflow, in the spirit of
 would push the asset over its budget fails the release rather than quietly
 doubling every Deck's download. The desktop updater's unit tests cover an
 art version that moved and one that did not.
+
+### Site imports follow their owner to the Deck
+
+Effort **M** · Impact **medium**, a deck imported on the site with friends is on the Deck the next time its owner plays alone · Depends on [Imports complete on the device](#imports-complete-on-the-device).
+
+#### Today
+
+A deck reaches the site from the Deck through the hand-off: the
+Online card carries the Moxfield ids of the decks imported at home
+(`onlineUrl` in `frontend/src/logic/desktop.ts`) and `HomeRoute`'s hand-off
+imports them before showing the door. Nothing goes the other way, which
+[ADR 0009](adr/0009-offline-first-desktop.md) records as a consequence:
+a deck imported on the site does not come back. The two ends do not even
+agree on who the owner is. A library is a random id each client mints into
+its own `localStorage` (`frontend/src/state/library.ts`), and the site's
+browser and the Deck's window are two clients with two ids, so the site has
+no way to know that a deck its browser library imported belongs to the
+player holding a given Deck.
+
+#### The change
+
+A deck imported on the site is on its owner's Deck after the
+next launch with a connection, complete, through the bundle
+[deck-complete-imports](deck-complete-imports.md) builds. That item is a real
+dependency: the bundle route, the adopt step and the `complete` verdict are
+what this item reuses unchanged.
+
+- **One library across the hand-off.** The Online hand-off carries the
+  Deck's library id, and the site's client adopts it for that browser
+  session rather than its own, so whatever the player imports there is
+  stamped with the Deck's id. A browser with a library of its own keeps it;
+  this changes only a window the Deck opened.
+- **The Deck asks what it is missing.** A route on the site lists the decks
+  a library owns with their Moxfield ids; at launch with a connection, the
+  same step that finishes incomplete decks adopts any the Deck lacks, through
+  the bundle, before the door.
+- It does not merge two libraries that already exist, or add accounts.
+
+#### Gate
+
+A server test lists a library's decks on the site and
+nobody else's. The desktop entry point's tests import a deck on a stub site
+under the Deck's library, relaunch the sidecar, and assert the deck is on
+disk and complete. A client test holds that a window opened by the hand-off
+adopts the Deck's library id and an ordinary browser keeps its own.
 
 ## Advanced CPUs
 
