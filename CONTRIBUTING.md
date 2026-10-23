@@ -109,7 +109,10 @@ effort, impact and dependencies, and rendered into
 - **`/plan-feature`** writes an item: what is true today, what would change,
   and the gate that would hold it, with the properties the queue ranks on.
 - **`/extend-roadmap`** takes the next ready item, or a named one, and
-  delivers it end to end, retiring the item in the same pull request.
+  delivers it end to end, retiring the item in the same pull request, then
+  watches the pull request and fixes what CI or review turns up until it is
+  green. By hand, that last part is `gh pr checks <n> --watch` and the
+  failing job's log.
 
 ## Pull requests
 

@@ -43,6 +43,10 @@ class TargetRef:
     def to_dict(self) -> dict[str, Any]:
         return {"kind": self.kind, "id": self.id}
 
+    @staticmethod
+    def from_dict(raw: Mapping[str, Any]) -> TargetRef:
+        return TargetRef(raw["kind"], int(raw["id"]))
+
 
 @dataclass
 class TempEffect:

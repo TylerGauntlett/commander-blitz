@@ -73,7 +73,7 @@ a card, never enough to decide legality.
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/health` | Version, card count, deck list, live game and pod counts, the catalog bundle and the art store's progress |
-| `GET` | `/api/config` | Which server this is: `mode` (`hosted` or `desktop`), whether the hosted server is reachable (`online`), `remote_origin`, and the app and content versions. The desktop build's client greys out what needs the other server on this answer, never on its origin |
+| `GET` | `/api/config` | Which server this is: `mode` (`hosted` or `desktop`), whether the hosted server is reachable (`online`), `remote_origin`, and the app and content versions. The desktop build's client greys out what needs the other server on this answer, never on its origin; the site's client polls it to notice a deploy and offer a reload |
 | `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags`, `source_id` — the Moxfield id an import came from, case intact — and `complete`, which the desktop build sets `false` while an import's art is not all on the device |
 | `GET` | `/api/decks/{deck_id}` | One deck with the dossier's fields: `ratings`, `strategy`, `signature`, and the derived `curve`/`lands`/`swaps` |
 | `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}`. The desktop build asks the site first and reads Moxfield itself only when the site does not answer; with `COMMANDERBLITZ_EAGER_ART=1` the response's `art_prefetch` is the verdict, `complete` and what is still `missing` ([ADR 0022](adr/0022-deck-imports-through-the-site.md)) |
@@ -300,9 +300,12 @@ Rationale and the alternatives in
 
 ## Sessions
 
-In-memory, single process. This is a LAN application; there is no database and no user
-model, and a `player_token` is a per-pod bearer credential, not an account. Restarting
-the server discards every game and every pod. Idle players, abandoned pods and
+Single process, cached in memory and, on the deployed site and the desktop, kept on
+disk as one file per game and per pod ([server.md](server.md#games-on-disk)). There is
+no database and no user model, and a `player_token` is a per-pod bearer credential, not
+an account. A restart keeps every game and pod whose file is still there: a game comes
+back at the version it had, so a long poll resumes and a stale action is still a 409. A
+server started without a sessions directory, as the tests build it, keeps nothing. Idle players, abandoned pods and
 abandoned game sessions are swept opportunistically when somebody creates or joins a
 pod, so there is no reaper thread to shut down cleanly.
 

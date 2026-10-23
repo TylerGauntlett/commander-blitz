@@ -5,7 +5,7 @@ area: play
 effort: M
 impact: medium
 why: every bug report becomes a tape and every CPU misplay becomes a training position
-depends_on: [zero-downtime-deploys]
+depends_on: []
 status: proposed
 ---
 

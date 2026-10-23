@@ -1,12 +1,15 @@
-"""In-memory game sessions.
+"""Game sessions.
 
-Single process, no auth, no database -- this is a local app.  A session owns one
-``Game``, the agents sitting in the AI seats, and the tape of actions applied so
-far (which is how undo works: replay from the seed minus the last human action).
+Single process, no auth, no database.  A session owns one ``Game``, the agents
+sitting in the AI seats, and the tape of actions applied so far (which is how
+undo works: replay from the seed minus the last human action).  Given a
+:class:`~.persist.JsonStore`, the registry also keeps each session on disk as
+that tape, so a game outlives the process that dealt it (ADR 0023).
 """
 
 from __future__ import annotations
 
+import logging
 import re
 import secrets
 import threading
@@ -14,6 +17,7 @@ import time
 import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from typing import Any
 
 from commanderblitz.ai.agents.base import Agent, agent_by_name
 from commanderblitz.cards.registry import GameData, default_registry
@@ -25,7 +29,10 @@ from commanderblitz.engine.legality import legal_actions
 from commanderblitz.engine.structs import TargetRef
 from commanderblitz.engine.targeting import target_refusal
 
+from .persist import JsonStore
 from .schemas import LegalActionDTO, SeatConfig
+
+log = logging.getLogger(__name__)
 
 #: How many AI decisions to resolve in one request before giving up.
 MAX_AI_STEPS = 20_000
@@ -42,6 +49,14 @@ MAX_POLL_SECONDS = 25.0
 _ACTION_ID_SHAPE = re.compile(
     r"a\d+-(?:{})".format("|".join(re.escape(kind.value) for kind in ActionKind))
 )
+
+
+class RestoreError(Exception):
+    """A session's tape does not replay to the end under this build.
+
+    Raised rather than restoring what did replay: a shortened game would rewind
+    a table that has already watched it move on (ADR 0023).
+    """
 
 
 class StaleActionError(IllegalActionError):
@@ -81,6 +96,25 @@ class TapeEntry:
     human: bool
     full_control: bool = False
     manual_mana: bool = False
+
+    def to_record(self) -> dict[str, Any]:
+        return {
+            "action": self.action.to_record(),
+            "seat": self.seat,
+            "human": self.human,
+            "full_control": self.full_control,
+            "manual_mana": self.manual_mana,
+        }
+
+    @staticmethod
+    def from_record(raw: dict[str, Any]) -> TapeEntry:
+        return TapeEntry(
+            Action.from_record(raw["action"]),
+            int(raw["seat"]),
+            bool(raw["human"]),
+            bool(raw.get("full_control", False)),
+            bool(raw.get("manual_mana", False)),
+        )
 
 
 @dataclass
@@ -131,9 +165,93 @@ class GameSession:
     #: underneath a reader.  Reentrant because the mutators nest (apply -> drive).
     _lock: threading.RLock = field(default_factory=threading.RLock, repr=False)
     _changed: threading.Condition = field(init=False, repr=False)
+    #: Where every ``_bump`` writes this session; ``None`` keeps it in memory.
+    store: JsonStore | None = field(default=None, repr=False)
+    #: ``st_mtime_ns`` of the last file this process wrote or read for it.  A
+    #: file with another stamp was written by somebody else.
+    _stamp: int | None = field(default=None, repr=False)
+    #: Set when the registry replaced this object with a newer copy read off
+    #: disk, so a long poll parked on it returns instead of waiting out its
+    #: timeout on a session nothing will ever bump again.
+    superseded: bool = False
 
     def __post_init__(self) -> None:
         self._changed = threading.Condition(self._lock)
+
+    # ------------------------------------------------------------------
+    # on disk
+    # ------------------------------------------------------------------
+
+    def to_record(self) -> dict[str, Any]:
+        """Everything a replay needs, and nothing a replay would recompute."""
+        with self._lock:
+            return {
+                "game_id": self.game_id,
+                "seats": [seat.model_dump() for seat in self.seats],
+                "seed": self.seed,
+                "max_turns": self.max_turns,
+                "tokens": dict(self.tokens),
+                "full_control": {str(k): v for k, v in self.full_control.items()},
+                "manual_mana": {str(k): v for k, v in self.manual_mana.items()},
+                "version": self.version,
+                "actions_version": self.actions_version,
+                "tape": [entry.to_record() for entry in self.tape],
+            }
+
+    @classmethod
+    def restore(cls, record: dict[str, Any], data: GameData) -> GameSession:
+        """Deal the recorded game again and replay every entry of its tape.
+
+        All or nothing: :class:`RestoreError` if any entry is not legal where it
+        falls, which is a build whose rules no longer agree with the one the
+        game was played under.  No AI is driven past the end of the tape --
+        a client animating the opponents one step at a time asks for the next.
+        """
+        try:
+            session = cls(
+                game_id=str(record["game_id"]),
+                seats=[SeatConfig(**seat) for seat in record["seats"]],
+                seed=int(record["seed"]),
+                data=data,
+                max_turns=record.get("max_turns"),
+                tokens={str(k): int(v) for k, v in record.get("tokens", {}).items()},
+                full_control={int(k): bool(v) for k, v in record["full_control"].items()},
+                manual_mana={int(k): bool(v) for k, v in record["manual_mana"].items()},
+            )
+            history = [TapeEntry.from_record(raw) for raw in record["tape"]]
+            version = int(record["version"])
+            actions_version = int(record["actions_version"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RestoreError(f"malformed record: {exc}") from exc
+        with session._lock:
+            try:
+                session._start_locked()
+            except (KeyError, ValueError) as exc:
+                # A deck deleted, or re-imported with a list that no longer deals.
+                raise RestoreError(f"cannot deal it again: {exc}") from exc
+            opening = len(session.tape)
+            if [e.action for e in session.tape] != [e.action for e in history[:opening]]:
+                raise RestoreError("the opening moves no longer replay")
+            if not session._replay_locked(history[opening:]):
+                raise RestoreError(
+                    f"the tape stops replaying at entry {len(session.tape)} of {len(history)}"
+                )
+            session._refresh_actions()
+            session._actions_dirty = False
+            session.version = version
+            session.actions_version = actions_version
+            session.last_seen = time.monotonic()
+        return session
+
+    def _persist(self) -> None:
+        """Write this session to its store.  Callers hold ``_lock``."""
+        if self.store is not None:
+            self._stamp = self.store.save(self.game_id, self.to_record())
+
+    def _supersede(self) -> None:
+        with self._lock:
+            self.superseded = True
+            self._changed.notify_all()
 
     # ------------------------------------------------------------------
 
@@ -168,6 +286,10 @@ class GameSession:
             self.actions_version = self.version
             self._actions_dirty = False
         self.last_seen = time.monotonic()
+        # After the counters move and before anybody is told: the file is what
+        # another process reads, and it must never be behind what a response
+        # from this one has shown (ADR 0023).
+        self._persist()
         self._changed.notify_all()
 
     def wait_for_change(self, since: int, timeout: float) -> int:
@@ -181,7 +303,8 @@ class GameSession:
             if since <= 0:
                 return self.version
             self._changed.wait_for(
-                lambda: self.version > since, timeout=min(timeout, MAX_POLL_SECONDS)
+                lambda: self.version > since or self.superseded,
+                timeout=min(timeout, MAX_POLL_SECONDS),
             )
             return self.version
 
@@ -553,35 +676,43 @@ class GameSession:
             self._start_locked()
             # start() already replayed the opening AI moves and re-recorded them,
             # so resume the tape from where it left off rather than re-applying.
-            history = history[len(self.tape) :]
-            for entry in history:
-                if self.game.over or self.game.pending() is None:
-                    break
-                # The stops setting decides which priority windows exist, so
-                # replay each action under the setting it was originally taken
-                # with.
-                if entry.seat in self.full_control:
-                    self.game.state.players[entry.seat].full_control = entry.full_control
-                if entry.seat in self.manual_mana:
-                    self.game.state.players[entry.seat].manual_mana = entry.manual_mana
-                match = next(
-                    (a for a in legal_actions(self.game.state) if a == entry.action), None
-                )
-                if match is None:
-                    # The replay diverged (it should not); stop rather than guess.
-                    break
-                self.game.apply(match)
-                self.tape.append(
-                    TapeEntry(
-                        match, entry.seat, entry.human, entry.full_control, entry.manual_mana
-                    )
-                )
-            for pid, value in self.full_control.items():
-                self.game.state.players[pid].full_control = value
-            for pid, value in self.manual_mana.items():
-                self.game.state.players[pid].manual_mana = value
+            self._replay_locked(history[len(self.tape) :])
             self.drive_ai()
             return True
+
+    def _replay_locked(self, history: Sequence[TapeEntry]) -> bool:
+        """Apply ``history`` onto the current game; whether all of it applied.
+
+        Shared by undo and by a restore from disk.  Each action is replayed
+        under the stops and mana settings it was taken with, because those
+        decide which windows and which actions exist; afterwards every seat is
+        put back on its current setting.  Callers hold ``_lock``.
+        """
+        complete = True
+        for entry in history:
+            if self.game.over or self.game.pending() is None:
+                complete = False
+                break
+            if entry.seat in self.full_control:
+                self.game.state.players[entry.seat].full_control = entry.full_control
+            if entry.seat in self.manual_mana:
+                self.game.state.players[entry.seat].manual_mana = entry.manual_mana
+            match = next(
+                (a for a in legal_actions(self.game.state) if a == entry.action), None
+            )
+            if match is None:
+                # The replay diverged; stop rather than guess.
+                complete = False
+                break
+            self.game.apply(match)
+            self.tape.append(
+                TapeEntry(match, entry.seat, entry.human, entry.full_control, entry.manual_mana)
+            )
+        for pid, value in self.full_control.items():
+            self.game.state.players[pid].full_control = value
+        for pid, value in self.manual_mana.items():
+            self.game.state.players[pid].manual_mana = value
+        return complete
 
 
 #: Upper bound on a generated seed.  Wide enough that two games never collide
@@ -607,13 +738,17 @@ SESSION_TTL_SECONDS = 2 * 60 * 60
 
 
 class SessionRegistry:
-    """All live sessions in this process."""
+    """All live sessions in this process, and on disk when given a store."""
 
-    def __init__(self, data: GameData | None = None) -> None:
+    def __init__(self, data: GameData | None = None, store: JsonStore | None = None) -> None:
         self.data = data if data is not None else default_registry()
+        self.store = store
         self._sessions: dict[str, GameSession] = {}
         #: ``_sessions`` is mutated from the request thread pool once pods exist.
         self._lock = threading.RLock()
+        #: Serialises restores, which replay a whole game, without holding
+        #: ``_lock`` -- and so every other game -- for the length of one.
+        self._loading = threading.Lock()
 
     def create(
         self,
@@ -631,6 +766,7 @@ class SessionRegistry:
             data=self.data,
             max_turns=max_turns,
             tokens=dict(tokens or {}),
+            store=self.store,
         )
         session.start()
         with self._lock:
@@ -638,14 +774,66 @@ class SessionRegistry:
         return session
 
     def get(self, game_id: str) -> GameSession:
-        try:
-            return self._sessions[game_id]
-        except KeyError:
-            raise KeyError(game_id) from None
+        """The session, read from disk when this process has none or an old one.
+
+        The memory copy is a cache of the file (ADR 0023): a miss loads it, and
+        a file another process has rewritten since replaces the copy here.
+        """
+        with self._lock:
+            session = self._sessions.get(game_id)
+        if self.store is None or (session is not None and self._current(session)):
+            if session is None:
+                raise KeyError(game_id)
+            return session
+        with self._loading:
+            with self._lock:
+                session = self._sessions.get(game_id)
+            if session is not None and self._current(session):
+                return session
+            loaded = self.store.load(game_id)
+            if loaded is None:
+                if session is None:
+                    raise KeyError(game_id)
+                return session
+            record, stamp = loaded
+            if session is not None and int(record.get("version", 0)) <= session.version:
+                # Not newer than what is here: this process's own write, seen
+                # between its save and its stamp.
+                session._stamp = stamp
+                return session
+            try:
+                fresh = GameSession.restore(record, self.data)
+            except RestoreError as exc:
+                log.warning("dropping game %s: %s", game_id, exc)
+                self.store.delete(game_id)
+                if session is not None:
+                    self._drop(game_id, session)
+                raise KeyError(game_id) from None
+            fresh.store = self.store
+            fresh._stamp = stamp
+            with self._lock:
+                self._sessions[game_id] = fresh
+            if session is not None:
+                session._supersede()
+            return fresh
+
+    def _current(self, session: GameSession) -> bool:
+        """Is the file on disk the one this process last wrote or read?"""
+        with session._lock:
+            stamp = self.store.stamp(session.game_id)
+            return stamp is None or stamp == session._stamp
+
+    def _drop(self, game_id: str, session: GameSession) -> None:
+        with self._lock:
+            if self._sessions.get(game_id) is session:
+                del self._sessions[game_id]
+        session._supersede()
 
     def delete(self, game_id: str) -> None:
         with self._lock:
             self._sessions.pop(game_id, None)
+        if self.store is not None:
+            self.store.delete(game_id)
 
     def sweep(self, *, now: float | None = None, ttl: float = SESSION_TTL_SECONDS) -> int:
         """Drop sessions nobody has touched in ``ttl`` seconds.
@@ -653,12 +841,22 @@ class SessionRegistry:
         Single-player leaked one session per abandoned tab and nobody noticed.
         A lobby invites four people to abandon the same process, so the pod
         registry calls this opportunistically rather than adding a reaper thread.
+
+        A file goes with its session only if nobody has written it since this
+        process did; one another process is still moving is not this one's to
+        delete.  Files no process holds age out by their modification time.
         """
         cutoff = (time.monotonic() if now is None else now) - ttl
         with self._lock:
-            dead = [gid for gid, s in self._sessions.items() if s.last_seen < cutoff]
-            for gid in dead:
+            dead = [(gid, s) for gid, s in self._sessions.items() if s.last_seen < cutoff]
+            for gid, _ in dead:
                 del self._sessions[gid]
+            held = set(self._sessions)
+        if self.store is not None:
+            for gid, session in dead:
+                if self.store.stamp(gid) == session._stamp:
+                    self.store.delete(gid)
+            self.store.sweep(ttl, keep=held)
         return len(dead)
 
     def __len__(self) -> int:

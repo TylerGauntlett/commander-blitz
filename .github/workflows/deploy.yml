@@ -628,9 +628,9 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Both ship with the repo rather than living only on the droplet, so a
-      # change to either is reviewed and versioned like anything else.
-      - name: Copy compose file and Caddyfile
+      # All three ship with the repo rather than living only on the droplet, so
+      # a change to any is reviewed and versioned like anything else.
+      - name: Copy compose file, Caddyfile and handover script
         uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.DROPLET_HOST }}
@@ -640,10 +640,10 @@ jobs:
           # commas, and a newline-separated block reaches it as one impossible
           # filename, which surfaces as "tar: Cowardly refusing to create an
           # empty archive" rather than as a missing-file error.
-          source: "docker-compose.yml,Caddyfile"
+          source: "docker-compose.yml,Caddyfile,scripts/handover.sh"
           target: /opt/automtg
 
-      - name: Pull and restart
+      - name: Hand over to the new image
         uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
@@ -672,58 +672,33 @@ jobs:
             [ -f /opt/automtg/.bootstrap-complete ] || { echo "bootstrap never completed"; exit 1; }
 
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            trap 'docker logout ghcr.io >/dev/null' EXIT
             cd /opt/automtg
-            # The single source of truth for what is running, and the thing you
-            # edit to roll back.
-            echo "IMAGE_TAG=$IMAGE_TAG" > .env
-            docker compose pull
 
-            # Assert the image is really here. This is the check that would have
-            # caught the silent pull failure, and it cannot itself pass vacuously.
-            docker image inspect "$IMAGE_NAME:$IMAGE_TAG" >/dev/null \
-              || { echo "pull reported success but $IMAGE_NAME:$IMAGE_TAG is not present"; exit 1; }
-
-            docker compose up -d --remove-orphans
-
-            # A bind-mounted file changing does not make compose recreate the
-            # container, so without this an edited Caddyfile would be copied up
-            # and then quietly ignored. `reload` is graceful -- no dropped
-            # connections -- and is redundant on a container that just started
-            # with the new file, which is exactly when it fails: the admin API
-            # it posts to is not listening for the first second or two.
-            reloaded=""
-            for _ in $(seq 1 10); do
-              if docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile; then
-                reloaded=yes
-                break
-              fi
-              sleep 2
-            done
-            [ -n "$reloaded" ] \
-              || echo "caddy reload never succeeded; the health check below is the real gate"
-
-            docker logout ghcr.io
-
-            # Same reasoning one level up: prove a container is actually running
-            # before handing off to the health check.
+            # Blue/green (ADR 0023): the stopped colour comes up on the new tag,
+            # the live one stops only once that is healthy, and .env records
+            # both tags and which is live. The script also asserts the image is
+            # really here after the pull -- a registry denial was once observed
+            # to leave `docker compose pull` exiting 0 -- and reloads Caddy,
+            # since a bind-mounted Caddyfile changing does not recreate it.
             #
-            # Captured into a variable rather than piped into `grep -q`, which
-            # is what the previous form did and why a successful deploy failed
-            # on its own proof: grep exits at the first match, `docker compose
-            # ps` takes SIGPIPE and exits 141, and `pipefail` reports the
-            # pipeline as failed. One container wrote too little to lose that
-            # race; two containers write enough to lose it most times.
+            # The probe polls the site through this machine's Caddy under the
+            # public name for the whole handover, and any poll that does not
+            # answer ok fails the deploy: this is the "no gap a poll can see".
+            IMAGE_NAME="$IMAGE_NAME" \
+              PROBE_URL="https://commanderblitz.com/health" \
+              PROBE_RESOLVE="commanderblitz.com:443:127.0.0.1" \
+              bash scripts/handover.sh "$IMAGE_TAG"
+
+            # Prove a container is actually running before handing off to the
+            # public health check.
             #
-            # Polled because compose can also answer empty for a second or two
-            # after `up -d` while the containers settle.
-            running=""
-            for _ in $(seq 1 15); do
-              running=$(docker compose ps --status running --quiet)
-              [ -n "$running" ] && break
-              sleep 2
-            done
+            # Captured into a variable rather than piped into `grep -q`: grep
+            # exits at the first match, `docker compose ps` takes SIGPIPE and
+            # exits 141, and `pipefail` reports the pipeline as failed.
+            running=$(docker compose ps --status running --quiet)
             [ -n "$running" ] \
-              || { echo "no running container after up -d"; docker compose logs --tail=50; exit 1; }
+              || { echo "no running container after the handover"; docker compose logs --tail=50; exit 1; }
 
       - name: Wait for health
         # The deploy is not "done" because the SSH step exited zero -- it is done

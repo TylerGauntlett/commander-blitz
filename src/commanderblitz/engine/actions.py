@@ -8,7 +8,7 @@ policy exercise identical rules code.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import Any
 
 from .enums import ActionKind, DecisionKind
@@ -289,6 +289,50 @@ class Action:
             "option_label": self.option_label,
             "pays": list(self.pays),
         }
+
+    def to_record(self) -> dict[str, Any]:
+        """Every field that is part of this action's identity, and nothing else.
+
+        ``to_dict`` is a view for the client and names only what it draws; this
+        is the lossless form a session's tape is written in (ADR 0023). It walks
+        the dataclass fields rather than listing them, so a flag added to
+        ``Action`` is recorded without anybody remembering to, and leaves out
+        the ``compare=False`` display fields, which a replay takes from legality.
+        A field still at its default is omitted, which keeps a tape small.
+        """
+        out: dict[str, Any] = {}
+        for spec in fields(self):
+            if not spec.compare:
+                continue
+            value = getattr(self, spec.name)
+            if value == spec.default:
+                continue
+            if spec.name == "kind":
+                value = value.value
+            elif spec.name == "targets":
+                value = [t.to_dict() for t in value]
+            elif isinstance(value, tuple):
+                value = list(value)
+            out[spec.name] = value
+        return out
+
+    @staticmethod
+    def from_record(raw: dict[str, Any]) -> Action:
+        """The inverse of :meth:`to_record`."""
+        known = {spec.name: spec for spec in fields(Action) if spec.compare}
+        values: dict[str, Any] = {}
+        for name, value in raw.items():
+            spec = known.get(name)
+            if spec is None:
+                raise ValueError(f"an action has no field {name!r}")
+            if name == "kind":
+                value = ActionKind(value)
+            elif name == "targets":
+                value = tuple(TargetRef.from_dict(t) for t in value)
+            elif isinstance(spec.default, tuple):
+                value = tuple(value)
+            values[name] = value
+        return Action(**values)
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"Action({self.label or self.kind.value})"

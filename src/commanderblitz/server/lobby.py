@@ -21,23 +21,31 @@ condition.  A client passes the version it last saw and the server blocks until
 the number moves or the poll ages out.  No sockets, no reconnection state
 machine, and every handler stays a plain sync ``def`` that ``TestClient`` can
 drive.  See ``docs/adr/0007-versioned-long-polling.md``.
+
+Given a store, every bump also writes the pod to disk, and the registry reads
+it back on a miss, so a lobby outlives the process the way a game does
+(``docs/adr/0023-games-outlive-the-process.md``).
 """
 
 from __future__ import annotations
 
+import logging
 import re
 import secrets
 import threading
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Literal
+from dataclasses import asdict, dataclass, field
+from typing import TYPE_CHECKING, Any, Literal
 
 from .deckinfo import deck_summary
+from .persist import JsonStore
 from .schemas import MAX_NAME_LENGTH, DeckSummary, PodSeatView, PodView, SeatConfig
 
 if TYPE_CHECKING:  # pragma: no cover
     from .sessions import GameSession, SessionRegistry
+
+log = logging.getLogger(__name__)
 
 #: Every pod has four chairs whether or not anybody sits in them, so the client
 #: can draw the empty ones rather than reflowing the hand as people arrive.
@@ -239,14 +247,90 @@ class Pod:
     decks: Callable[[str], DeckSummary | None] | None = None
     _lock: threading.RLock = field(default_factory=threading.RLock, repr=False)
     _changed: threading.Condition = field(init=False, repr=False)
+    #: Where every ``_bump`` writes this pod; ``None`` keeps it in memory.
+    store: JsonStore | None = field(default=None, repr=False)
+    #: ``st_mtime_ns`` of the last file this process wrote or read for it.
+    _stamp: int | None = field(default=None, repr=False)
+    #: Set when the registry replaced this object with a newer copy off disk.
+    superseded: bool = False
 
     def __post_init__(self) -> None:
         self._changed = threading.Condition(self._lock)
+
+    # -- on disk -----------------------------------------------------------
+
+    def to_record(self) -> dict[str, Any]:
+        """The pod, with its monotonic clocks turned into ages.
+
+        ``time.monotonic()`` means nothing to another process, so ``created``
+        and ``closed_at`` are written as how long ago they were, beside the
+        wall-clock moment of writing.  A player's ``last_seen`` is not written
+        at all: it moves on every poll, which is not a change worth a file, and
+        a restored player is given a fresh one (see :meth:`from_record`).
+        """
+        with self._lock:
+            now = time.monotonic()
+            return {
+                "code": self.code,
+                "host_id": self.host_id,
+                "written_at": time.time(),
+                "age": now - self.created,
+                "closed_for": None if self.closed_at is None else now - self.closed_at,
+                "seats": [asdict(seat) for seat in self.seats],
+                "players": [
+                    {"player_id": p.player_id, "token": p.token, "name": p.name, "seat": p.seat}
+                    for p in self.players.values()
+                ],
+                "version": self.version,
+                "status": self.status,
+                "game_id": self.game_id,
+                "seed": self.seed,
+            }
+
+    @classmethod
+    def from_record(cls, record: dict[str, Any]) -> Pod:
+        """The inverse of :meth:`to_record`.
+
+        Every player is stamped as seen now: whoever is still at the table polls
+        again within :data:`PLAYER_TTL_SECONDS`, and whoever is not loses the
+        chair on the same clock they would have without the restart.
+        """
+        now = time.monotonic()
+        elapsed = max(0.0, time.time() - float(record["written_at"]))
+        closed_for = record.get("closed_for")
+        return cls(
+            code=str(record["code"]),
+            host_id=str(record["host_id"]),
+            created=now - float(record["age"]) - elapsed,
+            seats=[PodSeat(**seat) for seat in record["seats"]],
+            players={
+                str(p["player_id"]): PodPlayer(
+                    player_id=str(p["player_id"]),
+                    token=str(p["token"]),
+                    name=str(p["name"]),
+                    seat=int(p["seat"]),
+                    last_seen=now,
+                )
+                for p in record["players"]
+            },
+            version=int(record["version"]),
+            status=record["status"],
+            closed_at=None if closed_for is None else now - float(closed_for) - elapsed,
+            game_id=record.get("game_id"),
+            seed=record.get("seed"),
+        )
+
+    def _supersede(self) -> None:
+        with self._lock:
+            self.superseded = True
+            self._changed.notify_all()
 
     # -- helpers; all assume the caller holds ``_lock`` --------------------
 
     def _bump(self) -> None:
         self.version += 1
+        if self.store is not None:
+            self._stamp = self.store.save(self.code, self.to_record())
         self._changed.notify_all()
 
     def _close(self) -> None:
@@ -339,8 +423,9 @@ class Pod:
 class PodRegistry:
     """All live pods in this process.  The analogue of ``SessionRegistry``."""
 
-    def __init__(self, sessions: SessionRegistry) -> None:
+    def __init__(self, sessions: SessionRegistry, store: JsonStore | None = None) -> None:
         self.sessions = sessions
+        self.store = store
         self._pods: dict[str, Pod] = {}
         self._lock = threading.RLock()
 
@@ -376,11 +461,13 @@ class PodRegistry:
             self._known_deck(deck_id)
         host_id = secrets.token_urlsafe(9)
         with self._lock:
+            taken = set(self._pods) | (self.store.names() if self.store else set())
             pod = Pod(
-                code=make_code(set(self._pods)),
+                code=make_code(taken),
                 host_id=host_id,
                 seed=seed,
                 decks=self._deck_summary,
+                store=self.store,
             )
             self._pods[pod.code] = pod
         player = PodPlayer(
@@ -398,10 +485,44 @@ class PodRegistry:
         return pod, player
 
     def get(self, code: str) -> Pod:
-        pod = self._pods.get(normalise_code(code))
-        if pod is None:
-            raise PodError("not_found", f"no pod {normalise_code(code)}")
-        return pod
+        """The pod, read from disk when this process has none or an old one.
+
+        The same cache rule as ``SessionRegistry.get`` (ADR 0023).
+        """
+        code = normalise_code(code)
+        with self._lock:
+            pod = self._pods.get(code)
+            if self.store is None or (pod is not None and self._current(pod)):
+                if pod is None:
+                    raise PodError("not_found", f"no pod {code}")
+                return pod
+            loaded = self.store.load(code)
+            if loaded is None:
+                if pod is None:
+                    raise PodError("not_found", f"no pod {code}")
+                return pod
+            record, stamp = loaded
+            if pod is not None and int(record.get("version", 0)) <= pod.version:
+                pod._stamp = stamp
+                return pod
+            try:
+                fresh = Pod.from_record(record)
+            except (KeyError, TypeError, ValueError) as exc:
+                log.warning("dropping pod %s: malformed record: %s", code, exc)
+                self.store.delete(code)
+                raise PodError("not_found", f"no pod {code}") from None
+            fresh.decks = self._deck_summary
+            fresh.store = self.store
+            fresh._stamp = stamp
+            self._pods[code] = fresh
+        if pod is not None:
+            pod._supersede()
+        return fresh
+
+    def _current(self, pod: Pod) -> bool:
+        with pod._lock:
+            stamp = self.store.stamp(pod.code)
+            return stamp is None or stamp == pod._stamp
 
     def join(
         self, code: str, *, name: str | None = None, token: str | None = None
@@ -468,7 +589,8 @@ class PodRegistry:
             return
         with pod._lock:
             pod._changed.wait_for(
-                lambda: pod.version > since, timeout=max(0.0, min(timeout, MAX_POLL_SECONDS))
+                lambda: pod.version > since or pod.superseded,
+                timeout=max(0.0, min(timeout, MAX_POLL_SECONDS)),
             )
 
     # -- seats -------------------------------------------------------------
@@ -772,8 +894,13 @@ class PodRegistry:
                 ):
                     dead.append(pod.code)
         with self._lock:
-            for code in dead:
-                self._pods.pop(code, None)
+            gone = [self._pods.pop(code) for code in dead if code in self._pods]
+            held = set(self._pods)
+        if self.store is not None:
+            for pod in gone:
+                if self.store.stamp(pod.code) == pod._stamp:
+                    self.store.delete(pod.code)
+            self.store.sweep(POD_TTL_SECONDS, keep=held)
         self.sessions.sweep(now=now)
         return len(dead)
 

@@ -87,8 +87,8 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"
 
-# `--workers 1` is not a default, it is a constraint: sessions.py keeps games in
-# process memory, so a second worker would serve half the requests from a
-# process that has never heard of the game being played.
+# `--workers 1` is not a default, it is a constraint: a game is cached in the
+# memory of the process moving it (ADR 0023), and two processes moving one game
+# at once would need locking across them that nothing provides.
 CMD ["uvicorn", "commanderblitz.server.app:get_app", "--factory", \
      "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

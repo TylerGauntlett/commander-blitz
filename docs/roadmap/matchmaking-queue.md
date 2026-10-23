@@ -5,7 +5,7 @@ area: matchmaking
 effort: L
 impact: medium
 why: strangers only, and the site is mostly one player today
-depends_on: [zero-downtime-deploys, cpu-takeover, brackets, outcome-log]
+depends_on: [cpu-takeover, brackets, outcome-log]
 status: proposed
 ---
 

@@ -39,16 +39,20 @@ public, and the compose file at the root is the whole runtime:
 mkdir commanderblitz && cd commanderblitz
 curl -fsSLO https://raw.githubusercontent.com/TylerGauntlett/commander-blitz/main/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/TylerGauntlett/commander-blitz/main/Caddyfile
-echo "IMAGE_TAG=latest" > .env
+echo "BLUE_TAG=latest" > .env
 # Edit the Caddyfile: replace commanderblitz.com with your own name, or with
 # `:80` for plain HTTP on a LAN.
-docker compose up -d
+docker compose up -d caddy web_blue
 ```
 
 Caddy terminates TLS for whatever name the Caddyfile holds and proxies to the app
 on the compose network; the app itself listens on 8000 and knows nothing about
-TLS or the host name. One named volume, `generated`, holds everything written at
-runtime (imported decks and their art). Building the image yourself is
+TLS or the host name. The compose file defines the app twice, `web_blue` and
+`web_green`, so the hosted site can hand over between them; a self-hosted box
+needs only one, so name it: `docker compose up -d caddy web_blue`, and
+`scripts/handover.sh <tag>` when you want a deploy that keeps games. One named
+volume, `generated`, holds everything written at runtime (imported decks, their
+art, and the games and pods in progress). Building the image yourself is
 `docker build -t commanderblitz .` at the repository root.
 
 ## The hosted site
@@ -139,18 +143,21 @@ ssh admin@<ip>
 cd /opt/automtg
 docker compose ps
 docker compose logs -f --tail=100
-cat .env                     # the SHA currently deployed
+cat .env                     # each colour's SHA, and which one is LIVE
 ```
 
-**Rolling back.** The live version is one line in `/opt/automtg/.env`, and every
-deploy leaves an immutable `sha-<commit>` tag in GHCR.
+**Rolling back.** Between deploys one colour runs and the other is stopped on
+the previous image, so going back one deploy is a handover to the colour that is
+already there; anything older is a handover to its tag. Either way it keeps the
+games, as a deploy does, and every deploy leaves an immutable `sha-<commit>` tag
+in GHCR.
 
 ```bash
 ssh deploy@<ip>
 cd /opt/automtg
+cat .env                                                                   # LIVE, and both tags
 docker images ghcr.io/tylergauntlett/commander-blitz --format '{{.Tag}}'   # what is cached
-echo "IMAGE_TAG=sha-abc1234" > .env                                        # pick one of those
-docker compose up -d
+bash scripts/handover.sh sha-abc1234                                       # the previous one, or any of those
 ```
 
 Confirm with `curl https://commanderblitz.com/health`. The image is public, so a tag
@@ -162,7 +169,8 @@ gone from the registry too, re-run the pipeline at that commit:
 ### HTTPS
 
 A [`caddy`](../Caddyfile) sidecar is the only container bound to a host port; it
-terminates TLS and reverse-proxies to `web:8000` on the compose network. Renewal
+terminates TLS and reverse-proxies to `web_blue:8000` or `web_green:8000` on the
+compose network, whichever is up (`lb_policy first`). Renewal
 is automatic and there is no cron job: Caddy renews at roughly 30 days remaining
 and reloads without dropping connections. Three things make that work, and each
 is a way to break it:
@@ -186,8 +194,10 @@ firewall, or DNS pointing elsewhere). While iterating on a fix, add
 options block at the top of the `Caddyfile` so retries do not burn the production
 rate limit, and remove it once the challenge succeeds. A `Caddyfile` edit alone
 does not take effect on redeploy, because a bind-mounted file changing does not
-make compose recreate the container; the deploy job runs
-`docker compose exec -T caddy caddy reload`, and by hand it is the same command.
+make compose recreate the container, and a copy that replaces the file leaves the
+container reading the old one. `scripts/handover.sh` reloads Caddy, and recreates
+it when the file it reads differs from the one on disk; by hand,
+`docker compose exec -T caddy caddy reload` after an edit in place.
 
 ## Desktop releases
 
@@ -235,11 +245,14 @@ runs).
 
 ## Things to know
 
-**A redeploy drops in-flight games.** `server/sessions.py` keeps games in
-process memory, so replacing the container ends every game in progress. Same
-reason the container runs `--workers 1`: a second worker would serve half the
-requests from a process that has never heard of the game being played. This
-also rules out horizontal scaling without a shared session store.
+**A redeploy keeps games, unless their rules changed.** Every game and pod is
+also a file under `data/generated/sessions/` on the `generated` volume
+([server.md](server.md#games-on-disk)), so the container that takes over picks
+each game up on its first request. A game whose tape no longer replays under
+the new build, because a card it used changed, is dropped and logged as
+`dropping game`. The container still runs `--workers 1`: two processes moving
+one game at once would need locking across them, which rules out horizontal
+scaling without a shared session store.
 
 **One Docker volume holds everything durable.** `generated` carries cards and
 decks from deck imports plus the card art lazily fetched from Scryfall

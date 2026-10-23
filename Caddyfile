@@ -2,7 +2,8 @@
 # /opt/automtg/ alongside docker-compose.yml, which bind-mounts it into the
 # caddy container.
 #
-# Caddy terminates TLS for commanderblitz.com and proxies to the app container.
+# Caddy terminates TLS for commanderblitz.com and proxies to whichever app
+# container is up.
 # It obtains the Let's Encrypt certificate itself and renews it on its own
 # schedule -- there is no cron job or renewal hook. It also adds the :80 -> :443
 # redirect automatically, which is why port 80 must stay open: the ACME HTTP-01
@@ -19,6 +20,20 @@ commanderblitz.com {
 	# the cheapest place to fix that.
 	encode zstd gzip
 
-	# web:8000 on the compose network. The app publishes no host port of its own.
-	reverse_proxy web:8000
+	# Both colours on the compose network; the app publishes no host port of
+	# its own. `first` sends every request to the first healthy one in this
+	# order, so exactly one process answers at any instant (ADR 0023). A
+	# request that finds its upstream gone -- the colour a deploy just stopped,
+	# or one still booting -- is retried on the other for `lb_try_duration`
+	# rather than answered with a 502.
+	reverse_proxy web_blue:8000 web_green:8000 {
+		lb_policy first
+		lb_try_duration 30s
+		lb_try_interval 250ms
+		fail_duration 10s
+
+		health_uri /health
+		health_interval 2s
+		health_timeout 2s
+	}
 }

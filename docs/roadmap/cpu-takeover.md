@@ -5,7 +5,7 @@ area: play
 effort: M
 impact: medium
 why: every multi-human game somebody drops from; required before strangers share a table
-depends_on: [zero-downtime-deploys]
+depends_on: []
 status: proposed
 ---
 

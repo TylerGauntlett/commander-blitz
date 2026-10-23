@@ -1,10 +1,11 @@
 /**
  * Which server this is, for every component that has to care.
  *
- * `GET /api/config` once at boot, then every half-minute on the desktop, where
- * the answer to "is the hosted server reachable" can change while the door is
- * open. On the site it is fetched once and never again: the answer there is
- * constant.
+ * `GET /api/config` once at boot, then every half-minute. On the desktop the
+ * answer to "is the hosted server reachable" can change while the door is
+ * open; on the site the version can, because a deploy hands the page's games
+ * to a new build without the page noticing (ADR 0023), and `UpdateBanner`
+ * tells the player a reload is due.
  *
  * The context's default is `HOSTED_DEFAULT`, so a component rendered bare -- a
  * story, a unit test, a screen somebody forgot to wrap -- sees the site's
@@ -20,7 +21,7 @@ import type { AppConfig } from "../api/types";
 import { bridge } from "../desktop/bridge";
 import { HOSTED_DEFAULT } from "../logic/desktop";
 
-/** How often the desktop asks again. Matches the sidecar's probe cache. */
+/** How often the client asks again. Matches the sidecar's probe cache. */
 export const CONFIG_REFRESH_MS = 30_000;
 
 /**
@@ -35,11 +36,7 @@ export function AppConfigProvider({ children }: { children: ReactNode }) {
     queryFn: api.config,
     placeholderData: HOSTED_DEFAULT,
     staleTime: CONFIG_REFRESH_MS,
-    // Only the desktop has anything to re-ask. `data` is the placeholder until
-    // the first answer, and the placeholder is hosted, so the first fetch
-    // decides whether there will be a second.
-    refetchInterval: (query) =>
-      query.state.data?.mode === "desktop" ? CONFIG_REFRESH_MS : false,
+    refetchInterval: CONFIG_REFRESH_MS,
     retry: 1,
   });
 
