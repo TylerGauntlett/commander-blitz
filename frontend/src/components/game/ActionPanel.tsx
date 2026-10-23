@@ -55,6 +55,7 @@ import { autoBlocks } from "../../logic/autoBlock";
 import { statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import {
+  isBoardPick,
   isPickSeveral,
   type PickOption,
   pickCarrier,
@@ -68,7 +69,7 @@ import { useHandheldLayout } from "../../state/useHandheld";
 import { AttackRows } from "./AttackRows";
 import { BlockGroups } from "./BlockGroups";
 import { CommitDock } from "./CommitDock";
-import { PickRows, pickStop } from "./PickRows";
+import { PickOneRows, PickRows, pickStop } from "./PickRows";
 import { PlayRows } from "./PlayRows";
 import { ToolStrip } from "./ToolStrip";
 import { XStepper } from "./XStepper";
@@ -82,7 +83,7 @@ import { XStepper } from "./XStepper";
  */
 const COMMIT_KINDS = ["keep", "yes", "pass"];
 
-type Mode = "attack" | "block" | "play" | "chooseX" | "pick";
+type Mode = "attack" | "block" | "play" | "chooseX" | "pick" | "pickOne";
 
 interface Props {
   state: GameView;
@@ -212,7 +213,9 @@ export function ActionPanel({
           ? "chooseX"
           : isPickSeveral(state)
             ? "pick"
-            : "play";
+            : isBoardPick(state)
+              ? "pickOne"
+              : "play";
   const isCombat = mode === "attack" || mode === "block";
   const key = decisionKey(state);
 
@@ -395,7 +398,7 @@ export function ActionPanel({
   // is: a row per candidate, the board's cards toggling the same set, and one
   // slab that sends it. See `logic/pickSeveral.ts`.
 
-  const pickOpts = mode === "pick" ? pickOptions(state, actions) : [];
+  const pickOpts = mode === "pick" || mode === "pickOne" ? pickOptions(state, actions) : [];
   const chosen = mode === "pick" ? pickedFor(staged, key) : [];
   const pickMax = mode === "pick" ? Math.min(pending?.max_count ?? 0, pickOpts.length) : 0;
   const pickMin = mode === "pick" ? (pending?.min_count ?? 0) : 0;
@@ -460,9 +463,12 @@ export function ActionPanel({
   // -------------------------------------------------------------------- play
 
   const finish = actions.find((a) => a.kind === "finish_declaration") ?? null;
+  // A board pick's decline ("up to one") is its slab; there is nothing else to commit.
   const commit = standDown
     ? null
-    : (actions.find((a) => COMMIT_KINDS.includes(a.kind)) ?? null);
+    : mode === "pickOne"
+      ? finish
+      : (actions.find((a) => COMMIT_KINDS.includes(a.kind)) ?? null);
   /**
    * Ids `Table`'s `.choices` fallback bar is rendering in the foot right now.
    *
@@ -558,7 +564,9 @@ export function ActionPanel({
           ? pickMin === pickMax
             ? `Choose ${pickMax}. Click one again to take it back.`
             : `Choose up to ${pickMax}. Click one again to take it back.`
-          : null;
+          : mode === "pickOne"
+            ? "Click a permanent to choose it."
+            : null;
 
   /*
    * The dock, in whichever parent it belongs to this session.
@@ -665,6 +673,18 @@ export function ActionPanel({
               full={pickFull}
               disabled={disabled}
               onToggle={toggleOption}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
+
+          {mode === "pickOne" && (
+            <PickOneRows
+              state={state}
+              options={pickOpts}
+              actions={actions}
+              disabled={disabled}
+              onAct={onAct}
               ptOf={ptOf}
               previewing={previewing}
             />

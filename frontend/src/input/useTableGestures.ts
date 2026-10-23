@@ -13,7 +13,7 @@ import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
 import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
 import type { Gesture } from "../logic/followUp";
-import { isPickSeveral, pickOptions } from "../logic/pickSeveral";
+import { boardPickAction, isBoardPick, isPickSeveral, pickOptions } from "../logic/pickSeveral";
 import { decisionKey, pickedFor, stagedAs } from "../logic/staging";
 import type { Lane as LaneName } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
@@ -152,6 +152,16 @@ export function useTableGestures({
         } else {
           cue("deny");
         }
+        return;
+      }
+
+      // 0b. One pick of a permanent: the press is the answer, the way a row
+      //     in the panel's mirror is. A card that is not an option is refused
+      //     out loud rather than read as an ability -- the decision is open.
+      if (isBoardPick(state)) {
+        const answer = boardPickAction(state, actions, card.oid);
+        if (answer) act(answer.id);
+        else cue("deny");
         return;
       }
 

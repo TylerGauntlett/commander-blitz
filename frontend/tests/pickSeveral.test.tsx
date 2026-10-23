@@ -12,10 +12,11 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ActionPanel } from "../src/components/game/ActionPanel";
-import { PromptDialog } from "../src/components/game/PromptDialog";
+import { isModalDecision, PromptDialog } from "../src/components/game/PromptDialog";
+import { boardPickAction, isBoardPick } from "../src/logic/pickSeveral";
 import { useUiStore } from "../src/state/uiStore";
 import { expectUniqueActionIds } from "../src/testing/asserts";
-import { chooseSeveralTargets, chooseTarget } from "../src/testing/scenarios";
+import { chooseSeveralTargets, chooseTarget, discardACard } from "../src/testing/scenarios";
 
 afterEach(() => {
   cleanup();
@@ -167,14 +168,71 @@ describe("confirming", () => {
   });
 });
 
-describe("a single pick is unchanged", () => {
+describe("a single pick off the table", () => {
   it("is still the dialog, answered with one press", () => {
-    const { state, actions } = chooseTarget();
+    const { state, actions } = discardACard();
     const onAct = vi.fn();
     render(<PromptDialog state={state} actions={actions} onAct={onAct} disabled={false} />);
     const first = document.querySelector<HTMLElement>(".opt--card");
     expect(first?.querySelector(".opt__caption")).toBeNull();
     if (first) fireEvent.click(first);
     expect(onAct).toHaveBeenCalledWith("a0-choose");
+  });
+});
+
+/**
+ * "Sacrifice a creature": one pick of a permanent, which the board answers.
+ *
+ * The dialog stands down, the panel mirrors every option as a row carrying the
+ * option's own `choose` id -- once, so the exactly-once invariant holds -- and
+ * a press on the row is the answer.
+ */
+describe("a single pick of a permanent", () => {
+  it("is not the dialog's", () => {
+    const { state } = chooseTarget();
+    expect(isBoardPick(state)).toBe(true);
+    expect(isModalDecision(state)).toBe(false);
+    // Nor anything off the table, nor a set.
+    expect(isBoardPick(discardACard().state)).toBe(false);
+    expect(isBoardPick(chooseSeveralTargets().state)).toBe(false);
+  });
+
+  it("is mirrored in the panel, one row per option carrying its id", () => {
+    const { state, actions } = chooseTarget();
+    const onAct = vi.fn();
+    render(
+      <ActionPanel
+        state={state}
+        actions={actions}
+        onAct={onAct}
+        onStage={noop}
+        onDeclare={noop}
+        onChoose={noop}
+        onUndo={noop}
+        onQuit={noop}
+        onToggleFullControl={noop}
+        onToggleManualMana={noop}
+        narrating={false}
+        onSkipNarration={noop}
+        busy={false}
+        aiThinking={false}
+        standDown={false}
+      />,
+    );
+    const rows = screen.getAllByTestId("pick-one");
+    expect(rows.map((row) => row.dataset.actionId)).toEqual([
+      "a0-choose",
+      "a1-choose",
+      "a2-choose",
+    ]);
+    expectUniqueActionIds(document.body);
+    fireEvent.click(rows[1]);
+    expect(onAct).toHaveBeenCalledWith("a1-choose");
+  });
+
+  it("finds the action a press on each card answers with", () => {
+    const { state, actions } = chooseTarget();
+    expect(boardPickAction(state, actions, 902)?.id).toBe("a1-choose");
+    expect(boardPickAction(state, actions, 999)).toBeNull();
   });
 });

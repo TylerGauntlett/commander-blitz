@@ -10,6 +10,7 @@
 import { describe, expect, it } from "vitest";
 import type { GameView, LegalAction } from "../src/api/types";
 import { groupForDecision, opponentTop } from "../src/logic/focusGroup";
+import { chooseTarget } from "../src/testing/scenarios";
 import { action, gameView, pending, player, stackItem } from "./fixtures";
 
 function view(overrides: Partial<GameView> = {}): GameView {
@@ -172,5 +173,12 @@ describe("the stack", () => {
     });
     expect(opponentTop(state)).toBeNull();
     expect(groupForDecision(state, [pass], false)).toBeNull();
+  });
+});
+
+describe("one pick of a permanent", () => {
+  it("goes to the panel's mirror, which `useTableRegions` overrides with a card it can land on", () => {
+    const { state, actions } = chooseTarget();
+    expect(groupForDecision(state, actions, false)).toBe("acts");
   });
 });

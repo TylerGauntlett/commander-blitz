@@ -16,7 +16,7 @@ import { actionAttrs, stopId } from "../../input/stops";
 import { bouncy } from "../../motion/springs";
 import { ActionIcon } from "../ui/ActionIcon";
 
-type Mode = "attack" | "block" | "play" | "chooseX" | "pick";
+type Mode = "attack" | "block" | "play" | "chooseX" | "pick" | "pickOne";
 
 /** A pick-several set in progress. See `logic/pickSeveral.ts`. */
 export interface PickDock {

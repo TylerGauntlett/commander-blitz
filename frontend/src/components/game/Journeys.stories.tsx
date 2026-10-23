@@ -43,8 +43,15 @@
  * Every kind the engine raises has a journey below, so a surface that moves a
  * question -- a pick that stops landing the ring on its first option, a slab
  * that gains a stop in front of it -- costs a press here before it costs one
- * on a Deck. The pick-one journeys stand for every `choose_objects` purpose
- * the dialog still answers; the audit's rows say which those are.
+ * on a Deck. The pick-one journeys stand for every `choose_objects` purpose:
+ * on the board when its options are permanents, in the dialog when they are
+ * not; the audit's rows say which is which.
+ *
+ * ## And `B` takes a staged set back, at every decision that has one
+ *
+ * The `BackOut…` stories are not journeys -- nothing is committed -- but they
+ * walk the same keys: a set the "all" mark built goes in one press, a set built
+ * by hand goes one press per entry.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -531,12 +538,12 @@ export const BottomACard: Story = {
  * A single pick in the dialog: the ring opens on the first option.
  *
  * This is the journey every `choose_objects` purpose the dialog still answers
- * is held to -- sacrifice, destroy, discard and the rest of the audit's
- * `dialog` rows -- because the dialog draws them all the same way, and the
- * press that answers one answers any.
+ * is held to -- discard, reveal, dredge and the rest of the audit's `dialog`
+ * rows -- because the dialog draws them all the same way, and the press that
+ * answers one answers any.
  */
 export const PickOneInTheDialog: Story = {
-  args: board(scenarios.chooseTarget(), { act: idleMutation(fn()) }),
+  args: board(scenarios.discardACard(), { act: idleMutation(fn()) }),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("prompt-dialog");
@@ -546,6 +553,31 @@ export const PickOneInTheDialog: Story = {
     await run.press("a");
     expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-choose");
     expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("PickOneInTheDialog"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * "SACRIFICE A CREATURE", ON THE BOARD.
+ *
+ * The journey every pick of a permanent is held to: sacrifice, destroy, a
+ * trigger's target and the rest of the audit's `board` rows. The ring opens
+ * on the first option's card -- yours first -- and the press on it is the
+ * answer, so a pick of one is the dialog's one press, made where the creature
+ * actually is. No modal opens over the board to ask.
+ */
+export const PickOneOnTheBoard: Story = {
+  args: board(scenarios.chooseTarget(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toBe("card:901"));
+    expect(canvasElement.querySelector('[data-testid="prompt-dialog"]')).toBeNull();
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("PickOneOnTheBoard"));
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -567,15 +599,13 @@ export const PickFromTheLibrary: Story = {
 };
 
 /**
- * A SET, BUILT IN THE PANEL AND SENT ONCE.
+ * A SET, BUILT AND SENT ONCE, FROM WHEREVER THE RING IS.
  *
- * "Exile up to two target artifacts": `L2` jumps to the slab (in pick mode
- * the slab is the decision and the mark beside it a convenience, so that is
- * where the jump lands), `left` is the "all" mark, `A` fills the set, `right`
- * is back on the slab and `A` sends it whole through `/choose`.
- *
- * This is the ceiling `one-staged-set` is built against: `X` does not yet
- * commit a pick the way it commits an attack, which is the walk counted here.
+ * "Exile up to two target artifacts": `X` is the "all" mark while nothing is
+ * chosen, which fills the set and does not send it, and the slab once
+ * something is -- `logic/commit.ts` names it the way it names Attack, so the
+ * walk to the dock that this journey used to count is gone. The bar says
+ * which, so the second press is never a surprise.
  */
 export const PickSeveralInThePanel: Story = {
   args: board(scenarios.chooseSeveralTargets(), { choose: idleMutation(fn()) }),
@@ -583,15 +613,14 @@ export const PickSeveralInThePanel: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("pick-confirm");
     const run = journey();
+    await waitFor(() => expect(verbFor(canvasElement, "x")).toBe("All (2)"));
 
-    await run.press("l2");
-    // The slab carries `Done`'s id, so its stop is the action's, not `commit`.
-    await waitFor(() => expect(run.at()).toBe("act:a4-finish_declaration"));
-    await run.walk("left", "a");
+    await run.press("x");
     await waitFor(() =>
       expect(canvasElement.querySelector(".commit-note")?.textContent).toMatch(/^2 chosen/),
     );
-    await run.walk("right", "a");
+    await waitFor(() => expect(verbFor(canvasElement, "x")).toBe("Confirm 2"));
+    await run.press("x");
     // Yours first, in row order: your Sol Ring and your Rhystic Study.
     expect(args.game.choose.mutate, run.trail.join("\n")).toHaveBeenCalledWith([1, 3]);
     expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(
@@ -683,5 +712,81 @@ export const ChooseAPlayer: Story = {
     expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a1-choose");
     expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("ChooseAPlayer"));
     expectUniqueActionIds(canvasElement);
+  },
+};
+
+/** How many entries the dock says are staged, read off its own note. */
+const noted = (root: HTMLElement) =>
+  Number.parseInt(root.querySelector(".commit-note")?.textContent ?? "", 10);
+
+/**
+ * `B` TAKES BACK AN ATTACK THE "ALL" MARK STAGED, WHOLE.
+ *
+ * One press of the mark staged it and one press of the mark rebuilds it, so
+ * nothing is lost by taking all of it back in one press.
+ */
+export const BackOutAnAttack: Story = {
+  args: board(scenarios.combatDeclareAttackers()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    const run = journey();
+    await run.press("x");
+    await waitFor(() => expect(noted(canvasElement)).toBe(2));
+
+    await run.press("b");
+    await waitFor(() => expect(noted(canvasElement)).toBe(0));
+    expect(canvas.getByTestId("combat-confirm")).toBeDisabled();
+  },
+};
+
+/** The same, at a block declaration. */
+export const BackOutABlock: Story = {
+  args: board(scenarios.combatDeclareBlockers()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    const run = journey();
+    await run.press("x");
+    await waitFor(() => expect(noted(canvasElement)).toBeGreaterThan(0));
+
+    await run.press("b");
+    await waitFor(() => expect(noted(canvasElement)).toBe(0));
+    expect(canvas.getByTestId("combat-confirm")).toBeDisabled();
+  },
+};
+
+/**
+ * `B` TAKES BACK A HAND-BUILT SET ONE PRESS PER ENTRY, NEWEST FIRST.
+ *
+ * Nothing rebuilds a set picked one row at a time but the same presses again,
+ * so emptying it in one would throw away work the player cannot get back in
+ * one. The ring steps on after each pick, so `A`, `A` is two picks.
+ */
+export const BackOutAPick: Story = {
+  args: board(scenarios.chooseSeveralTargets(), { choose: idleMutation(fn()) }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("pick-confirm");
+    const run = journey();
+    const row = await waitFor(() => {
+      const first = canvasElement.querySelector<HTMLElement>('[data-testid="pick-option"]');
+      expect(first).not.toBeNull();
+      return first as HTMLElement;
+    });
+    await userEvent.click(row);
+    await waitFor(() => expect(noted(canvasElement)).toBe(1));
+    const second = canvasElement.querySelectorAll<HTMLElement>(
+      '[data-testid="pick-option"]',
+    )[1];
+    await userEvent.click(second);
+    await waitFor(() => expect(noted(canvasElement)).toBe(2));
+
+    await run.press("b");
+    await waitFor(() => expect(noted(canvasElement)).toBe(1));
+    // The newest went first: the first row is still in the set.
+    expect(row.getAttribute("aria-pressed")).toBe("true");
+    await run.press("b");
+    await waitFor(() => expect(noted(canvasElement)).toBe(0));
   },
 };

@@ -28,6 +28,7 @@
 
 import type { GameView, LegalAction } from "../api/types";
 import type { GroupId } from "../input/groups";
+import { isBoardPick } from "./pickSeveral";
 
 /**
  * Steps where the decision is about creatures, and the creatures are on the
@@ -73,6 +74,14 @@ export function groupForDecision(
 
   const kind = state.pending?.player === state.seat ? state.pending.kind : null;
   if (kind && COMBAT.has(kind)) return boardCanDecide ? "board" : "acts";
+
+  /*
+   * One pick of a permanent: the panel's rows, which mirror every option.
+   * `useTableRegions` lands on the first option's card instead when it is on
+   * your own board, which is the region a press on it answers from; this is
+   * where the ring goes when none of them is.
+   */
+  if (isBoardPick(state)) return "acts";
 
   /*
    * Somebody else's spell or ability is waiting on you: the stack, so the card

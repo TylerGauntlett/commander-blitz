@@ -15,7 +15,7 @@ import { useMemo } from "react";
 import type { GameView, LegalAction } from "../api/types";
 import { abilityText, availableAttackers, canDropOnLane } from "../logic/actionMatch";
 import { sourcesSpentBy } from "../logic/mana";
-import { isPickSeveral, pickOptions } from "../logic/pickSeveral";
+import { isBoardPick, isPickSeveral, pickOptions } from "../logic/pickSeveral";
 import { findCard, LANES } from "../logic/zoneGrouping";
 
 export interface TableDerivedInput {
@@ -129,7 +129,8 @@ export function useTableDerived({
     }
     // A pick-several set's candidates light up the same way, because a click
     // on one toggles it (`useTableGestures`, step 0).
-    if (isPickSeveral(state)) {
+    // So do a board pick's, where the click answers it outright.
+    if (isPickSeveral(state) || isBoardPick(state)) {
       for (const option of pickOptions(state, actions)) {
         if (option.oid !== null) set.add(option.oid);
       }

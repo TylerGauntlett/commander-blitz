@@ -28,7 +28,7 @@ import { useEffect, useRef } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
 import { mulliganPhase } from "../../logic/openingHand";
-import { isPickSeveral } from "../../logic/pickSeveral";
+import { isBoardPick, isPickSeveral } from "../../logic/pickSeveral";
 import { COMBO_MIN } from "../../logic/promptFilter";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
@@ -71,7 +71,11 @@ export function isModalDecision(state: GameView): boolean {
     // A set to build is the action panel's, the way an attack is -- a
     // `choose_objects` like any other, so it cannot be named in the
     // denylist above. See `logic/pickSeveral.ts`.
-    !isPickSeveral(state)
+    !isPickSeveral(state) &&
+    // ...and so is one pick of a permanent: the board answers it, the panel
+    // mirrors it. What stays here is every pick whose options are not on the
+    // table -- a library, a hand, a mode, a player.
+    !isBoardPick(state)
   );
 }
 

@@ -235,10 +235,13 @@ export function useTableVerbs({
      * that answers the prompt. `.click()` for the reason the dock is clicked
      * below: the button carries the highlighted row's id and this does not.
      */
-    if (ref.kind === "combo") {
-      document
-        .querySelector<HTMLButtonElement>('[data-testid="combo-go"]:not([disabled])')
-        ?.click();
+    /*
+     * Only where there is a combobox: a pick-several row is a `combo:` stop too,
+     * and there `X` is the commit below, the way the bar says it is.
+     */
+    const go = document.querySelector<HTMLButtonElement>('[data-testid="combo-go"]');
+    if (ref.kind === "combo" && go) {
+      if (!go.disabled) go.click();
       return;
     }
     const oid = ref.kind === "card" ? ref.id : null;

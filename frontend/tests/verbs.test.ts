@@ -17,7 +17,12 @@ import type { CardView } from "../src/api/types";
 import { decisionKey, NOTHING_STAGED, pickedSet, stagedSet } from "../src/logic/staging";
 import { parseStop, type Staging, verbsFor } from "../src/logic/verbs";
 import { action, card, gameView, pending, player, stackItem } from "../src/testing/fixtures";
-import { chooseSeveralTargets, mulligan, mulliganBottom } from "../src/testing/scenarios";
+import {
+  chooseSeveralTargets,
+  chooseTarget,
+  mulligan,
+  mulliganBottom,
+} from "../src/testing/scenarios";
 
 const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
   card({
@@ -260,6 +265,15 @@ describe("verbsFor", () => {
       expect(verbsFor(base, actions, "card:2", staging({ stagedBlocks: { 1: 2 } })).a).toBe(
         "Clear blocks",
       );
+    });
+  });
+
+  describe("one pick of a permanent", () => {
+    it("chooses with A on an option, and says so on anything else", () => {
+      const { state, actions } = chooseTarget();
+      expect(verbsFor(state, actions, "card:902").a).toBe("Choose");
+      const elsewhere = { ...state, battlefield: [...state.battlefield, creature(950)] };
+      expect(verbsFor(elsewhere, actions, "card:950").a).toBe("Not an option");
     });
   });
 

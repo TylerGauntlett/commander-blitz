@@ -23,6 +23,7 @@ import type { GameView, LegalAction } from "../api/types";
 import { blockableBy, defendersFor } from "./actionMatch";
 import { commitmentFor } from "./commit";
 import { mulliganPhase } from "./openingHand";
+import { boardPickAction, isBoardPick } from "./pickSeveral";
 import { NOTHING_STAGED, type Staged, stagedAs } from "./staging";
 import { findCard } from "./zoneGrouping";
 
@@ -308,6 +309,13 @@ function contextVerbs(
 
   const oid = ref.id;
   const card = findCard(state, oid);
+
+  // 0. One pick of a permanent: the press answers it (`useTableGestures`, 0b).
+  if (isBoardPick(state)) {
+    return boardPickAction(state, actions, oid)
+      ? { a: "Choose", y: "Read", b: "Back" }
+      : { a: "Not an option", y: "Read", b: "Back" };
+  }
 
   // 1. Finishing a targeted spell.
   if (staging.targeting) {
