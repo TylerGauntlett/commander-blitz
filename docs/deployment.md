@@ -194,8 +194,10 @@ firewall, or DNS pointing elsewhere). While iterating on a fix, add
 options block at the top of the `Caddyfile` so retries do not burn the production
 rate limit, and remove it once the challenge succeeds. A `Caddyfile` edit alone
 does not take effect on redeploy, because a bind-mounted file changing does not
-make compose recreate the container; the deploy job runs
-`docker compose exec -T caddy caddy reload`, and by hand it is the same command.
+make compose recreate the container, and a copy that replaces the file leaves the
+container reading the old one. `scripts/handover.sh` reloads Caddy, and recreates
+it when the file it reads differs from the one on disk; by hand,
+`docker compose exec -T caddy caddy reload` after an edit in place.
 
 ## Desktop releases
 

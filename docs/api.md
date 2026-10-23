@@ -300,9 +300,12 @@ Rationale and the alternatives in
 
 ## Sessions
 
-In-memory, single process. This is a LAN application; there is no database and no user
-model, and a `player_token` is a per-pod bearer credential, not an account. Restarting
-the server discards every game and every pod. Idle players, abandoned pods and
+Single process, cached in memory and, on the deployed site and the desktop, kept on
+disk as one file per game and per pod ([server.md](server.md#games-on-disk)). There is
+no database and no user model, and a `player_token` is a per-pod bearer credential, not
+an account. A restart keeps every game and pod whose file is still there: a game comes
+back at the version it had, so a long poll resumes and a stale action is still a 409. A
+server started without a sessions directory, as the tests build it, keeps nothing. Idle players, abandoned pods and
 abandoned game sessions are swept opportunistically when somebody creates or joins a
 pod, so there is no reaper thread to shut down cleanly.
 
