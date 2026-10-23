@@ -86,9 +86,18 @@ response's `event_cursor`) says *what* is new — and `absorb` trims anything al
 seen, so a pump reply and a poll reply that overlap never narrate a move twice.
 `tests/useGame.test.tsx` pins the loop.
 
-**Client-only state lives in `uiStore`** (zustand): selection, hover, targeting, staged
-attacks and blocks, the open stack group, the peek, the log and settings overlays, the
-viewed seat, the error banner. None of it reaches the server except as an action id.
+**Client-only state lives in `uiStore`** (zustand): selection, hover, targeting, the
+staged set, the open stack group, the peek, the log and settings overlays, the viewed
+seat, the error banner. None of it reaches the server except as an action id.
+
+**One staged set.** Attackers, blockers and the picks of a pick-several decision are one
+map in `uiStore` (`logic/staging.ts`), from the thing staged to what it is staged as,
+keyed by the decision it answers (`decisionKey`). A write under another key starts a new
+set, and `useGame` re-keys on every response, so a set never outlives its question.
+`commitmentFor` (`logic/commit.ts`) names the one control each decision ends at, which
+`X` presses and the hint bar prints from the same call. `B` backs a staged set out
+between targeting and selection: whole when the "all" mark built it, newest entry first
+when a hand did, so it never discards what one press could not put back.
 
 **What persists** does so under one prefix. `state/storage.ts` owns `STORAGE_PREFIX`;
 `state/migrate.ts` runs the rename of any legacy keys as a side effect of being imported,
@@ -408,6 +417,10 @@ it, `AbilityMenu`, and the `OpeningHand` screen. The rule they converge on is th
 choice among things on the table is made on the table, staged and committed once; a
 choice among things not on the table is made in the panel or a dialog; and the panel
 stays the fallback under which every legal action is one control (ADR 0015).
+A `choose_objects` whose every option is a permanent (`logic/pickSeveral.isBoardPick`) is
+the board's: the press on the card is the answer, the ring opens on the first option, and
+the panel's rows mirror every option with its id; `PromptDialog` keeps every pick whose
+options are off the table, and `isModalDecision` is where that split is made once.
 `components/game/decisionAudit.ts` is the record: one row per `DecisionKind` and per
 `purpose` tag, with the surface each uses today, the surface the rule gives it
 (`ruleFor`, derived) and the press ceiling its journey in `Journeys.stories.tsx` is
