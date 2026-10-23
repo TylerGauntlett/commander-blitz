@@ -177,6 +177,50 @@ export function chooseType(): Scenario {
   };
 }
 
+/**
+ * X, as the panel's stepper.
+ *
+ * `ask_x` offers one `choose` per payable value, labelled `X = n`, and the
+ * ceiling rides in `context.max_x`; the stepper changes which of those the
+ * slab carries rather than drawing them all. The hand is empty on purpose --
+ * the question is about the payment, and a card in hand would be one more
+ * stop between the ring and the stepper.
+ */
+export function chooseX(): Scenario {
+  const battlefield = [
+    pool.forest({ oid: 971 }),
+    pool.forest({ oid: 972 }),
+    pool.island({ oid: 973 }),
+  ];
+  const values = [0, 1, 2, 3];
+
+  const state = gameView({
+    players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
+    battlefield,
+    pending: pending({
+      kind: "choose_x",
+      prompt: "Choose X for Fireball",
+      options: values.map((x) => decisionOption({ label: `X = ${x}`, value: x })),
+      context: { purpose: "choose_x", max_x: 3, per_point: 1, source_name: "Fireball" },
+    }),
+  });
+
+  return {
+    state,
+    actions: values.map((x) =>
+      action({
+        id: `a${x}-choose`,
+        kind: "choose",
+        label: `X = ${x}`,
+        base_label: `X = ${x}`,
+        choice: x,
+        x,
+      }),
+    ),
+    events: [],
+  };
+}
+
 /** Pointing at a player rather than a permanent. */
 export function choosePlayer(): Scenario {
   const state = gameView({

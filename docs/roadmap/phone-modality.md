@@ -5,7 +5,7 @@ area: play
 effort: L
 impact: high
 why: a phone is the one device every player always has, and today the site breaks on it
-depends_on: [selection-model]
+depends_on: []
 status: proposed
 ---
 

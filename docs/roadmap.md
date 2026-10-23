@@ -43,15 +43,17 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [One selection model](#one-selection-model) | M | high | nothing | 1 |
 | [Imports complete on the device](#imports-complete-on-the-device) | M | high | nothing | 0 |
+| [One staged set](#one-staged-set) | M | high | nothing | 0 |
 | [Zero-downtime deployments](#zero-downtime-deployments) | L | high | nothing | 4 |
 | [The real precons](#the-real-precons) | L | high | nothing | 3 |
-| [A phone modality](#a-phone-modality) | L | high | One selection model | 0 |
+| [A phone modality](#a-phone-modality) | L | high | nothing | 0 |
 | [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
+| [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
+| [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | The real precons | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | Zero-downtime deployments | 1 |
@@ -72,22 +74,24 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [One selection model](#one-selection-model) — M, high
-2. [Imports complete on the device](#imports-complete-on-the-device) — M, high
+1. [Imports complete on the device](#imports-complete-on-the-device) — M, high
+2. [One staged set](#one-staged-set) — M, high
 3. [Zero-downtime deployments](#zero-downtime-deployments) — L, high
 4. [The real precons](#the-real-precons) — L, high
-5. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-6. [Difficulty](#difficulty) — S, medium
-7. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-8. [Outcomes as data](#outcomes-as-data) — M, medium
-9. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-10. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-11. [Archidekt import](#archidekt-import) — S, low
-12. [Sound](#sound) — S, low
+5. [A phone modality](#a-phone-modality) — L, high
+6. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+7. [Difficulty](#difficulty) — S, medium
+8. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+9. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+10. [Why a press is refused](#why-a-press-is-refused) — S, medium
+11. [Outcomes as data](#outcomes-as-data) — M, medium
+12. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+13. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+14. [Archidekt import](#archidekt-import) — S, low
+15. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
-- [A phone modality](#a-phone-modality) — [One selection model](#one-selection-model)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [Brackets, derived from the list](#brackets-derived-from-the-list) — [The real precons](#the-real-precons)
 - [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — [Zero-downtime deployments](#zero-downtime-deployments)
@@ -491,65 +495,84 @@ with a pad by group and reads one card.
 
 ## Play experience
 
-### One selection model
+### One staged set
 
-Effort **M** · Impact **high**, every decision in every game, on every device · Depends on nothing.
+Effort **M** · Impact **high**, every pick of a thing on the table, in every game, on every device · Depends on nothing.
 
 #### Today
 
-Pressing a permanent with several abilities asks
-which one in a modal (`AbilityMenu`); a Treasure asks which colour the same
-way. Proliferate, "any number of target permanents" and the other pick-several
-decisions are answered as rows in the action panel with a commit slab
-(`PickRows`), and the board's cards toggle those rows. Targets are chosen on
-the board. Modes, X and yes-or-no are dialogs. Many options with no card face
-are a `ChoiceCombo`. Every one of these was the right call for the decision
-it was built for, and together they are five shapes for what a player
-experiences as one question: *which of these things do I mean?*
+`uiStore` holds three staged sets with three shapes: `stagedAttacks`
+(attacker to defender), `stagedBlocks` (blocker to attacker) and `picked`
+(option ordinals, keyed by `logic/pickSeveral.pickKey`). Each has its own
+stage, unstage and clear, and `clearStaging` empties all three by name.
+`logic/commit.ts` knows the two combat sets and names the one control each
+ends at; the pick-several slab is a separate control the panel renders with
+its own carrier (`pickCarrier`). A single `choose_objects` whose options are
+permanents on the table, "sacrifice a creature" among them, is not staged at
+all: `PromptDialog` draws it as a modal of card faces and the board does not
+answer it, so the press that a handheld player makes on the board goes
+nowhere for exactly the decision whose subject is the board. `B` backs out of
+targeting and selection through `useTableVerbs.back`, but a staged attack,
+block or pick is undone card by card and there is no level of the unwind for
+"take the whole set back". The audit in `decisionAudit.ts` beside
+`Journeys.stories.tsx` records, per decision, which of these surfaces each
+pick uses today and which the rule gives it.
 
 #### The change
 
-**The rule to converge on:** a choice among things on the table is made on
-the table, staged, and committed once; a choice among things that are not on
-the table is made in the panel or a dialog; and the panel remains the
-universal fallback under which every legal action is one control exactly once
-([ADR 0015](adr/0015-every-legal-action-is-one-control.md)). Attack
-declaration already follows the rule, and `PickRows` already borrowed its
-shape; what is left is to make the board the primary surface for every
-object pick and the panel the mirror, with one staged set in `uiStore` and
-one commit control (`logic/commit.ts`) rather than a set per surface.
+One staged set in `uiStore`, one commit control in `logic/commit.ts`, and
+the board as the primary surface for every pick of a thing on the table,
+with the panel as the mirror — the rule the audit converged on, built.
 
-**Do it as an audit before it is done as code.** A table of every
-`PendingDecision` kind and purpose against the surface it uses today and the
-surface the rule gives it, kept beside `Journeys.stories.tsx` with a press
-budget per decision, is the deliverable of the first pull request; the
-budgets are what make "unified" measurable and what stop a later surface
-from drifting back. The phone modality adds a touch column to the same
-table, which is why it waits for this.
+- **One set.** `staged` replaces the three: a map from the thing being
+  staged (an attacker, a blocker, an option ordinal) to what it is staged as
+  (a defender, an attacker, membership), keyed by the decision the way
+  `pickKey` keys picks today, so a set never outlives its question.
+  `stageAttack`, `stageBlock` and `togglePick` become one `stage` with the
+  three call sites unchanged in meaning; `clearStaging` empties one thing.
+- **One commit.** `commitmentFor` names the control for a pick-several
+  decision the way it names Attack and Block, so `X` commits a Clever
+  Concealment from wherever the ring is, and `logic/verbs.ts` prints it
+  through the same shared function.
+- **The board answers a single object pick.** A `choose_objects` whose every
+  option is a permanent the layout draws is staged by pressing the card and
+  committed once, with the panel's rows as the mirror where the card is not
+  drawn (an opponent's lane at the handheld size), the shape `PickRows` and
+  the attack declaration already have. `PromptDialog` keeps every pick whose
+  options are not on the table: a library search, a hand to bottom, a mode,
+  a player. `isModalDecision` is where the split is decided, and
+  `ownsDecision` keeps the panel standing down for exactly the decisions a
+  modal still owns ([ADR 0015](adr/0015-every-legal-action-is-one-control.md)).
+- **`B` backs out of a staged set, everywhere.** One level of the unwind in
+  `useTableVerbs.back`, between targeting and selection: a non-empty set is
+  emptied, and the voice says so. The level never discards a set the player
+  cannot rebuild in one press: a set the "all" mark would rebuild is backed
+  out whole, a hand-built one is backed out one press per card, newest
+  first.
 
-**Smaller items in the same pass:**
+What it does not do: change which actions the engine offers, or how `/choose`
+takes a set. The engine's `choose` actions stay one pick each and the slab
+stays the one control carrying an id for the set.
 
-- `B` always backs out of a staged set, everywhere, and never discards a set
-  the player cannot rebuild in one press.
-- The targeting hint says why a card is skipped; the same hint for a card
-  that cannot be *cast* (mana, timing, a cast lock) and an ability that cannot
-  be activated, read from the engine's own reason where it has one.
-- The stack: a response to a response is a stack of three and the panel is
-  the only place that reads it in order.
-- `UI-02` in [TECH_DEBT.md](../TECH_DEBT.md), the accessibility pass,
-  because every surface this touches is one of the ones it lists.
+The dependency is real: the audit's rule column is what says which pick moves
+to the board and which stays a modal, and its press ceilings are what this
+item must not exceed.
 
 #### Gate
 
-The audit table itself, held by a test that every `PendingDecision` kind the
-engine can emit has a row; a journey with a press ceiling per decision kind
-in `Journeys.stories.tsx` and the handheld e2e journeys; and the existing
-one-control-per-action invariant, which must hold through every surface the
-pass touches.
+`tests/uiStore.test.ts` on the one set: staging across the three call sites,
+a key change empties it, `clearStaging` empties it. `tests/commit.test.ts`
+naming the pick-several control, and `tests/verbs.test.ts` printing it. A
+story in `Journeys.stories.tsx` per pick kind the board now answers, each
+under the ceiling its row in `decisionAudit.ts` already holds, and a story
+that `B` empties a staged set at every decision kind that has one. The
+`PromptDialog` stories for every pick that stays a modal, unchanged.
+`expectUniqueActionIds` through all of it, as `clarity.spec.ts` holds it
+across a game.
 
 ### A phone modality
 
-Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on [One selection model](#one-selection-model).
+Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on nothing.
 
 #### Today
 
@@ -631,6 +654,111 @@ see, and it ships before any model does.
 The lobby's predicates in `logic/lobby.ts` cover the new field; the pod
 server tests assert the agent each seat is dealt; and the lobby story and
 e2e spec reach the segment with a pad under the floors.
+
+### The stack reads in order from the panel
+
+Effort **S** · Impact **medium**, every response to a response, which is the skill the format is about · Depends on nothing.
+
+#### Today
+
+`StackPanel` draws the stack as a pile of faces, top first, with the
+targeting relationship drawn by `CombatArrows`; a press on a ply is a target
+when a spell is waiting for one and otherwise a read
+(`useTableGestures.onStackItem`). At the handheld size the pile is a rail
+panel the ring can land on but cannot read in order: a stack of three is
+three faces offset by `PLY_Y`, the two below the top are mostly covered, and
+the only text that says what resolves next is on the face itself. The
+action panel, which is the one surface every decision can be answered from
+([ADR 0015](adr/0015-every-legal-action-is-one-control.md)), says nothing
+about the stack at all: a priority window with three items on the stack is
+drawn the same as one with none, so the player responding to a response
+reads the order off a pile of art.
+
+#### The change
+
+The panel is the one place the stack is read in order, and the pile is the
+picture of it.
+
+- **A stack strip in the panel.** While `state.stack` is non-empty on a
+  priority window, the panel's head carries one line per item, top first,
+  in the words the log already uses for the same item (`logic/events.ts`
+  names a stack item the way the ticker does), each naming its controller
+  and its targets, with "resolves next" on the first. Lines, not stops: the
+  strip is read, and the pile remains the thing to press.
+- **The pile stays the pile.** `StackPanel` is unchanged except that
+  pressing a ply while nothing is being targeted sends the ring to the
+  strip's matching line, so a controller can read a buried item without
+  uncovering it.
+- **Nothing changes size with game state**
+  ([ADR 0016](adr/0016-nothing-changes-size-with-game-state.md)): the
+  strip is a fixed number of lines, and a stack deeper than that scrolls
+  inside it rather than growing the panel.
+
+What it does not do: change what the engine puts on the stack, or add an
+action. A response is still the cast or activate action the panel already
+carries.
+
+#### Gate
+
+A `StackPanel` story and a panel story with a stack of three, each at the
+handheld floors, asserting the strip reads top first and that the panel's
+box is the same height as with an empty stack. A journey in
+`Journeys.stories.tsx` that responding to a response costs no more presses
+than responding to a spell, under the priority row's ceiling in
+`decisionAudit.ts`.
+
+### Why a press is refused
+
+Effort **S** · Impact **medium**, every player who presses a permanent that does nothing and has to guess why · Depends on nothing.
+
+#### Today
+
+Two of the three refusals a player meets already carry the engine's own
+reason. A hand card that cannot be played arrives with one of
+`UnplayableReason` in `PlayerView.hand_reasons`, from
+`legality.unplayable_reason`, and `HandFan` draws it: priority, timing, the
+land drop, mana, no legal target. A card that cannot be *targeted* carries
+`LegalAction.untargetable` from the same `target_refusal` that
+`can_be_targeted` answers with, and `logic/targetHint.ts` turns it into one
+sentence in the foot. The third refusal is silent: a permanent whose
+activated ability cannot be activated now (a tap ability on a tapped or
+summoning-sick creature, a cost the pool cannot pay, a loyalty ability
+already used this turn, a cast lock) is pressable and does nothing, and
+`logic/abilities.ts` can only say that no `activate` action names it.
+
+#### The change
+
+The same hint, for the same reasons, on a permanent. The engine already
+decides every one of these refusals in `legality`; this item surfaces the
+decision it made rather than re-deriving one in the client
+([architecture.md](architecture.md)).
+
+- **The engine says why.** `PlayerView` gains `ability_reasons`, keyed by
+  oid, built beside `hand_reasons` in `serialize.player_view` from a
+  `legality.unactivatable_reason` that answers in the vocabulary
+  `unplayable_reason` already uses, extended by the two reasons only an
+  ability has: tapped (or summoning sick, for a tap cost) and already
+  activated this turn. Only for the viewer's own permanents, and only the
+  gates that are closed, so a permanent absent from the map is activatable
+  and the map is empty on most boards.
+- **The foot says it.** `targetHint` grows a sibling in `logic/` that reads
+  `ability_reasons` for the hovered or ringed permanent while nothing is
+  being targeted, in the sentence shape `targetHint` uses, and the foot's
+  hint draws it as a refusal. `HandFan`'s reason rendering and this one read
+  one label table in `logic/labels.ts`, so the same gate says the same thing
+  from either zone.
+
+What it does not do: offer an action that was not legal, or change what a
+press on a refused permanent does. Pressing it still reads the card.
+
+#### Gate
+
+An engine test per reason in `tests/unit/` that `unactivatable_reason`
+names it and that an activatable permanent is absent from the map; a server
+test that an opponent's seat gets `null`. `tests/targetHint.test.ts`'s
+sibling for the new hint, one case per reason, and that it is silent while
+targeting. A story in `HintBar.stories.tsx` or `TableFoot`'s nearest that
+draws the refusal at the handheld floors.
 
 ### CPU takeover and reconnection
 

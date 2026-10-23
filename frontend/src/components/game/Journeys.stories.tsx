@@ -26,11 +26,25 @@
  * `fakeGame` never produces one -- so the honest place for it is
  * `e2e/journeys-handheld.spec.ts`, against a real engine.
  *
- * ## The budgets are ceilings
+ * ## The budgets are ceilings, and they live in the audit
  *
  * `toBeLessThanOrEqual`, always. An exact count fails on an improvement, which
  * is the wrong direction to be strict in. Each number is what the journey
- * measured against the real engine at 1280x800.
+ * measured against the real engine at 1280x800, and it is written down once,
+ * in `decisionAudit.ts`, under the name of the story that measures it: the
+ * audit is the table of every question the engine asks against the surface
+ * that answers it, and the ceiling is the column that makes "one selection
+ * model" a number rather than a mood. A story here is held to `ceiling(<its
+ * own name>)`, and `tests/decisionAudit.test.ts` fails on a ceiling with no
+ * story of that name.
+ *
+ * ## One journey per decision kind
+ *
+ * Every kind the engine raises has a journey below, so a surface that moves a
+ * question -- a pick that stops landing the ring on its first option, a slab
+ * that gains a stop in front of it -- costs a press here before it costs one
+ * on a Deck. The pick-one journeys stand for every `choose_objects` purpose
+ * the dialog still answers; the audit's rows say which those are.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -41,6 +55,7 @@ import { fakeGame, idleMutation } from "../../testing/fakeGame";
 import { journey } from "../../testing/journey";
 import type { Scenario } from "../../testing/scenarios";
 import * as scenarios from "../../testing/scenarios";
+import { ceiling } from "./decisionAudit";
 import { Table } from "./Table";
 
 type Props = Parameters<typeof Table>[0];
@@ -114,7 +129,7 @@ export const DeclareAnAttack: Story = {
     expect(canvasElement.querySelector('[data-attacker="301"][data-staged]')).toBeNull();
 
     await run.walk("right", "a");
-    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(4);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("DeclareAnAttack"));
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -150,7 +165,7 @@ export const CommitFromAnywhere: Story = {
     await waitFor(() => expect(verbFor(canvasElement, "x")).toBe("Attack"));
 
     await run.press("x");
-    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(2);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("CommitFromAnywhere"));
     // The ring never left the board to do any of it.
     expect(run.region(), run.trail.join("\n")).toBe("board");
   },
@@ -269,7 +284,7 @@ export const SendEverythingAnyway: Story = {
     await waitFor(() =>
       expect(canvasElement.querySelector(".commit-note")?.textContent).toBe("3 attacking"),
     );
-    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(3);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("SendEverythingAnyway"));
   },
 };
 
@@ -351,7 +366,7 @@ export const AimABlocker: Story = {
     await waitFor(() =>
       expect(canvasElement.querySelector(".commit-note")?.textContent).toMatch(/^1 blocked/),
     );
-    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(1);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("AimABlocker"));
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -384,7 +399,7 @@ export const AimASpell: Story = {
 
     await run.press("a");
     expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalled();
-    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(2);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("AimASpell"));
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -415,7 +430,7 @@ export const PassInOnePress: Story = {
 
     await run.press("x");
     expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith(pass?.id);
-    expect(run.cost).toBe(1);
+    expect(run.cost).toBeLessThanOrEqual(ceiling("PassInOnePress"));
   },
 };
 
@@ -456,6 +471,217 @@ export const ChooseATypeByPaging: Story = {
 
     await run.press("a");
     expect(args.game.act.mutate).toHaveBeenCalledWith(options[11].id);
-    expect(run.cost).toBeLessThanOrEqual(5);
+    expect(run.cost).toBeLessThanOrEqual(ceiling("ChooseATypeByPaging"));
+  },
+};
+
+/* ==========================================================================
+   One journey per decision kind.
+
+   The combat and priority journeys above are the ones that were measured
+   first. These are the rest of the audit (`decisionAudit.ts`): every kind
+   the engine raises, walked from wherever the surface that owns it puts the
+   ring, so the ceiling is the whole cost a player pays and not the cost
+   after a walk nobody counted.
+   ========================================================================== */
+
+/**
+ * THE FIRST DECISION OF EVERY GAME IS ONE PRESS.
+ *
+ * `OpeningHand` lands the ring on the middle card and binds `A` on any card
+ * stop to Keep (its header says why: the Keep plate is a stop too, and a
+ * player reading the hand should not have to leave it to say yes).
+ */
+export const KeepTheHand: Story = {
+  args: board(scenarios.mulligan(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("opening-hand");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^card:/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-keep");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("KeepTheHand"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * ...and bottoming a card after a mulligan is one press per card, on the same
+ * screen: in the bottoming phase a card's click IS the answer.
+ */
+export const BottomACard: Story = {
+  args: board(scenarios.mulliganBottom(1), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("opening-hand");
+    const run = journey();
+    // In the bottoming phase the cards carry the ids, so the stop is the action's.
+    await waitFor(() => expect(run.at()).toMatch(/^act:a\d-bottom$/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalled();
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("BottomACard"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * A single pick in the dialog: the ring opens on the first option.
+ *
+ * This is the journey every `choose_objects` purpose the dialog still answers
+ * is held to -- sacrifice, destroy, discard and the rest of the audit's
+ * `dialog` rows -- because the dialog draws them all the same way, and the
+ * press that answers one answers any.
+ */
+export const PickOneInTheDialog: Story = {
+  args: board(scenarios.chooseTarget(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^act:/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("PickOneInTheDialog"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/** The same press over faces the server attached, which the player view cannot supply. */
+export const PickFromTheLibrary: Story = {
+  args: board(scenarios.searchLibrary(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^act:/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("PickFromTheLibrary"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * A SET, BUILT IN THE PANEL AND SENT ONCE.
+ *
+ * "Exile up to two target artifacts": `L2` jumps to the slab (in pick mode
+ * the slab is the decision and the mark beside it a convenience, so that is
+ * where the jump lands), `left` is the "all" mark, `A` fills the set, `right`
+ * is back on the slab and `A` sends it whole through `/choose`.
+ *
+ * This is the ceiling `one-staged-set` is built against: `X` does not yet
+ * commit a pick the way it commits an attack, which is the walk counted here.
+ */
+export const PickSeveralInThePanel: Story = {
+  args: board(scenarios.chooseSeveralTargets(), { choose: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("pick-confirm");
+    const run = journey();
+
+    await run.press("l2");
+    // The slab carries `Done`'s id, so its stop is the action's, not `commit`.
+    await waitFor(() => expect(run.at()).toBe("act:a4-finish_declaration"));
+    await run.walk("left", "a");
+    await waitFor(() =>
+      expect(canvasElement.querySelector(".commit-note")?.textContent).toMatch(/^2 chosen/),
+    );
+    await run.walk("right", "a");
+    // Yours first, in row order: your Sol Ring and your Rhystic Study.
+    expect(args.game.choose.mutate, run.trail.join("\n")).toHaveBeenCalledWith([1, 3]);
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(
+      ceiling("PickSeveralInThePanel"),
+    );
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/** A modal spell's first mode, from where the dialog opens. */
+export const ChooseAMode: Story = {
+  args: board(scenarios.chooseMode(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^act:/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a0-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("ChooseAMode"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * X = 2, THROUGH THE STEPPER.
+ *
+ * The one decision whose control changes which id the slab carries rather
+ * than adding more (ADR 0015's deliberate exception). The panel opens with
+ * the ring in the stepper, `right` is its plus, two presses raise X, `down`
+ * is the slab and `A` pays. The slab's stop is the id of whatever X it
+ * currently carries, which is why the walk reads the stepper's own
+ * `data-x` rather than the ring.
+ */
+export const PayX: Story = {
+  args: board(scenarios.chooseX(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("choose-x");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^combo:x-/));
+
+    await run.press("right");
+    expect(run.at(), run.trail.join("\n")).toBe("combo:x-up");
+    await run.walk("a", "a");
+    await waitFor(() => expect(canvas.getByTestId("choose-x").dataset.x).toBe("2"));
+    await run.walk("down", "a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a2-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("PayX"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * Declining a "you may" is the second option, one step from the first.
+ *
+ * Counted on No rather than Yes because No is the answer a player gives
+ * when the trigger would hurt, and a surface that made declining a walk
+ * would be a surface that taxes the right call.
+ */
+export const SayNo: Story = {
+  args: board(scenarios.mayAbility(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toBe("act:a0-choose"));
+
+    await run.press("right");
+    expect(run.at(), run.trail.join("\n")).toBe("act:a1-choose");
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a1-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("SayNo"));
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/** Pointing at an opponent, from where the dialog opens. */
+export const ChooseAPlayer: Story = {
+  args: board(scenarios.choosePlayer(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const run = journey();
+    await waitFor(() => expect(run.at()).toMatch(/^act:/));
+
+    await run.press("a");
+    expect(args.game.act.mutate, run.trail.join("\n")).toHaveBeenCalledWith("a1-choose");
+    expect(run.cost, run.trail.join("\n")).toBeLessThanOrEqual(ceiling("ChooseAPlayer"));
+    expectUniqueActionIds(canvasElement);
   },
 };
