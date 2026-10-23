@@ -13,7 +13,7 @@ adr: true
 ## Today
 
 Every pod and every game lives in one uvicorn worker's memory
-([server.md](../server.md#in-process-memory)); the deploy job replaces the
+([server.md](../server.md#games-on-disk)); the deploy job replaces the
 container ([ci-cd.md](../ci-cd.md#build-and-deploy)), so every game in progress
 is dropped on every shipping merge, and the site ships on most merges
 ([ADR 0010](../adr/0010-release-every-main-build.md)). The desktop has the same
