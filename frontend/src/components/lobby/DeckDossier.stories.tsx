@@ -110,6 +110,8 @@ export const Imported: Story = {
  * player looking at a deck before going offline knows what they will see.
  */
 export const ArtMissing: Story = {
+  globals: { handheld: "on" },
+  tags: ["handheld"],
   args: { deckId: "unfinished" },
   parameters: {
     commanderblitz: { query: seeded({ ...imported, id: "unfinished", complete: false }) },

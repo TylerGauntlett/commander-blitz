@@ -80,6 +80,8 @@ export const WithImportedDeck: Story = {
  * `complete`, and the next launch with a connection finishes it (ADR 0022).
  */
 export const ArtStillToFetch: Story = {
+  globals: { handheld: "on" },
+  tags: ["handheld"],
   args: {
     decks: pods.DECKS.map((deck) => (deck.id === "mine" ? { ...deck, complete: false } : deck)),
   },
