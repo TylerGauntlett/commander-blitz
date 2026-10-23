@@ -40,14 +40,19 @@ with the panel as the mirror — the rule the audit converged on, built.
   `pickKey` keys picks today, so a set never outlives its question.
   `stageAttack`, `stageBlock` and `togglePick` become one `stage` with the
   three call sites unchanged in meaning; `clearStaging` empties one thing.
+  The key covers all three kinds, combat included: a staged attack lives
+  exactly as long as the declaration it was staged for, and a key change
+  mid-declaration empties it like any other set.
 - **One commit.** `commitmentFor` names the control for a pick-several
   decision the way it names Attack and Block, so `X` commits a Clever
   Concealment from wherever the ring is, and `logic/verbs.ts` prints it
   through the same shared function.
 - **The board answers a single object pick.** A `choose_objects` whose every
-  option is a permanent the layout draws is staged by pressing the card and
-  committed once, with the panel's rows as the mirror where the card is not
-  drawn (an opponent's lane at the handheld size), the shape `PickRows` and
+  option is a permanent the layout draws is answered by pressing the card.
+  A pick of one is committed by that press, the ring already on the first
+  option, so it stays inside `PickOneInTheDialog`; a pick of several is
+  staged and committed once. The panel's rows are the mirror where the card
+  is not drawn (an opponent's lane at the handheld size), the shape `PickRows` and
   the attack declaration already have. `PromptDialog` keeps every pick whose
   options are not on the table: a library search, a hand to bottom, a mode,
   a player. `isModalDecision` is where the split is decided, and
@@ -63,6 +68,10 @@ with the panel as the mirror — the rule the audit converged on, built.
 What it does not do: change which actions the engine offers, or how `/choose`
 takes a set. The engine's `choose` actions stay one pick each and the slab
 stays the one control carrying an id for the set.
+
+It ships as one pull request, the four parts as phased commits in the order
+above: they share the store and `logic/commit.ts`, and a split would land the
+same files twice.
 
 The dependency is real: the audit's rule column is what says which pick moves
 to the board and which stays a modal, and its press ceilings are what this
