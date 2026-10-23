@@ -10,6 +10,7 @@
 
 import { expect, test } from "@playwright/test";
 import {
+  actionsOfKind,
   budget,
   isOver,
   keepOpeningHand,
@@ -24,6 +25,9 @@ const LOCAL = /^https?:\/\/127\.0\.0\.1:8010\//;
 
 /** The stub site: the sidecar's hosted origin, reached by the test, never the page. */
 const SITE = "http://127.0.0.1:8011";
+
+/** How many turns the imported deck plays offline. */
+const TURNS = 6;
 
 /** The deck `tests/server/stub_site.py` answers for any Moxfield link. */
 const DECK_URL = "https://moxfield.com/decks/vVdybWVgC0imBOlW63FlTg";
@@ -111,12 +115,12 @@ test("a solo pod deals and plays with nothing off the device", async ({ page, re
  * trusts a probe answer for half a minute, so a spec after it could see the
  * door lit for a site that has already gone again.
  */
-test("a deck imported through the site plays a whole game once the site is gone", async ({
+test("a deck imported through the site plays offline once the site is gone", async ({
   page,
   request,
 }) => {
   test.slow();
-  test.setTimeout(budget(900_000));
+  test.setTimeout(budget(600_000));
 
   // Online: the import goes through the site and lands whole (ADR 0022).
   await request.post(`${SITE}/__stub/state`, { data: { online: true } });
@@ -136,18 +140,42 @@ test("a deck imported through the site plays a whole game once the site is gone"
   const fetched: string[] = (await (await request.get(`${SITE}/__stub/stats`)).json()).art;
   expect(fetched.length).toBeGreaterThan(0);
 
-  await startGame(page, { deck: imported.deck.id, opponents: 1, seed: 11 });
-  let steps = 0;
-  for (; steps < 3000; steps += 1) {
+  await startGame(page, { deck: imported.deck.id, opponents: 1, seed: 7 });
+  // One attacker staged, then the declaration finished: an `add_attacker`
+  // row stays pressable once staged, and preferring it again only takes the
+  // attacker back, which is a loop rather than a game.
+  let staged = false;
+  // Several turns rather than a whole game: a game's length is bounded only
+  // by the turn cap, and `full-game.spec.ts` already plays one to a result.
+  // What this spec holds is that the imported deck plays off the device.
+  const turn = page.getByTestId("turn-counter");
+  for (let steps = 0; steps < 3000; steps += 1) {
     await waitForOurTurn(page);
     if (await isOver(page)) break;
-    await takeAction(page, ["keep", "play_land", "cast", "add_attacker", "pass"]);
+    if (Number(await turn.getAttribute("data-turn")) > TURNS) break;
+    const finish = actionsOfKind(page, "finish_declaration").first();
+    if (staged && (await finish.count())) {
+      await finish.click();
+      staged = false;
+      continue;
+    }
+    const attacker = actionsOfKind(page, "add_attacker").first();
+    if (!staged && (await attacker.count())) {
+      await attacker.click();
+      staged = true;
+      continue;
+    }
+    staged = false;
+    await takeAction(page, ["keep", "play_land", "cast", "finish_declaration", "pass"]);
   }
-  expect(await isOver(page), `game never finished in ${steps} decisions`).toBe(true);
-  await expect(page.getByTestId("game-over")).toBeVisible();
+  expect(
+    (await isOver(page)) || Number(await turn.getAttribute("data-turn")) > TURNS,
+    "the game stopped short of its turns",
+  ).toBe(true);
 
   // The opponent's precon may go looking for a printing the device never had;
   // the imported deck must not have gone looking for anything.
-  const asked: string[] = (await (await request.get(`${SITE}/__stub/stats`)).json()).offline_art;
+  const asked: string[] = (await (await request.get(`${SITE}/__stub/stats`)).json())
+    .offline_art;
   expect(asked.filter((name) => fetched.includes(name))).toEqual([]);
 });
