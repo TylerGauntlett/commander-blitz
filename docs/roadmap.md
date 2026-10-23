@@ -920,8 +920,9 @@ the process, relaunch, and assert `POST /api/decks/complete` finishes it
 without fetching anything twice. Server tests hold the bundle route, the
 fall-back to Moxfield, and a definition the loader refuses becoming a proxy.
 The sidecar spec in the e2e matrix imports through the same stub, turns the
-stub off, and plays a full game on the imported deck with nothing off the
-device. A story shows an incomplete deck's tile and dossier.
+stub off, and plays several turns on the imported deck with nothing off the
+device; playing a game to its result is `full-game.spec.ts`'s, whose length
+the turn cap alone bounds. A story shows an incomplete deck's tile and dossier.
 
 ### Compressed art, shipped for offline precon play
 
