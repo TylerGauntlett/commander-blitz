@@ -332,8 +332,12 @@ export async function stubUpcoming(
 }
 
 /**
- * Serve the real deck list with these appended. Call it before the page
- * loads, because the client fetches the list once and keeps it.
+ * Serve the real deck list with its precons replaced by these extras. Call it
+ * before the page loads, because the client fetches the list once and keeps it.
+ *
+ * The real precons are dropped so a stubbed Precons segment is exactly what the
+ * test wrote: a shipped precon would otherwise join a stub's release run and
+ * bring its archetype to the filter. The favorites stay real.
  */
 export async function stubDeckList(
   page: Page,
@@ -341,8 +345,10 @@ export async function stubDeckList(
 ): Promise<void> {
   await page.route("**/api/decks", async (route) => {
     const response = await route.fetch();
-    const decks = await response.json();
-    return route.fulfill({ json: [...decks, ...extra] });
+    const decks = (await response.json()) as { source?: string }[];
+    return route.fulfill({
+      json: [...decks.filter((deck) => deck.source !== "precon"), ...extra],
+    });
   });
 }
 

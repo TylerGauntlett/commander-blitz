@@ -1,11 +1,13 @@
 /**
  * The shelf's segments against a real engine (ADR 0024).
  *
- * The server ships the favorites; the precons and the imports are appended to
- * its list by `stubDeckList`, because no precon is shipped yet and an import
- * would reach Moxfield. What is under test is the screen: which segment holds
- * what, the precons' runs and their order, and that a star is drawn from the
- * server's answer rather than from the press.
+ * The server ships the favorites and the precons; most tests replace the
+ * precons with `stubDeckList`'s, so the runs under test are the ones written
+ * here, and add imports because a real one would reach Moxfield. One test reads
+ * the real shelf, to hold that a shipped precon is drawn in its release's run.
+ * What is under test is the screen: which segment holds what, the precons' runs
+ * and their order, and that a star is drawn from the server's answer rather
+ * than from the press.
  */
 
 import { expect, type Page, test } from "@playwright/test";
@@ -142,7 +144,16 @@ test.describe("the shelf's segments", () => {
     await expect(page.getByRole("region", { name: "Bloomburrow Commander" })).toHaveCount(0);
   });
 
+  test("a shipped precon is drawn in its release's run", async ({ page }) => {
+    await browseDecks(page);
+    await page.getByTestId("source-precon").click();
+    const run = page.getByRole("region", { name: "Foundations Commander" });
+    await expect(run.getByTestId("deck-fdc_wretched_ranks")).toBeVisible();
+  });
+
   test("the archetype filter is not drawn when no deck names one", async ({ page }) => {
+    // The favorites name none; the shipped precons, which do, are dropped.
+    await stubDeckList(page, []);
     await browseDecks(page);
     await expect(page.locator(".shelf__body .tile").first()).toBeVisible();
     await expect(page.getByTestId("deck-archetype")).toHaveCount(0);
