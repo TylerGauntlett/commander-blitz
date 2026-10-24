@@ -58,7 +58,7 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 | `fx/` | `scheduler.ts`, `actuators.ts`, `particles.ts`, `presets.ts`, `reducedMotion.ts` | effects run concurrently on one frame loop and never touch React state |
 | `motion/` | `springs.ts` | every transition in the app, named once |
 | `styles/` and `theme.css` | `theme.css` at `src/` root is the token layer; `styles/*.css` are the surfaces (`cards`, `board`, `handheld`, `phone`, `lobby`, `opening`, …) | source order is the cascade; see the Biome note under Storybook |
-| `testing/` | `fixtures.ts`, `cards.ts`, `pods.ts`, `scenarios/`, `fakeGame.ts`, `mounts.tsx`, `appGeometry.ts`, `journey.ts`, `asserts.ts`, `art.ts` | shared by tests and stories, and kept out of the production bundle by `tests/imports.test.ts` |
+| `testing/` | `fixtures.ts`, `cards.ts`, `pods.ts`, `shelf.ts`, `scenarios/`, `fakeGame.ts`, `mounts.tsx`, `appGeometry.ts`, `journey.ts`, `asserts.ts`, `art.ts` | shared by tests and stories, and kept out of the production bundle by `tests/imports.test.ts` |
 | `desktop/` | `bridge.ts`, the typed view of what the Electron preload exposes on `window` | the only place the shell is spoken to; `logic/desktop.ts` makes the decisions (ADR 0009 *The desktop build runs its own server, and the site is for friends*) |
 | `api/` | `client.ts` and `types.ts`, the fetch wrapper and the DTO mirrors | same-origin: every call goes to `/api` relative to the page, so the dev server proxies it and a deployment serves it; the pod token is attached once in `request()` and no call site can forget |
 | `audio/` | `sfx.ts`, the synthesised palette | — |
@@ -483,6 +483,17 @@ into the `CardView` that `CardFace` takes and puts a `podcard` class on it, whic
 `styles/lobby.css` re-boxes to `--card-w`, so a face-up seat and a face-down back are
 the same rectangle.
 
+**The shelf is runs, each a region.** `groupDecks` in `logic/lobby.ts` is the one place
+the catalogue's order is decided: precons in one run per `release.set_name`, newest
+`date` first, then Favorites, then Yours (ADR 0024 names the three). A run with a header
+is a labelled region (`role="region"`, `aria-label` its title), so a screen reader can
+jump between sets; the header is type and not a stop, so a pad walking down passes from
+the last deck of one run to the first of the next. A single run under its own segment
+has no header, because the segment already names it. Filters that come and go with the
+decks, like the archetype one, are drawn only when they have something to offer. The
+star on an import is drawn from `DeckSummary.starred` alone: the press sends the value it
+wants, and `useStarDeck` puts the server's answer into the deck list.
+
 **The phase ribbon** keeps every step label in the DOM whether or not its phase is
 expanded, which is what keeps the marker's `layoutId` continuous across a phase boundary
 and what `e2e/acceptance.spec.ts` counts.
@@ -532,7 +543,7 @@ this is the set of rules a story has to follow.
   react-query, `art` picks the art source, `zoomLock` opts out of the pinned zoom for the
   stories that exercise the solver. Fixtures are under `src/testing/`:
   `fixtures.ts` for DTOs, `cards.ts` for a real pool, `scenarios/` for whole positions,
-  `pods.ts` for lobby states, `fakeGame.ts` for a `useGame` stand-in, and `asserts.ts` for
+  `pods.ts` for lobby states, `shelf.ts` for the catalogue's segments, `fakeGame.ts` for a `useGame` stand-in, and `asserts.ts` for
   `expectUniqueActionIds`, the invariant most worth sharing.
 - **The toolbar globals** are `input` (mouse, keyboard, pad), `handheld` (desktop or
   handheld; stamps `data-desktop` or `data-handheld`), `hints` (the hint bar, reviewed on

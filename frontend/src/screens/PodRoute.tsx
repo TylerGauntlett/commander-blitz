@@ -19,7 +19,7 @@ import { PodLobby } from "../components/lobby/PodLobby";
 import { Screen } from "../components/screen/Screen";
 import { normaliseCode } from "../logic/lobby";
 import { gamePath, joinPath } from "../logic/routes";
-import { useDecks } from "../state/useGame";
+import { useDecks, useStarDeck } from "../state/useGame";
 import { usePod } from "../state/usePod";
 import { linkGame, usePodSession } from "../state/usePodSession";
 
@@ -58,6 +58,7 @@ export function PodRoute() {
   const { session, forget } = usePodSession(code || undefined);
   const lobby = usePod(session);
   const decks = useDecks();
+  const starDeck = useStarDeck();
 
   const pod = lobby.pod;
   const gameId = pod?.status === "in_game" ? pod.game_id : null;
@@ -126,6 +127,7 @@ export function PodRoute() {
         onStart={() => lobby.start.mutate(pinnedSeed())}
         onLeave={leave}
         onDecksChanged={() => decks.refetch()}
+        onStarDeck={starDeck}
       />
     </Screen>
   );

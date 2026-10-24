@@ -74,12 +74,13 @@ a card, never enough to decide legality.
 |---|---|---|
 | `GET` | `/health` | Version, card count, deck list, live game and pod counts, the catalog bundle and the art store's progress |
 | `GET` | `/api/config` | Which server this is: `mode` (`hosted` or `desktop`), whether the hosted server is reachable (`online`), `remote_origin`, and the app and content versions. The desktop build's client greys out what needs the other server on this answer, never on its origin; the site's client polls it to notice a deploy and offer a reload |
-| `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags`, `source_id` — the Moxfield id an import came from, case intact — and `complete`, which the desktop build sets `false` while an import's art is not all on the device |
+| `GET` | `/api/decks` | Deck summaries for the catalogue, with `source` (`precon`, `favorite` or `moxfield`, [ADR 0024](adr/0024-precon-means-the-product.md))/`playable`/`simplified`/`tags`, `archetype` (`""` when the deck names none), `release` (`{set_code, set_name, date}` on a precon, else `null`), `starred` (an import's star), `source_id` — the Moxfield id an import came from, case intact — and `complete`, which the desktop build sets `false` while an import's art is not all on the device |
 | `GET` | `/api/decks/{deck_id}` | One deck with the dossier's fields: `ratings`, `strategy`, `signature`, and the derived `curve`/`lands`/`swaps` |
 | `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}`. The desktop build asks the site first and reads Moxfield itself only when the site does not answer; with `COMMANDERBLITZ_EAGER_ART=1` the response's `art_prefetch` is the verdict, `complete` and what is still `missing` ([ADR 0022](adr/0022-deck-imports-through-the-site.md)) |
 | `GET` | `/api/decks/{deck_id}/bundle` | An imported deck's file with every card definition, face and token behind it, their coverage and their printings. `404` on a precon, `403` on another library's import |
 | `POST` | `/api/decks/complete` | Fetch what every incomplete imported deck is missing and record the verdict. The desktop door calls it before drawing whenever the site answers; `[]` on the site |
 | `DELETE` | `/api/decks/{deck_id}` | Remove an imported deck. `400` on a precon |
+| `POST` | `/api/decks/{deck_id}/star` | Star or unstar an imported deck, which pins it to the top of Yours. Body: `{starred}`; answers the updated deck summary. `400` on a shipped deck, `403` on another library's import |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
 | `GET` | `/api/images?game_id=` | Card art paths. Static, so fetched once. Scoped to a game's own cards when `game_id` is given — unscoped it grows with every imported deck |
 | `GET` | `/art/{card_id}.jpg` | The art itself, from disk. Lazily fetched for cards outside the shipped pool |

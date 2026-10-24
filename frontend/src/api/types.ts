@@ -363,6 +363,17 @@ export interface GameCreated {
   version: number;
 }
 
+/** Where a deck came from (ADR 0024). */
+export type DeckSourceKind = "precon" | "favorite" | "moxfield";
+
+/** The product a precon is. Mirrors `ReleaseDTO`. */
+export interface DeckRelease {
+  set_code: string;
+  set_name: string;
+  /** ISO date, so it orders as a string. */
+  date: string;
+}
+
 export interface DeckSummary {
   id: string;
   name: string;
@@ -371,14 +382,23 @@ export interface DeckSummary {
   color_identity: string[];
   card_count: number;
   notes: string;
-  /** "precon" ships with the engine; "moxfield" was imported. */
-  source: string;
+  /**
+   * ADR 0024: "precon" is a list Wizards sold, "favorite" one the maintainer
+   * ships, "moxfield" the player's own import.
+   */
+  source: DeckSourceKind;
   /** Cards whose printed text the engine represents in full. */
   playable: number;
   /** Cards whose non-keyword rules text does nothing. */
   simplified: number;
   /** Editorial. Empty for an imported deck, which the catalogue draws honestly. */
   tags: string[];
+  /** The `ARCHETYPES` key the deck file names, or `""` when it names none. */
+  archetype: string;
+  /** The product a precon is, which the shelf groups by; `null` otherwise. */
+  release: DeckRelease | null;
+  /** The player's star on their own import. Always false on a shipped deck. */
+  starred: boolean;
   /**
    * The Moxfield public id an import came from, case preserved. Empty for a
    * precon. What the desktop sends the hosted server so an imported deck can

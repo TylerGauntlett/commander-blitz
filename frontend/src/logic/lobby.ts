@@ -12,7 +12,7 @@
  * not wrong.
  */
 
-import type { DeckSummary, PodSeatView, PodView } from "../api/types";
+import type { DeckSourceKind, DeckSummary, PodSeatView, PodView } from "../api/types";
 
 /* ------------------------------------------------------------------ */
 /* Seats                                                               */
@@ -160,13 +160,16 @@ export function readyTrack(pod: PodView): TrackSegment[] {
 /* ------------------------------------------------------------------ */
 
 export type DeckSort = "name" | "speed" | "complexity" | "pilot";
-export type DeckSource = "all" | "precon" | "moxfield";
+/** The shelf's segments: every deck, or one `DeckSummary.source` (ADR 0024). */
+export type DeckSource = "all" | DeckSourceKind;
 
 export interface CatalogFilters {
   q: string;
   /** Colour identity, as an AND: three colours means decks that play all three. */
   colours: string[];
   source: DeckSource;
+  /** One `ARCHETYPES` key, or `""` for any. */
+  archetype: string;
   sort: DeckSort;
 }
 
@@ -174,6 +177,7 @@ export const EMPTY_FILTERS: CatalogFilters = {
   q: "",
   colours: [],
   source: "all",
+  archetype: "",
   sort: "name",
 };
 
@@ -210,6 +214,7 @@ export function visibleDecks(
   const q = filters.q.trim().toLowerCase();
   const matched = decks.filter((deck) => {
     if (filters.source !== "all" && deck.source !== filters.source) return false;
+    if (filters.archetype && deck.archetype !== filters.archetype) return false;
     if (
       filters.colours.length > 0 &&
       !filters.colours.every((colour) => deck.color_identity.includes(colour))
@@ -239,6 +244,106 @@ export function visibleDecks(
     const delta = rating.invert ? left - right : right - left;
     return delta || byName(a, b);
   });
+}
+
+/**
+ * The archetypes the filter can offer: those of the decks every other filter
+ * leaves, so a choice never empties the grid by itself, plus the one already
+ * chosen, so the control that set it is still there to clear it. Empty means
+ * the control has nothing to offer and is not drawn.
+ */
+export function archetypeOptions(decks: DeckSummary[], filters: CatalogFilters): string[] {
+  const found = new Set(
+    visibleDecks(decks, { ...filters, archetype: "" })
+      .map((deck) => deck.archetype)
+      .filter(Boolean),
+  );
+  if (filters.archetype) found.add(filters.archetype);
+  return [...found].sort();
+}
+
+/** The archetype after this one, through "any" and round again. */
+export function nextArchetype(current: string, options: string[]): string {
+  const ring = ["", ...options];
+  return ring[(ring.indexOf(current) + 1) % ring.length];
+}
+
+/** `go_wide` reads "Go wide"; `""` reads "Any". */
+export function archetypeName(key: string): string {
+  if (!key) return "Any";
+  const words = key.replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/** One run of tiles on the shelf, under its own header or under none. */
+export interface DeckGroup {
+  /** Stable across renders: the React key and the region's test id. */
+  key: string;
+  /** The header and the region's name; `null` draws a bare grid. */
+  title: string | null;
+  decks: DeckSummary[];
+}
+
+const SOURCE_TITLES: Record<DeckSourceKind, string> = {
+  precon: "Precons",
+  favorite: "Favorites",
+  moxfield: "Yours",
+};
+
+/**
+ * The shelf as it is drawn: the visible decks, in runs.
+ *
+ * Precons run by product, one group per `release.set_name`, newest `date`
+ * first, so the set that came out last is the first row. Favorites and the
+ * player's own imports follow as one group each. A single run under a segment
+ * of its own needs no header, because the segment already names it; a precon
+ * run always has one, because the product is what it says.
+ *
+ * Within Yours a starred import sorts above every other. Otherwise each run
+ * keeps the order `visibleDecks` gave it, so the sort control still decides.
+ */
+export function groupDecks(shown: DeckSummary[], source: DeckSource): DeckGroup[] {
+  const releases = new Map<string, { date: string; decks: DeckSummary[] }>();
+  const favorites: DeckSummary[] = [];
+  const yours: DeckSummary[] = [];
+  for (const deck of shown) {
+    if (deck.source === "precon") {
+      const name = deck.release?.set_name || SOURCE_TITLES.precon;
+      const run = releases.get(name) ?? { date: "", decks: [] };
+      const date = deck.release?.date ?? "";
+      if (date > run.date) run.date = date;
+      run.decks.push(deck);
+      releases.set(name, run);
+    } else if (deck.source === "moxfield") {
+      yours.push(deck);
+    } else {
+      favorites.push(deck);
+    }
+  }
+
+  const groups: DeckGroup[] = [...releases.entries()]
+    .sort(([a, left], [b, right]) => right.date.localeCompare(left.date) || a.localeCompare(b))
+    .map(([name, run]) => ({ key: `release-${slug(name)}`, title: name, decks: run.decks }));
+  if (favorites.length > 0) {
+    groups.push({ key: "favorite", title: SOURCE_TITLES.favorite, decks: favorites });
+  }
+  if (yours.length > 0) {
+    // A stable sort, so the starred keep the order they arrived in.
+    const pinned = [...yours].sort((a, b) => Number(b.starred) - Number(a.starred));
+    groups.push({ key: "moxfield", title: SOURCE_TITLES.moxfield, decks: pinned });
+  }
+
+  if (groups.length === 1 && source !== "all" && source !== "precon") {
+    return [{ ...groups[0], title: null }];
+  }
+  return groups;
+}
+
+function slug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 /* ------------------------------------------------------------------ */

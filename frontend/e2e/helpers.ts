@@ -229,6 +229,91 @@ export async function keepOpeningHand(page: Page, mulligans = 0): Promise<void> 
   await page.mouse.move(1, 1);
 }
 
+/** A deck the server's list does not carry, shaped as `DeckSummary` is. */
+function stubDeck(fields: Record<string, unknown>): Record<string, unknown> {
+  return {
+    card_count: 100,
+    notes: "",
+    playable: 100,
+    simplified: 0,
+    tags: [],
+    archetype: "",
+    release: null,
+    starred: false,
+    source_id: "",
+    ...fields,
+  };
+}
+
+const FOUNDATIONS = { set_code: "FDC", set_name: "Foundations Commander", date: "2026-10-02" };
+const DUSKMOURN = { set_code: "DSC", set_name: "Duskmourn Commander", date: "2024-09-27" };
+
+/**
+ * Precons from two releases, the older listed first so the order on screen is
+ * the shelf's. Their commanders are cards the server knows, so every tile
+ * draws a face; the decks themselves exist only in the stubbed list, which is
+ * enough for a spec about the shelf and not for one that deals.
+ */
+export const STUB_PRECONS = [
+  stubDeck({
+    id: "dsc_stub_older",
+    name: "Older Precon",
+    source: "precon",
+    commanders: ["sheoldred_the_apocalypse"],
+    commander_names: ["Sheoldred, the Apocalypse"],
+    color_identity: ["B"],
+    archetype: "punisher",
+    release: DUSKMOURN,
+  }),
+  stubDeck({
+    id: "fdc_stub_angels",
+    name: "Newer Precon",
+    source: "precon",
+    commanders: ["giada_font_of_hope"],
+    commander_names: ["Giada, Font of Hope"],
+    color_identity: ["W"],
+    archetype: "tribal",
+    release: FOUNDATIONS,
+  }),
+];
+
+/** Two imports for Yours, neither starred. */
+export const STUB_IMPORTS = [
+  stubDeck({
+    id: "mox_stub_alpha",
+    name: "Alpha Import",
+    source: "moxfield",
+    source_id: "alpha",
+    commanders: ["edgar_markov"],
+    commander_names: ["Edgar Markov"],
+    color_identity: ["B", "R", "W"],
+  }),
+  stubDeck({
+    id: "mox_stub_zeta",
+    name: "Zeta Import",
+    source: "moxfield",
+    source_id: "zeta",
+    commanders: ["vivi_ornitier"],
+    commander_names: ["Vivi Ornitier"],
+    color_identity: ["R", "U"],
+  }),
+];
+
+/**
+ * Serve the real deck list with these appended. Call it before the page
+ * loads, because the client fetches the list once and keeps it.
+ */
+export async function stubDeckList(
+  page: Page,
+  extra: Record<string, unknown>[],
+): Promise<void> {
+  await page.route("**/api/decks", async (route) => {
+    const response = await route.fetch();
+    const decks = await response.json();
+    return route.fulfill({ json: [...decks, ...extra] });
+  });
+}
+
 /**
  * Open a pod and leave the catalogue open on your own seat.
  *

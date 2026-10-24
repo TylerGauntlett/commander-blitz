@@ -132,8 +132,12 @@
    The filter strip
    ========================================================================== */
 
+/* Wraps rather than overflows: the archetype control comes and goes with the
+   decks, and a strip that only fits without it would push its last control off
+   the side the moment it appeared. */
 .shelf__filters {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: calc(12px * var(--du));
   padding-bottom: calc(14px * var(--du));
@@ -248,6 +252,22 @@
   grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-w) + 26px), 1fr));
   gap: calc(20px * var(--du)) calc(14px * var(--du));
   justify-items: center;
+}
+
+/* A run of decks under its header: one release of precons, the favorites, or
+   yours. The header is type, not a control, so the ring passes over it. */
+.shelf__run + .shelf__run {
+  margin-top: calc(26px * var(--du));
+}
+
+.shelf__runh {
+  margin: 0 0 calc(12px * var(--du));
+  padding-bottom: calc(6px * var(--du));
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  font-size: max(var(--type-floor), calc(17px * var(--du)));
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
 }
 
 .shelf__empty {
@@ -400,7 +420,8 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
  */
 .tile__i,
 .tile__x,
-.tile__yes {
+.tile__yes,
+.tile__star {
   position: relative;
   width: 44px;
   min-width: var(--hit-floor);
@@ -420,7 +441,8 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
    the two can be sized independently -- 26px of lit ground under a 16px mark. */
 .tile__i::before,
 .tile__x::before,
-.tile__yes::before {
+.tile__yes::before,
+.tile__star::before {
   content: "";
   position: absolute;
   left: 50%;
@@ -436,14 +458,19 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
 .tile__i:hover,
 .tile__i[data-cursor],
 .tile__yes:hover,
-.tile__yes[data-cursor] {
+.tile__yes[data-cursor],
+.tile__star:hover,
+.tile__star[data-cursor],
+.tile__star--on {
   color: var(--focus);
 }
 
 .tile__i:hover::before,
 .tile__i[data-cursor]::before,
 .tile__yes:hover::before,
-.tile__yes[data-cursor]::before {
+.tile__yes[data-cursor]::before,
+.tile__star:hover::before,
+.tile__star[data-cursor]::before {
   background: rgb(255 224 138 / 0.16);
 }
 
@@ -455,6 +482,27 @@ html[data-input="keyboard"] .tile:has([data-cursor]) {
 .tile__x:hover::before,
 .tile__x[data-cursor]::before {
   background: rgb(224 90 90 / 0.16);
+}
+
+/* An import's name row, with its star before the name. The star keeps its box
+   and the name gives, so a long name ellipsises rather than shoving the star
+   into the next tile. */
+.tile__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.tile__star {
+  flex: none;
+  font-size: max(var(--type-floor), calc(19px * var(--du)));
+  cursor: pointer;
+}
+
+.tile__head .tile__n {
+  min-width: 0;
 }
 
 .tile__confirm {

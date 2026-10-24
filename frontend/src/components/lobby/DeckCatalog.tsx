@@ -28,16 +28,20 @@
  * same control and only one of them starts from nothing.
  */
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { DeckImportResponse, DeckSummary } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { useDismiss } from "../../input/useDismiss";
 import { canImport } from "../../logic/desktop";
 import {
+  archetypeName,
+  archetypeOptions,
   type CatalogFilters,
   type DeckSort,
   type DeckSource,
   EMPTY_FILTERS,
+  groupDecks,
+  nextArchetype,
   visibleDecks,
 } from "../../logic/lobby";
 import { useAppConfig } from "../../state/useAppConfig";
@@ -73,9 +77,11 @@ function sortName(sort: DeckSort): string {
   return SORTS.find(([id]) => id === sort)?.[1] ?? SORTS[0][1];
 }
 
+/* ADR 0024: each segment is a promise about where its decks came from. */
 const SOURCES: [DeckSource, string][] = [
   ["all", "All"],
   ["precon", "Precons"],
+  ["favorite", "Favorites"],
   ["moxfield", "Yours"],
 ];
 
@@ -91,8 +97,14 @@ interface Props {
   onDossier: (deckId: string) => void;
   onClose: () => void;
   onImported: (result: DeckImportResponse) => void;
-  /** Throw an imported deck away. Never called for a precon. */
+  /** Throw an imported deck away. Never called for a shipped deck. */
   onDelete: (deckId: string) => void;
+  /**
+   * Star or unstar an import, which pins it to the top of Yours. The tile
+   * draws `DeckSummary.starred` and nothing else, so the star changes when the
+   * server's answer comes back as a new deck list, never on the press.
+   */
+  onStar: (deckId: string, starred: boolean) => void;
   /**
    * Deck ids somebody at this table has already taken. They get no remove
    * control.
@@ -117,6 +129,7 @@ export function DeckCatalog({
   onClose,
   onImported,
   onDelete,
+  onStar,
   inUse = [],
 }: Props) {
   const [filters, setFilters] = useState<CatalogFilters>(EMPTY_FILTERS);
@@ -131,6 +144,8 @@ export function DeckCatalog({
   useDismiss(stage, onClose);
 
   const shown = useMemo(() => visibleDecks(decks, filters), [decks, filters]);
+  const groups = useMemo(() => groupDecks(shown, filters.source), [shown, filters.source]);
+  const archetypes = useMemo(() => archetypeOptions(decks, filters), [decks, filters]);
 
   /* The ring lands on a deck. See the header: without this it opens on the ✕,
      which is the way out of the screen the player just asked for. Once, on
@@ -138,7 +153,7 @@ export function DeckCatalog({
      whatever somebody had walked to. */
   // biome-ignore lint/correctness/useExhaustiveDependencies: mount only, by design.
   useLayoutEffect(() => {
-    const first = chosen ?? shown[0]?.id;
+    const first = chosen ?? groups[0]?.decks[0]?.id;
     if (first) setCursor(`ui:deck-${first}-take`);
   }, []);
 
@@ -287,6 +302,29 @@ export function DeckCatalog({
             {sortName(filters.sort)}
           </button>
 
+          {/*
+            The archetype cycles for the sort's reason, and only through the
+            archetypes the other filters leave (`archetypeOptions`). When no
+            visible deck names one there is nothing to choose, so there is no
+            control -- a button whose every press says "Any" is a dead stop.
+          */}
+          {archetypes.length > 0 && (
+            <button
+              type="button"
+              className="shelf__sort"
+              onClick={() => set("archetype", nextArchetype(filters.archetype, archetypes))}
+              aria-label={`Archetype: ${archetypeName(filters.archetype)}`}
+              data-hint="Show one archetype"
+              data-testid="deck-archetype"
+              data-archetype={filters.archetype}
+            >
+              <span className="shelf__sortk" aria-hidden="true">
+                Archetype
+              </span>{" "}
+              {archetypeName(filters.archetype)}
+            </button>
+          )}
+
           <span className="shelf__gap" />
 
           {/* The one line browsing needs and choosing does not: a pick here
@@ -299,19 +337,47 @@ export function DeckCatalog({
         </div>
 
         <div className="shelf__body">
-          {shown.length > 0 ? (
-            <div className="shelf__grid">
-              {shown.map((deck) => (
-                <DeckPick
-                  key={deck.id}
-                  deck={deck}
-                  selected={deck.id === chosen}
-                  onPick={onPick}
-                  onDossier={onDossier}
-                  onDelete={inUse.includes(deck.id) ? null : onDelete}
-                />
-              ))}
-            </div>
+          {/*
+            RUNS, EACH A REGION. A precon is a product, so the shelf runs them
+            by release, newest first (`groupDecks`), and each run is a labelled
+            region under its own header: a screen reader can jump between them,
+            and a pad walking down meets a heading between two sets rather than
+            one sweep with no landmarks in it. The header is not a stop; the
+            next press lands on the first deck of the next run.
+          */}
+          {groups.length > 0 ? (
+            groups.map((group) => {
+              const grid = (
+                <div className="shelf__grid">
+                  {group.decks.map((deck) => (
+                    <DeckPick
+                      key={deck.id}
+                      deck={deck}
+                      selected={deck.id === chosen}
+                      onPick={onPick}
+                      onDossier={onDossier}
+                      onDelete={inUse.includes(deck.id) ? null : onDelete}
+                      onStar={onStar}
+                    />
+                  ))}
+                </div>
+              );
+              if (group.title === null) {
+                return <Fragment key={group.key}>{grid}</Fragment>;
+              }
+              return (
+                <div
+                  key={group.key}
+                  className="shelf__run"
+                  role="region"
+                  aria-label={group.title}
+                  data-testid={`deck-group-${group.key}`}
+                >
+                  <h2 className="shelf__runh">{group.title}</h2>
+                  {grid}
+                </div>
+              );
+            })
           ) : (
             <div className="shelf__empty" data-testid="deck-catalog-empty">
               Nothing matches. Colours are an AND.
@@ -346,6 +412,7 @@ function DeckPick({
   onPick,
   onDossier,
   onDelete,
+  onStar,
 }: {
   deck: DeckSummary;
   selected: boolean;
@@ -353,6 +420,7 @@ function DeckPick({
   onDossier: (deckId: string) => void;
   /** Null when this deck may not be removed -- see `Props.inUse`. */
   onDelete: ((deckId: string) => void) | null;
+  onStar: (deckId: string, starred: boolean) => void;
 }) {
   /**
    * Whether this tile is asking "Remove?" rather than offering the ✕.
@@ -394,7 +462,33 @@ function DeckPick({
           </span>
         )}
       </div>
-      <div className="tile__n">{deck.name}</div>
+      {/*
+        THE STAR SITS BY THE NAME, NOT IN THE META ROW. An import's meta row
+        already carries its pips, its simplified count, the `i` and the ✕, and
+        a fourth 44px target there runs into the next tile. One toggle with
+        `aria-pressed`, which is the only control that sets it: the press sends
+        the value it wants rather than "flip", so a second press before the
+        answer lands asks for the same thing twice and nothing flickers.
+      */}
+      {deck.source === "moxfield" ? (
+        <div className="tile__head">
+          <button
+            type="button"
+            className={deck.starred ? "tile__star tile__star--on" : "tile__star"}
+            aria-pressed={deck.starred}
+            aria-label={`Pin ${deck.name} to the top`}
+            data-hint={deck.starred ? "Pinned to the top of Yours" : "Pin to the top of Yours"}
+            onClick={() => onStar(deck.id, !deck.starred)}
+            data-testid={`deck-${deck.id}-star`}
+            data-starred={deck.starred ? "yes" : "no"}
+          >
+            {deck.starred ? "★" : "☆"}
+          </button>
+          <div className="tile__n">{deck.name}</div>
+        </div>
+      ) : (
+        <div className="tile__n">{deck.name}</div>
+      )}
       {/*
         THE CONFIRM REPLACES THE ROW; IT DOES NOT JOIN IT.
         
@@ -434,7 +528,7 @@ function DeckPick({
                 <ManaSymbol key={colour} code={colour} />
               ))}
             </span>
-            {/* Only when there is something to admit. A precon is hand-written
+            {/* Only when there is something to admit. A shipped deck is native
                 all the way through, so this stays off its tiles entirely. */}
             {deck.simplified > 0 && (
               <span className="tile__badge" data-testid={`deck-${deck.id}-simplified`}>
@@ -465,10 +559,8 @@ function DeckPick({
             >
               i
             </button>
-            {/* Only what somebody imported. A precon ships with the engine and
-                has no ✕ at all, rather than one that explains itself
-                afterwards -- which is also the only mark on a tile that says
-                which decks are yours. */}
+            {/* Only what somebody imported. A shipped deck has no ✕ at all,
+                rather than one that explains itself afterwards. */}
             {deck.source === "moxfield" && onDelete !== null && (
               <button
                 type="button"

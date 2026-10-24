@@ -253,10 +253,13 @@ export function deckSummary(overrides: Partial<DeckSummary> = {}): DeckSummary {
     color_identity: ["G", "U"],
     card_count: 100,
     notes: "Simic ramp and landfall.",
-    source: "precon",
+    source: "favorite",
     playable: 100,
     simplified: 0,
     tags: ["Ramp", "Landfall"],
+    archetype: "",
+    release: null,
+    starred: false,
     ...overrides,
   };
 }
@@ -264,7 +267,7 @@ export function deckSummary(overrides: Partial<DeckSummary> = {}): DeckSummary {
 /**
  * The dossier's half of a deck.
  *
- * Defaults to a precon, which is the only kind that has the authored half at
+ * Defaults to a favorite, since only a shipped deck has the authored half at
  * all -- an imported deck's `ratings` are null and its `strategy` empty, and the
  * screen's whole design point is that it says so. Pass those explicitly.
  */

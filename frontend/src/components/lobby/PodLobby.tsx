@@ -71,6 +71,8 @@ interface Props {
   onStart: () => void;
   onLeave: () => void;
   onDecksChanged: () => void;
+  /** Star an import in the catalogue; see `DeckCatalog`'s `onStar`. */
+  onStarDeck: (deckId: string, starred: boolean) => void;
 }
 
 export function PodLobby({
@@ -85,6 +87,7 @@ export function PodLobby({
   onStart,
   onLeave,
   onDecksChanged,
+  onStarDeck,
 }: Props) {
   /** Which seat the catalogue is choosing for, or null when it is closed. */
   const [catalogFor, setCatalogFor] = useState<number | null>(null);
@@ -385,6 +388,7 @@ export function PodLobby({
             await api.deleteDeck(deckId);
             onDecksChanged();
           }}
+          onStar={onStarDeck}
           inUse={pod.seats.flatMap((seat) => (seat.deck ? [seat.deck.id] : []))}
         />
       )}
