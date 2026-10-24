@@ -669,6 +669,17 @@ def frontend_stages(
                 group="frontend",
             )
         )
+        # ...and the stories tagged `phone`, each on the phone viewport it
+        # names, holding the phone's own floors (ADR 0025).
+        stages.append(
+            Stage(
+                "storybook stories (phone)",
+                [runner, "run", "test:stories:phone"],
+                cwd=FRONTEND,
+                slow=True,
+                group="frontend",
+            )
+        )
     elif strict and "frontend" in want:
         raise StrictSkip("storybook stories need Chromium: npx playwright install chromium")
     else:

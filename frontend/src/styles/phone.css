@@ -155,10 +155,27 @@
   display: none;
 }
 
+/*
+ * It rides the sheet's top edge rather than taking a row of it: a line that
+ * comes and goes with the targeting must not move the list under the thumb
+ * (ADR 0016), and the sheet's height is the decision's.
+ */
+[data-layout="phone"] .rail--right {
+  position: relative;
+}
+
 .sheet__say {
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% + 4px);
+  left: 8px;
+  z-index: 3;
   display: grid;
   gap: 4px;
-  padding: 4px 2px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
 }
 
 .sheet__say .choices {
@@ -346,7 +363,19 @@
   [data-layout="phone"] .table__body > .rail--right {
     grid-column: 1;
     grid-row: 3;
-    max-height: 36dvh;
+    /* A third of the screen, and never less than a prompt, one row of the
+       list, the sheet's voice and the slab: the decision must be answerable
+       from the sheet on the shortest phone `testing/devices.ts` names. */
+    max-height: max(36dvh, 232px);
+  }
+
+  /*
+   * One row of the list is the floor here, not the Deck's 74px: the list
+   * scrolls, and a phone upright cannot spare a second row's height from the
+   * board. A row is a 44px target, so one is always whole.
+   */
+  [data-layout="phone"] .acts__list {
+    min-height: 48px;
   }
 
   /*
@@ -363,6 +392,9 @@
   }
 
   [data-layout="phone"] .table__body > .rail--right {
+    /* Visible, so the voice can ride the top edge; the list inside is what
+       scrolls, and the sheet's height already fits a row of it. */
+    overflow: visible;
     padding: 6px 8px calc(4px + var(--safe-b));
     border-radius: 14px 14px 0 0;
     background: var(--felt-0);

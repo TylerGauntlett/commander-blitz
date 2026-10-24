@@ -334,3 +334,23 @@ export function expectNothingOverflows(root: HTMLElement, allow: string[] = []):
   }
   expect(over, "these regions hold more than they can show").toEqual([]);
 }
+
+/**
+ * The page does not scroll sideways (ADR 0025).
+ *
+ * On a phone a row that will not shrink pushes the whole document wider than
+ * the screen, and the board then pans under the thumb. `body { overflow:
+ * hidden }` would hide that from `scrollWidth` on the body, so the question is
+ * asked of the root, against the viewport the story claims to be on.
+ */
+export function expectNoSideScroll(): void {
+  const root = document.documentElement;
+  expect(root.scrollWidth, "the page is wider than the screen").toBeLessThanOrEqual(
+    window.innerWidth,
+  );
+}
+
+/** The story is really on the viewport it names, so its floors mean that screen. */
+export function expectViewport(size: { width: number; height: number }): void {
+  expect({ width: window.innerWidth, height: window.innerHeight }).toEqual(size);
+}

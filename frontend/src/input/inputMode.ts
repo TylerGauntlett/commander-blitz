@@ -64,6 +64,20 @@ export function isPointerMode(mode: InputMode | string | null): boolean {
   return mode === "mouse" || mode === "touch";
 }
 
+/**
+ * Whether the page is being driven by a finger, as the document says.
+ *
+ * The attribute and not `getInputMode()`, for the reason `stops.ts` reads it:
+ * it is what every stylesheet keys on, and a surface that stamps it directly (a
+ * Storybook toolbar) is believed the same way the CSS believes it.
+ */
+export function isTouch(): boolean {
+  return (
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-input") === "touch"
+  );
+}
+
 const SCHEMES: readonly SchemePref[] = ["auto", "pad", "keyboard", "mouse", "touch"];
 
 const SCHEME_KEY = "commanderblitz.scheme";

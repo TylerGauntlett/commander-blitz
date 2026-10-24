@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
 import { refollowCursor } from "../../input/cursor";
-import { getInputMode } from "../../input/inputMode";
+import { isTouch } from "../../input/inputMode";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
 import { HAND_FAN_W, handStep } from "../../logic/zoomFit";
@@ -217,7 +217,7 @@ export function HandFan({
    * the gesture a phone has.
    */
   const storeOid = useUiStore((s) => s.hoveredOid);
-  const tapped = getInputMode() === "touch" ? cards.find((c) => c.oid === storeOid) : undefined;
+  const tapped = isTouch() ? cards.find((c) => c.oid === storeOid) : undefined;
   const readCard = hoveredCard ?? tapped ?? null;
   const hint = readCard ? unplayableHint(readCard, reasons[String(readCard.oid)], mana) : null;
   const anchorRef = useRef<HTMLDivElement>(null);

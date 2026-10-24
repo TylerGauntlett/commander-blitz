@@ -9,7 +9,7 @@ import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } fro
 import type { GameView } from "../api/types";
 import { findCard } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
-import { getInputMode } from "./inputMode";
+import { isTouch } from "./inputMode";
 import { oidAt, useLongPress } from "./longPress";
 
 /**
@@ -83,7 +83,7 @@ export function useCardHold(state: GameView) {
   const lastTap = useRef<number | null>(null);
   const tapRead = useCallback(
     (event: ReactMouseEvent) => {
-      if (getInputMode() !== "touch" || !(event.target instanceof Element)) return;
+      if (!isTouch() || !(event.target instanceof Element)) return;
       const host = event.target.closest("[data-oid]");
       const oid = host ? oidAt(host) : null;
       if (host === null || oid === null || host.matches(ACTIONABLE)) {

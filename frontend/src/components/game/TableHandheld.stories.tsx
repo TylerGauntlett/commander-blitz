@@ -38,10 +38,10 @@ type Story = StoryObj<typeof meta>;
  * ## Every one of these is a CI gate, and that is new
  *
  * `tags: ["handheld"]` puts them in the `storybook-handheld` project as well as
- * the ordinary one, so each runs twice: at 1600x950, where `data-handheld`
- * gives the compact STRUCTURE with desktop tokens, and at a real 1280x800,
- * where `handheld.css`'s media query also re-values `--rail-r`, `--mat-side`,
- * `--pod-seat-h` and `--hand-lift`. Both have to hold.
+ * the ordinary one. The `deck` viewport is a real 1280x800 in both (the Vitest
+ * addon sizes the page to the story's viewport), so `handheld.css`'s media
+ * query re-values `--rail-r`, `--mat-side`, `--pod-seat-h` and `--hand-lift`
+ * under the compact structure, as it does on the Deck.
  *
  * The floors -- 16px of type, 44px of target, 96px of card -- have been
  * asserted by `e2e/handheldAssert.ts` since Loop 3, but **Playwright is not in

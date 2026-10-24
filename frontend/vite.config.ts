@@ -236,9 +236,32 @@ export default defineConfig({
             headless: true,
             provider: playwright(),
             instances: [{ browser: "chromium" }],
-            // See the note above: declared, and the toolbar is what actually
-            // decides the layout. These stories carry `handheld: "on"`.
+            // The story's `viewport` global is what the page is sized to; these
+            // stories carry the `deck` one. This is the fallback.
             viewport: { width: 1280, height: 800 },
+          },
+        },
+      },
+      /*
+       * The same stories on phones (ADR 0025).
+       *
+       * Opt-in by the `phone` tag, as the handheld project is by its own. Each
+       * story names one viewport from `testing/devices.ts` and the addon sizes
+       * the page to it, so the phone's floors are asserted at the phone's size
+       * with the phone query matching -- not stamped onto a desktop canvas.
+       */
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: ".storybook", tags: { include: ["phone"] } })],
+        test: {
+          name: "storybook-phone",
+          setupFiles: [".storybook/vitest.setup.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: "chromium" }],
+            viewport: { width: 393, height: 659 },
           },
         },
       },
