@@ -70,7 +70,7 @@ import { SymbolText } from "./SymbolText";
  * about 128px of card, and twelve permanents at 128px is 1536px of row on a
  * 1280px screen -- so **the name cannot be on every board card at once**, and
  * the handheld board drops it. But that is a consequence of the *layout*, which
- * `[data-handheld]` already states, and adding a variant as well would be two
+ * `[data-compact]` already states, and adding a variant as well would be two
  * ways to ask for one look with nothing keeping them in step. The rules live in
  * `styles/handheld.css`; what *names* a card at that size is the read rail the
  * ring is pointing at, which is the whole argument for the rail existing.

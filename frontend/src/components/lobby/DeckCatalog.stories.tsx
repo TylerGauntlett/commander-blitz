@@ -83,7 +83,7 @@ export const WithImportedDeck: Story = {
  * `complete`, and the next launch with a connection finishes it (ADR 0022).
  */
 export const ArtStillToFetch: Story = {
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   args: {
     decks: pods.DECKS.map((deck) => (deck.id === "mine" ? { ...deck, complete: false } : deck)),
@@ -334,7 +334,7 @@ async function segments(canvasElement: HTMLElement): Promise<void> {
  */
 export const Favorites: Story = {
   args: { decks: SHELF },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
   play: async ({ canvasElement }) => {
@@ -368,7 +368,7 @@ export const Favorites: Story = {
  */
 export const Precons: Story = {
   args: { decks: SHELF },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
   play: async ({ canvasElement }) => {
@@ -413,7 +413,7 @@ export const Precons: Story = {
  */
 export const Yours: Story = {
   args: { decks: SHELF },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
   play: async ({ canvasElement, args }) => {
@@ -453,7 +453,7 @@ export const Yours: Story = {
 /** All of it at once: every run under its own header, favorites and yours first. */
 export const AllRuns: Story = {
   args: { decks: SHELF },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
   play: async ({ canvasElement }) => {
@@ -487,7 +487,7 @@ export const AllRuns: Story = {
  */
 export const PreconsWithComingSoonShells: Story = {
   args: { decks: SHELF, upcoming: UPCOMING },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
   play: async ({ canvasElement, args }) => {

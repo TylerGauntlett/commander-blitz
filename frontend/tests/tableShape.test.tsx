@@ -69,13 +69,14 @@ const noop = () => undefined;
 
 afterEach(() => {
   cleanup();
-  document.documentElement.removeAttribute("data-handheld");
-  document.documentElement.removeAttribute("data-desktop");
+  document.documentElement.removeAttribute("data-compact");
+  document.documentElement.removeAttribute("data-layout");
 });
 
 describe.each(["desktop", "handheld"] as const)("Table, %s layout", (layout) => {
   it.each(Object.keys(POSITIONS))("%s", (name) => {
-    document.documentElement.setAttribute(`data-${layout}`, "");
+    document.documentElement.setAttribute("data-layout", layout);
+    document.documentElement.toggleAttribute("data-compact", layout !== "desktop");
     const scenario = POSITIONS[name]();
     render(
       <Table

@@ -128,7 +128,7 @@ export const HeightDoesNotChange: Story = {
 /** A creature: the P/T is stamped on the picture, not on the type line. */
 export const ReaderCreature: Story = {
   args: { state: board },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
@@ -173,7 +173,7 @@ export const ReaderCounters: Story = {
       ),
     },
   },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
@@ -202,7 +202,7 @@ export const ReaderCounters: Story = {
 /** A land: no P/T, and the rules box is most of the panel. */
 export const ReaderLand: Story = {
   args: { state: board },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 204 } } },
   play: async ({ canvasElement }) => {
@@ -221,7 +221,7 @@ export const ReaderLand: Story = {
  */
 export const ReaderHoldsItsHeight: Story = {
   args: { state: board },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
@@ -246,7 +246,7 @@ export const ReaderHoldsItsHeight: Story = {
  */
 export const ReaderIdle: Story = {
   args: { state: board },
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -267,7 +267,7 @@ export const ReaderIdle: Story = {
  */
 export const ReaderUnplayable: Story = {
   args: { state: scenarios.openingHand().state },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: {
     commanderblitz: {
@@ -296,7 +296,7 @@ export const ReaderKeywordLine: Story = {
       ],
     }),
   },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "railRight", ui: { hoveredOid: 7 } } },
   play: async ({ canvasElement }) => {

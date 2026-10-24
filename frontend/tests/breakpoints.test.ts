@@ -20,11 +20,14 @@ import {
   HANDHELD_MAX_W,
   HANDHELD_QUERY,
   isHandheldSize,
+  isCompact,
   isPhoneSize,
+  layoutModeForSize,
   PHONE_MAX_H,
   PHONE_MAX_W,
   PHONE_QUERY,
 } from "../src/logic/breakpoints";
+import { PHONE_VIEWPORTS, VIEWPORTS } from "../src/testing/devices";
 
 // `__dirname` rather than `import.meta.url`: under the jsdom project Vite
 // rewrites the module URL to an http one and `fileURLToPath` refuses it.
@@ -108,7 +111,7 @@ describe("isPhoneSize", () => {
     expect(isPhoneSize(1600, 950)).toBe(false);
   });
 
-  it("is always a handheld too, because the tier is additive", () => {
+  it("is a size the handheld query also matches, which is why it is asked first", () => {
     for (const [w, h] of [
       [390, 844],
       [926, 428],
@@ -117,6 +120,54 @@ describe("isPhoneSize", () => {
     ]) {
       expect(isPhoneSize(w, h)).toBe(true);
       expect(isHandheldSize(w, h)).toBe(true);
+      expect(layoutModeForSize(w, h)).toBe("phone");
     }
+  });
+});
+
+describe("layoutModeForSize", () => {
+  /*
+   * ADR 0025: the three layouts are peers, so a size is exactly one of them.
+   * Nesting the phone inside the handheld mode would hand every Deck rule to
+   * every phone again, which is the failure the decision exists to prevent.
+   */
+  it("gives every size exactly one mode", () => {
+    expect(layoutModeForSize(1600, 950)).toBe("desktop");
+    expect(layoutModeForSize(1280, 800)).toBe("handheld");
+    expect(layoutModeForSize(1200, 800)).toBe("handheld");
+    expect(layoutModeForSize(393, 659)).toBe("phone");
+    expect(layoutModeForSize(734, 343)).toBe("phone");
+  });
+
+  it("puts every viewport `testing/devices.ts` names in the layout it claims", () => {
+    for (const viewport of VIEWPORTS) {
+      expect(layoutModeForSize(viewport.size.width, viewport.size.height), viewport.id).toBe(
+        viewport.layout,
+      );
+    }
+    for (const viewport of PHONE_VIEWPORTS) expect(viewport.layout).toBe("phone");
+  });
+
+  it("calls only the two small modes compact", () => {
+    expect(isCompact("desktop")).toBe(false);
+    expect(isCompact("handheld")).toBe(true);
+    expect(isCompact("phone")).toBe(true);
+  });
+});
+
+describe("the layout attributes", () => {
+  /*
+   * The old names nested the modes: `data-phone` meant "and also a handheld".
+   * They are gone, so no sheet can key a rule on them and reach two modes
+   * without saying so.
+   */
+  it("are no longer the nested pair in any stylesheet", () => {
+    for (const sheet of [css, phoneCss]) {
+      expect(sheet).not.toMatch(/\[data-(handheld|phone|desktop)\]/);
+    }
+  });
+
+  it("key phone.css's rules on the phone mode", () => {
+    expect(phoneCss).toContain('[data-layout="phone"]');
   });
 });

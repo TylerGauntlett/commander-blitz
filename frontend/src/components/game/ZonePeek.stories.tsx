@@ -138,7 +138,7 @@ export const ClosingIt: Story = {
 /** The graveyard modal on a Deck: the pile's cards are readable. */
 export const GraveyardHandheld: Story = {
   args: Graveyard.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

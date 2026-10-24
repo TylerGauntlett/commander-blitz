@@ -300,7 +300,7 @@ export const BottomPartlyChosen: Story = {
 /** The composition of record: 1280x800, where `--mu` is exactly 1. */
 export const HandheldKeep: Story = {
   args: { state: keep().state, actions: keep().actions },
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "tableOverlay", motion: "real", zoomLock: false } },
   beforeEach: () => {
@@ -352,7 +352,7 @@ export const HandheldKeep: Story = {
 /** The second question at the same size, where the marks and the tag appear. */
 export const HandheldBottom: Story = {
   args: { state: bottom(2).state, actions: bottom(2).actions },
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "tableOverlay", motion: "real", zoomLock: false } },
   beforeEach: () => {

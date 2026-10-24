@@ -126,7 +126,7 @@ export const StillPlaying: Story = {
  */
 export const VictoryHandheld: Story = {
   args: Victory.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

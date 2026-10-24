@@ -13,7 +13,7 @@ import { useEffect, useRef } from "react";
 import { play } from "../audio/sfx";
 import { useUiStore } from "../state/uiStore";
 import { getCursor, moveCursor, setCursor } from "./cursor";
-import { getInputMode, startInputMode } from "./inputMode";
+import { getInputMode, isPointerMode, startInputMode } from "./inputMode";
 import { on, rumble, startPad } from "./pad";
 import { ringPress } from "./ring";
 import { stopAtPoint, stopElement } from "./stops";
@@ -135,7 +135,7 @@ export function useCursorNav(active = true): void {
    */
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
-      if (!live.current || getInputMode() === "mouse") return;
+      if (!live.current || isPointerMode(getInputMode())) return;
       const stop = stopAtPoint(event.clientX, event.clientY);
       if (stop) setCursor(stop);
     };

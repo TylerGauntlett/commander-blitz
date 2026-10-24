@@ -37,12 +37,12 @@
  * in `e2e/handheldAssert.ts` -- and which still clears its 74px floor by a
  * wide margin at the shortest viewport the layout supports.
  */
-[data-handheld] .rail--right .preview--reader {
+[data-compact] .rail--right .preview--reader {
   height: 296px;
   padding: 6px;
 }
 
-[data-handheld] .preview--reader .preview__body {
+[data-compact] .preview--reader .preview__body {
   gap: 4px;
   align-items: stretch;
 }

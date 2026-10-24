@@ -144,7 +144,7 @@ export const FourPlayerCross: Story = {
  */
 export const HandheldHiddenAttackers: Story = {
   args: { state: scenarios.combatDeclareBlockers().state, boardRef: { current: null } },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   render: () => <Board state={scenarios.combatDeclareBlockers().state} />,
   play: async ({ canvasElement }) => {

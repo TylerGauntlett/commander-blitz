@@ -188,7 +188,7 @@ export const Locked: Story = {
 /** Your own mat at 1280x800: the lanes and the orb both hold the floors. */
 export const ViewerHandheld: Story = {
   args: mat(early, 0),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

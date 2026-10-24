@@ -197,7 +197,7 @@ export const PlatesLineUp: Story = {
  */
 export const PlatesLineUpHandheld: Story = {
   args: lobby(pods.filling()),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await within(canvasElement).findByTestId("ready-track");

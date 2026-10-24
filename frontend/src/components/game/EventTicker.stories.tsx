@@ -83,7 +83,7 @@ export const LongLog: Story = {
 /** The log overlay on a Deck: 16px lines, a 44px title button. */
 export const MixedLogHandheld: Story = {
   args: { state, events, cardName: (id: string) => names[id] },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -129,17 +129,52 @@ export interface HandheldReport {
   failures: string[];
 }
 
-/** The floors. Every one of them comes from a 7-inch panel at 40-50cm. */
-export const FLOORS = {
-  /** Nothing carrying information may be smaller. */
-  font: 16,
-  /** Any card the ring can land on. */
-  card: 96,
-  /** Any focusable or tappable box. */
-  hit: 44,
-  /** The focus outline. */
-  ring: 3,
-} as const;
+/**
+ * What the gate is asked to hold: a row of `logic/floors.ts`, and the region
+ * budgets of one layout as fractions of the viewport's height.
+ *
+ * An ARGUMENT rather than an import, because `page.evaluate` sends this
+ * function's source alone. The spec reads the row and the budgets for the
+ * layout it runs in and hands them over.
+ */
+export interface GateSpec {
+  floors: { font: number; card: number; hit: number };
+  /** `[selector, share of innerHeight]`; a visible match taller than that fails. */
+  budget: [string, number][];
+}
+
+/**
+ * The compact budgets on a Steam Deck's panel.
+ *
+ * The numbers are what the compact layout is designed around and they are
+ * stated here so a change to any of them has to be deliberate. An opponent's
+ * seat is the one that matters: `--pod-seat-h` caps it at 96px, and before
+ * that cap existed it drew 220px against an empty board -- 28% of the screen
+ * for a player with nothing in play, taken straight out of the viewer's own
+ * mat, which then clipped its graveyard off the bottom.
+ *
+ * Fractions rather than literals so this says the same thing at 1200x800 and
+ * at 1280x800, which is the pair of sizes this layout has to hold.
+ */
+export const HANDHELD_BUDGET: [string, number][] = [
+  // One opponent's whole seat, and its lanes if it has any.
+  [".mat--compact", 0.14],
+  // The seat itself, which is a stated 96px design: the seat round (`docs/adr/0016-nothing-changes-size-with-game-state.md`) measured
+  // every one of its directions inside 332x96, and a seat drawn at some other
+  // height is a different design wearing the same name.
+  [".seat", 0.13],
+  // Every opponent together. They share a row, so this is the row.
+  [".play__opponents", 0.14],
+  // The phase ribbon is a strip, not a panel.
+  [".track", 0.08],
+  // The foot: the hand, the hints, the tools and the slab.
+  [".table__foot", 0.33],
+];
+
+export const HANDHELD_GATE: GateSpec = {
+  floors: { font: 16, card: 96, hit: 44 },
+  budget: HANDHELD_BUDGET,
+};
 
 /**
  * The gate, as one self-contained function.
@@ -147,10 +182,10 @@ export const FLOORS = {
  * Deliberately not split into helpers: `page.evaluate` sends the source of this
  * function alone, so anything it calls has to be declared inside it.
  */
-export function handheldAssert(): HandheldReport {
-  const FONT = 16;
-  const CARD = 96;
-  const HIT = 44;
+export function handheldAssert(spec: GateSpec): HandheldReport {
+  const FONT = spec.floors.font;
+  const CARD = spec.floors.card;
+  const HIT = spec.floors.hit;
   const RING = 3;
 
   const root =
@@ -494,33 +529,11 @@ export function handheldAssert(): HandheldReport {
   }
 
   /*
-   * Region budgets, in fractions of the viewport rather than in pixels.
-   *
-   * The numbers are what the compact layout is designed around and they are
-   * stated here so a change to any of them has to be deliberate. An opponent's
-   * seat is the one that matters: `--pod-seat-h` caps it at 96px, and before
-   * that cap existed it drew 220px against an empty board -- 28% of the screen
-   * for a player with nothing in play, taken straight out of the viewer's own
-   * mat, which then clipped its graveyard off the bottom.
-   *
-   * Fractions rather than literals so this says the same thing at 1200x800 and
-   * at 1280x800, which is the pair of sizes this layout has to hold.
+   * Region budgets, in fractions of the viewport rather than in pixels. The
+   * layout's own, handed in -- `HANDHELD_BUDGET` above says why each exists.
    */
   const vh = window.innerHeight;
-  const BUDGET: [string, number][] = [
-    // One opponent's whole seat, and its lanes if it has any.
-    [".mat--compact", 0.14],
-    // The seat itself, which is a stated 96px design: the seat round (`docs/adr/0016-nothing-changes-size-with-game-state.md`) measured
-    // every one of its directions inside 332x96, and a seat drawn at some other
-    // height is a different design wearing the same name.
-    [".seat", 0.13],
-    // Every opponent together. They share a row, so this is the row.
-    [".play__opponents", 0.14],
-    // The phase ribbon is a strip, not a panel.
-    [".track", 0.08],
-    // The foot: the hand, the hints, the tools and the slab.
-    [".table__foot", 0.33],
-  ];
+  const BUDGET = spec.budget;
   const overBudget: { selector: string; h: number; cap: number }[] = [];
   for (const [selector, share] of BUDGET) {
     const cap = Math.round(vh * share);

@@ -352,7 +352,7 @@ export const Banner: Story = {
  * on it, the way a burn spell's does.
  */
 export const HandheldHitFromAHiddenBoard: Story = {
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   render: () => (
     <Stage
@@ -393,7 +393,7 @@ export const HandheldHitFromAHiddenBoard: Story = {
 
 /** ...and a hit ON a creature you cannot see draws nothing at all. */
 export const HandheldHitOnAHiddenBoard: Story = {
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   render: () => (
     <Stage

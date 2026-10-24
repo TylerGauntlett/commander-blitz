@@ -65,7 +65,7 @@ import { decisionKey, pickedFor, stagedAs, stagedOrder } from "../../logic/stagi
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
-import { useHandheldLayout } from "../../state/useHandheld";
+import { useCompactLayout } from "../../state/useHandheld";
 import { AttackRows } from "./AttackRows";
 import { BlockGroups } from "./BlockGroups";
 import { CommitDock } from "./CommitDock";
@@ -171,7 +171,7 @@ export function ActionPanel({
    * each other's foot.
    */
   const anchorRef = useRef<HTMLElement>(null);
-  const handheld = useHandheldLayout();
+  const handheld = useCompactLayout();
   const [hosts, setHosts] = useState<{ slab: HTMLElement | null; tools: HTMLElement | null }>({
     slab: null,
     tools: null,

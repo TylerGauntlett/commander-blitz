@@ -166,7 +166,7 @@ export const SettingsHold: Story = {
  */
 export const DesktopOffline: Story = {
   args: { mode: "desktop", online: false, onPlayOnline: fn() },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -187,7 +187,7 @@ export const DesktopOffline: Story = {
 /** ...and with a connection, the hold takes a code or goes with none. */
 export const DesktopOnline: Story = {
   args: { mode: "desktop", online: true, onPlayOnline: fn() },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -206,7 +206,7 @@ export const DesktopOnline: Story = {
 /** The front door on a Deck: three cards, each a target. */
 export const FreshHandheld: Story = {
   args: Fresh.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

@@ -19,6 +19,7 @@ import {
   getInputMode,
   getScheme,
   isPadConnected,
+  isPointerMode,
   noteInput,
   notePadConnected,
   resetInputMode,
@@ -311,5 +312,54 @@ describe("the pointer grace", () => {
     noteInput("pad");
     window.dispatchEvent(pointer("pointerdown"));
     expect(getInputMode()).toBe("mouse");
+  });
+});
+
+describe("touch", () => {
+  /*
+   * ADR 0025: a finger is a fourth input mode, not a mouse. The listener reads
+   * `pointerType`, which jsdom's plain `Event` lacks, so it is set by hand.
+   */
+  const finger = (type: string) => Object.assign(new Event(type), { pointerType: "touch" });
+
+  it("is what a finger's press writes", () => {
+    startInputMode();
+    window.dispatchEvent(finger("pointerdown"));
+    expect(getInputMode()).toBe("touch");
+    expect(root().getAttribute("data-input")).toBe("touch");
+  });
+
+  it("is not taken back by the same finger moving", () => {
+    startInputMode();
+    window.dispatchEvent(finger("pointerdown"));
+    vi.advanceTimersByTime(400);
+    window.dispatchEvent(finger("pointermove"));
+    expect(getInputMode()).toBe("touch");
+  });
+
+  it("yields to a mouse the moment one is used, last input winning", () => {
+    startInputMode();
+    window.dispatchEvent(finger("pointerdown"));
+    vi.advanceTimersByTime(400);
+    window.dispatchEvent(pointer("pointermove"));
+    expect(getInputMode()).toBe("mouse");
+  });
+
+  it("can be pinned from Settings and survives a reload", () => {
+    startInputMode();
+    setScheme("touch");
+    expect(getInputMode()).toBe("touch");
+    window.dispatchEvent(pointer("pointerdown"));
+    expect(getInputMode()).toBe("touch");
+    resetInputMode();
+    startInputMode();
+    expect(getScheme()).toBe("touch");
+  });
+
+  it("is a pointer mode, so it draws no ring", () => {
+    expect(isPointerMode("touch")).toBe(true);
+    expect(isPointerMode("mouse")).toBe(true);
+    expect(isPointerMode("pad")).toBe(false);
+    expect(isPointerMode("keyboard")).toBe(false);
   });
 });

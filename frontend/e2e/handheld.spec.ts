@@ -15,7 +15,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { type HandheldReport, handheldAssert } from "./handheldAssert";
+import { HANDHELD_GATE, type HandheldReport, handheldAssert } from "./handheldAssert";
 import {
   actionsOfKind,
   browseDecks,
@@ -62,7 +62,7 @@ async function gate(
   where: string,
 ): Promise<HandheldReport> {
   await settled(page);
-  const report = (await page.evaluate(handheldAssert)) as HandheldReport;
+  const report = (await page.evaluate(handheldAssert, HANDHELD_GATE)) as HandheldReport;
   expect(
     report.pass,
     `${where}\n  ${report.failures.join("\n  ")}\n  (min font ${report.minFontPx}px, ` +
@@ -190,7 +190,7 @@ test.describe("the compact layout is the one being drawn", () => {
     if (await keep.count()) await keep.first().click();
     await waitForOurTurn(page);
 
-    await expect(page.getByTestId("table")).toHaveAttribute("data-handheld", "true");
+    await expect(page.getByTestId("table")).toHaveAttribute("data-compact", "true");
 
     /*
      * The rail is retired at EVERY size now, so this is no longer a claim about

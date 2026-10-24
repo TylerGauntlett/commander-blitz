@@ -77,8 +77,10 @@
   box-shadow: inset 0 0 0 6px var(--focus-glow);
 }
 
-/* A mouse player has a pointer to say where they are and does not need this. */
-html[data-input="mouse"] [data-cursor] {
+/* A mouse player has a pointer to say where they are and does not need this,
+   and a finger is its own pointer too (ADR 0025). */
+html[data-input="mouse"] [data-cursor],
+html[data-input="touch"] [data-cursor] {
   outline: none;
   box-shadow: none;
 }
@@ -117,7 +119,9 @@ html[data-input="mouse"] [data-cursor] {
 }
 
 html[data-input="mouse"] #ring,
-html[data-input="mouse"] #ringtrail {
+html[data-input="mouse"] #ringtrail,
+html[data-input="touch"] #ring,
+html[data-input="touch"] #ringtrail {
   display: none;
 }
 
@@ -149,17 +153,21 @@ html[data-input="keyboard"] .glyph--key {
    ========================================================================== */
 
 /*
- * `:root:not([data-desktop])`, and the query text is untouched.
+ * `:root:not([data-layout="desktop"])`, and the query text is untouched.
  *
  * `tests/breakpoints.test.ts` reads this file off disk and asserts it contains
  * `HANDHELD_QUERY` verbatim, which is why the guard is on the SELECTOR and not
- * inside the query. The app never stamps `data-desktop`; Storybook does, and
- * without it the review surface could not show the wide board at all -- its
- * tester canvas is 1200px, inside `(max-width: 1366px)`, so every story got
- * handheld tokens no matter what the Layout toolbar said. See `preview.tsx`.
+ * inside the query. A story with no viewport of its own runs on a 1200px
+ * canvas, inside `(max-width: 1366px)`, and is stamped `desktop`; without the
+ * guard it would get these tokens under the wide board. See `preview.tsx`.
+ *
+ * THIS SHEET IS THE COMPACT FAMILY (ADR 0025). `[data-compact]` is stamped for
+ * the handheld and the phone layouts alike, so a rule here reaches both. A
+ * rule meant for the Deck alone keys on `[data-layout="handheld"]`; the phone's
+ * own rules, floors and tokens are `styles/phone.css`.
  */
 @media (max-width: 1366px), (max-height: 820px) {
-  :root:not([data-desktop]) {
+  :root:not([data-layout="desktop"]) {
     /*
      * The tracks, re-valued. `board.css` restates no grid -- it reads these --
      * so this block is the whole of the "fluid rails" change.
@@ -207,7 +215,7 @@ html[data-input="keyboard"] .glyph--key {
  * handheld tree. Keeping them off the media query means a story can show the
  * handheld board at any canvas size by setting the attribute.
  */
-[data-handheld] .table__body {
+[data-compact] .table__body {
   grid-template-columns: minmax(0, 1fr) var(--rail-r);
   gap: 8px;
   /*
@@ -249,7 +257,7 @@ html[data-input="keyboard"] .glyph--key {
  * are clipped to zero height instead, so every anchor stays real while costing
  * no space. The `R2` overlay is where an opponent's board is actually read.
  */
-[data-handheld] .mat--compact {
+[data-compact] .mat--compact {
   /* The columns and the seat row come from `seat.css` and are the same at both
      sizes. What a handheld changes is the SECOND row: an opponent's lanes give
      up their height entirely. */
@@ -260,7 +268,7 @@ html[data-input="keyboard"] .glyph--key {
   background: none;
 }
 
-[data-handheld] .mat--compact .mat__lanes {
+[data-compact] .mat--compact .mat__lanes {
   height: 0;
   min-height: 0;
   overflow: hidden;
@@ -291,7 +299,7 @@ html[data-input="keyboard"] .glyph--key {
  * `fit-content` to bite -- a grid row never shrinks below min-content, so
  * capping the row alone would have done nothing at all.
  */
-[data-handheld] .play__opponents {
+[data-compact] .play__opponents {
   align-items: start;
   /*
    * The 4px `board.css` reserves under the row is gutter for a horizontal
@@ -301,7 +309,7 @@ html[data-input="keyboard"] .glyph--key {
   padding-bottom: 0;
 }
 
-[data-handheld] .mat--compact {
+[data-compact] .mat--compact {
   max-height: var(--pod-seat-h);
 }
 
@@ -312,7 +320,7 @@ html[data-input="keyboard"] .glyph--key {
  * at this size. See `styles/seat.css`.
  */
 
-[data-handheld] .play {
+[data-compact] .play {
   grid-template-rows: fit-content(var(--pod-seat-h)) minmax(0, 1fr);
   /* Two, for the reason `.table__body`'s padding is four. The seats and the
      board are different surfaces and still read as such at 2px, because each
@@ -350,7 +358,7 @@ html[data-input="keyboard"] .glyph--key {
  * has never been a problem there. The strip also reads better at the bottom
  * edge -- it is chrome, and the hand is the thing being played.
  */
-[data-handheld] .table__foot {
+[data-compact] .table__foot {
   display: grid;
   grid-template-areas:
     "hand hand hand"
@@ -371,7 +379,7 @@ html[data-input="keyboard"] .glyph--key {
   gap: 2px 10px;
 }
 
-[data-handheld] .foot__regions {
+[data-compact] .foot__regions {
   grid-area: regions;
 }
 
@@ -383,21 +391,21 @@ html[data-input="keyboard"] .glyph--key {
  * wide and they are one line, which is both smaller and easier to hit than what
  * they replaced.
  */
-[data-handheld] .foot__tools {
+[data-compact] .foot__tools {
   grid-area: tools;
 }
 
-[data-handheld] .foot__tools .tools {
+[data-compact] .foot__tools .tools {
   flex-wrap: nowrap;
   padding-top: 0;
   border-top: 0;
 }
 
-[data-handheld] .hints {
+[data-compact] .hints {
   grid-area: hints;
 }
 
-[data-handheld] .hand {
+[data-compact] .hand {
   grid-area: hand;
 }
 
@@ -408,12 +416,12 @@ html[data-input="keyboard"] .glyph--key {
  * third row, pushing the hand down mid-decision -- which moves every drop
  * target on the board at the moment the player is aiming at one.
  */
-[data-handheld] .choices {
+[data-compact] .choices {
   grid-area: hints;
 }
 
 /* The foot's own gutters, for the reason `.table__body`'s were cut. */
-[data-handheld] .table__foot {
+[data-compact] .table__foot {
   padding: 2px 8px 4px;
 }
 
@@ -445,25 +453,25 @@ html[data-input="keyboard"] .glyph--key {
  * a row. Desktop keeps its panes: `e2e/action-panel.spec.ts` measures `.acts`
  * against the stack pane opposite it, and on a desktop there still is one.
  */
-[data-handheld] .rail--right .preview,
-[data-handheld] .rail--right .acts {
+[data-compact] .rail--right .preview,
+[data-compact] .rail--right .acts {
   padding: 0;
   border: 0;
   background: none;
   box-shadow: none;
 }
 
-[data-handheld] .rail--right .commit-dock {
+[data-compact] .rail--right .commit-dock {
   flex: 0 0 auto;
   gap: 4px;
 }
 
-[data-handheld] .rail--right .commit {
+[data-compact] .rail--right .commit {
   min-height: 48px;
   padding: 8px 14px;
 }
 
-[data-handheld] .rail--right .commit__main {
+[data-compact] .rail--right .commit__main {
   font-size: 18px;
 }
 
@@ -481,14 +489,14 @@ html[data-input="keyboard"] .glyph--key {
  * with `place-items: center` centres the LINE BOX, so a taller-than-necessary
  * line box is centred while the glyph inside it is not.
  */
-[data-handheld] .act__key {
+[data-compact] .act__key {
   width: 26px;
   height: 26px;
   border-radius: 6px;
   line-height: 1;
 }
 
-[data-handheld] .glyph {
+[data-compact] .glyph {
   min-width: 26px;
   height: 26px;
   border-radius: 6px;
@@ -510,7 +518,7 @@ html[data-input="keyboard"] .glyph--key {
    `CardFace.tsx` for why that is the right thing to lose.
    ========================================================================== */
 
-[data-handheld] .face {
+[data-compact] .face {
   --fs-nm: clamp(var(--type-floor), calc(var(--card-w) * 0.085), 19px);
   --fs-tp: clamp(var(--type-floor), calc(var(--card-w) * 0.062), 18px);
   --fs-tx: clamp(var(--type-floor), calc(var(--card-w) * 0.053), 18px);
@@ -531,9 +539,9 @@ html[data-input="keyboard"] .glyph--key {
  * the accessibility tree, `FxLayer`'s `[data-oid]` anchors and every existing
  * query keep working, and the node the ring lands on is the same node.
  */
-[data-handheld] .mat__lanes .face__name,
-[data-handheld] .mat__lanes .face__type,
-[data-handheld] .mat__lanes .face__kwline {
+[data-compact] .mat__lanes .face__name,
+[data-compact] .mat__lanes .face__type,
+[data-compact] .mat__lanes .face__kwline {
   display: none;
 }
 
@@ -558,8 +566,8 @@ html[data-input="keyboard"] .glyph--key {
  * and the pod seats render `CardFace` on its own with no card wrapper around
  * it -- which is where a first pass at this rule missed thirty-odd stories.
  */
-[data-handheld] .face__type,
-[data-handheld] .face__kwline {
+[data-compact] .face__type,
+[data-compact] .face__kwline {
   display: none;
 }
 
@@ -574,12 +582,12 @@ html[data-input="keyboard"] .glyph--key {
  *
  * After the drop, so the tie on specificity falls this way.
  */
-[data-handheld] .preview .face__type,
-[data-handheld] .preview .face__kwline,
-[data-handheld] .opt--card .face__type,
-[data-handheld] .opt--card .face__kwline,
-[data-handheld] .peek__slot .face__type,
-[data-handheld] .peek__slot .face__kwline {
+[data-compact] .preview .face__type,
+[data-compact] .preview .face__kwline,
+[data-compact] .opt--card .face__type,
+[data-compact] .opt--card .face__kwline,
+[data-compact] .peek__slot .face__type,
+[data-compact] .peek__slot .face__kwline {
   display: revert;
   /*
    * ...and it WRAPS on those three, rather than truncating.
@@ -604,13 +612,13 @@ html[data-input="keyboard"] .glyph--key {
  * name and the rules; what kind of card it is, it says in the rules.
  */
 
-[data-handheld] .mat__lanes .face__head,
-[data-handheld] .mat__lanes .face__foot {
+[data-compact] .mat__lanes .face__head,
+[data-compact] .mat__lanes .face__foot {
   padding: 3px 4px;
 }
 
 /* With the name gone the glyph is what says "creature", so it earns the room. */
-[data-handheld] .mat__lanes .face__glyph {
+[data-compact] .mat__lanes .face__glyph {
   font-size: var(--fs-pt);
 }
 
@@ -639,7 +647,7 @@ html[data-input="keyboard"] .glyph--key {
  * these in CSS alone would leave the solver reserving room for them, and the
  * board would keep sizing its cards for a box smaller than the one it has.
  */
-[data-handheld] .play__mine .lane__label {
+[data-compact] .play__mine .lane__label {
   display: none;
 }
 
@@ -652,7 +660,7 @@ html[data-input="keyboard"] .glyph--key {
  * straight back. `.band--front .lane` already collapses to one column, so this
  * only bites on the lands row, which is the row that holds the most cards.
  */
-[data-handheld] .play__mine .lane {
+[data-compact] .play__mine .lane {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -672,22 +680,22 @@ html[data-input="keyboard"] .glyph--key {
  * `min-width` keeps a readable slice of every card -- `OVERLAP_MIN_VISIBLE` in
  * `logic/zoomFit.ts`, which is what tells the solver a lane is one row.
  */
-[data-handheld] .play__mine .lane__cards {
+[data-compact] .play__mine .lane__cards {
   flex-wrap: nowrap;
 }
 
-[data-handheld] .play__mine .lane__cards > .cardstack {
+[data-compact] .play__mine .lane__cards > .cardstack {
   flex: 0 1 auto;
   min-width: calc(var(--card-w) * 0.22);
 }
 
-[data-handheld] .play__mine .lane__cards > .cardstack:last-of-type {
+[data-compact] .play__mine .lane__cards > .cardstack:last-of-type {
   flex-shrink: 0;
 }
 
 /* The card being read comes to the front of the fan, as a hand card does. */
-[data-handheld] .play__mine .lane__cards > .cardstack:has([data-cursor]),
-[data-handheld] .play__mine .lane__cards > .cardstack:hover {
+[data-compact] .play__mine .lane__cards > .cardstack:has([data-cursor]),
+[data-compact] .play__mine .lane__cards > .cardstack:hover {
   z-index: 2;
 }
 
@@ -780,7 +788,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * The plinth's state glyph, dropped: at the 16px floor the price strip has room
  * for the cost and the state word, and the word says what the glyph does.
  */
-[data-handheld] .cmdplinth__glyph {
+[data-compact] .cmdplinth__glyph {
   display: none;
 }
 
@@ -804,7 +812,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * tick: an empty line plus a gap, at the top of the tightest column on the
  * screen.
  */
-[data-handheld] .play__mine .orb__head {
+[data-compact] .play__mine .orb__head {
   display: contents;
 }
 
@@ -814,7 +822,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * ring. Hidden rather than removed: `tests/playerOrb.test.tsx` and
  * `e2e/orb.spec.ts` still read the element.
  */
-[data-handheld] .play__mine .orb__priority {
+[data-compact] .play__mine .orb__priority {
   display: none;
 }
 
@@ -824,19 +832,19 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * that fits three and clears the floor, so the floor wins and the row does not.
  * `expectHandheldFloors` is the gate that refuses the trade the other way.
  */
-[data-handheld] .play__mine .piles {
+[data-compact] .play__mine .piles {
   flex-wrap: wrap;
 }
 
 /* `.piles` twice, to outrank the five-chip stacking rule in `board.css`: on two
    to a row there is room for the mark beside the count again. */
-[data-handheld] .play__mine .piles .pile {
+[data-compact] .play__mine .piles .pile {
   flex: 1 1 calc(50% - 2px);
   flex-direction: row-reverse;
   gap: 3px;
 }
 
-[data-handheld] .play__mine .piles .pile--revealed {
+[data-compact] .play__mine .piles .pile--revealed {
   flex-basis: 100%;
 }
 
@@ -848,7 +856,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * kind: the graveyard pile was *behind the hand*, so it was neither visible nor
  * clickable and nothing said it was there.
  */
-[data-handheld] .mat__side {
+[data-compact] .mat__side {
   overflow-y: auto;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
@@ -863,8 +871,8 @@ html[data-hints="on"][data-input="keyboard"] .hints {
   min-height: 0;
 }
 
-[data-handheld] .play__mine,
-[data-handheld] .play__mine .mat {
+[data-compact] .play__mine,
+[data-compact] .play__mine .mat {
   min-height: 0;
 }
 
@@ -887,7 +895,7 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * still grows and `.play__mine` still scrolls -- which is the affordance
  * `board.css` chose and this does not take away.
  */
-[data-handheld] .play__mine .mat {
+[data-compact] .play__mine .mat {
   min-height: 100%;
 }
 
@@ -906,11 +914,11 @@ html[data-hints="on"][data-input="keyboard"] .hints {
  * seat stays put. `cqh` reads `.play__mine`'s own height, which the grid fixes
  * and nothing inside it can change, so size containment there is free.
  */
-[data-handheld] .play__mine {
+[data-compact] .play__mine {
   container-type: size;
 }
 
-[data-handheld] .play__mine .mat__side {
+[data-compact] .play__mine .mat__side {
   position: sticky;
   top: 0;
   align-self: start;
@@ -1087,8 +1095,8 @@ html[data-input="keyboard"] [data-cursor].card {
    out to be read rather than played.
    ========================================================================== */
 
-[data-handheld] .opt--card,
-[data-handheld] .peek__slot {
+[data-compact] .opt--card,
+[data-compact] .peek__slot {
   --card-w: clamp(210px, 24vw, 264px);
 }
 
@@ -1111,11 +1119,11 @@ html[data-input="keyboard"] [data-cursor].card {
  * The zone viewer keeps the bigger card: it shows one zone at a time and
  * scrolling a graveyard is what a graveyard is for.
  */
-[data-handheld] .opt--card {
+[data-compact] .opt--card {
   --card-w: clamp(140px, 14vw, 180px);
 }
 
-[data-handheld] .opt__caption {
+[data-compact] .opt__caption {
   max-width: none;
   font-size: var(--type-floor);
 }
@@ -1126,7 +1134,7 @@ html[data-input="keyboard"] [data-cursor].card {
  * here"; a hard cut at a line boundary is indistinguishable from the card
  * simply not having the rest of the sentence.
  */
-[data-handheld] .face__rules {
+[data-compact] .face__rules {
   overflow: hidden;
   mask-image: linear-gradient(to bottom, #000 calc(100% - 14px), transparent 100%);
 }
@@ -1140,21 +1148,21 @@ html[data-input="keyboard"] [data-cursor].card {
  * at the one moment the card is the only thing on the screen and could simply
  * look like a card. So here the frame is a card's proportions, and the rules
  * box inside it scrolls -- with the right stick (`stickScroll.ts`), and with
- * a scrollbar rather than the fade `[data-handheld] .face__rules` uses on the
+ * a scrollbar rather than the fade `[data-compact] .face__rules` uses on the
  * board, because a fade on a box that scrolls reads as the text ending.
  */
-[data-handheld] .hold__card {
+[data-compact] .hold__card {
   width: min(330px, 90vw);
   aspect-ratio: 5 / 7;
   max-height: 92vh;
   overflow: hidden;
 }
 
-[data-handheld] .hold--card .card--big {
+[data-compact] .hold--card .card--big {
   height: 100%;
 }
 
-[data-handheld] .hold--card .face__rules {
+[data-compact] .hold--card .face__rules {
   overflow-y: auto;
   mask-image: none;
 }
@@ -1208,12 +1216,12 @@ html[data-input="keyboard"] .hints {
  * point of the panel.
  *
  * Removed rather than out-specified. The two rules keyed on the same fact --
- * `[data-handheld]` here, `useHandheldLayout()` there -- so they could never
+ * `[data-compact]` here, `useCompactLayout()` there -- so they could never
  * disagree about WHETHER the reader is drawn, only about how tall it is, which
  * makes one of them redundant by construction.
  */
 
-[data-handheld] .rail--right .stackpanel {
+[data-compact] .rail--right .stackpanel {
   /* Two items and a scroll, rather than growing without limit. Capped rather
      than hidden-when-empty: an empty stack that vanishes and reappears moves
      the two panels under it several times a turn, which is exactly the jumping
@@ -1224,7 +1232,7 @@ html[data-input="keyboard"] .hints {
   flex: 0 0 auto;
 }
 
-[data-handheld] .rail--right .acts {
+[data-compact] .rail--right .acts {
   /* The list takes what is left, and never less than enough to read a decision
      and its first two choices. */
   flex: 1 1 auto;
@@ -1243,12 +1251,12 @@ html[data-input="keyboard"] .hints {
  * which are full-width rows, walked fine, and that is the shape this borrows:
  * a column, every chip the rail's width, the next one straight below.
  */
-[data-handheld] .act__aims {
+[data-compact] .act__aims {
   flex-direction: column;
   align-items: stretch;
 }
 
-[data-handheld] .aim {
+[data-compact] .aim {
   text-align: left;
 }
 
@@ -1260,7 +1268,7 @@ html[data-input="pad"] .act__key {
   display: none;
 }
 
-[data-handheld] .acts__list {
+[data-compact] .acts__list {
   overflow-y: auto;
   scrollbar-gutter: stable;
   /*
@@ -1281,8 +1289,8 @@ html[data-input="pad"] .act__key {
  * 16px, and it is the least useful thing in the panel once you have read it
  * once. The list underneath is the turn.
  */
-[data-handheld] .acts__ask,
-[data-handheld] .acts__hint {
+[data-compact] .acts__ask,
+[data-compact] .acts__hint {
   flex: 0 1 auto;
   overflow: hidden;
 }
@@ -1302,7 +1310,7 @@ html[data-input="pad"] .act__key {
  * headings, one panel over -- and this is the list the turn is actually spent
  * in, so it is the last place that should be showing half-words.
  */
-[data-handheld] .act__type {
+[data-compact] .act__type {
   display: none;
 }
 
@@ -1343,62 +1351,62 @@ html[data-input="pad"] .act__key {
 
 /* --- raised: names, numbers, verbs ------------------------------------- */
 
-[data-handheld] .track__turn-round,
-[data-handheld] .track__pri,
-[data-handheld] .track__who,
-[data-handheld] .ph__name,
-[data-handheld] .orb__name,
-[data-handheld] .orb__none,
-[data-handheld] .cmdplinth__name,
-[data-handheld] .cmdplinth__word,
-[data-handheld] .mana-grp__n,
-[data-handheld] .pile__leaf,
-[data-handheld] .lane__count,
-[data-handheld] .cardstack__count,
-[data-handheld] .rail__title,
-[data-handheld] .rail__empty,
-[data-handheld] .preview__idle,
-[data-handheld] .acts__prompt,
-[data-handheld] .act__key,
-[data-handheld] .act__name,
-[data-handheld] .act__aim,
-[data-handheld] .act__pt,
-[data-handheld] .aim,
-[data-handheld] .tool,
-[data-handheld] .hints,
-[data-handheld] .hint__verb,
-[data-handheld] .glyph,
+[data-compact] .track__turn-round,
+[data-compact] .track__pri,
+[data-compact] .track__who,
+[data-compact] .ph__name,
+[data-compact] .orb__name,
+[data-compact] .orb__none,
+[data-compact] .cmdplinth__name,
+[data-compact] .cmdplinth__word,
+[data-compact] .mana-grp__n,
+[data-compact] .pile__leaf,
+[data-compact] .lane__count,
+[data-compact] .cardstack__count,
+[data-compact] .rail__title,
+[data-compact] .rail__empty,
+[data-compact] .preview__idle,
+[data-compact] .acts__prompt,
+[data-compact] .act__key,
+[data-compact] .act__name,
+[data-compact] .act__aim,
+[data-compact] .act__pt,
+[data-compact] .aim,
+[data-compact] .tool,
+[data-compact] .hints,
+[data-compact] .hint__verb,
+[data-compact] .glyph,
 /* The lane's own name -- "Creatures", "Lands". Kept rather than dropped: the
    bands are in a fixed order but an empty one has nothing else to say what it
    is, and an empty lane is exactly when you need to know. */
-[data-handheld] .lane__label,
+[data-compact] .lane__label,
 /* The commit bar's two marks, and the line that carries the count the slab's
    label used to. These are decisions. */
-[data-handheld] .commit-note,
-[data-handheld] .commit-dock button,
+[data-compact] .commit-note,
+[data-compact] .commit-dock button,
 /*
  * The action panel's own rows, found by the CI gate rather than by looking --
  * a card's type line inside a play row was 10.5px, and "CPU 3 - main 1" (which
  * is the only thing on screen saying why nothing is happening) was 11px.
  */
-[data-handheld] .act__type,
-[data-handheld] .acts__thinking,
-[data-handheld] .acts__none,
+[data-compact] .act__type,
+[data-compact] .acts__thinking,
+[data-compact] .acts__none,
 /* Modal choices. "Mulligan" and "Keep" were 14px -- the two most consequential
    words in the opening of every game. */
-[data-handheld] .opt__label,
-[data-handheld] .opt__caption,
-/* The lobby, which had no floor at all until `data-handheld` moved to <html>.
+[data-compact] .opt__label,
+[data-compact] .opt__caption,
+/* The lobby, which had no floor at all until `data-compact` moved to <html>.
    Six of these went with the old front door -- `.hero__line`, `.or`,
    `.join__go`, `.join__in` and `.door__cap` were its pitch, its separator, its
    Join button, its code field and its footer. The door is written at the floor
    now (`styles/door.css`) and has nothing for this list to reach. */
-[data-handheld] .brand__mark,
-[data-handheld] .brand__sub,
-[data-handheld] .link,
+[data-compact] .brand__mark,
+[data-compact] .brand__sub,
+[data-compact] .link,
 /* The zone viewer's own chrome: its Close button and its empty-state line. */
-[data-handheld] .peek__hidden,
-[data-handheld] .btn--ghost {
+[data-compact] .peek__hidden,
+[data-compact] .btn--ghost {
   font-size: var(--type-floor);
 }
 
@@ -1407,7 +1415,7 @@ html[data-input="pad"] .act__key {
 /* The em dash standing in for an empty lane, next to the lane's own name.
    (`.orb__lab` and `.cmdplinth__tag` were dropped here too; `board.css` drops
    them at every size now.) */
-[data-handheld] .lane__empty {
+[data-compact] .lane__empty {
   display: none;
 }
 
@@ -1432,7 +1440,7 @@ html[data-input="pad"] .act__key {
  * Dropping is for labels whose subject is still on screen; a count is not its
  * own name.
  */
-[data-handheld] .track__step-label {
+[data-compact] .track__step-label {
   display: revert;
   font-size: var(--type-floor);
 }
@@ -1452,7 +1460,7 @@ html[data-input="pad"] .act__key {
  * doubt whose panel this is. The row stays -- the priority tick lives in it --
  * and only the name goes.
  */
-[data-handheld] .play__mine .orb__name {
+[data-compact] .play__mine .orb__name {
   display: none;
 }
 
@@ -1468,27 +1476,27 @@ html[data-input="pad"] .act__key {
    real targets beats one row of targets nobody can hit.
    ========================================================================== */
 
-[data-handheld] .pile,
-[data-handheld] .aim,
-[data-handheld] .tool,
+[data-compact] .pile,
+[data-compact] .aim,
+[data-compact] .tool,
 /* The settings menu's rows. They are one press away from quitting the game, so
    they are the last controls that may be hard to land on. */
-[data-handheld] .settings__item,
-[data-handheld] .settings__legend,
+[data-compact] .settings__item,
+[data-compact] .settings__legend,
 /* The commit bar's "all" and "none" marks. They are decisions with
    consequences, not affordances, so a finger has to be able to land on them as
    reliably as on the slab between them. */
-[data-handheld] .commit-mark,
+[data-compact] .commit-mark,
 /* Modal options and action rows: the two controls a turn is actually spent on. */
-[data-handheld] .opt,
-[data-handheld] .act,
-[data-handheld] .link,
-[data-handheld] .btn--ghost {
+[data-compact] .opt,
+[data-compact] .act,
+[data-compact] .link,
+[data-compact] .btn--ghost {
   min-width: var(--hit-floor);
   min-height: var(--hit-floor);
 }
 
-[data-handheld] .tools {
+[data-compact] .tools {
   flex-wrap: wrap;
   row-gap: 4px;
 }
@@ -1516,21 +1524,21 @@ html[data-input="pad"] .act__key {
  * across the row, which is more than the deficit -- measured after, no step in
  * any phase truncates at 1200x800.
  */
-[data-handheld] .track {
+[data-compact] .track {
   gap: 8px;
   padding: 6px 10px;
 }
 
-[data-handheld] .ph {
+[data-compact] .ph {
   gap: 6px;
   padding: 4px 8px;
 }
 
-[data-handheld] .track__step {
+[data-compact] .track__step {
   padding: 2px 6px;
 }
 
-[data-handheld] .ph--now .ph__steps {
+[data-compact] .ph--now .ph__steps {
   /*
    * A FLEX ROW, NOT SIX `auto` GRID TRACKS -- which is what this said, and it
    * did not do the job. `auto` tracks in a container narrower than their content
@@ -1554,12 +1562,12 @@ html[data-input="pad"] .act__key {
    desktop's six equal columns do -- packed to the left, the live pill read as
    a different control from the one on a desktop. The live step still refuses
    to shrink below its word. */
-[data-handheld] .ph--now .track__step {
+[data-compact] .ph--now .track__step {
   flex: 1 1 0;
   min-width: 0;
 }
 
-[data-handheld] .ph--now .track__step--now {
+[data-compact] .ph--now .track__step--now {
   min-width: max-content;
 }
 
@@ -1573,30 +1581,30 @@ html[data-input="pad"] .act__key {
  * and lands on the look desktop has. The hierarchy is unchanged -- phase over
  * step, live step heaviest of all.
  */
-[data-handheld] .ph {
+[data-compact] .ph {
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
-[data-handheld] .ph__name {
+[data-compact] .ph__name {
   font-weight: 700;
   letter-spacing: 0.05em;
 }
 
-[data-handheld] .track__step--now {
+[data-compact] .track__step--now {
   font-weight: 800;
 }
 
-[data-handheld] .track__turn-n {
+[data-compact] .track__turn-n {
   font-weight: 800;
 }
 
-[data-handheld] .track__who,
-[data-handheld] .track__pri {
+[data-compact] .track__who,
+[data-compact] .track__pri {
   font-weight: 600;
 }
 
-[data-handheld] .track__step--now .track__step-label {
+[data-compact] .track__step--now .track__step-label {
   overflow: visible;
   text-overflow: clip;
   white-space: nowrap;
@@ -1647,142 +1655,142 @@ html[data-input="pad"] .act__key {
    which is exactly what a floor does.
    ========================================================================== */
 
-[data-handheld] .act,
-[data-handheld] .act--nested,
-[data-handheld] .act__aim,
-[data-handheld] .act__key,
-[data-handheld] .act__src,
-[data-handheld] .act__type,
-[data-handheld] .actgroup__head,
-[data-handheld] .actgroup__kw,
-[data-handheld] .actgroup__none,
-[data-handheld] .acts__hint,
-[data-handheld] .acts__none,
-[data-handheld] .acts__prompt,
-[data-handheld] .acts__stakes,
-[data-handheld] .acts__thinking,
-[data-handheld] .aim,
-[data-handheld] .badge,
-[data-handheld] .bar--tiny .bar__label,
-[data-handheld] .bar__label,
-[data-handheld] .brand__badge,
-[data-handheld] .brand__mark,
-[data-handheld] .brand__sub,
-[data-handheld] .btn,
-[data-handheld] .btn--primary,
-[data-handheld] .cat__browsing,
-[data-handheld] .cat__for,
-[data-handheld] .chip,
-[data-handheld] .chip--tiny,
-[data-handheld] .choices__label,
-[data-handheld] .cmdplinth__art--none span,
-[data-handheld] .cmdplinth__glyph,
-[data-handheld] .cmdplinth__name,
-[data-handheld] .cmdplinth__word,
-[data-handheld] .cmdslot__tax,
-[data-handheld] .codechip__l,
-[data-handheld] .codechip__v,
-[data-handheld] .commit-mark,
-[data-handheld] .commit-note,
-[data-handheld] .count,
-[data-handheld] .curve__n,
-[data-handheld] .curve__none,
-[data-handheld] .combo__n,
-[data-handheld] .combo__opt,
-[data-handheld] .deal,
-[data-handheld] .deal--lg,
-[data-handheld] .deck__badge,
-[data-handheld] .deck__cmd,
-[data-handheld] .deck__count,
-[data-handheld] .deck__engine,
-[data-handheld] .deck__notes,
-[data-handheld] .dos__artist,
-[data-handheld] .dos__h,
-[data-handheld] .dos__p,
-[data-handheld] .dos__p--foot,
-[data-handheld] .empty,
-[data-handheld] .fgroup__l,
-[data-handheld] .field__label,
-[data-handheld] .filters__n,
-[data-handheld] .fx-ghost__cause,
-[data-handheld] .fx-spotlight__kind,
-[data-handheld] .ghost,
-[data-handheld] .hand__empty,
-[data-handheld] .hand__hint,
-[data-handheld] .ibtn,
-[data-handheld] .import__hint,
-[data-handheld] .import__hint--inline,
-[data-handheld] .import__label,
-[data-handheld] .import__notes,
-[data-handheld] .import__report,
-[data-handheld] .import__title,
-[data-handheld] .inv__l,
-[data-handheld] .inv__linkv,
-[data-handheld] .inv__note,
-[data-handheld] .inv__t,
-[data-handheld] .lane__count,
-[data-handheld] .lane__label,
-[data-handheld] .link,
-[data-handheld] .lock,
-[data-handheld] .lock--on,
-[data-handheld] .mana-grp__n,
-[data-handheld] .mana-grp__spend,
-[data-handheld] .note,
-[data-handheld] .opt,
-[data-handheld] .opt__caption,
-[data-handheld] .orb__loss,
-[data-handheld] .orb__none,
-[data-handheld] .over__player,
-[data-handheld] .over__sub,
-[data-handheld] .over__why,
-[data-handheld] .peek__count,
-[data-handheld] .peek__note,
-[data-handheld] .ph,
-[data-handheld] .ph__name,
-[data-handheld] .pick__confirm-q,
-[data-handheld] .pick__n,
-[data-handheld] .pick__s,
-[data-handheld] .pick__tick,
-[data-handheld] .pile__label,
-[data-handheld] .pile__leaf--top,
-[data-handheld] .pile__revealed,
-[data-handheld] .plate__deck,
-[data-handheld] .plate__n,
-[data-handheld] .plate__name,
-[data-handheld] .plate__tag,
-[data-handheld] .podrail__guest,
-[data-handheld] .podrail__why,
-[data-handheld] .preview__facts,
-[data-handheld] .preview__idle,
-[data-handheld] .prompt__hint,
-[data-handheld] .rail__badge,
-[data-handheld] .rail__empty,
-[data-handheld] .rail__title,
-[data-handheld] .search__g,
-[data-handheld] .search__i,
-[data-handheld] .seg__b,
-[data-handheld] .segmented__btn,
-[data-handheld] .sel,
-[data-handheld] .settings__item,
-[data-handheld] .sig__n,
-[data-handheld] .sig__why,
-[data-handheld] .slot__no,
-[data-handheld] .slot__x,
-[data-handheld] .stackpile__ghost,
-[data-handheld] .stackpile__tag,
-[data-handheld] .tablewrap__h,
-[data-handheld] .tablewrap__l,
-[data-handheld] .ticker__line,
-[data-handheld] .toast,
-[data-handheld] .tool,
-[data-handheld] .tool--wide,
-[data-handheld] .track__step,
-[data-handheld] .track__turn-round,
-[data-handheld] .track__pri,
-[data-handheld] .track__who,
-[data-handheld] .turned__l,
-[data-handheld] .verdict,
-[data-handheld] .xstep__hint {
+[data-compact] .act,
+[data-compact] .act--nested,
+[data-compact] .act__aim,
+[data-compact] .act__key,
+[data-compact] .act__src,
+[data-compact] .act__type,
+[data-compact] .actgroup__head,
+[data-compact] .actgroup__kw,
+[data-compact] .actgroup__none,
+[data-compact] .acts__hint,
+[data-compact] .acts__none,
+[data-compact] .acts__prompt,
+[data-compact] .acts__stakes,
+[data-compact] .acts__thinking,
+[data-compact] .aim,
+[data-compact] .badge,
+[data-compact] .bar--tiny .bar__label,
+[data-compact] .bar__label,
+[data-compact] .brand__badge,
+[data-compact] .brand__mark,
+[data-compact] .brand__sub,
+[data-compact] .btn,
+[data-compact] .btn--primary,
+[data-compact] .cat__browsing,
+[data-compact] .cat__for,
+[data-compact] .chip,
+[data-compact] .chip--tiny,
+[data-compact] .choices__label,
+[data-compact] .cmdplinth__art--none span,
+[data-compact] .cmdplinth__glyph,
+[data-compact] .cmdplinth__name,
+[data-compact] .cmdplinth__word,
+[data-compact] .cmdslot__tax,
+[data-compact] .codechip__l,
+[data-compact] .codechip__v,
+[data-compact] .commit-mark,
+[data-compact] .commit-note,
+[data-compact] .count,
+[data-compact] .curve__n,
+[data-compact] .curve__none,
+[data-compact] .combo__n,
+[data-compact] .combo__opt,
+[data-compact] .deal,
+[data-compact] .deal--lg,
+[data-compact] .deck__badge,
+[data-compact] .deck__cmd,
+[data-compact] .deck__count,
+[data-compact] .deck__engine,
+[data-compact] .deck__notes,
+[data-compact] .dos__artist,
+[data-compact] .dos__h,
+[data-compact] .dos__p,
+[data-compact] .dos__p--foot,
+[data-compact] .empty,
+[data-compact] .fgroup__l,
+[data-compact] .field__label,
+[data-compact] .filters__n,
+[data-compact] .fx-ghost__cause,
+[data-compact] .fx-spotlight__kind,
+[data-compact] .ghost,
+[data-compact] .hand__empty,
+[data-compact] .hand__hint,
+[data-compact] .ibtn,
+[data-compact] .import__hint,
+[data-compact] .import__hint--inline,
+[data-compact] .import__label,
+[data-compact] .import__notes,
+[data-compact] .import__report,
+[data-compact] .import__title,
+[data-compact] .inv__l,
+[data-compact] .inv__linkv,
+[data-compact] .inv__note,
+[data-compact] .inv__t,
+[data-compact] .lane__count,
+[data-compact] .lane__label,
+[data-compact] .link,
+[data-compact] .lock,
+[data-compact] .lock--on,
+[data-compact] .mana-grp__n,
+[data-compact] .mana-grp__spend,
+[data-compact] .note,
+[data-compact] .opt,
+[data-compact] .opt__caption,
+[data-compact] .orb__loss,
+[data-compact] .orb__none,
+[data-compact] .over__player,
+[data-compact] .over__sub,
+[data-compact] .over__why,
+[data-compact] .peek__count,
+[data-compact] .peek__note,
+[data-compact] .ph,
+[data-compact] .ph__name,
+[data-compact] .pick__confirm-q,
+[data-compact] .pick__n,
+[data-compact] .pick__s,
+[data-compact] .pick__tick,
+[data-compact] .pile__label,
+[data-compact] .pile__leaf--top,
+[data-compact] .pile__revealed,
+[data-compact] .plate__deck,
+[data-compact] .plate__n,
+[data-compact] .plate__name,
+[data-compact] .plate__tag,
+[data-compact] .podrail__guest,
+[data-compact] .podrail__why,
+[data-compact] .preview__facts,
+[data-compact] .preview__idle,
+[data-compact] .prompt__hint,
+[data-compact] .rail__badge,
+[data-compact] .rail__empty,
+[data-compact] .rail__title,
+[data-compact] .search__g,
+[data-compact] .search__i,
+[data-compact] .seg__b,
+[data-compact] .segmented__btn,
+[data-compact] .sel,
+[data-compact] .settings__item,
+[data-compact] .sig__n,
+[data-compact] .sig__why,
+[data-compact] .slot__no,
+[data-compact] .slot__x,
+[data-compact] .stackpile__ghost,
+[data-compact] .stackpile__tag,
+[data-compact] .tablewrap__h,
+[data-compact] .tablewrap__l,
+[data-compact] .ticker__line,
+[data-compact] .toast,
+[data-compact] .tool,
+[data-compact] .tool--wide,
+[data-compact] .track__step,
+[data-compact] .track__turn-round,
+[data-compact] .track__pri,
+[data-compact] .track__who,
+[data-compact] .turned__l,
+[data-compact] .verdict,
+[data-compact] .xstep__hint {
   font-size: var(--type-floor);
 }
 
@@ -1793,16 +1801,16 @@ html[data-input="pad"] .act__key {
  * controls under 44px on the pod lobby, the smallest a 25px-tall name field.
  * A Steam Deck has a touchscreen and these are the controls a finger goes for.
  */
-[data-handheld] .btn,
-[data-handheld] .combo__opt,
-[data-handheld] .ghost,
-[data-handheld] .lock,
-[data-handheld] .deal,
-[data-handheld] .seg__b,
-[data-handheld] .segmented__btn,
-[data-handheld] .sel,
-[data-handheld] .search__i,
-[data-handheld] .field__input {
+[data-compact] .btn,
+[data-compact] .combo__opt,
+[data-compact] .ghost,
+[data-compact] .lock,
+[data-compact] .deal,
+[data-compact] .seg__b,
+[data-compact] .segmented__btn,
+[data-compact] .sel,
+[data-compact] .search__i,
+[data-compact] .field__input {
   min-height: var(--hit-floor);
 }
 
@@ -1814,7 +1822,7 @@ html[data-input="pad"] .act__key {
  * raised to the touch floor and the metric left at 40px, that arithmetic is
  * describing a row height the list no longer has.
  */
-[data-handheld] .combo__list {
+[data-compact] .combo__list {
   --combo-row: 44px;
 }
 
@@ -1835,12 +1843,12 @@ html[data-input="pad"] .act__key {
  * floor is a TARGET, not a size, so the target grows and the mark does not:
  * `lobby.css` draws the circle on `.ibtn::before`, and only the box is 44px.
  */
-[data-handheld] .plate {
+[data-compact] .plate {
   --name-h: 44px;
   --meta-h: 44px;
 }
 
-[data-handheld] .ibtn {
+[data-compact] .ibtn {
   /* A shade larger than the desktop's 17px, because the pips and the type
      beside it grew too -- but nothing like the box it is centred in. */
   --ibtn-dot: 22px;
@@ -1853,12 +1861,12 @@ html[data-input="pad"] .act__key {
  * The last of the floors, all found by pointing the gate at surfaces the board
  * work never touched: the deck catalogue's chrome and the zone viewer's.
  */
-[data-handheld] .cat__x,
-[data-handheld] .cbtn,
-[data-handheld] .peek__x,
-[data-handheld] .peek button,
-[data-handheld] .cat button,
-[data-handheld] .dos button {
+[data-compact] .cat__x,
+[data-compact] .cbtn,
+[data-compact] .peek__x,
+[data-compact] .peek button,
+[data-compact] .cat button,
+[data-compact] .dos button {
   min-width: var(--hit-floor);
   min-height: var(--hit-floor);
   font-size: var(--type-floor);
@@ -1872,7 +1880,7 @@ html[data-input="pad"] .act__key {
  * decision. It carries a real fact (`aria-label="Commander"`), so it is raised
  * to match the name it lives in rather than exempted.
  */
-[data-handheld] .crown {
+[data-compact] .crown {
   font-size: 1em;
 }
 
@@ -1882,7 +1890,7 @@ html[data-input="pad"] .act__key {
  * A full-width 23px strip: comfortably wide, and half the height a finger needs.
  * The last one the gate found, on a surface that only exists in this layout.
  */
-[data-handheld] .rail__title--button {
+[data-compact] .rail__title--button {
   min-height: var(--hit-floor);
 }
 

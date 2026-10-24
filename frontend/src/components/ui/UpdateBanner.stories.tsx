@@ -140,7 +140,7 @@ export const SiteDeployed: StoryObj<typeof SiteStage> = {
  * site the same way (ADR 0013).
  */
 export const SiteDeployedMidGame: StoryObj<typeof SiteStage> = {
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   render: (args) => <SiteStage {...args} />,
   args: { path: "/games/g1", next: "1.5.0" },

@@ -34,7 +34,7 @@ import { stagedAs } from "../../logic/staging";
 import { seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
-import { useHandheldLayout, usePhone } from "../../state/useHandheld";
+import { useCompactLayout, usePhone } from "../../state/useHandheld";
 import { useNarrationSkip } from "../../state/useNarrationSkip";
 import { useTableDerived } from "../../state/useTableDerived";
 import { useViewingSeat } from "../../state/useViewingSeat";
@@ -134,8 +134,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * pad gets the compact board and no glyphs. The two signals are deliberately
    * independent -- see `input/inputMode.ts`.
    */
-  const handheld = useHandheldLayout();
-  /** A handheld whose floors are too big for it. See `logic/breakpoints.ts`. */
+  const handheld = useCompactLayout();
+  /** The phone layout, a peer of the handheld one (ADR 0025). */
   const phone = usePhone();
 
   // Only the seats still in the game: the viewing guard would show an empty
@@ -386,7 +386,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-zoom-pod={zoom.pod.toFixed(3)}
       data-zoom-hand={zoom.hand.toFixed(3)}
       data-zoom-locked={zoom.locked || undefined}
-      data-handheld={handheld || undefined}
+      data-compact={handheld || undefined}
       /*
         The box an opponent's lanes were solved inside, handed back to CSS.
 

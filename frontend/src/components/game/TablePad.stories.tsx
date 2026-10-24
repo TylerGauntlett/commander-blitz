@@ -50,7 +50,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const EveryAdvertisedButtonIsBound: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -102,7 +102,7 @@ export const EveryAdvertisedButtonIsBound: Story = {
  */
 export const HandheldRegionStepping: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -157,7 +157,7 @@ export const HandheldRegionStepping: Story = {
  */
 export const HandheldCardHold: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -239,7 +239,7 @@ export const HandheldCardHold: Story = {
  */
 export const HandheldTheCommanderIsReachable: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -291,7 +291,7 @@ function ringed(root: HTMLElement): HTMLElement {
 
 export const HandheldJumpToTheDecision: Story = {
   args: board(scenarios.combatDeclareAttackers()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -342,7 +342,7 @@ export const HandheldJumpToTheDecision: Story = {
  */
 export const HandheldJumpToThePromptsPrimary: Story = {
   args: board(scenarios.chooseType()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -370,7 +370,7 @@ export const HandheldJumpToThePromptsPrimary: Story = {
  */
 export const HandheldJumpToThePickConfirm: Story = {
   args: board(scenarios.chooseSeveralTargets()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -389,7 +389,7 @@ export const HandheldJumpToThePickConfirm: Story = {
 
 export const HandheldRegionDial: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -457,7 +457,7 @@ export const HandheldRegionDial: Story = {
  */
 export const HandheldSettingsMenu: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -521,7 +521,7 @@ export const HandheldSettingsMenu: Story = {
  */
 export const HandheldAbilityMenu: Story = {
   args: board(scenarios.twoAbilityPermanent()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -563,7 +563,7 @@ export const HandheldAbilityMenu: Story = {
  */
 export const HandheldTreasureColour: Story = {
   args: board(scenarios.treasureColours(), { act: idleMutation(fn()) }),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -597,7 +597,7 @@ export const HandheldTreasureColour: Story = {
  */
 export const HandheldTargetChipsWalk: Story = {
   args: board(scenarios.targetVariants()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -640,7 +640,7 @@ export const HandheldTargetChipsWalk: Story = {
  */
 export const HandheldStackIsARegion: Story = {
   args: board(scenarios.stackThreeDeep()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -708,7 +708,7 @@ export const HandheldStackPlyIsATarget: Story = {
     ];
     return board({ ...scenario, actions }, { act: idleMutation(fn()) });
   })(),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

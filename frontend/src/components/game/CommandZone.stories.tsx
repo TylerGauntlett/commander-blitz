@@ -136,7 +136,7 @@ export const Disabled: Story = {
 /** The plinth, castable, in the compact orb. */
 export const PlayableHandheld: Story = {
   args: Playable.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

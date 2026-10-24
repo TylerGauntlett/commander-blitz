@@ -58,12 +58,12 @@ export function isHandheldSize(width: number, height: number): boolean {
 /*
  * ...AND WHERE IT STOPS BEING A HANDHELD AND BECOMES A PHONE.
  *
- * A phone is a handheld too -- it keeps `data-handheld` and everything the Deck
- * layout already does for a small screen -- but the Deck's floors are written
- * for 1280x800. A 96px card, a 224px rail and a 132px info column are fine on
- * a Deck and leave an iPhone's battlefield 0px wide in portrait and 34px tall
- * in landscape. So the phone tier is ADDITIVE: `data-phone` on `<html>`, and
- * `styles/phone.css` relaxes the floors and restacks the table under it.
+ * A phone is a PEER of the handheld layout, not a tier inside it (ADR 0025).
+ * Geometrically every phone size is inside the handheld query too -- 390 is
+ * well under 1366 -- so the phone query is asked FIRST and a size is exactly
+ * one mode: `layoutModeForSize` below. The Deck's floors are written for
+ * 1280x800 and a 96px card, a 224px rail and a 132px info column leave an
+ * iPhone's battlefield 0px wide in portrait; a phone states its own.
  *
  * THE NUMBERS. 600 wide catches every phone held upright (the widest common one
  * is 430) and no tablet. 500 tall catches every phone held sideways (the
@@ -87,4 +87,32 @@ export function isPhone(): boolean {
 
 export function isPhoneSize(width: number, height: number): boolean {
   return width <= PHONE_MAX_W || height <= PHONE_MAX_H;
+}
+
+/**
+ * The three layouts, and exactly one of them at a time.
+ *
+ * Stamped on `<html data-layout>` by `App.tsx`. `handheld` and `phone` are both
+ * COMPACT -- they share the structure `[data-compact]` keys in `handheld.css` --
+ * and differ in everything a floor, a token or a budget decides.
+ */
+export type LayoutMode = "desktop" | "handheld" | "phone";
+
+/** Whether a mode uses the compact structure. */
+export function isCompact(mode: LayoutMode): boolean {
+  return mode !== "desktop";
+}
+
+/** The mode of an explicit size. The phone query is asked first. */
+export function layoutModeForSize(width: number, height: number): LayoutMode {
+  if (isPhoneSize(width, height)) return "phone";
+  if (isHandheldSize(width, height)) return "handheld";
+  return "desktop";
+}
+
+/** The mode of the live viewport, through the same two queries the sheets use. */
+export function layoutMode(): LayoutMode {
+  if (isPhone()) return "phone";
+  if (isHandheld()) return "handheld";
+  return "desktop";
 }

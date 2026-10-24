@@ -117,7 +117,7 @@ export function ChoiceCombo({ choices, extras = [], onAct, disabled }: Props) {
    * first press, and the field is one press up for whoever wants to type.
    */
   const typeFirst =
-    getInputMode() !== "pad" && !document.documentElement.hasAttribute("data-handheld");
+    getInputMode() !== "pad" && !document.documentElement.hasAttribute("data-compact");
   // biome-ignore lint/correctness/useExhaustiveDependencies: where a dialog opens is a moment, not a state.
   useLayoutEffect(() => {
     if (typeFirst) return;

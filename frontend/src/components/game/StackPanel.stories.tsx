@@ -119,7 +119,7 @@ export const FiveDeep: Story = {
 /** Three deep on a Deck: the pile's faces stay readable. */
 export const ThreeDeepHandheld: Story = {
   args: { state: scenarios.stackThreeDeep().state },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

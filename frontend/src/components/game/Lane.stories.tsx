@@ -175,7 +175,7 @@ export const WithAttachments: Story = {
 /** The same creatures on a Deck: every card at the floor, every label legible. */
 export const CreaturesHandheld: Story = {
   args: Creatures.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

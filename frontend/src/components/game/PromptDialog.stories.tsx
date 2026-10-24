@@ -345,7 +345,7 @@ export const ChooseTypeOnPad: Story = {
 /** And on a handheld, where the rows have to clear the touch floor. */
 export const ChooseTypeHandheld: Story = {
   args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "screen", motion: "real" } },
   beforeEach: () => {
