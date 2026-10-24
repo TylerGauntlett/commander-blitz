@@ -1,0 +1,782 @@
+{
+  "window_years": 5,
+  "as_of": "2026-10-24",
+  "rows": [
+    {
+      "id": "fdc_calling_all_angels",
+      "product": "Calling All Angels",
+      "set_code": "FDC",
+      "set_name": "Foundations Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/CallingAllAngels_FDC.json"
+    },
+    {
+      "id": "fdc_keen_engineering",
+      "product": "Keen Engineering",
+      "set_code": "FDC",
+      "set_name": "Foundations Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/KeenEngineering_FDC.json"
+    },
+    {
+      "id": "fdc_reign_of_dragons",
+      "product": "Reign of Dragons",
+      "set_code": "FDC",
+      "set_name": "Foundations Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/ReignOfDragons_FDC.json"
+    },
+    {
+      "id": "fdc_tramplesaurus_rex",
+      "product": "Tramplesaurus Rex",
+      "set_code": "FDC",
+      "set_name": "Foundations Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/TramplesaurusRex_FDC.json"
+    },
+    {
+      "id": "fdc_wretched_ranks",
+      "product": "Wretched Ranks",
+      "set_code": "FDC",
+      "set_name": "Foundations Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/WretchedRanks_FDC.json"
+    },
+    {
+      "id": "frc_multiverse_reforged",
+      "product": "Multiverse Reforged",
+      "set_code": "FRC",
+      "set_name": "Reality Fracture Commander",
+      "date": "2026-10-02",
+      "source": "https://mtgjson.com/api/v5/decks/MultiverseReforged_FRC.json"
+    },
+    {
+      "id": "msc_avengers_assemble",
+      "product": "Avengers Assemble",
+      "set_code": "MSC",
+      "set_name": "Marvel Super Heroes Commander",
+      "date": "2026-06-26",
+      "source": "https://mtgjson.com/api/v5/decks/AvengersAssemble_MSC.json"
+    },
+    {
+      "id": "msc_doom_prevails",
+      "product": "Doom Prevails",
+      "set_code": "MSC",
+      "set_name": "Marvel Super Heroes Commander",
+      "date": "2026-06-26",
+      "source": "https://mtgjson.com/api/v5/decks/DoomPrevails_MSC.json"
+    },
+    {
+      "id": "msc_the_fantastic_four",
+      "product": "The Fantastic Four",
+      "set_code": "MSC",
+      "set_name": "Marvel Super Heroes Commander",
+      "date": "2026-06-26",
+      "source": "https://mtgjson.com/api/v5/decks/TheFantasticFour_MSC.json"
+    },
+    {
+      "id": "msc_wakanda_forever",
+      "product": "Wakanda Forever",
+      "set_code": "MSC",
+      "set_name": "Marvel Super Heroes Commander",
+      "date": "2026-06-26",
+      "source": "https://mtgjson.com/api/v5/decks/WakandaForever_MSC.json"
+    },
+    {
+      "id": "soc_lorehold_spirit",
+      "product": "Lorehold Spirit",
+      "set_code": "SOC",
+      "set_name": "Secrets of Strixhaven Commander",
+      "date": "2026-04-24",
+      "source": "https://mtgjson.com/api/v5/decks/LoreholdSpirit_SOC.json"
+    },
+    {
+      "id": "soc_prismari_artistry",
+      "product": "Prismari Artistry",
+      "set_code": "SOC",
+      "set_name": "Secrets of Strixhaven Commander",
+      "date": "2026-04-24",
+      "source": "https://mtgjson.com/api/v5/decks/PrismariArtistry_SOC.json"
+    },
+    {
+      "id": "soc_quandrix_unlimited",
+      "product": "Quandrix Unlimited",
+      "set_code": "SOC",
+      "set_name": "Secrets of Strixhaven Commander",
+      "date": "2026-04-24",
+      "source": "https://mtgjson.com/api/v5/decks/QuandrixUnlimited_SOC.json"
+    },
+    {
+      "id": "soc_silverquill_influence",
+      "product": "Silverquill Influence",
+      "set_code": "SOC",
+      "set_name": "Secrets of Strixhaven Commander",
+      "date": "2026-04-24",
+      "source": "https://mtgjson.com/api/v5/decks/SilverquillInfluence_SOC.json"
+    },
+    {
+      "id": "soc_witherbloom_pestilence",
+      "product": "Witherbloom Pestilence",
+      "set_code": "SOC",
+      "set_name": "Secrets of Strixhaven Commander",
+      "date": "2026-04-24",
+      "source": "https://mtgjson.com/api/v5/decks/WitherbloomPestilence_SOC.json"
+    },
+    {
+      "id": "ecc_blight_curse",
+      "product": "Blight Curse",
+      "set_code": "ECC",
+      "set_name": "Lorwyn Eclipsed Commander",
+      "date": "2026-01-23",
+      "source": "https://mtgjson.com/api/v5/decks/BlightCurse_ECC.json"
+    },
+    {
+      "id": "ecc_dance_of_the_elements",
+      "product": "Dance of the Elements",
+      "set_code": "ECC",
+      "set_name": "Lorwyn Eclipsed Commander",
+      "date": "2026-01-23",
+      "source": "https://mtgjson.com/api/v5/decks/DanceOfTheElements_ECC.json"
+    },
+    {
+      "id": "eoc_counter_intelligence",
+      "product": "Counter Intelligence",
+      "set_code": "EOC",
+      "set_name": "Edge of Eternities Commander",
+      "date": "2025-08-01",
+      "source": "https://mtgjson.com/api/v5/decks/CounterIntelligence_EOC.json"
+    },
+    {
+      "id": "eoc_world_shaper",
+      "product": "World Shaper",
+      "set_code": "EOC",
+      "set_name": "Edge of Eternities Commander",
+      "date": "2025-08-01",
+      "source": "https://mtgjson.com/api/v5/decks/WorldShaper_EOC.json"
+    },
+    {
+      "id": "fic_counter_blitz_final_fantasy_x",
+      "product": "Counter Blitz (FINAL FANTASY X)",
+      "set_code": "FIC",
+      "set_name": "Final Fantasy Commander",
+      "date": "2025-06-13",
+      "source": "https://mtgjson.com/api/v5/decks/CounterBlitzFinalFantasyX_FIC.json"
+    },
+    {
+      "id": "fic_limit_break_final_fantasy_vii",
+      "product": "Limit Break (FINAL FANTASY VII)",
+      "set_code": "FIC",
+      "set_name": "Final Fantasy Commander",
+      "date": "2025-06-13",
+      "source": "https://mtgjson.com/api/v5/decks/LimitBreakFinalFantasyVii_FIC.json"
+    },
+    {
+      "id": "fic_revival_trance_final_fantasy_vi",
+      "product": "Revival Trance (FINAL FANTASY VI)",
+      "set_code": "FIC",
+      "set_name": "Final Fantasy Commander",
+      "date": "2025-06-13",
+      "source": "https://mtgjson.com/api/v5/decks/RevivalTranceFinalFantasyVi_FIC.json"
+    },
+    {
+      "id": "fic_scions_spellcraft_final_fantasy_xiv",
+      "product": "Scions & Spellcraft (FINAL FANTASY XIV)",
+      "set_code": "FIC",
+      "set_name": "Final Fantasy Commander",
+      "date": "2025-06-13",
+      "source": "https://mtgjson.com/api/v5/decks/ScionsSpellcraftFinalFantasyXiv_FIC.json"
+    },
+    {
+      "id": "tdc_abzan_armor",
+      "product": "Abzan Armor",
+      "set_code": "TDC",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "date": "2025-04-11",
+      "source": "https://mtgjson.com/api/v5/decks/AbzanArmor_TDC.json"
+    },
+    {
+      "id": "tdc_jeskai_striker",
+      "product": "Jeskai Striker",
+      "set_code": "TDC",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "date": "2025-04-11",
+      "source": "https://mtgjson.com/api/v5/decks/JeskaiStriker_TDC.json"
+    },
+    {
+      "id": "tdc_mardu_surge",
+      "product": "Mardu Surge",
+      "set_code": "TDC",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "date": "2025-04-11",
+      "source": "https://mtgjson.com/api/v5/decks/MarduSurge_TDC.json"
+    },
+    {
+      "id": "tdc_sultai_arisen",
+      "product": "Sultai Arisen",
+      "set_code": "TDC",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "date": "2025-04-11",
+      "source": "https://mtgjson.com/api/v5/decks/SultaiArisen_TDC.json"
+    },
+    {
+      "id": "tdc_temur_roar",
+      "product": "Temur Roar",
+      "set_code": "TDC",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "date": "2025-04-11",
+      "source": "https://mtgjson.com/api/v5/decks/TemurRoar_TDC.json"
+    },
+    {
+      "id": "drc_eternal_might",
+      "product": "Eternal Might",
+      "set_code": "DRC",
+      "set_name": "Aetherdrift Commander",
+      "date": "2025-02-14",
+      "source": "https://mtgjson.com/api/v5/decks/EternalMight_DRC.json"
+    },
+    {
+      "id": "drc_living_energy",
+      "product": "Living Energy",
+      "set_code": "DRC",
+      "set_name": "Aetherdrift Commander",
+      "date": "2025-02-14",
+      "source": "https://mtgjson.com/api/v5/decks/LivingEnergy_DRC.json"
+    },
+    {
+      "id": "dsc_death_toll",
+      "product": "Death Toll",
+      "set_code": "DSC",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "date": "2024-09-27",
+      "source": "https://mtgjson.com/api/v5/decks/DeathToll_DSC.json"
+    },
+    {
+      "id": "dsc_endless_punishment",
+      "product": "Endless Punishment",
+      "set_code": "DSC",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "date": "2024-09-27",
+      "source": "https://mtgjson.com/api/v5/decks/EndlessPunishment_DSC.json"
+    },
+    {
+      "id": "dsc_jump_scare",
+      "product": "Jump Scare!",
+      "set_code": "DSC",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "date": "2024-09-27",
+      "source": "https://mtgjson.com/api/v5/decks/JumpScare_DSC.json"
+    },
+    {
+      "id": "dsc_miracle_worker",
+      "product": "Miracle Worker",
+      "set_code": "DSC",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "date": "2024-09-27",
+      "source": "https://mtgjson.com/api/v5/decks/MiracleWorker_DSC.json"
+    },
+    {
+      "id": "blc_animated_army",
+      "product": "Animated Army",
+      "set_code": "BLC",
+      "set_name": "Bloomburrow Commander",
+      "date": "2024-08-02",
+      "source": "https://mtgjson.com/api/v5/decks/AnimatedArmy_BLC.json"
+    },
+    {
+      "id": "blc_family_matters",
+      "product": "Family Matters",
+      "set_code": "BLC",
+      "set_name": "Bloomburrow Commander",
+      "date": "2024-08-02",
+      "source": "https://mtgjson.com/api/v5/decks/FamilyMatters_BLC.json"
+    },
+    {
+      "id": "blc_peace_offering",
+      "product": "Peace Offering",
+      "set_code": "BLC",
+      "set_name": "Bloomburrow Commander",
+      "date": "2024-08-02",
+      "source": "https://mtgjson.com/api/v5/decks/PeaceOffering_BLC.json"
+    },
+    {
+      "id": "blc_squirreled_away",
+      "product": "Squirreled Away",
+      "set_code": "BLC",
+      "set_name": "Bloomburrow Commander",
+      "date": "2024-08-02",
+      "source": "https://mtgjson.com/api/v5/decks/SquirreledAway_BLC.json"
+    },
+    {
+      "id": "m3c_creative_energy",
+      "product": "Creative Energy",
+      "set_code": "M3C",
+      "set_name": "Modern Horizons 3 Commander",
+      "date": "2024-06-14",
+      "source": "https://mtgjson.com/api/v5/decks/CreativeEnergy_M3C.json"
+    },
+    {
+      "id": "m3c_eldrazi_incursion",
+      "product": "Eldrazi Incursion",
+      "set_code": "M3C",
+      "set_name": "Modern Horizons 3 Commander",
+      "date": "2024-06-14",
+      "source": "https://mtgjson.com/api/v5/decks/EldraziIncursion_M3C.json"
+    },
+    {
+      "id": "m3c_graveyard_overdrive",
+      "product": "Graveyard Overdrive",
+      "set_code": "M3C",
+      "set_name": "Modern Horizons 3 Commander",
+      "date": "2024-06-14",
+      "source": "https://mtgjson.com/api/v5/decks/GraveyardOverdrive_M3C.json"
+    },
+    {
+      "id": "m3c_tricky_terrain",
+      "product": "Tricky Terrain",
+      "set_code": "M3C",
+      "set_name": "Modern Horizons 3 Commander",
+      "date": "2024-06-14",
+      "source": "https://mtgjson.com/api/v5/decks/TrickyTerrain_M3C.json"
+    },
+    {
+      "id": "otc_desert_bloom",
+      "product": "Desert Bloom",
+      "set_code": "OTC",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "date": "2024-04-19",
+      "source": "https://mtgjson.com/api/v5/decks/DesertBloom_OTC.json"
+    },
+    {
+      "id": "otc_grand_larceny",
+      "product": "Grand Larceny",
+      "set_code": "OTC",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "date": "2024-04-19",
+      "source": "https://mtgjson.com/api/v5/decks/GrandLarceny_OTC.json"
+    },
+    {
+      "id": "otc_most_wanted",
+      "product": "Most Wanted",
+      "set_code": "OTC",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "date": "2024-04-19",
+      "source": "https://mtgjson.com/api/v5/decks/MostWanted_OTC.json"
+    },
+    {
+      "id": "otc_quick_draw",
+      "product": "Quick Draw",
+      "set_code": "OTC",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "date": "2024-04-19",
+      "source": "https://mtgjson.com/api/v5/decks/QuickDraw_OTC.json"
+    },
+    {
+      "id": "pip_hail_caesar",
+      "product": "Hail, Caesar",
+      "set_code": "PIP",
+      "set_name": "Fallout",
+      "date": "2024-03-08",
+      "source": "https://mtgjson.com/api/v5/decks/HailCaesar_PIP.json"
+    },
+    {
+      "id": "pip_mutant_menace",
+      "product": "Mutant Menace",
+      "set_code": "PIP",
+      "set_name": "Fallout",
+      "date": "2024-03-08",
+      "source": "https://mtgjson.com/api/v5/decks/MutantMenace_PIP.json"
+    },
+    {
+      "id": "pip_science",
+      "product": "Science!",
+      "set_code": "PIP",
+      "set_name": "Fallout",
+      "date": "2024-03-08",
+      "source": "https://mtgjson.com/api/v5/decks/Science_PIP.json"
+    },
+    {
+      "id": "pip_scrappy_survivors",
+      "product": "Scrappy Survivors",
+      "set_code": "PIP",
+      "set_name": "Fallout",
+      "date": "2024-03-08",
+      "source": "https://mtgjson.com/api/v5/decks/ScrappySurvivors_PIP.json"
+    },
+    {
+      "id": "mkc_blame_game",
+      "product": "Blame Game",
+      "set_code": "MKC",
+      "set_name": "Murders at Karlov Manor Commander",
+      "date": "2024-02-09",
+      "source": "https://mtgjson.com/api/v5/decks/BlameGame_MKC.json"
+    },
+    {
+      "id": "mkc_deadly_disguise",
+      "product": "Deadly Disguise",
+      "set_code": "MKC",
+      "set_name": "Murders at Karlov Manor Commander",
+      "date": "2024-02-09",
+      "source": "https://mtgjson.com/api/v5/decks/DeadlyDisguise_MKC.json"
+    },
+    {
+      "id": "mkc_deep_clue_sea",
+      "product": "Deep Clue Sea",
+      "set_code": "MKC",
+      "set_name": "Murders at Karlov Manor Commander",
+      "date": "2024-02-09",
+      "source": "https://mtgjson.com/api/v5/decks/DeepClueSea_MKC.json"
+    },
+    {
+      "id": "mkc_revenant_recon",
+      "product": "Revenant Recon",
+      "set_code": "MKC",
+      "set_name": "Murders at Karlov Manor Commander",
+      "date": "2024-02-09",
+      "source": "https://mtgjson.com/api/v5/decks/RevenantRecon_MKC.json"
+    },
+    {
+      "id": "lcc_ahoy_mateys",
+      "product": "Ahoy Mateys",
+      "set_code": "LCC",
+      "set_name": "The Lost Caverns of Ixalan Commander",
+      "date": "2023-11-17",
+      "source": "https://mtgjson.com/api/v5/decks/AhoyMateys_LCC.json"
+    },
+    {
+      "id": "lcc_blood_rites",
+      "product": "Blood Rites",
+      "set_code": "LCC",
+      "set_name": "The Lost Caverns of Ixalan Commander",
+      "date": "2023-11-17",
+      "source": "https://mtgjson.com/api/v5/decks/BloodRites_LCC.json"
+    },
+    {
+      "id": "lcc_explorers_of_the_deep",
+      "product": "Explorers of the Deep",
+      "set_code": "LCC",
+      "set_name": "The Lost Caverns of Ixalan Commander",
+      "date": "2023-11-17",
+      "source": "https://mtgjson.com/api/v5/decks/ExplorersOfTheDeep_LCC.json"
+    },
+    {
+      "id": "lcc_veloci_ramp_tor",
+      "product": "Veloci-Ramp-Tor",
+      "set_code": "LCC",
+      "set_name": "The Lost Caverns of Ixalan Commander",
+      "date": "2023-11-17",
+      "source": "https://mtgjson.com/api/v5/decks/VelociRampTor_LCC.json"
+    },
+    {
+      "id": "who_blast_from_the_past",
+      "product": "Blast from the Past",
+      "set_code": "WHO",
+      "set_name": "Doctor Who",
+      "date": "2023-10-13",
+      "source": "https://mtgjson.com/api/v5/decks/BlastFromThePast_WHO.json"
+    },
+    {
+      "id": "who_masters_of_evil",
+      "product": "Masters of Evil",
+      "set_code": "WHO",
+      "set_name": "Doctor Who",
+      "date": "2023-10-13",
+      "source": "https://mtgjson.com/api/v5/decks/MastersOfEvil_WHO.json"
+    },
+    {
+      "id": "who_paradox_power",
+      "product": "Paradox Power",
+      "set_code": "WHO",
+      "set_name": "Doctor Who",
+      "date": "2023-10-13",
+      "source": "https://mtgjson.com/api/v5/decks/ParadoxPower_WHO.json"
+    },
+    {
+      "id": "who_timey_wimey",
+      "product": "Timey-Wimey",
+      "set_code": "WHO",
+      "set_name": "Doctor Who",
+      "date": "2023-10-13",
+      "source": "https://mtgjson.com/api/v5/decks/TimeyWimey_WHO.json"
+    },
+    {
+      "id": "woc_fae_dominion",
+      "product": "Fae Dominion",
+      "set_code": "WOC",
+      "set_name": "Wilds of Eldraine Commander",
+      "date": "2023-09-08",
+      "source": "https://mtgjson.com/api/v5/decks/FaeDominion_WOC.json"
+    },
+    {
+      "id": "woc_virtue_and_valor",
+      "product": "Virtue and Valor",
+      "set_code": "WOC",
+      "set_name": "Wilds of Eldraine Commander",
+      "date": "2023-09-08",
+      "source": "https://mtgjson.com/api/v5/decks/VirtueAndValor_WOC.json"
+    },
+    {
+      "id": "ltc_elven_council",
+      "product": "Elven Council",
+      "set_code": "LTC",
+      "set_name": "Tales of Middle-earth Commander",
+      "date": "2023-06-23",
+      "source": "https://mtgjson.com/api/v5/decks/ElvenCouncil_LTC.json"
+    },
+    {
+      "id": "ltc_food_and_fellowship",
+      "product": "Food and Fellowship",
+      "set_code": "LTC",
+      "set_name": "Tales of Middle-earth Commander",
+      "date": "2023-06-23",
+      "source": "https://mtgjson.com/api/v5/decks/FoodAndFellowship_LTC.json"
+    },
+    {
+      "id": "ltc_riders_of_rohan",
+      "product": "Riders of Rohan",
+      "set_code": "LTC",
+      "set_name": "Tales of Middle-earth Commander",
+      "date": "2023-06-23",
+      "source": "https://mtgjson.com/api/v5/decks/RidersOfRohan_LTC.json"
+    },
+    {
+      "id": "ltc_the_hosts_of_mordor",
+      "product": "The Hosts of Mordor",
+      "set_code": "LTC",
+      "set_name": "Tales of Middle-earth Commander",
+      "date": "2023-06-23",
+      "source": "https://mtgjson.com/api/v5/decks/TheHostsOfMordor_LTC.json"
+    },
+    {
+      "id": "moc_call_for_backup",
+      "product": "Call for Backup",
+      "set_code": "MOC",
+      "set_name": "March of the Machine Commander",
+      "date": "2023-04-21",
+      "source": "https://mtgjson.com/api/v5/decks/CallForBackup_MOC.json"
+    },
+    {
+      "id": "moc_cavalry_charge",
+      "product": "Cavalry Charge",
+      "set_code": "MOC",
+      "set_name": "March of the Machine Commander",
+      "date": "2023-04-21",
+      "source": "https://mtgjson.com/api/v5/decks/CavalryCharge_MOC.json"
+    },
+    {
+      "id": "moc_divine_convocation",
+      "product": "Divine Convocation",
+      "set_code": "MOC",
+      "set_name": "March of the Machine Commander",
+      "date": "2023-04-21",
+      "source": "https://mtgjson.com/api/v5/decks/DivineConvocation_MOC.json"
+    },
+    {
+      "id": "moc_growing_threat",
+      "product": "Growing Threat",
+      "set_code": "MOC",
+      "set_name": "March of the Machine Commander",
+      "date": "2023-04-21",
+      "source": "https://mtgjson.com/api/v5/decks/GrowingThreat_MOC.json"
+    },
+    {
+      "id": "moc_tinker_time",
+      "product": "Tinker Time",
+      "set_code": "MOC",
+      "set_name": "March of the Machine Commander",
+      "date": "2023-04-21",
+      "source": "https://mtgjson.com/api/v5/decks/TinkerTime_MOC.json"
+    },
+    {
+      "id": "onc_corrupting_influence",
+      "product": "Corrupting Influence",
+      "set_code": "ONC",
+      "set_name": "Phyrexia: All Will Be One Commander",
+      "date": "2023-02-10",
+      "source": "https://mtgjson.com/api/v5/decks/CorruptingInfluence_ONC.json"
+    },
+    {
+      "id": "onc_rebellion_rising",
+      "product": "Rebellion Rising",
+      "set_code": "ONC",
+      "set_name": "Phyrexia: All Will Be One Commander",
+      "date": "2023-02-10",
+      "source": "https://mtgjson.com/api/v5/decks/RebellionRising_ONC.json"
+    },
+    {
+      "id": "scd_chaos_incarnate",
+      "product": "Chaos Incarnate",
+      "set_code": "SCD",
+      "set_name": "Starter Commander Decks",
+      "date": "2022-12-02",
+      "source": "https://mtgjson.com/api/v5/decks/ChaosIncarnate_SCD.json"
+    },
+    {
+      "id": "scd_draconic_destruction",
+      "product": "Draconic Destruction",
+      "set_code": "SCD",
+      "set_name": "Starter Commander Decks",
+      "date": "2022-12-02",
+      "source": "https://mtgjson.com/api/v5/decks/DraconicDestruction_SCD.json"
+    },
+    {
+      "id": "scd_first_flight",
+      "product": "First Flight",
+      "set_code": "SCD",
+      "set_name": "Starter Commander Decks",
+      "date": "2022-12-02",
+      "source": "https://mtgjson.com/api/v5/decks/FirstFlight_SCD.json"
+    },
+    {
+      "id": "scd_grave_danger",
+      "product": "Grave Danger",
+      "set_code": "SCD",
+      "set_name": "Starter Commander Decks",
+      "date": "2022-12-02",
+      "source": "https://mtgjson.com/api/v5/decks/GraveDanger_SCD.json"
+    },
+    {
+      "id": "scd_token_triumph",
+      "product": "Token Triumph",
+      "set_code": "SCD",
+      "set_name": "Starter Commander Decks",
+      "date": "2022-12-02",
+      "source": "https://mtgjson.com/api/v5/decks/TokenTriumph_SCD.json"
+    },
+    {
+      "id": "brc_mishras_burnished_banner",
+      "product": "Mishra's Burnished Banner",
+      "set_code": "BRC",
+      "set_name": "The Brothers' War Commander",
+      "date": "2022-11-18",
+      "source": "https://mtgjson.com/api/v5/decks/MishraSBurnishedBanner_BRC.json"
+    },
+    {
+      "id": "brc_urzas_iron_alliance",
+      "product": "Urza's Iron Alliance",
+      "set_code": "BRC",
+      "set_name": "The Brothers' War Commander",
+      "date": "2022-11-18",
+      "source": "https://mtgjson.com/api/v5/decks/UrzaSIronAlliance_BRC.json"
+    },
+    {
+      "id": "40k_forces_of_the_imperium",
+      "product": "Forces of the Imperium",
+      "set_code": "40K",
+      "set_name": "Warhammer 40,000 Commander",
+      "date": "2022-10-07",
+      "source": "https://mtgjson.com/api/v5/decks/ForcesOfTheImperium_40K.json"
+    },
+    {
+      "id": "40k_necron_dynasties",
+      "product": "Necron Dynasties",
+      "set_code": "40K",
+      "set_name": "Warhammer 40,000 Commander",
+      "date": "2022-10-07",
+      "source": "https://mtgjson.com/api/v5/decks/NecronDynasties_40K.json"
+    },
+    {
+      "id": "40k_the_ruinous_powers",
+      "product": "The Ruinous Powers",
+      "set_code": "40K",
+      "set_name": "Warhammer 40,000 Commander",
+      "date": "2022-10-07",
+      "source": "https://mtgjson.com/api/v5/decks/TheRuinousPowers_40K.json"
+    },
+    {
+      "id": "40k_tyranid_swarm",
+      "product": "Tyranid Swarm",
+      "set_code": "40K",
+      "set_name": "Warhammer 40,000 Commander",
+      "date": "2022-10-07",
+      "source": "https://mtgjson.com/api/v5/decks/TyranidSwarm_40K.json"
+    },
+    {
+      "id": "dmc_legends_legacy",
+      "product": "Legends' Legacy",
+      "set_code": "DMC",
+      "set_name": "Dominaria United Commander",
+      "date": "2022-09-09",
+      "source": "https://mtgjson.com/api/v5/decks/LegendsLegacy_DMC.json"
+    },
+    {
+      "id": "dmc_painbow",
+      "product": "Painbow",
+      "set_code": "DMC",
+      "set_name": "Dominaria United Commander",
+      "date": "2022-09-09",
+      "source": "https://mtgjson.com/api/v5/decks/Painbow_DMC.json"
+    },
+    {
+      "id": "ncc_bedecked_brokers",
+      "product": "Bedecked Brokers",
+      "set_code": "NCC",
+      "set_name": "New Capenna Commander",
+      "date": "2022-04-29",
+      "source": "https://mtgjson.com/api/v5/decks/BedeckedBrokers_NCC.json"
+    },
+    {
+      "id": "ncc_cabaretti_cacophony",
+      "product": "Cabaretti Cacophony",
+      "set_code": "NCC",
+      "set_name": "New Capenna Commander",
+      "date": "2022-04-29",
+      "source": "https://mtgjson.com/api/v5/decks/CabarettiCacophony_NCC.json"
+    },
+    {
+      "id": "ncc_maestros_massacre",
+      "product": "Maestros Massacre",
+      "set_code": "NCC",
+      "set_name": "New Capenna Commander",
+      "date": "2022-04-29",
+      "source": "https://mtgjson.com/api/v5/decks/MaestrosMassacre_NCC.json"
+    },
+    {
+      "id": "ncc_obscura_operation",
+      "product": "Obscura Operation",
+      "set_code": "NCC",
+      "set_name": "New Capenna Commander",
+      "date": "2022-04-29",
+      "source": "https://mtgjson.com/api/v5/decks/ObscuraOperation_NCC.json"
+    },
+    {
+      "id": "ncc_riveteers_rampage",
+      "product": "Riveteers Rampage",
+      "set_code": "NCC",
+      "set_name": "New Capenna Commander",
+      "date": "2022-04-29",
+      "source": "https://mtgjson.com/api/v5/decks/RiveteersRampage_NCC.json"
+    },
+    {
+      "id": "nec_buckle_up",
+      "product": "Buckle Up",
+      "set_code": "NEC",
+      "set_name": "Neon Dynasty Commander",
+      "date": "2022-02-18",
+      "source": "https://mtgjson.com/api/v5/decks/BuckleUp_NEC.json"
+    },
+    {
+      "id": "nec_upgrades_unleashed",
+      "product": "Upgrades Unleashed",
+      "set_code": "NEC",
+      "set_name": "Neon Dynasty Commander",
+      "date": "2022-02-18",
+      "source": "https://mtgjson.com/api/v5/decks/UpgradesUnleashed_NEC.json"
+    },
+    {
+      "id": "voc_spirit_squadron",
+      "product": "Spirit Squadron",
+      "set_code": "VOC",
+      "set_name": "Crimson Vow Commander",
+      "date": "2021-11-19",
+      "source": "https://mtgjson.com/api/v5/decks/SpiritSquadron_VOC.json"
+    },
+    {
+      "id": "voc_vampiric_bloodline",
+      "product": "Vampiric Bloodline",
+      "set_code": "VOC",
+      "set_name": "Crimson Vow Commander",
+      "date": "2021-11-19",
+      "source": "https://mtgjson.com/api/v5/decks/VampiricBloodline_VOC.json"
+    }
+  ]
+}
