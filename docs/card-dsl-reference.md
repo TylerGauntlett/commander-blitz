@@ -665,7 +665,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
 | `return_to_hand` | Return a matching permanent to hand. | [Costs](card-dsl.md#costs) |
-| `sacrifice` | Sacrifice a matching permanent. | [Costs](card-dsl.md#costs) |
+| `sacrifice` | Sacrifice a matching permanent; `as` names it for the effects. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |
 | `tap` | {T}: tap the source. | [Costs](card-dsl.md#costs) |
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |

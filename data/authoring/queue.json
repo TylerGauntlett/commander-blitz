@@ -108192,12 +108192,12 @@
     },
     "Ghoulcaller Gisa": {
       "edhrec_rank": 2500,
-      "gate": "template",
+      "gate": null,
       "name": "Ghoulcaller Gisa",
-      "reason": "no template for: {B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X i",
+      "reason": "",
       "scryfall_id": "44d7906e-8a89-4644-acb5-46fbe97ab39f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghoulcaller's Accomplice": {

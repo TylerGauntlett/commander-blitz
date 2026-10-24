@@ -1017,9 +1017,10 @@ class Game:
             mana_ability=False,
         )
 
-        # What the cost named -- Station's "the tapped creature" -- handed on to
-        # the stack item so the effects can read it. Empty for every cost that
-        # names nothing, which is every cost but `tap_permanents` with `as`.
+        # What the cost named -- Station's "the tapped creature", Gisa's "the
+        # sacrificed creature" -- handed on to the stack item so the effects can
+        # read it. Empty for every cost that names nothing, which is every cost
+        # but `tap_permanents` or `sacrifice` with `as`.
         bindings: dict[str, Any] = {}
         if distribution:
             bindings["distribution"] = distribution

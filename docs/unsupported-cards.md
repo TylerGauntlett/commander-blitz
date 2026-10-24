@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**72 cards** blocked by **81** capabilities.
+**71 cards** blocked by **80** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -79,7 +79,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [redirect-attack](#redirect-attack) | 1 | 3213 | op |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
-| [sacrifice-cost-binding](#sacrifice-cost-binding) | 1 | 2500 | cost |
 | [same-name-count](#same-name-count) | 1 | 2429 | value |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -1060,20 +1059,6 @@ Blocks **1** card.
 
 - **Clifftop Lookout** (rank 2637) — `clifftop_lookout`
   - When this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.
-
-</details>
-
-## sacrifice-cost-binding
-
-Blocks **1** card.
-
-- **(cost)** an `as` key on the `sacrifice` cost that binds the creature sacrificed to pay it, with its last-known power, so the ability's effects can read it (e.g. create_token amount {"power_of": {"binding": "sacrificed"}} or a power_had-style read off that binding)
-  <br>Why the existing vocabulary won't do: Only `tap_permanents` accepts `as` (costs.py pays `sacrifice` via sacrifice_object and binds nothing); `power_had` reads only a trigger's event snapshot; `power_of` needs a live binding; moving the sacrifice into effects as the `sacrifice` op with `snapshot` would pay the cost on resolution and let the ability be activated with no other creature, which the packet notes forbid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghoulcaller Gisa** (rank 2500) — `ghoulcaller_gisa`
-  - {B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.
 
 </details>
 

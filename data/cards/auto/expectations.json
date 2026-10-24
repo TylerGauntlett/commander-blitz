@@ -4413,6 +4413,10 @@
   "ghostly_sentinel": {
     "zone": "battlefield"
   },
+  "ghoulcaller_gisa": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "giada_font_of_hope": {
     "battlefield_count": 33,
     "zone": "battlefield"

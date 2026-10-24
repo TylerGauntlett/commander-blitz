@@ -57,7 +57,35 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"worth, and there is no '{{X}}' in {model.mana!r} for it to fill in"
             )
         validate_value(model.x_value, f"{where}.cost.x_value")
-    validate_selector(model.sacrifice, f"{where}.cost.sacrifice")
+    sacrifice_selector = dict(model.sacrifice) if model.sacrifice is not None else None
+    if sacrifice_selector is not None and "as" in sacrifice_selector:
+        # "…where X is **the sacrificed creature's** power" (Ghoulcaller Gisa).
+        # A name the ability's effects read the sacrificed permanent back
+        # through, so a property of the cost rather than a test on a candidate,
+        # and lifted out before the selector language sees it -- exactly as
+        # `tap_permanents`' `as` is below.
+        sacrifice_name = sacrifice_selector.pop("as")
+        if not isinstance(sacrifice_name, str) or not sacrifice_name:
+            raise DslError(f"{where}.cost.sacrifice.as: a binding name, got {sacrifice_name!r}")
+        if int(sacrifice_selector.get("count", 1) or 1) != 1:
+            # "The sacrificed creature" is one creature; a name bound to the
+            # first of several would read one creature's power where the card
+            # meant nobody's.
+            raise DslError(
+                f"{where}.cost.sacrifice.as: names *the* sacrificed permanent, so "
+                f"the cost must sacrifice exactly one -- no 'count' above 1"
+            )
+        if not defines_x:
+            # Only an activated ability hands its cost a place to write the
+            # name (`costs.pay`'s `bindings`) and reads it back on resolution.
+            # An additional cost to cast, a ward or attack tax, or a mana
+            # ability would pay the sacrifice and bind nothing, so every read
+            # of the name would answer 0 while the card looked implemented.
+            raise DslError(
+                f"{where}.cost.sacrifice.as: only an activated ability's effects "
+                f"can read what its cost sacrificed; this cost names it for nothing"
+            )
+    validate_selector(sacrifice_selector, f"{where}.cost.sacrifice")
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")

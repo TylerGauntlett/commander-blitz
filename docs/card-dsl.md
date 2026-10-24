@@ -2863,6 +2863,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "exert": true,                                  // Arena of Glory: it won't untap next untap step
   "pay_life": 3,
   "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
+  "sacrifice":      { "types": ["Creature"], "exclude_self": true,
+                      "as": "sacrificed" },      // Gisa: names *the* sacrificed creature
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
   "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
   "tap_permanents": { "types": ["Creature"], "total_power": 3 },  // crew 3
@@ -3202,6 +3204,37 @@ creature with negative power stations nothing rather than removing counters.
 
 Not `choose_permanents` + the `tap` op + `add_counters`: that pays on resolution,
 so the ability could be activated with nothing to tap.
+
+### Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed
+
+```jsonc
+{ "kind": "activated",
+  "text": "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.",
+  "cost": { "mana": "{B}", "tap": true,
+            "sacrifice": { "types": ["Creature"], "exclude_self": true,
+                           "as": "sacrificed" } },
+  "effects": [ { "op": "create_token", "token": "zombie_2_2_b",
+                 "amount": { "power_of": { "binding": "sacrificed" } } } ] }
+```
+
+`as` on the `sacrifice` cost binds the sacrificed permanent under that name, and
+`power_of`/`toughness_of` `{"binding": …}` read it back, as does `{"binding": …}`
+as a selector. It is the sacrifice twin of Station's `as`, and what it holds
+differs for a rules reason: the creature has left the battlefield by the time
+the cost is paid, so X is its last-known information (608.2h) and nothing cast
+in response can change it. The binding is a `zones.snapshot` taken after the
+choice and before the move — the shape the `sacrifice` op's `snapshot` key
+writes — so counters, anthems and pumps on the creature count, and a sacrificed
+token, which no longer exists once it has left, still has a power.
+
+`as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
+above 1, and anywhere but an activated ability's cost: an additional cost to
+cast, a ward or tax price and a mana ability have no effects that receive what
+the cost named, so the name would bind nothing and read 0.
+
+Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
+so the ability could be activated with no other creature and responded to
+before anything had died.
 
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 
