@@ -416,6 +416,12 @@ jobs:
           - { project: chromium, shard: 4, shards: 5 }
           - { project: chromium, shard: 5, shards: 5 }
           - { project: handheld, shard: 1, shards: 1 }
+          # The phones (ADR 0025): every device held both ways, and a whole
+          # game by tap on each -- the long legs, so three of them. The project
+          # is `fullyParallel`, so its one spec splits by test, not by file.
+          - { project: phone, shard: 1, shards: 3 }
+          - { project: phone, shard: 2, shards: 3 }
+          - { project: phone, shard: 3, shards: 3 }
           - { project: deckfit, shard: 1, shards: 1 }
           # The desktop build: the sidecar serving `dist/`, offline. Its own
           # config, and `verify.py` builds the client first (~1 min extra).

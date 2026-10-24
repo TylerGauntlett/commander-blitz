@@ -25,6 +25,9 @@ import {
   DECISION_AUDIT,
   type JourneyName,
   ruleOf,
+  TAP_BUDGET,
+  type TapJourneyName,
+  tapCeiling,
 } from "../src/components/game/decisionAudit";
 
 const STORIES = readFileSync(
@@ -99,6 +102,23 @@ describe("the rows", () => {
     }
     for (const [kind, answered] of byKind) {
       expect(new Set(answered).size, `${kind} both is and is not raised`).toBe(1);
+    }
+  });
+});
+
+describe("the touch column", () => {
+  it("never costs a finger more than a walk", () => {
+    for (const journey of Object.keys(TAP_BUDGET) as TapJourneyName[]) {
+      expect(Number.isInteger(tapCeiling(journey)), journey).toBe(true);
+      expect(tapCeiling(journey), journey).toBeGreaterThanOrEqual(1);
+      expect(tapCeiling(journey), journey).toBeLessThanOrEqual(ceiling(journey));
+    }
+  });
+
+  it("names only journeys the phone spec walks", () => {
+    const spec = readFileSync(join(__dirname, "..", "e2e", "phone.spec.ts"), "utf-8");
+    for (const journey of Object.keys(TAP_BUDGET)) {
+      expect(spec, journey).toContain(`tapCeiling("${journey}")`);
     }
   });
 });

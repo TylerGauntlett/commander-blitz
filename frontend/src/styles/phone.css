@@ -139,6 +139,13 @@
   font-size: 13px;
 }
 
+/* The viewer's own orb is a control too, and on the shortest phone upright
+   the board's strip is shorter than a thumb. It keeps the hit floor and the
+   mat scrolls, which is the phone's design for the mat (`TablePhone`). */
+[data-layout="phone"] .orb--viewer {
+  min-height: 44px;
+}
+
 [data-layout="phone"] .seat__cmdr,
 [data-layout="phone"] .seat__perms,
 [data-layout="phone"] .seat__zones {
@@ -294,6 +301,23 @@
   white-space: normal;
 }
 
+/* The import field takes a line of its own: beside its button on a 393px
+   screen it came out 20px wide, which is no field at all. */
+[data-layout="phone"] .shelf__foot .import__row {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+[data-layout="phone"] .shelf__foot .import__input {
+  flex: 1 1 100%;
+}
+
+/* A one-word segment ("All") is narrower than a thumb; the floor is the hit
+   floor, in both directions. */
+[data-layout="phone"] .seg__b {
+  min-width: 44px;
+}
+
 /* ==========================================================================
    Dialogs
    ==========================================================================
@@ -310,6 +334,8 @@
   max-height: calc(100dvh - 12px);
   margin-bottom: 0;
   overflow-y: auto;
+  /* Reserved, so a long prompt growing a bar does not re-wrap what it says. */
+  scrollbar-gutter: stable;
 }
 
 [data-layout="phone"] .opt--card {
@@ -363,10 +389,11 @@
   [data-layout="phone"] .table__body > .rail--right {
     grid-column: 1;
     grid-row: 3;
-    /* A third of the screen, and never less than a prompt, one row of the
-       list, the sheet's voice and the slab: the decision must be answerable
-       from the sheet on the shortest phone `testing/devices.ts` names. */
-    max-height: max(36dvh, 232px);
+    /* A third of the screen, and never less than a prompt, a row of the list
+       and the combat slab (its tallest) on the shortest phone
+       `testing/devices.ts` names; the board keeps the rest. The list scrolls
+       inside it. */
+    max-height: max(36dvh, 190px);
   }
 
   /*

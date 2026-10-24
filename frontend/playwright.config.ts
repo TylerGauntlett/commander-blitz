@@ -70,7 +70,7 @@ export default defineConfig({
       // `handheldAssert.ts`, and Playwright refuses to let one test file import
       // another. `sidecar` has a config of its own (`playwright.sidecar.config.ts`):
       // it needs a different server, and `webServer` is per config.
-      testIgnore: /(handheld|pad|deckfit|sidecar)\.spec\.ts/,
+      testIgnore: /(handheld|pad|deckfit|sidecar|phone)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: { width: 1600, height: 950 } },
     },
     /*
@@ -85,6 +85,23 @@ export default defineConfig({
       name: "handheld",
       testMatch: /(handheld|pad)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
+    },
+    /*
+     * The phones (ADR 0025).
+     *
+     * One project, and the devices are inside it: `phone.spec.ts` walks every
+     * phone `testing/devices.ts` names, held both ways, with `test.use` per
+     * device -- the same list the Storybook viewport global reads, so a story
+     * and a spec on "the iPhone 15" are on the same screen. Chromium for every
+     * descriptor, iPhones included, because it is the one browser CI installs.
+     */
+    {
+      name: "phone",
+      testMatch: /phone\.spec\.ts/,
+      // Every test deals its own game, so they split by test across CI's
+      // shards rather than by file; `workers: 1` still runs them one at a time.
+      fullyParallel: true,
+      use: { ...devices["Desktop Chrome"] },
     },
     /*
      * The fit gate, which sets its own viewport per test.

@@ -26,6 +26,8 @@
  * with itself while disagreeing with the app.
  */
 
+import { FLOORS } from "../src/logic/floors";
+
 export interface HandheldReport {
   /** Smallest font size on anything that owns a text node and is not hidden. */
   minFontPx: number;
@@ -141,6 +143,16 @@ export interface GateSpec {
   floors: { font: number; card: number; hit: number };
   /** `[selector, share of innerHeight]`; a visible match taller than that fails. */
   budget: [string, number][];
+  /** Regions where scrolling is this layout's design, beside the shared ones. */
+  scrollers?: string[];
+  /** Regions this layout does not draw at all, so a zero box is not a collapse. */
+  undrawn?: string[];
+  /**
+   * Whether every stop must be reachable by PRESSES from every other. True for
+   * a controller layout; a phone's question is the tap, which `phone.spec.ts`
+   * asks of every stop itself.
+   */
+  pressReach?: boolean;
 }
 
 /**
@@ -172,8 +184,36 @@ export const HANDHELD_BUDGET: [string, number][] = [
 ];
 
 export const HANDHELD_GATE: GateSpec = {
-  floors: { font: 16, card: 96, hit: 44 },
+  floors: FLOORS.handheld,
   budget: HANDHELD_BUDGET,
+};
+
+/**
+ * The phone's gate (ADR 0025): its own floors, its own budgets, and the two
+ * places its design scrolls.
+ *
+ * The budgets are shares of the viewport's height, the larger of what the
+ * phones `testing/devices.ts` names measured held either way, so one number
+ * holds upright and sideways. The orb strip is the one that matters, as the
+ * seat is on the Deck: an opponent that grows takes the viewer's board.
+ */
+export const PHONE_GATE: GateSpec = {
+  floors: FLOORS.phone,
+  budget: [
+    // An orb, and the row of them.
+    [".seat", 0.17],
+    [".play__opponents", 0.18],
+    // The phase ribbon, one line.
+    [".track", 0.14],
+    // The hand drawer and the tool row under it.
+    [".table__foot", 0.42],
+  ],
+  // The viewer's mat scrolls upright, as the stories say (`TablePhone`).
+  scrollers: [".play__mine", ".play__mine .mat__side", ".play__mine .mat__lanes"],
+  // The reader is the full card view on a phone: a long press, not a rail.
+  undrawn: [".preview"],
+  // A finger points; reachability is asked of every stop by tap instead.
+  pressReach: false,
 };
 
 /**
@@ -352,6 +392,7 @@ export function handheldAssert(spec: GateSpec): HandheldReport {
   /* Regions that must never flatten to nothing. */
   const collapsed: string[] = [];
   for (const selector of [".acts__list", ".preview", ".table__foot", ".play__mine"]) {
+    if (spec.undrawn?.includes(selector)) continue;
     const el = document.querySelector<HTMLElement>(selector);
     if (!el) continue;
     const box = el.getBoundingClientRect();
@@ -384,6 +425,7 @@ export function handheldAssert(spec: GateSpec): HandheldReport {
     // The reader's rules box: a card with more text than 78px is the ordinary
     // case, not the failure. It reserves its gutter, which `unguttered` checks.
     ".reader__rules",
+    ...(spec.scrollers ?? []),
   ]);
   const overflowing: { selector: string; by: number }[] = [];
   for (const selector of [
@@ -434,8 +476,18 @@ export function handheldAssert(spec: GateSpec): HandheldReport {
      */
     const kids = [...el.children] as HTMLElement[];
     if (kids.length === 0) continue;
+    /*
+     * FROM THE FAN'S OWN LEFT EDGE. `offsetLeft` counts from the offset
+     * parent, and the fan is only that when something has positioned it; where
+     * nothing has, the kids measure from an ancestor further out and the info
+     * column beside the lanes is counted as overflow. Both offsets are layout
+     * values against the same parent, so the difference is still untransformed.
+     */
     let reach = 0;
-    for (const kid of kids) reach = Math.max(reach, kid.offsetLeft + kid.offsetWidth);
+    for (const kid of kids) {
+      const origin = kid.offsetParent === el.offsetParent ? el.offsetLeft : 0;
+      reach = Math.max(reach, kid.offsetLeft - origin + kid.offsetWidth);
+    }
     const by = Math.round(reach - el.clientWidth);
     if (by <= SLACK) continue;
     // The room it had comes with it: "26px over" is not actionable on its own,
@@ -619,7 +671,9 @@ export function handheldAssert(spec: GateSpec): HandheldReport {
   if (ringExpected && marked.length === 1 && (ringWidthPx < RING || ringStyle === "none")) {
     failures.push(`ring is ${ringWidthPx}px ${ringStyle}`);
   }
-  if (unreachable.length > 0) failures.push(`unreachable stops: ${unreachable.join(", ")}`);
+  if (spec.pressReach !== false && unreachable.length > 0) {
+    failures.push(`unreachable stops: ${unreachable.join(", ")}`);
+  }
   if (spilled.length > 0) failures.push(`spilled: ${spilled.slice(0, 5).join(", ")}`);
   if (collapsed.length > 0) failures.push(`collapsed: ${collapsed.join(", ")}`);
   if (overflowing.length > 0) {

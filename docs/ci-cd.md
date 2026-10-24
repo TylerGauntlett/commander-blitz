@@ -109,7 +109,7 @@ The slices each run `verify.py --only <group> --strict --verbose`:
 | `sim` | `sim --jobs $(nproc)` | The arena and the live-server games; no Node on the box |
 | `frontend` | `frontend --coverage` | Build, lint, the one vitest process that merges jsdom with both story projects, then the desktop shell's lint, build and tests |
 | `installer` | `desktop/steam/test/install.test.sh` | A minute of bash on a bare runner |
-| `e2e` | `e2e --e2e-project P --e2e-shard i/n` | Pull requests only: `chromium` sharded across several legs, plus `handheld`, `deckfit` and `sidecar`, with `fail-fast: false` so one leg's timeout does not hide another's assertion |
+| `e2e` | `e2e --e2e-project P --e2e-shard i/n` | Pull requests only: `chromium` and `phone` sharded across several legs, plus `handheld`, `deckfit` and `sidecar`, with `fail-fast: false` so one leg's timeout does not hide another's assertion |
 
 **Sharding is the only parallelism Playwright tolerates.** `workers` stays at 1
 because the app's motion is frame-driven and a loaded runner draws few frames
