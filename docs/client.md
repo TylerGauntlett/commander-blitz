@@ -500,6 +500,8 @@ grayed-out commander under a "Coming soon" badge, in its release's run after the
 decks (`visibleShells`, then `groupDecks`). It has no role, no tab stop and no handler,
 so ADR 0015 *Every legal action is exactly one control* is untouched: the ring and Tab pass
 over it. A colour or archetype filter hides every shell, since a shell has neither to match.
+Shells are drawn under **Precons** only: **All** is what a player can take today, so it
+puts Favorites and Yours first and the precon runs after them, without shells.
 
 **The phase ribbon** keeps every step label in the DOM whether or not its phase is
 expanded, which is what keeps the marker's `layoutId` continuous across a phase boundary

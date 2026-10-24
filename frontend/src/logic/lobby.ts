@@ -295,7 +295,9 @@ export function visibleShells(
   shells: UpcomingPrecon[],
   filters: CatalogFilters,
 ): UpcomingPrecon[] {
-  if (filters.source !== "all" && filters.source !== "precon") return [];
+  // Precons only. Under All the shells would bury every playable deck behind
+  // a hundred that cannot be taken, so All is what you can play today.
+  if (filters.source !== "precon") return [];
   if (filters.colours.length > 0 || filters.archetype) return [];
   const q = filters.q.trim().toLowerCase();
   return shells
@@ -332,16 +334,19 @@ const SOURCE_TITLES: Record<DeckSourceKind, string> = {
  *
  * Precons run by product, one group per `release.set_name`, newest `date`
  * first, so the set that came out last is the first row. Favorites and the
- * player's own imports follow as one group each. A single run under a segment
+ * player's own imports are one group each: after the precons under Precons,
+ * and *before* them under All, where the decks a player reaches for most come
+ * first and the precon runs are the long tail. A single run under a segment
  * of its own needs no header, because the segment already names it; a precon
  * run always has one, because the product is what it says.
  *
  * Within Yours a starred import sorts above every other. Otherwise each run
  * keeps the order `visibleDecks` gave it, so the sort control still decides.
  *
- * `shells` (from `visibleShells`) join the run of their own `set_name`, after
- * that release's playable decks, and a release with nothing playable yet is a
- * run of shells alone, ordered by its date like any other.
+ * `shells` (from `visibleShells`, so only under Precons) join the run of their
+ * own `set_name`, after that release's playable decks, and a release with
+ * nothing playable yet is a run of shells alone, ordered by its date like any
+ * other.
  */
 export function groupDecks(
   shown: DeckSummary[],
@@ -375,7 +380,7 @@ export function groupDecks(
     run(shell.set_name || SOURCE_TITLES.precon, shell.date).shells.push(shell);
   }
 
-  const groups: DeckGroup[] = [...releases.entries()]
+  const runs: DeckGroup[] = [...releases.entries()]
     .sort(([a, left], [b, right]) => right.date.localeCompare(left.date) || a.localeCompare(b))
     .map(([name, found]) => ({
       key: `release-${slug(name)}`,
@@ -383,8 +388,9 @@ export function groupDecks(
       decks: found.decks,
       shells: found.shells,
     }));
+  const own: DeckGroup[] = [];
   if (favorites.length > 0) {
-    groups.push({
+    own.push({
       key: "favorite",
       title: SOURCE_TITLES.favorite,
       decks: favorites,
@@ -394,8 +400,9 @@ export function groupDecks(
   if (yours.length > 0) {
     // A stable sort, so the starred keep the order they arrived in.
     const pinned = [...yours].sort((a, b) => Number(b.starred) - Number(a.starred));
-    groups.push({ key: "moxfield", title: SOURCE_TITLES.moxfield, decks: pinned, shells: [] });
+    own.push({ key: "moxfield", title: SOURCE_TITLES.moxfield, decks: pinned, shells: [] });
   }
+  const groups = source === "all" ? [...own, ...runs] : [...runs, ...own];
 
   if (groups.length === 1 && source !== "all" && source !== "precon") {
     return [{ ...groups[0], title: null }];

@@ -390,12 +390,12 @@ describe("the shelf's groups", () => {
     expect(shape(groupDecks([fav], "favorite"))).toEqual([[null, ["aesi"]]]);
   });
 
-  it("puts every run under All, precons first", () => {
+  it("puts every run under All, favorites and yours first", () => {
     expect(shape(groupDecks([fav, mine, dsc, fdc], "all"))).toEqual([
-      ["Foundations Commander", ["fdc_angels"]],
-      ["Duskmourn Commander", ["dsc_endless"]],
       ["Favorites", ["aesi"]],
       ["Yours", ["mine"]],
+      ["Foundations Commander", ["fdc_angels"]],
+      ["Duskmourn Commander", ["dsc_endless"]],
     ]);
   });
 
@@ -469,30 +469,33 @@ describe("the coming-soon shells", () => {
   });
 
   it("make a run of their own for a release with nothing playable yet", () => {
-    expect(shape(groupDecks([], "all", [blbShell]))).toEqual([
+    expect(shape(groupDecks([], "precon", [blbShell]))).toEqual([
       ["Bloomburrow Commander", [], ["blb_squirrels"]],
     ]);
   });
 
-  it("show under All and Precons, and nowhere else", () => {
+  it("show under Precons, and nowhere else", () => {
     const ids = (source: DeckSource) =>
       visibleShells(shells, { ...EMPTY_FILTERS, source }).map((s) => s.id);
-    expect(ids("all")).toEqual(["fdc_zombies", "blb_squirrels"]);
+    // Not under All, which is what you can take today.
+    expect(ids("all")).toEqual([]);
     expect(ids("precon")).toEqual(["fdc_zombies", "blb_squirrels"]);
     expect(ids("favorite")).toEqual([]);
     expect(ids("moxfield")).toEqual([]);
   });
 
   it("answer the search box by product and by commander", () => {
-    const find = (q: string) => visibleShells(shells, { ...EMPTY_FILTERS, q }).map((s) => s.id);
+    const find = (q: string) =>
+      visibleShells(shells, { ...EMPTY_FILTERS, source: "precon", q }).map((s) => s.id);
     expect(find("squirrel")).toEqual(["blb_squirrels"]);
     expect(find("ghoul")).toEqual(["fdc_zombies"]);
     expect(find("nothing like it")).toEqual([]);
   });
 
   it("hide under a colour or an archetype, which they cannot match", () => {
-    expect(visibleShells(shells, { ...EMPTY_FILTERS, colours: ["G"] })).toEqual([]);
-    expect(visibleShells(shells, { ...EMPTY_FILTERS, archetype: "tribal" })).toEqual([]);
+    const precons = { ...EMPTY_FILTERS, source: "precon" as const };
+    expect(visibleShells(shells, { ...precons, colours: ["G"] })).toEqual([]);
+    expect(visibleShells(shells, { ...precons, archetype: "tribal" })).toEqual([]);
   });
 
   it("leave the favorites without any", () => {

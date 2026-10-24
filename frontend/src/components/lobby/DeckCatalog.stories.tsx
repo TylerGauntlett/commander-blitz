@@ -450,7 +450,7 @@ export const Yours: Story = {
   },
 };
 
-/** All of it at once: every run under its own header, the precons first. */
+/** All of it at once: every run under its own header, favorites and yours first. */
 export const AllRuns: Story = {
   args: { decks: SHELF },
   globals: { handheld: "on" },
@@ -459,15 +459,16 @@ export const AllRuns: Story = {
   play: async ({ canvasElement }) => {
     await segments(canvasElement);
     const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    // The decks a player reaches for most come first; the precon runs follow.
     expect(regionNames(body)).toEqual([
-      "Foundations Commander",
-      "Duskmourn Commander",
       "Favorites",
       "Yours",
+      "Foundations Commander",
+      "Duskmourn Commander",
     ]);
     // The ring opens on the first deck of the first run.
     expect(canvasElement.querySelector("[data-cursor]")?.getAttribute("data-testid")).toBe(
-      "deck-fdc_calling_all_angels-take",
+      "deck-aesi-take",
     );
     await settled(canvasElement);
     expectHandheldFloors(canvasElement);
