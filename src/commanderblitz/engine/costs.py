@@ -63,6 +63,7 @@ from .temp_effects import sacrifice_forbidden
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
+from .zones import snapshot as capture_snapshot
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -1422,6 +1423,9 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     """
 
     spec = dict(cost.sacrifice or {})
+    # `as` names what was sacrificed for the ability's effects; like
+    # `tap_permanents`' it says nothing about which permanents qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
@@ -1621,7 +1625,8 @@ def pay(
     so a ``False`` return means the game state changed underneath them.
 
     ``bindings`` is where a cost that **names** what paid it writes the name --
-    `tap_permanents` with ``as``, Station's "the tapped creature". The caller
+    `tap_permanents` with ``as``, Station's "the tapped creature", and
+    `sacrifice` with ``as``, Ghoulcaller Gisa's "the sacrificed creature". The caller
     hands the same dict to the stack item, so the ability's effects read it
     back. ``None`` from every caller with no ability to hand it to; a named cost
     paid there simply names nothing.
@@ -1762,8 +1767,23 @@ def pay(
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
         count = int(spec.pop("count", 1) or 1)
+        name = spec.pop("as", None)
         pool = _sacrifice_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(ctx, "Sacrifice", pool, count, count, pid, "sacrifice")
+        if name and picked and bindings is not None:
+            # Ghoulcaller Gisa: "…where X is **the sacrificed creature's**
+            # power". A snapshot, where `tap_permanents`' `as` is a record read
+            # at resolution, and the difference is the rules rather than taste:
+            # a sacrificed creature has left the battlefield by the time the
+            # cost is paid, so its last-known information (608.2h) is fixed
+            # here and nothing cast in response can change it. Taken in the one
+            # window where it has been chosen and has not yet moved -- after the
+            # move it is a graveyard card answering with its printed line, or a
+            # token with no object at all -- and in `zones.snapshot`'s shape,
+            # the one the `sacrifice` op's `snapshot` key writes, so
+            # `power_of {"binding": …}` and `{"binding": …}` as a selector read
+            # it without knowing a cost wrote it.
+            bindings[str(name)] = capture_snapshot(state, picked[0])
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.

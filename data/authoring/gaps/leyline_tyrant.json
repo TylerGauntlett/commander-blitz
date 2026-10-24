@@ -1,0 +1,18 @@
+{
+  "card_id": "leyline_tyrant",
+  "name": "Leyline Tyrant",
+  "oracle_text": "Flying\nYou don't lose unspent red mana as steps and phases end.\nWhen this creature dies, you may pay any amount of {R}. When you do, it deals that much damage to any target.",
+  "blocked_sentences": [
+    "You don't lose unspent red mana as steps and phases end."
+  ],
+  "needs": [
+    {
+      "capability": "mana_retention",
+      "kind": "static_effect",
+      "what": "a player-wide static (affects_player: \"you\") that exempts unspent mana of the listed colors (here red) from emptying the mana pool at the end of every step and phase (rule 500.4 exception), lasting while the permanent is on the battlefield, across turns",
+      "why_existing_wont_do": "No static in static_effects touches mana-pool emptying; spend_mana_as_any_color, double_land_mana and add_mana_on_tap change how mana is made or spent, not how long it lasts. The add_mana option persists_until_end_of_turn is per-production, applies to all colors of that one ability's mana, and still empties at end of turn, so it cannot keep red mana from other sources or carry it into later turns"
+    }
+  ],
+  "closest_existing": ["add_mana.persists_until_end_of_turn", "spend_mana_as_any_color"],
+  "confidence": "high"
+}

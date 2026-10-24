@@ -8,6 +8,7 @@ the whole rules vocabulary can grow without touching the frontend.
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 
@@ -18,6 +19,7 @@ from commanderblitz import __version__
 from commanderblitz.cards import importer, moxfield
 from commanderblitz.cards.bundle import adopt_bundle, build_bundle
 from commanderblitz.cards.images import CardIndex, IndexEntry
+from commanderblitz.cards.registry import data_dir
 from commanderblitz.engine.errors import IllegalActionError
 from commanderblitz.engine.serialize import event_log, event_log_for, full_view, player_view
 
@@ -44,7 +46,10 @@ from .schemas import (
     ImportedCardDTO,
     NewGameRequest,
     OptionsRequest,
+    ShellCommanderDTO,
+    StarDeckRequest,
     StateResponse,
+    UpcomingPreconDTO,
 )
 from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry, StaleActionError
 from .upstream import Site, SiteUnavailable
@@ -164,6 +169,45 @@ def list_decks(request: Request, library: str | None = _LIBRARY) -> list[DeckSum
         for deck in data.decks.values()
         if _visible_to(deck, library)
     ]
+
+
+@router.get("/precons/upcoming", response_model=list[UpcomingPreconDTO])
+def upcoming_precons(request: Request) -> list[UpcomingPreconDTO]:
+    """Every precon in the manifest's window that is not a shipped deck yet.
+
+    Read from ``data/decks/sources.json`` on each request; it is small, and a
+    precon that ships stops being listed here the moment its deck file loads,
+    because shipped ids are subtracted rather than recorded. Newest first, the
+    manifest's own order.
+    """
+    shipped = set(_registry(request).data.decks)
+    return [
+        UpcomingPreconDTO(
+            id=row["id"],
+            product=row["product"],
+            set_code=row["set_code"],
+            set_name=row["set_name"],
+            date=row["date"],
+            commanders=[
+                ShellCommanderDTO(
+                    name=c["name"],
+                    # By printing, the way the catalog's art is served: the
+                    # engine need not know the card for its picture to show.
+                    art_url=f"/art/{c['scryfall_id']}.jpg" if c.get("scryfall_id") else None,
+                )
+                for c in row.get("commanders", [])
+            ],
+        )
+        for row in _precon_manifest()
+        if row["id"] not in shipped
+    ]
+
+
+def _precon_manifest() -> list[dict]:
+    path = data_dir() / "decks" / "sources.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8")).get("rows", [])
 
 
 @router.get("/decks/{deck_id}", response_model=DeckDetail)
@@ -352,6 +396,30 @@ def get_bundle(request: Request, deck_id: str, library: str | None = _LIBRARY) -
         return DeckBundle(**build_bundle(deck, data.registry, _art(request).images))
     except LookupError:
         raise HTTPException(status_code=404, detail=f"no imported deck {deck_id}") from None
+
+
+@router.post("/decks/{deck_id}/star", response_model=DeckSummary)
+def star_deck(
+    request: Request, deck_id: str, body: StarDeckRequest, library: str | None = _LIBRARY
+) -> DeckSummary:
+    """Pin an imported deck to the top of **Yours**, or unpin it.
+
+    Kept on the deck file rather than in the browser so it survives a reload
+    and a second device on the same library.  Only imports carry one: a precon
+    or a favorite is everyone's, and a star on it would be one player's mark
+    on a shelf they share.
+    """
+    data = _registry(request).data
+    deck = data.decks.get(deck_id)
+    if deck is None:
+        raise HTTPException(status_code=404, detail=f"no deck {deck_id}")
+    if deck.source != "moxfield":
+        raise HTTPException(status_code=400, detail=f"{deck_id} ships with the engine")
+    if not _visible_to(deck, library):
+        raise HTTPException(status_code=403, detail=f"{deck_id} belongs to another library")
+    importer.mark_starred(deck_id, body.starred)
+    request.app.state.reload()
+    return deck_summary(_registry(request).data.decks[deck_id], _registry(request).data)
 
 
 @router.delete("/decks/{deck_id}", status_code=204)

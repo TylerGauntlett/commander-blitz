@@ -76,6 +76,7 @@ function lobby() {
           onStart={noop}
           onLeave={noop}
           onDecksChanged={noop}
+          onStarDeck={noop}
         />
       </Screen>
     </QueryClientProvider>,

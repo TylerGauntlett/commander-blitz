@@ -8,7 +8,7 @@
     "G",
     "U"
   ],
-  "source": "precon",
+  "source": "favorite",
   "notes": "Moxfield list \"Lander Commander\" (https://moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw). Promoted from an import, card for card. Simic landfall: extra land drops, a card off every land, payoffs that turn each drop into a creature, and a Craterhoof to finish.",
   "tags": ["Landfall", "Ramp", "Card draw", "Overrun"],
   "ratings": {"speed": 2, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},

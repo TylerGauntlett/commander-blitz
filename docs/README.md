@@ -61,6 +61,7 @@ separately:
 - [adr/0021-art-store-is-committed.md](adr/0021-art-store-is-committed.md) — the crawled art is committed, written by a bot, and asked before Scryfall
 - [adr/0022-deck-imports-through-the-site.md](adr/0022-deck-imports-through-the-site.md) — a Deck imports through the site, and a deck on the device is complete or says so
 - [adr/0023-games-outlive-the-process.md](adr/0023-games-outlive-the-process.md) — a game lives on disk as its tape, comes back whole or not at all, and the site is handed over blue/green
+- [adr/0024-precon-means-the-product.md](adr/0024-precon-means-the-product.md) — "precon" means the product Wizards sold, the maintainer's lists are favorites, and an archetype can pilot a deck
 
 ## If you are here to...
 

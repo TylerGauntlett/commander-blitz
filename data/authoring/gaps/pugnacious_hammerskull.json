@@ -1,0 +1,18 @@
+{
+  "card_id": "pugnacious_hammerskull",
+  "name": "Pugnacious Hammerskull",
+  "oracle_text": "Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)",
+  "blocked_sentences": [
+    "Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)"
+  ],
+  "needs": [
+    {
+      "capability": "stun_counters",
+      "kind": "replacement",
+      "what": "the rule 122.1d replacement for stun counters: if a permanent with a stun counter on it would become untapped (untap step, untap op, untap cost, any effect), instead remove one stun counter from it and it stays tapped",
+      "why_existing_wont_do": "add_counters can place a counter named \"stun\" and the trigger half is expressible (event \"attacks\", source self, condition not-exists another Dinosaur you control), but the engine only lists \"stun\" as a harmful counter for AI/cost ordering; untap_permanent and untap_all in engine/primitives.py untap unconditionally, so the counter would be inert. skip_untap / untap_limit are not counter-driven and do not remove a counter instead, so writing the card now would be an approximation"
+    }
+  ],
+  "closest_existing": ["add_counters", "skip_untap", "skip_untap_step"],
+  "confidence": "high"
+}

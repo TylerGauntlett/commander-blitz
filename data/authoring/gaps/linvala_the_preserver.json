@@ -1,0 +1,18 @@
+{
+  "card_id": "linvala_the_preserver",
+  "name": "Linvala, the Preserver",
+  "oracle_text": "Flying\nWhen Linvala enters, if an opponent has more life than you, you gain 5 life.\nWhen Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying.",
+  "blocked_sentences": [
+    "When Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "angel_token_3_3_flying",
+      "kind": "token",
+      "what": "a 3/3 white Angel creature token with flying (e.g. id angel_3_3_w_flying)",
+      "why_existing_wont_do": "token_ids has only 4/4 Angels (angel_4_4_w_flying, angel_4_4_w_flying_vigilance, angel_warrior_4_4_w_flying); a 4/4 is not the printed 3/3. The rest of the line is expressible: a self_enters trigger whose condition is a cmp of max_count_of opponents' creatures > creatures_you_control, then create_token"
+    }
+  ],
+  "closest_existing": ["angel_4_4_w_flying"],
+  "confidence": "high"
+}

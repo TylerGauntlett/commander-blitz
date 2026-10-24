@@ -8,9 +8,10 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import { expectFontFloor } from "../../testing/asserts";
+import { expectFontFloor, expectHandheldFloors, settled } from "../../testing/asserts";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
+import { FAVORITES, PRECONS, shelfCards, UPCOMING, YOURS } from "../../testing/shelf";
 import { DeckCatalog } from "./DeckCatalog";
 
 /** A printed card per deck, so every tile draws a face rather than a back. */
@@ -32,6 +33,7 @@ const meta = {
     onClose: fn(),
     onImported: fn(),
     onDelete: fn(),
+    onStar: fn(),
   },
   parameters: { commanderblitz: { mount: "screen", query: cards } },
 } satisfies Meta<typeof DeckCatalog>;
@@ -61,7 +63,8 @@ export const Chosen: Story = {
 };
 
 /**
- * An imported deck sits in the same grid as the precons.
+ * An imported deck sits on the same shelf as the shipped decks, in a run of
+ * its own under All.
  *
  * It has no tags and a `simplified` count, and the catalogue draws that honestly
  * rather than padding it out to look like the others.
@@ -235,8 +238,9 @@ export const BackCloses: Story = {
 /**
  * Only an import can be thrown away.
  *
- * A precon ships with the engine -- the server refuses to delete one -- so its
- * tile carries no ✕ at all, rather than one that explains itself after the click.
+ * A shipped deck comes with the engine -- the server refuses to delete one -- so
+ * its tile carries no ✕ at all, rather than one that explains itself after the
+ * click.
  */
 export const OnlyImportsCanBeRemoved: Story = {
   play: async ({ canvasElement }) => {
@@ -285,5 +289,258 @@ export const TakenDecksKeepTheirTile: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("deck-mine");
     expect(canvas.queryByTestId("deck-mine-remove")).toBeNull();
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* The shelf's segments (ADR 0024)                                     */
+/* ------------------------------------------------------------------ */
+
+/** Every deck a full shelf has: two releases of precons, the twelve, yours. */
+const SHELF = [...PRECONS, ...FAVORITES, ...YOURS];
+
+/** The ids of the tiles in one container, in the order they are drawn. */
+function tileIds(root: Element): string[] {
+  return [...root.querySelectorAll<HTMLElement>(".tile")].map(
+    (tile) => tile.dataset.testid?.replace(/^deck-/, "") ?? "",
+  );
+}
+
+/** The named runs on the shelf, in order. */
+function regionNames(root: HTMLElement): string[] {
+  return within(root)
+    .queryAllByRole("region")
+    .map((region) => region.getAttribute("aria-label") ?? "");
+}
+
+/**
+ * The four segments, in the order the shelf promises them. Each is a word that
+ * is true of what it holds: Precons are what Wizards sold, Favorites what the
+ * maintainer ships, Yours what you imported.
+ */
+async function segments(canvasElement: HTMLElement): Promise<void> {
+  const canvas = within(canvasElement);
+  await canvas.findByTestId("deck-catalog");
+  const names = [...canvasElement.querySelectorAll(".seg__b")].map((b) => b.textContent);
+  expect(names).toEqual(["All", "Precons", "Favorites", "Yours"]);
+}
+
+/**
+ * THE FAVORITES ARE THE TWELVE, and nothing else.
+ *
+ * The lists the maintainer likes, under the word that is true of them. Under
+ * a segment of its own one run needs no header, and no favorite names an
+ * archetype yet, so there is no archetype control to walk past.
+ */
+export const Favorites: Story = {
+  args: { decks: SHELF },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await segments(canvasElement);
+    await userEvent.click(canvas.getByTestId("source-favorite"));
+
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    await waitFor(() => expect(tileIds(body)).toHaveLength(FAVORITES.length));
+    expect(new Set(tileIds(body))).toEqual(new Set(FAVORITES.map((deck) => deck.id)));
+    expect(canvas.getByTestId("deck-count")).toHaveTextContent(
+      `${FAVORITES.length}/${SHELF.length}`,
+    );
+    expect(regionNames(body), "one run, and the segment already names it").toEqual([]);
+    expect(canvas.queryByTestId("deck-archetype")).toBeNull();
+    // A shipped deck carries no star: it is everybody's shelf.
+    expect(body.querySelector(".tile__star")).toBeNull();
+
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
+/**
+ * PRECONS RUN BY RELEASE, NEWEST FIRST.
+ *
+ * The fixture lists the older release first, so finding Foundations on top is
+ * `groupDecks` ordering the runs and not the fixture. Each run is a region
+ * named for its product, which is what a screen reader jumps between and what
+ * breaks a pad's walk down the grid into sets.
+ */
+export const Precons: Story = {
+  args: { decks: SHELF },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await segments(canvasElement);
+    await userEvent.click(canvas.getByTestId("source-precon"));
+
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    await waitFor(() =>
+      expect(regionNames(body)).toEqual(["Foundations Commander", "Duskmourn Commander"]),
+    );
+    const [newest, older] = within(body).getAllByRole("region");
+    expect(within(newest).getByRole("heading")).toHaveTextContent("Foundations Commander");
+    expect(tileIds(newest)).toEqual(["fdc_calling_all_angels", "fdc_wild_hunt"]);
+    expect(tileIds(older)).toEqual(["dsc_death_toll", "dsc_endless_punishment"]);
+    expect(tileIds(body), "nothing but precons in the segment").toHaveLength(PRECONS.length);
+    // A header is type, not a place the ring can stop.
+    expect(newest.querySelector("h2")?.hasAttribute("data-stop")).toBe(false);
+
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+
+    // These precons name archetypes, so the filter is drawn; one press narrows
+    // to the first of them, and the run it empties goes with it.
+    const archetype = canvas.getByTestId("deck-archetype");
+    expect(archetype).toHaveAttribute("aria-label", "Archetype: Any");
+    await userEvent.click(archetype);
+    expect(archetype).toHaveAttribute("aria-label", "Archetype: Aristocrats");
+    await waitFor(() => expect(regionNames(body)).toEqual(["Duskmourn Commander"]));
+    expect(tileIds(body)).toEqual(["dsc_death_toll"]);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
+/**
+ * A STAR PINS AN IMPORT TO THE TOP OF YOURS.
+ *
+ * Yuriko sorts last by name and is drawn first, because it is starred. The
+ * star is one toggle per import and nowhere else. Pressing one asks the server
+ * and changes nothing by itself: the tile redraws from the deck list the
+ * answer brings back, and this story sends none, so it stays as it was.
+ */
+export const Yours: Story = {
+  args: { decks: SHELF },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await segments(canvasElement);
+    await userEvent.click(canvas.getByTestId("source-moxfield"));
+
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    await waitFor(() => expect(tileIds(body)).toHaveLength(YOURS.length));
+    expect(tileIds(body)).toEqual(["mox_yuriko", "mox_alela", "mox_krenko"]);
+    expect(regionNames(body)).toEqual([]);
+
+    for (const deck of YOURS) {
+      const stars = body.querySelectorAll(`[data-testid="deck-${deck.id}-star"]`);
+      expect(stars, `${deck.id} has exactly one star`).toHaveLength(1);
+      expect(stars[0]).toHaveAttribute("aria-pressed", String(deck.starred));
+    }
+
+    const star = canvas.getByTestId("deck-mox_alela-star");
+    await userEvent.click(star);
+    expect(args.onStar).toHaveBeenCalledWith("mox_alela", true);
+    expect(args.onPick, "a star must not also take the deck").not.toHaveBeenCalled();
+    expect(star, "no answer came back, so nothing moved").toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    expect(tileIds(body)[0]).toBe("mox_yuriko");
+
+    await userEvent.click(canvas.getByTestId("deck-mox_yuriko-star"));
+    expect(args.onStar).toHaveBeenCalledWith("mox_yuriko", false);
+
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
+/** All of it at once: every run under its own header, favorites and yours first. */
+export const AllRuns: Story = {
+  args: { decks: SHELF },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement }) => {
+    await segments(canvasElement);
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    // The decks a player reaches for most come first; the precon runs follow.
+    expect(regionNames(body)).toEqual([
+      "Favorites",
+      "Yours",
+      "Foundations Commander",
+      "Duskmourn Commander",
+    ]);
+    // The ring opens on the first deck of the first run.
+    expect(canvasElement.querySelector("[data-cursor]")?.getAttribute("data-testid")).toBe(
+      "deck-aesi-take",
+    );
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
+/**
+ * PRECONS WITH COMING-SOON SHELLS.
+ *
+ * The whole catalogue, the playable and the not yet. A shell joins its
+ * release's run after the decks that can be dealt, and a release with nothing
+ * playable is a run of shells alone, placed by its date. A shell is not a
+ * control: no role, no tab stop, nowhere for the ring to land, and a press
+ * on it takes nothing. A colour filter hides every shell, since a shell has
+ * no identity to match.
+ */
+export const PreconsWithComingSoonShells: Story = {
+  args: { decks: SHELF, upcoming: UPCOMING },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await segments(canvasElement);
+    await userEvent.click(canvas.getByTestId("source-precon"));
+
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    await waitFor(() =>
+      expect(regionNames(body)).toEqual([
+        "Foundations Commander",
+        "Bloomburrow Commander",
+        "Duskmourn Commander",
+      ]),
+    );
+    const [foundations, bloomburrow] = within(body).getAllByRole("region");
+    // Playable first, then the shell, in one grid.
+    const order = [...foundations.querySelectorAll<HTMLElement>(".tile, .shell")].map(
+      (el) => el.dataset.testid,
+    );
+    expect(order).toEqual([
+      "deck-fdc_calling_all_angels",
+      "deck-fdc_wild_hunt",
+      "shell-fdc_grave_danger",
+    ]);
+    expect(tileIds(bloomburrow), "nothing playable in Bloomburrow").toEqual([]);
+    expect(bloomburrow.querySelectorAll(".shell")).toHaveLength(2);
+
+    const shell = canvas.getByTestId("shell-fdc_grave_danger");
+    expect(shell).toHaveTextContent("Coming soon");
+    expect(shell).toHaveTextContent("Grave Danger");
+    expect(shell).toHaveTextContent("Ghoul Lord of the Crypt");
+    expect(shell.querySelector("img.shell__art")).not.toBeNull();
+    // A shell without a printing draws a plain plate, not a broken image.
+    expect(canvas.getByTestId("shell-blc_family_matters").querySelector("img")).toBeNull();
+
+    // Not a control, anywhere inside it.
+    for (const el of body.querySelectorAll<HTMLElement>(".shell, .shell *")) {
+      expect(el.getAttribute("role"), "a shell is not a control").toBeNull();
+      expect(el.hasAttribute("tabindex")).toBe(false);
+      expect(el.hasAttribute("data-stop")).toBe(false);
+      expect(el.tagName).not.toBe("BUTTON");
+    }
+    await userEvent.click(shell);
+    expect(args.onPick).not.toHaveBeenCalled();
+    expect(args.onDossier).not.toHaveBeenCalled();
+
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+
+    // A colour filter hides the shells, and the run they alone made goes too.
+    await userEvent.click(canvas.getByTestId("colour-W"));
+    await waitFor(() => expect(body.querySelectorAll(".shell")).toHaveLength(0));
+    expect(regionNames(body)).toEqual(["Foundations Commander"]);
   },
 };

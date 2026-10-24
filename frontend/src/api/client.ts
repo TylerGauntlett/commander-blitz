@@ -15,6 +15,7 @@ import type {
   SeatAdminAction,
   SeatConfig,
   StateResponse,
+  UpcomingPrecon,
 } from "./types";
 
 const BASE = "/api";
@@ -139,6 +140,24 @@ export const api = {
     }),
 
   deleteDeck: (deckId: string) => request<void>(`/decks/${deckId}`, { method: "DELETE" }),
+
+  /**
+   * The precons of the release window that are not playable yet, newest
+   * first. The shelf draws them as "Coming soon" shells beside the shipped
+   * ones; none of them can be taken.
+   */
+  upcomingPrecons: () => request<UpcomingPrecon[]>("/precons/upcoming"),
+
+  /**
+   * Pin an import to the top of Yours, or unpin it. The answer is the deck as
+   * the server now holds it, which is what the tile draws; the client never
+   * flips the star on its own.
+   */
+  starDeck: (deckId: string, starred: boolean) =>
+    request<DeckSummary>(`/decks/${deckId}/star`, {
+      method: "POST",
+      body: JSON.stringify({ starred }),
+    }),
 
   /**
    * Finish every imported deck whose art is not all on this machine. The

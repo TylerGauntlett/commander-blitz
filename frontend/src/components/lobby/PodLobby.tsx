@@ -47,7 +47,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { api } from "../../api/client";
-import type { DeckImportResponse, DeckSummary, PodView } from "../../api/types";
+import type { DeckImportResponse, DeckSummary, PodView, UpcomingPrecon } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { canStart, whyNot, yourSeat } from "../../logic/lobby";
 import { useAppConfig } from "../../state/useAppConfig";
@@ -71,6 +71,10 @@ interface Props {
   onStart: () => void;
   onLeave: () => void;
   onDecksChanged: () => void;
+  /** The catalogue's "Coming soon" shells; see `DeckCatalog`'s `upcoming`. */
+  upcoming?: readonly UpcomingPrecon[];
+  /** Star an import in the catalogue; see `DeckCatalog`'s `onStar`. */
+  onStarDeck: (deckId: string, starred: boolean) => void;
 }
 
 export function PodLobby({
@@ -85,6 +89,8 @@ export function PodLobby({
   onStart,
   onLeave,
   onDecksChanged,
+  onStarDeck,
+  upcoming = [],
 }: Props) {
   /** Which seat the catalogue is choosing for, or null when it is closed. */
   const [catalogFor, setCatalogFor] = useState<number | null>(null);
@@ -362,6 +368,7 @@ export function PodLobby({
       {catalogFor !== null && (
         <DeckCatalog
           decks={decks}
+          upcoming={upcoming}
           forSeat={catalogFor}
           forWhom={
             catalogFor === you?.index
@@ -385,6 +392,7 @@ export function PodLobby({
             await api.deleteDeck(deckId);
             onDecksChanged();
           }}
+          onStar={onStarDeck}
           inUse={pod.seats.flatMap((seat) => (seat.deck ? [seat.deck.id] : []))}
         />
       )}

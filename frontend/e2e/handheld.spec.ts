@@ -16,7 +16,17 @@
 
 import { expect, test } from "@playwright/test";
 import { type HandheldReport, handheldAssert } from "./handheldAssert";
-import { actionsOfKind, startGame, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  browseDecks,
+  STUB_IMPORTS,
+  STUB_PRECONS,
+  STUB_UPCOMING,
+  startGame,
+  stubDeckList,
+  stubUpcoming,
+  waitForOurTurn,
+} from "./helpers";
 
 /**
  * Wait until nothing is still moving.
@@ -92,6 +102,32 @@ test.describe("the handheld layout holds its floors", () => {
     });
     expect(inside.hasDialog).toBe(true);
     expect(inside.cursorInside, "the ring escaped the open catalogue").toBe(true);
+  });
+
+  test("the shelf's segments, precons grouped by release", async ({ page }) => {
+    // The precons and imports are appended to the server's list; see
+    // `stubDeckList`. Every segment is gated, because each draws different
+    // controls: the archetype filter, the release headers, the stars.
+    await stubDeckList(page, [...STUB_PRECONS, ...STUB_IMPORTS]);
+    await stubUpcoming(page, STUB_UPCOMING);
+    await browseDecks(page);
+    await gate(page, "the shelf, every run");
+
+    await page.getByTestId("source-precon").click();
+    await expect(page.locator('.shelf__body [role="region"]').first()).toHaveAttribute(
+      "aria-label",
+      "Foundations Commander",
+    );
+    await expect(page.getByTestId(`shell-${STUB_UPCOMING[0].id}`)).toBeVisible();
+    await gate(page, "the precons, by release, with coming-soon shells");
+
+    await page.getByTestId("source-favorite").click();
+    await expect(page.getByTestId("deck-archetype")).toHaveCount(0);
+    await gate(page, "the favorites");
+
+    await page.getByTestId("source-moxfield").click();
+    await expect(page.getByTestId(`deck-${STUB_IMPORTS[0].id}-star`)).toBeVisible();
+    await gate(page, "yours, with a star on each");
   });
 
   test("the board, from the mulligan through combat", async ({ page }) => {

@@ -1,0 +1,18 @@
+{
+  "card_id": "goreclaw_terror_of_qal_sisma",
+  "name": "Goreclaw, Terror of Qal Sisma",
+  "oracle_text": "Creature spells you cast with power 4 or greater cost {2} less to cast.\nWhenever Goreclaw attacks, each creature you control with power 4 or greater gets +1/+1 and gains trample until end of turn.",
+  "blocked_sentences": [
+    "Creature spells you cast with power 4 or greater cost {2} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "spell_filter_power",
+      "kind": "selector",
+      "what": "a `power` comparison (e.g. {\"op\": \">=\", \"value\": 4}) in the `affects_spells` filter of a `spell_cost_reduction` static, matched against the spell's printed power (a */* spell's power on the stack is evaluated per 208.2), so \"creature spells you cast with power 4 or greater cost {2} less\" reduces only those spells",
+      "why_existing_wont_do": "`spell_cost_reduction`'s `affects_spells` takes SPELL_COST_REDUCTION_FILTER_KEYS (controller, types, any_types, not_types, subtypes, supertypes, colors, min_colors, keywords, not_keywords, name, mana_cost, exclude_self) -- no `power`. `power` exists in `static_filter_keys` and `cost_reduction_filter_keys`, but those filter permanents or the card's own self-discount, not other spells being cast. Dropping the power clause would discount every creature spell."
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction"],
+  "confidence": "high"
+}

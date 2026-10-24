@@ -31,6 +31,9 @@ const DECK = {
   // stub that omits a field the DTO always carries is a stub that tests a shape
   // the server never sends.
   tags: [],
+  archetype: "",
+  release: null,
+  starred: false,
 };
 
 const REPORT = {
@@ -308,14 +311,14 @@ test.describe("importing a Moxfield deck", () => {
     await expect(page.getByTestId(`deck-${DECK.id}`)).toHaveCount(0);
   });
 
-  test("a precon cannot be removed", async ({ page }) => {
+  test("a shipped deck cannot be removed", async ({ page }) => {
     // The server refuses to delete one, so the tile does not offer it. A ✕ that
     // fails on click would be the same lie the "Yours" badge is there to avoid.
     await expect(page.getByTestId("deck-aesi")).toBeVisible();
     await expect(page.getByTestId("deck-aesi-remove")).toHaveCount(0);
   });
 
-  test("a precon tile carries no simplified count", async ({ page }) => {
+  test("a shipped deck's tile carries no simplified count", async ({ page }) => {
     // An always-present "0 simplified" would train people to stop reading the
     // line that matters.
     await expect(page.getByTestId("deck-aesi")).toBeVisible();

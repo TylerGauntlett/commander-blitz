@@ -220,8 +220,14 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
     # X is the number of times this was kicked" spends `additional_paid` in its
     # target spec and nowhere else, and the multikicker guard below -- "a cost no
     # effect reads" -- would otherwise refuse the one card the mechanic is for.
+    #
+    # `exclude_none`, so a key a spec leaves unset is not a key it carries:
+    # `gift_promised` is a target field as well as a condition, and with every
+    # dump spelling `"gift_promised": None` each targeted card would read as
+    # reading the gift. Set, it is a read -- the promise decides what the spell
+    # points at.
     def targets_of(models: Any) -> list[Any]:
-        return [t.model_dump() for t in models]
+        return [t.model_dump(exclude_none=True) for t in models]
 
     if walk(model.spell_effects) or walk(targets_of(model.targets)):
         return True

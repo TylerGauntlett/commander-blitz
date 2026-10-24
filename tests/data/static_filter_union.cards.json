@@ -1,0 +1,242 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_filter_union.py. t_sfu_baron is Death Baron's printed line -- a Zombie whose `affects` is an `any_of` of 'Skeletons' and 'other Zombies', so it excludes itself. t_sfu_bone_lord is the same line on a Skeleton Zombie, which the Skeleton branch reaches and the Zombie branch does not: the witness that `exclude_self` is scoped to its branch. t_sfu_skeleton_zombie is printed with both subtypes, as a changeling is every type, and must be pumped once. The rest are one-type contrasts.",
+  "cards": [
+    {
+      "id": "t_sfu_baron",
+      "name": "Test Union Baron",
+      "oracle_text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+      "mana_cost": "{1}{B}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+          "effect": "buff",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Zombie"
+                ],
+                "exclude_self": true
+              }
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+          "effect": "grant_keyword",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Zombie"
+                ],
+                "exclude_self": true
+              }
+            ]
+          },
+          "keywords": [
+            "deathtouch"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sfu_bone_lord",
+      "name": "Test Union Bone Lord",
+      "oracle_text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+      "mana_cost": "{1}{B}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Skeleton",
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+          "effect": "buff",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Zombie"
+                ],
+                "exclude_self": true
+              }
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.",
+          "effect": "grant_keyword",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Zombie"
+                ],
+                "exclude_self": true
+              }
+            ]
+          },
+          "keywords": [
+            "deathtouch"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sfu_skeleton",
+      "name": "Test Union Skeleton",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Skeleton"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ]
+    },
+    {
+      "id": "t_sfu_zombie",
+      "name": "Test Union Zombie",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ]
+    },
+    {
+      "id": "t_sfu_skeleton_zombie",
+      "name": "Test Union Skeleton Zombie",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Skeleton",
+        "Zombie"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ]
+    },
+    {
+      "id": "t_sfu_goblin",
+      "name": "Test Union Goblin",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ]
+    }
+  ]
+}

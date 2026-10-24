@@ -1,0 +1,664 @@
+{
+  "id": "fdc_wretched_ranks",
+  "name": "Wretched Ranks",
+  "commanders": [
+    "ghoulcaller_gisa"
+  ],
+  "color_identity": [
+    "B"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "FDC",
+    "set_name": "Foundations Commander",
+    "date": "2026-10-02"
+  },
+  "notes": "Foundations Commander precon, card for card (https://mtgjson.com/api/v5/decks/WretchedRanks_FDC.json).",
+  "tags": [
+    "Zombies",
+    "Aristocrats",
+    "Recursion",
+    "Drain"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 2,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 2
+  },
+  "strategy": "Ghoulcaller Gisa turns one creature into many: sacrifice a Zombie, get that many 2/2 Zombies back. The deck is a wide black Zombie board built around that trade. Lords like Death Baron, Lord of the Undead and Undead Warchief make every token a threat, Cryptbreaker, Midnight Reaper and Graveborn Muse turn the bodies into cards, and Gravecrawler, Cemetery Recruitment and Oversold Cemetery bring the good ones back. Kalitas steals the opponents' dead as Zombies of its own, and Gray Merchant of Asphodel drains the table for the devotion the board has built. It plays slowly and grinds: the plan is to outlast a wrath with a graveyard full of returns, then swing wide with an anthem out.",
+  "signature": [
+    {
+      "card_id": "ghoulcaller_gisa",
+      "why": "Sacrifice a Zombie, make that many Zombies: the engine is the commander."
+    },
+    {
+      "card_id": "gray_merchant_of_asphodel",
+      "why": "A board of black permanents is devotion, and every point drains each opponent."
+    },
+    {
+      "card_id": "kalitas_traitor_of_ghet",
+      "why": "Opponents' creatures die as Zombies on your side of the table."
+    },
+    {
+      "card_id": "death_baron",
+      "why": "Every Zombie gets bigger and gains deathtouch, so nothing blocks the horde cleanly."
+    }
+  ],
+  "archetype": "aristocrats",
+  "printings": {
+    "ambition_s_cost": {
+      "scryfall_id": "2f7c9824-b7b0-47f9-ad3f-59037871b7ca",
+      "artist": "Zezhou Chen",
+      "set_code": "fdc",
+      "collector_number": "84"
+    },
+    "arcane_signet": {
+      "scryfall_id": "ee7710cf-e73d-479f-bc8d-0e78a0e324d9",
+      "artist": "Dan Murayama Scott",
+      "set_code": "fdc",
+      "collector_number": "245"
+    },
+    "army_of_the_damned": {
+      "scryfall_id": "33c01126-1918-4c67-8ee8-14ffc1325b97",
+      "artist": "Ryan Pancoast",
+      "set_code": "fdc",
+      "collector_number": "85"
+    },
+    "ayara_first_of_locthwain": {
+      "scryfall_id": "58c50444-3660-4039-ae18-278b92d32132",
+      "artist": "Ryan Pancoast",
+      "set_code": "fdc",
+      "collector_number": "86"
+    },
+    "bad_moon": {
+      "scryfall_id": "65d2620a-92e8-4a05-be90-5bdcad70ae30",
+      "artist": "Gary Leach",
+      "set_code": "fdc",
+      "collector_number": "87"
+    },
+    "barren_moor": {
+      "scryfall_id": "b4f6c5d3-9dce-48dc-aa0c-9324d6e2e77f",
+      "artist": "Heather Hudson",
+      "set_code": "fdc",
+      "collector_number": "295"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "3999a519-bfd5-43cf-b7b1-40ed5eb0a05a",
+      "artist": "Howard Lyon",
+      "set_code": "fdc",
+      "collector_number": "296"
+    },
+    "bontu_s_monument": {
+      "scryfall_id": "b4d4daca-34ef-4a5a-97e6-21f7f6a2f481",
+      "artist": "Jonas De Ro",
+      "set_code": "fdc",
+      "collector_number": "247"
+    },
+    "carrion_feeder": {
+      "scryfall_id": "b6b2df2b-7436-4359-9246-2d5a471621fb",
+      "artist": "Svetlin Velinov",
+      "set_code": "fdc",
+      "collector_number": "88"
+    },
+    "castle_locthwain": {
+      "scryfall_id": "61fdb579-86f3-4f8d-a0b1-fd545917105d",
+      "artist": "Titus Lunter",
+      "set_code": "fdc",
+      "collector_number": "299"
+    },
+    "cemetery_reaper": {
+      "scryfall_id": "c179dd0e-4904-457f-b11e-7d267d0bb9eb",
+      "artist": "Dave Allsop",
+      "set_code": "fdc",
+      "collector_number": "89"
+    },
+    "cemetery_recruitment": {
+      "scryfall_id": "69c60f2e-b313-4139-9708-1a0e0f1ca63e",
+      "artist": "Kieran Yanner",
+      "set_code": "fdc",
+      "collector_number": "90"
+    },
+    "champion_of_the_perished": {
+      "scryfall_id": "d3bfa5bc-bcb9-4649-96b8-3cded84a25a2",
+      "artist": "Kekai Kotaki",
+      "set_code": "fdc",
+      "collector_number": "91"
+    },
+    "charcoal_diamond": {
+      "scryfall_id": "970593fe-747f-48d3-a964-e18a1fa2cf0f",
+      "artist": "Lindsey Look",
+      "set_code": "fdc",
+      "collector_number": "248"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "a2f126c3-ef62-421b-8d3e-2ae2f2d4f000",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "fdc",
+      "collector_number": "250"
+    },
+    "consumed_by_greed": {
+      "scryfall_id": "dc334dac-bd40-44f2-8550-c80f73056ade",
+      "artist": "Mathias Kollros",
+      "set_code": "fdc",
+      "collector_number": "92"
+    },
+    "consuming_corruption": {
+      "scryfall_id": "1d175191-6946-434d-90c8-73412472a543",
+      "artist": "Andrew Theophilopoulos",
+      "set_code": "fdc",
+      "collector_number": "93"
+    },
+    "cryptbreaker": {
+      "scryfall_id": "c9d70cc4-379d-41db-8eb0-10643d2aafd1",
+      "artist": "Darek Zabrocki",
+      "set_code": "fdc",
+      "collector_number": "94"
+    },
+    "death_baron": {
+      "scryfall_id": "ddfc57da-6cfd-4b81-8fc0-51270edc0200",
+      "artist": "Nils Hamm",
+      "set_code": "fdc",
+      "collector_number": "95"
+    },
+    "diregraf_colossus": {
+      "scryfall_id": "89a24a9c-ad0d-49df-b7d8-e898da567e51",
+      "artist": "Vincent Proce",
+      "set_code": "fdc",
+      "collector_number": "96"
+    },
+    "endless_ranks_of_the_dead": {
+      "scryfall_id": "859a3a66-dae9-4a67-936d-2681397a6bc2",
+      "artist": "Ryan Yee",
+      "set_code": "fdc",
+      "collector_number": "97"
+    },
+    "eternal_taskmaster": {
+      "scryfall_id": "ccb7deab-cec1-453a-8257-8204c883c9f6",
+      "artist": "Chris Seaman",
+      "set_code": "fdc",
+      "collector_number": "98"
+    },
+    "fleshbag_marauder": {
+      "scryfall_id": "04848d8c-2294-4ca6-850c-1eadaa3ca93f",
+      "artist": "Mark Zug",
+      "set_code": "fdc",
+      "collector_number": "99"
+    },
+    "geier_reach_sanitarium": {
+      "scryfall_id": "6f5b3931-580a-4471-9b5d-25bcf5803a73",
+      "artist": "Cliff Childs",
+      "set_code": "fdc",
+      "collector_number": "303"
+    },
+    "ghoulcaller_gisa": {
+      "scryfall_id": "909e62fa-4585-495e-812b-5df56af24610",
+      "artist": "Miguel Mercado",
+      "set_code": "fdc",
+      "collector_number": "6"
+    },
+    "go_for_the_throat": {
+      "scryfall_id": "239015f1-02ba-49d0-b11e-1d9729e9d57e",
+      "artist": "David Rapoza",
+      "set_code": "fdc",
+      "collector_number": "100"
+    },
+    "god_eternal_bontu": {
+      "scryfall_id": "0070d335-d42d-4ccc-b828-405b7dd00868",
+      "artist": "Lius Lasahido",
+      "set_code": "fdc",
+      "collector_number": "101"
+    },
+    "grave_titan": {
+      "scryfall_id": "5bde28a1-635f-48f8-bed8-444921d5912c",
+      "artist": "Nils Hamm",
+      "set_code": "fdc",
+      "collector_number": "102"
+    },
+    "graveborn_muse": {
+      "scryfall_id": "49b8e4af-5a44-4aec-a386-729443af4140",
+      "artist": "Kev Walker",
+      "set_code": "fdc",
+      "collector_number": "103"
+    },
+    "gravecrawler": {
+      "scryfall_id": "7625fff5-9080-4590-be75-14df86d5ba3c",
+      "artist": "Steven Belledin",
+      "set_code": "fdc",
+      "collector_number": "104"
+    },
+    "gray_merchant_of_asphodel": {
+      "scryfall_id": "58251ceb-aadb-4e1f-b1f1-428e5f94e7bc",
+      "artist": "Robbie Trevino",
+      "set_code": "fdc",
+      "collector_number": "105"
+    },
+    "headless_rider": {
+      "scryfall_id": "54280b46-470f-46bd-9407-5bb5e34302b1",
+      "artist": "E. M. Gist",
+      "set_code": "fdc",
+      "collector_number": "106"
+    },
+    "infernal_idol": {
+      "scryfall_id": "21a72531-329c-43fd-adc1-a671b3b1edc4",
+      "artist": "Drew Tucker",
+      "set_code": "fdc",
+      "collector_number": "266"
+    },
+    "josu_vess_lich_knight": {
+      "scryfall_id": "1f7bcaf9-4e36-4f23-b63f-f70fe5c9dd6f",
+      "artist": "Tyler Jacobson",
+      "set_code": "fdc",
+      "collector_number": "107"
+    },
+    "kalitas_traitor_of_ghet": {
+      "scryfall_id": "d188a93a-cd9b-4a0b-80fb-738907b228cf",
+      "artist": "Todd Lockwood",
+      "set_code": "fdc",
+      "collector_number": "108"
+    },
+    "liliana_s_mastery": {
+      "scryfall_id": "8d107d3f-1f6f-41dc-999f-b18bb55bf892",
+      "artist": "Kieran Yanner",
+      "set_code": "fdc",
+      "collector_number": "109"
+    },
+    "liliana_s_reaver": {
+      "scryfall_id": "2ee81094-87e3-45a2-8ad8-2610ca52d357",
+      "artist": "Karl Kopinski",
+      "set_code": "fdc",
+      "collector_number": "110"
+    },
+    "lord_of_the_accursed": {
+      "scryfall_id": "1992d081-a3f9-4349-bc71-770372af2adf",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "fdc",
+      "collector_number": "111"
+    },
+    "lord_of_the_undead": {
+      "scryfall_id": "09a16104-26d5-422e-b86d-6c008ac2c903",
+      "artist": "Brom",
+      "set_code": "fdc",
+      "collector_number": "112"
+    },
+    "marchesa_s_decree": {
+      "scryfall_id": "e94a5f83-24fe-4182-b70c-63303b4e3890",
+      "artist": "Chris Rallis",
+      "set_code": "fdc",
+      "collector_number": "113"
+    },
+    "memorial_to_folly": {
+      "scryfall_id": "3ce8bd32-5c35-4696-bdda-addc576925f6",
+      "artist": "Sung Choi",
+      "set_code": "fdc",
+      "collector_number": "306"
+    },
+    "midnight_reaper": {
+      "scryfall_id": "95bea61d-986c-4e01-a82d-25e47986375e",
+      "artist": "Sidharth Chaturvedi",
+      "set_code": "fdc",
+      "collector_number": "114"
+    },
+    "mind_stone": {
+      "scryfall_id": "62901ae9-98dd-466b-8358-f5abd765b3c0",
+      "artist": "Adam Rex",
+      "set_code": "fdc",
+      "collector_number": "271"
+    },
+    "mire_triton": {
+      "scryfall_id": "22dc3c27-78ca-42fd-b434-15a813c07eed",
+      "artist": "Seb McKinnon",
+      "set_code": "fdc",
+      "collector_number": "115"
+    },
+    "moan_of_the_unhallowed": {
+      "scryfall_id": "983efb06-c4e3-4fe4-8a67-9ea9b54344a6",
+      "artist": "Nils Hamm",
+      "set_code": "fdc",
+      "collector_number": "116"
+    },
+    "mutilate": {
+      "scryfall_id": "c2038b12-30b8-42ff-a15d-87cbbf72c939",
+      "artist": "Zoltan Boros & Gabor Szikszai",
+      "set_code": "fdc",
+      "collector_number": "117"
+    },
+    "necrotic_hex": {
+      "scryfall_id": "815334d8-8f4b-47dd-b24a-07ac297e14c8",
+      "artist": "Nils Hamm",
+      "set_code": "fdc",
+      "collector_number": "118"
+    },
+    "nights_whisper": {
+      "scryfall_id": "b7d4377e-d96f-475b-9512-0a1c4fbcd4e3",
+      "artist": "John Severin Brassell",
+      "set_code": "fdc",
+      "collector_number": "119"
+    },
+    "noxious_ghoul": {
+      "scryfall_id": "551de81f-35e9-4467-b575-ae5bf79d4e7c",
+      "artist": "Luca Zontini",
+      "set_code": "fdc",
+      "collector_number": "120"
+    },
+    "open_the_graves": {
+      "scryfall_id": "9a6bc939-3d31-4a78-9925-27435bec2a67",
+      "artist": "Vincent Proce",
+      "set_code": "fdc",
+      "collector_number": "121"
+    },
+    "oversold_cemetery": {
+      "scryfall_id": "21733d61-25c1-4844-9385-a2c01f82ea9f",
+      "artist": "Thomas M. Baxa",
+      "set_code": "fdc",
+      "collector_number": "122"
+    },
+    "patchwork_banner": {
+      "scryfall_id": "205c527c-0055-4d2a-86b1-18d1c58a898d",
+      "artist": "Sarah Finnigan",
+      "set_code": "fdc",
+      "collector_number": "279"
+    },
+    "phyrexian_arena": {
+      "scryfall_id": "e6db1ad2-ed85-4084-976e-da1933f4d008",
+      "artist": "Svetlin Velinov",
+      "set_code": "fdc",
+      "collector_number": "123"
+    },
+    "razorlash_transmogrant": {
+      "scryfall_id": "a789aea2-bf82-430e-ab6d-8beac52964a8",
+      "artist": "Kekai Kotaki",
+      "set_code": "fdc",
+      "collector_number": "124"
+    },
+    "sign_in_blood": {
+      "scryfall_id": "0111bf5d-7132-4cf2-b27d-efba3ad9477a",
+      "artist": "Howard Lyon",
+      "set_code": "fdc",
+      "collector_number": "125"
+    },
+    "sol_ring": {
+      "scryfall_id": "4f152dd9-2b35-45b2-90fe-8c71d0634226",
+      "artist": "Mike Bierek",
+      "set_code": "fdc",
+      "collector_number": "286"
+    },
+    "soulless_one": {
+      "scryfall_id": "cb759501-d634-430b-b5c9-24338e2d7367",
+      "artist": "Thomas M. Baxa",
+      "set_code": "fdc",
+      "collector_number": "126"
+    },
+    "swamp": {
+      "scryfall_id": "319bc1f0-ee42-44e5-b08b-735613ded2ba",
+      "artist": "Mike Bierek",
+      "set_code": "fdn",
+      "collector_number": "276"
+    },
+    "syphon_flesh": {
+      "scryfall_id": "e92628a2-9a26-4a44-bb2c-98418cb950b0",
+      "artist": "Ironbrush",
+      "set_code": "fdc",
+      "collector_number": "127"
+    },
+    "tendrils_of_corruption": {
+      "scryfall_id": "cf71a124-6112-4094-9541-dc0d384cc4de",
+      "artist": "Mike Dringenberg",
+      "set_code": "fdc",
+      "collector_number": "128"
+    },
+    "undead_augur": {
+      "scryfall_id": "63df1c6a-98b8-41c1-ac06-c816b50cb07c",
+      "artist": "Sara Winters",
+      "set_code": "fdc",
+      "collector_number": "129"
+    },
+    "undead_butler": {
+      "scryfall_id": "da046d5a-9a44-4efb-af0f-229898edc051",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fdc",
+      "collector_number": "130"
+    },
+    "undead_warchief": {
+      "scryfall_id": "f9139c01-ab89-445f-b564-dce1abf2c79f",
+      "artist": "Greg Hildebrandt",
+      "set_code": "fdc",
+      "collector_number": "131"
+    },
+    "vengeful_dead": {
+      "scryfall_id": "81197564-19bb-423d-87d4-3d83deac85a2",
+      "artist": "Alex Horley-Orlandelli",
+      "set_code": "fdc",
+      "collector_number": "132"
+    },
+    "wight_of_precinct_six": {
+      "scryfall_id": "e9d9f150-dc54-4dcd-9bd8-809a0b87b266",
+      "artist": "Ryan Barger",
+      "set_code": "fdc",
+      "collector_number": "133"
+    },
+    "witch_s_cottage": {
+      "scryfall_id": "316398d0-cf0a-43ed-a419-aaf0ea44b9c1",
+      "artist": "Gabor Szikszai",
+      "set_code": "fdc",
+      "collector_number": "319"
+    },
+    "withering_torment": {
+      "scryfall_id": "0868f94e-235d-4f65-a7af-8aacd58dd61e",
+      "artist": "Inkognit",
+      "set_code": "fdc",
+      "collector_number": "134"
+    },
+    "zul_ashur_lich_lord": {
+      "scryfall_id": "e92dcd69-8978-4afe-b83d-c9224dfb6a9e",
+      "artist": "Raluca Marinescu",
+      "set_code": "fdc",
+      "collector_number": "135"
+    }
+  },
+  "cards": [
+    {
+      "id": "ambition_s_cost"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "army_of_the_damned"
+    },
+    {
+      "id": "ayara_first_of_locthwain"
+    },
+    {
+      "id": "bad_moon"
+    },
+    {
+      "id": "barren_moor"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "bontu_s_monument"
+    },
+    {
+      "id": "carrion_feeder"
+    },
+    {
+      "id": "castle_locthwain"
+    },
+    {
+      "id": "cemetery_reaper"
+    },
+    {
+      "id": "cemetery_recruitment"
+    },
+    {
+      "id": "champion_of_the_perished"
+    },
+    {
+      "id": "charcoal_diamond"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "consumed_by_greed"
+    },
+    {
+      "id": "consuming_corruption"
+    },
+    {
+      "id": "cryptbreaker"
+    },
+    {
+      "id": "death_baron"
+    },
+    {
+      "id": "diregraf_colossus"
+    },
+    {
+      "id": "endless_ranks_of_the_dead"
+    },
+    {
+      "id": "eternal_taskmaster"
+    },
+    {
+      "id": "fleshbag_marauder"
+    },
+    {
+      "id": "geier_reach_sanitarium"
+    },
+    {
+      "id": "go_for_the_throat"
+    },
+    {
+      "id": "god_eternal_bontu"
+    },
+    {
+      "id": "grave_titan"
+    },
+    {
+      "id": "graveborn_muse"
+    },
+    {
+      "id": "gravecrawler"
+    },
+    {
+      "id": "gray_merchant_of_asphodel"
+    },
+    {
+      "id": "headless_rider"
+    },
+    {
+      "id": "infernal_idol"
+    },
+    {
+      "id": "josu_vess_lich_knight"
+    },
+    {
+      "id": "kalitas_traitor_of_ghet"
+    },
+    {
+      "id": "liliana_s_mastery"
+    },
+    {
+      "id": "liliana_s_reaver"
+    },
+    {
+      "id": "lord_of_the_accursed"
+    },
+    {
+      "id": "lord_of_the_undead"
+    },
+    {
+      "id": "marchesa_s_decree"
+    },
+    {
+      "id": "memorial_to_folly"
+    },
+    {
+      "id": "midnight_reaper"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "mire_triton"
+    },
+    {
+      "id": "moan_of_the_unhallowed"
+    },
+    {
+      "id": "mutilate"
+    },
+    {
+      "id": "necrotic_hex"
+    },
+    {
+      "id": "nights_whisper"
+    },
+    {
+      "id": "noxious_ghoul"
+    },
+    {
+      "id": "open_the_graves"
+    },
+    {
+      "id": "oversold_cemetery"
+    },
+    {
+      "id": "patchwork_banner"
+    },
+    {
+      "id": "phyrexian_arena"
+    },
+    {
+      "id": "razorlash_transmogrant"
+    },
+    {
+      "id": "sign_in_blood"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "soulless_one"
+    },
+    {
+      "id": "swamp",
+      "qty": 33
+    },
+    {
+      "id": "syphon_flesh"
+    },
+    {
+      "id": "tendrils_of_corruption"
+    },
+    {
+      "id": "undead_augur"
+    },
+    {
+      "id": "undead_butler"
+    },
+    {
+      "id": "undead_warchief"
+    },
+    {
+      "id": "vengeful_dead"
+    },
+    {
+      "id": "wight_of_precinct_six"
+    },
+    {
+      "id": "witch_s_cottage"
+    },
+    {
+      "id": "withering_torment"
+    },
+    {
+      "id": "zul_ashur_lich_lord"
+    }
+  ]
+}

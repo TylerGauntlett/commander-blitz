@@ -46,6 +46,7 @@ from ..loader.vocabulary import (
     COST_REDUCTION_KEYS,
     COST_REDUCTION_REFUSED_FILTER_KEYS,
     MANA_RIDER_OPS,
+    STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
@@ -503,6 +504,12 @@ def reference() -> dict:
         # already shipped short of a load error.
         "playable_durations": sorted(PLAYABLE_DURATIONS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        # What a static's `affects` may use: the list above plus `any_of`, a
+        # union of whole filters ("Skeletons and **other** Zombies"). Its own
+        # entry because the other static filters -- `blockers`, `targeting`,
+        # the counts -- do not take the word, and a worker shown it in the
+        # shared list would write it where it does not load.
+        "static_affects_filter_keys": sorted(STATIC_AFFECTS_FILTER_KEYS),
         # "This spell costs {1} less to cast for each ..." -- the arithmetic
         # heads, and the filter language beside them. The filter is
         # `static_filter_keys` plus `zone` and minus the three relational keys a
@@ -800,7 +807,12 @@ def reference() -> dict:
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"
             " printed characteristics -- do not mistake it for the whole"
-            " selector language.",
+            " selector language. A static's `affects` reads"
+            " `static_affects_filter_keys`, which adds `any_of`: a union of"
+            " whole filters, each branch the outer filter plus its own keys, so"
+            " \"Skeletons you control and other Zombies you control\" is one"
+            " `affects` with `exclude_self` on the Zombie branch only -- never"
+            " two statics, which pump a creature that is both twice.",
             "A selector's `controller` (and `player`, for a zone somebody owns)"
             " takes a player spec as well as \"you\"/\"opponent\"/\"any\"."
             " `{\"target\": \"t1\"}` there means EVERY player target t1 chose, so"
@@ -892,6 +904,14 @@ def reference() -> dict:
             " `\"exclude_self\": true` to a `spell_cost_reduction`'s"
             " `affects_spells`, which matters exactly here: a commander is cast"
             " out of the zone its own eminence static is read from.",
+            "\"You may cast this card from your graveyard [as long as ...]\" --"
+            " the card's own permission, at its printed price -- is a"
+            " `cast_from_graveyard` static with `\"active_zones\":"
+            " [\"graveyard\"]`, `\"affects_player\": \"you\"` and the \"as long"
+            " as\" as its `condition`; no `affects_spells` or `max_per_turn`,"
+            " since it frees only the card carrying it. Permanent cards only."
+            " It is not `graveyard_cost`, which is an alternative price with no"
+            " condition, offered always.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"
             " with `attached_to`, a selector naming the host -- never"
             " `create_token` then `attach`, which makes the Role even when the"

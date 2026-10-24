@@ -30,6 +30,7 @@ from .player_statics import (
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
     library_top_cast_permission,
+    own_graveyard_cast_permission,
     player_cant_cast_spells,
     player_casts_as_though_flash,
     player_casts_only_at_sorcery_speed,
@@ -250,7 +251,15 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # unlike flashback and retrace it is not a property of the card being
         # cast and legality has to ask the board. Offered at the **printed**
         # price, which is what separates it from flashback's alternative cost.
-        if _graveyard_cast_permission(state, pid, card, oid) is not None:
+        #
+        # Gravecrawler's "you may cast this card from your graveyard as long as
+        # you control a Zombie" is the same printed-price line, granted by the
+        # card itself rather than a permanent -- so it is one line offered when
+        # either permission holds, not two identical ones.
+        if (
+            _graveyard_cast_permission(state, pid, card, oid) is not None
+            or own_graveyard_cast_permission(state, pid, oid)
+        ):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
@@ -520,6 +529,45 @@ def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return granted_warp_cost(state, pid, card)
 
 
+def _gift_lines(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    tuples,
+    *,
+    extra_generic: int,
+) -> list[Action]:
+    """One promised cast line per opponent, or none for a card with no gift.
+
+    ``tuples`` are the unpromised targets, reused as they are unless the card
+    has a gift-gated spec. Then the promised lines get their own enumeration
+    from :attr:`CardDef.gift_targets`: 601.2b announces the promise and 601.2c
+    declares the targets after it, so "if the gift was promised, return target
+    creature card from your graveyard" is a target only these lines carry, and
+    an empty graveyard takes away the promised lines and never the plain one.
+    One enumeration for every promisee, because whom the promise names changes
+    nothing about what the spell may point at.
+    """
+    if card.gift is None:
+        return []
+    if card.gift_targets is not None:
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            card.gift_targets,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, card.gift_targets),
+        )
+    out: list[Action] = []
+    for promisee in state.opponents(pid):
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, gift_to=promisee
+        )
+    return out
+
+
 def _cast_options(
     state: GameState,
     pid: int,
@@ -552,7 +600,11 @@ def _cast_options(
         defer=deferred_target_spec(state, card, card.targets),
     )
     if not tuples:
-        return []
+        # Nothing the unpromised cast could point at -- but a promise may
+        # declare a different target, and Into the Flood Maw facing only an
+        # opponent's artifact is castable promised and not otherwise. Only the
+        # promised lines, then: every other variant shares `tuples`.
+        return _gift_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
 
     plain = _cast_variant(
         state,
@@ -639,11 +691,7 @@ def _cast_options(
     #
     # Unpromised stays first, the way unkicked does: the line that hands an
     # opponent a creature should never be the one taken by default.
-    if card.gift is not None:
-        for promisee in state.opponents(pid):
-            out += _cast_variant(
-                state, pid, oid, card, tuples, extra_generic=extra_generic, gift_to=promisee
-            )
+    out += _gift_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
     # Only from hand: an alternative cost is permission to cast the card *this
     # way*, and nothing extends it to the graveyard or the command zone the way
     # `retrace` and commander casting do.

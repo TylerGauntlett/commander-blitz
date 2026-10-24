@@ -13,8 +13,8 @@ from commanderblitz.cards.registry import (
     validate_deck,
 )
 
-#: The precons a player sees in the catalogue.
-PRECONS = {
+#: The maintainer's lists, shipped as ``favorite`` (ADR 0024).
+FAVORITES = {
     "aesi_tyrant_of_gyre_strait",
     "atraxa_praetors_voice",
     "bard_king_of_dale",
@@ -28,6 +28,13 @@ PRECONS = {
     "vivi_ornitier",
     "zurgo",
 }
+
+#: The lists Wizards sold, shipped as ``precon``: every one has a row in
+#: ``data/decks/sources.json`` (``tests/cards/test_precon_sources.py``).
+PRECONS = {"fdc_wretched_ranks"}
+
+#: Every deck a player sees on the shelf.
+SHIPPED = FAVORITES | PRECONS
 
 #: The retired first Edgar and Aesi lists, kept for the seeded tests.
 FIXTURES = {"aesi", "edgar"}
@@ -49,7 +56,7 @@ class TestDecksAreLegal:
     def test_the_shipped_decks_exist(self, decks):
         # `load_decks` reads the authored layer only, so an imported deck on the
         # developer's machine cannot make this fail.
-        assert set(load_decks()) == PRECONS
+        assert set(load_decks()) == SHIPPED
         assert set(load_decks(fixture_decks_dir())) == FIXTURES
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)

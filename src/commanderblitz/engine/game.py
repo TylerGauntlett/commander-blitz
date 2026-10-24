@@ -58,6 +58,7 @@ from .player import PlayerState
 from .player_statics import (
     cast_lock_min_x,
     graveyard_cast_permissions,
+    own_graveyard_cast_permission,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
     spell_life_tax,
@@ -411,7 +412,10 @@ class Game:
         # legality asked with these same specs. First, because everything
         # below that reads the targets -- discounts, taxes, the stored refs --
         # has to read the real ones.
-        specs = tuple(card.targets)
+        # A promised cast declares the promised list (601.2b, then 601.2c):
+        # legality enumerated this line from it, and `stack._resolve_spell`
+        # splits the stored refs by it.
+        specs = card.targets_for(gift_promised=action.gift_to is not None)
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped
         deferred = (
@@ -787,7 +791,16 @@ class Game:
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
-            granting = _graveyard_cast_permission(state, pid, card, oid)
+            # Gravecrawler's own permission, when it holds, is the one used: it
+            # costs nothing to spend, and billing an Edgar for a cast the card
+            # could make by itself would take that turn's use away for nothing.
+            # The card is its own grantor, so the stack item still says the
+            # spell was cast from a graveyard.
+            if own_graveyard_cast_permission(state, pid, oid):
+                permission = oid
+                granting = None
+            else:
+                granting = _graveyard_cast_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
@@ -1017,9 +1030,10 @@ class Game:
             mana_ability=False,
         )
 
-        # What the cost named -- Station's "the tapped creature" -- handed on to
-        # the stack item so the effects can read it. Empty for every cost that
-        # names nothing, which is every cost but `tap_permanents` with `as`.
+        # What the cost named -- Station's "the tapped creature", Gisa's "the
+        # sacrificed creature" -- handed on to the stack item so the effects can
+        # read it. Empty for every cost that names nothing, which is every cost
+        # but `tap_permanents` or `sacrifice` with `as`.
         bindings: dict[str, Any] = {}
         if distribution:
             bindings["distribution"] = distribution

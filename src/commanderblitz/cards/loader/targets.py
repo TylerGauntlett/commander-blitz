@@ -36,6 +36,7 @@ def _compile_targets(
     mode_count: int | None = None,
     mana_cost: str | None = None,
     has_kicker: bool = False,
+    has_gift: bool = False,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -151,20 +152,75 @@ def _compile_targets(
                 f"{where}.{spec.id}: 'count_if_kicked' on a card with no 'kicker' "
                 f"names a choice that can never be made"
             )
+    _check_gift_targets(specs, where, on_spell=on_spell, has_gift=has_gift)
     fixed = [spec for spec in specs if spec.mode is None]
-    variable = [i for i, spec in enumerate(fixed) if spec.variable_size]
-    if len(variable) > 1:
-        raise DslError(
-            f"{where}: only one target may be variable-size ('any number of', "
-            f"'up to', or a computed count) -- "
-            f"two variable-size specs cannot be told apart once chosen"
-        )
-    if variable and variable[0] != len(fixed) - 1:
-        raise DslError(
-            f"{where}: a variable-size target must come last, "
-            f"or the targets after it cannot be identified"
-        )
+    # A gift-gated card declares one of two lists, and the ordering rule is
+    # about the refs one cast stores -- so each list has to satisfy it, not
+    # the printed union, which no cast ever declares.
+    gated = any(spec.gift_promised is not None for spec in fixed)
+    for promised in (False, True) if gated else (None,):
+        declared = [
+            spec
+            for spec in fixed
+            if promised is None or spec.gift_promised in (None, promised)
+        ]
+        variable = [i for i, spec in enumerate(declared) if spec.variable_size]
+        if len(variable) > 1:
+            raise DslError(
+                f"{where}: only one target may be variable-size ('any number of', "
+                f"'up to', or a computed count) -- "
+                f"two variable-size specs cannot be told apart once chosen"
+            )
+        if variable and variable[0] != len(declared) - 1:
+            raise DslError(
+                f"{where}: a variable-size target must come last, "
+                f"or the targets after it cannot be identified"
+            )
     return specs
+
+
+def _check_gift_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, has_gift: bool
+) -> None:
+    """Every restriction on a target's ``gift_promised``, each a card that would
+    load wrong.
+
+    Legal at all because 601.2b announces the promise one step before 601.2c
+    declares the targets, so a cast already knows which side it is on. Each
+    refusal below is a place with no such cast, or a spelling that names a
+    choice the card never offers.
+    """
+    for spec in specs:
+        if spec.gift_promised is None:
+            continue
+        label = f"{where}.target[{spec.id}]"
+        if not on_spell:
+            # An ability's targets are declared when it is activated or put on
+            # the stack, with no cast to have promised anything; the gate would
+            # read as unpromised for ever and the card be its small half.
+            raise DslError(
+                f"{label}: 'gift_promised' is about a cast, and an ability's "
+                f"targets are declared without one"
+            )
+        if not has_gift:
+            raise DslError(
+                f"{label}: 'gift_promised' on a card with no 'gift' names a "
+                f"promise that can never be made"
+            )
+        if spec.mode is not None:
+            # A mode-owned spec is declared after the cast action is chosen,
+            # by `Game._ask_mode_targets`; the promise rides on the action, so
+            # the two gates would answer at different moments. No printing
+            # asks for both.
+            raise DslError(
+                f"{label}: a mode-owned target cannot also be 'gift_promised' -- "
+                f"the mode already decides whether it is declared"
+            )
+        if spec.count_if_kicked is not None:
+            raise DslError(
+                f"{label}: 'gift_promised' and 'count_if_kicked' on one target "
+                f"are two cast-time choices sizing one spec -- no printing does it"
+            )
 
 
 def _check_mode_targets(
@@ -357,6 +413,7 @@ def _compile_target(
         optional=model.optional,
         total_mana_value=model.total_mana_value,
         mode=model.mode,
+        gift_promised=model.gift_promised,
     )
 
 

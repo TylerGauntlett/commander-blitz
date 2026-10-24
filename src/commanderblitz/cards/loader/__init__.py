@@ -39,6 +39,7 @@ from commanderblitz.engine.effects.values import (
     validate_value,
 )
 from commanderblitz.engine.enums import (
+    PERMANENT_TYPES,
     AbilityKind,
     CardType,
     Step,
@@ -126,6 +127,7 @@ from .vocabulary import (  # noqa: F401
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
@@ -631,8 +633,20 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         mana_cost=model.mana_cost,
         # `count_if_kicked` names a choice made at 601.2b, so there has to be one.
         has_kicker=model.kicker is not None or model.multikicker is not None,
+        # `gift_promised` names the 601.2b promise, so there has to be one.
+        has_gift=model.gift is not None,
     )
-    targets = tuple(spec for spec in all_targets if spec.mode is None)
+    card_level = tuple(spec for spec in all_targets if spec.mode is None)
+    # The two sides of the gift promise, when a spec names one. The unpromised
+    # list is `targets`, so every cast line that cannot promise -- flashback, a
+    # free cast, a copy's default -- reads the right specs without knowing gift
+    # exists; only the promised lines ask for `gift_targets`.
+    targets = tuple(spec for spec in card_level if spec.gift_promised is not True)
+    gift_targets = (
+        tuple(spec for spec in card_level if spec.gift_promised is not False)
+        if any(spec.gift_promised is not None for spec in card_level)
+        else None
+    )
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -1509,6 +1523,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"'graveyard_cost', so it could never be true"
         )
 
+    # Gravecrawler's own graveyard permission is cast at the printed price and
+    # the card goes wherever it normally would. For a permanent that is the
+    # battlefield. An instant or sorcery would be marked cast-from-a-graveyard
+    # and exiled as it resolves (`graveyard_cast_exiles`), which is flashback's
+    # rider and not this permission's -- so the line is refused rather than
+    # loaded as a once-only card.
+    owns_graveyard_permission = any(
+        ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
+        for ability in model.abilities
+    )
+    if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
+        raise DslError(
+            f"{where}: a card's own permission to cast itself from the graveyard "
+            f"is supported on permanent cards only -- a nonpermanent cast that way "
+            f"would be exiled as it resolves, and the printed card is not"
+        )
+
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
 
@@ -1576,6 +1607,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         color_identity=identity,
         targets=targets,
         mode_targets=mode_targets,
+        gift_targets=gift_targets,
         spell_effects=tuple(model.spell_effects),
         replacements=_implied_replacements(model),
         abilities=abilities,
@@ -2566,6 +2598,54 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
 
 
+def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> None:
+    """A static's ``affects``, and each branch of its ``any_of``, recursively.
+
+    A branch is matched as the outer filter **plus** the branch's keys
+    (`characteristics._matches_wherever`), so it is held to the same keys and
+    the same value checks as the top level -- a malformed ``power`` or
+    ``owner`` inside a branch would otherwise load and fail at match time, or
+    match everything.
+
+    Two refusals of shape. A union of one is the filter itself written the
+    long way. And a branch may not repeat a key the outer filter already
+    names: the branch's value would *replace* the outer one rather than narrow
+    it, so ``{"types": ["Creature"], "any_of": [{"types": ["Artifact"]}, …]}``
+    would quietly stop requiring a creature.
+    """
+    top = path == f"{where}.affects"
+    unknown = set(filt) - STATIC_AFFECTS_FILTER_KEYS
+    if unknown:
+        raise DslError(
+            f"{where if top else path}: static filters may only read printed "
+            f"characteristics; unsupported keys {sorted(unknown)}"
+        )
+    _check_owner_key(filt, path)
+    if not top:
+        # The top level is checked by the caller's loop over every filter key.
+        _check_mana_cost_key(filt, path)
+        _check_pt_keys(filt, path)
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{path}.any_of: takes at least two filters -- a union of one is the "
+            f"filter itself, written the long way"
+        )
+    outer = set(filt) - {"any_of"}
+    for i, branch in enumerate(branches):
+        here = f"{path}.any_of[{i}]"
+        if not isinstance(branch, Mapping) or not branch:
+            raise DslError(f"{here}: must be a non-empty filter object")
+        if clash := sorted(outer & set(branch)):
+            raise DslError(
+                f"{here}: {clash} already appear on the outer filter, and a "
+                f"branch's value would replace the outer one rather than narrow it"
+            )
+        _check_static_affects(branch, where, here)
+
+
 def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
     """Every key of a ``grant_warp`` filter, and of each ``any_of`` branch.
 
@@ -2740,13 +2820,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
-        unknown = set(model.affects) - STATIC_FILTER_KEYS
-        if unknown:
-            raise DslError(
-                f"{where}: static filters may only read printed characteristics; "
-                f"unsupported keys {sorted(unknown)}"
-            )
-        _check_owner_key(model.affects, f"{where}.affects")
+        _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
@@ -2835,7 +2909,43 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
             f"the permission without its price is a different card"
         )
-    if model.effect == "cast_from_graveyard":
+    if model.effect == "cast_from_graveyard" and "graveyard" in model.active_zones:
+        # "You may cast **this card** from your graveyard as long as you control
+        # a Zombie" -- Gravecrawler. The card's own permission, read off it by
+        # `player_statics.own_graveyard_cast_permission` while it sits in its
+        # owner's graveyard. It covers the card carrying it and nothing else,
+        # so a filter naming other spells would be a promise no reader keeps;
+        # and it has nothing to meter, because each use takes the card -- and
+        # the permission -- out of the graveyard.
+        if list(model.active_zones) != ["graveyard"]:
+            raise DslError(
+                f"{where}: a cast_from_graveyard permission printed on the card it "
+                f"frees is active in the graveyard alone, not in {model.active_zones}"
+            )
+        if model.affects_player != "you":
+            raise DslError(
+                f"{where}: a card's own graveyard permission is its owner's -- "
+                f"'affects_player' must be 'you'"
+            )
+        stray = [
+            key
+            for key, present in (
+                ("affects_spells", model.affects_spells is not None),
+                ("affects", model.affects is not None),
+                ("max_per_turn", model.static_max_per_turn is not None),
+                ("grants_flashback", model.grants_flashback),
+                ("enters_tapped", model.enters_tapped),
+                ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
+            )
+            if present
+        ]
+        if stray:
+            raise DslError(
+                f"{where}: a cast_from_graveyard static with active_zones "
+                f"['graveyard'] is the card's own permission to cast itself; "
+                f"nothing reads {stray} on it"
+            )
+    elif model.effect == "cast_from_graveyard":
         # Both halves required, for `spell_cost_reduction`'s reason: a
         # permission that named no card type would let every spell out of the
         # graveyard, and one with no `max_per_turn` would be an unbounded engine
@@ -3840,6 +3950,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"zone a printed card in this family redirects to"
             )
 
+    if model.effect == "replace_dies":
+        # `affects` is required by the general rule above, and it is the whole
+        # printed clause: "a nontoken creature an opponent controls" is a filter
+        # on the dying permanent, read against its controller, not a seat whose
+        # graveyard is replaced. `affects_player` would be a key nothing reads.
+        if model.affects_player is not None:
+            raise DslError(
+                f"{where}: replace_dies names the dying permanent with 'affects' "
+                f"(its controller included); 'affects_player' is replace_graveyard's"
+            )
+        # Exile is the only zone a printed die-replacement sends a creature to.
+        # Required rather than defaulted, for `replace_graveyard`'s reason: the
+        # destination is printed and the card file should say it.
+        if model.destination != "exile":
+            raise DslError(
+                f"{where}: replace_dies needs 'destination': 'exile' -- the zone the "
+                f"printed card sends the creature to instead"
+            )
+    elif model.and_create:
+        raise DslError(
+            f"{where}: 'and_create' is a replace_dies rider; on {model.effect!r} "
+            f"nothing would create the tokens"
+        )
+
     if model.effect == "untap_limit":
         if model.amount is None:
             # A cap with no number is not a cap. Absent, `_static_value` reads it
@@ -4099,6 +4233,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["prevent_all"] = True
     if model.destination is not None:
         static["destination"] = model.destination
+    if model.and_create:
+        static["and_create"] = list(model.and_create)
     if model.affects_token is not None:
         static["affects_token"] = model.affects_token
     if model.keywords:

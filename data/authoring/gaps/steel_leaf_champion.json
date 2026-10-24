@@ -1,0 +1,18 @@
+{
+  "card_id": "steel_leaf_champion",
+  "name": "Steel Leaf Champion",
+  "oracle_text": "This creature can't be blocked by creatures with power 2 or less.",
+  "blocked_sentences": [
+    "This creature can't be blocked by creatures with power 2 or less."
+  ],
+  "needs": [
+    {
+      "capability": "power_evasion",
+      "kind": "static_effect",
+      "what": "a block restriction on the attacker that refuses would-be blockers by their DERIVED (current) power at declare-blockers -- \"can't be blocked by creatures with power N or less\" -- so an anthem, pump spell or +1/+1 counter on the blocker changes whether it may block; e.g. a block_restriction whose blockers filter may carry a derived-power comparison ({\"op\": \"<=\", \"value\": 2}) read from chars in combat.can_block",
+      "why_existing_wont_do": "block_restriction's `blockers` filter goes through matches_static, whose `power` key is read at _base_pt (the size before any layer), so a 2/2 given +1/+1 would still be refused and a 3/3 shrunk to 2/2 could still block -- the same reason the engine made skulk a keyword reading derived power instead of a blockers filter. Skulk itself compares against the attacker's power (greater power), not a fixed threshold, so it is a different sentence."
+    }
+  ],
+  "closest_existing": ["block_restriction", "skulk"],
+  "confidence": "high"
+}

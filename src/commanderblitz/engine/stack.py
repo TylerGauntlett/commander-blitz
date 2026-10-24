@@ -718,7 +718,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # declared them, which is what makes `filter_legal`'s positional split line
     # up with the refs the cast stored. For every card without them this is
     # `card.targets` unchanged.
-    specs = card.specs_for_modes(item.modes)
+    # And the side of the gift promise it was cast on, for the same reason:
+    # "if the gift was promised, return target creature card…" is a spec only
+    # the promised cast declared, so only its refs have a bucket for it.
+    specs = card.specs_for_modes(item.modes, gift_promised=item.gift_to is not None)
     if item.fused and card.second_face is not None:
         # Both halves' targets, in the order legality offered them.
         specs = tuple(card.targets) + tuple(state.registry.get(card.second_face).targets)

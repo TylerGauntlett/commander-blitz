@@ -70,6 +70,7 @@ function lobby() {
         onStart={vi.fn()}
         onLeave={vi.fn()}
         onDecksChanged={vi.fn()}
+        onStarDeck={vi.fn()}
       />
     </QueryClientProvider>
   );

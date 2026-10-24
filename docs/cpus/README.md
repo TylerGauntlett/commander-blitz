@@ -40,11 +40,14 @@ legal actions ──> agent's score ──> strategy.priority_value(...) ──>
 The strategy is looked up per seat from the deck it is playing
 (`commanderblitz.ai.strategy.strategy_for`):
 
-1. **The deck id.** Each shipped precon has a module in
+1. **The deck id.** Each favorite has a module in
    [`strategy/decks/`](../../src/commanderblitz/ai/strategy/decks/), found automatically.
 2. **The commander.** A player's own import of Bruvac is still piloted as a mill
    deck, because a plan is really about the commander.
-3. **`DefaultStrategy`**, the baseline, for everything else.
+3. **The archetype** a deck file names, one of `ARCHETYPES` in
+   `strategy/archetypes.py`. This is how a precon without a module is piloted
+   ([ADR 0024](../adr/0024-precon-means-the-product.md)).
+4. **`DefaultStrategy`**, the baseline, for everything else.
 
 The hooks (`strategy/base.py`) each take the agent's own answer and return the
 one to use, so an archetype changes only what it cares about:
@@ -130,9 +133,10 @@ no archetype has subclasses the archetype in its own module.
 4. Add `tests/ai/strategy/decks/test_<deck_id>.py` — a position or two that shows
    the plan doing what makes the deck different.
 
-`tests/ai/strategy/test_registry.py` fails until every precon has a strategy, and
-fails if a plan names a card that is not in its deck — a typo would otherwise
-silently switch a bonus off.
+`tests/ai/strategy/test_registry.py` fails until every favorite has a strategy
+and every shipped deck has a module or an archetype, and fails if a plan names a
+card that is not in its deck — a typo would otherwise silently switch a bonus
+off.
 
 ## Measuring it
 
@@ -141,8 +145,10 @@ python scripts/run_arena.py --agents heuristic,heuristic_classic --decks precons
 ```
 
 seats the strategy CPU against the classic one across every precon, seats
-rotated. `tests/ai/strategy/test_deck_games.py` plays every precon through whole
-four-player games and checks a seed replays exactly.
+rotated. `tests/ai/strategy/test_deck_games.py` plays a seeded sample of the
+shipped decks through whole four-player games, the day's date unless
+`DECK_GAMES_SEED` names one, and checks a seed replays exactly; the full matrix
+is the arena's.
 
 ## What the CPU cannot do
 

@@ -11,7 +11,7 @@ Read your packet, then write **exactly one file** and nothing else.
 Read `oracle_text` and the `todo` list in your packet. For each outstanding
 sentence, decide whether it can be said **exactly** with the vocabulary in the
 packet's `reference` block — its `ops`, `keywords`, `types`, `trigger_events`,
-`static_effects`, `static_filter_keys`.
+`static_effects`, `static_filter_keys`, `static_affects_filter_keys`.
 
 **If your packet has a `back_face`, that half of the card is your job too.** It
 carries the back's own name, type line, mana cost, power/toughness and printed

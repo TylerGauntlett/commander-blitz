@@ -5,7 +5,7 @@ area: matchmaking
 effort: M
 impact: medium
 why: a filter and a signal on every tile; the precondition for the queue
-depends_on: [official-precons]
+depends_on: []
 status: proposed
 ---
 

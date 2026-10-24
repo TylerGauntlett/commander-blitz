@@ -41,7 +41,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api } from "../api/client";
-import type { GameEvent, GameView, SeatConfig, StateResponse } from "../api/types";
+import type { DeckSummary, GameEvent, GameView, SeatConfig, StateResponse } from "../api/types";
 import { beatsFor } from "../logic/events";
 import { playerNames } from "../logic/labels";
 import { isPickSeveral } from "../logic/pickSeveral";
@@ -104,6 +104,40 @@ export function useDecks() {
     queryFn: api.decks,
     staleTime: Number.POSITIVE_INFINITY,
   });
+}
+
+/**
+ * The precons the shelf names but cannot deal yet, for its "Coming soon"
+ * shells. Fixed for the life of the server, like the deck list. A server that
+ * does not answer leaves the shelf with what it can deal, so every consumer
+ * reads `data ?? []` rather than treating a missing list as an error.
+ */
+export function useUpcomingPrecons() {
+  return useQuery({
+    queryKey: ["precons", "upcoming"],
+    queryFn: api.upcomingPrecons,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+}
+
+/**
+ * Star or unstar an import, and put the server's answer into the deck list.
+ *
+ * The answer is the deck as the server now holds it, so it replaces that one
+ * entry rather than the client flipping a flag it guessed at; there is no
+ * optimistic update here any more than anywhere else.
+ */
+export function useStarDeck(): (deckId: string, starred: boolean) => Promise<void> {
+  const queries = useQueryClient();
+  return useCallback(
+    async (deckId: string, starred: boolean) => {
+      const deck = await api.starDeck(deckId, starred);
+      queries.setQueryData<DeckSummary[]>(["decks"], (list) =>
+        list?.map((each) => (each.id === deck.id ? deck : each)),
+      );
+    },
+    [queries],
+  );
 }
 
 /**

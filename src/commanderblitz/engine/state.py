@@ -178,6 +178,16 @@ class GameState:
     #: matched again, and the set is bounded by how many batched triggers
     #: actually fired rather than by the length of the game.
     batched_triggers: set = field(default_factory=set)
+    #: `replace_dies` statics whose permanent has just left the battlefield, as
+    #: ``(event_batch, source as it last existed, static)``. Kalitas's ruling:
+    #: if it dies at the same time as a nontoken creature an opponent controls,
+    #: its ability still applies to that creature -- but the engine moves a
+    #: wrath's creatures one at a time, so Kalitas may already be gone when the
+    #: next one is moved. Read by `zones._dies_replacement` only while the batch
+    #: is unchanged, and emptied by every state-based-action pass, which is one
+    #: simultaneous event of its own (704.3) and shares the batch counter with
+    #: whatever ran before it.
+    leaving_dies_replacers: list[tuple[int, Any, Any]] = field(default_factory=list)
     #: "Whenever a creature dealt damage by this creature this turn dies…"
     #:
     #: victim oid -> the oids of everything that has damaged it this turn.

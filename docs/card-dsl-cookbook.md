@@ -1988,6 +1988,55 @@ the enters trigger of the permanent a gift *creature* becomes. It records the
 **seat**, not a bool, because "whom" is the half a later effect needs and a bool
 could not say it.
 
+### A target only the promise declares
+
+"If the gift was promised, return **target** creature card from your graveyard
+to your hand" (Consumed by Greed) is a target the unpromised spell never
+chooses. `gift_promised` on a target spec says which side of the promise
+declares it: `true` only a promised cast, `false` only an unpromised one, absent
+every cast.
+
+```jsonc
+// Into the Flood Maw: one printed target word, two selectors.
+"gift": "a tapped Fish",
+"targets": [
+  { "id": "t1", "kind": "permanent", "gift_promised": false,
+    "selector": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] } },
+  { "id": "t2", "kind": "permanent", "gift_promised": true,
+    "selector": { "zone": "battlefield", "controller": "opponent", "not_types": ["Land"] } }
+],
+"spell_effects": [
+  { "op": "create_token", "token": "fish_1_1_u", "tapped": true, "controller": "gift_recipient" },
+  { "op": "return_to_hand", "objects": { "target": "t1" } },
+  { "op": "return_to_hand", "objects": { "target": "t2" } }
+]
+```
+
+It is legal for kicker's reason: 601.2b announces the promise and 601.2c
+declares the targets after it. The loader splits the specs in two:
+`CardDef.targets` is the unpromised list and `CardDef.gift_targets` the promised
+one, so every cast line that cannot promise reads the right list without knowing
+gift exists. Legality enumerates the promised lines from `gift_targets`, and
+`Game._cast` and `stack._resolve_spell` read the same list through
+`CardDef.targets_for`. An effect naming the target a cast did not declare finds
+an empty bucket and does nothing, so neither effect needs an `if`. The required
+gift-only target follows 601.2c. With no legal choice the promised lines are not
+offered, as a kicked line with no legal kicked target is not, and the plain line
+is untouched. A board with no legal unpromised target still offers the promised
+lines when they have one. A copy keeps the promise (707.10), so its refs are split
+by the same list.
+
+The near misses are both a different card. A spec declared on every cast and
+branched on with `{"gift_promised": true}` needs a creature card in your
+graveyard to be cast at all, and announces a target the printed spell never
+chooses. `optional: true` lets a promised cast skip the target the promise buys.
+
+The loader refuses `gift_promised` on a card with no `gift`, on an ability's
+targets (no cast declares them), on a mode-owned spec, and beside
+`count_if_kicked`. The variable-size ordering rule is checked on each side's
+list, the lists a cast actually stores. A gated spec counts as reading the
+gift, so it satisfies the half-a-gift guard.
+
 ## Delayed triggers — "at the beginning of the next …"
 
 Every other trigger in the engine fires *from* an event that has just happened.
@@ -4109,6 +4158,35 @@ resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
 
+**A card's own permission at its printed price** is not a graveyard cost. It is
+a `cast_from_graveyard` static that works from the graveyard:
+
+```jsonc
+// Gravecrawler -- "You may cast this card from your graveyard as long as you
+//  control a Zombie."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "active_zones": ["graveyard"],
+  "condition": { "exists": { "subtypes": ["Zombie"], "controller": "you" } } }
+```
+
+`player_statics.own_graveyard_cast_permission` reads it off the card while the
+card sits in its owner's graveyard. Legality asks the `condition` each time it
+offers the cast, which is when 601.2a/601.3 need the permission to hold, so the
+line goes the moment the last Zombie leaves. The `condition` is optional, which
+is the unconditional form. The card is cast for its mana cost and goes where it
+normally would. When an Edgar-shaped permission also covers the card, the card's
+own permission is the one used, so the other permission's use for the turn is
+not spent.
+
+The loader refuses a second zone in `active_zones`, any `affects_player` other
+than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
+`enters_tapped` and `arrived_this_turn_from`. The permission frees only the card
+carrying it, and each use takes that card out of the graveyard, so no reader
+looks at those keys. It is refused on an instant or sorcery, which would be
+exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
+with the printed mana, which has no `condition`: the card would be castable from
+the graveyard with no Zombie at all.
+
 #### An *alternative* cost that is not mana
 
 ```jsonc
@@ -5815,6 +5893,48 @@ never dies and there is nothing to replace.
 damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
+
+## "If a nontoken creature an opponent controls would die, instead exile that card"
+
+```jsonc
+// Kalitas, Traitor of Ghet
+{ "kind": "static",
+  "text": "If a nontoken creature an opponent controls would die, instead exile that card and create a 2/2 black Zombie creature token.",
+  "effect": "replace_dies",
+  "affects": { "types": ["Creature"], "controller": "opponent", "is_token": false },
+  "destination": "exile",
+  "and_create": ["zombie_2_2_b"] }
+```
+
+A standing replacement of a **death** — a move from the battlefield to a
+graveyard, and nothing else. `affects` is a static filter read against the dying
+permanent while it still stands, so `controller` is who controls it as it dies
+and `is_token` is "nontoken". `destination` is required and is `"exile"`, the
+only zone printed die-replacements send a creature to. `and_create` is
+optional: one of each listed token, created by the **static's controller** as
+part of each replaced death. Void Maw's "If another creature would die, exile it
+instead" is the same static without it.
+
+The creature never dies (614.6), so no `dies` or `creature_dies` trigger fires
+for it; that is why the token is part of the static and not a death trigger
+beside it, which would also let the opponent's "when this dies" fire.
+
+How it orders against the other replacements on a death, all decided without
+asking:
+
+- **A commander** is exiled, the token is made, and then it goes to the command
+  zone (903.9a moves it after it has been exiled).
+- **The affected player's own replacements come first** (616.1): a creature
+  under `replace_deaths`, unearth's `leaves_to`, or a `replace_graveyard` that
+  would also catch it goes where that one says, and no token is made.
+- **Dying together**: a `replace_dies` permanent that leaves in the same
+  simultaneous event (one effect op, one state-based-action pass) still applies
+  to the creatures leaving with it — Kalitas in a wrath still exiles the
+  opponents' creatures.
+
+The near misses: `replace_graveyard` is gated on the destination alone, filters
+by the graveyard's **owner** and creates nothing; `replace_deaths` is a one-shot
+mark on the objects a spell chose, not a standing static.
 
 ## "It can't be regenerated."
 

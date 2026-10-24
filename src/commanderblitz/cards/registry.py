@@ -197,6 +197,10 @@ class DeckList:
     ratings: dict | None = None
     strategy: str = ""
     signature: tuple[dict, ...] = ()
+    #: See ``DeckModel.archetype``, ``DeckModel.release`` and ``DeckModel.starred``.
+    archetype: str = ""
+    release: dict | None = None
+    starred: bool = False
     #: ``card id -> {scryfall_id, artist, set_code, collector_number}``: the
     #: printings the source list chose.  Empty for a precon and for anything
     #: imported before the importer recorded them.  See ``DeckModel.printings``.
@@ -234,6 +238,9 @@ class DeckList:
             ratings=None if model.ratings is None else model.ratings.model_dump(),
             strategy=model.strategy,
             signature=tuple(s.model_dump() for s in model.signature),
+            archetype=model.archetype,
+            release=None if model.release is None else model.release.model_dump(),
+            starred=model.starred,
             printings={cid: p.model_dump() for cid, p in model.printings.items()},
             complete=model.complete,
         )

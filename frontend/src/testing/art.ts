@@ -44,7 +44,7 @@ function hueOf(cardId: string): number {
  * placeholder would make every legibility judgement look fine in a story when a
  * real illustration would not.
  */
-function stubImage(cardId: string): string {
+export function stubImage(cardId: string): string {
   const hue = hueOf(cardId);
   const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240">',

@@ -1,0 +1,18 @@
+{
+  "card_id": "endless_atlas",
+  "name": "Endless Atlas",
+  "oracle_text": "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name.",
+  "blocked_sentences": [
+    "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name"
+  ],
+  "needs": [
+    {
+      "capability": "same_name_count",
+      "kind": "value",
+      "what": "a value giving the size of the largest group of objects matching a selector that share one name (e.g. {\"max_same_name_count\": {\"controller\": \"you\", \"types\": [\"Land\"], \"zone\": \"battlefield\"}}), usable in an activated ability's activation condition as a cmp >= 3",
+      "why_existing_wont_do": "`count` totals every match regardless of name; `max_count_of` groups per player, not per name; `shares_a_name_with` needs an already-bound object, and nothing iterates the lands as candidates inside a condition. An `any` of literal `name` counts for the basic land names would miss snow basics, nonbasic duplicates and copied/renamed lands, so it would be an approximation"
+    }
+  ],
+  "closest_existing": ["count", "max_count_of", "shares_a_name_with", "condition"],
+  "confidence": "high"
+}

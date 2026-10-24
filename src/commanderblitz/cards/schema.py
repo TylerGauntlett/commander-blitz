@@ -276,6 +276,15 @@ class TargetModel(BaseModel):
     #: refused on a triggered ability's targets, which have no cast to have
     #: been kicked.
     count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
+    #: Which side of the **gift promise** declares this target. ``true``: only
+    #: a promised cast does -- "if the gift was promised, return target
+    #: creature card from your graveyard to your hand" (Consumed by Greed).
+    #: ``false``: only an unpromised cast does -- the creature Into the Flood
+    #: Maw bounces "instead" of the nonland permanent its promised cast points
+    #: at. Absent: every cast. Legal because 601.2b announces the promise one
+    #: step before 601.2c declares the targets. Refused on a card with no
+    #: ``gift``, on an ability's targets and on a mode-owned spec.
+    gift_promised: bool | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,
@@ -691,8 +700,15 @@ class AbilityModel(BaseModel):
     #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
     #: exile because the same sentence is printed about a library by the
     #: Kozilek and Ulamog family, and defaulting it silently would make the
-    #: two indistinguishable in a card file.
+    #: two indistinguishable in a card file. `replace_dies` reads it too, for
+    #: "instead exile that card" (Kalitas, Traitor of Ghet).
     destination: str | None = None
+    #: ``replace_dies``: the token ids the static's **controller** creates as
+    #: part of each replaced death, one of each -- Kalitas's "instead exile
+    #: that card **and create a 2/2 black Zombie creature token**". Part of the
+    #: replacement rather than a trigger, because the creature never dies
+    #: (614.6) and a `creature_dies` trigger has nothing to fire on.
+    and_create: list[str] = Field(default_factory=list)
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is
     #: what every printed card in the family says; `false` is how one that
@@ -1497,6 +1513,20 @@ class PrintingModel(BaseModel):
         return value
 
 
+class ReleaseModel(BaseModel):
+    """The Wizards product a precon is, as ``data/decks/sources.json`` names it.
+
+    ``set_name`` is what the shelf groups by and ``date`` is the order: the
+    newest release is the first row (ADR 0024).
+    """
+
+    model_config = Strict
+
+    set_code: str
+    set_name: str
+    date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+
 class DeckModel(BaseModel):
     """One 100-card Commander deck list."""
 
@@ -1512,7 +1542,10 @@ class DeckModel(BaseModel):
     #: Where the list came from.  Defaulted so the two committed precons stay
     #: valid untouched -- the model is ``extra="forbid"``, so a required field
     #: here would have broken every deck file in the repository.
-    source: Literal["precon", "moxfield"] = "precon"
+    #: ``precon`` is a list Wizards sold, inside the window; ``favorite`` is a
+    #: list the maintainer chose to ship; ``moxfield`` is a player's import
+    #: (ADR 0024).
+    source: Literal["precon", "favorite", "moxfield"] = "precon"
     #: The Moxfield public id an import came from, case preserved -- ``id`` is
     #: a lowercased slug of it and cannot be turned back.  What the desktop
     #: build sends the hosted server so a deck imported at home can be imported
@@ -1538,6 +1571,17 @@ class DeckModel(BaseModel):
     ratings: DeckRatingsModel | None = None
     strategy: str = ""
     signature: list[SignatureCardModel] = Field(default_factory=list)
+    #: Which ``ARCHETYPES`` key pilots this deck when it has no strategy module
+    #: of its own (ADR 0024).  A string rather than a ``Literal`` because the
+    #: archetypes live in the AI package, which the card layer never imports;
+    #: ``tests/ai/strategy/test_registry.py`` checks every value resolves.
+    archetype: str = ""
+    #: The product a precon is.  ``None`` for anything else.
+    release: ReleaseModel | None = None
+    #: A player's star on their own import: it pins the deck to the top of
+    #: **Yours**.  Written by ``importer.mark_starred`` and kept across a
+    #: re-import of the same list.
+    starred: bool = False
 
     #: ``card id -> printing``: which illustration this deck's copies use, when
     #: the source list said.  Overrides the catalog's pick **for this deck's

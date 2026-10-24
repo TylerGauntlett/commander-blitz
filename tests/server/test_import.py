@@ -643,6 +643,49 @@ class TestLibraries:
         assert deck_id not in deck_ids(client, "alice")
 
 
+class TestTheStar:
+    """A star pins an import to the top of Yours, kept on the server (ADR 0024)."""
+
+    def _star(self, client, deck_id, starred, library=None):
+        return client.post(
+            f"/api/decks/{deck_id}/star", json={"starred": starred}, headers=as_library(library)
+        )
+
+    def _starred(self, client, deck_id, library=None) -> bool:
+        decks = client.get("/api/decks", headers=as_library(library)).json()
+        return next(d for d in decks if d["id"] == deck_id)["starred"]
+
+    def test_a_star_survives_a_reload(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        assert self._starred(client, deck_id, "alice") is False
+        response = self._star(client, deck_id, True, "alice")
+        assert response.status_code == 200
+        assert response.json()["starred"] is True
+        client.app.state.reload()
+        assert self._starred(client, deck_id, "alice") is True
+
+    def test_unstarring_takes_it_off(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        self._star(client, deck_id, True, "alice")
+        self._star(client, deck_id, False, "alice")
+        assert self._starred(client, deck_id, "alice") is False
+
+    def test_a_re_import_keeps_the_star(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        self._star(client, deck_id, True, "alice")
+        do_import(client, payload, library="alice")
+        assert self._starred(client, deck_id, "alice") is True
+
+    def test_a_shipped_deck_takes_no_star(self, client):
+        response = self._star(client, "aesi_tyrant_of_gyre_strait", True, "alice")
+        assert response.status_code == 400
+
+    def test_nobody_stars_somebody_elses_deck(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        assert self._star(client, deck_id, True, "bob").status_code == 403
+        assert self._starred(client, deck_id, "alice") is False
+
+
 class TestNoTestWritesIntoTheRepository:
     def test_the_real_data_directory_is_untouched(self, client, payload):
         """The fixture's deck must not land in the developer's own `data/`.

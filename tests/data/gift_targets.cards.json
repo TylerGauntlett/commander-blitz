@@ -1,0 +1,73 @@
+{
+  "_comment": "Cards that exist only for the gift-gated target test (tests/unit/targets/test_gift_promised_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_greed` is Consumed by Greed: a target opponent on every cast, and a creature card in your graveyard that only a promised cast declares. `t_flood_maw` is Into the Flood Maw: one printed target word with two selectors, a creature when unpromised and a nonland permanent when promised.",
+  "cards": [
+    {
+      "id": "t_greed",
+      "name": "Test Consumed by Greed",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nTarget opponent sacrifices a creature with the greatest power among creatures they control. If the gift was promised, return target creature card from your graveyard to your hand.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "gift": "a card",
+      "targets": [
+        { "id": "t1", "kind": "player", "selector": { "controller": "opponent" } },
+        {
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "gift_promised": true,
+          "selector": { "zone": "graveyard", "controller": "you", "types": ["Creature"] }
+        }
+      ],
+      "spell_effects": [
+        { "op": "draw", "player": "gift_recipient", "amount": { "const": 1 } },
+        {
+          "op": "sacrifice",
+          "objects": {
+            "zone": "battlefield",
+            "controller": { "target": "t1" },
+            "types": ["Creature"],
+            "count": 1,
+            "chooser": "owner",
+            "extreme": { "of": "power", "pick": "greatest" }
+          }
+        },
+        { "op": "return_to_hand", "objects": { "target": "t2" } }
+      ]
+    },
+    {
+      "id": "t_flood_maw",
+      "name": "Test Into the Flood Maw",
+      "oracle_text": "Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)\nReturn target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "gift": "a tapped Fish",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "gift_promised": false,
+          "selector": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] }
+        },
+        {
+          "id": "t2",
+          "kind": "permanent",
+          "gift_promised": true,
+          "selector": { "zone": "battlefield", "controller": "opponent", "not_types": ["Land"] }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "create_token",
+          "token": "fish_1_1_u",
+          "tapped": true,
+          "controller": "gift_recipient"
+        },
+        { "op": "return_to_hand", "objects": { "target": "t1" } },
+        { "op": "return_to_hand", "objects": { "target": "t2" } }
+      ]
+    }
+  ]
+}

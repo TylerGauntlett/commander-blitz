@@ -1,0 +1,24 @@
+{
+  "card_id": "misleading_signpost",
+  "name": "Misleading Signpost",
+  "oracle_text": "Flash\nWhen this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)\n{T}: Add {U}.",
+  "blocked_sentences": [
+    "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)"
+  ],
+  "needs": [
+    {
+      "capability": "redirect_attack",
+      "kind": "op",
+      "what": "an op that changes which player, planeswalker or battle a target attacking creature is attacking, with the new defender chosen by the effect's controller from among the attacking creature's legal defenders, excluding the attacking creature's controller and permanents that player controls",
+      "why_existing_wont_do": "cant_attack_player and must_attack_planeswalker only constrain attack declarations that have not happened yet; put_onto_battlefield/create_token `attacking` only set the defender for an object entering the battlefield attacking. No op changes the defender of a creature that is already attacking"
+    },
+    {
+      "capability": "declare_attackers_step_condition",
+      "kind": "value",
+      "what": "a trigger condition that is true only when the current step is the declare attackers step (\"When this artifact enters during the declare attackers step\")",
+      "why_existing_wont_do": "condition_keys has is_your_turn, is_active_player and cast_during (which reads how the spell was cast, not the current step); nothing reads the game's current step, so the enters trigger cannot be gated to that step"
+    }
+  ],
+  "closest_existing": ["cant_attack_player", "must_attack_planeswalker", "put_onto_battlefield"],
+  "confidence": "high"
+}

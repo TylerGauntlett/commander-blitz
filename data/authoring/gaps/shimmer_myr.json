@@ -1,0 +1,21 @@
+{
+  "card_id": "shimmer_myr",
+  "name": "Shimmer Myr",
+  "oracle_text": "Flash\nYou may cast artifact spells as though they had flash.",
+  "blocked_sentences": [
+    "You may cast artifact spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "cast_as_though_flash_spell_filter",
+      "kind": "static_effect",
+      "what": "a spell filter (affects_spells: {\"types\": [\"Artifact\"]}) on the player-wide cast_as_though_flash static, so the permission covers only artifact spells the controller casts while the source is on the battlefield, read by casting._timing_ok against the CardDef's types",
+      "why_existing_wont_do": "The cast_as_though_flash static takes only affects_player and an optional condition; the loader refuses 'affects' or 'amount' on it, so it can only grant flash timing to every spell (a strictly better card). The grant_flash_permission op does carry 'types', but it is a one-shot timed permission with a required duration (this_turn / until_your_next_turn), not a continuous static that lasts while Shimmer Myr is on the battlefield. Granting the flash keyword cannot stand in either, since _timing_ok reads printed keywords only."
+    }
+  ],
+  "closest_existing": [
+    "cast_as_though_flash",
+    "grant_flash_permission"
+  ],
+  "confidence": "high"
+}

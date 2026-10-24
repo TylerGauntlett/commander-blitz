@@ -24,6 +24,7 @@ function lobby(pod = pods.filling(), overrides = {}) {
     onStart: fn(),
     onLeave: fn(),
     onDecksChanged: fn(),
+    onStarDeck: fn(),
     ...overrides,
   };
 }

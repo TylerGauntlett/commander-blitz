@@ -421,3 +421,30 @@ class TestVerdantKrakensTentacleIsALand:
         assert dryad is not None and (dryad.power, dryad.toughness) == (1, 1)
         tentacle = pool.get("tentacle_1_1_u")
         assert tentacle is not None and "Land" not in tentacle.types
+
+
+class TestJosuVesssKnightsAreZombieKnightsWithMenace:
+    """Josu Vess, Lich Knight, kicked: *"create eight 2/2 black **Zombie Knight**
+    creature tokens with **menace**."*
+
+    The pool had `zombie_2_2_b` (no menace, no Knight) and `pirate_2_2_b_menace`
+    (the wrong creature type). Eight of either is a different card: a Zombie
+    deck's lords count the subtype, and menace is most of what the kicker buys.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("zombie_knight_2_2_b_menace") is not None
+
+    def test_it_is_a_two_two_black_zombie_knight_with_menace(self, pool):
+        knight = pool.get("zombie_knight_2_2_b_menace")
+        assert (knight.power, knight.toughness) == (2, 2)
+        assert sorted(knight.colors) == ["B"]
+        assert {"Zombie", "Knight"} <= set(knight.subtypes)
+        assert "menace" in knight.keywords
+        assert knight.is_creature and knight.is_token
+
+    def test_the_plain_zombie_is_still_a_separate_token(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert other is not None
+        assert "menace" not in other.keywords
+        assert "Knight" not in other.subtypes

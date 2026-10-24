@@ -5,7 +5,7 @@ area: steamdeck
 effort: M
 impact: medium
 why: every Deck update gets smaller and every precon plays offline from the first launch
-depends_on: [official-precons]
+depends_on: []
 status: proposed
 ---
 

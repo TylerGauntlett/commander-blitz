@@ -1,0 +1,27 @@
+{
+  "_comment": "Cards that exist only for the death-replacement test (tests/unit/replacement/test_replace_dies.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_kalitas_like` is Kalitas, Traitor of Ghet's second line with nothing else on the body, so the static can be measured alone.",
+  "cards": [
+    {
+      "id": "t_kalitas_like",
+      "name": "Test Kalitas",
+      "oracle_text": "If a nontoken creature an opponent controls would die, instead exile that card and create a 2/2 black Zombie creature token.",
+      "mana_cost": "{2}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Warrior"],
+      "power": 3,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a nontoken creature an opponent controls would die, instead exile that card and create a 2/2 black Zombie creature token.",
+          "effect": "replace_dies",
+          "affects": { "types": ["Creature"], "controller": "opponent", "is_token": false },
+          "destination": "exile",
+          "and_create": ["zombie_2_2_b"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "_comment": "A sacrifice cost that names what it sacrificed -- Ghoulcaller Gisa's shape, standing in for her. Test-only.",
+  "cards": [
+    {
+      "id": "t_gisa_outlet",
+      "name": "Test Ghoulcaller",
+      "oracle_text": "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "power": 3,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.",
+          "cost": {
+            "mana": "{B}",
+            "tap": true,
+            "sacrifice": {"types": ["Creature"], "exclude_self": true, "as": "sacrificed"}
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "zombie_2_2_b",
+              "amount": {"power_of": {"binding": "sacrificed"}}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

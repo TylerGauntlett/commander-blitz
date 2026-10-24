@@ -131,6 +131,25 @@ def move_object(
             # needs is the one saying the arrival was replaced.
             cause = "enters_replaced"
 
+    # -- "if a nontoken creature an opponent controls would die, instead…" --
+    # Kalitas, Traitor of Ghet. **Before** the commander replacement below,
+    # unlike `replace_graveyard`, because here the order shows: 903.9a moves a
+    # commander to the command zone *after* it has been exiled, so an
+    # opponent's commander dying under Kalitas is exiled, Kalitas's controller
+    # gets the Zombie, and the commander still goes home -- the redirect below
+    # takes exile as readily as a graveyard. Ordered after it, the commander
+    # would never be dying and the Zombie would be lost.
+    #
+    # Only a death: battlefield to graveyard, as asked. The creature does not
+    # die (614.6), so `DIES` below never fires for it.
+    dies_rider: tuple[int, int, tuple[str, ...]] | None = None
+    if from_zone is Zone.BATTLEFIELD and to_zone is Zone.GRAVEYARD:
+        replaced_dies = _dies_replacement(state, obj, card)
+        if replaced_dies is not None:
+            to_zone, dies_rider = replaced_dies
+            target_player = owner
+            cause = cause or "dies_replaced"
+
     # -- commander zone-change replacement (rule 903.9a) --------------------
     # Simplification: the owner always chooses the command zone.  Documented in
     # docs/rules-coverage.md; it is what a player picks in practice, and it keeps
@@ -264,6 +283,9 @@ def move_object(
     # only for a battlefield destination, so a countered creature spell does not
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
+
+    if was_on_battlefield:
+        _remember_leaving_dies_replacer(state, obj)
 
     _remove_from_zone(state, obj)
 
@@ -404,6 +426,16 @@ def move_object(
                 had_power=had_power,
                 had_toughness=had_toughness,
             )
+
+    # "…and create a 2/2 black Zombie creature token": the rest of the
+    # replacement event, performed once the card is in exile. Under the
+    # replacement's controller, which is Kalitas's and not the dead creature's.
+    if dies_rider is not None:
+        from .primitives import create_token  # primitives imports this module
+
+        rider_source, rider_controller, rider_tokens = dies_rider
+        for token_id in rider_tokens:
+            create_token(state, token_id, rider_controller, 1, source=rider_source)
 
     if to_zone is Zone.BATTLEFIELD:
         _enter_battlefield(
@@ -997,6 +1029,91 @@ def _graveyard_replacement(state: GameState, obj: GameObject, card: CardDef) -> 
             continue
         return Zone(str(static.get("destination", "exile")))
     return None
+
+
+#: What a replaced death still owes once the card has moved: ``(source oid, the
+#: replacement's controller, token ids to create)``.
+_DiesRider = tuple[int, int, tuple[str, ...]]
+
+
+def _dies_replacement(
+    state: GameState, obj: GameObject, card: CardDef
+) -> tuple[Zone, _DiesRider] | None:
+    """Where a dying permanent goes instead, and what its replacement creates -- 614.
+
+    "If a nontoken creature an opponent controls would die, instead exile that
+    card and create a 2/2 black Zombie creature token." -- Kalitas, Traitor of
+    Ghet. Asked by `move_object` about a battlefield-to-graveyard move only,
+    while the permanent is still on the battlefield, so `affects` reads it as it
+    stands -- its controller, `is_token`, its type -- with `_matches`, the
+    filter language every static speaks.
+
+    **The affected player's own replacements come first** (616.1). A creature
+    under `dies_to` or `leaves_to`, or one a `replace_graveyard` would also
+    exile, belongs to a player who would apply that one and leave nothing dying
+    for Kalitas to make a Zombie from, so this does not apply to it. That is the
+    choice the engine makes for them without asking, as it does for the
+    commander replacement.
+
+    A source that left the battlefield in this same simultaneous event still
+    applies (`GameState.leaving_dies_replacers`): Kalitas dying beside an
+    opponent's creatures in one wrath still exiles them. One static applies per
+    death -- the event is no longer a death once one has (614.5) -- and the
+    first in battlefield order is the one taken.
+    """
+    if obj.dies_to or obj.leaves_to:
+        return None
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
+    from .characteristics import _battlefield_statics, _matches
+
+    candidates = [
+        (source_obj, static)
+        for source_obj, static in _battlefield_statics(state)
+        if static.get("effect") == "replace_dies"
+    ]
+    candidates.extend(
+        (source_obj, static)
+        for batch, source_obj, static in state.leaving_dies_replacers
+        if batch == state.event_batch
+    )
+    if not candidates:
+        return None
+    if _graveyard_replacement(state, obj, card) is not None:
+        return None
+    for source_obj, static in candidates:
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        tokens = tuple(str(token_id) for token_id in static.get("and_create", ()))
+        rider = (source_obj.oid, source_obj.controller, tokens)
+        return Zone(str(static.get("destination", "exile"))), rider
+    return None
+
+
+def _remember_leaving_dies_replacer(state: GameState, obj: GameObject) -> None:
+    """Keep a leaving permanent's `replace_dies` statics for the rest of its event.
+
+    Snapshotted before `reset_permanent_state` hands control back to the owner,
+    because "an opponent" is measured against the controller Kalitas had. Older
+    entries are dropped as the batch moves on, so the list never outgrows one
+    simultaneous event.
+    """
+    from .characteristics import _static_active, abilities_of
+
+    statics = [
+        ability.static
+        for ability in abilities_of(state, obj.oid)
+        if ability.is_static
+        and ability.static
+        and ability.static.get("effect") == "replace_dies"
+        and Zone.BATTLEFIELD in ability.active_zones
+        and _static_active(state, obj, ability.static)
+    ]
+    batch = state.event_batch
+    kept = [entry for entry in state.leaving_dies_replacers if entry[0] == batch]
+    if statics:
+        snapshot = replace(obj)
+        kept.extend((batch, snapshot, static) for static in statics)
+    state.leaving_dies_replacers[:] = kept
 
 
 #: One replacement on the counters an arriving permanent is given, as

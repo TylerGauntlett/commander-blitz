@@ -205,4 +205,14 @@ describe("the endpoints", () => {
     ]);
     expect(sent[0].body).toEqual({ url: "https://moxfield.com/decks/x", dry_run: true });
   });
+
+  it("the shelf: coming-soon precons and a star", async () => {
+    await api.upcomingPrecons();
+    await api.starDeck("mox_x", true);
+    expect(sent.map((s) => `${s.method} ${s.url}`)).toEqual([
+      "GET /api/precons/upcoming",
+      "POST /api/decks/mox_x/star",
+    ]);
+    expect(sent[1].body).toEqual({ starred: true });
+  });
 });

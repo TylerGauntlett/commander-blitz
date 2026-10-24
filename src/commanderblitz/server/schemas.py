@@ -130,6 +130,42 @@ class StateResponse(BaseModel):
     human_seats: list[int] = Field(default_factory=list)
 
 
+class StarDeckRequest(BaseModel):
+    """Pin an imported deck to the top of **Yours**, or unpin it."""
+
+    starred: bool
+
+
+class ReleaseDTO(BaseModel):
+    """The product a precon is.  See ``ReleaseModel``."""
+
+    set_code: str
+    set_name: str
+    date: str
+
+
+class ShellCommanderDTO(BaseModel):
+    """A coming-soon precon's commander: a name, and art by its printing."""
+
+    name: str
+    art_url: str | None = None
+
+
+class UpcomingPreconDTO(BaseModel):
+    """A precon in the manifest's window that does not ship yet (ADR 0024).
+
+    The shelf draws it as a "coming soon" shell in its release group: not a
+    deck, so nothing about it can be picked or played.
+    """
+
+    id: str
+    product: str
+    set_code: str
+    set_name: str
+    date: str
+    commanders: list[ShellCommanderDTO] = Field(default_factory=list)
+
+
 class DeckSummary(BaseModel):
     id: str
     name: str
@@ -138,8 +174,8 @@ class DeckSummary(BaseModel):
     color_identity: list[str]
     card_count: int
     notes: str = ""
-    #: "precon" or "moxfield".  Lets a deck tile carry its own badge without the
-    #: client fetching anything else.
+    #: "precon", "favorite" or "moxfield" (ADR 0024).  Lets a deck tile carry
+    #: its own badge, and the shelf its segments, without fetching anything else.
     source: str = "precon"
     #: The Moxfield public id an import came from, case preserved; ``""`` for a
     #: precon.  The desktop sends these to the hosted server so a deck imported
@@ -152,6 +188,13 @@ class DeckSummary(BaseModel):
     #: Editorial, authored per deck.  Empty for an imported deck, and the client
     #: draws that state rather than inventing a strategy paragraph.
     tags: list[str] = Field(default_factory=list)
+    #: The ``ARCHETYPES`` key a deck file names, for the shelf's filter; ``""``
+    #: when it names none.
+    archetype: str = ""
+    #: The product a precon is, which the shelf groups by; ``None`` otherwise.
+    release: ReleaseDTO | None = None
+    #: The player's star on their own import.
+    starred: bool = False
     #: ``False`` when this machine is still missing illustrations the deck can
     #: have, so it would play with blank plates offline (ADR 0022).  ``None``
     #: means nobody checked, which is every deck the hosted server lists.

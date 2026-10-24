@@ -83,6 +83,12 @@ def _active_player_statics(
             # (716.2b). Asked here because this walk reads the printed face.
             if not ability.present_at(obj.class_level):
                 continue
+            if Zone.BATTLEFIELD not in ability.active_zones:
+                # The command-zone walk below refuses a battlefield static on a
+                # commander waiting there; this is the same refusal the other
+                # way. Gravecrawler's graveyard-only permission is printed on a
+                # creature, and on the battlefield it is not the card's to use.
+                continue
             if not _static_active(state, obj, static):
                 continue
             yield obj, static
@@ -1722,6 +1728,42 @@ def graveyard_cast_permissions(
         if source is not None:
             out.append((source, grant.static))
     return out
+
+
+def own_graveyard_cast_permission(state: GameState, pid: int, oid: int) -> bool:
+    """ "You may cast this card from your graveyard as long as you control a Zombie."
+
+    Gravecrawler. A `cast_from_graveyard` static with ``active_zones:
+    ["graveyard"]``: the permission is printed on the card being cast and works
+    only while that card sits in its owner's graveyard, so it is read off the
+    card itself rather than gathered from the battlefield with the Edgar-shaped
+    permissions in `graveyard_cast_permissions`.
+
+    Not in that list, for two reasons. It covers exactly one card -- the one
+    carrying it -- so it has no `affects_spells` for `graveyard_cast_allows` to
+    match; and it has no per-turn count to bill, because each use moves the card
+    out of the graveyard and the permission with it.
+
+    The ``condition`` is asked here, which is when legality offers the cast:
+    601.2a/601.3 need the permission to hold as the cast *begins*, and once the
+    card is on the stack nothing re-asks it. "You" is the card's owner, which is
+    its controller in a graveyard -- `reset_permanent_state` hands control back
+    on the way out of the battlefield.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.zone is not Zone.GRAVEYARD or obj.owner != pid:
+        return False
+    for ability in state.card_of(obj).abilities:
+        static = ability.static
+        if not ability.is_static or not static:
+            continue
+        if static.get("effect") != "cast_from_graveyard":
+            continue
+        if Zone.GRAVEYARD not in ability.active_zones:
+            continue
+        if _static_active(state, obj, static):
+            return True
+    return False
 
 
 def graveyard_cast_allows(

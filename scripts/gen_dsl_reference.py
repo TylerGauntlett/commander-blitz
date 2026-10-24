@@ -56,9 +56,9 @@ from commanderblitz.cards.loader.vocabulary import (
     MANA_RIDER_OPS,
     PLAYER_WIDE_STATIC_EFFECTS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_EFFECTS,
-    STATIC_FILTER_KEYS,
     STATIC_VALUE_KEYS,
 )
 from commanderblitz.cards.schema import CostModel
@@ -485,6 +485,8 @@ SELECTORS: dict[str, Entry] = {
 
 #: Keys a static's `affects` filter answers that the effect-side selector does not.
 STATIC_FILTER_EXTRAS: dict[str, Entry] = {
+    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` only.",
+               "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
     "paired": ("Is paired (soulbond).", "Soulbond — a relationship that is not attachment"),
     "paired_with_source": ("Paired with the static's own source.",
@@ -697,7 +699,8 @@ STATICS: dict[str, Entry] = {
                             '"Can\'t cause their controller to search their library"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
-    "cast_from_graveyard": ("The player may cast matching spells from their graveyard.",
+    "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "
+                            "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast matching spells from the top of their library.",
                               None),
@@ -742,6 +745,8 @@ STATICS: dict[str, Entry] = {
                          "Counters replaced on the way in"),
     "replace_damage": ("Damage dealt by or to matching permanents is multiplied or redirected.",
                        "Damage multiplied on the way out"),
+    "replace_dies": ("If a matching permanent would die, exile it instead, optionally creating tokens.",
+                     '"If a nontoken creature an opponent controls would die, instead exile that card"'),
     "replace_draw": ("If the player would draw a card, draw more instead.",
                      '"If you would draw a card, draw two cards instead"'),
     "replace_empty_draw": ("If the player would draw from an empty library, something else happens.",
@@ -817,7 +822,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "remove_counters_from_among": ("Remove N counters of any kinds from among other permanents.",
                                    "`remove_counters_from_among` — counters of any kind, off other permanents"),
     "return_to_hand": ("Return a matching permanent to hand.", None),
-    "sacrifice": ("Sacrifice a matching permanent.", None),
+    "sacrifice": ("Sacrifice a matching permanent; `as` names it for the effects.",
+                  "Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed"),
     "tap": ("{T}: tap the source.", None),
     "tap_permanents": ("Tap N other permanents, or `total_power` of them (crew).",
                        "Crew — a tap cost measured in power"),
@@ -1009,7 +1015,9 @@ def families() -> list[Family]:
     listeners = _event_listeners()
 
     def selector_or_static(name: str) -> Entry | None:
-        return SELECTORS.get(name) or STATIC_FILTER_EXTRAS.get(name)
+        # The static entry first: `any_of` is in both languages and means a
+        # different branch rule in each.
+        return STATIC_FILTER_EXTRAS.get(name) or SELECTORS.get(name)
 
     def condition_or_static(name: str) -> Entry | None:
         return CONDITIONS.get(name) or STATIC_CONDITION_EXTRAS.get(name)
@@ -1143,7 +1151,8 @@ def families() -> list[Family]:
         ),
         # ---- extra families ------------------------------------------------
         Family(
-            "Static filter keys", H_STATICS, tuple(sorted(STATIC_FILTER_KEYS)), selector_or_static,
+            "Static filter keys", H_STATICS, tuple(sorted(STATIC_AFFECTS_FILTER_KEYS)),
+            selector_or_static,
             "The subset of the selector language a static's `affects` may use -- printed "
             "characteristics only, plus three relations to the static's own source.",
         ),

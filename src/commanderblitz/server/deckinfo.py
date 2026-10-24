@@ -19,7 +19,7 @@ from commanderblitz.cards.importer import coverage_path
 from commanderblitz.cards.registry import DeckList, GameData
 
 from .art import ArtStore
-from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, SignatureCardDTO
+from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, ReleaseDTO, SignatureCardDTO
 
 #: Mana values 1..6 then "7 or more".  A 0-drop is folded into the first bucket:
 #: it is a real card the deck can cast on turn one, and a column of its own for
@@ -74,6 +74,9 @@ def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
         playable=deck.total_cards() - simplified,
         simplified=simplified,
         tags=list(deck.tags),
+        archetype=deck.archetype,
+        release=None if deck.release is None else ReleaseDTO(**deck.release),
+        starred=deck.starred,
         complete=deck.complete,
     )
 

@@ -241,14 +241,15 @@ def token_references(card: CardDef) -> set[str]:
     for ability in card.abilities:
         static = ability.static or {}
         out.update(str(token_id) for token_id in static.get("create_instead", ()))
+        out.update(str(token_id) for token_id in static.get("and_create", ()))
     return out
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:
     """Every ``create_token`` must name a card id that exists and is a token.
 
-    ``create_instead`` on a `replace_token_creation` static is checked by the
-    same rule and in the same place: it names token ids that
+    ``create_instead`` on a `replace_token_creation` static, and ``and_create``
+    on a `replace_dies` one, are checked by the same rule and in the same place: it names token ids that
     `primitives.create_token` will put onto the battlefield, so an id that is
     missing or is a real card fails identically -- and it must fail *here*
     rather than at the moment somebody plays a Treasure into a Divine
@@ -277,6 +278,8 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
             static = ability.static or {}
             for token_id in static.get("create_instead", ()):
                 check(card, str(token_id), "create_instead")
+            for token_id in static.get("and_create", ()):
+                check(card, str(token_id), "and_create")
 
 
 def _walk_effects(card: CardDef):

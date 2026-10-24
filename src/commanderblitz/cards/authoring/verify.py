@@ -175,17 +175,35 @@ OWN_GRAVEYARD_ROLES = ("small_creature", "flier")
 BASIC_LANDS = ("forest", "island", "swamp", "mountain", "plains")
 
 
-def _props(registry: CardRegistry, roles: tuple[str, ...]) -> list[str]:
+def _props(
+    registry: CardRegistry, roles: tuple[str, ...], *, exclude: str | None = None
+) -> list[str]:
     """Concrete card ids for a list of roles, skipping any the pool cannot fill.
 
     Sorted before picking so the sandbox is identical run to run -- an unstable
     board makes a verdict unreproducible, which is the one thing a gate must
     never be.
+
+    ``exclude`` is a card under test that would *act* as its own prop: one
+    that sorts first for its role faces a copy of itself, and a non-mana
+    ability payable off the opponent's Forest and Island stops the drive at
+    their priority window -- the Bident of Thassa trap `legendary_creature`
+    records, with the card as its own prop. Aether Spellbomb, ahead of
+    `arcane_signet` for "artifact", was the measured case. A quiet card stays
+    eligible, because moving the prop moves every verdict written against it:
+    Arcane Signet is its own artifact prop, and its next neighbour is not quiet.
     """
     out: list[str] = []
     for role in roles:
         match = _ROLES[role]
-        pick = next((c.id for c in sorted(registry, key=lambda c: c.id) if match(c)), None)
+        pick = next(
+            (
+                c.id
+                for c in sorted(registry, key=lambda c: c.id)
+                if match(c) and c.id != exclude
+            ),
+            None,
+        )
         if pick is not None:
             out.append(pick)
     return out
@@ -336,7 +354,18 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     under_test = registry.get(card_id) if card_id in registry else None
     builder.battlefield(0, MANA_BASE)
     builder.battlefield(0, _own_board(registry, under_test))
-    builder.battlefield(1, [*_props(registry, OPPONENT_BOARD_ROLES), "forest", "island"])
+    acts = under_test is not None and any(
+        (a.is_activated and not a.is_mana_ability) or a.is_triggered
+        for a in under_test.abilities
+    )
+    builder.battlefield(
+        1,
+        [
+            *_props(registry, OPPONENT_BOARD_ROLES, exclude=card_id if acts else None),
+            "forest",
+            "island",
+        ],
+    )
     builder.graveyard(0, _props(registry, OWN_GRAVEYARD_ROLES))
     # Forty cards, and the **second** one is deliberately not a land. The pile
     # used to be forty basic lands, which made Cultivator Colossus -- "put a

@@ -2863,6 +2863,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "exert": true,                                  // Arena of Glory: it won't untap next untap step
   "pay_life": 3,
   "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
+  "sacrifice":      { "types": ["Creature"], "exclude_self": true,
+                      "as": "sacrificed" },      // Gisa: names *the* sacrificed creature
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
   "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
   "tap_permanents": { "types": ["Creature"], "total_power": 3 },  // crew 3
@@ -3202,6 +3204,37 @@ creature with negative power stations nothing rather than removing counters.
 
 Not `choose_permanents` + the `tap` op + `add_counters`: that pays on resolution,
 so the ability could be activated with nothing to tap.
+
+### Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed
+
+```jsonc
+{ "kind": "activated",
+  "text": "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.",
+  "cost": { "mana": "{B}", "tap": true,
+            "sacrifice": { "types": ["Creature"], "exclude_self": true,
+                           "as": "sacrificed" } },
+  "effects": [ { "op": "create_token", "token": "zombie_2_2_b",
+                 "amount": { "power_of": { "binding": "sacrificed" } } } ] }
+```
+
+`as` on the `sacrifice` cost binds the sacrificed permanent under that name, and
+`power_of`/`toughness_of` `{"binding": …}` read it back, as does `{"binding": …}`
+as a selector. It is the sacrifice twin of Station's `as`, and what it holds
+differs for a rules reason: the creature has left the battlefield by the time
+the cost is paid, so X is its last-known information (608.2h) and nothing cast
+in response can change it. The binding is a `zones.snapshot` taken after the
+choice and before the move — the shape the `sacrifice` op's `snapshot` key
+writes — so counters, anthems and pumps on the creature count, and a sacrificed
+token, which no longer exists once it has left, still has a power.
+
+`as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
+above 1, and anywhere but an activated ability's cost: an additional cost to
+cast, a ward or tax price and a mana ability have no effects that receive what
+the cost named, so the name would bind nothing and read 0.
+
+Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
+so the ability could be activated with no other creature and responded to
+before anything had died.
 
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 
@@ -4317,6 +4350,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`damage_life_floor`](card-dsl-cookbook.md#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) ·
+[`replace_dies`](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) ·
 [`replace_life_loss`](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`replace_life_gain`](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) ·
 [`cant_gain_life`](card-dsl-cookbook.md#your-opponents-cant-gain-life) ·
@@ -4371,6 +4405,32 @@ way, and this is the same spelling rather than a second dialect.
 
 Battlefield only. A counting filter that names a zone other than `battlefield`
 refuses it with the rest of the board-state keys.
+
+#### `any_of` — a union of static filters
+
+```jsonc
+// Death Baron: "Skeletons you control and other Zombies you control get +1/+1 ..."
+"affects": { "types": ["Creature"],
+             "any_of": [ { "subtypes": ["Skeleton"] },
+                         { "subtypes": ["Zombie"], "exclude_self": true } ] }
+```
+
+A permanent is described when **any** branch describes it, and it is described
+once: a Skeleton Zombie gets +1/+1, not +2/+2. Each branch is matched as the
+outer filter with the branch's keys added, so a relation to the source —
+`exclude_self` above — belongs to its branch, and the outer keys (here `types`,
+and the defaulted `controller: "you"`) apply to every branch.
+
+Two statics, one per half, are the near miss, and they pump a creature both
+halves describe twice — every changeling, in a Zombie deck. One static with
+`subtypes: ["Skeleton", "Zombie"]` is the other near miss: it cannot put "other"
+on one half only.
+
+`affects` only (`STATIC_AFFECTS_FILTER_KEYS`); `blockers`, `targeting`,
+`damage_source` and the counting filters do not take it. A branch is held to the
+same keys and checks as the top level, recursively. The loader refuses a union
+of one, an empty branch, and a branch that repeats a key the outer filter names —
+the branch's value would replace the outer one rather than narrow it.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
 of a `cmp` in its condition — is a fourth language, `STATIC_VALUE_KEYS`, and much
