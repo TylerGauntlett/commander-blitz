@@ -904,6 +904,14 @@ def reference() -> dict:
             " `\"exclude_self\": true` to a `spell_cost_reduction`'s"
             " `affects_spells`, which matters exactly here: a commander is cast"
             " out of the zone its own eminence static is read from.",
+            "\"You may cast this card from your graveyard [as long as ...]\" --"
+            " the card's own permission, at its printed price -- is a"
+            " `cast_from_graveyard` static with `\"active_zones\":"
+            " [\"graveyard\"]`, `\"affects_player\": \"you\"` and the \"as long"
+            " as\" as its `condition`; no `affects_spells` or `max_per_turn`,"
+            " since it frees only the card carrying it. Permanent cards only."
+            " It is not `graveyard_cost`, which is an alternative price with no"
+            " condition, offered always.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"
             " with `attached_to`, a selector naming the host -- never"
             " `create_token` then `attach`, which makes the Role even when the"

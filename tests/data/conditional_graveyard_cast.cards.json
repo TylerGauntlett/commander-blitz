@@ -1,0 +1,61 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_conditional_graveyard_cast.py. t_gravecrawler carries its own graveyard permission behind a Zombie condition; t_crypt_keeper is an Edgar-shaped creature permission, kept to show the card's own permission is the one spent when both hold.",
+  "cards": [
+    {
+      "id": "t_gravecrawler",
+      "name": "Test Gravecrawler",
+      "oracle_text": "You may cast this card from your graveyard as long as you control a Zombie.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 2,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast this card from your graveyard as long as you control a Zombie.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "active_zones": ["graveyard"],
+          "condition": {"exists": {"subtypes": ["Zombie"], "controller": "you"}}
+        }
+      ]
+    },
+    {
+      "id": "t_zombie",
+      "name": "Test Zombie",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    },
+    {
+      "id": "t_crypt_keeper",
+      "name": "Test Crypt Keeper",
+      "oracle_text": "Once during each of your turns, you may cast a creature spell from your graveyard.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Once during each of your turns, you may cast a creature spell from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Creature"]},
+          "static_max_per_turn": 1
+        }
+      ]
+    }
+  ]
+}

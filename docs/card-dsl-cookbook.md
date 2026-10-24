@@ -4109,6 +4109,35 @@ resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
 
+**A card's own permission at its printed price** is not a graveyard cost. It is
+a `cast_from_graveyard` static that works from the graveyard:
+
+```jsonc
+// Gravecrawler -- "You may cast this card from your graveyard as long as you
+//  control a Zombie."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "active_zones": ["graveyard"],
+  "condition": { "exists": { "subtypes": ["Zombie"], "controller": "you" } } }
+```
+
+`player_statics.own_graveyard_cast_permission` reads it off the card while the
+card sits in its owner's graveyard. Legality asks the `condition` each time it
+offers the cast, which is when 601.2a/601.3 need the permission to hold, so the
+line goes the moment the last Zombie leaves. The `condition` is optional, which
+is the unconditional form. The card is cast for its mana cost and goes where it
+normally would. When an Edgar-shaped permission also covers the card, the card's
+own permission is the one used, so the other permission's use for the turn is
+not spent.
+
+The loader refuses a second zone in `active_zones`, any `affects_player` other
+than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
+`enters_tapped` and `arrived_this_turn_from`. The permission frees only the card
+carrying it, and each use takes that card out of the graveyard, so no reader
+looks at those keys. It is refused on an instant or sorcery, which would be
+exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
+with the printed mana, which has no `condition`: the card would be castable from
+the graveyard with no Zombie at all.
+
 #### An *alternative* cost that is not mana
 
 ```jsonc

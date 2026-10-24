@@ -4801,6 +4801,10 @@
     },
     "zone": "battlefield"
   },
+  "gravecrawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "graven_cairns": {
     "zone": "battlefield"
   },

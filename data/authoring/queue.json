@@ -116552,12 +116552,12 @@
     },
     "Gravecrawler": {
       "edhrec_rank": 683,
-      "gate": "template",
+      "gate": null,
       "name": "Gravecrawler",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "08ef7130-5051-4e2c-b473-2dae3176078e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravedig": {

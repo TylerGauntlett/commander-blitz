@@ -699,7 +699,8 @@ STATICS: dict[str, Entry] = {
                             '"Can\'t cause their controller to search their library"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
-    "cast_from_graveyard": ("The player may cast matching spells from their graveyard.",
+    "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "
+                            "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast matching spells from the top of their library.",
                               None),

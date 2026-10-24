@@ -39,6 +39,7 @@ from commanderblitz.engine.effects.values import (
     validate_value,
 )
 from commanderblitz.engine.enums import (
+    PERMANENT_TYPES,
     AbilityKind,
     CardType,
     Step,
@@ -1510,6 +1511,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"'graveyard_cost', so it could never be true"
         )
 
+    # Gravecrawler's own graveyard permission is cast at the printed price and
+    # the card goes wherever it normally would. For a permanent that is the
+    # battlefield. An instant or sorcery would be marked cast-from-a-graveyard
+    # and exiled as it resolves (`graveyard_cast_exiles`), which is flashback's
+    # rider and not this permission's -- so the line is refused rather than
+    # loaded as a once-only card.
+    owns_graveyard_permission = any(
+        ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
+        for ability in model.abilities
+    )
+    if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
+        raise DslError(
+            f"{where}: a card's own permission to cast itself from the graveyard "
+            f"is supported on permanent cards only -- a nonpermanent cast that way "
+            f"would be exiled as it resolves, and the printed card is not"
+        )
+
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
 
@@ -2878,7 +2896,43 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
             f"the permission without its price is a different card"
         )
-    if model.effect == "cast_from_graveyard":
+    if model.effect == "cast_from_graveyard" and "graveyard" in model.active_zones:
+        # "You may cast **this card** from your graveyard as long as you control
+        # a Zombie" -- Gravecrawler. The card's own permission, read off it by
+        # `player_statics.own_graveyard_cast_permission` while it sits in its
+        # owner's graveyard. It covers the card carrying it and nothing else,
+        # so a filter naming other spells would be a promise no reader keeps;
+        # and it has nothing to meter, because each use takes the card -- and
+        # the permission -- out of the graveyard.
+        if list(model.active_zones) != ["graveyard"]:
+            raise DslError(
+                f"{where}: a cast_from_graveyard permission printed on the card it "
+                f"frees is active in the graveyard alone, not in {model.active_zones}"
+            )
+        if model.affects_player != "you":
+            raise DslError(
+                f"{where}: a card's own graveyard permission is its owner's -- "
+                f"'affects_player' must be 'you'"
+            )
+        stray = [
+            key
+            for key, present in (
+                ("affects_spells", model.affects_spells is not None),
+                ("affects", model.affects is not None),
+                ("max_per_turn", model.static_max_per_turn is not None),
+                ("grants_flashback", model.grants_flashback),
+                ("enters_tapped", model.enters_tapped),
+                ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
+            )
+            if present
+        ]
+        if stray:
+            raise DslError(
+                f"{where}: a cast_from_graveyard static with active_zones "
+                f"['graveyard'] is the card's own permission to cast itself; "
+                f"nothing reads {stray} on it"
+            )
+    elif model.effect == "cast_from_graveyard":
         # Both halves required, for `spell_cost_reduction`'s reason: a
         # permission that named no card type would let every spell out of the
         # graveyard, and one with no `max_per_turn` would be an unbounded engine

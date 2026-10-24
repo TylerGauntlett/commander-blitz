@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**70 cards** blocked by **79** capabilities.
+**69 cards** blocked by **78** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [colorless-filter](#colorless-filter) | 1 | 893 | selector |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
-| [conditional-graveyard-cast](#conditional-graveyard-cast) | 1 | 683 | cost |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
@@ -374,20 +373,6 @@ Blocks **1** card.
   - Whenever one or more Dragons you control deal combat damage to an opponent, choose one that hasn't been chosen this turn —
   - • Destroy target artifact that opponent controls.
   - • This creature deals 4 damage to each other opponent.
-
-</details>
-
-## conditional-graveyard-cast
-
-Blocks **1** card.
-
-- **(cost)** a card-level permission to cast this card from its owner's graveyard for its normal mana cost, offered only while a condition holds (here: `exists` a permanent with subtype Zombie that you control), with the card going wherever it normally would afterwards (not exiled) -- i.e. a `condition` on `graveyard_cost` (or a graveyard-zone self-permission static), the graveyard analogue of `alternative_cost`'s condition
-  <br>Why the existing vocabulary won't do: `graveyard_cost` is a strict CostModel with no `condition` field, so it would make the card castable from the graveyard unconditionally (a strictly better card). The `cast_from_graveyard` static does accept a condition, but `_active_player_statics` only walks the battlefield and command zone, so a static on the card while it sits in the graveyard is never read; and `active_zones: ["graveyard"]` has no reader for that effect. `grant_graveyard_cast` is a one-shot op with no source to fire it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gravecrawler** (rank 683) — `gravecrawler`
-  - You may cast this card from your graveyard as long as you control a Zombie.
 
 </details>
 

@@ -51976,6 +51976,54 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard as long as you control a Zombie."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gravecrawler",
+      "mana_cost": "{B}",
+      "name": "Gravecrawler",
+      "oracle_text": "This creature can't block.\nYou may cast this card from your graveyard as long as you control a Zombie.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

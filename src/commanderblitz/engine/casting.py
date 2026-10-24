@@ -30,6 +30,7 @@ from .player_statics import (
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
     library_top_cast_permission,
+    own_graveyard_cast_permission,
     player_cant_cast_spells,
     player_casts_as_though_flash,
     player_casts_only_at_sorcery_speed,
@@ -250,7 +251,15 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # unlike flashback and retrace it is not a property of the card being
         # cast and legality has to ask the board. Offered at the **printed**
         # price, which is what separates it from flashback's alternative cost.
-        if _graveyard_cast_permission(state, pid, card, oid) is not None:
+        #
+        # Gravecrawler's "you may cast this card from your graveyard as long as
+        # you control a Zombie" is the same printed-price line, granted by the
+        # card itself rather than a permanent -- so it is one line offered when
+        # either permission holds, not two identical ones.
+        if (
+            _graveyard_cast_permission(state, pid, card, oid) is not None
+            or own_graveyard_cast_permission(state, pid, oid)
+        ):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))

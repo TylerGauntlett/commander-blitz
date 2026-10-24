@@ -58,6 +58,7 @@ from .player import PlayerState
 from .player_statics import (
     cast_lock_min_x,
     graveyard_cast_permissions,
+    own_graveyard_cast_permission,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
     spell_life_tax,
@@ -787,7 +788,16 @@ class Game:
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
-            granting = _graveyard_cast_permission(state, pid, card, oid)
+            # Gravecrawler's own permission, when it holds, is the one used: it
+            # costs nothing to spend, and billing an Edgar for a cast the card
+            # could make by itself would take that turn's use away for nothing.
+            # The card is its own grantor, so the stack item still says the
+            # spell was cast from a graveyard.
+            if own_graveyard_cast_permission(state, pid, oid):
+                permission = oid
+                granting = None
+            else:
+                granting = _graveyard_cast_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
