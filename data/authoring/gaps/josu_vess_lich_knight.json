@@ -1,0 +1,18 @@
+{
+  "card_id": "josu_vess_lich_knight",
+  "name": "Josu Vess, Lich Knight",
+  "oracle_text": "Kicker {5}{B} (You may pay an additional {5}{B} as you cast this spell.)\nMenace\nWhen Josu Vess enters, if it was kicked, create eight 2/2 black Zombie Knight creature tokens with menace.",
+  "blocked_sentences": [
+    "When Josu Vess enters, if it was kicked, create eight 2/2 black Zombie Knight creature tokens with menace."
+  ],
+  "needs": [
+    {
+      "capability": "zombie_knight_token",
+      "kind": "token",
+      "what": "a 2/2 black Zombie Knight creature token with menace (e.g. id zombie_knight_2_2_b_menace)",
+      "why_existing_wont_do": "token_ids has zombie_2_2_b (a Zombie without menace and without the Knight subtype) and pirate_2_2_b_menace (wrong subtype); neither is the printed token. Kicker is the card-level `kicker` key, Menace a keyword, and the trigger is self_enters with a `kicked` condition and create_token amount 8, so the token is the only missing piece"
+    }
+  ],
+  "closest_existing": ["zombie_2_2_b", "pirate_2_2_b_menace"],
+  "confidence": "high"
+}

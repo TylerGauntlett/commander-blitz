@@ -1,0 +1,25 @@
+{
+  "card_id": "hit_the_mother_lode",
+  "name": "Hit the Mother Lode",
+  "oracle_text": "Discover 10. If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference. (To discover 10, exile cards from the top of your library until you exile a nonland card with mana value 10 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+  "blocked_sentences": [
+    "Discover 10.",
+    "If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference."
+  ],
+  "needs": [
+    {
+      "capability": "discover",
+      "kind": "op",
+      "what": "a `discover` op taking N: exile cards from the top of your library until a nonland card with mana value N or less is exiled, then let the player either cast it without paying its mana cost or put it into their hand, and put the rest on the bottom in a random order (701.57); it must bind the discovered card (`as`) so later effects can read it",
+      "why_existing_wont_do": "`cascade` takes `max_mana_value` but only offers cast-or-bottom (no put-into-hand choice), uses a strict 'less than' bound, and binds nothing; `reveal_until` has `selector`, `destination` and `rest_to_bottom` but no free-cast option, no cast-or-hand choice and no `as` binding; `look_at_top` has `cast_free` but looks at a fixed number of cards rather than exiling until a match"
+    },
+    {
+      "capability": "discover",
+      "kind": "value",
+      "what": "reading the discovered card's mana value after it has been cast or moved to hand, so the follow-up can compute `minus(const 10, mana_value_of(binding discovered))` as the number of tapped `treasure_token`s, and do nothing when no card was discovered",
+      "why_existing_wont_do": "`mana_value_of` and `minus` exist but there is no binding to the discovered card for them to read, since no op in reference both performs the discover and records its result"
+    }
+  ],
+  "closest_existing": ["cascade", "reveal_until", "look_at_top"],
+  "confidence": "high"
+}

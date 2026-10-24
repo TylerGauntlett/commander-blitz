@@ -1,0 +1,18 @@
+{
+  "card_id": "fall_from_favor",
+  "name": "Fall from Favor",
+  "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+  "blocked_sentences": [
+    "Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch."
+  ],
+  "needs": [
+    {
+      "capability": "monarch",
+      "kind": "static_effect",
+      "what": "a skip_untap_step static whose hold is lifted per affected permanent when that permanent's controller (the untapping player) is the monarch -- i.e. a static condition `is_monarch` that can name the affected object's controller, read at the untap step",
+      "why_existing_wont_do": "skip_untap_step with affects {attached: true} covers 'doesn't untap during its controller's untap step', but static_condition_keys (all, any, cmp, counters, exists, has_city_s_blessing, is_attached, is_your_turn, not, top_of_library) has no is_monarch, and `untap_held` reads every skip_untap_step static unconditionally; is_monarch exists only in effect/trigger condition_keys. Dropping the 'unless' clause would make it a permanent freeze (a different, harsher card)"
+    }
+  ],
+  "closest_existing": ["skip_untap_step", "is_monarch", "become_monarch"],
+  "confidence": "high"
+}

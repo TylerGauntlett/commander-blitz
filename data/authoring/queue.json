@@ -3162,12 +3162,12 @@
     },
     "Aether Spellbomb": {
       "edhrec_rank": 2768,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Spellbomb",
-      "reason": "no template for: {U}, Sacrifice this artifact: Return target creature to its owner's hand",
+      "reason": "",
       "scryfall_id": "ee539bda-62b4-40fb-95d3-c7d1fc0a7e09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Spike": {
@@ -3352,12 +3352,12 @@
     },
     "Aetherize": {
       "edhrec_rank": 294,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherize",
-      "reason": "no template for: Return all attacking creatures to their owner's hand",
+      "reason": "",
       "scryfall_id": "1e5530fc-0291-4a17-b048-c5d24e6f51d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherjacket": {
@@ -6192,12 +6192,12 @@
     },
     "All Is Dust": {
       "edhrec_rank": 978,
-      "gate": "template",
+      "gate": null,
       "name": "All Is Dust",
-      "reason": "no template for: Each player sacrifices all permanents they control that are one or more colors",
+      "reason": "",
       "scryfall_id": "600518f5-4598-436d-9513-3d32adfc93f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "All Suns' Dawn": {
@@ -6992,12 +6992,12 @@
     },
     "Always Watching": {
       "edhrec_rank": 6472,
-      "gate": "template",
+      "gate": null,
       "name": "Always Watching",
-      "reason": "no template for: Nontoken creatures you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "878667d8-89ee-4eba-bf56-ac05bbba1770",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Amalia Benavides Aguirre": {
@@ -7132,12 +7132,12 @@
     },
     "Ambition's Cost": {
       "edhrec_rank": 3573,
-      "gate": "template",
+      "gate": null,
       "name": "Ambition's Cost",
-      "reason": "no template for: You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "47dc6e81-a694-478c-99b0-d52eb0b695b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ambitious Aetherborn": {
@@ -8502,12 +8502,12 @@
     },
     "Angel of Finality": {
       "edhrec_rank": 4278,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Finality",
-      "reason": "no template for: When this creature enters, exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "baaabd52-3aa9-4e2f-9369-d4db8b405ba8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Flight Alabaster": {
@@ -8912,12 +8912,12 @@
     },
     "Angelic Destiny": {
       "edhrec_rank": 2616,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Destiny",
-      "reason": "no template for: Enchanted creature gets +4/+4, has flying and first strike, and is an Angel in addition to",
+      "reason": "",
       "scryfall_id": "a588b610-86bb-4a18-b54e-a12f7d7d15c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angelic Edict": {
@@ -13702,12 +13702,12 @@
     },
     "Army of the Damned": {
       "edhrec_rank": 1784,
-      "gate": "template",
+      "gate": null,
       "name": "Army of the Damned",
-      "reason": "no template for: Create thirteen tapped 2/2 black Zombie creature tokens",
+      "reason": "",
       "scryfall_id": "b46b0818-cd87-41b4-85d2-c474b995d4c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arna Kennerüd, Skycaptain": {
@@ -15862,12 +15862,12 @@
     },
     "Atsushi, the Blazing Sky": {
       "edhrec_rank": 1400,
-      "gate": "template",
+      "gate": null,
       "name": "Atsushi, the Blazing Sky",
-      "reason": "no template for: When Atsushi dies, choose one —",
+      "reason": "",
       "scryfall_id": "045d1a10-dfc4-4b1a-a9f4-424d7ea0d216",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Attack-in-the-Box": {
@@ -18222,12 +18222,12 @@
     },
     "Ayara, First of Locthwain": {
       "edhrec_rank": 836,
-      "gate": "template",
+      "gate": null,
       "name": "Ayara, First of Locthwain",
-      "reason": "no template for: Whenever Ayara or another black creature you control enters, each opponent loses 1 life an",
+      "reason": "",
       "scryfall_id": "06921700-6094-41e6-9f50-4d0e208d0ab2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ayara, Widow of the Realm // Ayara, Furnace Queen": {
@@ -18882,12 +18882,12 @@
     },
     "Bad Moon": {
       "edhrec_rank": 7348,
-      "gate": "template",
+      "gate": null,
       "name": "Bad Moon",
-      "reason": "no template for: Black creatures get +1/+1",
+      "reason": "",
       "scryfall_id": "4c84a788-89c9-4864-b834-0d9c3b315a70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bad River": {
@@ -25292,12 +25292,12 @@
     },
     "Bite Down": {
       "edhrec_rank": 2770,
-      "gate": "template",
+      "gate": null,
       "name": "Bite Down",
-      "reason": "no template for: Target creature you control deals damage equal to its power to target creature or planeswa",
+      "reason": "",
       "scryfall_id": "f8d70b3b-f6f9-4b3c-ad70-0ce369e812b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bite Down on Crime": {
@@ -25392,12 +25392,12 @@
     },
     "Bitter Reunion": {
       "edhrec_rank": 2846,
-      "gate": "template",
+      "gate": null,
       "name": "Bitter Reunion",
-      "reason": "no template for: When this enchantment enters, you may discard a card. If you do, draw two cards",
+      "reason": "",
       "scryfall_id": "795e33f8-2a9a-493b-8b53-de28a3f58e68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bitter Revelation": {
@@ -28828,7 +28828,7 @@
       "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Bloodline Shaman": {
       "edhrec_rank": 20161,
@@ -31252,12 +31252,12 @@
     },
     "Bontu's Monument": {
       "edhrec_rank": 669,
-      "gate": "template",
+      "gate": null,
       "name": "Bontu's Monument",
-      "reason": "no template for: Black creature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "ba25bdf9-b6bf-4f4f-af37-8bfb84a74c97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bonus Round": {
@@ -33772,12 +33772,12 @@
     },
     "Breath Weapon": {
       "edhrec_rank": 13104,
-      "gate": "template",
+      "gate": null,
       "name": "Breath Weapon",
-      "reason": "no template for: deals 2 damage to each non-Dragon creature",
+      "reason": "",
       "scryfall_id": "0174e40a-0ef5-4439-91e6-3fc39f482520",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breath of Darigaaz": {
@@ -35402,12 +35402,12 @@
     },
     "Broodstar": {
       "edhrec_rank": 9814,
-      "gate": "template",
+      "gate": "playable",
       "name": "Broodstar",
-      "reason": "no template for: Affinity for artifacts",
+      "reason": "broodstar is a permanent but ended in graveyard",
       "scryfall_id": "38d22fa8-e9cf-43a6-9170-38e00b1bed70",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Broodwarden": {
@@ -40002,12 +40002,12 @@
     },
     "Carnage Tyrant": {
       "edhrec_rank": 6646,
-      "gate": "template",
+      "gate": null,
       "name": "Carnage Tyrant",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "f5f20dd5-ff5f-4530-9a69-d6a3eab467f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carnage Wurm": {
@@ -40892,12 +40892,12 @@
     },
     "Castle Locthwain": {
       "edhrec_rank": 776,
-      "gate": "template",
+      "gate": null,
       "name": "Castle Locthwain",
-      "reason": "no template for: {1}{B}{B}, {T}: Draw a card, then you lose life equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "19336e3a-2242-4a30-a563-32f2e4fc18e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Castle Raptors": {
@@ -42312,22 +42312,22 @@
     },
     "Cemetery Reaper": {
       "edhrec_rank": 2151,
-      "gate": "template",
+      "gate": null,
       "name": "Cemetery Reaper",
-      "reason": "no template for: Other Zombie creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "b874f27a-2e10-4331-8f6d-fd3575be0885",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cemetery Recruitment": {
       "edhrec_rank": 11079,
-      "gate": "template",
+      "gate": null,
       "name": "Cemetery Recruitment",
-      "reason": "no template for: Return target creature card from your graveyard to your hand. If it's a Zombie card, draw ",
+      "reason": "",
       "scryfall_id": "34a80873-86d7-44a9-894b-65e8f77dd2ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cemetery Tampering": {
@@ -42962,12 +42962,12 @@
     },
     "Chain Reaction": {
       "edhrec_rank": 704,
-      "gate": "template",
+      "gate": null,
       "name": "Chain Reaction",
-      "reason": "no template for: deals X damage to each creature, where X is the number of creatures on the battlefield",
+      "reason": "",
       "scryfall_id": "6f34d11e-8452-448f-be4f-838e0ace9904",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chain Stasis": {
@@ -43452,12 +43452,12 @@
     },
     "Champion of the Perished": {
       "edhrec_rank": 2758,
-      "gate": "template",
+      "gate": null,
       "name": "Champion of the Perished",
-      "reason": "no template for: Whenever another Zombie you control enters, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "e1c35c4d-7af9-467b-ba09-eef26671641b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion of the Weird": {
@@ -45312,12 +45312,12 @@
     },
     "Chief of the Foundry": {
       "edhrec_rank": 2858,
-      "gate": "template",
+      "gate": null,
       "name": "Chief of the Foundry",
-      "reason": "no template for: Other artifact creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "39e20660-c7f6-4326-928d-cc71cc72a20c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chief of the Scale": {
@@ -47752,12 +47752,12 @@
     },
     "Cleansing Nova": {
       "edhrec_rank": 1262,
-      "gate": "template",
+      "gate": null,
       "name": "Cleansing Nova",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "670e4457-927e-42ed-a36f-28b60c2f7566",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cleansing Ray": {
@@ -50262,12 +50262,12 @@
     },
     "Colossal Majesty": {
       "edhrec_rank": 1314,
-      "gate": "template",
+      "gate": null,
       "name": "Colossal Majesty",
-      "reason": "no template for: At the beginning of your upkeep, if you control a creature with power 4 or greater, draw a",
+      "reason": "",
       "scryfall_id": "db1cadc7-f79e-4cc9-855b-68cb1ef25d5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossal Might": {
@@ -52352,12 +52352,12 @@
     },
     "Consuming Corruption": {
       "edhrec_rank": 2414,
-      "gate": "template",
+      "gate": null,
       "name": "Consuming Corruption",
-      "reason": "no template for: deals X damage to target creature or planeswalker and you gain X life, where X is the numb",
+      "reason": "",
       "scryfall_id": "9068b3a4-9130-42d8-a26b-52010b7daa8b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Consuming Ferocity": {
@@ -54252,12 +54252,12 @@
     },
     "Count on Luck": {
       "edhrec_rank": 4351,
-      "gate": "template",
+      "gate": null,
       "name": "Count on Luck",
-      "reason": "no template for: At the beginning of your upkeep, exile the top card of your library. You may play that car",
+      "reason": "",
       "scryfall_id": "5d2abab5-c4f0-41ec-ae6f-e42721ca2cfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Counterbalance": {
@@ -56752,12 +56752,12 @@
     },
     "Crucible of Fire": {
       "edhrec_rank": 3725,
-      "gate": "template",
+      "gate": null,
       "name": "Crucible of Fire",
-      "reason": "no template for: Dragon creatures you control get +3/+3",
+      "reason": "",
       "scryfall_id": "a4cfcb17-6401-4595-82e6-ac1ab2a9e43b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crucible of Worlds": {
@@ -57472,12 +57472,12 @@
     },
     "Cryptbreaker": {
       "edhrec_rank": 2016,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptbreaker",
-      "reason": "no template for: {1}{B}, {T}, Discard a card: Create a 2/2 black Zombie creature token",
+      "reason": "",
       "scryfall_id": "72cd8a57-1cdc-4090-84e3-f78da661ee39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cryptcaller Chariot": {
@@ -58152,12 +58152,12 @@
     },
     "Cultivator's Caravan": {
       "edhrec_rank": 2873,
-      "gate": "template",
+      "gate": null,
       "name": "Cultivator's Caravan",
-      "reason": "no template for: Crew 3",
+      "reason": "",
       "scryfall_id": "6e6ab4b6-49a8-4c02-a230-74a29f535f8c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cultural Exchange": {
@@ -58472,12 +58472,12 @@
     },
     "Curious Altisaur": {
       "edhrec_rank": 2905,
-      "gate": "template",
+      "gate": null,
       "name": "Curious Altisaur",
-      "reason": "no template for: Whenever a Dinosaur you control deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "83fb87d8-d6f6-4cb0-aca1-49e6fcb181b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curious Cadaver": {
@@ -61512,12 +61512,12 @@
     },
     "Darksteel Juggernaut": {
       "edhrec_rank": 4634,
-      "gate": "template",
+      "gate": null,
       "name": "Darksteel Juggernaut",
-      "reason": "no template for: 's power and toughness are each equal to the number of artifacts you control",
+      "reason": "",
       "scryfall_id": "a0e4cce2-9c30-4ca9-a069-cc86d4ac57e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darksteel Monolith": {
@@ -65552,12 +65552,12 @@
     },
     "Defy Death": {
       "edhrec_rank": 12493,
-      "gate": "template",
+      "gate": null,
       "name": "Defy Death",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield. If it's an Angel, put ",
+      "reason": "",
       "scryfall_id": "500edf50-7d23-453d-baf9-e755939cabdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defy Gravity": {
@@ -67572,12 +67572,12 @@
     },
     "Destroy Evil": {
       "edhrec_rank": 5227,
-      "gate": "template",
+      "gate": null,
       "name": "Destroy Evil",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "af2498a2-3763-408a-9bd2-279034869285",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Destroy the Evidence": {
@@ -69352,12 +69352,12 @@
     },
     "Diregraf Colossus": {
       "edhrec_rank": 2107,
-      "gate": "template",
+      "gate": null,
       "name": "Diregraf Colossus",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it for each Zombie card in your graveyard",
+      "reason": "",
       "scryfall_id": "caaa7dd5-4fc2-40be-94a5-39d7c7187072",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diregraf Escort": {
@@ -73402,12 +73402,12 @@
     },
     "Dragon's Hoard": {
       "edhrec_rank": 1185,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon's Hoard",
-      "reason": "no template for: Whenever a Dragon you control enters, put a gold counter on this artifact",
+      "reason": "",
       "scryfall_id": "e48e23fe-f0ed-4c5a-b90b-30cf096a9d02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragon's Presence": {
@@ -73722,22 +73722,22 @@
     },
     "Dragonlord's Servant": {
       "edhrec_rank": 1336,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonlord's Servant",
-      "reason": "no template for: Dragon spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "37e35f88-a580-4b55-9c11-0b58e2f752d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonmaster Outcast": {
       "edhrec_rank": 1520,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonmaster Outcast",
-      "reason": "no template for: At the beginning of your upkeep, if you control six or more lands, create a 5/5 red Dragon",
+      "reason": "",
       "scryfall_id": "b720f3a8-f38f-4460-86a3-dad541e7add7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonologist": {
@@ -73832,12 +73832,12 @@
     },
     "Dragonspeaker Shaman": {
       "edhrec_rank": 1304,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonspeaker Shaman",
-      "reason": "no template for: Dragon spells you cast cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "d7098bac-9e43-41e7-a891-780fe4232940",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonstalker": {
@@ -73872,12 +73872,12 @@
     },
     "Dragonstorm Globe": {
       "edhrec_rank": 3065,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonstorm Globe",
-      "reason": "no template for: Each Dragon you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "7f50aa6e-ce6a-4479-9725-202926245f2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonwing Glider": {
@@ -74042,12 +74042,12 @@
     },
     "Drakuseth, Maw of Flames": {
       "edhrec_rank": 1101,
-      "gate": "template",
+      "gate": null,
       "name": "Drakuseth, Maw of Flames",
-      "reason": "no template for: Whenever Drakuseth attacks, it deals 4 damage to any target and 3 damage to each of up to ",
+      "reason": "",
       "scryfall_id": "9e9b40f5-3dd0-4607-a78d-b004d57fa4ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dralnu's Crusade": {
@@ -76912,12 +76912,12 @@
     },
     "Dungrove Elder": {
       "edhrec_rank": 11012,
-      "gate": "template",
+      "gate": null,
       "name": "Dungrove Elder",
-      "reason": "no template for: 's power and toughness are each equal to the number of Forests you control",
+      "reason": "",
       "scryfall_id": "5dac6967-e4db-40c1-9556-0a85f5422dd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dunland Crebain": {
@@ -80112,12 +80112,12 @@
     },
     "Elder Gargaroth": {
       "edhrec_rank": 2331,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Gargaroth",
-      "reason": "no template for: Whenever this creature attacks or blocks, choose one —",
+      "reason": "",
       "scryfall_id": "e5729bd1-f480-4a9a-a36c-c36bf4b85a3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elder Land Wurm": {
@@ -80662,12 +80662,12 @@
     },
     "Elemental Bond": {
       "edhrec_rank": 570,
-      "gate": "template",
+      "gate": null,
       "name": "Elemental Bond",
-      "reason": "no template for: Whenever a creature you control with power 3 or greater enters, draw a card",
+      "reason": "",
       "scryfall_id": "da25ea1d-2fa6-42ca-bd06-a2edeb300eb5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elemental Eruption": {
@@ -82852,12 +82852,12 @@
     },
     "Emeria Shepherd": {
       "edhrec_rank": 2105,
-      "gate": "template",
+      "gate": null,
       "name": "Emeria Shepherd",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you may return target nonland permanent car",
+      "reason": "",
       "scryfall_id": "52d1a2a8-9b3e-4dae-84d7-5a3e34228063",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emeria's Call // Emeria, Shattered Skyclave": {
@@ -83742,12 +83742,12 @@
     },
     "Endless Ranks of the Dead": {
       "edhrec_rank": 2428,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Ranks of the Dead",
-      "reason": "no template for: At the beginning of your upkeep, create X 2/2 black Zombie creature tokens, where X is hal",
+      "reason": "",
       "scryfall_id": "d920b00c-d4ed-4d21-abfa-da270a1ae94f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Sands": {
@@ -86632,12 +86632,12 @@
     },
     "Eternal Taskmaster": {
       "edhrec_rank": 16509,
-      "gate": "template",
+      "gate": null,
       "name": "Eternal Taskmaster",
-      "reason": "no template for: Whenever this creature attacks, you may pay {2}{B}. If you do, return target creature card",
+      "reason": "",
       "scryfall_id": "58afc628-2d79-4155-bb27-373fc4c50ba1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eternal Thirst": {
@@ -86872,12 +86872,12 @@
     },
     "Etherium Sculptor": {
       "edhrec_rank": 418,
-      "gate": "template",
+      "gate": null,
       "name": "Etherium Sculptor",
-      "reason": "no template for: Artifact spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "b0556f20-1ea8-4ab5-9a09-dec9959f017b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Etherium Spinner": {
@@ -88092,12 +88092,12 @@
     },
     "Exorcise": {
       "edhrec_rank": 6132,
-      "gate": "template",
+      "gate": null,
       "name": "Exorcise",
-      "reason": "no template for: Exile target artifact, enchantment, or creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "f49006f2-a097-417d-8eb0-b8016ff2e0d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exorcist": {
@@ -97992,12 +97992,12 @@
     },
     "Fleshbag Marauder": {
       "edhrec_rank": 801,
-      "gate": "template",
+      "gate": null,
       "name": "Fleshbag Marauder",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature of their choice",
+      "reason": "",
       "scryfall_id": "ea3ac95f-23ad-4b05-bfbd-5de667c78ddc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fleshformer": {
@@ -101292,12 +101292,12 @@
     },
     "Foundry Inspector": {
       "edhrec_rank": 252,
-      "gate": "template",
+      "gate": null,
       "name": "Foundry Inspector",
-      "reason": "no template for: Artifact spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "adf1a38e-30a8-4883-af5f-7d2c3f98b707",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Foundry Screecher": {
@@ -101322,12 +101322,12 @@
     },
     "Foundry of the Consuls": {
       "edhrec_rank": 9913,
-      "gate": "template",
+      "gate": null,
       "name": "Foundry of the Consuls",
-      "reason": "no template for: {5}, {T}, Sacrifice this land: Create two 1/1 colorless Thopter artifact creature tokens w",
+      "reason": "",
       "scryfall_id": "09d83c1d-6916-48e7-8a0d-b5abadc34b2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fountain Watch": {
@@ -113992,12 +113992,12 @@
     },
     "God-Eternal Bontu": {
       "edhrec_rank": 3578,
-      "gate": "template",
+      "gate": null,
       "name": "God-Eternal Bontu",
-      "reason": "no template for: When enters, sacrifice any number of other permanents, then draw that many cards",
+      "reason": "",
       "scryfall_id": "142b0860-8a82-4830-a4ff-2bbfc102437e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "God-Eternal Kefnet": {
@@ -116532,12 +116532,12 @@
     },
     "Graveborn Muse": {
       "edhrec_rank": 7341,
-      "gate": "template",
+      "gate": null,
       "name": "Graveborn Muse",
-      "reason": "no template for: At the beginning of your upkeep, you draw X cards and you lose X life, where X is the numb",
+      "reason": "",
       "scryfall_id": "ac98f86b-687f-4f70-9046-0d5f8616dbd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravebreaker Lamia": {
@@ -123652,12 +123652,12 @@
     },
     "Haven of the Spirit Dragon": {
       "edhrec_rank": 1140,
-      "gate": "template",
+      "gate": null,
       "name": "Haven of the Spirit Dragon",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a Dragon creature spell",
+      "reason": "",
       "scryfall_id": "f4454c38-a490-4ea7-8525-c695e37b9fc9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Havengul Laboratory // Havengul Mystery": {
@@ -124212,12 +124212,12 @@
     },
     "Headless Rider": {
       "edhrec_rank": 2841,
-      "gate": "template",
+      "gate": null,
       "name": "Headless Rider",
-      "reason": "no template for: Whenever this creature or another nontoken Zombie you control dies, create a 2/2 black Zom",
+      "reason": "",
       "scryfall_id": "17287d60-c2f5-4673-a5ac-b8fc317f75c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Headless Skaab": {
@@ -125162,12 +125162,12 @@
     },
     "Hedron Archive": {
       "edhrec_rank": 532,
-      "gate": "template",
+      "gate": null,
       "name": "Hedron Archive",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "535b9ac6-dba2-4162-86ed-df3e9fad0306",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hedron Blade": {
@@ -125772,12 +125772,12 @@
     },
     "Hellkite Charger": {
       "edhrec_rank": 2130,
-      "gate": "template",
+      "gate": null,
       "name": "Hellkite Charger",
-      "reason": "no template for: Whenever this creature attacks, you may pay {5}{R}{R}. If you do, untap all attacking crea",
+      "reason": "",
       "scryfall_id": "6836c646-83ff-4bf8-96dd-4cbdd6c7e861",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hellkite Courser": {
@@ -126188,7 +126188,7 @@
       "scryfall_id": "18cc6624-d288-4f99-9606-3ce914890530",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Herald of Faith": {
       "edhrec_rank": 17486,
@@ -126292,12 +126292,12 @@
     },
     "Herald of War": {
       "edhrec_rank": 3145,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of War",
-      "reason": "no template for: Whenever this creature attacks, put a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "4d7342ad-8e5a-45c6-a09c-f5d6df2db5f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of the Dreadhorde": {
@@ -131172,12 +131172,12 @@
     },
     "Hulking Raptor": {
       "edhrec_rank": 1935,
-      "gate": "template",
+      "gate": null,
       "name": "Hulking Raptor",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "27b95a76-688c-4bd9-a759-f83f1aa18e2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hulkling, Burgeoning Bruiser": {
@@ -133162,12 +133162,12 @@
     },
     "Ichor Wellspring": {
       "edhrec_rank": 950,
-      "gate": "template",
+      "gate": null,
       "name": "Ichor Wellspring",
-      "reason": "no template for: When this artifact enters or is put into a graveyard from the battlefield, draw a card",
+      "reason": "",
       "scryfall_id": "1a5313e8-b7d1-49c7-81de-4da99ba9733f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ichorclaw Myr": {
@@ -136192,12 +136192,12 @@
     },
     "Infernal Idol": {
       "edhrec_rank": 16583,
-      "gate": "template",
+      "gate": null,
       "name": "Infernal Idol",
-      "reason": "no template for: {1}{B}{B}, {T}, Sacrifice this artifact: You draw two cards and you lose 2 life",
+      "reason": "",
       "scryfall_id": "9d986229-c8d5-462c-bf74-ae94326a5aa0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Infernal Kirin": {
@@ -139372,12 +139372,12 @@
     },
     "Invoke the Divine": {
       "edhrec_rank": 6488,
-      "gate": "template",
+      "gate": null,
       "name": "Invoke the Divine",
-      "reason": "no template for: Destroy target artifact or enchantment. You gain 4 life",
+      "reason": "",
       "scryfall_id": "1a41ebd8-641f-495b-a315-7e0c7df5c36a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Invoke the Firemind": {
@@ -155012,12 +155012,12 @@
     },
     "Launch Mishap": {
       "edhrec_rank": 14110,
-      "gate": "template",
+      "gate": null,
       "name": "Launch Mishap",
-      "reason": "no template for: Counter target creature or planeswalker spell. Create a 1/1 colorless Thopter artifact cre",
+      "reason": "",
       "scryfall_id": "abc561d3-9e52-41fd-8311-60cc9dfffdd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Launch Party": {
@@ -158812,12 +158812,12 @@
     },
     "Liliana's Mastery": {
       "edhrec_rank": 4757,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana's Mastery",
-      "reason": "no template for: Zombies you control get +1/+1",
+      "reason": "",
       "scryfall_id": "e28b5fce-ac73-44ec-be2c-c95d8d3579fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana's Other Contract // Liliana's Undead Minion": {
@@ -161332,12 +161332,12 @@
     },
     "Lord of the Accursed": {
       "edhrec_rank": 1969,
-      "gate": "template",
+      "gate": null,
       "name": "Lord of the Accursed",
-      "reason": "no template for: Other Zombies you control get +1/+1",
+      "reason": "",
       "scryfall_id": "15750fb6-4141-4ad9-937d-e18c76154a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lord of the Forsaken": {

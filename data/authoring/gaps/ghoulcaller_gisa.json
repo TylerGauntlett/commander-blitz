@@ -1,0 +1,18 @@
+{
+  "card_id": "ghoulcaller_gisa",
+  "name": "Ghoulcaller Gisa",
+  "oracle_text": "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power.",
+  "blocked_sentences": [
+    "{B}, {T}, Sacrifice another creature: Create X 2/2 black Zombie creature tokens, where X is the sacrificed creature's power."
+  ],
+  "needs": [
+    {
+      "capability": "sacrifice_cost_binding",
+      "kind": "cost",
+      "what": "an `as` key on the `sacrifice` cost that binds the creature sacrificed to pay it, with its last-known power, so the ability's effects can read it (e.g. create_token amount {\"power_of\": {\"binding\": \"sacrificed\"}} or a power_had-style read off that binding)",
+      "why_existing_wont_do": "Only `tap_permanents` accepts `as` (costs.py pays `sacrifice` via sacrifice_object and binds nothing); `power_had` reads only a trigger's event snapshot; `power_of` needs a live binding; moving the sacrifice into effects as the `sacrifice` op with `snapshot` would pay the cost on resolution and let the ability be activated with no other creature, which the packet notes forbid"
+    }
+  ],
+  "closest_existing": ["tap_permanents.as", "power_had", "sacrifice.snapshot"],
+  "confidence": "high"
+}

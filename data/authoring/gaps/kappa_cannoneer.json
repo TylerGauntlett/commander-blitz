@@ -1,0 +1,18 @@
+{
+  "card_id": "kappa_cannoneer",
+  "name": "Kappa Cannoneer",
+  "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nWard {4}\nWhenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+  "blocked_sentences": [
+    "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)"
+  ],
+  "needs": [
+    {
+      "capability": "improvise",
+      "kind": "cost",
+      "what": "a third value for the card-level pay_generic_with, \"tap_artifacts\": while casting, each untapped artifact you control tapped after mana abilities pays for {1} of the spell's generic cost (702.126), mirroring convoke's tap_creatures but over artifacts and paying generic only, never colored",
+      "why_existing_wont_do": "pay_generic_with is the right card-level key but the schema (cards/schema.py) admits only \"tap_creatures\" (convoke, which taps creatures and can pay colored mana) and \"exile_from_graveyard\" (delve); neither taps artifacts, and cost_reduction would lower the price without tapping anything"
+    }
+  ],
+  "closest_existing": ["pay_generic_with: tap_creatures (convoke)", "pay_generic_with: exile_from_graveyard (delve)"],
+  "confidence": "high"
+}

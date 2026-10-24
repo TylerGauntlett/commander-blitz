@@ -1,0 +1,18 @@
+{
+  "card_id": "arasta_of_the_endless_web",
+  "name": "Arasta of the Endless Web",
+  "oracle_text": "Reach\nWhenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach.",
+  "blocked_sentences": [
+    "Whenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach."
+  ],
+  "needs": [
+    {
+      "capability": "spider_token",
+      "kind": "token",
+      "what": "a 1/2 green Spider creature token with reach (e.g. id spider_1_2_g_reach)",
+      "why_existing_wont_do": "The trigger is expressible (spell_cast with controller opponent and filter any_types [Instant, Sorcery]) and create_token exists, but token_ids has no Spider token at all; the nearest green tokens (insect_1_1_g, plant_0_1_g) differ in type, P/T and lack reach"
+    }
+  ],
+  "closest_existing": ["insect_1_1_g", "plant_0_1_g"],
+  "confidence": "high"
+}
