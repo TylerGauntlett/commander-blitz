@@ -402,29 +402,34 @@ Effort **L, continuous** · Impact **high**, each set is a shelf row a player ex
 #### Today
 
 The manifest, `data/decks/sources.json`, lists every official Commander
-precon inside the window `scripts/sync_precons.py` names as one constant,
-and `official-precons` ships the newest set in it. Every other row is a deck
-the shelf promises and does not have: its list is published, its printings
-are known, and some of its cards are not native, which the import pin
-would show the day the deck file is written.
+precon inside the window `scripts/sync_precons.py` names as one constant.
+Wretched Ranks ships; every other row is a coming-soon shell on the shelf,
+served by `GET /api/precons/upcoming` until its deck file loads. The cards a
+row lacks are `sync_precons.py --missing <id>`, and the newest set's are
+already gap records in `data/authoring/gaps/`, so `docs/unsupported-cards.md`
+ranks the capabilities they wait on. A whole set at a time proved the wrong
+unit: Foundations Commander's other four decks need dozens of capabilities
+between them, while one deck needed five.
 
 #### The change
 
-One batch is one set from the manifest, the newest not yet shipped first.
-The batch drives `/author-cards` (and `/extend-dsl` for a mechanic the DSL
-lacks) until every list in the set is native, then writes each deck file
-with `source: precon`, its `set` and release, an `archetype` and an editorial
-dossier seeded from the product description, and the import pin that holds
-it. A deck gets a strategy module and a page under `docs/cpus/` only where
-its archetype visibly misplays it. A set the window ages out is the script
-reporting a row to retire, and its decks leave the shelf in the same batch.
+One batch is one precon from the manifest: the one fewest capabilities away
+from native, newest first among equals. The batch drives `/author-cards` (and
+one `/extend-dsl` run per capability the deck lacks) until `--missing` is
+empty, then `--write-deck` writes the file with its printings and release, a
+person writes the dossier and picks an `archetype`, and the deck joins
+`PRECONS` in `tests/cards/test_deck_legality.py`, which puts it under the
+import pin and the sampled whole-game test. Its shell disappears by itself. A
+deck gets a strategy module and a page under `docs/cpus/` only where its
+archetype visibly misplays it. A row the window ages out is the script
+reporting a precon to retire, and its deck leaves the shelf in the same batch.
 
 #### Gate
 
-Per batch: the import pin of every deck in the set; the manifest test
-(every row inside the window, every `precon` deck has a row) still green;
-the sampled whole-game test drawing from the new decks; and the shelf's e2e
-catalogue spec with the new release group in it.
+Per batch: `tests/cards/test_precon_imports.py` over the new deck; the
+manifest test (every row inside the window, every `precon` deck has a row)
+and the coming-soon test (`tests/server/test_upcoming_precons.py`) still green;
+and the sampled whole-game test able to draw the new deck.
 
 ### Viewing a deck's list
 
