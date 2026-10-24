@@ -44,6 +44,7 @@ from .schemas import (
     ImportedCardDTO,
     NewGameRequest,
     OptionsRequest,
+    StarDeckRequest,
     StateResponse,
 )
 from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry, StaleActionError
@@ -352,6 +353,30 @@ def get_bundle(request: Request, deck_id: str, library: str | None = _LIBRARY) -
         return DeckBundle(**build_bundle(deck, data.registry, _art(request).images))
     except LookupError:
         raise HTTPException(status_code=404, detail=f"no imported deck {deck_id}") from None
+
+
+@router.post("/decks/{deck_id}/star", response_model=DeckSummary)
+def star_deck(
+    request: Request, deck_id: str, body: StarDeckRequest, library: str | None = _LIBRARY
+) -> DeckSummary:
+    """Pin an imported deck to the top of **Yours**, or unpin it.
+
+    Kept on the deck file rather than in the browser so it survives a reload
+    and a second device on the same library.  Only imports carry one: a precon
+    or a favorite is everyone's, and a star on it would be one player's mark
+    on a shelf they share.
+    """
+    data = _registry(request).data
+    deck = data.decks.get(deck_id)
+    if deck is None:
+        raise HTTPException(status_code=404, detail=f"no deck {deck_id}")
+    if deck.source != "moxfield":
+        raise HTTPException(status_code=400, detail=f"{deck_id} ships with the engine")
+    if not _visible_to(deck, library):
+        raise HTTPException(status_code=403, detail=f"{deck_id} belongs to another library")
+    importer.mark_starred(deck_id, body.starred)
+    request.app.state.reload()
+    return deck_summary(_registry(request).data.decks[deck_id], _registry(request).data)
 
 
 @router.delete("/decks/{deck_id}", status_code=204)

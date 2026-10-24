@@ -324,13 +324,17 @@ def persist(
         images = _read_json(generated_images_path(), {})
         images.update(entries)
 
+        # A re-import of the same list keeps the player's star: it is their
+        # mark on the deck, not something the list says.
+        deck_path = decks_dir() / f"{deck_model.id}.deck.json"
+        previous = _read_json(deck_path, None)
+        if isinstance(previous, dict) and previous.get("starred") is True:
+            deck_model = deck_model.model_copy(update={"starred": True})
+
         _write_atomic(cards_path(), {"cards": [by_id[k] for k in sorted(by_id)]})
         _write_atomic(coverage_path(), coverage)
         _write_atomic(generated_images_path(), images)
-        _write_atomic(
-            decks_dir() / f"{deck_model.id}.deck.json",
-            deck_model.model_dump(exclude_defaults=True),
-        )
+        _write_atomic(deck_path, deck_model.model_dump(exclude_defaults=True))
 
 
 def mark_complete(deck_id: str, complete: bool) -> bool:
@@ -348,6 +352,25 @@ def mark_complete(deck_id: str, complete: bool) -> bool:
         if raw.get("complete") is complete:
             return True
         raw["complete"] = complete
+        _write_atomic(path, raw)
+    return True
+
+
+def mark_starred(deck_id: str, starred: bool) -> bool:
+    """Star or unstar an imported deck, which pins it to the top of **Yours**.
+
+    The one field, under the importer's lock, the way ``mark_complete`` writes
+    its own.  ``False`` when there is no imported deck by that id.
+    """
+    path = decks_dir() / f"{deck_id}.deck.json"
+    with _WRITE_LOCK:
+        raw = _read_json(path, None)
+        if not isinstance(raw, dict):
+            return False
+        if starred:
+            raw["starred"] = True
+        else:
+            raw.pop("starred", None)
         _write_atomic(path, raw)
     return True
 
@@ -398,13 +421,17 @@ def persist_adopted(
 
         if site_cards:
             _write_atomic(site_cards_path(), {"cards": [site_by_id[k] for k in sorted(site_by_id)]})
+        # A re-import of the same list keeps the player's star: it is their
+        # mark on the deck, not something the list says.
+        deck_path = decks_dir() / f"{deck_model.id}.deck.json"
+        previous = _read_json(deck_path, None)
+        if isinstance(previous, dict) and previous.get("starred") is True:
+            deck_model = deck_model.model_copy(update={"starred": True})
+
         _write_atomic(cards_path(), {"cards": [by_id[k] for k in sorted(by_id)]})
         _write_atomic(coverage_path(), coverage)
         _write_atomic(generated_images_path(), images)
-        _write_atomic(
-            decks_dir() / f"{deck_model.id}.deck.json",
-            deck_model.model_dump(exclude_defaults=True),
-        )
+        _write_atomic(deck_path, deck_model.model_dump(exclude_defaults=True))
 
 
 def count_lands(resolved: list[ResolvedCard], registry: CardRegistry) -> tuple[int, int, int]:

@@ -382,3 +382,24 @@ class Control(DefaultStrategy):
         if value > 0 and not is_evasive(state, oid) and blockers_for(state, oid, defender):
             return 0.0
         return value
+
+
+#: Every archetype a deck file may name in ``archetype``, by its ``name``
+#: (ADR 0024).  ``strategy_for`` reaches for one when a deck has no module.
+ARCHETYPES: dict[str, type[DefaultStrategy]] = {
+    cls.name: cls
+    for cls in (
+        Aggro,
+        GoWide,
+        Aristocrats,
+        Voltron,
+        Tribal,
+        Dragons,
+        Landfall,
+        Superfriends,
+        Punisher,
+        Mill,
+        Spellslinger,
+        Control,
+    )
+}

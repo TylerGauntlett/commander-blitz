@@ -9,7 +9,7 @@
     "R",
     "W"
   ],
-  "source": "precon",
+  "source": "favorite",
   "notes": "Moxfield list \"Markov Chains\" (https://moxfield.com/decks/Sr3op2p6G0m0Msv1n_jLZw). Promoted from an import, card for card.",
   "tags": ["Tribal", "Tokens", "Sacrifice", "Combo"],
   "ratings": {"speed": 4, "complexity": 3, "interaction": 3, "resilience": 3, "pilot": 3},

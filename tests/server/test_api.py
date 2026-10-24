@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from commanderblitz.server.app import create_app
-from tests.cards.test_deck_legality import FIXTURES, PRECONS
+from tests.cards.test_deck_legality import FIXTURES, SHIPPED
 
 
 @pytest.fixture(scope="module")
@@ -37,18 +37,18 @@ class TestStaticData:
         assert body["status"] == "ok"
         # The fixture pins this client to `default_registry()`, so this is the
         # shipped set regardless of what anyone has imported locally -- the
-        # precons plus the fixture decks the tests play.
-        assert set(body["decks"]) == PRECONS | FIXTURES
+        # shipped decks plus the fixture decks the tests play.
+        assert set(body["decks"]) == SHIPPED | FIXTURES
 
     def test_deck_list(self, client):
         decks = client.get("/api/decks").json()
-        assert {d["id"] for d in decks} == PRECONS | FIXTURES
+        assert {d["id"] for d in decks} == SHIPPED | FIXTURES
         for deck in decks:
             assert deck["card_count"] == 100
             assert deck["commander_names"]
-            # A precon is hand-written all the way through, so it has nothing
+            # A shipped deck is native all the way through, so it has nothing
             # to admit -- an imported deck is where these are non-zero.
-            assert deck["source"] == "precon"
+            assert deck["source"] in {"precon", "favorite"}
             assert deck["simplified"] == 0
 
     def test_card_lookup(self, client):

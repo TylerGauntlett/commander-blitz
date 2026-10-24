@@ -1497,6 +1497,20 @@ class PrintingModel(BaseModel):
         return value
 
 
+class ReleaseModel(BaseModel):
+    """The Wizards product a precon is, as ``data/decks/sources.json`` names it.
+
+    ``set_name`` is what the shelf groups by and ``date`` is the order: the
+    newest release is the first row (ADR 0024).
+    """
+
+    model_config = Strict
+
+    set_code: str
+    set_name: str
+    date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+
 class DeckModel(BaseModel):
     """One 100-card Commander deck list."""
 
@@ -1512,7 +1526,10 @@ class DeckModel(BaseModel):
     #: Where the list came from.  Defaulted so the two committed precons stay
     #: valid untouched -- the model is ``extra="forbid"``, so a required field
     #: here would have broken every deck file in the repository.
-    source: Literal["precon", "moxfield"] = "precon"
+    #: ``precon`` is a list Wizards sold, inside the window; ``favorite`` is a
+    #: list the maintainer chose to ship; ``moxfield`` is a player's import
+    #: (ADR 0024).
+    source: Literal["precon", "favorite", "moxfield"] = "precon"
     #: The Moxfield public id an import came from, case preserved -- ``id`` is
     #: a lowercased slug of it and cannot be turned back.  What the desktop
     #: build sends the hosted server so a deck imported at home can be imported
@@ -1538,6 +1555,17 @@ class DeckModel(BaseModel):
     ratings: DeckRatingsModel | None = None
     strategy: str = ""
     signature: list[SignatureCardModel] = Field(default_factory=list)
+    #: Which ``ARCHETYPES`` key pilots this deck when it has no strategy module
+    #: of its own (ADR 0024).  A string rather than a ``Literal`` because the
+    #: archetypes live in the AI package, which the card layer never imports;
+    #: ``tests/ai/strategy/test_registry.py`` checks every value resolves.
+    archetype: str = ""
+    #: The product a precon is.  ``None`` for anything else.
+    release: ReleaseModel | None = None
+    #: A player's star on their own import: it pins the deck to the top of
+    #: **Yours**.  Written by ``importer.mark_starred`` and kept across a
+    #: re-import of the same list.
+    starred: bool = False
 
     #: ``card id -> printing``: which illustration this deck's copies use, when
     #: the source list said.  Overrides the catalog's pick **for this deck's
