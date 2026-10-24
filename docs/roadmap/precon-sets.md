@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: each set is a shelf row a player expects and a dated deadline for the card work
-depends_on: [official-precons]
+depends_on: []
 status: proposed
 continuous: true
 ---

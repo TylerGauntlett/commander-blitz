@@ -43,21 +43,20 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [The real precons](#the-real-precons) | L | high | nothing | 4 |
 | [A phone modality](#a-phone-modality) | L | high | nothing | 0 |
 | [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
-| [Every precon set in the window](#every-precon-set-in-the-window) | L, continuous | high | The real precons | 0 |
+| [Every precon set in the window](#every-precon-set-in-the-window) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
-| [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | The real precons | 1 |
+| [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
-| [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | The real precons | 0 |
+| [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
 | [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing | 0 |
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
@@ -71,31 +70,29 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [The real precons](#the-real-precons).
-
 **Ready now, best first:**
 
 1. [A phone modality](#a-phone-modality) — L, high
 2. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-3. [Difficulty](#difficulty) — S, medium
-4. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-5. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-6. [Why a press is refused](#why-a-press-is-refused) — S, medium
-7. [Outcomes as data](#outcomes-as-data) — M, medium
-8. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-9. [Replays and sharing](#replays-and-sharing) — M, medium
-10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-11. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-12. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-13. [Archidekt import](#archidekt-import) — S, low
-14. [Sound](#sound) — S, low
+3. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
+4. [Difficulty](#difficulty) — S, medium
+5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+6. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+7. [Why a press is refused](#why-a-press-is-refused) — S, medium
+8. [Outcomes as data](#outcomes-as-data) — M, medium
+9. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+10. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+11. [Replays and sharing](#replays-and-sharing) — M, medium
+12. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+13. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+14. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+15. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+16. [Archidekt import](#archidekt-import) — S, low
+17. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
-- [Every precon set in the window](#every-precon-set-in-the-window) — [The real precons](#the-real-precons)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
-- [Brackets, derived from the list](#brackets-derived-from-the-list) — [The real precons](#the-real-precons)
-- [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — [The real precons](#the-real-precons)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
 ## Operating the site
@@ -299,105 +296,9 @@ the number this item exists to drive to zero.
 
 ## Decks
 
-### The real precons
-
-Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on nothing · **In progress** · ADR first.
-
-#### Today
-
-The shelf's "Precons" segment holds twelve decks, and all but two
-are lists the maintainer likes, promoted from Moxfield. The word is doing
-work it cannot do: a player who filters to precons expects the decks Wizards
-sells, and a deck somebody built is a different promise. Every shipped deck
-costs a hand-written dossier, a strategy module with a page, a whole-game
-test and its art, and each of those is held by a test that fails without it.
-
-#### The change
-
-**Target.** The shelf ships the official Commander preconstructed decks from
-the last five years, a window the sources manifest names as one constant so
-it is a rolling window and not a list that goes stale, and nothing else under
-that word. The lists the maintainer likes stay shipped,
-under a word that is true of them: **Favorites**.
-
-**Sources.** Official lists are published data, not something to scrape:
-MTGJSON's deck files carry every preconstructed deck with its set, release
-date and the exact printings, and Moxfield mirrors the same lists under its
-own precon section. The manifest, `data/decks/sources.json`, is one row per
-precon with the set, the release date, the product name and the source URL,
-generated from the deck files and filtered to the window, so widening it is
-a change to one constant and a run of the script, and a set ageing out of
-the five years is the script reporting a row to retire. Five years of
-Commander releases is on the order of a hundred decks, which is why the
-data-model changes in the table below come before the first set. Printings
-come with the list, which is what the per-seat `printings` design was built
-for.
-
-**What a shipped deck costs today, and what changes at dozens per year:**
-
-| Requirement now | Held by | For the precon window |
-|---|---|---|
-| Every card native | the import pin test per deck | Unchanged, and it is what orders the card roadmap: each new precon set is a dated deadline for the mechanics it introduces |
-| Tags, ratings, strategy, signature cards | `test_deck_metadata.py` | Keep the dossier editorial, since nothing in a list says a deck is hard to pilot, but seed the tags and the strategy paragraph from the product's own description, with a person's edit as the gate rather than a person's blank page |
-| A CPU strategy module and a page under `docs/cpus/` | `test_registry.py` | A deck file declares an `archetype`, and `strategy_for` falls back deck id, commander, archetype, default. A module and a page are written where the archetype's plan visibly misplays the deck, and the test asks for a module or an archetype |
-| Every precon through a whole four-player game | `test_deck_games.py` | A seeded sample per run, with the full matrix in the arena stage, which is already its own runner |
-| Art for every printing the list chose | eager prefetch on the desktop | The owned art store; the content package carries the window's printings and fetches the rest |
-
-**Favorites.** The site's most frequent player is its maintainer, and the
-twelve are the decks that player wants at the table without pasting a link
-every time. So they stay exactly where they are, in `data/decks/`, native,
-with their strategies, their pages and their import pins, and the only
-change is the word on the tile: `source` grows a `favorite` value beside
-`precon` and `moxfield`, the deck file carries it, and the shelf's segments
-become **Precons**, **Favorites** and **Yours**. The dossier, the ratings and
-the signature cards stay editorial for a favorite, since they are the one
-tier a person has actually written about. Promoting a personal import to a
-favorite is the existing `promote_deck.py` with the source set, which is
-how a thirteenth arrives.
-
-The same word works for a player's own imports: a star on a tile in
-**Yours** that pins the deck to the top of that segment, kept on the server
-beside the import so it survives a reload, which is one field on the
-generated deck file. It is a small thing, and it is the thing the segment
-is for once the imports outnumber the shelf.
-
-**The shelf at dozens.** `DeckCatalog` is a grid with search, colour pips, a
-source filter and a cycling sort. For the window it needs: grouping by the
-set's release name, newest release first, so the newest precons are the
-first row; an archetype filter; and group headers as regions so the grid
-stays walkable with a pad rather than being one long sweep. There is no
-bracket filter: the shelf groups by release, and whatever a bracket becomes
-is the `brackets` item's to decide. The floors of
-[ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) apply to every tile.
-
-**This item's pull request**, as the owner scoped it before delivery: the
-data model (the `favorite` source, the `archetype` fallback, the manifest and
-its script over MTGJSON, the sampled game test), the star in **Yours**, the
-shelf grouped by release, and the newest set in the window driven through
-the card loop until its lists are native and promoted. The decision that
-"precon" means a Wizards product in the rolling window, and that an
-archetype is enough to pilot one, is an ADR. Every older set in the window
-is [precon-sets](precon-sets.md), one set per batch, newest first.
-
-The owner widened this during delivery: the newest set proved to need dozens of
-engine capabilities, so this pull request ships its closest deck, Wretched
-Ranks, and the shelf represents the rest of the window as **coming-soon
-shells** with a grayed-out commander, filled in as each deck becomes native.
-
-#### Gate
-
-The manifest script's window is one constant and a test asserts every row
-in it is inside the window and every deck under `precon` has a row; the
-import pin per deck of the newest set; `test_registry.py` accepting a module
-or an archetype; a server test that the star survives a reload; the shelf's
-story and e2e specs at the handheld floors with the decks grouped by
-release; the favorites segment's story with the twelve in it; and a server test that
-the coming-soon list is the manifest minus what ships, with a story and an e2e
-check that a shell is drawn and is not a control.
-
 ### Every precon set in the window
 
-Effort **L, continuous** · Impact **high**, each set is a shelf row a player expects and a dated deadline for the card work · Depends on [The real precons](#the-real-precons).
+Effort **L, continuous** · Impact **high**, each set is a shelf row a player expects and a dated deadline for the card work · Depends on nothing.
 
 #### Today
 
@@ -756,7 +657,7 @@ resolve the same way as the equivalent Moxfield list.
 
 ### Compressed art, shipped for offline precon play
 
-Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on [The real precons](#the-real-precons).
+Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on nothing.
 
 #### Today
 
@@ -936,7 +837,7 @@ to be trusted.
 
 ### Brackets, derived from the list
 
-Effort **M** · Impact **medium**, a filter and a signal on every tile; the precondition for the queue · Depends on [The real precons](#the-real-precons).
+Effort **M** · Impact **medium**, a filter and a signal on every tile; the precondition for the queue · Depends on nothing.
 
 #### Today
 
