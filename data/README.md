@@ -9,7 +9,7 @@ rather than repeated.
 data/
 ├── cards/            the authored card pool            committed
 │   └── auto/         machine-authored cards            committed
-├── decks/            the shipped precons               committed
+├── decks/            the shipped decks and the precon manifest  committed
 │   └── fixtures/     retired lists kept for tests      committed
 ├── catalog/          the Scryfall-derived index        committed, except bulk/
 ├── art/              owned card art                    committed
@@ -52,12 +52,16 @@ checked when it was accepted. `tests/cards/test_auto_cards.py` re-runs all six
 gates over every card and fails on an expectation whose card is gone. Nothing
 moves from here into `cards/`. Read [cards/auto/README.md](cards/auto/README.md).
 
-## `decks/` — the shipped precons
+## `decks/` — the shipped decks
 
-One `*.deck.json` per precon, named after its commander: identity, editorial
-fields (`tags`, `ratings`, `strategy`, `signature`), optional `substitutions`
-and `printings`, then the list. Every card must be native, which is what
-`scripts/promote_deck.py` enforces when it copies an import in here. Pinned by
+One `*.deck.json` per shipped deck: identity, `source` (`precon` or `favorite`),
+editorial fields (`tags`, `ratings`, `strategy`, `signature`), an optional
+`archetype`, `release` for a precon, optional `substitutions` and `printings`,
+then the list. A favorite is named after its commander; a precon after its set
+and product. Every card must be native, which is what `scripts/promote_deck.py`
+and `scripts/sync_precons.py --write-deck` enforce when they write one here.
+`sources.json` is the precon manifest `sync_precons.py` writes from MTGJSON,
+held by `tests/cards/test_precon_sources.py`. Pinned by
 `tests/cards/test_deck_legality.py`, `tests/cards/test_deck_metadata.py` and a
 `tests/cards/test_<deck>_deck.py` per deck. Owned by
 [docs/decks.md](../docs/decks.md).
