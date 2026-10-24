@@ -1988,6 +1988,55 @@ the enters trigger of the permanent a gift *creature* becomes. It records the
 **seat**, not a bool, because "whom" is the half a later effect needs and a bool
 could not say it.
 
+### A target only the promise declares
+
+"If the gift was promised, return **target** creature card from your graveyard
+to your hand" (Consumed by Greed) is a target the unpromised spell never
+chooses. `gift_promised` on a target spec says which side of the promise
+declares it: `true` only a promised cast, `false` only an unpromised one, absent
+every cast.
+
+```jsonc
+// Into the Flood Maw: one printed target word, two selectors.
+"gift": "a tapped Fish",
+"targets": [
+  { "id": "t1", "kind": "permanent", "gift_promised": false,
+    "selector": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] } },
+  { "id": "t2", "kind": "permanent", "gift_promised": true,
+    "selector": { "zone": "battlefield", "controller": "opponent", "not_types": ["Land"] } }
+],
+"spell_effects": [
+  { "op": "create_token", "token": "fish_1_1_u", "tapped": true, "controller": "gift_recipient" },
+  { "op": "return_to_hand", "objects": { "target": "t1" } },
+  { "op": "return_to_hand", "objects": { "target": "t2" } }
+]
+```
+
+It is legal for kicker's reason: 601.2b announces the promise and 601.2c
+declares the targets after it. The loader splits the specs in two:
+`CardDef.targets` is the unpromised list and `CardDef.gift_targets` the promised
+one, so every cast line that cannot promise reads the right list without knowing
+gift exists. Legality enumerates the promised lines from `gift_targets`, and
+`Game._cast` and `stack._resolve_spell` read the same list through
+`CardDef.targets_for`. An effect naming the target a cast did not declare finds
+an empty bucket and does nothing, so neither effect needs an `if`. The required
+gift-only target follows 601.2c. With no legal choice the promised lines are not
+offered, as a kicked line with no legal kicked target is not, and the plain line
+is untouched. A board with no legal unpromised target still offers the promised
+lines when they have one. A copy keeps the promise (707.10), so its refs are split
+by the same list.
+
+The near misses are both a different card. A spec declared on every cast and
+branched on with `{"gift_promised": true}` needs a creature card in your
+graveyard to be cast at all, and announces a target the printed spell never
+chooses. `optional: true` lets a promised cast skip the target the promise buys.
+
+The loader refuses `gift_promised` on a card with no `gift`, on an ability's
+targets (no cast declares them), on a mode-owned spec, and beside
+`count_if_kicked`. The variable-size ordering rule is checked on each side's
+list, the lists a cast actually stores. A gated spec counts as reading the
+gift, so it satisfies the half-a-gift guard.
+
 ## Delayed triggers — "at the beginning of the next …"
 
 Every other trigger in the engine fires *from* an event that has just happened.

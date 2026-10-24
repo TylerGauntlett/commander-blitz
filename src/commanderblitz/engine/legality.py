@@ -509,7 +509,13 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "mana"
 
     exclude_sid = state.objects[oid].stack_id
-    if not enumerate_target_tuples(state, pid, card.targets, oid, exclude_sid=exclude_sid):
+    # Either side of a gift promise will do: a card whose unpromised target is
+    # missing is still castable promised, when the promise declares another.
+    if not any(
+        enumerate_target_tuples(state, pid, specs, oid, exclude_sid=exclude_sid)
+        for specs in (card.targets, card.gift_targets)
+        if specs is not None
+    ):
         return "targets"
     return None
 

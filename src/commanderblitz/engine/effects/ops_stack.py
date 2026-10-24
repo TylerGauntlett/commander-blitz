@@ -165,6 +165,10 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
         chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
+    if original.gift_to is not None:
+        # The copy keeps the promise (707.10), so it re-chooses among the
+        # promised specs -- the list its stored refs were declared under.
+        specs = card.targets_for(gift_promised=True)
     if not specs:
         return None
     options = enumerate_target_tuples(
@@ -239,6 +243,11 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # original. A copied Baleful Mastery cast for {1}{B} still hands an
         # opponent a card; without this the copy was the rider-free half.
         evoked=original.evoked,
+        # And the gift promise, which is a 601.2b choice like the kicker: a
+        # copy of a promised spell was promised too, and its refs were
+        # declared under the promised target list, so `stack._resolve_spell`
+        # has to split them by that list rather than the unpromised one.
+        gift_to=original.gift_to,
         bindings=dict(original.bindings),
         description=f"{card.name} (copy)",
     )

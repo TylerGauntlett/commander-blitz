@@ -2195,6 +2195,10 @@
     "artist": "John Avon",
     "scryfall_id": "6d808a30-f1b5-484e-a90e-0a9f751ef597"
   },
+  "consumed_by_greed": {
+    "artist": "Mathias Kollros",
+    "scryfall_id": "dc334dac-bd40-44f2-8550-c80f73056ade"
+  },
   "consuming_corruption": {
     "artist": "Andrew Theophilopoulos",
     "scryfall_id": "1d175191-6946-434d-90c8-73412472a543"
@@ -5516,6 +5520,10 @@
   "intelligence_bobblehead": {
     "artist": "Torgeir Fjereide",
     "scryfall_id": "114600bd-4bf5-4eeb-bb9d-25bfb8a54adc"
+  },
+  "into_the_flood_maw": {
+    "artist": "Danny Schwartz",
+    "scryfall_id": "50b9575a-53d9-4df7-b86c-cda021107d3f"
   },
   "into_the_roil": {
     "artist": "Campbell White",

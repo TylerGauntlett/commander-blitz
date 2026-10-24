@@ -276,6 +276,15 @@ class TargetModel(BaseModel):
     #: refused on a triggered ability's targets, which have no cast to have
     #: been kicked.
     count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
+    #: Which side of the **gift promise** declares this target. ``true``: only
+    #: a promised cast does -- "if the gift was promised, return target
+    #: creature card from your graveyard to your hand" (Consumed by Greed).
+    #: ``false``: only an unpromised cast does -- the creature Into the Flood
+    #: Maw bounces "instead" of the nonland permanent its promised cast points
+    #: at. Absent: every cast. Legal because 601.2b announces the promise one
+    #: step before 601.2c declares the targets. Refused on a card with no
+    #: ``gift``, on an ability's targets and on a mode-owned spec.
+    gift_promised: bool | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,

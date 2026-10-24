@@ -24726,6 +24726,77 @@
       "colors": [
         "B"
       ],
+      "gift": "a card",
+      "id": "consumed_by_greed",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Consumed by Greed",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nTarget opponent sacrifices a creature with the greatest power among creatures they control. If the gift was promised, return target creature card from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "gift_recipient"
+        },
+        {
+          "objects": {
+            "chooser": "owner",
+            "controller": {
+              "target": "t1"
+            },
+            "count": 1,
+            "extreme": {
+              "of": "power",
+              "pick": "greatest"
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "objects": {
+            "target": "t2"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        },
+        {
+          "gift_promised": true,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "id": "consuming_corruption",
       "mana_cost": "{B}{B}",
       "name": "Consuming Corruption",
@@ -61384,6 +61455,69 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "gift": "a tapped Fish",
+      "id": "into_the_flood_maw",
+      "mana_cost": "{U}",
+      "name": "Into the Flood Maw",
+      "oracle_text": "Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)\nReturn target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "gift_recipient",
+          "op": "create_token",
+          "tapped": true,
+          "token": "fish_1_1_u"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "objects": {
+            "target": "t2"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "gift_promised": false,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "gift_promised": true,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

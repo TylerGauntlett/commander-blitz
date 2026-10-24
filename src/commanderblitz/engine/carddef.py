@@ -94,6 +94,13 @@ class TargetSpec:
     #: enumeration. Nothing outside that line ever sees it, so an unkicked cast is
     #: byte-for-byte the card it was before.
     count_if_kicked: int | str | Mapping[str, Any] | None = None
+    #: Which side of the gift promise declares this spec: ``True`` only a
+    #: promised cast, ``False`` only an unpromised one, ``None`` both. The
+    #: loader has already split the card's specs into :attr:`CardDef.targets`
+    #: (unpromised) and :attr:`CardDef.gift_targets` (promised) by it, so
+    #: nothing in the engine reads the field itself -- it records the printed
+    #: clause the way `mode` records which bullet owns a spec.
+    gift_promised: bool | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
@@ -1067,6 +1074,16 @@ class CardDef:
     #: has been chosen -- which happens inside the cast, after the action.  So
     #: legality never sees these, and `Game._ask_mode_targets` declares them.
     mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
+    #: The card-level specs a **gift-promised** cast declares, or ``None`` when
+    #: the promise changes nothing about what the spell points at -- every card
+    #: but the few printing "if the gift was promised, … target …".
+    #: :attr:`targets` is then the *unpromised* list, which is what keeps every
+    #: cast line that cannot promise -- flashback, a copy's default, a free cast
+    #: -- correct without knowing gift exists. Read through
+    #: :meth:`targets_for`, by legality's promised lines, `Game._cast` and
+    #: `stack._resolve_spell`, which must agree on the list or the stored refs
+    #: are split into the wrong buckets.
+    gift_targets: tuple[TargetSpec, ...] | None = None
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     replacements: tuple[Mapping[str, Any], ...] = ()
     #: Starting loyalty. Kept as a characteristic as well as compiled into a
@@ -1350,7 +1367,9 @@ class CardDef:
         spec = top_level_mode_spec(self.spell_effects)
         return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
-    def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
+    def specs_for_modes(
+        self, modes: Sequence[int], *, gift_promised: bool = False
+    ) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
 
         Card-level specs first, then one mode's specs after another in
@@ -1361,8 +1380,26 @@ class CardDef:
 
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
+
+        ``gift_promised`` picks the side of the promise the cast was on -- see
+        :meth:`targets_for`.
         """
-        return _specs_for_modes(self.targets, self.mode_targets, modes)
+        return _specs_for_modes(
+            self.targets_for(gift_promised=gift_promised), self.mode_targets, modes
+        )
+
+    def targets_for(self, *, gift_promised: bool) -> tuple[TargetSpec, ...]:
+        """The card-level specs a cast declares, on its side of the gift promise.
+
+        601.2b announces the promise and 601.2c declares the targets after it,
+        so "if the gift was promised, return target creature card from your
+        graveyard" (Consumed by Greed) is a target only the promised cast has.
+        :attr:`targets` unchanged for an unpromised cast and for every card
+        with no gift-gated spec.
+        """
+        if gift_promised and self.gift_targets is not None:
+            return self.gift_targets
+        return self.targets
 
     @property
     def retrace_cost(self) -> Cost:

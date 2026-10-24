@@ -52292,12 +52292,12 @@
     },
     "Consumed by Greed": {
       "edhrec_rank": 6559,
-      "gate": "template",
+      "gate": null,
       "name": "Consumed by Greed",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "e50acc41-3517-42db-b1d3-1bdfd7294d84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Consuming Aberration": {
@@ -138282,12 +138282,12 @@
     },
     "Into the Flood Maw": {
       "edhrec_rank": 716,
-      "gate": "template",
+      "gate": null,
       "name": "Into the Flood Maw",
-      "reason": "no template for: Gift a tapped Fish",
+      "reason": "",
       "scryfall_id": "50b9575a-53d9-4df7-b86c-cda021107d3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Into the Fray": {

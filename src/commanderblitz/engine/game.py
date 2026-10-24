@@ -412,7 +412,10 @@ class Game:
         # legality asked with these same specs. First, because everything
         # below that reads the targets -- discounts, taxes, the stored refs --
         # has to read the real ones.
-        specs = tuple(card.targets)
+        # A promised cast declares the promised list (601.2b, then 601.2c):
+        # legality enumerated this line from it, and `stack._resolve_spell`
+        # splits the stored refs by it.
+        specs = card.targets_for(gift_promised=action.gift_to is not None)
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped
         deferred = (

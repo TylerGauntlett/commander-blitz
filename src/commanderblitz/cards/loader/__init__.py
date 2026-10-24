@@ -633,8 +633,20 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         mana_cost=model.mana_cost,
         # `count_if_kicked` names a choice made at 601.2b, so there has to be one.
         has_kicker=model.kicker is not None or model.multikicker is not None,
+        # `gift_promised` names the 601.2b promise, so there has to be one.
+        has_gift=model.gift is not None,
     )
-    targets = tuple(spec for spec in all_targets if spec.mode is None)
+    card_level = tuple(spec for spec in all_targets if spec.mode is None)
+    # The two sides of the gift promise, when a spec names one. The unpromised
+    # list is `targets`, so every cast line that cannot promise -- flashback, a
+    # free cast, a copy's default -- reads the right specs without knowing gift
+    # exists; only the promised lines ask for `gift_targets`.
+    targets = tuple(spec for spec in card_level if spec.gift_promised is not True)
+    gift_targets = (
+        tuple(spec for spec in card_level if spec.gift_promised is not False)
+        if any(spec.gift_promised is not None for spec in card_level)
+        else None
+    )
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -1595,6 +1607,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         color_identity=identity,
         targets=targets,
         mode_targets=mode_targets,
+        gift_targets=gift_targets,
         spell_effects=tuple(model.spell_effects),
         replacements=_implied_replacements(model),
         abilities=abilities,

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**68 cards** blocked by **77** capabilities.
+**66 cards** blocked by **76** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [set-creature-types](#set-creature-types) | 2 | 715 | static_effect |
 | [spider-token](#spider-token) | 2 | 1012 | token |
-| [variant-dependent-targets](#variant-dependent-targets) | 2 | 716 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [add-mana-on-tap-produced-filter](#add-mana-on-tap-produced-filter) | 1 | 893 | static_effect |
 | [angel-token-3-3-flying](#angel-token-3-3-flying) | 1 | 14991 | token |
@@ -180,24 +179,6 @@ Blocks **2** cards.
 - **Arachnogenesis** (rank 1232) — `arachnogenesis`
   - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
   - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
-
-</details>
-
-## variant-dependent-targets
-
-Blocks **2** cards.
-
-- **(engine)** a target spec that is declared only when the gift was promised -- e.g. a `count_if_gift` (or a general `variant: "gift_promised"`) on a TargetModel/TargetSpec, parallel to `count_if_kicked`, so "return target creature card from your graveyard to your hand" is a second target {kind: card, selector: {zone: graveyard, owner: you, types: [Creature]}} with count 0 on the unpromised cast and 1 on each promised cast, with target enumeration in the cast-options code building a separate tuple set for the gift variants
-  <br>Why the existing vocabulary won't do: The casting code computes the target tuples once and hands the identical list to the unpromised `_cast_variant` and to every gift-promisee variant, so the promise cannot change what the spell points at. `count_if_kicked` is the existing per-variant target count, but the loader accepts it only on a card with `kicker`/`multikicker`, and a gift is not a kicker (the loader refuses a free kicker). Declaring the graveyard target unconditionally and gating the return with `if {gift_promised: true}` is not the card: an unpromised cast would then require a creature card in your graveyard to be castable at all, and would announce a target the printed spell never chooses. `optional: true` makes the second target the caster's free choice rather than the promise's consequence (a promised cast could skip it). `mode` gates a spec on a cast-time choice but only on a single top-level `choose_mode`. Everything else on the card is expressible: `gift: "a card"` with `{op: draw, player: gift_recipient}` (as parting_gust/perch_protection write their gifts), a target-player spec, and `sacrifice` with `objects: {controller: {target: t1}, types: [Creature], zone: battlefield, count: 1, chooser: owner, extreme: {of: power, pick: greatest}}`; only the gift-gated target blocks it. Same need as into_the_flood_maw.
-- **(engine)** a way for a card's own target spec to be declared only under a particular cast-time variant, so one printed target word can have two different selectors -- e.g. a `variant` field on a TargetModel/TargetSpec taking a cast-choice name ("gift_promised", "unpromised", "kicked", "unkicked", "overloaded"), parallel to the existing `mode` field, plus target enumeration in `legality._cast_options` that builds a separate tuple set per variant from the specs that variant activates. Into the Flood Maw needs exactly one target either way: `{types: ["Creature"], controller: "opponent"}` when unpromised and `{not_types: ["Land"], controller: "opponent"}` when the gift was promised, with legality, fizzling and the resolution-time `return_to_hand` all reading whichever one was declared
-  <br>Why the existing vocabulary won't do: `legality._cast_options` (src/commanderblitz/engine/legality.py) computes `tuples = enumerate_target_tuples(state, pid, card.targets, ...)` **once**, before any variant exists, and hands the identical tuple list to every `_cast_variant` call -- unkicked and kicked, unpromised and each gift promisee. So the promise cannot widen or narrow what the spell may point at; `gift_to` only rides along on the Action. `TargetModel`/`TargetSpec` carry no condition of any kind: `selector` clauses (`selector_keys`) are evaluated against one candidate object in isolation and none of them can ask about the cast, and `gift_promised`/`kicked` live in `condition_keys`, which only an `if` op may read at resolution -- far too late, since the target was locked in at 601.2c. The nearest existing thing is `mode`, which does gate a spec on a cast-time choice, but it is the wrong choice and is refused here twice: `loader._compile_targets` accepts `mode` only on a card whose whole effect tree is a single top-level `choose_mode`, and a mode is a free player election, not the gift promise -- writing the two lines as modes would let a player take the wide nonland-permanent bounce without ever promising the Fish. `bestow` is the one variant that does change what a spell points at, but its list is the fixed rules constant `BESTOW_TARGET` (carddef.py), not a per-variant selector a card may write. The workaround of declaring two specs (t1 creature, t2 nonland permanent) and branching with `if {gift_promised: ...}` at resolution is not the card: both specs would have to be legal and locked at cast time, so an unpromised cast would still require and announce a nonland-permanent target and a promised cast would still require a creature -- two target words where the card prints one, changing legality, what opponents can respond to, and when the spell fizzles. `optional: true` on the second spec does not save it either: it makes the extra target the caster's free choice rather than the promise's consequence. The first printed line, "Gift a tapped Fish", is fully expressible (`gift: "a tapped Fish"` plus a `create_token` of `fish_1_1_u`, tapped, `controller: "gift_recipient"`, exactly as parting_gust writes it), so only the second line is blocked and no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
-  - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-- **Consumed by Greed** (rank 6559) — `consumed_by_greed`
-  - Target opponent sacrifices a creature with the greatest power among creatures they control. If the gift was promised, return target creature card from your graveyard to your hand.
 
 </details>
 
