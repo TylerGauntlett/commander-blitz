@@ -12,7 +12,13 @@
  * not wrong.
  */
 
-import type { DeckSourceKind, DeckSummary, PodSeatView, PodView } from "../api/types";
+import type {
+  DeckSourceKind,
+  DeckSummary,
+  PodSeatView,
+  PodView,
+  UpcomingPrecon,
+} from "../api/types";
 
 /* ------------------------------------------------------------------ */
 /* Seats                                                               */
@@ -275,6 +281,35 @@ export function archetypeName(key: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+/**
+ * The "Coming soon" shells the filters leave: precons of the release window
+ * that cannot be dealt yet.
+ *
+ * Only under All and Precons, since a shell is a precon. The search box reads
+ * the product and its commanders, which is all a shell knows. A colour or
+ * archetype filter hides every shell rather than guessing: a shell has no
+ * identity and no archetype to match, and a shelf that kept them under "Green"
+ * would be claiming something nobody checked.
+ */
+export function visibleShells(
+  shells: UpcomingPrecon[],
+  filters: CatalogFilters,
+): UpcomingPrecon[] {
+  if (filters.source !== "all" && filters.source !== "precon") return [];
+  if (filters.colours.length > 0 || filters.archetype) return [];
+  const q = filters.q.trim().toLowerCase();
+  return shells
+    .filter(
+      (shell) =>
+        !q ||
+        [shell.product, ...shell.commanders.map((c) => c.name)]
+          .join(" ")
+          .toLowerCase()
+          .includes(q),
+    )
+    .sort((a, b) => a.product.localeCompare(b.product));
+}
+
 /** One run of tiles on the shelf, under its own header or under none. */
 export interface DeckGroup {
   /** Stable across renders: the React key and the region's test id. */
@@ -282,6 +317,8 @@ export interface DeckGroup {
   /** The header and the region's name; `null` draws a bare grid. */
   title: string | null;
   decks: DeckSummary[];
+  /** "Coming soon" shells, drawn after the decks; only a release run has any. */
+  shells: UpcomingPrecon[];
 }
 
 const SOURCE_TITLES: Record<DeckSourceKind, string> = {
@@ -301,36 +338,63 @@ const SOURCE_TITLES: Record<DeckSourceKind, string> = {
  *
  * Within Yours a starred import sorts above every other. Otherwise each run
  * keeps the order `visibleDecks` gave it, so the sort control still decides.
+ *
+ * `shells` (from `visibleShells`) join the run of their own `set_name`, after
+ * that release's playable decks, and a release with nothing playable yet is a
+ * run of shells alone, ordered by its date like any other.
  */
-export function groupDecks(shown: DeckSummary[], source: DeckSource): DeckGroup[] {
-  const releases = new Map<string, { date: string; decks: DeckSummary[] }>();
+export function groupDecks(
+  shown: DeckSummary[],
+  source: DeckSource,
+  shells: UpcomingPrecon[] = [],
+): DeckGroup[] {
+  const releases = new Map<
+    string,
+    { date: string; decks: DeckSummary[]; shells: UpcomingPrecon[] }
+  >();
+  const run = (name: string, date: string) => {
+    const found = releases.get(name) ?? { date: "", decks: [], shells: [] };
+    if (date > found.date) found.date = date;
+    releases.set(name, found);
+    return found;
+  };
   const favorites: DeckSummary[] = [];
   const yours: DeckSummary[] = [];
   for (const deck of shown) {
     if (deck.source === "precon") {
-      const name = deck.release?.set_name || SOURCE_TITLES.precon;
-      const run = releases.get(name) ?? { date: "", decks: [] };
-      const date = deck.release?.date ?? "";
-      if (date > run.date) run.date = date;
-      run.decks.push(deck);
-      releases.set(name, run);
+      run(deck.release?.set_name || SOURCE_TITLES.precon, deck.release?.date ?? "").decks.push(
+        deck,
+      );
     } else if (deck.source === "moxfield") {
       yours.push(deck);
     } else {
       favorites.push(deck);
     }
   }
+  for (const shell of shells) {
+    run(shell.set_name || SOURCE_TITLES.precon, shell.date).shells.push(shell);
+  }
 
   const groups: DeckGroup[] = [...releases.entries()]
     .sort(([a, left], [b, right]) => right.date.localeCompare(left.date) || a.localeCompare(b))
-    .map(([name, run]) => ({ key: `release-${slug(name)}`, title: name, decks: run.decks }));
+    .map(([name, found]) => ({
+      key: `release-${slug(name)}`,
+      title: name,
+      decks: found.decks,
+      shells: found.shells,
+    }));
   if (favorites.length > 0) {
-    groups.push({ key: "favorite", title: SOURCE_TITLES.favorite, decks: favorites });
+    groups.push({
+      key: "favorite",
+      title: SOURCE_TITLES.favorite,
+      decks: favorites,
+      shells: [],
+    });
   }
   if (yours.length > 0) {
     // A stable sort, so the starred keep the order they arrived in.
     const pinned = [...yours].sort((a, b) => Number(b.starred) - Number(a.starred));
-    groups.push({ key: "moxfield", title: SOURCE_TITLES.moxfield, decks: pinned });
+    groups.push({ key: "moxfield", title: SOURCE_TITLES.moxfield, decks: pinned, shells: [] });
   }
 
   if (groups.length === 1 && source !== "all" && source !== "precon") {

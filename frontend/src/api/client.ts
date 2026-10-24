@@ -15,6 +15,7 @@ import type {
   SeatAdminAction,
   SeatConfig,
   StateResponse,
+  UpcomingPrecon,
 } from "./types";
 
 const BASE = "/api";
@@ -139,6 +140,13 @@ export const api = {
     }),
 
   deleteDeck: (deckId: string) => request<void>(`/decks/${deckId}`, { method: "DELETE" }),
+
+  /**
+   * The precons of the release window that are not playable yet, newest
+   * first. The shelf draws them as "Coming soon" shells beside the shipped
+   * ones; none of them can be taken.
+   */
+  upcomingPrecons: () => request<UpcomingPrecon[]>("/precons/upcoming"),
 
   /**
    * Pin an import to the top of Yours, or unpin it. The answer is the deck as

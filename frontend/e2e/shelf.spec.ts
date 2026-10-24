@@ -9,7 +9,15 @@
  */
 
 import { expect, type Page, test } from "@playwright/test";
-import { browseDecks, STUB_IMPORTS, STUB_PRECONS, setInstant, stubDeckList } from "./helpers";
+import {
+  browseDecks,
+  STUB_IMPORTS,
+  STUB_PRECONS,
+  STUB_UPCOMING,
+  setInstant,
+  stubDeckList,
+  stubUpcoming,
+} from "./helpers";
 
 /** The deck ids of the tiles on the shelf, in the order they are drawn. */
 async function tileIds(page: Page): Promise<string[]> {
@@ -61,7 +69,9 @@ test.describe("the shelf's segments", () => {
   });
 
   test("Precons run by release, newest first, each a named region", async ({ page }) => {
+    // No shells: the real list would add runs of its own between these two.
     await stubDeckList(page, STUB_PRECONS);
+    await stubUpcoming(page, []);
     await browseDecks(page);
     await page.getByTestId("source-precon").click();
 
@@ -80,6 +90,56 @@ test.describe("the shelf's segments", () => {
     await expect(archetype).toHaveAttribute("aria-label", "Archetype: Punisher");
     await expect(named.first()).toHaveAttribute("aria-label", "Duskmourn Commander");
     await expect(page.getByTestId("deck-fdc_stub_angels")).toHaveCount(0);
+  });
+
+  test("coming-soon shells join their release's run and are not controls", async ({ page }) => {
+    await stubDeckList(page, STUB_PRECONS);
+    await stubUpcoming(page, STUB_UPCOMING);
+    await browseDecks(page);
+    await page.getByTestId("source-precon").click();
+
+    const named = regions(page);
+    await expect(named.nth(0)).toHaveAttribute("aria-label", "Foundations Commander");
+    await expect(named.nth(1)).toHaveAttribute("aria-label", "Bloomburrow Commander");
+    await expect(named.nth(2)).toHaveAttribute("aria-label", "Duskmourn Commander");
+
+    // Playable first, then the shell, in the one run.
+    const order = await named
+      .nth(0)
+      .locator(".tile, .shell")
+      .evaluateAll((els) => els.map((el) => el.getAttribute("data-testid")));
+    expect(order).toEqual(["deck-fdc_stub_angels", "shell-fdc_stub_shell"]);
+
+    const shell = page.getByTestId("shell-fdc_stub_shell");
+    await expect(shell).toBeVisible();
+    await expect(shell).toContainText("Coming soon");
+    await expect(shell).toContainText("Shell Precon");
+    await expect(shell).toContainText("Shell Commander");
+    await expect(named.nth(1).getByTestId("shell-blc_stub_shell")).toBeVisible();
+
+    // Not a control: nothing inside it is focusable, and Tab walks past it.
+    const focusable = await shell.evaluate(
+      (el) =>
+        el.querySelectorAll('button, a[href], input, [tabindex], [role="button"], [data-stop]')
+          .length,
+    );
+    expect(focusable).toBe(0);
+    const take = page.getByTestId("deck-fdc_stub_angels-take");
+    await take.focus();
+    await page.keyboard.press("Tab");
+    const landed = await page.evaluate(() => document.activeElement?.closest(".shell") ?? null);
+    expect(landed, "Tab landed in a shell").toBeNull();
+
+    // A click on it takes nothing and opens nothing.
+    const url = page.url();
+    await shell.click();
+    expect(page.url()).toBe(url);
+    await expect(page.getByTestId("deck-catalog")).toBeVisible();
+
+    // A colour filter hides every shell, and the run they alone made.
+    await page.getByTestId("colour-W").click();
+    await expect(page.locator(".shelf__body .shell")).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Bloomburrow Commander" })).toHaveCount(0);
   });
 
   test("the archetype filter is not drawn when no deck names one", async ({ page }) => {

@@ -374,6 +374,32 @@ export interface DeckRelease {
   date: string;
 }
 
+/** A shell's commander: its printed name, and its art when a printing is known. */
+export interface ShellCommander {
+  name: string;
+  /** `/art/<id>.jpg`, or `null` when no printing is known and the shell draws a plain plate. */
+  art_url: string | null;
+}
+
+/**
+ * A precon the shelf names but cannot deal yet: one from the release window
+ * that is not a shipped deck. Mirrors the rows of `GET /api/precons/upcoming`,
+ * which answers newest first. It is drawn as a "Coming soon" shell, never as a
+ * control.
+ */
+export interface UpcomingPrecon {
+  id: string;
+  /** The product's own name, e.g. "Calling All Angels". */
+  product: string;
+  set_code: string;
+  /** The release it belongs to; the shelf groups it with that set's decks. */
+  set_name: string;
+  /** ISO date, so it orders as a string. */
+  date: string;
+  /** Who leads it, for the shell's caption and its grayed-out art. */
+  commanders: ShellCommander[];
+}
+
 export interface DeckSummary {
   id: string;
   name: string;

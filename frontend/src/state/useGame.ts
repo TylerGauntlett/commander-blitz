@@ -107,6 +107,20 @@ export function useDecks() {
 }
 
 /**
+ * The precons the shelf names but cannot deal yet, for its "Coming soon"
+ * shells. Fixed for the life of the server, like the deck list. A server that
+ * does not answer leaves the shelf with what it can deal, so every consumer
+ * reads `data ?? []` rather than treating a missing list as an error.
+ */
+export function useUpcomingPrecons() {
+  return useQuery({
+    queryKey: ["precons", "upcoming"],
+    queryFn: api.upcomingPrecons,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+}
+
+/**
  * Star or unstar an import, and put the server's answer into the deck list.
  *
  * The answer is the deck as the server now holds it, so it replaces that one

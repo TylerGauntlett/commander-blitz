@@ -29,7 +29,7 @@
  */
 
 import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { DeckImportResponse, DeckSummary } from "../../api/types";
+import type { DeckImportResponse, DeckSummary, UpcomingPrecon } from "../../api/types";
 import { setCursor } from "../../input/cursor";
 import { useDismiss } from "../../input/useDismiss";
 import { canImport } from "../../logic/desktop";
@@ -43,6 +43,7 @@ import {
   groupDecks,
   nextArchetype,
   visibleDecks,
+  visibleShells,
 } from "../../logic/lobby";
 import { useAppConfig } from "../../state/useAppConfig";
 import { ManaSymbol } from "../game/ManaSymbol";
@@ -87,6 +88,11 @@ const SOURCES: [DeckSource, string][] = [
 
 interface Props {
   decks: DeckSummary[];
+  /**
+   * The precons of the release window that cannot be dealt yet. Each is drawn
+   * as a "Coming soon" shell in its release's run, and none is a control.
+   */
+  upcoming?: readonly UpcomingPrecon[];
   /** Which seat this catalogue is choosing for. 0-3, or null when browsing. */
   forSeat: number | null;
   /** Whose chair, in three words or fewer -- it sits after "Choosing for". */
@@ -121,6 +127,7 @@ interface Props {
 
 export function DeckCatalog({
   decks,
+  upcoming = [],
   forSeat,
   forWhom,
   chosen,
@@ -144,7 +151,11 @@ export function DeckCatalog({
   useDismiss(stage, onClose);
 
   const shown = useMemo(() => visibleDecks(decks, filters), [decks, filters]);
-  const groups = useMemo(() => groupDecks(shown, filters.source), [shown, filters.source]);
+  const shells = useMemo(() => visibleShells([...upcoming], filters), [upcoming, filters]);
+  const groups = useMemo(
+    () => groupDecks(shown, filters.source, shells),
+    [shown, filters.source, shells],
+  );
   const archetypes = useMemo(() => archetypeOptions(decks, filters), [decks, filters]);
 
   /* The ring lands on a deck. See the header: without this it opens on the ✕,
@@ -153,7 +164,9 @@ export function DeckCatalog({
      whatever somebody had walked to. */
   // biome-ignore lint/correctness/useExhaustiveDependencies: mount only, by design.
   useLayoutEffect(() => {
-    const first = chosen ?? groups[0]?.decks[0]?.id;
+    // The first DECK: a release with nothing playable yet is a run of shells,
+    // and a shell is not somewhere the ring can stand.
+    const first = chosen ?? groups.find((group) => group.decks.length > 0)?.decks[0]?.id;
     if (first) setCursor(`ui:deck-${first}-take`);
   }, []);
 
@@ -359,6 +372,9 @@ export function DeckCatalog({
                       onDelete={inUse.includes(deck.id) ? null : onDelete}
                       onStar={onStar}
                     />
+                  ))}
+                  {group.shells.map((shell) => (
+                    <ShellTile key={shell.id} shell={shell} />
                   ))}
                 </div>
               );
@@ -576,6 +592,39 @@ function DeckPick({
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+/**
+ * A precon the shelf names but cannot deal yet.
+ *
+ * NOT A CONTROL. No role, no tabIndex, no handler: there is nothing a press
+ * on it could do, so it is text in a card-shaped box, and the ring and Tab
+ * both pass over it to the next deck (ADR 0015 counts controls, and this adds
+ * none). It says what the product is, who leads it and that it is coming,
+ * which is everything the shelf knows about it. The first commander's art is
+ * drawn grayed out behind the badge, and an empty `alt`, because the names
+ * under it already say whose it is; without a printing it is a plain plate.
+ */
+function ShellTile({ shell }: { shell: UpcomingPrecon }) {
+  const art = shell.commanders.find((commander) => commander.art_url)?.art_url ?? null;
+  return (
+    <div className="shell" data-testid={`shell-${shell.id}`} data-shell={shell.set_code}>
+      <div className="shell__card">
+        {art !== null && (
+          <img className="shell__art" src={art} alt="" loading="lazy" draggable={false} />
+        )}
+        <span className="shell__badge">Coming soon</span>
+        <span className="shell__cmdrs">
+          {shell.commanders.map((commander) => (
+            <span key={commander.name} className="shell__cmdr">
+              {commander.name}
+            </span>
+          ))}
+        </span>
+      </div>
+      <div className="shell__n">{shell.product}</div>
     </div>
   );
 }

@@ -8,7 +8,8 @@
  * shows the order.
  */
 
-import type { DeckRelease, DeckSummary } from "../api/types";
+import type { DeckRelease, DeckSummary, UpcomingPrecon } from "../api/types";
+import { stubImage } from "./art";
 import { cardResponse, deckSummary } from "./fixtures";
 
 function favorite(
@@ -205,6 +206,48 @@ export const YOURS: DeckSummary[] = [
     ["U", "B"],
     true,
   ),
+];
+
+export const BLOOMBURROW: DeckRelease = {
+  set_code: "BLC",
+  set_name: "Bloomburrow Commander",
+  date: "2025-08-02",
+};
+
+function shell(
+  id: string,
+  product: string,
+  release: DeckRelease,
+  commanders: [name: string, art: boolean][],
+): UpcomingPrecon {
+  return {
+    id,
+    product,
+    set_code: release.set_code,
+    set_name: release.set_name,
+    date: release.date,
+    commanders: commanders.map(([name, art]) => ({
+      name,
+      art_url: art ? stubImage(name) : null,
+    })),
+  };
+}
+
+/**
+ * Precons the shelf names but cannot deal yet. One shares Foundations with
+ * the playable decks, so it must come after them in that run; Bloomburrow
+ * has nothing playable, so it is a run of shells alone, between the two
+ * releases by date. One shell has no printing known and draws a plain plate.
+ */
+export const UPCOMING: UpcomingPrecon[] = [
+  shell("fdc_grave_danger", "Grave Danger", FOUNDATIONS, [["Ghoul Lord of the Crypt", true]]),
+  shell("blc_squirreled_away", "Squirreled Away", BLOOMBURROW, [
+    ["Hazel of the Rootbloom", true],
+  ]),
+  shell("blc_family_matters", "Family Matters", BLOOMBURROW, [
+    ["Zinnia, Valley's Voice", false],
+    ["Bello, Bard of the Brambles", false],
+  ]),
 ];
 
 /** A printed card per commander, so every tile on the shelf draws a face. */

@@ -494,6 +494,13 @@ decks, like the archetype one, are drawn only when they have something to offer.
 star on an import is drawn from `DeckSummary.starred` alone: the press sends the value it
 wants, and `useStarDeck` puts the server's answer into the deck list.
 
+**A coming-soon shell is not a control.** A precon of the release window that does not
+ship yet (`GET /api/precons/upcoming`) is drawn by `ShellTile` in `DeckCatalog.tsx` as a
+grayed-out commander under a "Coming soon" badge, in its release's run after the playable
+decks (`visibleShells`, then `groupDecks`). It has no role, no tab stop and no handler,
+so ADR 0015 *Every legal action is exactly one control* is untouched: the ring and Tab pass
+over it. A colour or archetype filter hides every shell, since a shell has neither to match.
+
 **The phase ribbon** keeps every step label in the DOM whether or not its phase is
 expanded, which is what keeps the marker's `layoutId` continuous across a phase boundary
 and what `e2e/acceptance.spec.ts` counts.

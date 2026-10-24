@@ -26,6 +26,7 @@ import {
   readyTrack,
   seatLabel,
   visibleDecks,
+  visibleShells,
   whyNot,
   yourSeat,
 } from "../src/logic/lobby";
@@ -411,6 +412,93 @@ describe("the shelf's groups", () => {
 
   it("draws nothing for nothing", () => {
     expect(groupDecks([], "all")).toEqual([]);
+  });
+});
+
+describe("the coming-soon shells", () => {
+  const shell = (
+    id: string,
+    product: string,
+    set_name: string,
+    date: string,
+    name: string,
+  ) => ({
+    id,
+    product,
+    set_code: set_name.slice(0, 3).toUpperCase(),
+    set_name,
+    date,
+    commanders: [{ name, art_url: null }],
+  });
+  const fdcShell = shell(
+    "fdc_zombies",
+    "Grave Danger",
+    "Foundations Commander",
+    "2026-10-02",
+    "Ghoul Lord",
+  );
+  const blbShell = shell(
+    "blb_squirrels",
+    "Squirreled Away",
+    "Bloomburrow Commander",
+    "2025-08-02",
+    "Hazel",
+  );
+  const fdc = deckSummary({
+    id: "fdc_angels",
+    name: "Calling All Angels",
+    source: "precon",
+    release: { set_code: "FDC", set_name: "Foundations Commander", date: "2026-10-02" },
+  });
+  const dsc = deckSummary({
+    id: "dsc_endless",
+    name: "Endless Punishment",
+    source: "precon",
+    release: { set_code: "DSC", set_name: "Duskmourn Commander", date: "2024-09-27" },
+  });
+  const shells = [blbShell, fdcShell];
+  const shape = (groups: ReturnType<typeof groupDecks>) =>
+    groups.map((g) => [g.title, g.decks.map((d) => d.id), g.shells.map((s) => s.id)]);
+
+  it("join their release's run, after its playable decks", () => {
+    expect(shape(groupDecks([dsc, fdc], "precon", shells))).toEqual([
+      ["Foundations Commander", ["fdc_angels"], ["fdc_zombies"]],
+      ["Bloomburrow Commander", [], ["blb_squirrels"]],
+      ["Duskmourn Commander", ["dsc_endless"], []],
+    ]);
+  });
+
+  it("make a run of their own for a release with nothing playable yet", () => {
+    expect(shape(groupDecks([], "all", [blbShell]))).toEqual([
+      ["Bloomburrow Commander", [], ["blb_squirrels"]],
+    ]);
+  });
+
+  it("show under All and Precons, and nowhere else", () => {
+    const ids = (source: DeckSource) =>
+      visibleShells(shells, { ...EMPTY_FILTERS, source }).map((s) => s.id);
+    expect(ids("all")).toEqual(["fdc_zombies", "blb_squirrels"]);
+    expect(ids("precon")).toEqual(["fdc_zombies", "blb_squirrels"]);
+    expect(ids("favorite")).toEqual([]);
+    expect(ids("moxfield")).toEqual([]);
+  });
+
+  it("answer the search box by product and by commander", () => {
+    const find = (q: string) => visibleShells(shells, { ...EMPTY_FILTERS, q }).map((s) => s.id);
+    expect(find("squirrel")).toEqual(["blb_squirrels"]);
+    expect(find("ghoul")).toEqual(["fdc_zombies"]);
+    expect(find("nothing like it")).toEqual([]);
+  });
+
+  it("hide under a colour or an archetype, which they cannot match", () => {
+    expect(visibleShells(shells, { ...EMPTY_FILTERS, colours: ["G"] })).toEqual([]);
+    expect(visibleShells(shells, { ...EMPTY_FILTERS, archetype: "tribal" })).toEqual([]);
+  });
+
+  it("leave the favorites without any", () => {
+    const fav = deckSummary({ id: "aesi", name: "Aesi" });
+    const groups = groupDecks([fav], "all", visibleShells(shells, EMPTY_FILTERS));
+    expect(groups.find((g) => g.key === "favorite")?.shells).toEqual([]);
   });
 });
 

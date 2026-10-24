@@ -81,6 +81,7 @@ a card, never enough to decide legality.
 | `POST` | `/api/decks/complete` | Fetch what every incomplete imported deck is missing and record the verdict. The desktop door calls it before drawing whenever the site answers; `[]` on the site |
 | `DELETE` | `/api/decks/{deck_id}` | Remove an imported deck. `400` on a precon |
 | `POST` | `/api/decks/{deck_id}/star` | Star or unstar an imported deck, which pins it to the top of Yours. Body: `{starred}`; answers the updated deck summary. `400` on a shipped deck, `403` on another library's import |
+| `GET` | `/api/precons/upcoming` | Every precon in the release window that is not a shipped deck, newest first: `{id, product, set_code, set_name, date, commanders: [{name, art_url}]}`, `art_url` `null` when no printing is known. The shelf draws each as a "Coming soon" shell in its release's run ([ADR 0024](adr/0024-precon-means-the-product.md)) |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
 | `GET` | `/api/images?game_id=` | Card art paths. Static, so fetched once. Scoped to a game's own cards when `game_id` is given — unscoped it grows with every imported deck |
 | `GET` | `/art/{card_id}.jpg` | The art itself, from disk. Lazily fetched for cards outside the shipped pool |

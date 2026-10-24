@@ -300,6 +300,38 @@ export const STUB_IMPORTS = [
 ];
 
 /**
+ * Coming-soon shells for the precon runs: one beside a stubbed playable
+ * precon, and a release with nothing playable. `art_url` is null, so the spec
+ * does not depend on art the server would have to fetch.
+ */
+export const STUB_UPCOMING = [
+  {
+    id: "fdc_stub_shell",
+    product: "Shell Precon",
+    set_code: FOUNDATIONS.set_code,
+    set_name: FOUNDATIONS.set_name,
+    date: FOUNDATIONS.date,
+    commanders: [{ name: "Shell Commander", art_url: null }],
+  },
+  {
+    id: "blc_stub_shell",
+    product: "Lone Shell",
+    set_code: "BLC",
+    set_name: "Bloomburrow Commander",
+    date: "2025-08-02",
+    commanders: [{ name: "Lone Commander", art_url: null }],
+  },
+];
+
+/** Serve these as `GET /api/precons/upcoming`, before the page loads. */
+export async function stubUpcoming(
+  page: Page,
+  shells: Record<string, unknown>[],
+): Promise<void> {
+  await page.route("**/api/precons/upcoming", (route) => route.fulfill({ json: shells }));
+}
+
+/**
  * Serve the real deck list with these appended. Call it before the page
  * loads, because the client fetches the list once and keeps it.
  */

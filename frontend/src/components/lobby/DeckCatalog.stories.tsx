@@ -11,7 +11,7 @@ import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { expectFontFloor, expectHandheldFloors, settled } from "../../testing/asserts";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
-import { FAVORITES, PRECONS, shelfCards, YOURS } from "../../testing/shelf";
+import { FAVORITES, PRECONS, shelfCards, UPCOMING, YOURS } from "../../testing/shelf";
 import { DeckCatalog } from "./DeckCatalog";
 
 /** A printed card per deck, so every tile draws a face rather than a back. */
@@ -471,5 +471,75 @@ export const AllRuns: Story = {
     );
     await settled(canvasElement);
     expectHandheldFloors(canvasElement);
+  },
+};
+
+/**
+ * PRECONS WITH COMING-SOON SHELLS.
+ *
+ * The whole catalogue, the playable and the not yet. A shell joins its
+ * release's run after the decks that can be dealt, and a release with nothing
+ * playable is a run of shells alone, placed by its date. A shell is not a
+ * control: no role, no tab stop, nowhere for the ring to land, and a press
+ * on it takes nothing. A colour filter hides every shell, since a shell has
+ * no identity to match.
+ */
+export const PreconsWithComingSoonShells: Story = {
+  args: { decks: SHELF, upcoming: UPCOMING },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", query: shelfCards(SHELF) } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await segments(canvasElement);
+    await userEvent.click(canvas.getByTestId("source-precon"));
+
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    await waitFor(() =>
+      expect(regionNames(body)).toEqual([
+        "Foundations Commander",
+        "Bloomburrow Commander",
+        "Duskmourn Commander",
+      ]),
+    );
+    const [foundations, bloomburrow] = within(body).getAllByRole("region");
+    // Playable first, then the shell, in one grid.
+    const order = [...foundations.querySelectorAll<HTMLElement>(".tile, .shell")].map(
+      (el) => el.dataset.testid,
+    );
+    expect(order).toEqual([
+      "deck-fdc_calling_all_angels",
+      "deck-fdc_wild_hunt",
+      "shell-fdc_grave_danger",
+    ]);
+    expect(tileIds(bloomburrow), "nothing playable in Bloomburrow").toEqual([]);
+    expect(bloomburrow.querySelectorAll(".shell")).toHaveLength(2);
+
+    const shell = canvas.getByTestId("shell-fdc_grave_danger");
+    expect(shell).toHaveTextContent("Coming soon");
+    expect(shell).toHaveTextContent("Grave Danger");
+    expect(shell).toHaveTextContent("Ghoul Lord of the Crypt");
+    expect(shell.querySelector("img.shell__art")).not.toBeNull();
+    // A shell without a printing draws a plain plate, not a broken image.
+    expect(canvas.getByTestId("shell-blc_family_matters").querySelector("img")).toBeNull();
+
+    // Not a control, anywhere inside it.
+    for (const el of body.querySelectorAll<HTMLElement>(".shell, .shell *")) {
+      expect(el.getAttribute("role"), "a shell is not a control").toBeNull();
+      expect(el.hasAttribute("tabindex")).toBe(false);
+      expect(el.hasAttribute("data-stop")).toBe(false);
+      expect(el.tagName).not.toBe("BUTTON");
+    }
+    await userEvent.click(shell);
+    expect(args.onPick).not.toHaveBeenCalled();
+    expect(args.onDossier).not.toHaveBeenCalled();
+
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
+
+    // A colour filter hides the shells, and the run they alone made goes too.
+    await userEvent.click(canvas.getByTestId("colour-W"));
+    await waitFor(() => expect(body.querySelectorAll(".shell")).toHaveLength(0));
+    expect(regionNames(body)).toEqual(["Foundations Commander"]);
   },
 };

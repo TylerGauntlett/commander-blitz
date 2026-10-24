@@ -21,8 +21,10 @@ import {
   browseDecks,
   STUB_IMPORTS,
   STUB_PRECONS,
+  STUB_UPCOMING,
   startGame,
   stubDeckList,
+  stubUpcoming,
   waitForOurTurn,
 } from "./helpers";
 
@@ -107,6 +109,7 @@ test.describe("the handheld layout holds its floors", () => {
     // `stubDeckList`. Every segment is gated, because each draws different
     // controls: the archetype filter, the release headers, the stars.
     await stubDeckList(page, [...STUB_PRECONS, ...STUB_IMPORTS]);
+    await stubUpcoming(page, STUB_UPCOMING);
     await browseDecks(page);
     await gate(page, "the shelf, every run");
 
@@ -115,7 +118,8 @@ test.describe("the handheld layout holds its floors", () => {
       "aria-label",
       "Foundations Commander",
     );
-    await gate(page, "the precons, by release");
+    await expect(page.getByTestId(`shell-${STUB_UPCOMING[0].id}`)).toBeVisible();
+    await gate(page, "the precons, by release, with coming-soon shells");
 
     await page.getByTestId("source-favorite").click();
     await expect(page.getByTestId("deck-archetype")).toHaveCount(0);

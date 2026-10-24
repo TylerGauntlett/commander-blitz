@@ -17,12 +17,13 @@ import { api } from "../api/client";
 import { DeckCatalog } from "../components/lobby/DeckCatalog";
 import { Screen } from "../components/screen/Screen";
 import { deckPath } from "../logic/routes";
-import { useDecks, useStarDeck } from "../state/useGame";
+import { useDecks, useStarDeck, useUpcomingPrecons } from "../state/useGame";
 
 export function DecksRoute() {
   const navigate = useNavigate();
   const decks = useDecks();
   const starDeck = useStarDeck();
+  const upcoming = useUpcomingPrecons();
 
   return (
     <Screen variant="fade">
@@ -40,6 +41,7 @@ export function DecksRoute() {
           decks.refetch();
         }}
         onStar={starDeck}
+        upcoming={upcoming.data ?? []}
       />
       <Outlet />
     </Screen>
