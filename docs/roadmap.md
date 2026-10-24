@@ -70,25 +70,26 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [A phone modality](#a-phone-modality).
+
 **Ready now, best first:**
 
-1. [A phone modality](#a-phone-modality) — L, high
-2. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-3. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
-4. [Difficulty](#difficulty) — S, medium
-5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-6. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-7. [Why a press is refused](#why-a-press-is-refused) — S, medium
-8. [Outcomes as data](#outcomes-as-data) — M, medium
-9. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-10. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-11. [Replays and sharing](#replays-and-sharing) — M, medium
-12. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-13. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-14. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-15. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-16. [Archidekt import](#archidekt-import) — S, low
-17. [Sound](#sound) — S, low
+1. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+2. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
+3. [Difficulty](#difficulty) — S, medium
+4. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+5. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+6. [Why a press is refused](#why-a-press-is-refused) — S, medium
+7. [Outcomes as data](#outcomes-as-data) — M, medium
+8. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+9. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+10. [Replays and sharing](#replays-and-sharing) — M, medium
+11. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+12. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+13. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+14. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+15. [Archidekt import](#archidekt-import) — S, low
+16. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -383,7 +384,7 @@ with a pad by group and reads one card.
 
 ### A phone modality
 
-Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on nothing · ADR first.
+Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on nothing · **In progress** · ADR first.
 
 #### Today
 
