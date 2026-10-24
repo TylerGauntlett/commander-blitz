@@ -56,9 +56,9 @@ from commanderblitz.cards.loader.vocabulary import (
     MANA_RIDER_OPS,
     PLAYER_WIDE_STATIC_EFFECTS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_EFFECTS,
-    STATIC_FILTER_KEYS,
     STATIC_VALUE_KEYS,
 )
 from commanderblitz.cards.schema import CostModel
@@ -485,6 +485,8 @@ SELECTORS: dict[str, Entry] = {
 
 #: Keys a static's `affects` filter answers that the effect-side selector does not.
 STATIC_FILTER_EXTRAS: dict[str, Entry] = {
+    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` only.",
+               "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
     "paired": ("Is paired (soulbond).", "Soulbond — a relationship that is not attachment"),
     "paired_with_source": ("Paired with the static's own source.",
@@ -1010,7 +1012,9 @@ def families() -> list[Family]:
     listeners = _event_listeners()
 
     def selector_or_static(name: str) -> Entry | None:
-        return SELECTORS.get(name) or STATIC_FILTER_EXTRAS.get(name)
+        # The static entry first: `any_of` is in both languages and means a
+        # different branch rule in each.
+        return STATIC_FILTER_EXTRAS.get(name) or SELECTORS.get(name)
 
     def condition_or_static(name: str) -> Entry | None:
         return CONDITIONS.get(name) or STATIC_CONDITION_EXTRAS.get(name)
@@ -1144,7 +1148,8 @@ def families() -> list[Family]:
         ),
         # ---- extra families ------------------------------------------------
         Family(
-            "Static filter keys", H_STATICS, tuple(sorted(STATIC_FILTER_KEYS)), selector_or_static,
+            "Static filter keys", H_STATICS, tuple(sorted(STATIC_AFFECTS_FILTER_KEYS)),
+            selector_or_static,
             "The subset of the selector language a static's `affects` may use -- printed "
             "characteristics only, plus three relations to the static's own source.",
         ),

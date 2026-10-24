@@ -63272,12 +63272,12 @@
     },
     "Death Baron": {
       "edhrec_rank": 1722,
-      "gate": "template",
+      "gate": null,
       "name": "Death Baron",
-      "reason": "no template for: Skeletons you control and other Zombies you control get +1/+1 and have deathtouch",
+      "reason": "",
       "scryfall_id": "34a27142-cf45-4164-9e10-373e5c8bf7c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death Baron // Death Baron": {

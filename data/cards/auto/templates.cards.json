@@ -29435,6 +29435,85 @@
     {
       "abilities": [
         {
+          "affects": {
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "exclude_self": true,
+                "subtypes": [
+                  "Zombie"
+                ]
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "exclude_self": true,
+                "subtypes": [
+                  "Zombie"
+                ]
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "death_baron",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Death Baron",
+      "oracle_text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch. (Any amount of damage they deal to a creature is enough to destroy it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

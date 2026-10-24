@@ -1653,9 +1653,11 @@ def _matches_printed(
     #
     # A branch is the same filter language asked about the same card, exactly
     # as `cost_reduction._object_matches` recurses for its own `any_of` and as
-    # the effect-side selector does. Only `grant_warp` may write the word --
-    # `SPELL_FILTER_KEYS` does not carry it -- so no shipped card's filter
-    # changes meaning by this being here.
+    # the effect-side selector does. `grant_warp` writes the word here, and so
+    # may a static's `affects` (`STATIC_AFFECTS_FILTER_KEYS`) when a reader
+    # matches it against a face alone; on the battlefield `_matches_wherever`
+    # answers the union first, with board state, and never reaches this.
+    # `SPELL_FILTER_KEYS` does not carry it.
     if (branches := selector.get("any_of")) is not None and not any(
         _matches_printed(card, branch, added_subtypes, text_changes) for branch in branches
     ):
@@ -1803,6 +1805,21 @@ def _matches_wherever(
     door onto the filter language: it is exact only for the questions asked
     *during* an arrival.
     """
+    # "Skeletons you control and **other** Zombies you control get +1/+1"
+    # (Death Baron). A union of whole filters, and the reason it is answered
+    # here rather than left to `_matches_printed`'s own `any_of`: that one sees
+    # the printed face alone, and this sentence's two halves differ in
+    # `exclude_self`, which is a relation to the source. Each branch is the
+    # outer filter with the branch's keys added -- the loader refuses a branch
+    # that repeats an outer key, so adding never replaces -- and the object
+    # matches the union once however many branches describe it, which is the
+    # whole difference from two statics: a Skeleton Zombie gets +1/+1, not +2/+2.
+    if (branches := selector.get("any_of")) is not None:
+        outer = {k: v for k, v in selector.items() if k != "any_of"}
+        return any(
+            _matches_wherever(state, obj, source, {**outer, **branch}) for branch in branches
+        )
+
     selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
     card = state.card_of(obj)
 

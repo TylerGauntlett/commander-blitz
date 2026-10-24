@@ -2713,6 +2713,10 @@
   "deadly_recluse": {
     "zone": "battlefield"
   },
+  "death_baron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deathbloom_gardener": {
     "zone": "battlefield"
   },

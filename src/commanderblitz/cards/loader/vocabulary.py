@@ -980,6 +980,17 @@ STATIC_FILTER_KEYS = frozenset(
     }
 )
 
+#: Keys a static's ``affects`` may use: `STATIC_FILTER_KEYS` plus ``any_of``, a
+#: union of whole static filters. "Skeletons you control and **other** Zombies
+#: you control get +1/+1" (Death Baron) is two descriptions with `exclude_self`
+#: on one of them only, and two statics would pump a creature that is both
+#: twice. Each branch is matched by `characteristics._matches_wherever` as the
+#: outer filter with the branch's keys added, so `exclude_self` is scoped to its
+#: branch. Kept off `STATIC_FILTER_KEYS` itself, which also validates
+#: `blockers`, `targeting`, `damage_source` and the counting filters -- readers
+#: that would each need the recursion argued separately.
+STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of"}
+
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")
 

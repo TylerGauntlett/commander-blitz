@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**71 cards** blocked by **80** capabilities.
+**70 cards** blocked by **79** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -87,7 +87,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [state-trigger](#state-trigger) | 1 | 6513 | trigger_event |
 | [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
-| [static-filter-union](#static-filter-union) | 1 | 1722 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -1177,20 +1176,6 @@ Blocks **1** card.
 - **Graaz, Unstoppable Juggernaut** (rank 6994) — `graaz_unstoppable_juggernaut`
   - Juggernauts you control attack each combat if able.
   - Juggernauts you control can't be blocked by Walls.
-
-</details>
-
-## static-filter-union
-
-Blocks **1** card.
-
-- **(selector)** a static ability `affects` filter that is a union of sub-filters, each with its own `exclude_self` ("Skeletons you control" including the source OR "other Zombies you control" excluding it), so a creature matching both branches (a Skeleton Zombie, or any changeling) is affected once and gets +1/+1, not +2/+2
-  <br>Why the existing vocabulary won't do: static_filter_keys has no `any_of`/`union` and no `not_subtypes`. One static with subtypes [Skeleton, Zombie] cannot apply `exclude_self` to only the Zombie branch; two separate buff/grant_keyword statics (Skeleton; Zombie + exclude_self) double-apply the +1/+1 to every creature that is both a Skeleton and a Zombie, which changelings make common in a Zombie deck. `any_of`/`union` exist in selector_keys and cost_reduction_filter_keys but not for statics
-
-<details><summary>Cards waiting on this</summary>
-
-- **Death Baron** (rank 1722) — `death_baron`
-  - Skeletons you control and other Zombies you control get +1/+1 and have deathtouch.
 
 </details>
 

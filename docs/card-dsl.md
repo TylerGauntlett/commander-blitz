@@ -4405,6 +4405,32 @@ way, and this is the same spelling rather than a second dialect.
 Battlefield only. A counting filter that names a zone other than `battlefield`
 refuses it with the rest of the board-state keys.
 
+#### `any_of` — a union of static filters
+
+```jsonc
+// Death Baron: "Skeletons you control and other Zombies you control get +1/+1 ..."
+"affects": { "types": ["Creature"],
+             "any_of": [ { "subtypes": ["Skeleton"] },
+                         { "subtypes": ["Zombie"], "exclude_self": true } ] }
+```
+
+A permanent is described when **any** branch describes it, and it is described
+once: a Skeleton Zombie gets +1/+1, not +2/+2. Each branch is matched as the
+outer filter with the branch's keys added, so a relation to the source —
+`exclude_self` above — belongs to its branch, and the outer keys (here `types`,
+and the defaulted `controller: "you"`) apply to every branch.
+
+Two statics, one per half, are the near miss, and they pump a creature both
+halves describe twice — every changeling, in a Zombie deck. One static with
+`subtypes: ["Skeleton", "Zombie"]` is the other near miss: it cannot put "other"
+on one half only.
+
+`affects` only (`STATIC_AFFECTS_FILTER_KEYS`); `blockers`, `targeting`,
+`damage_source` and the counting filters do not take it. A branch is held to the
+same keys and checks as the top level, recursively. The loader refuses a union
+of one, an empty branch, and a branch that repeats a key the outer filter names —
+the branch's value would replace the outer one rather than narrow it.
+
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
 of a `cmp` in its condition — is a fourth language, `STATIC_VALUE_KEYS`, and much
 smaller than the effect-side `value_keys`:

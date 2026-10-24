@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 27 |
+| [Static filter keys](#static-filter-keys) | 28 |
 | [Static conditions](#static-conditions) | 10 |
 | [Static values](#static-values) | 12 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -806,6 +806,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 
 | Name | Description | Defined in |
 |---|---|---|
+| `any_of` | A union of whole static filters, each with its own `exclude_self`; `affects` only. | [any_of — a union of static filters](card-dsl.md#any_of--a-union-of-static-filters) |
 | `any_types` | Any one of these card types is enough. | [Static abilities](card-dsl.md#static-abilities) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Static abilities](card-dsl.md#static-abilities) |
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |

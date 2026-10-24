@@ -126,6 +126,7 @@ from .vocabulary import (  # noqa: F401
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
@@ -2566,6 +2567,54 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
 
 
+def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> None:
+    """A static's ``affects``, and each branch of its ``any_of``, recursively.
+
+    A branch is matched as the outer filter **plus** the branch's keys
+    (`characteristics._matches_wherever`), so it is held to the same keys and
+    the same value checks as the top level -- a malformed ``power`` or
+    ``owner`` inside a branch would otherwise load and fail at match time, or
+    match everything.
+
+    Two refusals of shape. A union of one is the filter itself written the
+    long way. And a branch may not repeat a key the outer filter already
+    names: the branch's value would *replace* the outer one rather than narrow
+    it, so ``{"types": ["Creature"], "any_of": [{"types": ["Artifact"]}, …]}``
+    would quietly stop requiring a creature.
+    """
+    top = path == f"{where}.affects"
+    unknown = set(filt) - STATIC_AFFECTS_FILTER_KEYS
+    if unknown:
+        raise DslError(
+            f"{where if top else path}: static filters may only read printed "
+            f"characteristics; unsupported keys {sorted(unknown)}"
+        )
+    _check_owner_key(filt, path)
+    if not top:
+        # The top level is checked by the caller's loop over every filter key.
+        _check_mana_cost_key(filt, path)
+        _check_pt_keys(filt, path)
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{path}.any_of: takes at least two filters -- a union of one is the "
+            f"filter itself, written the long way"
+        )
+    outer = set(filt) - {"any_of"}
+    for i, branch in enumerate(branches):
+        here = f"{path}.any_of[{i}]"
+        if not isinstance(branch, Mapping) or not branch:
+            raise DslError(f"{here}: must be a non-empty filter object")
+        if clash := sorted(outer & set(branch)):
+            raise DslError(
+                f"{here}: {clash} already appear on the outer filter, and a "
+                f"branch's value would replace the outer one rather than narrow it"
+            )
+        _check_static_affects(branch, where, here)
+
+
 def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
     """Every key of a ``grant_warp`` filter, and of each ``any_of`` branch.
 
@@ -2740,13 +2789,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
-        unknown = set(model.affects) - STATIC_FILTER_KEYS
-        if unknown:
-            raise DslError(
-                f"{where}: static filters may only read printed characteristics; "
-                f"unsupported keys {sorted(unknown)}"
-            )
-        _check_owner_key(model.affects, f"{where}.affects")
+        _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
