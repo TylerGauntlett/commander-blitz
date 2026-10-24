@@ -7,6 +7,7 @@ impact: high
 why: the shelf's main promise, and the driver that orders the card work
 depends_on: []
 status: proposed
+adr: true
 ---
 
 ## Today
@@ -68,22 +69,28 @@ generated deck file. It is a small thing, and it is the thing the segment
 is for once the imports outnumber the shelf.
 
 **The shelf at dozens.** `DeckCatalog` is a grid with search, colour pips, a
-source filter and a cycling sort. For the window it needs: grouping by set
-with the release as the order, so the newest precons are the first row; an
-archetype filter; the bracket filter; and group headers as regions so the
-grid stays walkable with a pad rather than being one long sweep. The floors
-of [ADR 0013](../adr/0013-handheld-floors-are-ci-gates.md) apply to every
-tile.
+source filter and a cycling sort. For the window it needs: grouping by the
+set's release name, newest release first, so the newest precons are the
+first row; an archetype filter; and group headers as regions so the grid
+stays walkable with a pad rather than being one long sweep. There is no
+bracket filter: the shelf groups by release, and whatever a bracket becomes
+is the `brackets` item's to decide. The floors of
+[ADR 0013](../adr/0013-handheld-floors-are-ci-gates.md) apply to every tile.
 
-Deliver it in that order: the data model first (the `favorite` source, the
-`archetype` fallback, the manifest and its script, the sampled game test),
-then one set at a time, newest first, each set driving the card loop until
-its lists are native before it is promoted.
+**This item's pull request**, as the owner scoped it before delivery: the
+data model (the `favorite` source, the `archetype` fallback, the manifest and
+its script over MTGJSON, the sampled game test), the star in **Yours**, the
+shelf grouped by release, and the newest set in the window driven through
+the card loop until its lists are native and promoted. The decision that
+"precon" means a Wizards product in the rolling window, and that an
+archetype is enough to pilot one, is an ADR. Every older set in the window
+is [precon-sets](precon-sets.md), one set per batch, newest first.
 
 ## Gate
 
 The manifest script's window is one constant and a test asserts every row
 in it is inside the window and every deck under `precon` has a row; the
-import pin per deck; `test_registry.py` accepting a module or an archetype;
-the shelf's story and e2e specs at the handheld floors with the window's
-tile count; and the favorites segment's story with the twelve in it.
+import pin per deck of the newest set; `test_registry.py` accepting a module
+or an archetype; a server test that the star survives a reload; the shelf's
+story and e2e specs at the handheld floors with the decks grouped by
+release; and the favorites segment's story with the twelve in it.

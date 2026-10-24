@@ -43,9 +43,10 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [The real precons](#the-real-precons) | L | high | nothing | 3 |
+| [The real precons](#the-real-precons) | L | high | nothing | 4 |
 | [A phone modality](#a-phone-modality) | L | high | nothing | 0 |
 | [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
+| [Every precon set in the window](#every-precon-set-in-the-window) | L, continuous | high | The real precons | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
@@ -90,6 +91,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Blocked, and by what:**
 
+- [Every precon set in the window](#every-precon-set-in-the-window) — [The real precons](#the-real-precons)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [Brackets, derived from the list](#brackets-derived-from-the-list) — [The real precons](#the-real-precons)
 - [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — [The real precons](#the-real-precons)
@@ -298,7 +300,7 @@ the number this item exists to drive to zero.
 
 ### The real precons
 
-Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on nothing.
+Effort **L** · Impact **high**, the shelf's main promise, and the driver that orders the card work · Depends on nothing · ADR first.
 
 #### Today
 
@@ -359,25 +361,62 @@ generated deck file. It is a small thing, and it is the thing the segment
 is for once the imports outnumber the shelf.
 
 **The shelf at dozens.** `DeckCatalog` is a grid with search, colour pips, a
-source filter and a cycling sort. For the window it needs: grouping by set
-with the release as the order, so the newest precons are the first row; an
-archetype filter; the bracket filter; and group headers as regions so the
-grid stays walkable with a pad rather than being one long sweep. The floors
-of [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) apply to every
-tile.
+source filter and a cycling sort. For the window it needs: grouping by the
+set's release name, newest release first, so the newest precons are the
+first row; an archetype filter; and group headers as regions so the grid
+stays walkable with a pad rather than being one long sweep. There is no
+bracket filter: the shelf groups by release, and whatever a bracket becomes
+is the `brackets` item's to decide. The floors of
+[ADR 0013](adr/0013-handheld-floors-are-ci-gates.md) apply to every tile.
 
-Deliver it in that order: the data model first (the `favorite` source, the
-`archetype` fallback, the manifest and its script, the sampled game test),
-then one set at a time, newest first, each set driving the card loop until
-its lists are native before it is promoted.
+**This item's pull request**, as the owner scoped it before delivery: the
+data model (the `favorite` source, the `archetype` fallback, the manifest and
+its script over MTGJSON, the sampled game test), the star in **Yours**, the
+shelf grouped by release, and the newest set in the window driven through
+the card loop until its lists are native and promoted. The decision that
+"precon" means a Wizards product in the rolling window, and that an
+archetype is enough to pilot one, is an ADR. Every older set in the window
+is [precon-sets](precon-sets.md), one set per batch, newest first.
 
 #### Gate
 
 The manifest script's window is one constant and a test asserts every row
 in it is inside the window and every deck under `precon` has a row; the
-import pin per deck; `test_registry.py` accepting a module or an archetype;
-the shelf's story and e2e specs at the handheld floors with the window's
-tile count; and the favorites segment's story with the twelve in it.
+import pin per deck of the newest set; `test_registry.py` accepting a module
+or an archetype; a server test that the star survives a reload; the shelf's
+story and e2e specs at the handheld floors with the decks grouped by
+release; and the favorites segment's story with the twelve in it.
+
+### Every precon set in the window
+
+Effort **L, continuous** · Impact **high**, each set is a shelf row a player expects and a dated deadline for the card work · Depends on [The real precons](#the-real-precons).
+
+#### Today
+
+The manifest, `data/decks/sources.json`, lists every official Commander
+precon inside the window `scripts/sync_precons.py` names as one constant,
+and `official-precons` ships the newest set in it. Every other row is a deck
+the shelf promises and does not have: its list is published, its printings
+are known, and some of its cards are not native, which the import pin
+would show the day the deck file is written.
+
+#### The change
+
+One batch is one set from the manifest, the newest not yet shipped first.
+The batch drives `/author-cards` (and `/extend-dsl` for a mechanic the DSL
+lacks) until every list in the set is native, then writes each deck file
+with `source: precon`, its `set` and release, an `archetype` and an editorial
+dossier seeded from the product description, and the import pin that holds
+it. A deck gets a strategy module and a page under `docs/cpus/` only where
+its archetype visibly misplays it. A set the window ages out is the script
+reporting a row to retire, and its decks leave the shelf in the same batch.
+
+#### Gate
+
+Per batch: the import pin of every deck in the set; the manifest test
+(every row inside the window, every `precon` deck has a row) still green;
+the sampled whole-game test drawing from the new decks; and the shelf's e2e
+catalogue spec with the new release group in it.
 
 ### Viewing a deck's list
 
