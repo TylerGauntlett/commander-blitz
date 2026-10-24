@@ -9,6 +9,7 @@
     "B",
     "R"
   ],
+  "source": "favorite",
   "notes": "Mardu vampire aggro. Eminence makes a token every time a Vampire is cast, lords make the swarm lethal, and drain effects convert every death and life gain into damage.",
   "cards": [
     {
