@@ -4350,6 +4350,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`damage_life_floor`](card-dsl-cookbook.md#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) ·
+[`replace_dies`](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) ·
 [`replace_life_loss`](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`replace_life_gain`](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) ·
 [`cant_gain_life`](card-dsl-cookbook.md#your-opponents-cant-gain-life) ·

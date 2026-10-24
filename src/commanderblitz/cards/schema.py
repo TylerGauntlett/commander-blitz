@@ -691,8 +691,15 @@ class AbilityModel(BaseModel):
     #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
     #: exile because the same sentence is printed about a library by the
     #: Kozilek and Ulamog family, and defaulting it silently would make the
-    #: two indistinguishable in a card file.
+    #: two indistinguishable in a card file. `replace_dies` reads it too, for
+    #: "instead exile that card" (Kalitas, Traitor of Ghet).
     destination: str | None = None
+    #: ``replace_dies``: the token ids the static's **controller** creates as
+    #: part of each replaced death, one of each -- Kalitas's "instead exile
+    #: that card **and create a 2/2 black Zombie creature token**". Part of the
+    #: replacement rather than a trigger, because the creature never dies
+    #: (614.6) and a `creature_dies` trigger has nothing to fire on.
+    and_create: list[str] = Field(default_factory=list)
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is
     #: what every printed card in the family says; `false` is how one that

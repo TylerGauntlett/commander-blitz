@@ -3937,6 +3937,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"zone a printed card in this family redirects to"
             )
 
+    if model.effect == "replace_dies":
+        # `affects` is required by the general rule above, and it is the whole
+        # printed clause: "a nontoken creature an opponent controls" is a filter
+        # on the dying permanent, read against its controller, not a seat whose
+        # graveyard is replaced. `affects_player` would be a key nothing reads.
+        if model.affects_player is not None:
+            raise DslError(
+                f"{where}: replace_dies names the dying permanent with 'affects' "
+                f"(its controller included); 'affects_player' is replace_graveyard's"
+            )
+        # Exile is the only zone a printed die-replacement sends a creature to.
+        # Required rather than defaulted, for `replace_graveyard`'s reason: the
+        # destination is printed and the card file should say it.
+        if model.destination != "exile":
+            raise DslError(
+                f"{where}: replace_dies needs 'destination': 'exile' -- the zone the "
+                f"printed card sends the creature to instead"
+            )
+    elif model.and_create:
+        raise DslError(
+            f"{where}: 'and_create' is a replace_dies rider; on {model.effect!r} "
+            f"nothing would create the tokens"
+        )
+
     if model.effect == "untap_limit":
         if model.amount is None:
             # A cap with no number is not a cap. Absent, `_static_value` reads it
@@ -4196,6 +4220,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["prevent_all"] = True
     if model.destination is not None:
         static["destination"] = model.destination
+    if model.and_create:
+        static["and_create"] = list(model.and_create)
     if model.affects_token is not None:
         static["affects_token"] = model.affects_token
     if model.keywords:

@@ -145342,12 +145342,12 @@
     },
     "Kalitas, Traitor of Ghet": {
       "edhrec_rank": 7131,
-      "gate": "template",
+      "gate": null,
       "name": "Kalitas, Traitor of Ghet",
-      "reason": "no template for: If a nontoken creature an opponent controls would die, instead exile that card and create ",
+      "reason": "",
       "scryfall_id": "c89dbc5d-1299-4dad-bb3c-c3160cdf8a0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kalonian Behemoth": {

@@ -5845,6 +5845,48 @@ damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
 
+## "If a nontoken creature an opponent controls would die, instead exile that card"
+
+```jsonc
+// Kalitas, Traitor of Ghet
+{ "kind": "static",
+  "text": "If a nontoken creature an opponent controls would die, instead exile that card and create a 2/2 black Zombie creature token.",
+  "effect": "replace_dies",
+  "affects": { "types": ["Creature"], "controller": "opponent", "is_token": false },
+  "destination": "exile",
+  "and_create": ["zombie_2_2_b"] }
+```
+
+A standing replacement of a **death** — a move from the battlefield to a
+graveyard, and nothing else. `affects` is a static filter read against the dying
+permanent while it still stands, so `controller` is who controls it as it dies
+and `is_token` is "nontoken". `destination` is required and is `"exile"`, the
+only zone printed die-replacements send a creature to. `and_create` is
+optional: one of each listed token, created by the **static's controller** as
+part of each replaced death. Void Maw's "If another creature would die, exile it
+instead" is the same static without it.
+
+The creature never dies (614.6), so no `dies` or `creature_dies` trigger fires
+for it; that is why the token is part of the static and not a death trigger
+beside it, which would also let the opponent's "when this dies" fire.
+
+How it orders against the other replacements on a death, all decided without
+asking:
+
+- **A commander** is exiled, the token is made, and then it goes to the command
+  zone (903.9a moves it after it has been exiled).
+- **The affected player's own replacements come first** (616.1): a creature
+  under `replace_deaths`, unearth's `leaves_to`, or a `replace_graveyard` that
+  would also catch it goes where that one says, and no token is made.
+- **Dying together**: a `replace_dies` permanent that leaves in the same
+  simultaneous event (one effect op, one state-based-action pass) still applies
+  to the creatures leaving with it — Kalitas in a wrath still exiles the
+  opponents' creatures.
+
+The near misses: `replace_graveyard` is gated on the destination alone, filters
+by the graveyard's **owner** and creates nothing; `replace_deaths` is a one-shot
+mark on the objects a spell chose, not a standing static.
+
 ## "It can't be regenerated."
 
 ```jsonc

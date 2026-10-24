@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**69 cards** blocked by **78** capabilities.
+**68 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
-| [death-replacement-with-rider](#death-replacement-with-rider) | 1 | 7131 | replacement |
 | [declare-attackers-step-condition](#declare-attackers-step-condition) | 1 | 3213 | value |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
@@ -416,20 +415,6 @@ Blocks **1** card.
 
 - **Spinerock Knoll** (rank 759) — `spinerock_knoll`
   - {R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn.
-
-</details>
-
-## death-replacement-with-rider
-
-Blocks **1** card.
-
-- **(replacement)** a static replacement of a creature dying (battlefield to graveyard only), filtered by the dying permanent's controller and token-ness (nontoken, controlled by an opponent), that sends the card to exile instead AND performs an additional effect for the static's controller as part of the replacement -- here create_token zombie_2_2_b under Kalitas's controller. The creature does not die, so no dies/creature_dies trigger may be used to make the token
-  <br>Why the existing vocabulary won't do: The static replace_graveyard (Rest in Peace / Leyline of the Void) redirects every card or token going to a graveyard from anywhere, keyed by affects_player, with no 'from battlefield only' scope, no nontoken-creature filter and no rider effect to create a token; replace_leaves_battlefield / replace_deaths are one-shot ops on chosen objects, not a standing static; a creature_dies trigger cannot fire because the replaced event is not a death
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kalitas, Traitor of Ghet** (rank 7131) — `kalitas_traitor_of_ghet`
-  - If a nontoken creature an opponent controls would die, instead exile that card and create a 2/2 black Zombie creature token.
 
 </details>
 

@@ -5832,6 +5832,10 @@
   "kalakscion_hunger_tyrant": {
     "zone": "battlefield"
   },
+  "kalitas_traitor_of_ghet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kalonian_behemoth": {
     "zone": "battlefield"
   },

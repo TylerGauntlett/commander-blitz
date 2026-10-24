@@ -44,6 +44,9 @@ def run(state: GameState) -> None:
 
 def check(state: GameState) -> bool:
     """One pass.  Returns True if anything changed."""
+    # One pass is one simultaneous event (704.3): a Kalitas that left in an
+    # earlier pass, or in the op before this, no longer replaces anything.
+    state.leaving_dies_replacers.clear()
     changed = False
     changed |= _player_losses(state)
     changed |= _tokens_and_attachments(state)

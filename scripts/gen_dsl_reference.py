@@ -745,6 +745,8 @@ STATICS: dict[str, Entry] = {
                          "Counters replaced on the way in"),
     "replace_damage": ("Damage dealt by or to matching permanents is multiplied or redirected.",
                        "Damage multiplied on the way out"),
+    "replace_dies": ("If a matching permanent would die, exile it instead, optionally creating tokens.",
+                     '"If a nontoken creature an opponent controls would die, instead exile that card"'),
     "replace_draw": ("If the player would draw a card, draw more instead.",
                      '"If you would draw a card, draw two cards instead"'),
     "replace_empty_draw": ("If the player would draw from an empty library, something else happens.",
