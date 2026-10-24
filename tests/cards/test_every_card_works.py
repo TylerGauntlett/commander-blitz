@@ -661,6 +661,16 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         return
     left = condition.get("left") or {}
     right = condition.get("right") or {}
+    # Speaker of the Heavens: "activate only if you have at least 7 life more
+    # than your starting life total". Satisfied by setting the life the
+    # condition reads, against the starting total the engine keeps.
+    if "life_of" in left and "sum" in right:
+        terms = right["sum"]
+        extra = sum(int(x["const"]) for x in terms if "const" in x)
+        if any("starting_life_of" in x for x in terms):
+            player = game.state.players[0]
+            player.life = player.starting_life + extra
+        return
     if "const" not in right:
         return
 
@@ -904,6 +914,9 @@ def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None 
     """
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     types = {str(t) for t in selector.get("types") or ["Creature"]}
+    # Ayara, First of Locthwain sacrifices "another **black** creature", and the
+    # first creature by id is green.
+    colors = {str(c) for c in selector.get("colors") or []}
     matches = [
         c
         for c in sorted(registry, key=lambda c: c.id)
@@ -911,6 +924,7 @@ def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None 
         and c.front_face is None
         and types <= set(c.types)
         and (not subtypes or subtypes & set(c.subtypes))
+        and colors <= set(c.colors)
         and (min_power is None or (c.power is not None and c.power >= min_power))
     ]
     if not matches:
@@ -1038,12 +1052,20 @@ def _stock_the_graveyard(game: Game, registry, spec) -> None:
     tests.
     """
     selector = spec.selector
-    types = {str(t) for t in selector.get("types") or []}
+    # Lord of the Undead returns a **Zombie** card, and Haven of the Spirit
+    # Dragon a Dragon creature card *or* an Ugin card: an `any_of` is satisfied
+    # by its first branch, which is all a prop needs to be.
+    shape = (selector.get("any_of") or [selector])[0]
+    types = {str(t) for t in shape.get("types") or []}
+    subtypes = {str(s) for s in shape.get("subtypes") or []}
     match = next(
         (
             c
             for c in sorted(registry, key=lambda c: c.id)
-            if not c.is_token and c.front_face is None and types <= set(c.types)
+            if not c.is_token
+            and c.front_face is None
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
         ),
         None,
     )
