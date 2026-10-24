@@ -1,0 +1,18 @@
+{
+  "card_id": "yeva_nature_s_herald",
+  "name": "Yeva, Nature's Herald",
+  "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nYou may cast green creature spells as though they had flash.",
+  "blocked_sentences": [
+    "You may cast green creature spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "cast_as_though_flash_filtered",
+      "kind": "static_effect",
+      "what": "a spell filter (affects_spells: {types: [\"Creature\"], colors: [\"G\"]}) on the player-wide cast_as_though_flash static, so the timing permission covers only green creature spells the controller casts, including cards drawn after the source arrived",
+      "why_existing_wont_do": "cast_as_though_flash is unfiltered: the loader refuses 'affects'/'amount' on it and reads no 'affects_spells', so it would grant flash to every spell (a strictly better card). grant_flash_permission takes 'types' but not colors and needs a timed duration, so it cannot be a static that lasts while Yeva is on the battlefield; grant_keyword flash is not read by casting._timing_ok and cannot reach cards in hand"
+    }
+  ],
+  "closest_existing": ["cast_as_though_flash", "grant_flash_permission"],
+  "confidence": "high"
+}

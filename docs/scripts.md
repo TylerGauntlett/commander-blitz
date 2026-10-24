@@ -22,7 +22,8 @@ The ones marked *stdlib only* run without the venv.
 | `scripts/backfill_art.py` | Crawl the catalog's art into `data/art_store/`, resumable and capped; `--limit`, `--delay`, `--dry-run`. Run on a schedule by `art-backfill.yml` | [card-catalog.md](card-catalog.md#the-art-store) |
 | `scripts/fetch_card_art.py` | Download card art into `data/art/` once, keyed on the engine `card_id`; normally called by `build_card_index.py`. *Stdlib only* | [card-catalog.md](card-catalog.md) |
 | `scripts/validate_decks.py` | Validate every card file and deck list; the authored layer by default, `--all` adds imports. Exits non-zero on the first problem | [decks.md](decks.md#checking-a-deck) |
-| `scripts/promote_deck.py` | Copy an imported deck out of `data/generated/` into a committed precon under `data/decks/`, refusing if any card is not native | [decks.md](decks.md#bringing-your-own) |
+| `scripts/promote_deck.py` | Copy an imported deck out of `data/generated/` into a committed favorite under `data/decks/`, refusing if any card is not native | [decks.md](decks.md#bringing-your-own) |
+| `scripts/sync_precons.py` | Rewrite the precon manifest `data/decks/sources.json` from MTGJSON inside `WINDOW_YEARS`; `--missing <id>` lists a precon's unsupported cards, `--write-deck <id>` writes its deck file | [decks.md](decks.md#bringing-your-own) |
 | `scripts/play_cli.py` | Play a game in the terminal: the fastest way to poke at the engine. `--players`, `--auto` | [architecture.md](architecture.md) |
 | `scripts/smoke_http.py` | Play a whole game against a running server exactly as the browser client does; `--pod` drives the lobby and the per-seat token boundary | [testing.md](testing.md) |
 | `scripts/run_arena.py` | Headless duels and pods between agents, with a results table; `--decks precons` is the deck-strategy benchmark | [ai-training.md](ai-training.md#evaluating) |

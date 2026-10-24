@@ -1,0 +1,18 @@
+{
+  "card_id": "utvara_hellkite",
+  "name": "Utvara Hellkite",
+  "oracle_text": "Flying\nWhenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.",
+  "blocked_sentences": [
+    "Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "dragon_6_6_r_flying_token",
+      "kind": "token",
+      "what": "a 6/6 red Dragon creature token with flying (e.g. id dragon_6_6_r_flying)",
+      "why_existing_wont_do": "The trigger itself is expressible (an `attacks` trigger with filter {controller: you, subtypes: [Dragon]} plus create_token), but token_ids holds only dragon_5_5_r_flying, a 5/5 -- substituting it would make a smaller token than the card prints"
+    }
+  ],
+  "closest_existing": ["dragon_5_5_r_flying"],
+  "confidence": "high"
+}

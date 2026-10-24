@@ -1,0 +1,18 @@
+{
+  "card_id": "death_baron",
+  "name": "Death Baron",
+  "oracle_text": "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch. (Any amount of damage they deal to a creature is enough to destroy it.)",
+  "blocked_sentences": [
+    "Skeletons you control and other Zombies you control get +1/+1 and have deathtouch."
+  ],
+  "needs": [
+    {
+      "capability": "static_filter_union",
+      "kind": "selector",
+      "what": "a static ability `affects` filter that is a union of sub-filters, each with its own `exclude_self` (\"Skeletons you control\" including the source OR \"other Zombies you control\" excluding it), so a creature matching both branches (a Skeleton Zombie, or any changeling) is affected once and gets +1/+1, not +2/+2",
+      "why_existing_wont_do": "static_filter_keys has no `any_of`/`union` and no `not_subtypes`. One static with subtypes [Skeleton, Zombie] cannot apply `exclude_self` to only the Zombie branch; two separate buff/grant_keyword statics (Skeleton; Zombie + exclude_self) double-apply the +1/+1 to every creature that is both a Skeleton and a Zombie, which changelings make common in a Zombie deck. `any_of`/`union` exist in selector_keys and cost_reduction_filter_keys but not for statics"
+    }
+  ],
+  "closest_existing": ["buff", "grant_keyword", "any_of"],
+  "confidence": "high"
+}

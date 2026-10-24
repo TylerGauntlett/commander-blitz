@@ -6,11 +6,19 @@ returns it. Each is a Commander-legal 100-card deck named after its commander, a
 separates them from an imported deck, whose unsupported cards are generated with
 their rules text inert ([deck-import.md](deck-import.md)).
 
-Most are real Moxfield lists, imported card for card and promoted into
-`data/decks/` by `scripts/promote_deck.py`; Isperia and Zurgo are the original
-hand-built precons. **Each one is piloted by a CPU strategy of its own**, and each
-has a page in [cpus/](cpus/README.md) on how it plays, how it wins and how the
-CPU drives it.
+Two kinds ship, and the shelf names them apart
+([ADR 0024](adr/0024-precon-means-the-product.md)):
+
+- **Precons** are the Commander decks Wizards sold, card for card, inside the
+  window `scripts/sync_precons.py` names as `WINDOW_YEARS`. Each is a row in
+  `data/decks/sources.json`, written from MTGJSON, and carries its `release`.
+  Each is piloted by the `archetype` its file names, and gets a strategy of its
+  own only where the archetype visibly misplays it.
+- **Favorites** are the lists the maintainer chose: real Moxfield lists,
+  imported card for card and promoted by `scripts/promote_deck.py`, plus
+  Isperia and Zurgo, which were built by hand. **Each one is piloted by a CPU
+  strategy of its own**, and each has a page in [cpus/](cpus/README.md) on how
+  it plays, how it wins and how the CPU drives it.
 
 ## Isperia, Supreme Judge
 
@@ -188,7 +196,7 @@ Any public Moxfield deck can be imported and played — see
 just in provenance: **every card in them is implemented and tested**, whereas an
 imported deck's unsupported cards are generated with their rules text inert.
 
-To make an imported list a shipped precon, the whole list has to be native
+To make an imported list a shipped favorite, the whole list has to be native
 first (`/import-moxfield`), then:
 
 ```bash
@@ -197,6 +205,14 @@ python scripts/promote_deck.py data/generated/decks/mox_<id>.deck.json \
 ```
 
 It refuses a list the authored layer cannot play. The editorial fields and a CPU
-strategy ([cpus/README.md](cpus/README.md#adding-a-deck)) come after. The import
+strategy ([cpus/README.md](cpus/README.md#adding-a-deck)) come after.
+
+A precon arrives from the manifest instead. `sync_precons.py` rewrites
+`sources.json`; `--missing <id>` lists the cards of one precon the engine lacks,
+which is the `/author-cards` queue for that set; and once that list is empty,
+`--write-deck <id>` writes the deck file with its printings and release. The
+dossier and the `archetype` are a person's edit after that. A run that reports
+a row has left the window means that precon leaves the shelf in the same
+change. The import
 report and the deck tile both say how many, because that difference decides
 whether a game makes sense.

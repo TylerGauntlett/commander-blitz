@@ -1,0 +1,25 @@
+{
+  "card_id": "arachnogenesis",
+  "name": "Arachnogenesis",
+  "oracle_text": "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.",
+  "blocked_sentences": [
+    "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.",
+    "Prevent all combat damage that would be dealt this turn by non-Spider creatures."
+  ],
+  "needs": [
+    {
+      "capability": "spider_token",
+      "kind": "token",
+      "what": "a 1/2 green Spider creature token with reach (e.g. spider_1_2_g_reach)",
+      "why_existing_wont_do": "token_ids is a closed list and has no Spider; the nearest green tokens (plant_0_1_g, insect_1_1_g, saproling_1_1_g) differ in type, size and lack reach. The X itself is expressible as a count of {types: [Creature], attacking_player/attacking: you} creatures, so only the token is missing for this sentence"
+    },
+    {
+      "capability": "fog",
+      "kind": "op",
+      "what": "a one-shot, this-turn prevention of COMBAT damage only, dealt BY creatures matching a filter (non-Spider: not_subtypes [Spider]) evaluated when the damage would be dealt, so creatures that become or stop being Spiders, or enter later in the turn, are covered correctly",
+      "why_existing_wont_do": "prevent_damage_permanent resolves its objects at resolution and shields all damage (not combat-only) from those fixed permanents; prevent_damage the op is seat-keyed (damage to a player); the prevent_damage / prevent_all_but statics live on a printed permanent and have no 'this turn' duration installable by a spell. None carries a combat_only flag together with a dealt-by creature filter"
+    }
+  ],
+  "closest_existing": ["prevent_damage_permanent", "prevent_damage", "prevent_all_but", "create_token"],
+  "confidence": "high"
+}

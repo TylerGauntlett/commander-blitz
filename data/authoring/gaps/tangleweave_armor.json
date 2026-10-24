@@ -1,0 +1,18 @@
+{
+  "card_id": "tangleweave_armor",
+  "name": "Tangleweave Armor",
+  "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +X/+X, where X is the greatest mana value among your commanders.\nEquip {4}",
+  "blocked_sentences": [
+    "Equipped creature gets +X/+X, where X is the greatest mana value among your commanders."
+  ],
+  "needs": [
+    {
+      "capability": "greatest_commander_mana_value",
+      "kind": "value",
+      "what": "a static value (usable as a buff's power/toughness) giving the greatest mana value among the cards that are your commanders, read wherever those commanders are (command zone, battlefield, hand, graveyard, exile, library), and 0 if you have none",
+      "why_existing_wont_do": "static_value_keys has const, count, counters_on, mana_symbols, max_count_of, min_count_of and life readers, but nothing reads a mana value; max_count_of is the largest per-player COUNT of matching objects (used for 'an opponent controls more lands'), not the largest mana value among objects. The value_keys mana_value_of/extreme_value are effect-time values not accepted by a static, and the cost_reduction greatest_mana_value key exists only for cost reduction, not buff magnitudes. A selector with is_commander would also only see one zone, while a commander is usually in the command zone"
+    }
+  ],
+  "closest_existing": ["max_count_of", "greatest_mana_value", "mana_value_of", "is_commander"],
+  "confidence": "high"
+}

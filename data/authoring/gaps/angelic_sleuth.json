@@ -1,0 +1,18 @@
+{
+  "card_id": "angelic_sleuth",
+  "name": "Angelic Sleuth",
+  "oracle_text": "Flying\nWhenever another permanent you control leaves the battlefield, if it had counters on it, investigate. (Create a Clue artifact token with \"{2}, Sacrifice this token: Draw a card.\")",
+  "blocked_sentences": [
+    "Whenever another permanent you control leaves the battlefield, if it had counters on it, investigate. (Create a Clue artifact token with \"{2}, Sacrifice this token: Draw a card.\")"
+  ],
+  "needs": [
+    {
+      "capability": "had_counters",
+      "kind": "value",
+      "what": "a last-known-information test of whether the permanent that just left the battlefield had ANY counters (of any kind) on it, usable as an intervening-if condition on a leaves_battlefield trigger -- e.g. a `had_any_counters` value or condition reading the event's `had_counters` snapshot summed over every kind",
+      "why_existing_wont_do": "The trigger filter key `has_counters` reads `obj.counters` at match time, but `zones` runs `reset_permanent_state` before LEAVES_BATTLEFIELD fires, so on a leave trigger it is always false (the card would never investigate). The value `counters_had` does read the snapshot but takes exactly one counter kind (`{\"counters_had\": \"+1/+1\"}`), and counter kinds are open-ended, so an `any` over a fixed list of kinds would miss oil, shield, stun, lore, etc. and be a narrower card"
+    }
+  ],
+  "closest_existing": ["counters_had", "has_counters"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "challenger_troll",
+  "name": "Challenger Troll",
+  "oracle_text": "Each creature you control with power 4 or greater can't be blocked by more than one creature.",
+  "blocked_sentences": [
+    "Each creature you control with power 4 or greater can't be blocked by more than one creature."
+  ],
+  "needs": [
+    {
+      "capability": "max_blockers",
+      "kind": "static_effect",
+      "what": "a static block restriction on the attacker that caps how many creatures may block it (here at most one), judged on the whole blocker declaration (509.1c), applied to each creature its controller controls whose CURRENT power is 4 or greater, so a creature pumped to 4 power gains it and one shrunk below 4 loses it",
+      "why_existing_wont_do": "block_restriction carries only 'blockers' (a per-pair filter refusing a blocker by what it is) or 'require_all' (Tromokratis' all-or-nothing); neither counts blockers, and refusing every blocker would make the creature unblockable. Its 'affects' filter, like every static filter, reads printed characteristics, so 'power 4 or greater' would test printed power rather than current power. Menace is the opposite cap (at least two), and cant_block / block_tax act on blockers, not on the number per attacker"
+    }
+  ],
+  "closest_existing": ["block_restriction", "menace"],
+  "confidence": "high"
+}
