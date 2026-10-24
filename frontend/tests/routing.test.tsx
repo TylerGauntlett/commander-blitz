@@ -174,9 +174,13 @@ describe("joining from the door", () => {
     fireEvent.click(await screen.findByTestId("join-go"));
     await waitFor(() => expect(app.where.pathname).toBe("/games/g9"));
     expect(app.where.how).toBe("REPLACE");
-    // ...and everything asked on behalf of that game carries the token.
+    // ...and everything asked on behalf of that game carries the token. Waited
+    // for rather than read at once: the table asks for its state after the
+    // route changes, not with it, and a loaded runner can land between.
+    await waitFor(() =>
+      expect(calls.filter((call) => call.path.includes("g9")).length).toBeGreaterThan(0),
+    );
     const forGame = calls.filter((call) => call.path.includes("g9"));
-    expect(forGame.length).toBeGreaterThan(0);
     expect(forGame.every((call) => call.token === "tok-1")).toBe(true);
   });
 
