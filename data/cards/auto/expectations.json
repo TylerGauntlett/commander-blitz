@@ -5057,6 +5057,13 @@
   "hawkeye_clint_barton": {
     "zone": "battlefield"
   },
+  "hazoret_s_monument": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "head_of_security": {
     "zone": "battlefield"
   },
@@ -5756,6 +5763,14 @@
     }
   },
   "joshua_phoenix_s_dominant_phoenix_warden_of_fire": {
+    "zone": "battlefield"
+  },
+  "josu_vess_lich_knight": {
+    "battlefield_count": 41,
+    "tokens": {
+      "count": 8,
+      "id": "zombie_knight_2_2_b_menace"
+    },
     "zone": "battlefield"
   },
   "jukai_messenger": {

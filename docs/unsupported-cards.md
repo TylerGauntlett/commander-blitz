@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**73 cards** blocked by **82** capabilities.
+**72 cards** blocked by **81** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -95,7 +95,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
 | [turns-taken-casting-restriction](#turns-taken-casting-restriction) | 1 | 11854 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
-| [zombie-knight-token](#zombie-knight-token) | 1 | 7247 | token |
 
 ## cast-as-though-flash
 
@@ -1292,19 +1291,5 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## zombie-knight-token
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Zombie Knight creature token with menace (e.g. id zombie_knight_2_2_b_menace)
-  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b (a Zombie without menace and without the Knight subtype) and pirate_2_2_b_menace (wrong subtype); neither is the printed token. Kicker is the card-level `kicker` key, Menace a keyword, and the trigger is self_enters with a `kicked` condition and create_token amount 8, so the token is the only missing piece
-
-<details><summary>Cards waiting on this</summary>
-
-- **Josu Vess, Lich Knight** (rank 7247) — `josu_vess_lich_knight`
-  - When Josu Vess enters, if it was kicked, create eight 2/2 black Zombie Knight creature tokens with menace.
 
 </details>

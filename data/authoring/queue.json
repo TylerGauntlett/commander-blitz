@@ -124092,12 +124092,12 @@
     },
     "Hazoret's Monument": {
       "edhrec_rank": 1892,
-      "gate": "template",
+      "gate": null,
       "name": "Hazoret's Monument",
-      "reason": "no template for: Red creature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "3c862fc4-e2fe-4fad-8bc1-a53f1fecc4de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazoret's Undying Fury": {
@@ -143852,12 +143852,12 @@
     },
     "Josu Vess, Lich Knight": {
       "edhrec_rank": 7247,
-      "gate": "template",
+      "gate": null,
       "name": "Josu Vess, Lich Knight",
-      "reason": "no template for: Kicker {5}{B}",
+      "reason": "",
       "scryfall_id": "30553f61-6edf-4e7b-b60f-b8f62ca2bcad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Journey for the Elixir": {

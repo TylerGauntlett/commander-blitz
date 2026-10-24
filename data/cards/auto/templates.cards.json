@@ -54738,6 +54738,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "colors": [
+              "R"
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Red creature spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1
+              },
+              "player": "you",
+              "prompt": "Discard a card to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, you may discard a card. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hazoret_s_monument",
+      "mana_cost": "{3}",
+      "name": "Hazoret's Monument",
+      "oracle_text": "Red creature spells you cast cost {1} less to cast.\nWhenever you cast a creature spell, you may discard a card. If you do, draw a card.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -63381,6 +63447,56 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 8
+              },
+              "op": "create_token",
+              "token": "zombie_knight_2_2_b_menace"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Josu Vess enters, if it was kicked, create eight 2/2 black Zombie Knight creature tokens with menace.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "josu_vess_lich_knight",
+      "keywords": [
+        "menace"
+      ],
+      "kicker": "{5}{B}",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Josu Vess, Lich Knight",
+      "oracle_text": "Kicker {5}{B} (You may pay an additional {5}{B} as you cast this spell.)\nMenace\nWhen Josu Vess enters, if it was kicked, create eight 2/2 black Zombie Knight creature tokens with menace.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
