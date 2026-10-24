@@ -1,0 +1,18 @@
+{
+  "card_id": "vanguard_seraph",
+  "name": "Vanguard Seraph",
+  "oracle_text": "Flying\nWhenever you gain life for the first time each turn, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+  "blocked_sentences": [
+    "Whenever you gain life for the first time each turn, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+  ],
+  "needs": [
+    {
+      "capability": "first_life_gain_each_turn",
+      "kind": "trigger_event",
+      "what": "a `you_gain_life` trigger that fires only on the player's first life-gain event of the turn, counted per player over the whole turn (including gains made before this permanent entered): `LIFE_GAINED` needs a per-player ordinal in `data[\"nth\"]` (as `DRAW` and `SPELL_CAST` carry, folded off the turn ledger) so `nth: 1` can be honoured on `you_gain_life`",
+      "why_existing_wont_do": "`nth` is answered by `triggers._ordinal`, which reads `event.data[\"nth\"]`, and `primitives.gain_life` fires `LIFE_GAINED` with only `amount`, so `nth: 1` would never match. `max_per_turn: 1` is a per-permanent cap on queued firings, so a Seraph entering after you already gained life this turn would wrongly trigger on the next gain (the engine's own comment on `nth` names this exact fault). A `condition` on `life_gained_this_turn` is an intervening-if read after the gain, and the ledger holds a total, not a count of gain events, so it cannot tell the first gain from a later one"
+    }
+  ],
+  "closest_existing": ["you_gain_life", "max_per_turn", "nth", "life_gained_this_turn", "surveil"],
+  "confidence": "high"
+}

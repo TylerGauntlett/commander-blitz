@@ -1,0 +1,25 @@
+{
+  "card_id": "scourge_of_the_throne",
+  "name": "Scourge of the Throne",
+  "oracle_text": "Flying\nDethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\nWhenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.",
+  "blocked_sentences": [
+    "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+    "Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase."
+  ],
+  "needs": [
+    {
+      "capability": "dethrone",
+      "kind": "trigger_event",
+      "what": "an `attacks` trigger clause that matches only when the creature attacks a PLAYER (not a planeswalker or battle that player controls) whose life is greater than or equal to every other living player's life, checked as part of the trigger event (702.105a), not as an intervening-if re-checked on resolution",
+      "why_existing_wont_do": "The trigger's `defending` clause takes only you/opponent/any (`triggers._defender_matches`). Writing it as a `condition` cmp of `{life_of: {binding: defender}}` >= `{max_life_of: each_player}` would be an intervening-if (re-checked at resolution, which dethrone is not), and the `defender` binding is the planeswalker's or battle's controller on an attack at a permanent; the ATTACKS event's `attacked_permanent` flag is not in `EVENT_BINDING_KEYS`, so the card would wrongly trigger when attacking the top-life player's planeswalker"
+    },
+    {
+      "capability": "first_attack_each_turn",
+      "kind": "trigger_event",
+      "what": "\"whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life\": an `attacks` trigger that fires only on the creature's first attack declaration of the turn regardless of whether the intervening-if passed, plus the same attacked-a-player-with-most-life test as dethrone",
+      "why_existing_wont_do": "`max_per_turn: 1` counts only queued firings (`triggers._queue`), so if the creature's first attack is against a player who does not have the most life, the cap is not used and a second attack in an extra combat would trigger it, which the printed card forbids; and the most-life defender test has the same planeswalker and binding problem as dethrone. `untap` over `{attacking: true}` and `extra_combat` would cover the effect half"
+    }
+  ],
+  "closest_existing": ["attacks", "defending", "max_per_turn", "max_life_of", "life_of", "extra_combat"],
+  "confidence": "high"
+}
