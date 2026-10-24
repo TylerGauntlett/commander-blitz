@@ -88,7 +88,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // The right stick scrolls the reader, or the list the ring is in.
   useStickScroll();
 
-  const { heldCard, setHeldCard, closeHold, readHovered, longPress } = useCardHold(state);
+  const { heldCard, setHeldCard, closeHold, readHovered, longPress, tapRead } =
+    useCardHold(state);
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
@@ -378,6 +379,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-testid="table"
       ref={tableRef}
       onContextMenu={readHovered}
+      onClick={tapRead}
       {...longPress}
       // Read by e2e rather than making it parse a resolved `calc()` off a lane, and
       // handy for eyeballing the solve in devtools. Same spirit as
@@ -494,6 +496,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           the hand alone.
         */}
         <aside className="rail rail--right">
+          {/* The phone sheet's voice: see `state/useSheetHost.ts`. */}
+          {phone && <div className="sheet__say" data-testid="sheet-say" aria-live="polite" />}
           <CardPreview state={state} />
           <ActionPanel
             state={state}
@@ -532,6 +536,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         <TableFoot
           footRef={footRef}
           handheld={handheld}
+          phone={phone}
           state={state}
           actions={actions}
           viewer={viewer}
