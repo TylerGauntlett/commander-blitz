@@ -51,6 +51,13 @@ class TestTheWindow:
         dates = [row["date"] for row in manifest["rows"]]
         assert dates == sorted(dates, reverse=True)
 
+    def test_every_row_names_its_commanders_and_their_printings(self, manifest):
+        """A coming-soon shell draws its commander from these, so a row
+        without them is a blank tile on the shelf."""
+        for row in manifest["rows"]:
+            assert row["commanders"], row["id"]
+            assert all(c["name"] and c["scryfall_id"] for c in row["commanders"]), row["id"]
+
     def test_ids_are_unique(self, manifest):
         ids = [row["id"] for row in manifest["rows"]]
         assert len(ids) == len(set(ids))

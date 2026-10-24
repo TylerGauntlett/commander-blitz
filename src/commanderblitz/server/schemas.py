@@ -144,6 +144,28 @@ class ReleaseDTO(BaseModel):
     date: str
 
 
+class ShellCommanderDTO(BaseModel):
+    """A coming-soon precon's commander: a name, and art by its printing."""
+
+    name: str
+    art_url: str | None = None
+
+
+class UpcomingPreconDTO(BaseModel):
+    """A precon in the manifest's window that does not ship yet (ADR 0024).
+
+    The shelf draws it as a "coming soon" shell in its release group: not a
+    deck, so nothing about it can be picked or played.
+    """
+
+    id: str
+    product: str
+    set_code: str
+    set_name: str
+    date: str
+    commanders: list[ShellCommanderDTO] = Field(default_factory=list)
+
+
 class DeckSummary(BaseModel):
     id: str
     name: str

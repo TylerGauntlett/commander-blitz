@@ -35,6 +35,14 @@ a quality bar and becomes a reason not to ship.
 
 The shelf's segments are named for them: **Precons**, **Favorites**, **Yours**.
 
+**The Precons segment shows the whole window.** A precon whose cards are not all
+native is a **coming-soon shell**: its product name, its release group and a
+grayed-out image of its commander, served by printing from the manifest. A shell
+is not a deck and not a control: nothing about it can be picked, seated or
+played, so [ADR 0015](0015-every-legal-action-is-one-control.md) is untouched.
+`GET /api/precons/upcoming` lists the manifest rows that do not ship, by
+subtraction, so a precon stops being a shell the moment its deck file loads.
+
 **An archetype is enough to pilot a deck.** A deck file may name an `archetype`,
 one of the keys of `ARCHETYPES` in `commanderblitz.ai.strategy.archetypes`, and
 `strategy_for` looks the deck up by id, then by commander, then by archetype,
@@ -60,6 +68,10 @@ only where the archetype visibly misplays it.
   precon is the signal to give that precon its own module.
 - The whole-game test runs a seeded sample of the shipped decks per run. The
   full matrix belongs to the arena, which has its own runner.
+
+- **Filling a shell with substitutions** to make it playable sooner would ship
+  a list Wizards did not sell under the word that promises one. A shell waits
+  for its cards instead.
 
 ## Rejected
 

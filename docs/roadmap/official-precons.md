@@ -86,6 +86,11 @@ the card loop until its lists are native and promoted. The decision that
 archetype is enough to pilot one, is an ADR. Every older set in the window
 is [precon-sets](precon-sets.md), one set per batch, newest first.
 
+The owner widened this during delivery: the newest set proved to need dozens of
+engine capabilities, so this pull request ships its closest deck, Wretched
+Ranks, and the shelf represents the rest of the window as **coming-soon
+shells** with a grayed-out commander, filled in as each deck becomes native.
+
 ## Gate
 
 The manifest script's window is one constant and a test asserts every row
@@ -93,4 +98,6 @@ in it is inside the window and every deck under `precon` has a row; the
 import pin per deck of the newest set; `test_registry.py` accepting a module
 or an archetype; a server test that the star survives a reload; the shelf's
 story and e2e specs at the handheld floors with the decks grouped by
-release; and the favorites segment's story with the twelve in it.
+release; the favorites segment's story with the twelve in it; and a server test that
+the coming-soon list is the manifest minus what ships, with a story and an e2e
+check that a shell is drawn and is not a control.

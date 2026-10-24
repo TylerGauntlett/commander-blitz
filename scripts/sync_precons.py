@@ -21,6 +21,9 @@ What counts as a precon, so the shelf promises one thing:
 - a *Collector's Edition* is the same list as its plain deck in other finishes,
   so it is dropped and the plain deck stands for both.
 
+Each row carries its commanders' names and printings, so the shelf can show a
+precon that is not playable yet as a "coming soon" tile.
+
 A run reports every shipped ``precon`` deck whose row is gone: a set that aged
 out of the window, to retire from the shelf in the same change.
 
@@ -146,6 +149,20 @@ def _names(deck: dict) -> tuple[list[dict], list[dict]]:
     return deck.get("commander", []), deck.get("mainBoard", [])
 
 
+def commanders_of(deck: dict) -> list[dict]:
+    """``[{name, scryfall_id}]``: who heads a precon, with the printing it shipped.
+
+    Held in the manifest so the shelf can show a precon that is not playable
+    yet as a "coming soon" tile with its commander's art, without the engine
+    knowing the card: art is served by Scryfall id (``/art/{id}.jpg``).
+    """
+    commanders, _ = _names(deck)
+    return [
+        {"name": c["name"], "scryfall_id": c.get("identifiers", {}).get("scryfallId", "")}
+        for c in commanders
+    ]
+
+
 def missing(row: dict, registry, *, refresh: bool = False) -> list[str]:
     """The names in a precon the authored layer cannot play."""
     commanders, main = _names(published_list(row, refresh=refresh))
@@ -246,6 +263,8 @@ def main() -> int:
         fetch("SetList.json", refresh=args.refresh),
         args.as_of,
     )
+    for row in rows:
+        row["commanders"] = commanders_of(published_list(row, refresh=args.refresh))
     manifest = {"window_years": WINDOW_YEARS, "as_of": args.as_of.isoformat(), "rows": rows}
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print(f"{len(rows)} precons since {window_start(args.as_of)}")

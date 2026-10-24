@@ -8,7 +8,13 @@
       "set_code": "FDC",
       "set_name": "Foundations Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/CallingAllAngels_FDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CallingAllAngels_FDC.json",
+      "commanders": [
+        {
+          "name": "Giada, Font of Hope",
+          "scryfall_id": "4ebc7622-08a1-4f43-92dd-8675d395e8f6"
+        }
+      ]
     },
     {
       "id": "fdc_keen_engineering",
@@ -16,7 +22,13 @@
       "set_code": "FDC",
       "set_name": "Foundations Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/KeenEngineering_FDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/KeenEngineering_FDC.json",
+      "commanders": [
+        {
+          "name": "Sai, Master Thopterist",
+          "scryfall_id": "5650587a-27a5-4d68-97e2-5745627bd094"
+        }
+      ]
     },
     {
       "id": "fdc_reign_of_dragons",
@@ -24,7 +36,13 @@
       "set_code": "FDC",
       "set_name": "Foundations Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/ReignOfDragons_FDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/ReignOfDragons_FDC.json",
+      "commanders": [
+        {
+          "name": "Lathliss, Dragon Queen",
+          "scryfall_id": "8a17ec4e-b508-41af-803b-32acd863e598"
+        }
+      ]
     },
     {
       "id": "fdc_tramplesaurus_rex",
@@ -32,7 +50,13 @@
       "set_code": "FDC",
       "set_name": "Foundations Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/TramplesaurusRex_FDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/TramplesaurusRex_FDC.json",
+      "commanders": [
+        {
+          "name": "Ghalta, Primal Hunger",
+          "scryfall_id": "5d9951d1-3228-4d69-8e63-6e6f0a893a86"
+        }
+      ]
     },
     {
       "id": "fdc_wretched_ranks",
@@ -40,7 +64,13 @@
       "set_code": "FDC",
       "set_name": "Foundations Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/WretchedRanks_FDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/WretchedRanks_FDC.json",
+      "commanders": [
+        {
+          "name": "Ghoulcaller Gisa",
+          "scryfall_id": "909e62fa-4585-495e-812b-5df56af24610"
+        }
+      ]
     },
     {
       "id": "frc_multiverse_reforged",
@@ -48,7 +78,13 @@
       "set_code": "FRC",
       "set_name": "Reality Fracture Commander",
       "date": "2026-10-02",
-      "source": "https://mtgjson.com/api/v5/decks/MultiverseReforged_FRC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MultiverseReforged_FRC.json",
+      "commanders": [
+        {
+          "name": "Jace, Multiverse Architect",
+          "scryfall_id": "55cd03d9-2535-4cf3-a8b2-1418e1190f4a"
+        }
+      ]
     },
     {
       "id": "msc_avengers_assemble",
@@ -56,7 +92,13 @@
       "set_code": "MSC",
       "set_name": "Marvel Super Heroes Commander",
       "date": "2026-06-26",
-      "source": "https://mtgjson.com/api/v5/decks/AvengersAssemble_MSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/AvengersAssemble_MSC.json",
+      "commanders": [
+        {
+          "name": "Captain America, Team Leader",
+          "scryfall_id": "61a51b67-d941-4e07-9c12-ffe583cb65d4"
+        }
+      ]
     },
     {
       "id": "msc_doom_prevails",
@@ -64,7 +106,13 @@
       "set_code": "MSC",
       "set_name": "Marvel Super Heroes Commander",
       "date": "2026-06-26",
-      "source": "https://mtgjson.com/api/v5/decks/DoomPrevails_MSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DoomPrevails_MSC.json",
+      "commanders": [
+        {
+          "name": "Doctor Doom, King of Latveria",
+          "scryfall_id": "099ed408-9178-4403-8b2d-479ca3cbda9b"
+        }
+      ]
     },
     {
       "id": "msc_the_fantastic_four",
@@ -72,7 +120,13 @@
       "set_code": "MSC",
       "set_name": "Marvel Super Heroes Commander",
       "date": "2026-06-26",
-      "source": "https://mtgjson.com/api/v5/decks/TheFantasticFour_MSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/TheFantasticFour_MSC.json",
+      "commanders": [
+        {
+          "name": "Invisible Woman",
+          "scryfall_id": "d8e13ecb-98be-4d9b-86a2-24eaa98f7f0d"
+        }
+      ]
     },
     {
       "id": "msc_wakanda_forever",
@@ -80,7 +134,13 @@
       "set_code": "MSC",
       "set_name": "Marvel Super Heroes Commander",
       "date": "2026-06-26",
-      "source": "https://mtgjson.com/api/v5/decks/WakandaForever_MSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/WakandaForever_MSC.json",
+      "commanders": [
+        {
+          "name": "T'Challa, the Black Panther",
+          "scryfall_id": "c1c8ad61-b7e1-446c-8b74-6e29371ea1d5"
+        }
+      ]
     },
     {
       "id": "soc_lorehold_spirit",
@@ -88,7 +148,13 @@
       "set_code": "SOC",
       "set_name": "Secrets of Strixhaven Commander",
       "date": "2026-04-24",
-      "source": "https://mtgjson.com/api/v5/decks/LoreholdSpirit_SOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/LoreholdSpirit_SOC.json",
+      "commanders": [
+        {
+          "name": "Quintorius, History Chaser",
+          "scryfall_id": "0742f19d-179c-43c4-ab95-4160c56b4384"
+        }
+      ]
     },
     {
       "id": "soc_prismari_artistry",
@@ -96,7 +162,13 @@
       "set_code": "SOC",
       "set_name": "Secrets of Strixhaven Commander",
       "date": "2026-04-24",
-      "source": "https://mtgjson.com/api/v5/decks/PrismariArtistry_SOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/PrismariArtistry_SOC.json",
+      "commanders": [
+        {
+          "name": "Rootha, Mastering the Moment",
+          "scryfall_id": "a5b3dbb2-c090-4118-9e47-56c16202572c"
+        }
+      ]
     },
     {
       "id": "soc_quandrix_unlimited",
@@ -104,7 +176,13 @@
       "set_code": "SOC",
       "set_name": "Secrets of Strixhaven Commander",
       "date": "2026-04-24",
-      "source": "https://mtgjson.com/api/v5/decks/QuandrixUnlimited_SOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/QuandrixUnlimited_SOC.json",
+      "commanders": [
+        {
+          "name": "Zimone, Infinite Analyst",
+          "scryfall_id": "605afac4-d2e5-4e68-97d2-3ac2ead5f3a9"
+        }
+      ]
     },
     {
       "id": "soc_silverquill_influence",
@@ -112,7 +190,13 @@
       "set_code": "SOC",
       "set_name": "Secrets of Strixhaven Commander",
       "date": "2026-04-24",
-      "source": "https://mtgjson.com/api/v5/decks/SilverquillInfluence_SOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/SilverquillInfluence_SOC.json",
+      "commanders": [
+        {
+          "name": "Killian, Decisive Mentor",
+          "scryfall_id": "76b6c35a-bb92-4ad3-8f85-88b9bafc6266"
+        }
+      ]
     },
     {
       "id": "soc_witherbloom_pestilence",
@@ -120,7 +204,13 @@
       "set_code": "SOC",
       "set_name": "Secrets of Strixhaven Commander",
       "date": "2026-04-24",
-      "source": "https://mtgjson.com/api/v5/decks/WitherbloomPestilence_SOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/WitherbloomPestilence_SOC.json",
+      "commanders": [
+        {
+          "name": "Dina, Essence Brewer",
+          "scryfall_id": "9fe237b8-c02c-41ea-9fc4-b771b91d2157"
+        }
+      ]
     },
     {
       "id": "ecc_blight_curse",
@@ -128,7 +218,13 @@
       "set_code": "ECC",
       "set_name": "Lorwyn Eclipsed Commander",
       "date": "2026-01-23",
-      "source": "https://mtgjson.com/api/v5/decks/BlightCurse_ECC.json"
+      "source": "https://mtgjson.com/api/v5/decks/BlightCurse_ECC.json",
+      "commanders": [
+        {
+          "name": "Auntie Ool, Cursewretch",
+          "scryfall_id": "9a2e4252-9fbc-4d43-8935-db2cafaa7b5f"
+        }
+      ]
     },
     {
       "id": "ecc_dance_of_the_elements",
@@ -136,7 +232,13 @@
       "set_code": "ECC",
       "set_name": "Lorwyn Eclipsed Commander",
       "date": "2026-01-23",
-      "source": "https://mtgjson.com/api/v5/decks/DanceOfTheElements_ECC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DanceOfTheElements_ECC.json",
+      "commanders": [
+        {
+          "name": "Ashling, the Limitless",
+          "scryfall_id": "5924c01f-2815-4e37-b700-3ba6cc81e0e4"
+        }
+      ]
     },
     {
       "id": "eoc_counter_intelligence",
@@ -144,7 +246,13 @@
       "set_code": "EOC",
       "set_name": "Edge of Eternities Commander",
       "date": "2025-08-01",
-      "source": "https://mtgjson.com/api/v5/decks/CounterIntelligence_EOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CounterIntelligence_EOC.json",
+      "commanders": [
+        {
+          "name": "Inspirit, Flagship Vessel",
+          "scryfall_id": "46900ec7-eb18-45c4-8e90-a48b665cfdee"
+        }
+      ]
     },
     {
       "id": "eoc_world_shaper",
@@ -152,7 +260,13 @@
       "set_code": "EOC",
       "set_name": "Edge of Eternities Commander",
       "date": "2025-08-01",
-      "source": "https://mtgjson.com/api/v5/decks/WorldShaper_EOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/WorldShaper_EOC.json",
+      "commanders": [
+        {
+          "name": "Hearthhull, the Worldseed",
+          "scryfall_id": "6b913e79-a9f6-44d4-bb37-c4f6f66b8151"
+        }
+      ]
     },
     {
       "id": "fic_counter_blitz_final_fantasy_x",
@@ -160,7 +274,13 @@
       "set_code": "FIC",
       "set_name": "Final Fantasy Commander",
       "date": "2025-06-13",
-      "source": "https://mtgjson.com/api/v5/decks/CounterBlitzFinalFantasyX_FIC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CounterBlitzFinalFantasyX_FIC.json",
+      "commanders": [
+        {
+          "name": "Tidus, Yuna's Guardian",
+          "scryfall_id": "2cfd4494-346c-4cbc-8072-e267254cefcc"
+        }
+      ]
     },
     {
       "id": "fic_limit_break_final_fantasy_vii",
@@ -168,7 +288,13 @@
       "set_code": "FIC",
       "set_name": "Final Fantasy Commander",
       "date": "2025-06-13",
-      "source": "https://mtgjson.com/api/v5/decks/LimitBreakFinalFantasyVii_FIC.json"
+      "source": "https://mtgjson.com/api/v5/decks/LimitBreakFinalFantasyVii_FIC.json",
+      "commanders": [
+        {
+          "name": "Cloud, Ex-SOLDIER",
+          "scryfall_id": "07b4e4f8-6a31-4533-be51-668ce3ddc84f"
+        }
+      ]
     },
     {
       "id": "fic_revival_trance_final_fantasy_vi",
@@ -176,7 +302,13 @@
       "set_code": "FIC",
       "set_name": "Final Fantasy Commander",
       "date": "2025-06-13",
-      "source": "https://mtgjson.com/api/v5/decks/RevivalTranceFinalFantasyVi_FIC.json"
+      "source": "https://mtgjson.com/api/v5/decks/RevivalTranceFinalFantasyVi_FIC.json",
+      "commanders": [
+        {
+          "name": "Terra, Herald of Hope",
+          "scryfall_id": "5aa1a2d7-6133-41a9-9662-9008d1309935"
+        }
+      ]
     },
     {
       "id": "fic_scions_spellcraft_final_fantasy_xiv",
@@ -184,7 +316,13 @@
       "set_code": "FIC",
       "set_name": "Final Fantasy Commander",
       "date": "2025-06-13",
-      "source": "https://mtgjson.com/api/v5/decks/ScionsSpellcraftFinalFantasyXiv_FIC.json"
+      "source": "https://mtgjson.com/api/v5/decks/ScionsSpellcraftFinalFantasyXiv_FIC.json",
+      "commanders": [
+        {
+          "name": "Y'shtola, Night's Blessed",
+          "scryfall_id": "c7f2c2d5-e052-49e8-b5de-712858c2ea78"
+        }
+      ]
     },
     {
       "id": "tdc_abzan_armor",
@@ -192,7 +330,13 @@
       "set_code": "TDC",
       "set_name": "Tarkir: Dragonstorm Commander",
       "date": "2025-04-11",
-      "source": "https://mtgjson.com/api/v5/decks/AbzanArmor_TDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/AbzanArmor_TDC.json",
+      "commanders": [
+        {
+          "name": "Felothar the Steadfast",
+          "scryfall_id": "2c3549f6-25df-4ea7-84ad-922ccd4af6b2"
+        }
+      ]
     },
     {
       "id": "tdc_jeskai_striker",
@@ -200,7 +344,13 @@
       "set_code": "TDC",
       "set_name": "Tarkir: Dragonstorm Commander",
       "date": "2025-04-11",
-      "source": "https://mtgjson.com/api/v5/decks/JeskaiStriker_TDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/JeskaiStriker_TDC.json",
+      "commanders": [
+        {
+          "name": "Shiko and Narset, Unified",
+          "scryfall_id": "5a42fc7d-52ac-4e95-9e04-8f8fa7f687c8"
+        }
+      ]
     },
     {
       "id": "tdc_mardu_surge",
@@ -208,7 +358,13 @@
       "set_code": "TDC",
       "set_name": "Tarkir: Dragonstorm Commander",
       "date": "2025-04-11",
-      "source": "https://mtgjson.com/api/v5/decks/MarduSurge_TDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MarduSurge_TDC.json",
+      "commanders": [
+        {
+          "name": "Zurgo Stormrender",
+          "scryfall_id": "dc8eb325-75c9-4331-830d-3f7d62d77290"
+        }
+      ]
     },
     {
       "id": "tdc_sultai_arisen",
@@ -216,7 +372,13 @@
       "set_code": "TDC",
       "set_name": "Tarkir: Dragonstorm Commander",
       "date": "2025-04-11",
-      "source": "https://mtgjson.com/api/v5/decks/SultaiArisen_TDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/SultaiArisen_TDC.json",
+      "commanders": [
+        {
+          "name": "Teval, the Balanced Scale",
+          "scryfall_id": "b5d1955a-9ff0-4f8b-9af8-341371957299"
+        }
+      ]
     },
     {
       "id": "tdc_temur_roar",
@@ -224,7 +386,13 @@
       "set_code": "TDC",
       "set_name": "Tarkir: Dragonstorm Commander",
       "date": "2025-04-11",
-      "source": "https://mtgjson.com/api/v5/decks/TemurRoar_TDC.json"
+      "source": "https://mtgjson.com/api/v5/decks/TemurRoar_TDC.json",
+      "commanders": [
+        {
+          "name": "Eshki, Temur's Roar",
+          "scryfall_id": "ff9aa863-8773-452d-946c-ae334c632e11"
+        }
+      ]
     },
     {
       "id": "drc_eternal_might",
@@ -232,7 +400,13 @@
       "set_code": "DRC",
       "set_name": "Aetherdrift Commander",
       "date": "2025-02-14",
-      "source": "https://mtgjson.com/api/v5/decks/EternalMight_DRC.json"
+      "source": "https://mtgjson.com/api/v5/decks/EternalMight_DRC.json",
+      "commanders": [
+        {
+          "name": "Temmet, Naktamun's Will",
+          "scryfall_id": "c0629894-0b72-4abe-9771-03becfdb241c"
+        }
+      ]
     },
     {
       "id": "drc_living_energy",
@@ -240,7 +414,13 @@
       "set_code": "DRC",
       "set_name": "Aetherdrift Commander",
       "date": "2025-02-14",
-      "source": "https://mtgjson.com/api/v5/decks/LivingEnergy_DRC.json"
+      "source": "https://mtgjson.com/api/v5/decks/LivingEnergy_DRC.json",
+      "commanders": [
+        {
+          "name": "Saheeli, Radiant Creator",
+          "scryfall_id": "5fea0781-e933-47ef-9414-92c8652a7778"
+        }
+      ]
     },
     {
       "id": "dsc_death_toll",
@@ -248,7 +428,13 @@
       "set_code": "DSC",
       "set_name": "Duskmourn: House of Horror Commander",
       "date": "2024-09-27",
-      "source": "https://mtgjson.com/api/v5/decks/DeathToll_DSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DeathToll_DSC.json",
+      "commanders": [
+        {
+          "name": "Winter, Cynical Opportunist",
+          "scryfall_id": "94dc35e4-a492-4019-afcd-cbef6f59a512"
+        }
+      ]
     },
     {
       "id": "dsc_endless_punishment",
@@ -256,7 +442,13 @@
       "set_code": "DSC",
       "set_name": "Duskmourn: House of Horror Commander",
       "date": "2024-09-27",
-      "source": "https://mtgjson.com/api/v5/decks/EndlessPunishment_DSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/EndlessPunishment_DSC.json",
+      "commanders": [
+        {
+          "name": "Valgavoth, Harrower of Souls",
+          "scryfall_id": "8d7c1f6c-af45-4449-8cf8-e13830b3df8a"
+        }
+      ]
     },
     {
       "id": "dsc_jump_scare",
@@ -264,7 +456,13 @@
       "set_code": "DSC",
       "set_name": "Duskmourn: House of Horror Commander",
       "date": "2024-09-27",
-      "source": "https://mtgjson.com/api/v5/decks/JumpScare_DSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/JumpScare_DSC.json",
+      "commanders": [
+        {
+          "name": "Zimone, Mystery Unraveler",
+          "scryfall_id": "30f23588-5064-48d9-a271-039df757f8d2"
+        }
+      ]
     },
     {
       "id": "dsc_miracle_worker",
@@ -272,7 +470,13 @@
       "set_code": "DSC",
       "set_name": "Duskmourn: House of Horror Commander",
       "date": "2024-09-27",
-      "source": "https://mtgjson.com/api/v5/decks/MiracleWorker_DSC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MiracleWorker_DSC.json",
+      "commanders": [
+        {
+          "name": "Aminatou, Veil Piercer",
+          "scryfall_id": "9f868023-6035-403d-ba91-7a4840c6c392"
+        }
+      ]
     },
     {
       "id": "blc_animated_army",
@@ -280,7 +484,13 @@
       "set_code": "BLC",
       "set_name": "Bloomburrow Commander",
       "date": "2024-08-02",
-      "source": "https://mtgjson.com/api/v5/decks/AnimatedArmy_BLC.json"
+      "source": "https://mtgjson.com/api/v5/decks/AnimatedArmy_BLC.json",
+      "commanders": [
+        {
+          "name": "Bello, Bard of the Brambles",
+          "scryfall_id": "31e4b7a1-b377-49d2-a92e-4bcb0db35f16"
+        }
+      ]
     },
     {
       "id": "blc_family_matters",
@@ -288,7 +498,13 @@
       "set_code": "BLC",
       "set_name": "Bloomburrow Commander",
       "date": "2024-08-02",
-      "source": "https://mtgjson.com/api/v5/decks/FamilyMatters_BLC.json"
+      "source": "https://mtgjson.com/api/v5/decks/FamilyMatters_BLC.json",
+      "commanders": [
+        {
+          "name": "Zinnia, Valley's Voice",
+          "scryfall_id": "dfe36901-5841-4942-8b61-c273111f715e"
+        }
+      ]
     },
     {
       "id": "blc_peace_offering",
@@ -296,7 +512,13 @@
       "set_code": "BLC",
       "set_name": "Bloomburrow Commander",
       "date": "2024-08-02",
-      "source": "https://mtgjson.com/api/v5/decks/PeaceOffering_BLC.json"
+      "source": "https://mtgjson.com/api/v5/decks/PeaceOffering_BLC.json",
+      "commanders": [
+        {
+          "name": "Ms. Bumbleflower",
+          "scryfall_id": "42bbedc1-6b83-46b4-8b3b-a4e05ce77d87"
+        }
+      ]
     },
     {
       "id": "blc_squirreled_away",
@@ -304,7 +526,13 @@
       "set_code": "BLC",
       "set_name": "Bloomburrow Commander",
       "date": "2024-08-02",
-      "source": "https://mtgjson.com/api/v5/decks/SquirreledAway_BLC.json"
+      "source": "https://mtgjson.com/api/v5/decks/SquirreledAway_BLC.json",
+      "commanders": [
+        {
+          "name": "Hazel of the Rootbloom",
+          "scryfall_id": "1269ca79-907e-4932-9e77-a9a5d2929060"
+        }
+      ]
     },
     {
       "id": "m3c_creative_energy",
@@ -312,7 +540,13 @@
       "set_code": "M3C",
       "set_name": "Modern Horizons 3 Commander",
       "date": "2024-06-14",
-      "source": "https://mtgjson.com/api/v5/decks/CreativeEnergy_M3C.json"
+      "source": "https://mtgjson.com/api/v5/decks/CreativeEnergy_M3C.json",
+      "commanders": [
+        {
+          "name": "Satya, Aetherflux Genius",
+          "scryfall_id": "3b964bbe-54cc-425c-9cc6-c877f82af7ba"
+        }
+      ]
     },
     {
       "id": "m3c_eldrazi_incursion",
@@ -320,7 +554,13 @@
       "set_code": "M3C",
       "set_name": "Modern Horizons 3 Commander",
       "date": "2024-06-14",
-      "source": "https://mtgjson.com/api/v5/decks/EldraziIncursion_M3C.json"
+      "source": "https://mtgjson.com/api/v5/decks/EldraziIncursion_M3C.json",
+      "commanders": [
+        {
+          "name": "Ulalek, Fused Atrocity",
+          "scryfall_id": "fdad1b0e-d3cc-4d76-ae7e-fee12558cf2c"
+        }
+      ]
     },
     {
       "id": "m3c_graveyard_overdrive",
@@ -328,7 +568,13 @@
       "set_code": "M3C",
       "set_name": "Modern Horizons 3 Commander",
       "date": "2024-06-14",
-      "source": "https://mtgjson.com/api/v5/decks/GraveyardOverdrive_M3C.json"
+      "source": "https://mtgjson.com/api/v5/decks/GraveyardOverdrive_M3C.json",
+      "commanders": [
+        {
+          "name": "Disa the Restless",
+          "scryfall_id": "c976edeb-0fa1-4647-a16c-870d8a3c30c6"
+        }
+      ]
     },
     {
       "id": "m3c_tricky_terrain",
@@ -336,7 +582,13 @@
       "set_code": "M3C",
       "set_name": "Modern Horizons 3 Commander",
       "date": "2024-06-14",
-      "source": "https://mtgjson.com/api/v5/decks/TrickyTerrain_M3C.json"
+      "source": "https://mtgjson.com/api/v5/decks/TrickyTerrain_M3C.json",
+      "commanders": [
+        {
+          "name": "Omo, Queen of Vesuva",
+          "scryfall_id": "e5d1c814-4c22-4917-95ae-dffaf491db32"
+        }
+      ]
     },
     {
       "id": "otc_desert_bloom",
@@ -344,7 +596,13 @@
       "set_code": "OTC",
       "set_name": "Outlaws of Thunder Junction Commander",
       "date": "2024-04-19",
-      "source": "https://mtgjson.com/api/v5/decks/DesertBloom_OTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DesertBloom_OTC.json",
+      "commanders": [
+        {
+          "name": "Yuma, Proud Protector",
+          "scryfall_id": "18df72be-07d2-4412-b36d-a45119763db3"
+        }
+      ]
     },
     {
       "id": "otc_grand_larceny",
@@ -352,7 +610,13 @@
       "set_code": "OTC",
       "set_name": "Outlaws of Thunder Junction Commander",
       "date": "2024-04-19",
-      "source": "https://mtgjson.com/api/v5/decks/GrandLarceny_OTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/GrandLarceny_OTC.json",
+      "commanders": [
+        {
+          "name": "Gonti, Canny Acquisitor",
+          "scryfall_id": "03a7e79f-625a-49ac-9cb1-e1fe5f51f5a0"
+        }
+      ]
     },
     {
       "id": "otc_most_wanted",
@@ -360,7 +624,13 @@
       "set_code": "OTC",
       "set_name": "Outlaws of Thunder Junction Commander",
       "date": "2024-04-19",
-      "source": "https://mtgjson.com/api/v5/decks/MostWanted_OTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MostWanted_OTC.json",
+      "commanders": [
+        {
+          "name": "Olivia, Opulent Outlaw",
+          "scryfall_id": "55e6c31b-f9e9-4e42-a875-985d99300d9d"
+        }
+      ]
     },
     {
       "id": "otc_quick_draw",
@@ -368,7 +638,13 @@
       "set_code": "OTC",
       "set_name": "Outlaws of Thunder Junction Commander",
       "date": "2024-04-19",
-      "source": "https://mtgjson.com/api/v5/decks/QuickDraw_OTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/QuickDraw_OTC.json",
+      "commanders": [
+        {
+          "name": "Stella Lee, Wild Card",
+          "scryfall_id": "2a8a7696-b5d9-4378-9d5c-2c9007e4df63"
+        }
+      ]
     },
     {
       "id": "pip_hail_caesar",
@@ -376,7 +652,13 @@
       "set_code": "PIP",
       "set_name": "Fallout",
       "date": "2024-03-08",
-      "source": "https://mtgjson.com/api/v5/decks/HailCaesar_PIP.json"
+      "source": "https://mtgjson.com/api/v5/decks/HailCaesar_PIP.json",
+      "commanders": [
+        {
+          "name": "Caesar, Legion's Emperor",
+          "scryfall_id": "246a7176-98bc-4f54-aa61-38747420f178"
+        }
+      ]
     },
     {
       "id": "pip_mutant_menace",
@@ -384,7 +666,13 @@
       "set_code": "PIP",
       "set_name": "Fallout",
       "date": "2024-03-08",
-      "source": "https://mtgjson.com/api/v5/decks/MutantMenace_PIP.json"
+      "source": "https://mtgjson.com/api/v5/decks/MutantMenace_PIP.json",
+      "commanders": [
+        {
+          "name": "The Wise Mothman",
+          "scryfall_id": "3d6d6944-a364-41c2-b824-7a1bf6ad0d1e"
+        }
+      ]
     },
     {
       "id": "pip_science",
@@ -392,7 +680,13 @@
       "set_code": "PIP",
       "set_name": "Fallout",
       "date": "2024-03-08",
-      "source": "https://mtgjson.com/api/v5/decks/Science_PIP.json"
+      "source": "https://mtgjson.com/api/v5/decks/Science_PIP.json",
+      "commanders": [
+        {
+          "name": "Dr. Madison Li",
+          "scryfall_id": "95af426d-a8af-4314-9ad0-ac61935e8e8e"
+        }
+      ]
     },
     {
       "id": "pip_scrappy_survivors",
@@ -400,7 +694,13 @@
       "set_code": "PIP",
       "set_name": "Fallout",
       "date": "2024-03-08",
-      "source": "https://mtgjson.com/api/v5/decks/ScrappySurvivors_PIP.json"
+      "source": "https://mtgjson.com/api/v5/decks/ScrappySurvivors_PIP.json",
+      "commanders": [
+        {
+          "name": "Dogmeat, Ever Loyal",
+          "scryfall_id": "86b45e3e-8460-4678-87d1-d74479936c83"
+        }
+      ]
     },
     {
       "id": "mkc_blame_game",
@@ -408,7 +708,13 @@
       "set_code": "MKC",
       "set_name": "Murders at Karlov Manor Commander",
       "date": "2024-02-09",
-      "source": "https://mtgjson.com/api/v5/decks/BlameGame_MKC.json"
+      "source": "https://mtgjson.com/api/v5/decks/BlameGame_MKC.json",
+      "commanders": [
+        {
+          "name": "Nelly Borca, Impulsive Accuser",
+          "scryfall_id": "2ef59aa9-f5e1-413a-869b-d287db95efd0"
+        }
+      ]
     },
     {
       "id": "mkc_deadly_disguise",
@@ -416,7 +722,13 @@
       "set_code": "MKC",
       "set_name": "Murders at Karlov Manor Commander",
       "date": "2024-02-09",
-      "source": "https://mtgjson.com/api/v5/decks/DeadlyDisguise_MKC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DeadlyDisguise_MKC.json",
+      "commanders": [
+        {
+          "name": "Kaust, Eyes of the Glade",
+          "scryfall_id": "648c15d1-a2a2-4f59-9b0a-5448be3e990f"
+        }
+      ]
     },
     {
       "id": "mkc_deep_clue_sea",
@@ -424,7 +736,13 @@
       "set_code": "MKC",
       "set_name": "Murders at Karlov Manor Commander",
       "date": "2024-02-09",
-      "source": "https://mtgjson.com/api/v5/decks/DeepClueSea_MKC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DeepClueSea_MKC.json",
+      "commanders": [
+        {
+          "name": "Morska, Undersea Sleuth",
+          "scryfall_id": "ae9ccfec-05c6-469e-b1dd-dfbafa1e927f"
+        }
+      ]
     },
     {
       "id": "mkc_revenant_recon",
@@ -432,7 +750,13 @@
       "set_code": "MKC",
       "set_name": "Murders at Karlov Manor Commander",
       "date": "2024-02-09",
-      "source": "https://mtgjson.com/api/v5/decks/RevenantRecon_MKC.json"
+      "source": "https://mtgjson.com/api/v5/decks/RevenantRecon_MKC.json",
+      "commanders": [
+        {
+          "name": "Mirko, Obsessive Theorist",
+          "scryfall_id": "690acbbf-5e92-4323-b939-31bdb07f9905"
+        }
+      ]
     },
     {
       "id": "lcc_ahoy_mateys",
@@ -440,7 +764,13 @@
       "set_code": "LCC",
       "set_name": "The Lost Caverns of Ixalan Commander",
       "date": "2023-11-17",
-      "source": "https://mtgjson.com/api/v5/decks/AhoyMateys_LCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/AhoyMateys_LCC.json",
+      "commanders": [
+        {
+          "name": "Admiral Brass, Unsinkable",
+          "scryfall_id": "bdc2d492-9d1e-4543-8b9c-c66ee67992ce"
+        }
+      ]
     },
     {
       "id": "lcc_blood_rites",
@@ -448,7 +778,13 @@
       "set_code": "LCC",
       "set_name": "The Lost Caverns of Ixalan Commander",
       "date": "2023-11-17",
-      "source": "https://mtgjson.com/api/v5/decks/BloodRites_LCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/BloodRites_LCC.json",
+      "commanders": [
+        {
+          "name": "Clavileño, First of the Blessed",
+          "scryfall_id": "9f55b648-b1ec-407a-a0c7-7647755793d1"
+        }
+      ]
     },
     {
       "id": "lcc_explorers_of_the_deep",
@@ -456,7 +792,13 @@
       "set_code": "LCC",
       "set_name": "The Lost Caverns of Ixalan Commander",
       "date": "2023-11-17",
-      "source": "https://mtgjson.com/api/v5/decks/ExplorersOfTheDeep_LCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/ExplorersOfTheDeep_LCC.json",
+      "commanders": [
+        {
+          "name": "Hakbal of the Surging Soul",
+          "scryfall_id": "e738e675-4fd1-4bc3-97f5-71d0e2fc3f2e"
+        }
+      ]
     },
     {
       "id": "lcc_veloci_ramp_tor",
@@ -464,7 +806,13 @@
       "set_code": "LCC",
       "set_name": "The Lost Caverns of Ixalan Commander",
       "date": "2023-11-17",
-      "source": "https://mtgjson.com/api/v5/decks/VelociRampTor_LCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/VelociRampTor_LCC.json",
+      "commanders": [
+        {
+          "name": "Pantlaza, Sun-Favored",
+          "scryfall_id": "2524645e-b066-4351-885b-10faa8d819d7"
+        }
+      ]
     },
     {
       "id": "who_blast_from_the_past",
@@ -472,7 +820,17 @@
       "set_code": "WHO",
       "set_name": "Doctor Who",
       "date": "2023-10-13",
-      "source": "https://mtgjson.com/api/v5/decks/BlastFromThePast_WHO.json"
+      "source": "https://mtgjson.com/api/v5/decks/BlastFromThePast_WHO.json",
+      "commanders": [
+        {
+          "name": "The Fourth Doctor",
+          "scryfall_id": "c84ea0fd-efc7-4614-9f8f-41a3c71fceaa"
+        },
+        {
+          "name": "Sarah Jane Smith",
+          "scryfall_id": "1ba76f68-e647-4786-903c-92dbd3cef05d"
+        }
+      ]
     },
     {
       "id": "who_masters_of_evil",
@@ -480,7 +838,13 @@
       "set_code": "WHO",
       "set_name": "Doctor Who",
       "date": "2023-10-13",
-      "source": "https://mtgjson.com/api/v5/decks/MastersOfEvil_WHO.json"
+      "source": "https://mtgjson.com/api/v5/decks/MastersOfEvil_WHO.json",
+      "commanders": [
+        {
+          "name": "Davros, Dalek Creator",
+          "scryfall_id": "59c5bd2b-cf68-4e5e-819d-53917a6c5275"
+        }
+      ]
     },
     {
       "id": "who_paradox_power",
@@ -488,7 +852,17 @@
       "set_code": "WHO",
       "set_name": "Doctor Who",
       "date": "2023-10-13",
-      "source": "https://mtgjson.com/api/v5/decks/ParadoxPower_WHO.json"
+      "source": "https://mtgjson.com/api/v5/decks/ParadoxPower_WHO.json",
+      "commanders": [
+        {
+          "name": "The Thirteenth Doctor",
+          "scryfall_id": "0dc4ec90-1650-4b98-9350-66341394cf0b"
+        },
+        {
+          "name": "Yasmin Khan",
+          "scryfall_id": "12b09a4f-bb62-4766-8115-cae4d5cc4c12"
+        }
+      ]
     },
     {
       "id": "who_timey_wimey",
@@ -496,7 +870,17 @@
       "set_code": "WHO",
       "set_name": "Doctor Who",
       "date": "2023-10-13",
-      "source": "https://mtgjson.com/api/v5/decks/TimeyWimey_WHO.json"
+      "source": "https://mtgjson.com/api/v5/decks/TimeyWimey_WHO.json",
+      "commanders": [
+        {
+          "name": "The Tenth Doctor",
+          "scryfall_id": "f1499f49-793b-4265-9ad0-883a431941ab"
+        },
+        {
+          "name": "Rose Tyler",
+          "scryfall_id": "3aa8d034-f98c-4e27-b6af-850eadf59941"
+        }
+      ]
     },
     {
       "id": "woc_fae_dominion",
@@ -504,7 +888,13 @@
       "set_code": "WOC",
       "set_name": "Wilds of Eldraine Commander",
       "date": "2023-09-08",
-      "source": "https://mtgjson.com/api/v5/decks/FaeDominion_WOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/FaeDominion_WOC.json",
+      "commanders": [
+        {
+          "name": "Tegwyll, Duke of Splendor",
+          "scryfall_id": "03fab911-7bd4-45fa-ba07-cd0e51b0cd95"
+        }
+      ]
     },
     {
       "id": "woc_virtue_and_valor",
@@ -512,7 +902,13 @@
       "set_code": "WOC",
       "set_name": "Wilds of Eldraine Commander",
       "date": "2023-09-08",
-      "source": "https://mtgjson.com/api/v5/decks/VirtueAndValor_WOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/VirtueAndValor_WOC.json",
+      "commanders": [
+        {
+          "name": "Ellivere of the Wild Court",
+          "scryfall_id": "45851394-b8f3-4713-8239-afcb387d47c5"
+        }
+      ]
     },
     {
       "id": "ltc_elven_council",
@@ -520,7 +916,13 @@
       "set_code": "LTC",
       "set_name": "Tales of Middle-earth Commander",
       "date": "2023-06-23",
-      "source": "https://mtgjson.com/api/v5/decks/ElvenCouncil_LTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/ElvenCouncil_LTC.json",
+      "commanders": [
+        {
+          "name": "Galadriel, Elven-Queen",
+          "scryfall_id": "8fa46d54-563d-4b5c-9c69-5ab37dd529b3"
+        }
+      ]
     },
     {
       "id": "ltc_food_and_fellowship",
@@ -528,7 +930,17 @@
       "set_code": "LTC",
       "set_name": "Tales of Middle-earth Commander",
       "date": "2023-06-23",
-      "source": "https://mtgjson.com/api/v5/decks/FoodAndFellowship_LTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/FoodAndFellowship_LTC.json",
+      "commanders": [
+        {
+          "name": "Frodo, Adventurous Hobbit",
+          "scryfall_id": "328df403-7428-4b17-bdd1-9759fc0f32d8"
+        },
+        {
+          "name": "Sam, Loyal Attendant",
+          "scryfall_id": "687a2b76-3f05-4732-bd9b-513d06d16300"
+        }
+      ]
     },
     {
       "id": "ltc_riders_of_rohan",
@@ -536,7 +948,13 @@
       "set_code": "LTC",
       "set_name": "Tales of Middle-earth Commander",
       "date": "2023-06-23",
-      "source": "https://mtgjson.com/api/v5/decks/RidersOfRohan_LTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/RidersOfRohan_LTC.json",
+      "commanders": [
+        {
+          "name": "Éowyn, Shieldmaiden",
+          "scryfall_id": "dd4a00ff-2206-4e12-a0ab-61ed82c9e6c5"
+        }
+      ]
     },
     {
       "id": "ltc_the_hosts_of_mordor",
@@ -544,7 +962,13 @@
       "set_code": "LTC",
       "set_name": "Tales of Middle-earth Commander",
       "date": "2023-06-23",
-      "source": "https://mtgjson.com/api/v5/decks/TheHostsOfMordor_LTC.json"
+      "source": "https://mtgjson.com/api/v5/decks/TheHostsOfMordor_LTC.json",
+      "commanders": [
+        {
+          "name": "Sauron, Lord of the Rings",
+          "scryfall_id": "fc53dec0-79fe-4f6f-9d5b-cf298588e808"
+        }
+      ]
     },
     {
       "id": "moc_call_for_backup",
@@ -552,7 +976,13 @@
       "set_code": "MOC",
       "set_name": "March of the Machine Commander",
       "date": "2023-04-21",
-      "source": "https://mtgjson.com/api/v5/decks/CallForBackup_MOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CallForBackup_MOC.json",
+      "commanders": [
+        {
+          "name": "Bright-Palm, Soul Awakener",
+          "scryfall_id": "a485c2c3-c90b-43b4-bb00-c1b811b4b392"
+        }
+      ]
     },
     {
       "id": "moc_cavalry_charge",
@@ -560,7 +990,13 @@
       "set_code": "MOC",
       "set_name": "March of the Machine Commander",
       "date": "2023-04-21",
-      "source": "https://mtgjson.com/api/v5/decks/CavalryCharge_MOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CavalryCharge_MOC.json",
+      "commanders": [
+        {
+          "name": "Sidar Jabari of Zhalfir",
+          "scryfall_id": "5fc707be-9286-4ba1-90f6-475265d19ed2"
+        }
+      ]
     },
     {
       "id": "moc_divine_convocation",
@@ -568,7 +1004,13 @@
       "set_code": "MOC",
       "set_name": "March of the Machine Commander",
       "date": "2023-04-21",
-      "source": "https://mtgjson.com/api/v5/decks/DivineConvocation_MOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/DivineConvocation_MOC.json",
+      "commanders": [
+        {
+          "name": "Kasla, the Broken Halo",
+          "scryfall_id": "a209bda2-f0bf-4417-94f9-b73eff0b4217"
+        }
+      ]
     },
     {
       "id": "moc_growing_threat",
@@ -576,7 +1018,13 @@
       "set_code": "MOC",
       "set_name": "March of the Machine Commander",
       "date": "2023-04-21",
-      "source": "https://mtgjson.com/api/v5/decks/GrowingThreat_MOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/GrowingThreat_MOC.json",
+      "commanders": [
+        {
+          "name": "Brimaz, Blight of Oreskos",
+          "scryfall_id": "f0d31ae7-8580-402a-a917-3d626a9e1f49"
+        }
+      ]
     },
     {
       "id": "moc_tinker_time",
@@ -584,7 +1032,13 @@
       "set_code": "MOC",
       "set_name": "March of the Machine Commander",
       "date": "2023-04-21",
-      "source": "https://mtgjson.com/api/v5/decks/TinkerTime_MOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/TinkerTime_MOC.json",
+      "commanders": [
+        {
+          "name": "Gimbal, Gremlin Prodigy",
+          "scryfall_id": "4a9aa899-752b-4106-89ba-9475ee777d41"
+        }
+      ]
     },
     {
       "id": "onc_corrupting_influence",
@@ -592,7 +1046,13 @@
       "set_code": "ONC",
       "set_name": "Phyrexia: All Will Be One Commander",
       "date": "2023-02-10",
-      "source": "https://mtgjson.com/api/v5/decks/CorruptingInfluence_ONC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CorruptingInfluence_ONC.json",
+      "commanders": [
+        {
+          "name": "Ixhel, Scion of Atraxa",
+          "scryfall_id": "ab866ec4-dcb4-47ef-8de1-a369986609c0"
+        }
+      ]
     },
     {
       "id": "onc_rebellion_rising",
@@ -600,7 +1060,13 @@
       "set_code": "ONC",
       "set_name": "Phyrexia: All Will Be One Commander",
       "date": "2023-02-10",
-      "source": "https://mtgjson.com/api/v5/decks/RebellionRising_ONC.json"
+      "source": "https://mtgjson.com/api/v5/decks/RebellionRising_ONC.json",
+      "commanders": [
+        {
+          "name": "Neyali, Suns' Vanguard",
+          "scryfall_id": "2b5df03d-2463-468b-b444-d946eeb1c96d"
+        }
+      ]
     },
     {
       "id": "scd_chaos_incarnate",
@@ -608,7 +1074,13 @@
       "set_code": "SCD",
       "set_name": "Starter Commander Decks",
       "date": "2022-12-02",
-      "source": "https://mtgjson.com/api/v5/decks/ChaosIncarnate_SCD.json"
+      "source": "https://mtgjson.com/api/v5/decks/ChaosIncarnate_SCD.json",
+      "commanders": [
+        {
+          "name": "Kardur, Doomscourge",
+          "scryfall_id": "19e4d494-e8b3-4ae2-93e3-70c65ab90f15"
+        }
+      ]
     },
     {
       "id": "scd_draconic_destruction",
@@ -616,7 +1088,13 @@
       "set_code": "SCD",
       "set_name": "Starter Commander Decks",
       "date": "2022-12-02",
-      "source": "https://mtgjson.com/api/v5/decks/DraconicDestruction_SCD.json"
+      "source": "https://mtgjson.com/api/v5/decks/DraconicDestruction_SCD.json",
+      "commanders": [
+        {
+          "name": "Atarka, World Render",
+          "scryfall_id": "719f172b-f9ad-4960-af66-757eb54147f6"
+        }
+      ]
     },
     {
       "id": "scd_first_flight",
@@ -624,7 +1102,13 @@
       "set_code": "SCD",
       "set_name": "Starter Commander Decks",
       "date": "2022-12-02",
-      "source": "https://mtgjson.com/api/v5/decks/FirstFlight_SCD.json"
+      "source": "https://mtgjson.com/api/v5/decks/FirstFlight_SCD.json",
+      "commanders": [
+        {
+          "name": "Isperia, Supreme Judge",
+          "scryfall_id": "de3278de-a045-4290-b05f-3b19e7055091"
+        }
+      ]
     },
     {
       "id": "scd_grave_danger",
@@ -632,7 +1116,13 @@
       "set_code": "SCD",
       "set_name": "Starter Commander Decks",
       "date": "2022-12-02",
-      "source": "https://mtgjson.com/api/v5/decks/GraveDanger_SCD.json"
+      "source": "https://mtgjson.com/api/v5/decks/GraveDanger_SCD.json",
+      "commanders": [
+        {
+          "name": "Gisa and Geralf",
+          "scryfall_id": "4d8fd87c-caf7-402e-b543-e35ba3007bcb"
+        }
+      ]
     },
     {
       "id": "scd_token_triumph",
@@ -640,7 +1130,13 @@
       "set_code": "SCD",
       "set_name": "Starter Commander Decks",
       "date": "2022-12-02",
-      "source": "https://mtgjson.com/api/v5/decks/TokenTriumph_SCD.json"
+      "source": "https://mtgjson.com/api/v5/decks/TokenTriumph_SCD.json",
+      "commanders": [
+        {
+          "name": "Emmara, Soul of the Accord",
+          "scryfall_id": "e8510a1e-62ca-462c-b036-d1312729f27d"
+        }
+      ]
     },
     {
       "id": "brc_mishras_burnished_banner",
@@ -648,7 +1144,13 @@
       "set_code": "BRC",
       "set_name": "The Brothers' War Commander",
       "date": "2022-11-18",
-      "source": "https://mtgjson.com/api/v5/decks/MishraSBurnishedBanner_BRC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MishraSBurnishedBanner_BRC.json",
+      "commanders": [
+        {
+          "name": "Mishra, Eminent One",
+          "scryfall_id": "7f5b1daa-ec45-48de-9496-6ca5b491a0dc"
+        }
+      ]
     },
     {
       "id": "brc_urzas_iron_alliance",
@@ -656,7 +1158,13 @@
       "set_code": "BRC",
       "set_name": "The Brothers' War Commander",
       "date": "2022-11-18",
-      "source": "https://mtgjson.com/api/v5/decks/UrzaSIronAlliance_BRC.json"
+      "source": "https://mtgjson.com/api/v5/decks/UrzaSIronAlliance_BRC.json",
+      "commanders": [
+        {
+          "name": "Urza, Chief Artificer",
+          "scryfall_id": "ea409050-4296-4b76-a6cd-2896ce1b88e4"
+        }
+      ]
     },
     {
       "id": "40k_forces_of_the_imperium",
@@ -664,7 +1172,13 @@
       "set_code": "40K",
       "set_name": "Warhammer 40,000 Commander",
       "date": "2022-10-07",
-      "source": "https://mtgjson.com/api/v5/decks/ForcesOfTheImperium_40K.json"
+      "source": "https://mtgjson.com/api/v5/decks/ForcesOfTheImperium_40K.json",
+      "commanders": [
+        {
+          "name": "Inquisitor Greyfax",
+          "scryfall_id": "1956cebe-bb71-45cc-b4ff-72ee3bb95c81"
+        }
+      ]
     },
     {
       "id": "40k_necron_dynasties",
@@ -672,7 +1186,13 @@
       "set_code": "40K",
       "set_name": "Warhammer 40,000 Commander",
       "date": "2022-10-07",
-      "source": "https://mtgjson.com/api/v5/decks/NecronDynasties_40K.json"
+      "source": "https://mtgjson.com/api/v5/decks/NecronDynasties_40K.json",
+      "commanders": [
+        {
+          "name": "Szarekh, the Silent King",
+          "scryfall_id": "12a3400d-7a8b-4bae-9a4f-c9a1bc741e68"
+        }
+      ]
     },
     {
       "id": "40k_the_ruinous_powers",
@@ -680,7 +1200,13 @@
       "set_code": "40K",
       "set_name": "Warhammer 40,000 Commander",
       "date": "2022-10-07",
-      "source": "https://mtgjson.com/api/v5/decks/TheRuinousPowers_40K.json"
+      "source": "https://mtgjson.com/api/v5/decks/TheRuinousPowers_40K.json",
+      "commanders": [
+        {
+          "name": "Abaddon the Despoiler",
+          "scryfall_id": "a78ab8fe-4499-4860-87d3-f8707398c00c"
+        }
+      ]
     },
     {
       "id": "40k_tyranid_swarm",
@@ -688,7 +1214,13 @@
       "set_code": "40K",
       "set_name": "Warhammer 40,000 Commander",
       "date": "2022-10-07",
-      "source": "https://mtgjson.com/api/v5/decks/TyranidSwarm_40K.json"
+      "source": "https://mtgjson.com/api/v5/decks/TyranidSwarm_40K.json",
+      "commanders": [
+        {
+          "name": "The Swarmlord",
+          "scryfall_id": "c9dbba5a-fb9a-422e-87a1-a29d2c17a04e"
+        }
+      ]
     },
     {
       "id": "dmc_legends_legacy",
@@ -696,7 +1228,13 @@
       "set_code": "DMC",
       "set_name": "Dominaria United Commander",
       "date": "2022-09-09",
-      "source": "https://mtgjson.com/api/v5/decks/LegendsLegacy_DMC.json"
+      "source": "https://mtgjson.com/api/v5/decks/LegendsLegacy_DMC.json",
+      "commanders": [
+        {
+          "name": "Dihada, Binder of Wills",
+          "scryfall_id": "ddeb54d6-a600-42b9-98df-20f8d58caed8"
+        }
+      ]
     },
     {
       "id": "dmc_painbow",
@@ -704,7 +1242,13 @@
       "set_code": "DMC",
       "set_name": "Dominaria United Commander",
       "date": "2022-09-09",
-      "source": "https://mtgjson.com/api/v5/decks/Painbow_DMC.json"
+      "source": "https://mtgjson.com/api/v5/decks/Painbow_DMC.json",
+      "commanders": [
+        {
+          "name": "Jared Carthalion",
+          "scryfall_id": "5acffa48-9e3f-4ba3-a55f-d459307f46df"
+        }
+      ]
     },
     {
       "id": "ncc_bedecked_brokers",
@@ -712,7 +1256,13 @@
       "set_code": "NCC",
       "set_name": "New Capenna Commander",
       "date": "2022-04-29",
-      "source": "https://mtgjson.com/api/v5/decks/BedeckedBrokers_NCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/BedeckedBrokers_NCC.json",
+      "commanders": [
+        {
+          "name": "Perrie, the Pulverizer",
+          "scryfall_id": "d438237b-c6f7-44d0-a3e6-6ec7d7465d33"
+        }
+      ]
     },
     {
       "id": "ncc_cabaretti_cacophony",
@@ -720,7 +1270,13 @@
       "set_code": "NCC",
       "set_name": "New Capenna Commander",
       "date": "2022-04-29",
-      "source": "https://mtgjson.com/api/v5/decks/CabarettiCacophony_NCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/CabarettiCacophony_NCC.json",
+      "commanders": [
+        {
+          "name": "Kitt Kanto, Mayhem Diva",
+          "scryfall_id": "9b9850d6-49d3-45ec-9a45-75aa0fce9ee5"
+        }
+      ]
     },
     {
       "id": "ncc_maestros_massacre",
@@ -728,7 +1284,13 @@
       "set_code": "NCC",
       "set_name": "New Capenna Commander",
       "date": "2022-04-29",
-      "source": "https://mtgjson.com/api/v5/decks/MaestrosMassacre_NCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/MaestrosMassacre_NCC.json",
+      "commanders": [
+        {
+          "name": "Anhelo, the Painter",
+          "scryfall_id": "462e887d-6b91-4b31-9487-2780ffe8943f"
+        }
+      ]
     },
     {
       "id": "ncc_obscura_operation",
@@ -736,7 +1298,13 @@
       "set_code": "NCC",
       "set_name": "New Capenna Commander",
       "date": "2022-04-29",
-      "source": "https://mtgjson.com/api/v5/decks/ObscuraOperation_NCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/ObscuraOperation_NCC.json",
+      "commanders": [
+        {
+          "name": "Kamiz, Obscura Oculus",
+          "scryfall_id": "74b8ae28-e169-46be-8180-ebdaf80efd81"
+        }
+      ]
     },
     {
       "id": "ncc_riveteers_rampage",
@@ -744,7 +1312,13 @@
       "set_code": "NCC",
       "set_name": "New Capenna Commander",
       "date": "2022-04-29",
-      "source": "https://mtgjson.com/api/v5/decks/RiveteersRampage_NCC.json"
+      "source": "https://mtgjson.com/api/v5/decks/RiveteersRampage_NCC.json",
+      "commanders": [
+        {
+          "name": "Henzie \"Toolbox\" Torre",
+          "scryfall_id": "ee228dcc-3170-4c24-80bc-28bcee07cb43"
+        }
+      ]
     },
     {
       "id": "nec_buckle_up",
@@ -752,7 +1326,13 @@
       "set_code": "NEC",
       "set_name": "Neon Dynasty Commander",
       "date": "2022-02-18",
-      "source": "https://mtgjson.com/api/v5/decks/BuckleUp_NEC.json"
+      "source": "https://mtgjson.com/api/v5/decks/BuckleUp_NEC.json",
+      "commanders": [
+        {
+          "name": "Kotori, Pilot Prodigy",
+          "scryfall_id": "fea6c1c8-eff9-4b66-b96d-e23016f0bb62"
+        }
+      ]
     },
     {
       "id": "nec_upgrades_unleashed",
@@ -760,7 +1340,13 @@
       "set_code": "NEC",
       "set_name": "Neon Dynasty Commander",
       "date": "2022-02-18",
-      "source": "https://mtgjson.com/api/v5/decks/UpgradesUnleashed_NEC.json"
+      "source": "https://mtgjson.com/api/v5/decks/UpgradesUnleashed_NEC.json",
+      "commanders": [
+        {
+          "name": "Chishiro, the Shattered Blade",
+          "scryfall_id": "bffa36ac-137d-481c-b1b7-76a88ef15d54"
+        }
+      ]
     },
     {
       "id": "voc_spirit_squadron",
@@ -768,7 +1354,13 @@
       "set_code": "VOC",
       "set_name": "Crimson Vow Commander",
       "date": "2021-11-19",
-      "source": "https://mtgjson.com/api/v5/decks/SpiritSquadron_VOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/SpiritSquadron_VOC.json",
+      "commanders": [
+        {
+          "name": "Millicent, Restless Revenant",
+          "scryfall_id": "2b86b538-0766-440d-a2cd-f5d5bfcfb010"
+        }
+      ]
     },
     {
       "id": "voc_vampiric_bloodline",
@@ -776,7 +1368,13 @@
       "set_code": "VOC",
       "set_name": "Crimson Vow Commander",
       "date": "2021-11-19",
-      "source": "https://mtgjson.com/api/v5/decks/VampiricBloodline_VOC.json"
+      "source": "https://mtgjson.com/api/v5/decks/VampiricBloodline_VOC.json",
+      "commanders": [
+        {
+          "name": "Strefan, Maurer Progenitor",
+          "scryfall_id": "8f54c6ce-fde4-47ef-a106-5c68b4397f99"
+        }
+      ]
     }
   ]
 }
