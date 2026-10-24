@@ -68,7 +68,6 @@ only where the archetype visibly misplays it.
   precon is the signal to give that precon its own module.
 - The whole-game test runs a seeded sample of the shipped decks per run. The
   full matrix belongs to the arena, which has its own runner.
-
 - **Filling a shell with substitutions** to make it playable sooner would ship
   a list Wizards did not sell under the word that promises one. A shell waits
   for its cards instead.
