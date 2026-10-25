@@ -9092,12 +9092,12 @@
     },
     "Angelic Sleuth": {
       "edhrec_rank": 12409,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Sleuth",
-      "reason": "no template for: Whenever another permanent you control leaves the battlefield, if it had counters on it, i",
+      "reason": "",
       "scryfall_id": "5381dd61-7d20-4a4c-a6c1-67e8c9020ed6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angelic Voices": {
@@ -83652,12 +83652,12 @@
     },
     "Endless Atlas": {
       "edhrec_rank": 2429,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Atlas",
-      "reason": "no template for: {2}, {T}: Draw a card. Activate only if you control three or more lands with the same name",
+      "reason": "",
       "scryfall_id": "9b33e3d0-a950-476c-b7dc-1af5767ab1ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Cockroaches": {
@@ -159312,12 +159312,12 @@
     },
     "Linvala, the Preserver": {
       "edhrec_rank": 14991,
-      "gate": "template",
+      "gate": null,
       "name": "Linvala, the Preserver",
-      "reason": "no template for: When Linvala enters, if an opponent has more life than you, you gain 5 life",
+      "reason": "",
       "scryfall_id": "ef0dbb08-d124-46da-bfb1-af7ef4a18179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lion Heart": {
@@ -171302,12 +171302,12 @@
     },
     "Merchant of Truth": {
       "edhrec_rank": 6337,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant of Truth",
-      "reason": "no template for: Whenever a nontoken creature you control dies, investigate",
+      "reason": "",
       "scryfall_id": "0f47e29e-54c5-4b1a-b9b9-d5e267a0203a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant of Venom": {
@@ -172482,12 +172482,12 @@
     },
     "Metropolis Reformer": {
       "edhrec_rank": 4689,
-      "gate": "template",
+      "gate": null,
       "name": "Metropolis Reformer",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "041111e8-3b0e-4337-a7d6-20cc455ea173",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Metropolis Sprite": {
@@ -240552,12 +240552,12 @@
     },
     "Seraph of the Sword": {
       "edhrec_rank": 17745,
-      "gate": "template",
+      "gate": null,
       "name": "Seraph of the Sword",
-      "reason": "no template for: Prevent all combat damage that would be dealt to this creature",
+      "reason": "",
       "scryfall_id": "d9789cac-5774-4f72-82c3-18f11f9d4a62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seraphic Greatsword": {
@@ -240912,12 +240912,12 @@
     },
     "Serra Avenger": {
       "edhrec_rank": 11854,
-      "gate": "template",
+      "gate": null,
       "name": "Serra Avenger",
-      "reason": "no template for: You can't cast during your first, second, or third turns of the game",
+      "reason": "",
       "scryfall_id": "8e5627de-fda7-4e39-a6ec-1e895bc353ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Serra Aviary": {
@@ -301082,12 +301082,12 @@
     },
     "Vanguard Seraph": {
       "edhrec_rank": 11147,
-      "gate": "template",
+      "gate": null,
       "name": "Vanguard Seraph",
-      "reason": "no template for: Whenever you gain life for the first time each turn, surveil 1",
+      "reason": "",
       "scryfall_id": "4329c861-fc16-4a96-9c03-25af6ac2adc8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanguard Suppressor": {

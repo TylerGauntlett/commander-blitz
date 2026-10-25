@@ -4822,6 +4822,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "clue_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another permanent you control leaves the battlefield, if it had counters on it, investigate.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angelic_sleuth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Angelic Sleuth",
+      "oracle_text": "Flying\nWhenever another permanent you control leaves the battlefield, if it had counters on it, investigate. (Create a Clue artifact token with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -37136,6 +37192,54 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "most_sharing_a_name": {
+                "objects": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "endless_atlas",
+      "mana_cost": "{2}",
+      "name": "Endless Atlas",
+      "oracle_text": "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -71038,6 +71142,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Linvala enters, if an opponent has more life than you, you gain 5 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_life_of": "each_opponent"
+              },
+              "right": {
+                "life_of": "you"
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "angel_3_3_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_count_of": {
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent"
+                }
+              },
+              "right": {
+                "creatures_you_control": true
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "linvala_the_preserver",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Linvala, the Preserver",
+      "oracle_text": "Flying\nWhen Linvala enters, if an opponent has more life than you, you gain 5 life.\nWhen Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -77257,6 +77450,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "clue_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control dies, investigate.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Clue"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "exalted"
+          ],
+          "kind": "static",
+          "text": "Clues you control have exalted."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "merchant_of_truth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Merchant of Truth",
+      "oracle_text": "Flying\nWhenever a nontoken creature you control dies, investigate.\nClues you control have exalted. (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Detective"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -77796,6 +78047,57 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, you gain that much life.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "metropolis_reformer",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Metropolis Reformer",
+      "oracle_text": "Flying, vigilance\nYou have hexproof.\nWhenever this creature is dealt damage, you gain that much life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -107393,6 +107695,42 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to this creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "seraph_of_the_sword",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Seraph of the Sword",
+      "oracle_text": "Flying\nPrevent all combat damage that would be dealt to this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -107454,6 +107792,32 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "cant_cast_first_turns": 3,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "serra_avenger",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Serra Avenger",
+      "oracle_text": "You can't cast Serra Avenger during your first, second, or third turns of the game.\nFlying, vigilance",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -136461,6 +136825,51 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life for the first time each turn, surveil 1",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "vanguard_seraph",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Vanguard Seraph",
+      "oracle_text": "Flying\nWhenever you gain life for the first time each turn, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

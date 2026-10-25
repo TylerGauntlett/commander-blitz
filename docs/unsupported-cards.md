@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**66 cards** blocked by **76** capabilities.
+**58 cards** blocked by **68** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spider-token](#spider-token) | 2 | 1012 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [add-mana-on-tap-produced-filter](#add-mana-on-tap-produced-filter) | 1 | 893 | static_effect |
-| [angel-token-3-3-flying](#angel-token-3-3-flying) | 1 | 14991 | token |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [behold](#behold) | 1 | 7614 | op |
@@ -44,15 +43,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
-| [exalted](#exalted) | 1 | 6337 | keyword |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until-cast-free](#exile-until-cast-free) | 1 | 4075 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
-| [first-life-gain-each-turn](#first-life-gain-each-turn) | 1 | 11147 | trigger_event |
 | [fog](#fog) | 1 | 1232 | op |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
-| [had-counters](#had-counters) | 1 | 12409 | value |
 | [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
 | [improvise](#improvise) | 1 | 942 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -68,15 +64,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [pack-tactics](#pack-tactics) | 1 | 6179 | value |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
-| [player-hexproof](#player-hexproof) | 1 | 4689 | static_effect |
 | [players-dealt-combat-damage-by-source](#players-dealt-combat-damage-by-source) | 1 | 1137 | selector |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
-| [prevent-combat-damage](#prevent-combat-damage) | 1 | 17745 | static_effect |
 | [put-counters-cost](#put-counters-cost) | 1 | 6513 | cost |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [redirect-attack](#redirect-attack) | 1 | 3213 | op |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
-| [same-name-count](#same-name-count) | 1 | 2429 | value |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -88,7 +81,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
-| [turns-taken-casting-restriction](#turns-taken-casting-restriction) | 1 | 11854 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
 
 ## cast-as-though-flash
@@ -209,20 +201,6 @@ Blocks **1** card.
   - Whenever you tap a permanent for {C}, add an additional {C}.
   - Colorless creatures you control get +2/+2.
   - Whenever you cast a colorless spell, you gain 2 life.
-
-</details>
-
-## angel-token-3-3-flying
-
-Blocks **1** card.
-
-- **(token)** a 3/3 white Angel creature token with flying (e.g. id angel_3_3_w_flying)
-  <br>Why the existing vocabulary won't do: token_ids has only 4/4 Angels (angel_4_4_w_flying, angel_4_4_w_flying_vigilance, angel_warrior_4_4_w_flying); a 4/4 is not the printed 3/3. The rest of the line is expressible: a self_enters trigger whose condition is a cmp of max_count_of opponents' creatures > creatures_you_control, then create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Linvala, the Preserver** (rank 14991) — `linvala_the_preserver`
-  - When Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying.
 
 </details>
 
@@ -546,20 +524,6 @@ Blocks **1** card.
 
 </details>
 
-## exalted
-
-Blocks **1** card.
-
-- **(keyword)** the exalted keyword (702.83): each instance on a permanent you control triggers when a creature you control attacks alone, giving that creature +1/+1 until end of turn; it must be grantable to other permanents (here Clues you control, via the grant_keyword static with affects {controller: you, subtypes: [Clue]}) and each instance counts separately
-  <br>Why the existing vocabulary won't do: exalted is not in the keyword list, so the grant_keyword static cannot name it. A grant_ability static handing Clues a quoted triggered ability is the near miss, but no trigger event or trigger key expresses 'a creature you control attacks alone' (attacks / you_attack have no alone/sole-attacker filter), and a granted trigger would not be an instance of exalted for other cards that count or grant it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Merchant of Truth** (rank 6337) — `merchant_of_truth`
-  - Clues you control have exalted. (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn for each instance of exalted among permanents you control.)
-
-</details>
-
 ## exile-target-spell
 
 Blocks **1** card.
@@ -619,20 +583,6 @@ Blocks **1** card.
 
 </details>
 
-## first-life-gain-each-turn
-
-Blocks **1** card.
-
-- **(trigger_event)** a `you_gain_life` trigger that fires only on the player's first life-gain event of the turn, counted per player over the whole turn (including gains made before this permanent entered): `LIFE_GAINED` needs a per-player ordinal in `data["nth"]` (as `DRAW` and `SPELL_CAST` carry, folded off the turn ledger) so `nth: 1` can be honoured on `you_gain_life`
-  <br>Why the existing vocabulary won't do: `nth` is answered by `triggers._ordinal`, which reads `event.data["nth"]`, and `primitives.gain_life` fires `LIFE_GAINED` with only `amount`, so `nth: 1` would never match. `max_per_turn: 1` is a per-permanent cap on queued firings, so a Seraph entering after you already gained life this turn would wrongly trigger on the next gain (the engine's own comment on `nth` names this exact fault). A `condition` on `life_gained_this_turn` is an intervening-if read after the gain, and the ledger holds a total, not a count of gain events, so it cannot tell the first gain from a later one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vanguard Seraph** (rank 11147) — `vanguard_seraph`
-  - Whenever you gain life for the first time each turn, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)
-
-</details>
-
 ## fog
 
 Blocks **1** card.
@@ -659,20 +609,6 @@ Blocks **1** card.
 
 - **Tangleweave Armor** (rank 11958) — `tangleweave_armor`
   - Equipped creature gets +X/+X, where X is the greatest mana value among your commanders.
-
-</details>
-
-## had-counters
-
-Blocks **1** card.
-
-- **(value)** a last-known-information test of whether the permanent that just left the battlefield had ANY counters (of any kind) on it, usable as an intervening-if condition on a leaves_battlefield trigger -- e.g. a `had_any_counters` value or condition reading the event's `had_counters` snapshot summed over every kind
-  <br>Why the existing vocabulary won't do: The trigger filter key `has_counters` reads `obj.counters` at match time, but `zones` runs `reset_permanent_state` before LEAVES_BATTLEFIELD fires, so on a leave trigger it is always false (the card would never investigate). The value `counters_had` does read the snapshot but takes exactly one counter kind (`{"counters_had": "+1/+1"}`), and counter kinds are open-ended, so an `any` over a fixed list of kinds would miss oil, shield, stun, lore, etc. and be a narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angelic Sleuth** (rank 12409) — `angelic_sleuth`
-  - Whenever another permanent you control leaves the battlefield, if it had counters on it, investigate. (Create a Clue artifact token with "{2}, Sacrifice this token: Draw a card.")
 
 </details>
 
@@ -897,20 +833,6 @@ Blocks **1** card.
 
 </details>
 
-## player-hexproof
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "you") giving the controller hexproof: the player can't be the target of spells or abilities their opponents control (702.11c), lasting while the permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: The grant_keyword static and grant_keyword op only reach permanents through affects/objects selectors, and no static in static_effects carries affects_player for hexproof; grant_protection takes a player but protection is a different rule (it also prevents damage and blocks targeting by everything with a quality), and ward/shroud are likewise permanent-only. The engine source has no player-hexproof check in targeting
-
-<details><summary>Cards waiting on this</summary>
-
-- **Metropolis Reformer** (rank 4689) — `metropolis_reformer`
-  - You have hexproof.
-
-</details>
-
 ## players-dealt-combat-damage-by-source
 
 Blocks **1** card.
@@ -936,20 +858,6 @@ Blocks **1** card.
 
 - **Steel Leaf Champion** (rank 13014) — `steel_leaf_champion`
   - This creature can't be blocked by creatures with power 2 or less.
-
-</details>
-
-## prevent-combat-damage
-
-Blocks **1** card.
-
-- **(static_effect)** a combat-only restriction on the `prevent_damage` static with `prevent_all` -- a total damage shield on `affects: {self_only: true}` that applies only when the damage event is combat damage, leaving noncombat damage (burn, fight, ping) to be dealt normally
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `prevent_all` (read by characteristics.prevents_all_damage) prevents ALL damage with no combat test, which would make the Seraph immune to burn and fight too. `combat_only` exists in ability_keys but the loader rejects it on anything but `replace_damage`. `replace_damage` with combat_only and a 0 multiplier would be a replacement, not a prevention (no DAMAGE_PREVENTED, wrong under 'damage can't be prevented'), and protection also stops blocking/targeting.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Seraph of the Sword** (rank 17745) — `seraph_of_the_sword`
-  - Prevent all combat damage that would be dealt to this creature.
 
 </details>
 
@@ -1009,20 +917,6 @@ Blocks **1** card.
 
 - **Clifftop Lookout** (rank 2637) — `clifftop_lookout`
   - When this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.
-
-</details>
-
-## same-name-count
-
-Blocks **1** card.
-
-- **(value)** a value giving the size of the largest group of objects matching a selector that share one name (e.g. {"max_same_name_count": {"controller": "you", "types": ["Land"], "zone": "battlefield"}}), usable in an activated ability's activation condition as a cmp >= 3
-  <br>Why the existing vocabulary won't do: `count` totals every match regardless of name; `max_count_of` groups per player, not per name; `shares_a_name_with` needs an already-bound object, and nothing iterates the lands as candidates inside a condition. An `any` of literal `name` counts for the basic land names would miss snow basics, nonbasic duplicates and copied/renamed lands, so it would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Endless Atlas** (rank 2429) — `endless_atlas`
-  - {2}, {T}: Draw a card. Activate only if you control three or more lands with the same name
 
 </details>
 
@@ -1184,20 +1078,6 @@ Blocks **1** card.
 
 - **Firespitter Whelp** (rank 4074) — `firespitter_whelp`
   - Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.
-
-</details>
-
-## turns-taken-casting-restriction
-
-Blocks **1** card.
-
-- **(value)** a value counting how many turns a player has begun this game ("your Nth turn of the game"), usable in a casting restriction on the card itself: the card can't be cast while it is its owner's turn and that player's turn count is 3 or less
-  <br>Why the existing vocabulary won't do: The nearest tool is the player-wide static `cant_cast_spells` with an `affects_spells` filter and a `condition` such as `is_your_turn`, but neither `static_value_keys` nor `value_keys` holds a per-player turns-taken count (only per-turn ledgers like `spells_cast_this_turn` and the game-long `spells_cast_this_game`), so 'first, second, or third turns' cannot be compared; a static would also have to work from the hand, and a card-level cast restriction key does not exist in `card_level_rider_keys`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra Avenger** (rank 11854) — `serra_avenger`
-  - You can't cast Serra Avenger during your first, second, or third turns of the game.
 
 </details>
 

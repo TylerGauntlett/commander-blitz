@@ -466,6 +466,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "angelic_sleuth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "angelic_wall": {
     "zone": "battlefield"
   },
@@ -3389,6 +3393,10 @@
     "library_size": {
       "0": 36
     },
+    "zone": "battlefield"
+  },
+  "endless_atlas": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "endless_ranks_of_the_dead": {
@@ -6383,6 +6391,9 @@
     },
     "zone": "battlefield"
   },
+  "linvala_the_preserver": {
+    "zone": "battlefield"
+  },
   "living_laser": {
     "zone": "battlefield"
   },
@@ -6983,6 +6994,9 @@
       "0": 2
     }
   },
+  "merchant_of_truth": {
+    "zone": "battlefield"
+  },
   "merchant_scroll": {
     "graveyard_size": {
       "0": 3
@@ -7046,6 +7060,10 @@
     "zone": "battlefield"
   },
   "meticulous_archive": {
+    "zone": "battlefield"
+  },
+  "metropolis_reformer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "midnight_assassin": {
@@ -9718,10 +9736,25 @@
   "seraph_of_the_suns": {
     "zone": "battlefield"
   },
+  "seraph_of_the_sword": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seraph_sanctuary": {
     "battlefield_count": 33,
     "life": {
       "0": 41
+    },
+    "zone": "battlefield"
+  },
+  "serra_avenger": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
     },
     "zone": "battlefield"
   },
@@ -12194,6 +12227,10 @@
   "vandalblast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "vanguard_seraph": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vanquisher_s_axe": {
     "zone": "battlefield"
