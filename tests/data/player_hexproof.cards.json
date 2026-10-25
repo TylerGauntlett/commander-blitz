@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/protection/test_player_hexproof.py. t_ph_reformer is Metropolis Reformer's \"You have hexproof.\" on a vanilla body.",
+  "cards": [
+    {
+      "id": "t_ph_reformer",
+      "name": "Test Hexproof Reformer",
+      "oracle_text": "You have hexproof.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You have hexproof.",
+          "effect": "player_hexproof",
+          "affects_player": "you"
+        }
+      ]
+    }
+  ]
+}

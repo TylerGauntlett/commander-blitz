@@ -733,6 +733,8 @@ STATICS: dict[str, Entry] = {
     "lose_keyword": ("Matching permanents lose keywords and can't have or gain them.",
                      "`lose_keyword` — the other kind of removal, at the other end of the pipeline"),
     "no_hand_limit": ("The player has no maximum hand size.", None),
+    "player_hexproof": ("The player has hexproof: opponents' spells and abilities can't target them.",
+                        "Player-wide statics"),
     "opponents_cant_force_discard_or_sacrifice": ("Opponents' spells and abilities can't make the player discard or sacrifice.",
                                                   '"Can\'t cause you to discard cards or sacrifice permanents"'),
     "play_lands_from_graveyard": ("The player may play lands from their graveyard.", None),

@@ -600,6 +600,19 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "no_hand_limit")
 
 
+def player_has_hexproof(state: GameState, pid: int) -> bool:
+    """Whether this player has hexproof (702.11d).
+
+    "You have hexproof" -- Metropolis Reformer, Leyline of Sanctity. The player
+    can't be the target of spells or abilities their **opponents** control;
+    their own and a teammate's still reach them, which is the whole difference
+    from shroud and from protection. Read by `targeting._player_allowed`, the
+    one place a seat is offered as a target, so declaring and the 608.2b
+    re-check both see it.
+    """
+    return _player_static(state, pid, "player_hexproof")
+
+
 def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     """Whether every ``{B}`` in a cost this player pays may be paid with 2 life.
 

@@ -930,7 +930,7 @@ silent.
 
 ## Player-wide statics
 
-Thirty-eight static effects describe the *player* rather than a characteristic, so
+Thirty-nine static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -938,6 +938,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "player_hexproof", "affects_player": "you" }
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
