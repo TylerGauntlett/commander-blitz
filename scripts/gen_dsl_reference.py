@@ -908,6 +908,7 @@ KEYWORDS: dict[str, Entry] = {
     "deathtouch": ("Deathtouch.", None),
     "defender": ("Defender.", None),
     "double_strike": ("Double strike.", None),
+    "exalted": ("Exalted.", "Exalted"),
     "fear": ("Fear.", "Fear, intimidate, horsemanship, shadow and nonbasic landwalk"),
     "first_strike": ("First strike.", None),
     "flash": ("Flash.", None),

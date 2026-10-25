@@ -277,6 +277,14 @@ class Keyword(str, Enum):
     #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
     #: does it during a zone change rather than on the board.
     RIOT = "riot"
+    #: Exalted (702.83).  "Whenever a creature you control attacks alone, that
+    #: creature gets +1/+1 until end of turn."  A `Keyword` rather than a
+    #: printed triggered ability because the printing that needs it --
+    #: "Clues you control **have exalted**" (Merchant of Truth) -- grants it,
+    #: and a granted keyword is what other exalted permanents count with.  The
+    #: trigger itself is `carddef.EXALTED_TRIGGER`, supplied by the rules for
+    #: every permanent with the keyword, one per permanent (702.83b).
+    EXALTED = "exalted"
     #: Compleated (702.150a): "If this permanent would enter with one or more
     #: loyalty counters on it, it enters with two fewer loyalty counters on it
     #: for each Phyrexian mana symbol life was paid for as it was cast."  A

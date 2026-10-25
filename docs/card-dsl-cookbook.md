@@ -3781,6 +3781,39 @@ nothing ever after, leaving the two branches indistinguishable one turn later.
 A **token** is asked nothing. `create_token` is not a generator and could not
 stop to ask, and Rhythm of the Wild says nontoken anyway.
 
+### Exalted
+
+    Noble Hierarch — "Exalted."
+    Merchant of Truth — "Clues you control have exalted."
+
+```jsonc
+"keywords": ["exalted"]                                // printed on the permanent
+
+{ "kind": "static", "text": "Clues you control have exalted.",
+  "effect": "grant_keyword", "keywords": ["exalted"],
+  "affects": { "controller": "you", "subtypes": ["Clue"] } }
+```
+
+A `Keyword` whose whole content is a triggered ability the rules supply:
+"whenever a creature you control attacks alone, that creature gets +1/+1 until
+end of turn" (702.83a). The trigger is `carddef.EXALTED_TRIGGER`, and
+`triggers._candidate_abilities` yields it once for every battlefield permanent
+whose **derived** keywords include exalted, with that permanent as its source.
+So each exalted permanent triggers on its own (702.83b), a granted exalted
+listens, and a permanent that loses its abilities stops.
+
+"Attacks alone" (506.5) is `you_attack` with exactly one creature in the
+`attackers` binding, the condition the trigger carries and the one a printed
+"whenever a creature you control attacks alone" line uses on its own (Squall,
+Seed Mercenary).
+
+**The near miss** is writing exalted out as that triggered ability on the
+card. It plays the same on the card that prints it, and it is not an instance
+of exalted: a grant cannot hand it to a Clue. Write the keyword.
+
+A keyword is a characteristic, not a count, so one permanent holding exalted
+twice (printed and granted) triggers once rather than twice.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:

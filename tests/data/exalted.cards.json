@@ -1,0 +1,49 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_exalted.py. t_ex_squire carries exalted as a printed keyword; t_ex_merchant is Merchant of Truth's grant line on its own, handing exalted to the Clue t_ex_clue.",
+  "cards": [
+    {
+      "id": "t_ex_squire",
+      "name": "Test Exalted Squire",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["exalted"]
+    },
+    {
+      "id": "t_ex_merchant",
+      "name": "Test Exalted Merchant",
+      "oracle_text": "Clues you control have exalted.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Clues you control have exalted.",
+          "effect": "grant_keyword",
+          "keywords": ["exalted"],
+          "affects": {"controller": "you", "subtypes": ["Clue"]}
+        }
+      ]
+    },
+    {
+      "id": "t_ex_clue",
+      "name": "Test Exalted Clue",
+      "oracle_text": "",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "subtypes": ["Clue"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}
