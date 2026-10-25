@@ -1179,6 +1179,15 @@ _SELF_REFERENCE = re.compile(
 _STRIATION = re.compile(r"^(\d+)\+\s*\|")
 
 
+#: The printed ordinals of a `cant_cast_first_turns` line, by how many turns
+#: it names.
+_FIRST_TURNS_WORDS = {
+    1: "first turn",
+    2: "first or second turns",
+    3: "first, second, or third turns",
+}
+
+
 def fold_self_reference(text: str, name: str) -> str:
     """Collapse every way a card names itself to one token, for comparison only."""
     if name:
@@ -1378,6 +1387,18 @@ def _covered(card: CardDef, line: str) -> bool:
     # ability: a spell is on the stack, where abilities do not reach it.
     if card.uncounterable and "can't be countered" in stripped.lower():
         return True
+
+    # "You can't cast Serra Avenger during your first, second, or third turns
+    # of the game" is `cant_cast_first_turns`. Strict: the printed ordinals
+    # must be exactly the turns the field names, or the card waits a
+    # different number of turns than it prints.
+    if card.cant_cast_first_turns is not None:
+        turns = _FIRST_TURNS_WORDS.get(card.cant_cast_first_turns)
+        if turns is not None and re.fullmatch(
+            rf"you can't cast (?:~ |this spell )?during your {turns} of the game",
+            folded_line.lower(),
+        ):
+            return True
 
     # "Teferi, Temporal Archmage can be your commander." is the other
     # deck-construction sentence (903.3), read by `validate_deck` through
