@@ -30,7 +30,8 @@
  *   has a ceiling, every ceiling is spent by a row, and the derived rule never
  *   leaves the panel out of a table pick.
  * - `Journeys.stories.tsx` and `e2e/journeys-handheld.spec.ts` import their
- *   ceilings from `BUDGET`, so the number a journey is held to lives here once.
+ *   ceilings from `BUDGET`, so the number a journey is held to lives here once;
+ *   `e2e/phone.spec.ts` imports the touch column, `TAP_BUDGET`, the same way.
  *
  * ## The ceilings
  *
@@ -661,4 +662,32 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
 /** The ceiling a journey is held to. */
 export function ceiling(journey: JourneyName): number {
   return BUDGET[journey];
+}
+
+/**
+ * THE TOUCH COLUMN: the same journeys, in taps (ADR 0025).
+ *
+ * A finger points at what it means, so a journey never costs more taps than
+ * it costs presses -- there is no walk -- and `tests/decisionAudit.test.ts`
+ * holds that. Each is what `e2e/phone.spec.ts` measured against the real
+ * engine on every phone `testing/devices.ts` names, under the same rule as
+ * the presses: a ceiling, lowered when a journey gets cheaper and never
+ * raised to make a test pass. Only the journeys the phone spec walks have a
+ * row; the rest are answered from the same sheet and held by its "every
+ * decision answerable from the sheet" assertion instead.
+ */
+export const TAP_BUDGET = {
+  /** The Pass row in the sheet. */
+  PassInOnePress: 1,
+  /** The Keep button the opening-hand screen draws. */
+  KeepTheHand: 1,
+  /** The "all" mark, then the slab: the same two steps `X` takes, by finger. */
+  CommitFromAnywhere: 2,
+} as const satisfies Partial<Record<JourneyName, number>>;
+
+export type TapJourneyName = keyof typeof TAP_BUDGET;
+
+/** The tap ceiling a journey is held to on a phone. */
+export function tapCeiling(journey: TapJourneyName): number {
+  return TAP_BUDGET[journey];
 }

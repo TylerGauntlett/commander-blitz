@@ -98,7 +98,7 @@ export const UnknownStep: Story = {
 /** The ribbon at 1280 wide: thirteen steps, every label at the floor. */
 export const DeclareBlockersHandheld: Story = {
   args: at("DECLARE_BLOCKERS", "combat"),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

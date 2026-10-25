@@ -47,9 +47,11 @@ import "../src/styles/phone.css";
 import { setReducedMotionOverride } from "../src/fx/reducedMotion";
 import { resetCursor, setCursor } from "../src/input/cursor";
 import { stopRoot } from "../src/input/stops";
+import { isCompact } from "../src/logic/breakpoints";
 import { useUiStore } from "../src/state/uiStore";
 import type { ArtMode } from "../src/testing/art";
 import { artFor } from "../src/testing/art";
+import { VIEWPORTS, viewportById } from "../src/testing/devices";
 import type { MountId } from "../src/testing/mounts";
 import { Mounted } from "../src/testing/mounts";
 
@@ -261,41 +263,41 @@ const withMount: Decorator = (Story, context) => {
 };
 
 /**
- * The two attributes the controller layer reads, as toolbar switches.
+ * The two attributes the controller layer reads, from the toolbar.
  *
  * `data-input` decides whether the focus ring and the button glyphs are drawn
- * at all; `data-handheld` decides the compact layout. Both live on `<html>` in
- * the app -- no component subscribes to either -- so a decorator that stamps
- * them makes EVERY existing story reviewable in the new dimensions without one
- * of them being rewritten. Flipping "Input" to "Pad" on the action panel is the
- * review for "do the glyphs appear where they should".
+ * at all; `data-layout` (and the `data-compact` family it implies) decides the
+ * layout. Both live on `<html>` in the app -- no component subscribes to
+ * either -- so a decorator that stamps them makes EVERY existing story
+ * reviewable in the new dimensions without one of them being rewritten.
+ * Flipping "Input" to "Pad" on the action panel is the review for "do the
+ * glyphs appear where they should".
  *
- * Stamped on the iframe's own `documentElement`, because that is where the app
- * puts them and where the stylesheet looks for them.
+ * ## The layout comes from the viewport, and the viewport is real
  *
- * ## `data-desktop` is stamped too, and it is not symmetry for its own sake
+ * The `viewport` global names a screen from `testing/devices.ts`, and the
+ * Vitest addon sizes the tester page to it before the story runs, so a story
+ * on "the iPhone 15" is laid out at the iPhone 15's viewport with the queries
+ * that size matches. The stamp is that viewport's layout (ADR 0025): a
+ * component that moves a node agrees with the sheet around it.
  *
- * The tester canvas is 1200x900, whatever `vite.config.ts` declares -- see the
- * note there for the four ways that were measured and reset. 1200 is inside
- * `HANDHELD_QUERY`'s `(max-width: 1366px)`, so **every story matched the
- * handheld query**, including every story in the project whose entire job is
- * proving the desktop board still works.
- *
- * So the toolbar is made authoritative rather than advisory: `data-desktop`
- * says "this story is being reviewed as the wide board, whatever the canvas
- * happens to be", and `styles/handheld.css` and `state/useHandheld.ts` both
- * treat an explicit choice as beating the query. Nothing in the app ever stamps
- * it, so the running client is untouched.
+ * A story with no viewport runs on the addon's 1200x900 canvas, which is
+ * inside `HANDHELD_QUERY`'s `(max-width: 1366px)`. It is stamped `desktop`,
+ * and `styles/handheld.css` guards its tokens with `:not([data-layout=
+ * "desktop"])`, so the wide board stays the wide board.
  */
 const withInputMode: Decorator = (Story, context) => {
   const root = document.documentElement;
-  const handheld = context.globals.handheld === "on";
+  const viewport = viewportById(
+    (context.globals.viewport as { value?: string } | undefined)?.value,
+  );
+  const layout = viewport?.layout ?? "desktop";
   root.setAttribute("data-input", String(context.globals.input ?? "mouse"));
   // The hint bar is a setting, off by default in the app; stories review it
   // on, because several read it to know what the ring is standing on.
   root.setAttribute("data-hints", String(context.globals.hints ?? "on"));
-  root.toggleAttribute("data-handheld", handheld);
-  root.toggleAttribute("data-desktop", !handheld);
+  root.setAttribute("data-layout", layout);
+  root.toggleAttribute("data-compact", isCompact(layout));
   return <Story />;
 };
 
@@ -382,6 +384,21 @@ const preview: Preview = {
     // `theme.css` owns the ground; a Storybook background would sit on top of
     // it and quietly change every contrast judgement.
     backgrounds: { disable: true },
+    // The screens of `testing/devices.ts`, by name. A story picks one with
+    // `globals: { viewport: { value: "deck" } }`; see `withInputMode`.
+    viewport: {
+      options: Object.fromEntries(
+        VIEWPORTS.map((v) => [
+          v.id,
+          {
+            name: v.name,
+            styles: { width: `${v.size.width}px`, height: `${v.size.height}px` },
+            type:
+              v.layout === "phone" ? "mobile" : v.layout === "handheld" ? "tablet" : "desktop",
+          },
+        ]),
+      ),
+    },
   },
 
   globalTypes: {
@@ -394,18 +411,7 @@ const preview: Preview = {
           { value: "mouse", title: "Mouse (no ring, no glyphs)" },
           { value: "keyboard", title: "Keyboard (ring, key labels)" },
           { value: "pad", title: "Gamepad (ring, A/B/X/Y)" },
-        ],
-        dynamicTitle: true,
-      },
-    },
-    handheld: {
-      description: "The compact 1280x800 layout",
-      toolbar: {
-        title: "Layout",
-        icon: "mobile",
-        items: [
-          { value: "off", title: "Desktop" },
-          { value: "on", title: "Handheld" },
+          { value: "touch", title: "Touch (no ring, no glyphs, taps)" },
         ],
         dynamicTitle: true,
       },
@@ -437,7 +443,7 @@ const preview: Preview = {
     },
   },
 
-  initialGlobals: { art: "stub", input: "mouse", handheld: "off", hints: "on" },
+  initialGlobals: { art: "stub", input: "mouse", hints: "on" },
 
   tags: ["autodocs"],
 };

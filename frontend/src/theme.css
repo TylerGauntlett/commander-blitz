@@ -397,6 +397,17 @@
   --seat-h: 96px;
 
   /*
+   * The phone's safe area (ADR 0025): the notch, the home indicator and the
+   * corners, as the browser reports them once `index.html`'s `viewport-fit=
+   * cover` lets the page draw edge to edge. Zero on every screen without one,
+   * so a layout may add them anywhere without a mode check.
+   */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+
+  /*
    * How far a hovered hand card rises.
    *
    * A token because three places have to agree on it: `.hand__slot`'s upward

@@ -242,7 +242,7 @@ function TakesAHit(props: ReturnType<typeof seat>) {
 
 export const HandheldLifeStaysReadableAfterAHit: Story = {
   args: seat(),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   parameters: { commanderblitz: { mount: "matSide", motion: "real" } },
   render: (args) => <TakesAHit {...(args as ReturnType<typeof seat>)} />,

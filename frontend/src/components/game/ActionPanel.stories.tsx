@@ -577,7 +577,7 @@ export const SettingsMenu: Story = {
 /** The play rows in the compact rail: every row a 44px target, every label 16px. */
 export const PlayModeHandheld: Story = {
   args: from(scenarios.earlyBoard()),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);
@@ -595,7 +595,7 @@ export const PlayModeHandheld: Story = {
  */
 export const AbilityRowsHandheld: Story = {
   args: from(scenarios.twoAbilityPermanent()),
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

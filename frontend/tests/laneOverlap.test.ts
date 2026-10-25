@@ -92,7 +92,7 @@ describe("the board stops growing", () => {
 describe("handheld.css draws what the solver assumes", () => {
   it("never wraps the viewer's lanes", () => {
     expect(HANDHELD_CSS).toMatch(
-      /\[data-handheld\] \.play__mine \.lane__cards \{\s*flex-wrap: nowrap;/,
+      /\[data-compact\] \.play__mine \.lane__cards \{\s*flex-wrap: nowrap;/,
     );
   });
 
@@ -105,7 +105,7 @@ describe("handheld.css draws what the solver assumes", () => {
 
   it("pins the viewer's seat column", () => {
     expect(HANDHELD_CSS).toMatch(
-      /\[data-handheld\] \.play__mine \.mat__side \{\s*position: sticky;/,
+      /\[data-compact\] \.play__mine \.mat__side \{\s*position: sticky;/,
     );
   });
 });

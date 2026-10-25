@@ -23,9 +23,9 @@
  * explicit that what cost this app its frame rate was components subscribing to
  * what the pointer is on.
  *
- * `useHandheldLayout` and not `useHandheld`: this swaps a NODE, so it has to
- * agree with the stylesheet in Storybook, where the Layout toolbar sets the
- * attribute without resizing anything.
+ * `useCompactLayout` and not `useHandheld`: this swaps a NODE, so it has to
+ * agree with the stylesheet in Storybook, where the viewport global stamps
+ * the layout of the device it names.
  */
 
 import { AnimatePresence, motion } from "motion/react";
@@ -47,7 +47,7 @@ import {
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
-import { useHandheldLayout } from "../../state/useHandheld";
+import { useCompactLayout } from "../../state/useHandheld";
 import { StaticCard } from "./Card";
 import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
@@ -269,7 +269,7 @@ export function CardPreview({ state }: Props) {
   const hoveredOid = useUiStore((s) => s.hoveredOid);
   const images = useUiStore((s) => s.images);
   const seatImages = useUiStore((s) => s.seatImages);
-  const compressed = useHandheldLayout();
+  const compressed = useCompactLayout();
   const card = hoveredOid === null ? null : findCard(state, hoveredOid);
   const artist = card ? artistFor(images, seatImages, card) : null;
 

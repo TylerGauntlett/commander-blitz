@@ -3,8 +3,8 @@
  *
  * Three facts now, and the third is the one a Steam Deck forced:
  *
- *   pref          what the player CHOSE, if they chose: auto, pad, keyboard, mouse
- *   mode          what they last actually used: mouse, keyboard, or pad
+ *   pref          what the player CHOSE, if they chose: auto, pad, keyboard, mouse, touch
+ *   mode          what they last actually used: mouse, keyboard, pad or touch
  *   padConnected  whether a gamepad exists at all
  *
  * `mode` is LAST-INPUT-WINS rather than "is a pad plugged in", because a Deck in
@@ -51,10 +51,34 @@
 
 import { HANDHELD_QUERY } from "../logic/breakpoints";
 
-export type InputMode = "mouse" | "keyboard" | "pad";
+export type InputMode = "mouse" | "keyboard" | "pad" | "touch";
 
 /** What the player chose. `auto` means "work it out", and is the default. */
-export type SchemePref = "auto" | "pad" | "keyboard" | "mouse";
+export type SchemePref = "auto" | "pad" | "keyboard" | "mouse" | "touch";
+
+/**
+ * Whether a mode points at things itself, so no ring is drawn and no region
+ * traps it. A finger is its own pointer, exactly as a mouse is (ADR 0025).
+ */
+export function isPointerMode(mode: InputMode | string | null): boolean {
+  return mode === "mouse" || mode === "touch";
+}
+
+/**
+ * Whether the page is being driven by a finger, as the document says.
+ *
+ * The attribute and not `getInputMode()`, for the reason `stops.ts` reads it:
+ * it is what every stylesheet keys on, and a surface that stamps it directly (a
+ * Storybook toolbar) is believed the same way the CSS believes it.
+ */
+export function isTouch(): boolean {
+  return (
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-input") === "touch"
+  );
+}
+
+const SCHEMES: readonly SchemePref[] = ["auto", "pad", "keyboard", "mouse", "touch"];
 
 const SCHEME_KEY = "commanderblitz.scheme";
 
@@ -243,7 +267,7 @@ export function subscribeInputMode(listener: Listener): () => void {
  * from here without a second loop.
  */
 export function noteInput(next: InputMode): void {
-  if (next !== "mouse") lastDirected = now();
+  if (next === "keyboard" || next === "pad") lastDirected = now();
   mode = next;
   if (apply()) announce();
 }
@@ -281,7 +305,9 @@ export function schemeDiagnostics(): {
 function storedScheme(): SchemePref {
   try {
     const saved = localStorage.getItem(SCHEME_KEY);
-    if (saved === "pad" || saved === "keyboard" || saved === "mouse") return saved;
+    if (saved && saved !== "auto" && SCHEMES.includes(saved as SchemePref)) {
+      return saved as SchemePref;
+    }
   } catch {
     // Private mode, or no DOM at all under vitest. `auto` is fine.
   }
@@ -297,9 +323,7 @@ function storedScheme(): SchemePref {
 function urlScheme(): SchemePref | null {
   try {
     const value = new URLSearchParams(window.location.search).get("input");
-    if (value === "pad" || value === "keyboard" || value === "mouse" || value === "auto") {
-      return value;
-    }
+    if (value && SCHEMES.includes(value as SchemePref)) return value as SchemePref;
   } catch {
     // No location, or a URL the parser refuses. Not worth a failure.
   }
@@ -318,9 +342,20 @@ export function startInputMode(): void {
   pref = urlScheme() ?? storedScheme();
   apply();
 
-  const onPointer = (event: Event) => {
-    // A touch is not a mouse, but it is not a pad either, and it wants the same
-    // thing a mouse does: no button glyphs, because there are no buttons.
+  const onPointer = (event: PointerEvent) => {
+    /*
+     * A FINGER IS TOUCH, NOT A MOUSE (ADR 0025).
+     *
+     * A touch press writes `touch`, and a move made by a finger writes
+     * nothing: a drag across the hand is still the same finger. Neither a
+     * touch nor a mouse draws a ring or a glyph, but they differ in what a tap
+     * on a card means -- a finger cannot hover, so a tap selects a card a click
+     * would only have pointed at. A pen hovers like a mouse, and is one.
+     */
+    if (event.pointerType === "touch") {
+      if (event.type === "pointerdown") noteInput("touch");
+      return;
+    }
     if (event.type === "pointermove") {
       const at = now();
       if (at - lastMove < MOVE_THROTTLE) return;

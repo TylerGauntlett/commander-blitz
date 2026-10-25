@@ -27,7 +27,7 @@
 
 import { useUiStore } from "../state/uiStore";
 import { setGroup } from "./groups";
-import { getInputMode, subscribeInputMode } from "./inputMode";
+import { getInputMode, isPointerMode, subscribeInputMode } from "./inputMode";
 import { type Dir, unreachableStops } from "./nav";
 import { padDiagnostics } from "./pad";
 import { followRing, retargetRing, ringNudge, ringTargetFor } from "./ring";
@@ -632,7 +632,7 @@ function hoverFor(stop: string | null): void {
    * measures it -- `e2e/cycle3.spec.ts` caught it as a mana row reporting a
    * spend of 2 with nothing hovered.
    */
-  if (getInputMode() === "mouse") return;
+  if (isPointerMode(getInputMode())) return;
   const oid = stop === null ? null : previewOidFor(stop);
   const store = useUiStore.getState();
   const apply = () => {
@@ -703,7 +703,7 @@ export function readingOid(): number | null {
  * the mouse's leave handler still fires normally.
  */
 subscribeInputMode(() => {
-  if (getInputMode() !== "mouse") return;
+  if (!isPointerMode(getInputMode())) return;
   if (settleTimer) {
     clearTimeout(settleTimer);
     settleTimer = null;

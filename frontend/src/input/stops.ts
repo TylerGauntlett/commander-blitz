@@ -26,6 +26,7 @@
  */
 
 import { type GroupId, getGroup, groupRoot, notLeaving } from "./groups";
+import { isPointerMode } from "./inputMode";
 import { type Candidate, type Dir, nearestStop, pickStop } from "./nav";
 
 /**
@@ -171,7 +172,7 @@ export function activeRoot(doc: Document = document): HTMLElement {
   const modal = stopRoot(doc);
   const board = doc.querySelector<HTMLElement>(".table");
   if (!board || modal !== board) return modal;
-  if (doc.documentElement.getAttribute("data-input") === "mouse") return modal;
+  if (isPointerMode(doc.documentElement.getAttribute("data-input"))) return modal;
   const group: GroupId | null = getGroup();
   if (group === null) return modal;
   return groupRoot(group, doc) ?? modal;
@@ -379,7 +380,7 @@ function onScreen(el: Element, rect: DOMRect): boolean {
  * feature is about.
  *
  * So the only disqualifier here is the one the layout creates ON PURPOSE: an
- * ancestor clipped to a zero box. `[data-handheld] .mat--compact .mat__lanes`
+ * ancestor clipped to a zero box. `[data-compact] .mat--compact .mat__lanes`
  * is `height: 0; overflow: hidden` so `FxLayer` keeps its anchors, and a card
  * inside it still reports its own full rect -- which is why this is an
  * ancestor walk and not a size check. Nothing can scroll a zero-height box into

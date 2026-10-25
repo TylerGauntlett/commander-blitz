@@ -53,7 +53,7 @@
 import { motion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { GameView, PlayerView } from "../../api/types";
-import { getInputMode } from "../../input/inputMode";
+import { getInputMode, isPointerMode } from "../../input/inputMode";
 import { stopId } from "../../input/stops";
 import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
@@ -334,7 +334,7 @@ export function OpponentSeat({
       ? {}
       : {
           onFocus: () => {
-            if (getInputMode() !== "mouse") onHoverCard?.(reading);
+            if (!isPointerMode(getInputMode())) onHoverCard?.(reading);
           },
           onBlur: () => {
             if (useUiStore.getState().hoveredOid === reading) onHoverCard?.(null);

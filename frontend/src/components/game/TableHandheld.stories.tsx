@@ -38,10 +38,10 @@ type Story = StoryObj<typeof meta>;
  * ## Every one of these is a CI gate, and that is new
  *
  * `tags: ["handheld"]` puts them in the `storybook-handheld` project as well as
- * the ordinary one, so each runs twice: at 1600x950, where `data-handheld`
- * gives the compact STRUCTURE with desktop tokens, and at a real 1280x800,
- * where `handheld.css`'s media query also re-values `--rail-r`, `--mat-side`,
- * `--pod-seat-h` and `--hand-lift`. Both have to hold.
+ * the ordinary one. The `deck` viewport is a real 1280x800 in both (the Vitest
+ * addon sizes the page to the story's viewport), so `handheld.css`'s media
+ * query re-values `--rail-r`, `--mat-side`, `--pod-seat-h` and `--hand-lift`
+ * under the compact structure, as it does on the Deck.
  *
  * The floors -- 16px of type, 44px of target, 96px of card -- have been
  * asserted by `e2e/handheldAssert.ts` since Loop 3, but **Playwright is not in
@@ -57,7 +57,7 @@ type Story = StoryObj<typeof meta>;
 /** Your turn, a few lands down. The everyday case. */
 export const HandheldBoard: Story = {
   args: board(scenarios.earlyBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -76,7 +76,7 @@ export const HandheldBoard: Story = {
  */
 export const HandheldPod: Story = {
   args: board(scenarios.fourPlayerPod()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -90,7 +90,7 @@ export const HandheldPod: Story = {
 /** Combat, where the ring has the most to reach and the least room to do it. */
 export const HandheldDeclareAttackers: Story = {
   args: board(scenarios.combatDeclareAttackers()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -104,7 +104,7 @@ export const HandheldDeclareAttackers: Story = {
 
 export const HandheldDeclareBlockers: Story = {
   args: board(scenarios.combatDeclareBlockers()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -128,7 +128,7 @@ export const HandheldDeclareBlockers: Story = {
  */
 export const HandheldModalDecision: Story = {
   args: board(scenarios.mulligan()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -154,7 +154,7 @@ export const HandheldModalDecision: Story = {
  */
 export const HandheldFullGlobalLane: Story = {
   args: board(scenarios.fullGlobalLane()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -194,7 +194,7 @@ export const HandheldFullGlobalLane: Story = {
  */
 export const HandheldCrowdedBoard: Story = {
   args: board(scenarios.crowdedBoard()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -220,7 +220,7 @@ export const HandheldCrowdedBoard: Story = {
  */
 export const HandheldViewingAnOpponent: Story = {
   args: board(scenarios.fourPlayerPod()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -305,7 +305,7 @@ export const HandheldViewingAnOpponent: Story = {
  */
 export const HandheldHoldingR2ViewsAnOpponent: Story = {
   args: board(scenarios.fourPlayerPod()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {
@@ -345,7 +345,7 @@ export const HandheldHoldingR2ViewsAnOpponent: Story = {
  */
 export const HandheldSeatPressTargetsFirst: Story = {
   args: board(scenarios.combatDeclareAttackers()),
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   parameters: { commanderblitz: { zoomLock: false } },
   play: async ({ canvasElement }) => {

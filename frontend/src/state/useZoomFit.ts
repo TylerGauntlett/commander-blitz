@@ -120,6 +120,13 @@ const HANDHELD_FOOT_EXTRA = 50;
  * board got nothing.
  */
 const PHONE_HAND_FRACTION = 0.3;
+/**
+ * Held upright, the sheet takes the bottom of the screen under the hand
+ * (`styles/phone.css`), so the hand gives up a share of its own to keep the
+ * viewer's board in view. Orientation is read from the table's own box, which
+ * nothing in it can move -- the rule `useZoomFit`'s header states.
+ */
+const PHONE_PORTRAIT_HAND_FRACTION = 0.25;
 const PHONE_FOOT_CHROME = 22;
 const PHONE_FOOT_EXTRA = 44;
 
@@ -431,7 +438,12 @@ export function useZoomFit(args: {
       measured.footW - FAN_INSET - (phone ? PHONE_FAN_INSET_EXTRA : 0),
     );
     const handHeight = phone
-      ? measured.tableH * PHONE_HAND_FRACTION - PHONE_FOOT_CHROME - PHONE_FOOT_EXTRA
+      ? measured.tableH *
+          (measured.tableH > measured.tableW
+            ? PHONE_PORTRAIT_HAND_FRACTION
+            : PHONE_HAND_FRACTION) -
+        PHONE_FOOT_CHROME -
+        PHONE_FOOT_EXTRA
       : measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
         FOOT_CHROME -
         (handheld ? HANDHELD_FOOT_EXTRA : 0);

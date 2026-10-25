@@ -56,7 +56,7 @@ const expectCardShaped = (canvasElement: HTMLElement) => {
  */
 export const HeldOpenHandheld: Story = {
   args: { card: pool.aesi({ oid: 900 }) },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -72,7 +72,7 @@ export const HeldOpenHandheld: Story = {
 /** ...and a card with one line of text is exactly the same size. */
 export const HeldOpenHandheldShortText: Story = {
   args: { card: pool.grizzlyBears({ oid: 901 }) },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

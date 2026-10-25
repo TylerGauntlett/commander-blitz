@@ -8,12 +8,14 @@
  * the component has no state of its own.
  */
 
-import { type RefObject, useMemo } from "react";
+import { type RefObject, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
 import { abilityRoute } from "../../logic/abilities";
 import { targetHint } from "../../logic/targetHint";
 import { useUiStore } from "../../state/uiStore";
+import { useSheetHost } from "../../state/useSheetHost";
 import type { useZoomFit } from "../../state/useZoomFit";
 import { Glyph } from "../ui/Glyph";
 import { HandFan } from "./HandFan";
@@ -22,6 +24,8 @@ import { HintBar } from "./HintBar";
 interface Props {
   footRef: RefObject<HTMLDivElement | null>;
   handheld: boolean;
+  /** The phone layout: the hand is a drawer and the hints go to the sheet. */
+  phone?: boolean;
   state: GameView;
   actions: LegalAction[];
   viewer: PlayerView;
@@ -43,6 +47,7 @@ interface Props {
 export function TableFoot({
   footRef,
   handheld,
+  phone = false,
   state,
   actions,
   viewer,
@@ -72,8 +77,32 @@ export function TableFoot({
   // `hoverFor`), so one subscription answers a mouse, a keyboard and a pad.
   const hoveredOid = useUiStore((s) => s.hoveredOid);
   const hint = targetChosen ? null : targetHint(state, targeting, targetableOids, hoveredOid);
+  const sheet = useSheetHost(footRef, phone);
+  /** The phone's hand drawer. Open until the player closes it; see `styles/phone.css`. */
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const handCount = viewer.hand?.length ?? 0;
+
+  const choices = targeting.length > 0 && (
+    <div className="choices" data-testid={targetChosen ? "variant-hint" : "targeting-hint"}>
+      <span
+        className={hint?.refused ? "choices__label choices__label--refused" : "choices__label"}
+        data-testid="targeting-reason"
+        aria-live="polite"
+      >
+        {targetChosen ? "Pick how, in the panel" : (hint?.text ?? "Pick a target")}
+      </span>
+      <button type="button" className="btn btn--ghost" onClick={endTargeting}>
+        Cancel (Esc)
+      </button>
+    </div>
+  );
+
   return (
-    <div className="table__foot" ref={footRef}>
+    <div
+      className="table__foot"
+      ref={footRef}
+      data-drawer={phone ? (drawerOpen ? "open" : "closed") : undefined}
+    >
       {/*
       Where the tool strip goes on a handheld. A host, not the controls
       themselves.
@@ -151,21 +180,24 @@ export function TableFoot({
         nothing. `aria-live` so a screen reader hears it on focus too. See
         `logic/targetHint.ts` for where each reason comes from.
       */}
-      {targeting.length > 0 && (
-        <div className="choices" data-testid={targetChosen ? "variant-hint" : "targeting-hint"}>
-          <span
-            className={
-              hint?.refused ? "choices__label choices__label--refused" : "choices__label"
-            }
-            data-testid="targeting-reason"
-            aria-live="polite"
-          >
-            {targetChosen ? "Pick how, in the panel" : (hint?.text ?? "Pick a target")}
-          </span>
-          <button type="button" className="btn btn--ghost" onClick={endTargeting}>
-            Cancel (Esc)
-          </button>
-        </div>
+      {sheet && choices ? createPortal(choices, sheet) : choices}
+
+      {/*
+        THE HAND IS A DRAWER ON A PHONE (ADR 0025). The tab is a `tool:` stop
+        and no `data-action-id`: it shows or hides a surface, which is not a
+        move in the game.
+      */}
+      {phone && (
+        <button
+          type="button"
+          className="btn btn--ghost drawer__tab"
+          onClick={() => setDrawerOpen((open) => !open)}
+          aria-expanded={drawerOpen}
+          data-stop={stopId.tool("drawer")}
+          data-testid="hand-drawer"
+        >
+          {drawerOpen ? "Hide hand" : `Hand ${handCount}`}
+        </button>
       )}
 
       {/*
@@ -195,6 +227,7 @@ export function TableFoot({
         // reason to be reading it, so the click route stays open.
         noDrag={viewing !== null}
         twoWayOids={twoWayOids}
+        sheetHint={phone}
       />
     </div>
   );

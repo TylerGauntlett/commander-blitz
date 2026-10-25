@@ -22,7 +22,7 @@
  */
 
 import { expect, type Page, test } from "@playwright/test";
-import { handheldAssert } from "./handheldAssert";
+import { HANDHELD_GATE, handheldAssert } from "./handheldAssert";
 import { budget, clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 const SIZES = [
@@ -173,7 +173,7 @@ for (const { w, h } of SIZES) {
     test("the floors and the budgets still hold", async ({ page }) => {
       await startGame(page, { opponents: 1, seed: 7 });
       await develop(page);
-      const report = await page.evaluate(handheldAssert);
+      const report = await page.evaluate(handheldAssert, HANDHELD_GATE);
       expect(report.pass, report.failures.join("\n  ")).toBe(true);
     });
   });

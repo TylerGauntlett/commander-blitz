@@ -181,11 +181,12 @@ export default defineConfig({
             /*
              * DECLARED, AND NOT WHAT THE STORIES ACTUALLY GET. Worth knowing.
              *
-             * The tester is an iframe that Storybook's Vitest addon sizes to
-             * 1200x900 per story, and it wins: `browser.viewport`,
-             * `instances[].viewport`, a `--window-size` launch arg and a
-             * `page.viewport()` call from `beforeEach` were all measured, and
-             * every one of them was reset before the play function ran.
+             * The addon sizes the page per story before the play function
+             * runs: to the story's `viewport` global when it names one
+             * (`testing/devices.ts`, through `preview.tsx`), and to 1200x900
+             * when it does not. `browser.viewport`, `instances[].viewport`, a
+             * `--window-size` launch arg and a `page.viewport()` call from
+             * `beforeEach` were all measured, and every one of them was reset.
              *
              * That was harmless for as long as nothing branched on the
              * viewport. It stopped being harmless the moment something did:
@@ -193,10 +194,9 @@ export default defineConfig({
              * matched it and the compact body rendered in the project whose job
              * is the desktop one.
              *
-             * So the layout is decided by the toolbar rather than by the canvas
-             * -- `preview.tsx` stamps `data-desktop` or `data-handheld`, and
-             * both `styles/handheld.css` and `state/useHandheld.ts` treat an
-             * explicit choice as beating the query. This value stays because it
+             * So a story with no viewport is stamped `data-layout="desktop"`,
+             * and both `styles/handheld.css` and `state/useHandheld.ts` treat
+             * the stamp as beating the query. This value stays because it
              * is what the suite MEANS, and because the zoom solver reads
              * `clientWidth`, so a canvas that varied by machine would make
              * `data-zoom-board` vary with it.
@@ -236,9 +236,32 @@ export default defineConfig({
             headless: true,
             provider: playwright(),
             instances: [{ browser: "chromium" }],
-            // See the note above: declared, and the toolbar is what actually
-            // decides the layout. These stories carry `handheld: "on"`.
+            // The story's `viewport` global is what the page is sized to; these
+            // stories carry the `deck` one. This is the fallback.
             viewport: { width: 1280, height: 800 },
+          },
+        },
+      },
+      /*
+       * The same stories on phones (ADR 0025).
+       *
+       * Opt-in by the `phone` tag, as the handheld project is by its own. Each
+       * story names one viewport from `testing/devices.ts` and the addon sizes
+       * the page to it, so the phone's floors are asserted at the phone's size
+       * with the phone query matching -- not stamped onto a desktop canvas.
+       */
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: ".storybook", tags: { include: ["phone"] } })],
+        test: {
+          name: "storybook-phone",
+          setupFiles: [".storybook/vitest.setup.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: "chromium" }],
+            viewport: { width: 393, height: 659 },
           },
         },
       },

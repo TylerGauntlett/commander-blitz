@@ -79,7 +79,7 @@ export const Open: Story = {
 };
 
 export const OpenHandheld: Story = {
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -167,7 +167,7 @@ export const MouseSeesNothing: Story = {
 /** The hint bar at 1280 wide: the verbs stay legible. */
 export const PlayingHandheld: Story = {
   args: Playing.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

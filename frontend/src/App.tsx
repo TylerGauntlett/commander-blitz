@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import { Route, Routes, useLocation, useMatch } from "react-router";
 import { UpdateBanner } from "./components/ui/UpdateBanner";
 import { startInputMode } from "./input/inputMode";
+import { isCompact } from "./logic/breakpoints";
 import { screenKey, titleFor } from "./logic/routes";
 import { DeckDossierRoute } from "./screens/DeckDossierRoute";
 import { DecksRoute } from "./screens/DecksRoute";
@@ -36,7 +37,7 @@ import { HomeRoute } from "./screens/HomeRoute";
 import { NotFound } from "./screens/NotFound";
 import { PodRoute } from "./screens/PodRoute";
 import { AppConfigProvider } from "./state/useAppConfig";
-import { useHandheld, usePhone } from "./state/useHandheld";
+import { useLayoutByQuery } from "./state/useHandheld";
 import { useImages } from "./state/useImages";
 
 export function App() {
@@ -81,17 +82,15 @@ export function App() {
    * property of the environment, not of one component, and it belongs beside
    * `data-input` on the root where every stylesheet can see it.
    */
-  const handheld = useHandheld();
+  const layout = useLayoutByQuery();
   useEffect(() => {
-    document.documentElement.toggleAttribute("data-handheld", handheld);
-  }, [handheld]);
-
-  // A phone is a handheld with floors too big for it; `styles/phone.css` keys
-  // on this. Additive, so everything `data-handheld` does still applies.
-  const phone = usePhone();
-  useEffect(() => {
-    document.documentElement.toggleAttribute("data-phone", phone);
-  }, [phone]);
+    const root = document.documentElement;
+    // One mode of three (ADR 0025), and the compact family the handheld and the
+    // phone share. `styles/handheld.css` keys structure on the second and
+    // `styles/phone.css` keys the phone's own rules on the first.
+    root.setAttribute("data-layout", layout);
+    root.toggleAttribute("data-compact", isCompact(layout));
+  }, [layout]);
 
   // `location` is passed explicitly so the *exiting* screen keeps matching
   // against the address it was rendered for. Without it the outgoing route

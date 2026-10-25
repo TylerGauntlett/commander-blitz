@@ -26,6 +26,8 @@
  * with itself while disagreeing with the app.
  */
 
+import { FLOORS } from "../src/logic/floors";
+
 export interface HandheldReport {
   /** Smallest font size on anything that owns a text node and is not hidden. */
   minFontPx: number;
@@ -129,17 +131,90 @@ export interface HandheldReport {
   failures: string[];
 }
 
-/** The floors. Every one of them comes from a 7-inch panel at 40-50cm. */
-export const FLOORS = {
-  /** Nothing carrying information may be smaller. */
-  font: 16,
-  /** Any card the ring can land on. */
-  card: 96,
-  /** Any focusable or tappable box. */
-  hit: 44,
-  /** The focus outline. */
-  ring: 3,
-} as const;
+/**
+ * What the gate is asked to hold: a row of `logic/floors.ts`, and the region
+ * budgets of one layout as fractions of the viewport's height.
+ *
+ * An ARGUMENT rather than an import, because `page.evaluate` sends this
+ * function's source alone. The spec reads the row and the budgets for the
+ * layout it runs in and hands them over.
+ */
+export interface GateSpec {
+  floors: { font: number; card: number; hit: number };
+  /** `[selector, share of innerHeight]`; a visible match taller than that fails. */
+  budget: [string, number][];
+  /** Regions where scrolling is this layout's design, beside the shared ones. */
+  scrollers?: string[];
+  /** Regions this layout does not draw at all, so a zero box is not a collapse. */
+  undrawn?: string[];
+  /**
+   * Whether every stop must be reachable by PRESSES from every other. True for
+   * a controller layout; a phone's question is the tap, which `phone.spec.ts`
+   * asks of every stop itself.
+   */
+  pressReach?: boolean;
+}
+
+/**
+ * The compact budgets on a Steam Deck's panel.
+ *
+ * The numbers are what the compact layout is designed around and they are
+ * stated here so a change to any of them has to be deliberate. An opponent's
+ * seat is the one that matters: `--pod-seat-h` caps it at 96px, and before
+ * that cap existed it drew 220px against an empty board -- 28% of the screen
+ * for a player with nothing in play, taken straight out of the viewer's own
+ * mat, which then clipped its graveyard off the bottom.
+ *
+ * Fractions rather than literals so this says the same thing at 1200x800 and
+ * at 1280x800, which is the pair of sizes this layout has to hold.
+ */
+export const HANDHELD_BUDGET: [string, number][] = [
+  // One opponent's whole seat, and its lanes if it has any.
+  [".mat--compact", 0.14],
+  // The seat itself, which is a stated 96px design: the seat round (`docs/adr/0016-nothing-changes-size-with-game-state.md`) measured
+  // every one of its directions inside 332x96, and a seat drawn at some other
+  // height is a different design wearing the same name.
+  [".seat", 0.13],
+  // Every opponent together. They share a row, so this is the row.
+  [".play__opponents", 0.14],
+  // The phase ribbon is a strip, not a panel.
+  [".track", 0.08],
+  // The foot: the hand, the hints, the tools and the slab.
+  [".table__foot", 0.33],
+];
+
+export const HANDHELD_GATE: GateSpec = {
+  floors: FLOORS.handheld,
+  budget: HANDHELD_BUDGET,
+};
+
+/**
+ * The phone's gate (ADR 0025): its own floors, its own budgets, and the two
+ * places its design scrolls.
+ *
+ * The budgets are shares of the viewport's height, the larger of what the
+ * phones `testing/devices.ts` names measured held either way, so one number
+ * holds upright and sideways. The orb strip is the one that matters, as the
+ * seat is on the Deck: an opponent that grows takes the viewer's board.
+ */
+export const PHONE_GATE: GateSpec = {
+  floors: FLOORS.phone,
+  budget: [
+    // An orb, and the row of them.
+    [".seat", 0.17],
+    [".play__opponents", 0.18],
+    // The phase ribbon, one line.
+    [".track", 0.14],
+    // The hand drawer and the tool row under it.
+    [".table__foot", 0.42],
+  ],
+  // The viewer's mat scrolls upright, as the stories say (`TablePhone`).
+  scrollers: [".play__mine", ".play__mine .mat__side", ".play__mine .mat__lanes"],
+  // The reader is the full card view on a phone: a long press, not a rail.
+  undrawn: [".preview"],
+  // A finger points; reachability is asked of every stop by tap instead.
+  pressReach: false,
+};
 
 /**
  * The gate, as one self-contained function.
@@ -147,10 +222,10 @@ export const FLOORS = {
  * Deliberately not split into helpers: `page.evaluate` sends the source of this
  * function alone, so anything it calls has to be declared inside it.
  */
-export function handheldAssert(): HandheldReport {
-  const FONT = 16;
-  const CARD = 96;
-  const HIT = 44;
+export function handheldAssert(spec: GateSpec): HandheldReport {
+  const FONT = spec.floors.font;
+  const CARD = spec.floors.card;
+  const HIT = spec.floors.hit;
   const RING = 3;
 
   const root =
@@ -317,6 +392,7 @@ export function handheldAssert(): HandheldReport {
   /* Regions that must never flatten to nothing. */
   const collapsed: string[] = [];
   for (const selector of [".acts__list", ".preview", ".table__foot", ".play__mine"]) {
+    if (spec.undrawn?.includes(selector)) continue;
     const el = document.querySelector<HTMLElement>(selector);
     if (!el) continue;
     const box = el.getBoundingClientRect();
@@ -349,6 +425,7 @@ export function handheldAssert(): HandheldReport {
     // The reader's rules box: a card with more text than 78px is the ordinary
     // case, not the failure. It reserves its gutter, which `unguttered` checks.
     ".reader__rules",
+    ...(spec.scrollers ?? []),
   ]);
   const overflowing: { selector: string; by: number }[] = [];
   for (const selector of [
@@ -399,8 +476,18 @@ export function handheldAssert(): HandheldReport {
      */
     const kids = [...el.children] as HTMLElement[];
     if (kids.length === 0) continue;
+    /*
+     * FROM THE FAN'S OWN LEFT EDGE. `offsetLeft` counts from the offset
+     * parent, and the fan is only that when something has positioned it; where
+     * nothing has, the kids measure from an ancestor further out and the info
+     * column beside the lanes is counted as overflow. Both offsets are layout
+     * values against the same parent, so the difference is still untransformed.
+     */
     let reach = 0;
-    for (const kid of kids) reach = Math.max(reach, kid.offsetLeft + kid.offsetWidth);
+    for (const kid of kids) {
+      const origin = kid.offsetParent === el.offsetParent ? el.offsetLeft : 0;
+      reach = Math.max(reach, kid.offsetLeft - origin + kid.offsetWidth);
+    }
     const by = Math.round(reach - el.clientWidth);
     if (by <= SLACK) continue;
     // The room it had comes with it: "26px over" is not actionable on its own,
@@ -494,33 +581,11 @@ export function handheldAssert(): HandheldReport {
   }
 
   /*
-   * Region budgets, in fractions of the viewport rather than in pixels.
-   *
-   * The numbers are what the compact layout is designed around and they are
-   * stated here so a change to any of them has to be deliberate. An opponent's
-   * seat is the one that matters: `--pod-seat-h` caps it at 96px, and before
-   * that cap existed it drew 220px against an empty board -- 28% of the screen
-   * for a player with nothing in play, taken straight out of the viewer's own
-   * mat, which then clipped its graveyard off the bottom.
-   *
-   * Fractions rather than literals so this says the same thing at 1200x800 and
-   * at 1280x800, which is the pair of sizes this layout has to hold.
+   * Region budgets, in fractions of the viewport rather than in pixels. The
+   * layout's own, handed in -- `HANDHELD_BUDGET` above says why each exists.
    */
   const vh = window.innerHeight;
-  const BUDGET: [string, number][] = [
-    // One opponent's whole seat, and its lanes if it has any.
-    [".mat--compact", 0.14],
-    // The seat itself, which is a stated 96px design: the seat round (`docs/adr/0016-nothing-changes-size-with-game-state.md`) measured
-    // every one of its directions inside 332x96, and a seat drawn at some other
-    // height is a different design wearing the same name.
-    [".seat", 0.13],
-    // Every opponent together. They share a row, so this is the row.
-    [".play__opponents", 0.14],
-    // The phase ribbon is a strip, not a panel.
-    [".track", 0.08],
-    // The foot: the hand, the hints, the tools and the slab.
-    [".table__foot", 0.33],
-  ];
+  const BUDGET = spec.budget;
   const overBudget: { selector: string; h: number; cap: number }[] = [];
   for (const [selector, share] of BUDGET) {
     const cap = Math.round(vh * share);
@@ -606,7 +671,9 @@ export function handheldAssert(): HandheldReport {
   if (ringExpected && marked.length === 1 && (ringWidthPx < RING || ringStyle === "none")) {
     failures.push(`ring is ${ringWidthPx}px ${ringStyle}`);
   }
-  if (unreachable.length > 0) failures.push(`unreachable stops: ${unreachable.join(", ")}`);
+  if (spec.pressReach !== false && unreachable.length > 0) {
+    failures.push(`unreachable stops: ${unreachable.join(", ")}`);
+  }
   if (spilled.length > 0) failures.push(`spilled: ${spilled.slice(0, 5).join(", ")}`);
   if (collapsed.length > 0) failures.push(`collapsed: ${collapsed.join(", ")}`);
   if (overflowing.length > 0) {

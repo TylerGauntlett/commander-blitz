@@ -65,9 +65,11 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 
 `theme.css` registers its moving tokens with `@property` (`--card-w`, `--card-w-base`,
 `--pod-lanes-h`, `--mat-side`, `--pod-seat-h`, `--seat-h`, …) so a transition on one
-re-resolves every declaration that reads it. It also reads three attributes on `<html>`
-that the rest of the stylesheets key on: `data-desktop` and `data-handheld` for the
-layout, `data-input` for whether a focus ring and button glyphs are drawn.
+re-resolves every declaration that reads it. It also reads the attributes on `<html>`
+that the rest of the stylesheets key on: `data-layout` and `data-compact` for the
+layout, `data-input` for whether a focus ring and button glyphs are drawn. The phone's
+safe-area insets are its `--safe-*` tokens, read from `env()` under `index.html`'s
+`viewport-fit=cover`.
 
 ## State: four kinds
 
@@ -126,23 +128,30 @@ engine's `create_app(serve_client=True)` does for `frontend/dist`.
 
 ## Layout modes
 
-There are three, and they nest: **desktop**, **handheld** (a Steam Deck's panel) and
-**phone** (a handheld whose floors are too big for it). The queries are stated once as
-strings in `logic/breakpoints.ts` — `HANDHELD_QUERY` and `PHONE_QUERY` — and
+There are three, and they are peers (ADR 0025 *A phone is a layout mode and touch is
+an input mode*): **desktop**, **handheld** (a Steam Deck's panel) and **phone**.
+`logic/breakpoints.ts:layoutModeForSize` decides, asking the phone query first because
+every phone size is inside the handheld query too, so a size is exactly one mode. The
+queries are stated once as strings — `HANDHELD_QUERY` and `PHONE_QUERY` — and
 `styles/handheld.css` and `styles/phone.css` repeat them literally;
-`tests/breakpoints.test.ts` reads the stylesheets off disk and fails if either drifts.
-`state/useHandheld.ts` hands React the same answers (`useHandheld`, `usePhone`) through
-`matchMedia`, because the compact layout moves components into different parents, which
-CSS alone cannot do.
+`tests/breakpoints.test.ts` reads the stylesheets off disk and fails if either drifts, and
+holds that every size has one mode. `state/useHandheld.ts` hands React the same answer
+(`useLayoutMode`, `useCompactLayout`, `usePhone`) through `matchMedia`, because the
+compact layouts move components into different parents, which CSS alone cannot do.
 
-**An explicit attribute beats the media query.** `App.tsx` stamps `data-handheld` and
-`data-phone` on `<html>` from the hooks; Storybook's `preview.tsx` stamps `data-handheld`
-or `data-desktop` from its toolbar without resizing anything. Anything that moves a
-*node* rather than a pixel reads `useHandheldLayout`, which honours the stamp first and
-the query second, so a story reviewed as the wide board renders the wide structure.
-`data-desktop` exists for Storybook alone; the running app never sets it.
+**Two attributes, one mode and one family.** `App.tsx` stamps `data-layout` (`desktop`,
+`handheld` or `phone`) and `data-compact`, which both small modes carry. The structure
+they share — the rules below — is keyed on `[data-compact]` in `handheld.css`; a rule
+for one mode alone keys on `[data-layout="handheld"]` or `[data-layout="phone"]`, so a
+Deck rule cannot reach a phone without saying so. Storybook's viewport global stamps
+the layout of the device it names (see the Storybook section). Anything that moves a
+*node* rather than a pixel reads `useLayoutMode`, which honours the stamp first and the
+query second.
 
-What the compact layout gives up, as rules:
+**The floors are per mode**: `logic/floors.ts:FLOORS` holds a row for `handheld` and one
+for `phone`, and the gates read the row for the page's layout (see Input and the cursor).
+
+What the compact layouts give up, as rules:
 
 - **The viewer's board is the only board.** An opponent's lanes are clipped to a zero
   box, not removed. `FxLayer` anchors numerals and ghosts by looking up `[data-oid]` in
@@ -156,8 +165,21 @@ What the compact layout gives up, as rules:
 - **The tool strip moves to the foot** by portal, not duplication, so every
   `data-action-id` and stop travels with it and the one-control-per-action invariant
   holds.
-- **The phone tier is additive**: everything `handheld.css` says still applies, and
-  `phone.css` lowers the floors and restacks the table under `data-phone`.
+
+What the phone does on top, as rules (`styles/phone.css`):
+
+- **Opponents are a strip of orbs**: each seat is cut to its portrait, name and life, and
+  a tap opens that seat's board where the viewer's was. The counts stay in the document
+  for the e2e gate's seat check.
+- **The action panel is a bottom sheet** held upright, with the commit slab under the
+  thumb; held sideways it is the rail. The targeting hint and a hand card's "why not"
+  are portalled into the sheet (`state/useSheetHost.ts`) and ride its top edge, so a line
+  that comes and goes never moves the list.
+- **The hand is a drawer** the player opens and closes from its tab; nothing the game
+  does moves it (ADR 0016).
+- **The viewer's mat scrolls** upright: three lanes at a card a thumb can read do not fit
+  the strip between the orbs and the drawer, so the phone's gate counts it among the
+  scrollers, as a long action list is. The Deck's gate does not.
 
 **How big a card is** has two layers. `logic/cardSize.ts` is proportion: one fluid
 `--card-w-base` in `theme.css`, every zone a ratio of it (`CARD_SCALE`), and
@@ -199,16 +221,25 @@ a stack.
 ## Input and the cursor
 
 **Two signals, deliberately independent, feed one intent.** `<html data-input>` says
-what the player last used — `mouse`, `keyboard` or `pad` — and decides whether the focus
-ring and button glyphs are drawn; `data-handheld` says what the viewport is and decides
-the layout. Neither implies the other: a desktop player who picks up a pad gets the ring
-on the wide board, and a Deck with no pad gets the compact board and no glyphs.
+what the player last used — `mouse`, `keyboard`, `pad` or `touch` — and decides whether
+the focus ring and button glyphs are drawn; `data-layout` says what the viewport is and
+decides the layout. Neither implies the other: a desktop player who picks up a pad gets
+the ring on the wide board, a Deck with no pad gets the compact board and no glyphs, and
+a touchscreen laptop gets the wide board under a finger.
+
+**Touch is a fourth input mode** (ADR 0025). A `pointerdown` whose `pointerType` is
+`touch` writes it, a finger's move writes nothing, and a mouse takes it back on its next
+use. `inputMode.ts:isPointerMode` is the question "does this mode point for itself": a
+mouse and a finger both draw no ring, take no region trap and drive no hover from the
+cursor. Under touch a tap is a click; a tap on a card a tap would do nothing with selects
+it, so the sheet can say why not, and a tap on the selected card or a long press
+(`input/longPress.ts`) opens the full card view (`input/useCardHold.ts:tapRead`).
 
 `data-input` is **last-input-wins**, not "is a pad plugged in", because a Deck in desktop
 mode has both at once. `input/inputMode.ts` throttles pointer moves and gives any key or
 pad input a grace period during which a move cannot steal the mode back — the Deck's
 stick and trackpads arrive as mouse events. A scheme preference (`SchemePref`:
-`auto | pad | keyboard | mouse`, set from `components/ui/SchemePicker.tsx`) pins the
+`auto | pad | keyboard | mouse`, set from `components/ui/SchemePicker.tsx`, which offers `touch` too) pins the
 mode outright; `?input=` is the un-persisted escape hatch.
 
 **The Deck sends a keyboard in some modes.** Under Steam Input's keyboard-and-mouse
@@ -315,13 +346,17 @@ The ring's spring (`input/ring.ts`) integrates the closed form of a damped oscil
 exact at any `dt`, so a throttled tab resolves to "the ring is where the cursor is"
 rather than going unstable; `tests/ringSpring.test.ts` holds it.
 
-**Handheld floors are CI gates** (ADR 0013): `FLOORS` in `testing/asserts.ts` for the
-story project and in `e2e/handheldAssert.ts` against a real engine — type, hit target,
-card, a visible ring, one cursor, zero unreachable stops, zero `title` tooltips
-(`tests/noTooltips.test.ts`; `data-hint` is the carrier). Press budgets are the fifth
-gate: `testing/journey.ts` walks a journey and returns what it cost,
-`Journeys.stories.tsx` holds a ceiling per journey, and `e2e/journeys-handheld.spec.ts`
-walks the same ones against the server. Ceilings, never exact counts.
+**The floors are CI gates** (ADR 0013, ADR 0025): `logic/floors.ts:FLOORS`, a row per
+compact mode, read by `testing/asserts.ts` for the story projects and handed to
+`e2e/handheldAssert.ts` as a `GateSpec` against a real engine — type, hit target, card,
+a visible ring where one is drawn, one cursor, zero unreachable stops, zero `title`
+tooltips (`tests/noTooltips.test.ts`; `data-hint` is the carrier). The phone's spec adds
+its own budgets and scrollers, and asks reachability by tap rather than by press. Press
+budgets are the fifth gate: `testing/journey.ts` walks a journey and returns what it
+cost, `Journeys.stories.tsx` holds a ceiling per journey, and
+`e2e/journeys-handheld.spec.ts` walks the same ones against the server; the audit's touch
+column (`decisionAudit.ts:TAP_BUDGET`) holds the tap budgets `e2e/phone.spec.ts` walks.
+Ceilings, never exact counts.
 
 ## Motion and effects
 
@@ -554,8 +589,10 @@ this is the set of rules a story has to follow.
   `fixtures.ts` for DTOs, `cards.ts` for a real pool, `scenarios/` for whole positions,
   `pods.ts` for lobby states, `shelf.ts` for the catalogue's segments, `fakeGame.ts` for a `useGame` stand-in, and `asserts.ts` for
   `expectUniqueActionIds`, the invariant most worth sharing.
-- **The toolbar globals** are `input` (mouse, keyboard, pad), `handheld` (desktop or
-  handheld; stamps `data-desktop` or `data-handheld`), `hints` (the hint bar, reviewed on
+- **The toolbar globals** are `input` (mouse, keyboard, pad, touch), `viewport` (a screen
+  from `testing/devices.ts`: desktop, the Deck, or a phone held either way; the Vitest
+  addon sizes the page to it, and the decorator stamps its `data-layout`; a story with
+  none is stamped `desktop`), `hints` (the hint bar, reviewed on
   because stories read it) and `art` (stub, live, none). Stub art is deterministic and
   offline; `live` needs uvicorn.
 - **The a11y addon reports and does not fail** (`a11y: { test: "todo" }` in

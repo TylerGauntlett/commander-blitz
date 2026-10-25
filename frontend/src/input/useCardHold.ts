@@ -5,11 +5,18 @@
  * right-click and a long-press open it from here, on the table's root.
  */
 
-import { type MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from "react";
 import type { GameView } from "../api/types";
 import { findCard } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
+import { isTouch } from "./inputMode";
 import { oidAt, useLongPress } from "./longPress";
+
+/**
+ * A card a tap would do something with. Its tap is the click it always was;
+ * the select-first rule below is only for the cards that would ignore one.
+ */
+const ACTIONABLE = ".card--playable, .card--targetable, .card--ability, .card--staged";
 
 export function useCardHold(state: GameView) {
   /*
@@ -59,5 +66,41 @@ export function useCardHold(state: GameView) {
     ),
   );
 
-  return { heldCard, setHeldCard, closeHold, readHovered, longPress };
+  /*
+   * ...and a finger's other way in, a tap (ADR 0025).
+   *
+   * A finger cannot hover, so the read a pointer gets for free -- the preview
+   * rail, a dim hand card's "why not" -- had no gesture at all. Under touch a
+   * tap on a card a tap would do nothing with SELECTS it: the store names it,
+   * and the sheet says what it is waiting for or why it will not play. A tap on
+   * the card already selected opens the full card view. A card a tap acts on
+   * (`ACTIONABLE`) is left alone, so playing a land is still one tap, and
+   * a long-press reads any card at all.
+   *
+   * On the table and in the bubble phase, after the card's own handler: the
+   * tap has already done whatever a click does by the time this looks at it.
+   */
+  const lastTap = useRef<number | null>(null);
+  const tapRead = useCallback(
+    (event: ReactMouseEvent) => {
+      if (!isTouch() || !(event.target instanceof Element)) return;
+      const host = event.target.closest("[data-oid]");
+      const oid = host ? oidAt(host) : null;
+      if (host === null || oid === null || host.matches(ACTIONABLE)) {
+        lastTap.current = null;
+        return;
+      }
+      if (findCard(state, oid) === null) return;
+      if (lastTap.current === oid) {
+        lastTap.current = null;
+        setHeldCard(oid);
+        return;
+      }
+      lastTap.current = oid;
+      useUiStore.getState().hover(oid);
+    },
+    [state],
+  );
+
+  return { heldCard, setHeldCard, closeHold, readHovered, longPress, tapRead };
 }

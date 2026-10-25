@@ -12,6 +12,7 @@
 
 import { expect } from "storybook/test";
 import { MIN_CARD_W } from "../logic/cardSize";
+import { type Floors, floorsFor } from "../logic/floors";
 
 /** Every action id the surface put in the document, in document order. */
 export function renderedActionIds(root: HTMLElement): string[] {
@@ -149,7 +150,7 @@ export async function settled(el: HTMLElement, quietFrames = 3): Promise<void> {
    The handheld floors, in CI
    ==========================================================================
 
-   16px of type, 44px of target, 96px of card. `e2e/handheldAssert.ts` has
+   Type, target and card, per layout. `e2e/handheldAssert.ts` has
    asserted these against a real engine since Loop 3 -- but **Playwright is not
    in CI**, so until now nothing stopped a change landing that put a label back
    under the floor. `scripts/verify.py` does run the Storybook project, in a
@@ -161,8 +162,13 @@ export async function settled(el: HTMLElement, quietFrames = 3): Promise<void> {
    broken images, the ring -- which needs a live board to be worth asking.
    ========================================================================== */
 
-/** The floors. Every one of them comes from a 7-inch panel at 40-50cm. */
-export const FLOORS = { font: 16, hit: 44, card: 96 } as const;
+/**
+ * The floors for the layout the story is in: `logic/floors.ts` holds a row per
+ * compact mode, and the viewport global stamps which one (ADR 0025).
+ */
+function floors(): Floors {
+  return floorsFor(document.documentElement.getAttribute("data-layout"));
+}
 
 /**
  * Sub-pixel slack.
@@ -222,6 +228,7 @@ function onScreen(el: Element): boolean {
  * reports failures at elements with nothing in them.
  */
 export function expectFontFloor(root: HTMLElement): void {
+  const FLOORS = floors();
   const under: string[] = [];
   for (const el of root.querySelectorAll<HTMLElement>("*")) {
     if (el.closest("[aria-hidden='true']")) continue;
@@ -246,6 +253,7 @@ export function expectFontFloor(root: HTMLElement): void {
  * press actually lands on.
  */
 export function expectHitFloor(root: HTMLElement): void {
+  const FLOORS = floors();
   const small: string[] = [];
   const controls = root.querySelectorAll<HTMLElement>(
     "button, [role='button'], a[href], input, select, [data-stop]",
@@ -268,6 +276,7 @@ export function expectHitFloor(root: HTMLElement): void {
  * catalogue's, the pod seat's -- is not a card you read, and is not a stop.
  */
 export function expectCardFloor(root: HTMLElement): void {
+  const FLOORS = floors();
   const small: string[] = [];
   for (const el of root.querySelectorAll<HTMLElement>(".card[data-stop], .face[data-stop]")) {
     if (!onScreen(el)) continue;
@@ -324,4 +333,24 @@ export function expectNothingOverflows(root: HTMLElement, allow: string[] = []):
     }
   }
   expect(over, "these regions hold more than they can show").toEqual([]);
+}
+
+/**
+ * The page does not scroll sideways (ADR 0025).
+ *
+ * On a phone a row that will not shrink pushes the whole document wider than
+ * the screen, and the board then pans under the thumb. `body { overflow:
+ * hidden }` would hide that from `scrollWidth` on the body, so the question is
+ * asked of the root, against the viewport the story claims to be on.
+ */
+export function expectNoSideScroll(): void {
+  const root = document.documentElement;
+  expect(root.scrollWidth, "the page is wider than the screen").toBeLessThanOrEqual(
+    window.innerWidth,
+  );
+}
+
+/** The story is really on the viewport it names, so its floors mean that screen. */
+export function expectViewport(size: { width: number; height: number }): void {
+  expect({ width: window.innerWidth, height: window.innerHeight }).toEqual(size);
 }

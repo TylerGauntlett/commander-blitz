@@ -34,7 +34,7 @@ import { stagedAs } from "../../logic/staging";
 import { seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
-import { useHandheldLayout, usePhone } from "../../state/useHandheld";
+import { useCompactLayout, usePhone } from "../../state/useHandheld";
 import { useNarrationSkip } from "../../state/useNarrationSkip";
 import { useTableDerived } from "../../state/useTableDerived";
 import { useViewingSeat } from "../../state/useViewingSeat";
@@ -88,7 +88,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // The right stick scrolls the reader, or the list the ring is in.
   useStickScroll();
 
-  const { heldCard, setHeldCard, closeHold, readHovered, longPress } = useCardHold(state);
+  const { heldCard, setHeldCard, closeHold, readHovered, longPress, tapRead } =
+    useCardHold(state);
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
@@ -134,8 +135,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * pad gets the compact board and no glyphs. The two signals are deliberately
    * independent -- see `input/inputMode.ts`.
    */
-  const handheld = useHandheldLayout();
-  /** A handheld whose floors are too big for it. See `logic/breakpoints.ts`. */
+  const handheld = useCompactLayout();
+  /** The phone layout, a peer of the handheld one (ADR 0025). */
   const phone = usePhone();
 
   // Only the seats still in the game: the viewing guard would show an empty
@@ -378,6 +379,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-testid="table"
       ref={tableRef}
       onContextMenu={readHovered}
+      onClick={tapRead}
       {...longPress}
       // Read by e2e rather than making it parse a resolved `calc()` off a lane, and
       // handy for eyeballing the solve in devtools. Same spirit as
@@ -386,7 +388,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-zoom-pod={zoom.pod.toFixed(3)}
       data-zoom-hand={zoom.hand.toFixed(3)}
       data-zoom-locked={zoom.locked || undefined}
-      data-handheld={handheld || undefined}
+      data-compact={handheld || undefined}
       /*
         The box an opponent's lanes were solved inside, handed back to CSS.
 
@@ -494,6 +496,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           the hand alone.
         */}
         <aside className="rail rail--right">
+          {/* The phone sheet's voice: see `state/useSheetHost.ts`. */}
+          {phone && <div className="sheet__say" data-testid="sheet-say" aria-live="polite" />}
           <CardPreview state={state} />
           <ActionPanel
             state={state}
@@ -532,6 +536,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         <TableFoot
           footRef={footRef}
           handheld={handheld}
+          phone={phone}
           state={state}
           actions={actions}
           viewer={viewer}

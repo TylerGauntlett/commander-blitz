@@ -43,7 +43,6 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [A phone modality](#a-phone-modality) | L | high | nothing | 0 |
 | [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
 | [Every precon set in the window](#every-precon-set-in-the-window) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
@@ -72,23 +71,22 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [A phone modality](#a-phone-modality) — L, high
-2. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-3. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
-4. [Difficulty](#difficulty) — S, medium
-5. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-6. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-7. [Why a press is refused](#why-a-press-is-refused) — S, medium
-8. [Outcomes as data](#outcomes-as-data) — M, medium
-9. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-10. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-11. [Replays and sharing](#replays-and-sharing) — M, medium
-12. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-13. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-14. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-15. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-16. [Archidekt import](#archidekt-import) — S, low
-17. [Sound](#sound) — S, low
+1. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
+2. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
+3. [Difficulty](#difficulty) — S, medium
+4. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+5. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+6. [Why a press is refused](#why-a-press-is-refused) — S, medium
+7. [Outcomes as data](#outcomes-as-data) — M, medium
+8. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+9. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+10. [Replays and sharing](#replays-and-sharing) — M, medium
+11. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+12. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+13. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+14. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+15. [Archidekt import](#archidekt-import) — S, low
+16. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -380,67 +378,6 @@ with a hundred faces under the floors; and an e2e spec that walks the list
 with a pad by group and reads one card.
 
 ## Play experience
-
-### A phone modality
-
-Effort **L** · Impact **high**, a phone is the one device every player always has, and today the site breaks on it · Depends on nothing.
-
-#### Today
-
-Phone is a tier under handheld, not a mode: `phone.css` lowers the
-handheld floors and restacks the table under `data-phone`, and everything
-else assumes the Deck ([client.md](client.md#layout-modes)). The input layer
-knows mouse, keyboard and pad, and every way to *read* a card is one of them:
-hover for a pointer, `Y` or the ring for a pad. Drag is a pointer gesture
-over drop zones sized for one. The floors, the press budgets and the
-legibility spec are measured at the Deck's panel in landscape, there is no
-phone story global and no phone Playwright project, so nothing fails when a
-phone layout breaks, which is why it does.
-
-#### The change
-
-**Phone is a fourth layout mode and touch is a fourth input mode**, each a
-peer of the three that exist rather than a squeeze of the handheld one.
-
-- **Layout, portrait first.** The viewer's mat is the board and the
-  opponents are a strip of orbs that open a seat on a tap, which the
-  compact layout's "the viewer's board is the only board" rule already
-  allows. The hand is a drawer and the action panel is a bottom sheet, so
-  the commit control is always under the thumb. Safe-area insets are
-  tokens in `theme.css`. The zoom-fit solver gets portrait inputs and keeps
-  its one rule, that it reads only what cannot move
-  ([ADR 0014](adr/0014-measured-numbers-invariant-relationships.md)), and
-  nothing changes size with game state ([ADR 0016](adr/0016-nothing-changes-size-with-game-state.md))
-  holds on a screen where that is most tempting to break. Landscape is a
-  second layout of the same mode, not the handheld layout.
-- **Touch, as `data-input="touch"`.** There is no hover, so a tap selects
-  and a second tap or a long press reads (`input/longPress.ts` exists for
-  the pad and gets a second caller); the targeting hint and the "why not"
-  reasons move into the sheet; no ring is drawn and no glyphs. Drop zones
-  grow under a finger. The invariant of
-  [ADR 0015](adr/0015-every-legal-action-is-one-control.md) is untouched,
-  because the sheet is the panel: every legal action is still one control,
-  exactly once. A hit-target floor for a thumb joins the floors.
-- **Stories per device.** The Storybook toolbar's handheld
-  on/off becomes a viewport global: desktop, the Deck, and a matrix of
-  popular phones named by Playwright's device descriptors rather than by
-  pixel counts, each in portrait and landscape.
-- **A `phone` Playwright project** on the same descriptors, walking the
-  handheld journeys with tap budgets in place of press budgets, and one
-  full game on each device.
-
-Do it after the selection audit, not before: touch is one more column in
-that audit's table, and a sheet built on surfaces that are about to be
-unified would be built twice.
-
-#### Gate
-
-The floors of [ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)
-asserted per viewport in the story project and in the `phone` e2e project;
-the legibility spec per viewport; `tests/breakpoints.test.ts` holding the
-new query to its stylesheet as it holds the two today; no horizontal
-scroll, every stop reachable by tap, and every decision answerable from the
-sheet, each as an e2e assertion on each device.
 
 ### Difficulty
 

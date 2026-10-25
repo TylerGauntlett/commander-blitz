@@ -267,7 +267,7 @@ export const ClickingACard: Story = {
 /** Seven cards in the compact foot: the fan still clears the card floor. */
 export const SevenCardsHandheld: Story = {
   args: { cards: hand(7), playableOids: new Set([100, 101]) },
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     const fan = canvasElement.querySelector<HTMLElement>(".hand") ?? canvasElement;

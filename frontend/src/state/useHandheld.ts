@@ -12,7 +12,14 @@
  */
 
 import { useSyncExternalStore } from "react";
-import { HANDHELD_QUERY, isHandheld, isPhone, PHONE_QUERY } from "../logic/breakpoints";
+import {
+  HANDHELD_QUERY,
+  isCompact,
+  isHandheld,
+  isPhone,
+  type LayoutMode,
+  PHONE_QUERY,
+} from "../logic/breakpoints";
 
 const lists = new Map<string, MediaQueryList | null>();
 
@@ -46,61 +53,57 @@ export function useHandheld(): boolean {
   return useSyncExternalStore(subscribeHandheld, isHandheld, () => false);
 }
 
-/**
- * Whether the viewport is a phone -- a handheld whose floors are too big for it.
- * See `logic/breakpoints.ts`. Always a subset of `useHandheld()`.
- */
-export function usePhone(): boolean {
+/** Whether the viewport matches the phone query. See `logic/breakpoints.ts`. */
+export function usePhoneQuery(): boolean {
   return useSyncExternalStore(subscribePhone, isPhone, () => false);
 }
 
 /**
- * The same question, asked the way the STYLESHEET answers it.
- *
- * `handheld.css` is compact when the media query matches **or** when
- * `<html>` carries `data-handheld` -- the query re-values the rail tokens, the
- * attribute drives every structural rule. `App.tsx` stamps the attribute from
- * `useHandheld()` above, so in the running app the two are the same fact.
- *
- * They are not the same fact in Storybook. The layout toolbar sets the
- * attribute directly, because the alternative is resizing the browser, and a
- * component that consulted only `matchMedia` would then disagree with the CSS
- * around it -- the sheet would draw the compact board while the component still
- * rendered the desktop structure, which is exactly the "does not match the
- * game" failure the toolbar exists to let a reviewer catch.
- *
- * So anything that moves a NODE rather than a pixel reads this one, and it
- * matches the sheet by construction: attribute OR query, the same `or` the
- * stylesheet is written with.
+ * The layout the viewport wants, asked the way `App.tsx` stamps it: the phone
+ * query first, then the handheld one. See `logic/breakpoints.ts:layoutMode`.
  */
-export function useHandheldLayout(): boolean {
-  const byQuery = useHandheld();
-  const stamped = useSyncExternalStore(subscribeAttr, readAttr, () => null);
-  // An explicit choice beats the viewport. See `readAttr`.
-  return stamped ?? byQuery;
+export function useLayoutByQuery(): LayoutMode {
+  const handheld = useHandheld();
+  const phone = usePhoneQuery();
+  return phone ? "phone" : handheld ? "handheld" : "desktop";
 }
 
 /**
- * The layout the document has been TOLD it is, or `null` for "ask the query".
+ * The layout, asked the way the STYLESHEETS answer it.
  *
- * `data-handheld` is stamped by `App.tsx` from the query itself, so in the
- * running client this and `byQuery` are the same fact and this branch never
- * decides anything.
+ * `App.tsx` stamps `<html data-layout>` from `useLayoutByQuery()` above, so in
+ * the running app the stamp and the query are the same fact and the stamp
+ * never decides anything.
  *
- * `data-desktop` exists for Storybook alone, and it is not symmetry for its own
- * sake. The Vitest tester canvas is 1200x900 whatever the project declares, and
- * 1200 is inside `(max-width: 1366px)` -- so without it every story in the
- * DESKTOP project matched the handheld query and rendered the compact body.
- * The toolbar has to be able to say "review this as the wide board" and be
- * believed, or a review surface that exists to compare the two layouts can only
- * ever show one of them.
+ * They are not the same fact in Storybook. The viewport global stamps the
+ * layout of the device it names, and a story with no viewport runs on a 1200px
+ * canvas stamped `desktop` -- inside `(max-width: 1366px)`, so a component that
+ * consulted only `matchMedia` would draw the compact structure while the sheet
+ * around it drew the wide one. So anything that moves a NODE rather than a
+ * pixel reads this, and it matches the sheets by construction: the stamp, and
+ * the query when there is none.
  */
-function readAttr(): boolean | null {
+export function useLayoutMode(): LayoutMode {
+  const byQuery = useLayoutByQuery();
+  const stamped = useSyncExternalStore(subscribeAttr, readAttr, () => null);
+  return stamped ?? byQuery;
+}
+
+/** Whether the layout is one of the two compact ones (ADR 0025). */
+export function useCompactLayout(): boolean {
+  return isCompact(useLayoutMode());
+}
+
+/** Whether the layout is the phone's. A peer of the handheld one, never a subset. */
+export function usePhone(): boolean {
+  return useLayoutMode() === "phone";
+}
+
+/** The layout the document has been TOLD it is, or `null` for "ask the query". */
+function readAttr(): LayoutMode | null {
   if (typeof document === "undefined") return null;
-  const root = document.documentElement;
-  if (root.hasAttribute("data-handheld")) return true;
-  if (root.hasAttribute("data-desktop")) return false;
-  return null;
+  const value = document.documentElement.getAttribute("data-layout");
+  return value === "desktop" || value === "handheld" || value === "phone" ? value : null;
 }
 
 function subscribeAttr(onChange: () => void): () => void {
@@ -110,7 +113,7 @@ function subscribeAttr(onChange: () => void): () => void {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["data-handheld", "data-desktop"],
+    attributeFilter: ["data-layout"],
   });
   return () => observer.disconnect();
 }

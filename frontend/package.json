@@ -12,6 +12,7 @@
     "test": "vitest run --project=unit",
     "test:stories": "vitest run --project=storybook",
     "test:stories:handheld": "vitest run --project=storybook-handheld",
+    "test:stories:phone": "vitest run --project=storybook-phone",
     "test:all": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "biome check .",

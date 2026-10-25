@@ -17,7 +17,7 @@ flags are for::
 
     --only lint,pytest   # the stage groups to run; GROUPS lists them
     --jobs 4             # pytest under xdist, and the arena, N workers
-    --e2e-project X      # one Playwright project rather than all four
+    --e2e-project X      # one Playwright project rather than all of them
     --e2e-shard 2/4      # ...and one shard of it
     --strict             # a stage that skips itself FAILS instead
 
@@ -386,7 +386,7 @@ def chromium_installed() -> bool:
 #: The Playwright projects, in the order `playwright.config.ts` lists them, then
 #: `sidecar` from its own config. Each is its own stage so a failure names the
 #: viewport -- or the server -- it happened at.
-E2E_PROJECTS = ("chromium", "handheld", "deckfit", "sidecar")
+E2E_PROJECTS = ("chromium", "handheld", "phone", "deckfit", "sidecar")
 
 #: The desktop build's project lives in a second config: it needs a different
 #: server (the sidecar serving `dist/`, no Vite), and `webServer` is per config.
@@ -664,6 +664,17 @@ def frontend_stages(
             Stage(
                 "storybook stories (handheld)",
                 [runner, "run", "test:stories:handheld"],
+                cwd=FRONTEND,
+                slow=True,
+                group="frontend",
+            )
+        )
+        # ...and the stories tagged `phone`, each on the phone viewport it
+        # names, holding the phone's own floors (ADR 0025).
+        stages.append(
+            Stage(
+                "storybook stories (phone)",
+                [runner, "run", "test:stories:phone"],
                 cwd=FRONTEND,
                 slow=True,
                 group="frontend",

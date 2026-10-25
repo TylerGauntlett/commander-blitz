@@ -299,7 +299,7 @@ export const NoCommanderVisible: Story = {
 /** A developed opponent's strip on a Deck. */
 export const DevelopedHandheld: Story = {
   args: Developed.args,
-  globals: { handheld: "on" },
+  globals: { viewport: { value: "deck" } },
   tags: ["handheld"],
   play: async ({ canvasElement }) => {
     await settled(canvasElement);

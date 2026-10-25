@@ -120,12 +120,14 @@ needs a router, a long-poll hook needs a query client), and such a test's `fetch
 stub answers each endpoint once and then blocks, because a poll that re-issues
 the instant one lands would otherwise spin the loop.
 
-Stories run in a real Chromium under Vitest's browser mode as **two projects**:
-one at the desktop canvas and one at the Steam Deck's, the latter running only
-stories tagged `handheld`. The layout is decided by a `data-desktop` or
-`data-handheld` attribute that `.storybook/preview.tsx` stamps, not by the
-viewport, because the test runner sizes the iframe itself; an explicit choice
-beats the media query everywhere (`styles/handheld.css`, `state/useHandheld.ts`).
+Stories run in a real Chromium under Vitest's browser mode as **three projects**:
+the desktop one, `storybook-handheld` running the stories tagged `handheld`, and
+`storybook-phone` running the stories tagged `phone`. A story's `viewport` global
+names a screen from `src/testing/devices.ts` and the Vitest addon sizes the page
+to it, so a phone story is laid out at the phone's real size with the phone query
+matching; `.storybook/preview.tsx` stamps that screen's `data-layout`. A story
+with no viewport runs on the addon's own canvas and is stamped `desktop`, which
+the sheets and `state/useHandheld.ts` believe over the media query.
 Mounts are mandatory and a layer may not state a size (`src/testing/mounts.tsx`,
 `appGeometry.ts`); motion runs twice, once reduced under test and once real.
 
@@ -134,17 +136,19 @@ against a real engine's legal-action list; a story asserts against a fixture and
 can only prove the client renders what it is given. Different questions, both
 worth asking.
 
-**Playwright** runs as four projects (`playwright.config.ts` and, for the desktop
+**Playwright** runs as five projects (`playwright.config.ts` and, for the desktop
 build, `playwright.sidecar.config.ts`):
 
 | Project | What it proves |
 |---|---|
 | `chromium` | The desktop board: the critical player path, a full game clicked to the end, the action panel's contract, art self-ownership, legibility, layout, stacking, routing, deck import, a two-browser pod |
 | `handheld` | The Steam Deck panel: the floors at every reachable state, the synthetic gamepad, the press budgets against a real engine |
+| `phone` | Every phone `testing/devices.ts` names, held both ways, by tap: the phone's floors and budgets, no sideways scroll, every stop reachable by tap, every decision answerable from the sheet, the tap budgets and a whole game per device |
 | `deckfit` | Nothing scrolls at the handheld sizes |
 | `sidecar` | The desktop build's own server serving the built client, with every request off the machine aborted; its hosted origin is `tests/server/stub_site.py`, switched off except while a deck is imported through it |
 
-`chromium` ignores the handheld specs and `handheld` matches only them. Running
+`chromium` ignores the handheld and phone specs, and `handheld` and `phone` match
+only their own. `phone` is `fullyParallel` so its one spec shards by test. Running
 the compact specs at the desktop size would test the wide layout while claiming
 to test the other one. `workers` stays at 1: the app's motion is frame-driven, so
 a second worker on the same box produces timeouts rather than speed. Sharding
@@ -200,10 +204,11 @@ layout bugs get through. The rule for changing a measured number is
 [ADR 0014](adr/0014-measured-numbers-invariant-relationships.md): geometry may
 move, invariants may not.
 
-**The floors are gated twice.** The handheld floors ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md))
-are asserted by the handheld story project over every story's states, and by
-`e2e/handheldAssert.ts` in the `handheld` Playwright project at every reachable
-state of a real game. The story project reaches states the e2e suite never does
+**The floors are gated twice, per mode.** The floors ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md),
+a row per compact mode in `src/logic/floors.ts` since [ADR 0025](adr/0025-phone-is-a-layout-mode-touch-an-input-mode.md))
+are asserted by the handheld and phone story projects over every story's states,
+and by `e2e/handheldAssert.ts` in the `handheld` and `phone` Playwright projects at
+every reachable state of a real game, each handed its layout's `GateSpec`. The story project reaches states the e2e suite never does
 (an empty hand, for one); the e2e gate reaches states a fixture cannot honestly
 stand in for. Three things about that gate cost a confusing loop each to learn:
 
@@ -238,7 +243,9 @@ is the property the whole build-time download exists to buy
 about a *state*; none can answer how long a decision takes on a controller, which
 is the property a player feels. `src/testing/journey.ts` walks a journey and
 returns what it cost; `Journeys.stories.tsx` holds a budget per journey in CI, and
-`e2e/journeys-handheld.spec.ts` holds the same journeys against a real engine.
+`e2e/journeys-handheld.spec.ts` holds the same journeys against a real engine;
+the audit's touch column, `TAP_BUDGET`, holds the journeys `e2e/phone.spec.ts`
+walks by tap, never above the press ceiling.
 The budgets live once, in `src/components/game/decisionAudit.ts`, the table of
 every decision kind and purpose the engine can raise against the surface that
 answers it ([client.md](client.md#surfaces-and-their-rules)); a story is held to
@@ -316,7 +323,7 @@ python scripts/smoke_http.py --players 4        # against a running server
 python scripts/smoke_http.py --pod --players 2 # the lobby, end to end, with tokens
 cd frontend && npm test && npm run build && npm run lint
 cd frontend && npx playwright install chromium   # one time, for stories and e2e
-cd frontend && npm run test:stories && npm run test:stories:handheld
+cd frontend && npm run test:stories && npm run test:stories:handheld && npm run test:stories:phone
 cd frontend && npx playwright test --project=chromium
 cd desktop && npm test
 ```

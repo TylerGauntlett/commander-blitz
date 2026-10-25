@@ -38,7 +38,7 @@ import {
 import { stopId } from "../../input/stops";
 
 /**
- * The four, in the order a confused player reads them.
+ * The five, in the order a confused player reads them.
  *
  * `auto` first because it is the default and the right answer nearly always.
  * `pad` second because somebody who opened this screen is overwhelmingly likely
@@ -50,6 +50,7 @@ const OPTIONS: { id: SchemePref; label: string; hint: string }[] = [
   { id: "pad", label: "Gamepad", hint: "Always show A, B, X and Y" },
   { id: "keyboard", label: "Keyboard", hint: "Always show Enter, Esc and the arrows" },
   { id: "mouse", label: "Mouse", hint: "No button hints at all" },
+  { id: "touch", label: "Touch", hint: "Tap to act, press and hold to read a card" },
 ];
 
 interface Props {

@@ -8,9 +8,11 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
 import { refollowCursor } from "../../input/cursor";
+import { isTouch } from "../../input/inputMode";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
 import { HAND_FAN_W, handStep } from "../../logic/zoomFit";
@@ -18,6 +20,7 @@ import { bouncy, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useCardBase } from "../../state/useCardBase";
 import { useHandLift } from "../../state/useHandLift";
+import { useSheetHost } from "../../state/useSheetHost";
 import { Card } from "./Card";
 
 /*
@@ -113,6 +116,8 @@ interface Props {
   noDrag?: boolean;
   /** Cards a press asks "which way" of: an MDFC's two faces, a shock land. */
   twoWayOids?: ReadonlySet<number>;
+  /** Say the "why not" in the phone sheet rather than over the hand (ADR 0025). */
+  sheetHint?: boolean;
 }
 
 export function HandFan({
@@ -128,6 +133,7 @@ export function HandFan({
   disabled = false,
   noDrag = false,
   twoWayOids,
+  sheetHint = false,
 }: Props) {
   /*
    * WHICH CARD IS RAISED, BY OID -- never by index.
@@ -205,9 +211,17 @@ export function HandFan({
   const mid = (count - 1) / 2;
 
   const hoveredCard = hovered === null ? null : cards[hovered];
-  const hint = hoveredCard
-    ? unplayableHint(hoveredCard, reasons[String(hoveredCard.oid)], mana)
-    : null;
+  /*
+   * A finger cannot hover, so on touch the card a tap selected is the one the
+   * store names (`useCardHold`'s tap rule) -- the same "why not", reached by
+   * the gesture a phone has.
+   */
+  const storeOid = useUiStore((s) => s.hoveredOid);
+  const tapped = isTouch() ? cards.find((c) => c.oid === storeOid) : undefined;
+  const readCard = hoveredCard ?? tapped ?? null;
+  const hint = readCard ? unplayableHint(readCard, reasons[String(readCard.oid)], mana) : null;
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const sheet = useSheetHost(anchorRef, sheetHint);
 
   return (
     /*
@@ -224,6 +238,7 @@ export function HandFan({
     // biome-ignore lint/a11y/noStaticElementInteractions: a pointer-only hover affordance. The pad and the keyboard reach the same preview through the focus ring, which is why `useKeyWithClickEvents` is off in biome.json for the same reason.
     <div
       className="hand"
+      ref={anchorRef}
       style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
       onMouseLeave={() => {
         setHeldOid(null);
@@ -306,17 +321,21 @@ export function HandFan({
         saying why -- "not enough mana", "sorcery, and it is not your main
         phase" and "no legal target" all looked identical.
       */}
-      {hint && (
-        <motion.div
-          className="hand__hint"
-          data-testid="unplayable-hint"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={settle}
-        >
-          {hint}
-        </motion.div>
-      )}
+      {hint &&
+        (() => {
+          const line = (
+            <motion.div
+              className="hand__hint"
+              data-testid="unplayable-hint"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={settle}
+            >
+              {hint}
+            </motion.div>
+          );
+          return sheet ? createPortal(line, sheet) : line;
+        })()}
       {count === 0 && <div className="hand__empty">No cards in hand</div>}
     </div>
   );

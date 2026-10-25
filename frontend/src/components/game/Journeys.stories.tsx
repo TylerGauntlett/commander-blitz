@@ -92,7 +92,7 @@ const meta = {
   title: "Game/Journeys",
   component: Table,
   parameters: { commanderblitz: { mount: "screen", zoomLock: false } },
-  globals: { handheld: "on", input: "pad" },
+  globals: { viewport: { value: "deck" }, input: "pad" },
   tags: ["handheld"],
   render: (args: Props) => <Playable {...args} />,
 } satisfies Meta<typeof Table>;
