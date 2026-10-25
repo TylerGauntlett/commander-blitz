@@ -1,0 +1,18 @@
+{
+  "card_id": "gourmand_s_talent",
+  "name": "Gourmand's Talent",
+  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nDuring your turn, artifacts you control are Foods in addition to their other types and have \"{2}, {T}, Sacrifice this artifact: You gain 3 life.\"\n{2}{G}: Level 2\nWhenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.\n{3}{G}: Level 3\nWhenever you gain life for the first time each turn, put a +1/+1 counter on each creature you control.",
+  "blocked_sentences": [
+    "Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token."
+  ],
+  "needs": [
+    {
+      "capability": "raccoon_3_3_g",
+      "kind": "token",
+      "what": "a 3/3 green Raccoon creature token (no abilities)",
+      "why_existing_wont_do": "token_ids is a closed list with no Raccoon; the nearest 3/3 green vanilla tokens (ape_3_3_g, badger_3_3_g, beast_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) carry the wrong creature type, which matters to type-matters cards. The rest of the card is expressible: an add_subtype static and a grant_ability static, each with condition is_your_turn, plus you_gain_life triggers with nth: 1 at levels 2 and 3"
+    }
+  ],
+  "closest_existing": ["badger_3_3_g", "beast_3_3_g"],
+  "confidence": "high"
+}

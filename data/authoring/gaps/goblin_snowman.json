@@ -1,0 +1,29 @@
+{
+  "card_id": "goblin_snowman",
+  "name": "Goblin Snowman",
+  "oracle_text": "Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.\n{T}: This creature deals 1 damage to target creature it's blocking.",
+  "blocked_sentences": [
+    "Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.",
+    "{T}: This creature deals 1 damage to target creature it's blocking."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a combat-only variant of the prevent_damage_permanent op: a `combat_only: true` option that makes the installed PermanentShield (dealt: to_and_by, duration: this_turn) stop only combat damage dealt to and by the object, leaving noncombat damage through",
+      "why_existing_wont_do": "prevent_damage_permanent with dealt: to_and_by prevents ALL damage, so it would also prevent this card's own {T} ability's 1 noncombat damage -- the whole point of the card; the combat_only key exists only on the prevent_damage static, which cannot be installed by a trigger, has no 'this turn' and only stops damage dealt to its matches"
+    },
+    {
+      "capability": "blocked_by_source",
+      "kind": "selector",
+      "what": "a target selector matching the attacking creature(s) the ability's source is blocking -- 'target creature it's blocking' -- e.g. `blocked_by: {\"self_only\": true}` reading combat.blockers[source]",
+      "why_existing_wont_do": "`blocked: true` matches any blocked attacker, not only the one this creature blocks; `blocking` (bool or binding) describes a blocker, not the attacker it blocks; no selector key reads the source's own block assignment"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "blocked",
+    "blocking"
+  ],
+  "confidence": "high"
+}

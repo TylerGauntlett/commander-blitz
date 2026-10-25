@@ -1,0 +1,18 @@
+{
+  "card_id": "yuna_grand_summoner",
+  "name": "Yuna, Grand Summoner",
+  "oracle_text": "Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.\nWhenever another permanent you control is put into a graveyard from the battlefield, if it had one or more counters on it, you may put that number of +1/+1 counters on target creature.",
+  "blocked_sentences": [
+    "Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "mana_ability_delayed_enters_with_counters",
+      "kind": "op",
+      "what": "a mana-ability rider that sets up a delayed trigger on activation (no stack): 'when you next cast a creature spell this turn' (fires once, then expires at end of turn), whose effect makes THAT spell's permanent enter with N additional +1/+1 counters (a replacement on the spell, not counters added after it enters)",
+      "why_existing_wont_do": "A mana ability may hold only add_mana plus riders from add_counters/add_poison/damage/gain_life/lose_life/remove_counters, so delayed_trigger cannot ride on it; mana_grant hands over keywords only, never counters; enters_with_additional_counters is a standing static over a filter rather than a one-shot tied to the next creature spell cast this turn; and add_counters on a spell_cast delayed trigger would act on the spell on the stack, not make the permanent enter with them"
+    }
+  ],
+  "closest_existing": ["mana_grant", "delayed_trigger", "enters_with_additional_counters"],
+  "confidence": "high"
+}

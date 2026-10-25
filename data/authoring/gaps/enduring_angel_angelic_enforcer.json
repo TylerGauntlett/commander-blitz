@@ -1,0 +1,18 @@
+{
+  "card_id": "enduring_angel_angelic_enforcer",
+  "name": "Enduring Angel // Angelic Enforcer",
+  "oracle_text": "Flying, double strike\nYou have hexproof.\nIf your life total would be reduced to 0 or less, instead transform this creature and your life total becomes 3. Then if this creature didn't transform this way, you lose the game.",
+  "blocked_sentences": [
+    "If your life total would be reduced to 0 or less, instead transform this creature and your life total becomes 3. Then if this creature didn't transform this way, you lose the game."
+  ],
+  "needs": [
+    {
+      "capability": "life_total_reduction_replacement",
+      "kind": "replacement",
+      "what": "a static replacement on its controller that fires whenever any life change (damage, life loss, paying life, setting life) would leave that player's life total at 0 or less: instead of that change, run an effect list on the source (here `transform` on self) and set the player's life total to a fixed value (3); then, if the source did not actually transform (e.g. it was already transformed or can't), that player loses the game",
+      "why_existing_wont_do": "`replace_life_loss` only multiplies a loss (`loss_multiplier`); `damage_life_floor` (static and op) only clamps damage to a floor of 1 and neither runs effects nor applies to life loss or payment; `lock_life_total` forbids any change; `cant_lose_the_game` prevents the loss outright. None replaces the reduction with a transform-plus-set-life and conditions a game loss on whether the transform happened"
+    }
+  ],
+  "closest_existing": ["replace_life_loss", "damage_life_floor", "transform", "lose_game"],
+  "confidence": "high"
+}

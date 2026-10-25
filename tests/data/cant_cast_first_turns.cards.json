@@ -3,8 +3,8 @@
   "cards": [
     {
       "id": "t_ccft_avenger",
-      "name": "Test Avenger",
-      "oracle_text": "You can't cast Test Avenger during your first, second, or third turns of the game.\nFlying, vigilance",
+      "name": "Test First Turns Avenger",
+      "oracle_text": "You can't cast Test First Turns Avenger during your first, second, or third turns of the game.\nFlying, vigilance",
       "mana_cost": "{W}{W}",
       "types": ["Creature"],
       "subtypes": ["Angel"],

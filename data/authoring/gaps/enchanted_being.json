@@ -1,0 +1,22 @@
+{
+  "card_id": "enchanted_being",
+  "name": "Enchanted Being",
+  "oracle_text": "Prevent all combat damage that would be dealt to this creature by enchanted creatures.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to this creature by enchanted creatures."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, plus a filter key matching an 'enchanted' creature (a creature with at least one Aura attached to it)",
+      "why_existing_wont_do": "The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. No static filter key means 'has an Aura attached' -- `attached` / `attached_to_host` describe the attachment itself, not the creature it enchants."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "replace_damage",
+    "damage_source"
+  ],
+  "confidence": "high"
+}

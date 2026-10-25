@@ -10,29 +10,42 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**58 cards** blocked by **68** capabilities.
+**114 cards** blocked by **102** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
+| [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
+| [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
+| [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
+| [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [set-creature-types](#set-creature-types) | 2 | 715 | static_effect |
 | [spider-token](#spider-token) | 2 | 1012 | token |
+| [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
+| [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-mana-on-tap-produced-filter](#add-mana-on-tap-produced-filter) | 1 | 893 | static_effect |
+| [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [behold](#behold) | 1 | 7614 | op |
+| [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-as-though-flash-filtered](#cast-as-though-flash-filtered) | 1 | 3426 | static_effect |
 | [cast-as-though-flash-spell-filter](#cast-as-though-flash-spell-filter) | 1 | 1301 | static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
+| [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [colorless-filter](#colorless-filter) | 1 | 893 | selector |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
+| [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
+| [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [declare-attackers-step-condition](#declare-attackers-step-condition) | 1 | 3213 | value |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
@@ -40,6 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [dragon-6-6-r-flying-token](#dragon-6-6-r-flying-token) | 1 | 1517 | token |
+| [energy](#energy) | 1 | 18326 | engine |
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -48,28 +62,43 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
 | [fog](#fog) | 1 | 1232 | op |
+| [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
 | [improvise](#improvise) | 1 | 942 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
+| [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
+| [lure](#lure) | 1 | 31502 | static_effect |
+| [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [mana-retention](#mana-retention) | 1 | 2381 | static_effect |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
 | [monarch](#monarch) | 1 | 14748 | static_effect |
+| [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [myr-token](#myr-token) | 1 | 896 | token |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
-| [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [pack-tactics](#pack-tactics) | 1 | 6179 | value |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
+| [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
+| [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-source](#players-dealt-combat-damage-by-source) | 1 | 1137 | selector |
+| [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
+| [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [put-counters-cost](#put-counters-cost) | 1 | 6513 | cost |
+| [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [redirect-attack](#redirect-attack) | 1 | 3213 | op |
+| [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
+| [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -80,8 +109,176 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [teammates](#teammates) | 1 | 26785 | selector |
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
+| [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
+| [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
+| [venture](#venture) | 1 | 19644 | engine |
+| [x-maximum](#x-maximum) | 1 | 17407 | engine |
+
+## combat-only-permanent-shield
+
+Blocks **15** cards.
+
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (a field on structs.PermanentShield read by primitives.damage_permanent / damage_player), so a resolving ability can install a this-turn shield that stops only COMBAT damage dealt to and dealt by one targeted permanent
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but stops ALL damage, so noncombat burn at the creature and its own ping/fight damage would also be prevented (a strictly better card); `combat_only` exists only on the `prevent_damage` static, which is continuous on a printed permanent and cannot be installed on a target for a turn by an activated ability
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (and its PermanentShield), so a resolving ability can prevent only COMBAT damage dealt to and/or by a permanent for this turn, leaving burn, fight and other noncombat damage untouched
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` takes `dealt: to_and_by` and `duration: this_turn` but has no combat-only filter, so it would also stop noncombat damage (a strictly different card); the `prevent_damage` static has `combat_only` but is continuous while its source stands (no 'this turn', cannot be installed by an activated ability) and only stops damage dealt TO what it matches, never damage the creature deals; the one-shot `grant_ability` op cannot grant a static
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (a field on the permanent shield read by the damage primitives), so a resolving activated ability can install a this-turn shield that stops only COMBAT damage dealt to and dealt by one targeted permanent
+  <br>Why the existing vocabulary won't do: `untap` on a target with selector {controller: you, attacking: true} covers the first sentence, and `prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but stops ALL damage (op_options are only dealt, duration, objects), so noncombat damage to or by the creature would also be prevented; `combat_only` exists only on the `prevent_damage` static, which is continuous on a printed permanent, only faces 'to', and cannot be installed on a target for a turn by an activated ability
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (a field on structs.PermanentShield read by primitives.damage_permanent / damage_player), so an activated ability can install a this-turn shield on its target that stops only COMBAT damage dealt to and dealt by that creature; the untap half is already the `untap` op on the same target
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but prevents ALL damage, so burn aimed at the creature and its noncombat damage would also be stopped (a strictly better card); the newly gained `combat_only` lives only on the `prevent_damage` static, which is continuous on a printed permanent, only stops damage dealt to what it matches, and cannot be installed on a target for a turn by a resolving ability
+- **(op)** a combat-only flag on the prevent_damage_permanent op (e.g. combat_only: true), so the PermanentShield it installs with dealt 'to_and_by' and duration 'this_turn' prevents only combat damage dealt to and by the targeted creatures, letting noncombat damage (burn, fight, pings) through
+  <br>Why the existing vocabulary won't do: prevent_damage_permanent (objects {target: t1}, dealt to_and_by, this_turn) is the exact shape but its PermanentShield has no combat flag and prevents ALL damage, a strictly better card; the combat_only key exists only on the prevent_damage static, which lives on a printed permanent, is continuous with no 'this turn' clock, cannot be installed by a resolving instant, and only stops damage dealt to what it matches, not by it
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (and its PermanentShield), so a resolving spell can prevent only COMBAT damage dealt to and dealt by a targeted permanent this turn, leaving noncombat damage to and from it untouched
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: to_and_by` and `duration: this_turn` is the right shape but PermanentShield has no combat filter, so it would also prevent noncombat damage (burn, fight, pingers) -- a strictly different card. The `prevent_damage` static has `combat_only` but is continuous on a printed permanent, cannot be installed by a spell for one turn, and only stops damage dealt TO what it matches
+- **(op)** a combat-only variant of the prevent_damage_permanent op: a `combat_only: true` option that makes the installed PermanentShield (dealt: to_and_by, duration: this_turn) stop only combat damage dealt to and by the object, leaving noncombat damage through
+  <br>Why the existing vocabulary won't do: prevent_damage_permanent with dealt: to_and_by prevents ALL damage, so it would also prevent this card's own {T} ability's 1 noncombat damage -- the whole point of the card; the combat_only key exists only on the prevent_damage static, which cannot be installed by a trigger, has no 'this turn' and only stops damage dealt to its matches
+- **(op)** a `combat_only` flag on the `prevent_damage_permanent` op (and the PermanentShield it installs), so a resolving ability can prevent only COMBAT damage dealt to and by one targeted permanent this turn, leaving noncombat damage to and from it unprevented
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: "to_and_by"` and `duration: "this_turn"` is the exact shape but its shield stops all damage, so the creature would also be immune to burn and its own noncombat damage would be prevented -- a strictly different card. The `combat_only` flag the engine just gained lives only on the `prevent_damage` STATIC, which cannot be installed by an activated ability, has no duration and only faces 'dealt to'.
+- **(op)** a one-shot prevention installed by a resolving triggered ability that prevents only COMBAT damage dealt to creatures you control for the rest of the turn -- a `combat_only` flag on `prevent_damage_permanent` (or a sibling op), ideally applying to every creature you control during the turn rather than only those present at resolution (prevention is not locked in by 611.2c)
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` is the one-shot over permanents but prevents ALL damage (noncombat too), takes no combat-only flag, and fixes its set of objects at resolution; `combat_only` exists only on the `prevent_damage` static, which is continuous while its source stands and cannot be given a 'this turn' duration by a trigger; the `prevent_damage` op shields a player, not permanents
+- **(op)** a `combat_only` flag on the `prevent_damage_permanent` op (and the PermanentShield it installs), so a resolving ability can prevent only COMBAT damage dealt to and by one targeted permanent this turn, leaving noncombat damage to and from it unprevented
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: "to_and_by"` and `duration: "this_turn"` is the exact shape, but its shield stops all damage, so the creature would also be immune to burn and its own noncombat damage would be prevented -- a strictly different card. `combat_only` exists only on the `prevent_damage` STATIC, which a resolving activated ability cannot install, has no duration and only faces 'dealt to'.
+- **(op)** a `combat_only` flag on the `prevent_damage_permanent` op (and the PermanentShield it installs), so a resolving ability can prevent only COMBAT damage dealt to and by one targeted permanent this turn, leaving noncombat damage to and from it unprevented
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: "to_and_by"` and `duration: "this_turn"` is the exact shape (the untap and the 'attacking creature with shadow' target are expressible via `untap` and a selector with `attacking: true, keywords: ["shadow"]`), but its shield stops all damage, so the creature would also be immune to burn and its own noncombat damage would be prevented. `combat_only` exists only on the `prevent_damage` STATIC, which cannot be installed by an activated ability, has no duration and only faces 'dealt to'.
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (and on structs.PermanentShield, read by primitives.damage_permanent / damage_player), so a resolving ability can install a this-turn shield on a permanent that stops only combat damage dealt to and/or by it, leaving noncombat damage (burn, fight, pingers) unprevented
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` takes `dealt: to_and_by` and `duration: this_turn` but has no combat filter, so it would also prevent all noncombat damage to and by the creature -- a strictly better card. The `prevent_damage` static has `combat_only` but is continuous (no 'this turn', cannot be installed by an activated ability) and only stops damage dealt TO what it matches, never damage dealt BY it
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (dealt: "to", duration: "this_turn"), so a resolving ability can install a this-turn shield on a permanent that stops only combat damage dealt to it -- the exert half is already expressible as Combat Celebrant writes it (may { set_turn_flag exerted, skip_untap self } on an `attacks` self trigger)
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` prevents ALL damage dealt to the object this turn, so a post-combat burn spell would also be prevented (a strictly better card); the `prevent_damage` static has `combat_only` but is continuous while the permanent stands, cannot be installed for "this turn" by a resolving ability, and its conditions (static_condition_keys) cannot read the `exerted` turn flag; the one-shot `grant_ability` op grants only triggered or activated abilities, not a static
+- **(op)** a `combat_only` flag on the `prevent_damage_permanent` op (and the PermanentShield it installs), so a resolving activated ability can prevent only COMBAT damage dealt to and by one targeted creature you control this turn, leaving noncombat damage to and from it unprevented
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: "to_and_by"` and `duration: "this_turn"` is the exact shape, but its shield stops all damage, so the creature would also be immune to burn and its noncombat damage would be prevented -- a strictly better card. `combat_only` exists only on the `prevent_damage` STATIC, which a resolving ability cannot install, has no 'this turn' duration and only faces 'dealt to'.
+- **(op)** a `combat_only: true` option on the `prevent_damage_permanent` op (a field on PermanentShield read by the damage primitives), so a resolving activated ability can install a this-turn shield on its own source ({"self_only": true}) that stops only COMBAT damage dealt to and dealt by it, leaving noncombat damage to and from it untouched
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but PermanentShield has no combat filter (op_options are only dealt, duration, objects), so it would also prevent noncombat damage such as burn or fight; `combat_only` exists only on the `prevent_damage` static, which is continuous on a printed permanent, only faces 'to', and cannot be switched on for one turn by an activated ability. 'This creature can't block' alone is expressible as the `cant_block` static with affects self_only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Maze of Ith** (rank 540) — `maze_of_ith`
+  - {T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn.
+- **Loyal Unicorn** (rank 6396) — `loyal_unicorn`
+  - Lieutenant — At the beginning of combat on your turn, if you control your commander, prevent all combat damage that would be dealt to creatures you control this turn.
+- **Cephalid Illusionist** (rank 15749) — `cephalid_illusionist`
+  - {2}{U}, {T}: Prevent all combat damage that would be dealt to and dealt by target creature you control this turn.
+- **Energy Arc** (rank 16855) — `energy_arc`
+  - Prevent all combat damage that would be dealt to and dealt by those creatures this turn.
+- **Ith, High Arcanist** (rank 19826) — `ith_high_arcanist`
+  - {T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn.
+- **Goblin Snowman** (rank 21010) — `goblin_snowman`
+  - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
+  - {T}: This creature deals 1 damage to target creature it's blocking.
+- **Deftblade Elite** (rank 22517) — `deftblade_elite`
+  - {1}{W}: Prevent all combat damage that would be dealt to and dealt by this creature this turn.
+- **Maze of Shadows** (rank 24155) — `maze_of_shadows`
+  - {T}: Untap target attacking creature with shadow. Prevent all combat damage that would be dealt to and dealt by that creature this turn.
+- **Elvish Scout** (rank 24216) — `elvish_scout`
+  - {G}, {T}: Untap target attacking creature you control. Prevent all combat damage that would be dealt to and dealt by it this turn.
+- **Ebony Horse** (rank 24352) — `ebony_horse`
+  - {2}, {T}: Untap target attacking creature you control. Prevent all combat damage that would be dealt to and dealt by that creature this turn.
+- **Foxfire** (rank 25380) — `foxfire`
+  - Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn
+- **Oketra's Avenger** (rank 27754) — `oketra_s_avenger`
+  - You may exert this creature as it attacks. When you do, prevent all combat damage that would be dealt to it this turn
+- **Soratami Cloud Chariot** (rank 28554) — `soratami_cloud_chariot`
+  - {2}: Prevent all combat damage that would be dealt to and dealt by target creature you control this turn.
+- **Moonlight Geist** (rank 31095) — `moonlight_geist`
+  - {3}{W}: Prevent all combat damage that would be dealt to and dealt by this creature this turn.
+- **Urborg Phantom** (rank 31912) — `urborg_phantom`
+  - {U}: Prevent all combat damage that would be dealt to and dealt by this creature this turn.
+
+</details>
+
+## combat-only-fog
+
+Blocks **9** cards.
+
+- **(op)** a combat_only flag on the prevent_damage_permanent op, so a one-shot shield installed by a resolving spell on a targeted permanent (dealt 'by' or 'to', duration this_turn) prevents only combat damage and lets noncombat damage through
+  <br>Why the existing vocabulary won't do: prevent_damage_permanent takes only objects, dealt and duration and prevents ALL damage, so it would also stop burn and fight damage; the prevent_damage static has combat_only but lives on a printed permanent, has no 'this turn' duration, cannot be installed by a spell, and only stops damage dealt to what it matches, never damage a creature would deal
+- **(op)** a combat_only flag on the prevent_damage op (the player DamageShield), so a resolving instant installs a this_turn shield over every player (player: each/any) that prevents only combat damage and lets noncombat damage to players through
+  <br>Why the existing vocabulary won't do: prevent_damage the op takes only player and duration and its DamageShield prevents ALL damage to the player, so burn and drain would also be stopped -- a strictly better card; the prevent_damage static has combat_only but lives on a printed permanent, matches only permanents via affects (no way to name a seat), and has no 'this turn' duration, so a spell cannot install it
+- **(op)** a combat-only form of the one-shot player damage shield: `combat_only: true` on the `prevent_damage` op (and on structs.DamageShield, read by primitives.damage_player), so a spell can say "prevent all combat damage that would be dealt to players this turn" with player: "any" while noncombat damage to players still lands
+  <br>Why the existing vocabulary won't do: The `prevent_damage` op (op_options: duration, player) installs a DamageShield that prevents ALL damage to the player, noncombat included, so it would be a strictly better card; `combat_only` exists only on the `prevent_damage` static, which lives on a permanent's battlefield statics, matches permanents not players, and has no this-turn duration, so an instant cannot carry it
+- **(op)** a combat_only flag on the prevent_damage op (the player DamageShield), so a resolving instant installs a this_turn shield over its controller (player: you) that prevents only combat damage and lets noncombat damage to that player through
+  <br>Why the existing vocabulary won't do: prevent_damage the op takes only player and duration and its DamageShield prevents ALL damage to the player, so burn and drain would also be stopped -- a strictly better card; the prevent_damage static has combat_only but lives on a printed permanent, matches only permanents via affects (no way to name a seat), and has no 'this turn' duration, so a spell cannot install it. Populate itself is expressible (choose_permanents over creature tokens you control, then copy_permanent of the binding), so only the first sentence is blocked
+- **(op)** a combat-only form of the one-shot `prevent_damage_permanent` op (e.g. `combat_only: true` beside `dealt: "to"` and `duration: "this_turn"`), installed on the spell's target at resolution, that prevents combat damage dealt to that permanent this turn while letting noncombat damage through
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` takes only objects, dealt and duration and its shield stops all damage, combat and noncombat (a strictly better card); `combat_only` exists only on the `prevent_damage` static, which lives on a printed permanent and cannot be installed on a target by a resolving spell; the `grant_ability` op grants only triggered or activated abilities, not a static. The first two sentences are expressible (add_counters +1/+1 on the target, grant_keyword flying until end of turn)
+- **(op)** a combat-only form of the prevent_damage op (e.g. combat_only: true on the op's player DamageShield), so a spell can say "prevent all combat damage that would be dealt to you this turn" without also shielding the player from noncombat damage
+  <br>Why the existing vocabulary won't do: The prevent_damage op takes only player and duration and prevents ALL damage to the player; combat_only exists only on the prevent_damage static, which is per-permanent, continuous while its source is on the battlefield and cannot name a seat, so neither fits a one-shot instant
+- **(op)** a one-shot effect that prevents all combat damage that would be dealt to a player (you) for the rest of the current combat
+  <br>Why the existing vocabulary won't do: the prevent_damage op takes only duration and player, with no combat_only narrowing and no 'this combat' duration; combat_only exists only on the prevent_damage static, which lasts while the permanent does rather than for one combat
+- **(op)** a one-shot, this-turn prevention of all COMBAT damage dealt to a player and to the planeswalkers that player controls (e.g. `combat_only: true` and `or_planeswalkers: true` on the `prevent_damage` op)
+  <br>Why the existing vocabulary won't do: the `prevent_damage` op takes only `duration` and `player`, so it would prevent noncombat damage too and would not cover planeswalkers; `combat_only` / `or_planeswalkers` exist only on the `prevent_damage` static, which a spell cannot create for a turn, and `prevent_damage_permanent` covers permanents only, not the player and not combat-only
+- **(op)** a combat-only option on the resolving prevention ops: `combat_only: true` on `prevent_damage` (the player's DamageShield) and on `prevent_damage_permanent` (or a selector-scoped variant covering 'creatures you control' for the turn), so a spell can say 'Prevent all combat damage that would be dealt to you and creatures you control this turn' while noncombat damage still gets through
+  <br>Why the existing vocabulary won't do: The `prevent_damage` op (player, duration) and `prevent_damage_permanent` op (objects, dealt, duration) both prevent ALL damage, combat and noncombat, which is a strictly better card; the new `combat_only` flag exists only on the `prevent_damage` STATIC, which lives on a permanent and has no 'this turn' clock and cannot be installed by an instant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inkshield** (rank 806) — `inkshield`
+  - Prevent all combat damage that would be dealt to you this turn.
+  - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
+- **Take the Bait** (rank 3254) — `take_the_bait`
+  - Cast this spell only during combat on an opponent's turn.
+  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
+- **Druid's Deliverance** (rank 4065) — `druid_s_deliverance`
+  - Prevent all combat damage that would be dealt to you this turn.
+- **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
+  - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+- **Fleeting Flight** (rank 8631) — `fleeting_flight`
+  - Prevent all combat damage that would be dealt to it this turn.
+- **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
+  - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+- **Commencement of Festivities** (rank 14612) — `commencement_of_festivities`
+  - Prevent all combat damage that would be dealt to players this turn.
+- **Defend the Hearth** (rank 14613) — `defend_the_hearth`
+  - Prevent all combat damage that would be dealt to players this turn.
+- **Azorius Ploy** (rank 26998) — `azorius_ploy`
+  - Prevent all combat damage target creature would deal this turn.
+  - Prevent all combat damage that would be dealt to target creature this turn.
+
+</details>
+
+## prevent-damage-by-source
+
+Blocks **8** cards.
+
+- **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
+  <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
+- **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, plus a filter key matching an 'enchanted' creature (a creature with at least one Aura attached to it)
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. No static filter key means 'has an Aura attached' -- `attached` / `attached_to_host` describe the attachment itself, not the creature it enchants.
+- **(static_effect)** a dealer filter (`damage_source`) on the `prevent_damage` static, so that `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` prevents all combat damage this creature would deal to any recipient (creatures, players and planeswalkers alike); the 'dealt to' half is already a second static with `affects: {"self_only": true}`
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` + `combat_only` reads only the recipient (`affects`, via `prevents_all_damage`), so it covers 'dealt to this creature' but never 'dealt by' it. `damage_source` filters the dealer but the loader accepts it only on `replace_damage`, whose `damage_multiplier` must be 2 or more and so cannot prevent. `prevent_all_but` caps by recipient too. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card.
+- **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by enchanted creature' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {attached: true}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players and permanents alike)
+  <br>Why the existing vocabulary won't do: The prevent_damage static with prevent_all + combat_only covers the 'dealt to' half via affects: {attached: true}, but its affects is the recipient only; damage_source exists only on replace_damage, which the loader refuses with a damage_multiplier below 2 (0 would be prevention). The prevent_damage_permanent op has a 'dealt' option but is a one-shot with a duration, not a static that lasts while the Aura is attached
+- **(static_effect)** a continuous static that prevents all (combat) damage a matching permanent would DEAL, e.g. a `prevent_damage` static with a direction key (`dealt: "by"` / `"to_and_by"`) read alongside `affects: {attached: true}` and `combat_only: true`, so an Aura can stop combat damage dealt both to and by the enchanted creature for as long as it is attached
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static (with `prevent_all` and `combat_only`) only answers damage dealt TO the matched permanent (`prevents_all_damage` checks the recipient). `prevent_damage_permanent` can face `by`/`to_and_by` but is a one-shot op with only `this_turn`/`until_your_next_turn` durations and no combat-only narrowing, not a continuous Aura static. `damage_source` filters the dealer only on `replace_damage`, which requires `damage_multiplier` of 2 or more and so cannot prevent.
+- **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) narrowed by a filter on the damage SOURCE, so only combat damage dealt by Walls is prevented
+  <br>Why the existing vocabulary won't do: `damage_source` is accepted only on `replace_damage` (the loader refuses it on any other static), and `prevent_damage` with `combat_only` would prevent combat damage from every creature, which is a much stronger card
+- **(static_effect)** a continuous prevent_damage static that also stops damage dealt BY the permanents its filter matches (a 'dealt': 'to' | 'by' | 'to_and_by' axis like the op's), combinable with combat_only and prevent_all, so an Aura can say 'prevent all combat damage that would be dealt to and dealt by enchanted creature' with affects {attached: true}
+  <br>Why the existing vocabulary won't do: The prevent_damage static (with combat_only and prevent_all) only prevents damage dealt TO what its affects matches, so it covers half the sentence; damage_source names a dealer but is accepted only on replace_damage, which requires damage_multiplier >= 2 and cannot prevent; the prevent_damage_permanent op has dealt: to_and_by but is a one-shot with a this_turn/until_your_next_turn duration, covers all damage rather than combat only, and cannot be continuous while the Aura is attached
+- **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by creatures you control' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {controller: you, types: [Creature]}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players, planeswalkers and creatures alike)
+  <br>Why the existing vocabulary won't do: The prevent_damage static with prevent_all + combat_only covers the 'dealt to' half via affects: {controller: you, types: [Creature]}, but its affects is the recipient only and prevents_all_damage never reads a dealer; damage_source exists only on replace_damage, which the loader refuses with a damage_multiplier below 2 (0 would be prevention). The prevent_damage_permanent op has a 'dealt' option but is a one-shot with a duration, not a static that lasts while the enchantment is on the battlefield. Writing only the 'dealt to' half would let your creatures still deal combat damage, a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fog Bank** (rank 2713) — `fog_bank`
+  - Prevent all combat damage that would be dealt to and dealt by this creature.
+- **Statecraft** (rank 14038) — `statecraft`
+  - Prevent all combat damage that would be dealt to and dealt by creatures you control.
+- **Armored Transport** (rank 22151) — `armored_transport`
+  - Prevent all combat damage that would be dealt to this creature by creatures blocking it.
+- **Ghostly Possession** (rank 22243) — `ghostly_possession`
+  - Prevent all combat damage that would be dealt to and dealt by enchanted creature.
+- **Gaseous Form** (rank 24207) — `gaseous_form`
+  - Prevent all combat damage that would be dealt to and dealt by enchanted creature.
+- **Sandskin** (rank 27695) — `sandskin`
+  - Prevent all combat damage that would be dealt to and dealt by enchanted creature.
+- **Marble Priest** (rank 31502) — `marble_priest`
+  - All Walls able to block this creature do so.
+  - Prevent all combat damage that would be dealt to this creature by Walls.
+- **Enchanted Being** (rank 31748) — `enchanted_being`
+  - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
+
+</details>
 
 ## cast-as-though-flash
 
@@ -98,6 +295,26 @@ Blocks **2** cards.
   - {1}, {T}, Sacrifice this land: You may cast spells this turn as though they had flash.
 - **Borne Upon a Wind** (rank 649) — `borne_upon_a_wind`
   - You may cast spells this turn as though they had flash.
+
+</details>
+
+## cast-only-during-opponents-turn
+
+Blocks **2** cards.
+
+- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster (and, by extension, the 'cast only during combat' / 'only during your turn' family), checked when the cast is offered
+  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own turn and fizzle rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction
+- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the combat phase ('Cast this spell only during combat on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn'
+  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own main phase and do nothing rather than be uncastable
+
+<details><summary>Cards waiting on this</summary>
+
+- **Take the Bait** (rank 3254) — `take_the_bait`
+  - Cast this spell only during combat on an opponent's turn.
+  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
+- **Delirium** (rank 12129) — `delirium`
+  - Cast this spell only during an opponent's turn.
+  - Tap target creature that player controls. That creature deals damage equal to its power to the player.
 
 </details>
 
@@ -134,6 +351,25 @@ Blocks **2** cards.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
+
+</details>
+
+## opening-hand-ability
+
+Blocks **2** cards.
+
+- **(engine)** an ability that functions from the opening hand during game setup (103.6): after mulligans and before turn 1, each player who is not the starting player must be offered a yes/no decision for every card in hand carrying one, and answering yes must move that card from hand to the battlefield, apply its enters rider (a luck counter), and then run the follow-up effect (exile a card from your hand). It needs three new pieces -- a setup window that walks opening hands, a card-level spelling for the ability (a `begin_the_game` block, or an ability whose active_zones include `hand` with a game-start evaluation site), and a condition that can ask "you are not the starting player"
+  <br>Why the existing vocabulary won't do: `_opening_sequence` (src/commanderblitz/engine/game.py) draws STARTING_HAND, runs London mulligans, and goes straight to turn 1; it never looks at what is in anyone's opening hand, so there is no window in which a card in hand can act at all. `active_zones` defaults to `(Zone.BATTLEFIELD,)` (src/commanderblitz/cards/loader/__init__.py) and the non-battlefield zones it is used for are graveyard/exile statics and activated abilities offered by `legality._activate_zones` -- both of which run once the game is already under way, so a HAND-zone ability would have no evaluator during setup. No entry in `trigger_events` is a game-start event: the earliest is `upkeep`, which is turn 1's upkeep and therefore after the starting player has already begun, and a trigger uses the stack rather than moving its own source out of hand. No entry in `condition_keys` asks who is on the play: `is_active_player` and `is_your_turn` are questions about the current turn, and both read true on the non-starting player's own turn, so neither can gate on "you're not the starting player". `put_onto_battlefield` can move a card, but it is a resolution op and there is nothing at setup to resolve it.
+- **(engine)** an ability that functions from the opening hand during game setup (103.6): after mulligans and before the first turn, each player is offered a yes/no decision for every card in their opening hand carrying the ability, and yes moves that card from hand directly onto the battlefield (not cast, no stack). Needs a setup window that walks opening hands plus a card-level spelling for the ability (e.g. `begin_the_game: true`)
+  <br>Why the existing vocabulary won't do: No key in `card_level_rider_keys`, `ability_keys` or `trigger_events` refers to game start: the earliest trigger is `upkeep`, which is during turn 1 and would use the stack rather than move the source from hand. `put_onto_battlefield` is a resolution op with nothing at setup to resolve it, and `active_zones: ["hand"]` only covers activated abilities offered once the game is under way. The second line is expressible (`player_hexproof` static with `affects_player: "you"`), but the card is only partly expressible, so it is recorded here rather than as a partial answer. Same capability as gemstone_caverns' gap
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gemstone Caverns** (rank 180) — `gemstone_caverns`
+  - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
+  - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+- **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
+  - If this card is in your opening hand, you may begin the game with it on the battlefield.
 
 </details>
 
@@ -174,6 +410,24 @@ Blocks **2** cards.
 
 </details>
 
+## wall-0-3-w-defender-token
+
+Blocks **2** cards.
+
+- **(token)** a 0/3 white Wall creature token with defender
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Wall token; plant_0_1_g is a 0/1 green Plant without defender, so no existing token matches. The rest of the card is expressible: a spell_cast trigger with nth: 2 and controller you, draw then create_token; and a begin_combat trigger on your turn with grant_keyword exalted over creatures you control with keywords [defender]
+- **(token)** a 0/3 white Wall creature token with defender
+  <br>Why the existing vocabulary won't do: create_token may only name an id in token_ids, and no entry there is a 0/3 Wall or any 0/3 defender token; the other line, "You have hexproof.", is expressible as the player_hexproof static
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rammas Echor, Ancient Shield** (rank 4347) — `rammas_echor_ancient_shield`
+  - Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender
+- **Teyo, the Shieldmage** (rank 9030) — `teyo_the_shieldmage`
+  - −2: Create a 0/3 white Wall creature token with defender.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -185,6 +439,21 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## active-player-selector
+
+Blocks **1** card.
+
+- **(selector)** a target selector and player spec meaning 'the active player' ('target creature that player controls ... deals damage to the player', where 'that player' is the opponent whose turn it is), e.g. controller: "active_player" on the target selector and player: "active_player" on the damage op
+  <br>Why the existing vocabulary won't do: selector `controller` takes you/opponent/any or a player target binding; `controller: "opponent"` would allow a creature of a non-active opponent in multiplayer, and `is_active_player` is only a condition, not a player reference
+
+<details><summary>Cards waiting on this</summary>
+
+- **Delirium** (rank 12129) — `delirium`
+  - Cast this spell only during an opponent's turn.
+  - Tap target creature that player controls. That creature deals damage equal to its power to the player.
 
 </details>
 
@@ -201,6 +470,20 @@ Blocks **1** card.
   - Whenever you tap a permanent for {C}, add an additional {C}.
   - Colorless creatures you control get +2/+2.
   - Whenever you cast a colorless spell, you gain 2 life.
+
+</details>
+
+## attached-to-player-selector
+
+Blocks **1** card.
+
+- **(selector)** an object selector key that matches permanents (Auras) attached to a given player, e.g. {"zone": "battlefield", "subtypes": ["Curse"], "attached_to_player": "you"}, reading GameObject.attached_to_player against a player spec
+  <br>Why the existing vocabulary won't do: selector key `attached` only matches the object the ability's source is attached to (source.attached_to); `enchanted_player` is a player spec read off the source Aura, not a filter on other objects. Nothing filters objects by which player they enchant, so `destroy` cannot be aimed at 'Curses attached to you' without also hitting Curses on opponents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Witchbane Orb** (rank 16177) — `witchbane_orb`
+  - When this artifact enters, destroy all Curses attached to you
 
 </details>
 
@@ -243,6 +526,21 @@ Blocks **1** card.
 
 - **Sarkhan, Dragon Ascendant** (rank 7614) — `sarkhan_dragon_ascendant`
   - When Sarkhan enters, you may behold a Dragon. If you do, create a Treasure token. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)
+
+</details>
+
+## blocked-by-source
+
+Blocks **1** card.
+
+- **(selector)** a target selector matching the attacking creature(s) the ability's source is blocking -- 'target creature it's blocking' -- e.g. `blocked_by: {"self_only": true}` reading combat.blockers[source]
+  <br>Why the existing vocabulary won't do: `blocked: true` matches any blocked attacker, not only the one this creature blocks; `blocking` (bool or binding) describes a blocker, not the attacker it blocks; no selector key reads the source's own block assignment
+
+<details><summary>Cards waiting on this</summary>
+
+- **Goblin Snowman** (rank 21010) — `goblin_snowman`
+  - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
+  - {T}: This creature deals 1 damage to target creature it's blocking.
 
 </details>
 
@@ -302,6 +600,22 @@ Blocks **1** card.
 
 </details>
 
+## cast-timing-restriction
+
+Blocks **1** card.
+
+- **(engine)** a card-level casting restriction limiting the spell to the combat phase before the declare-blockers step (beginning of combat or declare attackers)
+  <br>Why the existing vocabulary won't do: cast_during exists only as a condition_key read inside effects, not as a legality check on casting; cast_only_at_sorcery_speed is the opposite restriction and no rider key narrows an instant's casting window
+
+<details><summary>Cards waiting on this</summary>
+
+- **Winter's Chill** (rank 17407) — `winter_s_chill`
+  - Cast this spell only during combat before blockers are declared.
+  - X can't be greater than the number of snow lands you control.
+  - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
 ## colorless-filter
 
 Blocks **1** card.
@@ -349,6 +663,20 @@ Blocks **1** card.
 
 </details>
 
+## convoke
+
+Blocks **1** card.
+
+- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line
+  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys
+
+<details><summary>Cards waiting on this</summary>
+
+- **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
+  - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
+
+</details>
+
 ## counter-to-exile
 
 Blocks **1** card.
@@ -363,6 +691,21 @@ Blocks **1** card.
 
 </details>
 
+## damage-prevented-this-way
+
+Blocks **1** card.
+
+- **(value)** a link from a resolved prevention shield to the amount it later prevents: each time the shield installed by this spell prevents N damage, its controller creates N inkling_2_1_wb_flying tokens (a delayed trigger keyed to that specific shield, carrying the prevented amount as a value)
+  <br>Why the existing vocabulary won't do: The damage_prevented trigger event exists, but a delayed_trigger on it has no filter tying the event to the shield this spell made ("prevented this way") and no value_keys entry reads the event's prevented amount, so create_token's amount cannot be the number of damage prevented
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inkshield** (rank 806) — `inkshield`
+  - Prevent all combat damage that would be dealt to you this turn.
+  - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
+
+</details>
+
 ## damage-taken-this-turn-per-player
 
 Blocks **1** card.
@@ -374,6 +717,20 @@ Blocks **1** card.
 
 - **Spinerock Knoll** (rank 759) — `spinerock_knoll`
   - {R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn.
+
+</details>
+
+## dealt-damage-to-player-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching objects that dealt damage to a given player this turn (e.g. `dealt_damage_to: "you"`), backed by a per-turn ledger of player victim -> source oids written wherever damage is dealt to a player and cleared at cleanup
+  <br>Why the existing vocabulary won't do: `damaged_by` reads `state.damage_ledger`, which is keyed by victim permanent oid and written only on the permanent-damage path of the damage primitive; damage to a player is never recorded by source, so nothing can ask which creatures dealt damage to you. `damaged` is only 'has damage marked on it', and `damage_taken_this_turn` is a player total, not a per-source record
+
+<details><summary>Cards waiting on this</summary>
+
+- **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
+  - {T}: Destroy target creature that dealt damage to you this turn.
 
 </details>
 
@@ -477,6 +834,21 @@ Blocks **1** card.
 
 - **Utvara Hellkite** (rank 1517) — `utvara_hellkite`
   - Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.
+
+</details>
+
+## energy
+
+Blocks **1** card.
+
+- **(engine)** a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}) and an activated-ability cost `pay_energy: N` that is payable only when the controller has at least N energy and removes it
+  <br>Why the existing vocabulary won't do: add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; the cost keys remove_counters / remove_counters_from_among remove counters from permanents, not from a player, and no value key reads a player's counter total
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
+  - When this creature enters, you get {E}{E}{E} (three energy counters).
+  - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
 
 </details>
 
@@ -598,6 +970,20 @@ Blocks **1** card.
 
 </details>
 
+## grantable-player-statics
+
+Blocks **1** card.
+
+- **(static_effect)** a granted ability that carries a player-wide static (here "You can't lose the game and your opponents can't win the game") onto another permanent, read through derived abilities
+  <br>Why the existing vocabulary won't do: cant_lose_the_game and cant_win_the_game are read off printed faces by _active_player_statics, so the loader refuses them inside grant_ability: granted, they would print the line and do nothing
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
+  - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
 ## greatest-commander-mana-value
 
 Blocks **1** card.
@@ -656,6 +1042,50 @@ Blocks **1** card.
 
 </details>
 
+## keyword-counters
+
+Blocks **1** card.
+
+- **(engine)** an exalted keyword counter (122.1b): add_counters with counter "exalted" on a permanent must grant that permanent the exalted keyword for as long as the counter remains, and each such counter counts as an instance of exalted
+  <br>Why the existing vocabulary won't do: exalted exists as a keyword and grant_keyword can give it until end of turn or permanently, but that is not a counter: it is not removable/movable/proliferatable as a counter and does not stack as one instance per counter; nothing in reference says a named counter grants its keyword
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
+  - When this creature enters, you get {E}{E}{E} (three energy counters).
+  - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
+
+</details>
+
+## life-total-reduction-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement on its controller that fires whenever any life change (damage, life loss, paying life, setting life) would leave that player's life total at 0 or less: instead of that change, run an effect list on the source (here `transform` on self) and set the player's life total to a fixed value (3); then, if the source did not actually transform (e.g. it was already transformed or can't), that player loses the game
+  <br>Why the existing vocabulary won't do: `replace_life_loss` only multiplies a loss (`loss_multiplier`); `damage_life_floor` (static and op) only clamps damage to a floor of 1 and neither runs effects nor applies to life loss or payment; `lock_life_total` forbids any change; `cant_lose_the_game` prevents the loss outright. None replaces the reduction with a transform-plus-set-life and conditions a game loss on whether the transform happened
+
+<details><summary>Cards waiting on this</summary>
+
+- **Enduring Angel // Angelic Enforcer** (rank 9586) — `enduring_angel_angelic_enforcer`
+  - If your life total would be reduced to 0 or less, instead transform this creature and your life total becomes 3. Then if this creature didn't transform this way, you lose the game.
+
+</details>
+
+## living-metal
+
+Blocks **1** card.
+
+- **(keyword)** Living metal on a Vehicle: as long as it is its controller's turn, the permanent is also an artifact creature (702.161)
+  <br>Why the existing vocabulary won't do: living_metal is not in keywords; a set_types static with condition is_your_turn might add Creature but there is no evidence set_types adds rather than replaces types, and animate's your_turn_keywords is a one-shot op not a printed static; filing rather than approximating
+
+<details><summary>Cards waiting on this</summary>
+
+- **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
+  - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
+  - Living metal (During your turn, this Vehicle is also a creature.)
+
+</details>
+
 ## look-at-random-card-in-hand
 
 Blocks **1** card.
@@ -682,6 +1112,35 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## lure
+
+Blocks **1** card.
+
+- **(static_effect)** a static block requirement on the source attacker (509.1c): every creature matching a printed blocker filter (here subtypes: ["Wall"]) that is able to block this creature must do so -- Lure-style, narrowed by a `blockers` filter
+  <br>Why the existing vocabulary won't do: The `must_block` op is a one-shot on resolution with no trigger to hang it on, and the only static that reads `blockers` is `block_restriction`, which restricts who MAY block (menace, Tromokratis' `require_all`) rather than requiring blocks; no static_effect imposes a block requirement
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marble Priest** (rank 31502) — `marble_priest`
+  - All Walls able to block this creature do so.
+  - Prevent all combat damage that would be dealt to this creature by Walls.
+
+</details>
+
+## mana-ability-delayed-enters-with-counters
+
+Blocks **1** card.
+
+- **(op)** a mana-ability rider that sets up a delayed trigger on activation (no stack): 'when you next cast a creature spell this turn' (fires once, then expires at end of turn), whose effect makes THAT spell's permanent enter with N additional +1/+1 counters (a replacement on the spell, not counters added after it enters)
+  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana plus riders from add_counters/add_poison/damage/gain_life/lose_life/remove_counters, so delayed_trigger cannot ride on it; mana_grant hands over keywords only, never counters; enters_with_additional_counters is a standing static over a filter rather than a one-shot tied to the next creature spell cast this turn; and add_counters on a spell_cast delayed trigger would act on the spell on the stack, not make the permanent enter with them
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yuna, Grand Summoner** (rank 3706) — `yuna_grand_summoner`
+  - Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.
 
 </details>
 
@@ -724,6 +1183,35 @@ Blocks **1** card.
 
 - **Fall from Favor** (rank 14748) — `fall_from_favor`
   - Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch.
+
+</details>
+
+## more-than-meets-the-eye
+
+Blocks **1** card.
+
+- **(cost)** a card-level alternative cost on a transforming DFC that casts the card from hand with its back face up (converted) for the printed mana, so it resolves as the back face (702.162)
+  <br>Why the existing vocabulary won't do: alternative_cost/evoke only change the price of the front face; graveyard_cast_transformed casts transformed only from the graveyard; second_face is for MDFC/split halves that never turn over, while this card's back must also be reachable by convert (transform op), so it has to be a back_face
+
+<details><summary>Cards waiting on this</summary>
+
+- **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
+  - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
+  - Living metal (During your turn, this Vehicle is also a creature.)
+
+</details>
+
+## move-any-number-of-counters
+
+Blocks **1** card.
+
+- **(decision)** a move_counters mode where the resolving player chooses, per counter kind on the source, how many counters (0 up to the number present) to move from the first target onto the second, so any sub-multiset of the source's counters across all kinds can be moved
+  <br>Why the existing vocabulary won't do: move_counters either moves one named `counter` kind with a fixed `amount` (default all of that kind) or, with `all_kinds`, moves the entire multiset; neither lets the player pick how many of each kind, so `all_kinds` would force moving every counter and a single `counter` kind would drop the others. The may op's `x` chooses one number, not a per-kind split
+
+<details><summary>Cards waiting on this</summary>
+
+- **Resourceful Defense** (rank 1628) — `resourceful_defense`
+  - {4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.
 
 </details>
 
@@ -790,18 +1278,19 @@ Blocks **1** card.
 
 </details>
 
-## opening-hand-ability
+## opponent-choice-of-payment
 
 Blocks **1** card.
 
-- **(engine)** an ability that functions from the opening hand during game setup (103.6): after mulligans and before turn 1, each player who is not the starting player must be offered a yes/no decision for every card in hand carrying one, and answering yes must move that card from hand to the battlefield, apply its enters rider (a luck counter), and then run the follow-up effect (exile a card from your hand). It needs three new pieces -- a setup window that walks opening hands, a card-level spelling for the ability (a `begin_the_game` block, or an ability whose active_zones include `hand` with a game-start evaluation site), and a condition that can ask "you are not the starting player"
-  <br>Why the existing vocabulary won't do: `_opening_sequence` (src/commanderblitz/engine/game.py) draws STARTING_HAND, runs London mulligans, and goes straight to turn 1; it never looks at what is in anyone's opening hand, so there is no window in which a card in hand can act at all. `active_zones` defaults to `(Zone.BATTLEFIELD,)` (src/commanderblitz/cards/loader/__init__.py) and the non-battlefield zones it is used for are graveyard/exile statics and activated abilities offered by `legality._activate_zones` -- both of which run once the game is already under way, so a HAND-zone ability would have no evaluator during setup. No entry in `trigger_events` is a game-start event: the earliest is `upkeep`, which is turn 1's upkeep and therefore after the starting player has already begun, and a trigger uses the stack rather than moving its own source out of hand. No entry in `condition_keys` asks who is on the play: `is_active_player` and `is_your_turn` are questions about the current turn, and both read true on the non-starting player's own turn, so neither can gate on "you're not the starting player". `put_onto_battlefield` can move a card, but it is a resolution op and there is nothing at setup to resolve it.
+- **(decision)** per target, the target's controller chooses among paying {2}, paying {1}, or paying nothing, with three distinct outcomes: nothing -> a delayed destroy at end of combat; {1} -> prevent all combat damage dealt to and by that creature this combat; {2} -> nothing
+  <br>Why the existing vocabulary won't do: may takes a single pay and player, so a nested may-pay-{2} else may-pay-{1} is an approximation of a single tiered choice; additionally the delay op's steps and prevent_damage_permanent's durations are not documented to include end of combat / this combat, and X variable-count targeting of attacking creatures with a per-target controller payment is not shown anywhere in the reference
 
 <details><summary>Cards waiting on this</summary>
 
-- **Gemstone Caverns** (rank 180) — `gemstone_caverns`
-  - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
-  - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+- **Winter's Chill** (rank 17407) — `winter_s_chill`
+  - Cast this spell only during combat before blockers are declared.
+  - X can't be greater than the number of snow lands you control.
+  - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
 
 </details>
 
@@ -833,6 +1322,34 @@ Blocks **1** card.
 
 </details>
 
+## played-or-cast-from-non-hand-this-turn
+
+Blocks **1** card.
+
+- **(value)** a turn-ledger value (or condition) counting the lands a player played and the spells a player cast this turn from a zone other than their hand (graveyard, exile, library top, command zone), e.g. {"plays_this_turn": {"player": "you", "except_zones": ["hand"], "lands": true, "spells": true}}, readable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: spells_cast_this_turn takes a filter, but it is matched by _matches_printed against the spell's printed face and the ledger (spells_cast_ids) records no origin zone, so it cannot tell a hand cast from a graveyard/exile/command-zone cast; no value_key records land plays at all, let alone their origin zone; cast_from_hand / cast_from_graveyard conditions only describe the card's own cast, and has_turn_flag would need an unprinted trigger to set the flag
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spider-Man 2099** (rank 7924) — `spider_man_2099`
+  - At the beginning of your end step, if you've played a land or cast a spell this turn from anywhere other than your hand, Spider-Man 2099 deals damage equal to his power to any target.
+
+</details>
+
+## player-damage-prevention
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
+  - If a creature would deal damage to you, prevent 1 of that damage.
+
+</details>
+
 ## players-dealt-combat-damage-by-source
 
 Blocks **1** card.
@@ -844,6 +1361,20 @@ Blocks **1** card.
 
 - **Steel Hellkite** (rank 1137) — `steel_hellkite`
   - {X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn.
+
+</details>
+
+## plot
+
+Blocks **1** card.
+
+- **(op)** an op (or an `exile` option) that exiles a chosen card from a zone other than the stack -- here a nonland card with mana value 3 or less from your hand -- and makes it plotted: the standing 702.171a permission to cast it as a sorcery on a later turn without paying its mana cost (playable_duration 'later_turns' + playable_free + playable_sorcery_only), emitting the 'plotted' event
+  <br>Why the existing vocabulary won't do: `grant_plot` takes only `sid`/`target` and marks a resolving spell on the stack (Lilah), turning it into the plotted permission in stack._place_after_resolution; it cannot reach a card in hand. `exile` with `playable: "later_turns"` gives the later-turn start but no way to set `playable_free` or `playable_sorcery_only`, so the card would be castable at its full price and at instant speed -- a different card. `cast_from_hand`/`play_exiled` cast now, not later.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jace Reawakened** (rank 7506) — `jace_reawakened`
+  - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
 
 </details>
 
@@ -861,6 +1392,20 @@ Blocks **1** card.
 
 </details>
 
+## prevent-noncombat-damage
+
+Blocks **1** card.
+
+- **(static_effect)** a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crystal Barricade** (rank 2070) — `crystal_barricade`
+  - Prevent all noncombat damage that would be dealt to other creatures you control.
+
+</details>
+
 ## put-counters-cost
 
 Blocks **1** card.
@@ -874,6 +1419,20 @@ Blocks **1** card.
   - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
   - {2}, {T}, Put a page counter on this artifact: Draw a card.
   - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
+
+</details>
+
+## raccoon-3-3-g
+
+Blocks **1** card.
+
+- **(token)** a 3/3 green Raccoon creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Raccoon; the nearest 3/3 green vanilla tokens (ape_3_3_g, badger_3_3_g, beast_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) carry the wrong creature type, which matters to type-matters cards. The rest of the card is expressible: an add_subtype static and a grant_ability static, each with condition is_your_turn, plus you_gain_life triggers with nth: 1 at levels 2 and 3
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
+  - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
 
 </details>
 
@@ -906,6 +1465,20 @@ Blocks **1** card.
 
 </details>
 
+## repartee
+
+Blocks **1** card.
+
+- **(trigger_event)** a spell_cast trigger filter clause (e.g. `targets: {types: ["Creature"]}` in the trigger `filter`) that matches the cast spell by what it targets, evaluated once when the trigger is collected and not re-checked on resolution
+  <br>Why the existing vocabulary won't do: The only way to read a cast spell's targets is the `spell_targets` binding inside a trigger `condition` (Orvar, the All-Form), but a condition is an intervening-if that 603.4 re-checks on resolution: if the targeted creature leaves in response, the printed Repartee trigger still gives the counter while the condition form does nothing. `trigger_filter_keys` has no clause about a spell's targets, and `targeted_by` belongs to the per-permanent becomes_target event.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scolding Administrator** (rank 18369) — `scolding_administrator`
+  - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
+
+</details>
+
 ## reveal-until-tapped
 
 Blocks **1** card.
@@ -917,6 +1490,20 @@ Blocks **1** card.
 
 - **Clifftop Lookout** (rank 2637) — `clifftop_lookout`
   - When this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.
+
+</details>
+
+## search-aura-attached
+
+Blocks **1** card.
+
+- **(op)** a search_library (or put_onto_battlefield) option `attached_to: <selector>` that puts the found Aura onto the battlefield already attached to the named host (303.4f), together with a selector key `could_enchant: <binding>` that matches only Aura cards whose printed enchant restriction (enchant creature, enchant creature you control, enchant green creature, ...) the host satisfies, so an 'enchant land' or 'enchant artifact' Aura cannot be found
+  <br>Why the existing vocabulary won't do: search_library's options carry destination/tapped/counters but no attach-on-entry host, and a search followed by the `attach` op lets the Aura enter unattached first, which is wrong for a non-cast Aura (303.4f) and leaves the window for it to hit the graveyard; create_token's `attached_to` exists only for tokens. selector_keys have subtypes: ["Aura"] but nothing that reads an Aura's enchant restriction against a specific creature, so 'that could enchant that creature' would be dropped
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sovereigns of Lost Alara** (rank 10579) — `sovereigns_of_lost_alara`
+  - Whenever a creature you control attacks alone, you may search your library for an Aura card that could enchant that creature, put it onto the battlefield attached to that creature, then shuffle.
 
 </details>
 
@@ -1067,6 +1654,20 @@ Blocks **1** card.
 
 </details>
 
+## teammates
+
+Blocks **1** card.
+
+- **(selector)** a player spec "teammate" (each player on your team other than you, rule 810 Two-Headed Giant / team variants) usable as `players` in `for_each_player` and as `controller` on `copy_permanent`, so the copy is created under each teammate's control; it resolves to no players in free-for-all
+  <br>Why the existing vocabulary won't do: Player specs offer only you, opponent, any and targets; the engine has no team concept, so every other player is an opponent and `for_each_player` over "opponent" would hand copies to enemies. The "You have hexproof" line is expressible with the `player_hexproof` static, and the "if it's not a token" intervening if with a self `is_token` check, but the card cannot be written partially
+
+<details><summary>Cards waiting on this</summary>
+
+- **Imperial Mask** (rank 26785) — `imperial_mask`
+  - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
+
+</details>
+
 ## trigger-filter-any-of
 
 Blocks **1** card.
@@ -1081,6 +1682,34 @@ Blocks **1** card.
 
 </details>
 
+## unattach-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost "Unattach <this Equipment>" on an ability granted to the equipped creature: paying it unattaches the named Equipment (the granting source) from the creature, and the cost is unpayable once the Equipment is no longer attached to it
+  <br>Why the existing vocabulary won't do: cost_keys has tap, sacrifice, exile_self, return_to_hand and the rest but nothing that unattaches; the `unattach` op exists, but putting it in the granted ability's effects moves the payment to resolution and lets the ability be activated repeatedly (and after the Powder has moved away), which the packet notes forbid. The rest is expressible: a `grant_ability` static with affects {attached: true} granting an activated ability whose effect is `prevent_damage_permanent` on self for this turn, combat only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blinding Powder** (rank 17717) — `blinding_powder`
+  - Equipped creature has "Unattach Blinding Powder: Prevent all combat damage that would be dealt to this creature this turn."
+
+</details>
+
+## unattacked-opponent-condition
+
+Blocks **1** card.
+
+- **(value)** an intervening-if condition (or value) on a 'player attacks you' trigger that asks whether the attacking player has an opponent other than you who is not being attacked this combat -- i.e. the count of the attacking player's opponents, excluding the trigger's controller, that no attacking creature (or their planeswalkers/battles) is attacking, compared > 0
+  <br>Why the existing vocabulary won't do: creatures_attack_player with defending: you covers 'a player attacks you', but condition_keys and value_keys have nothing that enumerates the active player's opponents and reads who is being attacked; attacked_this_turn / attackers_this_turn / count over {binding: attackers} count creatures, not unattacked defending players, and selectors are object-based so no player-level 'not being attacked' filter exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
+  - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
 ## value-locked-on-cast
 
 Blocks **1** card.
@@ -1092,5 +1721,35 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
+
+</details>
+
+## venture
+
+Blocks **1** card.
+
+- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening
+  <br>Why the existing vocabulary won't do: The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Keen-Eared Sentry** (rank 19644) — `keen_eared_sentry`
+  - Each opponent can't venture into the dungeon more than once each turn.
+
+</details>
+
+## x-maximum
+
+Blocks **1** card.
+
+- **(engine)** a card-level cap on the chosen value of X, read at cast time from a value (here {"count": {"zone": "battlefield", "controller": "you", "types": ["Land"], "supertypes": ["Snow"]}}), so the cast offers no X above it
+  <br>Why the existing vocabulary won't do: No card_level_cost_key or rider key bounds X; x_value is an activated-ability cost key and cost_reduction only discounts, so X is unbounded and the spell would be strictly better than printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Winter's Chill** (rank 17407) — `winter_s_chill`
+  - Cast this spell only during combat before blockers are declared.
+  - X can't be greater than the number of snow lands you control.
+  - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
 
 </details>

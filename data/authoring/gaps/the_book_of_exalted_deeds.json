@@ -1,0 +1,22 @@
+{
+  "card_id": "the_book_of_exalted_deeds",
+  "name": "The Book of Exalted Deeds",
+  "oracle_text": "At the beginning of your end step, if you gained 3 or more life this turn, create a 3/3 white Angel creature token with flying.\n{W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains \"You can't lose the game and your opponents can't win the game.\" Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains \"You can't lose the game and your opponents can't win the game.\" Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "grantable-player-statics",
+      "kind": "static_effect",
+      "what": "a granted ability that carries a player-wide static (here \"You can't lose the game and your opponents can't win the game\") onto another permanent, read through derived abilities",
+      "why_existing_wont_do": "cant_lose_the_game and cant_win_the_game are read off printed faces by _active_player_statics, so the loader refuses them inside grant_ability: granted, they would print the line and do nothing"
+    }
+  ],
+  "closest_existing": [
+    "grant_ability",
+    "cant_lose_the_game",
+    "cant_win_the_game"
+  ],
+  "confidence": "high"
+}

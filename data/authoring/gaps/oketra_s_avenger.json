@@ -1,0 +1,21 @@
+{
+  "card_id": "oketra_s_avenger",
+  "name": "Oketra's Avenger",
+  "oracle_text": "You may exert this creature as it attacks. When you do, prevent all combat damage that would be dealt to it this turn. (An exerted creature won't untap during your next untap step.)",
+  "blocked_sentences": [
+    "You may exert this creature as it attacks. When you do, prevent all combat damage that would be dealt to it this turn"
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a `combat_only: true` option on the `prevent_damage_permanent` op (dealt: \"to\", duration: \"this_turn\"), so a resolving ability can install a this-turn shield on a permanent that stops only combat damage dealt to it -- the exert half is already expressible as Combat Celebrant writes it (may { set_turn_flag exerted, skip_untap self } on an `attacks` self trigger)",
+      "why_existing_wont_do": "`prevent_damage_permanent` prevents ALL damage dealt to the object this turn, so a post-combat burn spell would also be prevented (a strictly better card); the `prevent_damage` static has `combat_only` but is continuous while the permanent stands, cannot be installed for \"this turn\" by a resolving ability, and its conditions (static_condition_keys) cannot read the `exerted` turn flag; the one-shot `grant_ability` op grants only triggered or activated abilities, not a static"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "fleeting_flight",
+  "name": "Fleeting Flight",
+  "oracle_text": "Put a +1/+1 counter on target creature. It gains flying until end of turn. Prevent all combat damage that would be dealt to it this turn.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to it this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a combat-only form of the one-shot `prevent_damage_permanent` op (e.g. `combat_only: true` beside `dealt: \"to\"` and `duration: \"this_turn\"`), installed on the spell's target at resolution, that prevents combat damage dealt to that permanent this turn while letting noncombat damage through",
+      "why_existing_wont_do": "`prevent_damage_permanent` takes only objects, dealt and duration and its shield stops all damage, combat and noncombat (a strictly better card); `combat_only` exists only on the `prevent_damage` static, which lives on a printed permanent and cannot be installed on a target by a resolving spell; the `grant_ability` op grants only triggered or activated abilities, not a static. The first two sentences are expressible (add_counters +1/+1 on the target, grant_keyword flying until end of turn)"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "prevent_damage",
+    "grant_ability"
+  ],
+  "confidence": "high"
+}

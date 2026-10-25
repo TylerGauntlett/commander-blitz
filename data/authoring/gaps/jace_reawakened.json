@@ -1,0 +1,16 @@
+{
+  "card_id": "jace_reawakened",
+  "name": "Jace Reawakened",
+  "oracle_text": "You can't cast Jace Reawakened during your first, second, or third turns of the game.\n+1: Draw a card, then discard a card.\n+1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.\n−6: Until end of turn, whenever you cast a spell, copy it. You may choose new targets for the copy.",
+  "blocked_sentences": [
+    "+1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted."
+  ],
+  "needs": [{
+    "capability": "plot",
+    "kind": "op",
+    "what": "an op (or an `exile` option) that exiles a chosen card from a zone other than the stack -- here a nonland card with mana value 3 or less from your hand -- and makes it plotted: the standing 702.171a permission to cast it as a sorcery on a later turn without paying its mana cost (playable_duration 'later_turns' + playable_free + playable_sorcery_only), emitting the 'plotted' event",
+    "why_existing_wont_do": "`grant_plot` takes only `sid`/`target` and marks a resolving spell on the stack (Lilah), turning it into the plotted permission in stack._place_after_resolution; it cannot reach a card in hand. `exile` with `playable: \"later_turns\"` gives the later-turn start but no way to set `playable_free` or `playable_sorcery_only`, so the card would be castable at its full price and at instant speed -- a different card. `cast_from_hand`/`play_exiled` cast now, not later."
+  }],
+  "closest_existing": ["grant_plot", "exile"],
+  "confidence": "high"
+}

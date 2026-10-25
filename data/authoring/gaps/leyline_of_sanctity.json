@@ -1,0 +1,23 @@
+{
+  "card_id": "leyline_of_sanctity",
+  "name": "Leyline of Sanctity",
+  "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)",
+  "blocked_sentences": [
+    "If this card is in your opening hand, you may begin the game with it on the battlefield."
+  ],
+  "needs": [
+    {
+      "capability": "opening_hand_ability",
+      "kind": "engine",
+      "what": "an ability that functions from the opening hand during game setup (103.6): after mulligans and before the first turn, each player is offered a yes/no decision for every card in their opening hand carrying the ability, and yes moves that card from hand directly onto the battlefield (not cast, no stack). Needs a setup window that walks opening hands plus a card-level spelling for the ability (e.g. `begin_the_game: true`)",
+      "why_existing_wont_do": "No key in `card_level_rider_keys`, `ability_keys` or `trigger_events` refers to game start: the earliest trigger is `upkeep`, which is during turn 1 and would use the stack rather than move the source from hand. `put_onto_battlefield` is a resolution op with nothing at setup to resolve it, and `active_zones: [\"hand\"]` only covers activated abilities offered once the game is under way. The second line is expressible (`player_hexproof` static with `affects_player: \"you\"`), but the card is only partly expressible, so it is recorded here rather than as a partial answer. Same capability as gemstone_caverns' gap"
+    }
+  ],
+  "closest_existing": [
+    "put_onto_battlefield",
+    "active_zones",
+    "upkeep",
+    "player_hexproof"
+  ],
+  "confidence": "high"
+}

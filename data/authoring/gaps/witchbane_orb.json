@@ -1,0 +1,18 @@
+{
+  "card_id": "witchbane_orb",
+  "name": "Witchbane Orb",
+  "oracle_text": "When this artifact enters, destroy all Curses attached to you.\nYou have hexproof. (You can't be the target of spells or abilities your opponents control, including Aura spells.)",
+  "blocked_sentences": [
+    "When this artifact enters, destroy all Curses attached to you"
+  ],
+  "needs": [
+    {
+      "capability": "attached_to_player_selector",
+      "kind": "selector",
+      "what": "an object selector key that matches permanents (Auras) attached to a given player, e.g. {\"zone\": \"battlefield\", \"subtypes\": [\"Curse\"], \"attached_to_player\": \"you\"}, reading GameObject.attached_to_player against a player spec",
+      "why_existing_wont_do": "selector key `attached` only matches the object the ability's source is attached to (source.attached_to); `enchanted_player` is a player spec read off the source Aura, not a filter on other objects. Nothing filters objects by which player they enchant, so `destroy` cannot be aimed at 'Curses attached to you' without also hitting Curses on opponents"
+    }
+  ],
+  "closest_existing": ["attached", "enchanted_player"],
+  "confidence": "high"
+}

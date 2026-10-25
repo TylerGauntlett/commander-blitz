@@ -1,0 +1,18 @@
+{
+  "card_id": "crystal_barricade",
+  "name": "Crystal Barricade",
+  "oracle_text": "Defender (This creature can't attack.)\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)\nPrevent all noncombat damage that would be dealt to other creatures you control.",
+  "blocked_sentences": [
+    "Prevent all noncombat damage that would be dealt to other creatures you control."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_noncombat_damage",
+      "kind": "static_effect",
+      "what": "a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage",
+      "why_existing_wont_do": "The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static"
+    }
+  ],
+  "closest_existing": ["prevent_damage", "combat_only", "player_hexproof"],
+  "confidence": "high"
+}

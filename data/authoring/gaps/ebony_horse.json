@@ -1,0 +1,22 @@
+{
+  "card_id": "ebony_horse",
+  "name": "Ebony Horse",
+  "oracle_text": "{2}, {T}: Untap target attacking creature you control. Prevent all combat damage that would be dealt to and dealt by that creature this turn.",
+  "blocked_sentences": [
+    "{2}, {T}: Untap target attacking creature you control. Prevent all combat damage that would be dealt to and dealt by that creature this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a `combat_only: true` option on the `prevent_damage_permanent` op (a field on the permanent shield read by the damage primitives), so a resolving activated ability can install a this-turn shield that stops only COMBAT damage dealt to and dealt by one targeted permanent",
+      "why_existing_wont_do": "`untap` on a target with selector {controller: you, attacking: true} covers the first sentence, and `prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but stops ALL damage (op_options are only dealt, duration, objects), so noncombat damage to or by the creature would also be prevented; `combat_only` exists only on the `prevent_damage` static, which is continuous on a printed permanent, only faces 'to', and cannot be installed on a target for a turn by an activated ability"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "prevent_damage",
+    "untap"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+  "card_id": "rammas_echor_ancient_shield",
+  "name": "Rammas Echor, Ancient Shield",
+  "oracle_text": "Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender.\nAt the beginning of combat on your turn, creatures you control with defender gain exalted until end of turn. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+  "blocked_sentences": [
+    "Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender"
+  ],
+  "needs": [
+    {
+      "capability": "wall-0-3-w-defender-token",
+      "kind": "token",
+      "what": "a 0/3 white Wall creature token with defender",
+      "why_existing_wont_do": "token_ids is a closed list and has no Wall token; plant_0_1_g is a 0/1 green Plant without defender, so no existing token matches. The rest of the card is expressible: a spell_cast trigger with nth: 2 and controller you, draw then create_token; and a begin_combat trigger on your turn with grant_keyword exalted over creatures you control with keywords [defender]"
+    }
+  ],
+  "closest_existing": [
+    "plant_0_1_g"
+  ],
+  "confidence": "high"
+}

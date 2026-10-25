@@ -1046,6 +1046,37 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aegis_of_the_gods",
+      "mana_cost": "{1}{W}",
+      "name": "Aegis of the Gods",
+      "oracle_text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -2176,6 +2207,31 @@
       "colors": [
         "W"
       ],
+      "id": "akrasan_squire",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{W}",
+      "name": "Akrasan Squire",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "akroma_s_will",
       "mana_cost": "{3}{W}",
       "name": "Akroma's Will",
@@ -3067,6 +3123,108 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Increment",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "mana_spent_of": {
+                  "binding": "subject"
+                }
+              },
+              "right": {
+                "min": [
+                  {
+                    "power_of": {
+                      "self": true
+                    }
+                  },
+                  {
+                    "toughness_of": {
+                      "self": true
+                    }
+                  }
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "fractal",
+              "op": "create_token",
+              "token": "fractal_0_0_gu"
+            },
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "binding": "fractal",
+                "count": "all"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it had one or more counters on it, create a 0/0 green and blue Fractal creature token, then put this creature's counters on that token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ambitious_augmenter",
+      "mana_cost": "{G}",
+      "name": "Ambitious Augmenter",
+      "oracle_text": "Increment (Whenever you cast a spell, if the amount of mana you spent is greater than this creature's power or toughness, put a +1/+1 counter on this creature.)\nWhen this creature dies, if it had one or more counters on it, create a 0/0 green and blue Fractal creature token, then put this creature's counters on that token.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Turtle",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -4660,6 +4818,73 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control attacks alone, you may tap target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angelic_benediction",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Angelic Benediction",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever a creature you control attacks alone, you may tap target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -6825,6 +7050,46 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "ardent_plea",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Ardent Plea",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -8135,6 +8400,78 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "cat_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life for the first time each turn, create a 1/1 white Cat creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life",
+            "nth": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "subtypes": [
+                  "Cleric"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{W}: Another target Cleric gains lifelink until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "attended_healer",
+      "mana_cost": "{3}{W}",
+      "name": "Attended Healer",
+      "oracle_text": "Whenever you gain life for the first time each turn, create a 1/1 white Cat creature token.\n{2}{W}: Another target Cleric gains lifelink until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -8725,6 +9062,32 @@
       "subtypes": [
         "Bird",
         "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aven_squire",
+      "keywords": [
+        "flying",
+        "exalted"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Aven Squire",
+      "oracle_text": "Flying\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Soldier"
       ],
       "toughness": 1,
       "types": [
@@ -10700,6 +11063,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks alone, it gains lifelink until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "battlegrace_angel",
+      "keywords": [
+        "flying",
+        "exalted"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Battlegrace Angel",
+      "oracle_text": "Flying\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever a creature you control attacks alone, it gains lifelink until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -12575,6 +12994,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "extorted",
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "binding": "extorted"
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{W/B}"
+              },
+              "prompt": "Extort: pay {W/B}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Extort",
+          "trigger": {
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "blind_obedience",
+      "mana_cost": "{1}{W}",
+      "name": "Blind Obedience",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nArtifacts and creatures your opponents control enter tapped.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -13096,6 +13571,31 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodletting",
+      "mana_cost": "{B}",
+      "name": "Bloodletting",
+      "oracle_text": "Each opponent loses 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -17076,6 +17576,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "any_types": [
+                    "Artifact",
+                    "Creature"
+                  ],
+                  "controller": "you",
+                  "count": 1,
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice an artifact or creature to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may sacrifice an artifact or creature. If you do, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "self_only": true
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control dies, if it had counters on it, put its counters on this creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "buzzard_wasp_colony",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Buzzard-Wasp Colony",
+      "oracle_text": "Flying\nWhen this creature enters, you may sacrifice an artifact or creature. If you do, draw a card.\nWhenever another creature you control dies, if it had counters on it, put its counters on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Insect"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}",
             "tap": true
@@ -19335,6 +19927,41 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cathedral_of_war",
+      "keywords": [
+        "exalted"
+      ],
+      "name": "Cathedral of War",
+      "oracle_text": "This land enters tapped.\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{T}: Add {C}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -22724,6 +23351,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Cleric you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Cleric"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life for the first time each turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "cleric_of_life_s_bond",
+      "mana_cost": "{W}{B}",
+      "name": "Cleric of Life's Bond",
+      "oracle_text": "Whenever another Cleric you control enters, you gain 1 life.\nWhenever you gain life for the first time each turn, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -25795,6 +26492,32 @@
         "Bird"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "court_archers",
+      "keywords": [
+        "reach",
+        "exalted"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Court Archers",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Archer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -29194,6 +29917,73 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "attacking": true
+                  },
+                  {
+                    "blocking": true
+                  }
+                ],
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{W}, {T}: This creature deals 1 damage to target attacking or blocking creature."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dawnray_archer",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Dawnray Archer",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{W}, {T}: This creature deals 1 damage to target attacking or blocking creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Archer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -29807,6 +30597,57 @@
       "source": "auto",
       "subtypes": [
         "Cockatrice"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you gain life for the first time each turn, return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "deathless_knight",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{B/G}{B/G}{B/G}{B/G}",
+      "name": "Deathless Knight",
+      "oracle_text": "Haste\nWhen you gain life for the first time each turn, return this card from your graveyard to your hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Skeleton",
+        "Knight"
       ],
       "toughness": 2,
       "types": [
@@ -31600,6 +32441,60 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Immune — Prevent all combat damage that would be dealt to Diamond Weapon."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "count": {
+          "any_types": [
+            "Artifact",
+            "Battle",
+            "Creature",
+            "Enchantment",
+            "Land",
+            "Planeswalker"
+          ],
+          "controller": "you",
+          "zone": "graveyard"
+        }
+      },
+      "id": "diamond_weapon",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{7}{G}{G}",
+      "name": "Diamond Weapon",
+      "oracle_text": "This spell costs {1} less to cast for each permanent card in your graveyard.\nReach\nImmune — Prevent all combat damage that would be dealt to Diamond Weapon.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -32202,6 +33097,176 @@
         "Djinn"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to attacking creatures you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dolmen_gate",
+      "mana_cost": "{2}",
+      "name": "Dolmen Gate",
+      "oracle_text": "Prevent all combat damage that would be dealt to attacking creatures you control.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "not_types": [
+                    "Creature"
+                  ],
+                  "target": "t1",
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "animate",
+                  "power": 0,
+                  "subtypes": [
+                    "Robot"
+                  ],
+                  "toughness": 0,
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Put three +1/+1 counters on target artifact you control. If it isn't a creature, it becomes a 0/0 Robot creature in addition to its other types. Activate only as a sorcery."
+        },
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever an artifact you control is put into a graveyard from the battlefield, if it had counters on it, put those counters on up to one target artifact or creature you control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "donatello_mutant_mechanic",
+      "mana_cost": "{3}{U}",
+      "name": "Donatello, Mutant Mechanic",
+      "oracle_text": "{T}: Put three +1/+1 counters on target artifact you control. If it isn't a creature, it becomes a 0/0 Robot creature in addition to its other types. Activate only as a sorcery.\nWhenever an artifact you control is put into a graveyard from the battlefield, if it had counters on it, put those counters on up to one target artifact or creature you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Ninja",
+        "Turtle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -34728,6 +35793,32 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "duskmantle_prowler",
+      "keywords": [
+        "haste",
+        "exalted"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Duskmantle Prowler",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -34742,6 +35833,49 @@
         "Zombie"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "duty_bound_dead",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{B}",
+      "name": "Duty-Bound Dead",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{3}{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Skeleton"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -38702,6 +39836,34 @@
       ]
     },
     {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "ethercaste_knight",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{W}{U}",
+      "name": "Ethercaste Knight",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_spells": {
@@ -38737,6 +39899,40 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to this creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "everdawn_champion",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Everdawn Champion",
+      "oracle_text": "Prevent all combat damage that would be dealt to this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -40995,6 +42191,110 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Mentor",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "any"
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control dies, if it had counters on it, create X tapped 2/1 white and black Inkling creature tokens with flying, where X is the number of counters it had on it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "felisa_fang_of_silverquill",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{B}",
+      "name": "Felisa, Fang of Silverquill",
+      "oracle_text": "Flying\nMentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nWhenever a nontoken creature you control dies, if it had counters on it, create X tapped 2/1 white and black Inkling creature tokens with flying, where X is the number of counters it had on it.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -41945,6 +43245,74 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks alone, if it's the first combat phase of the turn, untap that creature. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cmp": "==",
+                  "left": {
+                    "count": {
+                      "binding": "attackers"
+                    }
+                  },
+                  "right": {
+                    "const": 1
+                  }
+                },
+                {
+                  "cmp": "==",
+                  "left": {
+                    "combats_this_turn": true
+                  },
+                  "right": {
+                    "const": 1
+                  }
+                }
+              ]
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "finest_hour",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{2}{G}{W}{U}",
+      "name": "Finest Hour",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever a creature you control attacks alone, if it's the first combat phase of the turn, untap that creature. After this phase, there is an additional combat phase.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -42543,6 +43911,46 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Sliver"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "exalted"
+          ],
+          "kind": "static",
+          "text": "Sliver creatures you control have exalted"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "first_sliver_s_chosen",
+      "mana_cost": "{4}{W}",
+      "name": "First Sliver's Chosen",
+      "oracle_text": "Sliver creatures you control have exalted. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Sliver"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -45496,6 +46904,55 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard"
+            }
+          ],
+          "kind": "activated",
+          "text": "{U}, {T}: Draw a card, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "frontline_sage",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Frontline Sage",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{U}, {T}: Draw a card, then discard a card.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -46914,6 +48371,74 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "shroud"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has shroud"
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to equipped creature"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "general_s_kabuto",
+      "mana_cost": "{4}",
+      "name": "General's Kabuto",
+      "oracle_text": "Equipped creature has shroud. (It can't be the target of spells or abilities.)\nPrevent all combat damage that would be dealt to equipped creature.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -50019,6 +51544,32 @@
         "Goblin"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_champion",
+      "keywords": [
+        "haste",
+        "exalted"
+      ],
+      "mana_cost": "{R}",
+      "name": "Goblin Champion",
+      "oracle_text": "Haste\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -53612,6 +55163,43 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to this creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "guard_gomazoa",
+      "keywords": [
+        "defender",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Guard Gomazoa",
+      "oracle_text": "Defender, flying\nPrevent all combat damage that would be dealt to this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Jellyfish"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -53631,6 +55219,32 @@
         "Cat"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "guardians_of_akrasa",
+      "keywords": [
+        "defender",
+        "exalted"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Guardians of Akrasa",
+      "oracle_text": "Defender (This creature can't attack.)\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -58511,6 +60125,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another creature you control dies, if it had counters on it, put its counters on up to one target creature you control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "host_of_the_hereafter",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Host of the Hereafter",
+      "oracle_text": "This creature enters with two +1/+1 counters on it.\nWhenever this creature or another creature you control dies, if it had counters on it, put its counters on up to one target creature you control.",
+      "power": 2,
+      "replacements": [
+        {
+          "amount": 2,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Warlock"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -61977,6 +63666,74 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature dies, if it had counters on it, put those counters on target creature you control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "iron_apprentice",
+      "mana_cost": "{1}",
+      "name": "Iron Apprentice",
+      "oracle_text": "This creature enters with a +1/+1 counter on it.\nWhen this creature dies, if it had counters on it, put those counters on target creature you control.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 0,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -67510,6 +69267,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "B"
+          ],
+          "kind": "static",
+          "text": "Protection from black"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "knight_of_glory",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Knight of Glory",
+      "oracle_text": "Protection from black (This creature can't be blocked, targeted, dealt damage, or enchanted by anything black.)\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "W"
+          ],
+          "kind": "static",
+          "text": "Protection from white"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "knight_of_infamy",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Knight of Infamy",
+      "oracle_text": "Protection from white (This creature can't be blocked, targeted, dealt damage, or enchanted by anything white.)\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -69542,6 +71375,47 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life for the first time each turn, this creature becomes prepared.",
+          "trigger": {
+            "event": "you_gain_life",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "leech_collector_bloodletting",
+      "mana_cost": "{1}{B}",
+      "name": "Leech Collector // Bloodletting",
+      "oracle_text": "Whenever you gain life for the first time each turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "bloodletting",
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -72221,6 +74095,73 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "combat_only": true,
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all combat damage that would be dealt to attacking artifact creatures you control."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more artifact creatures you control enter, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "losheel_clockwork_scholar",
+      "mana_cost": "{2}{W}",
+      "name": "Losheel, Clockwork Scholar",
+      "oracle_text": "Prevent all combat damage that would be dealt to attacking artifact creatures you control.\nWhenever one or more artifact creatures you control enter, draw a card. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -83480,6 +85421,73 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "owner",
+                "controller": {
+                  "binding": "defender"
+                },
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Nefarox attacks alone, defending player sacrifices a creature of their choice.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nefarox_overlord_of_grixis",
+      "keywords": [
+        "flying",
+        "exalted"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Nefarox, Overlord of Grixis",
+      "oracle_text": "Flying\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever Nefarox attacks alone, defending player sacrifices a creature of their choice.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -84432,6 +86440,112 @@
         "Vampire"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Yannik, Scavenging Sentinel"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Yannik, Scavenging Sentinel into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Yannik, Scavenging Sentinel (When this creature enters, target player may put Yannik into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control leaves the battlefield, if it had one or more counters on it, you draw a card and you lose 1 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nikara_lair_scavenger",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Nikara, Lair Scavenger",
+      "oracle_text": "Partner with Yannik, Scavenging Sentinel (When this creature enters, target player may put Yannik into their hand from their library, then shuffle.)\nMenace\nWhenever another creature you control leaves the battlefield, if it had one or more counters on it, you draw a card and you lose 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -89812,6 +91926,31 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "outrider_of_jhess",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Outrider of Jhess",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -96095,6 +98234,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice this creature: Destroy target artifact or enchantment."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "qasali_pridemage",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{G}{W}",
+      "name": "Qasali Pridemage",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{1}, Sacrifice this creature: Destroy target artifact or enchantment.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -96652,6 +98855,70 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks alone, it gains double strike until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "rafiq_of_the_many",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Rafiq of the Many",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever a creature you control attacks alone, it gains double strike until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -97592,6 +99859,53 @@
         "Dinosaur"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Aura"
+            ],
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "exalted"
+          ],
+          "kind": "static",
+          "text": "Auras you control have exalted."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rashel_fist_of_torm",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Rashel, Fist of Torm",
+      "oracle_text": "Double strike\nAuras you control have exalted. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -99002,6 +101316,137 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "flying",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "lifelink",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Survival — At the beginning of your second main phase, if this creature is tapped, put a flying, lifelink, or +1/+1 counter on it.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "self_only": true,
+                "tapped": true,
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "postcombat_main",
+            "max_per_turn": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another creature you control dies, if it had counters on it, put those counters on up to one target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "reluctant_role_model",
+      "mana_cost": "{1}{W}",
+      "name": "Reluctant Role Model",
+      "oracle_text": "Survival — At the beginning of your second main phase, if this creature is tapped, put a flying, lifelink, or +1/+1 counter on it.\nWhenever this creature or another creature you control dies, if it had counters on it, put those counters on up to one target creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Survivor"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -100101,6 +102546,53 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you gain 3 life",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "rhox_bodyguard",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{3}{G}{W}",
+      "name": "Rhox Bodyguard",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhen this creature enters, you gain 3 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Monk",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -100119,6 +102611,32 @@
         "Warrior"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rhox_charger",
+      "keywords": [
+        "trample",
+        "exalted"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Rhox Charger",
+      "oracle_text": "Trample\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Soldier"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -108082,6 +110600,31 @@
       "colors": [
         "B"
       ],
+      "id": "servant_of_nefarox",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Servant of Nefarox",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "id": "severed_legion",
       "keywords": [
         "fear"
@@ -111141,6 +113684,107 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{U}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "shroud"
+              ],
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{U}: This creature gains shroud until end of turn. (It can't be the target of spells or abilities.)"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sighted_caste_sorcerer",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Sighted-Caste Sorcerer",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{U}: This creature gains shroud until end of turn. (It can't be the target of spells or abilities.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard",
+        "Sorcerer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sigiled_behemoth",
+      "keywords": [
+        "exalted"
+      ],
+      "mana_cost": "{4}{G}{W}",
+      "name": "Sigiled Behemoth",
+      "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sigiled_paladin",
+      "keywords": [
+        "first_strike",
+        "exalted"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Sigiled Paladin",
+      "oracle_text": "First strike\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
       ],
       "toughness": 2,
       "types": [
@@ -116622,6 +119266,39 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spirit_of_the_hearth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Spirit of the Hearth",
+      "oracle_text": "Flying\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Spirit"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -119847,6 +122524,48 @@
         "Hydra"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "exalted"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control have exalted."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sublime_archangel",
+      "keywords": [
+        "flying",
+        "exalted"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Sublime Archangel",
+      "oracle_text": "Flying\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nOther creatures you control have exalted. (If a creature has multiple instances of exalted, each triggers separately.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -142105,6 +144824,36 @@
     },
     {
       "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "waveskimmer_aven",
+      "keywords": [
+        "flying",
+        "exalted"
+      ],
+      "mana_cost": "{2}{G}{W}{U}",
+      "name": "Waveskimmer Aven",
+      "oracle_text": "Flying\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Soldier"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -146945,6 +149694,52 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Hero"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "exalted"
+          ],
+          "kind": "static",
+          "text": "Other Heroes you control have exalted."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "zarda_the_power_princess",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Zarda, the Power Princess",
+      "oracle_text": "Flying\nOther Heroes you control have exalted. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

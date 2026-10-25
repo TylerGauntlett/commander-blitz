@@ -1,0 +1,18 @@
+{
+  "card_id": "resourceful_defense",
+  "name": "Resourceful Defense",
+  "oracle_text": "Whenever a permanent you control leaves the battlefield, if it had counters on it, put those counters on target permanent you control.\n{4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.",
+  "blocked_sentences": [
+    "{4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control."
+  ],
+  "needs": [
+    {
+      "capability": "move_any_number_of_counters",
+      "kind": "decision",
+      "what": "a move_counters mode where the resolving player chooses, per counter kind on the source, how many counters (0 up to the number present) to move from the first target onto the second, so any sub-multiset of the source's counters across all kinds can be moved",
+      "why_existing_wont_do": "move_counters either moves one named `counter` kind with a fixed `amount` (default all of that kind) or, with `all_kinds`, moves the entire multiset; neither lets the player pick how many of each kind, so `all_kinds` would force moving every counter and a single `counter` kind would drop the others. The may op's `x` chooses one number, not a per-kind split"
+    }
+  ],
+  "closest_existing": ["move_counters"],
+  "confidence": "high"
+}

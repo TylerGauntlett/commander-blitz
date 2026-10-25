@@ -1,0 +1,18 @@
+{
+  "card_id": "scolding_administrator",
+  "name": "Scolding Administrator",
+  "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nRepartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.\nWhen this creature dies, if it had counters on it, put those counters on up to one target creature.",
+  "blocked_sentences": [
+    "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature."
+  ],
+  "needs": [
+    {
+      "capability": "repartee",
+      "kind": "trigger_event",
+      "what": "a spell_cast trigger filter clause (e.g. `targets: {types: [\"Creature\"]}` in the trigger `filter`) that matches the cast spell by what it targets, evaluated once when the trigger is collected and not re-checked on resolution",
+      "why_existing_wont_do": "The only way to read a cast spell's targets is the `spell_targets` binding inside a trigger `condition` (Orvar, the All-Form), but a condition is an intervening-if that 603.4 re-checks on resolution: if the targeted creature leaves in response, the printed Repartee trigger still gives the counter while the condition form does nothing. `trigger_filter_keys` has no clause about a spell's targets, and `targeted_by` belongs to the per-permanent becomes_target event."
+    }
+  ],
+  "closest_existing": ["spell_targets", "spell_cast", "targeted_by"],
+  "confidence": "low"
+}

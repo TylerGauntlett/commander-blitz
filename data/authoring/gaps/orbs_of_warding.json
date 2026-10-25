@@ -1,0 +1,18 @@
+{
+  "card_id": "orbs_of_warding",
+  "name": "Orbs of Warding",
+  "oracle_text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)\nIf a creature would deal damage to you, prevent 1 of that damage.",
+  "blocked_sentences": [
+    "If a creature would deal damage to you, prevent 1 of that damage."
+  ],
+  "needs": [
+    {
+      "capability": "player_damage_prevention",
+      "kind": "static_effect",
+      "what": "a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics",
+      "why_existing_wont_do": "The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more"
+    }
+  ],
+  "closest_existing": ["prevent_damage", "prevent_all_but", "replace_damage"],
+  "confidence": "high"
+}

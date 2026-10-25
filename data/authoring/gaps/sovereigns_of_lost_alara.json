@@ -1,0 +1,18 @@
+{
+  "card_id": "sovereigns_of_lost_alara",
+  "name": "Sovereigns of Lost Alara",
+  "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nWhenever a creature you control attacks alone, you may search your library for an Aura card that could enchant that creature, put it onto the battlefield attached to that creature, then shuffle.",
+  "blocked_sentences": [
+    "Whenever a creature you control attacks alone, you may search your library for an Aura card that could enchant that creature, put it onto the battlefield attached to that creature, then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "search_aura_attached",
+      "kind": "op",
+      "what": "a search_library (or put_onto_battlefield) option `attached_to: <selector>` that puts the found Aura onto the battlefield already attached to the named host (303.4f), together with a selector key `could_enchant: <binding>` that matches only Aura cards whose printed enchant restriction (enchant creature, enchant creature you control, enchant green creature, ...) the host satisfies, so an 'enchant land' or 'enchant artifact' Aura cannot be found",
+      "why_existing_wont_do": "search_library's options carry destination/tapped/counters but no attach-on-entry host, and a search followed by the `attach` op lets the Aura enter unattached first, which is wrong for a non-cast Aura (303.4f) and leaves the window for it to hit the graveyard; create_token's `attached_to` exists only for tokens. selector_keys have subtypes: [\"Aura\"] but nothing that reads an Aura's enchant restriction against a specific creature, so 'that could enchant that creature' would be dropped"
+    }
+  ],
+  "closest_existing": ["search_library", "attach", "create_token.attached_to"],
+  "confidence": "high"
+}

@@ -93,11 +93,11 @@ class TestTheResidualGate:
         from commanderblitz.cards.authoring.verify import _covered
 
         card = registry.get(AVENGER)
-        line = "You can't cast Test Avenger during your first, second, or third turns of the game."
+        line = "You can't cast Test First Turns Avenger during your first, second, or third turns of the game."
         assert _covered(card, line)
 
     def test_a_different_count_is_not(self, registry):
         from commanderblitz.cards.authoring.verify import _covered
 
         card = registry.get(AVENGER)
-        assert not _covered(card, "You can't cast Test Avenger during your first or second turns of the game.")
+        assert not _covered(card, "You can't cast Test First Turns Avenger during your first or second turns of the game.")

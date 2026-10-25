@@ -1,0 +1,18 @@
+{
+  "card_id": "giltspire_avenger",
+  "name": "Giltspire Avenger",
+  "oracle_text": "Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\n{T}: Destroy target creature that dealt damage to you this turn.",
+  "blocked_sentences": [
+    "{T}: Destroy target creature that dealt damage to you this turn."
+  ],
+  "needs": [
+    {
+      "capability": "dealt_damage_to_player_this_turn",
+      "kind": "selector",
+      "what": "a selector key matching objects that dealt damage to a given player this turn (e.g. `dealt_damage_to: \"you\"`), backed by a per-turn ledger of player victim -> source oids written wherever damage is dealt to a player and cleared at cleanup",
+      "why_existing_wont_do": "`damaged_by` reads `state.damage_ledger`, which is keyed by victim permanent oid and written only on the permanent-damage path of the damage primitive; damage to a player is never recorded by source, so nothing can ask which creatures dealt damage to you. `damaged` is only 'has damage marked on it', and `damage_taken_this_turn` is a player total, not a per-source record"
+    }
+  ],
+  "closest_existing": ["damaged_by", "damage_taken_this_turn"],
+  "confidence": "high"
+}

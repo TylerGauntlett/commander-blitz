@@ -1,0 +1,32 @@
+{
+  "card_id": "winter_s_chill",
+  "name": "Winter's Chill",
+  "oracle_text": "Cast this spell only during combat before blockers are declared.\nX can't be greater than the number of snow lands you control.\nChoose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.",
+  "blocked_sentences": [
+    "Cast this spell only during combat before blockers are declared.",
+    "X can't be greater than the number of snow lands you control.",
+    "Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat."
+  ],
+  "needs": [
+    {
+      "capability": "x_maximum",
+      "kind": "engine",
+      "what": "a card-level cap on the chosen value of X, read at cast time from a value (here {\"count\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Land\"], \"supertypes\": [\"Snow\"]}}), so the cast offers no X above it",
+      "why_existing_wont_do": "No card_level_cost_key or rider key bounds X; x_value is an activated-ability cost key and cost_reduction only discounts, so X is unbounded and the spell would be strictly better than printed"
+    },
+    {
+      "capability": "cast_timing_restriction",
+      "kind": "engine",
+      "what": "a card-level casting restriction limiting the spell to the combat phase before the declare-blockers step (beginning of combat or declare attackers)",
+      "why_existing_wont_do": "cast_during exists only as a condition_key read inside effects, not as a legality check on casting; cast_only_at_sorcery_speed is the opposite restriction and no rider key narrows an instant's casting window"
+    },
+    {
+      "capability": "opponent_choice_of_payment",
+      "kind": "decision",
+      "what": "per target, the target's controller chooses among paying {2}, paying {1}, or paying nothing, with three distinct outcomes: nothing -> a delayed destroy at end of combat; {1} -> prevent all combat damage dealt to and by that creature this combat; {2} -> nothing",
+      "why_existing_wont_do": "may takes a single pay and player, so a nested may-pay-{2} else may-pay-{1} is an approximation of a single tiered choice; additionally the delay op's steps and prevent_damage_permanent's durations are not documented to include end of combat / this combat, and X variable-count targeting of attacking creatures with a per-target controller payment is not shown anywhere in the reference"
+    }
+  ],
+  "closest_existing": ["may", "delay", "prevent_damage_permanent", "cast_during"],
+  "confidence": "high"
+}

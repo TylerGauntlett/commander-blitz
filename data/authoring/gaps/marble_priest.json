@@ -1,0 +1,30 @@
+{
+  "card_id": "marble_priest",
+  "name": "Marble Priest",
+  "oracle_text": "All Walls able to block this creature do so.\nPrevent all combat damage that would be dealt to this creature by Walls.",
+  "blocked_sentences": [
+    "All Walls able to block this creature do so.",
+    "Prevent all combat damage that would be dealt to this creature by Walls."
+  ],
+  "needs": [
+    {
+      "capability": "lure",
+      "kind": "static_effect",
+      "what": "a static block requirement on the source attacker (509.1c): every creature matching a printed blocker filter (here subtypes: [\"Wall\"]) that is able to block this creature must do so -- Lure-style, narrowed by a `blockers` filter",
+      "why_existing_wont_do": "The `must_block` op is a one-shot on resolution with no trigger to hang it on, and the only static that reads `blockers` is `block_restriction`, which restricts who MAY block (menace, Tromokratis' `require_all`) rather than requiring blocks; no static_effect imposes a block requirement"
+    },
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a `prevent_damage` static (prevent_all, combat_only, affects self_only) narrowed by a filter on the damage SOURCE, so only combat damage dealt by Walls is prevented",
+      "why_existing_wont_do": "`damage_source` is accepted only on `replace_damage` (the loader refuses it on any other static), and `prevent_damage` with `combat_only` would prevent combat damage from every creature, which is a much stronger card"
+    }
+  ],
+  "closest_existing": [
+    "block_restriction",
+    "must_block",
+    "prevent_damage",
+    "replace_damage"
+  ],
+  "confidence": "high"
+}

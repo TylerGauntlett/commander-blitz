@@ -1,0 +1,33 @@
+{
+  "card_id": "take_the_bait",
+  "name": "Take the Bait",
+  "oracle_text": "Cast this spell only during combat on an opponent's turn.\nPrevent all combat damage that would be dealt to you and planeswalkers you control this turn. Untap all attacking creatures and goad them. After this phase, there is an additional combat phase.",
+  "blocked_sentences": [
+    "Cast this spell only during combat on an opponent's turn.",
+    "Prevent all combat damage that would be dealt to you and planeswalkers you control this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_during_opponents_turn",
+      "kind": "engine",
+      "what": "a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the combat phase ('Cast this spell only during combat on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn'",
+      "why_existing_wont_do": "card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own main phase and do nothing rather than be uncastable"
+    },
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a one-shot, this-turn prevention of all COMBAT damage dealt to a player and to the planeswalkers that player controls (e.g. `combat_only: true` and `or_planeswalkers: true` on the `prevent_damage` op)",
+      "why_existing_wont_do": "the `prevent_damage` op takes only `duration` and `player`, so it would prevent noncombat damage too and would not cover planeswalkers; `combat_only` / `or_planeswalkers` exist only on the `prevent_damage` static, which a spell cannot create for a turn, and `prevent_damage_permanent` covers permanents only, not the player and not combat-only"
+    }
+  ],
+  "closest_existing": [
+    "cant_cast_first_turns",
+    "cast_during",
+    "is_active_player",
+    "prevent_damage",
+    "prevent_damage_permanent",
+    "goad",
+    "extra_combat"
+  ],
+  "confidence": "high"
+}

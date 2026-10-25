@@ -1,0 +1,14 @@
+{
+  "card_id": "keen_eared_sentry",
+  "name": "Keen-Eared Sentry",
+  "oracle_text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)\nEach opponent can't venture into the dungeon more than once each turn.",
+  "blocked_sentences": ["Each opponent can't venture into the dungeon more than once each turn."],
+  "needs": [{
+    "capability": "venture",
+    "kind": "engine",
+    "what": "venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening",
+    "why_existing_wont_do": "The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed"
+  }],
+  "closest_existing": ["draw_limit", "player_hexproof"],
+  "confidence": "high"
+}
