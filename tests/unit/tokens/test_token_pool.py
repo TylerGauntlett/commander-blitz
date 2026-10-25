@@ -225,6 +225,30 @@ class TestTheAberrationsAngelsAreColorlessEldrazi:
         assert "Eldrazi" not in other.subtypes
 
 
+class TestLinvalasAngelIsAThreeThree:
+    """Linvala, the Preserver: *"create a **3/3** white Angel creature token
+    with flying."*
+
+    `angel_4_4_w_flying` is the right colour, type and keyword on the wrong
+    body: a 4/4 survives the blocks and trades the 3/3 printed one cannot.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("angel_3_3_w_flying") is not None
+
+    def test_it_is_a_three_three_white_angel_with_flying(self, pool):
+        token = pool.get("angel_3_3_w_flying")
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Angel"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_four_four_angel_is_still_a_separate_token(self, pool):
+        other = pool.get("angel_4_4_w_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (4, 4)
+
+
 class TestTheEaglesAreBirdSoldiers:
     """The Eagles Are Coming!: *"create a **4/4 white Bird Soldier** creature
     token with flying for each creature returned to your hand this way."*
