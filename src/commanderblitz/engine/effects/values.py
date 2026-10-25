@@ -432,10 +432,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
     if "counters_had" in expr:
-        # The kind, as a bare string: {"counters_had": "-1/-1"}.
+        # The kind, as a bare string: {"counters_had": "-1/-1"}. Or "any",
+        # every kind summed -- Angelic Sleuth's "if it had counters on it",
+        # where the kinds are open-ended (oil, shield, stun, lore) and no
+        # list of them would be the printed card.
         kind = str(expr["counters_had"])
         had = ctx.bindings.get("had_counters")
-        return int(had.get(kind, 0)) if isinstance(had, Mapping) else 0
+        if not isinstance(had, Mapping):
+            return 0
+        if kind == "any":
+            return sum(int(n) for n in had.values() if int(n) > 0)
+        return int(had.get(kind, 0))
     if "power_had" in expr:
         # No argument: it is always "the creature this trigger is about", the
         # only object the event snapshotted. A trigger that never fired binds

@@ -522,7 +522,7 @@ VALUES: dict[str, Entry] = {
                                  'Commander-identity mana — "any color in your commander\'s color identity"'),
     "const": ("A literal number.", None),
     "count": ("How many objects a selector finds.", None),
-    "counters_had": ("Counters of a kind the dying creature had.", None),
+    "counters_had": ("Counters of a kind (or \"any\", every kind) the permanent that just left had.", None),
     "counters_on": ("Counters of a kind on the objects a selector finds.", None),
     "creatures_died_this_turn": ("Creatures that died this turn (morbid).", H_LEDGER),
     "creatures_you_control": ("Creatures the player controls.", None),

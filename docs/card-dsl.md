@@ -1269,6 +1269,7 @@ Anywhere a number is expected -- the leaf list is
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
+{ "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }

@@ -1,0 +1,29 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_counters_had_any.py. t_hac_sleuth is Angelic Sleuth's second line with a draw in place of investigate, so the number of triggers is the number of cards drawn.",
+  "cards": [
+    {
+      "id": "t_hac_sleuth",
+      "name": "Test Counter Sleuth",
+      "oracle_text": "Whenever another permanent you control leaves the battlefield, if it had counters on it, draw a card.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another permanent you control leaves the battlefield, if it had counters on it, draw a card.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "filter": {"controller": "you", "exclude_self": true},
+            "condition": {"cmp": ">=", "left": {"counters_had": "any"}, "right": {"const": 1}}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

@@ -291,7 +291,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `commander_color_identity` | Colors in your commander's color identity. | [Commander-identity mana — "any color in your commander's color identity"](card-dsl-cookbook.md#commander-identity-mana--any-color-in-your-commanders-color-identity) |
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
-| `counters_had` | Counters of a kind the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
+| `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_on` | Counters of a kind on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
