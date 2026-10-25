@@ -43,8 +43,7 @@ generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [Every import native, every time](#every-import-native-every-time) | L, continuous | high | nothing | 0 |
-| [Every precon set in the window](#every-precon-set-in-the-window) | L, continuous | high | nothing | 0 |
+| [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
@@ -71,22 +70,21 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [Every import native, every time](#every-import-native-every-time) — L, continuous, high
-2. [Every precon set in the window](#every-precon-set-in-the-window) — L, continuous, high
-3. [Difficulty](#difficulty) — S, medium
-4. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-5. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-6. [Why a press is refused](#why-a-press-is-refused) — S, medium
-7. [Outcomes as data](#outcomes-as-data) — M, medium
-8. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-9. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-10. [Replays and sharing](#replays-and-sharing) — M, medium
-11. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-12. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-13. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-14. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-15. [Archidekt import](#archidekt-import) — S, low
-16. [Sound](#sound) — S, low
+1. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+2. [Difficulty](#difficulty) — S, medium
+3. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+4. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+5. [Why a press is refused](#why-a-press-is-refused) — S, medium
+6. [Outcomes as data](#outcomes-as-data) — M, medium
+7. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+8. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+9. [Replays and sharing](#replays-and-sharing) — M, medium
+10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+11. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+12. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+13. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+14. [Archidekt import](#archidekt-import) — S, low
+15. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -207,128 +205,104 @@ The timing test still holds every golden batch at or under its cost, since a
 cue that waits on a file load would be a lag the narration must never have;
 and the mute setting's e2e assertion still passes.
 
-## Cards
-
-### Every import native, every time
-
-Effort **L, continuous** · Impact **high**, the difference between a deck and an inert list, for every link ever pasted · Depends on nothing.
-
-#### Today
-
-Every shipped deck is native; everything else imports as a proxy
-that keeps its keywords and loses its text ([deck-import.md](deck-import.md)).
-The loop that closes the gap is in place: the template tier, the agent tier
-behind six gates, gap records, and `/extend-dsl` to clear them
-([card-authoring.md](card-authoring.md)). The queue is already ordered by what
-players have imported and then by EDHREC rank, which is the right order and
-stays.
-
-#### The change
-
-**The target.** Any public Moxfield link a player pastes imports with a
-simplified count of zero, and keeps doing so as sets are released. That is
-the whole catalog, with each card carrying its own verified behaviour, not a
-working set. Three things make it a target rather than a wish:
-
-- **A card's unit test already exists as a shape.** Gate 5's expectation is
-  the per-card test, `test_auto_cards.py` re-runs all six gates over every
-  authored card on every run, and `test_every_card_works.py` casts each one
-  in a sandbox and checks where it lands. "Every card has unit tests" means
-  every card goes through that door and none is promoted around it; the
-  per-deck behaviour files stay for what a one-cast sandbox cannot reach.
-- **An unattended worker.** The agent tier's packet is a file format
-  precisely so that a worker with no repository open can drain the queue
-  ([card-authoring.md](card-authoring.md#driving-it)). Running that worker
-  continuously, collecting through the gates and opening the pull request
-  itself, is what turns the loop from a session someone drives into a
-  pipeline that keeps up with the catalog. Its gaps still go to
-  `/extend-dsl`, which stays a person's decision because it changes the
-  engine.
-- **Set releases are events.** A refresh of the Scryfall bundle on each
-  release, a queue refresh over the new rows, and the worker on them before
-  players meet the cards. The gap report after each release is the list of
-  new mechanics the set introduced, which is the engine roadmap for that
-  quarter written by the set itself.
-
-Until the count reaches zero, an import's report and the per-card marker in
-the deck list view say exactly which cards are still waiting, and a card
-imported by a player goes to the front of the queue as it does now.
-
-**What the catalog runs into, in the order it will be met:**
-
-1. **The validator.** Every new op adds a branch to `_validate_effect`, which
-   is already the largest function in the tree (`OF-01` in
-   [TECH_DEBT.md](../TECH_DEBT.md)). A per-op validator registry, mirroring
-   the engine's `@register`, is the precondition for the long tail, not a
-   nicety.
-2. **The deliberate simplifications** in
-   [rules-coverage.md](rules-coverage.md#simplified). Most of the catalog never
-   touches them, but the ones that bite as coverage widens are: layers-lite
-   ([ADR 0001](adr/0001-layers-lite.md)) once two statics genuinely depend on
-   each other on a board players build; card-level targets chosen before
-   modes, which is why modal spells are the oldest open item in the authoring
-   doc; and the absence of a general replacement system, which every "instead"
-   that is not one of the named hooks runs into. Each of these is an ADR
-   amendment, not a card.
-3. **The not-implemented list** in the same page: companions, the initiative,
-   voting, energy, damage division, redirection. Each is additive and each is
-   ordered by how many cards the gap report says it blocks.
-4. **Test cost.** `test_every_card_works` and the auto-card gates run over the
-   whole pool on every run. At tens of thousands of cards the python slice
-   needs sharding by card file, as the e2e slice is sharded today, and the
-   golden pool hash needs a per-file variant so a change to one file re-pins
-   one hash.
-5. **Art.** Every supported card wants its illustration, which is the art
-   store.
-
-This item is continuous: `/extend-roadmap` takes one batch of it, in the
-queue's order, and leaves the item on the page.
-
-#### Gate
-
-`author_cards.py --report` for coverage, the generated
-[unsupported-cards.md](unsupported-cards.md) for what blocks what, one
-import pin per shipped deck, and a new one: a sample of public lists
-imported as a dry run on a schedule, with the simplified count reported as
-the number this item exists to drive to zero.
-
 ## Decks
 
-### Every precon set in the window
+### Every precon native, one at a time, then every import
 
-Effort **L, continuous** · Impact **high**, each set is a shelf row a player expects and a dated deadline for the card work · Depends on nothing.
+Effort **L, continuous** · Impact **high**, each precon is a shelf row a player expects, and every list a player pastes is the same card work one deck at a time · Depends on nothing.
 
 #### Today
 
 The manifest, `data/decks/sources.json`, lists every official Commander
 precon inside the window `scripts/sync_precons.py` names as one constant.
-Wretched Ranks ships; every other row is a coming-soon shell on the shelf,
-served by `GET /api/precons/upcoming` until its deck file loads. The cards a
-row lacks are `sync_precons.py --missing <id>`, and the newest set's are
-already gap records in `data/authoring/gaps/`, so `docs/unsupported-cards.md`
-ranks the capabilities they wait on. A whole set at a time proved the wrong
-unit: Foundations Commander's other four decks need dozens of capabilities
-between them, while one deck needed five.
+A precon whose deck file loads ships; every other row is a coming-soon shell
+on the shelf, served by `GET /api/precons/upcoming` until its deck file
+loads. The cards a row lacks are `sync_precons.py --missing <id>`, and the
+cards already attempted are gap records in `data/authoring/gaps/`, each
+naming the capability it waits on, so `docs/unsupported-cards.md` ranks
+those capabilities. A whole set at a time proved the wrong unit: Foundations
+Commander's decks need dozens of capabilities between them, while one deck
+needed five.
+
+Everything that is not a shipped deck imports as a proxy that keeps its
+keywords and loses its text ([deck-import.md](deck-import.md)). The loop
+that closes the gap is in place: the template tier, the agent tier behind
+six gates, gap records, and `/extend-dsl` to clear them
+([card-authoring.md](card-authoring.md)). The queue is ordered by what
+players have imported and then by EDHREC rank. Working that queue top down
+spreads each batch across thousands of unrelated cards, so no batch ever
+finishes a deck a player can pick.
 
 #### The change
 
-One batch is one precon from the manifest: the one fewest capabilities away
-from native, newest first among equals. The batch drives `/author-cards` (and
-one `/extend-dsl` run per capability the deck lacks) until `--missing` is
-empty, then `--write-deck` writes the file with its printings and release, a
-person writes the dossier and picks an `archetype`, and the deck joins
-`PRECONS` in `tests/cards/test_deck_legality.py`, which puts it under the
-import pin and the sampled whole-game test. Its shell disappears by itself. A
-deck gets a strategy module and a page under `docs/cpus/` only where its
+**One batch is one precon taken to 100%.** The batch is the manifest row
+fewest cards short of native, newest first among equals; a row whose
+missing cards have never been through the queue goes through
+`/author-cards` by name first, because until it has, its distance is
+unknown. The batch:
+
+1. Runs `/author-cards` by name over the row's `--missing` list, which
+   either writes a card or files its gap record.
+2. Clears every capability those gap records name, one `/extend-dsl` run
+   and one commit per capability, in the order the most cards elsewhere in
+   the catalog wait on it. A capability that needs a rules subsystem the
+   engine does not have ([rules-coverage.md](rules-coverage.md#not-implemented))
+   stops the batch: it becomes its own item and the precon waits on it.
+3. Re-authors the row's cards until `--missing` is empty, then
+   `--write-deck` writes the deck file with its printings and release. A
+   person writes the dossier and picks an `archetype`, and the deck joins
+   `PRECONS` in `tests/cards/test_deck_legality.py`, which puts it under the
+   import pin and the sampled whole-game test. Its shell disappears by
+   itself.
+4. Harvests the rest of the catalog the batch's capabilities unblocked: the
+   template tier with `--retry`, then one `/author-cards` wave over the
+   pending cards the new vocabulary reaches.
+
+A deck gets a strategy module and a page under `docs/cpus/` only where its
 archetype visibly misplays it. A row the window ages out is the script
-reporting a precon to retire, and its deck leaves the shelf in the same batch.
+reporting a precon to retire, and its deck leaves the shelf in the same
+batch.
+
+**After the window.** Once every row in the window is native, the unit stays
+a deck: the most-imported public list that is not native, then the next
+older precon. The target is unchanged: any public Moxfield link a player
+pastes imports with a simplified count of zero, and keeps doing so as sets
+are released. A set release is a manifest refresh, which makes the new
+precons the next batches before players meet the cards; the gap report
+after each release is the list of mechanics the set introduced.
+
+**What the catalog runs into, in the order it will be met:**
+
+1. **The validator.** Every new op adds a branch to `_validate_effect`, which
+   is already the largest function in the tree (`OF-01` in
+   [TECH_DEBT.md](../TECH_DEBT.md)). A per-op validator registry,
+   mirroring the engine's `@register`, is the precondition for the long tail.
+2. **The deliberate simplifications** in
+   [rules-coverage.md](rules-coverage.md#simplified): layers-lite
+   ([ADR 0001](adr/0001-layers-lite.md)) once two statics genuinely depend
+   on each other, card-level targets chosen before modes, and the absence of
+   a general replacement system. Each of these is an ADR amendment, not a
+   card.
+3. **The not-implemented list** in the same page: each is additive and each
+   is ordered by how many cards the gap report says it blocks.
+4. **Test cost.** `test_every_card_works` and the auto-card gates run over
+   the whole pool on every run; at the catalog's size the python slice needs
+   sharding by card file, and the golden pool hash a per-file variant.
+5. **Art.** Every supported card wants its illustration, which is the art
+   store.
+
+This item is continuous: `/extend-roadmap` takes one precon of it and
+leaves the item on the page.
 
 #### Gate
 
-Per batch: `tests/cards/test_precon_imports.py` over the new deck; the
-manifest test (every row inside the window, every `precon` deck has a row)
-and the coming-soon test (`tests/server/test_upcoming_precons.py`) still green;
-and the sampled whole-game test able to draw the new deck.
+Per batch: `tests/cards/test_precon_imports.py` over the new deck; one unit
+test per capability under `tests/unit/`; the manifest test (every row inside
+the window, every `precon` deck has a row) and the coming-soon test
+(`tests/server/test_upcoming_precons.py`) still green; and the sampled
+whole-game test able to draw the new deck. Across batches,
+`author_cards.py --report` for coverage and the generated
+[unsupported-cards.md](unsupported-cards.md) for what blocks what.
 
 ### Viewing a deck's list
 

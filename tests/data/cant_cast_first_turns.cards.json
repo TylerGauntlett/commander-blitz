@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_cant_cast_first_turns.py. t_ccft_avenger is Serra Avenger: a 3/3 flier for {W}{W} that can't be cast during its controller's first three turns; t_ccft_flash_avenger is the same with flash, to show the restriction is about the caster's own turns.",
+  "cards": [
+    {
+      "id": "t_ccft_avenger",
+      "name": "Test First Turns Avenger",
+      "oracle_text": "You can't cast Test First Turns Avenger during your first, second, or third turns of the game.\nFlying, vigilance",
+      "mana_cost": "{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying", "vigilance"],
+      "cant_cast_first_turns": 3
+    },
+    {
+      "id": "t_ccft_flash_avenger",
+      "name": "Test Flash Avenger",
+      "oracle_text": "Flash\nYou can't cast Test Flash Avenger during your first, second, or third turns of the game.",
+      "mana_cost": "{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flash"],
+      "cant_cast_first_turns": 3
+    }
+  ]
+}

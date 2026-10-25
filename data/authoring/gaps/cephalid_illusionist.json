@@ -1,0 +1,21 @@
+{
+  "card_id": "cephalid_illusionist",
+  "name": "Cephalid Illusionist",
+  "oracle_text": "Whenever this creature becomes the target of a spell or ability, mill three cards.\n{2}{U}, {T}: Prevent all combat damage that would be dealt to and dealt by target creature you control this turn.",
+  "blocked_sentences": [
+    "{2}{U}, {T}: Prevent all combat damage that would be dealt to and dealt by target creature you control this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a `combat_only: true` option on the `prevent_damage_permanent` op (a field on structs.PermanentShield read by primitives.damage_permanent / damage_player), so a resolving ability can install a this-turn shield that stops only COMBAT damage dealt to and dealt by one targeted permanent",
+      "why_existing_wont_do": "`prevent_damage_permanent` with dealt: to_and_by and duration: this_turn is the right shape but stops ALL damage, so noncombat burn at the creature and its own ping/fight damage would also be prevented (a strictly better card); `combat_only` exists only on the `prevent_damage` static, which is continuous on a printed permanent and cannot be installed on a target for a turn by an activated ability"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

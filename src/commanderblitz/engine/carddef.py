@@ -1177,6 +1177,10 @@ class CardDef:
     #: instant before any of them are consulted, so a restriction written
     #: anywhere else could not be reached at all.
     cast_before_step: Step | None = None
+    #: "You can't cast this during your first, second, or third turns of the
+    #: game" (Serra Avenger). Read by `player_statics.player_cant_cast_spells`
+    #: against `PlayerState.turns_begun`, so every cast path refuses it.
+    cant_cast_first_turns: int | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False
@@ -1656,3 +1660,38 @@ def rules_ability(index: int) -> Ability | None:
 #: price, and were two hand-written twins only because the keyword had nowhere to
 #: put its cost.
 CLOAK_WARD = ward_ability({"mana": "{2}"})
+
+
+#: Exalted's trigger (702.83a): "Whenever a creature you control attacks alone,
+#: that creature gets +1/+1 until end of turn."
+#:
+#: Rules-supplied for ward's reason: the sentence is the rules', not the
+#: card's, and the printing that made it necessary *grants* the keyword
+#: (Merchant of Truth's Clues), so there is no card text to hang a trigger on.
+#: `triggers._candidate_abilities` yields it once for every battlefield
+#: permanent whose derived keywords include exalted, with that permanent as
+#: the source -- so each exalted permanent triggers separately (702.83b), and
+#: one that loses its abilities stops listening.
+#:
+#: "Attacks alone" (506.5) is the sentence the printed exalted cards already
+#: carry: `you_attack` with exactly one creature in its ``attackers`` binding.
+EXALTED_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Exalted",
+    trigger=TriggerSpec(
+        event="you_attack",
+        controller="you",
+        condition={"cmp": "==", "left": {"count": {"binding": "attackers"}}, "right": {"const": 1}},
+    ),
+    effects=(
+        {
+            "op": "pump",
+            "objects": {"binding": "attackers"},
+            "power": {"const": 1},
+            "toughness": {"const": 1},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(EXALTED_TRIGGER)

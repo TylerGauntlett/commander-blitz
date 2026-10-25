@@ -1,0 +1,21 @@
+{
+  "card_id": "you_look_upon_the_tarrasque",
+  "name": "You Look Upon the Tarrasque",
+  "oracle_text": "Choose one —\n• Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn.\n• Gather Your Courage — Target creature gets +5/+5 and gains indestructible until end of turn. All creatures your opponents control able to block that creature this turn do so.",
+  "blocked_sentences": [
+    "• Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn"
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a combat-only option on the resolving prevention ops: `combat_only: true` on `prevent_damage` (the player's DamageShield) and on `prevent_damage_permanent` (or a selector-scoped variant covering 'creatures you control' for the turn), so a spell can say 'Prevent all combat damage that would be dealt to you and creatures you control this turn' while noncombat damage still gets through",
+      "why_existing_wont_do": "The `prevent_damage` op (player, duration) and `prevent_damage_permanent` op (objects, dealt, duration) both prevent ALL damage, combat and noncombat, which is a strictly better card; the new `combat_only` flag exists only on the `prevent_damage` STATIC, which lives on a permanent and has no 'this turn' clock and cannot be installed by an instant"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_damage_permanent"
+  ],
+  "confidence": "high"
+}

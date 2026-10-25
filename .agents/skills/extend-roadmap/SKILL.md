@@ -20,7 +20,7 @@ lists the item. Opening the pull request is not the end of the run: §9 is.
 ```
 /extend-roadmap                 the top of the queue
 /extend-roadmap art-store       a named item, which must be ready
-/extend-roadmap every-import-native   one batch of a continuous item
+/extend-roadmap precon-sets   one batch of a continuous item
 ```
 
 ## 0 · Preflight

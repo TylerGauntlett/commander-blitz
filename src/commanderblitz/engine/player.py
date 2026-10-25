@@ -80,6 +80,11 @@ class PlayerState:
     #: shared between two cards.
     has_city_s_blessing: bool = False
 
+    #: How many turns this player has begun this game, the current one
+    #: included -- extra turns too (500.7). Counted by `turn._untap_step`.
+    #: Serra Avenger's "your first, second, or third turns of the game".
+    turns_begun: int = 0
+
     mulligans_taken: int = 0
     has_kept_hand: bool = False
     #: The oid of the **epic** spell this player cast, if any (702.50a). One-way

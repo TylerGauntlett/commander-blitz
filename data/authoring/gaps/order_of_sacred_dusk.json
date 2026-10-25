@@ -1,0 +1,16 @@
+{
+  "card_id": "order_of_sacred_dusk",
+  "name": "Order of Sacred Dusk",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFlying, lifelink, haste\nExalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)\nOther Vampires you control have exalted.",
+  "blocked_sentences": [
+    "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)"
+  ],
+  "needs": [{
+    "capability": "convoke",
+    "kind": "cost",
+    "what": "a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line",
+    "why_existing_wont_do": "pay_generic_with: \"tap_creatures\" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys"
+  }],
+  "closest_existing": ["pay_generic_with"],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "gaseous_form",
+  "name": "Gaseous Form",
+  "oracle_text": "Enchant creature\nPrevent all combat damage that would be dealt to and dealt by enchanted creature.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to and dealt by enchanted creature."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by enchanted creature' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {attached: true}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players and permanents alike)",
+      "why_existing_wont_do": "The prevent_damage static with prevent_all + combat_only covers the 'dealt to' half via affects: {attached: true}, but its affects is the recipient only; damage_source exists only on replace_damage, which the loader refuses with a damage_multiplier below 2 (0 would be prevention). The prevent_damage_permanent op has a 'dealt' option but is a one-shot with a duration, not a static that lasts while the Aura is attached"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "replace_damage",
+    "prevent_damage_permanent"
+  ],
+  "confidence": "high"
+}

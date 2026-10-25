@@ -2532,12 +2532,12 @@
     },
     "Aegis of the Gods": {
       "edhrec_rank": 7432,
-      "gate": "template",
+      "gate": null,
       "name": "Aegis of the Gods",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "f2b2f381-86a2-42ac-b694-dcde437d574f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aegis of the Heavens": {
@@ -5252,12 +5252,12 @@
     },
     "Akrasan Squire": {
       "edhrec_rank": 14952,
-      "gate": "template",
+      "gate": null,
       "name": "Akrasan Squire",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "59fdc045-b938-4321-aec3-51685cbbaa52",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Akroan Conscriptor": {
@@ -7162,12 +7162,12 @@
     },
     "Ambitious Augmenter": {
       "edhrec_rank": 15529,
-      "gate": "template",
+      "gate": null,
       "name": "Ambitious Augmenter",
-      "reason": "no template for: Increment",
+      "reason": "",
       "scryfall_id": "0319c982-e257-42fc-bb85-79da3a6dd6c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ambitious Dragonborn": {
@@ -8852,12 +8852,12 @@
     },
     "Angelic Benediction": {
       "edhrec_rank": 13265,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Benediction",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "a2a782a3-cc30-47c2-aab3-18abcda3df0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angelic Blessing": {
@@ -9092,12 +9092,12 @@
     },
     "Angelic Sleuth": {
       "edhrec_rank": 12409,
-      "gate": "template",
+      "gate": null,
       "name": "Angelic Sleuth",
-      "reason": "no template for: Whenever another permanent you control leaves the battlefield, if it had counters on it, i",
+      "reason": "",
       "scryfall_id": "5381dd61-7d20-4a4c-a6c1-67e8c9020ed6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angelic Voices": {
@@ -12642,12 +12642,12 @@
     },
     "Ardent Plea": {
       "edhrec_rank": 15766,
-      "gate": "template",
+      "gate": null,
       "name": "Ardent Plea",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "013e68be-daf9-409b-aab8-caf51f1cada3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ardent Recruit": {
@@ -15902,12 +15902,12 @@
     },
     "Attended Healer": {
       "edhrec_rank": 12891,
-      "gate": "template",
+      "gate": null,
       "name": "Attended Healer",
-      "reason": "no template for: Whenever you gain life for the first time each turn, create a 1/1 white Cat creature token",
+      "reason": "",
       "scryfall_id": "1eae2fa8-032a-49d5-8e5f-de742cded9c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Attended Knight": {
@@ -17562,12 +17562,12 @@
     },
     "Aven Squire": {
       "edhrec_rank": 14877,
-      "gate": "template",
+      "gate": null,
       "name": "Aven Squire",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "5a89ee77-5b43-4ae6-8408-366bfcc18f44",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Aven Sunstriker": {
@@ -22172,12 +22172,12 @@
     },
     "Battlegrace Angel": {
       "edhrec_rank": 12432,
-      "gate": "template",
+      "gate": null,
       "name": "Battlegrace Angel",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "1cf72b23-a951-4e88-a52b-b3abe8f16bf4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battleground Geist": {
@@ -27302,12 +27302,12 @@
     },
     "Blind Obedience": {
       "edhrec_rank": 495,
-      "gate": "template",
+      "gate": null,
       "name": "Blind Obedience",
-      "reason": "no template for: Extort",
+      "reason": "",
       "scryfall_id": "8a9bba57-57cf-4354-bc19-c8f40c8db12e",
-      "source": "",
-      "status": "pending",
+      "source": "template:extort",
+      "status": "done",
       "wanted": false
     },
     "Blind Phantasm": {
@@ -37092,12 +37092,12 @@
     },
     "Buzzard-Wasp Colony": {
       "edhrec_rank": 15619,
-      "gate": "template",
+      "gate": null,
       "name": "Buzzard-Wasp Colony",
-      "reason": "no template for: When this creature enters, you may sacrifice an artifact or creature. If you do, draw a ca",
+      "reason": "",
       "scryfall_id": "42d83229-0555-4361-8964-4b525c825843",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "By Force": {
@@ -41372,12 +41372,12 @@
     },
     "Cathedral of War": {
       "edhrec_rank": 4811,
-      "gate": "template",
+      "gate": null,
       "name": "Cathedral of War",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "1cb9aaeb-4996-4c21-969d-5861b05dc432",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Cathodion": {
@@ -48012,12 +48012,12 @@
     },
     "Cleric of Life's Bond": {
       "edhrec_rank": 13331,
-      "gate": "template",
+      "gate": null,
       "name": "Cleric of Life's Bond",
-      "reason": "no template for: Whenever another Cleric you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "953db280-6999-4b91-bc40-c6e7f7dd13ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cleric of the Forward Order": {
@@ -54512,12 +54512,12 @@
     },
     "Court Archers": {
       "edhrec_rank": 19945,
-      "gate": "template",
+      "gate": null,
       "name": "Court Archers",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "a3776b1c-4a3f-43b9-962e-64010f286ba5",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Court Cleric": {
@@ -62402,12 +62402,12 @@
     },
     "Dawnray Archer": {
       "edhrec_rank": 22207,
-      "gate": "template",
+      "gate": null,
       "name": "Dawnray Archer",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "86c1ff65-8ad5-42e0-9e4c-1caf83ab86e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dawnsire, Sunstar Dreadnought": {
@@ -63982,12 +63982,12 @@
     },
     "Deathless Knight": {
       "edhrec_rank": 22170,
-      "gate": "template",
+      "gate": null,
       "name": "Deathless Knight",
-      "reason": "no template for: When you gain life for the first time each turn, return this card from your graveyard to y",
+      "reason": "",
       "scryfall_id": "a18becee-460c-4a1d-8ddf-f12f891e2df4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathless Pilot": {
@@ -68452,12 +68452,12 @@
     },
     "Diamond Weapon": {
       "edhrec_rank": 5396,
-      "gate": "template",
+      "gate": null,
       "name": "Diamond Weapon",
-      "reason": "no template for: This spell costs {1} less to cast for each permanent card in your graveyard",
+      "reason": "",
       "scryfall_id": "6ce7f494-2a19-4b11-94d4-fc5e5a7068bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diaochan, Artful Beauty": {
@@ -71522,12 +71522,12 @@
     },
     "Dolmen Gate": {
       "edhrec_rank": 1339,
-      "gate": "template",
+      "gate": null,
       "name": "Dolmen Gate",
-      "reason": "no template for: Prevent all combat damage that would be dealt to attacking creatures you control",
+      "reason": "",
       "scryfall_id": "50191314-ad97-4758-895a-5fc61714de32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Domesticated Hydra": {
@@ -71862,12 +71862,12 @@
     },
     "Donatello, Mutant Mechanic": {
       "edhrec_rank": 13640,
-      "gate": "template",
+      "gate": null,
       "name": "Donatello, Mutant Mechanic",
-      "reason": "no template for: {T}: Put three +1/+1 counters on target artifact you control. If it isn't a creature, it b",
+      "reason": "",
       "scryfall_id": "3271b821-8efc-49e2-96fd-c48e2b2585c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Donatello, Rad Scientist": {
@@ -77192,12 +77192,12 @@
     },
     "Duskmantle Prowler": {
       "edhrec_rank": 23716,
-      "gate": "template",
+      "gate": null,
       "name": "Duskmantle Prowler",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "bcb031da-d41a-496a-b78e-0773f6504303",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Duskmantle Seer": {
@@ -77472,12 +77472,12 @@
     },
     "Duty-Bound Dead": {
       "edhrec_rank": 19202,
-      "gate": "template",
+      "gate": null,
       "name": "Duty-Bound Dead",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "5150aa90-1284-4261-8625-2528139f0015",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dwalin, Weaponmaster": {
@@ -83652,12 +83652,12 @@
     },
     "Endless Atlas": {
       "edhrec_rank": 2429,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Atlas",
-      "reason": "no template for: {2}, {T}: Draw a card. Activate only if you control three or more lands with the same name",
+      "reason": "",
       "scryfall_id": "9b33e3d0-a950-476c-b7dc-1af5767ab1ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Cockroaches": {
@@ -86712,12 +86712,12 @@
     },
     "Ethercaste Knight": {
       "edhrec_rank": 17264,
-      "gate": "template",
+      "gate": null,
       "name": "Ethercaste Knight",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "9601e9ff-e1c7-4793-87eb-4935cd33ded6",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Ethereal Absolution": {
@@ -87242,12 +87242,12 @@
     },
     "Everdawn Champion": {
       "edhrec_rank": 24647,
-      "gate": "template",
+      "gate": null,
       "name": "Everdawn Champion",
-      "reason": "no template for: Prevent all combat damage that would be dealt to this creature",
+      "reason": "",
       "scryfall_id": "46c38e2a-3a82-402f-a436-f9ebb2ba2ea4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everdream": {
@@ -93112,12 +93112,12 @@
     },
     "Felisa, Fang of Silverquill": {
       "edhrec_rank": 4641,
-      "gate": "template",
+      "gate": null,
       "name": "Felisa, Fang of Silverquill",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "18b8abf0-e8c3-4c19-bdf1-18aabe75a3de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Felix Five-Boots": {
@@ -95232,12 +95232,12 @@
     },
     "Finest Hour": {
       "edhrec_rank": 8430,
-      "gate": "template",
+      "gate": null,
       "name": "Finest Hour",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "ad89ace6-b872-4a56-8128-795119ceb972",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finishing Blow": {
@@ -96362,12 +96362,12 @@
     },
     "First Sliver's Chosen": {
       "edhrec_rank": 16793,
-      "gate": "template",
+      "gate": null,
       "name": "First Sliver's Chosen",
-      "reason": "no template for: Sliver creatures you control have exalted",
+      "reason": "",
       "scryfall_id": "7f5c4368-4f2e-4f5f-8944-8b0d49ab3e38",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "First Volley": {
@@ -102602,12 +102602,12 @@
     },
     "Frontline Sage": {
       "edhrec_rank": 19097,
-      "gate": "template",
+      "gate": null,
       "name": "Frontline Sage",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "46acbabc-9d0a-4fba-9604-7d131c22cdeb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontline Strategist": {
@@ -106622,12 +106622,12 @@
     },
     "General's Kabuto": {
       "edhrec_rank": 13781,
-      "gate": "template",
+      "gate": null,
       "name": "General's Kabuto",
-      "reason": "no template for: Prevent all combat damage that would be dealt to equipped creature",
+      "reason": "",
       "scryfall_id": "1382c339-256f-4ba1-a4cc-6307d0859964",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "General's Regalia": {
@@ -109564,7 +109564,7 @@
       "edhrec_rank": 15516,
       "gate": "template",
       "name": "Giltspire Avenger",
-      "reason": "no template for: Exalted",
+      "reason": "no template for: {T}: Destroy target creature that dealt damage to you this turn",
       "scryfall_id": "5f1a67fd-6736-4f2b-8ed3-57a0a6afb98f",
       "source": "",
       "status": "pending",
@@ -112592,12 +112592,12 @@
     },
     "Goblin Champion": {
       "edhrec_rank": 16171,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Champion",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "9543660a-6797-4719-bbe7-ff6e40709599",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Goblin Charbelcher": {
@@ -119682,12 +119682,12 @@
     },
     "Guard Gomazoa": {
       "edhrec_rank": 9741,
-      "gate": "template",
+      "gate": null,
       "name": "Guard Gomazoa",
-      "reason": "no template for: Prevent all combat damage that would be dealt to this creature",
+      "reason": "",
       "scryfall_id": "51a57dcb-c7fc-449b-85c1-6f4aae763ec0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guarded Heir": {
@@ -120012,12 +120012,12 @@
     },
     "Guardians of Akrasa": {
       "edhrec_rank": 17237,
-      "gate": "template",
+      "gate": null,
       "name": "Guardians of Akrasa",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "383c9aa5-30ad-4a2a-8b64-65d4b333c613",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Guardians of Koilos": {
@@ -130282,12 +130282,12 @@
     },
     "Host of the Hereafter": {
       "edhrec_rank": 7857,
-      "gate": "template",
+      "gate": null,
       "name": "Host of the Hereafter",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "0f182957-8133-45a7-80a3-1944bead4d43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hostage Taker": {
@@ -139752,12 +139752,12 @@
     },
     "Iron Apprentice": {
       "edhrec_rank": 5986,
-      "gate": "template",
+      "gate": null,
       "name": "Iron Apprentice",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "13d6d9fc-509b-42db-8ac1-85066eb6e9c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iron Bully": {
@@ -150522,12 +150522,12 @@
     },
     "Knight of Glory": {
       "edhrec_rank": 14277,
-      "gate": "template",
+      "gate": null,
       "name": "Knight of Glory",
-      "reason": "no template for: Protection from black",
+      "reason": "",
       "scryfall_id": "1646cb67-e0ac-4f2d-af21-618ff3613d69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight of Grace": {
@@ -150542,12 +150542,12 @@
     },
     "Knight of Infamy": {
       "edhrec_rank": 18055,
-      "gate": "template",
+      "gate": null,
       "name": "Knight of Infamy",
-      "reason": "no template for: Protection from white",
+      "reason": "",
       "scryfall_id": "9e339853-5b6b-47b7-8d88-e9d3befb803f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight of Lost Causes": {
@@ -156012,12 +156012,12 @@
     },
     "Leech Collector // Bloodletting": {
       "edhrec_rank": 15886,
-      "gate": "template",
+      "gate": null,
       "name": "Leech Collector // Bloodletting",
-      "reason": "no template for: Whenever you gain life for the first time each turn, this creature becomes prepared",
+      "reason": "",
       "scryfall_id": "c715fe4c-c0e7-4342-811f-b74687851097",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leech Fanatic": {
@@ -159312,12 +159312,12 @@
     },
     "Linvala, the Preserver": {
       "edhrec_rank": 14991,
-      "gate": "template",
+      "gate": null,
       "name": "Linvala, the Preserver",
-      "reason": "no template for: When Linvala enters, if an opponent has more life than you, you gain 5 life",
+      "reason": "",
       "scryfall_id": "ef0dbb08-d124-46da-bfb1-af7ef4a18179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lion Heart": {
@@ -161592,12 +161592,12 @@
     },
     "Losheel, Clockwork Scholar": {
       "edhrec_rank": 1554,
-      "gate": "template",
+      "gate": null,
       "name": "Losheel, Clockwork Scholar",
-      "reason": "no template for: Prevent all combat damage that would be dealt to attacking artifact creatures you control",
+      "reason": "",
       "scryfall_id": "ee6b54de-8e79-4f60-b642-3d259bf74ea0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lossarnach Captain": {
@@ -171302,12 +171302,12 @@
     },
     "Merchant of Truth": {
       "edhrec_rank": 6337,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant of Truth",
-      "reason": "no template for: Whenever a nontoken creature you control dies, investigate",
+      "reason": "",
       "scryfall_id": "0f47e29e-54c5-4b1a-b9b9-d5e267a0203a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant of Venom": {
@@ -172482,12 +172482,12 @@
     },
     "Metropolis Reformer": {
       "edhrec_rank": 4689,
-      "gate": "template",
+      "gate": null,
       "name": "Metropolis Reformer",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "041111e8-3b0e-4337-a7d6-20cc455ea173",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Metropolis Sprite": {
@@ -184912,12 +184912,12 @@
     },
     "Nefarox, Overlord of Grixis": {
       "edhrec_rank": 17317,
-      "gate": "template",
+      "gate": null,
       "name": "Nefarox, Overlord of Grixis",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "abc382f3-fdb9-4987-acf4-bf1ac4fd2ef7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nefashu": {
@@ -187052,12 +187052,12 @@
     },
     "Nikara, Lair Scavenger": {
       "edhrec_rank": 12917,
-      "gate": "template",
+      "gate": null,
       "name": "Nikara, Lair Scavenger",
-      "reason": "no template for: Partner with Yannik, Scavenging Sentinel",
+      "reason": "",
       "scryfall_id": "00b9ac91-51e4-4653-ac2a-da166a894f2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nikko-Onna": {
@@ -194252,12 +194252,12 @@
     },
     "Order of Sacred Dusk": {
       "edhrec_rank": 11110,
-      "gate": "template",
+      "gate": "residual",
       "name": "Order of Sacred Dusk",
-      "reason": "no template for: Convoke",
+      "reason": "printed text not represented: Convoke",
       "scryfall_id": "134fe0d8-4326-43f3-ba0c-95589079164e",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Order of Succession": {
@@ -195702,12 +195702,12 @@
     },
     "Outrider of Jhess": {
       "edhrec_rank": 25260,
-      "gate": "template",
+      "gate": null,
       "name": "Outrider of Jhess",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "d3b681c8-6d20-4e43-95f8-e83d34626145",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Outwit": {
@@ -211172,12 +211172,12 @@
     },
     "Qasali Pridemage": {
       "edhrec_rank": 5044,
-      "gate": "template",
+      "gate": null,
       "name": "Qasali Pridemage",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "a103646d-b363-4896-a48f-0527d746587e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Qasali Slingers": {
@@ -213032,12 +213032,12 @@
     },
     "Rafiq of the Many": {
       "edhrec_rank": 10551,
-      "gate": "template",
+      "gate": null,
       "name": "Rafiq of the Many",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "361087ea-16f9-4d93-b720-1ebaa05bc281",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raft Security Officer": {
@@ -215582,12 +215582,12 @@
     },
     "Rashel, Fist of Torm": {
       "edhrec_rank": 12056,
-      "gate": "template",
+      "gate": null,
       "name": "Rashel, Fist of Torm",
-      "reason": "no template for: Auras you control have exalted",
+      "reason": "",
       "scryfall_id": "12401fc7-3332-48e5-b38a-efaae29b3ee1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rashida Scalebane": {
@@ -219982,12 +219982,12 @@
     },
     "Reluctant Role Model": {
       "edhrec_rank": 4602,
-      "gate": "template",
+      "gate": null,
       "name": "Reluctant Role Model",
-      "reason": "no template for: Survival — At the beginning of your second main phase, if this creature is tapped, put a f",
+      "reason": "",
       "scryfall_id": "1fcea7eb-3174-4549-a1de-8dda577cd0b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rem Karolus, Stalwart Slayer": {
@@ -223092,12 +223092,12 @@
     },
     "Rhox Bodyguard": {
       "edhrec_rank": 25134,
-      "gate": "template",
+      "gate": null,
       "name": "Rhox Bodyguard",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "1e9f43c8-9df6-49df-b145-4a19bc55e8f4",
-      "source": "",
-      "status": "pending",
+      "source": "template:etb:^you gain (?P<n>\\d+|a|an|one|two|three|f",
+      "status": "done",
       "wanted": false
     },
     "Rhox Brute": {
@@ -223112,12 +223112,12 @@
     },
     "Rhox Charger": {
       "edhrec_rank": 21183,
-      "gate": "template",
+      "gate": null,
       "name": "Rhox Charger",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "8aaae6a3-ae3c-4b7e-82e8-69147f61ee18",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Rhox Faithmender": {
@@ -240552,12 +240552,12 @@
     },
     "Seraph of the Sword": {
       "edhrec_rank": 17745,
-      "gate": "template",
+      "gate": null,
       "name": "Seraph of the Sword",
-      "reason": "no template for: Prevent all combat damage that would be dealt to this creature",
+      "reason": "",
       "scryfall_id": "d9789cac-5774-4f72-82c3-18f11f9d4a62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seraphic Greatsword": {
@@ -240912,12 +240912,12 @@
     },
     "Serra Avenger": {
       "edhrec_rank": 11854,
-      "gate": "template",
+      "gate": null,
       "name": "Serra Avenger",
-      "reason": "no template for: You can't cast during your first, second, or third turns of the game",
+      "reason": "",
       "scryfall_id": "8e5627de-fda7-4e39-a6ec-1e895bc353ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Serra Aviary": {
@@ -241222,12 +241222,12 @@
     },
     "Servant of Nefarox": {
       "edhrec_rank": 23158,
-      "gate": "template",
+      "gate": null,
       "name": "Servant of Nefarox",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "e00a2b22-a473-44ae-919f-29bc8be05543",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Servant of Tymaret": {
@@ -246712,12 +246712,12 @@
     },
     "Sighted-Caste Sorcerer": {
       "edhrec_rank": 20898,
-      "gate": "template",
+      "gate": null,
       "name": "Sighted-Caste Sorcerer",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "d07e2d4c-a33b-42b1-9576-2269d137a868",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sightless Brawler": {
@@ -246842,12 +246842,12 @@
     },
     "Sigiled Behemoth": {
       "edhrec_rank": 26742,
-      "gate": "template",
+      "gate": null,
       "name": "Sigiled Behemoth",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "e0195ee6-c5d9-402e-8339-2caa50c4e46b",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sigiled Contender": {
@@ -246862,12 +246862,12 @@
     },
     "Sigiled Paladin": {
       "edhrec_rank": 15975,
-      "gate": "template",
+      "gate": null,
       "name": "Sigiled Paladin",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "4b22520d-c495-4528-9b24-4aa19e046a9e",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sigiled Sentinel": {
@@ -256694,7 +256694,7 @@
       "edhrec_rank": 10579,
       "gate": "template",
       "name": "Sovereigns of Lost Alara",
-      "reason": "no template for: Exalted",
+      "reason": "no template for: Whenever a creature you control attacks alone, you may search your library for an Aura car",
       "scryfall_id": "9d68ea02-66d3-4cca-ba0c-96f4340f683c",
       "source": "",
       "status": "pending",
@@ -260042,12 +260042,12 @@
     },
     "Spirit of the Hearth": {
       "edhrec_rank": 15038,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit of the Hearth",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "263357fd-4c2e-40ff-b952-e899609e1890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spirit of the Hunt": {
@@ -268042,12 +268042,12 @@
     },
     "Sublime Archangel": {
       "edhrec_rank": 8303,
-      "gate": "template",
+      "gate": null,
       "name": "Sublime Archangel",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "33ac93d2-80dd-4e2a-93b6-3e85526c7372",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sublime Epiphany": {
@@ -301082,12 +301082,12 @@
     },
     "Vanguard Seraph": {
       "edhrec_rank": 11147,
-      "gate": "template",
+      "gate": null,
       "name": "Vanguard Seraph",
-      "reason": "no template for: Whenever you gain life for the first time each turn, surveil 1",
+      "reason": "",
       "scryfall_id": "4329c861-fc16-4a96-9c03-25af6ac2adc8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanguard Suppressor": {
@@ -312232,12 +312232,12 @@
     },
     "Waveskimmer Aven": {
       "edhrec_rank": 23690,
-      "gate": "template",
+      "gate": null,
       "name": "Waveskimmer Aven",
-      "reason": "no template for: Exalted",
+      "reason": "",
       "scryfall_id": "e75ebcb4-5db8-4c72-9f65-8ee8f2c893ea",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Wax // Wane": {
@@ -321982,12 +321982,12 @@
     },
     "Zarda, the Power Princess": {
       "edhrec_rank": 25972,
-      "gate": "template",
+      "gate": null,
       "name": "Zarda, the Power Princess",
-      "reason": "no template for: Other Heroes you control have exalted",
+      "reason": "",
       "scryfall_id": "f99b7504-a743-4923-becf-37b5759487b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zareth San, the Trickster": {

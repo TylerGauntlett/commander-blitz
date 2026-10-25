@@ -172,6 +172,7 @@ CARD_LEVEL_RIDER_KEYS = (
     "splice_onto",  # which spells this may be spliced onto
     "melds_with",  # the other half of a meld pair
     "melds_into",  # what the pair becomes
+    "cant_cast_first_turns",  # "You can't cast this during your first N turns of the game"
 )
 
 

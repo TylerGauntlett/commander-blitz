@@ -1,0 +1,22 @@
+{
+  "card_id": "ghostly_possession",
+  "name": "Ghostly Possession",
+  "oracle_text": "Enchant creature\nEnchanted creature has flying.\nPrevent all combat damage that would be dealt to and dealt by enchanted creature.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to and dealt by enchanted creature."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a continuous static that prevents all (combat) damage a matching permanent would DEAL, e.g. a `prevent_damage` static with a direction key (`dealt: \"by\"` / `\"to_and_by\"`) read alongside `affects: {attached: true}` and `combat_only: true`, so an Aura can stop combat damage dealt both to and by the enchanted creature for as long as it is attached",
+      "why_existing_wont_do": "The `prevent_damage` static (with `prevent_all` and `combat_only`) only answers damage dealt TO the matched permanent (`prevents_all_damage` checks the recipient). `prevent_damage_permanent` can face `by`/`to_and_by` but is a one-shot op with only `this_turn`/`until_your_next_turn` durations and no combat-only narrowing, not a continuous Aura static. `damage_source` filters the dealer only on `replace_damage`, which requires `damage_multiplier` of 2 or more and so cannot prevent."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_damage_permanent",
+    "replace_damage"
+  ],
+  "confidence": "high"
+}

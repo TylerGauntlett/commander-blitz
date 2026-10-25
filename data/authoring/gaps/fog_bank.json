@@ -1,0 +1,23 @@
+{
+  "card_id": "fog_bank",
+  "name": "Fog Bank",
+  "oracle_text": "Defender (This creature can't attack.)\nFlying\nPrevent all combat damage that would be dealt to and dealt by this creature.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to and dealt by this creature."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a dealer filter (`damage_source`) on the `prevent_damage` static, so that `{\"effect\": \"prevent_damage\", \"prevent_all\": true, \"combat_only\": true, \"damage_source\": {\"self_only\": true}}` prevents all combat damage this creature would deal to any recipient (creatures, players and planeswalkers alike); the 'dealt to' half is already a second static with `affects: {\"self_only\": true}`",
+      "why_existing_wont_do": "The `prevent_damage` static with `prevent_all` + `combat_only` reads only the recipient (`affects`, via `prevents_all_damage`), so it covers 'dealt to this creature' but never 'dealt by' it. `damage_source` filters the dealer but the loader accepts it only on `replace_damage`, whose `damage_multiplier` must be 2 or more and so cannot prevent. `prevent_all_but` caps by recipient too. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "combat_only",
+    "replace_damage",
+    "damage_source"
+  ],
+  "confidence": "high"
+}

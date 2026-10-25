@@ -1,0 +1,27 @@
+{
+  "card_id": "suppressor_skyguard",
+  "name": "Suppressor Skyguard",
+  "oracle_text": "Flying\nWhenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.",
+  "blocked_sentences": [
+    "Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat."
+  ],
+  "needs": [
+    {
+      "capability": "unattacked_opponent_condition",
+      "kind": "value",
+      "what": "an intervening-if condition (or value) on a 'player attacks you' trigger that asks whether the attacking player has an opponent other than you who is not being attacked this combat -- i.e. the count of the attacking player's opponents, excluding the trigger's controller, that no attacking creature (or their planeswalkers/battles) is attacking, compared > 0",
+      "why_existing_wont_do": "creatures_attack_player with defending: you covers 'a player attacks you', but condition_keys and value_keys have nothing that enumerates the active player's opponents and reads who is being attacked; attacked_this_turn / attackers_this_turn / count over {binding: attackers} count creatures, not unattacked defending players, and selectors are object-based so no player-level 'not being attacked' filter exists"
+    },
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a one-shot effect that prevents all combat damage that would be dealt to a player (you) for the rest of the current combat",
+      "why_existing_wont_do": "the prevent_damage op takes only duration and player, with no combat_only narrowing and no 'this combat' duration; combat_only exists only on the prevent_damage static, which lasts while the permanent does rather than for one combat"
+    }
+  ],
+  "closest_existing": [
+    "creatures_attack_player",
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/values/test_most_sharing_a_name.py. t_msn_atlas is Endless Atlas: {2}, {T}: draw a card, activated only if you control three or more lands with the same name.",
+  "cards": [
+    {
+      "id": "t_msn_atlas",
+      "name": "Test Atlas",
+      "oracle_text": "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}: Draw a card. Activate only if you control three or more lands with the same name.",
+          "cost": {"mana": "{2}", "tap": true},
+          "condition": {
+            "cmp": ">=",
+            "left": {"most_sharing_a_name": {"objects": {"controller": "you", "types": ["Land"], "zone": "battlefield"}}},
+            "right": {"const": 3}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

@@ -376,5 +376,5 @@ class TestTheLoaderGuards:
     def test_it_is_still_refused_on_an_event_with_no_ordinal(self):
         card = watcher(nth=2)
         card["abilities"][0]["trigger"]["event"] = "discard"
-        with pytest.raises(DslError, match="only means anything on a draw or spell_cast"):
+        with pytest.raises(DslError, match="only means anything on a draw, spell_cast or you_gain_life"):
             compile_card(CardModel.model_validate(card))

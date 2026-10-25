@@ -25,6 +25,9 @@ from commanderblitz.engine.state import GameState, new_object
 #: Library filler so a position never loses to decking by accident.
 FILLER_CARD = "island"
 FILLER_COUNT = 40
+#: How many turns each seat of a built position has begun: past every
+#: "during your first turns of the game" restriction a card prints.
+IN_PROGRESS_TURNS_BEGUN = 10
 
 
 class GameBuilder:
@@ -53,6 +56,11 @@ class GameBuilder:
         self.state.step = Step.PRECOMBAT_MAIN
         self.state.active_idx = 0
         self.state.starting_player = 0
+        # A built position is a game in progress, so every seat is past the
+        # opening turns a "can't cast during your first turns" card counts
+        # (Serra Avenger). `turns_begun` puts a seat back in them.
+        for player in self.state.players:
+            player.turns_begun = IN_PROGRESS_TURNS_BEGUN
         self._explicit_library: set[int] = set()
 
     # -- zone population ----------------------------------------------------
@@ -157,6 +165,11 @@ class GameBuilder:
 
     def turn(self, turn: int) -> GameBuilder:
         self.state.turn = turn
+        return self
+
+    def turns_begun(self, pid: int, turns: int) -> GameBuilder:
+        """How many turns ``pid`` has begun, the current one included."""
+        self.state.players[pid].turns_begun = turns
         return self
 
     def active(self, pid: int) -> GameBuilder:

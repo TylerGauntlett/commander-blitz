@@ -190,6 +190,11 @@ STATIC_EFFECTS = frozenset(
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
+        # "You have hexproof." (Metropolis Reformer, Leyline of Sanctity) --
+        # 702.11d, read by `targeting._player_allowed`. Not `grant_protection`
+        # on a player: protection also prevents damage and stops everyone
+        # targeting, the player's own spells included.
+        "player_hexproof",
         # "Skip your draw step." Necropotence, and the fourteen other cards that
         # print exactly this sentence. Player-wide for `no_hand_limit`'s reason,
         # and read by `turn._draw_step`, which is the only place a turn-based
@@ -721,6 +726,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_lose_the_game",
         "cant_win_the_game",
         "damage_life_floor",
+        "player_hexproof",
     }
 )
 

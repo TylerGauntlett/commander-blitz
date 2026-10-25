@@ -600,6 +600,19 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "no_hand_limit")
 
 
+def player_has_hexproof(state: GameState, pid: int) -> bool:
+    """Whether this player has hexproof (702.11d).
+
+    "You have hexproof" -- Metropolis Reformer, Leyline of Sanctity. The player
+    can't be the target of spells or abilities their **opponents** control;
+    their own and a teammate's still reach them, which is the whole difference
+    from shroud and from protection. Read by `targeting._player_allowed`, the
+    one place a seat is offered as a target, so declaring and the 608.2b
+    re-check both see it.
+    """
+    return _player_static(state, pid, "player_hexproof")
+
+
 def player_pays_life_for_black(state: GameState, pid: int) -> bool:
     """Whether every ``{B}`` in a cost this player pays may be paid with 2 life.
 
@@ -1469,6 +1482,16 @@ def player_cant_cast_spells(
     filtered lock is asked there -- `casting._cast_variant` for every offered
     cast, and each resolution-time cast listed above.
     """
+    if (
+        card is not None
+        and card.cant_cast_first_turns is not None
+        and state.active_player == pid
+        and state.players[pid].turns_begun <= card.cant_cast_first_turns
+    ):
+        # "You can't cast Serra Avenger during your first, second, or third
+        # turns of the game." A "can't" on the card rather than a static, asked
+        # here so every cast path that asks about a lock asks about this.
+        return True
     for obj, static in _active_player_statics(state, "cant_cast_spells"):
         if not _reaches_player(obj, static, pid):
             continue

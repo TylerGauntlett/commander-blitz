@@ -832,6 +832,11 @@ class GameState:
             if pid is not None:
                 amount = int(data.get("amount") or 0)
                 ledger.life_gained[pid] = ledger.life_gained.get(pid, 0) + amount
+                # "Whenever you gain life for the first time each turn." The
+                # ordinal goes on the event, as a cast's does below, so a
+                # `you_gain_life` trigger with `nth` reads it at queue time.
+                ledger.life_gains[pid] = ledger.life_gains.get(pid, 0) + 1
+                data["nth"] = ledger.life_gains[pid]
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1

@@ -1269,7 +1269,9 @@ Anywhere a number is expected -- the leaf list is
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
+{ "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
+{ "most_sharing_a_name": { "objects": { … } } } // Endless Atlas; the biggest same-name group
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
@@ -2604,6 +2606,19 @@ A misspelled step is a load error rather than a fall back to "no restriction",
 which would be a strictly better Berserk: castable after blockers, with the
 damage already dealt.
 
+```jsonc
+// Serra Avenger
+{ "types": ["Creature"], "cant_cast_first_turns": 3 }
+```
+
+`cant_cast_first_turns` is "you can't cast this during your first, second, or
+third turns of the game": how many of the caster's **own** turns it waits out,
+counted by `PlayerState.turns_begun` (extra turns count, 500.7). It is a
+"can't" rather than a window, so `player_statics.player_cant_cast_spells`
+answers it with the card in hand, on every cast path; on an opponent's turn a
+card with flash can still be cast. `GameState.turn` is the near miss: it counts
+the table's turns, and in a pod the game's third turn is somebody's first.
+
 ### Choosing a permanent type, and reading it back
 
 ```jsonc
@@ -3596,7 +3611,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw` or a `spell_cast` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast` or a `you_gain_life` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -3640,6 +3655,17 @@ by an instant fires on the instant.
 // The Council of Four: "a player casts their second spell during their turn"
 { "event": "spell_cast", "controller": "any", "nth": 2,
   "condition": { "is_active_player": { "binding": "event_player" } } }
+```
+
+On `you_gain_life` it is "whenever you gain life **for the first time** each
+turn" (Vanguard Seraph): the ledger fold counts each player's gain *events* in
+`TurnLedger.life_gains` and writes the count onto LIFE_GAINED. A condition on
+`life_gained_this_turn` cannot say it, because that is a total and one gain of 4
+is four gains of 1 to it.
+
+```jsonc
+// Vanguard Seraph
+{ "event": "you_gain_life", "nth": 1 }
 ```
 
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the

@@ -1,0 +1,25 @@
+{
+  "card_id": "goldbug_humanity_s_ally_goldbug_scrappy_scout",
+  "name": "Goldbug, Humanity's Ally // Goldbug, Scrappy Scout",
+  "oracle_text": "More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)\nPrevent all combat damage that would be dealt to attacking Humans you control.\nWhenever you cast your second spell each turn, convert Goldbug.",
+  "blocked_sentences": [
+    "More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)",
+    "Living metal (During your turn, this Vehicle is also a creature.)"
+  ],
+  "needs": [
+    {
+      "capability": "more_than_meets_the_eye",
+      "kind": "cost",
+      "what": "a card-level alternative cost on a transforming DFC that casts the card from hand with its back face up (converted) for the printed mana, so it resolves as the back face (702.162)",
+      "why_existing_wont_do": "alternative_cost/evoke only change the price of the front face; graveyard_cast_transformed casts transformed only from the graveyard; second_face is for MDFC/split halves that never turn over, while this card's back must also be reachable by convert (transform op), so it has to be a back_face"
+    },
+    {
+      "capability": "living_metal",
+      "kind": "keyword",
+      "what": "Living metal on a Vehicle: as long as it is its controller's turn, the permanent is also an artifact creature (702.161)",
+      "why_existing_wont_do": "living_metal is not in keywords; a set_types static with condition is_your_turn might add Creature but there is no evidence set_types adds rather than replaces types, and animate's your_turn_keywords is a one-shot op not a printed static; filing rather than approximating"
+    }
+  ],
+  "closest_existing": ["graveyard_cast_transformed", "alternative_cost", "set_types", "transform"],
+  "confidence": "high"
+}

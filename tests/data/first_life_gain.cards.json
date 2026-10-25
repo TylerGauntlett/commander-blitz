@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_life_gain_nth.py. t_flg_seraph is Vanguard Seraph's trigger with a draw in place of surveil, so the count of triggers is the count of cards drawn.",
+  "cards": [
+    {
+      "id": "t_flg_seraph",
+      "name": "Test First Gain Seraph",
+      "oracle_text": "Whenever you gain life for the first time each turn, draw a card.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life for the first time each turn, draw a card.",
+          "trigger": {"event": "you_gain_life", "nth": 1},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

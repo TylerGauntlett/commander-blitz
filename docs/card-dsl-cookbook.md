@@ -930,7 +930,7 @@ silent.
 
 ## Player-wide statics
 
-Thirty-eight static effects describe the *player* rather than a characteristic, so
+Thirty-nine static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -938,6 +938,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "player_hexproof", "affects_player": "you" }
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
@@ -3781,6 +3782,39 @@ nothing ever after, leaving the two branches indistinguishable one turn later.
 A **token** is asked nothing. `create_token` is not a generator and could not
 stop to ask, and Rhythm of the Wild says nontoken anyway.
 
+### Exalted
+
+    Noble Hierarch — "Exalted."
+    Merchant of Truth — "Clues you control have exalted."
+
+```jsonc
+"keywords": ["exalted"]                                // printed on the permanent
+
+{ "kind": "static", "text": "Clues you control have exalted.",
+  "effect": "grant_keyword", "keywords": ["exalted"],
+  "affects": { "controller": "you", "subtypes": ["Clue"] } }
+```
+
+A `Keyword` whose whole content is a triggered ability the rules supply:
+"whenever a creature you control attacks alone, that creature gets +1/+1 until
+end of turn" (702.83a). The trigger is `carddef.EXALTED_TRIGGER`, and
+`triggers._candidate_abilities` yields it once for every battlefield permanent
+whose **derived** keywords include exalted, with that permanent as its source.
+So each exalted permanent triggers on its own (702.83b), a granted exalted
+listens, and a permanent that loses its abilities stops.
+
+"Attacks alone" (506.5) is `you_attack` with exactly one creature in the
+`attackers` binding, the condition the trigger carries and the one a printed
+"whenever a creature you control attacks alone" line uses on its own (Squall,
+Seed Mercenary).
+
+**The near miss** is writing exalted out as that triggered ability on the
+card. It plays the same on the card that prints it, and it is not an instance
+of exalted: a grant cannot hand it to a Clue. Write the keyword.
+
+A keyword is a characteristic, not a count, so one permanent holding exalted
+twice (printed and granted) triggers once rather than twice.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:
@@ -5734,6 +5768,21 @@ The loader requires exactly **one** of `prevent_all` and `amount` — absorb 0
 prevents nothing and would print a line that never fires, while both together are
 two answers to one question — and refuses `prevent_all` on any other static,
 since a flag nothing reads is a printed line that does nothing.
+
+**`combat_only`** narrows either form to combat damage, the key
+`replace_damage` reads for Inquisitor's Flail:
+
+```jsonc
+// Seraph of the Sword: prevent all combat damage that would be dealt to this
+//                      creature.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "combat_only": true, "affects": { "self_only": true } }
+```
+
+`damage_permanent` passes its `is_combat` to `prevents_all_damage` and
+`prevented_damage`, so burn and a fight still reach the Seraph. A
+`replace_damage` to zero is the near miss and is not a prevention: it fires no
+`DAMAGE_PREVENTED`, so "damage can't be prevented" would not see it.
 
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It

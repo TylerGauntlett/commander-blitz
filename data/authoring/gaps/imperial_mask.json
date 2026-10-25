@@ -1,0 +1,18 @@
+{
+  "card_id": "imperial_mask",
+  "name": "Imperial Mask",
+  "oracle_text": "When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)",
+  "blocked_sentences": [
+    "When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "teammates",
+      "kind": "selector",
+      "what": "a player spec \"teammate\" (each player on your team other than you, rule 810 Two-Headed Giant / team variants) usable as `players` in `for_each_player` and as `controller` on `copy_permanent`, so the copy is created under each teammate's control; it resolves to no players in free-for-all",
+      "why_existing_wont_do": "Player specs offer only you, opponent, any and targets; the engine has no team concept, so every other player is an opponent and `for_each_player` over \"opponent\" would hand copies to enemies. The \"You have hexproof\" line is expressible with the `player_hexproof` static, and the \"if it's not a token\" intervening if with a self `is_token` check, but the card cannot be written partially"
+    }
+  ],
+  "closest_existing": ["copy_permanent", "for_each_player", "player_hexproof"],
+  "confidence": "high"
+}

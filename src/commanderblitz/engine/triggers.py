@@ -13,7 +13,7 @@ from collections.abc import Generator, Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CLOAK_WARD, Ability, TriggerSpec
+from .carddef import CLOAK_WARD, EXALTED_TRIGGER, Ability, TriggerSpec
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
@@ -23,6 +23,7 @@ from .characteristics import (
     granted_abilities,
     granted_ability_origin,
     granted_wards,
+    has_keyword,
     resolve_chosen_subtypes,
 )
 from .characteristics import _matches as _static_matches
@@ -30,7 +31,7 @@ from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
 from .effects.selectors import ZONE_NAMES, attacking_player_matches, has_printed_cost
-from .enums import Zone
+from .enums import Keyword, Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
@@ -857,6 +858,11 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # opponent who answers the trigger by killing the granter still pays.
         for ability in wards.get(oid, ()):
             yield obj, ability
+        # Exalted (702.83): the rules' trigger, once per permanent with the
+        # keyword, read off derived keywords so a granted exalted (Merchant
+        # of Truth's Clues) listens and a removed one does not.
+        if not obj.face_down and has_keyword(state, oid, Keyword.EXALTED.value):
+            yield obj, EXALTED_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.

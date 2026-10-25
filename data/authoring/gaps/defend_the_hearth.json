@@ -1,0 +1,20 @@
+{
+  "card_id": "defend_the_hearth",
+  "name": "Defend the Hearth",
+  "oracle_text": "Prevent all combat damage that would be dealt to players this turn.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to players this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a combat-only form of the one-shot player damage shield: `combat_only: true` on the `prevent_damage` op (and on structs.DamageShield, read by primitives.damage_player), so a spell can say \"prevent all combat damage that would be dealt to players this turn\" with player: \"any\" while noncombat damage to players still lands",
+      "why_existing_wont_do": "The `prevent_damage` op (op_options: duration, player) installs a DamageShield that prevents ALL damage to the player, noncombat included, so it would be a strictly better card; `combat_only` exists only on the `prevent_damage` static, which lives on a permanent's battlefield statics, matches permanents not players, and has no this-turn duration, so an instant cannot carry it"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

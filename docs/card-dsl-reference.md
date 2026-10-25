@@ -13,17 +13,17 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 139 |
 | [Selectors](#selectors) | 65 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 51 |
+| [Values](#values) | 52 |
 | [Conditions](#conditions) | 29 |
 | [Trigger events](#trigger-events) | 46 |
 | [Trigger filters](#trigger-filters) | 32 |
-| [Static effects](#static-effects) | 77 |
-| [Player-wide statics](#player-wide-statics) | 38 |
+| [Static effects](#static-effects) | 78 |
+| [Player-wide statics](#player-wide-statics) | 39 |
 | [Grantable statics](#grantable-statics) | 36 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 25 |
 | [Card-level costs](#card-level-costs) | 28 |
-| [Keywords](#keywords) | 37 |
+| [Keywords](#keywords) | 38 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -35,7 +35,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 6 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 13 |
+| [Card-level rider keys](#card-level-rider-keys) | 14 |
 | [Engine events](#engine-events) | 73 |
 
 ## Effect ops
@@ -291,7 +291,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `commander_color_identity` | Colors in your commander's color identity. | [Commander-identity mana — "any color in your commander's color identity"](card-dsl-cookbook.md#commander-identity-mana--any-color-in-your-commanders-color-identity) |
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
-| `counters_had` | Counters of a kind the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
+| `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_on` | Counters of a kind on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
@@ -316,6 +316,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
 | `minus` | a - b. | [Value expressions](card-dsl.md#value-expressions) |
+| `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
@@ -513,6 +514,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard. | [Static abilities](card-dsl.md#static-abilities) |
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
+| `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `prevent_all_but` |  | yes | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
 | `prevent_damage` |  | yes | Prevent damage dealt to or by matching permanents. | [Static abilities](card-dsl.md#static-abilities) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
@@ -575,6 +577,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | The player may play lands from their graveyard. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_draw` | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
@@ -723,6 +726,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
 | `fear` | Fear. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
 | `first_strike` | First strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `flash` | Flash. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
@@ -958,6 +962,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `splice_onto` | What this card may be spliced onto. | [Splice](card-dsl-cookbook.md#splice) |
 | `melds_with` | The card this one melds with. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
+| `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 
 ## Engine events
 

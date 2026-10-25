@@ -1,0 +1,21 @@
+{
+  "card_id": "commencement_of_festivities",
+  "name": "Commencement of Festivities",
+  "oracle_text": "Prevent all combat damage that would be dealt to players this turn.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to players this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-fog",
+      "kind": "op",
+      "what": "a combat_only flag on the prevent_damage op (the player DamageShield), so a resolving instant installs a this_turn shield over every player (player: each/any) that prevents only combat damage and lets noncombat damage to players through",
+      "why_existing_wont_do": "prevent_damage the op takes only player and duration and its DamageShield prevents ALL damage to the player, so burn and drain would also be stopped -- a strictly better card; the prevent_damage static has combat_only but lives on a printed permanent, matches only permanents via affects (no way to name a seat), and has no 'this turn' duration, so a spell cannot install it"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_damage_permanent"
+  ],
+  "confidence": "high"
+}

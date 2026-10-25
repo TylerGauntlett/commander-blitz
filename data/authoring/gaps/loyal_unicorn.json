@@ -1,0 +1,21 @@
+{
+  "card_id": "loyal_unicorn",
+  "name": "Loyal Unicorn",
+  "oracle_text": "Vigilance\nLieutenant — At the beginning of combat on your turn, if you control your commander, prevent all combat damage that would be dealt to creatures you control this turn. Other creatures you control gain vigilance until end of turn.",
+  "blocked_sentences": [
+    "Lieutenant — At the beginning of combat on your turn, if you control your commander, prevent all combat damage that would be dealt to creatures you control this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a one-shot prevention installed by a resolving triggered ability that prevents only COMBAT damage dealt to creatures you control for the rest of the turn -- a `combat_only` flag on `prevent_damage_permanent` (or a sibling op), ideally applying to every creature you control during the turn rather than only those present at resolution (prevention is not locked in by 611.2c)",
+      "why_existing_wont_do": "`prevent_damage_permanent` is the one-shot over permanents but prevents ALL damage (noncombat too), takes no combat-only flag, and fixes its set of objects at resolution; `combat_only` exists only on the `prevent_damage` static, which is continuous while its source stands and cannot be given a 'this turn' duration by a trigger; the `prevent_damage` op shields a player, not permanents"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

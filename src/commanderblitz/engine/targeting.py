@@ -21,6 +21,7 @@ from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
+from .player_statics import player_has_hexproof
 from .structs import StackItem, TargetRef
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -271,6 +272,10 @@ def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:
     # player still be the target of their own spell. The object side draws the
     # same line, in `can_be_targeted`, and for the same reason.
     if player_protected_from(ctx.state, pid, ctx.source_oid):
+        return False
+    # Hexproof over a seat (702.11d): only an opponent of that player is
+    # stopped, so the check reads who controls the spell or ability.
+    if ctx.controller in ctx.state.opponents(pid) and player_has_hexproof(ctx.state, pid):
         return False
     clause = spec.selector.get("controller", "any")
     if clause == "any":

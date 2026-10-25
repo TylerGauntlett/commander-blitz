@@ -1,0 +1,16 @@
+{
+  "card_id": "blinding_powder",
+  "name": "Blinding Powder",
+  "oracle_text": "Equipped creature has \"Unattach Blinding Powder: Prevent all combat damage that would be dealt to this creature this turn.\"\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+  "blocked_sentences": [
+    "Equipped creature has \"Unattach Blinding Powder: Prevent all combat damage that would be dealt to this creature this turn.\""
+  ],
+  "needs": [{
+    "capability": "unattach_cost",
+    "kind": "cost",
+    "what": "an activated-ability cost \"Unattach <this Equipment>\" on an ability granted to the equipped creature: paying it unattaches the named Equipment (the granting source) from the creature, and the cost is unpayable once the Equipment is no longer attached to it",
+    "why_existing_wont_do": "cost_keys has tap, sacrifice, exile_self, return_to_hand and the rest but nothing that unattaches; the `unattach` op exists, but putting it in the granted ability's effects moves the payment to resolution and lets the ability be activated repeatedly (and after the Powder has moved away), which the packet notes forbid. The rest is expressible: a `grant_ability` static with affects {attached: true} granting an activated ability whose effect is `prevent_damage_permanent` on self for this turn, combat only"
+  }],
+  "closest_existing": ["unattach", "grant_ability", "prevent_damage_permanent"],
+  "confidence": "high"
+}

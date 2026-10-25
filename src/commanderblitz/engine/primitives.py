@@ -648,7 +648,7 @@ def damage_permanent(
     # with both on one creature the total shield has already taken everything,
     # and absorb would otherwise fire a second DAMAGE_PREVENTED for damage that
     # no longer exists.
-    if prevents_all_damage(state, oid):
+    if prevents_all_damage(state, oid, is_combat=is_combat):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -683,7 +683,7 @@ def damage_permanent(
     # what is prevented was never dealt, so nothing below should see it: no
     # deathtouch mark, no lifelink, no ledger entry, and a `DAMAGE_DEALT` event
     # carrying the reduced number rather than the printed one.
-    if (shield := prevented_damage(state, oid)) > 0:
+    if (shield := prevented_damage(state, oid, is_combat=is_combat)) > 0:
         blocked = min(shield, amount)
         amount -= blocked
         fire(

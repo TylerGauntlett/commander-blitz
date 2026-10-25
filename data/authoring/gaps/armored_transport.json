@@ -1,0 +1,23 @@
+{
+  "card_id": "armored_transport",
+  "name": "Armored Transport",
+  "oracle_text": "Prevent all combat damage that would be dealt to this creature by creatures blocking it.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt to this creature by creatures blocking it."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "static_effect",
+      "what": "a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)",
+      "why_existing_wont_do": "`prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "combat_only",
+    "damage_source",
+    "blocking"
+  ],
+  "confidence": "high"
+}

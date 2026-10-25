@@ -1,0 +1,25 @@
+{
+  "card_id": "delirium",
+  "name": "Delirium",
+  "oracle_text": "Cast this spell only during an opponent's turn.\nTap target creature that player controls. That creature deals damage equal to its power to the player. Prevent all combat damage that would be dealt to and dealt by the creature this turn.",
+  "blocked_sentences": [
+    "Cast this spell only during an opponent's turn.",
+    "Tap target creature that player controls. That creature deals damage equal to its power to the player."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_during_opponents_turn",
+      "kind": "engine",
+      "what": "a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster (and, by extension, the 'cast only during combat' / 'only during your turn' family), checked when the cast is offered",
+      "why_existing_wont_do": "card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own turn and fizzle rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction"
+    },
+    {
+      "capability": "active_player_selector",
+      "kind": "selector",
+      "what": "a target selector and player spec meaning 'the active player' ('target creature that player controls ... deals damage to the player', where 'that player' is the opponent whose turn it is), e.g. controller: \"active_player\" on the target selector and player: \"active_player\" on the damage op",
+      "why_existing_wont_do": "selector `controller` takes you/opponent/any or a player target binding; `controller: \"opponent\"` would allow a creature of a non-active opponent in multiplayer, and `is_active_player` is only a condition, not a player reference"
+    }
+  ],
+  "closest_existing": ["cant_cast_first_turns", "cast_during", "is_active_player", "prevent_damage_permanent"],
+  "confidence": "high"
+}

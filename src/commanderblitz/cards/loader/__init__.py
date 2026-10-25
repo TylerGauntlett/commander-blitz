@@ -1588,6 +1588,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{[s.name.lower() for s in Step]})"
             ) from None
 
+    if model.cant_cast_first_turns is not None and model.cant_cast_first_turns < 1:
+        # "Your first zero turns" restricts nothing: the card would print the
+        # line and cast as if it did not.
+        raise DslError(
+            f"{model.id}: 'cant_cast_first_turns' counts turns from 1, "
+            f"got {model.cant_cast_first_turns!r}"
+        )
+
     return CardDef(
         id=model.id,
         name=model.name,
@@ -1623,6 +1631,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         cast_before_step=cast_before_step,
+        cant_cast_first_turns=model.cant_cast_first_turns,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
@@ -2221,14 +2230,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"trigger, not on {model.trigger.event!r}"
             )
 
-        if model.trigger.nth is not None and model.trigger.event not in ("draw", "spell_cast"):
-            # Same reasoning as `counter` and `mana_ability` above: only `draw`
-            # and `spell_cast` carry an ordinal, so accepting it elsewhere would
-            # look like "your second card each turn" and be a restriction that
-            # never matches -- an ability that silently never fires.
+        if model.trigger.nth is not None and model.trigger.event not in (
+            "draw",
+            "spell_cast",
+            "you_gain_life",
+        ):
+            # Same reasoning as `counter` and `mana_ability` above: only `draw`,
+            # `spell_cast` and `you_gain_life` carry an ordinal, so accepting it
+            # elsewhere would look like "your second card each turn" and be a
+            # restriction that never matches -- an ability that silently never
+            # fires.
             raise DslError(
-                f"{where}: 'nth' only means anything on a draw or spell_cast trigger, "
-                f"not on {model.trigger.event!r}"
+                f"{where}: 'nth' only means anything on a draw, spell_cast or "
+                f"you_gain_life trigger, not on {model.trigger.event!r}"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
             # Ordinals count from 1. A zeroth or negative card or spell is
@@ -3328,14 +3342,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.damage_source: static filters may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
-    elif (
-        model.damage_multiplier is not None
-        or model.damage_source is not None
-        or model.combat_only
-    ):
+    elif model.damage_multiplier is not None or model.damage_source is not None:
         raise DslError(
-            f"{where}: 'damage_multiplier'/'damage_source'/'combat_only' only mean "
+            f"{where}: 'damage_multiplier'/'damage_source' only mean "
             f"anything on a replace_damage static, not on {model.effect!r}"
+        )
+    elif model.combat_only and model.effect != "prevent_damage":
+        # "Prevent all **combat** damage that would be dealt to this creature"
+        # (Seraph of the Sword) is the other reader: the same narrowing on a
+        # prevention rather than a replacement.
+        raise DslError(
+            f"{where}: 'combat_only' only means anything on a replace_damage "
+            f"or prevent_damage static, not on {model.effect!r}"
         )
 
     if model.effect == "prevent_all_but":

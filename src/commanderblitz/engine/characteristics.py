@@ -2029,7 +2029,7 @@ def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
     return False
 
 
-def prevented_damage(state: GameState, oid: int) -> int:
+def prevented_damage(state: GameState, oid: int, *, is_combat: bool = False) -> int:
     """How much damage from **each source** this permanent prevents -- absorb.
 
     Per source and per instance, which is what 702.63a says and is the whole of
@@ -2050,6 +2050,8 @@ def prevented_damage(state: GameState, oid: int) -> int:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
+        if static.get("combat_only") and not is_combat:
+            continue
         if static.get("prevent_all"):
             # A total shield is answered by `prevents_all_damage` below, not by
             # a number here. Skipped rather than summed as 0, so the two never
@@ -2060,7 +2062,7 @@ def prevented_damage(state: GameState, oid: int) -> int:
     return total
 
 
-def prevents_all_damage(state: GameState, oid: int) -> bool:
+def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) -> bool:
     """Whether **all** damage to this permanent is prevented.
 
     "Prevent all damage that would be dealt to other attacking Soldiers you
@@ -2076,12 +2078,18 @@ def prevents_all_damage(state: GameState, oid: int) -> bool:
     deliberately is *not* is protection, which also stops the creature being
     blocked, enchanted and targeted -- reusing that would make every shielded
     Soldier unblockable, which is three extra cards' worth of text.
+
+    A static carrying ``combat_only`` -- "prevent all **combat** damage that
+    would be dealt to this creature" (Seraph of the Sword) -- answers only when
+    ``is_combat``, so burn and a fight still reach the creature.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     return any(
-        static.get("prevent_all") and _matches(state, obj, source_obj, static.get("affects"))
+        static.get("prevent_all")
+        and (is_combat or not static.get("combat_only"))
+        and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
         if static.get("effect") == "prevent_damage"
     )

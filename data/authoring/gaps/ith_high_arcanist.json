@@ -1,0 +1,21 @@
+{
+  "card_id": "ith_high_arcanist",
+  "name": "Ith, High Arcanist",
+  "oracle_text": "Vigilance\n{T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn.\nSuspend 4—{W}{U}",
+  "blocked_sentences": [
+    "{T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn."
+  ],
+  "needs": [
+    {
+      "capability": "combat-only-permanent-shield",
+      "kind": "op",
+      "what": "a `combat_only` flag on the `prevent_damage_permanent` op (and the PermanentShield it installs), so a resolving ability can prevent only COMBAT damage dealt to and by one targeted permanent this turn, leaving noncombat damage to and from it unprevented",
+      "why_existing_wont_do": "`prevent_damage_permanent` with `dealt: \"to_and_by\"` and `duration: \"this_turn\"` is the exact shape but its shield stops all damage, so the creature would also be immune to burn and its own noncombat damage would be prevented -- a strictly different card. The `combat_only` flag the engine just gained lives only on the `prevent_damage` STATIC, which cannot be installed by an activated ability, has no duration and only faces 'dealt to'."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage_permanent",
+    "untap"
+  ],
+  "confidence": "high"
+}

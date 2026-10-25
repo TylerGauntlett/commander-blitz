@@ -1,0 +1,18 @@
+{
+  "card_id": "spider_man_2099",
+  "name": "Spider-Man 2099",
+  "oracle_text": "From the Future — You can't cast Spider-Man 2099 during your first, second, or third turns of the game.\nDouble strike, vigilance\nAt the beginning of your end step, if you've played a land or cast a spell this turn from anywhere other than your hand, Spider-Man 2099 deals damage equal to his power to any target.",
+  "blocked_sentences": [
+    "At the beginning of your end step, if you've played a land or cast a spell this turn from anywhere other than your hand, Spider-Man 2099 deals damage equal to his power to any target."
+  ],
+  "needs": [
+    {
+      "capability": "played_or_cast_from_non_hand_this_turn",
+      "kind": "value",
+      "what": "a turn-ledger value (or condition) counting the lands a player played and the spells a player cast this turn from a zone other than their hand (graveyard, exile, library top, command zone), e.g. {\"plays_this_turn\": {\"player\": \"you\", \"except_zones\": [\"hand\"], \"lands\": true, \"spells\": true}}, readable as an end_step trigger's intervening-if condition",
+      "why_existing_wont_do": "spells_cast_this_turn takes a filter, but it is matched by _matches_printed against the spell's printed face and the ledger (spells_cast_ids) records no origin zone, so it cannot tell a hand cast from a graveyard/exile/command-zone cast; no value_key records land plays at all, let alone their origin zone; cast_from_hand / cast_from_graveyard conditions only describe the card's own cast, and has_turn_flag would need an unprinted trigger to set the flag"
+    }
+  ],
+  "closest_existing": ["spells_cast_this_turn", "cards_from_graveyard_this_turn", "cast_from_hand", "cant_cast_first_turns"],
+  "confidence": "high"
+}
