@@ -68,24 +68,23 @@ on is still on this page, and the ready items are ranked by impact, then
 effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import).
-
 **Ready now, best first:**
 
-1. [Difficulty](#difficulty) — S, medium
-2. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-3. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-4. [Why a press is refused](#why-a-press-is-refused) — S, medium
-5. [Outcomes as data](#outcomes-as-data) — M, medium
-6. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-7. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-8. [Replays and sharing](#replays-and-sharing) — M, medium
-9. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-10. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-11. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-12. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-13. [Archidekt import](#archidekt-import) — S, low
-14. [Sound](#sound) — S, low
+1. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+2. [Difficulty](#difficulty) — S, medium
+3. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+4. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+5. [Why a press is refused](#why-a-press-is-refused) — S, medium
+6. [Outcomes as data](#outcomes-as-data) — M, medium
+7. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+8. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+9. [Replays and sharing](#replays-and-sharing) — M, medium
+10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+11. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+12. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+13. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+14. [Archidekt import](#archidekt-import) — S, low
+15. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -210,7 +209,7 @@ and the mute setting's e2e assertion still passes.
 
 ### Every precon native, one at a time, then every import
 
-Effort **L, continuous** · Impact **high**, each precon is a shelf row a player expects, and every list a player pastes is the same card work one deck at a time · Depends on nothing · **In progress**.
+Effort **L, continuous** · Impact **high**, each precon is a shelf row a player expects, and every list a player pastes is the same card work one deck at a time · Depends on nothing.
 
 #### Today
 
