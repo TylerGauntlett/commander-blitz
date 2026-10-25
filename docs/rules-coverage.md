@@ -130,7 +130,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Reflexive triggered abilities** | 603.11: `AbilityKind.REFLEXIVE` carries no `TriggerSpec` and is fired by name by the `reflexive_trigger` op, then goes on the stack as an ordinary `TriggerInstance` with modes and targets chosen as it is put there (603.3d); `_check_reflexive_wiring` makes the two halves name each other |
 | **Trigger doubling** | `double_triggers` with a `cause_filter` (Ancient Greenwarden) |
 | **Triggering on an activation** | `ability_activated` over `EventType.ABILITY_ACTIVATED`, fired before costs are paid (602.2b), with `TriggerSpec.mana_ability` for "if it isn't a mana ability" |
-| **The ordinal of a draw or a cast** | `TriggerSpec.nth` compared against the ordinal `draw_cards` and `GameState._tally` write onto the event, per drawing player or caster, with `triggers._spell_ordinal` for a filtered cast |
+| **The ordinal of a draw, a cast or a life gain** | `TriggerSpec.nth` compared against the ordinal `draw_cards` and `GameState._tally` write onto the event, per drawing player, caster or gaining player (`TurnLedger.life_gains`), with `triggers._spell_ordinal` for a filtered cast |
 | **What targeted, and who caused it** | `targeted_by` on `becomes_target` reads the `is_spell` flag on `BECAME_TARGET` (Goldspan Dragon); `cause_controller` on a `discard` trigger reads `caused_by`, scanned on the discarded card itself; the `spell_targets` event binding on `SPELL_CAST` serves an intervening-if and the effect alike (Orvar) |
 | **"Whenever an opponent searches their library"** | `searches_library` over `EventType.LIBRARY_SEARCHED`, fired by `ops_cards._search` once per player per search (701.19) |
 

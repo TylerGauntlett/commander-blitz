@@ -1385,6 +1385,11 @@ class TurnLedger:
     #: -- fires no event and is not counted. Not derivable from the life total:
     #: gaining 2 and losing 2 leaves it where it was.
     life_gained: dict[int, int] = field(default_factory=dict)
+    #: How many separate life gains each player has had this turn -- events,
+    #: not life. Vanguard Seraph's "whenever you gain life **for the first time**
+    #: each turn" asks for the ordinal, which `life_gained` cannot give: one
+    #: gain of 4 and four gains of 1 are the same total.
+    life_gains: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -1583,6 +1588,7 @@ class TurnLedger:
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()
+        self.life_gains.clear()
         self.spells_cast.clear()
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()

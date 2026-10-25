@@ -2221,14 +2221,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"trigger, not on {model.trigger.event!r}"
             )
 
-        if model.trigger.nth is not None and model.trigger.event not in ("draw", "spell_cast"):
-            # Same reasoning as `counter` and `mana_ability` above: only `draw`
-            # and `spell_cast` carry an ordinal, so accepting it elsewhere would
-            # look like "your second card each turn" and be a restriction that
-            # never matches -- an ability that silently never fires.
+        if model.trigger.nth is not None and model.trigger.event not in (
+            "draw",
+            "spell_cast",
+            "you_gain_life",
+        ):
+            # Same reasoning as `counter` and `mana_ability` above: only `draw`,
+            # `spell_cast` and `you_gain_life` carry an ordinal, so accepting it
+            # elsewhere would look like "your second card each turn" and be a
+            # restriction that never matches -- an ability that silently never
+            # fires.
             raise DslError(
-                f"{where}: 'nth' only means anything on a draw or spell_cast trigger, "
-                f"not on {model.trigger.event!r}"
+                f"{where}: 'nth' only means anything on a draw, spell_cast or "
+                f"you_gain_life trigger, not on {model.trigger.event!r}"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
             # Ordinals count from 1. A zeroth or negative card or spell is

@@ -3596,7 +3596,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw` or a `spell_cast` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast` or a `you_gain_life` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -3640,6 +3640,17 @@ by an instant fires on the instant.
 // The Council of Four: "a player casts their second spell during their turn"
 { "event": "spell_cast", "controller": "any", "nth": 2,
   "condition": { "is_active_player": { "binding": "event_player" } } }
+```
+
+On `you_gain_life` it is "whenever you gain life **for the first time** each
+turn" (Vanguard Seraph): the ledger fold counts each player's gain *events* in
+`TurnLedger.life_gains` and writes the count onto LIFE_GAINED. A condition on
+`life_gained_this_turn` cannot say it, because that is a total and one gain of 4
+is four gains of 1 to it.
+
+```jsonc
+// Vanguard Seraph
+{ "event": "you_gain_life", "nth": 1 }
 ```
 
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the
