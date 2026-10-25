@@ -6,7 +6,7 @@ effort: L
 impact: high
 why: each precon is a shelf row a player expects, and every list a player pastes is the same card work one deck at a time
 depends_on: []
-status: proposed
+status: in_progress
 continuous: true
 ---
 
