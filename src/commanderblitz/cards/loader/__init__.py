@@ -3328,14 +3328,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.damage_source: static filters may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
-    elif (
-        model.damage_multiplier is not None
-        or model.damage_source is not None
-        or model.combat_only
-    ):
+    elif model.damage_multiplier is not None or model.damage_source is not None:
         raise DslError(
-            f"{where}: 'damage_multiplier'/'damage_source'/'combat_only' only mean "
+            f"{where}: 'damage_multiplier'/'damage_source' only mean "
             f"anything on a replace_damage static, not on {model.effect!r}"
+        )
+    elif model.combat_only and model.effect != "prevent_damage":
+        # "Prevent all **combat** damage that would be dealt to this creature"
+        # (Seraph of the Sword) is the other reader: the same narrowing on a
+        # prevention rather than a replacement.
+        raise DslError(
+            f"{where}: 'combat_only' only means anything on a replace_damage "
+            f"or prevent_damage static, not on {model.effect!r}"
         )
 
     if model.effect == "prevent_all_but":

@@ -5768,6 +5768,21 @@ prevents nothing and would print a line that never fires, while both together ar
 two answers to one question — and refuses `prevent_all` on any other static,
 since a flag nothing reads is a printed line that does nothing.
 
+**`combat_only`** narrows either form to combat damage, the key
+`replace_damage` reads for Inquisitor's Flail:
+
+```jsonc
+// Seraph of the Sword: prevent all combat damage that would be dealt to this
+//                      creature.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "combat_only": true, "affects": { "self_only": true } }
+```
+
+`damage_permanent` passes its `is_combat` to `prevents_all_damage` and
+`prevented_damage`, so burn and a fight still reach the Seraph. A
+`replace_damage` to zero is the near miss and is not a prevention: it fires no
+`DAMAGE_PREVENTED`, so "damage can't be prevented" would not see it.
+
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
 modifies nothing when it resolves — the damage does not exist yet — and the whole

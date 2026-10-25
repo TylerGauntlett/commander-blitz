@@ -1,0 +1,50 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_prevent_combat_damage.py. t_pcd_seraph is Seraph of the Sword: prevent all combat damage that would be dealt to it, and nothing else. t_pcd_absorber is absorb 1 against combat damage only, the numbered form of the same narrowing.",
+  "cards": [
+    {
+      "id": "t_pcd_seraph",
+      "name": "Test Combat Shield Seraph",
+      "oracle_text": "Flying\nPrevent all combat damage that would be dealt to this creature.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Prevent all combat damage that would be dealt to this creature.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "combat_only": true,
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_pcd_absorber",
+      "name": "Test Combat Absorber",
+      "oracle_text": "If a source would deal combat damage to this creature, prevent 1 of that damage.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Soldier"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a source would deal combat damage to this creature, prevent 1 of that damage.",
+          "effect": "prevent_damage",
+          "amount": {"const": 1},
+          "combat_only": true,
+          "affects": {"self_only": true}
+        }
+      ]
+    }
+  ]
+}

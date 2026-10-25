@@ -807,8 +807,9 @@ class AbilityModel(BaseModel):
     #: "if **equipped creature** would deal combat damage". Omitted is any
     #: source, which is Furnace of Rath's "if a source would deal damage".
     damage_source: dict[str, Any] | None = None
-    #: `replace_damage`: only combat damage. The Flail says "combat damage" and
-    #: Furnace of Rath does not, and the difference is a whole card.
+    #: `replace_damage` and `prevent_damage`: only combat damage. The Flail says
+    #: "combat damage" and Furnace of Rath does not, and the difference is a
+    #: whole card; Seraph of the Sword's shield is the prevention twin.
     combat_only: bool = False
     counter_multiplier: int | None = None
     counter_addend: int | None = None
