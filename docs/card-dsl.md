@@ -2605,6 +2605,19 @@ A misspelled step is a load error rather than a fall back to "no restriction",
 which would be a strictly better Berserk: castable after blockers, with the
 damage already dealt.
 
+```jsonc
+// Serra Avenger
+{ "types": ["Creature"], "cant_cast_first_turns": 3 }
+```
+
+`cant_cast_first_turns` is "you can't cast this during your first, second, or
+third turns of the game": how many of the caster's **own** turns it waits out,
+counted by `PlayerState.turns_begun` (extra turns count, 500.7). It is a
+"can't" rather than a window, so `player_statics.player_cant_cast_spells`
+answers it with the card in hand, on every cast path; on an opponent's turn a
+card with flash can still be cast. `GameState.turn` is the near miss: it counts
+the table's turns, and in a pod the game's third turn is somebody's first.
+
 ### Choosing a permanent type, and reading it back
 
 ```jsonc

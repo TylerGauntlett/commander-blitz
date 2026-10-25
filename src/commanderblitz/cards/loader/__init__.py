@@ -1588,6 +1588,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{[s.name.lower() for s in Step]})"
             ) from None
 
+    if model.cant_cast_first_turns is not None and model.cant_cast_first_turns < 1:
+        # "Your first zero turns" restricts nothing: the card would print the
+        # line and cast as if it did not.
+        raise DslError(
+            f"{model.id}: 'cant_cast_first_turns' counts turns from 1, "
+            f"got {model.cant_cast_first_turns!r}"
+        )
+
     return CardDef(
         id=model.id,
         name=model.name,
@@ -1623,6 +1631,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         cast_before_step=cast_before_step,
+        cant_cast_first_turns=model.cant_cast_first_turns,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,

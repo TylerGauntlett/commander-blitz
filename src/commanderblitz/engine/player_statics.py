@@ -1482,6 +1482,16 @@ def player_cant_cast_spells(
     filtered lock is asked there -- `casting._cast_variant` for every offered
     cast, and each resolution-time cast listed above.
     """
+    if (
+        card is not None
+        and card.cant_cast_first_turns is not None
+        and state.active_player == pid
+        and state.players[pid].turns_begun <= card.cant_cast_first_turns
+    ):
+        # "You can't cast Serra Avenger during your first, second, or third
+        # turns of the game." A "can't" on the card rather than a static, asked
+        # here so every cast path that asks about a lock asks about this.
+        return True
     for obj, static in _active_player_statics(state, "cant_cast_spells"):
         if not _reaches_player(obj, static, pid):
             continue

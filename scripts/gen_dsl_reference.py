@@ -891,6 +891,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "splice_onto": ("What this card may be spliced onto.", "Splice"),
     "melds_with": ("The card this one melds with.", H_MELD),
     "melds_into": ("The permanent the pair melds into.", H_MELD),
+    "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
+                              "Narrowing when a spell may be cast"),
 }
 
 DELAYED_TRIGGER: dict[str, Entry] = {

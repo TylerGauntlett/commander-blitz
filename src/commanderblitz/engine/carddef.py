@@ -1177,6 +1177,10 @@ class CardDef:
     #: instant before any of them are consulted, so a restriction written
     #: anywhere else could not be reached at all.
     cast_before_step: Step | None = None
+    #: "You can't cast this during your first, second, or third turns of the
+    #: game" (Serra Avenger). Read by `player_statics.player_cant_cast_spells`
+    #: against `PlayerState.turns_begun`, so every cast path refuses it.
+    cant_cast_first_turns: int | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False

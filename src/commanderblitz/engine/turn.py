@@ -322,6 +322,7 @@ def _monarch_draw(state: GameState) -> Generator[Any, list[int]]:
 
 def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     player = state.players[state.active_idx]
+    player.turns_begun += 1
     player.lands_played = 0
     player.extra_land_drops = 0
     # "…for each card you've drawn this turn." Reset at the *start* of the turn

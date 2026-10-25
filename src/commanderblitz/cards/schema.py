@@ -1110,6 +1110,11 @@ class CardModel(BaseModel):
     #: of the step the casting window closes at, lowercased -- the only card
     #: field that narrows when a spell may be cast.
     cast_before_step: str | None = None
+    #: "You can't cast Serra Avenger during your first, second, or third turns
+    #: of the game." How many of its controller's first turns the card can't be
+    #: cast in -- ``3`` for the Avenger. Only the caster's *own* turns: with
+    #: flash it could be cast on an opponent's turn. At least 1.
+    cant_cast_first_turns: int | None = None
     #: **Buyback**: "You may pay an additional cost as you cast this spell. If
     #: you do, put it into your hand instead of your graveyard as it resolves."
     #:
