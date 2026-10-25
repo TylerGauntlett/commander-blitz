@@ -1271,6 +1271,7 @@ Anywhere a number is expected -- the leaf list is
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
+{ "most_sharing_a_name": { "objects": { … } } } // Endless Atlas; the biggest same-name group
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours

@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 139 |
 | [Selectors](#selectors) | 65 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 51 |
+| [Values](#values) | 52 |
 | [Conditions](#conditions) | 29 |
 | [Trigger events](#trigger-events) | 46 |
 | [Trigger filters](#trigger-filters) | 32 |
@@ -316,6 +316,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
 | `minus` | a - b. | [Value expressions](card-dsl.md#value-expressions) |
+| `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |

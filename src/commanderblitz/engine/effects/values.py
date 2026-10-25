@@ -184,6 +184,11 @@ VALUE_KEYS = frozenset(
         # *distinct values* over a pool, which no other leaf can be: `count`
         # counts objects, so five Forests are five and not one.
         "distinct",
+        # "…if you control three or more lands **with the same name**" --
+        # Endless Atlas. The largest group in a pool that shares one name:
+        # `distinct` counts the names and `count` the objects, and neither is
+        # how many of them are called the same thing.
+        "most_sharing_a_name",
         # "…the number of green mana symbols in the mana costs of permanents you
         # control" -- chroma. The one question nothing else asks: every other
         # reader of a cost wants its total or the set of colours in it, and this
@@ -381,6 +386,19 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
         return len(found)
+    if "most_sharing_a_name" in expr:
+        # `card_of(...).name`, as `shares_a_name_with` reads it: nothing in the
+        # characteristics layer renames an object. A face-down permanent has
+        # no name (708.2a), so it shares one with nothing.
+        pool = resolve_pool(ctx, expr["most_sharing_a_name"].get("objects") or {})
+        names: dict[str, int] = {}
+        for oid in pool:
+            obj = ctx.state.objects.get(oid)
+            if obj is None or obj.face_down:
+                continue
+            name = ctx.state.card_of(obj).name
+            names[name] = names.get(name, 0) + 1
+        return max(names.values(), default=0)
     if "creatures_you_control" in expr:
         return len(ctx.state.creatures(ctx.controller))
     if "lands_you_control" in expr:
@@ -1186,3 +1204,12 @@ def validate_value(expr: Any, where: str) -> None:
                 f"every permanent in the game, including your opponents'"
             )
         validate_selector(spec["objects"], f"{where}.distinct.objects")
+    if "most_sharing_a_name" in expr:
+        spec = expr["most_sharing_a_name"]
+        if not isinstance(spec, Mapping) or set(spec) != {"objects"} or not spec["objects"]:
+            # An empty selector is every permanent in the game, opponents'
+            # included -- `distinct`'s refusal, for its reason.
+            raise DslError(
+                f"{where}.most_sharing_a_name: takes exactly a non-empty 'objects' selector"
+            )
+        validate_selector(spec["objects"], f"{where}.most_sharing_a_name.objects")

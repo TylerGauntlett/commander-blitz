@@ -527,6 +527,7 @@ VALUES: dict[str, Entry] = {
     "creatures_died_this_turn": ("Creatures that died this turn (morbid).", H_LEDGER),
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn (bloodthirst).", H_LEDGER),
+    "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
     "distinct": ("Distinct values of a quality among a pool (domain, coven).",
                  "Counting different values rather than objects"),
     "extreme_value": ("The greatest/least of a quality in a pool, as one number.", None),
