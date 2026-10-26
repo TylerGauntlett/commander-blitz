@@ -7467,6 +7467,11 @@ which is who the printed "you get" names). It goes through
 players (Innkeeper's Talent) applies to it, and proliferate gives a chosen
 player one more energy if they already have some. Energy never ends the game.
 
+Energy is spent with the `pay_energy` cost key, a whole number of counters:
+"Pay {E}{E}: …" is `"cost": { "pay_energy": 2 }`. It is payable only while the
+player has at least that many, and the loader refuses a negative amount (that
+is `add_energy`). Paying fires `energy_paid` with what is left.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc

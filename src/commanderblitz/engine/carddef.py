@@ -292,6 +292,8 @@ class Cost:
     #: payment of X life into X payments of one, and describes an *optional*
     #: cost paid a number of times rather than one mandatory announced number.
     pay_life_x: bool = False
+    #: "Pay {E}{E}": energy counters off the payer (107.14).
+    pay_energy: int = 0
     remove_counters: Mapping[str, Any] | None = None
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
@@ -392,6 +394,7 @@ class Cost:
             ),
             mill=int(spec.get("mill", 0) or 0),
             pay_life_x=bool(spec.get("pay_life_x")),
+            pay_energy=int(spec.get("pay_energy", 0) or 0),
             exile_self=bool(spec.get("exile_self")),
             exile_from_hand=(
                 dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
@@ -456,6 +459,7 @@ class Cost:
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
             and not self.pay_life
+            and not self.pay_energy
             and self.remove_counters is None
             and self.loyalty is None
             and self.exile_from_graveyard is None
@@ -497,6 +501,8 @@ class Cost:
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
+        if self.pay_energy:
+            parts.append("Pay " + "{E}" * self.pay_energy)
         if self.remove_counters:
             parts.append("Remove counters")
         if self.remove_counters_from_among:

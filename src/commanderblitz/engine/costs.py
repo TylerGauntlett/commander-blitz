@@ -54,6 +54,7 @@ from .primitives import (
     life_locked,
     lose_life,
     mill_cards,
+    pay_energy,
     remove_counters,
     tap_permanent,
     untap_permanent,
@@ -1235,6 +1236,11 @@ def can_pay(
     # is the strictly better card this check exists to refuse.
     if life and life_locked(state, pid):
         return False
+    # 107.14: energy is spent, never borrowed -- a player with seven cannot pay
+    # eight, and there is no "down to exactly 0" question because nothing
+    # happens at zero.
+    if cost.pay_energy and player.energy < cost.pay_energy:
+        return False
     if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
     if cost.exile_self:
@@ -1725,6 +1731,9 @@ def pay(
         # so in the same event batch, because the mana and the life are one
         # payment however the printed symbol is read.
         lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
+
+    if cost.pay_energy:
+        pay_energy(state, pid, cost.pay_energy, source=source_oid)
 
     if cost.discard:
         pool = _discard_pool(state, pid, cost, source_oid)

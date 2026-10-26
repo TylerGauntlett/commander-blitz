@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 39 |
 | [Grantable statics](#grantable-statics) | 36 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 25 |
+| [Ability costs](#ability-costs) | 26 |
 | [Card-level costs](#card-level-costs) | 28 |
 | [Keywords](#keywords) | 38 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 14 |
-| [Engine events](#engine-events) | 74 |
+| [Engine events](#engine-events) | 75 |
 
 ## Effect ops
 
@@ -666,6 +666,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `mana` | A mana cost. | [Costs](card-dsl.md#costs) |
 | `mana_reduction` | A reduction applied to this ability's mana cost. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `mill` | Mill N cards off your own library. | [mill — a cost, and never an effect](card-dsl.md#mill--a-cost-and-never-an-effect) |
+| `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `pay_life` | Pay N life. | [Costs](card-dsl.md#costs) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
@@ -1007,6 +1008,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `emblem_created` |  |  | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` |  | [Triggers](card-dsl.md#triggers) |
 | `energy_added` |  |  | [Triggers](card-dsl.md#triggers) |
+| `energy_paid` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |

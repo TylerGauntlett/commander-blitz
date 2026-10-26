@@ -1025,6 +1025,20 @@ def add_energy(
     return amount
 
 
+def pay_energy(state: GameState, pid: int, amount: int, *, source: int | None = None) -> None:
+    """Spend ``amount`` of a player's energy, which `costs.can_pay` proved they have.
+
+    A cost rather than a removal effect, so no counter replacement reads it --
+    nothing modifies how many counters a payment takes off (122.8 is about
+    putting counters, not paying them).
+    """
+    player = state.players[pid]
+    player.energy -= amount
+    state.emit(
+        EventType.ENERGY_PAID, player=pid, source=source, amount=amount, total=player.energy
+    )
+
+
 def add_counters(
     state: GameState,
     oid: int,

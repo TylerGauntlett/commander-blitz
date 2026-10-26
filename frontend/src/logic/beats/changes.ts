@@ -194,6 +194,18 @@ export function changeBeat(ctx: EventContext): boolean {
       });
       return true;
 
+    case "energy_paid":
+      if (amount === null) return true;
+      push({
+        hold: 240,
+        float: {
+          anchor: { kind: "player", pid: event.player ?? 0 },
+          value: `-${amount} energy`,
+          tone: "loss",
+        },
+      });
+      return true;
+
     case "life_gained":
       if (amount === null) return true;
       push({

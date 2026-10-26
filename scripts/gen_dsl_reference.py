@@ -820,6 +820,7 @@ ABILITY_COSTS: dict[str, Entry] = {
     "mana": ("A mana cost.", None),
     "mana_reduction": ("A reduction applied to this ability's mana cost.", H_CHEAPER),
     "mill": ("Mill N cards off your own library.", "`mill` — a cost, and never an effect"),
+    "pay_energy": ("Pay N energy ({E}).", "Energy"),
     "pay_life": ("Pay N life.", None),
     "pay_life_x": ("Pay X life, X announced.", None),
     "remove_counters": ("Remove N counters of a kind from the source.", None),

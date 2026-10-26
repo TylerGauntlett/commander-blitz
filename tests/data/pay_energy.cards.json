@@ -1,0 +1,35 @@
+{
+  "_comment": "Cards that exist only for tests/unit/costs/test_pay_energy.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_energy_cell` spends energy on an activated ability; `t_energy_hub` is Aether Hub's shape, a mana ability whose price is a tap and an energy, which the payment solver must never pay on its own.",
+  "cards": [
+    {
+      "id": "t_energy_cell",
+      "name": "Test Energy Cell",
+      "oracle_text": "Pay {E}{E}: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Pay {E}{E}: Draw a card.",
+          "cost": {"pay_energy": 2},
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_energy_hub",
+      "name": "Test Energy Hub",
+      "oracle_text": "{T}, Pay {E}: Add {R}.",
+      "types": ["Land"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Pay {E}: Add {R}.",
+          "is_mana_ability": true,
+          "cost": {"tap": true, "pay_energy": 1},
+          "effects": [{"op": "add_mana", "mana": "{R}"}]
+        }
+      ]
+    }
+  ]
+}

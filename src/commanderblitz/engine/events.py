@@ -212,6 +212,8 @@ class EventType:
     #: Energy counters given to a player (107.14). ``amount`` is what arrived
     #: after counter replacements, ``total`` the player's energy afterwards.
     ENERGY_ADDED = "energy_added"
+    #: Energy spent on a ``pay_energy`` cost. ``amount`` paid, ``total`` left.
+    ENERGY_PAID = "energy_paid"
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"

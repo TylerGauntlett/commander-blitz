@@ -143,6 +143,11 @@ class CostModel(BaseModel):
     #: payment of X life into X payments of one, and describes an *optional*
     #: cost paid a number of times rather than one mandatory announced number.
     pay_life_x: bool = False
+    #: "**Pay {E}{E}**" -- spend that many of the payer's energy counters
+    #: (107.14). A whole number, payable only while the player has that many;
+    #: it is a counter coming off a player, not life, so it never reads
+    #: "your life total can't change".
+    pay_energy: int = 0
     remove_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
