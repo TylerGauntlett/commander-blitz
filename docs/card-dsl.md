@@ -4788,6 +4788,10 @@ cache miss. Borrowing one is a `DslError` at load.
 
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
+The rule binds the statics the pipeline applies; the rule-modifying ones it does
+not — `attacks_if_able` and `block_restriction` — match their filters against
+derived characteristics instead (`characteristics._matches` with `derived`),
+since nothing they say can feed back into a layer.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and

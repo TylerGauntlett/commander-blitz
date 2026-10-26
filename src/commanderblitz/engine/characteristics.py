@@ -50,7 +50,10 @@ read the real, fully derived power: :func:`commanderblitz.engine.triggers.matche
 the anthem, and has since it was written) and
 :func:`commanderblitz.engine.cost_reduction._object_matches` (which already reads derived types
 and keywords, for the same reason).  Only the reader inside the pipeline is
-restricted, because only it can be asked the question halfway through.
+restricted, because only it can be asked the question halfway through.  The
+same goes for the rule-modifying statics the static filter language describes
+but no layer applies -- an attack requirement and a block restriction -- which
+match with ``derived=True`` (see :func:`_matches`).
 
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
@@ -1850,17 +1853,30 @@ def _matches(
     obj: GameObject,
     source: GameObject,
     selector: Mapping[str, Any] | None,
+    *,
+    derived: bool = False,
 ) -> bool:
     """Match ``obj`` against a static ability's filter, using printed characteristics.
 
     A deliberately smaller language than the full selector DSL in
     :mod:`commanderblitz.engine.effects.selectors` -- see the module docstring for why.
+
+    ``derived`` reads the object's characteristics off :func:`chars` instead --
+    its types, subtypes, supertypes, keywords, colours and power/toughness after
+    every layer. Only a reader **outside** the layer pipeline may ask for it,
+    because :func:`chars` is what the pipeline computes; the readers that do are
+    the rule-modifying statics, which no layer applies: an attack requirement
+    (`attacks_if_able`) and a block restriction (`block_restriction`, both its
+    `affects` and its `blockers`). "Juggernauts you control attack each combat if
+    able" (Graaz, Unstoppable Juggernaut) has to see the creatures Graaz's own
+    third line makes Juggernauts, and rule 613 has nothing to order there --
+    neither effect is a layer, so reading layer 4's output is no loop.
     """
     if selector is None:
         return False
     if not obj.on_battlefield:
         return False
-    return _matches_wherever(state, obj, source, selector)
+    return _matches_wherever(state, obj, source, selector, derived=derived)
 
 
 def _matches_wherever(
@@ -1868,6 +1884,8 @@ def _matches_wherever(
     obj: GameObject,
     source: GameObject,
     selector: Mapping[str, Any],
+    *,
+    derived: bool = False,
 ) -> bool:
     """`_matches` without the battlefield gate -- for an object that is *arriving*.
 
@@ -1897,7 +1915,8 @@ def _matches_wherever(
     if (branches := selector.get("any_of")) is not None:
         outer = {k: v for k, v in selector.items() if k != "any_of"}
         return any(
-            _matches_wherever(state, obj, source, {**outer, **branch}) for branch in branches
+            _matches_wherever(state, obj, source, {**outer, **branch}, derived=derived)
+            for branch in branches
         )
 
     selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
@@ -1982,8 +2001,26 @@ def _matches_wherever(
     if owner == "opponent" and obj.owner == source.controller:
         return False
 
-    if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
-        return False
+    if derived:
+        # The face the filter reads becomes the derived one: `chars` has
+        # already applied the text changes and every subtype grant, so neither
+        # is passed again.
+        c = chars(state, obj.oid)
+        face = dataclasses.replace(
+            card,
+            types=c.types,
+            subtypes=c.subtypes,
+            supertypes=c.supertypes,
+            keywords=c.keywords,
+            colors=c.colors,
+        )
+        if not _matches_printed(face, selector):
+            return False
+        size = (c.power, c.toughness)
+    else:
+        if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+            return False
+        size = None
 
     # "…each creature you control **with power 4 or greater**" (Temur
     # Battlecrier), and the rest of the ferocious family. The one derived
@@ -1991,12 +2028,13 @@ def _matches_wherever(
     # size before any layer -- and never through `chars`, which this function is
     # called from and would recurse into. The module docstring argues the
     # restriction; `_base_pt` is the whole of it.
+    # A `derived` reader is outside the pipeline and reads the real size.
     if (spec := selector.get("power")) is not None and not compare_pt(
-        _base_pt(state, obj)[0], spec
+        (size or _base_pt(state, obj))[0], spec
     ):
         return False
     if (spec := selector.get("toughness")) is not None and not compare_pt(
-        _base_pt(state, obj)[1], spec
+        (size or _base_pt(state, obj))[1], spec
     ):
         return False
 
@@ -2342,10 +2380,19 @@ def ward_abilities(state: GameState, oid: int) -> tuple[Ability, ...]:
 
 
 def matches_static(
-    state: GameState, obj: GameObject, source: GameObject, selector: Mapping[str, Any] | None
+    state: GameState,
+    obj: GameObject,
+    source: GameObject,
+    selector: Mapping[str, Any] | None,
+    *,
+    derived: bool = False,
 ) -> bool:
-    """Public name for the static-filter matcher, for rules outside this module."""
-    return _matches(state, obj, source, selector)
+    """Public name for the static-filter matcher, for rules outside this module.
+
+    ``derived`` is `_matches`' own: a rule-modifying static, read outside the
+    layer pipeline, matches the object's characteristics after every layer.
+    """
+    return _matches(state, obj, source, selector, derived=derived)
 
 
 def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -2365,7 +2412,8 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "block_restriction":
             continue
-        if not _matches(state, obj, source_obj, static.get("affects")):
+        # Not a layer (613): a restriction reads the attacker as it now is.
+        if not _matches(state, obj, source_obj, static.get("affects"), derived=True):
             continue
         out.append((source_obj, static))
     return out
