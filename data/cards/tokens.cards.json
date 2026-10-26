@@ -1448,6 +1448,23 @@
       ]
     },
     {
+      "id": "myr_1_1_c",
+      "name": "Myr Token",
+      "oracle_text": "1/1 colorless Myr artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Myr"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "monk_1_1_w_prowess",
       "name": "Monk Token",
       "oracle_text": "1/1 white Monk creature token with prowess.",

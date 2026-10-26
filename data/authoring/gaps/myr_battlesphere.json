@@ -3,16 +3,9 @@
   "name": "Myr Battlesphere",
   "oracle_text": "When this creature enters, create four 1/1 colorless Myr artifact creature tokens.\nWhenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.",
   "blocked_sentences": [
-    "When this creature enters, create four 1/1 colorless Myr artifact creature tokens.",
     "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking."
   ],
   "needs": [
-    {
-      "capability": "myr_token",
-      "kind": "token",
-      "what": "a 1/1 colorless Myr artifact creature token (e.g. id myr_1_1_c)",
-      "why_existing_wont_do": "token_ids is a closed list with no Myr; the nearest colorless 1/1 artifact creature tokens (servo_1_1_c, gnome_1_1_c, soldier_1_1_c) have the wrong creature type, which matters because the card's own attack trigger counts untapped Myr"
-    },
     {
       "capability": "tap_x_permanents_on_resolution",
       "kind": "op",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**110 cards** blocked by **94** capabilities.
+**110 cards** blocked by **93** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -75,7 +75,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [myr-token](#myr-token) | 1 | 896 | token |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -1146,21 +1145,6 @@ Blocks **1** card.
 
 </details>
 
-## myr-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 colorless Myr artifact creature token (e.g. id myr_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Myr; the nearest colorless 1/1 artifact creature tokens (servo_1_1_c, gnome_1_1_c, soldier_1_1_c) have the wrong creature type, which matters because the card's own attack trigger counts untapped Myr
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
-  - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
-
-</details>
-
 ## noted-mana-type
 
 Blocks **1** card.
@@ -1505,7 +1489,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
   - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
 
 </details>
