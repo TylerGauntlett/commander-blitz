@@ -897,6 +897,12 @@ STATIC_FILTER_KEYS = frozenset(
         "subtypes",
         "supertypes",
         "colors",
+        # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
+        # 105.2c, zero colours, which `colors` cannot say. Read off
+        # `characteristics._base_colors` -- printed colours, a copy exception's
+        # repaint, a face-down shell's none -- and never off a `set_colors`
+        # static's output, for `power`'s reason below.
+        "colorless",
         "keywords",
         # "Creatures **without** flying or islandwalk can't attack."  The
         # negated form, which the effect-side selector language always had

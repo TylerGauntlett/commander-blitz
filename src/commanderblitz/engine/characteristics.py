@@ -261,6 +261,25 @@ def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     return power, toughness
 
 
+def _base_colors(state: GameState, obj: GameObject) -> frozenset[str]:
+    """The colours an object *starts* the pipeline with -- `_base_pt`'s twin.
+
+    The printed colours, a copy exception's repaint ("…except it's a black
+    Zombie", 707.9b) and a face-down permanent's none (707.2): what the object
+    **is**, before any layer. A `set_colors` static and an `animate`'s colours
+    are layer outputs and are not seen, for the module docstring's reason --
+    a static filter that read them could read another static's output.
+
+    Read by the static filter's `colorless` (Forsaken Monument). `_compute`
+    builds its own colours from the same three inputs.
+    """
+    if obj.face_down and obj.on_battlefield:
+        return FACE_DOWN_CHARS.colors
+    if obj.copy_overrides and (repaint := obj.copy_overrides.get("colors")) is not None:
+        return frozenset(repaint)
+    return frozenset(state.card_of(obj).colors)
+
+
 def _compute(state: GameState, oid: int) -> Characteristics:
     obj = state.objects.get(oid)
     if obj is None:
@@ -1695,6 +1714,7 @@ def _matches_printed(
     added_subtypes: tuple[str, ...] = (),
     text_changes: tuple[tuple[str, str], ...] = (),
     x: int = 0,
+    base_colors: frozenset[str] | None = None,
 ) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -1780,6 +1800,16 @@ def _matches_printed(
     # clause rather than a spelling of that one.
     if (least := selector.get("min_colors")) is not None and len(card.colors) < int(least):
         return False
+    # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
+    # 105.2c: zero colours. `colors` cannot say it -- colorless is not a colour,
+    # and an empty `colors` list is no test at all. ``base_colors`` is the set to
+    # read when the caller knows better than the face: `_matches_wherever`
+    # passes `_base_colors`, so a copy exception's repaint and a face-down
+    # shell are seen; every other caller holds a bare card and reads its face.
+    if "colorless" in selector:
+        have = card.colors if base_colors is None else base_colors
+        if (not have) != bool(selector["colorless"]):
+            return False
 
     keywords = selector.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
@@ -1977,7 +2007,13 @@ def _matches_wherever(
     if owner == "opponent" and obj.owner == source.controller:
         return False
 
-    if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+    if not _matches_printed(
+        card,
+        selector,
+        obj.added_subtypes,
+        obj.text_changes,
+        base_colors=_base_colors(state, obj) if "colorless" in selector else None,
+    ):
         return False
 
     # "…each creature you control **with power 4 or greater**" (Temur

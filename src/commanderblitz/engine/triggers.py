@@ -1507,6 +1507,9 @@ def _actor(
 #: were each found that way, one card at a time; this closes the class. A key
 #: belongs here only once the function below answers it, and
 #: `tests/unit/triggers/test_trigger_filter_owner.py` holds the two in step.
+#: Where a trigger filter's `colorless` reads `chars` rather than the face.
+_DERIVED_COLOR_ZONES = frozenset({Zone.BATTLEFIELD, Zone.STACK})
+
 TRIGGER_FILTER_KEYS = frozenset(
     {
         "exclude_self",
@@ -1530,6 +1533,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "shares_a_creature_type_with",
         "colors",
         "min_colors",
+        "colorless",
         "keywords",
         "is_token",
         "is_commander",
@@ -1782,6 +1786,17 @@ def matches_card_filter(
     # clause rather than a spelling of that one.
     if (least := filt.get("min_colors")) is not None and len(card.colors) < int(least):
         return False
+    # "Whenever you cast a **colorless** spell" -- Forsaken Monument (105.2c,
+    # zero colours). The one colour clause here read off *derived* colours
+    # where the subject still has them: this reader runs outside the layer
+    # pipeline, so a permanent a `set_colors` static repainted is asked about
+    # what it is now, and a spell about its colours on the stack. A subject
+    # that has left both (a creature that died) has only its face, and is
+    # asked about that.
+    if "colorless" in filt:
+        have = chars(state, oid).colors if obj.zone in _DERIVED_COLOR_ZONES else card.colors
+        if (not have) != bool(filt["colorless"]):
+            return False
     keywords = filt.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
         return False

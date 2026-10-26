@@ -439,6 +439,7 @@ SELECTORS: dict[str, Entry] = {
     "keywords": ("Has all of these keywords.", None),
     "mana_cost": ("Printed mana cost is one of these.", None),
     "mana_value": ("A comparison on mana value.", None),
+    "colorless": ("Has no colors (105.2c), or with `false` at least one.", '"Colorless" — `colorless`'),
     "min_colors": ("Has at least N colors (\"multicolored\").", '"Multicolored" — `min_colors`'),
     "modified": ("Is modified (equipped, enchanted by you, or has counters).", None),
     "name": ("Named exactly this, or the name under a binding.", None),

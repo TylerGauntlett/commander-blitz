@@ -11,12 +11,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 140 |
-| [Selectors](#selectors) | 65 |
+| [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
 | [Conditions](#conditions) | 29 |
 | [Trigger events](#trigger-events) | 46 |
-| [Trigger filters](#trigger-filters) | 32 |
+| [Trigger filters](#trigger-filters) | 33 |
 | [Static effects](#static-effects) | 79 |
 | [Player-wide statics](#player-wide-statics) | 40 |
 | [Grantable statics](#grantable-statics) | 36 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 28 |
+| [Static filter keys](#static-filter-keys) | 29 |
 | [Static conditions](#static-conditions) | 11 |
 | [Static values](#static-values) | 12 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -203,6 +203,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `blocked` | Is (or is not) blocked by anything. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
+| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `count` | How many: an int or value, `all`, or `any`. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -430,6 +431,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `any_types` | Any one of these card types is enough. | [Triggers](card-dsl.md#triggers) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Triggers](card-dsl.md#triggers) |
 | `attacking_player` | Attacking this player (`you`/`opponent`/`any`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
+| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Triggers](card-dsl.md#triggers) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
@@ -822,6 +824,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
+| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |

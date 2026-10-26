@@ -1171,6 +1171,29 @@ boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
 
+### "Colorless" — `colorless`
+
+```jsonc
+{ "types": ["Creature"], "colorless": true }      // a static's affects
+{ "event": "spell_cast", "controller": "you", "filter": { "colorless": true } }
+```
+
+Zero colours (105.2c) — Forsaken Monument's "colorless creatures you control"
+and "whenever you cast a colorless spell". `true` matches an object with no
+colour and `false` one with at least one; anything but a bool is refused at load
+time. Colorless is not a colour, so `colors` has no letter for it, and an empty
+`colors` list is no test at all. The effect selector's `not_colors` over all five
+letters says the same thing there, but the static and trigger filters carry this
+key and not that one.
+
+Which colours are read depends on the reader. A static filter may not read
+another static's output, so it reads `characteristics._base_colors`: the printed
+colours, a copy exception's repaint (707.9b) and a face-down permanent's none —
+never a `set_colors` static's result. A trigger filter runs outside the layer
+pipeline and reads derived colours for a subject on the battlefield or the
+stack, its printed face otherwise. The effect selector and a cost reduction's
+filter read derived colours on the battlefield.
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc

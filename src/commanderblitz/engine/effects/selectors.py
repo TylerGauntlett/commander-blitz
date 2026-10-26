@@ -137,6 +137,15 @@ SELECTOR_KEYS = frozenset(
         #: "Two or more colors", which `colors` cannot say: that is a membership
         #: test, so `["U", "R"]` matches a mono-blue permanent.
         "min_colors",
+        #: "Colorless creatures you control get +2/+2"; "whenever you cast a
+        #: **colorless** spell" -- Forsaken Monument. 105.2c: an object with no
+        #: colour is colorless, and colorless is not a colour, so `colors` has
+        #: no letter for it (an empty list there is no test at all). `true`
+        #: matches an object with zero colours and `false` one with at least
+        #: one. `not_colors` over all five letters says the same thing here,
+        #: but only here: the static and trigger filter languages carry this
+        #: key and not that one.
+        "colorless",
         "keywords",
         "not_keywords",
         "tapped",
@@ -904,6 +913,8 @@ def matches(
         return False
     if (want := selector.get("not_colors")) and set(want) & colors:
         return False
+    if "colorless" in selector and (not colors) != bool(selector["colorless"]):
+        return False
     if (want := selector.get("keywords")) and not set(want).issubset(keywords):
         return False
     if (want := selector.get("not_keywords")) and set(want) & keywords:
@@ -1573,6 +1584,13 @@ def validate_selector(selector: Any, where: str) -> None:
     # accident, and `0`/`""` would quietly become `false`. A card that asks for
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
+    # The same refusal for the same reason: `"C"` or `["C"]` would read as
+    # `true` by accident, and `0` as `false`.
+    if "colorless" in selector and not isinstance(selector["colorless"], bool):
+        raise DslError(
+            f"{where}: 'colorless' is true (no colours, 105.2c) or false (one or "
+            f"more); use 'colors' to name a colour"
+        )
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "

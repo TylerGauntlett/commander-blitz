@@ -150,6 +150,7 @@ from .vocabulary import (  # noqa: F401
     WAS_CAST_TRIGGERS,
 )
 from .walk import (
+    _check_colorless_key,
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,
@@ -2664,6 +2665,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
         _check_pt_keys(filt, path)
+        _check_colorless_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
         return
@@ -2853,6 +2855,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     for key in ("affects", "blockers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
+        _check_colorless_key(getattr(model, key, None), f"{where}.{key}")
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so

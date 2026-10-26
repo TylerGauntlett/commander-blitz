@@ -1,0 +1,119 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_colorless_filter.py. t_colorless_anthem is Forsaken Monument's first line alone (a static affects with colorless: true); t_colorless_cast_watcher is its third (a spell_cast trigger filter with colorless: true). t_colorless_golem is a colorless artifact creature and t_colorless_trinket a colorless instant, the two things both lines should see. t_bleacher is a set_colors static that makes every creature colorless (Song of the Dryads' layer, over every creature), so the trigger filter is shown to read derived colours and the static filter, which may not read another static's output, is shown not to.",
+  "cards": [
+    {
+      "id": "t_colorless_anthem",
+      "name": "Test Colorless Anthem",
+      "oracle_text": "Colorless creatures you control get +2/+2.",
+      "mana_cost": "{5}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Colorless creatures you control get +2/+2.",
+          "effect": "buff",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "colorless": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_cast_watcher",
+      "name": "Test Colorless Cast Watcher",
+      "oracle_text": "Whenever you cast a colorless spell, you gain 2 life.",
+      "mana_cost": "{5}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless spell, you gain 2 life.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "colorless": true
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 2
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_golem",
+      "name": "Test Colorless Golem",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_colorless_trinket",
+      "name": "Test Colorless Trinket",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{1}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_bleacher",
+      "name": "Test Bleacher",
+      "oracle_text": "Creatures are colorless.",
+      "mana_cost": "{2}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures are colorless.",
+          "effect": "set_colors",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          },
+          "colors": []
+        }
+      ]
+    }
+  ]
+}
