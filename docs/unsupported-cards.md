@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**116 cards** blocked by **104** capabilities.
+**115 cards** blocked by **103** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -82,7 +82,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [myr-token](#myr-token) | 1 | 896 | token |
-| [not-chosen-creature-type](#not-chosen-creature-type) | 1 | 27365 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -1264,20 +1263,6 @@ Blocks **1** card.
 - **Myr Battlesphere** (rank 896) — `myr_battlesphere`
   - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
   - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
-
-</details>
-
-## not-chosen-creature-type
-
-Blocks **1** card.
-
-- **(selector)** an effect selector that excludes objects of the creature type the source chose: `not_subtypes: [{"chosen_type_of": "self"}]`, resolved against the spell's `chosen_type` the way `subtypes` already is, so `destroy` over `{zone: battlefield, controller: any, count: all, types: [Creature], not_subtypes: [{chosen_type_of: self}]}` destroys every creature not of the chosen type at once (a changeling, being every type, survives)
-  <br>Why the existing vocabulary won't do: `choose_type` on a spell stores `chosen_type` on the spell and `selectors.matches` substitutes `{"chosen_type_of": "self"}` only inside `subtypes` (via `characteristics.resolve_chosen_subtypes`); `not_subtypes` is compared as a literal list, so the dict entry never matches any subtype and the selector would destroy every creature, chosen type included. The selector language has no general negation, and a `for_each` + `if` + `exists` workaround would destroy the creatures one at a time instead of simultaneously, which is not the printed "destroy all"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kindred Judgment** (rank 27365) — `kindred_judgment`
-  - Choose a creature type. Destroy all creatures that aren't of the chosen type.
 
 </details>
 

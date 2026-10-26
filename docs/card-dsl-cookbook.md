@@ -9692,6 +9692,24 @@ choice does not exist until the permanent is on the battlefield.
 half: falling back to "match everything" would make the Banner a global anthem
 for as long as the choice was pending.
 
+`not_subtypes` takes the same entry, for "…that **aren't** of the chosen type".
+Kindred Judgment chooses on the spell and reads the choice back in the same
+resolution:
+
+```jsonc
+"spell_effects": [
+  { "op": "choose_type", "prompt": "Choose a creature type" },
+  { "op": "destroy",
+    "objects": { "zone": "battlefield", "controller": "any", "count": "all",
+                 "types": ["Creature"],
+                 "not_subtypes": [ { "chosen_type_of": "self" } ] } }
+]
+```
+
+An unchosen negation also matches nothing. Dropping the entry would turn
+"aren't of the chosen type" into "every creature", so the filter fails closed
+in both directions.
+
 `choose_type` needs **no new `DecisionKind`**. `ask_mode` already asks "pick one
 of these labels" and returns the index, so legality, `game.apply` and the
 authoring verifier's auto-answer table all work unchanged. Reach for an existing

@@ -117,7 +117,7 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """
     if not isinstance(filt, Mapping):
         return
-    for key in ("subtypes", "colors"):
+    for key in ("subtypes", "not_subtypes", "colors"):
         for entry in filt.get(key) or ():
             if not isinstance(entry, Mapping):
                 continue

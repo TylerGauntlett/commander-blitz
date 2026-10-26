@@ -149082,12 +149082,12 @@
     },
     "Kindred Judgment": {
       "edhrec_rank": 27365,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Judgment",
-      "reason": "no template for: Choose a creature type. Destroy all creatures that aren't of the chosen type",
+      "reason": "",
       "scryfall_id": "6f9f814b-8249-4e48-a05e-4c84060fe6fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kindred Summons": {
