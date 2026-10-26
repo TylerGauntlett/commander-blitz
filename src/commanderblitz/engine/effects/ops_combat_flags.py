@@ -1,11 +1,14 @@
-"""Effect ops that restrict or compel combat and sacrifice: detain, goad,
-must-attack/-block, can't-attack/-block/-sacrifice, unblockable, and flags."""
+"""Effect ops that restrict, compel or rearrange combat and sacrifice: detain,
+goad, must-attack/-block, can't-attack/-block/-sacrifice, unblockable,
+reselecting an attack, and flags."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
+from ..enums import Step
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
@@ -26,6 +29,7 @@ from ..temp_effects import (
     restrict_attack,
 )
 from .board_helpers import (
+    _offer_blocks_to,
     _players,
 )
 from .context import EffectContext, ask_targets
@@ -767,3 +771,85 @@ def op_choose_blockers(ctx: EffectContext, spec: Mapping[str, Any]):
     chooser = _players(ctx, spec.get("player", "you"))
     combat.blocker_chooser = chooser[0] if chooser else ctx.controller
     yield from ()
+
+
+@register("redirect_attack")
+def op_redirect_attack(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may reselect which player or permanent target attacking creature is
+    attacking. (It can't attack its controller or their permanents.)" --
+    Misleading Signpost, Portal Mage.
+
+    ``objects`` names the attacking creatures, normally ``{"target": "t1"}``.
+    For each one still attacking, the **effect's controller** -- not the
+    creature's -- picks its new attack target from 506.2's three kinds: a
+    player other than the creature's controller, or a planeswalker or battle one
+    of those players controls (a battle is attacked by its controller's
+    opponents here, as `combat.legal_permanent_defenders` reads it). The
+    current target is among the options, so "reselect" may land where it was;
+    the printed "you may" is a `may` around the op.
+
+    **Nothing is declared**, and three things follow from that, each the
+    reading `board_helpers` gives a creature put onto the battlefield attacking
+    (508.4). Restrictions, requirements and costs on *declaring* (508.1c,
+    508.1d, 508.1g) are not consulted -- Ghostly Prison is not paid again, a
+    goaded creature may be sent at its goader -- which is why the printed
+    reminder names only the controller and their permanents. No attack trigger
+    fires. And the turn ledger keeps the declaration: `players_attacked_by`
+    and `creatures_attacked` record what was declared, not where a creature was
+    moved.
+
+    The new defending player is offered blocks if nobody else was attacking
+    them, and a player nobody attacks any more is dropped from the blocker
+    queue -- both only before the declare blockers step, which is the window
+    the printed cards resolve in. Once blockers are declared the op does
+    nothing: a blocked creature's block is with the defender it was blocked by.
+    """
+    from ..combat import ATTACKABLE_TYPES
+
+    state = ctx.state
+    combat = state.combat
+    if combat is None or combat.blockers_declared:
+        return
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield or not combat.attacking(oid):
+            continue
+        seats = [pid for pid in state.turn_order() if pid != obj.controller]
+        refs = [
+            (state.players[pid].name or f"Player {pid}", TargetRef.player(pid)) for pid in seats
+        ]
+        refs.extend(
+            (ctx.name_of(perm), TargetRef.obj(perm))
+            for perm in state.battlefield
+            if perm != oid
+            and (perm_obj := state.objects.get(perm)) is not None
+            and perm_obj.controller in seats
+            and any(t in chars(state, perm).types for t in ATTACKABLE_TYPES)
+        )
+        if not refs:
+            continue
+        picked = yield from ask_targets(
+            ctx,
+            f"Choose what {ctx.name_of(oid)} attacks",
+            refs,
+            1,
+            1,
+            ctx.controller,
+            purpose="attack",
+        )
+        if not picked:
+            continue
+        old = combat.attackers[oid]
+        choice = picked[0]
+        if choice.kind == "object":
+            combat.attackers[oid] = state.objects[choice.id].controller
+            combat.attacking_permanent[oid] = choice.id
+        else:
+            combat.attackers[oid] = choice.id
+            combat.attacking_permanent.pop(oid, None)
+        _offer_blocks_to(ctx, combat.attackers[oid])
+        still_attacked = any(
+            combat.attacking(a) and pid == old for a, pid in combat.attackers.items()
+        )
+        if not still_attacked and state.step < Step.DECLARE_BLOCKERS:
+            combat.pending_blockers = [p for p in combat.pending_blockers if p != old]

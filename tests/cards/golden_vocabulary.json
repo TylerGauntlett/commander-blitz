@@ -858,6 +858,7 @@
   "pump",
   "put_on_top",
   "put_onto_battlefield",
+  "redirect_attack",
   "reflexive_trigger",
   "regenerate",
   "remove_counters",

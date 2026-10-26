@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 140 |
+| [Effect ops](#effect-ops) | 141 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
@@ -110,6 +110,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
 | `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters. | [Effect ops](card-dsl.md#effect-ops) |
+| `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind. | [Effect ops](card-dsl.md#effect-ops) |
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |

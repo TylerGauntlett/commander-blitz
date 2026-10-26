@@ -175922,12 +175922,12 @@
     },
     "Misleading Signpost": {
       "edhrec_rank": 3213,
-      "gate": "template",
+      "gate": null,
       "name": "Misleading Signpost",
-      "reason": "no template for: When this artifact enters during the declare attackers step, you may reselect which player",
+      "reason": "",
       "scryfall_id": "958b247d-83d3-4dd6-9a1a-654ba3adf078",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miss Highwater": {

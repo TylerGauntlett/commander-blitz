@@ -1724,6 +1724,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "as" in effect and not isinstance(effect["as"], str):
             raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "redirect_attack" and not effect.get("objects"):
+        # Without it the pool is empty and the op silently moves nothing -- a
+        # Misleading Signpost whose reselection never happens.
+        raise DslError(
+            f"{where}: 'redirect_attack' needs 'objects' naming the attacking "
+            f"creature to reselect for, normally {{'target': 't1'}}"
+        )
     if op == "choose_permanents" and "as" not in effect:
         # It changes nothing on the board, so a choice nobody reads back is a
         # question put to the player for no reason -- and a card written that

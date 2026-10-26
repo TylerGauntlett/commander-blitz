@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**111 cards** blocked by **95** capabilities.
+**110 cards** blocked by **94** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -89,7 +89,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
-| [redirect-attack](#redirect-attack) | 1 | 3213 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -1349,20 +1348,6 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
-## redirect-attack
-
-Blocks **1** card.
-
-- **(op)** an op that changes which player, planeswalker or battle a target attacking creature is attacking, with the new defender chosen by the effect's controller from among the attacking creature's legal defenders, excluding the attacking creature's controller and permanents that player controls
-  <br>Why the existing vocabulary won't do: cant_attack_player and must_attack_planeswalker only constrain attack declarations that have not happened yet; put_onto_battlefield/create_token `attacking` only set the defender for an object entering the battlefield attacking. No op changes the defender of a creature that is already attacking
-
-<details><summary>Cards waiting on this</summary>
-
-- **Misleading Signpost** (rank 3213) — `misleading_signpost`
-  - When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)
 
 </details>
 

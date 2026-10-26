@@ -241,6 +241,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "cant_attack_player": ("Board", "Creatures can't attack a player until a duration ends.",
                            '"That player can\'t attack you"'),
     "goad": ("Board", "Goad creatures until your next turn.", "Goad"),
+    "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
+                        "Reselecting an attack — `redirect_attack`"),
     "cant_block": ("Board", "Creatures can't block this turn.",
                    "The `cant_block` **op** — the same sentence with a clock"),
     "unblockable": ("Board", "Creatures can't be blocked this turn.",

@@ -2467,6 +2467,34 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Reselecting an attack — `redirect_attack`
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (…)",
+  "trigger": { "event": "self_enters", "source": "self",
+               "condition": { "step_is": "declare_attackers" } },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "types": ["Creature"], "attacking": true } } ],
+  "effects": [ { "op": "may",
+                 "effects": [ { "op": "redirect_attack", "objects": { "target": "t1" } } ] } ] }
+```
+
+Misleading Signpost. `redirect_attack` takes `objects` (required) and, for each
+one still attacking, asks the **effect's controller** what it attacks now: a
+player other than the creature's controller, or a planeswalker or battle one of
+those players controls. The current target is offered too, so the printed "you
+may" is a `may` around the op. The choice is written where a declared attack
+writes it, `combat.attackers` and `attacking_permanent`, so blocks and damage
+follow it: the new defending player is asked to block, and a player nobody
+attacks any more is not.
+
+Nothing is declared, so it reads like ninjutsu's `attacking` (508.4): no
+restriction, requirement or cost on declaring is consulted, no attack trigger
+fires, and the turn ledger keeps what was declared. After blockers are declared
+the op does nothing. The near misses are `cant_attack_player` and
+`must_attack_planeswalker`, which shape a declaration that has not happened yet.
+
 ## Banding
 
 ```jsonc
