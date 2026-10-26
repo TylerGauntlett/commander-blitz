@@ -143,6 +143,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_LIFE_PLAYERS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
+    TAPPED_FOR_SYMBOLS,
     TAPPED_PERMANENT_KEYS,
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
@@ -2719,24 +2720,44 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
 def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
 
-    Both halves are required. Without `tapped_permanent` the static would fire
-    off every permanent tapped for mana -- Mana Reflection's reach with Crypt
-    Ghast's payload, a much bigger card. Without `add_mana` it adds nothing. And
+    Both halves are required. Without `tapped_permanent` or `tapped_for` the
+    static would fire off every permanent tapped for mana -- Mana Reflection's
+    reach with Crypt Ghast's payload, a much bigger card. `tapped_for` alone is
+    Forsaken Monument's "a permanent for {C}": any permanent, narrowed by the
+    mana it made. Without `add_mana` it adds nothing. And
     `affects`/`amount` are refused rather than ignored: the permanent is named
     by `tapped_permanent` and the amount is printed in `add_mana`.
     """
 
-    if model.tapped_permanent is None or not model.add_mana:
+    if (model.tapped_permanent is None and model.tapped_for is None) or not model.add_mana:
         raise DslError(
             f"{where}: add_mana_on_tap needs 'tapped_permanent' (what was tapped, "
-            f"e.g. {{'subtypes': ['Swamp']}}) and 'add_mana' (the mana added, e.g. '{{B}}')"
+            f"e.g. {{'subtypes': ['Swamp']}}) or 'tapped_for' (the mana it was "
+            f"tapped for, e.g. '{{C}}'), and 'add_mana' (the mana added, e.g. '{{B}}')"
         )
     if model.affects is not None or model.amount is not None:
         raise DslError(
             f"{where}: add_mana_on_tap takes 'affects_player', 'tapped_permanent', "
-            f"'add_mana' and an optional 'condition', and no 'affects' or 'amount'"
+            f"'tapped_for', 'add_mana' and an optional 'condition', and no "
+            f"'affects' or 'amount'"
         )
-    tapped = model.tapped_permanent
+    # "Whenever you tap a permanent **for {C}**" (Forsaken Monument). One mana
+    # symbol, because the printed sentence names one; `parse_mana_production`
+    # would accept "{C}{C}" and the static would then ask about a pair the
+    # card never mentions. A hybrid or generic symbol is no type of mana a
+    # permanent can be tapped for (106.1).
+    if model.tapped_for is not None and model.tapped_for not in TAPPED_FOR_SYMBOLS:
+        raise DslError(
+            f"{where}.tapped_for: one mana symbol, one of {sorted(TAPPED_FOR_SYMBOLS)}, "
+            f"got {model.tapped_for!r}"
+        )
+    if model.tapped_permanent is not None:
+        _validate_tapped_permanent(model.tapped_permanent, where)
+    _validate_added_mana(model, where)
+
+
+def _validate_tapped_permanent(tapped: Mapping[str, Any], where: str) -> None:
+    """`add_mana_on_tap`'s description of the tapped permanent."""
     unknown = set(tapped) - TAPPED_PERMANENT_KEYS
     if unknown or not tapped:
         raise DslError(
@@ -2759,6 +2780,10 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
             f"{where}.tapped_permanent.attached: must be true if present "
             f"(omit the key to match a class of permanent instead)"
         )
+
+
+def _validate_added_mana(model: AbilityModel, where: str) -> None:
+    """`add_mana_on_tap`'s `add_mana`: a production string or the chosen colour."""
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
         # about the source and cannot be parsed now, so the shape is checked here
@@ -3530,9 +3555,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "add_mana_on_tap":
         _validate_add_mana_on_tap(model, where)
-    elif model.tapped_permanent is not None or model.add_mana is not None:
+    elif (
+        model.tapped_permanent is not None
+        or model.tapped_for is not None
+        or model.add_mana is not None
+    ):
         raise DslError(
-            f"{where}: 'tapped_permanent'/'add_mana' only mean anything on an "
+            f"{where}: 'tapped_permanent'/'tapped_for'/'add_mana' only mean anything on an "
             f"add_mana_on_tap static, not on {model.effect!r}"
         )
     if model.effect == "replace_life_gain":
@@ -4328,6 +4357,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:
         static["tapped_permanent"] = dict(model.tapped_permanent)
+    if model.tapped_for is not None:
+        static["tapped_for"] = model.tapped_for
     if model.add_mana is not None:
         static["add_mana"] = model.add_mana
     # `grant_warp`'s price. Copied explicitly like every other field here --

@@ -470,7 +470,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 |---|---|---|---|---|
 | `ability_cost_reduction` |  | yes | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
-| `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
+| `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays. | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able. | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
@@ -554,7 +554,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 
 | Name | Description | Defined in |
 |---|---|---|
-| `add_mana_on_tap` | Whenever a matching permanent is tapped for mana, add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `add_mana_on_tap` | Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `black_mana_as_phyrexian` | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
 | `cant_activate_abilities` | The player can't activate matching abilities. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells` | The player can't cast matching spells. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

@@ -100,6 +100,11 @@ def normalize_keyword(word: str) -> str:
 #: thirty other lands on the table.
 TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached"})
 
+#: What `add_mana_on_tap`'s `tapped_for` may name: one type of mana (106.1b),
+#: written as its symbol. Forsaken Monument's "whenever you tap a permanent
+#: for {C}" is ``"{C}"``.
+TAPPED_FOR_SYMBOLS = frozenset({"{W}", "{U}", "{B}", "{R}", "{G}", "{C}"})
+
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
     {

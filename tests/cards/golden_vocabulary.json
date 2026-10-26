@@ -569,6 +569,14 @@
    "types",
    "zone"
   ],
+  "TAPPED_FOR_SYMBOLS": [
+   "{B}",
+   "{C}",
+   "{G}",
+   "{R}",
+   "{U}",
+   "{W}"
+  ],
   "TAPPED_PERMANENT_KEYS": [
    "attached",
    "subtypes",

@@ -1049,6 +1049,26 @@ Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_ma
 op uses, read off the static's own source, and adding nothing while no colour has
 been chosen, since this runs inside cost payment where nothing may stop to ask.
 
+`tapped_for` is the other half of the sentence: what the permanent was tapped
+**for**, where `tapped_permanent` is what it is. Forsaken Monument's "whenever
+you tap a permanent for {C}, add an additional {C}":
+
+```jsonc
+{ "kind": "static", "effect": "add_mana_on_tap", "affects_player": "you",
+  "tapped_for": "{C}", "add_mana": "{C}" }
+```
+
+One mana symbol — `{W}` `{U}` `{B}` `{R}` `{G}` or `{C}`. It reads the yield of the
+ability that was activated, for the option chosen, before any other triggered
+mana ability adds to it: a land that taps for {C} or {G} triggers it only when
+tapped for {C}, and a Kinnan's extra {C} on a Sol Ring is Kinnan's mana and does
+not count. It fires once when the yield holds at least one mana of that type, so
+a Sol Ring's {C}{C} adds one {C} — a trigger, not Mana Reflection's "twice as
+much", which is a replacement this static does not say. With no
+`tapped_permanent` any permanent counts, of any type; the two keys compose, and
+the loader requires at least one of them. The planner prices it per option
+(`costs._tapped_yield`), so the offer and the payment agree.
+
 ### `fight`
 
 "Target creature you control fights another target creature" (Ulvenwald Tracker).

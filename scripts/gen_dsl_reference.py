@@ -673,7 +673,7 @@ STATICS: dict[str, Entry] = {
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),
-    "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana, add extra mana.", None),
+    "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana.", None),
     "add_subtype": ("Matching permanents have an extra subtype.",
                     '"…is the chosen type in addition to its other types"'),
     "attack_tax": ("Matching creatures can't attack unless their controller pays.",

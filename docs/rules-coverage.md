@@ -79,7 +79,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Spending mana as though it were any colour** | `spend_mana_as_any_color` player-wide static (Chromatic Orrery; `affects_spells` for Oath of Nissa) and the per-spell `any_color` flag, priced by `ManaCost.as_any_color`; `{C}` is never loosened and colourless may be spent as a colour |
 | **The colours of mana actually spent** | `colors_of_mana_spent` read off `ManaPool.spend`'s record, surviving onto the battlefield (sunburst, converge) |
 | **A rider on mana that outlives the spell** | `mana_grant` on the pip, snapshotted past `reset_permanent_state` for a battlefield destination only (Arena of Glory); `mana_uncounterable` (Cavern of Souls) is read while the spell is on the stack |
-| **Triggered mana abilities on tapping** | 605.1b: `add_mana_on_tap` player-wide static read inline at the mana choke point (Crypt Ghast) |
+| **Triggered mana abilities on tapping** | 605.1b: `add_mana_on_tap` player-wide static read inline at the mana choke point (Crypt Ghast); `tapped_for` asks what the {T} mana ability produced rather than what the permanent is, once per tap (Forsaken Monument) |
 
 ### Combat
 

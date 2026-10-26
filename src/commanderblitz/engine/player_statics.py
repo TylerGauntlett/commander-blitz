@@ -24,7 +24,7 @@ from .characteristics import (
     resolve_chosen_subtypes,
 )
 from .enums import Step, Zone
-from .mana import ManaCost, parse_mana_production
+from .mana import SYMBOL_INDEX, ManaCost, parse_mana_production
 from .objects import GameObject
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -486,7 +486,9 @@ def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
     return False
 
 
-def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
+def mana_added_on_tap(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 
     Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." A
@@ -512,6 +514,17 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     taps, which is a different and far larger card. An Aura attached to nothing
     matches nothing, which is the same answer a state-based action is about to
     give by binning it.
+
+    ``tapped_for`` asks about the other half of "tap a permanent for {C}"
+    (Forsaken Monument): the mana the tapped permanent's ability **produced**,
+    ``produced``, which is the ability's own yield before any other triggered
+    mana ability adds to it -- a Kinnan's extra {C} or a Ghast's {B} is that
+    ability's mana, not the tapped permanent's. The static fires when the yield
+    holds at least one mana of that type and adds its mana once, however many
+    of that type were made: a Sol Ring tapped for {C}{C} triggers it once, as a
+    Swamp tapped for {B} triggers Crypt Ghast once. A permanent tapped for {G}
+    does not trigger it whatever it is. Without ``tapped_permanent`` beside it,
+    any permanent counts.
     """
     out: list[tuple[int, tuple[int, ...]]] = []
     tapped: Any = None
@@ -520,6 +533,10 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
             continue
         wanted = static.get("tapped_permanent") or {}
         if wanted.get("attached") and source.attached_to != oid:
+            continue
+        if (symbol := static.get("tapped_for")) is not None and not produced[
+            SYMBOL_INDEX[symbol.strip("{}")]
+        ]:
             continue
         if tapped is None:
             tapped = chars(state, oid)

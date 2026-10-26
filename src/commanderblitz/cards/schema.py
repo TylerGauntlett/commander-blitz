@@ -882,6 +882,10 @@ class AbilityModel(BaseModel):
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.
     tapped_permanent: dict[str, Any] | None = None
+    #: ``add_mana_on_tap``: the mana the tapped permanent's ability must have
+    #: **produced** -- Forsaken Monument's "whenever you tap a permanent for
+    #: ``"{C}"``". One symbol; with no `tapped_permanent`, any permanent counts.
+    tapped_for: str | None = None
     #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
     #: chosen color", the same spelling the ``add_mana`` op uses.
