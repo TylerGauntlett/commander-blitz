@@ -15,6 +15,7 @@ what passed. Operating the site after it ships is [deployment.md](deployment.md)
 | `release.yml` "desktop release" | called by `deploy.yml`; `workflow_dispatch` on `main` | The content package and, when the shell changed, the AppImage, published as a GitHub Release |
 | `art-backfill.yml` "art backfill" | weekly schedule; `workflow_dispatch` with a `limit` | Crawls the art store and opens a `chore(art):` pull request that merges itself ([below](#art-backfill)) |
 | `automerge-guard.yml` "auto-merge guard" | `pull_request_target`: opened, pushed to, or auto-merge turned on | Turns auto-merge off, with one comment, unless the pull request is a maintainer's from a branch here and a maintainer made the push or the switch ([below](#roadmap-autopilot)). Never checks out the pull request's code |
+| `autopilot-lock.yml` "autopilot lock" | `pull_request_target`: opened, reopened, labelled or marked ready | Closes, with one comment, an `autopilot` pull request opened while an older one from a branch here is open, so one holds the lock ([below](#roadmap-autopilot)). Never checks out the pull request's code |
 | `tls-check.yml` "tls check" | weekly schedule; `workflow_dispatch` | An alarm, renewing nothing: fails if the certificate is near expiry, `/health` stops answering over TLS, or port 80 stops redirecting. GitHub disables a schedule after two months without repository activity |
 
 Every workflow has its own concurrency group with `cancel-in-progress`
@@ -230,11 +231,17 @@ and fires the task again when it merges. An open `autopilot` pull request is the
 lock: a firing that finds one stops. A run claims its item by opening that
 pull request as a draft before it builds anything, so a build that outlasts
 the four hours still holds the lock; drafts run no gate, and the run marks
-it ready when the work is done. The skill's §10 is the procedure.
+it ready when the work is done. The skill's §10 is the procedure. The run
+checks the lock again before every push and stops pushing once its pull
+request merges or closes; `autopilot-lock.yml` holds the lock even for a run
+that does not, by closing any newer `autopilot` pull request.
 
 It needs, set once by a maintainer:
 
 - **Allow auto-merge**, as for the art backfill.
+- **Automatically delete head branches**, under the repository's general
+  settings, so a merged autopilot branch is removed rather than left to
+  collect stale commits.
 - **Branch protection on `main`** requiring the status checks `verify gate`,
   `pull request title` and `gitleaks` (the `secrets.yml` job, which has no name
   of its own), and, as its own checkbox, conversation resolution. This is what
