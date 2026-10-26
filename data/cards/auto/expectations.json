@@ -3790,6 +3790,13 @@
   "falkenrath_reaver": {
     "zone": "battlefield"
   },
+  "fall_from_favor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "fanatic_of_rhonas": {
     "battlefield_count": 33,
     "zone": "battlefield"

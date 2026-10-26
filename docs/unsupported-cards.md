@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **99** capabilities.
+**111 cards** blocked by **98** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -73,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [mana-retention](#mana-retention) | 1 | 2381 | static_effect |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
-| [monarch](#monarch) | 1 | 14748 | static_effect |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -1122,20 +1121,6 @@ Blocks **1** card.
 
 - **Challenger Troll** (rank 12001) — `challenger_troll`
   - Each creature you control with power 4 or greater can't be blocked by more than one creature.
-
-</details>
-
-## monarch
-
-Blocks **1** card.
-
-- **(static_effect)** a skip_untap_step static whose hold is lifted per affected permanent when that permanent's controller (the untapping player) is the monarch -- i.e. a static condition `is_monarch` that can name the affected object's controller, read at the untap step
-  <br>Why the existing vocabulary won't do: skip_untap_step with affects {attached: true} covers 'doesn't untap during its controller's untap step', but static_condition_keys (all, any, cmp, counters, exists, has_city_s_blessing, is_attached, is_your_turn, not, top_of_library) has no is_monarch, and `untap_held` reads every skip_untap_step static unconditionally; is_monarch exists only in effect/trigger condition_keys. Dropping the 'unless' clause would make it a permanent freeze (a different, harsher card)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fall from Favor** (rank 14748) — `fall_from_favor`
-  - Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch.
 
 </details>
 

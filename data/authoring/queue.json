@@ -90542,12 +90542,12 @@
     },
     "Fall from Favor": {
       "edhrec_rank": 14748,
-      "gate": "template",
+      "gate": null,
       "name": "Fall from Favor",
-      "reason": "no template for: When this Aura enters, tap enchanted creature and you become the monarch",
+      "reason": "",
       "scryfall_id": "29679998-2fb4-4fb4-9048-27b6bf6b79e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fall of Cair Andros": {

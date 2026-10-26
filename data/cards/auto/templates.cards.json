@@ -41234,6 +41234,73 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            },
+            {
+              "op": "become_monarch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, tap enchanted creature and you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "not": {
+              "is_monarch": "affected_controller"
+            }
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fall_from_favor",
+      "mana_cost": "{2}{U}",
+      "name": "Fall from Favor",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
