@@ -218,6 +218,29 @@ It needs two things set once, by a maintainer:
   fails at its first step without it.
 - **Allow auto-merge**, under the repository's general settings.
 
+## Roadmap autopilot
+
+Not a workflow: a scheduled task in Claude Code on the web, named `roadmap
+autopilot`, starts a fresh session every four hours with `/extend-roadmap
+--auto` ([ADR 0026](adr/0026-the-roadmap-autopilot-merges-on-green.md)). The
+session builds the top decided item (`scripts/roadmap.py --next --auto`), opens
+its pull request labelled `autopilot` with auto-merge on, drives it to green,
+and fires the task again when it merges. An open `autopilot` pull request is the
+lock: a firing that finds one stops. The skill's §10 is the procedure.
+
+It needs, set once by a maintainer:
+
+- **Allow auto-merge**, as for the art backfill.
+- **Branch protection on `main`** requiring `verify gate`, `pull request title`
+  and `secrets`, and conversation resolution. This is what makes auto-merge wait
+  for the gate; without it the pull request merges as soon as it opens.
+- **The Claude GitHub App** on this repository with write access, so the
+  session's pull requests start workflows (a `GITHUB_TOKEN` one would not, as
+  above).
+
+To pause it, disable the scheduled task; to stop one pull request, turn off its
+auto-merge or remove the label and close it.
+
 ## Conventions CI enforces
 
 - **Commit types** are the one list in `.github/scripts/conventional.sh`. It also

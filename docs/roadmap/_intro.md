@@ -25,6 +25,11 @@ How to read it:
   touches a class of players or removes a weekly annoyance, **low** is polish
   somebody would notice and nobody would miss. **Depends on** names the items
   that have to land first; "nothing" means it can start today.
+- An item may close with **Decisions**, the owner's answers to the questions
+  its plan leaves open, and **Open questions**, the ones still waiting. An item
+  with the first and not the second is decided, and only a decided item is
+  built unattended ([ADR 0026](../adr/0026-the-roadmap-autopilot-merges-on-green.md));
+  the rest say **Awaiting decisions**.
 - An item leaves this page the way a debt item leaves
   [TECH_DEBT.md](../../TECH_DEBT.md): when the work lands, retire the item in the
   same pull request (`scripts/roadmap.py --done <id>`), which also unblocks

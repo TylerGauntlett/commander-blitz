@@ -31,6 +31,11 @@ def rm():
     return module
 
 
+BASE = "\n## Today\n\nWhat is.\n\n## The change\n\nWhat will be.\n\n## Gate\n\nA test.\n"
+DECIDED = BASE + "\n## Decisions\n\n- Where? Here.\n"
+OPEN = DECIDED + "\n## Open questions\n\n- How far?\n"
+
+
 def item(
     id_: str,
     *,
@@ -41,11 +46,7 @@ def item(
     extra: str = "",
     body: str | None = None,
 ) -> str:
-    body = (
-        body
-        if body is not None
-        else "\n## Today\n\nWhat is.\n\n## The change\n\nWhat will be.\n\n## Gate\n\nA test.\n"
-    )
+    body = body if body is not None else BASE
     return (
         f"---\nid: {id_}\ntitle: Item {id_}\narea: play\neffort: {effort}\n"
         f"impact: {impact}\nwhy: because\ndepends_on: [{depends}]\nstatus: {status}\n{extra}---\n"
@@ -81,6 +82,9 @@ class TestAnItemIsHeldToItsShape:
                 item("a", body="\n# Top\n\n## Today\n\nx\n\n## The change\n\nx\n\n## Gate\n\nx\n"),
                 "top-level",
             ),
+            (item("a", body=BASE + "\n## Open questions\n\nq\n\n## Decisions\n\nd\n"), "order"),
+            (item("a", body=BASE + "\n## Notes\n\nn\n"), "may follow"),
+            (item("a", body=BASE + "\n## Decisions\n\n"), "empty"),
             (item("a").replace("area: play", "area: moon"), "area"),
             (item("a").replace("why: because\n", ""), "missing"),
             (item("a").replace("status: proposed", "status: proposed\nowner: me"), "unknown"),
@@ -149,6 +153,32 @@ class TestTheQueueRanks:
         items = rm.load_items(tmp_path)
         assert [i.id for i in rm.ready(items)] == ["b"]
         assert [i.id for i in rm.in_progress(items)] == ["a"]
+
+
+class TestTheAutopilotBuildsOnlyWhatIsDecided:
+    def test_decisions_without_open_questions_is_decided(self, rm):
+        assert rm.parse_item(item("a", body=DECIDED)).decided
+        assert not rm.parse_item(item("a", body=OPEN)).decided
+        assert not rm.parse_item(item("a")).decided
+
+    def test_the_queue_is_ready_decided_and_never_continuous(self, rm, tmp_path):
+        backlog(
+            tmp_path,
+            item("decided", body=DECIDED),
+            item("open", body=OPEN),
+            item("unplanned"),
+            item("cards", extra="continuous: true\n", body=DECIDED),
+            item("waits", depends="decided", body=DECIDED),
+        )
+        items = rm.load_items(tmp_path)
+        assert [i.id for i in rm.autopilot(items)] == ["decided"]
+        assert [i.id for i in rm.awaiting_decisions(items)] == ["open", "unplanned"]
+
+    def test_the_page_says_an_item_awaits_decisions(self, rm, tmp_path):
+        backlog(tmp_path, item("a", body=OPEN), item("b", body=DECIDED))
+        text = rm.generate(tmp_path)
+        assert text.count("Awaiting decisions") == 1
+        assert "#### Decisions" in text and "#### Open questions" in text
 
 
 class TestThePage:

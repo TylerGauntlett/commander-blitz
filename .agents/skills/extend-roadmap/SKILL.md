@@ -1,6 +1,6 @@
 ---
 name: extend-roadmap
-description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — brief the person on what the item is and what the run will build, then ask the architecture questions the item leaves open before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, open the pull request with /create-pr, then watch it and fix every CI failure and review ask until it is green and mergeable, without being asked. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
+description: Take the next roadmap item off the backlog, or a named one, and ship it end to end — brief the person on what the item is and what the run will build, then ask the architecture questions the item leaves open (unless its Decisions section already answers them) before touching anything, branch from main, write the ADR first where the item asks for one, build the change through the seams the item names, add the gate it specifies, run scripts/verify.py, retire the item with scripts/roadmap.py --done, open the pull request with /create-pr, then watch it and fix every CI failure and review ask until it is green and mergeable, without being asked. With --auto it runs unattended from the schedule: only decided items, auto-merge on green, then the next run. Use when asked to work the roadmap, implement a planned feature, "do the next thing", or deliver a specific item id. The counterpart to /plan-feature.
 ---
 
 # Delivering a feature
@@ -21,6 +21,7 @@ lists the item. Opening the pull request is not the end of the run: §9 is.
 /extend-roadmap                 the top of the queue
 /extend-roadmap art-store       a named item, which must be ready
 /extend-roadmap precon-sets   one batch of a continuous item
+/extend-roadmap --auto          unattended: the autopilot's queue, merged on green (§10)
 ```
 
 ## 0 · Preflight
@@ -94,6 +95,12 @@ decides, so every answer is given with the whole plan in view.
 
 ### The questions
 
+An item may already carry a **Decisions** section: the owner's answers,
+written into the plan ahead of the run. A question it answers is settled;
+follow the answer and do not ask it again. An **Open questions** section is
+the list still waiting; those are asked, along with anything else below that
+neither section covers.
+
 Read the item's **The change** and **Gate** sections and the ADR it asks
 for, and list every point where you would otherwise choose for the person:
 
@@ -117,8 +124,9 @@ An item with genuinely nothing open still gets the briefing, says in one
 line that nothing is open, and goes on.
 
 Record the answers in the item itself, through `/plan-feature`, as the
-first commit on the branch, so the plan the pull request was built from is
-the plan the reviewer reads.
+first commit on the branch: each one moves into **Decisions**, and
+**Open questions** goes when it is empty. The plan the pull request was
+built from is then the plan the reviewer reads.
 
 ## 3 · Branch and start
 
@@ -284,8 +292,82 @@ run back.
    an item.
 5. **Everything the other skills forbid stays forbidden**: only `--collect`
    writes cards, one capability per `/extend-dsl` run, never push to a
-   branch you did not create, never merge.
+   branch you did not create, never merge. The one exception is `--auto`,
+   which turns on GitHub's auto-merge and lets branch protection decide
+   (§10); it never merges by hand.
 6. **Never leave the pull request red.** A run ends on a green, mergeable pull
    request or on a stated blocker, never on an unread failure. Never skip,
    weaken or quarantine a test, push an empty commit, or close and reopen the
    pull request to get CI to pass.
+7. **The autopilot never guesses.** An `--auto` run builds a decided item or
+   none; a question the item does not answer stops the build and becomes an
+   **Open question** for the owner (§10).
+
+## 10 · Unattended: `--auto`
+
+The autopilot is a scheduled task that starts a fresh session every four
+hours with `/extend-roadmap --auto`, and a merge that starts the next run
+straight away ([ADR 0026](../../../docs/adr/0026-the-roadmap-autopilot-merges-on-green.md)).
+Nobody is there to answer, so the owner answers ahead of time, in the item.
+Everything above holds except where this section says otherwise.
+
+**The lock.** Before §0, look for an open pull request labelled `autopilot`
+(the GitHub tools' pull request search: `is:pr is:open label:autopilot`).
+If there is one, stop: the session that opened it is still driving it, and
+this run never pushes to a branch it did not create. The one thing it may
+do is notice a stuck one: red or conflicted, with no commit since the
+previous firing. Then it says so once, in one comment on that pull request
+naming what is red, unless such a comment is already there, and stops. One
+autopilot pull request is open at a time, and that is what keeps two runs
+off the same item, since `--start` lives on a branch `main` cannot see; a
+stuck one holds the loop until the owner closes it or fixes it.
+
+**The pick.** Start from a fresh `main`: `git fetch origin main` and work
+from `origin/main`.
+
+```bash
+python scripts/roadmap.py --next --auto --json   # build: decided, ready, not continuous
+```
+
+Take the top of `build`. Continuous items are never in it; a batch of cards
+is started by a person. If `build` is empty, go to *Preparing questions*
+below.
+
+**§2 without a person.** Write the briefing as usual, into the pull request
+body instead of the chat. Read **Decisions** and settle every question from
+it. A question it does not cover, or a claim in **Today** that no longer
+holds, is not guessed: write it into the item's **Open questions** through
+`/plan-feature`, with the choice you would make and why, open that as a
+`docs(roadmap):` pull request labelled `autopilot`, and go on to the merge
+step below with it instead of the feature. Asking a question as a pull
+request is the autopilot's way of waiting.
+
+**The branch.** Where the harness designates a branch for the session, that
+branch is the one; otherwise `feat/<id>` as §3 says.
+
+**The merge.** After `/create-pr`, label the pull request `autopilot` and
+turn on auto-merge with a squash (`gh pr merge <n> --auto --squash`, or the
+GitHub tools' auto-merge). GitHub merges it when every required check is
+green; branch protection on `main` is the judge, never this run. Then §9
+as written: subscribe, fix every red check and review ask, until it merges.
+
+**The chain.** When the merge event arrives, find the scheduled task named
+`roadmap autopilot` and fire it now, so the next run starts on the `main`
+this merge just made. Then stop. A run that cannot fire it leaves the
+four-hourly schedule to pick up.
+
+**Preparing questions.** When nothing is decided, take the top of
+`awaiting_decisions` that has no **Open questions** section yet, read it and
+the code it names as §1 does, write the questions §2 would have asked into
+**Open questions** through `/plan-feature`, each with the recommended answer,
+and open that as a `docs(roadmap):` pull request labelled `autopilot`, merged
+as above. One item per run. When every item awaiting decisions already has
+its questions, there is nothing for the autopilot to do: stop without a
+word. The owner answers by moving each question into **Decisions** with its
+answer, through `/plan-feature answer <id>` or by hand, and the next run
+builds the item.
+
+**When to stop and say so.** A failure this run cannot fix (§9's "say so
+once") leaves the pull request open and labelled, so the lock holds and no
+later run piles on; the next run reads it and tries again. A run that ends
+for any reason other than the merge leaves the schedule to come back.

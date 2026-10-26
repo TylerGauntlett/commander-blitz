@@ -3,6 +3,7 @@
     python scripts/roadmap.py --check            exit 1 if an item is malformed or the page is stale
     python scripts/roadmap.py --write            regenerate docs/roadmap.md wholesale
     python scripts/roadmap.py --next             the ready items, best first; --json for a machine
+    python scripts/roadmap.py --next --auto      what the autopilot may build, and what awaits decisions
     python scripts/roadmap.py --show <id>        print one item
     python scripts/roadmap.py --new <id> --title ... --area ... --effort ... --impact ... --why ...
     python scripts/roadmap.py --start <id>       mark an item in progress
@@ -26,6 +27,13 @@ on an id that does not exist, a cycle, a missing section, a placeholder left
 behind by ``--new``, a dead link, or a committed page that differs from what
 this script would write now. ``scripts/verify.py`` runs ``--check`` in its lint
 group and ``tests/unit/roadmap/`` holds the rules on synthetic items.
+
+Two optional sections follow the three: **Decisions**, the architecture
+questions the item leaves open with the owner's answer to each, and **Open
+questions**, the ones still waiting on an answer. An item is *decided* when it
+has the first and not the second. The unattended ``/extend-roadmap --auto``
+builds only decided items, so the questions are answered in the plan, ahead of
+the run, rather than guessed during it (ADR 0026).
 """
 
 from __future__ import annotations
@@ -68,6 +76,10 @@ STATUSES = ("proposed", "in_progress")
 #: `--check` refuses an item without them.
 SECTIONS = ("Today", "The change", "Gate")
 
+#: The sections an item may carry after those, in this order. An item with
+#: Decisions and no Open questions is decided, and the autopilot may build it.
+OPTIONAL_SECTIONS = ("Decisions", "Open questions")
+
 #: What `--new` writes into an empty section; `--check` refuses it, so a
 #: scaffold cannot be committed as a plan.
 PLACEHOLDER = "<!-- fill me in -->"
@@ -100,6 +112,12 @@ class Item:
     @property
     def effort_label(self) -> str:
         return f"{self.effort}, continuous" if self.continuous else self.effort
+
+    @property
+    def decided(self) -> bool:
+        """Every architecture question the item leaves open has an answer in it."""
+        names = sections_in(self.body)
+        return "Decisions" in names and "Open questions" not in names
 
     @property
     def slug(self) -> str:
@@ -222,14 +240,24 @@ def validate_item(item: Item) -> None:
         raise RoadmapError(f"{item.id} still has a {PLACEHOLDER!r} left by --new")
     if re.search(r"^# ", item.body, re.M):
         raise RoadmapError(f"{item.id} has a top-level heading; sections are `## `")
-    found = [m.group(1) for m in re.finditer(r"^## (.+)$", item.body, re.M)]
+    found = sections_in(item.body)
     if found[: len(SECTIONS)] != list(SECTIONS):
         raise RoadmapError(
             f"{item.id} must open with the sections {list(SECTIONS)} in order; found {found}"
         )
-    for name in SECTIONS:
+    rest = found[len(SECTIONS) :]
+    if [s for s in OPTIONAL_SECTIONS if s in rest] != rest:
+        raise RoadmapError(
+            f"{item.id}: after {list(SECTIONS)} only {list(OPTIONAL_SECTIONS)} may follow,"
+            f" once each and in that order; found {rest}"
+        )
+    for name in found:
         if not _section_text(item.body, name).strip():
             raise RoadmapError(f"{item.id}: section {name!r} is empty")
+
+
+def sections_in(body: str) -> list[str]:
+    return [m.group(1) for m in re.finditer(r"^## (.+)$", body, re.M)]
 
 
 def _section_text(body: str, name: str) -> str:
@@ -336,6 +364,16 @@ def blocked(items: list[Item]) -> list[Item]:
     )
 
 
+def autopilot(items: list[Item]) -> list[Item]:
+    """What an unattended run may build: ready, decided, and not continuous."""
+    return [i for i in ready(items) if i.decided and not i.continuous]
+
+
+def awaiting_decisions(items: list[Item]) -> list[Item]:
+    """Ready items the autopilot would build once their questions are answered."""
+    return [i for i in ready(items) if not i.decided and not i.continuous]
+
+
 def in_progress(items: list[Item]) -> list[Item]:
     return sorted((i for i in items if i.status == "in_progress"), key=lambda i: i.title.lower())
 
@@ -388,6 +426,8 @@ def property_line(item: Item, by_id: dict[str, Item]) -> str:
         parts.append("**In progress**")
     if item.adr:
         parts.append("ADR first")
+    if not item.decided and not item.continuous:
+        parts.append("Awaiting decisions")
     return " · ".join(parts) + ".\n"
 
 
@@ -564,6 +604,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--next", action="store_true")
     ap.add_argument("--json", action="store_true", help="with --next: machine-readable")
+    ap.add_argument(
+        "--auto", action="store_true", help="with --next: the autopilot's queue (ADR 0026)"
+    )
     ap.add_argument("--show", metavar="ID")
     ap.add_argument("--new", metavar="ID")
     ap.add_argument("--title")
@@ -658,9 +701,19 @@ def main(argv: list[str] | None = None) -> int:
                     "impact": i.impact,
                     "unlocks": unlock[i.id],
                     "adr": i.adr,
+                    "decided": i.decided,
                 }
                 for i in ready(items)
             ]
+            if args.auto:
+                auto = [i.id for i in autopilot(items)]
+                waiting = [i.id for i in awaiting_decisions(items)]
+                if args.json:
+                    print(json.dumps({"build": auto, "awaiting_decisions": waiting}, indent=2))
+                else:
+                    print("the autopilot builds, best first: " + (", ".join(auto) or "nothing"))
+                    print("awaiting decisions, best first: " + (", ".join(waiting) or "nothing"))
+                return 0
             if args.json:
                 print(
                     json.dumps(

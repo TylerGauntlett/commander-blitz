@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: Turn a feature idea into a roadmap item the backlog can rank and /extend-roadmap can build — one file under docs/roadmap/ with effort, impact, dependencies and the three sections (Today, The change, Gate), checked by scripts/roadmap.py. Use when asked to plan, propose, add, scope, split or re-rank a feature, to "put this on the roadmap", or when /extend-roadmap discovers a blocker that needs an item of its own. The counterpart to /extend-roadmap.
+description: Turn a feature idea into a roadmap item the backlog can rank and /extend-roadmap can build — one file under docs/roadmap/ with effort, impact, dependencies and the three sections (Today, The change, Gate) and the Decisions that answer its open questions, checked by scripts/roadmap.py. Use when asked to plan, propose, add, scope, split or re-rank a feature, to "put this on the roadmap", to answer an item's open questions, or when /extend-roadmap discovers a blocker that needs an item of its own. The counterpart to /extend-roadmap.
 ---
 
 # Planning a feature
@@ -23,6 +23,7 @@ to be ranked.
 /plan-feature <paragraph or pasted brief>                       a longer brief
 /plan-feature split official-precons                            an L item that is really several
 /plan-feature rerank                                            re-read the properties, nothing else
+/plan-feature answer difficulty                                  record the owner's answers to its open questions
 ```
 
 ## 1 · Read what exists
@@ -72,7 +73,7 @@ reverse by accident: where data lives, what is distributed, a rule the client
 or the engine will be built around. `/extend-roadmap` writes the ADR before
 the code when it is set.
 
-## 3 · Scaffold, then write the three sections
+## 3 · Scaffold, then write the sections
 
 ```bash
 python scripts/roadmap.py --new <id> --title "<title>" --area <area> \
@@ -100,6 +101,30 @@ section, or a section out of order.
 - **Gate.** The tests that would hold it, named by suite and shape: "a server
   test that…", "a story per layout mode under the floors", "the e2e spec
   that…". A gate is a thing `verify.py` runs, not a sentence about quality.
+
+Then the two optional sections, which are what lets the autopilot build the
+item unattended (`/extend-roadmap --auto`,
+[ADR 0026](../../../docs/adr/0026-the-roadmap-autopilot-merges-on-green.md)):
+
+- **Decisions.** Every architecture question **The change** leaves open, with
+  the owner's answer: where data lives, how far the scope reaches, whether an
+  `L` ships as one pull request or several, what the ADR decides, what the
+  pull request must not touch. One bullet each, the question then the answer.
+  An item with genuinely nothing open says so in one bullet; that is still a
+  decision.
+- **Open questions.** The questions still waiting, one bullet each with the
+  choice you would make and why. Ask the person them now, the way
+  `/extend-roadmap` §2 does, and move each answer into **Decisions**; what is
+  left unanswered stays here. An item with this section is *awaiting
+  decisions*: a person can build it, the autopilot cannot.
+
+Only the person who owns the backlog answers a question. This skill writes
+the questions and the recommendations, never the answers on its own.
+
+**Answering** (`/plan-feature answer <id>`) is the same step on an item that
+already exists: put its **Open questions** to the person, move each answer
+into **Decisions**, delete **Open questions** once it is empty, and commit
+with `docs(roadmap): decide <id>`.
 
 Write the way the docs are written ([AGENTS.md](../../../AGENTS.md), "How the
 docs are written"): rules over examples, symbols not line numbers, no counts
