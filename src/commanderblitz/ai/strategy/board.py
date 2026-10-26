@@ -39,7 +39,16 @@ HARMFUL_TO_PLAYER = {
     "look_at_hand": "discard",
 }
 HELPFUL_TO_PLAYER = frozenset(
-    {"draw", "gain_life", "create_token", "search_library", "add_counters", "untap", "extra_turn"}
+    {
+        "draw",
+        "gain_life",
+        "create_token",
+        "search_library",
+        "add_counters",
+        "add_energy",
+        "untap",
+        "extra_turn",
+    }
 )
 
 

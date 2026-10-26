@@ -8,7 +8,14 @@ from typing import Any
 from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
-from ..primitives import add_poison, damage_permanent, damage_player, gain_life, lose_life
+from ..primitives import (
+    add_energy,
+    add_poison,
+    damage_permanent,
+    damage_player,
+    gain_life,
+    lose_life,
+)
 from ..structs import (
     DAMAGE_SHIELD_DURATIONS,
     LIFE_FLOOR_DURATIONS,
@@ -81,6 +88,21 @@ def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
         # Through the funnel, so a counter replacement that reaches players
         # (Innkeeper's Talent) applies. The effect's controller puts them.
         add_poison(ctx.state, pid, amount, source=ctx.source_oid, by=ctx.controller)
+
+
+@register("add_energy")
+def op_add_energy(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You get {E}{E} (two energy counters)." (107.14)
+
+    `add_poison`'s shape with the other default: energy is something a card
+    gives its own controller, so ``player`` defaults to ``you``. Spent by a
+    ``pay_energy`` cost, which is the only way it goes down.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    if amount <= 0:
+        return
+    for pid in select_players(ctx, spec.get("player", "you")):
+        add_energy(ctx.state, pid, amount, source=ctx.source_oid, by=ctx.controller)
 
 
 @register("prevent_damage")

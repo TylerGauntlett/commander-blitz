@@ -1,0 +1,43 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_granted_alternative_cost.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_energy_grant` is Nissa, Worldsoul Speaker's static at a smaller price (three energy) and with no landfall, so a test sets the energy it needs; `t_life_grant` is the same grant paid in life, the other currency the static accepts.",
+  "cards": [
+    {
+      "id": "t_energy_grant",
+      "name": "Test Energy Grant",
+      "oracle_text": "You may pay three {E} rather than pay the mana cost for permanent spells you cast.",
+      "mana_cost": "{3}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may pay three {E} rather than pay the mana cost for permanent spells you cast.",
+          "effect": "granted_alternative_cost",
+          "affects_player": "you",
+          "affects_spells": {"controller": "you", "not_types": ["Instant", "Sorcery"]},
+          "cost": {"pay_energy": 3}
+        }
+      ]
+    },
+    {
+      "id": "t_life_grant",
+      "name": "Test Life Grant",
+      "oracle_text": "You may pay 5 life rather than pay the mana cost for creature spells you cast.",
+      "mana_cost": "{3}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may pay 5 life rather than pay the mana cost for creature spells you cast.",
+          "effect": "granted_alternative_cost",
+          "affects_player": "you",
+          "affects_spells": {"controller": "you", "types": ["Creature"]},
+          "cost": {"pay_life": 5}
+        }
+      ]
+    }
+  ]
+}

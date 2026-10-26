@@ -983,6 +983,10 @@
     "artist": "Nils Hamm",
     "scryfall_id": "23795291-5acc-465f-aa02-95ead947ced8"
   },
+  "bartolome_del_presidio": {
+    "artist": "Randy Gallegos",
+    "scryfall_id": "690ccdc7-6c43-4902-9d11-2f07b7a36b11"
+  },
   "basilisk_collar": {
     "artist": "Craig J Spearing",
     "scryfall_id": "cd35c8ca-a456-45b5-b018-98027a56c719"
@@ -6045,6 +6049,10 @@
     "artist": "Enishi",
     "scryfall_id": "84332812-367a-4ac4-9be5-2adc57562c9d"
   },
+  "kindred_judgment": {
+    "artist": "Ekaterina Burmak",
+    "scryfall_id": "6f9f814b-8249-4e48-a05e-4c84060fe6fb"
+  },
   "king_cheetah": {
     "artist": "Terese Nielsen",
     "scryfall_id": "6450a333-9776-4cda-a369-f9342e5b0278"
@@ -7722,6 +7730,10 @@
     "artist": "Raymond Swanland",
     "scryfall_id": "a548acc7-bf37-4bb3-83c9-6e5fdb501f56"
   },
+  "nissa_worldsoul_speaker": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "9aeb44e0-2257-444a-b805-7e939ca5f6fe"
+  },
   "nissas_pilgrimage": {
     "artist": "Matt Stewart",
     "scryfall_id": "ccf744d0-4349-4338-99aa-db0780c7296f"
@@ -9358,6 +9370,10 @@
   "rustwing_falcon": {
     "artist": "Paul Scott Canavan",
     "scryfall_id": "c6691e62-8887-41e8-8e74-76ee2353d45e"
+  },
+  "ruthless_lawbringer": {
+    "artist": "Joshua Raphael",
+    "scryfall_id": "927b5498-23f1-47c0-b441-7daaeb54f9b8"
   },
   "sabertooth_wyvern": {
     "artist": "Keith Parkinson",
@@ -13029,6 +13045,10 @@
   "willow_wind": {
     "artist": "Ignis Bruno",
     "scryfall_id": "fc19dc82-6608-4a2c-bdf5-27585cf86645"
+  },
+  "willowrush_verge": {
+    "artist": "Carl Critchlow",
+    "scryfall_id": "38218d0f-4b70-45eb-a753-cdb44f94271c"
   },
   "wilt_leaf_cavaliers": {
     "artist": "Steve Prescott",

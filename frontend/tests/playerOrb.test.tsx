@@ -518,3 +518,15 @@ describe("commander damage is not this panel's job any more", () => {
     expect(container.querySelector(".cmd-pip")).toBeNull();
   });
 });
+
+describe("energy", () => {
+  it("draws nothing until the player has some", () => {
+    const { queryByTestId } = renderOrb();
+    expect(queryByTestId("energy-0")).toBeNull();
+  });
+
+  it("shows the viewer's energy on the head row", () => {
+    const { getByTestId } = renderOrb({ energy: 8 });
+    expect(getByTestId("energy-0").textContent).toContain("8");
+  });
+});

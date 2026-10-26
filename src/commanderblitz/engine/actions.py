@@ -108,6 +108,13 @@ class Action:
     #: action must not compare equal to a hand cast of it. What it buys is on
     #: the granting static, which `Game._cast` reads to charge the life.
     from_library_top: bool = False
+    #: Cast for an **alternative cost a static granted** -- Nissa, Worldsoul
+    #: Speaker's "pay eight {E} rather than pay the mana cost". The price
+    #: itself, as sorted ``(cost key, amount)`` pairs, rather than a flag, for
+    #: `warp`'s reason: the granting permanent can leave between the line
+    #: being offered and the cast being charged, and a re-derived price would
+    #: then be the printed one. Empty for every other cast.
+    granted_cost: tuple[tuple[str, int], ...] = ()
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a
@@ -261,6 +268,8 @@ class Action:
             # line a spree card offers shares all of the above, so without this
             # the seven subsets are one key.
             self.spree_modes,
+            # The granted line and the printed one share everything else.
+            self.granted_cost,
             # A shock land's two drops share everything else.
             -1 if self.enters_paid is None else int(self.enters_paid),
         )
@@ -329,6 +338,10 @@ class Action:
                 value = ActionKind(value)
             elif name == "targets":
                 value = tuple(TargetRef.from_dict(t) for t in value)
+            elif name == "granted_cost":
+                # Pairs, which JSON writes as lists: a tuple of lists would
+                # never compare equal to the line legality offered.
+                value = tuple((str(key), int(amount)) for key, amount in value)
             elif isinstance(spec.default, tuple):
                 value = tuple(value)
             values[name] = value

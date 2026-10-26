@@ -3,16 +3,9 @@
   "name": "Emissary of Soulfire",
   "oracle_text": "When this creature enters, you get {E}{E}{E} (three energy counters).\nPay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
   "blocked_sentences": [
-    "When this creature enters, you get {E}{E}{E} (three energy counters).",
     "Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery."
   ],
   "needs": [
-    {
-      "capability": "energy",
-      "kind": "engine",
-      "what": "a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}) and an activated-ability cost `pay_energy: N` that is payable only when the controller has at least N energy and removes it",
-      "why_existing_wont_do": "add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; the cost keys remove_counters / remove_counters_from_among remove counters from permanents, not from a player, and no value key reads a player's counter total"
-    },
     {
       "capability": "keyword_counters",
       "kind": "engine",
@@ -20,6 +13,11 @@
       "why_existing_wont_do": "exalted exists as a keyword and grant_keyword can give it until end of turn or permanently, but that is not a counter: it is not removable/movable/proliferatable as a counter and does not stack as one instance per counter; nothing in reference says a named counter grants its keyword"
     }
   ],
-  "closest_existing": ["add_poison", "add_counters", "remove_counters", "grant_keyword"],
+  "closest_existing": [
+    "add_poison",
+    "add_counters",
+    "remove_counters",
+    "grant_keyword"
+  ],
   "confidence": "high"
 }

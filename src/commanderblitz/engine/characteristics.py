@@ -1550,14 +1550,24 @@ def resolve_chosen_subtypes(
     everybody. The sentinel replaces the *whole* list rather than just the
     unresolved entry, because ``subtypes`` is an any-of: "Goblins and the chosen
     type" with no choice made yet must not quietly fall back to "Goblins".
+
+    ``not_subtypes`` takes the same entry -- "destroy all creatures that
+    **aren't** of the chosen type" (Kindred Judgment) -- and fails the same
+    way: with no choice made the filter matches nothing. Dropping the entry
+    instead would make "aren't of the chosen type" read "every creature".
     """
-    wanted = selector.get("subtypes")
-    if not wanted or not any(isinstance(s, Mapping) for s in wanted):
-        return selector
-    out = resolve_chosen_subtype_list(wanted, source)
-    if len(out) != len(wanted):
+    unresolved = False
+    for key in ("subtypes", "not_subtypes"):
+        wanted = selector.get(key)
+        if not wanted or not any(isinstance(s, Mapping) for s in wanted):
+            continue
+        out = resolve_chosen_subtype_list(wanted, source)
+        if len(out) != len(wanted):
+            unresolved = True
+        selector = {**selector, key: out}
+    if unresolved:
         return {**selector, "subtypes": ["\0none"]}
-    return {**selector, "subtypes": out}
+    return selector
 
 
 def resolve_chosen_color_list(entries: Any, source: GameObject | None) -> list[str]:

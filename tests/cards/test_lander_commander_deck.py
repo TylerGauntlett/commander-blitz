@@ -23,11 +23,14 @@ to pay it, and its replay spends a land drop.
 from __future__ import annotations
 
 from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.costs import mana_sources
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from tests.conftest import (
     _default_answer,
     action_for_card,
     activations,
+    count_on_battlefield,
+    find_action,
     hand_ids,
     oids_of,
     only_oid,
@@ -367,3 +370,119 @@ class TestOboroPalaceInTheClouds:
         assert game.state.active_player == 0
         assert hand_ids(game, 0).count(OBORO) == 1
         assert [a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND] == []
+
+
+NISSA = "nissa_worldsoul_speaker"
+VERGE = "willowrush_verge"
+
+
+class TestWillowrushVerge:
+    """"{T}: Add {U}. / {T}: Add {G}. Activate only if you control a Forest or
+    an Island."
+
+    Gate 5 never taps a land. The near misses are the condition's two halves:
+    an unconditional {G} is a strictly better dual, and a `subtypes` read as
+    "a Forest and an Island" is a strictly worse one.
+    """
+
+    @staticmethod
+    def sources(builder, *others: str) -> set[int]:
+        game = builder(players=2).battlefield(0, [VERGE, *others]).build(advance=False)
+        verge = only_oid(game, VERGE)
+        return {s.ability_index for s in mana_sources(game.state, 0) if s.oid == verge}
+
+    def test_alone_it_makes_only_blue(self, builder):
+        assert self.sources(builder) == {0}
+
+    def test_a_plains_does_not_turn_on_green(self, builder):
+        assert self.sources(builder, "plains") == {0}
+
+    def test_a_forest_turns_on_green(self, builder):
+        assert self.sources(builder, "forest") == {0, 1}
+
+    def test_an_island_alone_is_enough(self, builder):
+        assert self.sources(builder, "island") == {0, 1}
+
+    def test_an_opponents_forest_is_not_yours(self, builder):
+        game = builder(players=2).battlefield(0, [VERGE]).battlefield(1, ["forest"]).build(
+            advance=False
+        )
+        verge = only_oid(game, VERGE)
+        assert {s.ability_index for s in mana_sources(game.state, 0) if s.oid == verge} == {0}
+
+
+class TestNissaWorldsoulSpeaker:
+    """"Landfall — Whenever a land you control enters, you get {E}{E}. / You
+    may pay eight {E} rather than pay the mana cost for permanent spells you
+    cast."
+
+    Neither line fires in gate 5's sandbox, where no land enters and nobody
+    has energy. The near misses: a landfall reading any player's land, energy
+    given to the wrong seat, and the alternative cost offered one short.
+    """
+
+    @staticmethod
+    def board(builder, *, energy=0, hand=("forest",), theirs=()):
+        b = (
+            builder(players=2)
+            .battlefield(0, [NISSA])
+            .battlefield(1, list(theirs))
+            .hand(0, list(hand))
+            .hand(1, [ANCHOR])
+            .library(0, ["forest"] * 10)
+            .library(1, ["forest"] * 10)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+        )
+        b.state.players[0].energy = energy
+        return b.build()
+
+    def test_a_land_you_play_gives_two_energy(self, builder):
+        game = self.board(builder)
+        game.apply(find_action(game, ActionKind.PLAY_LAND))
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        assert game.state.players[0].energy == 2
+        assert game.state.players[1].energy == 0
+
+    def test_two_lands_are_four(self, builder):
+        game = self.board(builder, energy=2)
+        game.apply(find_action(game, ActionKind.PLAY_LAND))
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        assert game.state.players[0].energy == 4
+
+    def test_an_opponents_land_gives_nothing(self, builder):
+        """"A land **you control**": the opponent plays one on their own turn."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [NISSA])
+            .hand(1, ["forest"])
+            .hand(0, [ANCHOR])
+            .library(0, ["forest"] * 10)
+            .library(1, ["forest"] * 10)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(1)
+            .build()
+        )
+        game.apply(find_action(game, ActionKind.PLAY_LAND))
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        assert count_on_battlefield(game, "forest", 1) == 1
+        assert game.state.players[0].energy == 0
+        assert game.state.players[1].energy == 0
+
+    def test_eight_energy_casts_a_permanent_spell_for_no_mana(self, builder):
+        game = self.board(builder, energy=8, hand=(BEAR,))
+        line = next(
+            a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.granted_cost
+        )
+        game.apply(line)
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.players[0].energy == 0
+        assert count_on_battlefield(game, BEAR, 0) == 1
+
+    def test_seven_is_one_short(self, builder):
+        game = self.board(builder, energy=7, hand=(BEAR,))
+        assert not [a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.granted_cost]
+
+    def test_an_instant_is_not_a_permanent_spell(self, builder):
+        game = self.board(builder, energy=8, hand=(ANCHOR,))
+        assert not [a for a in game.legal_actions() if a.kind is ActionKind.CAST and a.granted_cost]

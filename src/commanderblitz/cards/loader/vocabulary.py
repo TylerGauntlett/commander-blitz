@@ -265,6 +265,13 @@ STATIC_EFFECTS = frozenset(
         # by `player_statics.granted_warp_cost` at every cast, so a card drawn
         # after the granter arrived is covered.
         "grant_warp",
+        # "You may pay eight {E} rather than pay the mana cost for permanent
+        # spells you cast." Nissa, Worldsoul Speaker. `grant_warp`'s shape for
+        # a price paid in something other than mana: `affects_spells` names the
+        # spells and `cost` the price, and `free_cast_permission` cannot stand
+        # in -- that one waives the cost, and this one replaces it. Read by
+        # `player_statics.granted_alternative_cost` at every cast.
+        "granted_alternative_cost",
         # "For each {B} in a cost, you may pay 2 life rather than pay that
         # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
         # player *pays*, in every cost, so there is no object to attach it to.
@@ -693,6 +700,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_from_library_top",
         "free_cast_permission",
         "grant_warp",
+        "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
         "play_lands_from_library_top",

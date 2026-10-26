@@ -478,3 +478,17 @@ describe("reading their commander from the seat", () => {
     expect(onHoverCard).toHaveBeenLastCalledWith(null);
   });
 });
+
+describe("energy", () => {
+  it("draws nothing for a seat with no energy", () => {
+    const { queryByTestId } = renderSeat(view());
+    expect(queryByTestId("energy-1")).toBeNull();
+  });
+
+  it("shows an opponent's energy beside their name", () => {
+    const { getByTestId } = renderSeat(view([], { energy: 6 }));
+    const chip = getByTestId("energy-1");
+    expect(chip.textContent).toContain("6");
+    expect(chip.getAttribute("data-hint")).toBe("6 energy");
+  });
+});

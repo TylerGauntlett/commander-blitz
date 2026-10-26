@@ -114,6 +114,10 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
         # The same card cannot go to two destinations, and which one it reached
         # is the whole difference between cycling and a pitch.
         raise DslError(f"{where}.cost: give 'discard_self' or 'exile_self_from_hand', not both")
+    if model.pay_energy < 0:
+        # A negative payment is energy *given*, which is the `add_energy` op;
+        # as a cost it would be a payment that makes the payer richer.
+        raise DslError(f"{where}.cost.pay_energy: must be 0 or more, got {model.pay_energy}")
     if model.pay_life_x and model.pay_life:
         # Two numbers for one payment. Whichever won would be the card and the
         # other would load clean and never be charged.

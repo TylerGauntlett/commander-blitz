@@ -703,8 +703,10 @@ def matches(
     # no static is being computed -- so the substitution the characteristics
     # layer already does for `affects` and for trigger filters has to happen on
     # the effect side too. Resolved against the ability's own source, which is
-    # the permanent that made the choice.
-    if selector.get("subtypes"):
+    # the permanent that made the choice. `not_subtypes` too -- Kindred
+    # Judgment's "destroy all creatures that **aren't** of the chosen type",
+    # where the spell itself made the choice.
+    if selector.get("subtypes") or selector.get("not_subtypes"):
         selector = resolve_chosen_subtypes(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )

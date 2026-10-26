@@ -541,6 +541,18 @@ export function describeEvent(
       const got = `${who} ${v("get", "gets")} ${amount ?? 1} poison`;
       return total === null ? got : `${got} (${total} total)`;
     }
+    // Energy is spent later, so the running total is the useful half: a
+    // player deciding whether to pay {E}{E}{E}{E}{E}{E}{E}{E} reads it here.
+    case "energy_added": {
+      const total = typeof event.data.total === "number" ? event.data.total : null;
+      const got = `${who} ${v("get", "gets")} ${amount ?? 1} energy`;
+      return total === null ? got : `${got} (${total} total)`;
+    }
+    case "energy_paid": {
+      const total = typeof event.data.total === "number" ? event.data.total : null;
+      const paid = `${who} ${v("pay", "pays")} ${amount ?? 1} energy`;
+      return total === null ? paid : `${paid} (${total} left)`;
+    }
     case "life_gained":
       return amount === null ? null : `${who} ${v("gain", "gains")} ${amount} life`;
     case "life_lost":

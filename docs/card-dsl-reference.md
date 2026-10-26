@@ -10,18 +10,18 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 139 |
+| [Effect ops](#effect-ops) | 140 |
 | [Selectors](#selectors) | 65 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
 | [Conditions](#conditions) | 29 |
 | [Trigger events](#trigger-events) | 46 |
 | [Trigger filters](#trigger-filters) | 32 |
-| [Static effects](#static-effects) | 78 |
-| [Player-wide statics](#player-wide-statics) | 39 |
+| [Static effects](#static-effects) | 79 |
+| [Player-wide statics](#player-wide-statics) | 40 |
 | [Grantable statics](#grantable-statics) | 36 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 25 |
+| [Ability costs](#ability-costs) | 26 |
 | [Card-level costs](#card-level-costs) | 28 |
 | [Keywords](#keywords) | 38 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 14 |
-| [Engine events](#engine-events) | 73 |
+| [Engine events](#engine-events) | 75 |
 
 ## Effect ops
 
@@ -134,6 +134,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `transform` | Modify |  | Transform a double-faced permanent. | [Transforming double-faced cards](card-dsl-cookbook.md#transforming-double-faced-cards) |
+| `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over. | [damage's excess_to](card-dsl.md#damages-excess_to) |
@@ -507,6 +508,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_warp` | yes |  | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
+| `granted_alternative_cost` | yes |  | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `look_at_library_top` | yes |  | The player may look at the top card of their library any time. | [Static abilities](card-dsl.md#static-abilities) |
 | `lose_all_abilities` |  |  | Matching permanents lose all abilities. | [lose_all_abilities, and why abilities_of exists](card-dsl-cookbook.md#lose_all_abilities-and-why-abilities_of-exists) |
 | `lose_keyword` |  | yes | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
@@ -572,6 +574,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `free_cast_permission` | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
 | `freeze_opponent_lands` | The player's lands don't untap during their untap step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `grant_warp` | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
+| `granted_alternative_cost` | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `look_at_library_top` | The player may look at the top card of their library any time. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
@@ -665,6 +668,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `mana` | A mana cost. | [Costs](card-dsl.md#costs) |
 | `mana_reduction` | A reduction applied to this ability's mana cost. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `mill` | Mill N cards off your own library. | [mill — a cost, and never an effect](card-dsl.md#mill--a-cost-and-never-an-effect) |
+| `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `pay_life` | Pay N life. | [Costs](card-dsl.md#costs) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
@@ -1005,6 +1009,8 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `draw_step` | `draw_step` |  | [Triggers](card-dsl.md#triggers) |
 | `emblem_created` |  |  | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` |  | [Triggers](card-dsl.md#triggers) |
+| `energy_added` |  |  | [Triggers](card-dsl.md#triggers) |
+| `energy_paid` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |

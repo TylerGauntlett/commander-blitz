@@ -75,6 +75,7 @@ export function player(overrides: Partial<PlayerView> = {}): PlayerView {
     commander_cost: {},
     commander_damage_taken: {},
     mulligans_taken: 0,
+    energy: 0,
     mulligans_free: 1,
     mulligans_max: 6,
     library_count: 60,

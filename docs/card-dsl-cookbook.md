@@ -7449,6 +7449,58 @@ near-miss shield counter is *visible on the board*. It is placed, it is shown,
 dies to the removal it is printed to survive. That card passes all six authoring
 gates, because placing the counter is genuine and only its meaning is missing.
 
+## Energy
+
+Energy (107.14) is a counter on a **player**, held in `PlayerState.energy`
+beside poison. Nissa, Worldsoul Speaker gets it on landfall:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).",
+  "trigger": { "event": "permanent_enters", "controller": "you", "filter": { "types": ["Land"] } },
+  "effects": [ { "op": "add_energy", "amount": { "const": 2 } } ] }
+```
+
+`add_energy` takes `amount` (a value, default 1) and `player` (default `you`,
+which is who the printed "you get" names). It goes through
+`primitives.add_energy`, the one funnel, so a counter replacement that reaches
+players (Innkeeper's Talent) applies to it, and proliferate gives a chosen
+player one more energy if they already have some. Energy never ends the game.
+
+Energy is spent with the `pay_energy` cost key, a whole number of counters:
+"Pay {E}{E}: …" is `"cost": { "pay_energy": 2 }`. It is payable only while the
+player has at least that many, and the loader refuses a negative amount (that
+is `add_energy`). Paying fires `energy_paid` with what is left.
+
+### `granted_alternative_cost` — paying energy instead of a spell's mana cost
+
+"You may pay eight {E} rather than pay the mana cost for permanent spells you
+cast" -- Nissa, Worldsoul Speaker. A player-wide static that offers a second
+cast line, beside the printed one, for every spell its `affects_spells` filter
+matches:
+
+```jsonc
+{ "kind": "static", "effect": "granted_alternative_cost", "affects_player": "you",
+  "text": "You may pay eight {E} rather than pay the mana cost for permanent spells you cast.",
+  "affects_spells": { "controller": "you", "not_types": ["Instant", "Sorcery"] },
+  "cost": { "pay_energy": 8 } }
+```
+
+"Permanent spells" is `not_types: ["Instant", "Sorcery"]`: a land is never a
+spell, so every other spell is a permanent spell.
+
+- **The price is energy or life**, a whole number of one or both. The line's
+  mana half is priced free, so a `mana` here would never be charged; the loader
+  refuses it, and anything that asks a question (a sacrifice, a discard).
+- **Offered only while payable**, and wherever the spell could otherwise be
+  cast: the filter names no zone. A commander cast this way still owes its tax
+  (118.9d). X is 0, because the replacing price has no X in it (107.3b), and
+  the mana value is unchanged.
+- **The price rides on the action** (`Action.granted_cost`), so the grant
+  leaving the battlefield between offer and charge cannot change what is billed.
+- Not `free_cast_permission`, which waives the cost rather than replacing it,
+  and not `alternative_cost`, which only the card that prints it has.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc
@@ -9691,6 +9743,24 @@ choice does not exist until the permanent is on the battlefield.
 **Before a type is chosen the filter matches nothing**, which is the important
 half: falling back to "match everything" would make the Banner a global anthem
 for as long as the choice was pending.
+
+`not_subtypes` takes the same entry, for "…that **aren't** of the chosen type".
+Kindred Judgment chooses on the spell and reads the choice back in the same
+resolution:
+
+```jsonc
+"spell_effects": [
+  { "op": "choose_type", "prompt": "Choose a creature type" },
+  { "op": "destroy",
+    "objects": { "zone": "battlefield", "controller": "any", "count": "all",
+                 "types": ["Creature"],
+                 "not_subtypes": [ { "chosen_type_of": "self" } ] } }
+]
+```
+
+An unchosen negation also matches nothing. Dropping the entry would turn
+"aren't of the chosen type" into "every creature", so the filter fails closed
+in both directions.
 
 `choose_type` needs **no new `DecisionKind`**. `ask_mode` already asks "pick one
 of these labels" and returns the index, so legality, `game.apply` and the

@@ -107,7 +107,13 @@ Effort **S** · Impact **medium**, a hidden-information leak that is harmless un
 `GET /api/games/{id}/debug` reveals every hand on the hosted site to anyone
 holding a `game_id`. It is `SV-01` in [TECH_DEBT.md](../TECH_DEBT.md), the
 cheapest item there, and nothing in `server/routes.py` gates it: no setting,
-mode or environment check.
+mode or environment check. Nothing in the client, the desktop shell or
+`scripts/` calls it; two server tests do, `test_api.py` and
+`test_multiplayer_game.py`, each asserting it reveals what `player_view`
+hides. `ServerSettings.mode` is `desktop` or `hosted` and nothing else, and
+`ServerSettings()` defaults to `hosted`, so every `create_app` a test builds
+and a local `uvicorn` run are hosted too: there is no development mode to
+check for.
 
 #### The change
 
@@ -121,6 +127,36 @@ strangers at one table. Delete the debt entry in the same pull request.
 A server test that builds the app with the hosted settings and asserts the
 route returns a 404, beside the existing test that asserts the desktop mode
 still reveals what `player_view` hides.
+
+#### Open questions
+
+- **What does "development" mean, when no such mode exists?** Recommended: a
+  new `ServerSettings.debug_endpoint` flag, read by `settings_from_env` from
+  `COMMANDERBLITZ_DEBUG_ENDPOINT=1`, on by default when `mode` is `desktop`
+  and off when it is `hosted`. A third `Mode` would change what the client is
+  told by `GET /api/config` for a flag only the server reads; a flag keeps
+  `mode` meaning where the server runs.
+- **Does the desktop keep it?** The desktop's games are local to the
+  sidecar, so nobody else holds their `game_id`. Recommended: yes, on by
+  default there, so the item's "desktop still reveals" test stays true without
+  an environment variable.
+- **What happens to the two existing tests, whose clients are hosted?**
+  Recommended: build those clients with the flag on and keep their
+  assertions, and add the hosted-404 test beside each, for a single-player
+  game and for a dealt pod, so both regimes in `_authorise` are covered.
+- **Gate the route, or delete it?** Nothing calls it. Recommended: gate it;
+  it is the one way to read a hidden zone while debugging the engine through
+  the server, and deleting it would also delete the tests that hold the
+  separation between `full_view` and `player_view`.
+- **A check in the handler, or a route registered only when allowed?**
+  Recommended: the check in the handler against `app.state.settings`, raising
+  the same 404 an unknown game gets, so the route table is one fixed list and
+  the refusal tells a stranger nothing.
+- **Which docs move with it?** Recommended: delete `SV-01` and its line in
+  the ordering at the top of `TECH_DEBT.md`, rewrite the `/debug` section of
+  [server.md](server.md) to name the flag, and change the row in
+  [api.md](api.md) from "development only" to the flag's name, all in the
+  same pull request.
 
 ### Outcomes as data
 
@@ -365,8 +401,15 @@ Effort **S** · Impact **medium**, visible in every pod, and the place the CPU w
 #### Today
 
 Three agents already exist with a clear ordering: `heuristic_classic`,
-`heuristic` with its strategies, and `policy`. A pod seats every CPU with
-the same one, and a player cannot ask for an easier or harder table.
+`heuristic` with its strategies, and `policy`, all built by `agent_by_name`.
+The wire already carries a per-seat agent: `SeatConfig.agent` and
+`SeatAdminRequest.agent` accept `random`, `heuristic` or `policy`, and the
+lobby's `set_agent` seat action stores it. Nothing in the client sends it:
+`PodRoute` calls `adminSeat` only for the actions without an agent, so every
+CPU a player seats plays `heuristic`. `heuristic_classic` is not a value the
+server accepts, and `GameSession` builds every agent without a checkpoint, so
+`policy` is `PolicyAgent` falling back to the heuristic. No checkpoint ships,
+and [ai-training.md](ai-training.md) trains one per pod size.
 
 #### The change
 
@@ -381,6 +424,36 @@ see, and it ships before any model does.
 The lobby's predicates in `logic/lobby.ts` cover the new field; the pod
 server tests assert the agent each seat is dealt; and the lobby story and
 e2e spec reach the segment with a pad under the floors.
+
+#### Open questions
+
+- **A new field, or the existing `agent`?** The change names a field on
+  `SeatConfig`, but `agent` and `set_agent` are already that seam end to end.
+  Recommended: keep `agent` as the one field and map easy, normal and hard
+  onto it in the client, adding `heuristic_classic` to the accepted values;
+  a second field that only translates to the first is two sources for one
+  fact.
+- **What is easy?** Recommended: `heuristic_classic`, the agent from before
+  strategies, not `random`, which makes no game of it; `random` stays a value
+  the API takes and the segment does not offer.
+- **Where does the hard checkpoint live, and how is it found?** None ships
+  today, and one is trained per pod size. Recommended: build the seam only,
+  a server setting naming a checkpoint per pod size that `GameSession` hands
+  to a `policy` seat, unset by default so hard plays the strategy CPU; which
+  checkpoint ships, and whether it is committed or deployed beside the site,
+  is a later item with its own ADR.
+- **Does hard say it is falling back?** With no checkpoint, hard and normal
+  play the same game. Recommended: keep all three segments and let the seat
+  report the agent it actually got, so the lobby can mark hard as "strategy
+  CPU" until a model lands, rather than hiding the segment.
+- **Who may set it?** Recommended: the host, through `set_agent`, the same
+  rule as the seat's deck; a joined player's own seat is human and has no
+  difficulty.
+- **Does a rematch keep it?** `GameRoute`'s rematch rebuilds the seats
+  through `useNewGame` and omits `agent`, because the table view does not say
+  which agent a seat runs, so every rematch plays `heuristic`. Recommended:
+  the player view carries each CPU seat's agent and the rematch sends it back,
+  so a hard table stays hard, in the same pull request.
 
 ### The stack reads in order from the panel
 
@@ -434,6 +507,62 @@ box is the same height as with an empty stack. A journey in
 than responding to a spell, under the priority row's ceiling in
 `decisionAudit.ts`.
 
+#### Open questions
+
+- **Today no longer matches the code: the pile is not a rail panel.**
+  `TablePlay` floats `StackPanel` over the play area at every size, in the
+  grid cell `.play__mine` sits in, and the pile is only drawn while
+  `state.stack` is non-empty. Each ply already wears a tag reading "next",
+  "ability" and its controller's name; only the targets are missing as text
+  (they are in `data-hint`, and drawn by `CombatArrows`). The
+  `[data-compact] .rail--right .stackpanel` cap in `styles/handheld.css` styles
+  a placement that no longer exists. Recommended: proceed on these facts,
+  rewrite **Today** to match in the decide commit, and delete the dead
+  handheld rule in the pull request, since the strip replaces what it was
+  for.
+- **Where do the strip's words come from?** `logic/events.ts` names no stack
+  item: the log's words are `describeEvent` in `logic/labels.ts`, which names
+  a `spell_cast` or `ability_triggered` event rather than a `StackItemView`,
+  and `ActionPanel` already resolves a `stack` target ref to the item's name.
+  Recommended: one pure `stackLine(state, item)` in `logic/labels.ts` beside
+  `describeEvent`, reusing its name and target lookups and verb agreement
+  (`You` for the viewer), with a unit test, so the strip and the log cannot
+  drift apart; `StackPanel`'s own target string moves onto it too.
+- **How many lines, and what fills the box when the stack is empty?**
+  ADR 0016 reserves a slot at its full size, and the gate asserts the panel's
+  box is the same height with and without a stack, but the strip shows only
+  "while `state.stack` is non-empty". Recommended: three lines, drawn in
+  `.acts__head` below the prompt on every priority window, reading `—` when the
+  stack is empty, with `scrollbar-gutter: stable` and an inside scroll beyond
+  three, so the strip's height is a constant and `.acts__list` never moves.
+  The alternative, taking the strip's height out of `.acts__list` only while
+  the stack is non-empty, keeps the box but moves every action under the ring.
+- **Only on priority windows, or on every decision while the stack is
+  non-empty?** A target pick for a counterspell, or a trigger's choice, is
+  made with the stack in play too. Recommended: every decision while the stack
+  is non-empty draws the strip, and every decision reserves its slot, since a
+  slot that appears on some decision kinds and not others is the same jump
+  ADR 0016 forbids.
+- **"Lines, not stops", yet a ply press "sends the ring to the strip's
+  line".** The ring can only stand on a stop, and a ply press outside
+  targeting already opens the item in the reader (`holdCard` in
+  `useTableGestures.onStackItem`), which reads a buried item without
+  uncovering it. Recommended: keep the lines non-stops and keep the press a
+  read; the press also marks the matching line (`aria-current`) while the
+  reader is up, rather than moving the ring, so ADR 0015's one-control rule is
+  untouched and the change to `StackPanel` is a highlight.
+- **Which journey, and what is its ceiling?** `BUDGET` in `decisionAudit.ts`
+  has no response journey; the priority row is held to `PassInOnePress` and
+  `AimASpell`. Recommended: a new `RespondToAResponse` journey in
+  `Journeys.stories.tsx`, on a stack of two with a counterspell in hand aimed
+  at the top item, with the ceiling `AimASpell` already holds (the card, then
+  the target), added to the priority row's `journeys`.
+- **The phone?** On a phone the right rail is a sheet holding `ActionPanel`
+  (`TablePhone.stories.tsx` holds it). Recommended:
+  the strip is part of `ActionPanel`, so the phone gets it with no extra work;
+  the gate adds the phone viewport to the panel story rather than a separate
+  phone story.
+
 ### Why a press is refused
 
 Effort **S** · Impact **medium**, every player who presses a permanent that does nothing and has to guess why · Depends on nothing · Awaiting decisions.
@@ -486,6 +615,78 @@ test that an opponent's seat gets `null`. `tests/targetHint.test.ts`'s
 sibling for the new hint, one case per reason, and that it is silent while
 targeting. A story in `HintBar.stories.tsx` or `TableFoot`'s nearest that
 draws the refusal at the handheld floors.
+
+#### Open questions
+
+- **Today no longer matches the code in three places.** The hand's reason
+  table is `unplayableHint` in `logic/mana.ts`, not `logic/labels.ts`, and
+  `HandFan` draws it itself, under the fan (`unplayable-hint`). The foot's
+  hint is not a standing surface: `TableFoot` renders `.choices` only while
+  `targeting` is non-empty, and `HintBar` deliberately shows button verbs and
+  never a card's text. And a press on a permanent no action names is not a
+  read: `abilityRoute` answers `none` and `useTableGestures.onBoardCard`
+  returns without a cue. The lock the item calls a "cast lock" is an
+  activation prohibition, `player_cant_activate` beside `abilities_locked`.
+  Recommended: proceed on these facts and rewrite **Today** and **The
+  change** to match in the decide commit.
+- **Where is the refusal drawn, with no foot hint outside targeting?**
+  Recommended: a line under the board the way `HandFan` draws one under the
+  hand, in the same slot and class family (`unplayable-hint`), shown for the
+  hovered or ringed permanent of your own while nothing is being targeted,
+  portalled into the sheet on a phone exactly as `HandFan` does; not in
+  `HintBar`, whose one-line, verbs-only rule is why it stopped echoing
+  `data-hint`. The alternative, rendering `.choices` outside targeting, puts
+  a Cancel button beside a sentence that has nothing to cancel.
+- **What does a press on a refused permanent do?** Recommended: `cue("deny")`,
+  the way a board pick refuses a card that is not an option, and nothing
+  else; a silent `none` is the half of the problem the hint cannot fix on a
+  pad, where nothing is hovered until the ring lands.
+- **Which permanents enter the map?** A tap-only mana ability is the payment
+  solver's and is never offered (`costs.offerable_mana_ability`), so "tapped"
+  on every tapped land would fill the map on every board. Recommended: an
+  oid is in `ability_reasons` only when it has an activated ability that is
+  not a suppressed mana ability and no `activate` action names it; a
+  permanent with one activatable ability and one refused one is absent,
+  since its press already acts or opens `AbilityMenu` on what is offered.
+  Battlefield only: cycling in hand and embalm in the graveyard are not this
+  item.
+- **Outside your priority window, is every such permanent `priority`?**
+  `hand_reasons` marks every hand card `priority` then, so the map cannot be
+  "empty on most boards" and mirror it. Recommended: mirror it, since a
+  press on your own turn's permanent during an opponent's step is the same
+  question with the same answer; drop the "empty on most boards" claim.
+- **The vocabulary.** `_ability_aims` closes on more gates than the item
+  lists. Recommended: `priority`, `timing` (sorcery speed, and
+  `activate_steps` such as forecast's upkeep), `locked` (`abilities_locked`
+  or `player_cant_activate`), `once_per_turn` (`once_each_turn` and 606.3's
+  loyalty limit, The Chain Veil's extra counted), `condition`
+  (`activation_condition`, a Class's level ladder), `tapped`,
+  `summoning_sick`, `mana`, `cost` (any other unpayable part: sacrifice,
+  discard, counters, life) and `targets`, as an `UNACTIVATABLE_REASONS` tuple
+  beside `UNPLAYABLE_REASONS` and a `UnactivatableReason` type beside
+  `UnplayableReason`. Where a permanent has several refused abilities, the
+  reason of the first in card order.
+- **Restated or shared with `_ability_aims`?** `unplayable_reason` restates
+  its generator's gates and `tests/unit/engine/test_legality_reasons.py` pins
+  the two together. `_ability_aims` has a dozen gates and is on the hot path
+  of `legal_actions`. Recommended: restate, as `unplayable_reason` does,
+  walking `_ability_aims`' gates in its order and calling `_ability_aims`
+  itself as the final arbiter so "absent from the map" and "an action names
+  it" cannot disagree; extend `test_legality_reasons.py` with the same
+  invariant over the activate path. Factoring `_ability_aims` to return a
+  reason would change the generator every RL step runs for a diagnostic.
+- **One label table, where?** Recommended: `unplayableHint`'s sentences stay
+  in `logic/mana.ts`, and the new `unactivatableHint` sits beside it sharing
+  the shared reasons' wording (and `manaRow` for the mana case, which is why
+  the table lives there), so the same gate says the same thing from either
+  zone without moving a file the item does not otherwise change. The gate's
+  `tests/targetHint.test.ts` sibling becomes a case table in the mana test,
+  one case per reason.
+- **The story.** `HintBar.stories.tsx` does not draw this surface under the
+  recommended placement. Recommended: a board story (the board component's
+  nearest stories file) with a refused permanent ringed, at the handheld
+  floors and the phone viewport, asserting the line is drawn and that the
+  board's box does not move when it appears (ADR 0016).
 
 ### CPU takeover and reconnection
 
