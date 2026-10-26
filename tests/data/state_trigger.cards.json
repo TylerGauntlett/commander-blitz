@@ -1,0 +1,40 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_state_trigger.py. t_st_tome is Mazemind Tome's state trigger on an ability that needs no tap, so page counters can be put on at instant speed while the trigger waits: the first ability's cost is the counter and its effect a 1-life marker, the state trigger exiles the tome and, if it did, gains 10.",
+  "cards": [
+    {
+      "id": "t_st_tome",
+      "name": "Test State Tome",
+      "oracle_text": "Put a page counter on this artifact: You gain 1 life.\nWhen there are four or more page counters on this artifact, exile it. If you do, you gain 10 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Put a page counter on this artifact: You gain 1 life.",
+          "cost": {"put_counters": {"counter": "page", "amount": 1}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 10 life.",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": ">=",
+              "left": {"counters_on": {"counter": "page", "objects": {"self_only": true}}},
+              "right": {"const": 4}
+            }
+          },
+          "effects": [
+            {"op": "exile", "objects": {"self_only": true}, "as": "exiled"},
+            {
+              "op": "if",
+              "condition": {"exists": {"binding": "exiled"}},
+              "then": [{"op": "gain_life", "player": "you", "amount": {"const": 10}}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

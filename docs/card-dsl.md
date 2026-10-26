@@ -3750,7 +3750,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library`
+`searches_library` · `state`
 
 **"Whenever this creature or another creature dies"** (Blood Artist, Zulaport
 Cutthroat, Falkenrath Noble) is a filtered `dies` / `creature_dies` with **no**
@@ -3759,6 +3759,46 @@ in time (603.10a), so the permanent that just died is offered its own leave
 triggers and the filter decides: without `exclude_self` it hears its own death,
 and with it ("whenever **another** creature dies") it does not. Writing
 `exclude_self` on an "X or another" wording silently drops the X half.
+
+### State triggers — a state, not an event
+
+    Mazemind Tome — "When there are four or more page counters on this
+    artifact, exile it. If you do, you gain 4 life."
+
+```jsonc
+"trigger": { "event": "state",
+             "state": { "cmp": ">=",
+                        "left": { "counters_on": { "counter": "page",
+                                                   "objects": { "self_only": true } } },
+                        "right": { "const": 4 } } },
+"effects": [
+  { "op": "exile", "objects": { "self_only": true }, "as": "exiled" },
+  { "op": "if", "condition": { "exists": { "binding": "exiled" } },
+    "then": [ { "op": "gain_life", "player": "you", "amount": { "const": 4 } } ] } ]
+```
+
+Rule 603.8: the ability triggers as soon as `state` — any condition — is true,
+however the game got there, and does not trigger again while it is waiting to go
+on the stack or is on it. Once it has resolved or been countered, it triggers
+again if the state still holds. `triggers.check_state_triggers` checks every
+permanent from the state-based-action pass, so a cost-placed fourth counter and
+a proliferated one are seen alike.
+
+`state` is not `condition`. A `condition` is an intervening "if" that 603.4
+re-checks on resolution; the state is checked only as the ability triggers, so a
+Tome whose counters are removed in response is still exiled. The loader requires
+`state` on this event and refuses it on every other, refuses `filter`, `source`,
+`condition`, `batched` and `max_per_turn` beside it (there is no event to
+narrow), and refuses `active_zones` other than the battlefield. A delayed
+trigger and a `double_triggers` cause cannot name it.
+
+`counter_placed` with a `counters_on` condition is the near miss: it fires
+again on every later counter while the count stays high, and misses a count
+that got there without a placement.
+
+"Exile it. If you do" is an `exile` whose `as` names what it exiled, read by an
+`if` over `exists`: a Tome that left the battlefield in response is not
+exiled, so nothing is bound and no life is gained.
 
 ### Tiered, and reading back which price was paid
 

@@ -496,6 +496,14 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(
             f"{where}: unknown trigger event {event!r} (implemented: {sorted(TRIGGER_EVENTS)})"
         )
+    if event == "state":
+        # 603.8's state triggers are hosted on a permanent and checked by the
+        # state-based-action pass; a delayed subscription waits on an event,
+        # and this one is never emitted.
+        raise DslError(
+            f"{where}: a state trigger cannot be delayed -- it waits on a state, "
+            f"not an event"
+        )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:
         raise DslError(

@@ -23,6 +23,7 @@ from .temp_effects import (
     clear_permanent_shields,
     drop_attack_requirements,
 )
+from .triggers import check_state_triggers
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -58,6 +59,10 @@ def check(state: GameState) -> bool:
     changed |= _legend_rule(state)
     changed |= _role_rule(state)
     changed |= _ascend(state)
+    # State triggers (603.8) are checked whenever state-based actions are. A
+    # queued trigger changes nothing the actions above read, so it does not
+    # count as a change; the next pass sees it waiting and leaves it.
+    check_state_triggers(state)
     return changed
 
 

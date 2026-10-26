@@ -2215,6 +2215,39 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"not on {model.trigger.event!r}"
             )
 
+        if model.trigger.state is not None and model.trigger.event != "state":
+            # Only a state trigger is checked against a state; anywhere else the
+            # key would look like a condition and never be read.
+            raise DslError(
+                f"{where}: 'state' is a state trigger's condition and means nothing "
+                f"on {model.trigger.event!r}; an intervening 'if' is 'condition'"
+            )
+        if model.trigger.event == "state":
+            # 603.8. The state *is* the trigger, so it is required, and every
+            # key that narrows an event has no event to narrow.
+            if not model.trigger.state:
+                raise DslError(
+                    f"{where}: a state trigger needs the 'state' it waits for"
+                )
+            validate_condition(model.trigger.state, f"{where}.trigger.state")
+            narrowing = sorted(
+                key
+                for key in ("filter", "source", "condition", "batched", "max_per_turn")
+                if getattr(model.trigger, key)
+            )
+            if narrowing:
+                raise DslError(
+                    f"{where}: a state trigger has no event for {narrowing} to narrow; "
+                    f"put the whole state in 'state'"
+                )
+            if list(model.active_zones) != ["battlefield"]:
+                # `triggers.check_state_triggers` walks the battlefield, which is
+                # where every printed state trigger's "this permanent" lives.
+                raise DslError(
+                    f"{where}: a state trigger is checked on the battlefield only, "
+                    f"not in {model.active_zones}"
+                )
+
         if model.trigger.counter is not None and model.trigger.event != "counter_placed":
             # Same reasoning as `not_cause` above: only `counter_placed` carries
             # a counter kind, so accepting it elsewhere would look like a filter
@@ -2334,6 +2367,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             not_cause=model.trigger.not_cause,
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
+            state=dict(model.trigger.state) if model.trigger.state else None,
             put_by=model.trigger.put_by,
             mana_ability=model.trigger.mana_ability,
             targeted_by=model.trigger.targeted_by,
@@ -2919,6 +2953,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.cause_events: unknown trigger event {name!r} "
                     f"(implemented: {sorted(TRIGGER_EVENTS)})"
                 )
+            if name == "state":
+                # No event causes a state trigger, so the clause would never
+                # match one.
+                raise DslError(f"{where}.cause_events: a state trigger has no causing event")
         if model.cause_filter is not None:
             unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
             if unknown:

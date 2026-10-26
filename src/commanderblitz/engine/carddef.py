@@ -556,6 +556,11 @@ class TriggerSpec:
     #: ``None`` on an event nobody caused -- the cleanup-step discard, and a
     #: discard paid as a cost -- so a trigger naming it never fires on either.
     cause_controller: str | None = None
+    #: The game state a ``state`` trigger waits for (603.8), in the condition
+    #: language: "when there are four or more page counters on this artifact".
+    #: Not ``condition``, which is an intervening "if" that 603.4 re-checks on
+    #: resolution; a state trigger's state is checked only as it triggers.
+    state: Mapping[str, Any] | None = None
     #: Which counter kind a ``counter_placed`` trigger cares about.  The event
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.

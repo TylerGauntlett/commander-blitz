@@ -354,6 +354,12 @@ class TriggerModel(BaseModel):
     #: only, and it is not `controller`: on a discard trigger that names the
     #: player who *discarded*, so it would read "an opponent discarded a card".
     cause_controller: str | None = None
+    #: For ``state`` and required there: the game state the trigger waits for
+    #: (603.8), in the condition language -- Mazemind Tome's "when there are four
+    #: or more page counters on this artifact" is a ``cmp`` over
+    #: ``counters_on``. Checked when state-based actions are and never on
+    #: resolution, which is the difference from ``condition``.
+    state: dict[str, Any] | None = None
     #: For ``counter_placed``: which kind of counter this cares about.  Without
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
