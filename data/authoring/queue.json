@@ -145822,12 +145822,12 @@
     },
     "Kappa Cannoneer": {
       "edhrec_rank": 942,
-      "gate": "template",
+      "gate": null,
       "name": "Kappa Cannoneer",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "99cd996f-be74-4dbb-9460-6d650cedfca6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kappa Tech-Wrecker": {

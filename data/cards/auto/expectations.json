@@ -6035,6 +6035,14 @@
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
+  "kappa_cannoneer": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },

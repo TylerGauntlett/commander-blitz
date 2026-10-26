@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**111 cards** blocked by **98** capabilities.
+**110 cards** blocked by **97** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -62,7 +62,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
-| [improvise](#improvise) | 1 | 942 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -964,20 +963,6 @@ Blocks **1** card.
 
 - **Duplicant** (rank 2853) — `duplicant`
   - As long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.
-
-</details>
-
-## improvise
-
-Blocks **1** card.
-
-- **(cost)** a third value for the card-level pay_generic_with, "tap_artifacts": while casting, each untapped artifact you control tapped after mana abilities pays for {1} of the spell's generic cost (702.126), mirroring convoke's tap_creatures but over artifacts and paying generic only, never colored
-  <br>Why the existing vocabulary won't do: pay_generic_with is the right card-level key but the schema (cards/schema.py) admits only "tap_creatures" (convoke, which taps creatures and can pay colored mana) and "exile_from_graveyard" (delve); neither taps artifacts, and cost_reduction would lower the price without tapping anything
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kappa Cannoneer** (rank 942) — `kappa_cannoneer`
-  - Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)
 
 </details>
 
