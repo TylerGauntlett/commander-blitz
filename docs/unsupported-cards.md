@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**110 cards** blocked by **97** capabilities.
+**109 cards** blocked by **95** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -75,7 +75,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [myr-token](#myr-token) | 1 | 896 | token |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -102,7 +101,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [state-trigger](#state-trigger) | 1 | 6513 | trigger_event |
 | [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
-| [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
@@ -1153,21 +1151,6 @@ Blocks **1** card.
 
 </details>
 
-## myr-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 colorless Myr artifact creature token (e.g. id myr_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Myr; the nearest colorless 1/1 artifact creature tokens (servo_1_1_c, gnome_1_1_c, soldier_1_1_c) have the wrong creature type, which matters because the card's own attack trigger counts untapped Myr
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
-  - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
-
-</details>
-
 ## noted-mana-type
 
 Blocks **1** card.
@@ -1545,21 +1528,6 @@ Blocks **1** card.
 
 - **Pugnacious Hammerskull** (rank 5244) — `pugnacious_hammerskull`
   - Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)
-
-</details>
-
-## tap-x-permanents-on-resolution
-
-Blocks **1** card.
-
-- **(op)** an optional resolution-time choice to tap any number X of untapped permanents matching a selector (untapped Myr you control), binding X so later effects can read it, then damage dealt by the source to the player or planeswalker it is attacking
-  <br>Why the existing vocabulary won't do: `may` carries `x` and `pay` but nothing documents paying by tapping a chosen number of permanents; `tap_permanents` exists only as an activated-ability cost with a fixed count, not on a triggered ability; and `damage` has no documented player/object spec for 'the player or planeswalker this creature is attacking' (`defending` is a trigger key, not a damage recipient)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
-  - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
 
 </details>
 

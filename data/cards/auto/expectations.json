@@ -7641,6 +7641,14 @@
   "mutilate": {
     "zone": "graveyard"
   },
+  "myr_battlesphere": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 4,
+      "id": "myr_1_1_c"
+    },
+    "zone": "battlefield"
+  },
   "myr_retriever": {
     "battlefield_count": 33,
     "zone": "battlefield"

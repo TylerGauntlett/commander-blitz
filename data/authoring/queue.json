@@ -181782,12 +181782,12 @@
     },
     "Myr Battlesphere": {
       "edhrec_rank": 896,
-      "gate": "template",
+      "gate": null,
       "name": "Myr Battlesphere",
-      "reason": "no template for: When this creature enters, create four 1/1 colorless Myr artifact creature tokens",
+      "reason": "",
       "scryfall_id": "0db4cf09-8cf0-4aa7-8bfe-fe600352032d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myr Convert": {
