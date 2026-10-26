@@ -35402,12 +35402,12 @@
     },
     "Broodstar": {
       "edhrec_rank": 9814,
-      "gate": "template",
+      "gate": null,
       "name": "Broodstar",
-      "reason": "no template for: Affinity for artifacts",
+      "reason": "",
       "scryfall_id": "38d22fa8-e9cf-43a6-9170-38e00b1bed70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broodwarden": {
@@ -90542,12 +90542,12 @@
     },
     "Fall from Favor": {
       "edhrec_rank": 14748,
-      "gate": "template",
+      "gate": null,
       "name": "Fall from Favor",
-      "reason": "no template for: When this Aura enters, tap enchanted creature and you become the monarch",
+      "reason": "",
       "scryfall_id": "29679998-2fb4-4fb4-9048-27b6bf6b79e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fall of Cair Andros": {
@@ -115572,12 +115572,12 @@
     },
     "Graaz, Unstoppable Juggernaut": {
       "edhrec_rank": 6994,
-      "gate": "template",
+      "gate": null,
       "name": "Graaz, Unstoppable Juggernaut",
-      "reason": "no template for: Juggernauts you control attack each combat if able",
+      "reason": "",
       "scryfall_id": "7e29a758-d930-4a99-b524-fc72bd125485",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grab the Prize": {
@@ -244292,12 +244292,12 @@
     },
     "Shimmer Myr": {
       "edhrec_rank": 1301,
-      "gate": "template",
+      "gate": null,
       "name": "Shimmer Myr",
-      "reason": "no template for: You may cast artifact spells as though they had flash",
+      "reason": "",
       "scryfall_id": "4f61479b-05e1-4c89-bf11-b79c06ace5e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shimmer of Possibility": {
@@ -263742,12 +263742,12 @@
     },
     "Steel Hellkite": {
       "edhrec_rank": 1137,
-      "gate": "template",
+      "gate": null,
       "name": "Steel Hellkite",
-      "reason": "no template for: {2}: This creature gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "931ad21b-a6bb-4a89-8d6f-80adfcf126c7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steel Leaf Champion": {

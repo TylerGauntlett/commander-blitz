@@ -17103,6 +17103,65 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Broodstar's power and toughness are each equal to the number of artifacts you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Artifact"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "broodstar",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{8}{U}{U}",
+      "name": "Broodstar",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nFlying\nBroodstar's power and toughness are each equal to the number of artifacts you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -41320,6 +41379,73 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            },
+            {
+              "op": "become_monarch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, tap enchanted creature and you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "not": {
+              "is_monarch": "affected_controller"
+            }
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fall_from_favor",
+      "mana_cost": "{2}{U}",
+      "name": "Fall from Favor",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -53464,6 +53590,89 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Juggernaut"
+            ]
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Juggernauts you control attack each combat if able."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Juggernaut"
+            ]
+          },
+          "blockers": {
+            "subtypes": [
+              "Wall"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Juggernauts you control can't be blocked by Walls."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 5
+          },
+          "text": "Other creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Juggernaut"
+          ],
+          "text": "Other creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "graaz_unstoppable_juggernaut",
+      "mana_cost": "{8}",
+      "name": "Graaz, Unstoppable Juggernaut",
+      "oracle_text": "Juggernauts you control attack each combat if able.\nJuggernauts you control can't be blocked by Walls.\nOther creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Juggernaut"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -112894,6 +113103,40 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast artifact spells as though they had flash."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shimmer_myr",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}",
+      "name": "Shimmer Myr",
+      "oracle_text": "Flash\nYou may cast artifact spells as though they had flash.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Myr"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -121451,6 +121694,79 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}: This creature gets +1/+0 until end of turn."
+        },
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "dealt_combat_damage_by": "self"
+                },
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "{X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "steel_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}",
+      "name": "Steel Hellkite",
+      "oracle_text": "Flying\n{2}: This creature gets +1/+0 until end of turn.\n{X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

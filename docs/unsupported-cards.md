@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**109 cards** blocked by **92** capabilities.
+**104 cards** blocked by **87** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,8 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [behold](#behold) | 1 | 7614 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-as-though-flash-filtered](#cast-as-though-flash-filtered) | 1 | 3426 | static_effect |
-| [cast-as-though-flash-spell-filter](#cast-as-though-flash-spell-filter) | 1 | 1301 | static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
@@ -71,7 +69,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [mana-retention](#mana-retention) | 1 | 2381 | static_effect |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
-| [monarch](#monarch) | 1 | 14748 | static_effect |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -82,7 +79,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
-| [players-dealt-combat-damage-by-source](#players-dealt-combat-damage-by-source) | 1 | 1137 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
@@ -96,7 +92,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -529,34 +524,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-as-though-flash-filtered
-
-Blocks **1** card.
-
-- **(static_effect)** a spell filter (affects_spells: {types: ["Creature"], colors: ["G"]}) on the player-wide cast_as_though_flash static, so the timing permission covers only green creature spells the controller casts, including cards drawn after the source arrived
-  <br>Why the existing vocabulary won't do: cast_as_though_flash is unfiltered: the loader refuses 'affects'/'amount' on it and reads no 'affects_spells', so it would grant flash to every spell (a strictly better card). grant_flash_permission takes 'types' but not colors and needs a timed duration, so it cannot be a static that lasts while Yeva is on the battlefield; grant_keyword flash is not read by casting._timing_ok and cannot reach cards in hand
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yeva, Nature's Herald** (rank 3426) — `yeva_nature_s_herald`
-  - You may cast green creature spells as though they had flash.
-
-</details>
-
-## cast-as-though-flash-spell-filter
-
-Blocks **1** card.
-
-- **(static_effect)** a spell filter (affects_spells: {"types": ["Artifact"]}) on the player-wide cast_as_though_flash static, so the permission covers only artifact spells the controller casts while the source is on the battlefield, read by casting._timing_ok against the CardDef's types
-  <br>Why the existing vocabulary won't do: The cast_as_though_flash static takes only affects_player and an optional condition; the loader refuses 'affects' or 'amount' on it, so it can only grant flash timing to every spell (a strictly better card). The grant_flash_permission op does carry 'types', but it is a one-shot timed permission with a required duration (this_turn / until_your_next_turn), not a continuous static that lasts while Shimmer Myr is on the battlefield. Granting the flash keyword cannot stand in either, since _timing_ok reads printed keywords only.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shimmer Myr** (rank 1301) — `shimmer_myr`
-  - You may cast artifact spells as though they had flash.
 
 </details>
 
@@ -1086,20 +1053,6 @@ Blocks **1** card.
 
 </details>
 
-## monarch
-
-Blocks **1** card.
-
-- **(static_effect)** a skip_untap_step static whose hold is lifted per affected permanent when that permanent's controller (the untapping player) is the monarch -- i.e. a static condition `is_monarch` that can name the affected object's controller, read at the untap step
-  <br>Why the existing vocabulary won't do: skip_untap_step with affects {attached: true} covers 'doesn't untap during its controller's untap step', but static_condition_keys (all, any, cmp, counters, exists, has_city_s_blessing, is_attached, is_your_turn, not, top_of_library) has no is_monarch, and `untap_held` reads every skip_untap_step static unconditionally; is_monarch exists only in effect/trigger condition_keys. Dropping the 'unless' clause would make it a permanent freeze (a different, harsher card)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fall from Favor** (rank 14748) — `fall_from_favor`
-  - Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch.
-
-</details>
-
 ## more-than-meets-the-eye
 
 Blocks **1** card.
@@ -1246,20 +1199,6 @@ Blocks **1** card.
 
 - **Orbs of Warding** (rank 13000) — `orbs_of_warding`
   - If a creature would deal damage to you, prevent 1 of that damage.
-
-</details>
-
-## players-dealt-combat-damage-by-source
-
-Blocks **1** card.
-
-- **(selector)** a player spec (usable as a selector's `controller`, or as `for_each_player.players`) meaning 'each player dealt combat damage by this creature this turn', backed by a per-turn ledger of which players each source object dealt combat damage to
-  <br>Why the existing vocabulary won't do: The selector key `damaged_by` and trigger filter `damaged_by` read `state.damage_ledger`, which records damage to OBJECTS only; the condition `combat_damage_by` is prowl's table-wide 'a player was dealt combat damage by a <subtype>' and names neither the player nor the source object; `select_players` has no spec for damaged players. Emulating it with an unprinted `deals_combat_damage_to_player` trigger that sets a flag would add an ability the card does not print. The rest of the line ({X} cost via `x_value`, `mana_value` X, `not_types: [Land]`, `once_each_turn`) and the {2} pump line are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Steel Hellkite** (rank 1137) — `steel_hellkite`
-  - {X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn.
 
 </details>
 
@@ -1446,21 +1385,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-filter-derived-subtypes
-
-Blocks **1** card.
-
-- **(selector)** a static ability's `affects` filter whose `subtypes` clause matches subtypes granted by layer-4 `add_subtype` statics (here Graaz's own third line, which makes every other creature you control a Juggernaut), so that `attacks_if_able` and `block_restriction` with `affects: {controller: you, subtypes: [Juggernaut]}` reach the creatures the card itself turned into Juggernauts
-  <br>Why the existing vocabulary won't do: characteristics._matches / _matches_printed read printed subtypes plus obj.added_subtypes (the one-shot add_subtype op) only, never the add_subtype static, so `subtypes: ["Juggernaut"]` on lines 1 and 2 would apply to Graaz alone and skip every creature line 3 makes a Juggernaut -- the whole point of the card. Rewriting the filter as `types: [Creature], controller: you` is a substitution that diverges under text-changing effects on Graaz and type-removing effects with later timestamps, so it is not filed as an answer. Line 3 itself is expressible (set_pt + add_subtype statics with `exclude_self`), and the Wall half of line 2 is `blockers: {subtypes: [Wall]}`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Graaz, Unstoppable Juggernaut** (rank 6994) — `graaz_unstoppable_juggernaut`
-  - Juggernauts you control attack each combat if able.
-  - Juggernauts you control can't be blocked by Walls.
 
 </details>
 

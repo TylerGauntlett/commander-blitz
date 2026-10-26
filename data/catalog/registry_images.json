@@ -1587,6 +1587,10 @@
     "artist": "Svetlin Velinov",
     "scryfall_id": "eee6ecdc-fff9-41a1-802a-08615ca6289f"
   },
+  "broodstar": {
+    "artist": "Glen Angus",
+    "scryfall_id": "77c699c3-c534-4ffa-bcaf-63c221e49243"
+  },
   "bruna_the_fading_light": {
     "artist": "Clint Cearley",
     "scryfall_id": "6fccdb60-5fce-4a6e-a709-b986f9a4b653"
@@ -3708,6 +3712,10 @@
     "artist": "Daarken",
     "scryfall_id": "dda06653-a7a0-45ac-9678-4d23406e2260"
   },
+  "fall_from_favor": {
+    "artist": "Caio Monteiro",
+    "scryfall_id": "dfb0a1c7-a88c-4b72-9fb9-2ad45242567f"
+  },
   "fanatic_of_rhonas": {
     "artist": "Scott Murphy",
     "scryfall_id": "15844392-111e-4bab-91eb-4fe53c52c34c"
@@ -4771,6 +4779,10 @@
   "gorn_captain": {
     "artist": "Jason Pastrana",
     "scryfall_id": "061dc7da-c803-49eb-b50a-a0801f09b5c0"
+  },
+  "graaz_unstoppable_juggernaut": {
+    "artist": "N\u00e9stor Ossand\u00f3n Leal",
+    "scryfall_id": "51f99ed6-4860-485a-8425-e9f854e0d5bd"
   },
   "grand_coliseum": {
     "artist": "Julian Kok Joon Wen",
@@ -10003,6 +10015,10 @@
     "artist": "Lie Setiawan",
     "scryfall_id": "826201fc-f7cb-43b5-988a-6b668d19fc2f"
   },
+  "shimmer_myr": {
+    "artist": "Jana Schirmer & Johannes Voss",
+    "scryfall_id": "8eb0c2fc-c7e0-41f2-b532-e4cac30d2ac7"
+  },
   "shimmering_barrier": {
     "artist": "D. Alexander Gregory",
     "scryfall_id": "2aa7158a-5c00-4969-a116-c40cefdf4591"
@@ -10826,6 +10842,10 @@
   "steam_vents": {
     "artist": "Shahab Alizadeh",
     "scryfall_id": "a83903c7-fd51-4526-aed2-359e946fea36"
+  },
+  "steel_hellkite": {
+    "artist": "James Paick",
+    "scryfall_id": "7ce14b48-34db-4308-8f5a-7b62d0e97d0e"
   },
   "steel_overseer": {
     "artist": "Chris Rahn",
