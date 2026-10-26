@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
 | [Conditions](#conditions) | 29 |
-| [Trigger events](#trigger-events) | 46 |
+| [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 32 |
 | [Static effects](#static-effects) | 79 |
 | [Player-wide statics](#player-wide-statics) | 40 |
@@ -416,6 +416,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` | A spell is cast. | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` | A spell is copied (magecraft's other half). | [spell_copied, and why magecraft is two abilities](card-dsl.md#spell_copied-and-why-magecraft-is-two-abilities) |
+| `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |

@@ -658,6 +658,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "searches_library": ("A player searches a library.", None),
     "self_enters": ("This permanent enters the battlefield.", None),
     "spell_cast": ("A spell is cast.", None),
+    "state": ("A state holds (603.8): the trigger's `state` condition; no event.",
+              "`state` — \"When there are four or more page counters on this artifact\""),
     "spell_copied": ("A spell is copied (magecraft's other half).",
                      "`spell_copied`, and why magecraft is two abilities"),
     "token_created": ("A token is created.", None),

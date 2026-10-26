@@ -56,6 +56,7 @@ from commanderblitz.engine.mana import (
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
+    STATE_TRIGGER,
     TRIGGER_EVENTS,
     validate_trigger_filter,
 )
@@ -2298,6 +2299,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'to_zones' names zones a permanent can leave to, "
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
+        _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -2317,6 +2319,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
+            state=dict(model.trigger.state) if model.trigger.state else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(
@@ -2687,6 +2690,56 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
         if not isinstance(branch, Mapping):
             raise DslError(f"{where}.any_of[{i}]: must be a filter object")
         _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
+
+
+def _validate_state_trigger(model: AbilityModel, where: str) -> None:
+    """A state trigger (603.8) names its condition in ``state`` and nothing else.
+
+    Every refusal is a key that would load and never be read. A state trigger
+    has no event, so there is no subject for a ``filter``, no event to count
+    for ``nth``, ``max_per_turn`` or ``batched``, and its ``condition`` would
+    be an intervening "if" beside the trigger condition -- written as two
+    halves of one sentence, the second re-asked on resolution where the printed
+    card asks nothing. And it is checked over the battlefield only, where the
+    permanent the condition reads is.
+    """
+    trig = model.trigger
+    assert trig is not None
+    if trig.event != STATE_TRIGGER:
+        if trig.state is not None:
+            raise DslError(
+                f"{where}: 'state' is a state trigger's condition and means nothing "
+                f"on {trig.event!r}; write event {STATE_TRIGGER!r}"
+            )
+        return
+    if trig.state is None:
+        raise DslError(
+            f"{where}: a state trigger needs the 'state' condition it watches "
+            f"(\"when there are four or more page counters on this artifact\")"
+        )
+    validate_condition(trig.state, f"{where}.trigger.state")
+    stray = [
+        key
+        for key, present in (
+            ("source", trig.source is not None),
+            ("filter", trig.filter is not None),
+            ("condition", trig.condition is not None),
+            ("nth", trig.nth is not None),
+            ("max_per_turn", trig.max_per_turn is not None),
+            ("batched", trig.batched),
+        )
+        if present
+    ]
+    if stray:
+        raise DslError(
+            f"{where}: a state trigger has no event, so {stray} would never be "
+            f"read; put the whole condition in 'state'"
+        )
+    if list(model.active_zones) != ["battlefield"]:
+        raise DslError(
+            f"{where}: a state trigger is checked over the battlefield only, "
+            f"not {model.active_zones}"
+        )
 
 
 def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:

@@ -3731,7 +3731,44 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library`
+`searches_library` · `state`
+
+### `state` — "When there are four or more page counters on this artifact"
+
+A **state trigger** (603.8) — Mazemind Tome's third line:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
+  "trigger": { "event": "state",
+               "state": { "cmp": ">=",
+                          "left":  { "counters_on": { "counter": "page",
+                                                      "objects": { "self_only": true } } },
+                          "right": { "const": 4 } } },
+  "effects": [ { "op": "exile", "objects": { "self_only": true }, "as": "exiled" },
+               { "op": "if", "condition": { "cmp": ">", "left": { "count": { "binding": "exiled" } },
+                                            "right": { "const": 0 } },
+                 "then": [ { "op": "gain_life", "player": "you", "amount": { "const": 4 } } ] } ] }
+```
+
+`state` is any condition. No event fires it: `triggers.check_state_triggers`
+walks the battlefield whenever state-based actions are checked (after them, so
+a permanent they remove triggers nothing) and queues the ability when its
+`state` holds. It then goes on the stack like any trigger and can be responded
+to. It does not trigger again while it is waiting or on the stack; once it has
+left the stack, a state that still holds triggers it again at the next check —
+so the effect should normally make the state false. `state` is not re-asked on
+resolution: it is the trigger condition, not an intervening "if" (603.4).
+
+The loader requires `state` on `event: "state"` and refuses it on every other
+event; refuses `source`, `filter`, `condition`, `nth`, `max_per_turn` and
+`batched` beside it, since there is no event for them to read; refuses any
+`active_zones` but the battlefield; and refuses `state` as a `delayed_trigger`'s
+event. The near miss is `counter_placed` with a `counters_on` condition, which
+needs a placement to fire, fires again on a fifth counter while the first
+ability waits, and re-asks its condition on resolution. Ascend's city's blessing
+is checked in the same pass but is not a triggered ability at all — see
+[Ascend](card-dsl-cookbook.md#ascend).
 
 **"Whenever this creature or another creature dies"** (Blood Artist, Zulaport
 Cutthroat, Falkenrath Noble) is a filtered `dies` / `creature_dies` with **no**

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **100** capabilities.
+**113 cards** blocked by **99** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -102,7 +102,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [state-trigger](#state-trigger) | 1 | 6513 | trigger_event |
 | [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
@@ -1543,22 +1542,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## state-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a state trigger (603.8) that fires when the source has at least N counters of a kind ('four or more page counters on this artifact') and does not retrigger while its ability is on the stack, with effects exile-self then 'if you do' gain 4 life
-  <br>Why the existing vocabulary won't do: trigger_events has counter_placed, which fires on placement rather than on the state holding; a counter_placed trigger with a counters_on >= 4 condition would also re-trigger on every later counter and depends on cost-placed counters raising the event, which no current cost does
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
 
 </details>
 

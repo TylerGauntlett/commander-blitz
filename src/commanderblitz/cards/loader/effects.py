@@ -38,7 +38,12 @@ from commanderblitz.engine.structs import (
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
-from commanderblitz.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
+from commanderblitz.engine.triggers import (
+    OBJECT_SUBJECT_TRIGGERS,
+    RECIPIENT_KEYS,
+    STATE_TRIGGER,
+    TRIGGER_EVENTS,
+)
 from commanderblitz.engine.turn import DELAY_STEPS
 
 from ..schema import CardModel, CostModel
@@ -495,6 +500,14 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     if event not in TRIGGER_EVENTS:
         raise DslError(
             f"{where}: unknown trigger event {event!r} (implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    if event == STATE_TRIGGER:
+        # Nothing is ever emitted under this name: a state trigger is found by
+        # `triggers.check_state_triggers` walking the battlefield's printed
+        # abilities, so a delayed one would be installed and never fire.
+        raise DslError(
+            f"{where}: a delayed_trigger watches an event, and {STATE_TRIGGER!r} "
+            f"is a printed state trigger's, not one"
         )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:

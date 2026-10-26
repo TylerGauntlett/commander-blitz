@@ -4740,9 +4740,11 @@ because it decides what is castable before anything is turned over.
 The blessing is granted by a **state trigger** in the state-based-action pass
 (rule 702.131a), not by a triggered ability. Ascend is not an *event*: a player
 at nine permanents who plays a land gets it at the instant of the tenth, with
-nothing having fired, and gets it on an opponent's turn just as readily. State
-triggers use no stack and cannot be responded to, so the SBA pass — beside the
-legend rule — is where they belong.
+nothing having fired, and gets it on an opponent's turn just as readily. The
+blessing uses no stack and cannot be responded to, so the SBA pass — beside the
+legend rule — is where it belongs. A printed state trigger, which does use the
+stack, is the `state` trigger event — see
+[`state`](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact).
 
 **Player state, not object state.** `PlayerState.has_city_s_blessing` is one-way
 and lasts the rest of the game: it survives the permanents leaving, survives the

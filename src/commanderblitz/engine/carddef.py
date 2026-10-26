@@ -678,6 +678,13 @@ class TriggerSpec:
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
     #: `move_object` stamps on every departure. ``None`` is any destination.
     to_zones: tuple[str, ...] | None = None
+    #: The ``state`` event only: the condition a **state trigger** watches
+    #: (603.8) -- "When there are four or more page counters on this
+    #: artifact…" (Mazemind Tome). Checked whenever state-based actions are, by
+    #: `triggers.check_state_triggers`, and not re-asked on resolution: it is
+    #: the trigger condition, not an intervening "if" (603.4), so a counter
+    #: removed in response does not stop the ability.
+    state: Mapping[str, Any] | None = None
 
 
 def count_mode_specs(effects: Any) -> int:

@@ -334,7 +334,22 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: on the placement rather than on the count *reaching* the number, so a
     #: proliferated Saga advances by the wrong pattern.
     "chapter": EventType.CHAPTER_REACHED,
+    #: A **state trigger** (603.8): "When there are four or more page counters
+    #: on this artifact…" (Mazemind Tome). It listens to no event -- the name
+    #: maps to itself and nothing is ever emitted under it, so `collect` never
+    #: matches one. `check_state_triggers` finds it instead, walking the
+    #: battlefield whenever state-based actions are checked, and the
+    #: condition is the trigger's `state`.
+    #:
+    #: `counter_placed` with a `counters_on` condition is the near miss: it
+    #: fires on a placement rather than on the state holding, misses a count
+    #: reached any other way, and fires again on every later counter while the
+    #: first ability is still waiting.
+    "state": "state",
 }
+
+#: The DSL name of a state trigger -- see the `TRIGGER_EVENTS` row.
+STATE_TRIGGER = "state"
 
 #: Triggers whose subject is an object rather than a player.
 OBJECT_SUBJECT_TRIGGERS = frozenset(
@@ -2025,6 +2040,57 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         card=card.id,
         ability=ability.index,
         trigger=spec.event,
+    )
+
+
+def check_state_triggers(state: GameState) -> None:
+    """Queue every state trigger whose condition holds (603.8).
+
+    Called with the state-based actions, which is when 603.8 says the game
+    checks: whenever a player would receive priority. The ability then goes
+    on the stack like any other trigger and can be responded to -- unlike
+    Ascend's blessing, which is not a triggered ability at all.
+
+    "A state-triggered ability doesn't trigger again until the ability has
+    resolved, has been countered, or has otherwise left the stack." So an
+    ability already waiting in `pending_triggers` or on the stack is skipped
+    -- the `sagas.chapter_on_stack` test, keyed by the ability rather than by
+    kind. Once it leaves the stack, a condition that still holds fires it
+    again at the next check, which is what the rule says and what makes a
+    countered Mazemind Tome ability try again.
+    """
+    for oid in list(state.battlefield):
+        obj = state.objects.get(oid)
+        if obj is None or obj.face_down:
+            continue
+        for ability in abilities_of(state, oid):
+            spec = ability.trigger
+            if not ability.is_triggered or spec is None or spec.event != STATE_TRIGGER:
+                continue
+            if _state_trigger_waiting(state, obj, ability):
+                continue
+            if not evaluate_condition(state, spec.state, controller=obj.controller, source=oid):
+                continue
+            # Never emitted: no event happened. `_queue` reads its bindings
+            # (`self`, `event_player`) off it, and that is all.
+            event = GameEvent(
+                type=STATE_TRIGGER,
+                turn=state.turn,
+                step=int(state.step),
+                player=obj.controller,
+                source=oid,
+            )
+            _queue(state, obj, ability, event)
+
+
+def _state_trigger_waiting(state: GameState, obj: GameObject, ability: Ability) -> bool:
+    """Whether this state trigger has triggered and not yet left the stack."""
+    granted_by, index = _granter_of(state, obj, ability)
+    return any(
+        item.source_oid == obj.oid
+        and item.ability_index == index
+        and item.granted_by == granted_by
+        for item in (*state.stack, *state.pending_triggers)
     )
 
 

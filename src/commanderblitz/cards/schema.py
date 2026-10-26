@@ -411,6 +411,12 @@ class TriggerModel(BaseModel):
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
     #: a tuck must not fire it. Refused on every other event.
     to_zones: list[str] | None = None
+    #: For ``state``: the condition a state trigger (603.8) watches -- "When
+    #: there are four or more page counters on this artifact" (Mazemind Tome).
+    #: Any condition; it fires when the condition holds and not again while
+    #: the ability is waiting or on the stack. Required on ``state`` and
+    #: refused on every other event.
+    state: dict[str, Any] | None = None
 
 
 class AbilityModel(BaseModel):
