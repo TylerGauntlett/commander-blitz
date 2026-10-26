@@ -1,0 +1,81 @@
+{
+  "_comment": "Cards that exist only for the filtered flash-permission test (tests/unit/casting/test_cast_as_though_flash_filter.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_myr_permission` is Shimmer Myr's second line alone, on a vanilla artifact with no flash of its own, so the filter is what is tested and not the body. `t_green_herald` is Yeva, Nature's Herald's two-key filter (green creature spells). The rest are the spells the filters are matched against: an artifact, an artifact creature, a green creature, a red creature and a green sorcery.",
+  "cards": [
+    {
+      "id": "t_myr_permission",
+      "name": "Test Shimmer Permission",
+      "oracle_text": "You may cast artifact spells as though they had flash.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast artifact spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Artifact"]}
+        }
+      ]
+    },
+    {
+      "id": "t_green_herald",
+      "name": "Test Green Herald",
+      "oracle_text": "You may cast green creature spells as though they had flash.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast green creature spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Creature"], "colors": ["G"]}
+        }
+      ]
+    },
+    {
+      "id": "t_filter_trinket",
+      "name": "Test Plain Trinket",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"]
+    },
+    {
+      "id": "t_filter_golem",
+      "name": "Test Plain Golem",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Golem"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_filter_bear",
+      "name": "Test Filter Bear",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    },
+    {
+      "id": "t_filter_growth",
+      "name": "Test Plain Growth",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}, "player": "you"}]
+    }
+  ]
+}

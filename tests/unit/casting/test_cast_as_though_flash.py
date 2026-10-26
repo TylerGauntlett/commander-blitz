@@ -226,7 +226,7 @@ class TestAGrantedKeywordIsNotThis:
         assert not can_cast(game, 0, SORCERY)
 
 
-class TestTheLoaderRefusesAFilteredPermission:
+class TestTheLoaderRefusesAPermanentFilter:
     def card(self, **extra):
         return {
             "id": "t_probe_flash",
@@ -244,9 +244,11 @@ class TestTheLoaderRefusesAFilteredPermission:
             ],
         }
 
-    def test_a_spell_filter_is_refused(self):
-        """"You may cast **Spirit** spells as though they had flash" would load
-        clean and hand the permission to every spell — a strictly better card."""
+    def test_a_permanent_filter_is_refused(self):
+        """`affects` picks out permanents and nothing reads it here: "you may cast
+        **Spirit** spells as though they had flash" written with it would load
+        clean and hand the permission to every spell. The spell filter is
+        `affects_spells` (test_cast_as_though_flash_filter.py)."""
         with pytest.raises(DslError, match="cast_as_though_flash"):
             compile_card(CardModel.model_validate(self.card(affects={"types": ["Creature"]})))
 

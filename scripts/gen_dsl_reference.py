@@ -1072,7 +1072,8 @@ def families() -> list[Family]:
             "Player specs", H_PLAYER_SPECS, tuple(sorted(PLAYER_SPEC_NAMES)), PLAYER_SPECS.get,
             "The named player specs. The structured forms -- `{\"target\": …}`, "
             "`{\"controller_of_target\": …}`, `{\"controller_of\": …}`, `{\"owner_of\": …}`, "
-            "`{\"binding\": …}`, `{\"not\": …}`, `{\"attacked_by\": …}` -- are described "
+            "`{\"binding\": …}`, `{\"not\": …}`, `{\"attacked_by\": …}`, "
+            "`{\"dealt_combat_damage_by\": …}` -- are described "
             "under the same heading.",
             own=PLAYER_SPECS,
         ),

@@ -32,6 +32,10 @@ from commanderblitz.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
+from commanderblitz.engine.characteristics import (
+    AFFECTED_CONTROLLER,
+    static_condition_names_affected,
+)
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
 from commanderblitz.engine.effects.selectors import (
@@ -132,6 +136,7 @@ from .vocabulary import (  # noqa: F401
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTED_CONDITION_EFFECTS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
@@ -3094,6 +3099,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_spells.mana_value: a number, or "
                     f"{{'op': '<=', 'value': 3}} with a literal number"
                 )
+    elif model.effect == "cast_as_though_flash" and model.affects_spells is not None:
+        # "You may cast **artifact** spells as though they had flash" -- Shimmer
+        # Myr. Optional, because Vedalken Orrery prints no filter: omitted it
+        # reaches every spell, written it reaches only a matching one, read by
+        # `casting._timing_ok` against the face being cast. `controller` is
+        # refused because `affects_player` already names the caster, and an
+        # empty filter would read as the unfiltered Orrery.
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would reach every spell")
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "spend_mana_as_any_color" and model.affects_spells is not None:
         # "…to cast **planeswalker** spells" -- Oath of Nissa. Optional, because
         # Chromatic Orrery prints no filter: omitted it loosens every cost the
@@ -3843,16 +3864,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if model.effect == "cast_as_though_flash" and (
             model.affects is not None or model.amount is not None
         ):
-            # The same guard as its prohibitive twin, for the same reason and
-            # pointing the other way. "You may cast **Spirit** spells as though
-            # they had flash" written with a filter here would load clean and
-            # hand the permission to *every* spell -- a strictly better card
-            # than the printed one, and one that reads correctly on screen.
-            # Refused until a spell filter is built.
+            # The same guard as its prohibitive twin. `affects` picks out
+            # permanents, and a spell in hand is not one: written there,
+            # "you may cast **artifact** spells as though they had flash"
+            # would load clean and read nothing -- a strictly better card
+            # than the printed one. The spell filter is `affects_spells`.
             raise DslError(
-                f"{where}: cast_as_though_flash lifts the timing window for every "
-                f"spell the named players cast; it takes 'affects_player' and an "
-                f"optional 'condition', and no 'affects' or 'amount'"
+                f"{where}: cast_as_though_flash takes 'affects_player', an "
+                f"optional 'affects_spells' naming which spells it reaches and "
+                f"an optional 'condition', and no 'affects' or 'amount'"
             )
     elif model.effect in (
         "spell_cost_reduction",
@@ -4279,6 +4299,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     _validate_static_condition(model.condition, f"{where}.condition")
+    if (
+        static_condition_names_affected(model.condition)
+        and model.effect not in STATIC_AFFECTED_CONDITION_EFFECTS
+    ):
+        # Asked once per static everywhere else, with no permanent to name the
+        # controller of -- `_static_active` would defer it for ever, and the
+        # static would apply as if the clause were not printed.
+        raise DslError(
+            f"{where}.condition: {AFFECTED_CONTROLLER!r} names the controller of the "
+            f"permanent the static is applied to, which only "
+            f"{sorted(STATIC_AFFECTED_CONDITION_EFFECTS)} read one at a time; "
+            f"{model.effect!r} does not"
+        )
 
     static: dict[str, Any] = {"effect": model.effect}
     if model.condition is not None:

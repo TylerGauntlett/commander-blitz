@@ -1319,7 +1319,10 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "attacks_if_able":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # An attack requirement is no layer (613), so its filter reads the
+        # creature as it now is: Graaz's Juggernauts include the creatures its
+        # own third line made Juggernauts.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
             return True
     return False
 
@@ -1429,6 +1432,14 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
     Explicit `untap` effects are untouched -- this is read only by the untap
     step, so Mana Vault's own upkeep payment still untaps it (302.6 / the
     printed card), exactly as `frozen_by` leaves targeted untaps alone.
+
+    **The condition is asked per held permanent.** "Enchanted creature doesn't
+    untap during its controller's untap step unless that player is the monarch"
+    (Fall from Favor) names the *held creature's* controller, not the Aura's,
+    so its `{"is_monarch": "affected_controller"}` cannot be answered once per
+    static. `_battlefield_statics` defers such a condition and this walk asks
+    it with each permanent the filter matched; a condition naming only the
+    source was already settled there and asking it again changes nothing.
     """
     held: set[int] = set()
     for source_obj, static in _battlefield_statics(state):
@@ -1443,7 +1454,12 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
             # narrowing here keeps the set to what this step would have touched.
             if obj.controller != active_pid:
                 continue
-            if _matches(state, obj, source_obj, static.get("affects")):
+            if not _matches(state, obj, source_obj, static.get("affects")):
+                continue
+            # Asked again with the permanent in hand: `_battlefield_statics`
+            # deferred a condition naming the affected permanent's controller,
+            # and this is where it has one.
+            if _static_active(state, source_obj, static, affected=obj):
                 held.add(oid)
     return held
 
@@ -1649,7 +1665,9 @@ def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
     )
 
 
-def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
+def player_casts_as_though_flash(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
     """"Any player may cast spells as though they had flash." Tidal Barracuda.
 
     Also Leyline of Anticipation and Vedalken Orrery, with
@@ -1674,8 +1692,26 @@ def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
     It permits and never compels, so it cannot make a spell castable that some
     other rule forbids: 101.2 still gives a "can't" the last word, and
     `player_cant_cast_spells` is checked before any of this.
+
+    **A spell filter**, `affects_spells`, is Shimmer Myr: "You may cast
+    **artifact** spells as though they had flash" (and Yeva, Nature's Herald's
+    green creature spells). The same shape `player_spends_mana_as_any_color`
+    reads for Oath of Nissa: a filtered permission is a claim about a spell,
+    so it answers only when ``card`` -- the face being cast -- is passed and
+    matches the printed filter. `_timing_ok` always passes it; asked without
+    one, only an unfiltered permission answers.
     """
-    return _player_static(state, pid, "cast_as_though_flash")
+    for obj, static in _active_player_statics(state, "cast_as_though_flash"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
 
 
 def player_reveals_library_top(state: GameState, pid: int) -> bool:

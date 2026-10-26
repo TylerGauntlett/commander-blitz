@@ -1369,6 +1369,26 @@ class TurnLedger:
     #: battlefield: an oid survives the zone change but the object does not
     #: (400.7), and a flickered Angel back from exile attacked nobody.
     players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
+    #: Which **players** each creature dealt **combat damage** to this turn:
+    #: source oid -> the seats. "Destroy each nonland permanent with mana value X
+    #: whose controller was dealt combat damage by this creature this turn" --
+    #: Steel Hellkite, whose ability is activated in the second main phase, long
+    #: after `state.combat` has gone.
+    #:
+    #: `players_attacked_by` is the near miss and is wrong in both directions: a
+    #: creature that attacked and was blocked, or whose damage was prevented,
+    #: dealt nobody anything, and one that dealt damage is not always the one
+    #: that was declared against that seat. `damage_ledger` is the other near
+    #: miss and records damage to *objects* only. Folded off
+    #: COMBAT_DAMAGE_TO_PLAYER, which fires only for damage actually dealt, so a
+    #: Fog records nothing and an infect hit (poison, no life) records the seat.
+    #:
+    #: Cleared for an oid when that oid **enters** the battlefield rather than
+    #: when it leaves: the permanent that comes back is a new object that has
+    #: dealt nobody anything (400.7), but an ability its old self put on the
+    #: stack still resolves off what the old object did -- last-known
+    #: information, so a Hellkite killed in response still destroys.
+    players_dealt_combat_damage_by: dict[int, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -1585,6 +1605,7 @@ class TurnLedger:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
         self.players_attacked_by.clear()
+        self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()

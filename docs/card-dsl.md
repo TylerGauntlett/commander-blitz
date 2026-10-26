@@ -3367,7 +3367,8 @@ The list with a line each is
 `"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
-`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }`
+`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
+`{ "dealt_combat_damage_by": "self" }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -3412,6 +3413,35 @@ attacked that permanent, not its controller (506.2), so it records no player.
 And the record goes when the creature **leaves the battlefield**: the oid
 survives the zone change but the object does not (400.7), and a flickered Angel
 attacked nobody. `"self"` is the only subject; anything else is a load error.
+
+### `dealt_combat_damage_by` — the players *this creature* dealt combat damage to this turn
+
+```jsonc
+// Steel Hellkite: "{X}: Destroy each nonland permanent with mana value X whose
+// controller was dealt combat damage by this creature this turn. Activate only
+// once each turn."
+"cost": { "mana": "{X}" }, "once_each_turn": true,
+"effects": [ { "op": "destroy",
+               "objects": { "zone": "battlefield", "not_types": ["Land"],
+                            "mana_value": { "op": "=", "value": { "x": true } },
+                            "controller": { "dealt_combat_damage_by": "self" } } } ]
+```
+
+Read off `TurnLedger.players_dealt_combat_damage_by` (source oid → seats),
+folded off each `combat_damage_to_player` event, which fires only for damage
+actually dealt: a prevented hit records nothing, and an infect hit records the
+seat. Usable wherever a player spec is — an effect's `player`, a
+`for_each_player`'s `players`, or a selector's `controller` as above.
+
+`attacked_by` is the near miss: a blocked creature attacked a player and dealt
+them nothing. `damaged_by` is the other: it is a *selector* key over objects
+damaged by the source, and records no players.
+
+The record is dropped when the oid **enters** the battlefield, because the
+permanent that comes back is a new object that has dealt nobody anything
+(400.7). It is kept when the creature leaves, so an ability it already put on
+the stack still resolves off what it did — a Hellkite killed in response still
+destroys. `"self"` is the only subject; anything else is a load error.
 
 ### `not` — the player a card *excludes*
 
@@ -4744,6 +4774,7 @@ Each node names **exactly one** form:
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
+| `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from
@@ -4757,6 +4788,10 @@ cache miss. Borrowing one is a `DslError` at load.
 
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
+The rule binds the statics the pipeline applies; the rule-modifying ones it does
+not — `attacks_if_able` and `block_restriction` — match their filters against
+derived characteristics instead (`characteristics._matches` with `derived`),
+since nothing they say can feed back into a layer.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and
@@ -4779,6 +4814,29 @@ of the shapes a printed static takes. See
 languages validate the leaf separately, and the filter inside it obeys whichever
 rules its own language has, so a graveyard count here is a printed face and an
 owner and nothing else.
+
+#### "Unless that player is the monarch"
+
+```jsonc
+// Fall from Favor
+{ "kind": "static", "effect": "skip_untap_step", "affects": { "attached": true },
+  "condition": { "not": { "is_monarch": "affected_controller" } } }
+```
+
+`is_monarch` reads `GameState.monarch`, player state and so a pipeline input; both
+routes that move the crown invalidate the characteristic cache. Every player spec
+in this language is measured from the static's **source**, except one:
+`affected_controller` names the controller of the permanent the static is being
+applied to. On an Aura that is the difference between the card and its opposite —
+Fall from Favor makes its caster the monarch, so `{"is_monarch": "you"}` would free
+the creature while the caster holds the crown and freeze it while its own
+controller does.
+
+`affected_controller` is answered per affected permanent, so only a reader that
+walks them one at a time may carry it: `skip_untap_step`, through `untap_held`.
+`_static_active` defers a condition naming it when no permanent is in hand, and the
+loader refuses it on every other effect, where the deferral would read as "always
+on".
 
 #### "The top card of your library is black"
 

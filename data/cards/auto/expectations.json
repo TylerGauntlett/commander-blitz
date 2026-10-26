@@ -1590,6 +1590,16 @@
   "broodhunter_wurm": {
     "zone": "battlefield"
   },
+  "broodstar": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "bruna_the_fading_light": {
     "graveyard_size": {
       "0": 1
@@ -3799,6 +3809,13 @@
   "falkenrath_reaver": {
     "zone": "battlefield"
   },
+  "fall_from_favor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "fanatic_of_rhonas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4933,6 +4950,10 @@
     "zone": "battlefield"
   },
   "gorn_captain": {
+    "zone": "battlefield"
+  },
+  "graaz_unstoppable_juggernaut": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "grand_coliseum": {
@@ -10189,6 +10210,16 @@
     },
     "zone": "battlefield"
   },
+  "shimmer_myr": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flash"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "shimmering_barrier": {
     "zone": "battlefield"
   },
@@ -10965,6 +10996,11 @@
     "zone": "battlefield"
   },
   "steam_vents": {
+    "zone": "battlefield"
+  },
+  "steel_hellkite": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "steel_overseer": {

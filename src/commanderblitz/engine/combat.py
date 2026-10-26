@@ -994,7 +994,9 @@ def can_block(
         # restriction would silently never fire. Whose creature it is has
         # already been settled above; this clause is only about what it *is*.
         spec = {"controller": "any", **dict(spec)}
-        if matches_static(state, blocker, source_obj, spec):
+        # Derived, as the attacker side is: a creature some static made a Wall
+        # is a Wall to "can't be blocked by Walls".
+        if matches_static(state, blocker, source_obj, spec, derived=True):
             return False
     return True
 

@@ -1239,10 +1239,28 @@ permission and leaves printed timing untouched.
 
 It permits and never compels, so 101.2 is unaffected: a seat under
 `cant_cast_spells` still casts nothing, which is exactly the pairing Tidal
-Barracuda prints on one card. Like its twin it takes no spell filter yet, and
-`affects` or `amount` beside it is a load error rather than ignored — "you may
-cast **Spirit** spells as though they had flash" written with a filter would
-otherwise hand the permission to every spell.
+Barracuda prints on one card.
+
+The spell filter is `affects_spells`, optional — Shimmer Myr's "You may cast
+**artifact** spells as though they had flash":
+
+```jsonc
+{ "kind": "static",
+  "text": "You may cast artifact spells as though they had flash.",
+  "effect": "cast_as_though_flash",
+  "affects_player": "you",
+  "affects_spells": { "types": ["Artifact"] } }
+```
+
+`_timing_ok` hands the face being cast to `player_casts_as_though_flash`, which
+matches it with `_matches_printed`, so "green creature spells" is
+`{ "types": ["Creature"], "colors": ["G"] }`. The keys are `SPELL_FILTER_KEYS`
+without `controller` (`affects_player` names the caster); an empty filter, or
+`affects` or `amount` beside the static, is a load error rather than ignored —
+`affects` picks out permanents, and a filter written there would load clean and
+hand the permission to every spell. The one-shot, timed form ("until your next
+turn, you may cast sorcery spells as though they had flash") is the
+`grant_flash_permission` op, not this static.
 
 `cast_only_at_sorcery_speed` points the other way — Teferi, Time Raveler's "Each
 opponent can cast spells only any time they could cast a sorcery":
@@ -3339,7 +3357,7 @@ that are worth keeping straight, because each one alone would have been fixable:
 |---|---|
 | it needs a permanent | a static is an ability on something standing on the battlefield; Rogue's Passage may be destroyed in response to its own ability and the creature stays unblockable |
 | it has no clock | a static is on exactly as long as its source is, so it cannot end "this turn" |
-| its filters read printed characteristics | there is no `static_filter_keys` entry meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
+| its filters describe what a creature is | there is no `static_filter_keys` entry meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
 
 `grant_ability` cannot smuggle *this* static across either, for the reasons in
 the first two rows. A granted `block_restriction` does
@@ -3493,6 +3511,18 @@ One effect covers every printed variant, because they differ only in `affects`:
 mirror image — that filter routinely names creatures the source's controller
 does not control.
 
+The `affects` filter reads the creature's **derived** characteristics, after
+every layer, where a layered static's filter reads printed ones: an attack
+requirement is no layer (613), so it applies to whatever the layers produced.
+"Juggernauts you control attack each combat if able" (Graaz, Unstoppable
+Juggernaut) therefore compels every creature Graaz's own third line, an
+`add_subtype` static, makes a Juggernaut:
+
+```jsonc
+{ "kind": "static", "effect": "attacks_if_able",
+  "affects": { "controller": "you", "subtypes": ["Juggernaut"] } }
+```
+
 Both forms meet at one enforcement point, `combat.attack_required`, so there is
 still only one place that decides whether "Done attacking" is offered. A goad
 is owed only on the compelled creature's **own** turn: a creature cannot attack
@@ -3623,7 +3653,7 @@ Neither half is expressible with the near relatives:
 | | |
 |---|---|
 | `must_attack` | one-shot. `combat.discharge_attack_requirements` spends the flag when attackers lock in, so `this_turn` and `next_combat` each compel exactly **one** combat where goad compels every combat until its goader untaps. It also records no goader, which is the datum the other half is about |
-| the `attacks_if_able` static | the live, unspent form — but a continuous ability on a permanent. A sorcery leaves no source on the battlefield, and a static's `affects` filter reads only printed characteristics, so it can say neither "those creatures" (the set chosen at resolution) nor "until your next turn" |
+| the `attacks_if_able` static | the live, unspent form — but a continuous ability on a permanent. A sorcery leaves no source on the battlefield, and a static's `affects` filter describes what a creature is, so it can say neither "those creatures" (the set chosen at resolution) nor "until your next turn" |
 | nothing at all | restricted **which** defender an attacker may pick. `cant_attack`/`attack_forbidden` is all-or-nothing, `block_restriction` restricts blockers. Without the second half a goaded creature swings straight back at the player who goaded it, which is the whole political point of the card |
 
 The datum written down is the **player**, in `GameObject.goaded_by` — detain's
@@ -3697,9 +3727,15 @@ block? — and is asked in `combat.can_block`, beside flying and protection.
 legal depends on what every other creature is doing, so it is asked in
 `combat.blocks_valid`, which is the shape menace already needed.
 
-`blockers` is a static filter and may read printed characteristics only, with
-one difference from every other static filter: `controller` defaults to **any**
-rather than `you`. A blocker belongs to the defending player by definition, so
+`blockers` is a static filter, and with `affects` it reads the creature's
+**derived** characteristics, after every layer, rather than the printed ones a
+layered static's filter reads: a restriction is no layer (613), so it applies to
+whatever the layers produced, and reading their output cannot loop. "Juggernauts
+you control can't be blocked by Walls" (Graaz, Unstoppable Juggernaut) covers
+the creatures Graaz's own `add_subtype` static makes Juggernauts, and a creature
+some static makes a Wall is a Wall to it. `blockers` has one more difference
+from every other static filter: `controller` defaults to **any** rather than
+`you`. A blocker belongs to the defending player by definition, so
 the usual default would match nothing and the restriction would silently never
 fire.
 
@@ -5721,6 +5757,12 @@ releases Mana Vault a turn later; `frozen_by` is written by the `freeze` op.
 Both are ops, so reaching either from a static means inventing a `self_enters`
 trigger for a line that is printed as a static — which the residual gate would
 see as a trigger claiming a static sentence.
+
+"Unless that player is the monarch" (Fall from Favor) is a `condition` on the
+hold, `{"not": {"is_monarch": "affected_controller"}}`, asked per held permanent —
+see [static conditions](card-dsl.md#unless-that-player-is-the-monarch). "That
+player" is the creature's controller, not the Aura's, which is why the spec is not
+`you`.
 
 `not_supertypes` is the negation of `supertypes`, in the static selector language
 as in the effect-side one. It is **not** interchangeable with a `not_types`
