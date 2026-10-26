@@ -115572,12 +115572,12 @@
     },
     "Graaz, Unstoppable Juggernaut": {
       "edhrec_rank": 6994,
-      "gate": "template",
+      "gate": null,
       "name": "Graaz, Unstoppable Juggernaut",
-      "reason": "no template for: Juggernauts you control attack each combat if able",
+      "reason": "",
       "scryfall_id": "7e29a758-d930-4a99-b524-fc72bd125485",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grab the Prize": {

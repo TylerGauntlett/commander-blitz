@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**106 cards** blocked by **90** capabilities.
+**105 cards** blocked by **89** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -94,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -1416,21 +1415,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-filter-derived-subtypes
-
-Blocks **1** card.
-
-- **(selector)** a static ability's `affects` filter whose `subtypes` clause matches subtypes granted by layer-4 `add_subtype` statics (here Graaz's own third line, which makes every other creature you control a Juggernaut), so that `attacks_if_able` and `block_restriction` with `affects: {controller: you, subtypes: [Juggernaut]}` reach the creatures the card itself turned into Juggernauts
-  <br>Why the existing vocabulary won't do: characteristics._matches / _matches_printed read printed subtypes plus obj.added_subtypes (the one-shot add_subtype op) only, never the add_subtype static, so `subtypes: ["Juggernaut"]` on lines 1 and 2 would apply to Graaz alone and skip every creature line 3 makes a Juggernaut -- the whole point of the card. Rewriting the filter as `types: [Creature], controller: you` is a substitution that diverges under text-changing effects on Graaz and type-removing effects with later timestamps, so it is not filed as an answer. Line 3 itself is expressible (set_pt + add_subtype statics with `exclude_self`), and the Wall half of line 2 is `blockers: {subtypes: [Wall]}`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Graaz, Unstoppable Juggernaut** (rank 6994) — `graaz_unstoppable_juggernaut`
-  - Juggernauts you control attack each combat if able.
-  - Juggernauts you control can't be blocked by Walls.
 
 </details>
 

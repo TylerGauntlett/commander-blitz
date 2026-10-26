@@ -53488,6 +53488,89 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Juggernaut"
+            ]
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Juggernauts you control attack each combat if able."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Juggernaut"
+            ]
+          },
+          "blockers": {
+            "subtypes": [
+              "Wall"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Juggernauts you control can't be blocked by Walls."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 5
+          },
+          "text": "Other creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Juggernaut"
+          ],
+          "text": "Other creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "graaz_unstoppable_juggernaut",
+      "mana_cost": "{8}",
+      "name": "Graaz, Unstoppable Juggernaut",
+      "oracle_text": "Juggernauts you control attack each combat if able.\nJuggernauts you control can't be blocked by Walls.\nOther creatures you control have base power and toughness 5/3 and are Juggernauts in addition to their other creature types.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Juggernaut"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

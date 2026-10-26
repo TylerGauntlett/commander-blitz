@@ -4944,6 +4944,10 @@
   "gorn_captain": {
     "zone": "battlefield"
   },
+  "graaz_unstoppable_juggernaut": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grand_coliseum": {
     "zone": "battlefield"
   },
