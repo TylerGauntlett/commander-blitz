@@ -543,3 +543,132 @@ class TestBloodlineRecollector:
         assert len(state.players[0].hand) == mine, "the caster did not draw"
         assert not state.objects[oid].prepared, "doing so unprepares it"
         assert state.objects[oid].zone is Zone.BATTLEFIELD
+
+
+BARTOLOME = "bartolome_del_presidio"
+LAWBRINGER = "ruthless_lawbringer"
+
+
+def outlet_board(builder, *mine: str):
+    """Bartolomé and his fodder; an opponent Bolt keeps priority windows open."""
+    return (
+        builder(players=2)
+        .battlefield(0, [BARTOLOME, "swamp", *mine])
+        .hand(1, ["t_bolt"])
+        .battlefield(1, ["mountain"])
+        .library(0, ["swamp"] * 10)
+        .library(1, ["swamp"] * 10)
+        .step(Step.PRECOMBAT_MAIN)
+        .active(0)
+        .build()
+    )
+
+
+def sacrifice_options(game) -> set[int]:
+    return {
+        t.id
+        for a in game.legal_actions()
+        if a.kind is ActionKind.CHOOSE
+        for t in a.targets
+    }
+
+
+class TestBartolomeDelPresidio:
+    """"Sacrifice another creature or artifact: Put a +1/+1 counter on
+    Bartolomé del Presidio."
+
+    Gate 5 never activates an ability. The near misses are the fodder: a
+    `types: [Creature, Artifact]` filter would want an artifact creature, a
+    missing `exclude_self` lets him eat himself, and a missing type filter lets
+    him eat a land.
+    """
+
+    def test_a_creature_or_an_artifact_is_fodder_and_nothing_else(self, builder):
+        game = outlet_board(builder, BEAR, "sol_ring")
+        bart = only_oid(game, BARTOLOME)
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.ACTIVATE and a.source == bart))
+        offered = sacrifice_options(game)
+        assert offered == {only_oid(game, BEAR), only_oid(game, "sol_ring")}
+
+    def test_the_counter_lands_on_him(self, builder):
+        game = outlet_board(builder, "sol_ring")
+        bart = only_oid(game, BARTOLOME)
+        ring = only_oid(game, "sol_ring")
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.ACTIVATE and a.source == bart))
+        if sacrifice_options(game):
+            game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and ring in [t.id for t in a.targets]))
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[ring].zone is Zone.GRAVEYARD
+        assert game.state.objects[bart].counters.get("+1/+1") == 1
+        assert chars(game.state, bart).power == 3
+
+    def test_alone_he_has_nothing_to_eat(self, builder):
+        game = outlet_board(builder)
+        bart = only_oid(game, BARTOLOME)
+        assert not [a for a in game.legal_actions() if a.kind is ActionKind.ACTIVATE and a.source == bart]
+
+
+class TestRuthlessLawbringer:
+    """"When this creature enters, you may sacrifice another creature. When you
+    do, destroy target nonland permanent."
+
+    A reflexive trigger (603.12): the destroy happens only if the sacrifice
+    did. The gate's sandbox takes the first answer to every question, so the
+    decline -- the half that would be wrong if the `reflexive_trigger` sat
+    outside the `may` -- is asserted here.
+    """
+
+    @staticmethod
+    def cast(builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 2 + ["plains"] * 2 + [BEAR])
+            .battlefield(1, ["sol_ring", "forest"])
+            .hand(0, [LAWBRINGER])
+            .library(0, ["swamp"] * 10)
+            .library(1, ["swamp"] * 10)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+            .build()
+        )
+        game.apply(find_action(game, ActionKind.CAST))
+        pass_until(game, lambda g: g.pending() is not None and g.pending().kind is DecisionKind.MAY)
+        return game
+
+    def test_declining_destroys_nothing(self, builder):
+        game = self.cast(builder)
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.NO))
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+        assert count_on_battlefield(game, BEAR, 0) == 1
+        assert count_on_battlefield(game, "sol_ring", 1) == 1
+
+    def test_the_sacrifice_buys_the_destroy(self, builder):
+        game = self.cast(builder)
+        ring = only_oid(game, "sol_ring", 1)
+        bear = only_oid(game, BEAR, 0)
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.YES))
+        for _ in range(40):
+            decision = game.pending()
+            if decision is None or (not game.state.stack and not game.state.pending_triggers and decision.kind is DecisionKind.PRIORITY):
+                break
+            pick = next(
+                (a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and any(t.id in (ring, bear) for t in a.targets)),
+                None,
+            )
+            game.apply(pick if pick is not None else _default_answer(game, decision))
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD
+        assert game.state.objects[ring].zone is Zone.GRAVEYARD
+
+    def test_a_land_is_never_the_target(self, builder):
+        game = self.cast(builder)
+        game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.YES))
+        forest = only_oid(game, "forest", 1)
+        seen = set()
+        for _ in range(40):
+            decision = game.pending()
+            if decision is None or (not game.state.stack and not game.state.pending_triggers and decision.kind is DecisionKind.PRIORITY):
+                break
+            for a in game.legal_actions():
+                seen.update(t.id for t in a.targets)
+            game.apply(_default_answer(game, decision))
+        assert forest not in seen
