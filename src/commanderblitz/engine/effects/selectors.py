@@ -137,6 +137,14 @@ SELECTOR_KEYS = frozenset(
         #: "Two or more colors", which `colors` cannot say: that is a membership
         #: test, so `["U", "R"]` matches a mono-blue permanent.
         "min_colors",
+        #: "**Colorless** creatures you control get +2/+2" -- Forsaken
+        #: Monument. Zero colours (105.2c), so `true` only: colorless is not a
+        #: colour, `colors: ["C"]` is not a spelling of it, and an empty
+        #: `colors` matches everything. `not_colors` over all five says the
+        #: same thing the long way. The same word in every filter language --
+        #: static, trigger and cost reduction -- and the same answer
+        #: protection's `from_colorless` gives.
+        "colorless",
         "keywords",
         "not_keywords",
         "tapped",
@@ -904,6 +912,8 @@ def matches(
         return False
     if (want := selector.get("not_colors")) and set(want) & colors:
         return False
+    if selector.get("colorless") and colors:
+        return False
     if (want := selector.get("keywords")) and not set(want).issubset(keywords):
         return False
     if (want := selector.get("not_keywords")) and set(want) & keywords:
@@ -1492,6 +1502,20 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
     raise DslError(f"unparsable player spec {spec!r}")
 
 
+def validate_colorless_key(filt: Any, where: str) -> None:
+    """``colorless`` is ``true`` or absent, in every filter language.
+
+    ``false`` is refused rather than read as "no filter" or as "colored": the
+    reader ignores a falsy value, so it would load and match every object, and
+    "a **colored** spell" is ``min_colors: 1``, which says it exactly.
+    """
+    if isinstance(filt, Mapping) and "colorless" in filt and filt["colorless"] is not True:
+        raise DslError(
+            f"{where}.colorless: must be true if present (zero colours, 105.2c); "
+            f"'colored' is min_colors: 1, got {filt['colorless']!r}"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -1573,6 +1597,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # accident, and `0`/`""` would quietly become `false`. A card that asks for
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
+    validate_colorless_key(selector, where)
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "

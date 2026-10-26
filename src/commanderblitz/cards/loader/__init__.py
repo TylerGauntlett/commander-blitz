@@ -34,7 +34,11 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
-from commanderblitz.engine.effects.selectors import ZONE_NAMES, validate_selector
+from commanderblitz.engine.effects.selectors import (
+    ZONE_NAMES,
+    validate_colorless_key,
+    validate_selector,
+)
 from commanderblitz.engine.effects.values import (
     validate_value,
 )
@@ -2642,6 +2646,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
         _check_pt_keys(filt, path)
+        validate_colorless_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
         return
@@ -2886,6 +2891,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # in the line above: a key its own set does not carry cannot appear, so
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
+        validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":

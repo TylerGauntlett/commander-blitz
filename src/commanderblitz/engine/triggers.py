@@ -1196,6 +1196,7 @@ ORDINAL_FILTER_KEYS = frozenset(
         "supertypes",
         "colors",
         "min_colors",
+        "colorless",
         "keywords",
         "not_keywords",
         "name",
@@ -1540,6 +1541,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "shares_a_creature_type_with",
         "colors",
         "min_colors",
+        "colorless",
         "keywords",
         "is_token",
         "is_commander",
@@ -1791,6 +1793,10 @@ def matches_card_filter(
     # entirely -- `["U", "R"]` matches a mono-blue spell -- so this is its own
     # clause rather than a spelling of that one.
     if (least := filt.get("min_colors")) is not None and len(card.colors) < int(least):
+        return False
+    # "Whenever you cast a **colorless** spell" (Forsaken Monument): zero
+    # colours, 105.2c, off the printed face like `colors` above.
+    if filt.get("colorless") and card.colors:
         return False
     keywords = filt.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):

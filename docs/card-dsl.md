@@ -1171,6 +1171,22 @@ boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
 
+### "Colorless" — `colorless`
+
+```jsonc
+"affects": { "types": ["Creature"], "controller": "you", "colorless": true }   // Forsaken Monument's anthem
+"filter":  { "colorless": true }                                                 // …"whenever you cast a colorless spell"
+```
+
+No colours at all (105.2c). `true` only: colorless is not a colour, so
+`colors: ["C"]` names nothing, an empty `colors` is no filter, and the loader
+refuses `false` rather than read it as "any" — "colored" is `min_colors: 1`. One
+word in every filter language: the selector (derived colours, where `not_colors`
+over all five says the same the long way), static and counting filters and the
+trigger filter (the printed face, as `colors` is), and the cost-reduction count
+(derived on the battlefield). It is the reading protection's `from_colorless`
+already makes of a source.
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc

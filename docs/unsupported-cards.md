@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **98** capabilities.
+**112 cards** blocked by **97** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash-spell-filter](#cast-as-though-flash-spell-filter) | 1 | 1301 | static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [colorless-filter](#colorless-filter) | 1 | 893 | selector |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
@@ -464,8 +463,6 @@ Blocks **1** card.
 
 - **Forsaken Monument** (rank 893) — `forsaken_monument`
   - Whenever you tap a permanent for {C}, add an additional {C}.
-  - Colorless creatures you control get +2/+2.
-  - Whenever you cast a colorless spell, you gain 2 life.
 
 </details>
 
@@ -609,22 +606,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## colorless-filter
-
-Blocks **1** card.
-
-- **(selector)** a 'colorless' filter key (zero colours, 105.2c) usable in a static's affects ("Colorless creatures you control get +2/+2") and in a spell_cast trigger filter ("Whenever you cast a colorless spell")
-  <br>Why the existing vocabulary won't do: static_filter_keys and trigger_filter_keys carry only colors (match any listed colour) and min_colors; colorless is not a colour letter, an empty colors list matches everything, and not_colors exists only in the effect selector language, not in static or trigger filters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forsaken Monument** (rank 893) — `forsaken_monument`
-  - Whenever you tap a permanent for {C}, add an additional {C}.
-  - Colorless creatures you control get +2/+2.
-  - Whenever you cast a colorless spell, you gain 2 life.
 
 </details>
 
