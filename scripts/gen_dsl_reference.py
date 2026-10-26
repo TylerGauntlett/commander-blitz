@@ -727,6 +727,8 @@ STATICS: dict[str, Entry] = {
     "grant_ability": ("Matching permanents have one of the card's `grantable_abilities`.",
                       "`grant_ability` as a static, and where the line now runs"),
     "grant_keyword": ("Matching permanents have keywords.", None),
+    "granted_alternative_cost": ("The player may pay `cost` (energy or life) instead of matching spells' mana cost.",
+                                 "`granted_alternative_cost` — paying energy instead of a spell's mana cost"),
     "grant_warp": ("Matching spells the player casts have warp for a price.",
                    "`grant_warp` — a card-level price handed to somebody else's cards"),
     "look_at_library_top": ("The player may look at the top card of their library any time.", None),

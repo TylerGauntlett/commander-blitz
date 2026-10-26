@@ -25,6 +25,7 @@ from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
+    granted_alternative_cost,
     granted_warp_cost,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
@@ -646,6 +647,29 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
         )
+    # "You may pay eight {E} rather than pay the mana cost for permanent spells
+    # you cast" -- Nissa, Worldsoul Speaker. Dracogenesis' slot for the same
+    # reason: a standing permission from the board, asked afresh whenever the
+    # lines are built, offered *beside* the printed line because "you may" is
+    # a choice. Unlike the free line it has a price, so it is offered only
+    # while that price can be paid -- a line showing eight energy to a player
+    # with seven is a price they can never pay (601.2h).
+    #
+    # No zone gate: the printed sentence names none, and a commander cast this
+    # way still owes its tax (118.9d), which `extra_generic` already carries.
+    if not free and (granted := granted_alternative_cost(state, pid, card)) is not None:
+        price = Cost.from_spec(granted)
+        if price is not None and can_pay(state, pid, price, oid):
+            out += _cast_variant(
+                state,
+                pid,
+                oid,
+                card,
+                tuples,
+                extra_generic=extra_generic,
+                kicked=False,
+                granted_cost=tuple(sorted((str(k), int(v)) for k, v in granted.items())),
+            )
     if card.kicker is not None:
         # "If this spell was kicked, **instead choose any number of** target
         # creatures you own" -- The Eagles Are Coming!. The kicked line gets its
@@ -1456,6 +1480,7 @@ def _cast_variant(
     mutated: bool = False,
     pay_generic: int = 0,
     alt_cost: str | None = None,
+    granted_cost: tuple[tuple[str, int], ...] = (),
 ) -> list[Action]:
     # 601.2b: a spell that cannot choose the modes it is required to choose
     # cannot be cast. Asked on every variant rather than in `_cast_options`
@@ -1548,8 +1573,10 @@ def _cast_variant(
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
-    if from_library_top:
+    if from_library_top or granted_cost:
         # "…pay life equal to its mana value **rather than** pay its mana cost."
+        # And Nissa's "pay eight {E} rather than pay the mana cost", which is
+        # the same substitution with the price on the action instead.
         # A whole substitution rather than a reduction, which is what
         # `spell_cost_reduction` cannot do: the mana half becomes free here and
         # `Game._cast` charges the life. Priced before every discount below, so
@@ -1720,6 +1747,11 @@ def _cast_variant(
             # would collapse into one row and the player would never see the
             # choice, which is the choice 601.2b gives them.
             label_base += " (without paying its mana cost)"
+        if granted_cost:
+            # The price, in the label: the client groups rows by `base_label`,
+            # and this line and the printed one are otherwise identical.
+            price = Cost.from_spec(dict(granted_cost))
+            label_base += f" (paying {price.describe().removeprefix('Pay ')} instead)"
         if alt_cost is not None:
             # The price, in the label, for the reason the free line carries its
             # printed words: a card airbent out of a graveyard could also be
@@ -1812,6 +1844,7 @@ def _cast_variant(
                     spree_modes=spree_modes,
                     cast_free=free,
                     from_library_top=from_library_top,
+                    granted_cost=granted_cost,
                     foretold=foretold,
                     face_down=face_down,
                     second_face=second_face,

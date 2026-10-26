@@ -3090,6 +3090,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.warp_cost).x_count:
             raise DslError(f"{where}: a warp cost with X is not implemented")
+    elif model.effect == "granted_alternative_cost":
+        # `free_cast_permission`'s guards, for its reason: a grant with no
+        # filter re-prices every spell in the game rather than the printed
+        # "permanent spells", and it would load clean and print the narrower
+        # line. The price is checked with the other costed statics below.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: granted_alternative_cost filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: granted_alternative_cost needs 'affects_spells' naming "
+                f"which spells may be cast this way"
+            )
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and a caster and no board state; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
         # in hand while legality prices it, so it may only read the printed
@@ -3893,11 +3914,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"number of life, 1 or more, got {priced.get('pay_life')!r}"
             )
         _compile_cost(model.cost, where)
+    elif model.effect == "granted_alternative_cost":
+        # The price that replaces the mana cost, so a grant without one is
+        # `free_cast_permission` under another name. Energy or life, a whole
+        # number of one of them: the cast line prices its mana half free, so a
+        # mana part here would never be charged, and anything that asks a
+        # question (a sacrifice, a discard) would have to be asked inside the
+        # cast where nothing answers it.
+        if model.cost is None:
+            raise DslError(
+                f"{where}: granted_alternative_cost needs a 'cost' -- a "
+                f"replacement price of nothing is free_cast_permission"
+            )
+        priced = prune_cost(model.cost.model_dump())
+        allowed = {"pay_energy", "pay_life"}
+        if not priced or set(priced) - allowed:
+            raise DslError(
+                f"{where}: granted_alternative_cost is paid in energy or life; "
+                f"give its 'cost' a 'pay_energy' or a 'pay_life' and nothing "
+                f"else, not {sorted(set(priced) - allowed) or 'nothing'}"
+            )
+        if any(not isinstance(priced[k], int) or priced[k] < 1 for k in priced):
+            raise DslError(
+                f"{where}.cost: granted_alternative_cost takes whole numbers, "
+                f"1 or more, got {priced!r}"
+            )
+        _compile_cost(model.cost, where)
     elif model.cost is not None:
         raise DslError(
             f"{where}: a static ability has no cost to pay; 'cost' means "
-            f"something only on 'ward', 'attack_tax', 'block_tax' and "
-            f"'spell_cost_increase' (and on activated abilities)"
+            f"something only on 'ward', 'attack_tax', 'block_tax', "
+            f"'spell_cost_increase' and 'granted_alternative_cost' (and on "
+            f"activated abilities)"
         )
     if model.or_planeswalkers and model.effect != "attack_tax":
         # "...attack you **or planeswalkers you control**" is a clause of an
@@ -4283,9 +4331,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.or_planeswalkers:
         static["or_planeswalkers"] = True
-    if model.effect == "spell_cost_increase":
+    if model.effect in ("spell_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
-        # reads `pay_life` off carries nothing the card did not write.
+        # and `player_statics.granted_alternative_cost` read carries nothing the
+        # card did not write.
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "cast_from_library_top":
         static["pay_life_instead"] = True

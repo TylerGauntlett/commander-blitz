@@ -87193,6 +87193,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "controller": "you",
+            "not_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "cost": {
+            "pay_energy": 8
+          },
+          "effect": "granted_alternative_cost",
+          "kind": "static",
+          "text": "You may pay eight {E} rather than pay the mana cost for permanent spells you cast."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nissa_worldsoul_speaker",
+      "mana_cost": "{3}{G}",
+      "name": "Nissa, Worldsoul Speaker",
+      "oracle_text": "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).\nYou may pay eight {E} rather than pay the mana cost for permanent spells you cast.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

@@ -497,6 +497,11 @@ class Game:
             # for free and then billed its printed cost, which `pay` refused
             # with no mana on the board: the cast simply did nothing.
             cost = ManaCost.parse("")
+        elif action.granted_cost:
+            # Nissa's "pay eight {E} rather than pay the mana cost". Priced free
+            # exactly as `_cast_variant` priced the line, and the price -- read
+            # off the action, for `warp`'s reason -- is charged below.
+            cost = ManaCost.parse("")
         elif action.cast_free:
             # "…without paying its mana cost" (601.2b). Plot's "you may cast it
             # as a sorcery on a later turn without paying its mana cost", and
@@ -601,6 +606,7 @@ class Game:
             and obj.zone is Zone.HAND
             and not action.cast_free
             and not action.from_library_top
+            and not action.granted_cost
         ):
             spent = yield from self._ask_pay_generic(
                 pid, card, oid, cost, extra, action.pay_generic
@@ -778,6 +784,15 @@ class Game:
             # legality withholds the line above that -- so this is charged
             # rather than offered and rewound.
             ok = yield from pay(state, pid, Cost(pay_life=card.mana_value), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+        if action.granted_cost:
+            # The granted alternative cost's own price, charged where Bolas's
+            # Citadel charges its life and for its reason: the mana half was
+            # zeroed when the line was priced, and legality offered the line
+            # only while this was payable.
+            granted = Cost.from_spec(dict(action.granted_cost))
+            ok = yield from pay(state, pid, granted, oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 

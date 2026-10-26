@@ -187862,12 +187862,12 @@
     },
     "Nissa, Worldsoul Speaker": {
       "edhrec_rank": 7635,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa, Worldsoul Speaker",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "9aeb44e0-2257-444a-b805-7e939ca5f6fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nissa, Worldwaker": {

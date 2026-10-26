@@ -7472,6 +7472,35 @@ Energy is spent with the `pay_energy` cost key, a whole number of counters:
 player has at least that many, and the loader refuses a negative amount (that
 is `add_energy`). Paying fires `energy_paid` with what is left.
 
+### `granted_alternative_cost` — paying energy instead of a spell's mana cost
+
+"You may pay eight {E} rather than pay the mana cost for permanent spells you
+cast" -- Nissa, Worldsoul Speaker. A player-wide static that offers a second
+cast line, beside the printed one, for every spell its `affects_spells` filter
+matches:
+
+```jsonc
+{ "kind": "static", "effect": "granted_alternative_cost", "affects_player": "you",
+  "text": "You may pay eight {E} rather than pay the mana cost for permanent spells you cast.",
+  "affects_spells": { "controller": "you", "not_types": ["Instant", "Sorcery"] },
+  "cost": { "pay_energy": 8 } }
+```
+
+"Permanent spells" is `not_types: ["Instant", "Sorcery"]`: a land is never a
+spell, so every other spell is a permanent spell.
+
+- **The price is energy or life**, a whole number of one or both. The line's
+  mana half is priced free, so a `mana` here would never be charged; the loader
+  refuses it, and anything that asks a question (a sacrifice, a discard).
+- **Offered only while payable**, and wherever the spell could otherwise be
+  cast: the filter names no zone. A commander cast this way still owes its tax
+  (118.9d). X is 0, because the replacing price has no X in it (107.3b), and
+  the mana value is unchanged.
+- **The price rides on the action** (`Action.granted_cost`), so the grant
+  leaving the battlefield between offer and charge cannot change what is billed.
+- Not `free_cast_permission`, which waives the cost rather than replacing it,
+  and not `alternative_cost`, which only the card that prints it has.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc
