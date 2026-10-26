@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **102** capabilities.
+**116 cards** blocked by **104** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,6 +21,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
+| [energy](#energy) | 2 | 7635 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [set-creature-types](#set-creature-types) | 2 | 715 | static_effect |
 | [spider-token](#spider-token) | 2 | 1012 | token |
@@ -53,7 +54,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [dragon-6-6-r-flying-token](#dragon-6-6-r-flying-token) | 1 | 1517 | token |
-| [energy](#energy) | 1 | 18326 | engine |
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -63,6 +63,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
 | [fog](#fog) | 1 | 1232 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [granted-alternative-cost](#granted-alternative-cost) | 1 | 7635 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
 | [improvise](#improvise) | 1 | 942 | cost |
@@ -81,6 +82,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [myr-token](#myr-token) | 1 | 896 | token |
+| [not-chosen-creature-type](#not-chosen-creature-type) | 1 | 27365 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -351,6 +353,26 @@ Blocks **2** cards.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
+
+</details>
+
+## energy
+
+Blocks **2** cards.
+
+- **(engine)** a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}) and an activated-ability cost `pay_energy: N` that is payable only when the controller has at least N energy and removes it
+  <br>Why the existing vocabulary won't do: add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; the cost keys remove_counters / remove_counters_from_among remove counters from permanents, not from a player, and no value key reads a player's counter total
+- **(engine)** a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}), and a cost key `pay_energy: N` usable in a cost spec (activated ability or alternative cost) that is payable only when the player has at least N energy and removes it
+  <br>Why the existing vocabulary won't do: add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; no cost key removes counters from a player (remove_counters / remove_counters_from_among read permanents) and no value key reads a player's energy total
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nissa, Worldsoul Speaker** (rank 7635) — `nissa_worldsoul_speaker`
+  - Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).
+  - You may pay eight {E} rather than pay the mana cost for permanent spells you cast.
+- **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
+  - When this creature enters, you get {E}{E}{E} (three energy counters).
+  - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
 
 </details>
 
@@ -837,21 +859,6 @@ Blocks **1** card.
 
 </details>
 
-## energy
-
-Blocks **1** card.
-
-- **(engine)** a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}) and an activated-ability cost `pay_energy: N` that is payable only when the controller has at least N energy and removes it
-  <br>Why the existing vocabulary won't do: add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; the cost keys remove_counters / remove_counters_from_among remove counters from permanents, not from a player, and no value key reads a player's counter total
-
-<details><summary>Cards waiting on this</summary>
-
-- **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
-  - When this creature enters, you get {E}{E}{E} (three energy counters).
-  - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
 ## enters-as-copy
 
 Blocks **1** card.
@@ -981,6 +988,21 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## granted-alternative-cost
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that offers an alternative cost (any cost spec, here `pay_energy: 8`) instead of the mana cost for every spell its controller casts that matches an `affects_spells` filter (here permanent spells: any_types Artifact, Creature, Enchantment, Planeswalker, Battle; lands are never cast) — 118.9, chosen at cast, mana value unchanged
+  <br>Why the existing vocabulary won't do: alternative_cost is card-level and applies only to the card that carries it; free_cast_permission casts without paying any cost rather than for a different price; spell_cost_reduction only discounts generic mana and cannot replace the cost with a non-mana payment
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nissa, Worldsoul Speaker** (rank 7635) — `nissa_worldsoul_speaker`
+  - Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).
+  - You may pay eight {E} rather than pay the mana cost for permanent spells you cast.
 
 </details>
 
@@ -1242,6 +1264,20 @@ Blocks **1** card.
 - **Myr Battlesphere** (rank 896) — `myr_battlesphere`
   - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
   - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
+
+</details>
+
+## not-chosen-creature-type
+
+Blocks **1** card.
+
+- **(selector)** an effect selector that excludes objects of the creature type the source chose: `not_subtypes: [{"chosen_type_of": "self"}]`, resolved against the spell's `chosen_type` the way `subtypes` already is, so `destroy` over `{zone: battlefield, controller: any, count: all, types: [Creature], not_subtypes: [{chosen_type_of: self}]}` destroys every creature not of the chosen type at once (a changeling, being every type, survives)
+  <br>Why the existing vocabulary won't do: `choose_type` on a spell stores `chosen_type` on the spell and `selectors.matches` substitutes `{"chosen_type_of": "self"}` only inside `subtypes` (via `characteristics.resolve_chosen_subtypes`); `not_subtypes` is compared as a literal list, so the dict entry never matches any subtype and the selector would destroy every creature, chosen type included. The selector language has no general negation, and a `for_each` + `if` + `exists` workaround would destroy the creatures one at a time instead of simultaneously, which is not the printed "destroy all"
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kindred Judgment** (rank 27365) — `kindred_judgment`
+  - Choose a creature type. Destroy all creatures that aren't of the chosen type.
 
 </details>
 

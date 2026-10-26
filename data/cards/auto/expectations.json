@@ -1033,6 +1033,10 @@
   "bartizan_bats": {
     "zone": "battlefield"
   },
+  "bartolome_del_presidio": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "basilisk_collar": {
     "zone": "battlefield"
   },
@@ -9556,6 +9560,13 @@
   "rustwing_falcon": {
     "zone": "battlefield"
   },
+  "ruthless_lawbringer": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "battlefield"
+  },
   "sabertooth_wyvern": {
     "zone": "battlefield"
   },
@@ -13182,6 +13193,10 @@
     "zone": "battlefield"
   },
   "willow_wind": {
+    "zone": "battlefield"
+  },
+  "willowrush_verge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wilt_leaf_cavaliers": {

@@ -1,0 +1,25 @@
+{
+  "card_id": "nissa_worldsoul_speaker",
+  "name": "Nissa, Worldsoul Speaker",
+  "oracle_text": "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).\nYou may pay eight {E} rather than pay the mana cost for permanent spells you cast.",
+  "blocked_sentences": [
+    "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).",
+    "You may pay eight {E} rather than pay the mana cost for permanent spells you cast."
+  ],
+  "needs": [
+    {
+      "capability": "energy",
+      "kind": "engine",
+      "what": "a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}), and a cost key `pay_energy: N` usable in a cost spec (activated ability or alternative cost) that is payable only when the player has at least N energy and removes it",
+      "why_existing_wont_do": "add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; no cost key removes counters from a player (remove_counters / remove_counters_from_among read permanents) and no value key reads a player's energy total"
+    },
+    {
+      "capability": "granted_alternative_cost",
+      "kind": "static_effect",
+      "what": "a player-wide static that offers an alternative cost (any cost spec, here `pay_energy: 8`) instead of the mana cost for every spell its controller casts that matches an `affects_spells` filter (here permanent spells: any_types Artifact, Creature, Enchantment, Planeswalker, Battle; lands are never cast) — 118.9, chosen at cast, mana value unchanged",
+      "why_existing_wont_do": "alternative_cost is card-level and applies only to the card that carries it; free_cast_permission casts without paying any cost rather than for a different price; spell_cost_reduction only discounts generic mana and cannot replace the cost with a non-mana payment"
+    }
+  ],
+  "closest_existing": ["add_poison", "alternative_cost", "free_cast_permission", "spell_cost_reduction"],
+  "confidence": "high"
+}

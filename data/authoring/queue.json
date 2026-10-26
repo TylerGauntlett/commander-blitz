@@ -21142,13 +21142,13 @@
     },
     "Bartolomé del Presidio": {
       "edhrec_rank": 1749,
-      "gate": "template",
+      "gate": null,
       "name": "Bartolomé del Presidio",
-      "reason": "no template for: Sacrifice another creature or artifact: Put a +1/+1 counter on",
+      "reason": "",
       "scryfall_id": "690ccdc7-6c43-4902-9d11-2f07b7a36b11",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bartz and Boko": {
       "edhrec_rank": 7263,
@@ -149082,13 +149082,13 @@
     },
     "Kindred Judgment": {
       "edhrec_rank": 27365,
-      "gate": null,
+      "gate": "template",
       "name": "Kindred Judgment",
-      "reason": "",
+      "reason": "no template for: Choose a creature type. Destroy all creatures that aren't of the chosen type",
       "scryfall_id": "6f9f814b-8249-4e48-a05e-4c84060fe6fb",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kindred Summons": {
       "edhrec_rank": 2379,
@@ -187868,7 +187868,7 @@
       "scryfall_id": "9aeb44e0-2257-444a-b805-7e939ca5f6fe",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Nissa, Worldwaker": {
       "edhrec_rank": 9360,
@@ -230122,13 +230122,13 @@
     },
     "Ruthless Lawbringer": {
       "edhrec_rank": 4843,
-      "gate": "template",
+      "gate": null,
       "name": "Ruthless Lawbringer",
-      "reason": "no template for: When this creature enters, you may sacrifice another creature. When you do, destroy target",
+      "reason": "",
       "scryfall_id": "927b5498-23f1-47c0-b441-7daaeb54f9b8",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ruthless Negotiation": {
       "edhrec_rank": 17932,
@@ -315892,13 +315892,13 @@
     },
     "Willowrush Verge": {
       "edhrec_rank": 1096,
-      "gate": "template",
+      "gate": null,
       "name": "Willowrush Verge",
-      "reason": "no template for: {T}: Add {G}. Activate only if you control a Forest or an Island",
+      "reason": "",
       "scryfall_id": "38218d0f-4b70-45eb-a753-cdb44f94271c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Wilson, Refined Grizzly": {
       "edhrec_rank": 4241,
