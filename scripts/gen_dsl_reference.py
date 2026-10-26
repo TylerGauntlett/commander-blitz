@@ -600,6 +600,7 @@ CONDITIONS: dict[str, Entry] = {
     "overloaded": ("This spell was cast for its overload cost.", "Overload"),
     "right": ("`cmp`'s right operand.", None),
     "spree_mode": ("The given spree mode was bought.", H_SPREE),
+    "step_is": ("The step the game is in now (\"during the declare attackers step\").", None),
     "two_share_a_color": ("Two cards in a pool share a color.",
                           '"Two cards that share a color" — `two_share_a_color`'),
     "was_cast": ("This arrival was a resolving spell (603.6e).", '"If it was cast" — 603.6e'),

@@ -3491,6 +3491,7 @@ The form list is
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
 { "is_active_player": { "binding": "event_player" } }   // "during their turn"
+{ "step_is": "declare_attackers" }            // the step the game is in *now*
 ```
 
 `is_monarch` takes a player spec, so "if an opponent is the monarch" is
@@ -3536,6 +3537,17 @@ the battlefield rather than about anything the card did earlier in the game —
 see ["If it was cast"](card-dsl-cookbook.md#if-it-was-cast--6036e) in the cookbook. The loader confines it to
 a `self_enters` trigger, which is the only place the clause is printed and the
 only place it asks about the right object.
+
+`step_is` is the step the game is in when the condition is asked, named the
+way `Step` names it lower-cased (`"declare_attackers"`, `"end_step"`), or a list
+of names for any of them; the loader refuses a name the turn does not have.
+"When this artifact enters **during the declare attackers step**" (Misleading
+Signpost) is a `self_enters` trigger with `{"step_is": "declare_attackers"}` as
+its `condition`. Asked again on resolution it gives the same answer, since a
+step does not end while the stack is non-empty. `cast_during` is the near miss:
+it reads the phase stamped on a spell as it was cast, is false for anything
+never cast, and names a phase, where "combat" spans the declare blockers step a
+reselection must not reach.
 
 `is_active_player` takes a player spec the way `is_monarch` does, and it is
 "during **their** turn" — the turn of the player a trigger's event was about.

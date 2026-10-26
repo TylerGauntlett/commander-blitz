@@ -20,7 +20,7 @@ under [Simplified](#simplified); what is missing outright is under
 
 | Area | Detail |
 |---|---|
-| **Turn structure** | Every step and turn-based action, cleanup repeating per 514.3a, and priority windows, walked by `turn` over the `Step` enum |
+| **Turn structure** | Every step and turn-based action, cleanup repeating per 514.3a, and priority windows, walked by `turn` over the `Step` enum; the `step_is` condition leaf reads the step the game is in |
 | **Additional combat and main phases** | 506.1, 505.1b: `GameState.extra_phases` queues granted phases and `resume_step` is the bookmark the turn returns to; an extra combat is inserted before the combat already owed, the additional main is a `POSTCOMBAT_MAIN` step and not an extra land drop, and an unspent grant expires with the turn |
 | **"At end of combat"** | The `delay` step keyed to `GameState.combat_number` (603.7), so a delay created in one combat of a multi-combat turn fires at that combat's end |
 | **Priority** | APNAP order, retaining priority after acting, auto-pass when passing is the only option, except for a human facing an opponent's removal, sweeper or targeted effect |

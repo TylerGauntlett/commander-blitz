@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**111 cards** blocked by **96** capabilities.
+**111 cards** blocked by **95** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
-| [declare-attackers-step-condition](#declare-attackers-step-condition) | 1 | 3213 | value |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -693,20 +692,6 @@ Blocks **1** card.
 
 - **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
   - {T}: Destroy target creature that dealt damage to you this turn.
-
-</details>
-
-## declare-attackers-step-condition
-
-Blocks **1** card.
-
-- **(value)** a trigger condition that is true only when the current step is the declare attackers step ("When this artifact enters during the declare attackers step")
-  <br>Why the existing vocabulary won't do: condition_keys has is_your_turn, is_active_player and cast_during (which reads how the spell was cast, not the current step); nothing reads the game's current step, so the enters trigger cannot be gated to that step
-
-<details><summary>Cards waiting on this</summary>
-
-- **Misleading Signpost** (rank 3213) — `misleading_signpost`
-  - When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)
 
 </details>
 

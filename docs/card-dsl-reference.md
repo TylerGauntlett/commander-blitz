@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
-| [Conditions](#conditions) | 29 |
+| [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 33 |
 | [Static effects](#static-effects) | 79 |
@@ -365,6 +365,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `overloaded` | This spell was cast for its overload cost. | [Overload](card-dsl-cookbook.md#overload) |
 | `right` | `cmp`'s right operand. | [Conditions](card-dsl.md#conditions) |
 | `spree_mode` | The given spree mode was bought. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
+| `step_is` | The step the game is in now ("during the declare attackers step"). | [Conditions](card-dsl.md#conditions) |
 | `two_share_a_color` | Two cards in a pool share a color. | ["Two cards that share a color" — two_share_a_color](card-dsl.md#two-cards-that-share-a-color--two_share_a_color) |
 | `was_cast` | This arrival was a resolving spell (603.6e). | ["If it was cast" — 603.6e](card-dsl-cookbook.md#if-it-was-cast--6036e) |
 | `zone_is` | The source is in the named zone. | [Conditions](card-dsl.md#conditions) |
