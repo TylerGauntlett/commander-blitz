@@ -5,7 +5,7 @@ itself is `scripts/verify.py` ([testing.md](testing.md)); this page is about how
 GitHub Actions slices it, decides whether there is anything to prove, and ships
 what passed. Operating the site after it ships is [deployment.md](deployment.md).
 
-## Six workflows
+## The workflows
 
 | Workflow | Trigger | Job |
 |---|---|---|
@@ -14,6 +14,7 @@ what passed. Operating the site after it ships is [deployment.md](deployment.md)
 | `secrets.yml` "secrets" | push to `main`; every pull request | gitleaks, with the allowlist in `.gitleaks.toml`. Shallow on a pull request (its commits plus a little context), full history on `main`. Runs even when the gate decides there is nothing to test |
 | `release.yml` "desktop release" | called by `deploy.yml`; `workflow_dispatch` on `main` | The content package and, when the shell changed, the AppImage, published as a GitHub Release |
 | `art-backfill.yml` "art backfill" | weekly schedule; `workflow_dispatch` with a `limit` | Crawls the art store and opens a `chore(art):` pull request that merges itself ([below](#art-backfill)) |
+| `automerge-guard.yml` "auto-merge guard" | `pull_request_target`: opened, pushed to, or auto-merge turned on | Turns auto-merge off, with one comment, unless the pull request is a maintainer's from a branch here and a maintainer made the push or the switch ([below](#roadmap-autopilot)). Never checks out the pull request's code |
 | `tls-check.yml` "tls check" | weekly schedule; `workflow_dispatch` | An alarm, renewing nothing: fails if the certificate is near expiry, `/health` stops answering over TLS, or port 80 stops redirecting. GitHub disables a schedule after two months without repository activity |
 
 Every workflow has its own concurrency group with `cancel-in-progress`
@@ -237,6 +238,17 @@ It needs, set once by a maintainer:
 - **The Claude GitHub App** on this repository with write access, so the
   session's pull requests start workflows (a `GITHUB_TOKEN` one would not, as
   above).
+
+**Only a maintainer's work merges itself.** The repository is public, so
+`automerge-guard.yml` turns auto-merge off on any pull request from a fork,
+opened by someone without the admin or maintain role, or pushed to or switched
+to auto-merge by such a person; a maintainer can still merge it by hand. The
+autopilot's sessions open pull requests as the owner, so they pass. On its own
+side, an `--auto` run acts only on review comments from maintainers and treats
+everyone else's as data, so a stranger's comment on an autopilot pull request
+cannot steer what merges. Its **Decisions** come from `main`, so merging
+someone else's edit to an item's **Decisions** is approving what the
+autopilot will build.
 
 To pause it, disable the scheduled task; to stop one pull request, turn off its
 auto-merge or remove the label and close it.

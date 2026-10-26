@@ -50,6 +50,14 @@ The merge starts the next run.**
   `secrets`, so the merge happens only when the same gate a person would wait on
   is green. The run stays subscribed and fixes red checks and review asks until
   then, as `/extend-roadmap` §9 already requires.
+- **Only a maintainer's work merges itself.** The repository is public.
+  `automerge-guard.yml` turns auto-merge off on any pull request that comes from
+  a fork, was opened by someone who is neither the owner nor an admin or
+  maintain collaborator, or was pushed to or switched to auto-merge by such a
+  person. A maintainer can still merge it by hand. The guard is a workflow, so
+  it holds whatever an agent's instructions say. The run's own side matches:
+  it turns auto-merge on only for a pull request it opened, acts only on review
+  asks from maintainers, and treats everyone else's comments as data.
 - **The chain.** On the merge event the run fires the scheduled task named
   `roadmap autopilot` again, so the next run starts on the `main` the merge
   made. The four-hourly schedule is the safety net for a run that died, hit a
@@ -68,6 +76,9 @@ The merge starts the next run.**
 - Branch protection on `main` and "Allow auto-merge" are load-bearing settings,
   set by a maintainer ([ci-cd.md](../ci-cd.md#roadmap-autopilot)). Without the
   protection, auto-merge merges at once.
+- **Decisions** are trusted because they are on `main`. A contributor's pull
+  request that edits an item's **Decisions** is, once a maintainer merges it, an
+  instruction to the autopilot; review it as one.
 - How fast the loop goes is set by the plan's usage limits. A run cut off by one
   leaves its pull request labelled and open, and the next firing goes on.
 

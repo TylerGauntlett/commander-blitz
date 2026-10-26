@@ -1,0 +1,78 @@
+name: auto-merge guard
+
+# Auto-merge is for maintainers' own work (ADR 0026). This is a public
+# repository, so a pull request merges itself only when it was opened from a
+# branch of this repository by a maintainer, and every push to it and the
+# switch that turned auto-merge on were a maintainer's too. Anything else has
+# its auto-merge turned off here and is left for a person to merge by hand.
+#
+# A maintainer is the repository's owner or anyone with the admin or maintain
+# role. The roadmap autopilot and the art backfill both open their pull
+# requests as the owner, so they pass; a contributor's pull request, a fork's,
+# or a push to a maintainer's branch by someone with plain write does not.
+#
+# `pull_request_target` so that it runs with a token that can turn auto-merge
+# off on a fork's pull request too. It never checks out the pull request's
+# code: everything it reads comes from the event and the API.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review, auto_merge_enabled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: automerge-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: auto-merge is a maintainer's
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Through env, never `${{ }}` in the script: logins and repository
+      # names come from the event.
+      - name: Only a maintainer's pull request merges itself
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          ACTOR: ${{ github.actor }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          AUTO_MERGE: ${{ github.event.pull_request.auto_merge != null || github.event.action == 'auto_merge_enabled' }}
+        run: |
+          set -euo pipefail
+          if [ "$AUTO_MERGE" != "true" ]; then
+            echo "auto-merge is off; nothing to guard"
+            exit 0
+          fi
+
+          is_maintainer() {
+            [ "$1" = "$OWNER" ] && return 0
+            role=$(gh api "repos/$REPO/collaborators/$1/permission" --jq .role_name 2>/dev/null) || return 1
+            [ "$role" = "admin" ] || [ "$role" = "maintain" ]
+          }
+
+          reason=""
+          if [ "$HEAD_REPO" != "$REPO" ]; then
+            reason="it comes from a fork ($HEAD_REPO)"
+          elif ! is_maintainer "$AUTHOR"; then
+            reason="it was opened by @$AUTHOR, who is not a maintainer"
+          elif ! is_maintainer "$ACTOR"; then
+            reason="@$ACTOR, who is not a maintainer, pushed to it or turned auto-merge on"
+          fi
+
+          if [ -z "$reason" ]; then
+            echo "auto-merge allowed: a maintainer's branch, author and actor"
+            exit 0
+          fi
+
+          echo "::error::auto-merge turned off: $reason"
+          gh pr merge "$NUMBER" --repo "$REPO" --disable-auto
+          printf 'Auto-merge was turned off because %s. Only a maintainer'\''s own pull requests merge themselves (ADR 0026); a maintainer can still merge this one by hand.\n' "$reason" \
+            | gh pr comment "$NUMBER" --repo "$REPO" --body-file -
+          exit 1
