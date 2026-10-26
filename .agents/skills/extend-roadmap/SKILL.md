@@ -312,15 +312,16 @@ Nobody is there to answer, so the owner answers ahead of time, in the item.
 Everything above holds except where this section says otherwise.
 
 **The lock.** Before §0, look for an open pull request labelled `autopilot`
-(the GitHub tools' pull request search: `is:pr is:open label:autopilot`).
-If there is one, stop: the session that opened it is still driving it, and
-this run never pushes to a branch it did not create. The one thing it may
-do is notice a stuck one: red or conflicted, with no commit since the
-previous firing. Then it says so once, in one comment on that pull request
-naming what is red, unless such a comment is already there, and stops. One
-autopilot pull request is open at a time, and that is what keeps two runs
-off the same item, since `--start` lives on a branch `main` cannot see; a
-stuck one holds the loop until the owner closes it or fixes it.
+(the GitHub tools' pull request search: `is:pr is:open label:autopilot`),
+drafts included. If there is one, stop: the session that opened it is still
+driving it, and this run never pushes to a branch it did not create. The
+one thing it may do is notice a stuck one: a draft, or a red or conflicted
+pull request, with no commit since the previous firing. Then it says so
+once, in one comment on that pull request naming what it is waiting on,
+unless such a comment is already there, and stops. One autopilot pull
+request is open at a time, and that is what keeps two runs off the same
+item, since `--start` lives on a branch `main` cannot see; a stuck one holds
+the loop until the owner closes it or fixes it.
 
 **The pick.** Start from a fresh `main`: `git fetch origin main` and work
 from `origin/main`.
@@ -345,6 +346,17 @@ request is the autopilot's way of waiting.
 **The branch.** Where the harness designates a branch for the session, that
 branch is the one; otherwise `feat/<id>` as §3 says.
 
+**The claim.** A build can outlast the four hours between firings, and the
+lock only holds once a pull request exists, so a run claims its item before
+it builds anything. The first commit on the branch (§3's `start`, or the
+**Open questions** commit) is pushed at once and opened through `/create-pr`
+as a **draft** labelled `autopilot`, with the briefing as its body. A draft
+runs no gate, so the claim costs nothing. Then look again: if another open
+`autopilot` pull request is older than this one, a second run started in the
+same minutes; close this draft with one line saying which pull request holds
+the lock, and stop. Otherwise build on the draft, pushing as the work goes,
+so its commits show it is alive.
+
 **Maintainers only.** The repository is public. An `--auto` run turns on
 auto-merge only for a pull request it opened itself, and counts toward the
 lock only `autopilot` pull requests a maintainer opened. A review comment or
@@ -357,9 +369,11 @@ says. `automerge-guard.yml` turns auto-merge off on anything that is not a
 maintainer's work, so a pull request that has lost its auto-merge has been
 touched by someone else: stop driving it and say so once.
 
-**The merge.** After `/create-pr`, label the pull request `autopilot` and
-turn on auto-merge with a squash (`gh pr merge <n> --auto --squash`, or the
-GitHub tools' auto-merge). GitHub merges it when every required check is
+**The merge.** When the work is done, bring the draft's title and body up to
+date the way `/create-pr` writes them (§8; `gh pr edit` on the open pull
+request), mark it ready for review, which starts the gate, and turn on
+auto-merge with a squash (`gh pr merge <n> --auto --squash`, or the GitHub
+tools' auto-merge). GitHub merges it when every required check is
 green; branch protection on `main` is the judge, never this run. Then §9
 as written: subscribe, fix every red check and review ask, until it merges.
 

@@ -44,7 +44,10 @@ The merge starts the next run.**
 - **One autopilot pull request at a time.** Every pull request it opens carries
   the `autopilot` label, and a run that finds one open stops, or flags a stuck
   one with a single comment. The label is the lock because `--start` happens on
-  a branch, where `main` cannot see it.
+  a branch, where `main` cannot see it. A run claims its item by opening that
+  pull request as a draft before building, since a build can outlast the four
+  hours between firings; a draft runs no gate, and a run that finds an older
+  claim from the same minutes closes its own draft.
 - **GitHub merges, not the agent.** The run turns on auto-merge with a squash.
   Branch protection on `main` requires `verify gate`, `pull request title` and
   `gitleaks` (from `secrets.yml`), so the merge happens only when the same gate a person would wait on
