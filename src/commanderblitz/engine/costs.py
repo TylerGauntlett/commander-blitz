@@ -1288,6 +1288,12 @@ def can_pay(
         amount = int(cost.remove_counters.get("amount", 1))
         if obj is None or obj.counter(kind) < amount:
             return False
+    # Always payable while the source is on the battlefield to take them: a
+    # counter needs a permanent (122.1), and one whose source has left is not.
+    if cost.put_counters is not None and (
+        source_oid is None or source_oid not in state.battlefield
+    ):
+        return False
     if cost.loyalty is not None and cost.loyalty < 0:
         # 606.3: a minus ability may only be activated if there is enough
         # loyalty to pay it. A plus or a zero is always payable, which is why
@@ -1895,6 +1901,20 @@ def pay(
             source_oid,
             str(cost.remove_counters.get("counter", "+1/+1")),
             int(cost.remove_counters.get("amount", 1)),
+        )
+
+    if cost.put_counters is not None and source_oid is not None:
+        # `as_cost` for the reason the loyalty branch below gives: Doubling
+        # Season's "if an effect would put" leaves a cost alone, while Hardened
+        # Scales' "would be put" does not. Through `add_counters`, so the
+        # placement raises `counter_placed` like any other placement.
+        add_counters(
+            state,
+            source_oid,
+            str(cost.put_counters["counter"]),
+            int(cost.put_counters.get("amount", 1)),
+            as_cost=True,
+            by=pid,
         )
 
     if cost.loyalty is not None and source_oid is not None:

@@ -2895,6 +2895,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
+  "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
@@ -2977,6 +2978,30 @@ for each age counter on it". It is read only by `may`'s `pay`, and that location
 is forced rather than convenient: an activated ability's cost is settled by
 legality *before* any effect has run, so a value expression there would have
 nothing to read.
+
+### `put_counters` — counters on the source, paid on activation
+
+"{T}, **Put a page counter on this artifact**: Scry 1." — Mazemind Tome.
+
+```jsonc
+"cost": { "tap": true, "put_counters": { "counter": "page", "amount": 1 } }
+```
+
+`counter` is the kind (required, checked by the same near-miss rule as every
+other counter kind) and `amount` a positive literal, defaulting to one. The
+counters go on the ability's own permanent as the ability is activated (602.2b),
+so they are there while it waits on the stack and stay whether it resolves or
+not. The loader refuses the key anywhere but an activated ability's cost: an
+additional cost to cast has a spell for a source.
+
+It is a placement like any other (122.6): it raises `counter_placed` with the
+activator as `put_by`, and counter replacements apply — except one marked
+`effects_only` (Doubling Season's "if **an effect** would put"), because a cost
+is not an effect. The near misses are the `add_counters` **op**, which moves the
+counter to resolution where a response can stop it arriving, and `loyalty`,
+which is a planeswalker's and carries 606.3's once per turn. Like every non-tap
+cost it disqualifies a mana ability from `Cost.is_tap_only()`, so the payment
+solver never pays it silently.
 
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 

@@ -9,18 +9,12 @@
   ],
   "needs": [
     {
-      "capability": "put_counters_cost",
-      "kind": "cost",
-      "what": "an activated-ability cost that puts N counters of a named kind (here one 'page' counter) on the source permanent, paid at activation alongside {T} and mana",
-      "why_existing_wont_do": "cost_keys has remove_counters and remove_counters_from_among but nothing that adds counters; the only cost that adds counters is loyalty, which is hard-wired to the 'loyalty' kind. Writing add_counters as an effect moves the payment to resolution, which the packet notes forbid"
-    },
-    {
       "capability": "state_trigger",
       "kind": "trigger_event",
       "what": "a state trigger (603.8) that fires when the source has at least N counters of a kind ('four or more page counters on this artifact') and does not retrigger while its ability is on the stack, with effects exile-self then 'if you do' gain 4 life",
       "why_existing_wont_do": "trigger_events has counter_placed, which fires on placement rather than on the state holding; a counter_placed trigger with a counters_on >= 4 condition would also re-trigger on every later counter and depends on cost-placed counters raising the event, which no current cost does"
     }
   ],
-  "closest_existing": ["remove_counters", "loyalty", "counter_placed"],
+  "closest_existing": ["loyalty", "counter_placed"],
   "confidence": "high"
 }

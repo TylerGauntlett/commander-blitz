@@ -149,6 +149,14 @@ class CostModel(BaseModel):
     #: "your life total can't change".
     pay_energy: int = 0
     remove_counters: dict[str, Any] | None = None
+    #: "{T}, **Put a page counter on this artifact**: Scry 1." -- Mazemind
+    #: Tome. ``{"counter": kind, "amount": N}`` (``amount`` defaults to one),
+    #: put on the source as the ability is activated. The mirror of
+    #: ``remove_counters``. Not the ``add_counters`` op, which moves the payment
+    #: to resolution, where it can be responded to and where a removed source
+    #: never gets the counter; and not ``loyalty``, which is a planeswalker's
+    #: and carries 606.3's once-per-turn. Activated abilities only.
+    put_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability

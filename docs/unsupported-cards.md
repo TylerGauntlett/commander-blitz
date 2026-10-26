@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **101** capabilities.
+**114 cards** blocked by **100** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -91,7 +91,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [put-counters-cost](#put-counters-cost) | 1 | 6513 | cost |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [redirect-attack](#redirect-attack) | 1 | 3213 | op |
@@ -1386,22 +1385,6 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
-## put-counters-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that puts N counters of a named kind (here one 'page' counter) on the source permanent, paid at activation alongside {T} and mana
-  <br>Why the existing vocabulary won't do: cost_keys has remove_counters and remove_counters_from_among but nothing that adds counters; the only cost that adds counters is loyalty, which is hard-wired to the 'loyalty' kind. Writing add_counters as an effect moves the payment to resolution, which the packet notes forbid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
 
 </details>
 

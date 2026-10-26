@@ -295,6 +295,14 @@ class Cost:
     #: "Pay {E}{E}": energy counters off the payer (107.14).
     pay_energy: int = 0
     remove_counters: Mapping[str, Any] | None = None
+    #: "{T}, **Put a page counter on this artifact**: Scry 1." -- Mazemind
+    #: Tome. ``{"counter": kind, "amount": N}`` put on the source as the
+    #: ability is activated (602.2b, 601.2h), through `primitives.add_counters`
+    #: with ``as_cost`` -- so ``counter_placed`` fires and the counter
+    #: replacements that are not "if an effect would" apply. The mirror of
+    #: ``remove_counters``, and not the `add_counters` op, which would move the
+    #: payment to resolution.
+    put_counters: Mapping[str, Any] | None = None
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
@@ -377,6 +385,9 @@ class Cost:
             ),
             remove_counters=(
                 dict(spec["remove_counters"]) if spec.get("remove_counters") else None
+            ),
+            put_counters=(
+                dict(spec["put_counters"]) if spec.get("put_counters") else None
             ),
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
@@ -461,6 +472,7 @@ class Cost:
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
+            and self.put_counters is None
             and self.loyalty is None
             and self.exile_from_graveyard is None
         )
@@ -505,6 +517,10 @@ class Cost:
             parts.append("Pay " + "{E}" * self.pay_energy)
         if self.remove_counters:
             parts.append("Remove counters")
+        if self.put_counters:
+            amount = self.put_counters.get("amount", 1)
+            kind = self.put_counters.get("counter", "")
+            parts.append(f"Put {amount} {kind} counter{'s' if amount != 1 else ''} on this")
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
             parts.append(f"Remove {count} counters from among permanents")
