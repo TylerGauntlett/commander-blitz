@@ -64,6 +64,7 @@ separately:
 - [adr/0024-precon-means-the-product.md](adr/0024-precon-means-the-product.md) — "precon" means the product Wizards sold, the maintainer's lists are favorites, and an archetype can pilot a deck
 - [adr/0025-phone-is-a-layout-mode-touch-an-input-mode.md](adr/0025-phone-is-a-layout-mode-touch-an-input-mode.md) — a phone is a peer of the handheld layout, touch is a fourth input mode, and floors are per mode
 - [adr/0026-the-roadmap-autopilot-merges-on-green.md](adr/0026-the-roadmap-autopilot-merges-on-green.md) — the autopilot builds only items whose questions the owner answered, and auto-merge lets branch protection decide
+- [adr/0027-rule-modifying-statics-read-derived-characteristics.md](adr/0027-rule-modifying-statics-read-derived-characteristics.md) — an attack requirement and a block restriction match their filters against derived characteristics, since no layer applies them
 
 ## If you are here to...
 

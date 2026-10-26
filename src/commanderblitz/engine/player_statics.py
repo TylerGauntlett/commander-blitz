@@ -1323,7 +1323,10 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "attacks_if_able":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # An attack requirement is no layer (613), so its filter reads the
+        # creature as it now is: Graaz's Juggernauts include the creatures its
+        # own third line made Juggernauts.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
             return True
     return False
 
