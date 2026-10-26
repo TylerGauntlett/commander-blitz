@@ -851,6 +851,21 @@ class GameObject:
     #: is never reused.
     created_tokens: set[int] = field(default_factory=set)
 
+    #: "…the **last** creature card exiled with it" -- Duplicant. The cards an
+    #: effect whose source is *this object* exiled with a link (`exiled_by`), in
+    #: the order they were exiled, written by `zones.link_exiled`.
+    #:
+    #: `exiled_by` on the exiled card answers *whether* a card was exiled with
+    #: a permanent, and that is all the O-Ring family needs. Duplicant also
+    #: needs *which one came last*, and *this* object's incarnation (607.2a,
+    #: 400.7): an oid survives every zone change, so a Duplicant that was
+    #: flickered still matches its old card's `exiled_by`, and only the list
+    #: on the object -- emptied by `reset_permanent_state` -- tells the two
+    #: incarnations apart, for `created_tokens`' reason. Read by
+    #: `characteristics.last_exiled_creature_card`, which also requires the
+    #: card still to be in exile with its `exiled_by` intact.
+    exiled_cards: list[int] = field(default_factory=list)
+
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
     #: ``{"chosen_type_of": "self"}``.
@@ -1038,6 +1053,9 @@ class GameObject:
         # The same new object: the tokens the old one made were not made by
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
+        # Nor the cards the old one exiled (607.2a): Duplicant flickered is a
+        # 2/4 again, whatever its earlier incarnation imprinted.
+        self.exiled_cards = []
         self.granted_keywords = set()
         self.granted_keyword_at = {}
         # Cleared like every other battlefield word, and deliberately: a spell

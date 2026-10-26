@@ -3250,6 +3250,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "duplicant": {
+    "battlefield_count": 32,
+    "zone": "battlefield"
+  },
   "durkwood_boars": {
     "zone": "battlefield"
   },
@@ -13518,6 +13522,13 @@
   },
   "yes_man_personal_securitron": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "yeva_nature_s_herald": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "yoked_ox": {

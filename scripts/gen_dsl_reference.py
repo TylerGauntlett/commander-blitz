@@ -741,6 +741,8 @@ STATICS: dict[str, Entry] = {
     "look_at_library_top": ("The player may look at the top card of their library any time.", None),
     "lose_all_abilities": ("Matching permanents lose all abilities.",
                            "`lose_all_abilities`, and why `abilities_of` exists"),
+    "imprint_characteristics": ("This creature has the power, toughness and creature types of the last creature card exiled with it.",
+                                "`imprint_characteristics` — Duplicant's size from a card in exile"),
     "lose_keyword": ("Matching permanents lose keywords and can't have or gain them.",
                      "`lose_keyword` — the other kind of removal, at the other end of the pipeline"),
     "no_hand_limit": ("The player has no maximum hand size.", None),

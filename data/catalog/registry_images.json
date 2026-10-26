@@ -3195,6 +3195,10 @@
     "artist": "Matt Stewart",
     "scryfall_id": "528fc1b2-62c9-4d83-bb43-58a59713a62b"
   },
+  "duplicant": {
+    "artist": "Thomas M. Baxa",
+    "scryfall_id": "74e04402-dbc3-4646-9857-fc42ecd8cc43"
+  },
   "durkwood_boars": {
     "artist": "Mike Kimble",
     "scryfall_id": "3741510d-a210-432c-a95b-a147689df995"
@@ -13377,6 +13381,10 @@
   "yes_man_personal_securitron": {
     "artist": "Dan Murayama Scott",
     "scryfall_id": "6f266eb4-1de6-41c2-9b8c-eb62e9093980"
+  },
+  "yeva_nature_s_herald": {
+    "artist": "Eric Deschamps",
+    "scryfall_id": "15f742a6-7dbe-4d13-b25b-0b5a50f4550f"
   },
   "yoked_ox": {
     "artist": "Ryan Yee",

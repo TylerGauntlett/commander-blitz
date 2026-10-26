@@ -16,6 +16,7 @@ from ..turn import phase_in, phase_out
 from ..zones import (
     destroy,
     exile,
+    link_exiled,
     move_object,
     offer_enters_replacement,
     offer_riot_choice,
@@ -295,9 +296,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.
-            obj = ctx.state.objects.get(oid)
-            if obj is not None:
-                obj.exiled_by = ctx.source_oid
+            link_exiled(ctx.state, oid, ctx.source_oid)
 
 
 @register("airbend")

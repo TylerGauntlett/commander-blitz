@@ -1,0 +1,654 @@
+{
+  "id": "fdc_keen_engineering",
+  "name": "Keen Engineering",
+  "commanders": [
+    "sai_master_thopterist"
+  ],
+  "color_identity": [
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "FDC",
+    "set_name": "Foundations Commander",
+    "date": "2026-10-02"
+  },
+  "notes": "Foundations Commander precon, card for card (https://mtgjson.com/api/v5/decks/KeenEngineering_FDC.json).",
+  "tags": [
+    "Artifacts",
+    "Tokens",
+    "Fliers"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "strategy": "Sai, Master Thopterist makes a 1/1 flying Thopter every time you cast an artifact spell, so the deck is mono-blue artifacts that turn into an air force. Sol Ring, Mind Stone, Palladium Myr and Thought Vessel ramp into the bigger pieces, Etherium Sculptor, Foundry Inspector and improvise on Kappa Cannoneer make them cheap, and Shimmer Myr lets them come down at instant speed. Master of Etherium, Steel Overseer and Chief of the Foundry grow the whole board, Myr Battlesphere and Thopter Spy Network add bodies of their own, and Sai can sacrifice two artifacts to draw a card when it needs gas. Counterspell, Negate and Duplicant answer what matters, and Nevinyrral's Disk resets a board the artifacts can rebuild from.",
+  "signature": [
+    {
+      "card_id": "sai_master_thopterist",
+      "why": "Every artifact spell is a 1/1 flier, and two artifacts are a card."
+    },
+    {
+      "card_id": "myr_battlesphere",
+      "why": "Five bodies in one card, and the Myr fire straight at the defender."
+    },
+    {
+      "card_id": "master_of_etherium",
+      "why": "Grows with every artifact and pumps the rest of them."
+    },
+    {
+      "card_id": "steel_hellkite",
+      "why": "Combat damage turns into a one-sided wipe at the chosen mana value."
+    }
+  ],
+  "archetype": "go_wide",
+  "printings": {
+    "adaptive_omnitool": {
+      "scryfall_id": "9e84f840-d7c6-4a82-8891-3d12281020ee",
+      "artist": "Adrián Rodríguez Pérez",
+      "set_code": "fdc",
+      "collector_number": "243"
+    },
+    "aether_spellbomb": {
+      "scryfall_id": "05647867-77a0-4f1c-afb9-6054f1f65f5f",
+      "artist": "Jim Nelson",
+      "set_code": "fdc",
+      "collector_number": "244"
+    },
+    "aetherize": {
+      "scryfall_id": "55c94e96-6563-43d5-8787-17868846e010",
+      "artist": "Alexandre Honoré",
+      "set_code": "fdc",
+      "collector_number": "59"
+    },
+    "all_is_dust": {
+      "scryfall_id": "8764ca43-bbbb-43b5-895b-c7049cc76580",
+      "artist": "Jason Felix",
+      "set_code": "fdc",
+      "collector_number": "9"
+    },
+    "arcane_signet": {
+      "scryfall_id": "ee7710cf-e73d-479f-bc8d-0e78a0e324d9",
+      "artist": "Dan Murayama Scott",
+      "set_code": "fdc",
+      "collector_number": "245"
+    },
+    "broodstar": {
+      "scryfall_id": "77c699c3-c534-4ffa-bcaf-63c221e49243",
+      "artist": "Glen Angus",
+      "set_code": "fdc",
+      "collector_number": "60"
+    },
+    "buried_ruin": {
+      "scryfall_id": "1e57d7ee-78d8-4e02-b3a8-a4b16ec0cdaf",
+      "artist": "Franz Vohwinkel",
+      "set_code": "fdc",
+      "collector_number": "298"
+    },
+    "chief_of_the_foundry": {
+      "scryfall_id": "19bdccb3-d85a-4b9a-9d5e-6f8add7a3c77",
+      "artist": "Daniel Ljunggren",
+      "set_code": "fdc",
+      "collector_number": "249"
+    },
+    "counterspell": {
+      "scryfall_id": "83390164-f00b-4be1-9cec-5de088c9debc",
+      "artist": "Zack Stella",
+      "set_code": "fdc",
+      "collector_number": "61"
+    },
+    "cultivator_s_caravan": {
+      "scryfall_id": "f5ec4e50-b667-4376-913c-715959840850",
+      "artist": "Mark Zug",
+      "set_code": "fdc",
+      "collector_number": "251"
+    },
+    "darksteel_citadel": {
+      "scryfall_id": "b379ba64-adf5-4a64-9f28-ace36f1b887b",
+      "artist": "John Avon",
+      "set_code": "fdc",
+      "collector_number": "300"
+    },
+    "darksteel_juggernaut": {
+      "scryfall_id": "79202c72-ffb3-4b00-811f-01814e117689",
+      "artist": "Randis Albion",
+      "set_code": "fdc",
+      "collector_number": "252"
+    },
+    "duplicant": {
+      "scryfall_id": "74e04402-dbc3-4646-9857-fc42ecd8cc43",
+      "artist": "Thomas M. Baxa",
+      "set_code": "fdc",
+      "collector_number": "255"
+    },
+    "etherium_sculptor": {
+      "scryfall_id": "438aca09-34c2-4dac-8008-1862109443b5",
+      "artist": "Steven Belledin",
+      "set_code": "fdc",
+      "collector_number": "62"
+    },
+    "fall_from_favor": {
+      "scryfall_id": "cd200502-84ad-40af-829d-ccb15859c226",
+      "artist": "Caio Monteiro",
+      "set_code": "fdc",
+      "collector_number": "63"
+    },
+    "forsaken_monument": {
+      "scryfall_id": "5f9e232e-39d0-4890-b935-98a1c14ef344",
+      "artist": "Piotr Dura",
+      "set_code": "fdc",
+      "collector_number": "258"
+    },
+    "foundry_inspector": {
+      "scryfall_id": "9ff34a25-85f9-40a4-a3fd-c27148bf7429",
+      "artist": "Jason A. Engle",
+      "set_code": "fdc",
+      "collector_number": "259"
+    },
+    "foundry_of_the_consuls": {
+      "scryfall_id": "0087b1ea-beba-49e6-924c-b792c473a8ce",
+      "artist": "Sam Burley",
+      "set_code": "fdc",
+      "collector_number": "302"
+    },
+    "graaz_unstoppable_juggernaut": {
+      "scryfall_id": "08947a4e-03cd-4e02-8eba-8f4087fad414",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fdc",
+      "collector_number": "260"
+    },
+    "hedron_archive": {
+      "scryfall_id": "068a365c-157c-4af4-9b17-4854d696c19d",
+      "artist": "Craig J Spearing",
+      "set_code": "fdc",
+      "collector_number": "262"
+    },
+    "ichor_wellspring": {
+      "scryfall_id": "c904cd73-b3bf-4fbd-a0a0-1b2aaaf880b0",
+      "artist": "Steven Belledin",
+      "set_code": "fdc",
+      "collector_number": "265"
+    },
+    "island": {
+      "scryfall_id": "17e2b637-72b1-4457-aaba-66d51107be4c",
+      "artist": "John Avon",
+      "set_code": "fdn",
+      "collector_number": "274"
+    },
+    "kappa_cannoneer": {
+      "scryfall_id": "d644be98-83df-4546-a448-247f40299993",
+      "artist": "Jesper Ejsing",
+      "set_code": "fdc",
+      "collector_number": "64"
+    },
+    "launch_mishap": {
+      "scryfall_id": "803c058c-4ccc-40cd-a74d-1bda5a4c453b",
+      "artist": "Kim Sokol",
+      "set_code": "fdc",
+      "collector_number": "65"
+    },
+    "lonely_sandbar": {
+      "scryfall_id": "6c8281c0-161b-45c9-abe0-5527b644b7d0",
+      "artist": "Heather Hudson",
+      "set_code": "fdc",
+      "collector_number": "305"
+    },
+    "master_of_etherium": {
+      "scryfall_id": "b5b7a5df-c926-45ea-af5a-008abc1f0f28",
+      "artist": "Matt Cavotta",
+      "set_code": "fdc",
+      "collector_number": "66"
+    },
+    "master_transmuter": {
+      "scryfall_id": "300fe2eb-fcaf-4888-9e44-a1718ac16f6c",
+      "artist": "Chippy",
+      "set_code": "fdc",
+      "collector_number": "67"
+    },
+    "mazemind_tome": {
+      "scryfall_id": "fbae0603-fdc3-488a-8917-08edf0884e1d",
+      "artist": "Randy Gallegos",
+      "set_code": "fdc",
+      "collector_number": "268"
+    },
+    "memory_guardian": {
+      "scryfall_id": "ce1aa5e5-a3b7-4a9d-9afd-b7c52aa2364c",
+      "artist": "Hardy Fowler",
+      "set_code": "fdc",
+      "collector_number": "68"
+    },
+    "meteor_golem": {
+      "scryfall_id": "9e72f3f6-7420-4d5c-bddb-7ea972adce81",
+      "artist": "Lake Hurwitz",
+      "set_code": "fdc",
+      "collector_number": "270"
+    },
+    "mind_s_eye": {
+      "scryfall_id": "b3390599-8fa6-4962-b762-f558a75945cc",
+      "artist": "Karl Kopinski",
+      "set_code": "fdc",
+      "collector_number": "272"
+    },
+    "mind_stone": {
+      "scryfall_id": "62901ae9-98dd-466b-8358-f5abd765b3c0",
+      "artist": "Adam Rex",
+      "set_code": "fdc",
+      "collector_number": "271"
+    },
+    "misleading_signpost": {
+      "scryfall_id": "74774cba-89b9-43c3-9648-df5a5e28a71b",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "fdc",
+      "collector_number": "69"
+    },
+    "myr_battlesphere": {
+      "scryfall_id": "7d2ca7dc-a999-4708-aeec-9f8e0f0db1e5",
+      "artist": "Franz Vohwinkel",
+      "set_code": "fdc",
+      "collector_number": "273"
+    },
+    "myr_retriever": {
+      "scryfall_id": "9bc01feb-9e14-40f1-ba4b-87e109c672e7",
+      "artist": "Trevor Hairsine",
+      "set_code": "fdc",
+      "collector_number": "274"
+    },
+    "negate": {
+      "scryfall_id": "40b33b38-8591-4e0c-8f3a-0249da977821",
+      "artist": "Magali Villeneuve",
+      "set_code": "fdc",
+      "collector_number": "70"
+    },
+    "nettlecyst": {
+      "scryfall_id": "91ef92af-de6b-4dc4-81ab-8e527cb96fdd",
+      "artist": "Vincent Proce",
+      "set_code": "fdc",
+      "collector_number": "275"
+    },
+    "nevinyrral_s_disk": {
+      "scryfall_id": "a8d65c8e-984b-4cc2-8dc4-c8a7dd65be71",
+      "artist": "Steve Argyle",
+      "set_code": "fdc",
+      "collector_number": "276"
+    },
+    "ornithopter_of_paradise": {
+      "scryfall_id": "9e5c677e-397d-4a0c-994e-2f35eadb8a33",
+      "artist": "Raoul Vitale",
+      "set_code": "fdc",
+      "collector_number": "277"
+    },
+    "padeem_consul_of_innovation": {
+      "scryfall_id": "6303997b-784d-4710-9c56-a92b7d5a8786",
+      "artist": "Matt Stewart",
+      "set_code": "fdc",
+      "collector_number": "71"
+    },
+    "palladium_myr": {
+      "scryfall_id": "3679933e-6880-41e3-b9e0-43d002722d4e",
+      "artist": "Alan Pollack",
+      "set_code": "fdc",
+      "collector_number": "278"
+    },
+    "propaganda": {
+      "scryfall_id": "efc52d02-7d22-4ff6-b104-a6fe704e8ef2",
+      "artist": "Clint Cearley",
+      "set_code": "fdc",
+      "collector_number": "72"
+    },
+    "psychosis_crawler": {
+      "scryfall_id": "450a680b-a2fb-495b-b22e-8c799a495fdf",
+      "artist": "Stephan Martiniere",
+      "set_code": "fdc",
+      "collector_number": "280"
+    },
+    "pull_from_tomorrow": {
+      "scryfall_id": "99d9d3a9-442b-485c-88e7-91de7278bde9",
+      "artist": "Sara Winters",
+      "set_code": "fdc",
+      "collector_number": "73"
+    },
+    "remote_isle": {
+      "scryfall_id": "444425b6-8529-430d-b74c-407ce462ad92",
+      "artist": "Ciruelo",
+      "set_code": "fdc",
+      "collector_number": "309"
+    },
+    "research_thief": {
+      "scryfall_id": "f6287354-4503-43c6-bfc0-39efb6179428",
+      "artist": "Cristi Balanescu",
+      "set_code": "fdc",
+      "collector_number": "74"
+    },
+    "sai_master_thopterist": {
+      "scryfall_id": "5650587a-27a5-4d68-97e2-5745627bd094",
+      "artist": "Bryan Sola",
+      "set_code": "fdc",
+      "collector_number": "5"
+    },
+    "scrawling_crawler": {
+      "scryfall_id": "09565ec6-dbb0-4ec8-bd75-781400f0dbe0",
+      "artist": "Miro Petrov",
+      "set_code": "fdc",
+      "collector_number": "282"
+    },
+    "shimmer_dragon": {
+      "scryfall_id": "826201fc-f7cb-43b5-988a-6b668d19fc2f",
+      "artist": "Lie Setiawan",
+      "set_code": "fdc",
+      "collector_number": "75"
+    },
+    "shimmer_myr": {
+      "scryfall_id": "8eb0c2fc-c7e0-41f2-b532-e4cac30d2ac7",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "fdc",
+      "collector_number": "283"
+    },
+    "silver_myr": {
+      "scryfall_id": "13d8a661-8e06-4625-8543-2c6ce7aaf03a",
+      "artist": "Alan Pollack",
+      "set_code": "fdc",
+      "collector_number": "284"
+    },
+    "skysovereign_consul_flagship": {
+      "scryfall_id": "0c254f4d-31ed-436a-92cb-85bb3709743e",
+      "artist": "Jung Park",
+      "set_code": "fdc",
+      "collector_number": "285"
+    },
+    "sol_ring": {
+      "scryfall_id": "4f152dd9-2b35-45b2-90fe-8c71d0634226",
+      "artist": "Mike Bierek",
+      "set_code": "fdc",
+      "collector_number": "286"
+    },
+    "soul_guide_lantern": {
+      "scryfall_id": "b005223d-aa57-4238-8c25-290141851177",
+      "artist": "Iris Compiet",
+      "set_code": "fdc",
+      "collector_number": "287"
+    },
+    "spire_golem": {
+      "scryfall_id": "50ef252f-02c3-4b79-8e1b-d42db37e9fc4",
+      "artist": "Daren Bader",
+      "set_code": "fdc",
+      "collector_number": "288"
+    },
+    "steel_hellkite": {
+      "scryfall_id": "7ce14b48-34db-4308-8f5a-7b62d0e97d0e",
+      "artist": "James Paick",
+      "set_code": "fdc",
+      "collector_number": "289"
+    },
+    "steel_overseer": {
+      "scryfall_id": "d306b8c9-7a7f-4238-8496-6df10782afaa",
+      "artist": "Chris Rahn",
+      "set_code": "fdc",
+      "collector_number": "290"
+    },
+    "tamiyo_s_logbook": {
+      "scryfall_id": "e5cef092-de95-4cc6-9426-908ca0b44c95",
+      "artist": "Piotr Dura",
+      "set_code": "fdc",
+      "collector_number": "76"
+    },
+    "thirst_for_knowledge": {
+      "scryfall_id": "f784f025-2798-4112-9768-39c8e3572b25",
+      "artist": "Andrea Piparo",
+      "set_code": "fdc",
+      "collector_number": "77"
+    },
+    "thopter_fabricator": {
+      "scryfall_id": "36123651-430b-4ae3-a055-713f81bb0f53",
+      "artist": "Racrufi",
+      "set_code": "fdc",
+      "collector_number": "78"
+    },
+    "thopter_spy_network": {
+      "scryfall_id": "8628d622-d682-4264-87d7-ad8434bb4328",
+      "artist": "Jung Park",
+      "set_code": "fdc",
+      "collector_number": "79"
+    },
+    "thought_monitor": {
+      "scryfall_id": "03fd75f3-e545-4a07-ab1d-9b51612a1463",
+      "artist": "Martina Pilcerova",
+      "set_code": "fdc",
+      "collector_number": "80"
+    },
+    "thought_vessel": {
+      "scryfall_id": "ddd26152-5e1f-4c48-99e0-a4fdc5155d98",
+      "artist": "rk post",
+      "set_code": "fdc",
+      "collector_number": "292"
+    },
+    "thoughtcast": {
+      "scryfall_id": "0baa33b1-c37c-4d62-a7c9-c08e5ac9724a",
+      "artist": "Greg Hildebrandt",
+      "set_code": "fdc",
+      "collector_number": "81"
+    },
+    "vedalken_archmage": {
+      "scryfall_id": "cb57430d-a799-4036-aee2-6b5162035a7f",
+      "artist": "Kev Walker",
+      "set_code": "fdc",
+      "collector_number": "82"
+    },
+    "war_room": {
+      "scryfall_id": "b2593c45-585f-4eaf-bb08-e91a4fc2d425",
+      "artist": "Milivoj Ćeran",
+      "set_code": "fdc",
+      "collector_number": "317"
+    },
+    "whirler_rogue": {
+      "scryfall_id": "51505039-b6f6-4dd6-9a09-5494e030deff",
+      "artist": "Winona Nelson",
+      "set_code": "fdc",
+      "collector_number": "83"
+    }
+  },
+  "cards": [
+    {
+      "id": "adaptive_omnitool"
+    },
+    {
+      "id": "aether_spellbomb"
+    },
+    {
+      "id": "aetherize"
+    },
+    {
+      "id": "all_is_dust"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "broodstar"
+    },
+    {
+      "id": "buried_ruin"
+    },
+    {
+      "id": "chief_of_the_foundry"
+    },
+    {
+      "id": "counterspell"
+    },
+    {
+      "id": "cultivator_s_caravan"
+    },
+    {
+      "id": "darksteel_citadel"
+    },
+    {
+      "id": "darksteel_juggernaut"
+    },
+    {
+      "id": "duplicant"
+    },
+    {
+      "id": "etherium_sculptor"
+    },
+    {
+      "id": "fall_from_favor"
+    },
+    {
+      "id": "forsaken_monument"
+    },
+    {
+      "id": "foundry_inspector"
+    },
+    {
+      "id": "foundry_of_the_consuls"
+    },
+    {
+      "id": "graaz_unstoppable_juggernaut"
+    },
+    {
+      "id": "hedron_archive"
+    },
+    {
+      "id": "ichor_wellspring"
+    },
+    {
+      "id": "island",
+      "qty": 34
+    },
+    {
+      "id": "kappa_cannoneer"
+    },
+    {
+      "id": "launch_mishap"
+    },
+    {
+      "id": "lonely_sandbar"
+    },
+    {
+      "id": "master_of_etherium"
+    },
+    {
+      "id": "master_transmuter"
+    },
+    {
+      "id": "mazemind_tome"
+    },
+    {
+      "id": "memory_guardian"
+    },
+    {
+      "id": "meteor_golem"
+    },
+    {
+      "id": "mind_s_eye"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "misleading_signpost"
+    },
+    {
+      "id": "myr_battlesphere"
+    },
+    {
+      "id": "myr_retriever"
+    },
+    {
+      "id": "negate"
+    },
+    {
+      "id": "nettlecyst"
+    },
+    {
+      "id": "nevinyrral_s_disk"
+    },
+    {
+      "id": "ornithopter_of_paradise"
+    },
+    {
+      "id": "padeem_consul_of_innovation"
+    },
+    {
+      "id": "palladium_myr"
+    },
+    {
+      "id": "propaganda"
+    },
+    {
+      "id": "psychosis_crawler"
+    },
+    {
+      "id": "pull_from_tomorrow"
+    },
+    {
+      "id": "remote_isle"
+    },
+    {
+      "id": "research_thief"
+    },
+    {
+      "id": "scrawling_crawler"
+    },
+    {
+      "id": "shimmer_dragon"
+    },
+    {
+      "id": "shimmer_myr"
+    },
+    {
+      "id": "silver_myr"
+    },
+    {
+      "id": "skysovereign_consul_flagship"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "soul_guide_lantern"
+    },
+    {
+      "id": "spire_golem"
+    },
+    {
+      "id": "steel_hellkite"
+    },
+    {
+      "id": "steel_overseer"
+    },
+    {
+      "id": "tamiyo_s_logbook"
+    },
+    {
+      "id": "thirst_for_knowledge"
+    },
+    {
+      "id": "thopter_fabricator"
+    },
+    {
+      "id": "thopter_spy_network"
+    },
+    {
+      "id": "thought_monitor"
+    },
+    {
+      "id": "thought_vessel"
+    },
+    {
+      "id": "thoughtcast"
+    },
+    {
+      "id": "vedalken_archmage"
+    },
+    {
+      "id": "war_room"
+    },
+    {
+      "id": "whirler_rogue"
+    }
+  ]
+}

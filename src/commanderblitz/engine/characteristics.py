@@ -222,6 +222,67 @@ FACE_DOWN_CHARS = Characteristics(
 )
 
 
+def last_exiled_creature_card(state: GameState, source: GameObject) -> GameObject | None:
+    """The last creature card exiled with ``source`` that is still there.
+
+    "As long as a card exiled with this creature is a creature card, this
+    creature has the power, toughness, and creature types of **the last
+    creature card exiled with it**" -- Duplicant. Walks the source's own
+    `exiled_cards` newest first, so a card the previous incarnation exiled is
+    not found (607.2a, 400.7), and keeps only a card still in exile whose
+    `exiled_by` is still this source: one that left exile is no longer exiled
+    with anything, even if some other effect exiled it again.
+
+    "Creature card" is the card's characteristics in exile, so an animated
+    land Duplicant took is a land card and does not count. None when nothing
+    qualifies, which is the "as long as" clause being false.
+    """
+    for oid in reversed(source.exiled_cards):
+        card = state.objects.get(oid)
+        if card is None or card.zone is not Zone.EXILE or card.exiled_by != source.oid:
+            continue
+        if "Creature" in chars(state, oid).types:
+            return card
+    return None
+
+
+def card_in_exile_characteristics(
+    state: GameState, card: GameObject
+) -> tuple[int, int, frozenset[str]]:
+    """A card's power, toughness and creature types where it sits in exile.
+
+    The printed ones, with the card's own characteristic-defining abilities
+    applied: 604.3 has a CDA function in every zone, so a `*/*` is a number in
+    exile and a changeling card is every creature type there, not the 0 and the
+    one printed type the layer pipeline's battlefield-only statics would leave.
+    A CDA is the shape the DSL writes one in -- an unconditional `set_pt` or
+    `add_subtype` whose `affects` is the card alone (`self_only`); a
+    conditional one is an ordinary static that works only on the battlefield.
+    """
+    c = chars(state, card.oid)
+    power, toughness = c.power, c.toughness
+    types = set(creature_types_of(state, card.oid))
+    # A card in exile has no controller; "you" in its CDA is its owner (108.4a),
+    # not whoever controlled the permanent it was before Duplicant took it.
+    if card.controller != card.owner:
+        card = dataclasses.replace(card, controller=card.owner)
+    for ability in state.card_of(card).abilities:
+        static = ability.static if ability.is_static else None
+        if not static or static.get("condition"):
+            continue
+        if dict(static.get("affects") or {}) != {"self_only": True}:
+            continue
+        if static.get("effect") == "set_pt":
+            power = _static_value(state, static.get("power"), card)
+            toughness = _static_value(state, static.get("toughness"), card)
+        elif static.get("effect") == "add_subtype":
+            types.update(
+                sub
+                for sub in resolve_chosen_subtype_list(static.get("subtypes", ()), card)
+                if SUBTYPE_CLASS.get(sub, "Creature") == "Creature"
+            )
+    return power, toughness, frozenset(types)
+
 def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     """The size an object *starts* the pipeline with, before any layer applies.
 
@@ -379,6 +440,32 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
+
+        # -2. "…this creature has the power, toughness, and creature types of
+        #     the last creature card exiled with it. It's still a Shapeshifter."
+        #     Duplicant. A 7b size and a layer-4 creature-type replacement, both
+        #     read off the card in exile, and placed *first* -- before
+        #     `animate`, `set_types` and every grant -- because its timestamp is
+        #     the permanent's own arrival: the effects that usually meet it
+        #     (an animation, an Imprisoned in the Moon, a "becomes a Vampire in
+        #     addition") began later and layer on top, and the anthems,
+        #     counters and pumps below add to the copied size as they add to a
+        #     printed one. The other creature types are replaced, not kept;
+        #     non-creature subtypes stay, and so does the named type.
+        for source_obj, static in statics:
+            if static.get("effect") != "imprint_characteristics":
+                continue
+            if not _matches(state, obj, source_obj, static.get("affects")):
+                continue
+            imprinted = last_exiled_creature_card(state, source_obj)
+            if imprinted is None:
+                continue
+            power, toughness, copied = card_in_exile_characteristics(state, imprinted)
+            subtypes = {
+                sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
+            }
+            subtypes.update(copied)
+            subtypes.update(static.get("subtypes", ()))
 
         # -1. animation -- "becomes a 4/4 creature until end of turn. It's still
         #     a land."  It runs *before* everything else because it replaces the

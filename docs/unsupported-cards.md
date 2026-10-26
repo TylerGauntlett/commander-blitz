@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**104 cards** blocked by **87** capabilities.
+**105 cards** blocked by **89** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -58,7 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fog](#fog) | 1 | 1232 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
-| [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -79,6 +78,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
+| [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
@@ -94,7 +94,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -894,22 +896,6 @@ Blocks **1** card.
 
 </details>
 
-## imprint-copy-characteristics
-
-Blocks **1** card.
-
-- **(static_effect)** a static on the source whose base power and toughness are the printed power/toughness of the last creature card exiled with it (an `exiled_with: self` card, most recent first), active only while such a card exists in exile
-  <br>Why the existing vocabulary won't do: The `set_pt` static takes its power/toughness from `static_value_keys`, which has no `power_of`/`toughness_of` or other reader of a card in exile; `static_condition_keys` `exists` cannot be confirmed to accept `exiled_with`, and nothing selects the LAST card exiled with the source
-- **(static_effect)** a static that sets the source's creature types to the creature types of the last creature card exiled with it, keeping Shapeshifter
-  <br>Why the existing vocabulary won't do: `add_subtype` (static and op) adds a fixed printed list of subtypes; there is no way to copy subtypes from another object, and `become_copy` copies every characteristic, not just P/T and creature types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Duplicant** (rank 2853) — `duplicant`
-  - As long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.
-
-</details>
-
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -1202,6 +1188,20 @@ Blocks **1** card.
 
 </details>
 
+## players-dealt-combat-damage-by-subtype
+
+Blocks **1** card.
+
+- **(selector)** a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any source with a given subtype (Dragon), so X can be counted as the number of distinct such opponents -- e.g. {"dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]}} countable as a number of players
+  <br>Why the existing vocabulary won't do: The `dealt_combat_damage_by` player spec takes only "self" and stands alone (the loader refuses any other subject), so it cannot include Dragons; the `combat_damage_by` condition (prowl) is a yes/no over subtypes and neither counts players nor includes the source itself; no value key counts the players a player spec resolves to
+
+<details><summary>Cards waiting on this</summary>
+
+- **Estinien Varlineau** (rank 10408) — `estinien_varlineau`
+  - At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.
+
+</details>
+
 ## plot
 
 Blocks **1** card.
@@ -1416,6 +1416,20 @@ Blocks **1** card.
 
 </details>
 
+## target-player-dealt-combat-damage-by
+
+Blocks **1** card.
+
+- **(selector)** a player target spec restricted to players this source dealt combat damage to this turn (the `{"dealt_combat_damage_by": "self"}` set), legal to choose as a target and checked again on resolution; it must read the ledger of the source as it was before it was sacrificed as the cost
+  <br>Why the existing vocabulary won't do: `{"dealt_combat_damage_by": "self"}` is a player spec usable as an effect's `player` or a selector's `controller`, not a restriction on which player may be TARGETED; and its record is keyed by the source oid, which the sacrifice cost removes from the battlefield before targets are legal-checked
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
+  - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
 ## teammates
 
 Blocks **1** card.
@@ -1427,6 +1441,20 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
+
+</details>
+
+## timed-cast-lock-spell-filter
+
+Blocks **1** card.
+
+- **(op)** a one-shot op (or an `affects_spells` option on the timed CastLock) that stops the named player(s) from casting spells matching a spell filter -- here `{"not_types": ["Creature"]}` -- until the controller's next turn, so an activated ability on a sacrificed permanent can leave the lock behind
+  <br>Why the existing vocabulary won't do: `cant_cast_spells` with `affects_spells` is a static_effect, so it lives only while its permanent does and dies with the sacrificed source; the timed op `cant_cast_spells_from_zones` has the right clock (`duration: until_your_next_turn`) and `player`, but filters only by zone (`zones`/`except_zones`), not by spell type, so it would forbid creature spells too or nothing at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
+  - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
 
 </details>
 

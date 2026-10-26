@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards that exist only for the imprint-characteristics test (tests/unit/statics/test_imprint_characteristics.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_duplicant` is the Duplicant shape: its enters trigger exiles a nontoken creature with a link, and its static takes the last linked creature card's power, toughness and creature types. `t_star_beast` is a */* creature card whose characteristic-defining ability must still count in exile (604.3).",
+  "cards": [
+    {
+      "id": "t_duplicant",
+      "name": "Test Duplicant",
+      "oracle_text": "Imprint — When this creature enters, you may exile target nontoken creature.\nAs long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.",
+      "mana_cost": "{6}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 2,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "Imprint — When this creature enters, you may exile target nontoken creature.",
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1, "optional": true,
+             "selector": {"zone": "battlefield", "types": ["Creature"],
+                          "is_token": false, "controller": "any"}}
+          ],
+          "effects": [{"op": "exile", "objects": {"target": "t1"}, "link": true}]
+        },
+        {
+          "kind": "static",
+          "effect": "imprint_characteristics",
+          "affects": {"self_only": true},
+          "subtypes": ["Shapeshifter"],
+          "text": "As long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter."
+        }
+      ]
+    },
+    {
+      "id": "t_star_beast",
+      "name": "Test Star Beast",
+      "oracle_text": "This creature's power is equal to the number of creatures you control.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 0,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "set_pt",
+          "affects": {"self_only": true},
+          "power": {"count": {"controller": "you", "types": ["Creature"]}},
+          "toughness": {"const": 3},
+          "text": "This creature's power is equal to the number of creatures you control."
+        }
+      ]
+    }
+  ]
+}

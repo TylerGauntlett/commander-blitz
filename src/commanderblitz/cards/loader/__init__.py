@@ -4237,6 +4237,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"the opposite of every printed card in this cycle"
             )
 
+    if model.effect == "imprint_characteristics":
+        # Duplicant: "…this creature has the power, toughness, and creature
+        # types of the last creature card exiled with it. It's still a
+        # Shapeshifter." The link it reads is the source's own
+        # (`exiled_cards`), so "this creature" is the only thing it can
+        # describe; a wider filter would hand every matching creature the
+        # source's imprint. The size comes from the card in exile, so a
+        # written one is a second answer to the same question, and `subtypes`
+        # is the creature type it keeps -- literal names only.
+        if dict(model.affects or {}) != {"self_only": True}:
+            raise DslError(
+                f"{where}: imprint_characteristics describes the creature that "
+                f'exiled the card; its \'affects\' is {{"self_only": true}}'
+            )
+        if model.power is not None or model.toughness is not None or model.types:
+            raise DslError(
+                f"{where}: imprint_characteristics reads power, toughness and "
+                f"creature types off the exiled card; it takes no 'power', "
+                f"'toughness' or 'types'"
+            )
+        for entry in model.subtypes:
+            if not isinstance(entry, str):
+                raise DslError(
+                    f"{where}.subtypes: imprint_characteristics keeps literal "
+                    f"creature types ('It's still a Shapeshifter'), not {entry!r}"
+                )
+
     if model.effect == "set_colors":
         # `[]` is colourless and is the point of the effect, so the check is for
         # the field being *absent* -- a `set_colors` with nothing said would

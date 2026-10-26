@@ -181,6 +181,11 @@ STATIC_EFFECTS = frozenset(
         # colours, and it is `set_types`' other half: a card that changes what a
         # permanent *is* almost always changes both.
         "set_colors",
+        # Duplicant: "…has the power, toughness, and creature types of the
+        # last creature card exiled with it. It's still a Shapeshifter." Reads
+        # the source's ordered `exiled_cards` link; applied first in
+        # `characteristics._compute`, a 7b size and a layer-4 type replacement.
+        "imprint_characteristics",
         # "...and loses all other card types and abilities." The only effect in
         # the engine that takes an ability away rather than adding one, which is
         # why `characteristics.abilities_of` exists at all -- before it, every

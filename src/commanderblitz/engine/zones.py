@@ -1683,6 +1683,32 @@ def exile(state: GameState, oid: int, *, cause: str = "exiled", by: int | None =
     return True
 
 
+def link_exiled(state: GameState, oid: int, source_oid: int) -> None:
+    """Record that ``source_oid`` exiled ``oid`` -- "…exiled with this creature".
+
+    Both ends of the link (607.2a): `exiled_by` on the card, which the
+    `exiled_with` selector reads, and the source's ordered `exiled_cards`,
+    which says which card came **last** and belongs to the source's current
+    incarnation (Duplicant). Called after the move, since `move_object` runs
+    `reset_permanent_state` on the card on the way and would wipe the link if
+    it were set first.
+
+    A card exiled with the same source twice moves to the end: it is the last
+    one exiled. Bumps the characteristics cache, because a static reading the
+    link (Duplicant's size) may have been computed during the move.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    obj.exiled_by = source_oid
+    source = state.objects.get(source_oid)
+    if source is not None:
+        if oid in source.exiled_cards:
+            source.exiled_cards.remove(oid)
+        source.exiled_cards.append(oid)
+    state.bump_chars()
+
+
 def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Return a permanent to its owner's hand."""
     obj = state.objects.get(oid)
