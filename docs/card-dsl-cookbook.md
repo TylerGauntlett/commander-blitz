@@ -7191,6 +7191,51 @@ a moon-imprisoned Sheoldred stops being a legal target for "destroy target black
 permanent". `[]` is colourless and is the point of the effect, so a `set_colors`
 with no `colors` field is a load error rather than a silent repaint.
 
+### `imprint_characteristics` — Duplicant's size from a card in exile
+
+"As long as a card exiled with this creature is a creature card, this creature
+has the power, toughness, and creature types of the last creature card exiled
+with it. It's still a Shapeshifter."
+
+```json
+{"kind": "static", "effect": "imprint_characteristics",
+ "affects": {"self_only": true}, "subtypes": ["Shapeshifter"]}
+```
+
+beside an enters trigger whose `exile` carries `link: true`. The static reads
+the source's `exiled_cards`, the cards its own linked abilities exiled in the
+order they were exiled (`zones.link_exiled`, written by every `link`), and
+takes the newest one still in exile with its `exiled_by` intact whose
+characteristics there are a creature card's
+(`characteristics.last_exiled_creature_card`). From it the source takes:
+
+- its **power and toughness** as a 7b setting effect, read in exile with the
+  card's own characteristic-defining ability applied (604.3,
+  `characteristics.card_in_exile_characteristics`): a `*/*` card is its number
+  there, counted for its owner (108.4a);
+- its **creature types**, replacing the source's own (613.1d) and keeping the
+  literal `subtypes` the static names ("It's still a Shapeshifter"); a
+  changeling card brings every creature type. Non-creature subtypes stay.
+
+Nothing else: not the name, colour, keywords or abilities. It applies first in
+`characteristics._compute`, ahead of `animate`, `set_types` and every grant,
+since its timestamp is the permanent's own arrival — counters, anthems and
+pumps add to the copied size, and a later "becomes a 4/4" or Imprisoned in the
+Moon wins. With no qualifying card the static does nothing and the printed
+2/4 Shapeshifter shows.
+
+The link belongs to the object, not the card (607.2a, 400.7):
+`reset_permanent_state` empties `exiled_cards`, so a flickered Duplicant is a
+2/4 again while its old card stays in exile. A card that left exile, or was
+exiled again by something else, is no longer exiled with it. The loader
+refuses any `affects` but `{"self_only": true}` (the link is the source's
+own), a written `power`, `toughness` or `types` (the card in exile is the
+answer), and a non-literal kept subtype.
+
+**The near miss is `become_copy`**, which copies every copiable value —
+name, colour, abilities — and is a different card; a `set_pt` cannot read a
+card in exile at all.
+
 ### `set_types` now strips orphaned subtypes
 
 205.1b and 613.1d: the subtypes of a card type a permanent no longer has go with

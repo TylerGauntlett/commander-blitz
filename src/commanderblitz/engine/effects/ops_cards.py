@@ -21,7 +21,7 @@ from ..stack import pull_spell_off_stack
 from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free
 from ..triggers import fire
-from ..zones import move_object, offer_enters_replacement, offer_riot_choice
+from ..zones import link_exiled, move_object, offer_enters_replacement, offer_riot_choice
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
@@ -614,9 +614,7 @@ def _move_found(
         # does, so a later `{"zone": "exile", "exiled_with": "self"}` finds
         # them -- after the move, because `reset_permanent_state` would wipe it.
         if destination is Zone.EXILE and spec.get("link") and ctx.source_oid is not None:
-            obj = ctx.state.objects.get(oid)
-            if obj is not None:
-                obj.exiled_by = ctx.source_oid
+            link_exiled(ctx.state, oid, ctx.source_oid)
         if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
@@ -1707,7 +1705,8 @@ def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
     chosen = picked[0]
     move_object(ctx.state, chosen, Zone.EXILE, to_player=pid, cause="hideaway")
     obj = ctx.state.objects[chosen]
-    obj.exiled_by = ctx.source_oid
+    if ctx.source_oid is not None:
+        link_exiled(ctx.state, chosen, ctx.source_oid)
     obj.revealed_to.add(pid)
     ctx.state.emit("hideaway", player=pid, source=ctx.source_oid, oid=chosen)
     _bottom_in_random_order(ctx, pid, [oid for oid in top if oid != chosen])
