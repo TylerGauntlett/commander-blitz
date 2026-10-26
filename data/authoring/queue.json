@@ -263742,12 +263742,12 @@
     },
     "Steel Hellkite": {
       "edhrec_rank": 1137,
-      "gate": "template",
+      "gate": null,
       "name": "Steel Hellkite",
-      "reason": "no template for: {2}: This creature gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "931ad21b-a6bb-4a89-8d6f-80adfcf126c7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steel Leaf Champion": {

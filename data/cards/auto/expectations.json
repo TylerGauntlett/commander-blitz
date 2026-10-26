@@ -10973,6 +10973,11 @@
   "steam_vents": {
     "zone": "battlefield"
   },
+  "steel_hellkite": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "steel_overseer": {
     "battlefield_count": 33,
     "zone": "battlefield"

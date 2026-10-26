@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**107 cards** blocked by **91** capabilities.
+**106 cards** blocked by **90** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -80,7 +80,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
-| [players-dealt-combat-damage-by-source](#players-dealt-combat-damage-by-source) | 1 | 1137 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
@@ -1217,20 +1216,6 @@ Blocks **1** card.
 
 - **Orbs of Warding** (rank 13000) — `orbs_of_warding`
   - If a creature would deal damage to you, prevent 1 of that damage.
-
-</details>
-
-## players-dealt-combat-damage-by-source
-
-Blocks **1** card.
-
-- **(selector)** a player spec (usable as a selector's `controller`, or as `for_each_player.players`) meaning 'each player dealt combat damage by this creature this turn', backed by a per-turn ledger of which players each source object dealt combat damage to
-  <br>Why the existing vocabulary won't do: The selector key `damaged_by` and trigger filter `damaged_by` read `state.damage_ledger`, which records damage to OBJECTS only; the condition `combat_damage_by` is prowl's table-wide 'a player was dealt combat damage by a <subtype>' and names neither the player nor the source object; `select_players` has no spec for damaged players. Emulating it with an unprinted `deals_combat_damage_to_player` trigger that sets a flag would add an ability the card does not print. The rest of the line ({X} cost via `x_value`, `mana_value` X, `not_types: [Land]`, `once_each_turn`) and the {2} pump line are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Steel Hellkite** (rank 1137) — `steel_hellkite`
-  - {X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn.
 
 </details>
 

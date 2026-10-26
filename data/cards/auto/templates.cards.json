@@ -121371,6 +121371,79 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}: This creature gets +1/+0 until end of turn."
+        },
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "dealt_combat_damage_by": "self"
+                },
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "{X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "steel_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}",
+      "name": "Steel Hellkite",
+      "oracle_text": "Flying\n{2}: This creature gets +1/+0 until end of turn.\n{X}: Destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature this turn. Activate only once each turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
