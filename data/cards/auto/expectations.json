@@ -1584,6 +1584,16 @@
   "broodhunter_wurm": {
     "zone": "battlefield"
   },
+  "broodstar": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "bruna_the_fading_light": {
     "graveyard_size": {
       "0": 1

@@ -35402,12 +35402,12 @@
     },
     "Broodstar": {
       "edhrec_rank": 9814,
-      "gate": "playable",
+      "gate": null,
       "name": "Broodstar",
-      "reason": "broodstar is a permanent but ended in graveyard",
+      "reason": "",
       "scryfall_id": "38d22fa8-e9cf-43a6-9170-38e00b1bed70",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broodwarden": {
